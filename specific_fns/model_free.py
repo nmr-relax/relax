@@ -1344,6 +1344,7 @@ class Model_free:
             remap_table = []
             noe_r1_table = []
             ri_labels = []
+            num_params = []
 
             # Loop over the number of data sets.
             for j in xrange(num_data_sets):
@@ -1374,12 +1375,14 @@ class Model_free:
                 noe_r1_table.append(self.relax.data.res[index].noe_r1_table[self.run])
                 ri_labels.append(self.relax.data.res[index].ri_labels[self.run])
 
+                # Count the number of model-free parameters for the residue index.
+                num_params.append(len(self.relax.data.res[index].params[self.run]))
+
             # Convert to Numeric arrays.
             relax_data = array(relax_data, Float64)
             relax_error = array(relax_error, Float64)
             r = array(r, Float64)
             csa = array(csa, Float64)
-            num_frq = array(num_frq, Float64)
             frq = array(frq, Float64)
 
             # Debug.
@@ -1420,7 +1423,7 @@ class Model_free:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(self.param_set, num_data_sets, equations, param_types, self.param_vector, relax_data, relax_error, r, csa, self.relax.data.diff[self.run].type, diff_params, self.scaling_matrix, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, self.relax.data.gx, self.relax.data.gh, self.relax.data.g_ratio, self.relax.data.h_bar, self.relax.data.mu0)
+            self.mf = Mf(self.param_set, num_data_sets, equations, param_types, self.param_vector, relax_data, relax_error, r, csa, self.relax.data.diff[self.run].type, diff_params, self.scaling_matrix, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, self.relax.data.gx, self.relax.data.gh, self.relax.data.g_ratio, self.relax.data.h_bar, self.relax.data.mu0, num_params)
 
 
             # Setup the minimisation algorithm when constraints are present.

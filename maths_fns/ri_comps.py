@@ -1016,9 +1016,8 @@ def calc_fixed_csa(data):
                           3
     """
 
-    data.csa_const_fixed = zeros(data.num_frq, Float64)
-    for i in xrange(data.num_frq):
-        data.csa_const_fixed[i] = data.frq_sqrd_list[i, 1] / 3.0
+    for j in xrange(data.num_frq[data.i]):
+        data.csa_const_fixed[data.i][j] = data.frq_sqrd_list[data.i][j, 1] / 3.0
 
 
 
