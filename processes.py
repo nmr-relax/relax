@@ -52,5 +52,4 @@ class RelaxPopen3(Popen3):
                 kill_cmd = login_cmd + " \"" + kill_cmd + "\""
 
             # Kill relax.
-            print kill_cmd
             system(kill_cmd)

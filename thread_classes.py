@@ -25,7 +25,6 @@ from Numeric import sum, zeros
 from exceptions import Exception
 from random import randint
 from re import search
-from signal import SIGINT, getsignal, signal
 from string import ascii_letters
 import sys
 from time import sleep
@@ -40,7 +39,7 @@ from processes import RelaxPopen3
 
 class Threading:
     def __init__(self, relax):
-        """Class containing the function to calculate the XH vector from the loaded structure."""
+        """Class containing functions for setting up and executing threading in relax."""
 
         self.relax = relax
 
@@ -202,10 +201,10 @@ class RelaxParentThread:
         for i in xrange(self.num_jobs):
             self.job_locks.append(Lock())
 
-        # Singal handling for KeyboardInterrupt.
-        self.signal_setup()
+        # Start the results thread.
+        RelaxResultsThread(self.job_queue, self.results_queue, self.finished_jobs, self.job_locks).start()
 
-        # Start all threads.
+        # Start all sub-threads.
         print "\nStarting all threads.\n"
         self.threads = []
         for i in xrange(self.num_threads):
@@ -219,77 +218,76 @@ class RelaxParentThread:
             self.threads[i].setName("Thread-" + `i`)
 
         # The main loop.
-        while 1:
-            # Get the next results off the results_queue.
-            job_number = self.results_queue.get()
+        try:
+            while 1:
+                # Sleep for 0.2 seconds.
+                sleep(0.2)
 
-            # Keyboard interrupt caught by the thread.
-            if job_number == KeyboardInterrupt:
-                break
+                # All jobs have finished.
+                if sum(self.finished_jobs) == self.num_jobs:
+                    # Add None to the job_queue to signal the threads to finish.
+                    self.job_queue.put(None)
 
-            # Update the finished jobs.
-            self.finished_jobs[job_number] = 1
+                    # Add None to the results_queue to signal to the results thread to finish.
+                    self.results_queue.put(None)
 
-            # Release the lock (finished jobs must be updated first).
-            if self.job_locks[job_number].locked():
-                self.job_locks[job_number].release()
+                    # Break the main loop.
+                    break
 
-            # All jobs have finished.
-            if sum(self.finished_jobs) == self.num_jobs:
-                # Add None to the job_queue to signal the threads to finish.
-                self.job_queue.put(None)
+        # Catch the keyboard interrupt signal.
+        except KeyboardInterrupt:
+            # Loop over all jobs.
+            for i in xrange(self.num_jobs):
+                # Tell the threads that all jobs have finished.
+                self.finished_jobs[i] == 1
 
-                # Break the main loop.
-                break
+                # Release the job locks.
+                if self.job_locks[i].locked():
+                    self.job_locks[i].release()
+
+            # Thread clean up function.
+            self.thread_clean_up(print_flag=1)
+
+            # Reraise the keyboard interrupt signal.
+            raise KeyboardInterrupt
 
         # Thread clean up function.
         self.thread_clean_up()
 
-        # Set the handler for KeyboardInterrupt back to the original signal.
-        signal(SIGINT, self.orig_signal)
 
-        # Raise the KeyboardInterrupt if caught in a thread.
-        if job_number == KeyboardInterrupt:
-            raise KeyboardInterrupt
-
-
-    def signal_handler(self, sig_number, stack_frame):
-        """Function for handling KeyboardInterrupt."""
-
-        # Clean up the threads.
-        self.thread_clean_up()
-        self.results_queue.put(KeyboardInterrupt)
-
-        # Set the handler for KeyboardInterrupt back to the original signal.
-        signal(SIGINT, self.orig_signal)
-
-        # Raise the keyboard interrupt exception
-        raise KeyboardInterrupt
-
-
-    def signal_setup(self):
-        """Singal handling for KeyboardInterrupt."""
-
-        # Store the original SIGINT signal
-        self.orig_signal = getsignal(SIGINT)
-
-        # Set the handler for the KeyboardInterrupt signal.
-        signal(SIGINT, self.signal_handler)
-
-
-    def thread_clean_up(self):
+    def thread_clean_up(self, print_flag=0):
         """Function for cleaning up the threads."""
 
         # Print out.
-        print "Cleaning up threads."
+        if print_flag:
+            print "Cleaning up threads."
 
-        # Place None onto the jobs queue.
+        # Place None onto the results queue to terminate the results thread.
+        self.results_queue.put(None)
+
+        # Place None onto the jobs queue to terminate the threads.
         self.job_queue.put(None)
 
-        # Kill all threads.
-        for i in xrange(len(self.threads)):
-            self.threads[i].kill()
-            self.threads[i]._Thread__stop()
+        # Kill all threads (as threads to serialise and speed up the kill process).
+        kill_threads = []
+        for i in xrange(self.num_threads):
+            # Initialise the thread.
+            kill_threads.append(RelaxKillThread(self.threads[i], print_flag))
+
+            # Start all the threads.
+            kill_threads[i].start()
+
+        # Hang until finished.
+        while 1:
+            # Count the number of finished kill threads.
+            num_killed = 0
+            for i in xrange(self.num_threads):
+                if not kill_threads[i].isAlive():
+                    num_killed = num_killed + 1
+
+            # Exit.
+            if num_killed == self.num_threads:
+                break
 
         # Delete the saved state file.
         if hasattr(self, 'save_state_file'):
@@ -306,6 +304,9 @@ class RelaxThread(Thread):
 
         # Run the Thread __init__ function (this is 'asserted' by the Thread class).
         Thread.__init__(self)
+
+        # Set as a daemon.
+        self.setDaemon(1)
 
         # Arguements.
         self.job_queue = job_queue
@@ -437,6 +438,10 @@ class RelaxThread(Thread):
 
         # Run until all results are returned.
         while 1:
+            # Catch the kill signal.
+            if self.kill_flag:
+                break
+
             # Get the job number for the next queued job.
             self.job_number = self.job_queue.get()
 
@@ -480,18 +485,17 @@ class RelaxThread(Thread):
                     # Job termination without running the post locked code or placing the job number in the results queue.
                     continue
 
+                # Catch the kill signal.
+                if self.kill_flag:
+                    break
+
                 # Run the specific code after locking the job.
                 self.post_locked_code()
-
-            # KeyboardInterupt.
-            except KeyboardInterrupt:
-                self.results_queue.put(KeyboardInterrupt)
 
             # All other errors.
             except:
                 # Catch a kill.
                 if self.kill_flag:
-                    print "Hello"
                     break
 
                 # Print the exception if in debugging mode.
@@ -544,14 +548,15 @@ class RelaxThread(Thread):
         return text
 
 
-    def kill(self):
+    def kill(self, print_flag=0):
         """Attempt to kill the thread."""
 
         # Set the thread's kill flag.
         self.kill_flag = 1
 
         # Kill the child process.
-        self.child.kill(login_cmd=self.login_cmd)
+        if hasattr(self, 'child'):
+            self.child.kill(login_cmd=self.login_cmd)
 
         # Finish active jobs.
         if hasattr(self, 'job_number') and self.job_number != None:
@@ -561,6 +566,10 @@ class RelaxThread(Thread):
             # Release the job lock.
             if self.job_locks[self.job_number].locked():
                 self.job_locks[self.job_number].release()
+
+        # Print out.
+        if print_flag:
+            print "%s, job %s on %s terminated." % (self.getName(), self.job_number, self.host_name)
 
 
     def test_dir(self):
@@ -593,6 +602,69 @@ class RelaxThread(Thread):
         # File exists.
         else:
             return 1
+
+
+
+
+# The results thread.
+#####################
+
+class RelaxResultsThread(Thread):
+    def __init__(self, job_queue, results_queue, finished_jobs, job_locks):
+        """The thread for collecting results."""
+
+        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
+        Thread.__init__(self)
+
+        # Arguements.
+        self.job_queue = job_queue
+        self.results_queue = results_queue
+        self.finished_jobs = finished_jobs
+        self.job_locks = job_locks
+
+
+    def run(self):
+        """Main function for execution of the specific threading code."""
+
+        # Loop until all results are in.
+        while 1:
+            # Get the next results off the results_queue (hang here until a result is queued).
+            job_number = self.results_queue.get()
+
+            # Termination of the thread.
+            if job_number == None:
+                break
+
+            # Update the finished jobs.
+            self.finished_jobs[job_number] = 1
+
+            # Release the lock (finished jobs must be updated first).
+            if self.job_locks[job_number].locked():
+                self.job_locks[job_number].release()
+
+
+
+
+# The thread for killing a thread.
+##################################
+
+class RelaxKillThread(Thread):
+    def __init__(self, thread, print_flag):
+        """The thread for collecting results."""
+
+        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
+        Thread.__init__(self)
+
+        # Arguments.
+        self.thread = thread
+        self.print_flag = print_flag
+
+
+    def run(self):
+        """Main function for execution of the specific threading code."""
+
+        # Run the threads' kill code.
+        self.thread.kill(self.print_flag)
 
 
 
@@ -643,6 +715,9 @@ class RelaxHostThread(RelaxThread):
 
         # Relax will not be spawned on the host machine (except for testing).
         self.spawn_relax_flag = 0
+
+        # Kill flag.
+        self.kill_flag = 0
 
 
     def pre_locked_code(self):
