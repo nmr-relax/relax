@@ -1,5 +1,6 @@
-import sys
 from re import match
+from os import chmod
+import sys
 
 class main_palmer:
 	def __init__(self, mf):
@@ -15,7 +16,7 @@ class main_palmer:
 		if self.mf.debug == 1:
 			self.mf.file_ops.init_log_file(title)
 
-		self.mf.common_ops.update_data(input)
+		self.mf.common_ops.update_data()
 		self.mf.common_ops.extract_relax_data()
 
 		if self.mf.debug == 1:
@@ -115,27 +116,12 @@ class main_palmer:
 		mfdata = self.mf.mfdata
 
 		mfdata.write("\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n")
-		k = 0
-		for i in range(len(self.mf.data.nmr_frq)):
-			for j in range(3):
-				if match('1', self.mf.data.nmr_frq[i][j+2]):
-					mfdata.write('%-7s' % self.mf.data.data_types[k])
-					mfdata.write('%-10s' % self.mf.data.frq_label[self.mf.data.remap_table[k]])
-					mfdata.write('%10s' % self.mf.data.relax_data[k][res][2])
-					mfdata.write('%10s' % self.mf.data.relax_data[k][res][3])
-					mfdata.write(' %-3s\n' % flag)
-					k = k + 1
-				else:
-					if j == 0:
-						mfdata.write('%-7s' % 'R1')
-					if j == 1:
-						mfdata.write('%-7s' % 'R2')
-					if j == 2:
-						mfdata.write('%-7s' % 'NOE')
-					mfdata.write('%-10s' % self.mf.data.nmr_frq[i][0])
-					mfdata.write('%10s' % '0.000')
-					mfdata.write('%10s' % '0.000')
-					mfdata.write(' %-3s\n' % '0')
+		for i in range(self.mf.data.num_ri):
+			mfdata.write('%-7s' % self.mf.data.data_types[i])
+			mfdata.write('%-10s' % self.mf.data.frq_label[self.mf.data.remap_table[i]])
+			mfdata.write('%10s' % self.mf.data.relax_data[i][res][2])
+			mfdata.write('%10s' % self.mf.data.relax_data[i][res][3])
+			mfdata.write(' %-3s\n' % flag)
 
 
 	def create_mfin(self):
@@ -155,9 +141,9 @@ class main_palmer:
 			mfin.write("simulations     none\n\n")
 		mfin.write("selection       " + self.mf.data.mfin.selection + "\n\n")
 		mfin.write("sim_algorithm   " + self.mf.data.mfin.algorithm + "\n\n")
-		mfin.write("fields          " + self.mf.data.mfin.num_fields)
-		for frq in range(len(self.mf.data.nmr_frq)):
-			mfin.write("  " + self.mf.data.nmr_frq[frq][0])
+		mfin.write("fields          " + `self.mf.data.num_frq`)
+		for frq in range(self.mf.data.num_frq):
+			mfin.write("  " + `self.mf.data.frq[frq]*1e-6`)
 		mfin.write("\n")
 		# tm.
 		mfin.write('%-7s' % 'tm')
@@ -270,8 +256,8 @@ class main_palmer:
 		mfpar.write('%-6s' % self.mf.data.relax_data[0][res][0])
 		mfpar.write('%-7s' % self.mf.usr_param.const['nucleus'])
 		mfpar.write('%-8s' % self.mf.usr_param.const['gamma'])
-		mfpar.write('%-8s' % self.mf.usr_param.const['rxh'])
-		mfpar.write('%-8s\n' % self.mf.usr_param.const['csa'])
+		mfpar.write('%-8s' % `self.mf.usr_param.const['rxh']*1e10`)
+		mfpar.write('%-8s\n' % `self.mf.usr_param.const['csa']*1e6`)
 
 		mfpar.write('%-10s' % "vector")
 		mfpar.write('%-4s' % self.mf.usr_param.vector['atom1'])
@@ -335,7 +321,7 @@ class main_palmer:
 			self.create_mfmodel(res, self.mf.usr_param.md1, type='M1')
 			# Mfpar.
 			self.create_mfpar(res)
-		close_mf_files(dir='final')
+		self.close_mf_files(dir='final')
 
 
 	def goto_stage(self):
@@ -468,7 +454,7 @@ class main_palmer:
 			else:
 				raise NameError, "The run '" + model + "'does not start with an m or f, quitting program!\n\n"
 			self.mf.file_ops.mkdir(dir=model)
-			open_mf_files(dir=model)
+			self.open_mf_files(dir=model)
 			self.set_run_flags(model)
 
 			if self.mf.debug == 1:
@@ -491,7 +477,7 @@ class main_palmer:
 					self.create_mfmodel(res, self.mf.usr_param.md2, type='M2')
 				# Mfpar.
 				self.create_mfpar(res)
-			close_mf_files(dir=model)
+			self.close_mf_files(dir=model)
 
 
 	def stage_initial_cv(self):
@@ -524,7 +510,7 @@ class main_palmer:
 					self.create_mfmodel(res, self.mf.usr_param.md1, type='M1')
 					# Mfpar.
 					self.create_mfpar(res)
-				close_mf_files(dir=cv_dir)
+				self.close_mf_files(dir=cv_dir)
 
 
 	def set_vars_stage_initial(self):

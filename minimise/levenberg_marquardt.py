@@ -7,7 +7,7 @@ class levenberg_marquardt:
 		self.mf = mf
 
 
-	def fit(self, function, function_options, chi2_func, values, errors, start_params):
+	def fit(self, function, function_options, derivative_flag, chi2_func, values, errors, start_params, limits_flag, limits):
 		"""Levenberg-Marquardt minimisation function.
 
 		'function' is the function to minimise, and should return:
@@ -26,16 +26,19 @@ class levenberg_marquardt:
 
 		self.function = function
 		self.function_options = function_options
+		self.derivative_flag = derivative_flag
 		self.chi2_func = chi2_func
 		self.values = values
 		self.errors = errors
 		self.params = start_params
+		self.limits_flag = limits_flag
+		self.limits = limits
 
 		# Initial value of lambda (the Levenberg-Marquardt fudge factor).
 		self.l = 1.0
 
 		# Back calculate the initial function values and the chi-squared statistic.
-		self.back_calc, self.df = function(self.function_options, self.params)
+		self.back_calc, self.df = function(self.function_options, self.derivative_flag, self.params)
 		self.chi2 = self.chi2_func(self.values, self.back_calc, self.errors)
 
 		minimise_num = 1
@@ -64,10 +67,17 @@ class levenberg_marquardt:
 			# Add the current parameter vector to the parameter change vector to find the new parameter vector.
 			self.new_params = []
 			for i in range(len(self.params)):
-				self.new_params.append(self.params[i] + param_change[i])
+				new_param = self.params[i] + param_change[i]
+				if self.limits_flag == 1:
+					if new_param < self.limits[i][0] or new_param > self.limits[i][1]:
+						self.new_params.append(self.params[i])
+					else:
+						self.new_params.append(new_param)
+				else:
+					self.new_params.append(new_param)
 
 			# Back calculate the new function values.
-			self.back_calc, self.df = function(self.function_options, self.new_params)
+			self.back_calc, self.df = function(self.function_options, self.derivative_flag, self.new_params)
 
 			# Calculate the new chi-squared statistic.
 			self.chi2_new = self.chi2_func(self.values, self.back_calc, self.errors)

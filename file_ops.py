@@ -1,4 +1,4 @@
-from os import mkdir, chmod
+from os import mkdir
 from re import match
 from string import split
 import sys

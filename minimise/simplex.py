@@ -7,13 +7,14 @@ class simplex:
 		self.mf = mf
 
 
-	def fit(self, function, function_options, chi2_func, values, errors, init_simplex):
+	def fit(self, function, function_options, derivative_flag, chi2_func, values, errors, init_simplex):
 		"""Downhill simplex minimisation function.
 
 		"""
 
 		self.function = function
 		self.function_options = function_options
+		self.derivative_flag = derivative_flag
 		self.chi2_func = chi2_func
 		self.values = values
 		self.errors = errors
@@ -22,7 +23,7 @@ class simplex:
 		# Create the initial chi-squared vector.
 		self.chi2 = []
 		for vertex in range(len(self.simplex)):
-			self.chi2.append(self.chi2_func(self.values, function(self.function_options, self.simplex[vertex]), self.errors))
+			self.chi2.append(self.chi2_func(self.values, function(self.function_options, self.derivative_flag, self.simplex[vertex]), self.errors))
 
 		# Print debugging info
 		if self.mf.min_debug == 2:
@@ -90,7 +91,7 @@ class simplex:
 			# Reflection.
 			#############
 			reflection_vector = self.move(self.simplex[index_high], 1.0)
-			reflection_chi2 = self.chi2_func(self.values, function(self.function_options, reflection_vector), self.errors)
+			reflection_chi2 = self.chi2_func(self.values, function(self.function_option, self.derivative_flags, reflection_vector), self.errors)
 			if self.mf.min_debug == 2:
 				print "%-29s%-40s" % ("Reflection vector:", `reflection_vector`)
 				print "%-29s%-40s" % ("Reflection chi2:", `reflection_chi2`)
@@ -105,7 +106,7 @@ class simplex:
 			############
 			if reflection_chi2 <= self.chi2[index_low]:
 				extension_vector = self.move(self.simplex[index_high], 2.0)
-				extension_chi2 = self.chi2_func(self.values, function(self.function_options, extension_vector), self.errors)
+				extension_chi2 = self.chi2_func(self.values, function(self.function_option, self.derivative_flags, extension_vector), self.errors)
 				if self.mf.min_debug == 2:
 					print "%-29s%-40s" % ("Extension vector:", `extension_vector`)
 					print "%-29s%-40s" % ("Extension chi2:", `extension_chi2`)
@@ -120,7 +121,7 @@ class simplex:
 			##############
 			elif reflection_chi2 >= self.chi2[index_2nd_high]:
 				contract_vector = self.move(self.simplex[index_high], -0.5)
-				contract_chi2 = self.chi2_func(self.values, function(self.function_options, contract_vector), self.errors)
+				contract_chi2 = self.chi2_func(self.values, function(self.function_option, self.derivative_flags, contract_vector), self.errors)
 				if self.mf.min_debug == 2:
 					print "%-29s%-40s" % ("Contraction vector:", `contract_vector`)
 					print "%-29s%-40s" % ("Contraction chi2:", `contract_chi2`)
@@ -133,6 +134,7 @@ class simplex:
 
 				# Shrink.
 				#########
+				# This code has not been debugged!!!
 				if contract_chi2 >= self.chi2[index_high]:
 					# Loop over the vertices.
 					for vertex in range(len(self.simplex)):
@@ -145,11 +147,9 @@ class simplex:
 							shrink_vector.append(new_param)
 						self.new_simplex[vertex] = shrink_vector[:]
 					if self.mf.min_debug == 2:
-						print "\n\n<<< Shrink >>>"
 						print "Shrinking"
 						print "\t%-29s%-40s" % ("Old simplex:", `self.simplex`)
 						print "\t%-29s%-40s" % ("New simplex:", `self.new_simplex`)
-					raise NameError, "Debugging code. To check shrinkage of the simplex"
 
 
 			# Update the simplex and chi-squared vector.

@@ -7,7 +7,7 @@ class grid:
 		self.mf = mf
 
 
-	def search(self, function, function_options, chi2_func, values, errors, grid_options):
+	def search(self, function, function_options, derivative_flag, chi2_func, values, errors, grid_options):
 		"""Levenberg-Marquardt minimisation function.
 
 		'function' is the function to minimise, and should return a single value.
@@ -27,6 +27,7 @@ class grid:
 
 		self.function = function
 		self.function_options = function_options
+		self.derivative_flag = derivative_flag
 		self.chi2_func = chi2_func
 		self.values = values
 		self.errors = errors
@@ -48,8 +49,7 @@ class grid:
 			total_steps = total_steps * self.grid_options[k][0]
 
 		# Back calculate the initial function values and the chi-squared statistic.
-		self.back_calc = function(self.function_options, self.params)
-		self.chi2 = self.chi2_func(self.values, self.back_calc, self.errors)
+		self.chi2 = self.chi2_func(self.values, function(self.function_options, self.derivative_flag, self.params), self.errors)
 		self.min_chi2 = self.chi2
 
 		if self.mf.min_debug >= 1:
@@ -77,8 +77,7 @@ class grid:
 					self.params[k] = self.grid_options[k][1]
 	
 			# Back calculate the initial function values and the chi-squared statistic.
-			self.back_calc = function(self.function_options, self.params)
-			self.chi2 = self.chi2_func(self.values, self.back_calc, self.errors)
+			self.chi2 = self.chi2_func(self.values, function(self.function_options, self.derivative_flag, self.params), self.errors)
 	
 			if self.chi2 < self.min_chi2:
 				self.min_chi2 = self.chi2

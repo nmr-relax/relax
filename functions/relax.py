@@ -10,7 +10,7 @@ class relax:
 		self.mf = mf
 
 
-	def Ri(self, options, mf_values):
+	def Ri(self, options, derivative_flag, mf_values):
 		"""Function for the back calculation of relaxation values and their derivatives.
 
 		The arguments are:
@@ -38,11 +38,12 @@ class relax:
 		"""
 
 		self.options = options
+		self.derivative_flag = derivative_flag
 		self.mf_values = mf_values
 
 		last_frq = 0.0
 		self.ri = []
-		if self.options[3] == 1:
+		if self.derivative_flag == 1:
 			self.dri = []
 			# Initialise an array with the model-free parameter labels.
 			if match('m1', self.options[2]):
@@ -59,10 +60,10 @@ class relax:
 				raise NameError, "Should not be here."
 
 		# Calculate the spectral density values and derivatives if asked to.
-		if self.options[3] == 0:
-			self.j = self.mf.functions.jw.J(self.options, self.mf_values)
+		if self.derivative_flag == 0:
+			self.j = self.mf.functions.jw.J(self.options, self.derivative_flag, self.mf_values)
 		else:
-			self.j, self.dj = self.mf.functions.jw.J(self.options, self.mf_values)
+			self.j, self.dj = self.mf.functions.jw.J(self.options, self.derivative_flag, self.mf_values)
 
 		# Loop over the relaxation values.
 		for i in range(self.mf.data.num_ri):
@@ -92,7 +93,7 @@ class relax:
 				raise NameError, "Function option not set correctly, quitting program."
 
 			# Derivatives.
-			if self.options[3] == 1:
+			if self.derivative_flag == 1:
 				self.dri.append([])
 				for param in range(len(self.param_types)):
 					# Isotropic rotational diffusion.
@@ -146,7 +147,7 @@ class relax:
 			# Set the last frequency value.
 			last_frq = self.mf.data.frq[self.mf.data.remap_table[i]]
 
-		if self.options[3] == 0:
+		if self.derivative_flag == 0:
 			return self.ri
 		else:
 			return self.ri, self.dri
@@ -179,7 +180,7 @@ class relax:
 			print "R1 is zero, this should not occur."
 			dnoe = 1e99
 		elif dr1 == 0:
-			dnoe = (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.dj[i][4] - self.dj[i][2])
+			dnoe = (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.dj[i][param][4] - self.dj[i][param][2])
 		else:
 			dnoe = (r1 * (6.0*self.dj[i][param][4] - self.dj[i][param][2]) - (6.0*self.j[i][4] - self.j[i][2]) * dr1) / r1**2
 			dnoe = self.mf.data.dipole_const * (self.mf.data.gh/self.mf.data.gx) * dnoe
@@ -200,7 +201,6 @@ class relax:
 
 		r2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.j[i][0] + self.j[i][2] + 3.0*self.j[i][1] + 6.0*self.j[i][3] + 6.0*self.j[i][4])
 		r2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * (4.0*self.j[i][0] + 3.0*self.j[i][1])
-		# Rex frq dep problem.
 		if match('m[34]', self.options[2]):
 			r2 = r2_dipole + r2_csa + self.rex
 		else:
@@ -211,7 +211,12 @@ class relax:
 	def calc_noe_iso(self, i):
 		"Calculate the Isotropic NOE value."
 
-		r1 = self.ri[self.mf.data.noe_r1_table[i]]
+		# May need debugging.
+		if self.mf.data.noe_r1_table[i] == None:
+			r1 = self.calc_r1_iso(i)
+		else:
+			r1 = self.ri[self.mf.data.noe_r1_table[i]]
+
 		if r1 == 0:
 			noe = 1e99
 		else:

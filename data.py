@@ -85,7 +85,6 @@ class data:
 			self.trim = self.mf.usr_param.trim
 			self.selection = 'none'
 			self.num_sim = self.mf.usr_param.num_sim
-			self.num_fields = `len(self.mf.usr_param.nmr_frq)`
 
 
 

@@ -10,7 +10,7 @@ class jw:
 		self.mf = mf
 
 
-	def J(self, options, mf_values):
+	def J(self, options, derivative_flag, mf_values):
 		"""Function to calculate spectral density values and their derivatives.
 
 		The arguments are:
@@ -74,6 +74,7 @@ class jw:
 		"""
 
 		self.options = options
+		self.derivative_flag = derivative_flag
 		self.mf_values = mf_values
 
 		# Calculate frequency independent terms (to increase speed)
@@ -81,7 +82,7 @@ class jw:
 
 		last_frq = 0.0
 		self.jw = []
-		if self.options[3] == 1:
+		if self.derivative_flag == 1:
 			self.djw = []
 			# Initialise an array with the model-free parameter labels.
 			if match('m1', self.options[2]):
@@ -126,7 +127,7 @@ class jw:
 
 
 				# Derivatives.
-				if self.options[3] == 1:
+				if self.derivative_flag == 1:
 					djw = []
 					for param in range(len(self.param_types)):
 						djw.append([])
@@ -167,13 +168,13 @@ class jw:
 								raise NameError, "Function option not set correctly, quitting program."
 
 			self.jw.append(jw)
-			if self.options[3] == 1:
+			if self.derivative_flag == 1:
 				self.djw.append(djw)
 
 			# Set the last frequency value.
 			last_frq = self.mf.data.frq[self.mf.data.remap_table[i]]
 
-		if self.options[3] == 0:
+		if self.derivative_flag == 0:
 			return self.jw
 		else:
 			return self.jw, self.djw
@@ -286,7 +287,7 @@ class jw:
 			self.s2s_tm = self.s2s * self.tm
 
 		# Terms used for derivatives.
-		if self.options[3] == 1:
+		if self.derivative_flag == 1:
 			if match('m[13]', self.options[2]):
 				self.const_djw_dS2_norm = 0.4 * self.tm
 			elif match('m[24]', self.options[2]):

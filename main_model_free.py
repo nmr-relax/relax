@@ -14,30 +14,48 @@ class main_model_free:
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
 		
-		# Debug
-		self.mf.min_debug = 2
-
 		print "\n\n[ Model-free fitting ]\n"
-		function_ops = ['iso', [float(10.0 * 1e-9)], self.mf.data.model, 0]
+		function_ops = ['iso', [float(10.0 * 1e-9)], self.mf.data.model]
 
+		# Flags.
+		########
+
+		# Debugging flag
+		self.mf.min_debug = 1
+
+		# Derivative flag, 0 = no derivatives, 1 = calculate derivatives.
+		derivatives_flag = 0
+
+		# Limits flag, 0 = no limits, 1 = set limits.
+		limits_flag = 0
+		
 		grid_ops = []
+		limits = []
 		if match('m1', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
+			limits.append([0.0, 1.0])
 			self.mf.results.write("%-30s" % "S2")
 		elif match('m2', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
+			limits.append([0.0, 1.0])
+			limits.append([0.0 * 1e-12, 10000.0 * 1e-12])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "te (ps)")
 		elif match('m3', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 30.0 / self.mf.data.frq[0]**2])
+			limits.append([0.0, 1.0])
+			limits.append([0.0, 100.0 / self.mf.data.frq[0]**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "Rex")
 		elif match('m4', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
 			grid_ops.append([20.0, 0.0, 30.0 / self.mf.data.frq[0]**2])
+			limits.append([0.0, 1.0])
+			limits.append([0.0 * 1e-12, 10000.0 * 1e-12])
+			limits.append([0.0, 100.0 / self.mf.data.frq[0]**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "te (ps)")
 			self.mf.results.write("%-30s" % "Rex")
@@ -45,6 +63,9 @@ class main_model_free:
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
+			limits.append([0.0, 1.0])
+			limits.append([0.0, 1.0])
+			limits.append([0.0 * 1e-12, 10000.0 * 1e-12])
 			self.mf.results.write("%-30s" % "S2f")
 			self.mf.results.write("%-30s" % "S2s")
 			self.mf.results.write("%-30s" % "ts (ps)")
@@ -66,8 +87,10 @@ class main_model_free:
 				values.append(self.mf.data.relax_data[data][res][2])
 				errors.append(self.mf.data.relax_data[data][res][3])
 
+
 			# Grid search.
-			params, chi2 = self.mf.minimise.grid.search(self.mf.functions.relax.Ri, function_ops, self.mf.functions.chi2.relax_data, values, errors, grid_ops)
+			derivative_flag = 0   # Derivative flag, turned off because not needed in grid search.
+			params, chi2 = self.mf.minimise.grid.search(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, grid_ops)
 			if self.mf.min_debug >= 1:
 				print "\nThe grid parameters are: " + `params`
 				print "The grid chi-squared value is: " + `chi2`
@@ -75,7 +98,8 @@ class main_model_free:
 			#params = [0.368]
 			#params = [0.368, 0.0]
 			#params = [0.368, 0.0, 0.0]
-			# Minimisation.
+
+			# Simplex minimisation.
 			if match('Simplex', self.mf.usr_param.minimiser):
 				if match('m1', self.mf.data.model):
 					print "One dimensional simplex minimisation, quitting program!"
@@ -86,14 +110,16 @@ class main_model_free:
 					self.simplex = self.create_simplex(params, grid_ops, factor)
 					if self.mf.min_debug >= 1:
 						print "\nThe initial simplex is: " + `self.simplex`
-					params, chi2 = self.mf.minimise.simplex.fit(self.mf.functions.relax.Ri, function_ops, self.mf.functions.chi2.relax_data, values, errors, self.simplex)
+					params, chi2 = self.mf.minimise.simplex.fit(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, self.simplex)
 					factor = factor / 10.0
 
+			# Levenberg-Marquardt minimisation.
 			elif match('LM', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-				function_ops[3] = 1
-				params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.functions.relax.Ri, function_ops, self.mf.functions.chi2.relax_data, values, errors, params)
+
+				derivative_flag = 1   # Derivative flag, turned no because needed by Levenberg-Marquardt minimisation.
+				params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, params, limits_flag, limits)
 		
 			if self.mf.min_debug >= 1:
 				print "\n\n<<< Finished minimiser >>>"

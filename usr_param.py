@@ -19,8 +19,9 @@ class usr_param:
 
 		# Normal program use.
 		elif match(self.program_type, "mf"):
-			self.minimiser = 'Simplex'   # Simplex minimisation.
-			#self.minimiser = 'LM'   # Levenberg-Marquardt minimisation.
+			self.mf.data.model = 'm1'
+			#self.minimiser = 'Simplex'   # Simplex minimisation.
+			self.minimiser = 'LM'   # Levenberg-Marquardt minimisation.
 			self.input()
 			self.model_selection()
 			self.palmer_method_param()
@@ -48,9 +49,6 @@ class usr_param:
 	def input(self):
 		"""Specify the input data.
 
-		To be compatible with the program Modelfree, the relaxation data should be placed in the order {R1, R2, NOE}
-		and from highest field strength to lowest.
-
 		The structure of self.input_info is as follows:  The fields of the first dimension correspond
 		to each relaxation data set and is flexible in size, ie len(self.input_info) = number of data sets.
 		The second dimension have the following fixed fields:
@@ -75,11 +73,6 @@ class usr_param:
 		self.input_info.append(['R1', '500', 500.0 * 1e6, 'r1.500.out'])
 		self.input_info.append(['R2', '500', 500.0 * 1e6, 'r2.500.out'])
 		self.input_info.append(['NOE', '500', 500.0 * 1e6, 'noe.500.out'])
-
-		# Relic for Modelfree 4.
-		#self.nmr_frq = []
-		#self.nmr_frq.append(['600', 600.0, '1', '1', '1'])
-		#self.nmr_frq.append(['500', 500.0, '1', '1', '1'])
 
 
 	def model_selection(self):
@@ -247,7 +240,7 @@ class usr_param:
 		# File type.  Only 'sparky' is implemented at the moment.
 		self.type = "sparky"
 
-		# Relaxation time an associated file.
+		# Relaxation time and associated file.
 		self.input_info = []
 		self.input_info.append([0.0111, 'T1_10ms.list'])
 		self.input_info.append([0.0111, 'T1_10ms_b.list'])
