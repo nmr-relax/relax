@@ -6,7 +6,7 @@ from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class cg_steihaug(generic_trust_region, generic_minimise, newton):
+class steihaug(generic_trust_region, generic_minimise, newton):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
 		"""Steihaug conjugate-gradient trust region algorithm.
 

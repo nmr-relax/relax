@@ -123,7 +123,7 @@ class levenberg_marquardt(generic_minimise):
 		self.n = len(self.xk)
 
 
-	def converge_test(self):
+	def tests(self):
 		"Levenberg-Marquardt convergence test."
 
 		if self.fk_new > self.fk:

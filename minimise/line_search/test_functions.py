@@ -65,7 +65,7 @@ def run():
 def func1(alpha, beta=2.0):
 	"""Test function 1.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The function is:
@@ -80,7 +80,7 @@ def func1(alpha, beta=2.0):
 def dfunc1(alpha, beta=2.0):
 	"""Derivative of test function 1.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The gradient is:
@@ -103,7 +103,7 @@ def dfunc1(alpha, beta=2.0):
 def func2(alpha, beta=0.004):
 	"""Test function 2.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The function is:
@@ -117,7 +117,7 @@ def func2(alpha, beta=0.004):
 def dfunc2(alpha, beta=0.004):
 	"""Derivative of test function 2.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The gradient is:
@@ -133,7 +133,7 @@ def dfunc2(alpha, beta=0.004):
 def func3(alpha, beta=0.01, l=39.0):
 	"""Test function 3.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The function is:
@@ -166,7 +166,7 @@ def func3(alpha, beta=0.01, l=39.0):
 def dfunc3(alpha, beta=0.01, l=39.0):
 	"""Derivative of test function 3.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The gradient is:
@@ -203,7 +203,7 @@ def dfunc3(alpha, beta=0.01, l=39.0):
 def func456(alpha, beta1, beta2):
 	"""Test functions 4, 5, and 6.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The function is:
@@ -222,7 +222,7 @@ def func456(alpha, beta1, beta2):
 def dfunc456(alpha, beta1, beta2):
 	"""Test functions 4, 5, and 6.
 
-	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	From Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
 	ACM Trans. Math. Softw. 20, 286-307.
 
 	The function is:

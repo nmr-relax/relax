@@ -23,11 +23,17 @@ from minimise.newton import newton
 # Trust region algorithms.
 from minimise.cauchy_point import cauchy_point
 from minimise.dogleg import dogleg
-from minimise.cg_steihaug import cg_steihaug
+from minimise.steihaug_cg import steihaug
 from minimise.exact_trust_region import exact_trust_region
-from minimise.levenberg_marquardt import levenberg_marquardt
+
+# Conjugate gradient algorithms.
+from minimise.fletcher_reeves_cg import fletcher_reeves
+from minimise.polak_ribiere_cg import polak_ribiere
+from minimise.polak_ribiere_plus_cg import polak_ribiere_plus
+from minimise.hestenes_stiefel_cg import hestenes_stiefel
 
 # Other algorithms.
+from minimise.levenberg_marquardt import levenberg_marquardt
 from minimise.simplex import simplex
 
 
@@ -145,6 +151,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Cc][Dd]$', min_algor) or match('^[Cc]oordinate[ _-][Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
 		min = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
@@ -155,6 +163,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Ss][Dd]$', min_algor) or match('^[Ss]teepest[ _-][Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Steepest descent minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
 		min = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
@@ -165,6 +175,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Bb][Ff][Gg][Ss]$', min_algor):
 		if print_flag:
 			print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
 		min = bfgs(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
@@ -175,6 +187,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Nn]ewton$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
 		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
@@ -209,7 +223,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Cc][Gg][-_ ][Ss]teihaug', min_algor) or match('^[Ss]teihaug', min_algor):
 		if print_flag:
 			print "\n\n<<< CG-Steihaug minimisation >>>"
-		min = cg_steihaug(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = steihaug(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -225,11 +239,53 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		else:
 			xk = min.minimise()
 
-	# Levenberg-Marquardt minimisation.
-	elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):
+
+	# Conjugate gradient algorithms.
+	################################
+
+	# Fletcher-Reeves conjugate gradient minimisation.
+	elif match('^[Ff][Rr]$', min_algor) or match('^[Ff]letcher[-_ ][Rr]eeves$', min_algor):
 		if print_flag:
-			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+			print "\n\n<<< Fletcher-Reeves conjugate gradient minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
+		min = fletcher_reeves(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Polak-Ribière conjugate gradient minimisation.
+	elif match('^[Pp][Rr]$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere$', min_algor):
+		if print_flag:
+			print "\n\n<<< Polak-Ribière conjugate gradient minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
+		min = polak_ribiere(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Polak-Ribière + conjugate gradient minimisation.
+	elif match('^[Pp][Rr]\+$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere\+$', min_algor):
+		if print_flag:
+			print "\n\n<<< Polak-Ribière + conjugate gradient minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
+		min = polak_ribiere_plus(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Hestenes-Stiefel conjugate gradient minimisation.
+	elif match('^[Hh][Ss]$', min_algor) or match('^[Hh]estenes[-_ ][Ss]tiefel$', min_algor):
+		if print_flag:
+			print "\n\n<<< Hestenes-Stiefel conjugate gradient minimisation >>>"
+		if min_options == None:
+			min_options = 'More Thuente'
+		min = hestenes_stiefel(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -244,6 +300,16 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< Simplex minimisation >>>"
 		min = simplex(func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Levenberg-Marquardt minimisation.
+	elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):
+		if print_flag:
+			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
+		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:

@@ -56,6 +56,9 @@ class generic_minimise:
 					text = message.args[0]
 				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
 				break
+			except NameError, message:
+				self.warning = message.args[0] + " (fatal minimisation error)."
+				break
 
 			# Test for warnings.
 			if self.warning != None:
@@ -67,7 +70,7 @@ class generic_minimise:
 				break
 
 			# Convergence test.
-			if self.converge_test():
+			if self.tests():
 				break
 
 			# Update function.
@@ -93,7 +96,7 @@ class generic_minimise:
 		pass
 
 
-	def converge_test(self):
+	def tests(self):
 		"""Default base class convergence test function.
 
 		Test if the minimum function tolerance between fk and fk+1 has been reached.
@@ -101,6 +104,11 @@ class generic_minimise:
 
 		# Test the function tolerance.
 		if abs(self.fk_new - self.fk) <= self.func_tol:
+			if self.print_flag == 2:
+				print "fk:          " + `self.fk`
+				print "fk+1:        " + `self.fk_new`
+				print "|fk+1 - fk|: " + `abs(self.fk_new - self.fk)`
+				print "tol:         " + `self.func_tol`
 			self.warning = "Function tol reached."
 			return 1
 

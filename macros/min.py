@@ -438,12 +438,6 @@ class min:
 			print "The model '" + self.model + "' has not been created yet."
 			return
 
-		# Set up the minimisation specific options.
-		# Line search methods.
-		if match('^[Cc][Dd]$', self.min_algor) or match('^[Cc]oordinate[ _-][Dd]escent$', self.min_algor) or match('^[Ss][Dd]$', self.min_algor) or match('^[Ss]teepest[ _-][Dd]escent$', self.min_algor) or match('^[Bb][Ff][Gg][Ss]$', self.min_algor) or match('^[Nn]ewton$', self.min_algor):
-			if self.min_options == None:
-				self.min_options = 'More Thuente'
-
 		# Main iterative loop.
 		self.main_loop()
 

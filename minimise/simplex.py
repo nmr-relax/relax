@@ -79,17 +79,6 @@ class simplex(generic_minimise):
 			self.shrink_flag = 1
 
 
-	def converge_test(self):
-		"""Convergence test.
-
-		Finish minimising when the function difference between the highest and lowest
-		simplex vertecies is insignificant.
-		"""
-
-		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
-			return 1
-
-
 	def extend(self):
 		"Extension step."
 
@@ -155,3 +144,14 @@ class simplex(generic_minimise):
 			j = i + 1
 			self.simplex[j] = 0.5 * (self.simplex[0] + self.simplex[j])
 			self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
+
+
+	def tests(self):
+		"""Convergence test.
+
+		Finish minimising when the function difference between the highest and lowest
+		simplex vertecies is insignificant.
+		"""
+
+		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
+			return 1

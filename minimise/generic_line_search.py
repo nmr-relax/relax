@@ -27,7 +27,7 @@ class generic_line_search:
 		# Nocedal and Wright line search for the Wolfe conditions.
 		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', self.line_search_algor):
 			self.alpha, fc, gc = nocedal_wright_wolfe(self.func, self.dfunc, self.args, self.xk, self.fk, self.dfk, self.pk, a_init=self.a0, mu=self.mu, eta=self.eta, print_flag=0)
-		# More and Thuente line search.
+		# Moré and Thuente line search.
 		elif match('^[Mm]ore[ _][Tt]huente$', self.line_search_algor):
 			self.alpha, fc, gc = more_thuente(self.func, self.dfunc, self.args, self.xk, self.fk, self.dfk, self.pk, a_init=self.a0, mu=self.mu, eta=self.eta, print_flag=0)
 		# No line search.
