@@ -159,23 +159,23 @@ class Model_free:
         The following commands will create the model-free model 'm1' which is based on the original
         model-free equation and contains the single parameter 'S2'.
 
-        relax> model.create_mf('m1', 'm1', 'mf_orig', ['S2'])
-        relax> model.create_mf(run='m1', model='m1', params=['S2'], equation='mf_orig')
+        relax> model_free.create_model('m1', 'm1', 'mf_orig', ['S2'])
+        relax> model_free.create_model(run='m1', model='m1', params=['S2'], equation='mf_orig')
 
 
         The following commands will create the model-free model 'large_model' which is based on the
         extended model-free equation and contains the seven parameters 'S2f', 'tf', 'S2', 'ts',
         'Rex', 'CSA', 'r'.
 
-        relax> model.create_mf('test', 'large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts', 'Rex',
-                               'CSA', 'r'])
-        relax> model.create_mf(run='test', model='large_model', params=['S2f', 'tf', 'S2', 'ts',
-                               'Rex', 'CSA', 'r'], equation='mf_ext')
+        relax> model_free.create_model('test', 'large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts',
+                                       'Rex', 'CSA', 'r'])
+        relax> model_free.create_model(run='test', model='large_model', params=['S2f', 'tf', 'S2',
+                                       'ts', 'Rex', 'CSA', 'r'], equation='mf_ext')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model.create_mf("
+            text = sys.ps3 + "model_free.create_model("
             text = text + "run=" + `run`
             text = text + ", model=" + `model`
             text = text + ", equation=" + `equation`
@@ -386,13 +386,13 @@ class Model_free:
 
         To pick model 'm1' for all selected residues and assign it to the run 'mixed', type:
 
-        relax> model.select_mf('mixed', 'm1')
-        relax> model.select_mf(run='mixed', model='m1', scaling=1)
+        relax> model_free.select_model('mixed', 'm1')
+        relax> model_free.select_model(run='mixed', model='m1', scaling=1)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model.select_mf("
+            text = sys.ps3 + "model_free.select_model("
             text = text + "run=" + `run`
             text = text + ", model=" + `model`
             text = text + ", scaling=" + `scaling` + ")"

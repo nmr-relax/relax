@@ -366,8 +366,8 @@ class RelaxErrors:
 
     # Cannot setup the functions.
     class RelaxFuncSetupError(BaseError):
-        def __init__(self, name, equation):
-            self.text = "The " + `name` + " functions for the equation type " + `equation` + " cannot be setup."
+        def __init__(self, string):
+            self.text = "This function is not available in " + string + "."
 
 
     # Regular expression errors.

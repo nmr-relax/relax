@@ -420,6 +420,11 @@ class Model_free(Common_functions):
         if not run2 in self.relax.data.run_names:
             raise RelaxNoRunError, run2
 
+        # Test if the run type is set to 'mf'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        if function_type != 'mf':
+            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+
         # Test if the sequence data for run1 is loaded.
         if not self.relax.data.res.has_key(run1):
             raise RelaxNoSequenceError, run1
@@ -489,13 +494,18 @@ class Model_free(Common_functions):
         # Run argument.
         self.run = run
 
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the run type is set to 'mf'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        if function_type != 'mf':
+            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
-
-        # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
 
         # Check the validity of the model-free equation type.
         valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
@@ -801,6 +811,11 @@ class Model_free(Common_functions):
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
+
+        # Test if the run type is set to 'mf'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        if function_type != 'mf':
+            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
@@ -3263,6 +3278,11 @@ class Model_free(Common_functions):
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
+
+        # Test if the run type is set to 'mf'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        if function_type != 'mf':
+            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):

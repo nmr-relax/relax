@@ -23,7 +23,7 @@
 from re import match
 
 from base_class import Common_functions
-from maths_fns.jw_mapping import Jw_mapping
+from maths_fns.jw_mapping import Mapping
 
 
 class Jw_mapping(Common_functions):
@@ -66,7 +66,7 @@ class Jw_mapping(Common_functions):
                 raise RelaxNoValueError, "bond length"
 
         # Frequency index.
-        if self.relax.data.jw_frq[self.run] not in self.relax.data.num_frq[self.run]:
+        if self.relax.data.jw_frq[self.run] not in self.relax.data.frq[self.run]:
             raise RelaxError, "No relaxation data corresponding to the frequency " + `self.relax.data.jw_frq[self.run]` + " has been loaded."
  
         # Reduced spectral density mapping.
@@ -78,15 +78,47 @@ class Jw_mapping(Common_functions):
             if not res.select:
                 continue
 
-            # Frequency index.
+            # Residue specific frequency index.
             frq_index = None
             for j in xrange(res.num_frq):
                 if res.frq[j] == self.relax.data.jw_frq[self.run]:
                     frq_index = j
             if frq_index == None:
                 continue
-            
-            # Get the R1 value corresponding to the set frequency.
+
+            # Set the r1, r2, and NOE to None.
+            r1 = None
+            r2 = None
+            noe = None
+
+            # Get the R1, R2, and NOE values corresponding to the set frequency.
+            for j in xrange(res.num_ri):
+                # R1.
+                if res.remap_table[j] == frq_index and res.ri_labels[j] == 'R1':
+                    r1 = res.relax_data[j]
+
+                # R2.
+                if res.remap_table[j] == frq_index and res.ri_labels[j] == 'R2':
+                    r2 = res.relax_data[j]
+
+                # NOE.
+                if res.remap_table[j] == frq_index and res.ri_labels[j] == 'NOE':
+                    noe = res.relax_data[j]
+
+            # Skip the residue if not all of the three value exist.
+            if r1 == None or r2 == None or noe == None:
+                continue
+
+            # Initialise the function to calculate.
+            self.jw = Mapping(frq=self.relax.data.jw_frq[self.run], gx=self.relax.data.gx, gh=self.relax.data.gh, mu0=self.relax.data.mu0, h_bar=self.relax.data.h_bar)
+
+            # Calculate the spectral density values.
+            j0, jwx, jwh = self.jw.func(r=res.r, csa=res.csa, r1=r1, r2=r2, noe=noe)
+
+            # Place the values into 'self.relax.data.res[self.run][i]'
+            res.j0 = j0
+            res.jwx = jwx
+            res.jwh = jwh
 
 
     def data_init(self, name):
@@ -284,6 +316,11 @@ class Jw_mapping(Common_functions):
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
+
+        # Test if the run type is set to 'jw'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        if function_type != 'jw':
+            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the frequency has been set.
         if hasattr(self.relax.data, 'jw_frq') and self.relax.data.jw_frq.has_key(self.run):
