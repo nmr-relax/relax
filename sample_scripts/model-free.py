@@ -7,7 +7,7 @@ read.sequence('noe.500.out')
 nuclei('N')
 
 # Create the run.
-name = 'm5'
+name = 'm2'
 create_run(name, 'mf')
 
 # Load the relaxation data.
@@ -37,13 +37,13 @@ model.select_mf(run=name, model=name)
 
 # Grid search.
 state.save('save', force=1)
-#grid_search(name, inc=21)
+grid_search(name, inc=21, print_flag=100)
 
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)
 #minimise('newton', run=name, constraints=1, print_flag=20, max_iter=0)
 #minimise('newton', run=name, print_flag=9, max_iter=20)
-minimise('simplex', run=name, print_flag=1)
+minimise('simplex', run=name, constraints=0, print_flag=1)
 
 # Finish.
 write(run=name, file='results_temp', force=1)

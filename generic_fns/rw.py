@@ -87,16 +87,16 @@ class RW:
         except OSError:
             pass
 
-        # Determine the equation type.
-        equation = self.relax.specific_setup.get_equation(run)
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Equation type specific header writing function setup.
-        self.write_header = self.relax.specific_setup.setup('write_header', equation)
+        self.write_header = self.relax.specific_setup.setup('write_header', function_type)
         if self.write_header == None:
             raise RelaxFuncSetupError, ('write_header', res.equations[run])
 
         # Equation type specific function setup.
-        self.write_function = self.relax.specific_setup.setup('write_results', equation)
+        self.write_function = self.relax.specific_setup.setup('write_results', function_type)
         if self.write_function == None:
             raise RelaxFuncSetupError, ('write_results', res.equations[run])
 

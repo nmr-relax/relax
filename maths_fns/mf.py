@@ -121,6 +121,22 @@ class Mf:
         # Initialise the data.
         self.init_data()
 
+        # Setup the residue specific equations.
+        if not self.setup_equations():
+            raise NameError, "The model-free equations could not be setup."
+
+        # Calculate the correlation times.
+        self.data.ti = self.calc_ti(self.data)
+
+        # Loop over the data sets.
+        for self.data.i in xrange(self.data.num_data_sets):
+            # Fixed spectral density components, ie tm is not a parameter.
+            if self.data.param_set == 'mf' and 'tm' not in self.data.param_types[self.data.i]:
+                # Loop over the indecies of the generic model-free equations.
+                for i in xrange(self.data.num_indecies):
+                    self.data.w_ti_sqrd[self.data.i][i] = self.data.frq_sqrd_list[self.data.i] * self.data.ti[i] ** 2
+                    self.data.fact_ti[self.data.i][i] = 1.0 / (1.0 + self.data.w_ti_sqrd[self.data.i][i])
+
         # Scaling initialisation.
         if self.data.scaling_matrix:
             self.scaling_flag = 1
@@ -128,10 +144,6 @@ class Mf:
         else:
             self.scaling_flag = 0
             self.set_params = self.set_params_unscaled
-
-        # Setup the residue specific equations.
-        if not self.setup_equations():
-            raise NameError, "The model-free equations could not be setup."
 
         # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
         self.init_r1_data()
@@ -196,7 +208,7 @@ class Mf:
         # Test if the function has already been calculated with these parameter values.
         if sum(self.data.params == self.data.func_test) == self.data.total_num_params:
             #if len(self.data.params):
-            return self.data.chi2
+            return self.data.chi2[0]
 
         # Store the parameter values in self.data.func_test for testing on next call if the function has already been calculated.
         self.data.func_test = self.data.params * 1.0
@@ -230,7 +242,7 @@ class Mf:
         # Calculate the chi-squared value.
         self.data.chi2[0] = chi2(self.data.relax_data[0], self.data.ri[0], self.data.errors[0])
 
-        return self.data.chi2
+        return self.data.chi2[0]
 
 
     def dfunc_mf(self, params):
@@ -368,12 +380,10 @@ class Mf:
         """Function for initialisation of the data."""
 
         # Initialise spectral density components.
-        self.data.w_tm_sqrd = []
-        self.data.fact_tm = []
-        #self.data.w_te_tm_sqrd = []
-        self.data.te_denom = []
-        self.data.two_fifths_tm = []
-        self.data.two_fifths_tm_sqrd = []
+        self.data.w_ti_sqrd = []
+        self.data.fact_ti = []
+        self.data.w_te_ti_sqrd = []
+        self.data.inv_te_denom = []
 
         # Initialise spectral density values, gradients, and Hessians.
         self.data.jw = []
@@ -418,27 +428,28 @@ class Mf:
         self.data.dri_prime = []
         self.data.d2ri_prime = []
 
+        # Initialise the data structures containing the Ri values.
+        self.data.ri = []
+        self.data.dri = []
+        self.data.d2ri = []
+
         # Initialise the data structures containing the R1 values at the position of and corresponding to the NOE.
         self.data.r1 = []
         self.data.dr1 = []
         self.data.d2r1 = []
 
+        # Initialise the data structures containing the chi-squared values.
+        self.data.chi2 = []
+        self.data.dchi2 = []
+        self.data.d2chi2 = []
+
         # Loop over the data sets.
         for self.data.i in xrange(self.data.num_data_sets):
-            # Fixed spectral density components, ie tm is not a parameter.
-            if self.data.param_set == 'mf' and 'tm' not in self.data.param_types[self.data.i]:
-                self.data.w_tm_sqrd.append(self.data.frq_sqrd_list[self.data.i] * self.data.diff_params[0] ** 2)
-                self.data.fact_tm.append(1.0 / (1.0 + self.data.w_tm_sqrd[self.data.i]))
-                self.data.two_fifths_tm.append(0.4 * self.data.diff_params[0])
-                self.data.two_fifths_tm_sqrd.append(0.4 * self.data.diff_params[0] ** 2)
-
-            # Else empty spectral density components.
-            else:
-                self.data.w_tm_sqrd.append(zeros((self.data.num_frq[self.data.i], 5), Float64))
-                self.data.fact_tm.append(zeros((self.data.num_frq[self.data.i], 5), Float64))
-                #self.data.w_te_tm_sqrd.append(zeros((self.data.num_frq[self.data.i], 5), Float64))
-                #self.data.te_denom.append(zeros((self.data.num_frq[self.data.i], 5), Float64))
-
+            # Empty spectral density components.
+            self.data.w_ti_sqrd.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
+            self.data.fact_ti.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
+            self.data.w_te_ti_sqrd.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
+            self.data.inv_te_denom.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
 
             # Empty spectral density values, gradients, and Hessians.
             self.data.jw.append(zeros((self.data.num_frq[self.data.i], 5), Float64))
@@ -485,10 +496,20 @@ class Mf:
             self.data.dri_prime.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i]), Float64))
             self.data.d2ri_prime.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i], self.data.num_params[self.data.i]), Float64))
 
+            # Data structures containing the Ri values.
+            self.data.ri.append(zeros((self.data.num_ri[self.data.i]), Float64))
+            self.data.dri.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i]), Float64))
+            self.data.d2ri.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i], self.data.num_params[self.data.i]), Float64))
+
             # Data structures containing the R1 values at the position of and corresponding to the NOE.
             self.data.r1.append(zeros((self.data.num_ri[self.data.i]), Float64))
             self.data.dr1.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i]), Float64))
             self.data.d2r1.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i], self.data.num_params[self.data.i]), Float64))
+
+            # Data structures containing the chi-squared values.
+            self.data.chi2.append(zeros((self.data.num_ri[self.data.i]), Float64))
+            self.data.dchi2.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i]), Float64))
+            self.data.d2chi2.append(zeros((self.data.num_ri[self.data.i], self.data.num_params[self.data.i], self.data.num_params[self.data.i]), Float64))
 
 
     def init_r1_data(self):
@@ -598,7 +619,6 @@ class Mf:
         ######################
 
         # Initialise the parameter index data structures.
-        self.data.tm_index = []
         self.data.s2_index, self.data.s2f_index, self.data.s2s_index = [], [], []
         self.data.te_index, self.data.tf_index, self.data.ts_index = [], [], []
         self.data.rex_index, self.data.r_index, self.data.csa_index = [], [], []
@@ -628,7 +648,6 @@ class Mf:
         # Loop over the data sets.
         for i in xrange(self.data.num_data_sets):
             # Fill the index data structures with None.
-            self.data.tm_index.append(None)
             self.data.s2_index.append(None)
             self.data.s2f_index.append(None)
             self.data.s2s_index.append(None)
@@ -745,9 +764,7 @@ class Mf:
             if self.data.equations[i] == 'mf_orig':
                 # Find the indecies of the model-free parameters.
                 for j in xrange(self.data.num_params[i]):
-                    if self.data.param_types[i][j] == 'tm':
-                        self.data.tm_index[i] = j
-                    elif self.data.param_types[i][j] == 'S2':
+                    if self.data.param_types[i][j] == 'S2':
                         self.data.s2_index[i] = j
                     elif self.data.param_types[i][j] == 'te':
                         self.data.te_index[i] = j
@@ -762,7 +779,7 @@ class Mf:
                         return 0
 
                 # No spectral density parameters {}.
-                if self.data.tm_index[i] == None and self.data.s2_index[i] == None and self.data.te_index[i] == None:
+                if self.data.s2_index[i] == None and self.data.te_index[i] == None:
                     # Equation.
                     self.calc_jw_comps[i] = None
                     self.calc_jw[i] = calc_jw
@@ -771,7 +788,7 @@ class Mf:
                     self.calc_djw_comps[i] = None
 
                 # Spectral density parameters {S2}.
-                elif self.data.tm_index[i] == None and self.data.s2_index[i] != None and self.data.te_index[i] == None:
+                elif self.data.s2_index[i] != None and self.data.te_index[i] == None:
                     # Equation.
                     self.calc_jw_comps[i] = None
                     self.calc_jw[i] = calc_S2_jw
@@ -781,7 +798,7 @@ class Mf:
                     self.calc_djw[i][self.data.s2_index[i]] = calc_S2_djw_dS2
 
                 # Spectral density parameters {S2, te}.
-                elif self.data.tm_index[i] == None and self.data.s2_index[i] != None and self.data.te_index[i] != None:
+                elif self.data.s2_index[i] != None and self.data.te_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_S2_te_jw_comps
                     self.calc_jw[i] = calc_S2_te_jw
@@ -796,49 +813,49 @@ class Mf:
                     self.calc_d2jw[i][self.data.te_index[i]][self.data.te_index[i]] = calc_S2_te_d2jw_dte2
 
                 # Spectral density parameters {tm}.
-                elif self.data.tm_index[i] != None and self.data.s2_index[i] == None and self.data.te_index[i] == None:
+                elif self.data.s2_index[i] == None and self.data.te_index[i] == None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_tm_jw_comps
                     self.calc_jw[i] = calc_jw
 
                     # Gradient.
                     self.calc_djw_comps[i] = calc_tm_djw_comps
-                    self.calc_djw[i][self.data.tm_index[i]] = calc_tm_djw_dtm
+                    self.calc_djw[i][0] = calc_tm_djw_dtm
 
                     # Hessian.
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tm_index[i]] = calc_tm_d2jw_dtm2
+                    self.calc_d2jw[i][0][0] = calc_tm_d2jw_dtm2
 
                 # Spectral density parameters {tm, S2}.
-                elif self.data.tm_index[i] != None and self.data.s2_index[i] != None and self.data.te_index[i] == None:
+                elif self.data.s2_index[i] != None and self.data.te_index[i] == None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_tm_jw_comps
                     self.calc_jw[i] = calc_S2_jw
 
                     # Gradient.
                     self.calc_djw_comps[i] = calc_tm_djw_comps
-                    self.calc_djw[i][self.data.tm_index[i]] = calc_tm_S2_djw_dtm
+                    self.calc_djw[i][0] = calc_tm_S2_djw_dtm
                     self.calc_djw[i][self.data.s2_index[i]] = calc_S2_djw_dS2
 
                     # Hessian.
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tm_index[i]] = calc_tm_S2_d2jw_dtm2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][self.data.tm_index[i]] = calc_tm_S2_d2jw_dtmdS2
+                    self.calc_d2jw[i][0][0] = calc_tm_S2_d2jw_dtm2
+                    self.calc_d2jw[i][0][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][0] = calc_tm_S2_d2jw_dtmdS2
 
                 # Spectral density parameters {tm, S2, te}.
-                elif self.data.tm_index[i] != None and self.data.s2_index[i] != None and self.data.te_index[i] != None:
+                elif self.data.s2_index[i] != None and self.data.te_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_tm_S2_te_jw_comps
                     self.calc_jw[i] = calc_S2_te_jw
 
                     # Gradient.
                     self.calc_djw_comps[i] = calc_tm_S2_te_djw_comps
-                    self.calc_djw[i][self.data.tm_index[i]] = calc_tm_S2_te_djw_dtm
+                    self.calc_djw[i][0] = calc_tm_S2_te_djw_dtm
                     self.calc_djw[i][self.data.s2_index[i]] = calc_S2_te_djw_dS2
                     self.calc_djw[i][self.data.te_index[i]] = calc_tm_S2_te_djw_dte
 
                     # Hessian.
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tm_index[i]] = calc_tm_S2_te_d2jw_dtm2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][self.data.tm_index[i]] = calc_tm_S2_te_d2jw_dtmdS2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.te_index[i]] = self.calc_d2jw[i][self.data.te_index[i]][self.data.tm_index[i]] = calc_tm_S2_te_d2jw_dtmdte
+                    self.calc_d2jw[i][0][0] = calc_tm_S2_te_d2jw_dtm2
+                    self.calc_d2jw[i][0][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][0] = calc_tm_S2_te_d2jw_dtmdS2
+                    self.calc_d2jw[i][0][self.data.te_index[i]] = self.calc_d2jw[i][self.data.te_index[i]][0] = calc_tm_S2_te_d2jw_dtmdte
                     self.calc_d2jw[i][self.data.s2_index[i]][self.data.te_index[i]] = self.calc_d2jw[i][self.data.te_index[i]][self.data.s2_index[i]] = calc_tm_S2_te_d2jw_dS2dte
                     self.calc_d2jw[i][self.data.te_index[i]][self.data.te_index[i]] = calc_tm_S2_te_d2jw_dte2
 
@@ -854,9 +871,7 @@ class Mf:
             elif self.data.equations[i] == 'mf_ext':
                 # Find the indecies of the model-free parameters.
                 for j in xrange(self.data.num_params[i]):
-                    if self.data.param_types[i][j] == 'tm':
-                        self.data.tm_index[i] = j
-                    elif self.data.param_types[i][j] == 'S2f':
+                    if self.data.param_types[i][j] == 'S2f':
                         self.data.s2f_index[i] = j
                     elif self.data.param_types[i][j] == 'tf':
                         self.data.tf_index[i] = j
@@ -875,7 +890,7 @@ class Mf:
                         return 0
 
                 # Spectral density parameters {S2f, S2, ts}.
-                if self.data.tm_index[i] == None and self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
+                if self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_S2f_S2_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_S2_ts_jw
@@ -892,7 +907,7 @@ class Mf:
                     self.calc_d2jw[i][self.data.ts_index[i]][self.data.ts_index[i]] = calc_S2f_S2_ts_d2jw_dts2
 
                 # Spectral density parameters {S2f, tf, S2, ts}.
-                elif self.data.tm_index[i] == None and self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
+                elif self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_S2f_tf_S2_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_tf_S2_ts_jw
@@ -912,47 +927,47 @@ class Mf:
                     self.calc_d2jw[i][self.data.ts_index[i]][self.data.ts_index[i]] = calc_S2f_S2_ts_d2jw_dts2
 
                 # Spectral density parameters {tm, S2f, S2, ts}.
-                elif self.data.tm_index[i] != None and self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
+                elif self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_tm_S2f_S2_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_S2_ts_jw
 
                     # Gradient.
                     self.calc_djw_comps[i] = calc_tm_S2f_S2_ts_djw_comps
-                    self.calc_djw[i][self.data.tm_index] = calc_tm_S2f_S2_ts_djw_dtm
+                    self.calc_djw[i][0] = calc_tm_S2f_S2_ts_djw_dtm
                     self.calc_djw[i][self.data.s2f_index] = calc_tm_S2f_S2_ts_djw_dS2f
                     self.calc_djw[i][self.data.s2_index] = calc_tm_S2f_S2_ts_djw_dS2
                     self.calc_djw[i][self.data.ts_index] = calc_tm_S2f_S2_ts_djw_dts
 
                     # Hessian.
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2_ts_d2jw_dtm2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2_ts_d2jw_dtmdS2f
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2_ts_d2jw_dtmdS2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2_ts_d2jw_dtmdts
+                    self.calc_d2jw[i][0][0] = calc_tm_S2f_S2_ts_d2jw_dtm2
+                    self.calc_d2jw[i][0][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][0] = calc_tm_S2f_S2_ts_d2jw_dtmdS2f
+                    self.calc_d2jw[i][0][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][0] = calc_tm_S2f_S2_ts_d2jw_dtmdS2
+                    self.calc_d2jw[i][0][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][0] = calc_tm_S2f_S2_ts_d2jw_dtmdts
                     self.calc_d2jw[i][self.data.s2f_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2f_index[i]] = calc_tm_S2f_S2_ts_d2jw_dS2fdts
                     self.calc_d2jw[i][self.data.s2_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2_index[i]] = calc_tm_S2f_S2_ts_d2jw_dS2dts
                     self.calc_d2jw[i][self.data.ts_index[i]][self.data.ts_index[i]] = calc_tm_S2f_S2_ts_d2jw_dts2
 
                 # Spectral density parameters {tm, S2f, tf, S2, ts}.
-                elif self.data.tm_index[i] != None and self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
+                elif self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_tm_S2f_tf_S2_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_tf_S2_ts_jw
 
                     # Gradient.
                     self.calc_djw_comps[i] = calc_tm_S2f_tf_S2_ts_djw_comps
-                    self.calc_djw[i][self.data.tm_index[i]] = calc_tm_S2f_tf_S2_ts_djw_dtm
+                    self.calc_djw[i][0] = calc_tm_S2f_tf_S2_ts_djw_dtm
                     self.calc_djw[i][self.data.s2f_index[i]] = calc_tm_S2f_tf_S2_ts_djw_dS2f
                     self.calc_djw[i][self.data.tf_index[i]] = calc_tm_S2f_tf_S2_ts_djw_dtf
                     self.calc_djw[i][self.data.s2_index[i]] = calc_tm_S2f_tf_S2_ts_djw_dS2
                     self.calc_djw[i][self.data.ts_index[i]] = calc_tm_S2f_tf_S2_ts_djw_dts
 
                     # Hessian.
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dtm2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2f
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tf_index[i]] = self.calc_d2jw[i][self.data.tf_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdtf
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdts
+                    self.calc_d2jw[i][0][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtm2
+                    self.calc_d2jw[i][0][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2f
+                    self.calc_d2jw[i][0][self.data.s2_index[i]] = self.calc_d2jw[i][self.data.s2_index[i]][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2
+                    self.calc_d2jw[i][0][self.data.tf_index[i]] = self.calc_d2jw[i][self.data.tf_index[i]][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdtf
+                    self.calc_d2jw[i][0][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdts
                     self.calc_d2jw[i][self.data.s2f_index[i]][self.data.tf_index[i]] = self.calc_d2jw[i][self.data.tf_index[i]][self.data.s2f_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dS2fdtf
                     self.calc_d2jw[i][self.data.s2f_index[i][i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2f_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dS2fdts
                     self.calc_d2jw[i][self.data.s2_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2_index[i]] = calc_tm_S2f_tf_S2_ts_d2jw_dS2dts
@@ -971,9 +986,7 @@ class Mf:
             elif self.data.equations[i] == 'mf_ext2':
                 # Find the indecies of the model-free parameters.
                 for j in xrange(self.data.num_params[i]):
-                    if self.data.param_types[i][j] == 'tm':
-                        self.data.tm_index[i] = j
-                    elif self.data.param_types[i][j] == 'S2f':
+                    if self.data.param_types[i][j] == 'S2f':
                         self.data.s2f_index[i] = j
                     elif self.data.param_types[i][j] == 'tf':
                         self.data.tf_index[i] = j
@@ -992,7 +1005,7 @@ class Mf:
                         return 0
 
                 # Spectral density parameters {S2f, S2s, ts}.
-                if self.data.tm_index[i] == None and self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
+                if self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_S2f_S2s_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_S2s_ts_jw
@@ -1009,7 +1022,7 @@ class Mf:
                     self.calc_d2jw[i][self.data.ts_index[i]][self.data.ts_index[i]] = calc_S2f_S2s_ts_d2jw_dts2
 
                 # Spectral density parameters {S2f, tf, S2s, ts}.
-                elif self.data.tm_index[i] == None and self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
+                elif self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_S2f_tf_S2s_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_tf_S2s_ts_jw
@@ -1029,47 +1042,47 @@ class Mf:
                     self.calc_d2jw[i][self.data.ts_index[i]][self.data.ts_index[i]] = calc_S2f_tf_S2s_ts_d2jw_dts2
 
                 # Spectral density parameters {tm, S2f, S2s, ts}.
-                elif self.data.tm_index[i] != None and self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
+                elif self.data.s2f_index[i] != None and self.data.tf_index[i] == None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_tm_S2f_S2s_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_S2s_ts_jw
 
                     # Gradient.
                     self.calc_djw_comps[i] = calc_tm_S2f_S2s_ts_djw_comps
-                    self.calc_djw[i][self.data.tm_index[i]] = calc_tm_S2f_S2s_ts_djw_dtm
+                    self.calc_djw[i][0] = calc_tm_S2f_S2s_ts_djw_dtm
                     self.calc_djw[i][self.data.s2f_index[i]] = calc_tm_S2f_S2s_ts_djw_dS2f
                     self.calc_djw[i][self.data.s2s_index[i]] = calc_tm_S2f_S2s_ts_djw_dS2s
                     self.calc_djw[i][self.data.ts_index[i]] = calc_tm_S2f_S2s_ts_djw_dts
 
                     # Hessian.
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2s_ts_d2jw_dtm2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2s_ts_d2jw_dtmdS2f
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2s_index[i]] = self.calc_d2jw[i][self.data.s2s_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2s_ts_d2jw_dtmdS2s
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.tm_index[i]] = calc_tm_S2f_S2s_ts_d2jw_dtmdts
+                    self.calc_d2jw[i][0][0] = calc_tm_S2f_S2s_ts_d2jw_dtm2
+                    self.calc_d2jw[i][0][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][0] = calc_tm_S2f_S2s_ts_d2jw_dtmdS2f
+                    self.calc_d2jw[i][0][self.data.s2s_index[i]] = self.calc_d2jw[i][self.data.s2s_index[i]][0] = calc_tm_S2f_S2s_ts_d2jw_dtmdS2s
+                    self.calc_d2jw[i][0][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][0] = calc_tm_S2f_S2s_ts_d2jw_dtmdts
                     self.calc_d2jw[i][self.data.s2f_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2f_index[i]] = calc_tm_S2f_S2s_ts_d2jw_dS2fdts
                     self.calc_d2jw[i][self.data.s2s_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2s_index[i]] = calc_tm_S2f_S2s_ts_d2jw_dS2sdts
                     self.calc_d2jw[i][self.data.ts_index[i]][self.data.ts_index[i]] = calc_tm_S2f_S2s_ts_d2jw_dts2
 
                 # Spectral density parameters {tm, S2f, tf, S2s, ts}.
-                elif self.data.tm_index[i] != None and self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
+                elif self.data.s2f_index[i] != None and self.data.tf_index[i] != None and self.data.s2s_index[i] != None and self.data.ts_index[i] != None:
                     # Equation.
                     self.calc_jw_comps[i] = calc_tm_S2f_tf_S2s_ts_jw_comps
                     self.calc_jw[i] = calc_S2f_tf_S2s_ts_jw
 
                     # Gradient.
                     self.calc_djw_comps[i] = calc_tm_S2f_tf_S2s_ts_djw_comps
-                    self.calc_djw[i][self.data.tm_index[i]] = calc_tm_S2f_tf_S2s_ts_djw_dtm
+                    self.calc_djw[i][0] = calc_tm_S2f_tf_S2s_ts_djw_dtm
                     self.calc_djw[i][self.data.s2f_index[i]] = calc_tm_S2f_tf_S2s_ts_djw_dS2f
                     self.calc_djw[i][self.data.tf_index[i]] = calc_tm_S2f_tf_S2s_ts_djw_dtf
                     self.calc_djw[i][self.data.s2s_index[i]] = calc_tm_S2f_tf_S2s_ts_djw_dS2s
                     self.calc_djw[i][self.data.ts_index[i]] = calc_tm_S2f_tf_S2s_ts_djw_dts
 
                     # Hessian.
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dtm2
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdS2f
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.s2s_index[i]] = self.calc_d2jw[i][self.data.s2s_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdS2s
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.tf_index[i]] = self.calc_d2jw[i][self.data.tf_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdtf
-                    self.calc_d2jw[i][self.data.tm_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.tm_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdts
+                    self.calc_d2jw[i][0][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtm2
+                    self.calc_d2jw[i][0][self.data.s2f_index[i]] = self.calc_d2jw[i][self.data.s2f_index[i]][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdS2f
+                    self.calc_d2jw[i][0][self.data.s2s_index[i]] = self.calc_d2jw[i][self.data.s2s_index[i]][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdS2s
+                    self.calc_d2jw[i][0][self.data.tf_index[i]] = self.calc_d2jw[i][self.data.tf_index[i]][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdtf
+                    self.calc_d2jw[i][0][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdts
                     self.calc_d2jw[i][self.data.s2f_index[i]][self.data.tf_index[i]] = self.calc_d2jw[i][self.data.tf_index[i]][self.data.s2f_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2fdtf
                     self.calc_d2jw[i][self.data.s2f_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2f_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2fdts
                     self.calc_d2jw[i][self.data.s2s_index[i]][self.data.ts_index[i]] = self.calc_d2jw[i][self.data.ts_index[i]][self.data.s2s_index[i]] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2sdts

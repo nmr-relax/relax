@@ -56,9 +56,9 @@ def ri(data, create_ri, get_r1):
     """
 
     # Calculate the NOE values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         if create_ri[i]:
-            create_ri[i](data, i, data.remap_table[i], get_r1)
+            create_ri[i](data, i, data.remap_table[data.i][i], get_r1)
 
 
 def dri(data, create_dri, get_dr1):
@@ -97,9 +97,9 @@ def dri(data, create_dri, get_dr1):
     """
 
     # Loop over the relaxation values and modify the NOE gradients.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         if create_dri[i]:
-            create_dri[i](data, i, data.remap_table[i], get_dr1)
+            create_dri[i](data, i, data.remap_table[data.i][i], get_dr1)
 
 
 def d2ri(data, create_d2ri, get_d2r1):
@@ -142,9 +142,9 @@ def d2ri(data, create_d2ri, get_d2r1):
     """
 
     # Loop over the relaxation values and modify the NOE Hessians.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         if create_d2ri[i]:
-            create_d2ri[i](data, i, data.remap_table[i], get_d2r1)
+            create_d2ri[i](data, i, data.remap_table[data.i][i], get_d2r1)
 
 
 
@@ -158,13 +158,13 @@ def calc_noe(data, i, frq_num, get_r1):
     """
 
     # Get the r1 value either from data.ri_prime or by calculation if the value is not in data.ri_prime
-    data.r1[i] = get_r1[i](data, i, frq_num)
+    data.r1[data.i][i] = get_r1[i](data, i, frq_num)
 
     # Calculate the NOE.
-    if data.r1[i] == 0.0:
-        data.ri[i] = 1e99
+    if data.r1[data.i][i] == 0.0:
+        data.ri[data.i][i] = 1e99
     else:
-        data.ri[i] = 1.0 + data.g_ratio*(data.ri_prime[i] / data.r1[i])
+        data.ri[data.i][i] = 1.0 + data.g_ratio*(data.ri_prime[data.i][i] / data.r1[data.i][i])
 
 
 def calc_dnoe(data, i, frq_num, get_dr1):
@@ -174,11 +174,11 @@ def calc_dnoe(data, i, frq_num, get_dr1):
     """
 
     # Calculate the NOE derivative.
-    data.dr1[i] = get_dr1[i](data, i, frq_num)
-    if data.r1[i] == 0.0:
-        data.dri[i] = 1e99
+    data.dr1[data.i][i] = get_dr1[i](data, i, frq_num)
+    if data.r1[data.i][i] == 0.0:
+        data.dri[data.i][i] = 1e99
     else:
-        data.dri[i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[i] - data.ri_prime[i] * data.dr1[i])
+        data.dri[data.i][i] = data.g_ratio * (1.0 / data.r1[data.i][i]**2) * (data.r1[data.i][i] * data.dri_prime[data.i][i] - data.ri_prime[data.i][i] * data.dr1[data.i][i])
 
 
 def calc_d2noe(data, i, frq_num, get_d2r1):
@@ -188,14 +188,14 @@ def calc_d2noe(data, i, frq_num, get_d2r1):
     """
 
     # Calculate the NOE second derivative.
-    data.d2r1[i] = get_d2r1[i](data, i, frq_num)
-    if data.r1[i] == 0.0:
-        data.d2ri[i] = 1e99
+    data.d2r1[data.i][i] = get_d2r1[i](data, i, frq_num)
+    if data.r1[data.i][i] == 0.0:
+        data.d2ri[data.i][i] = 1e99
     else:
         for j in xrange(data.total_num_params):
-            a = data.ri_prime[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
-            b = data.r1[i] * (data.dri_prime[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri_prime[i] - data.r1[i] * data.d2ri_prime[i, j])
-            data.d2ri[i, j] = data.g_ratio * (1.0 / data.r1[i]**3) * (a - b)
+            a = data.ri_prime[data.i][i] * (2.0 * data.dr1[data.i][i, j] * data.dr1[data.i][i] - data.r1[data.i][i] * data.d2r1[data.i][i, j])
+            b = data.r1[data.i][i] * (data.dri_prime[data.i][i, j] * data.dr1[data.i][i] + data.dr1[data.i][i, j] * data.dri_prime[data.i][i] - data.r1[data.i][i] * data.d2ri_prime[data.i][i, j])
+            data.d2ri[data.i][i, j] = data.g_ratio * (1.0 / data.r1[data.i][i]**3) * (a - b)
 
 
 
@@ -265,25 +265,25 @@ def calc_d2r1(data, i, frq_num):
     """Calculate the R1 value if there is no R1 data corresponding to the NOE data."""
 
     # Place data in the R1 data class.
-    data.r1_data.params = data.params
-    data.r1_data.remap_table = data.remap_table
-    data.r1_data.d2jw = data.d2jw
-    data.r1_data.dip_const_hess = data.dip_const_hess
-    data.r1_data.csa_const_hess = data.csa_const_hess
+    data.r1_data.params[data.i] = data.params[data.i]
+    data.r1_data.remap_table[data.i] = data.remap_table[data.i]
+    data.r1_data.d2jw[data.i] = data.d2jw[data.i]
+    data.r1_data.dip_const_hess[data.i] = data.dip_const_hess[data.i]
+    data.r1_data.csa_const_hess[data.i] = data.csa_const_hess[data.i]
 
     # Calculate the dr1 components.
-    d2r1_comps(data.r1_data, i)
+    d2r1_comps(data.r1_data[data.i], i)
 
     # Calculate the dr1 value.
     for j in xrange(data.total_num_params):
         for k in xrange(j + 1):
-            if data.r1_data.create_d2ri_prime[j][k]:
-                data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
+            if data.r1_data.create_d2ri_prime[data.i][j][k]:
+                data.r1_data.create_d2ri_prime[data.i][j][k](data.r1_data[data.i], j, k)
                 # Make the Hessian symmetric.
                 if i != j:
-                    data.r1_data.d2ri_prime[i, k, j] = data.r1_data.d2ri_prime[i, j, k]
+                    data.r1_data.d2ri_prime[data.i][i, k, j] = data.r1_data.d2ri_prime[data.i][i, j, k]
 
-    return data.r1_data.d2ri_prime[i]
+    return data.r1_data.d2ri_prime[data.i][i]
 
 
 
@@ -293,16 +293,16 @@ def calc_d2r1(data, i, frq_num):
 def extract_r1(data, i, frq_num):
     """Get the R1 value from data.ri_prime"""
 
-    return data.ri_prime[data.noe_r1_table[i]]
+    return data.ri_prime[data.i][data.noe_r1_table[data.i][i]]
 
 
 def extract_dr1(data, i, frq_num):
     """Get the dR1 value from data.dri_prime"""
 
-    return data.dri_prime[data.noe_r1_table[i]]
+    return data.dri_prime[data.i][data.noe_r1_table[data.i][i]]
 
 
 def extract_d2r1(data, i, frq_num):
     """Get the d2R1 value from data.d2ri_prime"""
 
-    return data.d2ri_prime[data.noe_r1_table[i]]
+    return data.d2ri_prime[data.i][data.noe_r1_table[data.i][i]]

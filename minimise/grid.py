@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -53,7 +53,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     n = len(grid_ops)
     grid_size = 0
     total_steps = 1
-    step_num = ones((n))
+    step_num = zeros((n))
     params = zeros((n), Float64)
     min_params = zeros((n), Float64)
     param_values = []   # This data structure eliminates the round-off error of summing a step size value to the parameter value.
@@ -113,13 +113,13 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
                 params[k] = param_values[k][step_num[k]-1]
                 break    # Exit so that the other step numbers are not incremented.
             else:
-                step_num[k] = 1
+                step_num[k] = 0
                 params[k] = grid_ops[k][1]
 
         # Check that the grid point does not violate a constraint, and if it does, move to the next point.
         if constraint_flag:
             ci = c(params)
-            if min(ci) >= 0.0:
+            if min(ci) < 0.0:
                 continue
 
         # Back calculate the current function value.
@@ -128,7 +128,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         # Test if the current function value is less than the least function value.
         if f < f_min:
             f_min = f
-            min_params = params
+            min_params = 1.0 * params
 
             # Print out code.
             if print_flag:

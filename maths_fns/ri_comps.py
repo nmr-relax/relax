@@ -270,13 +270,13 @@ def ri_comps(data, create_dip_func, create_dip_jw_func, create_csa_func, create_
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[data.i][i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[data.i][i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
 
 # Ri (Rex).
@@ -293,17 +293,17 @@ def ri_comps_rex(data, create_dip_func, create_dip_jw_func, create_csa_func, cre
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_func[i]:
-            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[data.i][i]])
 
 
 # Ri (Bond length).
@@ -323,18 +323,18 @@ def ri_comps_r(data, create_dip_func, create_dip_jw_func, create_csa_func, creat
     comp_dip_const_func(data, data.params[data.r_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if create_dip_func[i]:
             data.dip_comps_func[i] = create_dip_func[i](data.dip_const_func)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
 
 # Ri (CSA).
@@ -354,17 +354,17 @@ def ri_comps_csa(data, create_dip_func, create_dip_jw_func, create_csa_func, cre
     comp_csa_const_func(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_func[i]:
-            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]])
+            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
 
 # Ri (Bond length, CSA).
@@ -387,22 +387,22 @@ def ri_comps_r_csa(data, create_dip_func, create_dip_jw_func, create_csa_func, c
     comp_csa_const_func(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if create_dip_func[i]:
             data.dip_comps_func[i] = create_dip_func[i](data.dip_const_func)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_func[i]:
-            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]])
+            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
 
 # Ri (Bond length, Rex).
@@ -422,22 +422,22 @@ def ri_comps_r_rex(data, create_dip_func, create_dip_jw_func, create_csa_func, c
     comp_dip_const_func(data, data.params[data.r_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if create_dip_func[i]:
             data.dip_comps_func[i] = create_dip_func[i](data.dip_const_func)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_func[i]:
-            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[data.i][i]])
 
 
 # Ri (CSA, Rex).
@@ -457,21 +457,21 @@ def ri_comps_csa_rex(data, create_dip_func, create_dip_jw_func, create_csa_func,
     comp_csa_const_func(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_func[i]:
-            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]])
+            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_func[i]:
-            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[data.i][i]])
 
 
 # Ri (Bond length, CSA, Rex).
@@ -495,26 +495,26 @@ def ri_comps_r_csa_rex(data, create_dip_func, create_dip_jw_func, create_csa_fun
     comp_csa_const_func(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if create_dip_func[i]:
             data.dip_comps_func[i] = create_dip_func[i](data.dip_const_func)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+        data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_func[i]:
-            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]])
+            data.csa_comps_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_func[i]:
-            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+            data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_func[i]:
-            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = create_rex_func[i](data.params[data.rex_index], data.frq[data.remap_table[data.i][i]])
 
 
 # R1 comps.
@@ -533,13 +533,13 @@ def r1_comps(data, i):
     data.dip_comps_func[i] = data.dip_const_func
 
     # Dipolar J(w) components
-    data.dip_jw_comps_func[i] = comp_r1_dip_jw(data.jw, data.remap_table[i])
+    data.dip_jw_comps_func[i] = comp_r1_dip_jw(data.jw, data.remap_table[data.i][i])
 
     # CSA constant components.
-    data.csa_comps_func[i] = data.csa_const_func[data.remap_table[i]]
+    data.csa_comps_func[i] = data.csa_const_func[data.remap_table[data.i][i]]
 
     # CSA J(w) components.
-    data.csa_jw_comps_func[i] = comp_r1_csa_jw(data.jw, data.remap_table[i])
+    data.csa_jw_comps_func[i] = comp_r1_csa_jw(data.jw, data.remap_table[data.i][i])
 
 
 
@@ -564,13 +564,13 @@ def dri_comps(data, create_dip_grad, create_dip_jw_grad, create_csa_grad, create
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
 
 # dRi (Rex).
@@ -587,17 +587,17 @@ def dri_comps_rex(data, create_dip_grad, create_dip_jw_grad, create_csa_grad, cr
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_grad[i]:
-            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[i]])
+            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[data.i][i]])
 
 
 # dRi (Bond length).
@@ -617,18 +617,18 @@ def dri_comps_r(data, create_dip_grad, create_dip_jw_grad, create_csa_grad, crea
     comp_dip_const_grad(data, data.params[data.r_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if create_dip_grad[i]:
             data.dip_comps_grad[i] = create_dip_grad[i](data.dip_const_grad)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
 
 # dRi (CSA).
@@ -648,17 +648,17 @@ def dri_comps_csa(data, create_dip_grad, create_dip_jw_grad, create_csa_grad, cr
     comp_csa_const_grad(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_grad[i]:
-            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]])
+            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
 
 # dRi (Bond length, CSA).
@@ -681,22 +681,22 @@ def dri_comps_r_csa(data, create_dip_grad, create_dip_jw_grad, create_csa_grad, 
     comp_csa_const_grad(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if create_dip_grad[i]:
             data.dip_comps_grad[i] = create_dip_grad[i](data.dip_const_grad)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_grad[i]:
-            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]])
+            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
 
 # dRi (Bond length, Rex).
@@ -716,22 +716,22 @@ def dri_comps_r_rex(data, create_dip_grad, create_dip_jw_grad, create_csa_grad, 
     comp_dip_const_grad(data, data.params[data.r_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if create_dip_grad[i]:
             data.dip_comps_grad[i] = create_dip_grad[i](data.dip_const_grad)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_grad[i]:
-            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[i]])
+            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[data.i][i]])
 
 
 # dRi (CSA, Rex).
@@ -751,21 +751,21 @@ def dri_comps_csa_rex(data, create_dip_grad, create_dip_jw_grad, create_csa_grad
     comp_csa_const_grad(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_grad[i]:
-            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]])
+            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_grad[i]:
-            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[i]])
+            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[data.i][i]])
 
 
 # dRi (Bond length, CSA, Rex).
@@ -789,26 +789,26 @@ def dri_comps_r_csa_rex(data, create_dip_grad, create_dip_jw_grad, create_csa_gr
     comp_csa_const_grad(data, data.params[data.csa_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if create_dip_grad[i]:
             data.dip_comps_grad[i] = create_dip_grad[i](data.dip_const_grad)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[i])
+        data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_grad[i]:
-            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]])
+            data.csa_comps_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_grad[i]:
-            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[i])
+            data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.djw, data.remap_table[data.i][i])
 
         # Rex components
         if create_rex_grad[i]:
-            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[i]])
+            data.rex_comps_grad[i] = create_rex_grad[i](data.frq[data.remap_table[data.i][i]])
 
 
 # dR1 comps.
@@ -827,13 +827,13 @@ def dr1_comps(data, i):
     data.dip_comps_grad[i] = data.dip_const_grad
 
     # Dipolar J(w) components
-    data.dip_jw_comps_grad[i] = comp_r1_dip_jw(data.djw, data.remap_table[i])
+    data.dip_jw_comps_grad[i] = comp_r1_dip_jw(data.djw, data.remap_table[data.i][i])
 
     # CSA constant components.
-    data.csa_comps_grad[i] = data.csa_const_grad[data.remap_table[i]]
+    data.csa_comps_grad[i] = data.csa_const_grad[data.remap_table[data.i][i]]
 
     # CSA J(w) components.
-    data.csa_jw_comps_grad[i] = comp_r1_csa_jw(data.djw, data.remap_table[i])
+    data.csa_jw_comps_grad[i] = comp_r1_csa_jw(data.djw, data.remap_table[data.i][i])
 
 
 # The main functions for the calculation of the d2Ri components.
@@ -857,13 +857,13 @@ def d2ri_comps(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, creat
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[i])
+        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_hess[i]:
-            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[i])
+            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
 
 # d2Ri (Bond length).
@@ -883,18 +883,18 @@ def d2ri_comps_r(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, cre
     comp_dip_const_hess(data, data.params[data.r_index])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_hess[i] = data.dip_const_hess
         if create_dip_hess[i]:
             data.dip_comps_hess[i] = create_dip_hess[i](data.dip_const_hess)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[i])
+        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
         # CSA J(w) components.
         if create_csa_jw_hess[i]:
-            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[i])
+            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
 
 # d2Ri (CSA).
@@ -914,17 +914,17 @@ def d2ri_comps_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, c
     comp_csa_const_hess(data)
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar J(w) components
-        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[i])
+        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_hess[i]:
-            data.csa_comps_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[i]])
+            data.csa_comps_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_hess[i]:
-            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[i])
+            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
 
 # d2Ri (Bond length, CSA).
@@ -947,22 +947,22 @@ def d2ri_comps_r_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess,
     comp_csa_const_hess(data)
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in xrange(data.num_ri[data.i]):
         # Dipolar constant components.
         data.dip_comps_hess[i] = data.dip_const_hess
         if create_dip_hess[i]:
             data.dip_comps_hess[i] = create_dip_hess[i](data.dip_const_hess)
 
         # Dipolar J(w) components
-        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[i])
+        data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
         # CSA constant components.
         if create_csa_hess[i]:
-            data.csa_comps_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[i]])
+            data.csa_comps_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[data.i][i]])
 
         # CSA J(w) components.
         if create_csa_jw_hess[i]:
-            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[i])
+            data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.d2jw, data.remap_table[data.i][i])
 
 
 # d2R1 comps.
@@ -981,13 +981,13 @@ def d2r1_comps(data, i):
     data.dip_comps_hess[i] = data.dip_const_hess
 
     # Dipolar J(w) components
-    data.dip_jw_comps_hess[i] = comp_r1_dip_jw(data.d2jw, data.remap_table[i])
+    data.dip_jw_comps_hess[i] = comp_r1_dip_jw(data.d2jw, data.remap_table[data.i][i])
 
     # CSA constant components.
-    data.csa_comps_hess[i] = data.csa_const_hess[data.remap_table[i]]
+    data.csa_comps_hess[i] = data.csa_const_hess[data.remap_table[data.i][i]]
 
     # CSA J(w) components.
-    data.csa_jw_comps_hess[i] = comp_r1_csa_jw(data.d2jw, data.remap_table[i])
+    data.csa_jw_comps_hess[i] = comp_r1_csa_jw(data.d2jw, data.remap_table[data.i][i])
 
 
 
