@@ -37,7 +37,7 @@ class Value:
         self.__relax_help__ = help.relax_class_help
 
 
-    def set(self, run=None, value=None, data_type=None, res_num=None, force=0):
+    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None, force=0):
         """Function for setting residue specific data values.
 
         Keyword arguments
@@ -47,9 +47,11 @@ class Value:
 
         value:  The value(s).
 
-        data_type:  A string specifying the data type to assign the value to.
+        data_type:  A string or array of strings specifying the data type to assign the value to.
 
         res_num:  The residue number.
+
+        res_name:  The residue name.
 
         force:  A flag specifying whether to force the setting of values.
 
@@ -63,26 +65,46 @@ class Value:
         determines the behaviour of this function.
         
         Single value:  If a single value is given, then the data_type argument must be supplied.
-        All data types matching the data_type string will be given the supplied value.
+        All data types matching the data_type string(s) will be given the supplied value.
         
-        Array of values:  If an array of values is given, then the data_type argument must be None.
-        The length of the array must equal the number of parameters in the model for a certain
-        residue.  The parameters will be set to the values of the array.
+        Array of values:  If an array of values is given, then the data_type argument must be None
+        or an array of equal length.  If data_type is set to None, the length of the values array
+        must equal the number of parameters in the model for an individual residue.  The parameters
+        will be set to the values of the array.
         
         None:  If None is given as the value, then the data_type argument can be either None or a
         string.  If data_type is None then all residue specific data consisting of the parameters
-        of the model-free model will be set to the hard wired values.  Otherwise if data_types is a
-        string, then all data types matching that string will have their values set to the hard
-        wired values.
+        of the model will be set to the hard wired values.  Otherwise if data_types is a string,
+        then all data types matching that string will have their values set to the hard wired
+        values.
         
 
         Data type argument.
 
+        This argument must be a string and is only accepted if the value argument is a single number
+        or None.  The python regular expression function 'match' is used to determine which data
+        type to set values to, therefore various data_type strings can be used to select the same
+        data type.  Patterns used for matching for specific runs are listed below.
 
-        Residue number argument.
+        This is a short description of python regular expression, for more information, see the
+        regular expression syntax section of the Python Library Reference.  Some of the regular
+        expression syntax used in this function is:
 
-        If 'res_num' is set to the default of None, then all residues will have the value of
-        'data_type' given by 'value', otherwise the single residue will be set to 'value'.
+            [] - A sequence or set of characters to match to a single character.  For example,
+            '[Ss]2' will match both 'S2' and 's2'.
+
+            ^ - Match the start of the string.
+
+            $ - Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
+            or 's2s'.
+
+
+        Residue number and name argument.
+
+        If the res_num argument is left on the default of None, then values will apply to all
+        residues.  Otherwise the residue number can either be set to an integer for selecting a
+        single residue or a python regular expression string for selecting multiple residues.  The
+        residue name argument must be a string and can use regular expression as well.
 
 
         The force flag.
@@ -105,6 +127,19 @@ class Value:
 
         relax> value.set('m5', 1.02 * 1e-10, 'bond_length')
         relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
+
+        To set the parameter values of residue 10, which is the model-free run 'm4' and has the
+        parameters {S2, te, Rex}, the following can be used.  Note that the Rex term should be the
+        chemical exchange value for the first given field strength.
+
+        relax> value.set('m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
+        relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
+
+        To set the S2 and te parameter values for model-free run 'm4' which has the parameters
+        {S2, te, Rex} to 0.56 and 13e-12, type:
+
+        relax> value.set('m4', [0.56, 13e-12], ['S2', 'te'], 10)
+        relax> value.set('m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
 
         """
 
