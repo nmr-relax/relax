@@ -38,6 +38,9 @@ class min:
 		>>> fixed('m2', [1.0, 10 * 10e-12])
 		>>> fixed('m2', values = [1.0, 10 * 10e-12])
 
+
+		________________
+		End of docstring
 		"""
 
 		# The model argument.
@@ -169,6 +172,10 @@ class min:
 		"""
 
 		Generate the data structure of model-free grid options for the grid search.
+
+
+		________________
+		End of docstring
 		"""
 
 		# The model argument.
@@ -397,7 +404,12 @@ class min:
 
 
 	def minimise(self, model, min_algor=None, min_options=None, chi2_tol=1e-25, max_iterations=10000, min_debug=1):
-		"Minimisation macro."
+		"""Minimisation macro.
+
+
+		________________
+		End of docstring
+		"""
 
 		# The model argument.
 		self.model = model

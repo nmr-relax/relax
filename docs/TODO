@@ -1,15 +1,12 @@
 # General.
 ##########
 
-Get the GPL text and place it in a file.
 change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
-data.grid_search["m1"]
 
 
 # Model-free function.
 ######################
 
-Diagonal scaling.
 Calculate the R1 value, gradient, and hessian corresponding to the NOE when no R1 data exists.
 Local tm as a parameter.
 Axially symmetric anisotropic formulae.
@@ -60,11 +57,8 @@ Diffusion tensor optimisation.
 # Speed.
 ########
 
+Create the grid search grid prior to the search.
 Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C and use swig to integrate the C functions.
-
-
-# Bugs.
-#######
 
 
 # Model selection methods.

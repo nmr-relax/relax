@@ -16,6 +16,10 @@ class echo_data(generic_functions, select_res):
 		"""Macro to print the names of all data structures in self.relax.data
 
 		With no arguments, the names of all data structures in self.relax.data are printed along with the data type.
+
+
+		________________
+		End of docstring
 		"""
 
 		self.args = args

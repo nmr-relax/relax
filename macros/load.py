@@ -50,6 +50,10 @@ class load(generic_functions):
 		The following commands will load the R1 data out of the file 'r1.out' where the columns are separated by the symbol '%'
 
 		>>> load_relax_data('R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
+
+
+		________________
+		End of docstring
 		"""
 
 		# Arguments
@@ -147,6 +151,9 @@ class load(generic_functions):
 		>>> load_sequence('noe.600.out', 1, 5, ',')
 		>>> load_sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',')
 
+
+		________________
+		End of docstring
 		"""
 
 		# Arguments

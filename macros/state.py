@@ -29,6 +29,9 @@ class state(generic_functions):
 		>>> state_load('save')
 		>>> state_load(file_name='save')
 
+
+		________________
+		End of docstring
 		"""
 
 		# Arguments.
@@ -78,6 +81,9 @@ class state(generic_functions):
 		>>> state_save('save', 1)
 		>>> state_save(file_name='save', force=1)
 
+
+		________________
+		End of docstring
 		"""
 
 		# Arguments.

@@ -1,23 +1,35 @@
 #! /usr/bin/python
 
-
-# mf v0.5            22 July 2002        Edward d'Auvergne
-#
-# Program to process all model-free input and output.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Library General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#################################################################################
+#                                                                               #
+#                                     relax                                     #
+#                                                                               #
+#                    a program for relaxation data analysis                     #
+#                                                                               #
+#                              by Edward d'Auvergne                             #
+#                                                                               #
+#################################################################################
+#                                                                               #
+#                                    Licence                                    #
+#                                                                               #
+# relax, a program for relaxation data analysis.                                #
+# Copyright (C) 2003 Edward d'Auvergne                                          #
+#                                                                               #
+# This program is free software; you can redistribute it and/or modify          #
+# it under the terms of the GNU General Public License as published by          #
+# the Free Software Foundation; either version 2 of the License, or             #
+# (at your option) any later version.                                           #
+#                                                                               #
+# This program is distributed in the hope that it will be useful,               #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of                #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                 #
+# GNU Library General Public License for more details.                          #
+#                                                                               #
+# You should have received a copy of the GNU General Public License             #
+# along with this program; if not, write to the Free Software                   #
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.    #
+#                                                                               #
+#################################################################################
 
 
 import profile
@@ -111,16 +123,15 @@ class relax:
 	def set_intro_string(self):
 		"Create the program introduction."
 
-		self.intro_string = "\n"
-		self.intro_string = self.intro_string + "relax v0.0\n"
-		self.intro_string = self.intro_string + "\n"
-		self.intro_string = self.intro_string + "Program for relaxation data analysis.\n"
-		self.intro_string = self.intro_string + "(relaxation curve fitting, "
-		self.intro_string = self.intro_string + "model-free analysis, "
-		self.intro_string = self.intro_string + "SRLS analysis, "
-		self.intro_string = self.intro_string + "reduced spectral density mapping, "
-		self.intro_string = self.intro_string + "relaxation dispersion analysis)"
-		self.intro_string = self.intro_string + "\n"
+		a = "\n\n\n"
+		a = a + "                                     relax\n\n"
+		a = a + "                    a program for relaxation data analysis\n\n"
+		a = a + "                     Copyright (C) 2003 Edward d'Auvergne\n\n\n"
+		a = a + "This is free software which you are welcome to modify and redistribute under the\n"
+		a = a + "conditions of the GNU General Public Licence (GPL).  This program, including all\n"
+		a = a + "modules, is licenced under the GPL and comes with absolutely no warranty.  For\n"
+		a = a + "details type GPL.\n"
+		self.intro_string = a
 
 
 if __name__ == "__main__":

@@ -53,6 +53,10 @@ class mf_model(generic_functions):
 
 		>>> mf_model_create('large_model', 'mf_ext', ['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'])
 		>>> mf_model_create(model='large_model', param_types=['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'], equation='mf_ext')
+
+
+		________________
+		End of docstring
 		"""
 
 		if not model or type(model) != str:
@@ -205,14 +209,14 @@ class mf_model(generic_functions):
 		Arguments
 		~~~~~~~~~
 
-		model:		The preset model name.
-		scaling:	Diagonal scaling flag.
+		model:		The name of the preset model.
+		scaling:	The diagonal scaling flag.
 
 
 		Description
 		~~~~~~~~~~~
 
-		The preset models are:
+		The preset model-free models are:
 			'm0'	=> []
 			'm1'	=> [S2]
 			'm2'	=> [S2, te]
@@ -257,14 +261,20 @@ class mf_model(generic_functions):
 			'm38'	=> [Bond length, CSA, S2f, tf, S2s, ts, Rex]
 			'm39'	=> [Bond length, CSA, Rex]
 
+		Warning:  A few of the models in the thirties range fail when using standard R1, R2, and NOE
+		relaxation data.
 
-		Diagonal scaling is the scaling of parameter values so that all parameters are on a similar scale.  For example, if
-		S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10, 7.036e-29]
-		(Rex is divided by (2*pi*600,000,000)**2 to make it field strength independent).  The scaling vector for this model
-		is [1.0, 1e-10, 1e-30].  By dividing the unscaled parameter vector by the scaling vector the scaled parameter vector
-		is [0.5, 2.0, 0.7].  To revert to the original unscaled parameter vector, the scaled parameter vector and scaling
-		vector are multiplied.  The reason for diagonal scaling is that certain minimisation techniques fail when the model
-		is not properly scaled.
+
+		Diagonal scaling.
+		
+		This is the scaling of parameter values with the intent of having the same order of magnitude
+		for all parameters values.  For example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz,
+		the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18] (Rex is divided by
+		(2*pi*600,000,000)**2 to make it field strength independent).  The scaling vector for this model
+		is [1.0, 1e-10, 1/(2*pi*6*1e8)**2].  By dividing the unscaled parameter vector by the scaling
+		vector the scaled parameter vector is [0.5, 2.0, 15.0].  To revert to the original unscaled
+		parameter vector, the scaled parameter vector and scaling vector are multiplied.  The reason for
+		diagonal scaling is that certain minimisation techniques fail when the model is not properly scaled.
 
 
 		Examples
@@ -274,6 +284,9 @@ class mf_model(generic_functions):
 
 		>>> mf_model_select('m1')
 
+
+		________________
+		End of docstring
 		"""
 
 		# Arguments.

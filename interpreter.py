@@ -2,6 +2,8 @@ import __builtin__
 import code
 import readline
 import sys
+sys.ps1 = 'relax> '
+sys.ps2 = 'relax| '
 
 from tab_completion import tab_completion
 
@@ -9,6 +11,7 @@ from tab_completion import tab_completion
 from macros.diffusion_tensor import diffusion_tensor
 from macros.echo_data import echo_data
 from macros.format import format
+from macros.gpl import gpl
 from macros.init_data import init_data
 from macros.load import load
 from macros.min import min
@@ -26,7 +29,7 @@ class interpreter:
 
 		# Place the program class structure under self.relax
 		self.relax = relax
-		self.class_echo = class_echo()
+		self.echo = _Echo()
 
 		# Place the macros into the namespace of the interpreter class.
 		self.diffusion_tensor = diffusion_tensor(relax)
@@ -40,7 +43,6 @@ class interpreter:
 		self.set_model_selection = set_model_selection(relax)
 		self.state = state(relax)
 		self.value_setup = value_setup(relax)
-
 
 	def run(self):
 		"""Run the python interpreter.
@@ -56,6 +58,9 @@ class interpreter:
 		ll = ll()
 		ls = ls()
 		print_all_data = print_all_data(self.relax)
+
+		# Place functions in the local namespace.
+		GPL = gpl()
 
 		# Place the macros in the local namespace.
 		diffusion_tensor = self.diffusion_tensor.set
@@ -76,20 +81,23 @@ class interpreter:
 		value_setup = self.value_setup.set
 
 		# Builtin interpreter functions.
-		echo_on = self.class_echo.echo_on
-		echo_off = self.class_echo.echo_off
-		exit = bye = quit = class_exit()
-		help = __builtin__.help
+		echo_on = self.echo.echo_on
+		echo_off = self.echo.echo_off
+		exit = bye = quit = _Exit()
 
 		# Setup tab completion.
 		readline.set_completer(tab_completion(name_space=locals()).finish)
 		readline.parse_and_bind("tab: complete")
 
+		# Modify the help system.
+		help_python = _Helper_python()
+		help = _Helper()
+
 		# Go to the prompt.
 		code.interact(banner=self.relax.intro_string, local=locals())
 
 
-class class_echo:
+class _Echo:
 	def echo_off(self):
 		"""Macro for turning off the echoing of commands.
 
@@ -145,11 +153,39 @@ class class_echo:
 		return input
 
 
-class class_exit:
+class _Exit:
 	def __repr__(self):
 		"Exit the program."
 
 		print "Exiting the program."
 		sys.exit()
+
+
+class _Helper:
+	text = "For assistence in using a macro, simply type help(macro).  In addition to macros, if help(object) is typed,\n"
+	text = text + "the help for the python object is returned.  This system is similar to the help function built into the\n"
+	text = text + "python interpreter, which has been renamed to help_python, with the interactive component removed.  For\n"
+	text = text + "the interactive python help system, type help_python()."
+
+	def __repr__(self):
+		return self.text
+
+	def __call__(self, *args, **kwds):
+		if len(args) != 1 or type(args[0]) == str:
+			print self.text
+			return
+		import pydoc
+		return pydoc.help(*args, **kwds)
+
+
+class _Helper_python:
+	def __repr__(self):
+		text = "For the interactive python help system, type help_python().  The help_python function\n"
+		text = text + "is identical to the help function built into the normal python interpreter."
+		return text
+
+	def __call__(self, *args, **kwds):
+		import pydoc
+		return pydoc.help(*args, **kwds)
 
 
