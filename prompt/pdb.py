@@ -30,7 +30,7 @@ class PDB:
         self.relax = relax
 
 
-    def pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):
+    def pdb(self, run=None, file=None, dir=None, model=None, first_model=1, load_seq=1):
         """The pdb loading function.
 
         Keyword Arguments
@@ -50,20 +50,9 @@ class PDB:
         Description
         ~~~~~~~~~~~
 
-        The model argument can have several values:
-
-            None - If the argument is set to None, the default value, then the first structure in
-        the PDB file will be extracted.  This should be the value used if the structure is
-        determined using X-ray crystallography.
-
-            i - If the argument is set to the integer, i, then the structure extracted will be the
-        one beginning with the line 'MODEL i' in the PDB file.  If no such model exists, then nothing
-        will be loaded.  For example, if the lowest energy structure in an NMR ensemble is structure
-        3, to load just this structure for an analysis, set the argument to 3.
-
-            'all' - If the argument is set to the string value 'all', then all structures in an NMR
-        ensemble will be loaded.
-
+        To load a specific model from the PDB file, set the model flag to an integer i.  The
+        structure beginning with the line 'MODEL i' in the PDB file will be loaded.  Otherwise all
+        structures will be loaded starting from the model number set by the argument first_model.
 
         To load the sequence from the PDB file, set the 'load_seq' flag to 1.  If the sequence has
         previously been loaded, then this flag will be ignored.
@@ -74,14 +63,11 @@ class PDB:
 
         To load the first structure from the PDB file 'test.pdb' in the directory 'pdb', type:
 
-        relax> pdb('pdb/test.pdb')
-        relax> pdb('pdb/test.pdb', None)
-        relax> pdb(file='pdb/test.pdb', model=None)
-        relax> pdb(file='pdb/test.pdb', model=1)
+        relax> pdb('test.pdb', 'pdb', 1)
+        relax> pdb(file='test.pdb', dir='pdb', model=1)
 
         To load the 10th model from the file 'test.pdb', use:
 
-        relax> pdb('test.pdb', 10)
         relax> pdb('test.pdb', model=10)
         relax> pdb(file='test.pdb', model=10)
 
@@ -94,6 +80,7 @@ class PDB:
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", model=" + `model`
+            text = text + ", first_model=" + `first_model`
             text = text + ", load_seq=" + `load_seq` + ")"
             print text
 
@@ -110,13 +97,16 @@ class PDB:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The model argument.
-        if model != None:
-            if type(model) != int and type(model) != str:
-                raise RelaxNoneIntStrError, ('model', model)
+        if model != None and type(model) != int:
+            raise RelaxIntError, ('model', model)
+
+        # The first model argument.
+        if first_model != None and type(first_model) != int:
+            raise RelaxIntError, ('first model', first_model)
 
         # The load sequence argument.
         if type(load_seq) != int or (load_seq != 0 and load_seq != 1):
             raise RelaxBinError, ('load sequence flag', load_seq)
 
         # Execute the functional code.
-        self.relax.generic.pdb.pdb(run=run, file=file, dir=dir, model=model, load_seq=load_seq)
+        self.relax.generic.pdb.pdb(run=run, file=file, dir=dir, model=model, first_model=first_model, load_seq=load_seq)

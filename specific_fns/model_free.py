@@ -2737,8 +2737,9 @@ class Model_free(Common_functions):
 
             # Set the nucleus type.
             if not nucleus_set:
-                self.relax.generic.nuclei.set_values(file_data[i][col['nucleus']])
-                nucleus_set = 1
+                if file_data[i][col['nucleus']] != 'None':
+                    self.relax.generic.nuclei.set_values(file_data[i][col['nucleus']])
+                    nucleus_set = 1
 
 
             # Simulations.
@@ -3176,10 +3177,6 @@ class Model_free(Common_functions):
         # Parameter set.
         ################
 
-        # Invalid parameter set.
-        if self.param_set == None:
-            raise RelaxError, "The parameter set is set to None."
-
         # Local tm and model-free only parameter sets.
         if self.param_set == 'local_tm' or self.param_set == 'mf':
             diff_fixed = 1
@@ -3195,13 +3192,19 @@ class Model_free(Common_functions):
             diff_fixed = 0
             res_fixed = 0
 
+        # No parameter set.
+        else:
+            diff_fixed = None
+            res_fixed = None
+
         # Set the diffusion tensor fixed flag.
-        if self.param_set != 'local_tm':
+        if self.param_set != 'local_tm' and diff_fixed != None:
             self.relax.data.diff[run].fixed = diff_fixed
 
         # Set the residue specific fixed flag.
         for i in xrange(len(self.relax.data.res[run])):
-            self.relax.data.res[run][i].fixed = res_fixed
+            if res_fixed != None:
+                self.relax.data.res[run][i].fixed = res_fixed
 
 
         # PDB and XH vector.
@@ -4318,8 +4321,11 @@ class Model_free(Common_functions):
         pdb = None
         pdb_model = None
         if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
-            pdb = self.relax.data.pdb[self.run].filename
-            pdb_model = self.relax.data.pdb[self.run].user_model
+            if type(self.relax.data.pdb[self.run]) == list:
+                pdb = self.relax.data.pdb[self.run][0].filename
+            else:
+                pdb = self.relax.data.pdb[self.run].filename
+                pdb_model = self.relax.data.pdb[self.run].user_model
 
         # Relaxation data setup.
         try:

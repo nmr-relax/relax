@@ -33,6 +33,10 @@ class Nuclei:
     def find_nucleus(self):
         """Function for finding the nucleus corresponding to 'self.relax.data.gx'."""
 
+        # Not set.
+        if not hasattr(self.relax.data, 'gx'):
+            return
+
         # Nitrogen.
         if self.relax.data.gx == self.gn():
             return 'N'

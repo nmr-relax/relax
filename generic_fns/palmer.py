@@ -391,9 +391,15 @@ class Palmer:
         file.write("#! /bin/sh\n")
         file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out\n")
         if self.relax.data.diff[self.run].type != 'iso':
+            # File name.
+            if type(self.relax.data.pdb[self.run]) == list:
+                filename = self.relax.data.pdb[self.run][0].filename
+            else:
+                filename = self.relax.data.pdb[self.run].filename
+
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
-            system('cp ' + self.relax.data.pdb[self.run].filename + ' ' + self.dir)
-            file.write(" -s " + self.relax.data.pdb[self.run].filename.split('/')[-1])
+            system('cp ' + filename + ' ' + self.dir)
+            file.write(" -s " + filename.split('/')[-1])
         file.write("\n")
 
 
@@ -430,7 +436,13 @@ class Palmer:
 
         # Test if the 'PDB' input file exists.
         if self.relax.data.diff[run].type != 'iso':
-            pdb = self.relax.data.pdb[self.run].filename.split('/')[-1]
+            # File name.
+            if type(self.relax.data.pdb[self.run]) == list:
+                filename = self.relax.data.pdb[self.run][0].filename
+            else:
+                filename = self.relax.data.pdb[self.run].filename
+
+            pdb = filename.split('/')[-1]
             if not access(pdb, F_OK):
                 raise RelaxFileError, ('PDB', pdb)
         else:

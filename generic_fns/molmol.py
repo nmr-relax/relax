@@ -74,7 +74,10 @@ class Molmol:
         self.write("InitAll yes")
 
         # Open the PDB.
-        self.write("ReadPdb " + self.relax.data.pdb[self.run].filename)
+        if type(self.relax.data.pdb[self.run]) == list:
+            self.write("ReadPdb " + self.relax.data.pdb[self.run][0].filename)
+        else:
+            self.write("ReadPdb " + self.relax.data.pdb[self.run].filename)
 
 
     def pipe_open(self):

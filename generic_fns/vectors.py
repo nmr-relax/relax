@@ -21,7 +21,7 @@
 ###############################################################################
 
 from math import sqrt
-from Numeric import dot
+from Numeric import Float64, dot, zeros
 
 
 class Vectors:
@@ -34,11 +34,11 @@ class Vectors:
     def set(self, run=None, res=None, xh_vect=None):
         """Function for setting the XH and XH unit vectors."""
 
-        # Place the XH vector in 'self.relax.data.res[run][i].xh_vect'.
+        # Place the XH vector in 'self.relax.data.res'.
         self.relax.data.res[run][res].xh_vect = xh_vect
 
         # Calculate the normalised vector.
-        self.relax.data.res[run][res].xh_unit = self.relax.data.res[run][res].xh_vect / sqrt(dot(self.relax.data.res[run][res].xh_vect, self.relax.data.res[run][res].xh_vect))
+        self.relax.data.res[run][res].xh_unit = xh_vect / sqrt(dot(xh_vect, xh_vect))
 
 
     def vectors(self, run, heteronuc, proton):
@@ -52,43 +52,79 @@ class Vectors:
         if not self.relax.data.res.has_key(run):
             raise RelaxNoSequenceError, run
 
-        # Reassign the first peptide chain of the first structure.
+        # Number of structures.
         if type(self.relax.data.pdb[run]) == list:
-            raise RelaxError, "Calculation of vectors from multiple structures is not yet implemented."
+            num_str = len(self.relax.data.pdb[run])
         else:
-            pdb_residues = self.relax.data.pdb[run].peptide_chains[0].residues
+            num_str = 1
 
-        # Loop over the sequence.
+        # Create a temporary vector list for each residue.
         for i in xrange(len(self.relax.data.res[run])):
-            # Find the corresponding residue in the PDB.
-            pdb_res = None
-            for j in xrange(len(pdb_residues)):
-                if self.relax.data.res[run][i].num == pdb_residues[j].number:
-                    pdb_res = pdb_residues[j]
-                    break
-            if pdb_res == None:
-                raise RelaxNoResError, self.relax.data.res[run][i].num
+            self.relax.data.res[run][i].xh_vect = []
 
-            # Test if the proton atom exists for residue i.
-            if not pdb_res.atoms.has_key(proton):
-                print "The proton atom " + `proton` + " could be found for residue '" + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + "'."
-                self.relax.data.res[run][i].xh_vect = None
+        # Loop over the structures.
+        for i in xrange(num_str):
+            # Print out.
+            print "\nStructure " + `i` + "\n"
 
-            # Test if the heteronucleus atom exists for residue i.
-            elif not pdb_res.atoms.has_key(heteronuc):
-                print "The heteronucleus atom " + `heteronuc` + " could be found for residue '" + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + "'."
-                self.relax.data.res[run][i].xh_vect = None
-
-            # Calculate the vector.
+            # Reassign the first peptide chain of the first structure.
+            if type(self.relax.data.pdb[run]) == list:
+                pdb_residues = self.relax.data.pdb[run][i].peptide_chains[0].residues
             else:
-                # Get the proton position.
-                posH = pdb_res.atoms[proton].position.array
+                pdb_residues = self.relax.data.pdb[run].peptide_chains[0].residues
 
-                # Get the heteronucleus position.
-                posX = pdb_res.atoms[heteronuc].position.array
+            # Loop over the sequence.
+            for j in xrange(len(self.relax.data.res[run])):
+                # Find the corresponding residue in the PDB.
+                pdb_res = None
+                for k in xrange(len(pdb_residues)):
+                    if self.relax.data.res[run][j].num == pdb_residues[k].number:
+                        pdb_res = pdb_residues[k]
+                        break
+                if pdb_res == None:
+                    raise RelaxNoResError, self.relax.data.res[run][j].num
 
-                # Calculate the vector and place it in 'self.relax.data.res[run][i].xh_vect'.
-                self.relax.data.res[run][i].xh_vect = posH - posX
+                # Test if the proton atom exists for residue i.
+                if not pdb_res.atoms.has_key(proton):
+                    print "The proton atom " + `proton` + " could be found for residue '" + `self.relax.data.res[run][j].num` + " " + self.relax.data.res[run][j].name + "'."
+                    self.relax.data.res[run][j].xh_vect.append(None)
 
-                # Calculate the normalised vector.
-                self.relax.data.res[run][i].xh_unit = self.relax.data.res[run][i].xh_vect / sqrt(dot(self.relax.data.res[run][i].xh_vect, self.relax.data.res[run][i].xh_vect))
+                # Test if the heteronucleus atom exists for residue i.
+                elif not pdb_res.atoms.has_key(heteronuc):
+                    print "The heteronucleus atom " + `heteronuc` + " could be found for residue '" + `self.relax.data.res[run][j].num` + " " + self.relax.data.res[run][j].name + "'."
+                    self.relax.data.res[run][j].xh_vect.append(None)
+
+                # Calculate the vector.
+                else:
+                    # Get the proton position.
+                    posH = pdb_res.atoms[proton].position.array
+
+                    # Get the heteronucleus position.
+                    posX = pdb_res.atoms[heteronuc].position.array
+
+                    # Calculate the vector.
+                    self.relax.data.res[run][j].xh_vect.append(posH - posX)
+
+        # Average the vectors and convert xh_vect from an array of vectors to a vector.
+        for i in xrange(len(self.relax.data.res[run])):
+            # No vectors.
+            if self.relax.data.res[run][i].xh_vect[0] == None:
+                del self.relax.data.res[run][i].xh_vect
+                continue
+
+            # Average vector.
+            ave_vector = zeros(3, Float64)
+
+            # Sum the vectors.
+            for j in xrange(num_str):
+                # Sum.
+                ave_vector = ave_vector + self.relax.data.res[run][i].xh_vect[j]
+
+            # Average the vector.
+            ave_vector = ave_vector / num_str
+
+            # Replace the temporary vector list with the average vector.
+            self.relax.data.res[run][i].xh_vect = ave_vector
+
+            # Calculate the normalised vector.
+            self.relax.data.res[run][i].xh_unit = ave_vector / sqrt(dot(ave_vector, ave_vector))
