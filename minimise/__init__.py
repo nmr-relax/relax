@@ -1,1 +1,1 @@
-__all__ = [ 'levenberg_marquardt', 'simplex', 'test' ]
+__all__ = [ 'grid', 'levenberg_marquardt', 'simplex', 'test' ]

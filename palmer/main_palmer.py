@@ -1,12 +1,64 @@
-from os import system
-from re import match
-from string import split
 import sys
+from re import match
 
+class main_palmer:
+	def __init__(self, mf):
+		"Class used to create and process input and output for the program Modelfree 4."
 
-class common_operations:
-	def __init__(self):
-		"Operations, functions, etc common to the different model-free analysis methods."
+		self.mf = mf
+
+		print "Model-free analysis based on " + self.mf.usr_param.method + " model selection."
+		self.mf.data.stage = self.ask_stage()
+		title = "<<< Stage " + self.mf.data.stage + " - "
+		title = title + self.mf.usr_param.method + " model selection >>>\n\n\n"
+
+		if self.mf.debug == 1:
+			self.mf.file_ops.init_log_file(title)
+
+		self.mf.common_ops.update_data(input)
+		self.mf.common_ops.extract_relax_data()
+
+		if self.mf.debug == 1:
+			self.log_input_info()
+
+		if match('^AIC$', self.mf.usr_param.method) or match('^AICc$', self.mf.usr_param.method):
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+			#self.mf.modsel.asymptotic(self.mf)
+		elif match('^BIC$', self.mf.usr_param.method):
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+			#self.mf.modsel.asymptotic(self.mf)
+		elif match('^Bootstrap$', self.mf.usr_param.method):
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+			#self.mf.modsel.bootstrap(self.mf)
+		elif match('^CV$', self.mf.usr_param.method):
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+			#self.mf.modsel.cv(self.mf)
+		elif match('^Expect$', self.mf.usr_param.method):
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+			#self.mf.modsel.exp_overall_disc(self.mf)
+		elif match('^Farrow$', self.mf.usr_param.method):
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+			#self.mf.modsel.farrow(self.mf)
+		elif match('^Palmer$', self.mf.usr_param.method):
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
+			if self.mf.data.num_data_sets > 3:
+				self.mf.data.runs.append('f-m2m4')
+				self.mf.data.runs.append('f-m2m5')
+				self.mf.data.runs.append('f-m3m4')
+			#self.mf.modsel.palmer(self.mf)
+		elif match('^Overall$', self.mf.usr_param.method):
+			message = "See the file 'modsel/overall_disc.py' for details.\n"
+			self.mf.file_ops.read_file('op_data', message)
+			self.mf.data.overall_disc.op_data = self.mf.file_ops.open_file(file_name='op_data')
+			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+			#self.mf.modsel.overall_disc(self.mf)
+		else:
+			print "The model-free analysis method is not set correctly.  Check self.method in"
+			print "the file 'usr_param.py', quitting program."
+			sys.exit()
+
+		self.mf.data.mfin.default_data()
+		self.goto_stage()
 
 
 	def ask_stage(self):
@@ -41,6 +93,17 @@ class common_operations:
 
 		print "The stage chosen is " + stage + "\n"
 		return stage
+
+
+	def close_mf_files(self, dir):
+		"Close the mfin, mfdata, mfmodel, mfpar, and run files, and make the run file executable."
+
+		self.mf.mfin.close()
+		self.mf.mfdata.close()
+		self.mf.mfmodel.close()
+		self.mf.mfpar.close()
+		self.mf.run.close()
+		chmod(dir + '/run', 0777)
 
 
 	def create_mfdata(self, res, flag='1'):
@@ -100,36 +163,36 @@ class common_operations:
 		mfin.write("\n")
 		# tm.
 		mfin.write('%-7s' % 'tm')
-		mfin.write('%14s' % self.mf.data.usr_param.tm['val'])
-		mfin.write('%2s' % self.mf.data.usr_param.tm['flag'])
-		mfin.write('%3s' % self.mf.data.usr_param.tm['bound'])
-		mfin.write('%5s' % self.mf.data.usr_param.tm['lower'])
-		mfin.write('%6s' % self.mf.data.usr_param.tm['upper'])
-		mfin.write('%4s\n' % self.mf.data.usr_param.tm['steps'])
+		mfin.write('%14s' % self.mf.usr_param.tm['val'])
+		mfin.write('%2s' % self.mf.usr_param.tm['flag'])
+		mfin.write('%3s' % self.mf.usr_param.tm['bound'])
+		mfin.write('%5s' % self.mf.usr_param.tm['lower'])
+		mfin.write('%6s' % self.mf.usr_param.tm['upper'])
+		mfin.write('%4s\n' % self.mf.usr_param.tm['steps'])
 		# dratio.
 		mfin.write('%-7s' % 'Dratio')
-		mfin.write('%14s' % self.mf.data.usr_param.dratio['val'])
-		mfin.write('%2s' % self.mf.data.usr_param.dratio['flag'])
-		mfin.write('%3s' % self.mf.data.usr_param.dratio['bound'])
-		mfin.write('%5s' % self.mf.data.usr_param.dratio['lower'])
-		mfin.write('%6s' % self.mf.data.usr_param.dratio['upper'])
-		mfin.write('%4s\n' % self.mf.data.usr_param.dratio['steps'])
+		mfin.write('%14s' % self.mf.usr_param.dratio['val'])
+		mfin.write('%2s' % self.mf.usr_param.dratio['flag'])
+		mfin.write('%3s' % self.mf.usr_param.dratio['bound'])
+		mfin.write('%5s' % self.mf.usr_param.dratio['lower'])
+		mfin.write('%6s' % self.mf.usr_param.dratio['upper'])
+		mfin.write('%4s\n' % self.mf.usr_param.dratio['steps'])
 		# theta.
 		mfin.write('%-7s' % 'Theta')
-		mfin.write('%14s' % self.mf.data.usr_param.theta['val'])
-		mfin.write('%2s' % self.mf.data.usr_param.theta['flag'])
-		mfin.write('%3s' % self.mf.data.usr_param.theta['bound'])
-		mfin.write('%5s' % self.mf.data.usr_param.theta['lower'])
-		mfin.write('%6s' % self.mf.data.usr_param.theta['upper'])
-		mfin.write('%4s\n' % self.mf.data.usr_param.theta['steps'])
+		mfin.write('%14s' % self.mf.usr_param.theta['val'])
+		mfin.write('%2s' % self.mf.usr_param.theta['flag'])
+		mfin.write('%3s' % self.mf.usr_param.theta['bound'])
+		mfin.write('%5s' % self.mf.usr_param.theta['lower'])
+		mfin.write('%6s' % self.mf.usr_param.theta['upper'])
+		mfin.write('%4s\n' % self.mf.usr_param.theta['steps'])
 		# phi.
 		mfin.write('%-7s' % 'Phi')
-		mfin.write('%14s' % self.mf.data.usr_param.phi['val'])
-		mfin.write('%2s' % self.mf.data.usr_param.phi['flag'])
-		mfin.write('%3s' % self.mf.data.usr_param.phi['bound'])
-		mfin.write('%5s' % self.mf.data.usr_param.phi['lower'])
-		mfin.write('%6s' % self.mf.data.usr_param.phi['upper'])
-		mfin.write('%4s\n' % self.mf.data.usr_param.phi['steps'])
+		mfin.write('%14s' % self.mf.usr_param.phi['val'])
+		mfin.write('%2s' % self.mf.usr_param.phi['flag'])
+		mfin.write('%3s' % self.mf.usr_param.phi['bound'])
+		mfin.write('%5s' % self.mf.usr_param.phi['lower'])
+		mfin.write('%6s' % self.mf.usr_param.phi['upper'])
+		mfin.write('%4s\n' % self.mf.usr_param.phi['steps'])
 
 
 	def create_mfmodel(self, res, md, type='M1'):
@@ -207,26 +270,26 @@ class common_operations:
 
 		mfpar.write('%-14s' % "constants")
 		mfpar.write('%-6s' % self.mf.data.relax_data[0][res][0])
-		mfpar.write('%-7s' % self.mf.data.usr_param.const['nucleus'])
-		mfpar.write('%-8s' % self.mf.data.usr_param.const['gamma'])
-		mfpar.write('%-8s' % self.mf.data.usr_param.const['rxh'])
-		mfpar.write('%-8s\n' % self.mf.data.usr_param.const['csa'])
+		mfpar.write('%-7s' % self.mf.usr_param.const['nucleus'])
+		mfpar.write('%-8s' % self.mf.usr_param.const['gamma'])
+		mfpar.write('%-8s' % self.mf.usr_param.const['rxh'])
+		mfpar.write('%-8s\n' % self.mf.usr_param.const['csa'])
 
 		mfpar.write('%-10s' % "vector")
-		mfpar.write('%-4s' % self.mf.data.usr_param.vector['atom1'])
-		mfpar.write('%-4s\n' % self.mf.data.usr_param.vector['atom2'])
+		mfpar.write('%-4s' % self.mf.usr_param.vector['atom1'])
+		mfpar.write('%-4s\n' % self.mf.usr_param.vector['atom2'])
 
 
 	def create_run(self, dir):
 		"Create the file 'run' to execute the model-free run"
 
 		self.mf.run.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
-		if self.mf.data.usr_param.diff == 'axial':
+		if self.mf.usr_param.diff == 'axial':
 			# Copy the pdb file to the model directory so there are no problems with the *.rotate
 			# file already existing.
-			cmd = 'cp ' + self.mf.data.usr_param.pdb_full + ' ' + dir
+			cmd = 'cp ' + self.mf.usr_param.pdb_full + ' ' + dir
 			system(cmd)
-			self.mf.run.write(" -s " + self.mf.data.usr_param.pdb_file)
+			self.mf.run.write(" -s " + self.mf.usr_param.pdb_file)
 		self.mf.run.write("\n")
 
 
@@ -240,57 +303,16 @@ class common_operations:
 			print "Extracting model-free data from " + model + "/mfout."
 			num_res = len(self.mf.data.relax_data[0])
 			if match('^m', model):
-				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n')
+				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.usr_param.chi2_lim, self.mf.usr_param.ftest_lim, ftest='n')
 			if match('^f', model):
-				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='y')
-
-
-	def extract_relax_data(self):
-		"Extract the relaxation data from the files given in the file 'input'"
-		print "\n[ Relaxation data extraction ]\n"
-		for i in range(len(self.mf.data.input_info)):
-			data = self.mf.file_ops.relax_data(self.mf.data.input_info[i][3])
-			self.mf.data.relax_data[i] = data
-
-
-	def fill_results(self, data, model='0'):
-		"Initialize the next row of the results data structure."
-
-		results = {}
-		results['res_num']   = data['res_num']
-		results['model']   = model
-		if match('0', model) or match('2\+3', model) or match('4\+5', model):
-			results['s2']      = ''
-			results['s2_err']  = ''
-			results['s2f']     = ''
-			results['s2f_err'] = ''
-			results['s2s']     = ''
-			results['s2s_err'] = ''
-			results['te']      = ''
-			results['te_err']  = ''
-			results['rex']     = ''
-			results['rex_err'] = ''
-			results['chi2']     = data['chi2']
-		else:
-			results['s2']      = data['s2']
-			results['s2_err']  = data['s2_err']
-			results['s2f']     = data['s2f']
-			results['s2f_err'] = data['s2f_err']
-			results['s2s']     = data['s2s']
-			results['s2s_err'] = data['s2s_err']
-			results['te']      = data['te']
-			results['te_err']  = data['te_err']
-			results['rex']     = data['rex']
-			results['rex_err'] = data['rex_err']
-			results['chi2']     = data['chi2']
-		return results
+				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.usr_param.chi2_lim, self.mf.usr_param.ftest_lim, ftest='y')
 
 
 	def final_run(self):
 		"Creation of the final run.  Files are placed in the directory 'final'."
 
 		self.mf.file_ops.mkdir('final')
-		self.mf.file_ops.open_mf_files(dir='final')
+		open_mf_files(dir='final')
 		self.create_mfin()
 
 		self.create_run(dir='final')
@@ -312,17 +334,20 @@ class common_operations:
 			else:
 				self.create_mfdata(res, flag='1')
 			# Mfmodel.
-			self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+			self.create_mfmodel(res, self.mf.usr_param.md1, type='M1')
 			# Mfpar.
 			self.create_mfpar(res)
-		self.mf.file_ops.close_mf_files(dir='final')
+		close_mf_files(dir='final')
 
 
 	def goto_stage(self):
 		if match('1', self.mf.data.stage):
 			print "\n[ Stage 1 ]\n"
 			self.set_vars_stage_initial()
-			self.stage_initial()
+			if match('^CV$', self.mf.usr_param.method):
+				self.stage_initial_cv()
+			else:
+				self.stage_initial()
 			print "\n[ End of stage 1 ]\n\n"
 
 		if match('^2', self.mf.data.stage):
@@ -346,250 +371,89 @@ class common_operations:
 			print "\n[ End of stage 3 ]\n\n"
 
 
-	def grace(self, file_name, type, subtitle):
-		"Create grace files for the results."
+	def open_mf_files(self, dir):
+		"Open the mfin, mfdata, mfmodel, mfpar, and run files for writing."
 
-		file = open(file_name, 'w')
-
-		if match('Chi2', type):
-			file.write(self.grace_header(type + ' values', subtitle, 'Residue Number', type, 'xy'))
-		else:
-			file.write(self.grace_header(type + ' values', subtitle, 'Residue Number', type, 'xydy'))
-
-		for res in range(len(self.mf.data.results)):
-			if match('S2', type) and self.mf.data.results[res]['s2']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['s2']` + " ")
-				file.write(`self.mf.data.results[res]['s2_err']` + "\n")
-			elif match('S2s', type) and self.mf.data.results[res]['s2s']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['s2s']` + " ")
-				file.write(`self.mf.data.results[res]['s2s_err']` + "\n")
-			elif match('S2f', type) and self.mf.data.results[res]['s2f']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['s2f']` + " ")
-				file.write(`self.mf.data.results[res]['s2f_err']` + "\n")
-			elif match('te', type) and self.mf.data.results[res]['te']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['te']` + " ")
-				file.write(`self.mf.data.results[res]['te_err']` + "\n")
-			elif match('Rex', type) and self.mf.data.results[res]['rex']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['rex']` + " ")
-				file.write(`self.mf.data.results[res]['rex_err']` + "\n")
-			elif match('Chi2', type) and self.mf.data.results[res]['chi2']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['chi2']` + "\n")
-		file.write("&\n")
-		file.close()
-
-
-	def grace_header(self, title, subtitle, x, y, type):
-		"Create and return a grace header."
-
-		text = "@version 50100\n"
-		text = text + "@with g0\n"
-		if match('Residue Number', x):
-			text = text + "@    world xmax 165\n"
-		if match('R1', x) and match('Chi2', y):
-			text = text + "@    world xmin 0.8\n"
-			text = text + "@    world xmax 2\n"
-			text = text + "@    world ymin 0\n"
-			text = text + "@    world ymax 2000\n"
-		if match('R2', x) and match('Chi2', y):
-			text = text + "@    world xmin 5\n"
-			text = text + "@    world xmax 45\n"
-			text = text + "@    world ymin 0\n"
-			text = text + "@    world ymax 2000\n"
-		if match('NOE', x) and match('Chi2', y):
-			text = text + "@    world xmin 0\n"
-			text = text + "@    world xmax 1\n"
-			text = text + "@    world ymin 0\n"
-			text = text + "@    world ymax 2000\n"
-		text = text + "@    view xmax 1.22\n"
-		text = text + "@    title \"" + title + "\"\n"
-		text = text + "@    subtitle \"" + subtitle + "\"\n"
-		text = text + "@    xaxis  label \"" + x + "\"\n"
-		if match('Residue Number', x):
-			text = text + "@    xaxis  tick major 10\n"
-		if match('R1', x) and match('Chi2', y):
-			text = text + "@    xaxis  tick major 0.2\n"
-		if match('R2', x) and match('Chi2', y):
-			text = text + "@    xaxis  tick major 5\n"
-		if match('NOE', x) and match('Chi2', y):
-			text = text + "@    xaxis  tick major 0.1\n"
-		text = text + "@    xaxis  tick major size 0.480000\n"
-		text = text + "@    xaxis  tick major linewidth 0.5\n"
-		text = text + "@    xaxis  tick minor linewidth 0.5\n"
-		text = text + "@    xaxis  tick minor size 0.240000\n"
-		text = text + "@    xaxis  ticklabel char size 0.790000\n"
-		text = text + "@    yaxis  label \"" + y + "\"\n"
-		if match('R1', x) and match('Chi2', y):
-			text = text + "@    yaxis  tick major 200\n"
-		if match('R2', x) and match('Chi2', y):
-			text = text + "@    yaxis  tick major 200\n"
-		if match('NOE', x) and match('Chi2', y):
-			text = text + "@    yaxis  tick major 200\n"
-		text = text + "@    yaxis  tick major size 0.480000\n"
-		text = text + "@    yaxis  tick major linewidth 0.5\n"
-		text = text + "@    yaxis  tick minor linewidth 0.5\n"
-		text = text + "@    yaxis  tick minor size 0.240000\n"
-		text = text + "@    yaxis  ticklabel char size 0.790000\n"
-		text = text + "@    frame linewidth 0.5\n"
-		text = text + "@    s0 symbol 1\n"
-		text = text + "@    s0 symbol size 0.49\n"
-		text = text + "@    s0 symbol fill pattern 1\n"
-		text = text + "@    s0 symbol linewidth 0.5\n"
-		text = text + "@    s0 line linestyle 0\n"
-		text = text + "@target G0.S0\n@type " + type + "\n"
-		return text
-
-
-	def initialize(self):
-		"A few operations to start up the program."
-
-		self.mf.data.stage = self.ask_stage()
-		title = "<<< Stage " + self.mf.data.stage + " - " 
-		title = title + self.mf.data.usr_param.method + " model selection >>>\n\n\n"
-
-		if self.mf.debug == 1:
-			self.mf.file_ops.init_log_file(title)
-
-		self.update_data(input)
-		self.extract_relax_data()
-
-		if self.mf.debug == 1:
-			self.log_input_info()
-
-
-	def log_input_info(self):
-		for i in range(len(self.mf.data.input_info)):
-			self.mf.log.write('%-25s%-20s\n' % ("Data label:", self.mf.data.input_info[i][0]))
-			self.mf.log.write('%-25s%-20s\n' % ("NMR frequency label:", self.mf.data.input_info[i][1]))
-			self.mf.log.write('%-25s%-20s\n' % ("NMR proton frequency:", `self.mf.data.input_info[i][2]`))
-			self.mf.log.write('%-25s%-20s\n\n' % ("File name:", self.mf.data.input_info[i][3]))
-		self.mf.log.write("Number of frequencies:\t" + `self.mf.data.num_frq` + "\n")
-		self.mf.log.write("Number of data sets:\t" + `self.mf.data.num_data_sets` + "\n\n")
-
-
-	def log_params(self, name, mdx):
-		"Put the parameter data structures into the log file."
-
-		self.mf.log.write("\n" + name + " data structure\n")
-		for param in ['tloc', 'theta', 'ss2', 'sf2', 'te', 'rex']:
-			self.mf.log.write('%-10s' % ( param + ":" ))
-			self.mf.log.write('%-15s' % ( "start = " + mdx[param]['start'] ))
-			self.mf.log.write('%-11s' % ( "flag = " + mdx[param]['flag'] ))
-			self.mf.log.write('%-13s' % ( "bound = " + mdx[param]['bound'] ))
-			self.mf.log.write('%-20s' % ( "lower = " + mdx[param]['lower'] ))
-			self.mf.log.write('%-20s' % ( "upper = " + mdx[param]['upper'] ))
-			self.mf.log.write('%-10s\n' % ( "steps = " + mdx[param]['steps'] ))
-
-
-	def print_results(self):
-		"Print the results into the results file."
-
-		file = open('results', 'w')
-
-		file.write('%-6s%-6s%-13s%-13s%-13s' % ( 'ResNo', 'Model', '    S2', '    S2f', '    S2s' ))
-		file.write('%-19s%-13s%-10s\n' % ( '       te', '    Rex', '    Chi2' ))
-		sys.stdout.write("[")
-		for res in range(len(self.mf.data.results)):
-			sys.stdout.write("-")
-			file.write('%-6s' % self.mf.data.results[res]['res_num'])
-			file.write('%-6s' % self.mf.data.results[res]['model'])
-
-			if self.mf.data.results[res]['model'] in ["1", "2", "3", "4", "5"]:
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] ))
-			else:
-				file.write('%13s' % '')
-			if self.mf.data.results[res]['model'] in ["5"]:
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] ))
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] ))
-			else:
-				file.write('%26s' % '')
-			if self.mf.data.results[res]['model'] in ["2", "4", "5"]:
-				file.write('%8.2f%1s%-8.2f  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] ))
-			else:
-				file.write('%19s' % '')
-			if self.mf.data.results[res]['model'] in ["3", "4"]:
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] ))
-			else:
-				file.write('%13s' % '')
-			file.write('%10.3f\n' % self.mf.data.results[res]['chi2'])
-		sys.stdout.write("]\n")
-
-		file.close()
+		self.mf.mfin = open(dir + '/mfin', 'w')
+		self.mf.mfdata = open(dir + '/mfdata', 'w')
+		self.mf.mfmodel = open(dir + '/mfmodel', 'w')
+		self.mf.mfpar = open(dir + '/mfpar', 'w')
+		self.mf.run = open(dir + '/run', 'w')
 
 
 	def set_run_flags(self, model):
-		"Reset, and then set the flags in self.mf.data.usr_param.md1 and md2."
+		"Reset, and then set the flags in self.mf.usr_param.md1 and md2."
 
-		self.mf.data.usr_param.md1['sf2']['flag'] = '0'
-		self.mf.data.usr_param.md1['ss2']['flag'] = '0'
-		self.mf.data.usr_param.md1['te']['flag']  = '0'
-		self.mf.data.usr_param.md1['rex']['flag'] = '0'
+		self.mf.usr_param.md1['sf2']['flag'] = '0'
+		self.mf.usr_param.md1['ss2']['flag'] = '0'
+		self.mf.usr_param.md1['te']['flag']  = '0'
+		self.mf.usr_param.md1['rex']['flag'] = '0'
 
-		self.mf.data.usr_param.md2['sf2']['flag'] = '0'
-		self.mf.data.usr_param.md2['ss2']['flag'] = '0'
-		self.mf.data.usr_param.md2['te']['flag']  = '0'
-		self.mf.data.usr_param.md2['rex']['flag'] = '0'
+		self.mf.usr_param.md2['sf2']['flag'] = '0'
+		self.mf.usr_param.md2['ss2']['flag'] = '0'
+		self.mf.usr_param.md2['te']['flag']  = '0'
+		self.mf.usr_param.md2['rex']['flag'] = '0'
 
 		# Normal runs.
 		if model == "m1":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
 		if model == "m2":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['te']['flag']  = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['te']['flag']  = '1'
 		if model == "m3":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['rex']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['rex']['flag'] = '1'
 		if model == "m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['te']['flag']  = '1'
-			self.mf.data.usr_param.md1['rex']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['te']['flag']  = '1'
+			self.mf.usr_param.md1['rex']['flag'] = '1'
 		if model == "m5":
-			self.mf.data.usr_param.md1['sf2']['flag'] = '1'
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['te']['flag']  = '1'
+			self.mf.usr_param.md1['sf2']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['te']['flag']  = '1'
 
 		# F-tests.
 		if model == "f-m1m2":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['te']['flag']  = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['te']['flag']  = '1'
 		if model == "f-m1m3":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['rex']['flag'] = '1'
 		if model == "f-m1m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['te']['flag']  = '1'
-			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['te']['flag']  = '1'
+			self.mf.usr_param.md2['rex']['flag'] = '1'
 		if model == "f-m1m5":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['sf2']['flag'] = '1'
-			self.mf.data.usr_param.md2['te']['flag']  = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['sf2']['flag'] = '1'
+			self.mf.usr_param.md2['te']['flag']  = '1'
 		if model == "f-m2m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['te']['flag']  = '1'
-			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['te']['flag']  = '1'
-			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['te']['flag']  = '1'
+			self.mf.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['te']['flag']  = '1'
+			self.mf.usr_param.md2['rex']['flag'] = '1'
 		if model == "f-m2m5":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['te']['flag']  = '1'
-			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['sf2']['flag'] = '1'
-			self.mf.data.usr_param.md2['te']['flag']  = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['te']['flag']  = '1'
+			self.mf.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['sf2']['flag'] = '1'
+			self.mf.usr_param.md2['te']['flag']  = '1'
 		if model == "f-m3m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['rex']['flag'] = '1'
-			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md2['te']['flag']  = '1'
-			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+			self.mf.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.usr_param.md1['rex']['flag'] = '1'
+			self.mf.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.usr_param.md2['te']['flag']  = '1'
+			self.mf.usr_param.md2['rex']['flag'] = '1'
+
+
+	def stage_final(self):
+		print "Stage 3 not implemented yet.\n"
+		sys.exit()
 
 
 	def stage_initial(self):
@@ -608,12 +472,12 @@ class common_operations:
 				print "The run '" + model + "'does not start with an m or f, quitting program!\n\n"
 				sys.exit()
 			self.mf.file_ops.mkdir(dir=model)
-			self.mf.file_ops.open_mf_files(dir=model)
+			open_mf_files(dir=model)
 			self.set_run_flags(model)
 
 			if self.mf.debug == 1:
-				self.log_params('M1', self.mf.data.usr_param.md1)
-				self.log_params('M2', self.mf.data.usr_param.md2)
+				self.log_params('M1', self.mf.usr_param.md1)
+				self.log_params('M2', self.mf.usr_param.md2)
 
 			if match('^m', model):
 				self.mf.data.mfin.selection = 'none'
@@ -626,54 +490,54 @@ class common_operations:
 				# Mfdata.
 				self.create_mfdata(res)
 				# Mfmodel.
-				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+				self.create_mfmodel(res, self.mf.usr_param.md1, type='M1')
 				if match('^f', model):
-					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
+					self.create_mfmodel(res, self.mf.usr_param.md2, type='M2')
 				# Mfpar.
 				self.create_mfpar(res)
-			self.mf.file_ops.close_mf_files(dir=model)
+			close_mf_files(dir=model)
 
 
-	def stage_selection(self):
-		"The stage for model selection common to all techniques."
+	def stage_initial_cv(self):
+		"Creation of the files for the Modelfree calculations for the models in self.mf.data.runs."
 
-		print "\n[ Model-free data extraction ]\n"
-		self.extract_mf_data()
+		for model in self.mf.data.runs:
+			print "Creating input files for model " + model
 
- 		print "\n[ " + self.mf.data.usr_param.method + " model selection ]\n"
-		self.model_selection()
+			if self.mf.debug == 1:
+				self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
 
-		print "\n[ Printing results ]\n"
-		self.print_results()
+			self.mf.file_ops.mkdir(dir=model)
+			self.set_run_flags(model)
 
-		print "\n[ Placing data structures into \"data_all\" ]\n"
-		self.print_data()
+			if self.mf.debug == 1:
+				self.log_params('M1', self.mf.usr_param.md1)
+				self.log_params('M2', self.mf.usr_param.md2)
 
-		print "\n[ Grace file creation ]\n"
-		self.mf.file_ops.mkdir('grace')
-		self.grace('grace/S2.agr', 'S2', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2f.agr', 'S2f', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2s.agr', 'S2s', subtitle="After model selection, unoptimized")
-		self.grace('grace/te.agr', 'te', subtitle="After model selection, unoptimized")
-		self.grace('grace/Rex.agr', 'Rex', subtitle="After model selection, unoptimized")
-		self.grace('grace/Chi2.agr', 'Chi2', subtitle="After model selection, unoptimized")
-
-
-	def stage_final(self):
-		print "Stage 3 not implemented yet.\n"
-		sys.exit()
-
-
-	def update_data(self, input):
-		"Extract all the information from the input info."
-
-		self.mf.data.input_info = self.mf.data.usr_param.input_info
-		self.mf.data.nmr_frq = self.mf.data.usr_param.nmr_frq
-
-		self.mf.data.num_data_sets = len(self.mf.data.input_info)
-		self.mf.data.num_frq = len(self.mf.data.nmr_frq)
-
-		for set in range(len(self.mf.data.input_info)):
-			self.mf.data.relax_data.append([])
+			for set in range(len(self.mf.data.relax_data)):
+				cv_dir = model + "/" + model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+				self.mf.file_ops.mkdir(dir=cv_dir)
+				open_mf_files(dir=cv_dir)
+				self.mf.data.mfin.selection = 'none'
+				self.create_mfin()
+				self.create_run(dir=model)
+				for res in range(len(self.mf.data.relax_data[0])):
+					# Mfdata.
+					self.create_mfdata(res, set)
+					# Mfmodel.
+					self.create_mfmodel(res, self.mf.usr_param.md1, type='M1')
+					# Mfpar.
+					self.create_mfpar(res)
+				close_mf_files(dir=cv_dir)
 
 
+	def set_vars_stage_initial(self):
+		"Set the options for the initial runs."
+
+		self.mf.data.mfin.sims = 'n'
+
+
+	def set_vars_stage_selection(self):
+		"Set the options for the final run."
+
+		self.mf.data.mfin.sims = 'y'

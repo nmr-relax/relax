@@ -50,10 +50,16 @@ class levenberg_marquardt:
 		# text = "%-4s%-6i%-8s%-46s%-6s%-25e%-8s%-6e" % ("run", 0, "Params:", `self.params`, "Chi2:", self.chi2, "l:", self.l)
 		#
 		# Print the status of the minimiser for model-free data (temporary code).
-		print_num = 0
-		self.print_relax_crap(0)
+		if self.mf.min_debug >= 1:
+			print_num = 0
+			self.print_relax_crap(0)
 
 		while 1:
+			# Print debugging info
+			if self.mf.min_debug == 2:
+				print "\n\n"
+				print "%-29s%-40s" % ("Minimisation run number:", `minimise_num`)
+
 			# Calculate the Levenberg-Marquardt matrix 'self.LM_matrix' and chi-squared gradient vector 'self.chi2_grad'.
 			self.LM_matrix, self.chi2_grad = self.create_structures()
 
@@ -74,27 +80,29 @@ class levenberg_marquardt:
 			self.chi2_new = self.chi2_func(self.values, self.back_calc, self.errors)
 
 			# Print debugging info
-			if self.mf.min_debug == 1:
-				print "\n\nMinimisation run number " + `minimise_num`
-				print "Levenberg-Marquardt matrix: " + `self.LM_matrix`
-				print "Chi2 grad vector: " + `self.chi2_grad`
-				print "Old parameter vector: " + `self.params`
-				print "Parameter change vector: " + `param_change`
-				print "New parameter vector: " + `self.new_params`
-				print "Chi-squared: " + `self.chi2`
-				print "Chi-squared new: " + `self.chi2_new`
-				print "l: " + `self.l`
+			if self.mf.min_debug == 2:
+				print "%-29s%-40s" % ("Levenberg-Marquardt matrix:", `self.LM_matrix`)
+				print "%-29s%-40s" % ("Chi2 grad vector:", `self.chi2_grad`)
+				print "%-29s%-40s" % ("Old parameter vector:", `self.params`)
+				print "%-29s%-40s" % ("Parameter change vector:", `param_change`)
+				print "%-29s%-40s" % ("New parameter vector:", `self.new_params`)
+				print "%-29s%-40e" % ("Chi-squared:", self.chi2)
+				print "%-29s%-40e" % ("Chi-squared new:", self.chi2_new)
+				print "%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
+				print "%-29s%-40e" % ("l:", self.l)
 
 
 			# Test improvement.
-			if self.chi2_new >= self.chi2:
+			if self.chi2_new > self.chi2:
 				if self.l <= 1e99:
 					self.l = self.l * 10.0
 			else:
 				# Finish minimising when the chi-squared difference is zero.
-				if self.chi2 - self.chi2_new < 1e-3:
-					print "chi2 diff: " + `self.chi2 - self.chi2_new`
-					print "No chi2 difference, stopped minimising."
+				if self.chi2 - self.chi2_new < 1e-10:
+					if self.mf.min_debug == 2:
+						print "\n%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
+						print "%-29s%-40e" % ("Chi-squared diff limit:", 1e-10)
+						print "Insignificant chi2 difference, stopped minimising."
 					break
 				if self.l >= 1e-99:
 					self.l = self.l / 10.0
@@ -107,12 +115,15 @@ class levenberg_marquardt:
 			# text = "%-4s%-6i%-8s%-46s%-6s%-25s%-8s%-6s" % ("run", minimise_num, "Params:", `self.new_params`, "Chi2:", `self.chi2_new`, "r:", `self.l`)
 			#
 			# Print the status of the minimiser for model-free data (temporary).
-			#if print_num == 100:
-			self.print_relax_crap(minimise_num)
-			#	print_num = 0
+			if self.mf.min_debug == 3:
+				if print_num == 100:
+					self.print_relax_crap(minimise_num)
+					print_num = 0
+					print_num = print_num + 1
+			if self.mf.min_debug >= 1:
+				self.print_relax_crap(minimise_num)
 
 			minimise_num = minimise_num + 1
-			print_num = print_num + 1
 
 		return self.params, self.chi2
 
@@ -126,11 +137,13 @@ class levenberg_marquardt:
 			text = text + "%-9s%-20g" % ("te (ps):", self.params[1]*1e12)
 		elif match('m3', self.function_options[2]):
 			text = text + "%-4s%-20g" % ("S2:", self.params[0])
-			text = text + "%-5s%-20g" % ("Rex:", self.params[1])
+			text = text + "%-5s%-20g" % ("Rex:", self.params[1] * 600000000.0**2)
+			#text = text + "%-5s%-20g" % ("Rex:", self.params[1] * self.mf.data.input_info[0][2]**2)
 		elif match('m4', self.function_options[2]):
 			text = text + "%-4s%-20g" % ("S2:", self.params[0])
 			text = text + "%-9s%-20g" % ("te (ps):", self.params[1]*1e12)
-			text = text + "%-5s%-20g" % ("Rex:", self.params[2])
+			text = text + "%-5s%-20s" % ("Rex:", `self.params[2] * 600000000.0**2`)
+			#text = text + "%-5s%-20g" % ("Rex:", self.params[2] * self.mf.data.input_info[0][2]**2)
 		elif match('m5', self.function_options[2]):
 			text = text + "%-5s%-20g" % ("S2f:", self.params[0])
 			text = text + "%-5s%-20g" % ("S2s:", self.params[1])
@@ -188,8 +201,8 @@ class levenberg_marquardt:
 
 			# Calculate the function derivative array for the data point 'i'.
 			df = self.dfunction(self.function_options, self.data_points[i], self.params)
-			if self.mf.min_debug == 1:
-				print "The derivative array is: " + `df`
+			if self.mf.min_debug == 2:
+				print "%-40s%-30s" % (`self.data_points[i]` + " derivative array is: ", `df`)
 
 			# Loop over all function parameters.
 			for param_j in range(len(self.params)):
@@ -236,13 +249,15 @@ class levenberg_marquardt:
 					A[i] = A[j]
 					A[j] = switch_row
 					break
+			if self.mf.min_debug == 2:
+				print "\tIndex " + `i` + " Step 1:"
+				for row in range(num_rows):
+					print "\t\t" + `A[row]`
+
 
 		# If unsuccessful, don't do the steps below and just return the unmodified matrix.
 		if A[i][i] == 0:
 			return A
-
-		if self.mf.min_debug == 1:
-			print "\tA pre norm: " + `A`
 
 		# Step 2.
 		#########
@@ -251,8 +266,10 @@ class levenberg_marquardt:
 		for col in range(num_cols):
 			A[i][col] = A[i][col] / coeff
 
-		if self.mf.min_debug == 1:
-			print "\tA norm: " + `A`
+		if self.mf.min_debug == 2:
+			print "\tIndex " + `i` + " Step 2:"
+			for row in range(num_rows):
+				print "\t\t" + `A[row]`
 
 		# Step 3.
 		#########
@@ -266,8 +283,10 @@ class levenberg_marquardt:
 			for col in range(num_cols):
 				A[row][col] = A[row][col] - coeff * A[i][col]
 
-		if self.mf.min_debug == 1:
-			print "\tA sub: " + `A`
+		if self.mf.min_debug == 2:
+			print "\tIndex " + `i` + " Step 3:"
+			for row in range(num_rows):
+				print "\t\t" + `A[row]`
 
 		return A
 
@@ -289,8 +308,11 @@ class levenberg_marquardt:
 			for col in range(len(A[row])):
 				Ab[row].append(A[row][col])
 			Ab[row].append(b[row])
-		if self.mf.min_debug == 1:
-			print "Ab: " + `Ab`
+		if self.mf.min_debug == 2:
+			print "Gauss Jordan Elimination:"
+			print "\tAugmented matrix:"
+			for row in range(len_A):
+				print "\t\t" + `Ab[row]`
 
 		# Row reduce the matrix.
 		for i in range(len_A):

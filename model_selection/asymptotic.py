@@ -2,7 +2,7 @@
 #
 # The following asymptotic methods are supported:
 #	AIC - Akaike Information Criteria
-#	AICc - Akaike Information Criteria corrected for small sample sizes 
+#	AICc - Akaike Information Criteria corrected for small sample sizes
 #	BIC - Schwartz Criteria
 #
 # The program is divided into the following stages:
@@ -27,12 +27,6 @@ class asymptotic(common_operations):
 
 		self.mf = mf
 
-		print "Model-free analysis based on " + self.mf.data.usr_param.method + " model selection."
-		self.initialize()
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-		self.mf.data.mfin.default_data()
-		self.goto_stage()
-
 
 	def model_selection(self):
 		"Model selection."
@@ -41,7 +35,7 @@ class asymptotic(common_operations):
 		n = float(self.mf.data.num_data_sets)
 
 		if self.mf.debug == 1:
-			self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>\n\n")
+			self.mf.log.write("\n\n<<< " + self.mf.usr_param.method + " model selection >>>\n\n")
 
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
@@ -64,16 +58,16 @@ class asymptotic(common_operations):
 				elif match('m4', model) or match('m5', model):
 					k = 3.0
 
-				if match('^AIC$', self.mf.data.usr_param.method):
+				if match('^AIC$', self.mf.usr_param.method):
 					crit = crit + k / n
 
-				elif match('^AICc$', self.mf.data.usr_param.method):
+				elif match('^AICc$', self.mf.usr_param.method):
 					if n - k == 1:
 						crit = 1e99
 					else:
 						crit = crit + k/n + k*(k + 1.0)/((n - k - 1.0) * n)
 
-				elif match('^BIC$', self.mf.data.usr_param.method):
+				elif match('^BIC$', self.mf.usr_param.method):
 					crit = crit + k*log(n) / (2.0 * n)
 
 				data[model][res]['crit'] = crit
@@ -89,11 +83,11 @@ class asymptotic(common_operations):
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
 			if self.mf.debug == 1:
-				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
 				self.mf.log.write("The selected model is: " + min + "\n\n")
 
 
@@ -159,7 +153,7 @@ class asymptotic(common_operations):
 				file.write('%-19.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Model selection criteria.
-			file.write('\n%-20s' % self.mf.data.usr_param.method)
+			file.write('\n%-20s' % self.mf.usr_param.method)
 			for run in self.mf.data.runs:
 				file.write('%-19.6f' % self.mf.data.data[run][res]['crit'])
 
@@ -169,15 +163,3 @@ class asymptotic(common_operations):
 		file.write('\n')
 		sys.stdout.write("]\n")
 		file.close()
-
-
-	def set_vars_stage_initial(self):
-		"Set the options for the initial runs."
-
-		self.mf.data.mfin.sims = 'n'
-
-
-	def set_vars_stage_selection(self):
-		"Set the options for the final run."
-
-		self.mf.data.mfin.sims = 'y'

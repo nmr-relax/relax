@@ -13,15 +13,11 @@ from common_ops import common_operations
 
 class farrow(common_operations):
 	def __init__(self, mf):
-		"The model-free analysis of Farrow."
+		"""The model-free analysis of Farrow.
 
+		Farrow's method for model-free analysis. (Farrow et al., 1994)
+		"""
 		self.mf = mf
-
-		print "Farrow's method for model-free analysis. (Farrow et al., 1994)"
-		self.initialize()
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-		self.mf.data.mfin.default_data()
-		self.goto_stage()
 
 
 	def farrows_tests(self):
@@ -206,25 +202,3 @@ class farrow(common_operations):
 		file.write('\n')
 		sys.stdout.write("]\n")
 		file.close()
-
-
-	def set_vars_stage_initial(self):
-		"Set the options for the initial runs."
-
-		self.mf.data.mfin.sims = 'y'
-
-
-	def set_vars_stage_selection(self):
-		"Set the options for the final run."
-
-		self.mf.data.mfin.sims = 'y'
-
-
-	def test_param(self, params, errs):
-		test = 1
-		for i in range(len(params)):
-			if params[i] < errs[i]:
-				test = 0
-		return test
-
-

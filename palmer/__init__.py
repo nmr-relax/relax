@@ -1,1 +1,1 @@
-__all__ = [ 'star' ]
+__all__ = [ 'main_palmer', 'star' ]

@@ -17,19 +17,11 @@ from common_ops import common_operations
 
 class palmer(common_operations):
 	def __init__(self, mf):
-		"The model-free analysis of Palmer."
-
-		self.mf = mf
+		"""The model-free analysis of Palmer.
 
 		print "Palmer's method for model-free analysis. (Mandel et al., 1995)"
-		self.initialize()
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
-		if self.mf.data.num_data_sets > 3:
-			self.mf.data.runs.append('f-m2m4')
-			self.mf.data.runs.append('f-m2m5')
-			self.mf.data.runs.append('f-m3m4')
-		self.mf.data.mfin.default_data()
-		self.goto_stage()
+		"""
+		self.mf = mf
 
 
 	def anova_tests(self):
@@ -45,7 +37,7 @@ class palmer(common_operations):
 						self.mf.data.data[run][res]['chi2_test'] = 0
 
 					# Large chi squared test.
-					if self.mf.data.data[run][res]['chi2'] >= float(self.mf.data.usr_param.large_chi2):
+					if self.mf.data.data[run][res]['chi2'] >= float(self.mf.usr_param.large_chi2):
 						self.mf.data.data[run][res]['large_chi2'] = 1
 					else:
 						self.mf.data.data[run][res]['large_chi2'] = 0
@@ -329,15 +321,3 @@ class palmer(common_operations):
 		file.write('\n')
 		sys.stdout.write("]\n")
 		file.close()
-
-
-	def set_vars_stage_initial(self):
-		"Set the options for the initial runs."
-
-		self.mf.data.mfin.sims = 'y'
-
-
-	def set_vars_stage_selection(self):
-		"Set the options for the final run."
-
-		self.mf.data.mfin.sims = 'y'

@@ -9,6 +9,6 @@ class simplex:
 		self.init_simplex()
 
 	def init_simplex(self):
-		"Initialize the points of the simplex."
+		"Initialise the points of the simplex."
 		self.simplex
 		

@@ -147,7 +147,7 @@ class data:
 
 
 	def init_data(self):
-		"""Initilize the data
+		"""Initilise the data
 
 		The structure of self.input_info is as follows:  The fields of the first dimension correspond
 		to each relaxation data set and is flexible in size, ie len(self.input_info) = number of data sets.

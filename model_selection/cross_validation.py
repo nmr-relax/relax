@@ -24,12 +24,6 @@ class cv(common_operations):
 
 		self.mf = mf
 
-		print "Model-free analysis based on cross-validation model selection."
-		self.initialize()
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-		self.mf.data.mfin.default_data()
-		self.goto_stage()
-
 
 	def extract_mf_data(self):
 		"Extract the model-free results."
@@ -44,11 +38,11 @@ class cv(common_operations):
 				mfout_lines = mfout.readlines()
 				mfout.close()
 				num_res = len(self.mf.data.relax_data[0])
-				self.mf.data.data[cv_model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n', sims='n')
+				self.mf.data.data[cv_model] = self.mf.star.extract(mfout_lines, num_res, self.mf.usr_param.chi2_lim, self.mf.usr_param.ftest_lim, ftest='n', sims='n')
 
 
 	def fill_results(self, data, model='0'):
-		"Initialize the next row of the results data structure."
+		"Initialise the next row of the results data structure."
 
 		results = {}
 		results['res_num']   = data['res_num']
@@ -73,10 +67,10 @@ class cv(common_operations):
 		data = self.mf.data.data
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
-		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
+		tm = float(self.mf.usr_param.tm['val']) * 1e-9
 
 		if self.mf.debug == 1:
-			self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>\n\n")
+			self.mf.log.write("\n\n<<< " + self.mf.usr_param.method + " model selection >>>\n\n")
 
 		for res in range(len(self.mf.data.relax_data[0])):
 			sys.stdout.write("%9s" % "Residue: ")
@@ -135,11 +129,11 @@ class cv(common_operations):
 				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res], model=min[1])
 
 			if self.mf.debug == 1:
-				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `self.mf.data.cv.cv_crit[res]['m1']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `self.mf.data.cv.cv_crit[res]['m2']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `self.mf.data.cv.cv_crit[res]['m3']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `self.mf.data.cv.cv_crit[res]['m4']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `self.mf.data.cv.cv_crit[res]['m5']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `self.mf.data.cv.cv_crit[res]['m1']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `self.mf.data.cv.cv_crit[res]['m2']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `self.mf.data.cv.cv_crit[res]['m3']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m4): " + `self.mf.data.cv.cv_crit[res]['m4']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m5): " + `self.mf.data.cv.cv_crit[res]['m5']` + "\n")
 				self.mf.log.write("The selected model is: " + min + "\n\n")
 
 			sys.stdout.write("%10s\n" % ("Model " + self.mf.data.results[res]['model']))
@@ -234,49 +228,3 @@ class cv(common_operations):
 			file.write('%-6s\n' % self.mf.data.results[res]['model'])
 		sys.stdout.write("]\n")
 		file.close()
-
-
-	def set_vars_stage_initial(self):
-		"Set the options for the initial runs."
-
-		self.mf.data.mfin.sims = 'n'
-
-
-	def set_vars_stage_selection(self):
-		"Set the options for the final run."
-
-		self.mf.data.mfin.sims = 'y'
-		self.mf.data.mfin.sim_type = 'pred'
-
-
-	def stage_initial(self):
-		"Creation of the files for the Modelfree calculations for the models in self.mf.data.runs."
-
-		for model in self.mf.data.runs:
-			print "Creating input files for model " + model
-
-			if self.mf.debug == 1:
-				self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
-
-			self.mf.file_ops.mkdir(dir=model)
-			self.set_run_flags(model)
-
-			if self.mf.debug == 1:
-				self.log_params('M1', self.mf.data.usr_param.md1)
-				self.log_params('M2', self.mf.data.usr_param.md2)
-
-			for set in range(len(self.mf.data.relax_data)):
-				cv_dir = model + "/" + model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-				self.mf.file_ops.mkdir(dir=cv_dir)
-				self.mf.file_ops.open_mf_files(dir=cv_dir)
-				self.mf.data.mfin.selection = 'none'
-				self.create_mfin()
-				self.create_run(dir=model)
-				for res in range(len(self.mf.data.relax_data[0])):
-					# Mfdata.
-					self.create_mfdata(res, set)
-					# Mfmodel.
-					self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-					# Mfpar.
-					self.create_mfpar(res)
-				self.mf.file_ops.close_mf_files(dir=cv_dir)

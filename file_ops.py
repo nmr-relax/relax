@@ -10,19 +10,8 @@ class file_ops:
 		self.mf = mf
 
 
-	def close_mf_files(self, dir):
-		"Close the mfin, mfdata, mfmodel, mfpar, and run files, and make the run file executable."
-
-		self.mf.mfin.close()
-		self.mf.mfdata.close()
-		self.mf.mfmodel.close()
-		self.mf.mfpar.close()
-		self.mf.run.close()
-		chmod(dir + '/run', 0777)
-
-
 	def init_log_file(self, title):
-		"Initialize the log file."
+		"Initialise the log file."
 
 		self.mf.log = open('log.stage' + self.mf.data.stage, 'w')
 		self.mf.log.write(title)
@@ -59,16 +48,6 @@ class file_ops:
 		except OSError:
 			print "Directory ./" + dir + " already exists, quitting program.\n"
 			sys.exit()
-
-
-	def open_mf_files(self, dir):
-		"Open the mfin, mfdata, mfmodel, mfpar, and run files for writing."
-
-		self.mf.mfin = open(dir + '/mfin', 'w')
-		self.mf.mfdata = open(dir + '/mfdata', 'w')
-		self.mf.mfmodel = open(dir + '/mfmodel', 'w')
-		self.mf.mfpar = open(dir + '/mfpar', 'w')
-		self.mf.run = open(dir + '/run', 'w')
 
 
 	def read_file(self, file_name, message=''):

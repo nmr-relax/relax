@@ -25,12 +25,13 @@ class relax:
 
 		The arguments are:
 		1: options - an array with:
-			[0] - the diffusion tensor, ie 'iso', 'axial', 'aniso'
-			[1] - an array with the diffusion parameters
-			[2] - the model-free model
+			[0] - String.  the diffusion tensor, ie 'iso', 'axial', 'aniso'
+			[1] - Array.   an array with the diffusion parameters
+			[2] - String.  the model-free model
 		2: type - an array with:
-			[0] - one of the following, {NOE, R1, R2}
-			[1] - the proton Lamor frequency in MHz
+			[0] - String.  One of the following, {NOE, R1, R2}
+			[1] - String.  The proton Lamor frequency in MHz
+			[2] - Float.  the proton Lamor frequency in MHz
 		3: mf_values - a list containing the model-free parameter values specific for the given model.
 		The order of model-free parameters must be as follows:
 			m1 - {S2}
@@ -93,8 +94,7 @@ class relax:
 			self.mf.log.write("%6s%-11.4f%2s" % (" S2s: ", self.s2s, " |"))
 			self.mf.log.write("%5s%-12.4g%2s" % (" tf: ", self.tf, " |"))
 			self.mf.log.write("%5s%-12.4g%2s" % (" ts: ", self.ts, " |"))
-			for i in range(len(self.mf.data.nmr_frq)):
-				self.mf.log.write("%10s%-7.4f%2s" % (self.mf.data.nmr_frq[i][0] + " rex: ", self.rex[i], " |"))
+			self.mf.log.write("%10s%-7.4f%2s" % (self.mf.data.nmr_frq[i][0] + " rex: ", self.rex, " |"))
 			self.mf.log.write("\n")
 
 			for i in range(len(self.type)):
@@ -112,12 +112,13 @@ class relax:
 
 		The arguments are:
 		1: options - an array with:
-			[0] - the diffusion tensor, ie 'iso', 'axial', 'aniso'
-			[1] - an array with the diffusion parameters
-			[2] - the model-free model
+			[0] - String.  the diffusion tensor, ie 'iso', 'axial', 'aniso'
+			[1] - Array.   an array with the diffusion parameters
+			[2] - String.  the model-free model
 		2: type - an array with:
-			[0] - one of the following, {NOE, R1, R2}
-			[1] - the proton Lamor frequency in MHz
+			[0] - String.  One of the following, {NOE, R1, R2}
+			[1] - String.  The proton Lamor frequency in MHz
+			[2] - Float.  the proton Lamor frequency in MHz
 		3: mf_values - a list containing the model-free parameter values specific for the given model.
 		The order of model-free parameters must be as follows:
 			m1 - {S2}
@@ -191,7 +192,7 @@ class relax:
 					if match('R1', self.type[0]):
 						self.dri.append(0.0)
 					elif match('R2', self.type[0]):
-						self.dri.append(1.0)
+						self.dri.append(1.0 * (self.type[2]*1000000.0)**2)
 					elif match('NOE', self.type[0]):
 						self.dri.append(0.0)
 					else:
@@ -229,8 +230,7 @@ class relax:
 			self.mf.log.write("%6s%-11.4f%2s" % (" S2s: ", self.s2s, " |"))
 			self.mf.log.write("%5s%-12.4g%2s" % (" tf: ", self.tf, " |"))
 			self.mf.log.write("%5s%-12.4g%2s" % (" ts: ", self.ts, " |"))
-			for i in range(len(self.mf.data.nmr_frq)):
-				self.mf.log.write("%10s%-7.4f%2s" % (self.mf.data.nmr_frq[i][0] + " rex: ", self.rex[i], " |"))
+			self.mf.log.write("%10s%-7.4f%2s" % (self.mf.data.nmr_frq[i][0] + " rex: ", self.rex, " |"))
 			self.mf.log.write("\n")
 
 			for i in range(len(self.type)):
@@ -268,7 +268,7 @@ class relax:
 		dr1 = self.calc_dr1_iso()
 		if r1 == 0:
 			print "R1 is zero, this should not occur."
-			dnoe = 10000.0
+			dnoe = 1e99
 		elif dr1 == 0:
 			dnoe = (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.dj[4] - self.dj[2])
 		else:
@@ -304,7 +304,7 @@ class relax:
 
 		r1 = self.calc_r1_iso()
 		if r1 == 0:
-			noe = 1.0
+			noe = 1e99
 		else:
 			noe = 1.0 + (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.j[4] - self.j[2])
 		return noe
@@ -313,7 +313,7 @@ class relax:
 	def initialise_mf_values(self):
 		"Remap the Rex parameter in self.mf_values, and make sure they are of the type float."
 		if match('m[34]', self.options[2]):
-			self.rex = float(self.mf_values[1]) / float(self.type[1])**2
+			self.rex = self.mf_values[1] * (self.type[2]*1000000.0)**2
 		elif not match('m[12345]', self.options[2]):
 			print "Model-free model " + `self.options[2]` + " not implemented yet, quitting program."
 			raise NameError, `self.options[2]`

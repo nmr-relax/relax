@@ -21,6 +21,11 @@ class usr_param:
 		elif match(self.program_type, "mf"):
 			self.input()
 			self.model_selection()
+			self.palmer_method_param()
+			self.palmer_run_param()
+			self.palmer_mfin_param()
+			self.palmer_mfpar_param()
+			self.palmer_mfmodel_param()
 
 		# Use Art Palmer's Modelfree minimiser.
 		elif match(self.program_type, "palmer"):
@@ -95,7 +100,7 @@ class usr_param:
 
 		Palmer:		The method given by Mandel et al., 1995.
 
-		Overall:	Calculate the realized overall discrepancy (real model-free parameters must be known).
+		Overall:	Calculate the realised overall discrepancy (real model-free parameters must be known).
 		"""
 
 		self.method = 'AIC'

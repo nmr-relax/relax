@@ -23,8 +23,9 @@
 import sys
 from re import match
 
+from main_model_free import main_model_free
 from main_relax_fit import main_relax_fit
-from main_palmer import main_palmer
+from common_ops import common_ops
 from data import data
 from file_ops import file_ops
 
@@ -37,19 +38,21 @@ from functions.chi2 import chi2
 from functions.jw import jw
 from functions.relax import relax
 
-
+from minimise.minimise import minimise
 from minimise.grid import grid
 from minimise.levenberg_marquardt import levenberg_marquardt
 from minimise.test import test
 
-from modsel.asymptotic import asymptotic
-from modsel.bootstrap import bootstrap
-from modsel.cross_validation import cv
-from modsel.exp_overall_disc import exp_overall_disc
-from modsel.farrow import farrow
-from modsel.palmer import palmer
-from modsel.overall_disc import overall_disc
+from model_selection.model_selection import modsel
+from model_selection.asymptotic import asymptotic
+from model_selection.bootstrap import bootstrap
+from model_selection.cross_validation import cv
+from model_selection.exp_overall_disc import exp_overall_disc
+from model_selection.farrow import farrow
+from model_selection.palmer import palmer
+from model_selection.overall_disc import overall_disc
 
+from palmer.main_palmer import main_palmer
 from palmer.star import star
 
 
@@ -72,15 +75,16 @@ class mf:
 
 		# Initialise the class self.mf.function to place program functions into.
 		self.functions = functions(self)
+		self.modsel = modsel(self)
 
 		# Testing minimiser!  Temp code.
-		self.data = data(self)
-		self.file_ops = file_ops(self)
-		self.functions.relax = relax(self)
-		self.functions.chi2 = chi2()
-		self.functions.jw = jw()
-		test(self)
-		sys.exit()
+		#self.data = data(self)
+		#self.file_ops = file_ops(self)
+		#self.functions.relax = relax(self)
+		#self.functions.chi2 = chi2()
+		#self.functions.jw = jw()
+		#test(self)
+		#sys.exit()
 
 		# Select the behaviour of the program.
 		if match(self.usr_param.program_type, 'relax_fit'):
@@ -89,18 +93,38 @@ class mf:
 			main_relax_fit(self)
 
 		if match(self.usr_param.program_type, 'mf'):
-			self.calc_relax_data = calc_relax_data(self)
-			self.calc_chi2 = calc_chi2()
+			self.common_ops = common_ops(self)
 			self.data = data(self)
 			self.file_ops = file_ops(self)
-			print "Not implemented yet, quitting program."
-			sys.exit()
+			self.functions.relax = relax(self)
+			self.functions.chi2 = chi2()
+			self.functions.jw = jw()
+			self.modsel.asymptotic = asymptotic(self)
+			self.modsel.bootstrap = bootstrap(self)
+			self.modsel.cv = cv(self)
+			self.modsel.exp_overall_disc =exp_overall_disc(self)
+			self.modsel.farrow = farrow(self)
+			self.modsel.palmer = palmer(self)
+			self.modsel.overall_disc = overall_disc(self)
+			self.minimise = minimise(self)
+			self.minimise.grid = grid(self)
+			self.minimise.levenberg_marquardt = levenberg_marquardt(self)
+			main_model_free(self)
 
 		if match(self.usr_param.program_type, 'palmer'):
-			self.calc_relax_data = calc_relax_data(self)
-			self.calc_chi2 = calc_chi2()
+			self.common_ops = common_ops(self)
 			self.data = data(self)
 			self.file_ops = file_ops(self)
+			self.functions.relax = relax(self)
+			self.functions.chi2 = chi2()
+			self.functions.jw = jw()
+			self.modsel.asymptotic = asymptotic(self)
+			self.modsel.bootstrap = bootstrap(self)
+			self.modsel.cv = cv(self)
+			self.modsel.exp_overall_disc =exp_overall_disc(self)
+			self.modsel.farrow = farrow(self)
+			self.modsel.palmer = palmer(self)
+			self.modsel.overall_disc = overall_disc(self)
 			self.star = star(self)
 			main_palmer(self)
 

@@ -4,7 +4,7 @@
 #
 # The program is divided into the following stages:
 #	Stage 1:  Creation of the files for the model-free calculations for models 1 to 5.  Monte Carlo
-#		simulations are used, but the initial data rather than the backcalculated data is randomized.
+#		simulations are used, but the initial data rather than the backcalculated data is randomised.
 #	Stage 2:  Model selection and the creation of the final run.  Monte Carlo simulations are used to
 #		find errors.  This stage has the option of optimizing the diffusion tensor along with the
 #		model-free parameters.
@@ -23,12 +23,6 @@ class exp_overall_disc(common_operations):
 
 		self.mf = mf
 
-		print "Model-free analysis based on the expected overall discrepancy."
-		self.initialize()
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-		self.mf.data.mfin.default_data()
-		self.goto_stage()
-
 
 	def model_selection(self):
 		"Model selection."
@@ -37,7 +31,7 @@ class exp_overall_disc(common_operations):
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
 		n = float(self.mf.data.num_data_sets)
-		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
+		tm = float(self.mf.usr_param.tm['val']) * 1e-9
 
 		if self.mf.debug == 1:
 			self.mf.log.write("\n\n<<< Expected overall discrepancy >>>\n\n")
@@ -117,11 +111,11 @@ class exp_overall_disc(common_operations):
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
 			if self.mf.debug == 1:
-				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['expect']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['expect']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['expect']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['expect']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `data['m1'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `data['m2'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `data['m3'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m4): " + `data['m4'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m5): " + `data['m5'][res]['expect']` + "\n")
 				self.mf.log.write("The selected model is: " + min + "\n\n")
 
 			print "   Model " + self.mf.data.results[res]['model']
@@ -199,17 +193,3 @@ class exp_overall_disc(common_operations):
 		file.write('\n')
 		sys.stdout.write("]\n")
 		file.close()
-
-
-	def set_vars_stage_initial(self):
-		"Set the options for the initial runs."
-
-		self.mf.data.mfin.sims = 'y'
-		self.mf.data.mfin.sim_type = 'expr'
-
-
-	def set_vars_stage_selection(self):
-		"Set the options for the final run."
-
-		self.mf.data.mfin.sims = 'y'
-		self.mf.data.mfin.sim_type = 'pred'

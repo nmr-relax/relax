@@ -1,7 +1,7 @@
 # Calculate the overall discrepancy.
 #
 # The input relaxation data for this method should be the operating model data (the theoretical, back calculated
-# relaxation values) which has been Gaussian randomized for a given error.  The original operating model data
+# relaxation values) which has been Gaussian randomised for a given error.  The original operating model data
 # should be placed in the file 'op_data'.  The format of the file should be as follows.  The first line is a
 # header line and is ignored.  The columns are:
 #	0 - Residue number.
@@ -11,15 +11,15 @@
 #
 #
 # The program is divided into the following stages:
-#	Stage 1:   Creation of the files for the model-free calculations for models 1 to 5 for the randomized
+#	Stage 1:   Creation of the files for the model-free calculations for models 1 to 5 for the randomised
 #		data.
 #	Stage 2a:  Calculation of the overall discrepancy for model selection, and the creation of the final
-#		run.  Monte Carlo simulations are used to find errors, and the diffusion tensor is unoptimized.
+#		run.  Monte Carlo simulations are used to find errors, and the diffusion tensor is unoptimised.
 #		Files are placed in the directory 'final'.
 #	Stage 2b:  Calculation of the overall discrepancy for model selection, and the creation of the final
 #		optimization run.  Monte Carlo simulations are used to find errors, and the diffusion tensor
-#		is optimized.  Files are placed in the directory 'optimized'.
-#	Stage 3:   Extraction of optimized data.
+#		is optimised.  Files are placed in the directory 'optimised'.
+#	Stage 3:   Extraction of optimised data.
 
 import sys
 from math import log, pi
@@ -33,15 +33,6 @@ class overall_disc(common_operations):
 
 		self.mf = mf
 
-		print "Modelfree analysis based on the overall discrepancy for model selection."
-		self.initialize()
-		message = "See the file 'modsel/overall_disc.py' for details.\n"
-		self.mf.file_ops.read_file('op_data', message)
-		self.mf.data.overall_disc.op_data = self.mf.file_ops.open_file(file_name='op_data')
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-		self.mf.data.mfin.default_data()
-		self.goto_stage()
-
 
 	def model_selection(self):
 		"Model selection."
@@ -50,10 +41,10 @@ class overall_disc(common_operations):
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
 		n = float(self.mf.data.num_data_sets)
-		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
+		tm = float(self.mf.usr_param.tm['val']) * 1e-9
 
 		if self.mf.debug == 1:
-			self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>\n\n")
+			self.mf.log.write("\n\n<<< " + self.mf.usr_param.method + " model selection >>>\n\n")
 
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
@@ -95,11 +86,11 @@ class overall_disc(common_operations):
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
 			if self.mf.debug == 1:
-				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
+				self.mf.log.write(self.mf.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
 				self.mf.log.write("The selected model is: " + min + "\n\n")
 
 
@@ -165,7 +156,7 @@ class overall_disc(common_operations):
 				file.write('%-19.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Model selection criteria.
-			file.write('\n%-20s' % self.mf.data.usr_param.method)
+			file.write('\n%-20s' % self.mf.usr_param.method)
 			for run in self.mf.data.runs:
 				file.write('%-19.6f' % self.mf.data.data[run][res]['crit'])
 
@@ -175,15 +166,3 @@ class overall_disc(common_operations):
 		file.write('\n')
 		sys.stdout.write("]\n")
 		file.close()
-
-
-	def set_vars_stage_initial(self):
-		"Set the options for the initial runs."
-
-		self.mf.data.mfin.sims = 'n'
-
-
-	def set_vars_stage_selection(self):
-		"Set the options for the final run."
-
-		self.mf.data.mfin.sims = 'y'

@@ -32,9 +32,9 @@ class grid:
 		self.data_points = data_points
 		self.errors = errors
 
+		# Initialise data structures.
 		self.num_params = len(grid_options)
 		total_steps = 1.0
-
 		self.step_size = []
 		self.step_num = []
 		self.params = []
@@ -54,23 +54,24 @@ class grid:
 		self.chi2 = self.chi2_func(self.values, self.back_calc, self.errors)
 		self.min_chi2 = self.chi2
 
-		print "%-20s%-20i" % ("Total_steps:", total_steps)
-		#print "%-20s%-20s" % ("Step size:", `self.step_size`)
-		#print "%-20s%-20s" % ("Init step num:", `self.step_num`)
-		#print "%-20s%-20s" % ("Init params:", `self.params`)
-		#print "%-20s%-20g" % ("Init chi2:", self.chi2)
+		if self.mf.min_debug >= 1:
+			print "%-20s%-20i" % ("Total_steps:", total_steps)
+		if self.mf.min_debug == 2:
+			print "%-20s%-20s" % ("Step size:", `self.step_size`)
+			print "%-20s%-20s" % ("Init step num:", `self.step_num`)
+			print "%-20s%-20s" % ("Init params:", `self.params`)
+			print "%-20s%-20g\n" % ("Init chi2:", self.chi2)
 
-		for step in range(total_steps):
-			if step != 0:
-				# Loop over the parameters.
-				for param in range(len(grid_options)):
-					if self.step_num[param] < self.grid_options[param][0]:
-						self.step_num[param] += 1
-						self.params[param] = self.params[param] + self.step_size[param]
-						break
-					else:
-						self.step_num[param] = 1
-						self.params[param] = self.grid_options[param][1]
+		for step in range(1, total_steps - 1):
+			# Loop over the parameters.
+			for param in range(len(grid_options)):
+				if self.step_num[param] < self.grid_options[param][0]:
+					self.step_num[param] += 1
+					self.params[param] = self.params[param] + self.step_size[param]
+					break
+				else:
+					self.step_num[param] = 1
+					self.params[param] = self.grid_options[param][1]
 	
 			# Back calculate the initial function values and the chi-squared statistic.
 			self.back_calc = []
@@ -82,14 +83,15 @@ class grid:
 				self.min_chi2 = self.chi2
 				for param in range(len(grid_options)):
 					self.min_params[param] = self.params[param]
+				if self.mf.min_debug >= 1:
+					print "%-6s%-8i%-12s%-20s" % ("Step:", step, "Min params:", `self.min_params`)
 
-				print "%-6s%-8i%-12s%-20s" % ("Step:", step, "Min params:", `self.min_params`)
-
-			#print "\n%-20s%-20i" % ("Step number:", step)
-			#print "%-20s%-20s" % ("Step num:", `self.step_num`)
-			#print "%-20s%-20s" % ("Params:", `self.params`)
-			#print "%-20s%-20g" % ("Chi2:", self.chi2)
-			#print "%-20s%-20s" % ("Min params:", `self.min_params`)
-			#print "%-20s%-20g" % ("Min Chi2:", self.min_chi2)
+			if self.mf.min_debug == 2:
+				print "%-20s%-20i" % ("Step number:", step)
+				print "%-20s%-20s" % ("Step num:", `self.step_num`)
+				print "%-20s%-20s" % ("Params:", `self.params`)
+				print "%-20s%-20g" % ("Chi2:", self.chi2)
+				print "%-20s%-20s" % ("Min params:", `self.min_params`)
+				print "%-20s%-20g\n" % ("Min Chi2:", self.min_chi2)
 
 		return self.min_params, self.min_chi2
