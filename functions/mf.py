@@ -320,12 +320,17 @@ class Mf:
         # Spectral density components.
         self.data.w_tm_sqrd = zeros((self.data.num_frq, 5), Float64)
         self.data.fact_tm = zeros((self.data.num_frq, 5), Float64)
-        self.data.w_tm_sqrd = self.data.frq_sqrd_list * self.data.diff_params[0] ** 2
-        self.data.fact_tm = 1.0 / (1.0 + self.data.w_tm_sqrd)
         self.data.w_te_tm_sqrd = zeros((self.data.num_frq, 5), Float64)
         self.data.te_denom = zeros((self.data.num_frq, 5), Float64)
-        self.data.two_fifths_tm = 0.4 * self.data.diff_params[0]
-        self.data.two_fifths_tm_sqrd = 0.4 * self.data.diff_params[0] ** 2
+        tm_flag = 0
+        for i in range(len(self.param_types)):
+            if self.param_types == 'tm':
+                tm_flag = 1
+        if not tm_flag:
+            self.data.w_tm_sqrd = self.data.frq_sqrd_list * self.data.diff_params[0] ** 2
+            self.data.fact_tm = 1.0 / (1.0 + self.data.w_tm_sqrd)
+            self.data.two_fifths_tm = 0.4 * self.data.diff_params[0]
+            self.data.two_fifths_tm_sqrd = 0.4 * self.data.diff_params[0] ** 2
 
         # Spectral density values, gradients, and Hessians.
         self.data.jw = zeros((self.relax.data.num_frq, 5), Float64)
@@ -469,8 +474,8 @@ class Mf:
                 self.calc_d2jw[i].append(None)
 
 
-        # The original model-free equations.
-        ####################################
+        # The original model-free equations {tm, S2, te, Rex, r, CSA}.
+        ##############################################################
 
         if self.equation == 'mf_orig':
             # Find the indecies of the parameters in self.param_types
@@ -491,8 +496,21 @@ class Mf:
                 else:
                     return 0
 
+            # No spectral density parameters {}.
+            if self.data.tm_index == None and self.data.s2_index == None and self.data.te_index == None:
+                self.calc_jw = calc_iso_jw
+                self.calc_jw_comps = None
+                self.calc_djw_comps = None
+
+            # Spectral density parameters {S2}.
+            elif self.data.tm_index == None and self.data.s2_index != None and self.data.te_index == None:
+                self.calc_jw = calc_iso_s2_jw
+                self.calc_jw_comps = None
+                self.calc_djw_comps = None
+                self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
+
             # Spectral density parameters {S2, te}.
-            if self.data.s2_index != None and self.data.te_index != None:
+            elif self.data.tm_index == None and self.data.s2_index != None and self.data.te_index != None:
                 self.calc_jw = calc_iso_s2_te_jw
                 self.calc_jw_comps = calc_iso_s2_te_jw_comps
                 self.calc_djw_comps = calc_iso_s2_te_djw_comps
@@ -501,21 +519,37 @@ class Mf:
                 self.calc_d2jw[self.data.s2_index][self.data.te_index] = self.calc_d2jw[self.data.te_index][self.data.s2_index] = calc_iso_S2_te_d2jw_dS2dte
                 self.calc_d2jw[self.data.te_index][self.data.te_index] = calc_iso_S2_te_d2jw_dte2
 
-            # Spectral density parameters {S2}.
-            elif self.data.s2_index != None:
-                self.calc_jw = calc_iso_s2_jw
-                self.calc_jw_comps = None
-                self.calc_djw_comps = None
-                self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
-
-            # No spectral density parameters.
-            else:
+            # Spectral density parameters {tm}.
+            if self.data.tm_index != None and self.data.s2_index == None and self.data.te_index == None:
                 self.calc_jw = calc_iso_jw
-                self.calc_jw_comps = None
+                self.calc_jw_comps = calc_iso_tm_comps
                 self.calc_djw_comps = None
 
-        # The extended model-free equations.
-        ####################################
+            # Spectral density parameters {tm, S2}.
+            elif self.data.tm_index != None and self.data.s2_index != None and self.data.te_index == None:
+                self.calc_jw = calc_iso_s2_jw
+                self.calc_jw_comps = calc_iso_tm_comps
+                self.calc_djw_comps = None
+                self.calc_djw[self.data.s2_index] = calc_iso_tm_S2_djw_dS2
+
+            # Spectral density parameters {tm, S2, te}.
+            elif self.data.tm_index != None and self.data.s2_index != None and self.data.te_index != None:
+                self.calc_jw = calc_iso_tm_s2_te_jw
+                self.calc_jw_comps = calc_iso_tm_s2_te_jw_comps
+                self.calc_djw_comps = calc_iso_tm_s2_te_djw_comps
+                self.calc_djw[self.data.s2_index] = calc_iso_tm_S2_te_djw_dS2
+                self.calc_djw[self.data.te_index] = calc_iso_tm_S2_te_djw_dte
+                self.calc_d2jw[self.data.s2_index][self.data.te_index] = self.calc_d2jw[self.data.te_index][self.data.s2_index] = calc_iso_tm_S2_te_d2jw_dS2dte
+                self.calc_d2jw[self.data.te_index][self.data.te_index] = calc_iso_tm_S2_te_d2jw_dte2
+
+            # Bad parameter combination.
+            else:
+                print "Invalid combination of parameters for the extended model-free equation."
+                return 0
+
+
+        # The extended model-free equations {tm, S2f, tf, S2, ts, Rex, r, CSA}.
+        #######################################################################
 
         elif self.equation == 'mf_ext':
             # Find the indecies of the parameters in self.param_types
@@ -539,8 +573,20 @@ class Mf:
                     self.data.csa_index = i
                 else: return 0
 
+            # Spectral density parameters {S2f, S2, ts}.
+            if self.data.tm_index == None and self.data.s2f_index != None and self.data.tf_index == None and self.data.s2_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_s2f_s2_ts_jw
+                self.calc_jw_comps = calc_iso_s2f_s2_ts_jw_comps
+                self.calc_djw_comps = calc_iso_s2f_s2_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2_ts_djw_dS2f
+                self.calc_djw[self.data.s2_index] = calc_iso_S2f_S2_ts_djw_dS2
+                self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_S2_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2_index] = calc_iso_S2f_S2_ts_d2jw_dS2dts
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_S2_ts_d2jw_dts2
+
             # Spectral density parameters {S2f, tf, S2, ts}.
-            if self.data.s2f_index != None and self.data.tf_index != None and self.data.s2_index != None and self.data.ts_index != None:
+            elif self.data.tm_index == None and self.data.s2f_index != None and self.data.tf_index != None and self.data.s2_index != None and self.data.ts_index != None:
                 self.calc_jw = calc_iso_s2f_tf_s2_ts_jw
                 self.calc_jw_comps = calc_iso_s2f_tf_s2_ts_jw_comps
                 self.calc_djw_comps = calc_iso_s2f_tf_s2_ts_djw_comps
@@ -554,24 +600,126 @@ class Mf:
                 self.calc_d2jw[self.data.tf_index][self.data.tf_index] = calc_iso_S2f_tf_S2_ts_d2jw_dtf2
                 self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_tf_S2_ts_d2jw_dts2
 
-            # Spectral density parameters {S2f, S2, ts}.
-            elif self.data.s2f_index != None and self.data.tf_index == None and self.data.s2_index != None and self.data.ts_index != None:
-                self.calc_jw = calc_iso_s2f_s2_ts_jw
-                self.calc_jw_comps = calc_iso_s2f_s2_ts_jw_comps
-                self.calc_djw_comps = calc_iso_s2f_s2_ts_djw_comps
-                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2_ts_djw_dS2f
-                self.calc_djw[self.data.s2_index] = calc_iso_S2f_S2_ts_djw_dS2
-                self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2_ts_djw_dts
-                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_S2_ts_d2jw_dS2fdts
-                self.calc_d2jw[self.data.s2_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2_index] = calc_iso_S2f_S2_ts_d2jw_dS2dts
-                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_S2_ts_d2jw_dts2
+            # Spectral density parameters {tm, S2f, S2, ts}.
+            elif self.data.tm_index != None and self.data.s2f_index != None and self.data.tf_index == None and self.data.s2_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_tm_s2f_s2_ts_jw
+                self.calc_jw_comps = calc_iso_tm_s2f_s2_ts_jw_comps
+                self.calc_djw_comps = calc_iso_tm_s2f_s2_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_tm_S2f_S2_ts_djw_dS2f
+                self.calc_djw[self.data.s2_index] = calc_iso_tm_S2f_S2_ts_djw_dS2
+                self.calc_djw[self.data.ts_index] = calc_iso_tm_S2f_S2_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_tm_S2f_S2_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2_index] = calc_iso_tm_S2f_S2_ts_d2jw_dS2dts
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_tm_S2f_S2_ts_d2jw_dts2
 
-            # Bad combination.
+            # Spectral density parameters {tm, S2f, tf, S2, ts}.
+            elif self.data.tm_index != None and self.data.s2f_index != None and self.data.tf_index != None and self.data.s2_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_tm_s2f_tf_s2_ts_jw
+                self.calc_jw_comps = calc_iso_tm_s2f_tf_s2_ts_jw_comps
+                self.calc_djw_comps = calc_iso_tm_s2f_tf_s2_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_tm_S2f_tf_S2_ts_djw_dS2f
+                self.calc_djw[self.data.tf_index] = calc_iso_tm_S2f_tf_S2_ts_djw_dtf
+                self.calc_djw[self.data.s2_index] = calc_iso_tm_S2f_tf_S2_ts_djw_dS2
+                self.calc_djw[self.data.ts_index] = calc_iso_tm_S2f_tf_S2_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.tf_index] = self.calc_d2jw[self.data.tf_index][self.data.s2f_index] = calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdtf
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2_index] = calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2dts
+                self.calc_d2jw[self.data.tf_index][self.data.tf_index] = calc_iso_tm_S2f_tf_S2_ts_d2jw_dtf2
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_tm_S2f_tf_S2_ts_d2jw_dts2
+
+            # Bad parameter combination.
             else:
                 print "Invalid combination of parameters for the extended model-free equation."
                 return 0
 
+
+        # The extended 2 model-free equations {tm, S2f, tf, S2s, ts, Rex, r, CSA}.
+        #########################################################################
+
+        elif self.equation == 'mf_ext2':
+            # Find the indecies of the parameters in self.param_types
+            self.data.tm_index, self.data.s2f_index, self.data.tf_index, self.data.s2s_index, self.data.ts_index, self.data.rex_index, self.data.r_index, self.data.csa_index,  = None, None, None, None, None, None, None, None
+            for i in range(len(self.param_types)):
+                if self.param_types[i] == 'tm':
+                    self.data.tm_index = i
+                elif self.param_types[i] == 'S2f':
+                    self.data.s2f_index = i
+                elif self.param_types[i] == 'tf':
+                    self.data.tf_index = i
+                elif self.param_types[i] == 'S2s':
+                    self.data.s2s_index = i
+                elif self.param_types[i] == 'ts':
+                    self.data.ts_index = i
+                elif self.param_types[i] == 'Rex':
+                    self.data.rex_index = i
+                elif self.param_types[i] == 'r':
+                    self.data.r_index = i
+                elif self.param_types[i] == 'CSA':
+                    self.data.csa_index = i
+                else: return 0
+
+            # Spectral density parameters {S2f, S2s, ts}.
+            if self.data.tm_index == None and self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_s2f_s2s_ts_jw
+                self.calc_jw_comps = calc_iso_s2f_s2s_ts_jw_comps
+                self.calc_djw_comps = calc_iso_s2f_s2s_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2s_ts_djw_dS2f
+                self.calc_djw[self.data.s2s_index] = calc_iso_S2f_S2s_ts_djw_dS2s
+                self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2s_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_S2s_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2s_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2s_index] = calc_iso_S2f_S2s_ts_d2jw_dS2sdts
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_S2s_ts_d2jw_dts2
+
+            # Spectral density parameters {S2f, tf, S2s, ts}.
+            elif self.data.tm_index == None and self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_s2f_tf_s2s_ts_jw
+                self.calc_jw_comps = calc_iso_s2f_tf_s2s_ts_jw_comps
+                self.calc_djw_comps = calc_iso_s2f_tf_s2s_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2f
+                self.calc_djw[self.data.tf_index] = calc_iso_S2f_tf_S2s_ts_djw_dtf
+                self.calc_djw[self.data.s2s_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2s
+                self.calc_djw[self.data.ts_index] = calc_iso_S2f_tf_S2s_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.tf_index] = self.calc_d2jw[self.data.tf_index][self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2s_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2s_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dS2sdts
+                self.calc_d2jw[self.data.tf_index][self.data.tf_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dtf2
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dts2
+
+            # Spectral density parameters {tm, S2f, S2s, ts}.
+            elif self.data.tm_index != None and self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_tm_s2f_s2s_ts_jw
+                self.calc_jw_comps = calc_iso_tm_s2f_s2s_ts_jw_comps
+                self.calc_djw_comps = calc_iso_tm_s2f_s2s_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_tm_S2f_S2s_ts_djw_dS2f
+                self.calc_djw[self.data.s2s_index] = calc_iso_tm_S2f_S2s_ts_djw_dS2s
+                self.calc_djw[self.data.ts_index] = calc_iso_tm_S2f_S2s_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_tm_S2f_S2s_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2s_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2s_index] = calc_iso_tm_S2f_S2s_ts_d2jw_dS2sdts
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_tm_S2f_S2s_ts_d2jw_dts2
+
+            # Spectral density parameters {tm, S2f, tf, S2s, ts}.
+            elif self.data.tm_index != None and self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_tm_s2f_tf_s2s_ts_jw
+                self.calc_jw_comps = calc_iso_tm_s2f_tf_s2s_ts_jw_comps
+                self.calc_djw_comps = calc_iso_tm_s2f_tf_s2s_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_tm_S2f_tf_S2s_ts_djw_dS2f
+                self.calc_djw[self.data.tf_index] = calc_iso_tm_S2f_tf_S2s_ts_djw_dtf
+                self.calc_djw[self.data.s2s_index] = calc_iso_tm_S2f_tf_S2s_ts_djw_dS2s
+                self.calc_djw[self.data.ts_index] = calc_iso_tm_S2f_tf_S2s_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.tf_index] = self.calc_d2jw[self.data.tf_index][self.data.s2f_index] = calc_iso_tm_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_tm_S2f_tf_S2s_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2s_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2s_index] = calc_iso_tm_S2f_tf_S2s_ts_d2jw_dS2sdts
+                self.calc_d2jw[self.data.tf_index][self.data.tf_index] = calc_iso_tm_S2f_tf_S2s_ts_d2jw_dtf2
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_tm_S2f_tf_S2s_ts_d2jw_dts2
+
+            # Bad parameter combination.
+            else:
+                print "Invalid combination of parameters for the extended model-free equation."
+                return 0
+
+        # Unknown model-free equation.
         else:
+            print "Unknown model-free equation."
             return 0
 
 
@@ -731,8 +879,8 @@ class Mf:
                         self.create_d2ri_prime[i].append(func_d2ri_djwidjwj_prime)
 
 
-        # Both the bond length and CSA are fixed.
-        #########################################
+        # Both the bond length and CSA are fixed {}.
+        ############################################
 
         if self.data.r_index == None and self.data.csa_index == None:
             # The main ri component functions
@@ -756,8 +904,8 @@ class Mf:
                     self.data.csa_comps_func[i] = self.create_csa_func[i](self.data.csa_const_func[self.data.remap_table[i]])
 
 
-        # The bond length is a parameter.
-        #################################
+        # The bond length is a parameter {r}.
+        #####################################
 
         elif self.data.r_index != None and self.data.csa_index == None:
             # The main ri component functions
@@ -777,8 +925,8 @@ class Mf:
                     self.data.csa_comps_func[i] = self.create_csa_func[i](self.data.csa_const_func[self.data.remap_table[i]])
 
 
-        # The CSA is a parameter.
-        #########################
+        # The CSA is a parameter {CSA}.
+        ###############################
 
         elif self.data.r_index == None and self.data.csa_index != None:
             # The main ri component functions
@@ -799,8 +947,8 @@ class Mf:
                     self.data.dip_comps_func[i] = self.create_dip_func[i](self.data.dip_const_func)
 
 
-        # Both the bond length and CSA are parameters.
-        ##############################################
+        # Both the bond length and CSA are parameters {r, CSA}.
+        #######################################################
 
         elif self.data.r_index != None and self.data.csa_index != None:
             # The main ri component functions

@@ -9,8 +9,9 @@ load.relax_data('NOE', '500', 500.0 * 1e6, 'noe.500.out')
 value.set('bond_length', 1.02 * 1e-10)
 value.set('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-name = 'm5'
+name = 'tm5'
 model.select_mf(name)
+#model.create_mf(name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Fixed value.
 #from math import pi
@@ -19,6 +20,7 @@ model.select_mf(name)
 #write(model=name, file='results_fixed', force=1)
 
 # Grid search.
+state.save('save', force=1)
 grid_search(name, inc=11)
 #write(model=name, file='results_grid', force=1)
 

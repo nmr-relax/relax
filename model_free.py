@@ -57,7 +57,7 @@ class Model_free:
             return
 
         # Check the validity of the parameter array.
-        s2, te, s2f, tf, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0
+        s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
         for i in range(len(param_types)):
             # Check if the parameter is a string.
             if type(param_types[i]) != str:
@@ -74,15 +74,12 @@ class Model_free:
                     invalid_param = 1
                 s2 = 1
 
-                # Does the array contain S2, S2f, and S2s simultaneously.
-                s2f_flag = 0
+                # Does the array contain S2s.
                 s2s_flag = 0
                 for j in range(len(param_types)):
-                    if param_types[j] == 'S2f':
-                        s2f_flag = 1
-                    elif param_types[j] == 'S2s':
+                    if param_types[j] == 'S2s':
                         s2s_flag = 1
-                if s2f_flag and s2s_flag:
+                if s2s_flag:
                     invalid_param = 1
 
             # te.
@@ -107,16 +104,12 @@ class Model_free:
                     invalid_param = 1
                 s2f = 1
 
-                # Does the array contain S2, S2f, and S2s simultaneously.
-                s2_flag = 0
-                s2s_flag = 0
-                for j in range(len(param_types)):
-                    if param_types[j] == 'S2':
-                        s2_flag = 1
-                    elif param_types[j] == 'S2s':
-                        s2s_flag = 1
-                if s2_flag and s2s_flag:
+            # S2s.
+            elif param_types[i] == 'S2s':
+                # Does the array contain more than one instance of S2s and has the original model-free formula been selected.
+                if equation == 'mf_orig' or s2s:
                     invalid_param = 1
+                s2s = 1
 
             # tf.
             elif param_types[i] == 'tf':
@@ -140,12 +133,12 @@ class Model_free:
                     invalid_param = 1
                 ts = 1
 
-                # Does the array contain the parameter S2.
-                s2_flag = 0
+                # Does the array contain the parameter S2 or S2s.
+                flag = 0
                 for j in range(len(param_types)):
-                    if param_types[j] == 'S2':
-                        s2_flag = 1
-                if not s2_flag:
+                    if param_types[j] == 'S2' or param_types[j] == 'S2f':
+                        flag = 1
+                if not flag:
                     invalid_param = 1
 
             # Rex.
@@ -500,21 +493,35 @@ class Model_free:
         Description
         ~~~~~~~~~~~
 
-        For selection of the model-free equation the string 'mf_orig' will select the original
-        model-free equation while the string 'mf_ext' will select the extended model-free equation.
+        The model-free model name can be any string.
+
+
+        Model-free equation.
+
+        'mf_orig' selects the original model-free equations with parameters {S2, te}.
+        'mf_ext' selects the extended model-free equations with parameters {S2f, tf, S2, ts}.
+        'mf_ext2' selects the extended model-free equations with parameters {S2f, tf, S2s, ts}.
+
+
+        Model-free parameters.
 
         The following parameters are accepted for the original model-free equation:
-            S2:          The square of the generalised order parameter.
-            te:          The effective correlation time.
+            S2:     The square of the generalised order parameter.
+            te:     The effective correlation time.
         The following parameters are accepted for the extended model-free equation:
-            S2f:         The square of the generalised order parameter of the faster motion.
-            tf:          The effective correlation time of the faster motion.
-            S2:          The square of the generalised order parameter S2 = S2f*S2s.
-            ts:          The effective correlation time of the slower motion.
-        The following parameters are accepted for both the original and extended equations:
-            Rex:         The chemical exchange relaxation.
-            r: The average bond length <r>.
-            CSA:         The chemical shift anisotropy.
+            S2f:    The square of the generalised order parameter of the faster motion.
+            tf:     The effective correlation time of the faster motion.
+            S2:     The square of the generalised order parameter S2 = S2f*S2s.
+            ts:     The effective correlation time of the slower motion.
+        The following parameters are accepted for the extended 2 model-free equation:
+            S2f:    The square of the generalised order parameter of the faster motion.
+            tf:     The effective correlation time of the faster motion.
+            S2s:    The square of the generalised order parameter of the slower motion.
+            ts:     The effective correlation time of the slower motion.
+        The following parameters are accepted for all equations:
+            Rex:    The chemical exchange relaxation.
+            r:      The average bond length <r>.
+            CSA:    The chemical shift anisotropy.
 
 
         Diagonal scaling.
@@ -615,43 +622,91 @@ class Model_free:
             'm8'    => [S2f, tf, S2, ts, Rex]
             'm9'    => [Rex]
 
-            'm10'    => [CSA]
-            'm11'    => [CSA, S2]
-            'm12'    => [CSA, S2, te]
-            'm13'    => [CSA, S2, Rex]
-            'm14'    => [CSA, S2, te, Rex]
-            'm15'    => [CSA, S2f, S2, ts]
-            'm16'    => [CSA, S2f, tf, S2, ts]
-            'm17'    => [CSA, S2f, S2, ts, Rex]
-            'm18'    => [CSA, S2f, tf, S2, ts, Rex]
-            'm19'    => [CSA, Rex]
+            'm10'   => [CSA]
+            'm11'   => [CSA, S2]
+            'm12'   => [CSA, S2, te]
+            'm13'   => [CSA, S2, Rex]
+            'm14'   => [CSA, S2, te, Rex]
+            'm15'   => [CSA, S2f, S2, ts]
+            'm16'   => [CSA, S2f, tf, S2, ts]
+            'm17'   => [CSA, S2f, S2, ts, Rex]
+            'm18'   => [CSA, S2f, tf, S2, ts, Rex]
+            'm19'   => [CSA, Rex]
 
-            'm20'    => [r]
-            'm21'    => [r, S2]
-            'm22'    => [r, S2, te]
-            'm23'    => [r, S2, Rex]
-            'm24'    => [r, S2, te, Rex]
-            'm25'    => [r, S2f, S2, ts]
-            'm26'    => [r, S2f, tf, S2, ts]
-            'm27'    => [r, S2f, S2, ts, Rex]
-            'm28'    => [r, S2f, tf, S2, ts, Rex]
-            'm29'    => [r, CSA, Rex]
+            'm20'   => [r]
+            'm21'   => [r, S2]
+            'm22'   => [r, S2, te]
+            'm23'   => [r, S2, Rex]
+            'm24'   => [r, S2, te, Rex]
+            'm25'   => [r, S2f, S2, ts]
+            'm26'   => [r, S2f, tf, S2, ts]
+            'm27'   => [r, S2f, S2, ts, Rex]
+            'm28'   => [r, S2f, tf, S2, ts, Rex]
+            'm29'   => [r, CSA, Rex]
 
-            'm30'    => [r, CSA]
-            'm31'    => [r, CSA, S2]
-            'm32'    => [r, CSA, S2, te]
-            'm33'    => [r, CSA, S2, Rex]
-            'm34'    => [r, CSA, S2, te, Rex]
-            'm35'    => [r, CSA, S2f, S2, ts]
-            'm36'    => [r, CSA, S2f, tf, S2, ts]
-            'm37'    => [r, CSA, S2f, S2, ts, Rex]
-            'm38'    => [r, CSA, S2f, tf, S2, ts, Rex]
-            'm39'    => [r, CSA, Rex]
+            'm30'   => [r, CSA]
+            'm31'   => [r, CSA, S2]
+            'm32'   => [r, CSA, S2, te]
+            'm33'   => [r, CSA, S2, Rex]
+            'm34'   => [r, CSA, S2, te, Rex]
+            'm35'   => [r, CSA, S2f, S2, ts]
+            'm36'   => [r, CSA, S2f, tf, S2, ts]
+            'm37'   => [r, CSA, S2f, S2, ts, Rex]
+            'm38'   => [r, CSA, S2f, tf, S2, ts, Rex]
+            'm39'   => [r, CSA, Rex]
 
         Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
         relaxation data.  This is due to the extreme flexibly of these models where a change in the
         parameter 'r' is compensated by a corresponding change in the parameter 'CSA' and
         vice versa.
+
+
+        Additional preset model-free models, which are simply extensions of the above models with
+        the addition of a local tm parameter are:
+            'tm0'   => [tm]
+            'tm1'   => [tm, S2]
+            'tm2'   => [tm, S2, te]
+            'tm3'   => [tm, S2, Rex]
+            'tm4'   => [tm, S2, te, Rex]
+            'tm5'   => [tm, S2f, S2, ts]
+            'tm6'   => [tm, S2f, tf, S2, ts]
+            'tm7'   => [tm, S2f, S2, ts, Rex]
+            'tm8'   => [tm, S2f, tf, S2, ts, Rex]
+            'tm9'   => [tm, Rex]
+
+            'tm10'  => [tm, CSA]
+            'tm11'  => [tm, CSA, S2]
+            'tm12'  => [tm, CSA, S2, te]
+            'tm13'  => [tm, CSA, S2, Rex]
+            'tm14'  => [tm, CSA, S2, te, Rex]
+            'tm15'  => [tm, CSA, S2f, S2, ts]
+            'tm16'  => [tm, CSA, S2f, tf, S2, ts]
+            'tm17'  => [tm, CSA, S2f, S2, ts, Rex]
+            'tm18'  => [tm, CSA, S2f, tf, S2, ts, Rex]
+            'tm19'  => [tm, CSA, Rex]
+
+            'tm20'  => [tm, r]
+            'tm21'  => [tm, r, S2]
+            'tm22'  => [tm, r, S2, te]
+            'tm23'  => [tm, r, S2, Rex]
+            'tm24'  => [tm, r, S2, te, Rex]
+            'tm25'  => [tm, r, S2f, S2, ts]
+            'tm26'  => [tm, r, S2f, tf, S2, ts]
+            'tm27'  => [tm, r, S2f, S2, ts, Rex]
+            'tm28'  => [tm, r, S2f, tf, S2, ts, Rex]
+            'tm29'  => [tm, r, CSA, Rex]
+
+            'tm30'  => [tm, r, CSA]
+            'tm31'  => [tm, r, CSA, S2]
+            'tm32'  => [tm, r, CSA, S2, te]
+            'tm33'  => [tm, r, CSA, S2, Rex]
+            'tm34'  => [tm, r, CSA, S2, te, Rex]
+            'tm35'  => [tm, r, CSA, S2f, S2, ts]
+            'tm36'  => [tm, r, CSA, S2f, tf, S2, ts]
+            'tm37'  => [tm, r, CSA, S2f, S2, ts, Rex]
+            'tm38'  => [tm, r, CSA, S2f, tf, S2, ts, Rex]
+            'tm39'  => [tm, r, CSA, Rex]
+
 
 
         Diagonal scaling.
@@ -1098,6 +1153,10 @@ class Model_free:
             print "The scaling flag is set incorrectly."
             return
 
+
+        # Preset models.
+        ################
+
         # Block 1.
         if model == 'm0':
             equation = 'mf_orig'
@@ -1225,6 +1284,138 @@ class Model_free:
         elif model == 'm39':
             equation = 'mf_orig'
             param_types = ['r', 'CSA', 'Rex']
+
+
+        # Preset models with local correlation time.
+        ############################################
+
+        # Block 1.
+        elif model == 'tm0':
+            equation = 'mf_orig'
+            param_types = ['tm']
+        elif model == 'tm1':
+            equation = 'mf_orig'
+            param_types = ['tm', 'S2']
+        elif model == 'tm2':
+            equation = 'mf_orig'
+            param_types = ['tm', 'S2', 'te']
+        elif model == 'tm3':
+            equation = 'mf_orig'
+            param_types = ['tm', 'S2', 'Rex']
+        elif model == 'tm4':
+            equation = 'mf_orig'
+            param_types = ['tm', 'S2', 'te', 'Rex']
+        elif model == 'tm5':
+            equation = 'mf_ext'
+            param_types = ['tm', 'S2f', 'S2', 'ts']
+        elif model == 'tm6':
+            equation = 'mf_ext'
+            param_types = ['tm', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm7':
+            equation = 'mf_ext'
+            param_types = ['tm', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm8':
+            equation = 'mf_ext'
+            param_types = ['tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm9':
+            equation = 'mf_orig'
+            param_types = ['tm', 'Rex']
+
+        # Block 2.
+        elif model == 'tm10':
+            equation = 'mf_orig'
+            param_types = ['tm', 'CSA']
+        elif model == 'tm11':
+            equation = 'mf_orig'
+            param_types = ['tm', 'CSA', 'S2']
+        elif model == 'tm12':
+            equation = 'mf_orig'
+            param_types = ['tm', 'CSA', 'S2', 'te']
+        elif model == 'tm13':
+            equation = 'mf_orig'
+            param_types = ['tm', 'CSA', 'S2', 'Rex']
+        elif model == 'tm14':
+            equation = 'mf_orig'
+            param_types = ['tm', 'CSA', 'S2', 'te', 'Rex']
+        elif model == 'tm15':
+            equation = 'mf_ext'
+            param_types = ['tm', 'CSA', 'S2f', 'S2', 'ts']
+        elif model == 'tm16':
+            equation = 'mf_ext'
+            param_types = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm17':
+            equation = 'mf_ext'
+            param_types = ['tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm18':
+            equation = 'mf_ext'
+            param_types = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm19':
+            equation = 'mf_orig'
+            param_types = ['tm', 'CSA', 'Rex']
+
+        # Block 3.
+        elif model == 'tm20':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r']
+        elif model == 'tm21':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'S2']
+        elif model == 'tm22':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'S2', 'te']
+        elif model == 'tm23':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'S2', 'Rex']
+        elif model == 'tm24':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'S2', 'te', 'Rex']
+        elif model == 'tm25':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'S2f', 'S2', 'ts']
+        elif model == 'tm26':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm27':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm28':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm29':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'Rex']
+
+        # Block 4.
+        elif model == 'tm30':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'CSA']
+        elif model == 'tm31':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'CSA', 'S2']
+        elif model == 'tm32':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'CSA', 'S2', 'te']
+        elif model == 'tm33':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'CSA', 'S2', 'Rex']
+        elif model == 'tm34':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'CSA', 'S2', 'te', 'Rex']
+        elif model == 'tm35':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
+        elif model == 'tm36':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm37':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm38':
+            equation = 'mf_ext'
+            param_types = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm39':
+            equation = 'mf_orig'
+            param_types = ['tm', 'r', 'CSA', 'Rex']
 
         # Invalid models.
         else:
