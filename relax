@@ -67,6 +67,7 @@ from data import Data
 from errors import RelaxErrors
 from file_ops import File_ops
 from generic_fns.main import Generic
+from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
@@ -113,8 +114,12 @@ class Relax:
             self.interpreter.run()
 
         # Test mode.
-        if mode == 'test':
+        elif mode == 'test':
             self.test_mode()
+
+        # Licence mode.
+        elif mode == 'licence':
+            self.licence()
 
 
     def arguments(self):
@@ -125,9 +130,10 @@ class Relax:
 
         # Recognised command line options.
         parser.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
-        parser.add_option('-t', '--test', action='store_true', dest='test', default=0, help='run relax in test mode')
-        parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (a user should not invoke this mode)')
         parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output, not implemented yet')
+        parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
+        parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (a user should not invoke this mode)')
+        parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
 
         # Parse the options.
         (options, args) = parser.parse_args()
@@ -166,6 +172,8 @@ class Relax:
             # Exclusive modes.
             if options.thread:
                 parser.error("the relax modes test and thread are mutually exclusive")
+            elif options.licence:
+                parser.error("the relax modes test and licence are mutually exclusive")
 
             # Return the mode.
             return 'test'
@@ -179,9 +187,26 @@ class Relax:
             # Exclusive modes.
             if options.test:
                 parser.error("the relax modes thread and test are mutually exclusive")
+            elif options.licence:
+                parser.error("the relax modes thread and licence are mutually exclusive")
 
             # Return the mode.
             return 'thread'
+
+        # Licence mode.
+        if options.licence:
+            # Make sure no script is supplied.
+            if self.script_file:
+                parser.error("a script should not be supplied in test mode")
+
+            # Exclusive modes.
+            if options.test:
+                parser.error("the relax modes licence and test are mutually exclusive")
+            elif options.thread:
+                parser.error("the relax modes licence and thread are mutually exclusive")
+
+            # Return the mode.
+            return 'licence'
 
         # Script mode.
         if self.script_file:
@@ -190,6 +215,11 @@ class Relax:
         # Prompt mode (default).
         return 'prompt'
 
+
+    def licence(self):
+        """Function for displaying the licence."""
+
+        help(gpl)
 
 
     def set_intro_string(self):

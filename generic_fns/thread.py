@@ -20,8 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-from os import popen3
 from Queue import Queue
+from os import popen3
 from re import search
 from threading import Thread
 
@@ -89,7 +89,7 @@ class Threading:
             self.host_data.append([host_name, user, login, prog_path, swd, priority])
 
         # Total number of hosts in hosts file.
-        num_hosts = len(self.host_data)
+        num_jobs = len(self.host_data)
 
 
         # Threading.
@@ -100,11 +100,11 @@ class Threading:
         results_queue = Queue()
 
         # Fill the job queue.
-        for i in xrange(num_hosts):
+        for i in xrange(num_jobs):
             host_queue.put((self.host_data[i], i))
 
         # Start threads for each host where each thread will run on the local machine.
-        for i in xrange(num_hosts):
+        for i in xrange(num_jobs):
             RelaxHostThread(self.relax, host_queue, results_queue).start()
 
         # The main loop.
@@ -130,7 +130,7 @@ class Threading:
                 self.relax.data.thread.host_data.append(self.host_data[job_index])
 
             # All jobs have finished.
-            if num_fin == num_hosts:
+            if num_fin == num_jobs:
                 # Add None to the host_queue to signal the threads to finish.
                 host_queue.put(None)
 
@@ -141,25 +141,18 @@ class Threading:
         print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_data)`
 
 
-class RelaxThread(Thread):
-    def __init__(self):
 
-        # Run the Thread __init__ function.
-        Thread.__init__(self)
-
-
-
-class RelaxHostThread(RelaxThread):
+class RelaxHostThread(Thread):
     def __init__(self, relax, hosts_queue, results_queue):
-        """"""
+        """Initialisation of the thread."""
 
         # Arguments.
         self.relax = relax
         self.job_queue = hosts_queue
         self.results_queue = results_queue
 
-        # Run the RelaxThread __init__ function.
-        RelaxThread.__init__(self)
+        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
+        Thread.__init__(self)
 
 
     def run(self):
