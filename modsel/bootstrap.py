@@ -29,8 +29,79 @@ class bootstrap(common_operations):
 		self.goto_stage()
 
 
+	def calc_crit(self, res, model, file):
+		sum_chi2 = 0
+		num_sims = len(file)
+		for sim in range(len(file)):
+			real = []
+			real_err = []
+			back_calc = []
+			for set in range(len(self.mf.data.input_info)):
+				real.append(self.mf.data.relax_data[set][res][2])
+				real_err.append(self.mf.data.relax_data[set][res][3])
+				type = self.mf.data.input_info[set][0]
+				frq = self.mf.data.input_info[set][2]
+				if match('m1', model):
+					back_calc.append(self.mf.calc_relax_data.calc(model, type, frq, [ file[sim][2] ]))
+				elif match('m2', model) or match('m3', model):
+					back_calc.append(self.mf.calc_relax_data.calc(model, type, frq, [ file[sim][2], file[sim][3] ]))
+				elif match('m4', model) or match('m5', model):
+					back_calc.append(self.mf.calc_relax_data.calc(model, type, frq, [ file[sim][2], file[sim][3], file[sim][4] ]))
+			sum_chi2 = sum_chi2 + self.mf.calc_chi2.relax_data(real, real_err, back_calc)
+		ave_chi2 = sum_chi2 / num_sims
+		return ave_chi2
+
+
 	def model_selection(self):
-		print "\n[ Bootstrap criteria model selection ]\n"
+		print "\n[ Bootstrap model selection ]\n"
+
+		data = self.mf.data.data
+		self.mf.data.calc_frq()
+		self.mf.data.calc_constants()
+
+		print "Calculating the bootstrap criteria"
+		self.mf.log.write("\n\n<<< Bootstrap model selection >>>")
+		for res in range(len(self.mf.data.relax_data[0])):
+			print "Residue: " + self.mf.data.relax_data[0][res][1] + " " + self.mf.data.relax_data[0][res][0]
+			self.mf.data.results.append({})
+			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
+			file_name = self.mf.data.relax_data[0][res][1] + '_' + self.mf.data.relax_data[0][res][0] + '.out'
+
+			# Model 1.
+			file = self.mf.file_ops.open_file("m1/" + file_name)
+			data['m1'][res]['bootstrap'] = self.calc_crit(res, 'm1', file)
+
+			# Model 2.
+			file = self.mf.file_ops.open_file("m2/" + file_name)
+			data['m2'][res]['bootstrap'] = self.calc_crit(res, 'm2', file)
+
+			# Model 3.
+			file = self.mf.file_ops.open_file("m3/" + file_name)
+			data['m3'][res]['bootstrap'] = self.calc_crit(res, 'm3', file)
+
+			# Model 4.
+			file = self.mf.file_ops.open_file("m4/" + file_name)
+			data['m4'][res]['bootstrap'] = self.calc_crit(res, 'm4', file)
+
+			# Model 5.
+			file = self.mf.file_ops.open_file("m5/" + file_name)
+			data['m5'][res]['bootstrap'] = self.calc_crit(res, 'm5', file)
+
+			# Select model.
+			min = 'm1'
+			for run in self.mf.data.runs:
+				if data[run][res]['bootstrap'] < data[min][res]['bootstrap']:
+					min = run
+			self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
+
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['bootstrap']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['bootstrap']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['bootstrap']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['bootstrap']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['bootstrap']` + "\n")
+			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
+
+			print "   Model " + self.mf.data.results[res]['model']
 
 
 	def print_data(self):
@@ -109,13 +180,13 @@ class bootstrap(common_operations):
 
 	def set_vars_stage_initial(self):
 		"Set the options for the initial runs."
-		
+
 		self.mf.data.mfin.sims = 'y'
 		self.mf.data.mfin.sim_type = 'expr'
 
 
 	def set_vars_stage_selection(self):
 		"Set the options for the final run."
-		
+
 		self.mf.data.mfin.sims = 'y'
 		self.mf.data.mfin.sim_type = 'pred'

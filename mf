@@ -24,6 +24,8 @@
 import sys
 from re import match
 
+from calc_relax_data import calc_relax_data
+from calc_chi2 import calc_chi2
 from data import data
 from file_ops import file_ops
 from star import star
@@ -32,17 +34,19 @@ sys.path.append(sys.path[0])
 sys.path[0] = '.'
 from usr_param import usr_param
 
-from asymptotic import asymptotic
-from bootstrap import bootstrap
-from farrow import farrow
-from palmer import palmer
-from true import true
+from modsel.asymptotic import asymptotic
+from modsel.bootstrap import bootstrap
+from modsel.farrow import farrow
+from modsel.palmer import palmer
+from modsel.true import true
 
 
 class mf:
 	def __init__(self):
 		"The top level class."
 
+		self.calc_relax_data = calc_relax_data(self)
+		self.calc_chi2 = calc_chi2()
 		self.data = data(self)
 		self.data.usr_param = usr_param()
 		self.file_ops = file_ops(self)
