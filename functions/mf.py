@@ -318,6 +318,9 @@ class Mf:
         self.data.noe_r1_table = self.relax.data.res[self.i].noe_r1_table[self.run]
         self.data.ri_labels = self.relax.data.res[self.i].ri_labels[self.run]
 
+        # The length.
+        self.data.len = len(self.data.ti)
+
         # Diagonal scaling data.
         if self.scaling_matrix:
             self.data.scaling_matrix = self.scaling_matrix

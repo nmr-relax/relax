@@ -42,31 +42,48 @@ def create_jw_struct(data, calc_jw):
     Formulae
     ~~~~~~~~
                       _n_
-                 2    \         /      1       \ 
-        J(w)  =  - S2  >  ci.ti | ------------ |
-                 5    /__       \ 1 + (w.ti)^2 /
+                 2    \           /      1       \ 
+        J(w)  =  - S2  >  ci . ti | ------------ |
+                 5    /__         \ 1 + (w.ti)^2 /
                       i=m
 
 
-                 2    /      S2             (1 - S2)(te + tm)te    \ 
-        J(w)  =  - tm | ------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
+                    _n_
+                 2  \           /      S2             (1 - S2)(te + ti)te    \ 
+        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                    i=m
 
 
-    Extended
-    ~~~~~~~~
+                    _n_
+                 2  \           /      S2            (S2f - S2)(ts + ti)ts   \ 
+        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                    i=m
 
-                 2    /      S2            (1 - S2f)(tf + tm)tf          (S2f - S2)(ts + tm)ts   \ 
-        J(w)  =  - tm | ------------  +  -------------------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+
+                    _n_
+                 2  \           /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
+        J(w)  =  -   >  ci . ti | ------------  +  -------------------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                    i=m
 
 
     Extended 2
     ~~~~~~~~~~
 
-                 2    /   S2f . S2s        (1 - S2f)(tf + tm)tf         S2f(1 - S2s)(ts + tm)ts  \ 
-        J(w)  =  - tm | ------------  +  -------------------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                       _n_
+                 2     \           /      S2s           (1 - S2s)(ts + ti)ts    \ 
+        J(w)  =  - S2f  >  ci . ti | ------------  +  ------------------------- |
+                 5     /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
+
+
+                    _n_
+                 2  \           /   S2f . S2s        (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
+        J(w)  =  -   >  ci . ti | ------------  +  -------------------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                    i=m
     """
 
     data.jw = calc_jw(data)
@@ -76,140 +93,188 @@ def create_jw_struct(data, calc_jw):
 # Original, no params and {tm}.
 ###############################
 
-def calc_iso_jw(data):
+def calc_jw(data):
     """Spectral density function.
 
-    Calculate the isotropic spectral density value for the original model-free formula with no
-    parameters.
+    Calculate the spectral density values for the original model-free formula with no parameters.
 
     The formula is:
 
-                 2 /      tm      \ 
-        J(w)  =  - | ------------ |
-                 5 \ 1 + (w.tm)^2 /
+                    _n_
+                 2  \           /      1       \ 
+        J(w)  =  -   >  ci . ti | ------------ |
+                 5  /__         \ 1 + (w.ti)^2 /
+                    i=m
     """
 
-    return data.two_fifths_tm * data.fact_tm
+    jw = 1.0 * data.ci[0] * data.ti[0] * data.fact_ti[0]
+
+    for i in xrange(1, data.len):
+        jw = jw + data.ci[i] * data.ti[i] * data.fact_ti[i]
+
+    return 0.4 * jw
 
 
 
 # Original {S2} and {tm, S2}.
 #############################
 
-def calc_iso_S2_jw(data):
+def calc_S2_jw(data):
     """Spectral density function.
 
-    Calculate the isotropic spectral density value for the original model-free formula with the
-    single parameter S2.
+    Calculate the spectral density values for the original model-free formula with the single
+    parameter S2.
 
     The formula is:
 
-                 2 /   S2 . tm    \ 
-        J(w)  =  - | ------------ |
-                 5 \ 1 + (w.tm)^2 /
+                      _n_
+                 2    \           /      1       \ 
+        J(w)  =  - S2  >  ci . ti | ------------ |
+                 5    /__         \ 1 + (w.ti)^2 /
+                      i=m
     """
 
-    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm)
+    jw = 1.0 * data.ci[0] * data.ti[0] * data.fact_ti[0]
+
+    for i in xrange(1, data.len):
+        jw = jw + data.ci[i] * data.ti[i] * data.fact_ti[i]
+
+    return 0.4 * data.params[data.s2_index] * jw
 
 
 
 # Original {S2, te} and {tm, S2, te}.
 #####################################
 
-def calc_iso_S2_te_jw(data):
+def calc_S2_te_jw(data):
     """Spectral density function.
 
-    Calculate the isotropic spectral density value for the original model-free formula with the
-    parameters S2 and te.
+    Calculate the spectral density values for the original model-free formula with the parameters
+    S2 and te.
 
     The model-free formula is:
 
-                 2    /      S2             (1 - S2)(te + tm)te    \ 
-        J(w)  =  - tm | ------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
+                    _n_
+                 2  \           /      S2             (1 - S2)(te + ti)te    \ 
+        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                    i=m
     """
 
-    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + data.one_s2 * data.te_tm_te * data.inv_te_denom)
+    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2 * data.te_ti_te[0] * data.inv_te_denom[0])
+
+    for i in xrange(1, data.len):
+        jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.one_s2 * data.te_ti_te[i] * data.inv_te_denom[i])
+
+    return 0.4 * jw
 
 
 
 # Extended {S2f, S2, ts} and {tm, S2f, S2, ts}.
 ###############################################
 
-def calc_iso_S2f_S2_ts_jw(data):
+def calc_S2f_S2_ts_jw(data):
     """Spectral density function.
 
-    Calculate the isotropic spectral density value for the extended model-free formula with the
-    parameters S2f, S2, and ts.
+    Calculate the spectral density values for the extended model-free formula with the parameters
+    S2f, S2, and ts.
 
     The model-free formula is:
 
-                 2    /      S2            (S2f - S2)(ts + tm)ts   \ 
-        J(w)  =  - tm | ------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                    _n_
+                 2  \           /      S2            (S2f - S2)(ts + ti)ts   \ 
+        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                    i=m
     """
 
-    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
+    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+
+    for i in xrange(1, data.len):
+        jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
+
+    return 0.4 * jw
 
 
 
 # Extended {S2f, tf, S2, ts} and {tm, S2f, tf, S2, ts}.
 #######################################################
 
-def calc_iso_S2f_tf_S2_ts_jw(data):
+def calc_S2f_tf_S2_ts_jw(data):
     """Spectral density function.
 
-    Calculate the isotropic spectral density value for the extended model-free formula with the
-    parameters S2f, tf, S2, and ts.
+    Calculate the spectral density values for the extended model-free formula with the parameters
+    S2f, tf, S2, and ts.
 
     The model-free formula is:
 
-                 2    /      S2            (1 - S2f)(tf + tm)tf          (S2f - S2)(ts + tm)ts   \ 
-        J(w)  =  - tm | ------------  +  -------------------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                    _n_
+                 2  \           /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
+        J(w)  =  -   >  ci . ti | ------------  +  -------------------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                    i=m
     """
 
-    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + data.one_s2f * data.tf_tm_tf * data.inv_tf_denom + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
+    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+
+    for i in xrange(1, data.len):
+        jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.one_s2f * data.tf_ti_tf[i] * data.inv_tf_denom[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
+
+    return 0.4 * jw
 
 
 
-# Extended 2 {S2f, S2s, ts}.
-############################
+# Extended 2 {S2f, S2s, ts} and {tm, S2f, S2s, ts}.
+###################################################
 
-def calc_iso_S2f_S2s_ts_jw(data):
+def calc_S2f_S2s_ts_jw(data):
     """Spectral density function.
 
-    Calculate the isotropic spectral density value for the extended model-free formula with the
-    parameters S2f, S2s, and ts.
+    Calculate the spectral density values for the extended model-free formula with the parameters
+    S2f, S2s, and ts.
 
     The model-free formula is:
 
-                 2    /   S2f . S2s       S2f(1 - S2s)(ts + tm)ts  \ 
-        J(w)  =  - tm | ------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                       _n_
+                 2     \           /      S2s           (1 - S2s)(ts + ti)ts    \ 
+        J(w)  =  - S2f  >  ci . ti | ------------  +  ------------------------- |
+                 5     /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
     """
 
-    return data.two_fifths_tm * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_tm + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
+    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2s * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+
+    for i in xrange(1, data.len):
+        jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2s_index] * data.fact_ti[i] + data.one_s2s * data.ts_ti_ts[i] * data.inv_ts_denom[i])
+
+    return 0.4 * data.params[data.s2f_index] * jw
 
 
 
-# Extended 2 {S2f, tf, S2s, ts}.
-################################
+# Extended 2 {S2f, tf, S2s, ts} and {tm, S2f, tf, S2s, ts}.
+###########################################################
 
-def calc_iso_S2f_tf_S2s_ts_jw(data):
+def calc_S2f_tf_S2s_ts_jw(data):
     """Spectral density function.
 
-    Calculate the isotropic spectral density value for the extended model-free formula with the
-    parameters S2f, tf, S2s, and ts.
+    Calculate the spectral density values for the extended model-free formula with the parameters
+    S2f, tf, S2s, and ts.
 
     The model-free formula is:
 
-                 2    /   S2f . S2s        (1 - S2f)(tf + tm)tf         S2f(1 - S2s)(ts + tm)ts  \ 
-        J(w)  =  - tm | ------------  +  -------------------------  +  ------------------------- |
-                 5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                    _n_
+                 2  \           /   S2f . S2s        (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
+        J(w)  =  -   >  ci . ti | ------------  +  -------------------------  +  ------------------------- |
+                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                    i=m
     """
 
-    return data.two_fifths_tm * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_tm + data.one_s2f * data.tf_tm_tf * data.inv_tf_denom + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
+    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+
+    for i in xrange(1, data.len):
+        jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_ti[i] + data.one_s2f * data.tf_ti_tf[i] * data.inv_tf_denom[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
+
+    return 0.4 * jw
 
 
 
@@ -361,7 +426,7 @@ def create_djw_struct(data, calc_djw):
 def calc_iso_tm_djw_dtm(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the tm partial derivative of the original
+    Calculate the isotropic spectral desity values for the tm partial derivative of the original
     model-free formula with the single parameter tm.
 
     The model-free gradient is:
@@ -381,7 +446,7 @@ def calc_iso_tm_djw_dtm(data):
 def calc_iso_S2_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the original
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
     model-free formula with the single parameter S2.
 
     The model-free gradient is:
@@ -401,7 +466,7 @@ def calc_iso_S2_djw_dS2(data):
 def calc_iso_tm_S2_djw_dtm(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the tm partial derivative of the original
+    Calculate the isotropic spectral desity values for the tm partial derivative of the original
     model-free formula with the parameters tm and S2.
 
     The model-free gradient is:
@@ -417,7 +482,7 @@ def calc_iso_tm_S2_djw_dtm(data):
 def calc_iso_tm_S2_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the original
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
     model-free formula with the parameters tm and S2.
 
     The model-free gradient is:
@@ -437,7 +502,7 @@ def calc_iso_tm_S2_djw_dS2(data):
 def calc_iso_S2_te_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the original
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
     model-free formula with the parameters S2 and te.
 
     The model-free gradient is:
@@ -453,7 +518,7 @@ def calc_iso_S2_te_djw_dS2(data):
 def calc_iso_S2_te_djw_dte(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the te partial derivative of the original
+    Calculate the isotropic spectral desity values for the te partial derivative of the original
     model-free formula with the parameters S2 and te.
 
     The model-free gradient is:
@@ -473,7 +538,7 @@ def calc_iso_S2_te_djw_dte(data):
 def calc_iso_tm_S2_te_djw_dtm(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the tm partial derivative of the original
+    Calculate the isotropic spectral desity values for the tm partial derivative of the original
     model-free formula with the parameters tm, S2, and te.
 
     The model-free gradient is:
@@ -489,7 +554,7 @@ def calc_iso_tm_S2_te_djw_dtm(data):
 def calc_iso_tm_S2_te_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the original
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
     model-free formula with the parameters tm, S2, and te.
 
     The model-free gradient is:
@@ -505,7 +570,7 @@ def calc_iso_tm_S2_te_djw_dS2(data):
 def calc_iso_tm_S2_te_djw_dte(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the te partial derivative of the original
+    Calculate the isotropic spectral desity values for the te partial derivative of the original
     model-free formula with the parameters tm, S2, and te.
 
     The model-free gradient is:
@@ -525,7 +590,7 @@ def calc_iso_tm_S2_te_djw_dte(data):
 def calc_iso_S2f_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2f partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
     model-free formula with the parameters S2f, S2, and ts.
 
     The formula is:
@@ -541,7 +606,7 @@ def calc_iso_S2f_S2_ts_djw_dS2f(data):
 def calc_iso_S2f_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
     model-free formula with the parameters S2f, S2, and ts.
 
     The formula is:
@@ -557,7 +622,7 @@ def calc_iso_S2f_S2_ts_djw_dS2(data):
 def calc_iso_S2f_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the ts partial derivative of the extended
+    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
     model-free formula with the parameters S2f, S2, and ts.
 
     The formula is:
@@ -577,7 +642,7 @@ def calc_iso_S2f_S2_ts_djw_dts(data):
 def calc_iso_tm_S2f_S2_ts_djw_dtm(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the tm partial derivative of the extended
+    Calculate the isotropic spectral desity values for the tm partial derivative of the extended
     model-free formula with the parameters tm, S2f, S2, and ts.
 
     The formula is:
@@ -593,7 +658,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dtm(data):
 def calc_iso_tm_S2f_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2f partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
     model-free formula with the parameters tm, S2f, S2, and ts.
 
     The formula is:
@@ -609,7 +674,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dS2f(data):
 def calc_iso_tm_S2f_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
     model-free formula with the parameters tm, S2f, S2, and ts.
 
     The formula is:
@@ -625,7 +690,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dS2(data):
 def calc_iso_tm_S2f_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the ts partial derivative of the extended
+    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
     model-free formula with the parameters tm, S2f, S2, and ts.
 
     The formula is:
@@ -645,7 +710,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dts(data):
 def calc_iso_S2f_tf_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2f partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
     model-free formula with the parameters S2f, tf, S2, and ts.
 
     The formula is:
@@ -661,7 +726,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dS2f(data):
 def calc_iso_S2f_tf_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
     model-free formula with the parameters S2f, tf, S2, and ts.
 
     The formula is:
@@ -677,7 +742,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dS2(data):
 def calc_iso_S2f_tf_S2_ts_djw_dtf(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the tf partial derivative of the extended
+    Calculate the isotropic spectral desity values for the tf partial derivative of the extended
     model-free formula with the parameters S2f, tf, S2, and ts.
 
     The formula is:
@@ -693,7 +758,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dtf(data):
 def calc_iso_S2f_tf_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the ts partial derivative of the extended
+    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
     model-free formula with the parameters S2f, tf, S2, and ts.
 
     The formula is:
@@ -713,7 +778,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dts(data):
 def calc_iso_tm_S2f_tf_S2_ts_djw_dtm(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2f partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
     model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The formula is:
@@ -729,7 +794,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dtm(data):
 def calc_iso_tm_S2f_tf_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2f partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
     model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The formula is:
@@ -745,7 +810,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dS2f(data):
 def calc_iso_tm_S2f_tf_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2 partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
     model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The formula is:
@@ -761,7 +826,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dS2(data):
 def calc_iso_tm_S2f_tf_S2_ts_djw_dtf(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the tf partial derivative of the extended
+    Calculate the isotropic spectral desity values for the tf partial derivative of the extended
     model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The formula is:
@@ -777,7 +842,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dtf(data):
 def calc_iso_tm_S2f_tf_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the ts partial derivative of the extended
+    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
     model-free formula with the parameters tm, S2f, S2, and ts.
 
     The formula is:
@@ -797,7 +862,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dts(data):
 def calc_iso_S2f_S2s_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2f partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
     model-free formula with the parameters S2f, S2s, and ts.
 
     The formula is:
@@ -813,7 +878,7 @@ def calc_iso_S2f_S2s_ts_djw_dS2f(data):
 def calc_iso_S2f_S2s_ts_djw_dS2s(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2s partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2s partial derivative of the extended
     model-free formula with the parameters S2f, S2s, and ts.
 
     The formula is:
@@ -829,7 +894,7 @@ def calc_iso_S2f_S2s_ts_djw_dS2s(data):
 def calc_iso_S2f_S2s_ts_djw_dts(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the ts partial derivative of the extended
+    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
     model-free formula with the parameters S2f, S2s, and ts.
 
     The formula is:
@@ -849,7 +914,7 @@ def calc_iso_S2f_S2s_ts_djw_dts(data):
 def calc_iso_S2f_tf_S2s_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2f partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
     model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The formula is:
@@ -865,7 +930,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2f(data):
 def calc_iso_S2f_tf_S2s_ts_djw_dS2s(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the S2s partial derivative of the extended
+    Calculate the isotropic spectral desity values for the S2s partial derivative of the extended
     model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The formula is:
@@ -881,7 +946,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2s(data):
 def calc_iso_S2f_tf_S2s_ts_djw_dtf(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the tf partial derivative of the extended
+    Calculate the isotropic spectral desity values for the tf partial derivative of the extended
     model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The formula is:
@@ -897,7 +962,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dtf(data):
 def calc_iso_S2f_tf_S2s_ts_djw_dts(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity value for the ts partial derivative of the extended
+    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
     model-free formula with the parameters S2f, S2s, and ts.
 
     The formula is:
@@ -1211,7 +1276,7 @@ def create_d2jw_struct(data, calc_d2jw):
 def calc_iso_tm_d2jw_dtm2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - tm double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
     original model-free formula with the single parameter tm.
 
     The model-free Hessian is:
@@ -1231,7 +1296,7 @@ def calc_iso_tm_d2jw_dtm2(data):
 def calc_iso_tm_S2_d2jw_dtm2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - tm double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
     original model-free formula with the parameters tm and S2.
 
     The model-free Hessian is:
@@ -1247,7 +1312,7 @@ def calc_iso_tm_S2_d2jw_dtm2(data):
 def calc_iso_tm_S2_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - S2 double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
     original model-free formula with the parameters tm and S2.
 
     The model-free Hessian is:
@@ -1267,7 +1332,7 @@ def calc_iso_tm_S2_d2jw_dtmdS2(data):
 def calc_iso_S2_te_d2jw_dS2dte(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2 - te double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2 - te double partial derivative of the
     original model-free formula with the parameters S2 and te.
 
     The model-free Hessian is:
@@ -1283,7 +1348,7 @@ def calc_iso_S2_te_d2jw_dS2dte(data):
 def calc_iso_S2_te_d2jw_dte2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the te - te double partial derivative of the
+    Calculate the isotropic spectral desity values for the te - te double partial derivative of the
     original model-free formula with the parameters S2 and te.
 
     The model-free Hessian is:
@@ -1304,7 +1369,7 @@ def calc_iso_S2_te_d2jw_dte2(data):
 def calc_iso_tm_S2_te_d2jw_dtm2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - tm double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
     original model-free formula with the parameters tm, S2, and te.
 
     The model-free Hessian is:
@@ -1322,7 +1387,7 @@ def calc_iso_tm_S2_te_d2jw_dtm2(data):
 def calc_iso_tm_S2_te_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - S2 double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
     original model-free formula with the parameters tm, S2, and te.
 
     The model-free Hessian is:
@@ -1338,7 +1403,7 @@ def calc_iso_tm_S2_te_d2jw_dtmdS2(data):
 def calc_iso_tm_S2_te_d2jw_dtmdte(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - te double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - te double partial derivative of the
     original model-free formula with the parameters tm, S2, and te.
 
     The model-free Hessian is:
@@ -1354,7 +1419,7 @@ def calc_iso_tm_S2_te_d2jw_dtmdte(data):
 def calc_iso_tm_S2_te_d2jw_dS2dte(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2 - te double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2 - te double partial derivative of the
     original model-free formula with the parameters tm, S2, and te.
 
     The model-free Hessian is:
@@ -1370,7 +1435,7 @@ def calc_iso_tm_S2_te_d2jw_dS2dte(data):
 def calc_iso_tm_S2_te_d2jw_dte2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the te - te double partial derivative of the
+    Calculate the isotropic spectral desity values for the te - te double partial derivative of the
     original model-free formula with the parameters tm, S2, and te.
 
     The model-free Hessian is:
@@ -1391,7 +1456,7 @@ def calc_iso_tm_S2_te_d2jw_dte2(data):
 def calc_iso_S2f_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
     extended model-free formula with the parameters S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1407,7 +1472,7 @@ def calc_iso_S2f_S2_ts_d2jw_dS2fdts(data):
 def calc_iso_S2f_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2 - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
     extended model-free formula with the parameters S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1423,7 +1488,7 @@ def calc_iso_S2f_S2_ts_d2jw_dS2dts(data):
 def calc_iso_S2f_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the ts - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
     extended model-free formula with the parameters S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1444,7 +1509,7 @@ def calc_iso_S2f_S2_ts_d2jw_dts2(data):
 def calc_iso_tm_S2f_S2_ts_d2jw_dtm2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - tm double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
     extended model-free formula with the parameters tm, S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1462,7 +1527,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtm2(data):
 def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2f(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - S2f double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - S2f double partial derivative of the
     extended model-free formula with the parameters tm, S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1478,7 +1543,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2f(data):
 def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - S2 double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
     extended model-free formula with the parameters tm, S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1494,7 +1559,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2(data):
 def calc_iso_tm_S2f_S2_ts_d2jw_dtmdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1510,7 +1575,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtmdts(data):
 def calc_iso_tm_S2f_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1526,7 +1591,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dS2fdts(data):
 def calc_iso_tm_S2f_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2 - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1542,7 +1607,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dS2dts(data):
 def calc_iso_tm_S2f_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the ts - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, S2, and ts.
 
     The model-free Hessian is:
@@ -1563,7 +1628,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dts2(data):
 def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f - tf double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f - tf double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1579,7 +1644,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
 def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1595,7 +1660,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdts(data):
 def calc_iso_S2f_tf_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2 - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1611,7 +1676,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dS2dts(data):
 def calc_iso_S2f_tf_S2_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tf - tf double partial derivative of the
+    Calculate the isotropic spectral desity values for the tf - tf double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1628,7 +1693,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dtf2(data):
 def calc_iso_S2f_tf_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the ts - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1649,7 +1714,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dts2(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtm2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - tm double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1680,7 +1745,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtm2(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2f(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - S2f double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - S2f double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1696,7 +1761,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2f(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - S2 double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1712,7 +1777,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdtf(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - tf double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - tf double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1728,7 +1793,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdtf(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tm - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the tm - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1744,7 +1809,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f - tf double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f - tf double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1760,7 +1825,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1776,7 +1841,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdts(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2 - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1792,7 +1857,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2dts(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the tf - tf double partial derivative of the
+    Calculate the isotropic spectral desity values for the tf - tf double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1809,7 +1874,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the ts - ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
     extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
 
     The model-free Hessian is:
@@ -1830,7 +1895,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dts2(data):
 def calc_iso_S2f_S2s_ts_d2jw_dS2fdS2s(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f/S2s double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f/S2s double partial derivative of the
     extended model-free formula with the parameters S2f, S2s, and ts.
 
     The model-free Hessian is:
@@ -1846,7 +1911,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dS2fdS2s(data):
 def calc_iso_S2f_S2s_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f/ts double partial derivative of the
     extended model-free formula with the parameters S2f, S2s, and ts.
 
     The model-free Hessian is:
@@ -1862,7 +1927,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dS2fdts(data):
 def calc_iso_S2f_S2s_ts_d2jw_dS2sdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2s/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2s/ts double partial derivative of the
     extended model-free formula with the parameters S2f, S2s, and ts.
 
     The model-free Hessian is:
@@ -1878,7 +1943,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dS2sdts(data):
 def calc_iso_S2f_S2s_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the ts/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the ts/ts double partial derivative of the
     extended model-free formula with the parameters S2f, S2s, and ts.
 
     The model-free Hessian is:
@@ -1899,7 +1964,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dts2(data):
 def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdS2s(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f/S2s double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f/S2s double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The model-free Hessian is:
@@ -1915,7 +1980,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdS2s(data):
 def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f/ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The model-free Hessian is:
@@ -1931,7 +1996,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdtf(data):
 def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2f/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2f/ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The model-free Hessian is:
@@ -1947,7 +2012,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdts(data):
 def calc_iso_S2f_tf_S2s_ts_d2jw_dS2sdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the S2s/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the S2s/ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The model-free Hessian is:
@@ -1963,7 +2028,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2sdts(data):
 def calc_iso_S2f_tf_S2s_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the ts/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the ts/ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The model-free Hessian is:
@@ -1980,7 +2045,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dtf2(data):
 def calc_iso_S2f_tf_S2s_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity value for the ts/ts double partial derivative of the
+    Calculate the isotropic spectral desity values for the ts/ts double partial derivative of the
     extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
     The model-free Hessian is:
