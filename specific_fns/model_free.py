@@ -2512,12 +2512,12 @@ class Model_free(Common_functions):
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
-        # Missing data sets.
-        if not hasattr(self.relax.data.res[self.run][instance], 'relax_data'):
-            return None, None, None
-
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
+            # Missing data sets.
+            if not hasattr(self.relax.data.res[self.run][instance], 'relax_data'):
+                return None, None, None
+
             # Create the parameter vector.
             self.param_vector = self.assemble_param_vector(index=instance)
 
