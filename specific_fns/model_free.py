@@ -1034,7 +1034,7 @@ class Model_free:
             # Get the object.
             data = getattr(self.relax.data, data_name)
 
-            # Skip the data if it is not a dictionary.
+            # Skip the data if it is not a dictionary (or equivalent).
             if not hasattr(data, 'has_key'):
                 continue
 
