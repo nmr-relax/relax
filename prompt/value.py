@@ -346,7 +346,7 @@ class Value:
     # Docstring modification.
     #########################
 
-    re = """
+    __re_doc__ = """
         Regular expression
         ~~~~~~~~~~~~~~~~~~
 
@@ -371,15 +371,15 @@ class Value:
     """
 
     # Display function.
-    display.__doc__ = display.__doc__ + "\n\n" + re + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + __re_doc__ + "\n"
     display.__doc__ = display.__doc__ + Model_free.get_data_name.__doc__ + "\n"
 
     # Set function.
-    set.__doc__ = set.__doc__ + "\n\n" + re + "\n"
+    set.__doc__ = set.__doc__ + "\n\n" + __re_doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.get_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.set.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n"
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + re + "\n"
+    write.__doc__ = write.__doc__ + "\n\n" + __re_doc__ + "\n"
     write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n"
