@@ -112,7 +112,7 @@ class bootstrap(common_operations):
 			for model in self.mf.data.runs:
 				if data[model][res]['bootstrap'] < data[min][res]['bootstrap']:
 					min = model
-			if data[min][res]['crit'] == float('inf'):
+			if data[min][res]['bootstrap'] == float('inf'):
 				self.mf.data.results[res] = self.fill_results(data[min][res], model='0')
 			else:
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])

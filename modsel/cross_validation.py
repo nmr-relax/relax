@@ -129,7 +129,7 @@ class cv(common_operations):
 			for model in self.mf.data.runs:
 				if self.mf.data.cv.cv_crit[res][model] < self.mf.data.cv.cv_crit[res][min]:
 					min = model
-			if data[min][res]['crit'] == float('inf'):
+			if self.mf.data.cv.cv_crit[res][min] == float('inf'):
 				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res], model='0')
 			else:
 				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res], model=min[1])
