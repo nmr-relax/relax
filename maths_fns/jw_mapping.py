@@ -87,7 +87,7 @@ class Mapping:
 
         # Calculate the sigma NOE value.
         sigma_noe = self.calc_sigma_noe(noe, r1)
-        
+
         # Calculate J(0).
         j0 = -1.5 / (3.0*d + c) * (0.5*r1 - r2 + 0.6*sigma_noe)
 

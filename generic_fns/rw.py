@@ -52,11 +52,15 @@ class RW:
 
         # No function.
         if not self.read_function:
-            raise RelaxError, "The " + format + " format is not currently supported in " + self.relax.specific_setup.get_string(function_type) + "."
+            raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+
+        # The directory.
+        if directory == 'run':
+            directory = run
+        elif directory == None:
+            directory = '.'
 
         # The results file.
-        if directory == None:
-            directory = run
         file_name = directory + '/' + file
         if not access(file_name, F_OK):
             raise RelaxFileError, ('relaxation data', file_name)
@@ -99,11 +103,12 @@ class RW:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
+        # The directory.
+        if directory == 'run':
+            directory = run
+
         # Open the file for writing.
-        if directory == None:
-            results_file = self.relax.file_ops.open_write_file(file, run, force)
-        else:
-            results_file = self.relax.file_ops.open_write_file(file, directory, force)
+        results_file = self.relax.file_ops.open_write_file(file, directory, force)
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
@@ -119,7 +124,7 @@ class RW:
 
         # No function.
         if not self.write_function:
-            raise RelaxError, "The " + format + " format is not currently supported in " + self.relax.specific_setup.get_string(function_type) + "."
+            raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
         # Write the results.
         self.write_function(results_file, run)

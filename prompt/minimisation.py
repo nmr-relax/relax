@@ -198,7 +198,7 @@ class Minimisation:
         methods, perform extemely poorly with badly scaled problems.  In addition, methods which are
         insensitive to scaling such as Newton minimisation may still benefit due to the minimisation
         of round off errors.
-        
+
         In Model-free analysis for example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz,
         the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  Rex is divided by
         (2*pi*600,000,000)**2 to make it field strength independent.  The scaling vector for this

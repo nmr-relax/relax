@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+from math import sqrt
 from re import split
 
 
@@ -30,12 +31,50 @@ class Noe:
         self.relax = relax
 
 
-    def error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
-        """Function for setting the errors."""
+    def calculate(self, run=None, print_flag=1):
+        """Function for calculating the NOE and its error.
+
+        The error for each peak is calculated using the formula:
+                          ___________________________________________
+                       \/ {sd(sat)*I(unsat)}^2 + {sd(unsat)*I(sat)}^2
+            sd(NOE) = -----------------------------------------------
+                                          I(unsat)^2
+        """
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            data = self.relax.data.res[self.run][i]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
+            # Skip residues which have no intensity values or errors.
+            if not (hasattr(data, 'ref') and hasattr(data, 'sat') and hasattr(data, 'ref_error') and hasattr(data, 'sat_error')):
+                continue
+
+            # Calculate the NOE.
+            data.noe = data.sat / data.ref
+
+            # Calculate the error.
+            data.noe_error = sqrt((data.sat_error * data.ref)**2 + (data.ref_error * data.sat)**2) / data.ref**2
+
 
     def extract_int_data(self, line):
         """Function for returning relevant data from the peak intensity line.
-        
+
         The residue number, heteronucleus and proton names, and peak intensity will be returned.
         """
 
@@ -170,8 +209,324 @@ class Noe:
             # Remap the data structure 'self.relax.data.res[self.run][index]'.
             data = self.relax.data.res[self.run][index]
 
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
             # Add the data.
             if self.spectrum_type == 'ref':
                 data.ref = intensity
             elif self.spectrum_type == 'sat':
                 data.sat = intensity
+
+
+    def read_columnar_results(self, run, file_name, file_data):
+        """Function for reading the results file."""
+
+        # Arguments.
+        self.run = run
+
+        # Extract and remove the header.
+        header = file_data[0]
+        file_data = file_data[1:]
+
+        # Sort the column numbers.
+        col = {}
+        for i in xrange(len(header)):
+            if header[i] == 'Num':
+                col['num'] = i
+            elif header[i] == 'Name':
+                col['name'] = i
+            elif header[i] == 'Selected':
+                col['select'] = i
+            elif header[i] == 'Ref_intensity':
+                col['ref_int'] = i
+            elif header[i] == 'Ref_error':
+                col['ref_error'] = i
+            elif header[i] == 'Sat_intensity':
+                col['sat_int'] = i
+            elif header[i] == 'Sat_error':
+                col['sat_error'] = i
+            elif header[i] == 'NOE':
+                col['noe'] = i
+            elif header[i] == 'NOE_error':
+                col['noe_error'] = i
+
+        # Test the file.
+        if len(col) < 2:
+            raise RelaxInvalidFileError, file_name
+
+
+        # Sequence.
+        ###########
+
+        # Generate the sequence.
+        for i in xrange(len(file_data)):
+            # Residue number and name.
+            try:
+                res_num = int(file_data[i][col['num']])
+            except ValueError:
+                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+            res_name = file_data[i][col['name']]
+
+            # Add the residue.
+            self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(file_data[i][col['select']]))
+
+
+        # Data.
+        #######
+
+        # Loop over the file data.
+        for i in xrange(len(file_data)):
+            # Residue number and name.
+            try:
+                res_num = int(file_data[i][col['num']])
+            except ValueError:
+                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+            res_name = file_data[i][col['name']]
+
+            # Find the residue index.
+            index = None
+            for j in xrange(len(self.relax.data.res[self.run])):
+                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                    index = j
+                    break
+            if index == None:
+                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+
+            # Reassign data structure.
+            data = self.relax.data.res[self.run][index]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
+            # Reference intensity.
+            try:
+                data.ref = float(file_data[i][col['ref_int']])
+            except ValueError:
+                data.ref = None
+
+            # Reference error.
+            try:
+                data.ref_error = float(file_data[i][col['ref_error']])
+            except ValueError:
+                data.ref_error = None
+
+            # Saturated intensity.
+            try:
+                data.sat = float(file_data[i][col['sat_int']])
+            except ValueError:
+                data.sat = None
+
+            # Saturated error.
+            try:
+                data.sat_error = float(file_data[i][col['sat_error']])
+            except ValueError:
+                data.sat_error = None
+
+            # NOE.
+            try:
+                data.noe = float(file_data[i][col['noe']])
+            except ValueError:
+                data.noe = None
+
+            # NOE error.
+            try:
+                data.noe_error = float(file_data[i][col['noe_error']])
+            except ValueError:
+                data.noe_error = None
+
+
+    def return_value(self, run, i, data_type=None):
+        """Function for returning the NOE value and error."""
+
+        # Remap the data structure 'self.relax.data.res[run][i]'.
+        data = self.relax.data.res[run][i]
+
+        # NOE.
+        noe = None
+        if hasattr(data, 'noe'):
+            noe = data.noe
+
+        # NOE error.
+        noe_error = None
+        if hasattr(data, 'noe_error'):
+            noe_error = data.noe_error
+
+        # Return the data.
+        return noe, noe_error
+
+
+    def set_error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
+        """Function for setting the errors."""
+
+        # Arguments.
+        self.run = run
+        self.spectrum_type = spectrum_type
+        self.res_num = res_num
+        self.res_name = res_name
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
+        # Test if the residue number is a valid regular expression.
+        if type(res_num) == str:
+            try:
+                compile(res_num)
+            except:
+                raise RelaxRegExpError, ('residue number', res_num)
+
+        # Test if the residue name is a valid regular expression.
+        if res_name:
+            try:
+                compile(res_name)
+            except:
+                raise RelaxRegExpError, ('residue name', res_name)
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            data = self.relax.data.res[self.run][i]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
+            # If 'res_num' is not None, skip the residue if there is no match.
+            if type(res_num) == int and not data.num == res_num:
+                continue
+            elif type(res_num) == str and not match(res_num, `data.num`):
+                continue
+
+            # If 'res_name' is not None, skip the residue if there is no match.
+            if res_name != None and not match(res_name, data.name):
+                continue
+
+            # Set the error.
+            if self.spectrum_type == 'ref':
+                data.ref_error = float(error)
+            elif self.spectrum_type == 'sat':
+                data.sat_error = float(error)
+
+
+    def write(self, run=None, file=None, dir=None, force=0):
+        """Function for writing NOE values and errors to a file."""
+
+        # Arguments
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Open the file for writing.
+        noe_file = self.relax.file_ops.open_write_file(file, dir, force)
+
+        # Write the data.
+        self.relax.generic.value.write_data(self.run, None, noe_file, return_value=self.return_value)
+
+        # Close the file.
+        noe_file.close()
+
+
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, ref_int=None, ref_error=None, sat_int=None, sat_error=None, noe=None, noe_error=None):
+        """Function for printing a single line of the columnar formatted results."""
+
+        # Residue number and name.
+        file.write("%-4s %-5s " % (num, name))
+
+        # Selected flag and data set.
+        file.write("%-9s " % select)
+        if not select:
+            file.write("\n")
+            return
+
+        # Reference and saturated data.
+        file.write("%-25s %-25s " % (ref_int, ref_error))
+        file.write("%-25s %-25s " % (sat_int, sat_error))
+
+        # NOE and error.
+        file.write("%-25s %-25s " % (noe, noe_error))
+
+        # End of the line.
+        file.write("\n")
+
+
+    def write_columnar_results(self, file, run):
+        """Function for printing the results into a file."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+
+        # Header.
+        #########
+
+
+        # Write the header line.
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', ref_int='Ref_intensity', ref_error='Ref_error', sat_int='Sat_intensity', sat_error='Sat_error', noe='NOE', noe_error='NOE_error')
+
+
+        # Values.
+        #########
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Reassign data structure.
+            data = self.relax.data.res[self.run][i]
+
+            # Unselected residues.
+            if not data.select:
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0)
+                continue
+
+            # Reference intensity.
+            ref_int = None
+            if hasattr(data, 'ref'):
+                ref_int = data.ref
+
+            # Reference error.
+            ref_error = None
+            if hasattr(data, 'ref_error'):
+                ref_error = data.ref_error
+
+            # Saturated intensity.
+            sat_int = None
+            if hasattr(data, 'sat'):
+                sat_int = data.sat
+
+            # Saturated error.
+            sat_error = None
+            if hasattr(data, 'sat_error'):
+                sat_error = data.sat_error
+
+            # NOE
+            noe = None
+            if hasattr(data, 'noe'):
+                noe = data.noe
+
+            # NOE error.
+            noe_error = None
+            if hasattr(data, 'noe_error'):
+                noe_error = data.noe_error
+
+            # Write the line.
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, ref_int=ref_int, ref_error=ref_error, sat_int=sat_int, sat_error=sat_error, noe=noe, noe_error=noe_error)

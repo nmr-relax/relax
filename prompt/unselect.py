@@ -80,6 +80,76 @@ class Unselect:
         self.__relax__.generic.selection.unsel_all(run=run)
 
 
+    def read(self, run=None, file=None, dir=None, change_all=0):
+        """Function for unselecting the residues contained in a file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+        single run, multiple runs, or all runs will be selected respectively.
+
+        file:  The name of the file containing the list of residues to unselect.
+
+        dir:  The directory where the file is located.
+
+        change_all:  A flag specifying if all other residues should be changed.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The file must contain one residue number per line.  The number is taken as the first column
+        of the file and all other columns are ignored.  Empty lines and lines beginning with a hash
+        are ignored.
+
+        The 'change_all' flag argument default is zero meaning that all residues currently either
+        selected or unselected will remain that way.  Setting the argument to 1 will cause all
+        residues not specified in the file to be selected.
+
+
+        Examples
+        ~~~~~~~~
+
+        To unselect all overlapped residues in the file 'unresolved', type:
+
+        relax> unselect.read('noe', 'unresolved')
+        relax> unselect.read(run='noe', file='unresolved')
+        """
+
+        # Function intro test.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "unselect.read("
+            text = text + "run=" + `run`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", change_all=" + `change_all` + ")"
+            print text
+
+        # The run argument.
+        if run != None and type(run) != str and type(run) != list:
+            raise RelaxNoneStrListError, ('run', run)
+        if type(run) == list:
+            for i in xrange(len(run)):
+                if type(run[i]) != str:
+                    raise RelaxListStrError, ('run', run)
+
+        # File name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # Change all flag.
+        if type(change_all) != int or (change_all != 0 and change_all != 1):
+            raise RelaxBinError, ('change_all', change_all)
+
+        # Execute the functional code.
+        self.__relax__.generic.selection.unsel_read(run=run, file=file, dir=dir, change_all=change_all)
+
+
     def res(self, run=None, num=None, name=None, change_all=0):
         """Function for unselecting specific residues.
 

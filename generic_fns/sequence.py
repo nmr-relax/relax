@@ -127,7 +127,7 @@ class Sequence:
 
         # Print a header.
         print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
-        
+
         # Print the sequence.
         for i in xrange(len(self.relax.data.res[run])):
             print "%-8i%-8s%-10i" % (self.relax.data.res[run][i].num, self.relax.data.res[run][i].name, self.relax.data.res[run][i].select)

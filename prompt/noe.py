@@ -71,9 +71,9 @@ class Noe:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.read("
+            text = sys.ps3 + "noe.error("
             text = text + "run=" + `run`
-            text = text + "error=" + `error`
+            text = text + ", error=" + `error`
             text = text + ", spectrum_type=" + `spectrum_type`
             text = text + ", res_num=" + `res_num`
             text = text + ", res_name=" + `res_name` + ")"
@@ -84,12 +84,12 @@ class Noe:
             raise RelaxStrError, ('run', run)
 
         # The error.
-        if type(error) != float or type(error) != int:
-            raise RelaxIntFloatError, ('file name', file)
+        if type(error) != float and type(error) != int:
+            raise RelaxNumError, ('error', error)
 
         # The spectrum type.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+        if type(spectrum_type) != str:
+            raise RelaxStrError, ('spectrum type', spectrum_type)
 
         # Residue number.
         if res_num != None and type(res_num) != int and type(res_num) != str:
@@ -100,7 +100,7 @@ class Noe:
             raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
-        self.__relax__.specific.noe.error(run=run, error=error, spectrum_type=spectrum_type, res_num=res_num, res_name=res_name)
+        self.__relax__.specific.noe.set_error(run=run, error=error, spectrum_type=spectrum_type, res_num=res_num, res_name=res_name)
 
 
     def read(self, run=None, file=None, dir=None, spectrum_type=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
@@ -163,7 +163,17 @@ class Noe:
         Examples
         ~~~~~~~~
 
-        
+        To read the reference and saturated spectra peak heights from the Sparky formatted files
+        'ref.list' and 'sat.list' to the run 'noe', type:
+
+        relax> noe.read('noe', file='ref.list', spectrum_type='ref')
+        relax> noe.read('noe', file='sat.list', spectrum_type='sat')
+
+        To read the reference and saturated spectra peak heights from the XEasy formatted files
+        'ref.text' and 'sat.text' to the run 'noe', type:
+
+        relax> noe.read('noe', file='ref.text', spectrum_type='ref', format='xeasy')
+        relax> noe.read('noe', file='sat.text', spectrum_type='sat', format='xeasy')
         """
 
         # Function intro text.
@@ -192,8 +202,8 @@ class Noe:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The spectrum type.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+        if type(spectrum_type) != str:
+            raise RelaxStrError, ('spectrum type', spectrum_type)
 
         # The format.
         if type(format) != str:
@@ -213,3 +223,65 @@ class Noe:
 
         # Execute the functional code.
         self.__relax__.specific.noe.read(run=run, file=file, dir=dir, spectrum_type=spectrum_type, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
+
+
+    def write(self, run=None, file=None, dir=None, force=0):
+        """Function for writing the NOE values and errors to a file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        file:  The name of the file.
+
+        dir:  The directory name.
+
+        force:  A flag which, if set to 1, will cause the file to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If no directory name is given, the file will be placed in the current working directory.
+
+
+        Examples
+        ~~~~~~~~
+
+        To write the NOE values from the run 'noe' to the file 'noe', type:
+
+        relax> noe.write('noe', 'noe')
+        relax> noe.write('noe', file='noe')
+        relax> noe.write(run='noe', file='noe')
+        relax> noe.write(run='noe', file='noe', force=1)
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "noe.write("
+            text = text + "run=" + `run`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # File.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The force flag.
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
+
+        # Execute the functional code.
+        self.__relax__.specific.noe.write(run=run, file=file, dir=dir, force=force)

@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+from os import F_OK, access
 from re import compile, match
 
 
@@ -48,10 +49,14 @@ class Selection:
 
             # Loop over the sequence and reverse the selection flag.
             for i in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][i].select:
-                    self.relax.data.res[self.run][i].select = 0
+                # Remap the data structure 'self.relax.data.res[self.run][i]'.
+                data = self.relax.data.res[self.run][i]
+
+                # Reverse the selection.
+                if data.select:
+                    data.select = 0
                 else:
-                    self.relax.data.res[self.run][i].select = 1
+                    data.select = 1
 
 
     def sel_all(self, run=None):
@@ -73,6 +78,59 @@ class Selection:
             # Loop over the sequence and set the selection flag to 1.
             for i in xrange(len(self.relax.data.res[self.run])):
                 self.relax.data.res[self.run][i].select = 1
+
+
+    def sel_read(self, run=None, file=None, dir=None, change_all=None):
+        """Function for selecting the residues contained in a file."""
+
+        # The file path.
+        self.file_path = file
+        if dir:
+            self.file_path = dir + '/' + self.file_path
+
+        # Test if the file exists.
+        if not access(self.file_path, F_OK):
+            raise RelaxFileError, (None, self.file_path)
+
+        # Extract the data from the file.
+        file_data = self.relax.file_ops.extract_data(self.file_path)
+
+        # Strip the data.
+        file_data = self.relax.file_ops.strip(file_data)
+
+        # Create the list of residues to select.
+        select = []
+        for i in xrange(len(file_data)):
+            try:
+                select.append(int(file_data[i][0]))
+            except:
+                raise RelaxError, "Improperly formatted file."
+
+        # Create the list of runs.
+        self.runs = self.relax.generic.runs.list_of_runs(run)
+
+        # Loop over the runs.
+        for self.run in self.runs:
+            # Test if the run exists.
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
+            # Test if sequence data is loaded.
+            if not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
+
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Remap the data structure 'self.relax.data.res[self.run][i]'.
+                data = self.relax.data.res[self.run][i]
+
+                # Unselect all residues.
+                if change_all:
+                    data.select = 0
+
+                # Select the residue if it is in the list select.
+                if data.num in select:
+                    data.select = 1
 
 
     def sel_res(self, run=None, num=None, name=None, change_all=None):
@@ -107,25 +165,28 @@ class Selection:
 
             # Loop over the sequence.
             for i in xrange(len(self.relax.data.res[self.run])):
+                # Remap the data structure 'self.relax.data.res[self.run][i]'.
+                data = self.relax.data.res[self.run][i]
+
                 # Unselect all residues.
                 if change_all:
-                    self.relax.data.res[self.run][i].select = 0
+                    data.select = 0
 
                 # Skip the residue if there is no match to 'num'.
                 if type(num) == int:
-                    if not self.relax.data.res[self.run][i].num == num:
+                    if not data.num == num:
                         continue
                 elif type(num) == str:
-                    if not match(num, `self.relax.data.res[self.run][i].num`):
+                    if not match(num, `data.num`):
                         continue
 
                 # Skip the residue if there is no match to 'name'.
                 if name != None:
-                    if not match(name, self.relax.data.res[self.run][i].name):
+                    if not match(name, data.name):
                         continue
 
                 # Select the residue.
-                self.relax.data.res[self.run][i].select = 1
+                data.select = 1
 
 
     def unsel_all(self, run=None):
@@ -147,6 +208,59 @@ class Selection:
             # Loop over the sequence and set the selection flag to 0.
             for i in xrange(len(self.relax.data.res[self.run])):
                 self.relax.data.res[self.run][i].select = 0
+
+
+    def unsel_read(self, run=None, file=None, dir=None, change_all=None):
+        """Function for unselecting the residues contained in a file."""
+
+        # The file path.
+        self.file_path = file
+        if dir:
+            self.file_path = dir + '/' + self.file_path
+
+        # Test if the file exists.
+        if not access(self.file_path, F_OK):
+            raise RelaxFileError, (None, self.file_path)
+
+        # Extract the data from the file.
+        file_data = self.relax.file_ops.extract_data(self.file_path)
+
+        # Strip the data.
+        file_data = self.relax.file_ops.strip(file_data)
+
+        # Create the list of residues to unselect.
+        unselect = []
+        for i in xrange(len(file_data)):
+            try:
+                unselect.append(int(file_data[i][0]))
+            except:
+                raise RelaxError, "Improperly formatted file."
+
+        # Create the list of runs.
+        self.runs = self.relax.generic.runs.list_of_runs(run)
+
+        # Loop over the runs.
+        for self.run in self.runs:
+            # Test if the run exists.
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
+            # Test if sequence data is loaded.
+            if not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
+
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Remap the data structure 'self.relax.data.res[self.run][i]'.
+                data = self.relax.data.res[self.run][i]
+
+                # Select all residues.
+                if change_all:
+                    data.select = 1
+
+                # Unselect the residue if it is in the list unselect.
+                if data.num in unselect:
+                    data.select = 0
 
 
     def unsel_res(self, run=None, num=None, name=None, change_all=None):
@@ -181,22 +295,25 @@ class Selection:
 
             # Loop over the sequence.
             for i in xrange(len(self.relax.data.res[self.run])):
+                # Remap the data structure 'self.relax.data.res[self.run][i]'.
+                data = self.relax.data.res[self.run][i]
+
                 # Select all residues.
                 if change_all:
-                    self.relax.data.res[self.run][i].select = 1
+                    data.select = 1
 
                 # Skip the residue if there is no match to 'num'.
                 if type(num) == int:
-                    if not self.relax.data.res[self.run][i].num == num:
+                    if not data.num == num:
                         continue
                 if type(num) == str:
-                    if not match(num, `self.relax.data.res[self.run][i].num`):
+                    if not match(num, `data.num`):
                         continue
 
                 # Skip the residue if there is no match to 'name'.
                 if name != None:
-                    if not match(name, self.relax.data.res[self.run][i].name):
+                    if not match(name, data.name):
                         continue
 
                 # Unselect the residue.
-                self.relax.data.res[self.run][i].select = 0
+                data.select = 0

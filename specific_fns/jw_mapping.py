@@ -73,16 +73,16 @@ class Jw_mapping(Common_functions):
         # Reduced spectral density mapping.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
-            res = self.relax.data.res[self.run][i]
+            data = self.relax.data.res[self.run][i]
 
             # Skip unselected residues.
-            if not res.select:
+            if not data.select:
                 continue
 
             # Residue specific frequency index.
             frq_index = None
-            for j in xrange(res.num_frq):
-                if res.frq[j] == self.relax.data.jw_frq[self.run]:
+            for j in xrange(data.num_frq):
+                if data.frq[j] == self.relax.data.jw_frq[self.run]:
                     frq_index = j
             if frq_index == None:
                 continue
@@ -93,27 +93,27 @@ class Jw_mapping(Common_functions):
             noe = None
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
-            for j in xrange(res.num_ri):
+            for j in xrange(data.num_ri):
                 # R1.
-                if res.remap_table[j] == frq_index and res.ri_labels[j] == 'R1':
+                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R1':
                     if sim_index == None:
-                        r1 = res.relax_data[j]
+                        r1 = data.relax_data[j]
                     else:
-                        r1 = res.relax_sim_data[sim_index][j]
+                        r1 = data.relax_sim_data[sim_index][j]
 
                 # R2.
-                if res.remap_table[j] == frq_index and res.ri_labels[j] == 'R2':
+                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R2':
                     if sim_index == None:
-                        r2 = res.relax_data[j]
+                        r2 = data.relax_data[j]
                     else:
-                        r2 = res.relax_sim_data[sim_index][j]
+                        r2 = data.relax_sim_data[sim_index][j]
 
                 # NOE.
-                if res.remap_table[j] == frq_index and res.ri_labels[j] == 'NOE':
+                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'NOE':
                     if sim_index == None:
-                        noe = res.relax_data[j]
+                        noe = data.relax_data[j]
                     else:
-                        noe = res.relax_sim_data[sim_index][j]
+                        noe = data.relax_sim_data[sim_index][j]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
@@ -123,27 +123,27 @@ class Jw_mapping(Common_functions):
             self.jw = Mapping(frq=self.relax.data.jw_frq[self.run], gx=self.relax.data.gx, gh=self.relax.data.gh, mu0=self.relax.data.mu0, h_bar=self.relax.data.h_bar)
 
             # Calculate the spectral density values.
-            j0, jwx, jwh = self.jw.func(r=res.r, csa=res.csa, r1=r1, r2=r2, noe=noe)
+            j0, jwx, jwh = self.jw.func(r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
 
             # Reduced spectral density values.
             if sim_index == None:
-                res.j0 = j0
-                res.jwx = jwx
-                res.jwh = jwh
+                data.j0 = j0
+                data.jwx = jwx
+                data.jwh = jwh
 
             # Monte Carlo simulated reduced spectral density values.
             else:
                 # Initialise the simulation data structures.
-                self.initialise_data(res, self.run, sim=1)
-                if res.j0_sim == None:
-                    res.j0_sim = []
-                    res.jwx_sim = []
-                    res.jwh_sim = []
+                self.initialise_data(data, self.run, sim=1)
+                if data.j0_sim == None:
+                    data.j0_sim = []
+                    data.jwx_sim = []
+                    data.jwh_sim = []
 
                 # Reduced spectral density values.
-                res.j0_sim.append(j0)
-                res.jwx_sim.append(jwx)
-                res.jwh_sim.append(jwh)
+                data.j0_sim.append(j0)
+                data.jwx_sim.append(jwx)
+                data.jwh_sim.append(jwh)
 
 
     def data_init(self, name):
@@ -464,6 +464,10 @@ class Jw_mapping(Common_functions):
         # Arguments.
         self.run = run
 
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
@@ -508,37 +512,37 @@ class Jw_mapping(Common_functions):
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
-            res = self.relax.data.res[self.run][i]
+            data = self.relax.data.res[self.run][i]
 
             # Unselected residues.
-            if not res.select:
-                self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='value')
+            if not data.select:
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='value')
                 continue
 
             # J(0).
             j0 = None
-            if hasattr(res, 'j0'):
-                j0 = res.j0
+            if hasattr(data, 'j0'):
+                j0 = data.j0
 
             # J(wX).
             jwx = None
-            if hasattr(res, 'jwx'):
-                jwx = res.jwx
+            if hasattr(data, 'jwx'):
+                jwx = data.jwx
 
             # J(wH).
             jwh = None
-            if hasattr(res, 'jwh'):
-                jwh = res.jwh
+            if hasattr(data, 'jwh'):
+                jwh = data.jwh
 
             # Bond length.
             r = None
-            if hasattr(res, 'r') and res.r != None:
-                r = res.r / 1e-10
+            if hasattr(data, 'r') and data.r != None:
+                r = data.r / 1e-10
 
             # CSA.
             csa = None
-            if hasattr(res, 'csa') and res.csa != None:
-                csa = res.csa / 1e-6
+            if hasattr(data, 'csa') and data.csa != None:
+                csa = data.csa / 1e-6
 
             # Relaxation data and errors.
             ri = []
@@ -547,20 +551,20 @@ class Jw_mapping(Common_functions):
                 for i in xrange(self.relax.data.num_ri[self.run]):
                     # Find the residue specific data corresponding to i.
                     index = None
-                    for j in xrange(res.num_ri):
-                        if res.ri_labels[j] == self.relax.data.ri_labels[self.run][i] and res.frq_labels[res.remap_table[j]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]]:
+                    for j in xrange(data.num_ri):
+                        if data.ri_labels[j] == self.relax.data.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]]:
                             index = j
 
                     # Data exists for this data type.
                     try:
-                        ri.append(`res.relax_data[index]`)
-                        ri_error.append(`res.relax_error[index]`)
+                        ri.append(`data.relax_data[index]`)
+                        ri_error.append(`data.relax_error[index]`)
                     except:
                         ri.append(None)
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -575,37 +579,37 @@ class Jw_mapping(Common_functions):
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
-            res = self.relax.data.res[self.run][i]
+            data = self.relax.data.res[self.run][i]
 
             # Unselected residues.
-            if not res.select:
-                self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='error')
+            if not data.select:
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='error')
                 continue
 
             # J(0).
             j0 = None
-            if hasattr(res, 'j0_err'):
-                j0 = res.j0_err
+            if hasattr(data, 'j0_err'):
+                j0 = data.j0_err
 
             # J(wX).
             jwx = None
-            if hasattr(res, 'jwx_err'):
-                jwx = res.jwx_err
+            if hasattr(data, 'jwx_err'):
+                jwx = data.jwx_err
 
             # J(wH).
             jwh = None
-            if hasattr(res, 'jwh_err'):
-                jwh = res.jwh_err
+            if hasattr(data, 'jwh_err'):
+                jwh = data.jwh_err
 
             # Bond length.
             r = None
-            if hasattr(res, 'r_err') and res.r_err != None:
-                r = res.r_err / 1e-10
+            if hasattr(data, 'r_err') and data.r_err != None:
+                r = data.r_err / 1e-10
 
             # CSA.
             csa = None
-            if hasattr(res, 'csa_err') and res.csa_err != None:
-                csa = res.csa_err / 1e-6
+            if hasattr(data, 'csa_err') and data.csa_err != None:
+                csa = data.csa_err / 1e-6
 
             # Relaxation data and errors.
             ri = []
@@ -615,7 +619,7 @@ class Jw_mapping(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -626,37 +630,37 @@ class Jw_mapping(Common_functions):
             # Loop over the sequence.
             for j in xrange(len(self.relax.data.res[self.run])):
                 # Reassign data structure.
-                res = self.relax.data.res[self.run][j]
+                data = self.relax.data.res[self.run][j]
 
                 # Unselected residues.
-                if not res.select:
-                    self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='sim_'+`i`)
+                if not data.select:
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='sim_'+`i`)
                     continue
 
                 # J(0).
                 j0 = None
-                if hasattr(res, 'j0_sim'):
-                    j0 = res.j0_sim[i]
+                if hasattr(data, 'j0_sim'):
+                    j0 = data.j0_sim[i]
 
                 # J(wX).
                 jwx = None
-                if hasattr(res, 'jwx_sim'):
-                    jwx = res.jwx_sim[i]
+                if hasattr(data, 'jwx_sim'):
+                    jwx = data.jwx_sim[i]
 
                 # J(wH).
                 jwh = None
-                if hasattr(res, 'jwh_sim'):
-                    jwh = res.jwh_sim[i]
+                if hasattr(data, 'jwh_sim'):
+                    jwh = data.jwh_sim[i]
 
                 # Bond length.
                 r = None
-                if hasattr(res, 'r_sim') and res.r_sim != None and res.r_sim[i] != None:
-                    r = res.r_sim[i] / 1e-10
+                if hasattr(data, 'r_sim') and data.r_sim != None and data.r_sim[i] != None:
+                    r = data.r_sim[i] / 1e-10
 
                 # CSA.
                 csa = None
-                if hasattr(res, 'csa_sim') and res.csa_sim != None and res.csa_sim[i] != None:
-                    csa = res.csa_sim[i] / 1e-6
+                if hasattr(data, 'csa_sim') and data.csa_sim != None and data.csa_sim[i] != None:
+                    csa = data.csa_sim[i] / 1e-6
 
                 # Relaxation data and errors.
                 ri = []
@@ -664,17 +668,17 @@ class Jw_mapping(Common_functions):
                 for k in xrange(self.relax.data.num_ri[self.run]):
                     # Find the residue specific data corresponding to k.
                     index = None
-                    for l in xrange(res.num_ri):
-                        if res.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and res.frq_labels[res.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
+                    for l in xrange(data.num_ri):
+                        if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
                             index = l
 
                     # Data exists for this data type.
                     try:
-                        ri.append(`res.relax_sim_data[i][index]`)
-                        ri_error.append(`res.relax_error[index]`)
+                        ri.append(`data.relax_sim_data[i][index]`)
+                        ri_error.append(`data.relax_error[index]`)
                     except:
                         ri.append(None)
                         ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

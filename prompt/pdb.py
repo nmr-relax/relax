@@ -101,9 +101,9 @@ class PDB:
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # The file argument.
+        # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxStrError, ('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:

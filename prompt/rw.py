@@ -30,7 +30,7 @@ class RW:
         self.relax = relax
 
 
-    def read(self, run=None, file='results', dir=None, format='columnar'):
+    def read(self, run=None, file='results', dir='run', format='columnar'):
         """Function for reading results from a file.
 
         Keyword Arguments
@@ -49,7 +49,8 @@ class RW:
         The name of the run can be any string.
 
         If no directory name is given, the results file will be searched for in a directory named
-        after the run name.
+        after the run name.  To search for the results file in the current working directory, set
+        dir to None.
         """
 
         # Function intro text.
@@ -57,7 +58,10 @@ class RW:
             text = sys.ps3 + "read("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
+            if dir == 'run':
+                text = text + ", dir=" + `run`
+            else:
+                text = text + ", dir=" + `dir`
             text = text + ", format=" + `format` + ")"
             print text
 
@@ -81,7 +85,7 @@ class RW:
         self.relax.generic.rw.read_results(run=run, file=file, directory=dir, format=format)
 
 
-    def write(self, run=None, file="results", dir=None, force=0, format='columnar'):
+    def write(self, run=None, file='results', dir='run', force=0, format='columnar'):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -100,7 +104,7 @@ class RW:
         ~~~~~~~~~~~
 
         If no directory name is given, the results file will be placed in a directory named after
-        the run name.
+        the run name.  To place the results file in the current working directory, set dir to None.
         """
 
         # Function intro text.
@@ -108,7 +112,10 @@ class RW:
             text = sys.ps3 + "write("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
+            if dir == 'run':
+                text = text + ", dir=" + `run`
+            else:
+                text = text + ", dir=" + `dir`
             text = text + ", force=" + `force`
             text = text + ", format=" + `format` + ")"
             print text

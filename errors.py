@@ -380,7 +380,7 @@ class RelaxErrors:
     # Cannot setup the functions.
     class RelaxFuncSetupError(BaseError):
         def __init__(self, string):
-            self.text = "This function is not available in " + string + "."
+            self.text = "This function is not available for " + string + "."
 
 
     # Regular expression errors.

@@ -37,6 +37,10 @@ class Specific_setup:
         # Initialise.
         string = "this analysis"
 
+        # NOE calculation.
+        if function_type == 'noe':
+            string = "NOE calculations"
+
         # Relaxation curve fitting.
         if function_type == 'relax_fit':
             string = "relaxation curve fitting"
@@ -49,7 +53,7 @@ class Specific_setup:
         if function_type == 'mf':
             string = "Model-free analysis"
 
-        return string 
+        return string
 
 
     def setup(self, eqi, function_type, raise_error=1):
@@ -61,6 +65,10 @@ class Specific_setup:
 
         # Get the function.
         try:
+            # NOE calculation.
+            if function_type == 'noe':
+                function = self.noe()
+
             # Relaxation curve fitting.
             if function_type == 'relax_fit':
                 function = self.relax_funcs()
@@ -247,6 +255,22 @@ class Specific_setup:
         # Write results function (XML format).
         #if self.eqi == 'write_xml_results':
         #    return self.relax.specific.model_free.write_xml_results
+
+
+    def noe(self):
+        """NOE calculation functions."""
+
+        # Calculate function.
+        if self.eqi == 'calculate':
+            return self.relax.specific.noe.calculate
+
+        # Read results file function (Columnar format).
+        if self.eqi == 'read_columnar_results':
+            return self.relax.specific.noe.read_columnar_results
+
+        # Write results function (Columnar format).
+        if self.eqi == 'write_columnar_results':
+            return self.relax.specific.noe.write_columnar_results
 
 
     def relax_funcs(self):
