@@ -7,31 +7,27 @@ class levenberg_marquardt:
 		self.mf = mf
 
 
-	def fit(self, function, dfunction, function_options, chi2_func, values, data_points, errors, start_params):
+	def fit(self, function, function_options, chi2_func, values, errors, start_params):
 		"""Levenberg-Marquardt minimisation function.
 
-		'function' is the function to minimise, and should return a single value.
-		'dfunction' is the derivative of the function 'function', and should return an array with the elements corresponding
-			to the 'function' parameters.
-		'function_options' are the function options to pass to 'function' and 'dfunction'.
+		'function' is the function to minimise, and should return:
+			1 - an array with the back calculated values.
+			2 - an array of arrays with the first dimension corresponding to the values, and the second corrresponding to the
+				derivative of the relaxation values with respect to function parameters.
+		'function_options' are the function options to pass to 'function'.
 		'values' is an array containing the values to minimise on, eg peak heights or relaxation rates.
-		'data_points' is an array containing information on type corresponding to 'values', eg relaxation time or relaxation data type.
 		'errors' is an array containing the errors associated with 'values'
 		'start_params' is the starting parameter values.
 
 		The following are returned:
 			1. An array with the fitted parameter values.
 			2. The chi-squared value.
-
-
 		"""
 
 		self.function = function
-		self.dfunction = dfunction
 		self.function_options = function_options
 		self.chi2_func = chi2_func
 		self.values = values
-		self.data_points = data_points
 		self.errors = errors
 		self.params = start_params
 
@@ -39,9 +35,7 @@ class levenberg_marquardt:
 		self.l = 1.0
 
 		# Back calculate the initial function values and the chi-squared statistic.
-		self.back_calc = []
-		for i in range(len(self.data_points)):
-			self.back_calc.append(function(self.function_options, self.data_points[i], self.params))
+		self.back_calc, self.df = function(self.function_options, self.params)
 		self.chi2 = self.chi2_func(self.values, self.back_calc, self.errors)
 
 		minimise_num = 1
@@ -54,6 +48,7 @@ class levenberg_marquardt:
 			print_num = 0
 			self.print_relax_crap(0)
 
+		# Iterate until the minimiser is finished.
 		while 1:
 			# Print debugging info
 			if self.mf.min_debug == 2:
@@ -72,15 +67,16 @@ class levenberg_marquardt:
 				self.new_params.append(self.params[i] + param_change[i])
 
 			# Back calculate the new function values.
-			self.back_calc = []
-			for i in range(len(self.data_points)):
-				self.back_calc.append(function(self.function_options, self.data_points[i], self.new_params))
+			self.back_calc, self.df = function(self.function_options, self.new_params)
 
 			# Calculate the new chi-squared statistic.
 			self.chi2_new = self.chi2_func(self.values, self.back_calc, self.errors)
 
 			# Print debugging info
 			if self.mf.min_debug == 2:
+				for i in range(len(self.values)):
+					print "%-29s%-40s" % ("Derivative array " + `i` + " is: ", `self.df[i]`)
+
 				print "%-29s%-40s" % ("Levenberg-Marquardt matrix:", `self.LM_matrix`)
 				print "%-29s%-40s" % ("Chi2 grad vector:", `self.chi2_grad`)
 				print "%-29s%-40s" % ("Old parameter vector:", `self.params`)
@@ -97,7 +93,7 @@ class levenberg_marquardt:
 				if self.l <= 1e99:
 					self.l = self.l * 10.0
 			else:
-				# Finish minimising when the chi-squared difference is zero.
+				# Finish minimising when the chi-squared difference is insignificant.
 				if self.chi2 - self.chi2_new < 1e-10:
 					if self.mf.min_debug == 2:
 						print "\n%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
@@ -137,13 +133,11 @@ class levenberg_marquardt:
 			text = text + "%-9s%-20g" % ("te (ps):", self.params[1]*1e12)
 		elif match('m3', self.function_options[2]):
 			text = text + "%-4s%-20g" % ("S2:", self.params[0])
-			text = text + "%-5s%-20g" % ("Rex:", self.params[1] * 600000000.0**2)
-			#text = text + "%-5s%-20g" % ("Rex:", self.params[1] * self.mf.data.input_info[0][2]**2)
+			text = text + "%-5s%-20g" % ("Rex:", self.params[1] * self.mf.data.frq[0]**2)
 		elif match('m4', self.function_options[2]):
 			text = text + "%-4s%-20g" % ("S2:", self.params[0])
 			text = text + "%-9s%-20g" % ("te (ps):", self.params[1]*1e12)
-			text = text + "%-5s%-20s" % ("Rex:", `self.params[2] * 600000000.0**2`)
-			#text = text + "%-5s%-20g" % ("Rex:", self.params[2] * self.mf.data.input_info[0][2]**2)
+			text = text + "%-5s%-20g" % ("Rex:", self.params[2] * self.mf.data.frq[0]**2)
 		elif match('m5', self.function_options[2]):
 			text = text + "%-5s%-20g" % ("S2f:", self.params[0])
 			text = text + "%-5s%-20g" % ("S2s:", self.params[1])
@@ -199,22 +193,17 @@ class levenberg_marquardt:
 			# Calculate the inverse of the variance to minimise calculations.
 			i_variance = 1.0 / self.errors[i]**2
 
-			# Calculate the function derivative array for the data point 'i'.
-			df = self.dfunction(self.function_options, self.data_points[i], self.params)
-			if self.mf.min_debug == 2:
-				print "%-40s%-30s" % (`self.data_points[i]` + " derivative array is: ", `df`)
-
 			# Loop over all function parameters.
 			for param_j in range(len(self.params)):
-				# Calculate and sum the chi-squared gradient vector element 'j'.
-				chi2_grad[param_j] = chi2_grad[param_j] + i_variance * (self.values[i] - self.back_calc[i]) * df[param_j]
+				# Calculate and sum the chi-squared gradient vector element 'param_j'.
+				chi2_grad[param_j] = chi2_grad[param_j] + i_variance * (self.values[i] - self.back_calc[i]) * self.df[i][param_j]
 
-				# Loop over the function parameters from the first to 'j' to create the Levenberg-Marquardt matrix.
+				# Loop over the function parameters from the first to 'param_j' to create the Levenberg-Marquardt matrix.
 				for param_k in range(param_j + 1):
 					if param_j == param_k:
-						LM_matrix_jk = i_variance * df[param_j] * df[param_k] * (1.0 + self.l)
+						LM_matrix_jk = i_variance * self.df[i][param_j] * self.df[i][param_k] * (1.0 + self.l)
 					else:
-						LM_matrix_jk = i_variance * df[param_j] * df[param_k]
+						LM_matrix_jk = i_variance * self.df[i][param_j] * self.df[i][param_k]
 
 					LM_matrix[param_j][param_k] = LM_matrix[param_j][param_k] + LM_matrix_jk
 					LM_matrix[param_k][param_j] = LM_matrix[param_k][param_j] + LM_matrix_jk

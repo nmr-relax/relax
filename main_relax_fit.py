@@ -6,8 +6,7 @@ class main_relax_fit:
 	def __init__(self):
 		"Relaxation curve fitting."
 
-		print "End of code."
-		sys.exit()
+		raise NameError, "End of code."
 
 
 	def curvefit_input(self):

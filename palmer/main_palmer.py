@@ -53,9 +53,7 @@ class main_palmer:
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 			#self.mf.modsel.overall_disc(self.mf)
 		else:
-			print "The model-free analysis method is not set correctly.  Check self.method in"
-			print "the file 'usr_param.py', quitting program."
-			sys.exit()
+			raise NameError, "The model-free analysis method is not set correctly.  Check self.method in the file 'usr_param.py', quitting program."
 
 		self.mf.data.mfin.default_data()
 		self.goto_stage()
@@ -121,8 +119,8 @@ class main_palmer:
 		for i in range(len(self.mf.data.nmr_frq)):
 			for j in range(3):
 				if match('1', self.mf.data.nmr_frq[i][j+2]):
-					mfdata.write('%-7s' % self.mf.data.input_info[k][0])
-					mfdata.write('%-10s' % self.mf.data.input_info[k][1])
+					mfdata.write('%-7s' % self.mf.data.data_types[k])
+					mfdata.write('%-10s' % self.mf.data.frq_label[self.mf.data.remap_table[k]])
 					mfdata.write('%10s' % self.mf.data.relax_data[k][res][2])
 					mfdata.write('%10s' % self.mf.data.relax_data[k][res][3])
 					mfdata.write(' %-3s\n' % flag)
@@ -452,8 +450,7 @@ class main_palmer:
 
 
 	def stage_final(self):
-		print "Stage 3 not implemented yet.\n"
-		sys.exit()
+		raise NameError, "Stage 3 not implemented yet.\n"
 
 
 	def stage_initial(self):
@@ -469,8 +466,7 @@ class main_palmer:
 				if self.mf.debug == 1:
 					self.mf.log.write("\n\n<<< F-test " + model + " >>>\n\n")
 			else:
-				print "The run '" + model + "'does not start with an m or f, quitting program!\n\n"
-				sys.exit()
+				raise NameError, "The run '" + model + "'does not start with an m or f, quitting program!\n\n"
 			self.mf.file_ops.mkdir(dir=model)
 			open_mf_files(dir=model)
 			self.set_run_flags(model)
@@ -514,8 +510,8 @@ class main_palmer:
 				self.log_params('M1', self.mf.usr_param.md1)
 				self.log_params('M2', self.mf.usr_param.md2)
 
-			for set in range(len(self.mf.data.relax_data)):
-				cv_dir = model + "/" + model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+			for i in range(self.mf.data.num_ri):
+				cv_dir = model + "/" + model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i]
 				self.mf.file_ops.mkdir(dir=cv_dir)
 				open_mf_files(dir=cv_dir)
 				self.mf.data.mfin.selection = 'none'
@@ -523,7 +519,7 @@ class main_palmer:
 				self.create_run(dir=model)
 				for res in range(len(self.mf.data.relax_data[0])):
 					# Mfdata.
-					self.create_mfdata(res, set)
+					self.create_mfdata(res, i)
 					# Mfmodel.
 					self.create_mfmodel(res, self.mf.usr_param.md1, type='M1')
 					# Mfpar.

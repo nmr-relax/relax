@@ -13,9 +13,9 @@ class common_ops:
 	def extract_relax_data(self):
 		"Extract the relaxation data from the files given in the file 'input'"
 		print "\n[ Relaxation data extraction ]\n"
-		for i in range(len(self.mf.data.input_info)):
-			data = self.mf.file_ops.relax_data(self.mf.data.input_info[i][3])
-			self.mf.data.relax_data[i] = data
+		for i in range(self.mf.data.num_ri):
+			data = self.mf.file_ops.relax_data(self.mf.data.data_files[i])
+			self.mf.data.relax_data.append(data)
 
 
 	def fill_results(self, data, model='0'):
@@ -151,13 +151,13 @@ class common_ops:
 
 
 	def log_input_info(self):
-		for i in range(len(self.mf.data.input_info)):
-			self.mf.log.write('%-25s%-20s\n' % ("Data label:", self.mf.data.input_info[i][0]))
-			self.mf.log.write('%-25s%-20s\n' % ("NMR frequency label:", self.mf.data.input_info[i][1]))
-			self.mf.log.write('%-25s%-20s\n' % ("NMR proton frequency:", `self.mf.data.input_info[i][2]`))
-			self.mf.log.write('%-25s%-20s\n\n' % ("File name:", self.mf.data.input_info[i][3]))
+		for i in range(self.mf.data.num_ri):
+			self.mf.log.write('%-25s%-20s\n' % ("Data label:", self.mf.data.data_types[i]))
+			#self.mf.log.write('%-25s%-20s\n' % ("NMR frequency label:", self.mf.data.frq_label[i]))
+			#self.mf.log.write('%-25s%-20s\n' % ("NMR proton frequency:", `self.mf.data.frq[i]`))
+			self.mf.log.write('%-25s%-20s\n\n' % ("File name:", self.mf.data.files[i]))
 		self.mf.log.write("Number of frequencies:\t" + `self.mf.data.num_frq` + "\n")
-		self.mf.log.write("Number of data sets:\t" + `self.mf.data.num_data_sets` + "\n\n")
+		self.mf.log.write("Number of data sets:\t" + `self.mf.data.num_ri` + "\n\n")
 
 
 	def log_params(self, name, mdx):
@@ -235,14 +235,78 @@ class common_ops:
 		self.grace('grace/Chi2.agr', 'Chi2', subtitle="After model selection, unoptimised")
 
 
-	def update_data(self, input):
+	def update_data(self):
 		"Extract all the information from the input info."
 
-		self.mf.data.input_info = self.mf.usr_param.input_info
-		self.mf.data.nmr_frq = self.mf.usr_param.nmr_frq
 
-		self.mf.data.num_data_sets = len(self.mf.data.input_info)
-		self.mf.data.num_frq = len(self.mf.data.nmr_frq)
+		trans_table = []
+		trans_frq_table = []
+		last_frq = 0.0
+		self.mf.data.num_ri = len(self.mf.usr_param.input_info)
 
-		for set in range(len(self.mf.data.input_info)):
-			self.mf.data.relax_data.append([])
+		# Create the frequency data structures.
+		for i in range(self.mf.data.num_ri):
+			flag = 1
+			if len(self.mf.data.frq) > 0:
+				for frq in range(len(self.mf.data.frq)):
+					if self.mf.usr_param.input_info[i][2] == self.mf.data.frq[frq]:
+						flag = 0
+			# Update entries.
+			if flag == 1:
+				self.mf.data.num_frq = self.mf.data.num_frq + 1
+				self.mf.data.frq_label.append(self.mf.usr_param.input_info[i][1])
+				self.mf.data.frq.append(float(self.mf.usr_param.input_info[i][2]))
+			trans_frq_table.append(self.mf.data.num_frq + 1)
+			last_frq = self.mf.usr_param.input_info[i][2]
+
+			# Fill the data structures with nothing.
+			self.mf.data.data_types.append(None)
+			self.mf.data.data_files.append(None)
+			self.mf.data.remap_table.append(None)
+			self.mf.data.noe_r1_table.append(None)
+			trans_table.append(None)
+
+		# Rearrange the data in self.mf.usr_param.input_info by creating the translation table 'trans_table'
+		counter = 0
+		for frq in range(len(self.mf.data.frq)):
+			for i in range(self.mf.data.num_ri):
+				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
+					if match('R1', self.mf.usr_param.input_info[i][0]):
+						trans_table[i] = counter
+						counter = counter + 1
+			for i in range(self.mf.data.num_ri):
+				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
+					if match('R2', self.mf.usr_param.input_info[i][0]):
+						trans_table[i] = counter
+						counter = counter + 1
+			for i in range(self.mf.data.num_ri):
+				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
+					if match('NOE', self.mf.usr_param.input_info[i][0]):
+						trans_table[i] = counter
+						counter = counter + 1
+
+		# Fill the data structures using the trans_table to reorder.
+		for i in range(self.mf.data.num_ri):
+			self.mf.data.data_types[trans_table[i]] = self.mf.usr_param.input_info[i][0]
+			self.mf.data.data_files[trans_table[i]] = self.mf.usr_param.input_info[i][3]
+			for frq in range(len(self.mf.data.frq)):
+				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
+					self.mf.data.remap_table[trans_table[i]] = frq
+			if match('NOE', self.mf.usr_param.input_info[i][0]):
+				for j in range(self.mf.data.num_ri):
+					if match('R1', self.mf.usr_param.input_info[j][0]) and self.mf.usr_param.input_info[i][2] == self.mf.usr_param.input_info[j][2]:
+						self.mf.data.noe_r1_table[trans_table[i]] = trans_table[j]
+
+		if self.mf.debug == 1:
+			print "%-20s%-20s" % ("Input info:", `self.mf.usr_param.input_info`)
+			print "%-20s%-20s" % ("Trans frq table:", `trans_frq_table`)
+			print "%-20s%-20s" % ("Trans table:", `trans_table`)
+			print "%-20s%-20i" % ("Num ri:", self.mf.data.num_ri)
+			print "%-20s%-20i" % ("Num frq:", self.mf.data.num_frq)
+			print "%-20s%-20s" % ("Data types:", `self.mf.data.data_types`)
+			print "%-20s%-20s" % ("Data files:", `self.mf.data.data_files`)
+			print "%-20s%-20s" % ("Remap table:", `self.mf.data.remap_table`)
+			print "%-20s%-20s" % ("NOE to R1 table:", `self.mf.data.noe_r1_table`)
+			print "%-20s%-20s" % ("Frq labels:", `self.mf.data.frq_label`)
+			print "%-20s%-20s" % ("Frqs:", `self.mf.data.frq`)
+			print "\n"

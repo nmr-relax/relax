@@ -30,12 +30,12 @@ class farrow(common_operations):
 			for model in self.mf.data.runs:
 				# 95% confidence limit test.
 				fail = 0
-				for set in range(len(relax_data)):
-					label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
-					diff = self.mf.data.relax_data[set][res][2] - self.mf.data.data[model][res][label_fit]
+				for i in range(self.mf.data.num_ri):
+					label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
+					diff = self.mf.data.relax_data[i][res][2] - self.mf.data.data[model][res][label_fit]
 					if diff < 0:
 						diff = -diff
-					limit = 1.96 * float(relax_data[set][res][3])
+					limit = 1.96 * float(relax_data[i][res][3])
 					if diff > limit:
 						fail = fail + 1
 				if fail == 0:
@@ -181,22 +181,22 @@ class farrow(common_operations):
 				file.write('%-19i' % self.mf.data.data[model][res]['param_test'])
 
 			# Relaxation values
-			for set in range(len(self.mf.data.relax_data)):
-				file.write('\n%-20s' % (self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0]))
+			for i in range(self.mf.data.num_ri):
+				file.write('\n%-20s' % (self.mf.data.frq_label[self.mf.data.remap_table[i]] + " " + self.mf.data.data_types[i]))
 				for model in self.mf.data.runs:
-					label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
-					file.write('%9.3f' % self.mf.data.relax_data[set][res][2])
+					label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
+					file.write('%9.3f' % self.mf.data.relax_data[i][res][2])
 					file.write('%1s' % "|")
 					file.write('%-9.3f' % self.mf.data.data[model][res][label_fit])
 				file.write('\n   %-20s' % "diff ± 95%")
 				for model in self.mf.data.runs:
-					label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
-					diff = self.mf.data.relax_data[set][res][2] - self.mf.data.data[model][res][label_fit]
+					label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
+					diff = self.mf.data.relax_data[i][res][2] - self.mf.data.data[model][res][label_fit]
 					if diff < 0:
 						diff = -diff
 					file.write('%9.3f' % diff)
 					file.write('%1s' % '±')
-					file.write('%-9.3f' % (1.96 * float(self.mf.data.relax_data[set][res][3])))
+					file.write('%-9.3f' % (1.96 * float(self.mf.data.relax_data[i][res][3])))
 
 
 		file.write('\n')

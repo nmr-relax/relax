@@ -103,12 +103,12 @@ class star:
 			if match('data_relaxation', self.row[0]):
 				self.line_num = line + 7
 				break
-		for set in range(len(self.mf.data.input_info)):
+		for i in range(self.mf.data.num_ri):
 			self.split_rows(self.line_num, self.num_res)
 
-			label = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-			label_err = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_err"
-			label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
+			label = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i]
+			label_err = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_err"
+			label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
 
 			for i in range(self.num_res):
 				self.data[i][label] = float(self.row[i][1])

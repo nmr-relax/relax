@@ -55,15 +55,15 @@ class overall_disc(common_operations):
 			real = []
 			err = []
 			types = []
-			for set in range(len(self.mf.data.relax_data)):
-				real.append(float(self.mf.data.overall_disc.op_data[res][set+2]))
-				err.append(float(self.mf.data.relax_data[set][res][3]))
-				types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
+			for i in range(self.mf.data.num_ri):
+				real.append(float(self.mf.data.overall_disc.op_data[res][i+2]))
+				err.append(float(self.mf.data.relax_data[i][res][3]))
+				types.append([self.mf.data.data_types[i], float(self.mf.data.frq[self.mf.data.remap_table[i]])])
 
 			for model in self.mf.data.runs:
 				back_calc = []
-				for set in range(len(self.mf.data.relax_data)):
-					label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
+				for i in range(self.mf.data.num_ri):
+					label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
 					back_calc.append(float(self.mf.data.data[model][res][label_fit]))
 
 				chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)

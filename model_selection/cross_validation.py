@@ -30,9 +30,9 @@ class cv(common_operations):
 
 		for model in self.mf.data.runs:
 			print "Extracting model-free data of model " + model
-			for set in range(len(self.mf.data.relax_data)):
-				cv_dir = model + "/" + model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-				cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+			for i in range(self.mf.data.num_ri):
+				cv_dir = model + "/" + model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
+				cv_model = model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
 				print "\t" + cv_dir + "/mfout."
 				mfout = self.mf.file_ops.read_file(cv_dir + '/mfout')
 				mfout_lines = mfout.readlines()
@@ -79,7 +79,7 @@ class cv(common_operations):
 			self.mf.data.results.append({})
 
 			if self.mf.debug == 1:
-				self.mf.log.write('%-22s\n' % ( "Checking res " + data["m1-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res]['res_num'] ))
+				self.mf.log.write('%-22s\n' % ( "Checking res " + data["m1-"+self.mf.data.frq_label[self.mf.data.remap_table[0]]+"_"+self.mf.data.data_types[0]][res]['res_num'] ))
 
 			for model in self.mf.data.runs:
 				sum_cv_crit = 0
@@ -87,12 +87,12 @@ class cv(common_operations):
 				if self.mf.debug == 1:
 					self.mf.log.write(model + "\n")
 
-				for set in range(len(self.mf.data.relax_data)):
-					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+				for i in range(self.mf.data.num_ri):
+					cv_model = model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
 
-					real = [ float(self.mf.data.relax_data[set][res][2]) ]
-					err = [ float(self.mf.data.relax_data[set][res][3]) ]
-					types = [ [self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])] ]
+					real = [ float(self.mf.data.relax_data[i][res][2]) ]
+					err = [ float(self.mf.data.relax_data[i][res][3]) ]
+					types = [ [self.mf.data.data_types[i], float(self.mf.data.frq[self.mf.data.remap_table[i]])] ]
 
 					if match('m1', model):
 						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2'] ])
@@ -124,9 +124,9 @@ class cv(common_operations):
 				if self.mf.data.cv.cv_crit[res][model] < self.mf.data.cv.cv_crit[res][min]:
 					min = model
 			if self.mf.data.cv.cv_crit[res][min] == float('inf'):
-				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res], model='0')
+				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.frq_label[self.mf.data.remap_table[0]]+"_"+self.mf.data.data_types[0]][res], model='0')
 			else:
-				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res], model=min[1])
+				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.frq_label[self.mf.data.remap_table[0]]+"_"+self.mf.data.data_types[0]][res], model=min[1])
 
 			if self.mf.debug == 1:
 				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `self.mf.data.cv.cv_crit[res]['m1']` + "\n")
@@ -160,13 +160,13 @@ class cv(common_operations):
 			file_crit.write('%-6s' % self.mf.data.results[res]['res_num'])
 			file_crit.write('%-6s' % self.mf.data.results[res]['model'])
 
-			for set in range(len(self.mf.data.relax_data)):
-				file.write("\n-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0])
+			for i in range(self.mf.data.num_ri):
+				file.write("\n-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i])
 
 				# S2.
 				file.write('\n%-20s' % 'S2')
 				for model in self.mf.data.runs:
-					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					cv_model = model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
 					file.write('%9.3f' % self.mf.data.data[cv_model][res]['s2'])
 					file.write('%1s' % '±')
 					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['s2_err'])
@@ -174,7 +174,7 @@ class cv(common_operations):
 				# S2f.
 				file.write('\n%-20s' % 'S2f')
 				for model in self.mf.data.runs:
-					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					cv_model = model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
 					file.write('%9.3f' % self.mf.data.data[cv_model][res]['s2f'])
 					file.write('%1s' % '±')
 					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['s2f_err'])
@@ -182,7 +182,7 @@ class cv(common_operations):
 				# S2s.
 				file.write('\n%-20s' % 'S2s')
 				for model in self.mf.data.runs:
-					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					cv_model = model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
 					file.write('%9.3f' % self.mf.data.data[cv_model][res]['s2s'])
 					file.write('%1s' % '±')
 					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['s2s_err'])
@@ -190,7 +190,7 @@ class cv(common_operations):
 				# te.
 				file.write('\n%-20s' % 'te')
 				for model in self.mf.data.runs:
-					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					cv_model = model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
 					file.write('%9.2f' % self.mf.data.data[cv_model][res]['te'])
 					file.write('%1s' % '±')
 					file.write('%-9.2f' % self.mf.data.data[cv_model][res]['te_err'])
@@ -198,7 +198,7 @@ class cv(common_operations):
 				# Rex.
 				file.write('\n%-20s' % 'Rex')
 				for model in self.mf.data.runs:
-					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					cv_model = model + "-" + self.mf.data.frq_label[self.mf.data.remap_table[i]][1] + "_" + self.mf.data.data_types[i]
 					file.write('%9.3f' % self.mf.data.data[cv_model][res]['rex'])
 					file.write('%1s' % '±')
 					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['rex_err'])

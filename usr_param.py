@@ -19,6 +19,8 @@ class usr_param:
 
 		# Normal program use.
 		elif match(self.program_type, "mf"):
+			self.minimiser = 'Simplex'   # Simplex minimisation.
+			#self.minimiser = 'LM'   # Levenberg-Marquardt minimisation.
 			self.input()
 			self.model_selection()
 			self.palmer_method_param()
@@ -40,8 +42,7 @@ class usr_param:
 
 		# Quit if there is no match.
 		else:
-			print "Variable 'program_type' is not set correctly in usr_param.py, quitting program."
-			sys.exit()
+			raise NameError, "Variable 'program_type' is not set correctly in usr_param.py, quitting program."
 
 
 	def input(self):
@@ -68,16 +69,17 @@ class usr_param:
 		"""
 
 		self.input_info = []
-		self.input_info.append(['R1', '600', 600.0, 'r1.600.out'])
-		self.input_info.append(['R2', '600', 600.0, 'r2.600.out'])
-		self.input_info.append(['NOE', '600', 600.0, 'noe.600.out'])
-		self.input_info.append(['R1', '500', 500.0, 'r1.500.out'])
-		self.input_info.append(['R2', '500', 500.0, 'r2.500.out'])
-		self.input_info.append(['NOE', '500', 500.0, 'noe.500.out'])
+		self.input_info.append(['R1', '600', 600.0 * 1e6, 'r1.600.out'])
+		self.input_info.append(['R2', '600', 600.0 * 1e6, 'r2.600.out'])
+		self.input_info.append(['NOE', '600', 600.0 * 1e6, 'noe.600.out'])
+		self.input_info.append(['R1', '500', 500.0 * 1e6, 'r1.500.out'])
+		self.input_info.append(['R2', '500', 500.0 * 1e6, 'r2.500.out'])
+		self.input_info.append(['NOE', '500', 500.0 * 1e6, 'noe.500.out'])
 
-		self.nmr_frq = []
-		self.nmr_frq.append(['600', 600.0, '1', '1', '1'])
-		self.nmr_frq.append(['500', 500.0, '1', '1', '1'])
+		# Relic for Modelfree 4.
+		#self.nmr_frq = []
+		#self.nmr_frq.append(['600', 600.0, '1', '1', '1'])
+		#self.nmr_frq.append(['500', 500.0, '1', '1', '1'])
 
 
 	def model_selection(self):
@@ -172,8 +174,8 @@ class usr_param:
 		self.const = {}
 		self.const['nucleus'] = 'N15'
 		self.const['gamma']   = -2.710
-		self.const['rxh']     = 1.020
-		self.const['csa']     = -160.00
+		self.const['rxh']     = 1.020 * 1e-10
+		self.const['csa']     = -160.00 * 1e-6
 
 		self.vector = {}
 		self.vector['atom1'] = 'N'

@@ -48,28 +48,28 @@ class exp_overall_disc(common_operations):
 			real = []
 			err = []
 			types = []
-			for set in range(len(self.mf.data.relax_data)):
-				real.append(float(self.mf.data.relax_data[set][res][2]))
-				err.append(float(self.mf.data.relax_data[set][res][3]))
-				types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
+			for i in range(self.mf.data.num_ri):
+				real.append(float(self.mf.data.relax_data[i][res][2]))
+				err.append(float(self.mf.data.relax_data[i][res][3]))
+				types.append([self.mf.data.data_types[i], float(self.mf.data.frq[self.mf.data.remap_table[i]])])
 
 			for model in self.mf.data.runs:
 				if self.mf.debug == 1:
 					self.mf.log.write("\nCalculating expected overall discrepancy for res " + `res` + ", model " + model + "\n\n")
-					for set in range(len(self.mf.data.input_info)):
+					for i in range(self.mf.data.num_ri):
 						self.mf.log.write("-------------------")
 					self.mf.log.write("\n")
-					for set in range(len(self.mf.data.input_info)):
-						name = " Orig " + self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0]
+					for i in range(self.mf.data.num_ri):
+						name = " Orig " + self.mf.data.frq_label[self.mf.data.remap_table[i]] + " " + self.mf.data.data_types[i]
 						self.mf.log.write("%-17s%2s" % (name, " |"))
 					self.mf.log.write("\n")
-					for set in range(len(self.mf.data.input_info)):
-						self.mf.log.write("%8.4f" % self.mf.data.relax_data[set][res][2])
+					for i in range(self.mf.data.num_ri):
+						self.mf.log.write("%8.4f" % self.mf.data.relax_data[i][res][2])
 						self.mf.log.write("%1s" % "±")
-						self.mf.log.write("%-8.4f" % self.mf.data.relax_data[set][res][3])
+						self.mf.log.write("%-8.4f" % self.mf.data.relax_data[i][res][3])
 						self.mf.log.write("%2s" % " |")
 					self.mf.log.write("\n")
-					for set in range(len(self.mf.data.input_info)):
+					for i in range(self.mf.data.num_ri):
 						self.mf.log.write("-------------------")
 					self.mf.log.write("\n\n")
 

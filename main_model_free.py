@@ -9,15 +9,16 @@ class main_model_free:
 
 		self.mf.data.stage, self.mf.data.model = self.ask_stage()
 		self.mf.file_ops.mkdir(self.mf.data.model)
-		self.mf.common_ops.update_data(input)
 		self.mf.common_ops.extract_relax_data()
 		self.mf.results = open(self.mf.data.model + '/results', 'w')
-		self.mf.min_debug = 1
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
+		
+		# Debug
+		self.mf.min_debug = 2
 
 		print "\n\n[ Model-free fitting ]\n"
-		function_ops = ['iso', [10.0 *1e-9], self.mf.data.model]
+		function_ops = ['iso', [float(10.0 * 1e-9)], self.mf.data.model, 0]
 
 		grid_ops = []
 		if match('m1', self.mf.data.model):
@@ -30,13 +31,13 @@ class main_model_free:
 			self.mf.results.write("%-30s" % "te (ps)")
 		elif match('m3', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
-			grid_ops.append([20.0, 0.0, 30.0 / (self.mf.data.input_info[0][2]*1000000.0)**2])
+			grid_ops.append([20.0, 0.0, 30.0 / self.mf.data.frq[0]**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "Rex")
 		elif match('m4', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
-			grid_ops.append([20.0, 0.0, 30.0 / (self.mf.data.input_info[0][2]*1000000.0)**2])
+			grid_ops.append([20.0, 0.0, 30.0 / self.mf.data.frq[0]**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "te (ps)")
 			self.mf.results.write("%-30s" % "Rex")
@@ -49,29 +50,50 @@ class main_model_free:
 			self.mf.results.write("%-30s" % "ts (ps)")
 		self.mf.results.write("%-30s\n" % "chi-squared statistic")
 
+
+		# Loop over all data sets.
 		for res in range(len(self.mf.data.relax_data[0])):
 			if self.mf.min_debug >= 1:
 				print "\n\n<<< Fitting to residue: " + self.mf.data.relax_data[0][res][0] + " " + self.mf.data.relax_data[0][res][1] + " >>>"
+				print "\n\n<<< Grid search >>>"
 			else:
 				print "Residue: " + self.mf.data.relax_data[0][res][0] + " " + self.mf.data.relax_data[0][res][1]
-			types = []
+
+			# Initialise some data structures.
 			values = []
 			errors = []
 			for data in range(len(self.mf.data.relax_data)):
-				types.append([self.mf.data.input_info[data][0], self.mf.data.input_info[data][1], self.mf.data.input_info[data][2]])
 				values.append(self.mf.data.relax_data[data][res][2])
 				errors.append(self.mf.data.relax_data[data][res][3])
 
-			if self.mf.min_debug >= 1:
-				print "\n\n<<< Grid search >>>"
-			params, chi2 = self.mf.minimise.grid.search(self.mf.functions.relax.Ri, function_ops, self.mf.functions.chi2.relax_data, grid_ops, values, types, errors)
-		
+			# Grid search.
+			params, chi2 = self.mf.minimise.grid.search(self.mf.functions.relax.Ri, function_ops, self.mf.functions.chi2.relax_data, values, errors, grid_ops)
 			if self.mf.min_debug >= 1:
 				print "\nThe grid parameters are: " + `params`
 				print "The grid chi-squared value is: " + `chi2`
-				print "\n\n<<< LM min >>>"
 
-			params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.functions.relax.Ri, self.mf.functions.relax.dRi, function_ops, self.mf.functions.chi2.relax_data, values, types, errors, params)
+			#params = [0.368]
+			#params = [0.368, 0.0]
+			#params = [0.368, 0.0, 0.0]
+			# Minimisation.
+			if match('Simplex', self.mf.usr_param.minimiser):
+				if match('m1', self.mf.data.model):
+					print "One dimensional simplex minimisation, quitting program!"
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Simplex minimisation >>>"
+				factor = 1.0
+				for i in range(10):
+					self.simplex = self.create_simplex(params, grid_ops, factor)
+					if self.mf.min_debug >= 1:
+						print "\nThe initial simplex is: " + `self.simplex`
+					params, chi2 = self.mf.minimise.simplex.fit(self.mf.functions.relax.Ri, function_ops, self.mf.functions.chi2.relax_data, values, errors, self.simplex)
+					factor = factor / 10.0
+
+			elif match('LM', self.mf.usr_param.minimiser):
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Levenberg-Marquardt minimisation >>>"
+				function_ops[3] = 1
+				params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.functions.relax.Ri, function_ops, self.mf.functions.chi2.relax_data, values, errors, params)
 		
 			if self.mf.min_debug >= 1:
 				print "\n\n<<< Finished minimiser >>>"
@@ -85,11 +107,11 @@ class main_model_free:
 				self.mf.results.write("%-30s" % `params[1] * 1e12`)
 			elif match('m3', self.mf.data.model):
 				self.mf.results.write("%-30s" % `params[0]`)
-				self.mf.results.write("%-30s" % `params[1] * (self.mf.data.input_info[0][2]*1000000.0)**2`)
+				self.mf.results.write("%-30s" % `params[1] * self.mf.data.frq[0]**2`)
 			elif match('m4', self.mf.data.model):
 				self.mf.results.write("%-30s" % `params[0]`)
 				self.mf.results.write("%-30s" % `params[1] * 1e12`)
-				self.mf.results.write("%-30s" % `params[2] * (self.mf.data.input_info[0][2]*1000000.0)**2`)
+				self.mf.results.write("%-30s" % `params[2] * self.mf.data.frq[0]**2`)
 			elif match('m5', self.mf.data.model):
 				self.mf.results.write("%-30s" % `params[0]`)
 				self.mf.results.write("%-30s" % `params[1]`)
@@ -138,4 +160,25 @@ class main_model_free:
 		print "\n"
 
 		return stage, 'm' + model
+
+
+	def create_simplex(self, params, grid_ops, factor):
+		"""Function to create the initial simplex.
+
+		params will become the first point of the simplex.
+		grid_ops is used to create the other points of the simplex.
+		"""
+		simplex = []
+		simplex.append(params)
+		for i in range(len(params)):
+			delta = factor * (grid_ops[i][2] - grid_ops[i][1]) / (grid_ops[i][0] - 1)
+			new_point = []
+			for j in range(len(params)):
+				if i == j:
+					new_point.append(params[j] + delta)
+				else:
+					new_point.append(params[j])
+			simplex.append(new_point)
+		return simplex
+
 

@@ -41,7 +41,7 @@ from functions.relax import relax
 from minimise.minimise import minimise
 from minimise.grid import grid
 from minimise.levenberg_marquardt import levenberg_marquardt
-from minimise.test import test
+from minimise.simplex import simplex
 
 from model_selection.model_selection import modsel
 from model_selection.asymptotic import asymptotic
@@ -77,15 +77,6 @@ class mf:
 		self.functions = functions(self)
 		self.modsel = modsel(self)
 
-		# Testing minimiser!  Temp code.
-		#self.data = data(self)
-		#self.file_ops = file_ops(self)
-		#self.functions.relax = relax(self)
-		#self.functions.chi2 = chi2()
-		#self.functions.jw = jw()
-		#test(self)
-		#sys.exit()
-
 		# Select the behaviour of the program.
 		if match(self.usr_param.program_type, 'relax_fit'):
 			self.data = data(self)
@@ -93,12 +84,13 @@ class mf:
 			main_relax_fit(self)
 
 		if match(self.usr_param.program_type, 'mf'):
-			self.common_ops = common_ops(self)
 			self.data = data(self)
+			self.common_ops = common_ops(self)
+			self.common_ops.update_data()
 			self.file_ops = file_ops(self)
 			self.functions.relax = relax(self)
 			self.functions.chi2 = chi2()
-			self.functions.jw = jw()
+			self.functions.jw = jw(self)
 			self.modsel.asymptotic = asymptotic(self)
 			self.modsel.bootstrap = bootstrap(self)
 			self.modsel.cv = cv(self)
@@ -109,15 +101,17 @@ class mf:
 			self.minimise = minimise(self)
 			self.minimise.grid = grid(self)
 			self.minimise.levenberg_marquardt = levenberg_marquardt(self)
+			self.minimise.simplex = simplex(self)
 			main_model_free(self)
 
 		if match(self.usr_param.program_type, 'palmer'):
-			self.common_ops = common_ops(self)
 			self.data = data(self)
+			self.common_ops = common_ops(self)
+			self.common_ops.update_data()
 			self.file_ops = file_ops(self)
 			self.functions.relax = relax(self)
 			self.functions.chi2 = chi2()
-			self.functions.jw = jw()
+			self.functions.jw = jw(self)
 			self.modsel.asymptotic = asymptotic(self)
 			self.modsel.bootstrap = bootstrap(self)
 			self.modsel.cv = cv(self)

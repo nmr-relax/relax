@@ -92,8 +92,8 @@ class data:
 	def calc_constants(self):
 		"Calculate the dipolar and CSA constants."
 
-		self.rnh = float(self.mf.usr_param.const['rxh']) * 1e-10
-		self.csa = float(self.mf.usr_param.const['csa']) * 1e-6
+		self.rnh = float(self.mf.usr_param.const['rxh'])
+		self.csa = float(self.mf.usr_param.const['csa'])
 
 		# Dipolar constant.
 
@@ -103,39 +103,50 @@ class data:
 
 		self.csa_const = []
 		csa_temp = []
-		for i in range(len(self.mf.usr_param.nmr_frq)):
-			csa_const = (self.csa**2) * (self.frq[i][1]**2) / 3.0
+		for i in range(self.num_frq):
+			csa_const = (self.csa**2) * (self.frq_list[i][1]**2) / 3.0
 			self.csa_const.append(csa_const)
 			csa_temp.append(csa_const/1e9)
 
-		# Print section.
-		#print "r(NH): " + `self.rnh`
-		#print "CSA: " + `self.csa`
-		#print "CSA^2: " + `self.csa**2`
-		#print "gH: " + `self.gh`
-		#print "gN: " + `self.gx`
-		#print "h-bar: " + `self.h_bar`
-		#print "mu0: " + `self.mu0`
-		#print "frq1: " + `self.frq[0][1]`
-		#print "frq2: " + `self.frq[1][1]`
-		#print dip_temp
-		#print csa_temp
+		if self.mf.debug == 1:
+			print "%-20s%-20s" % ("r(NH):", `self.rnh`)
+			print "%-20s%-20s" % ("CSA:", `self.csa`)
+			print "%-20s%-20s" % ("CSA squared:", `self.csa**2`)
+			print "%-20s%-20s" % ("gH:", `self.gh`)
+			print "%-20s%-20s" % ("gN:", `self.gx`)
+			print "%-20s%-20s" % ("h-bar:", `self.h_bar`)
+			print "%-20s%-20s" % ("mu0:", `self.mu0`)
+			print "%-20s%-20s" % ("Dipolar const / 1e9", dip_temp)
+			print "%-20s%-20s" % ("CSA const / 1e9", csa_temp)
+			print "\n"
 
 
 
 	def calc_frq(self):
 		"Calculate all the frequencies which lead to relaxation."
 
-		self.frq = []
-		for i in range(len(self.mf.usr_param.nmr_frq)):
-			self.frq.append([])
-			frqH = 2.0*pi * ( float(self.mf.usr_param.nmr_frq[i][1]) * 1e6 )
+		self.frq_list = []
+		self.frq_sqrd_list = []
+		for i in range(self.num_frq):
+			self.frq_list.append([])
+			self.frq_sqrd_list.append([])
+
+			frqH = 2.0 * pi * self.frq[i]
 			frqN = frqH * ( self.gx / self.gh )
-			self.frq[i].append(0.0)
-			self.frq[i].append(frqN)
-			self.frq[i].append(frqH - frqN)
-			self.frq[i].append(frqH)
-			self.frq[i].append(frqH + frqN)
+
+			# Normal frequencies.
+			self.frq_list[i].append(0.0)
+			self.frq_list[i].append(frqN)
+			self.frq_list[i].append(frqH - frqN)
+			self.frq_list[i].append(frqH)
+			self.frq_list[i].append(frqH + frqN)
+			
+			# Frequencies squared.
+			self.frq_sqrd_list[i].append(0.0)
+			self.frq_sqrd_list[i].append(frqN**2)
+			self.frq_sqrd_list[i].append((frqH - frqN)**2)
+			self.frq_sqrd_list[i].append(frqH**2)
+			self.frq_sqrd_list[i].append((frqH + frqN)**2)
 
 
 	def init_constants(self):
@@ -147,31 +158,52 @@ class data:
 
 
 	def init_data(self):
-		"""Initilise the data
+		"Initilise the data structures."
 
-		The structure of self.input_info is as follows:  The fields of the first dimension correspond
-		to each relaxation data set and is flexible in size, ie len(self.input_info) = number of data sets.
-		The second dimension have the following fixed fields:
-			0 - Data type (R1, R2, or NOE)
-			1 - NMR frequency label
-			2 - NMR proton frequency in MHz
-			3 - The name of the file containing the relaxation data
+		# The number of data points.
+		#	eg 6
+		self.num_ri = 0
 
-		The structure of self.relax_data is as follows:  The first dimension corresponds to each
-		relaxation data set as in self.input_info.  The fields point to 2D data structures containing
-		the data from the relaxation file (missing the single header line), ie:
-			[res][0] - Residue number
-			[res][1] - Residue name
-			[res][2] - Relaxation value
-			[res][3] - Relaxation error
-		"""
+		# The number of field strengths.
+		#	eg 2
+		self.num_frq = 0
+		
+		# Labels corresponding to the data type.
+		#	eg ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
+		self.data_types = []
 
-		self.input_info = []
+		# The names of the files containing the relaxation data.
+		#	eg ['R1.out', 'R2.out', 'NOE.out', 'R1.out', 'R2.out', 'NOE.out']
+		self.data_files = []
+
+		# A translation table to map relaxation data points to their frequencies.
+		#	eg [0, 0, 0, 1, 1, 1]
+		self.remap_table = []
+
+		# A translation table to direct the NOE data points to the R1 data points.  Used to speed up
+		# calculations by avoiding the recalculation of R1 values.
+		#	eg [None, None, 0, None, None, 3]
+		self.noe_r1_table = []
+
+		# The NMR frequency labels.
+		#	eg ['600', '500']
+		self.frq_label = []
+
+		# The NMR frequencies in Hz.
+		#	eg [600.0 * 1e6, 500.0 * 1e6]
+		self.frq = []
+
+		# The structure of self.relax_data is as follows:  The first dimension corresponds to each
+		# relaxation data point.  The fields point to 2D data structures containing the data from
+		# the relaxation file (missing the single header line), ie:
+		#	[res][0] - Residue number
+		#	[res][1] - Residue name
+		#	[res][2] - Relaxation value
+		#	[res][3] - Relaxation error
 		self.relax_data = []
-		self.num_data_sets = 0
-		self.runs = []
 
-		self.stage = '0'
-
-		self.data = {}
-		self.results = []
+		# Don't know if these are used any more?
+		#self.runs = []
+		#self.stage = '0'
+		#self.data = {}
+		#self.results = []

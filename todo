@@ -2,6 +2,11 @@
 #########
 
 merge all print_data functions
+fix LM min, start inside while loop
+
+
+# Speed
+#######
 
 
 # Bugs
