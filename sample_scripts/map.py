@@ -1,7 +1,7 @@
 # Script for mapping the model-free space.
 
 # Set the run name (also the name of a preset model-free model).
-name = 'tm3'
+name = 'm5'
 create_run(name, 'mf')
 
 # Nuclei type

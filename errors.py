@@ -181,10 +181,10 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must be a tuple."
 
-    # Tuple of numbers.
-    class RelaxTupleNumError(BaseError):
+    # Tuple or number.
+    class RelaxNumTupleError(BaseError):
         def __init__(self, name, value):
-            self.text = "The " + name + " argument " + `value` + " must be a tuple, a list enclosed in round brackets, of numbers."
+            self.text = "The " + name + " argument " + `value` + " must either be a number or tuple of numbers."
 
     # None.
     class RelaxNoneError(BaseError):

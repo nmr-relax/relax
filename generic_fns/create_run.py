@@ -40,7 +40,7 @@ class Create_run:
 
         # Test if run_type is valid.
         if not run_type in valid:
-            raise RelaxError, "The run type name " + `run_type` + " is invalid."
+            raise RelaxError, "The run type name " + `run_type` + " is invalid and must be one of the strings in the list " + `valid` + "."
 
         # Add the run and type.
         self.relax.data.run_names.append(run)

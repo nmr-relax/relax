@@ -38,18 +38,18 @@ class Diffusion_tensor:
 
         run:  The name of the run to assign the data to.
 
-        params:  The parameters argument containing the diffusion tensor data.
+        params:  The diffusion tensor data.
 
-        time_scale:  Value to scale the correlation time parameters values by.
+        time_scale:  The correlation time scaling value.
 
-        d_scale:  Value to scale the diffusion tensor eigenvalue parameters values by.
+        d_scale:  The diffusion tensor eigenvalue scaling value.
 
         angle_units:  The units for the angle parameters.
 
         param_types:  A flag to select different parameter combinations.
 
-        axial_type:  A string, which if supplied will axially symmetric parameters, will restrict
-        the tensor to either being oblate or prolate.
+        axial_type:  A string, which if supplied with axially symmetric parameters, will restrict
+        the tensor to either being 'oblate' or 'prolate'.
 
         fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
 
@@ -182,13 +182,13 @@ class Diffusion_tensor:
 
         # Parameter argument.
         if type(params) != int and type(params) != float and type(params) != tuple:
-            raise RelaxTupleNumError, ('diffusion parameters', params)
+            raise RelaxNumTupleError, ('diffusion parameters', params)
         if type(params) == tuple:
             if len(params) != 4 and len(params) != 6:
-                raise RelaxError, "The diffusion parameters argument should either be a floating point number or a tuple of length 4 or 6."
+                raise RelaxError, "The diffusion parameters argument must either be a number or a tuple of numbers of length 4 or 6."
             for i in xrange(len(params)):
                 if type(params[i]) != float and type(params[i]) != int:
-                    raise RelaxTupleNumError, ('diffusion parameters', params)
+                    raise RelaxNumTupleError, ('diffusion parameters', params)
 
         # Time scale argument.
         if type(time_scale) != float:

@@ -40,7 +40,7 @@ class Modsel:
 
         modsel_run:  The run name to assign to the results of model selection.
 
-        runs:  An array containing the names of all runs to include in the model selection.
+        runs:  An array containing the names of all runs to include in model selection.
 
 
         Description
