@@ -11,7 +11,7 @@ set_model_selection('AIC')
 value_setup('bond_length', 1.02 * 1e-10)
 value_setup('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-model = 'm4'
+model = 'm1'
 mf_model_select(model)
 grid_search(model, inc=7)
 minimise(model, 'simplex', max_iterations=10000, chi2_tol=1e-99)

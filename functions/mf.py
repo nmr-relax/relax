@@ -115,15 +115,18 @@ class mf:
 		self.data.params = params
 		self.print_flag = print_flag
 
-		# Store the parameter vector in self.data.func_test
-		self.data.func_test = params
-
 		# Calculate the spectral density values.
 		self.calc_jw_comps(self.data)
 		create_jw_struct(self.data, self.calc_jw)
 
+		# Calculate the relaxation formula components.
+		self.create_ri_comps(self.data, self.create_dip_func, self.create_dip_jw_func, self.create_csa_func, self.create_csa_jw_func, self.create_rex_func)
+
 		# Calculate the R1, R2, and sigma_noe values.
 		ri_prime(self.data, self.create_ri_prime_comps, self.create_ri_prime)
+
+		import sys
+		sys.exit()
 
 		# Calculate the R1, R2, and NOE values.
 		self.data.ri = copy.deepcopy(self.data.ri_prime)
@@ -157,12 +160,19 @@ class mf:
 		self.data.params = params
 		self.print_flag = print_flag
 
-		# Test if function self.func has been called with these parameter values.  If not, call it.
-		#if self.data.func_test != params:
-		#	temp_chi2 = self.func(params, print_flag)
+		# It is assumed that the function self.func has been called before with these parameter values.
+		# This may not always be the case depending on the minimisation technique.  Therefore for debugging
+		# a broken minimiser, uncomment this line.
+		#temp_chi2 = self.func(params, print_flag)
 
 		# Calculate the spectral density values.
 		create_djw_struct(self.data, self.calc_djw)
+
+		# Calculate the relaxation formula components.
+		self.create_ri_comps(self.data, self.create_dip_grad, self.create_dip_jw_grad, self.create_csa_grad, self.create_csa_jw_grad, self.create_rex_grad)
+
+		import sys
+		sys.exit()
 
 		# Calculate the R1, R2, and sigma_noe values.
 		dri_prime(self.data, self.create_dri_prime_comps, self.create_dri_prime)
@@ -199,9 +209,11 @@ class mf:
 		self.data.params = params
 		self.print_flag = print_flag
 
-		# Test if function self.func has been called with these parameter values.  If not, call it.
-		#if self.data.func_test != params:
-		#	temp_chi2 = self.func(params, print_flag)
+		# It is assumed that the function self.func has been called before with these parameter values.
+		# This may not always be the case depending on the minimisation technique.  Therefore for debugging
+		# a broken minimiser, uncomment the following lines.
+		#temp_chi2 = self.func(params, print_flag)
+		#temp_dchi2 = self.dfunc(params, print_flag)
 
 		# Calculate the spectral density values.
 		create_d2jw_struct(self.data, self.calc_d2jw)
@@ -245,19 +257,19 @@ class mf:
 		calc_fixed_dip(self.data)
 
 		# Dipolar and CSA constants.
-		self.data.dip_const = 0.0
-		self.data.dip_grad = 0.0
-		self.data.dip_hess = 0.0
-		self.data.csa_const = zeros((self.relax.data.num_frq), Float64)
-		self.data.csa_grad = zeros((self.relax.data.num_frq), Float64)
-		self.data.csa_hess = zeros((self.relax.data.num_frq), Float64)
+		self.data.dip_const_func = 0.0
+		self.data.dip_const_grad = 0.0
+		self.data.dip_const_hess = 0.0
+		self.data.csa_const_func = zeros((self.relax.data.num_frq), Float64)
+		self.data.csa_const_grad = zeros((self.relax.data.num_frq), Float64)
+		self.data.csa_const_hess = zeros((self.relax.data.num_frq), Float64)
 
 		# Components of the transformed relaxation equations.
-		self.data.dip_comps = zeros((self.relax.data.num_ri), Float64)
-		self.data.dip_jw_comps = zeros((self.relax.data.num_ri), Float64)
-		self.data.csa_comps = zeros((self.relax.data.num_ri), Float64)
-		self.data.csa_jw_comps = zeros((self.relax.data.num_ri), Float64)
-		self.data.rex_comps = zeros((self.relax.data.num_ri), Float64)
+		self.data.dip_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.dip_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.csa_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.csa_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.rex_comps_func = zeros((self.relax.data.num_ri), Float64)
 
 		# Initialise the first partial derivative components of the transformed relaxation equations.
 		self.data.dip_comps_grad = zeros((len(self.params), self.relax.data.num_ri), Float64)
@@ -386,16 +398,35 @@ class mf:
 			return 0
 
 
-		# Initialise the ri and ri_prime function pointer data structures.
+		# Initialise function pointer data structures.
+		self.create_dip_func = []
+		self.create_dip_grad = []
+		self.create_dip_hess = []
+		self.create_csa_func = []
+		self.create_csa_grad = []
+		self.create_csa_hess = []
+		self.create_rex_func = []
+		self.create_rex_grad = []
+
+		self.create_dip_jw_func = []
+		self.create_dip_jw_grad = []
+		self.create_dip_jw_hess = []
+		self.create_csa_jw_func = []
+		self.create_csa_jw_grad = []
+		self.create_csa_jw_hess = []
+
 		self.create_ri_prime = None
 		self.create_dri_prime = []
 		self.create_d2ri_prime = []
-		self.create_ri_prime_comps = []
-		self.create_dri_prime_comps = []
-		self.create_d2ri_prime_comps = []
+
+		#self.create_ri_prime_comps = []
+		#self.create_dri_prime_comps = []
+		#self.create_d2ri_prime_comps = []
+
 		self.create_ri = []
 		self.create_dri = []
 		self.create_d2ri = []
+
 		self.get_r1 = []
 		self.get_dr1 = []
 		self.get_d2r1 = []
@@ -404,9 +435,15 @@ class mf:
 		for i in range(self.relax.data.num_ri):
 			# The R1 equations.
 			if self.relax.data.ri_labels[i]  == 'R1':
-				self.create_ri_prime_comps.append(comp_r1_prime)
-				self.create_dri_prime_comps.append(comp_dr1_djw_prime)
-				self.create_d2ri_prime_comps.append(comp_d2r1_djwidjwj_prime)
+				self.create_dip_jw_func.append(comp_r1_dip_jw)
+				self.create_dip_jw_grad.append(comp_r1_dip_jw)
+				self.create_dip_jw_hess.append(comp_r1_dip_jw)
+				self.create_csa_jw_func.append(comp_r1_csa_jw)
+				self.create_csa_jw_grad.append(comp_r1_csa_jw)
+				self.create_csa_jw_hess.append(comp_r1_csa_jw)
+				#self.create_ri_prime_comps.append(comp_r1_prime)
+				#self.create_dri_prime_comps.append(comp_dr1_djw_prime)
+				#self.create_d2ri_prime_comps.append(comp_d2r1_djwidjwj_prime)
 				self.create_ri.append(None)
 				self.create_dri.append(None)
 				self.create_d2ri.append(None)
@@ -416,12 +453,18 @@ class mf:
 
 			# The R2 equations.
 			elif self.relax.data.ri_labels[i] == 'R2':
-				if self.data.rex_index == None:
-					self.create_ri_prime_comps.append(comp_r2_prime)
-				else:
-					self.create_ri_prime_comps.append(comp_r2_prime_rex)
-				self.create_dri_prime_comps.append(comp_dr2_djw_prime)
-				self.create_d2ri_prime_comps.append(comp_d2r2_djwidjwj_prime)
+				self.create_dip_jw_func.append(comp_r2_dip_jw)
+				self.create_dip_jw_grad.append(comp_r2_dip_jw)
+				self.create_dip_jw_hess.append(comp_r2_dip_jw)
+				self.create_csa_jw_func.append(comp_r2_csa_jw)
+				self.create_csa_jw_grad.append(comp_r2_csa_jw)
+				self.create_csa_jw_hess.append(comp_r2_csa_jw)
+				#if self.data.rex_index == None:
+				#	self.create_ri_prime_comps.append(comp_r2_prime)
+				#else:
+				#	self.create_ri_prime_comps.append(comp_r2_prime_rex)
+				#self.create_dri_prime_comps.append(comp_dr2_djw_prime)
+				#self.create_d2ri_prime_comps.append(comp_d2r2_djwidjwj_prime)
 				self.create_ri.append(None)
 				self.create_dri.append(None)
 				self.create_d2ri.append(None)
@@ -431,9 +474,15 @@ class mf:
 
 			# The NOE equations.
 			elif self.relax.data.ri_labels[i] == 'NOE':
-				self.create_ri_prime_comps.append(comp_sigma_noe)
-				self.create_dri_prime_comps.append(comp_dsigma_noe_djw_prime)
-				self.create_d2ri_prime_comps.append(comp_d2sigma_noe_djwidjwj_prime)
+				self.create_dip_jw_func.append(comp_sigma_noe_dip_jw)
+				self.create_dip_jw_grad.append(comp_sigma_noe_dip_jw)
+				self.create_dip_jw_hess.append(comp_sigma_noe_dip_jw)
+				self.create_csa_jw_func.append(None)
+				self.create_csa_jw_grad.append(None)
+				self.create_csa_jw_hess.append(None)
+				#self.create_ri_prime_comps.append(comp_sigma_noe)
+				#self.create_dri_prime_comps.append(comp_dsigma_noe_djw_prime)
+				#self.create_d2ri_prime_comps.append(comp_d2sigma_noe_djwidjwj_prime)
 				self.create_ri.append(calc_noe)
 				self.create_dri.append(calc_dnoe)
 				self.create_d2ri.append(calc_d2noe)
@@ -449,6 +498,16 @@ class mf:
 
 		# Both the bond length and CSA are fixed.
 		if self.data.r_index == None and self.data.csa_index == None:
+			# The main ri component functions
+			if self.data.rex_index == None:
+				self.create_ri_comps = ri_comps
+				self.create_dri_comps = dri_comps
+				self.create_d2ri_comps = d2ri_comps
+			else:
+				self.create_ri_comps = ri_comps_rex
+				self.create_dri_comps = dri_comps_rex
+				self.create_d2ri_comps = d2ri_comps
+
 			# Calculate the dipolar and CSA constant components.
 			comp_dip_const_func(self.data)
 			comp_csa_const_func(self.data)
@@ -512,6 +571,16 @@ class mf:
 
 		# The bond length is part of the parameter vector.
 		elif self.data.r_index != None and self.data.csa_index == None:
+			# The main ri component functions
+			if self.data.rex_index == None:
+				self.create_ri_comps = ri_comps_r
+				self.create_dri_comps = dri_comps_r
+				self.create_d2ri_comps = d2ri_comps_r
+			else:
+				self.create_ri_comps = ri_comps_r_rex
+				self.create_dri_comps = dri_comps_r_rex
+				self.create_d2ri_comps = d2ri_comps_r
+
 			# Calculate the CSA constant.
 			comp_csa_const_func(self.data)
 
@@ -542,6 +611,16 @@ class mf:
 
 		# The CSA is part of the parameter vector.
 		elif self.data.r_index == None and self.data.csa_index != None:
+			# The main ri component functions
+			if self.data.rex_index == None:
+				self.create_ri_comps = ri_comps_csa
+				self.create_dri_comps = dri_comps_csa
+				self.create_d2ri_comps = d2ri_comps_csa
+			else:
+				self.create_ri_comps = ri_comps_csa_rex
+				self.create_dri_comps = dri_comps_csa_rex
+				self.create_d2ri_comps = d2ri_comps_csa
+
 			comp_dip_const_func(self.data)
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
@@ -564,6 +643,16 @@ class mf:
 
 		# Both the bond length and CSA are part of the parameter vector.
 		elif self.data.r_index != None and self.data.csa_index != None:
+			# The main ri component functions
+			if self.data.rex_index == None:
+				self.create_ri_comps = ri_comps_r_csa
+				self.create_dri_comps = dri_comps_r_csa
+				self.create_d2ri_comps = d2ri_comps_r_csa
+			else:
+				self.create_ri_comps = ri_comps_r_csa_rex
+				self.create_dri_comps = dri_comps_r_csa_rex
+				self.create_d2ri_comps = d2ri_comps_r_csa
+
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
 				if self.relax.data.ri_labels[i]  == 'R1':
