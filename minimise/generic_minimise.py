@@ -38,10 +38,10 @@ class generic_minimise:
 					print "\n\n<<<Main iteration k=" + `self.k` + " >>>"
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 				else:
-					if self.k2 == 0:
-						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 					if self.k2 == 100:
 						self.k2 = 0
+					if self.k2 == 0:
+						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 
 			# Get xk+1 (new parameter function).
 			try:

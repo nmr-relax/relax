@@ -24,6 +24,7 @@ from minimise.newton import newton
 from minimise.cauchy_point import cauchy_point
 from minimise.dogleg import dogleg
 from minimise.cg_steihaug import cg_steihaug
+from minimise.exact_trust_region import exact_trust_region
 from minimise.levenberg_marquardt import levenberg_marquardt
 
 # Other algorithms.
@@ -209,6 +210,16 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< CG-Steihaug minimisation >>>"
 		min = cg_steihaug(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Exact trust region minimisation.
+	elif match('^[Ee]xact', min_algor):
+		if print_flag:
+			print "\n\n<<< Exact trust region minimisation >>>"
+		min = exact_trust_region(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
