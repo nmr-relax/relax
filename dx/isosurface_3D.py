@@ -171,7 +171,7 @@ class Iso3D(Base_Map):
         # Default labels.
         if self.map_labels == None or self.labels != None:
             # Axis increments.
-            axis_incs = 5.0
+            axis_incs = 5
 
             # Labels.
             if self.labels:
@@ -187,7 +187,7 @@ class Iso3D(Base_Map):
             tick_locations = []
             for i in xrange(3):
                 string = "{"
-                inc = self.inc / axis_incs
+                inc = self.inc / float(axis_incs)
                 val = 0.0
                 for i in xrange(axis_incs + 1):
                     string = string + " " + `val`
@@ -197,15 +197,12 @@ class Iso3D(Base_Map):
 
             # Tick values.
             tick_values = []
-            inc = (self.bounds[:, 1] - self.bounds[:, 0]) / axis_incs
+            inc = (self.bounds[:, 1] - self.bounds[:, 0]) / float(axis_incs)
             for i in xrange(3):
                 vals = self.bounds[self.swap[i], 0] * 1.0
                 string = "{"
                 for j in xrange(axis_incs + 1):
-                    if self.relax.data.res[self.run][self.index].scaling:
-                        string = string + "\"" + "%.2g" % (vals * self.scaling_matrix[self.swap[i], self.swap[i]]) + "\" "
-                    else:
-                        string = string + "\"" + "%.2g" % vals + "\" "
+                    string = string + "\"" + "%.2g" % vals + "\" "
                     vals = vals + inc[self.swap[i]]
                 string = string + "}"
                 tick_values.append(string)

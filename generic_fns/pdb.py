@@ -62,7 +62,7 @@ class PDB:
         print self.relax.data.pdb[self.run]
 
         # Sequence loading.
-        if self.load_seq and not len(self.relax.data.res[self.run]):
+        if self.load_seq and not self.relax.data.res.has_key(self.run):
             self.relax.generic.sequence.load_PDB_sequence(self.run)
 
         # Load into Molmol (if running).

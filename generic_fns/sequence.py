@@ -50,10 +50,13 @@ class Sequence:
         else:
             res = self.relax.data.pdb[run].peptide_chains[0].residues
 
+        # Add the run to 'self.relax.data.res'.
+        self.relax.data.res.add_list(run)
+
         # Loop over the sequence.
         for i in xrange(len(res)):
             # Append a data container.
-            self.relax.data.res[run].append(Residue())
+            self.relax.data.res[run].add_element()
 
             # Insert the data.
             self.relax.data.res[run][i].num = res[i].number

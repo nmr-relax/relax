@@ -58,6 +58,10 @@ class Palmer:
             if not self.relax.data.pdb.has_key(run):
                 raise RelaxPdbError
 
+        # Test if the nucleus type has been set.
+        if not hasattr(self.relax.data, 'gx'):
+            raise RelaxNucleusError
+
         # Directory creation.
         if dir == None:
             dir = run
@@ -437,6 +441,9 @@ class Palmer:
 
     def extract(self, run, dir):
         """Function for extracting the Modelfree4 results out of the 'mfout' file."""
+
+        # Arguments.
+        self.run = run
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res[self.run]):

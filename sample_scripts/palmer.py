@@ -23,6 +23,13 @@ def exec_stage_1(runs):
         print "\n\n# " + run + " #"
         create_run(run, 'mf')
 
+        # Load the sequence.
+        read.sequence(run, 'noe.500.out')
+
+        # PDB.
+        pdb(run, 'Ap4Aase_new_3.pdb')
+        vectors(run)
+
         # Load the relaxation data.
         read.relax_data(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
         read.relax_data(run, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
@@ -33,8 +40,8 @@ def exec_stage_1(runs):
 
         # Setup other values.
         diffusion_tensor(run, 1e-8)
-        value.set(run, 'bond_length', 1.02 * 1e-10)
-        value.set(run, 'csa', -170 * 1e-6)
+        value.set(run, 1.02 * 1e-10, 'bond_length')
+        value.set(run, -170 * 1e-6, 'csa')
 
         # Select the model-free model.
         model.select_mf(run=run, model=run)
@@ -113,15 +120,8 @@ def exec_stage_3():
 # Main section of the script.
 #############################
 
-# Load the sequence.
-read.sequence('noe.500.out')
-
 # Nuclei type.
 nuclei('N')
-
-# PDB.
-pdb('Ap4Aase_new_3.pdb')
-vectors()
 
 # Set the run name (also the name of a preset model-free model).
 runs = ['m1', 'm2', 'm3', 'm4', 'm5']

@@ -21,6 +21,7 @@
 ###############################################################################
 
 
+from Numeric import zeros
 from re import match
 
 from isosurface_3D import Iso3D

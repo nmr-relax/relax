@@ -52,7 +52,7 @@ class Molmol:
 
         # Test if the PDB file has been loaded.
         if hasattr(self.relax.data, 'pdb'):
-            self.open_pdb(run)
+            self.open_pdb()
 
         # Run InitAll to remove everything from molmol.
         else:

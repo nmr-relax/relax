@@ -113,7 +113,7 @@ class Rx_data:
         """Function for reading R1, R2, or NOE relaxation data."""
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[run]):
+        if not self.relax.data.res.has_key(run):
             raise RelaxSequenceError
 
         # Test if the run exists.

@@ -99,6 +99,15 @@ class RelaxErrors:
             self.text = "The unit XH bond vectors have not been calculated."
 
 
+    # Nuclear errors.
+    #################
+
+    # Nucleus not set.
+    class RelaxNucleusError(BaseError):
+        def __init__(self):
+            self.text = "The type of nucleus has not yet been set."
+
+
     # Argument errors.
     ##################
 

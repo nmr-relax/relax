@@ -103,7 +103,7 @@ class Specific_setup:
 
         # Model statistics.
         if self.function_type == 'model_stats':
-            return self.relax.specific.model_free.model_stats
+            return self.relax.specific.model_free.model_statistics
 
         # Number of instances.
         if self.function_type == 'num_instances':

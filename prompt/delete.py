@@ -44,11 +44,23 @@ class Delete:
         Description
         ~~~~~~~~~~~
 
-        The data_type argument specifies what type of data is to be deleted and must be one of the
-        following strings:
+        The 'run' argument can either a string or None.  If None, then the data corresponding to
+        'data_type' for all runs will be deleted.
+
+
+        The data_type argument specifies what type of data is to be deleted.  Only data
+        corresponding to the run argument will be deleted.  The argument can be classified as
+        belonging to one of two categories, global data types found in 'self.relax.data', and
+        specific data types usually found in 'self.relax.data.res'.
+
+        Global data types:
+            None:  All data.
             res:  All residue specific data.
-            diff:  Diffusion tensor.
-            None:  All data associated with the run.
+            diff:  All diffusion tensor data.
+
+        Specific data types:
+            relax_data:  All relaxation data.
+            mf:  All model-free data.
         """
 
         # Function intro text.
@@ -63,7 +75,7 @@ class Delete:
             raise RelaxStrError, ('run', run)
 
         # Data_type.
-        if type != None and type(data_type) != str:
+        if data_type != None and type(data_type) != str:
             raise RelaxNoneStrError, ('data type', data_type)
 
         # Execute the functional code.

@@ -706,7 +706,7 @@ class Model_free:
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             # Duplicate the diffusion tensor data.
-            if not self.relax.data.diff.has_key(new_run):
+            if self.relax.data.diff.has_key(old_run) and not self.relax.data.diff.has_key(new_run):
                 self.relax.data.diff[new_run] = deepcopy(self.relax.data.diff[old_run])
 
             # Create the sequence data if it does not exist.
@@ -1437,6 +1437,10 @@ class Model_free:
                 if not hasattr(self.relax.data.res[self.run][i], 'xh_unit'):
                     raise RelaxNoVectorsError
 
+        # Test if the nucleus type has been set.
+        if not hasattr(self.relax.data, 'gx'):
+            raise RelaxNucleusError
+
         # Print out.
         if self.print_flag >= 1:
             if self.param_set == 'mf':
@@ -1770,6 +1774,9 @@ class Model_free:
         chi2 - the chi-squared value.
         """
 
+        # Arguments.
+        self.run = run
+
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
@@ -1779,10 +1786,10 @@ class Model_free:
             self.assemble_param_vector(index=instance)
 
             # Count the number of data points.
-            n = len(self.relax.data.res[run][instance].relax_data)
+            n = len(self.relax.data.res[self.run][instance].relax_data)
 
             # The chi2 value.
-            chi2 = self.relax.data.res[run][instance].chi2
+            chi2 = self.relax.data.res[self.run][instance].chi2
 
         # Other data.
         elif self.param_set == 'diff' or self.param_set == 'all':
@@ -1791,16 +1798,16 @@ class Model_free:
 
             # Loop over the sequence.
             n = 0
-            for i in xrange(len(self.relax.data.res[run])):
+            for i in xrange(len(self.relax.data.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[run][i].select:
+                if not self.relax.data.res[self.run][i].select:
                     continue
 
                 # Count the number of data points.
-                n = n + len(self.relax.data.res[run][i].relax_data)
+                n = n + len(self.relax.data.res[self.run][i].relax_data)
 
             # The chi2 value.
-            chi2 = self.relax.data.chi2[run]
+            chi2 = self.relax.data.chi2[self.run]
 
         # Count the number of parameters.
         k = len(self.param_vector)
@@ -1812,12 +1819,15 @@ class Model_free:
     def num_instances(self, run=None):
         """Function for returning the number of instances."""
 
+        # Arguments.
+        self.run = run
+
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
-            return len(self.relax.data.res[run])
+            return len(self.relax.data.res[self.run])
 
         # Other data.
         elif self.param_set == 'diff' or self.param_set == 'all':
@@ -2340,12 +2350,15 @@ class Model_free:
     def skip_function(self, run=None, instance=None):
         """Function for skiping certain data."""
 
+        # Arguments.
+        self.run = run
+
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
-            if not self.relax.data.res[run][instance].select:
+            if not self.relax.data.res[self.run][instance].select:
                 return 1
             else:
                 return 0

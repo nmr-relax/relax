@@ -53,7 +53,7 @@ class Model_selection:
         elif method == 'BIC':
             self.formula = self.bic
         elif method == 'CV':
-            self.formula = self.cv
+            pass
         else:
             raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
 
@@ -73,7 +73,7 @@ class Model_selection:
         # Specific duplicate data, number of instances, and model statistics functions.
         self.duplicate_data = self.relax.specific_setup.setup('duplicate_data', self.function_type)
         self.count_num_instances = self.relax.specific_setup.setup('num_instances', self.function_type)
-        self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
+        self.model_statistics = self.relax.specific_setup.setup('model_stats', self.function_type)
         self.skip_function = self.relax.specific_setup.setup('skip_function', self.function_type)
 
         # The number of instances.
@@ -107,17 +107,20 @@ class Model_selection:
             for j in xrange(len(self.runs)):
                 # Single-item-out cross validation.
                 if method == 'CV':
+                    # Reassign the run.
+                    run = self.runs[j][0]
+
                     # Sum of chi-squared values.
                     sum_crit = 0.0
 
                     # Loop over the validation samples and sum the chi-squared values.
                     for k in xrange(len(self.runs[j])):
                         # Skip function.
-                        if self.skip_function(run=run[j][k], instance=i):
+                        if self.skip_function(run=self.runs[j][k], instance=i):
                             continue
 
                         # Get the model statistics.
-                        k, n, chi2 = model_stats(run=run[j], instance=i)
+                        k, n, chi2 = self.model_statistics(run=self.runs[j][k], instance=i)
 
                         # Chi2 sum.
                         sum_crit = sum_crit + chi2
@@ -127,12 +130,15 @@ class Model_selection:
 
                 # Other model selection methods.
                 else:
+                    # Reassign the run.
+                    run = self.runs[j]
+
                     # Skip function.
-                    if self.skip_function(run=run[j], instance=i):
+                    if self.skip_function(run=run, instance=i):
                         continue
 
                     # Get the model statistics.
-                    k, n, chi2 = model_stats(run=run[j], instance=i)
+                    k, n, chi2 = self.model_statistics(run=run, instance=i)
 
                     # Calculate the criterion value.
                     crit = self.formula(chi2, float(k), float(n))
