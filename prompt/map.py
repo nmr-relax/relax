@@ -8,7 +8,7 @@ class Map:
         self.relax = relax
 
 
-    def map(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx"):
+    def map(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point_file="point", point=None):
         """Function for creating a map of the given space.
         
         OpenDX is the program used to view the output.  Currently only 3D and 4D mappings are
@@ -89,6 +89,9 @@ class Map:
         if type(inc) != int:
             print "The increment argument should be an integer."
             return
+        elif inc <= 1:
+            print "The increment value needs to be greater than 1."
+            return
 
         # Lower bounds.
         if lower != None:
@@ -149,9 +152,25 @@ class Map:
             print "The directory name must be a string or 'None'."
             return
 
+        # Point file.
+        if point != None:
+            if type(point_file) != str:
+                print "The point file name must be a string."
+                return
+            elif type(point) != list:
+                print "The point argument must be an array."
+                return
+            elif len(point) != n:
+                print "The point array must be of length " + `n`
+                return
+            for i in range(n):
+                if type(point[i]) != int and type(point[i]) != float:
+                    print "The elements of the point array must be numbers."
+                    return
+
         # Size of map.
         if n != 3 and n != 4:
             print `n` + "D space mapping is not implemented."
             return
         
-        self.relax.map.map_space(model=model, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir)
+        self.relax.map.map_space(model=model, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point_file=point_file, point=point)

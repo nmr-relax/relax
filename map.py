@@ -10,7 +10,7 @@ class Map:
         self.relax = relax
 
 
-    def map_space(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None):
+    def map_space(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point_file="point", point=None):
         """"""
 
         # Equation type specific function setup.
@@ -38,10 +38,12 @@ class Map:
         self.dir = dir
 
         # Points.
-        if point == None:
-            self.point = 0
-        else:
+        if point != None:
+            self.point_file = point_file
             self.point = point
+            self.num_points = 1
+        else:
+            self.num_points = 0
 
         # The OpenDX directory.
         if self.dir:
@@ -58,9 +60,9 @@ class Map:
             self.bounds[:, 1] = array(upper, Float64)
 
         # Diagonal scaling.
-        if self.relax.data.scaling.has_key(model):
-            for i in range(len(self.bounds[0])):
-                self.bounds[:, i] = self.bounds[:, i] / self.relax.data.scaling[self.model][0]
+        #if self.relax.data.scaling.has_key(model):
+        #    for i in range(len(self.bounds[0])):
+        #        self.bounds[:, i] = self.bounds[:, i] / self.relax.data.scaling[self.model][0]
 
         # Number of parameters.
         self.n = len(self.relax.data.param_types[self.model])
@@ -79,6 +81,9 @@ class Map:
             self.create_3D_general()
             self.create_3D_program()
             self.create_3D_map()
+            if self.num_points == 1:
+                self.create_3D_point()
+                self.create_3D_point_general()
 
         # Map the 4D space.
         elif self.n == 4:
@@ -149,6 +154,48 @@ class Map:
         map_file.close()
 
 
+    def create_3D_point(self):
+        """Function for creating a sphere at a given position within the 3D map."""
+
+        # Open the file.
+        if self.dir:
+            point_file = open(self.dir + "/" + self.point_file, "w")
+        else:
+            point_file = open(self.point_file, "w")
+
+        # Calculate the coordinate values.
+        coords = (self.point - self.bounds[:, 0]) * (self.inc) / (self.bounds[:, 1] - self.bounds[:, 0])
+        for i in range(self.n):
+            point_file.write("%-15.5g" % coords[self.swap[i]])
+        point_file.write("1\n")
+
+        # Close the file.
+        point_file.close()
+
+
+    def create_3D_point_general(self):
+        """Function for creating the OpenDX .general file for a 3D map."""
+
+        # Open the file.
+        if self.dir:
+            general_file = open(self.dir + "/" + self.point_file + ".general", "w")
+        else:
+            general_file = open(self.point_file + ".general", "w")
+
+        # Generate the text.
+        general_file.write("file = " + self.point_file + "\n")
+        general_file.write("points = 1\n")
+        general_file.write("format = ascii\n")
+        general_file.write("interleaving = field\n")
+        general_file.write("field = locations, field0\n")
+        general_file.write("structure = 3-vector, scalar\n")
+        general_file.write("type = float, float\n\n")
+        general_file.write("end\n")
+
+        # Close the file.
+        general_file.close()
+
+
     def create_3D_program(self):
         """Function for creating the OpenDX program for a 3D map."""
 
@@ -210,7 +257,7 @@ macro main(
 ) -> (
 ) {"""
         
-        if self.point == 1:
+        if self.num_points == 1:
             text = text + """
     // 
     // node Import[2]: x = 30, y = 159, inputs = 6, label = Import Fit
@@ -304,7 +351,7 @@ main_Color_1_out_1 =
 main_Collect_1_out_1 = 
     Collect("""
 
-        if self.point == 1:
+        if self.num_points == 1:
             text = text + "\n    main_Color_4_out_1,"
         else:
             text = text + "\n    main_Collect_1_in_1,"
@@ -485,7 +532,7 @@ main_AutoAxes_1_out_1 =
     main_AutoAxes_1_in_19
     ) [instance: 1, cache: 1];"""
 
-        if self.point == 1:
+        if self.num_points == 1:
             text = text + """
     // 
     // node Image[2]: x = 510, y = 480, inputs = 49, label = Image
@@ -611,7 +658,7 @@ main_Image_2_out_3 =
 CacheScene(main_Image_2_in_1, main_Image_2_out_1, main_Image_2_out_2);
 }"""
 
-        if self.point == 1:
+        if self.num_points == 1:
             text = text + """
 main_Import_2_in_1 = "fit.general";
 main_Import_2_in_2 = NULL;
@@ -653,7 +700,7 @@ main_Color_1_in_4 = NULL;
 main_Color_1_in_5 = NULL;
 main_Color_1_out_1 = NULL;"""
 
-        if self.point == 1:
+        if self.num_points == 1:
             pass
         else:
             text = text + "\nmain_Collect_1_in_1 = NULL;"
@@ -1041,7 +1088,7 @@ main_Image_2_in_1 = "Image_2";
 main_Image_2_in_3 = "X24,,";
 main_Image_2_in_4 = 1;"""
 
-        if self.point == 1:
+        if self.num_points == 1:
             text = text + """
 main_Image_2_in_5 = [52.5443 54.8297 52.7712];
 main_Image_2_in_6 = [175.465 -47.5719 189.021];
@@ -1080,7 +1127,7 @@ main_Image_2_in_27 = NULL;
 main_Image_2_in_28 = NULL;
 main_Image_2_in_29 = 0;"""
 
-        if self.point == 1:
+        if self.num_points == 1:
             text = text + """
 main_Image_2_in_30 = NULL;
 main_Image_2_in_31 = NULL;

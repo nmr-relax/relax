@@ -13,5 +13,5 @@ value.set('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
 name = 'm5'
 model.select_mf(name)
-map(name, inc=50, swap=[0, 2, 1])
+map(name, inc=10, swap=[0, 2, 1], point=[0.952, 0.582, 32e-12])
 state.save("save", 1)
