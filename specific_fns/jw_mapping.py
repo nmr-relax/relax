@@ -21,6 +21,7 @@
 ###############################################################################
 
 from re import match
+from string import replace
 
 from base_class import Common_functions
 from maths_fns.jw_mapping import Mapping
@@ -33,7 +34,7 @@ class Jw_mapping(Common_functions):
         self.relax = relax
 
 
-    def calculate(self, run=None, print_flag=1):
+    def calculate(self, run=None, print_flag=1, sim_index=None):
         """Calculation of the spectral density values."""
 
         # Run argument.
@@ -68,7 +69,7 @@ class Jw_mapping(Common_functions):
         # Frequency index.
         if self.relax.data.jw_frq[self.run] not in self.relax.data.frq[self.run]:
             raise RelaxError, "No relaxation data corresponding to the frequency " + `self.relax.data.jw_frq[self.run]` + " has been loaded."
- 
+
         # Reduced spectral density mapping.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
@@ -95,15 +96,24 @@ class Jw_mapping(Common_functions):
             for j in xrange(res.num_ri):
                 # R1.
                 if res.remap_table[j] == frq_index and res.ri_labels[j] == 'R1':
-                    r1 = res.relax_data[j]
+                    if sim_index == None:
+                        r1 = res.relax_data[j]
+                    else:
+                        r1 = res.relax_sim_data[sim_index][j]
 
                 # R2.
                 if res.remap_table[j] == frq_index and res.ri_labels[j] == 'R2':
-                    r2 = res.relax_data[j]
+                    if sim_index == None:
+                        r2 = res.relax_data[j]
+                    else:
+                        r2 = res.relax_sim_data[sim_index][j]
 
                 # NOE.
                 if res.remap_table[j] == frq_index and res.ri_labels[j] == 'NOE':
-                    noe = res.relax_data[j]
+                    if sim_index == None:
+                        noe = res.relax_data[j]
+                    else:
+                        noe = res.relax_sim_data[sim_index][j]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
@@ -115,10 +125,25 @@ class Jw_mapping(Common_functions):
             # Calculate the spectral density values.
             j0, jwx, jwh = self.jw.func(r=res.r, csa=res.csa, r1=r1, r2=r2, noe=noe)
 
-            # Place the values into 'self.relax.data.res[self.run][i]'
-            res.j0 = j0
-            res.jwx = jwx
-            res.jwh = jwh
+            # Reduced spectral density values.
+            if sim_index == None:
+                res.j0 = j0
+                res.jwx = jwx
+                res.jwh = jwh
+
+            # Monte Carlo simulated reduced spectral density values.
+            else:
+                # Initialise the simulation data structures.
+                self.initialise_data(res, self.run, sim=1)
+                if res.j0_sim == None:
+                    res.j0_sim = []
+                    res.jwx_sim = []
+                    res.jwh_sim = []
+
+                # Reduced spectral density values.
+                res.j0_sim.append(j0)
+                res.jwx_sim.append(jwx)
+                res.jwh_sim.append(jwh)
 
 
     def data_init(self, name):
@@ -211,6 +236,15 @@ class Jw_mapping(Common_functions):
         # CSA.
         if match('^[Cc][Ss][Aa]$', name):
             return 'csa'
+
+
+    def num_instances(self, run=None):
+        """Function for returning the number of instances."""
+
+        # Arguments.
+        self.run = run
+
+        return len(self.relax.data.res[self.run])
 
 
     def return_value(self, run, i, data_type):
@@ -332,3 +366,315 @@ class Jw_mapping(Common_functions):
 
         # Set the frequency.
         self.relax.data.jw_frq[self.run] = frq
+
+
+    def set_error(self, run, instance, index, error):
+        """Function for setting parameter errors."""
+
+        # Arguments.
+        self.run = run
+
+        # Return J(0) sim data.
+        if index == 0:
+            self.relax.data.res[self.run][instance].j0_err = error
+
+        # Return J(wX) sim data.
+        if index == 1:
+            self.relax.data.res[self.run][instance].jwx_err = error
+
+        # Return J(wH) sim data.
+        if index == 2:
+            self.relax.data.res[self.run][instance].jwh_err = error
+
+
+    def sim_return_param(self, run, instance, index):
+        """Function for returning the array of simulation parameter values."""
+
+        # Arguments.
+        self.run = run
+
+        # Return J(0) sim data.
+        if index == 0:
+            return self.relax.data.res[self.run][instance].j0_sim
+
+        # Return J(wX) sim data.
+        if index == 1:
+            return self.relax.data.res[self.run][instance].jwx_sim
+
+        # Return J(wH) sim data.
+        if index == 2:
+            return self.relax.data.res[self.run][instance].jwh_sim
+
+
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+        """Function for printing a single line of the columnar formatted results."""
+
+        # Residue number and name.
+        file.write("%-4s %-5s " % (num, name))
+
+        # Selected flag and data set.
+        file.write("%-9s %-9s " % (select, data_set))
+        if not select:
+            file.write("\n")
+            return
+
+        # Nucleus.
+        file.write("%-7s " % nucleus)
+
+        # Proton frequency.
+        file.write("%-25s " % wH)
+
+        # Parameters.
+        file.write("%-25s " % j0)
+        file.write("%-25s " % jwx)
+        file.write("%-25s " % jwh)
+        file.write("%-25s " % r)
+        file.write("%-25s " % csa)
+
+        # Relaxation data setup.
+        if ri_labels:
+            file.write("%-40s " % ri_labels)
+            file.write("%-25s " % remap_table)
+            file.write("%-25s " % frq_labels)
+            file.write("%-30s " % frq)
+
+        # Relaxation data.
+        if ri:
+            for i in xrange(len(ri)):
+                if ri[i] == None:
+                    file.write("%-25s " % 'None')
+                else:
+                    file.write("%-25s " % ri[i])
+
+        # Relaxation errors.
+        if ri_error:
+            for i in xrange(len(ri_error)):
+                if ri_error[i] == None:
+                    file.write("%-25s " % 'None')
+                else:
+                    file.write("%-25s " % ri_error[i])
+
+        # End of the line.
+        file.write("\n")
+
+
+    def write_columnar_results(self, file, run):
+        """Function for printing the results into a file."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+
+        # Header.
+        #########
+
+        # Relaxation data and errors.
+        ri = []
+        ri_error = []
+        if hasattr(self.relax.data, 'num_ri'):
+            for i in xrange(self.relax.data.num_ri[self.run]):
+                ri.append('Ri_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
+                ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
+
+        # Write the header line.
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', jwx='J(wX)', jwh='J(wH)', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+
+
+        # Values.
+        #########
+
+        # Nucleus.
+        nucleus = self.relax.generic.nuclei.find_nucleus()
+
+        # The proton frequency in MHz.
+        wH = self.relax.data.jw_frq[self.run] / 1e6
+
+        # Relaxation data setup.
+        try:
+            ri_labels = replace(`self.relax.data.ri_labels[self.run]`, ' ', '')
+            remap_table = replace(`self.relax.data.remap_table[self.run]`, ' ', '')
+            frq_labels = replace(`self.relax.data.frq_labels[self.run]`, ' ', '')
+            frq = replace(`self.relax.data.frq[self.run]`, ' ', '')
+        except AttributeError:
+            ri_labels = `None`
+            remap_table = `None`
+            frq_labels = `None`
+            frq = `None`
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Reassign data structure.
+            res = self.relax.data.res[self.run][i]
+
+            # Unselected residues.
+            if not res.select:
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='value')
+                continue
+
+            # J(0).
+            j0 = None
+            if hasattr(res, 'j0'):
+                j0 = res.j0
+
+            # J(wX).
+            jwx = None
+            if hasattr(res, 'jwx'):
+                jwx = res.jwx
+
+            # J(wH).
+            jwh = None
+            if hasattr(res, 'jwh'):
+                jwh = res.jwh
+
+            # Bond length.
+            r = None
+            if hasattr(res, 'r') and res.r != None:
+                r = res.r / 1e-10
+
+            # CSA.
+            csa = None
+            if hasattr(res, 'csa') and res.csa != None:
+                csa = res.csa / 1e-6
+
+            # Relaxation data and errors.
+            ri = []
+            ri_error = []
+            if hasattr(self.relax.data, 'num_ri'):
+                for i in xrange(self.relax.data.num_ri[self.run]):
+                    # Find the residue specific data corresponding to i.
+                    index = None
+                    for j in xrange(res.num_ri):
+                        if res.ri_labels[j] == self.relax.data.ri_labels[self.run][i] and res.frq_labels[res.remap_table[j]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]]:
+                            index = j
+
+                    # Data exists for this data type.
+                    try:
+                        ri.append(`res.relax_data[index]`)
+                        ri_error.append(`res.relax_error[index]`)
+                    except:
+                        ri.append(None)
+                        ri_error.append(None)
+
+            # Write the line.
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+
+
+        # Errors.
+        #########
+
+        # Skip this section and the next if no simulations have been setup.
+        if not hasattr(self.relax.data, 'sim_state'):
+            return
+        elif self.relax.data.sim_state[self.run] == 0:
+            return
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Reassign data structure.
+            res = self.relax.data.res[self.run][i]
+
+            # Unselected residues.
+            if not res.select:
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='error')
+                continue
+
+            # J(0).
+            j0 = None
+            if hasattr(res, 'j0_err'):
+                j0 = res.j0_err
+
+            # J(wX).
+            jwx = None
+            if hasattr(res, 'jwx_err'):
+                jwx = res.jwx_err
+
+            # J(wH).
+            jwh = None
+            if hasattr(res, 'jwh_err'):
+                jwh = res.jwh_err
+
+            # Bond length.
+            r = None
+            if hasattr(res, 'r_err') and res.r_err != None:
+                r = res.r_err / 1e-10
+
+            # CSA.
+            csa = None
+            if hasattr(res, 'csa_err') and res.csa_err != None:
+                csa = res.csa_err / 1e-6
+
+            # Relaxation data and errors.
+            ri = []
+            ri_error = []
+            for i in xrange(self.relax.data.num_ri[self.run]):
+                ri.append(None)
+                ri_error.append(None)
+
+            # Write the line.
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+
+
+        # Simulation values.
+        ####################
+
+        # Loop over the simulations.
+        for i in xrange(self.relax.data.sim_number[self.run]):
+            # Loop over the sequence.
+            for j in xrange(len(self.relax.data.res[self.run])):
+                # Reassign data structure.
+                res = self.relax.data.res[self.run][j]
+
+                # Unselected residues.
+                if not res.select:
+                    self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='sim_'+`i`)
+                    continue
+
+                # J(0).
+                j0 = None
+                if hasattr(res, 'j0_sim'):
+                    j0 = res.j0_sim[i]
+
+                # J(wX).
+                jwx = None
+                if hasattr(res, 'jwx_sim'):
+                    jwx = res.jwx_sim[i]
+
+                # J(wH).
+                jwh = None
+                if hasattr(res, 'jwh_sim'):
+                    jwh = res.jwh_sim[i]
+
+                # Bond length.
+                r = None
+                if hasattr(res, 'r_sim') and res.r_sim != None and res.r_sim[i] != None:
+                    r = res.r_sim[i] / 1e-10
+
+                # CSA.
+                csa = None
+                if hasattr(res, 'csa_sim') and res.csa_sim != None and res.csa_sim[i] != None:
+                    csa = res.csa_sim[i] / 1e-6
+
+                # Relaxation data and errors.
+                ri = []
+                ri_error = []
+                for k in xrange(self.relax.data.num_ri[self.run]):
+                    # Find the residue specific data corresponding to k.
+                    index = None
+                    for l in xrange(res.num_ri):
+                        if res.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and res.frq_labels[res.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
+                            index = l
+
+                    # Data exists for this data type.
+                    try:
+                        ri.append(`res.relax_sim_data[i][index]`)
+                        ri_error.append(`res.relax_error[index]`)
+                    except:
+                        ri.append(None)
+                        ri_error.append(None)
+
+                # Write the line.
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

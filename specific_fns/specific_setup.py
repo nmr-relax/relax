@@ -59,17 +59,23 @@ class Specific_setup:
         self.eqi = eqi
         function = None
 
-        # Relaxation curve fitting.
-        if function_type == 'relax_fit':
-            function = self.relax_funcs()
+        # Get the function.
+        try:
+            # Relaxation curve fitting.
+            if function_type == 'relax_fit':
+                function = self.relax_funcs()
 
-        # Reduced spectral density mapping.
-        if function_type == 'jw':
-            function = self.jw_funcs()
+            # Reduced spectral density mapping.
+            if function_type == 'jw':
+                function = self.jw_funcs()
 
-        # Model-free analysis.
-        if function_type == 'mf':
-            function = self.mf_funcs()
+            # Model-free analysis.
+            if function_type == 'mf':
+                function = self.mf_funcs()
+
+        # Catch all errors.
+        except:
+            function = None
 
         # Raise an error if the function doesn't exist.
         if raise_error and function == None:
@@ -86,6 +92,30 @@ class Specific_setup:
         if self.eqi == 'calculate':
             return self.relax.specific.jw_mapping.calculate
 
+        # Create Monte Carlo data function (same as data returning function).
+        if self.eqi == 'create_mc_data':
+            return self.relax.specific.jw_mapping.return_data
+
+        # Number of instances.
+        if self.eqi == 'num_instances':
+            return self.relax.specific.jw_mapping.num_instances
+
+        # Pack Monte Carlo simulation data function.
+        if self.eqi == 'pack_sim_data':
+            return self.relax.specific.jw_mapping.sim_pack_data
+
+        # Data returning function.
+        if self.eqi == 'return_data':
+            return self.relax.specific.jw_mapping.return_data
+
+        # Data error returning function.
+        if self.eqi == 'return_error':
+            return self.relax.specific.jw_mapping.return_error
+
+        # Simulation parameter array returning function.
+        if self.eqi == 'return_sim_param':
+            return self.relax.specific.jw_mapping.sim_return_param
+
         # Value and error returning function.
         if self.eqi == 'return_value':
             return self.relax.specific.jw_mapping.return_value
@@ -93,6 +123,14 @@ class Specific_setup:
         # Set function.
         if self.eqi == 'set':
             return self.relax.specific.jw_mapping.set
+
+        # Set error function.
+        if self.eqi == 'set_error':
+            return self.relax.specific.jw_mapping.set_error
+
+        # Write results function (Columnar format).
+        if self.eqi == 'write_columnar_results':
+            return self.relax.specific.jw_mapping.write_columnar_results
 
 
     def mf_funcs(self):
@@ -163,8 +201,8 @@ class Specific_setup:
             return self.relax.specific.model_free.read_columnar_results
 
         # Read results file function (XML format).
-        if self.eqi == 'read_xml_results':
-            return self.relax.specific.model_free.read_xml_results
+        #if self.eqi == 'read_xml_results':
+        #    return self.relax.specific.model_free.read_xml_results
 
         # Data returning function.
         if self.eqi == 'return_data':
@@ -207,8 +245,8 @@ class Specific_setup:
             return self.relax.specific.model_free.write_columnar_results
 
         # Write results function (XML format).
-        if self.eqi == 'write_xml_results':
-            return self.relax.specific.model_free.write_xml_results
+        #if self.eqi == 'write_xml_results':
+        #    return self.relax.specific.model_free.write_xml_results
 
 
     def relax_funcs(self):

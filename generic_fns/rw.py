@@ -43,17 +43,16 @@ class RW:
 
         # Equation type specific function setup.
         if format == 'xml':
-            try:
-                self.read_function = self.relax.specific_setup.setup('read_xml_results', data_type)
-            except:
-                raise RelaxError, "The XML format is not currently supported for the run " + `run` + "."
+            format = 'XML'
+            self.read_function = self.relax.specific_setup.setup('read_xml_results', data_type)
         elif format == 'columnar':
-            try:
-                self.read_function = self.relax.specific_setup.setup('read_columnar_results', function_type)
-            except:
-                raise RelaxError, "The columnar format is not currently supported for the run " + `run` + "."
+            self.read_function = self.relax.specific_setup.setup('read_columnar_results', function_type)
         else:
-            raise RelaxError, "Unknown format."
+            raise RelaxError, "Unknown format " + `format` + "."
+
+        # No function.
+        if not self.read_function:
+            raise RelaxError, "The " + format + " format is not currently supported in " + self.relax.specific_setup.get_string(function_type) + "."
 
         # The results file.
         if directory == None:
@@ -109,19 +108,18 @@ class RW:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Specific header writing and results writing functions.
+        # Specific results writing function.
         if format == 'xml':
-            try:
-                self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type)
-            except:
-                raise RelaxError, "The XML format is not currently supported for the run " + `run` + "."
+            format = 'XML'
+            self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type, raise_error=0)
         elif format == 'columnar':
-            try:
-                self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type)
-            except:
-                raise RelaxError, "The columnar format is not currently supported for the run " + `run` + "."
+            self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
         else:
-            raise RelaxError, "Unknown format."
+            raise RelaxError, "Unknown format " + `format` + "."
+
+        # No function.
+        if not self.write_function:
+            raise RelaxError, "The " + format + " format is not currently supported in " + self.relax.specific_setup.get_string(function_type) + "."
 
         # Write the results.
         self.write_function(results_file, run)

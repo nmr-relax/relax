@@ -109,7 +109,7 @@ class RW:
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + ", force=" + `force`
             text = text + ", format=" + `format` + ")"
             print text
 

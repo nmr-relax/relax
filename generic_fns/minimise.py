@@ -47,8 +47,17 @@ class Minimise:
         # Specific calculate function setup.
         calculate = self.relax.specific_setup.setup('calculate', function_type)
 
+        # Monte Carlo simulation calculation.
+        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
+            # Loop over the simulations.
+            for i in xrange(self.relax.data.sim_number[run]):
+                if print_flag:
+                    print "Simulation " + `i+1`
+                calculate(run=run, print_flag=print_flag-1, sim_index=i)
+
         # Minimisation.
-        calculate(run=run, print_flag=print_flag)
+        else:
+            calculate(run=run, print_flag=print_flag)
 
 
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):

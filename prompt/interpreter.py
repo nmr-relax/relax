@@ -85,7 +85,7 @@ class Interpreter:
         # The prompts.
         sys.ps1 = 'relax> '
         sys.ps2 = 'relax| '
-        sys.ps3 = '\n<func> '
+        sys.ps3 = '\nrelax> '
 
         # The function intro flag.
         self.intro = 0

@@ -123,7 +123,8 @@ class Monte_carlo:
 
         # Specific number of instances, return simulation chi2 array, return simulation parameter array, and set error functions.
         count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
-        return_sim_chi2 = self.relax.specific_setup.setup('return_sim_chi2', function_type)
+        if prune > 0.0:
+            return_sim_chi2 = self.relax.specific_setup.setup('return_sim_chi2', function_type)
         return_sim_param = self.relax.specific_setup.setup('return_sim_param', function_type)
         set_error = self.relax.specific_setup.setup('set_error', function_type)
 
@@ -132,17 +133,17 @@ class Monte_carlo:
 
         # Loop over the instances.
         for instance in xrange(num_instances):
-            # Get the array of simulation chi-squared values.
-            chi2_array = return_sim_chi2(run, instance)
-
-            # The total number of simulations.
-            n = len(chi2_array)
-
             # Initialise an array of indecies to prune.
             indecies_to_skip = []
 
             # Pruning.
             if prune > 0.0:
+                # Get the array of simulation chi-squared values.
+                chi2_array = return_sim_chi2(run, instance)
+
+                # The total number of simulations.
+                n = len(chi2_array)
+
                 # Create a sorted array of chi-squared values.
                 chi2_sorted = deepcopy(chi2_array)
                 chi2_sorted.sort()
@@ -170,6 +171,9 @@ class Monte_carlo:
 
                 # Simulation parameters with values (ie not None).
                 if param_array[0] != None:
+                    # The total number of simulations.
+                    n = len(param_array)
+
                     # Calculate the mean parameter value for all simulations.
                     Xav = 0.0
                     for i in xrange(n):

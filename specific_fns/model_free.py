@@ -399,14 +399,14 @@ class Model_free(Common_functions):
         return value
 
 
-    def calculate(self, run=None, res_num=None, print_flag=1):
+    def calculate(self, run=None, res_num=None, print_flag=1, sim_index=None):
         """Calculation of the model-free chi-squared value."""
 
         # Run argument.
         self.run = run
 
         # Go to the minimise function.
-        self.minimise(run=self.run, min_algor='calc', min_options=res_num)
+        self.minimise(run=self.run, min_algor='calc', min_options=res_num, sim_index=sim_index)
 
 
     def copy(self, run1=None, run2=None):
@@ -1536,22 +1536,6 @@ class Model_free(Common_functions):
         return min_options
 
 
-    def initialise_mf_data(self, data, run):
-        """Function for the initialisation of model-free data structures.
-
-        Only data structures which do not exist are created.
-        """
-
-        # Get the data names.
-        data_names = self.data_names()
-
-        # Loop over the names.
-        for name in data_names:
-            # If the name is not in 'data', add it.
-            if not hasattr(data, name):
-                setattr(data, name, self.data_init(name))
-
-
     def linear_constraints(self, index=None):
         """Function for setting up the model-free linear constraint matrices A and b.
 
@@ -2442,7 +2426,7 @@ class Model_free(Common_functions):
                 continue
 
             # Initialise the data structures (if needed).
-            self.initialise_mf_data(self.relax.data.res[run][i], run)
+            self.initialise_data(self.relax.data.res[run][i], run)
 
             # Model-free model, equation, and parameter types.
             self.relax.data.res[run][i].model = model
@@ -3229,18 +3213,6 @@ class Model_free(Common_functions):
                     res.warning_sim.append(eval(replace(file_data[i][col['warn']], '_', ' ')))
 
 
-    def return_data(self, run, i):
-        """Function for returning the Ri data structure."""
-
-        return self.relax.data.res[run][i].relax_data
-
-
-    def return_error(self, run, i):
-        """Function for returning the Ri error structure."""
-
-        return self.relax.data.res[run][i].relax_error
-
-
     def return_value(self, run, i, data_type):
         """Function for returning the value and error corresponding to 'data_type'."""
 
@@ -3612,7 +3584,7 @@ class Model_free(Common_functions):
 
                 # Initialise all data if it doesn't exist.
                 if not hasattr(self.relax.data.res[self.run][index], object_name):
-                    self.initialise_mf_data(self.relax.data.res[self.run][index], self.run)
+                    self.initialise_data(self.relax.data.res[self.run][index], self.run)
 
                 # Set the value.
                 setattr(self.relax.data.res[self.run][index], object_name, float(value[i]))
@@ -3629,7 +3601,7 @@ class Model_free(Common_functions):
 
             # Initialise all data if it doesn't exist.
             if not hasattr(self.relax.data.res[self.run][index], object_name):
-                self.initialise_mf_data(self.relax.data.res[self.run][index], self.run)
+                self.initialise_data(self.relax.data.res[self.run][index], self.run)
 
             # Default value.
             if value == None:
@@ -3894,17 +3866,6 @@ class Model_free(Common_functions):
                         for j in xrange(self.relax.data.sim_number[self.run]):
                             # Copy and append the data.
                             sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
-
-
-    def sim_pack_data(self, run, i, sim_data):
-        """Function for packing Monte Carlo simulation data."""
-
-        # Test if the simulation data already exists.
-        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
-
-        # Create the data structure.
-        self.relax.data.res[run][i].relax_sim_data = sim_data
 
 
     def sim_return_chi2(self, run, instance):
@@ -4209,12 +4170,11 @@ class Model_free(Common_functions):
                 diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma * 360 / (2.0 * pi)`]
 
         # PDB.
+        pdb = None
+        pdb_model = None
         if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
             pdb = self.relax.data.pdb[self.run].filename
             pdb_model = self.relax.data.pdb[self.run].user_model
-        else:
-            pdb = None
-            pdb_model = None
 
         # Relaxation data setup.
         try:
@@ -4239,75 +4199,63 @@ class Model_free(Common_functions):
                 continue
 
             # Model details.
+            model = None
             if hasattr(res, 'model'):
                 model = res.model
-            else:
-                model = None
 
+            equation = None
             if hasattr(res, 'equation'):
                 equation = res.equation
-            else:
-                equation = None
 
+            params = None
             if hasattr(res, 'params'):
                 params = replace(`res.params`, ' ', '')
-            else:
-                params = None
 
             # S2.
+            s2 = None
             if hasattr(res, 's2'):
                 s2 = res.s2
-            else:
-                s2 = None
 
             # S2f.
+            s2f = None
             if hasattr(res, 's2f'):
                 s2f = res.s2f
-            else:
-                s2f = None
 
             # S2s.
+            s2s = None
             if hasattr(res, 's2s'):
                 s2s = res.s2s
-            else:
-                s2s = None
 
             # tm.
+            local_tm = None
             if hasattr(res, 'tm') and res.tm != None:
                 local_tm = res.tm / 1e-9
-            else:
-                local_tm = None
 
             # tf.
-            if not hasattr(res, 'tf') or res.tf == None:
-                tf = None
-            else:
+            tf = None
+            if hasattr(res, 'tf') and res.tf != None:
                 tf = res.tf / 1e-12
 
             # te or ts.
-            if not hasattr(res, 'te') or res.te == None and not hasattr(res, 'ts') or res.ts == None:
-                te = None
-            elif res.te != None:
+            te = None
+            if hasattr(res, 'te') and res.te != None:
                 te = res.te / 1e-12
-            else:
+            elif hasattr(res, 'ts') and res.ts != None:
                 te = res.ts / 1e-12
 
             # Rex.
-            if not hasattr(res, 'rex') or res.rex == None:
-                rex = None
-            else:
+            rex = None
+            if hasattr(res, 'rex') and res.rex != None:
                 rex = res.rex * (2.0 * pi * res.frq[0])**2
 
             # Bond length.
-            if not hasattr(res, 'r') or res.r == None:
-                r = None
-            else:
+            r = None
+            if hasattr(res, 'r') and res.r != None:
                 r = res.r / 1e-10
 
             # CSA.
-            if not hasattr(res, 'csa') or res.csa == None:
-                csa = None
-            else:
+            csa = None
+            if hasattr(res, 'csa') and res.csa != None:
                 csa = res.csa / 1e-6
 
             # Minimisation details.
@@ -4335,6 +4283,8 @@ class Model_free(Common_functions):
                         warn = replace(res.warning, ' ', '_')
                     else:
                         warn = res.warning
+
+            # No minimisation details.
             except AttributeError:
                 chi2 = None
                 iter = None
@@ -4344,10 +4294,9 @@ class Model_free(Common_functions):
                 warn = None
 
             # XH vector.
+            xh_vect = None
             if hasattr(res, 'xh_vect'):
                 xh_vect = replace(`res.xh_vect.tolist()`, ' ', '')
-            else:
-                xh_vect = None
 
             # Relaxation data and errors.
             ri = []
@@ -4361,10 +4310,10 @@ class Model_free(Common_functions):
                             index = j
 
                     # Data exists for this data type.
-                    if index != None:
+                    try:
                         ri.append(`res.relax_data[index]`)
                         ri_error.append(`res.relax_error[index]`)
-                    else:
+                    except:
                         ri.append(None)
                         ri_error.append(None)
 
@@ -4412,14 +4361,6 @@ class Model_free(Common_functions):
                 elif self.relax.data.diff[self.run].type == 'aniso':
                     diff_params = [None, None, None, None, None, None]
 
-        # PDB.
-        if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
-            pdb = self.relax.data.pdb[self.run].filename
-            pdb_model = self.relax.data.pdb[self.run].user_model
-        else:
-            pdb = None
-            pdb_model = None
-
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
@@ -4430,55 +4371,52 @@ class Model_free(Common_functions):
                 self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='error')
                 continue
 
-            # Model details.
-            if hasattr(res, 'params'):
-                params = replace(`res.params`, ' ', '')
-            else:
-                params = None
+            # S2.
+            s2 = None
+            if hasattr(res, 's2_err'):
+                s2 = res.s2_err
+
+            # S2f.
+            s2f = None
+            if hasattr(res, 's2f_err'):
+                s2f = res.s2f_err
+
+            # S2s.
+            s2s = None
+            if hasattr(res, 's2s_err'):
+                s2s = res.s2s_err
 
             # tm.
+            local_tm = None
             if hasattr(res, 'tm_err') and res.tm_err != None:
                 local_tm = res.tm_err / 1e-9
-            else:
-                local_tm = None
 
             # tf.
-            if res.tf_err == None:
-                tf = None
-            else:
+            tf = None
+            if hasattr(res, 'tf_err') and res.tf_err != None:
                 tf = res.tf_err / 1e-12
 
             # te or ts.
-            if res.te_err == None and res.ts_err == None:
-                te = None
-            elif res.te_err != None:
+            te = None
+            if hasattr(res, 'te_err') and res.te_err != None:
                 te = res.te_err / 1e-12
-            else:
+            elif hasattr(res, 'ts_err') and res.ts_err != None:
                 te = res.ts_err / 1e-12
 
             # Rex.
-            if res.rex_err == None:
-                rex = None
-            else:
+            rex = None
+            if hasattr(res, 'rex_err') and res.rex_err != None:
                 rex = res.rex_err * (2.0 * pi * res.frq[0])**2
 
             # Bond length.
-            if res.r_err == None:
-                r = None
-            else:
+            r = None
+            if hasattr(res, 'r_err') and res.r_err != None:
                 r = res.r_err / 1e-10
 
             # CSA.
-            if res.csa_err == None:
-                csa = None
-            else:
+            csa = None
+            if hasattr(res, 'csa_err') and res.csa_err != None:
                 csa = res.csa_err / 1e-6
-
-            # XH vector.
-            if hasattr(res, 'xh_vect'):
-                xh_vect = replace(`res.xh_vect.tolist()`, ' ', '')
-            else:
-                xh_vect = None
 
             # Relaxation data and errors.
             ri = []
@@ -4488,7 +4426,7 @@ class Model_free(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_err`, s2f=`res.s2f_err`, s2s=`res.s2s_err`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -4527,14 +4465,6 @@ class Model_free(Common_functions):
                     elif self.relax.data.diff[self.run].type == 'aniso':
                         diff_params = [None, None, None, None, None, None]
 
-            # PDB.
-            if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
-                pdb = self.relax.data.pdb[self.run].filename
-                pdb_model = self.relax.data.pdb[self.run].user_model
-            else:
-                pdb = None
-                pdb_model = None
-
             # Loop over the sequence.
             for j in xrange(len(self.relax.data.res[self.run])):
                 # Reassign data structure.
@@ -4545,79 +4475,87 @@ class Model_free(Common_functions):
                     self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='sim_'+`i`)
                     continue
 
-                # Model details.
-                if hasattr(res, 'params'):
-                    params = replace(`res.params`, ' ', '')
-                else:
-                    params = None
+                # S2.
+                s2 = None
+                if hasattr(res, 's2_sim'):
+                    s2 = res.s2_sim[i]
+
+                # S2f.
+                s2f = None
+                if hasattr(res, 's2f_sim'):
+                    s2f = res.s2f_sim[i]
+
+                # S2s.
+                s2s = None
+                if hasattr(res, 's2s_sim'):
+                    s2s = res.s2s_sim[i]
 
                 # tm.
-                if hasattr(res, 'tm') and res.tm_sim[i] != None:
+                local_tm = None
+                if hasattr(res, 'tm_sim') and res.tm_sim[i] != None:
                     local_tm = res.tm_sim[i] / 1e-9
-                else:
-                    local_tm = None
 
                 # tf.
-                if res.tf_sim[i] == None:
-                    tf = None
-                else:
+                tf = None
+                if hasattr(res, 'tf_sim') and res.tf_sim[i] != None:
                     tf = res.tf_sim[i] / 1e-12
 
                 # te or ts.
-                if res.te_sim[i] == None and res.ts_sim[i] == None:
-                    te = None
-                elif res.te_sim[i] != None:
+                te = None
+                if hasattr(res, 'te_sim') and res.te_sim[i] != None:
                     te = res.te_sim[i] / 1e-12
-                else:
+                elif hasattr(res, 'ts_sim') and res.ts_sim[i] != None:
                     te = res.ts_sim[i] / 1e-12
 
                 # Rex.
-                if res.rex_sim[i] == None:
-                    rex = None
-                else:
+                rex = None
+                if hasattr(res, 'rex_sim') and res.rex_sim[i] != None:
                     rex = res.rex_sim[i] * (2.0 * pi * res.frq[0])**2
 
                 # Bond length.
-                if res.r_sim[i] == None:
-                    r = None
-                else:
+                r = None
+                if hasattr(res, 'r_sim') and res.r_sim[i] != None:
                     r = res.r_sim[i] / 1e-10
 
                 # CSA.
-                if res.csa_sim[i] == None:
-                    csa = None
-                else:
+                csa = None
+                if hasattr(res, 'csa_sim') and res.csa_sim[i] != None:
                     csa = res.csa_sim[i] / 1e-6
 
-                # Minimisation details (global minimisation results).
-                if self.param_set == 'diff' or self.param_set == 'all':
-                    chi2 = self.relax.data.chi2_sim[self.run][i]
-                    iter = self.relax.data.iter_sim[self.run][i]
-                    f = self.relax.data.f_count_sim[self.run][i]
-                    g = self.relax.data.g_count_sim[self.run][i]
-                    h = self.relax.data.h_count_sim[self.run][i]
-                    if type(self.relax.data.warning_sim[self.run][i]) == str:
-                        warn = replace(self.relax.data.warning_sim[self.run][i], ' ', '_')
-                    else:
-                        warn = self.relax.data.warning_sim[self.run][i]
+                # Minimisation details.
+                try:
+                    # Global minimisation results.
+                    if self.param_set == 'diff' or self.param_set == 'all':
+                        chi2 = self.relax.data.chi2_sim[self.run][i]
+                        iter = self.relax.data.iter_sim[self.run][i]
+                        f = self.relax.data.f_count_sim[self.run][i]
+                        g = self.relax.data.g_count_sim[self.run][i]
+                        h = self.relax.data.h_count_sim[self.run][i]
+                        if type(self.relax.data.warning_sim[self.run][i]) == str:
+                            warn = replace(self.relax.data.warning_sim[self.run][i], ' ', '_')
+                        else:
+                            warn = self.relax.data.warning_sim[self.run][i]
 
-                # Minimisation details (individual residue results).
-                else:
-                    chi2 = res.chi2_sim[i]
-                    iter = res.iter_sim[i]
-                    f = res.f_count_sim[i]
-                    g = res.g_count_sim[i]
-                    h = res.h_count_sim[i]
-                    if type(res.warning_sim[i]) == str:
-                        warn = replace(res.warning_sim[i], ' ', '_')
+                    # Individual residue results.
                     else:
-                        warn = res.warning_sim[i]
+                        chi2 = res.chi2_sim[i]
+                        iter = res.iter_sim[i]
+                        f = res.f_count_sim[i]
+                        g = res.g_count_sim[i]
+                        h = res.h_count_sim[i]
+                        if type(res.warning_sim[i]) == str:
+                            warn = replace(res.warning_sim[i], ' ', '_')
+                        else:
+                            warn = res.warning_sim[i]
 
-                # XH vector.
-                if hasattr(res, 'xh_vect'):
-                    xh_vect = replace(`res.xh_vect.tolist()`, ' ', '')
-                else:
-                    xh_vect = None
+                # No minimisation details.
+                except AttributeError:
+                    chi2 = None
+                    iter = None
+                    f = None
+                    g = None
+                    h = None
+                    warn = None
 
                 # Relaxation data and errors.
                 ri = []
@@ -4630,12 +4568,12 @@ class Model_free(Common_functions):
                             index = l
 
                     # Data exists for this data type.
-                    if index != None:
+                    try:
                         ri.append(`res.relax_sim_data[i][index]`)
                         ri_error.append(`res.relax_error[index]`)
-                    else:
+                    except:
                         ri.append(None)
                         ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_sim[i]`, s2f=`res.s2f_sim[i]`, s2s=`res.s2s_sim[i]`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

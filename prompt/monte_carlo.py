@@ -53,7 +53,9 @@ class Monte_carlo:
         ~~~~~~~~~~~
 
         The method argument can either be set to 'back_calc' or 'direct', the choice of which
-        determines the simulation type.
+        determines the simulation type.  If the values or parameters of a run are calculated rather
+        than minimised, this option will have no effect, hence 'back_calc' and 'direct' are
+        identical.
 
         For error analysis, the method argument should be set to 'back_calc' which will result in
         proper Monte Carlo simulations.  The data used for each simulation is back calculated from
@@ -143,45 +145,20 @@ class Monte_carlo:
 
         run:  The name of the run.
 
-        number:  The number of Monte Carlo simulations.
-
-        prune:  The proportion of the simulations to prune for the calculation of parameter errors.
-
-        method:  The simulation method.
-
 
         Description
         ~~~~~~~~~~~
 
-        This function should only be called after the model or run is fully minimised.  Once called,
-        the functions 'grid_search' and 'minimise' will only effect the simulations and not the
-        model parameters.
+        This function only effects runs where minimisation occurs and can therefore be skipped if
+        the values or parameters are calculated rather than minimised.  However, if accidently run
+        in this case, the results will be unaffected.  It should only be called after the model or
+        run is fully minimised.  Once called, the functions 'grid_search' and 'minimise' will only
+        effect the simulations and not the model parameters.
 
         The initial values of the parameters for each simulation is set to the minimised parameters
         of the model.  A grid search can be undertaken for each simulation instead, although this
         is computationally expensive and unnecessary.  The minimisation function should be executed
         for a second time after running this function.
-
-        The prune argument is equivalent to Art Palmer's 'trim' parameter in Modelfree.  The
-        argument value is the proportion of simulations removed prior to error calculation.  If
-        prune is set to 0, all simulations are used for calculating errors, whereas a value of 1
-        excludes all data.  In almost all cases prune must be set to zero, any value greater than
-        zero will result in an underestimation of the error values.  If a value is supplied, then
-        the lower and upper tails (of the distribution of chi-squared values) will be excluded from
-        the error calculation.
-
-        For error analysis, the method argument should be set to 'mc' which will result in proper
-        Monte Carlo simulations.  The data used for each simulation is back calculated from the
-        minimised model parameters and is randomised using Gaussian noise where the standard
-        deviation is the original data error.
-
-        The behaviour of this function can be modified by setting the method argument to 'random'.
-        This is required for certain model selection techniques (see the documentation for the model
-        selection function for details), and can be used for other purposes.  Two major differences
-        occur after setting this argument.  The first is that errors are no longer calculated from
-        the simulations.  The second is that the data used in the simulation is not back calculated
-        from the fitted model parameters.  The data is simply the original data randomised using
-        Gaussian noise with the standard deviations set to the original data errors.
         """
 
         # Function intro text.
@@ -297,23 +274,27 @@ class Monte_carlo:
         1.  The measured data set together with the corresponding error set should be loaded into
         relax.
 
-        2.  Chi-squared minimisation is used to optimise the parameters of the chosen model.
+        2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+        calculation is run.
 
         3.  To initialise and turn on Monte Carlo simulations, the number of simulations, n, needs
         to be set.
 
-        4.  The simulation data needs to be created by back calculation from the fully minimised
-        model parameters from step 2.  The error set is used to randomise each simulation data set
-        by assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
+        4.  The simulation data needs to be created either by back calculation from the fully
+        minimised model parameters from step 2 or by direct calculation when values are calculated
+        rather than minimised.  The error set is used to randomise each simulation data set by
+        assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
         simulation.
 
         5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
         are required.  These are taken as the optimised model parameters.  An alternative is to use
         a grid search for each simulation to generate initial estimates, however this is extremely
-        computationally expensive.
+        computationally expensive.  For the case where values are calculated rather than minimised,
+        this step should be skipped (although the results will be unaffected if this is accidently
+        run).
 
-        6.  Each simulation requires minimisation.  The same techniques as used in step 2, excluding
-        the grid search, should be used for the simulations.
+        6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+        step 2, excluding the grid search when minimising, should be used for the simulations.
 
         7.  The model parameter errors are calculated from the distribution of simulation
         parameters.
@@ -322,22 +303,30 @@ class Monte_carlo:
         Monte Carlo simulations can be turned on or off using functions within this class.  Once the
         function for setting up simulations has been called, simulations will be turned on.  The
         effect of having simulations turned on is that the functions used for minimisation (grid
-        search, minimise, etc) will only affect the simulation parameters and not the model
-        parameters.  By subsequently turning simulations off using the appropriate function, the
-        functions used in minimisation will affect the model parameters and not the simulation
+        search, minimise, etc) or calculation will only affect the simulation parameters and not the
+        model parameters.  By subsequently turning simulations off using the appropriate function,
+        the functions used in minimisation will affect the model parameters and not the simulation
         parameters.
 
 
-        An example, for model-free analysis, which includes solely the functions required for
+        An example, for model-free analysis, which includes only the functions required for
         implementing the above steps is:
 
-        relax> grid_search('m1', inc=11)                             # Step 2.
-        relax> minimise('newton', run='m1')                          # Step 2.
-        relax> monte_carlo.setup('m1', number=500)                   # Step 3.
-        relax> monte_carlo.create_data('m1', method='back_calc')     # Step 4.
-        relax> monte_carlo.initial_values('m1')                      # Step 5.
-        relax> minimise('newton', run='m1')                          # Step 6.
-        relax> monte_carlo.error_analysis('m1')                      # Step 7.
+        relax> grid_search('m1', inc=11)                                 # Step 2.
+        relax> minimise('newton', run='m1')                              # Step 2.
+        relax> monte_carlo.setup('m1', number=500)                       # Step 3.
+        relax> monte_carlo.create_data('m1', method='back_calc')         # Step 4.
+        relax> monte_carlo.initial_values('m1')                          # Step 5.
+        relax> minimise('newton', run='m1')                              # Step 6.
+        relax> monte_carlo.error_analysis('m1')                          # Step 7.
+
+        An example for reduced spectral density mapping is:
+
+        relax> calc('600MHz')                                            # Step 2.
+        relax> monte_carlo.setup('600MHz', number=500)                   # Step 3.
+        relax> monte_carlo.create_data('600MHz', method='back_calc')     # Step 4.
+        relax> calc('600MHz')                                            # Step 6.
+        relax> monte_carlo.error_analysis('600MHz')                      # Step 7.
     """
 
     create_data.__doc__ = create_data.__doc__ + "\n\n" + __description__
