@@ -16,37 +16,37 @@ def ri_prime(data, create_ri_prime_comps, create_ri_prime):
 
 	Components
 	~~~~~~~~~~
-		      1   / mu0  \ 2  (gH.gN.h_bar)**2
-		d  =  - . | ---- |  . ----------------
-		      4   \ 4.pi /         <r**6>
+		                   1   / mu0  \ 2  (gH.gN.h_bar)**2
+		dip_const_func  =  - . | ---- |  . ----------------
+		                   4   \ 4.pi /         <r**6>
 
-		      (wN.csa)**2
-		c  =  -----------
-		           3
+		                   (wN.csa)**2
+		csa_const_func  =  -----------
+		                        3
 
-		J_R1_d  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
+		dip_Jw_R1_func  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
 
-		J_R1_c  =  J(wN)
+		csa_Jw_R1_func  =  J(wN)
 
-		J_R2_d  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
+		dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
 
-		J_R2_c  =  4J(0) + 3J(wN)
+		csa_Jw_R2_func  =  4J(0) + 3J(wN)
 
-		J_sigma_noe  =  6J(wH+wN) - J(wH-wN)
+		dip_Jw_sigma_noe_func  =  6J(wH+wN) - J(wH-wN)
 
 
 	Relaxation equations
 	~~~~~~~~~~~~~~~~~~~~
 
-		R1()  =  d . J_R1_d  +  c . J_R1_c
+		R1()  =  dip_const_func . dip_Jw_R1_func  +  csa_const_func . csa_Jw_R1_func
 
 
-		         d              c
-		R2()  =  - . J_R2_d  +  - . J_R2_c  +  Rex
-		         2              6
+		         dip_const_func                      csa_const_func
+		R2()  =  -------------- . dip_Jw_R2_func  +  -------------- . csa_Jw_R2_func  +  Rex
+		               2                                   6
 
 
-		sigma_noe()  =  d . J_sigma_noe
+		sigma_noe()  =  dip_const_func . dip_Jw_sigma_noe_func
 
 	"""
 
@@ -61,11 +61,11 @@ def ri_prime(data, create_ri_prime_comps, create_ri_prime):
 def comp_r1_prime(data, i, frq_num):
 	"""Calculate the r1 components.
 
-	R1()  =  d . J_R1_d  +  c . J_R1_c
+	R1()  =  dip_const_func . dip_Jw_R1_func  +  csa_const_func . csa_Jw_R1_func
 
-	J_R1_d  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
+	dip_Jw_R1_func  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
 
-	J_R1_c  =  J(wN)
+	csa_Jw_R1_func  =  J(wN)
 
 	"""
 	data.dip_comps[i] = data.dipole_const
@@ -77,13 +77,13 @@ def comp_r1_prime(data, i, frq_num):
 def comp_r2_prime(data, i, frq_num):
 	"""Calculate the r2 components.
 
-	         d              c
-	R2()  =  - . J_R2_d  +  - . J_R2_c
-	         2              6
+	         dip_const_func                      csa_const_func
+	R2()  =  -------------- . dip_Jw_R2_func  +  -------------- . csa_Jw_R2_func
+	               2                                   6
 
-	J_R2_d  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
+	dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
 
-	J_R2_c  =  4J(0) + 3J(wN)
+	csa_Jw_R2_func  =  4J(0) + 3J(wN)
 
 	"""
 
@@ -96,13 +96,13 @@ def comp_r2_prime(data, i, frq_num):
 def comp_r2_prime_rex(data, i, frq_num):
 	"""Calculate the r2 components including chemical exchange.
 
-	         d              c
-	R2()  =  - . J_R2_d  +  - . J_R2_c  +  Rex
-	         2              6
+	         dip_const_func                      csa_const_func
+	R2()  =  -------------- . dip_Jw_R2_func  +  -------------- . csa_Jw_R2_func  +  Rex
+	               2                                   6
 
-	J_R2_d  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
+	dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
 
-	J_R2_c  =  4J(0) + 3J(wN)
+	csa_Jw_R2_func  =  4J(0) + 3J(wN)
 
 	"""
 
@@ -116,9 +116,9 @@ def comp_r2_prime_rex(data, i, frq_num):
 def comp_sigma_noe(data, i, frq_num):
 	"""Calculate the sigma_noe components.
 
-	sigma_noe()  =  d . J_sigma_noe
+	sigma_noe()  =  dip_const_func . dip_Jw_sigma_noe_func
 
-	J_sigma_noe  =  6J(wH+wN) - J(wH-wN)
+	dip_Jw_sigma_noe_func  =  6J(wH+wN) - J(wH-wN)
 
 	"""
 

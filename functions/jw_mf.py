@@ -1,6 +1,7 @@
 from Numeric import Float64, zeros
 
-from jw_mf_new import *
+#from swig_jw_mf import *
+
 
 def create_jw_struct(data, calc_jw):
 	"""Function to create the model-free spectral density values.
@@ -54,8 +55,9 @@ def calc_iso_s2_jw(i, frq_index, data):
 
 	"""
 
-	return c_calc_iso_s2_jw(data.s2_tm, data.omega_tm_sqrd[i, frq_index])
-	#return 0.4 * (data.s2_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]))
+	# Swig C code.
+	#return c_calc_iso_s2_jw(data.s2_tm, data.omega_tm_sqrd[i, frq_index])
+	return 0.4 * (data.s2_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]))
 
 
 def calc_iso_s2_jw_comps(data):
@@ -112,8 +114,9 @@ def calc_iso_s2f_s2s_ts_jw(i, frq_index, data):
 
 	"""
 
-	return c_calc_iso_s2f_s2s_ts_jw(data.params[data.s2f_index], data.s2s_tm, data.omega_tm_sqrd[i, frq_index], data.params[data.s2s_index], data.ts_prime, data.omega_ts_prime_sqrd[i, frq_index])
-	#return 0.4 * data.params[data.s2f_index] * (data.s2s_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
+	# Swig C code.
+	#return c_calc_iso_s2f_s2s_ts_jw(data.params[data.s2f_index], data.s2s_tm, data.omega_tm_sqrd[i, frq_index], data.params[data.s2s_index], data.ts_prime, data.omega_ts_prime_sqrd[i, frq_index])
+	return 0.4 * data.params[data.s2f_index] * (data.s2s_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
 
 
 def calc_iso_s2f_s2s_ts_jw_comps(data):

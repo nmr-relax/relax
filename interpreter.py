@@ -9,7 +9,10 @@ class interpreter:
 
 		# Place the program class structure under self.relax
 		self.relax = relax
-		del relax
+
+
+	def run(self):
+		"Run the python interpreter"
 
 		# Place the macros in the local namespace.
 		create_mf_model = self.relax.macros.mf_model.create
@@ -36,7 +39,6 @@ class interpreter:
 
 		# Modify the function code.InteractiveConsole.raw_input to echo the input.
 		code.InteractiveConsole.raw_input = self.raw_input
-		#code.InteractiveConsole.raw_input(code.InteractiveConsole())
 
 		# Go to the prompt.
 		code.interact(banner=self.relax.intro_string, local=locals())

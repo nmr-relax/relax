@@ -1,4 +1,3 @@
-from copy import deepcopy
 from Numeric import Float64, zeros
 from re import match
 

@@ -1,5 +1,4 @@
 import sys
-from copy import deepcopy
 from math import sqrt
 from Numeric import copy, dot
 
@@ -237,8 +236,8 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 		if print_flag:
 			print "Bracketed: " + `bracketed`
 			print_data("Final", k, a_new, Ik_new, Ik_lim)
-		a = deepcopy(a_new)
-		Ik = deepcopy(Ik_new)
+		a = copy.deepcopy(a_new)
+		Ik = copy.deepcopy(Ik_new)
 
 
 
@@ -479,7 +478,7 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 
 
 	# Interval updating algorithm.
-	Ik_new = deepcopy(Ik)
+	Ik_new = copy.deepcopy(Ik)
 
 	if ft > fl:
 		if print_flag:

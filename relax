@@ -21,6 +21,7 @@
 
 
 import profile
+import pstats
 from re import match
 import sys
 
@@ -60,21 +61,27 @@ class relax:
 		self.minimise = minimise
 		self.model_free = model_free(self)
 
-		# Test if command line arguments are given, else run the interpreter.
-		try:
-			self.argv[1]
-		except IndexError:
-			interpreter(self)
-		else:
-			self.arguments()
+		# Command line arguments.
+		self.arguments()
+
+		# Run the interpreter.
+		self.interpreter = interpreter(self)
+		self.interpreter.run()
 
 
 	def arguments(self):
-		"Function for dealing with command line options"
+		"Function for dealing with command line arguments"
+
+		# No arguments are given.
+		try:
+			self.argv[1]
+		except IndexError:
+			return
 
 		# Help.
 		if match('--help', self.argv[1]) or match('-h', self.argv[1]):
 			self.print_help()
+			sys.exit()
 
 		# Script file.
 		elif match('-s', self.argv[1]):
@@ -82,12 +89,16 @@ class relax:
 				self.argv[2]
 			except IndexError:
 				print "The name of the script file is not given."
+				sys.exit()
 			else:
-				print "This option is yet to be coded."
+				print "This argument is yet to be coded."
 				print "use \"relax < file_name\" instead."
+				sys.exit()
 
+		# Unknown argument.
 		else:
 			print "Try \"relax --help\" for more information."
+			sys.exit()
 
 
 	def print_help(self):
@@ -115,4 +126,13 @@ class relax:
 
 
 if __name__ == "__main__":
-	profile.run('relax(sys.argv)')
+	profile_flag = 0
+
+	if not profile_flag:
+		relax(sys.argv)
+	else:
+		def print_stats(stats):
+			pstats.Stats(stats).sort_stats(-1).print_stats()
+
+		profile.Profile.print_stats = print_stats
+		profile.run('relax(sys.argv)')

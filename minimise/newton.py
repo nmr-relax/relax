@@ -57,10 +57,13 @@ class newton(generic_line_search, generic_minimise):
 	def dir(self):
 		"Calculate the Newton direction."
 
-		print "dfk: " + `self.dfk`
-		print "d2fk: " + `self.d2fk`
 		self.pk = -matrixmultiply(inverse(self.d2fk), self.dfk)
+
+		# Take a steepest descent step if self.pk is not a descent dir.
 		if dot(self.dfk, self.pk) >= 0.0:
+			print "Switching to a steepest descent step to avoid an ascent direction."
+			#print "dfk: " + `self.dfk`
+			#print "d2fk: " + `self.d2fk`
 			self.pk = -self.dfk
 
 

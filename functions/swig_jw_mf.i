@@ -1,5 +1,5 @@
 /* swig interface for jw_mf_new.c */
-%module jw_mf_new
+%module swig_jw_mf
 
 extern double jw;
 extern double c_calc_iso_s2_jw(double s2_tm, double omega_tm_sqrd);

@@ -1,22 +1,25 @@
-from copy import deepcopy
+from Numeric import copy
 from math import pi
 from re import match
 
 from data import data
+from ri_dipole_csa_comps import *
 
 from jw_mf import *
 from djw_mf import *
-
-from ri_dipole_csa_comps import *
+from d2jw_mf import *
 
 from ri_prime import *
 from dri_prime import *
+from d2ri_prime import *
 
 from ri import *
 from dri import *
+from d2ri import *
 
 from chi2 import chi2
 from dchi2 import dchi2
+from d2chi2 import d2chi2
 
 class mf:
 	def __init__(self, relax, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling=None, print_flag=0):
@@ -124,7 +127,7 @@ class mf:
 		ri_prime(self.data, self.create_ri_prime_comps, self.create_ri_prime)
 
 		# Calculate the R1, R2, and NOE values.
-		self.data.ri = deepcopy(self.data.ri_prime)
+		self.data.ri = copy.deepcopy(self.data.ri_prime)
 		ri(self.data, self.create_ri, self.get_r1)
 
 		# Calculate the chi-squared value.
@@ -166,10 +169,8 @@ class mf:
 		dri_prime(self.data, self.create_dri_prime_comps, self.create_dri_prime)
 
 		# Calculate the R1, R2, and NOE values.
-		self.data.dri = deepcopy(self.data.dri_prime)
-
+		self.data.dri = copy.deepcopy(self.data.dri_prime)
 		dri(self.data, self.create_dri, self.get_dr1)
-
 
 		# Calculate the chi-squared value.
 		self.data.dchi2 = dchi2(self.data.relax_data, self.data.ri, self.data.dri, self.data.errors)
@@ -178,7 +179,45 @@ class mf:
 
 
 	def d2func(self, params, print_flag=0):
-		"asdf"
+		"""The function for calculating the model-free chi-squared gradient vector.
+
+		The chi-sqared hessian
+		~~~~~~~~~~~~~~~~~~~~~~
+			                      _n_
+			     d2chi2           \       1      /  dRi()     dRi()                         d2Ri()     \ 
+			---------------  =  2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
+			dthetaj.dthetak       /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak / 
+			                      i=1
+
+		where:
+			Ri are the values of the measured relaxation data set.
+			Ri() are the values of the back calculated relaxation data set.
+			sigma_i are the values of the error set.
+
+		"""
+
+		# Arguments
+		self.data.params = params
+		self.print_flag = print_flag
+
+		# Test if function self.func has been called with these parameter values.  If not, call it.
+		#if self.data.func_test != params:
+		#	temp_chi2 = self.func(params, print_flag)
+
+		# Calculate the spectral density values.
+		create_d2jw_struct(self.data, self.calc_d2jw)
+
+		# Calculate the R1, R2, and sigma_noe values.
+		d2ri_prime(self.data, self.create_d2ri_prime_comps, self.create_d2ri_prime)
+
+		# Calculate the R1, R2, and NOE values.
+		self.data.d2ri = copy.deepcopy(self.data.d2ri_prime)
+		d2ri(self.data, self.create_d2ri, self.get_d2r1)
+
+		# Calculate the chi-squared value.
+		self.data.d2chi2 = d2chi2(self.data.relax_data, self.data.ri, self.data.dri, self.data.d2ri, self.data.errors)
+
+		return self.data.d2chi2
 
 
 	def init_data(self):
@@ -203,6 +242,7 @@ class mf:
 		# Initialise the spectral density values, gradients, and hessians.
 		self.data.jw = zeros((self.relax.data.num_frq, 5), Float64)
 		self.data.djw = zeros((self.relax.data.num_frq, 5, len(self.params)), Float64)
+		self.data.d2jw = zeros((self.relax.data.num_frq, 5, len(self.params), len(self.params)), Float64)
 
 		# Initialise the components of the transformed relaxation equations.
 		self.data.dip_comps = zeros((self.relax.data.num_ri), Float64)
@@ -212,11 +252,18 @@ class mf:
 		self.data.rex_comps = zeros((self.relax.data.num_ri), Float64)
 
 		# Initialise the first partial derivative components of the transformed relaxation equations.
-		self.data.dip_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
-		self.data.dip_jw_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
-		self.data.csa_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
-		self.data.csa_jw_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
-		self.data.rex_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.dip_comps_grad = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.dip_jw_comps_grad = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.csa_comps_grad = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.csa_jw_comps_grad = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.rex_comps_grad = zeros((len(self.params), self.relax.data.num_ri), Float64)
+
+		# Initialise the first partial derivative components of the transformed relaxation equations.
+		self.data.dip_comps_hess = zeros((len(self.params), len(self.params), self.relax.data.num_ri), Float64)
+		self.data.dip_jw_comps_hess = zeros((len(self.params), len(self.params), self.relax.data.num_ri), Float64)
+		self.data.csa_comps_hess = zeros((len(self.params), len(self.params), self.relax.data.num_ri), Float64)
+		self.data.csa_jw_comps_hess = zeros((len(self.params), len(self.params), self.relax.data.num_ri), Float64)
+		self.data.rex_comps_hess = zeros((len(self.params), len(self.params), self.relax.data.num_ri), Float64)
 
 		# Initialise the transformed relaxation values, gradients, and hessians.
 		self.data.ri_prime = zeros((self.relax.data.num_ri), Float64)
@@ -238,9 +285,14 @@ class mf:
 	def setup_equations(self):
 		"Setup the equations used to calculate the chi-squared statistic."
 
+		# Initialise the spectral density gradient and hessian function lists.
 		self.calc_djw = []
+		self.calc_d2jw = []
 		for i in range(len(self.params)):
 			self.calc_djw.append(None)
+			self.calc_d2jw.append([])
+			for j in range(len(self.params)):
+				self.calc_d2jw[i].append(None)
 
 		# The original model-free equations.
 		if match('mf_orig', self.equation):
@@ -266,6 +318,8 @@ class mf:
 				self.calc_jw_comps = calc_iso_s2_te_jw_comps
 				self.calc_djw[self.data.s2_index] = calc_iso_S2_te_djw_dS2
 				self.calc_djw[self.data.te_index] = calc_iso_S2_te_djw_dte
+				self.calc_d2jw[self.data.s2_index][self.data.te_index] = self.calc_d2jw[self.data.te_index][self.data.s2_index] = calc_iso_S2_te_d2jw_dS2dte
+				self.calc_d2jw[self.data.te_index][self.data.te_index] = calc_iso_S2_te_d2jw_dte2
 			elif self.data.s2_index != None:
 				self.calc_jw = calc_iso_s2_jw
 				self.calc_jw_comps = calc_iso_s2_jw_comps
@@ -312,6 +366,10 @@ class mf:
 				self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2s_ts_djw_dS2f
 				self.calc_djw[self.data.s2s_index] = calc_iso_S2f_S2s_ts_djw_dS2s
 				self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2s_ts_djw_dts
+				self.calc_d2jw[self.data.s2f_index][self.data.s2s_index] = self.calc_d2jw[self.data.s2s_index][self.data.s2f_index] = calc_iso_S2f_S2s_ts_d2jw_dS2fdS2s
+				self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_S2s_ts_d2jw_dS2fdts
+				self.calc_d2jw[self.data.s2s_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2s_index] = calc_iso_S2f_S2s_ts_d2jw_dS2sdts
+				self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_S2s_ts_d2jw_dts2
 			else:
 				print "Invalid combination of parameters for the extended model-free equation."
 				return 0
@@ -331,21 +389,26 @@ class mf:
 		# Initialise the ri function pointer data structures.
 		self.create_ri = []
 		self.create_dri = []
+		self.create_d2ri = []
 
 		# Initialise the data structures containing the R1 values at the position of and corresponding to the NOE.
 		self.get_r1 = []
 		self.get_dr1 = []
+		self.get_d2r1 = []
 		for i in range(self.relax.data.num_ri):
 			if self.relax.data.ri_labels[i] == 'NOE':
 				if self.relax.data.noe_r1_table[i] == None:
 					self.get_r1.append(calc_r1)
 					self.get_dr1.append(calc_dr1)
+					self.get_d2r1.append(calc_d2r1)
 				else:
 					self.get_r1.append(extract_r1)
 					self.get_dr1.append(extract_dr1)
+					self.get_d2r1.append(extract_d2r1)
 			else:
 				self.get_r1.append(None)
 				self.get_dr1.append(None)
+				self.get_d2r1.append(None)
 
 
 		# Both the bond length and CSA are fixed.
@@ -360,25 +423,31 @@ class mf:
 				if self.relax.data.ri_labels[i]  == 'R1':
 					self.create_ri.append(None)
 					self.create_dri.append(None)
+					self.create_d2ri.append(None)
 					self.create_ri_prime_comps.append(comp_r1_prime)
-					self.create_dri_prime_comps.append(comp_dr1_dmf_prime)
+					self.create_dri_prime_comps.append(comp_dr1_djw_prime)
+					self.create_d2ri_prime_comps.append(comp_d2r1_djwidjwj_prime)
 
 				# The R2 equations.
 				elif self.relax.data.ri_labels[i] == 'R2':
 					self.create_ri.append(None)
 					self.create_dri.append(None)
+					self.create_d2ri.append(None)
 					if self.data.rex_index == None:
 						self.create_ri_prime_comps.append(comp_r2_prime)
 					else:
 						self.create_ri_prime_comps.append(comp_r2_prime_rex)
-					self.create_dri_prime_comps.append(comp_dr2_dmf_prime)
+					self.create_dri_prime_comps.append(comp_dr2_djw_prime)
+					self.create_d2ri_prime_comps.append(comp_d2r2_djwidjwj_prime)
 
 				# The NOE equations.
 				elif self.relax.data.ri_labels[i] == 'NOE':
 					self.create_ri.append(calc_noe)
 					self.create_dri.append(calc_dnoe)
+					self.create_d2ri.append(calc_d2noe)
 					self.create_ri_prime_comps.append(comp_sigma_noe)
-					self.create_dri_prime_comps.append(comp_dsigma_noe_dmf_prime)
+					self.create_dri_prime_comps.append(comp_dsigma_noe_djw_prime)
+					self.create_d2ri_prime_comps.append(comp_d2sigma_noe_djwidjwj_prime)
 
 			# Make pointers to the function for the calculation of ri_prime values.
 			if self.data.rex_index == None:
@@ -390,12 +459,52 @@ class mf:
 			for i in range(len(self.data.params)):
 				if match('Rex', self.param_types[i]):
 					self.create_dri_prime.append(func_dri_drex_prime)
+					self.create_d2ri_prime.append([])
+					for j in range(len(self.data.params)):
+						if match('Rex', self.param_types[j]):
+							self.create_d2ri_prime[i].append(None)
+						elif match('Bond length', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_drexdr_prime)
+						elif match('CSA', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_drexdcsa_prime)
+						else:
+							self.create_d2ri_prime[i].append(None)
 				elif match('Bond length', self.param_types[i]):
 					self.create_dri_prime.append(func_dri_dr_prime)
+					self.create_d2ri_prime.append([])
+					for j in range(len(self.data.params)):
+						if match('Rex', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_drexdr_prime)
+						elif match('Bond length', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_dr2_prime)
+						elif match('CSA', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_dcsadr_prime)
+						else:
+							self.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
 				elif match('CSA', self.param_types[i]):
 					self.create_dri_prime.append(func_dri_dcsa_prime)
+					self.create_d2ri_prime.append([])
+					for j in range(len(self.data.params)):
+						if match('Rex', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_drexdcsa_prime)
+						elif match('Bond length', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_dcsadr_prime)
+						elif match('CSA', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_dcsa2_prime)
+						else:
+							self.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
 				else:
-					self.create_dri_prime.append(func_dri_dmf_prime)
+					self.create_dri_prime.append(func_dri_djw_prime)
+					self.create_d2ri_prime.append([])
+					for j in range(len(self.data.params)):
+						if match('Rex', self.param_types[j]):
+							self.create_d2ri_prime[i].append(None)
+						elif match('Bond length', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
+						elif match('CSA', self.param_types[j]):
+							self.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
+						else:
+							self.create_d2ri_prime[i].append(func_d2ri_djwidjwj_prime)
 
 		# The bond length is part of the parameter vector.
 		elif self.data.r_index != None and self.data.csa_index == None:

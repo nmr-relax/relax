@@ -1,4 +1,3 @@
-from copy import deepcopy
 from Numeric import copy, dot, sqrt
 
 from interpolate import cubic_ext, quadratic_fafbga
@@ -53,7 +52,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 		return a['a'], f_count
 
 	# Backup a_last.
-	a_last = deepcopy(a)
+	a_last = copy.deepcopy(a)
 
 	# Quadratic interpolation.
 	a_new = - 0.5 * a0['phi_prime'] * a['a']**2 / (a['phi'] - a0['phi'] - a0['phi_prime']*a['a'])
@@ -94,8 +93,8 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 			f_count = f_count + 1
 
 		# Updating.
-		a_last = deepcopy(a)
-		a = deepcopy(a_new)
+		a_last = copy.deepcopy(a)
+		a = copy.deepcopy(a_new)
 
 
 def print_data(text, k, a):

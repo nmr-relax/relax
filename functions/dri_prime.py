@@ -19,85 +19,84 @@ def dri_prime(data, create_dri_prime_comps, create_dri_prime):
 
 		Dipolar
 		~~~~~~~
-			      1   / mu0  \ 2  (gH.gN.h_bar)**2
-			d  =  - . | ---- |  . ----------------
-			      4   \ 4.pi /         <r**6>
+			                   1   / mu0  \ 2  (gH.gN.h_bar)**2
+			dip_const_func  =  - . | ---- |  . ----------------
+			                   4   \ 4.pi /         <r**6>
 
 
-			         3   / mu0  \ 2  (gH.gN.h_bar)**2
-			d'  =  - - . | ---- |  . ----------------
-			         2   \ 4.pi /         <r**7>
+			                     3   / mu0  \ 2  (gH.gN.h_bar)**2
+			dip_const_grad  =  - - . | ---- |  . ----------------
+			                     2   \ 4.pi /         <r**7>
 
 
 		CSA
 		~~~
-			      (wN.csa)**2
-			c  =  -----------
-			           3
+			                   (wN.csa)**2
+			csa_const_func  =  -----------
+			                        3
 
-			       2.wN**2.csa
-			c'  =  -----------
-			            3
+			                   2.wN**2.csa
+			csa_const_grad  =  -----------
+			                        3
 
 
 		R1()
 		~~~~
-			J_R1_d  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
+			dip_Jw_R1_func  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
 
-			                 dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
-			J_R1_d_prime  =  ---------  +  3 . ------  +  6 . ---------
-			                    dmf             dmf              dmf
+			                   dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
+			dip_Jw_R1_grad  =  ---------  +  3 . ------  +  6 . ---------
+			                      dJw             dJw              dJw
 
 
-			J_R1_c  =  J(wN)
+			csa_Jw_R1_func  =  J(wN)
 
-			                 dJ(wN)
-			J_R1_c_prime  =  ------
-			                  dmf
-
+			                   dJ(wN)
+			csa_Jw_R1_grad  =  ------
+			                    dJw
 
 
 		R2()
 		~~~~
-			J_R2_d  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
+			dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
 
-			                     dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
-			J_R2_d_prime  =  4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . ---------
-			                      dmf         dmf             dmf            dmf             dmf
+			                       dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
+			dip_Jw_R2_grad  =  4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . ---------
+			                        dJw         dJw             dJw            dJw              dJw
 
 
-			J_R2_c  =  4J(0) + 3J(wN)
+			csa_Jw_R2_func  =  4J(0) + 3J(wN)
 
-			                     dJ(0)         dJ(wN)
-			J_R2_c_prime  =  4 . -----  +  3 . ------
-			                      dmf           dmf
+			                       dJ(0)         dJ(wN)
+			csa_Jw_R2_grad  =  4 . -----  +  3 . ------
+			                        dJw           dJw
 
 
 		sigma_noe()
 		~~~~~~~~~~~
-			J_sigma_noe  =  6J(wH+wN) - J(wH-wN)
+			dip_Jw_sigma_noe_func  =  6J(wH+wN) - J(wH-wN)
 
-			                          dJ(wH+wN)     dJ(wH-wN)
-			J_sigma_noe_prime  =  6 . ---------  -  ---------
-			                             dmf           dmf
+			                              dJ(wH+wN)     dJ(wH-wN)
+			dip_Jw_sigma_noe_grad  =  6 . ---------  -  ---------
+			                                 dJw           dJw
 
 
 	Spectral density parameter
 	~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		dR1()
-		-----  =  d . J_R1_d_prime  +  c . J_R1_c_prime
-		 dJj
+		-----  =  dip_const_func . dip_Jw_R1_grad  +  csa_const_func . csa_Jw_R1_grad
+		 dJw
 
 
-		dR2()     d                    c
-		-----  =  - . J_R2_d_prime  +  - . J_R2_c_prime
-		 dJj      2                    6
+		dR2()     dip_const_func                      csa_const_func
+		-----  =  -------------- . dip_Jw_R2_grad  +  -------------- . csa_Jw_R2_grad
+		 dJw            2                                   6
 
 
 		dsigma_noe()
-		------------  = d . J_sigma_noe_prime
-		    dJj
+		------------  = dip_const_func . dip_Jw_sigma_noe_grad
+		    dJw
 
 
 	Chemical exchange
@@ -127,13 +126,13 @@ def dri_prime(data, create_dri_prime_comps, create_dri_prime):
 	~~~
 
 		dR1()
-		-----  =  c' . J_R1_c
+		-----  =  csa_const_grad . csa_Jw_R1_func
 		dcsa
 
 
-		dR2()     c'
-		-----  =  - . J_R2_c
-		dcsa      6
+		dR2()     csa_const_grad
+		-----  =  -------------- . csa_Jw_R2_func
+		dcsa            6
 
 
 		dsigma_noe()
@@ -145,17 +144,17 @@ def dri_prime(data, create_dri_prime_comps, create_dri_prime):
 	~~~~~~~~~~~
 
 		dR1()
-		-----  =  d' . J_R1_d
+		-----  =  dip_const_grad . dip_Jw_R1_func
 		 dr
 
 
-		dR2()     d'
-		-----  =  - . J_R2_d
-		 dr       2
+		dR2()     dip_const_grad
+		-----  =  -------------- . dip_Jw_R2_func
+		 dr             2
 
 
 		dsigma_noe()
-		------------  =  d' . J_sigma_noe
+		------------  =  dip_const_grad . dip_Jw_sigma_noe_func
 		     dr
 
 	"""
@@ -169,25 +168,25 @@ def dri_prime(data, create_dri_prime_comps, create_dri_prime):
 		create_dri_prime[i](data, i)
 
 
-def comp_dr1_dmf_prime(data, i, frq_num):
-	"""Calculate the dr1/dmf components.
+def comp_dr1_djw_prime(data, i, frq_num):
+	"""Calculate the dr1/dJw components.
 
 	dR1()
-	-----  =  d . J_R1_d_prime  +  c . J_R1_c_prime
-	 dJj
+	-----  =  dip_const_func . dip_Jw_R1_grad  +  csa_const_func . csa_Jw_R1_grad
+	 dJw
 
-	                 dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
-	J_R1_d_prime  =  ---------  +  3 . ------  +  6 . ---------
-	                    dmf             dmf              dmf
+	                   dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
+	dip_Jw_R1_grad  =  ---------  +  3 . ------  +  6 . ---------
+	                      dJw             dJw              dJw
 
-	                 dJ(wN)
-	J_R1_c_prime  =  ------
-	                  dmf
+	                   dJ(wN)
+	csa_Jw_R1_grad  =  ------
+	                    dJw
 
 	"""
 
-	data.dip_jw_comps_prime[:, i] = data.djw[frq_num, 2] + 3.0*data.djw[frq_num, 1] + 6.0*data.djw[frq_num, 4]
-	data.csa_jw_comps_prime[:, i] = data.djw[frq_num, 1]
+	data.dip_jw_comps_grad[:, i] = data.djw[frq_num, 2] + 3.0*data.djw[frq_num, 1] + 6.0*data.djw[frq_num, 4]
+	data.csa_jw_comps_grad[:, i] = data.djw[frq_num, 1]
 
 
 def comp_dr1_drex_prime(data, i, frq_num):
@@ -202,26 +201,26 @@ def comp_dr1_drex_prime(data, i, frq_num):
 	return
 
 
-def comp_dr2_dmf_prime(data, i, frq_num):
-	"""Calculate the dr2/dmf components.
+def comp_dr2_djw_prime(data, i, frq_num):
+	"""Calculate the dr2/dJw components.
 
-	dR2()     d                    c
-	-----  =  - . J_R2_d_prime  +  - . J_R2_c_prime
-	 dJj      2                    6
+	dR2()     dip_const_func                      csa_const_func
+	-----  =  -------------- . dip_Jw_R2_grad  +  -------------- . csa_Jw_R2_grad
+	 dJw            2                                   6
 
-	                     dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
-	J_R2_d_prime  =  4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . ---------
-	                      dmf         dmf             dmf            dmf             dmf
+	                       dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
+	dip_Jw_R2_grad  =  4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . ---------
+	                        dJw         dJw             dJw            dJw              dJw
 
-	                     dJ(0)         dJ(wN)
-	J_R2_c_prime  =  4 . -----  +  3 . ------
-	                      dmf           dmf
+	                       dJ(0)         dJ(wN)
+	csa_Jw_R2_grad  =  4 . -----  +  3 . ------
+	                        dJw           dJw
 
 	"""
 
-	data.dip_jw_comps_prime[:, i] = 4.0*data.djw[frq_num, 0] + data.djw[frq_num, 2] + 3.0*data.djw[frq_num, 1] + 6.0*data.djw[frq_num, 3] + 6.0*data.djw[frq_num, 4]
-	data.csa_jw_comps_prime[:, i] = 4.0*data.djw[frq_num, 0] + 3.0*data.djw[frq_num, 1]
-	data.rex_comps_prime[:, i] = (1e-8 * data.frq[frq_num])**2
+	data.dip_jw_comps_grad[:, i] = 4.0*data.djw[frq_num, 0] + data.djw[frq_num, 2] + 3.0*data.djw[frq_num, 1] + 6.0*data.djw[frq_num, 3] + 6.0*data.djw[frq_num, 4]
+	data.csa_jw_comps_grad[:, i] = 4.0*data.djw[frq_num, 0] + 3.0*data.djw[frq_num, 1]
+	data.rex_comps_grad[:, i] = (1e-8 * data.frq[frq_num])**2
 
 
 def comp_dr2_drex_prime(data, i, frq_num):
@@ -233,23 +232,23 @@ def comp_dr2_drex_prime(data, i, frq_num):
 
 	"""
 
-	data.rex_comps_prime[:, i] = (1e-8 * data.frq[frq_num])**2
+	data.rex_comps_grad[:, i] = (1e-8 * data.frq[frq_num])**2
 
 
-def comp_dsigma_noe_dmf_prime(data, i, frq_num):
-	"""Calculate the dsigma_noe/dmf components.
+def comp_dsigma_noe_djw_prime(data, i, frq_num):
+	"""Calculate the dsigma_noe/dJw components.
 
 	dsigma_noe()
-	------------  = d . J_sigma_noe_prime
-	    dJj
+	------------  = dip_const_func . dip_Jw_sigma_noe_grad
+	    dJw
 
-	                          dJ(wH+wN)     dJ(wH-wN)
-	J_sigma_noe_prime  =  6 . ---------  -  ---------
-	                             dmf           dmf
+	                              dJ(wH+wN)     dJ(wH-wN)
+	dip_Jw_sigma_noe_grad  =  6 . ---------  -  ---------
+	                                 dJw           dJw
 
 	"""
 
-	data.dip_jw_comps_prime[:, i] = 6.0*data.djw[frq_num, 4] - data.djw[frq_num, 2]
+	data.dip_jw_comps_grad[:, i] = 6.0*data.djw[frq_num, 4] - data.djw[frq_num, 2]
 
 
 def comp_dsigma_noe_drex_prime(data, i, frq_num):
@@ -267,22 +266,22 @@ def comp_dsigma_noe_drex_prime(data, i, frq_num):
 def func_dcsa_prime(data, i):
 	"CSA derivatives."
 
-	data.dri_prime[i] = data.csa_comps_prime[i] * data.csa_jw_comps
+	data.dri_grad[i] = data.csa_comps_grad[i] * data.csa_jw_comps
 
 
-def func_dri_dmf_prime(data, i):
+def func_dri_djw_prime(data, i):
 	"Spectral density parameter derivatives."
 
-	data.dri_prime[i] = data.dip_comps * data.dip_jw_comps_prime[i] + data.csa_comps * data.csa_jw_comps_prime[i]
+	data.dri_prime[i] = data.dip_comps * data.dip_jw_comps_grad[i] + data.csa_comps * data.csa_jw_comps_grad[i]
 
 
 def func_dri_dr_prime(data, i):
 	"Bond length derivatives."
 
-	data.dri_prime[i] = data.dip_comps_prime[i] * data.dip_jw_comps
+	data.dri_prime[i] = data.dip_comps_grad[i] * data.dip_jw_comps
 
 
 def func_dri_drex_prime(data, i):
 	"Chemical exchange derivatives."
 
-	data.dri_prime[i] = data.rex_comps_prime[i]
+	data.dri_prime[i] = data.rex_comps_grad[i]
