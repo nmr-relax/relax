@@ -40,7 +40,11 @@ class Model_selection:
 
         # The runs argument.
         if runs == None:
-            runs = self.relax.data.run_names
+            runs = deepcopy(self.relax.data.run_names)
+
+            # Remove the model selection run name if it is in the list.
+            if modsel_run in runs:
+                runs.remove(modsel_run)
         else:
             if len(runs) == 0:
                 raise RelaxError, "The runs argument " + `runs` + " must be an array of length greater than zero."
@@ -53,10 +57,6 @@ class Model_selection:
                             raise RelaxNoRunError, run2
                 elif not run in self.relax.data.run_names:
                     raise RelaxNoRunError, run
-
-        # Test if the run 'modsel_run' does not already exist.
-        if modsel_run in self.relax.data.run_names:
-            raise RelaxRunError, modsel_run
 
         # Test that all the runs are of the same type.
         run_type = 'None'

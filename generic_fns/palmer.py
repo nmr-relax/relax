@@ -473,7 +473,7 @@ class Palmer:
                 #self.relax.data.res[i].s2_err[run] = s2_err
 
             # Get the S2f data.
-            if 'S2f' in self.relax.data.res[i].params[self.run] or 'S2s' in self.relax.data.res[i].params[self.run]:
+            if 'S2f' in self.relax.data.res[i].params[run] or 'S2s' in self.relax.data.res[i].params[run]:
                 data = self.get_mf_data('S2f', mfout, self.relax.data.res[i].num)
                 if data != None:
                     s2f, s2f_err = data
@@ -481,7 +481,7 @@ class Palmer:
                     #self.relax.data.res[i].s2f_err[run] = s2f_err
 
             # Get the S2s data.
-            if 'S2f' in self.relax.data.res[i].params[self.run] or 'S2s' in self.relax.data.res[i].params[self.run]:
+            if 'S2f' in self.relax.data.res[i].params[run] or 'S2s' in self.relax.data.res[i].params[run]:
                 data = self.get_mf_data('S2s', mfout, self.relax.data.res[i].num)
                 if data != None:
                     s2s, s2s_err = data
@@ -489,18 +489,18 @@ class Palmer:
                     #self.relax.data.res[i].s2s_err[run] = s2s_err
 
             # Get the te and ts data.
-            if 'te' in self.relax.data.res[i].params[self.run] or 'ts' in self.relax.data.res[i].params[self.run]:
+            if 'te' in self.relax.data.res[i].params[run] or 'ts' in self.relax.data.res[i].params[run]:
                 data = self.get_mf_data('te', mfout, self.relax.data.res[i].num)
                 if data != None:
                     te, te_err = data
                     self.relax.data.res[i].te[run] = te / 1e12
                     #self.relax.data.res[i].te_err[run] = te_err / 1e12
-                    if 'ts' in self.relax.data.res[i].params[self.run]:
+                    if 'ts' in self.relax.data.res[i].params[run]:
                         self.relax.data.res[i].ts[run] = te / 1e12
                         #self.relax.data.res[i].ts_err[run] = te_err / 1e12
 
             # Get the Rex data.
-            if 'Rex' in self.relax.data.res[i].params[self.run]:
+            if 'Rex' in self.relax.data.res[i].params[run]:
                 data = self.get_mf_data('Rex', mfout, self.relax.data.res[i].num)
                 if data != None:
                     rex, rex_err = data

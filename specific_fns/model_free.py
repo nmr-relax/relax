@@ -171,7 +171,7 @@ class Model_free:
                 # Test if the diffusion parameters should be scaled.
                 if self.relax.data.diff[self.run].scaling:
                     # tm.
-                    self.scaling_matrix[i, i] = 1e-9
+                    self.scaling_matrix[i, i] = 1e-15
 
                 # Increment i.
                 i = i + 1
@@ -204,45 +204,47 @@ class Model_free:
                 # Increment i.
                 i = i + 6
 
-        # Loop over all residues.
-        for j in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[j].select:
-                continue
+        # Model-free parameters.
+        if self.param_set == 'mf' or self.param_set == 'all':
+            # Loop over all residues.
+            for j in xrange(len(self.relax.data.res)):
+                # Skip unselected residues.
+                if not self.relax.data.res[j].select:
+                    continue
 
-            # Only add parameters for a single residue if index has a value.
-            if index != None and j != index:
-                continue
+                # Only add parameters for a single residue if index has a value.
+                if index != None and j != index:
+                    continue
 
-            # Skip residues which should not be scaled.
-            if not self.relax.data.res[j].scaling[self.run]:
-                i = i + len(self.relax.data.res[j].params[self.run])
-                continue
+                # Skip residues which should not be scaled.
+                if not self.relax.data.res[j].scaling[self.run]:
+                    i = i + len(self.relax.data.res[j].params[self.run])
+                    continue
 
-            # Loop over the model-free parameters.
-            for k in xrange(len(self.relax.data.res[j].params[self.run])):
-                # tm.
-                if self.relax.data.res[j].params[self.run][k] == 'tm':
-                    self.scaling_matrix[i, i] = 1e-9
+                # Loop over the model-free parameters.
+                for k in xrange(len(self.relax.data.res[j].params[self.run])):
+                    # tm.
+                    if self.relax.data.res[j].params[self.run][k] == 'tm':
+                        self.scaling_matrix[i, i] = 1e-15
 
-                # te, tf, and ts.
-                elif match('t', self.relax.data.res[j].params[self.run][k]):
-                    self.scaling_matrix[i, i] = 1e-9
+                    # te, tf, and ts.
+                    elif match('t', self.relax.data.res[j].params[self.run][k]):
+                        self.scaling_matrix[i, i] = 1e-15
 
-                # Rex.
-                elif self.relax.data.res[j].params[self.run][k] == 'Rex':
-                    self.scaling_matrix[i, i] = 1.0 / (2.0 * pi * self.relax.data.res[j].frq[self.run][0]) ** 2
+                    # Rex.
+                    elif self.relax.data.res[j].params[self.run][k] == 'Rex':
+                        self.scaling_matrix[i, i] = 1.0 / (2.0 * pi * self.relax.data.res[j].frq[self.run][0]) ** 2
 
-                # Bond length.
-                elif self.relax.data.res[j].params[self.run][k] == 'r':
-                    self.scaling_matrix[i, i] = 1e-10
+                    # Bond length.
+                    elif self.relax.data.res[j].params[self.run][k] == 'r':
+                        self.scaling_matrix[i, i] = 1e-10
 
-                # CSA.
-                elif self.relax.data.res[j].params[self.run][k] == 'CSA':
-                    self.scaling_matrix[i, i] = 1e-4
+                    # CSA.
+                    elif self.relax.data.res[j].params[self.run][k] == 'CSA':
+                        self.scaling_matrix[i, i] = 1e-4
 
-                # Increment i.
-                i = i + 1
+                    # Increment i.
+                    i = i + 1
 
 
     def calculate(self, run, print_flag):

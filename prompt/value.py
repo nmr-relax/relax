@@ -162,7 +162,7 @@ class Main:
         # Value.
         elif val == None:
             raise RelaxNoneError, 'value'
-        elif type(val) != float:
+        elif type(val) != float and type(val) != int:
             raise RelaxFloatError, ('value', val)
 
         # Error.
