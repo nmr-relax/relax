@@ -276,7 +276,7 @@ def calc_aniso_ti(data, diff_data):
     """
 
     # Calculate Diso.
-    if diff_data.params[0] == 0:
+    if diff_data.params[0] == 0.0:
         data.Diso = 1e99
     else:
         data.Diso = 1.0 / (6.0 * diff_data.params[0])
