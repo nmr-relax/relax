@@ -194,7 +194,7 @@ if __name__ == "__main__":
         Relax(sys.argv)
     else:
         def print_stats(stats):
-            pstats.Stats(stats).sort_stats(-1).print_stats()
+            pstats.Stats(stats).sort_stats('time', 'name').print_stats()
 
         profile.Profile.print_stats = print_stats
         profile.run('Relax(sys.argv)')

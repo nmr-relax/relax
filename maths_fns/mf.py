@@ -279,15 +279,11 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue.
         """
 
+        # Store the parameter values in self.func_test for testing.
+        self.func_test = params * 1.0
+
         # Set self.data[0] to data.
         data = self.data[0]
-
-        # Test if the function has already been calculated with these parameter values.
-        if sum(params == self.func_test) == self.total_num_params:
-            return data.chi2
-
-        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
-        self.func_test = params * 1.0
 
         # Scaling.
         if self.scaling_flag:
@@ -336,15 +332,11 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue with a local tm.
         """
 
+        # Store the parameter values in self.func_test for testing.
+        self.func_test = params * 1.0
+
         # Set self.data[0] to data.
         data = self.data[0]
-
-        # Test if the function has already been calculated with these parameter values.
-        if sum(params == self.func_test) == self.total_num_params:
-            return data.chi2
-
-        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
-        self.func_test = params * 1.0
 
         # Scaling.
         if self.scaling_flag:
@@ -393,11 +385,7 @@ class Mf:
         fixed.
         """
 
-        # Test if the function has already been calculated with these parameter values.
-        if sum(params == self.func_test) == self.total_num_params:
-            return self.total_chi2
-
-        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
+        # Store the parameter values in self.func_test for testing.
         self.func_test = params * 1.0
 
         # Scaling.
@@ -466,11 +454,7 @@ class Mf:
         parameters.
         """
 
-        # Test if the function has already been calculated with these parameter values.
-        if sum(params == self.func_test) == self.total_num_params:
-            return self.total_chi2
-
-        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
+        # Store the parameter values in self.func_test for testing.
         self.func_test = params * 1.0
 
         # Scaling.
@@ -538,19 +522,15 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue.
         """
 
-        # Set self.data[0] to data.
-        data = self.data[0]
-
-        # Test if the gradient has already been calculated with these parameter values.
-        if sum(params == self.grad_test) == self.total_num_params:
-            return data.dchi2
-
         # Test if the function has already been called, otherwise run self.func.
         if sum(params == self.func_test) != self.total_num_params:
             self.func(params)
 
-        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
+        # Store the parameter values in self.grad_test for testing.
         self.grad_test = params * 1.0
+
+        # Set self.data[0] to data.
+        data = self.data[0]
 
         # Scaling.
         if self.scaling_flag:
@@ -592,19 +572,15 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue with a local tm.
         """
 
-        # Set self.data[0] to data.
-        data = self.data[0]
-
-        # Test if the gradient has already been calculated with these parameter values.
-        if sum(params == self.grad_test) == self.total_num_params:
-            return data.dchi2
-
         # Test if the function has already been called, otherwise run self.func.
         if sum(params == self.func_test) != self.total_num_params:
             self.func(params)
 
-        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
+        # Store the parameter values in self.grad_test for testing.
         self.grad_test = params * 1.0
+
+        # Set self.data[0] to data.
+        data = self.data[0]
 
         # Scaling.
         if self.scaling_flag:
@@ -653,15 +629,11 @@ class Mf:
         fixed.
         """
 
-        # Test if the gradient has already been calculated with these parameter values.
-        if sum(params == self.grad_test) == self.total_num_params:
-            return self.total_dchi2
-
         # Test if the function has already been called, otherwise run self.func.
         if sum(params == self.func_test) != self.total_num_params:
             self.func(params)
 
-        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
+        # Store the parameter values in self.grad_test for testing.
         self.grad_test = params * 1.0
 
         # Scaling.
@@ -741,15 +713,11 @@ class Mf:
         parameters.
         """
 
-        # Test if the gradient has already been calculated with these parameter values.
-        if sum(params == self.grad_test) == self.total_num_params:
-            return self.total_dchi2
-
         # Test if the function has already been called, otherwise run self.func.
         if sum(params == self.func_test) != self.total_num_params:
             self.func(params)
 
-        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
+        # Store the parameter values in self.grad_test for testing.
         self.grad_test = params * 1.0
 
         # Scaling.
@@ -828,19 +796,12 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue.
         """
 
-        # Set self.data[0] to data.
-        data = self.data[0]
-
-        # Test if the Hessian has already been calculated with these parameter values.
-        if sum(params == self.hess_test) == self.total_num_params:
-            return data.d2chi2
-
         # Test if the gradient has already been called, otherwise run self.dfunc.
         if sum(params == self.grad_test) != self.total_num_params:
             self.dfunc(params)
 
-        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
-        self.hess_test = params * 1.0
+        # Set self.data[0] to data.
+        data = self.data[0]
 
         # Scaling.
         if self.scaling_flag:
@@ -881,19 +842,12 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue with a local tm.
         """
 
-        # Set self.data[0] to data.
-        data = self.data[0]
-
-        # Test if the Hessian has already been calculated with these parameter values.
-        if sum(params == self.hess_test) == self.total_num_params:
-            return data.d2chi2
-
         # Test if the gradient has already been called, otherwise run self.dfunc.
         if sum(params == self.grad_test) != self.total_num_params:
             self.dfunc(params)
 
-        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
-        self.hess_test = params * 1.0
+        # Set self.data[0] to data.
+        data = self.data[0]
 
         # Scaling.
         if self.scaling_flag:
@@ -938,16 +892,9 @@ class Mf:
         fixed.
         """
 
-        # Test if the Hessian has already been calculated with these parameter values.
-        if sum(params == self.hess_test) == self.total_num_params:
-            return self.total_d2chi2
-
         # Test if the gradient has already been called, otherwise run self.dfunc.
         if sum(params == self.grad_test) != self.total_num_params:
             self.dfunc(params)
-
-        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
-        self.hess_test = params * 1.0
 
         # Scaling.
         if self.scaling_flag:
@@ -1026,16 +973,9 @@ class Mf:
         parameters.
         """
 
-        # Test if the Hessian has already been calculated with these parameter values.
-        if sum(params == self.hess_test) == self.total_num_params:
-            return self.total_d2chi2
-
         # Test if the gradient has already been called, otherwise run self.dfunc.
         if sum(params == self.grad_test) != self.total_num_params:
             self.dfunc(params)
-
-        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
-        self.hess_test = params * 1.0
 
         # Scaling.
         if self.scaling_flag:
