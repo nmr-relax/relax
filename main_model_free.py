@@ -34,12 +34,6 @@ class main_model_free:
 		chi2_tol = 1e-15
 		max_iterations = 5000
 
-		# Initialise the iteration counter and function, gradient, and hessian call counters.
-		self.iter_count = 0
-		self.f_count = 0
-		self.g_count = 0
-		self.h_count = 0
-
 		# Set the function, gradient, and hessian functions.
 		if self.scaling_flag:
 			func = self.mf.mf_trans_functions.chi2
@@ -78,6 +72,12 @@ class main_model_free:
 				print "\n\n<<< Fitting to residue: " + self.mf.data.relax_data[0][self.res][0] + " " + self.mf.data.relax_data[0][self.res][1] + " >>>"
 			else:
 				print "Residue: " + self.mf.data.relax_data[0][self.res][0] + " " + self.mf.data.relax_data[0][self.res][1]
+
+			# Initialise the iteration counter and function, gradient, and hessian call counters.
+			self.iter_count = 0
+			self.f_count = 0
+			self.g_count = 0
+			self.h_count = 0
 
 			# Initialise the relaxation data and error data structures.
 			relax_data = []

@@ -28,7 +28,7 @@ class asymptotic(common_operations):
 		self.mf = mf
 
 
-	def model_selection(self):
+	def run(self):
 		"Model selection."
 
 		data = self.mf.data.data

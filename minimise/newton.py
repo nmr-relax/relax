@@ -1,5 +1,5 @@
 from LinearAlgebra import inverse
-from Numeric import copy, matrixmultiply
+from Numeric import copy, dot, matrixmultiply
 
 from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
@@ -58,6 +58,8 @@ class newton(generic_line_search, generic_minimise):
 		"Calculate the Newton direction."
 
 		self.pk = -matrixmultiply(inverse(self.d2fk), self.dfk)
+		if dot(self.dfk, self.pk) >= 0.0:
+			self.pk = -self.dfk
 
 
 	def update_data(self):

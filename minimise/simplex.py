@@ -1,4 +1,9 @@
-from Numeric import Float64, add, argsort, average, copy, take, zeros
+import sys
+
+try:
+	from Numeric import Float64, add, argsort, average, copy, take, zeros
+except ImportError:
+	raise NameError, "Please upgrade Numeric."
 
 from generic_minimise import generic_minimise
 

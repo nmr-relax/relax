@@ -1,8 +1,9 @@
 from re import match
 from os import chmod
 import sys
+from common_ops import common_ops
 
-class main_palmer:
+class main_palmer(common_ops):
 	def __init__(self, mf):
 		"Class used to create and process input and output for the program Modelfree 4."
 
@@ -16,37 +17,37 @@ class main_palmer:
 		if self.mf.debug == 1:
 			self.mf.file_ops.init_log_file(title)
 
-		self.mf.common_ops.update_data()
-		self.mf.common_ops.extract_relax_data()
+		self.update_data()
+		self.extract_relax_data()
 
 		if self.mf.debug == 1:
 			self.log_input_info()
 
 		if match('^AIC$', self.mf.usr_param.method) or match('^AICc$', self.mf.usr_param.method):
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-			#self.mf.modsel.asymptotic(self.mf)
+			self.model_selection = self.mf.modsel.asymptotic
 		elif match('^BIC$', self.mf.usr_param.method):
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-			#self.mf.modsel.asymptotic(self.mf)
+			self.model_selection = self.mf.modsel.asymptotic
 		elif match('^Bootstrap$', self.mf.usr_param.method):
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-			#self.mf.modsel.bootstrap(self.mf)
+			self.model_selection = self.mf.modsel.bootstrap
 		elif match('^CV$', self.mf.usr_param.method):
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-			#self.mf.modsel.cv(self.mf)
+			self.model_selection = self.mf.modsel.cv
 		elif match('^Expect$', self.mf.usr_param.method):
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-			#self.mf.modsel.exp_overall_disc(self.mf)
+			self.model_selection = self.mf.modsel.exp_overall_disc
 		elif match('^Farrow$', self.mf.usr_param.method):
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-			#self.mf.modsel.farrow(self.mf)
+			self.model_selection = self.mf.modsel.farrow
 		elif match('^Palmer$', self.mf.usr_param.method):
 			self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
 			if self.mf.data.num_data_sets > 3:
 				self.mf.data.runs.append('f-m2m4')
 				self.mf.data.runs.append('f-m2m5')
 				self.mf.data.runs.append('f-m3m4')
-			#self.mf.modsel.palmer(self.mf)
+			self.model_selection = self.mf.modsel.palmer
 		elif match('^Overall$', self.mf.usr_param.method):
 			message = "See the file 'modsel/overall_disc.py' for details.\n"
 			self.mf.file_ops.read_file('op_data', message)
@@ -287,9 +288,9 @@ class main_palmer:
 			print "Extracting model-free data from " + model + "/mfout."
 			num_res = len(self.mf.data.relax_data[0])
 			if match('^m', model):
-				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.usr_param.chi2_lim, self.mf.usr_param.ftest_lim, ftest='n')
+				self.mf.data.model = self.mf.star.extract(mfout_lines, num_res, self.mf.usr_param.chi2_lim, self.mf.usr_param.ftest_lim, ftest='n')
 			if match('^f', model):
-				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.usr_param.chi2_lim, self.mf.usr_param.ftest_lim, ftest='y')
+				self.mf.data.model = self.mf.star.extract(mfout_lines, num_res, self.mf.usr_param.chi2_lim, self.mf.usr_param.ftest_lim, ftest='y')
 
 
 	def final_run(self):

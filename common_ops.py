@@ -217,7 +217,7 @@ class common_ops:
 		self.extract_mf_data()
 
  		print "\n[ " + self.mf.usr_param.method + " model selection ]\n"
-		self.model_selection()
+		self.model_selection.run()
 
 		print "\n[ Printing results ]\n"
 		self.print_results()
