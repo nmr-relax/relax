@@ -1,1 +1,3 @@
-__all__ = ['map']
+__all__ = ['base_map',
+           'isosurface_3D',
+           'map']

@@ -1,6 +1,6 @@
 class Write:
     def __init__(self, relax):
-        """Class containing functions specific to model-free analysis."""
+        """Class containing functions for writing data."""
 
         self.relax = relax
 

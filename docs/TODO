@@ -30,17 +30,13 @@ mc_relax_data["m1"]["-5"][mc_num]
 # Macros.
 #########
 
-Write macros!
-Map model-free space.
 Grace.
-OpenDX.
 Molmol.
 
 
 # Minimisation.
 ###############
 
-Make minimisation doc strings.
 log grid search.
 Constrained grid search.
 

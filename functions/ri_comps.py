@@ -1016,7 +1016,10 @@ def comp_dip_const_func(data, bond_length):
                            4   \ 4.pi /         <r**6>
     """
 
-    data.dip_const_func = 0.25 * data.dip_const_fixed * bond_length**-6
+    if bond_length == 0.0:
+        data.dip_const_func = 1e99
+    else:
+        data.dip_const_func = 0.25 * data.dip_const_fixed * bond_length**-6
 
 
 # Gradient.
@@ -1031,7 +1034,10 @@ def comp_dip_const_grad(data, bond_length):
                              2   \ 4.pi /         <r**7>
     """
 
-    data.dip_const_grad = -1.5 * data.dip_const_fixed * bond_length**-7
+    if bond_length == 0.0:
+        data.dip_const_grad = 1e99
+    else:
+        data.dip_const_grad = -1.5 * data.dip_const_fixed * bond_length**-7
 
 
 # Hessian.
@@ -1046,7 +1052,10 @@ def comp_dip_const_hess(data, bond_length):
                            2    \ 4.pi /         <r**8>
     """
 
-    data.dip_const_hess = 10.5 * data.dip_const_fixed * bond_length**-8
+    if bond_length == 0.0:
+        data.dip_const_hess = 1e99
+    else:
+        data.dip_const_hess = 10.5 * data.dip_const_fixed * bond_length**-8
 
 
 

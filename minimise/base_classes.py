@@ -264,11 +264,11 @@ class Min:
     def setup_conv_tests(self):
         """Default base class for selecting the convergence tests."""
 
-        if self.func_tol and self.grad_tol:
+        if self.func_tol != None and self.grad_tol != None:
             self.conv_test = self.double_test
-        elif self.func_tol:
+        elif self.func_tol != None:
             self.conv_test = self.func_test
-        elif self.grad_tol:
+        elif self.grad_tol != None:
             self.conv_test = self.grad_test
         else:
             print self.print_prefix + "Convergence tests cannot be setup because both func_tol and grad_tol are set to None."

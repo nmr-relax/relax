@@ -1,4 +1,4 @@
-# Script for model-free analysis.
+# Script for mapping the model-free space.
 echo.on()
 load.sequence('noe.500.out')
 load.relax_data('R1', '600', 600.0 * 1e6, 'r1.600.out')

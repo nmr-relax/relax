@@ -42,8 +42,12 @@ def cubic_int(a, b, fa, fb, ga, gb):
         beta2 = sqrt(beta1**2 - ga*gb)
     else:
         beta2 = -sqrt(beta1**2 - ga*gb)
-    alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
-    return alpha
+
+    denom = gb - ga + 2.0*beta2
+    if denom == 0.0:
+        return -1e99
+    else:
+        return b - (b - a)*(gb + beta2 - beta1)/denom
 
 
 def cubic_ext(a, b, fa, fb, ga, gb, full_output=0):
@@ -81,7 +85,11 @@ def cubic_ext(a, b, fa, fb, ga, gb, full_output=0):
     else:
         beta2 = -sqrt(max(0.0, beta1**2 - ga*gb))
 
-    alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
+    denom = gb - ga + 2.0*beta2
+    if denom == 0.0:
+        alpha = -1e99
+    else:
+        alpha = b - (b - a)*(gb + beta2 - beta1)/denom
 
     if full_output:
         return alpha, beta1, beta2

@@ -6,7 +6,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-2, lambda0=None, epsilon0=1e-10, gamma0=1e-10, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-2, lambda0=None, epsilon0=1e-5, gamma0=1e-5, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
@@ -315,30 +315,19 @@ class Method_of_multipliers(Min):
             self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
             # Unconstrained minimisation sub-loop.
-            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
-            #try:
-            #    results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
-            #except "LinearAlgebraError", message:
-            #    self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
-            #    break
-            #except OverflowError, message:
-            #    if type(message.args[0]) == int:
-            #        text = message.args[1]
-            #    else:
-            #        text = message.args[0]
-            #    self.warning = "OverflowError: " + text + " (fatal minimisation error)."
-            #    break
-            #except NameError, message:
-            #    self.warning = message.args[0] + " (fatal minimisation error)."
-            #    break
-
-            # Unpack the results.
+            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=(self.maxiter - self.j), full_output=1, print_flag=sub_print_flag, print_prefix="\t")
             if results == None:
                 return
-            self.xk_new, self.L_new, j, f, g, h, temp = results
-            self.j = self.j + j
-            self.f_count, self.g_count, self.h_count = self.f_count + f, self.g_count + g, self.h_count + h
+
+            # Unpack and sort the results.
+            self.xk_new, self.L_new, j, f, g, h, self.warning = results
+            self.j, self.f_count, self.g_count, self.h_count = self.j + j, self.f_count + f, self.g_count + g, self.h_count + h
             if self.warning != None:
+                break
+
+            # Maximum number of iteration test.
+            if self.j >= self.maxiter:
+                self.warning = "Maximum number of iterations reached"
                 break
 
             # Convergence test.
@@ -374,6 +363,7 @@ class Method_of_multipliers(Min):
         # Sum iterations.
         self.k  = self.k + self.j
 
+        # Return.
         if self.full_output:
             try:
                 return self.xk_new, self.fk, self.k+1, self.f_count, self.g_count, self.h_count, self.warning

@@ -218,7 +218,9 @@ class Model_free:
             self.relax.data.scaling[self.model][:] = self.scale_vect
 
         # Minimisation results.
-        self.relax.data.min_results[self.model] = zeros((len(self.relax.data.seq), 5), Float64)
+        self.relax.data.min_results[self.model] = []
+        for i in range(len(self.relax.data.seq)):
+            self.relax.data.min_results[self.model].append([0.0, 0, 0, 0, 0, None])
 
 
     def fixed_setup(self, min_options=None, model=None):
@@ -310,7 +312,7 @@ class Model_free:
 
                 # Rex.
                 elif match('Rex', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2])
+                    min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
                 # Bond length.
                 elif match('Bond length', self.relax.data.param_types[model][i]):
@@ -346,7 +348,7 @@ class Model_free:
 
                 # Rex.
                 elif match('Rex', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2])
+                    min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
                 # Bond length.
                 elif match('Bond length', self.relax.data.param_types[model][i]):
@@ -427,27 +429,36 @@ class Model_free:
                 # r >= 0.9e-10
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
-                b.append(0.9e-10)
+                if self.relax.data.scaling.has_key(model):
+                    b.append(0.9e-10 / self.relax.data.scaling[model][0][i])
+                else:
+                    b.append(0.9e-10)
                 j = j + 1
 
                 # -r >= -2e-10
                 A.append(zero_array * 0.0)
                 A[j][i] = -1.0
-                b.append(-2e-10)
+                if self.relax.data.scaling.has_key(model):
+                    b.append(-2e-10 / self.relax.data.scaling[model][0][i])
+                else:
+                    b.append(-2e-10)
                 j = j + 1
 
-            # CSA (-300e-6 <= CSA <= -100e-6).
+            # CSA (-300e-6 <= CSA <= 0).
             elif match("CSA", types[i]):
                 # CSA >= -300e-6
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
-                b.append(-300e-6)
+                if self.relax.data.scaling.has_key(model):
+                    b.append(-300e-6 / self.relax.data.scaling[model][0][i])
+                else:
+                    b.append(-300e-6)
                 j = j + 1
 
-                # -CSA >= 100e-6
+                # -CSA >= 0
                 A.append(zero_array * 0.0)
                 A[j][i] = -1.0
-                b.append(100e-6)
+                b.append(0.0)
                 j = j + 1
 
         # Convert to Numeric data structures.
@@ -525,7 +536,7 @@ class Model_free:
 
             # Place the results in various data structures.
             self.relax.data.params[model][self.res] = self.params
-            self.relax.data.min_results[model][self.res] = [self.func, self.iter_count, self.f_count, self.g_count, self.h_count]
+            self.relax.data.min_results[model][self.res] = [self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning]
 
 
     def map_bounds(self, model=None):
@@ -721,12 +732,15 @@ class Model_free:
                 file.write("%-26s" % (types[i] + " (ppm)"))
 
         # Minimisation results.
-        file.write("%-26s" % "chi-squared")
-        file.write("%-9s" % "iter")
+        file.write("%-26s" % "Chi-squared")
+        file.write("%-9s" % "Iter")
         file.write("%-9s" % "f")
         file.write("%-9s" % "g")
         file.write("%-9s" % "h")
-        file.write("%-30s\n" % "warning")
+        file.write("Warning")
+
+        # End of line.
+        file.write("\n")
 
 
     def print_results(self, file, model):
@@ -775,10 +789,10 @@ class Model_free:
             file.write("%-9i" % self.relax.data.min_results[model][i][2])
             file.write("%-9i" % self.relax.data.min_results[model][i][3])
             file.write("%-9i" % self.relax.data.min_results[model][i][4])
-            #if self.warning:
-            #    file.write("%-30s\n" % `self.warning`)
+            if self.relax.data.min_results[model][i][5] != None:
+                file.write(self.relax.data.min_results[model][i][5])
 
-            # End of line
+            # End of line.
             file.write("\n")
 
 
@@ -857,8 +871,10 @@ class Model_free:
             'm38'    => [Bond length, CSA, S2f, tf, S2s, ts, Rex]
             'm39'    => [Bond length, CSA, Rex]
 
-        Warning:  A few of the models in the thirties range fail when using standard R1, R2, and NOE
-        relaxation data.
+        Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
+        relaxation data.  This is due to the extreme flexibly of these models where a change in the
+        parameter 'Bond length' is compensated by a corresponding change in the parameter 'CSA' and
+        vice versa.
 
 
         Diagonal scaling.

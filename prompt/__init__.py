@@ -4,7 +4,8 @@ __all__ = ['command',
            'format',
            'generic_functions',
            'gpl',
-           'init_data',
+           'init_data'
+           'interpreter',
            'load',
            'map',
            'min',
@@ -14,7 +15,7 @@ __all__ = ['command',
            'print_all_data',
            'select_res',
            'state',
-           'tab',
+           'tab_completion',
            'value',
            'write']
 

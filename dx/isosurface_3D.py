@@ -804,7 +804,7 @@ macro Image(
             viewAngle,
             backgroundColor) [instance: 1, cache: 1];
     coloredDefaultCamera = 
-	 UpdateCamera(defaultCamera,
+     UpdateCamera(defaultCamera,
             background=backgroundColor) [instance: 1, cache: 1];
     nullDefaultCamera =
         Inquire(defaultCamera,
@@ -854,11 +854,11 @@ macro Image(
             AAyTickLabels,
             AAzTickLabels) [instance: 1, cache: 1];
     switchAAenable = Compute("$0+1",
-	     AAenable) [instance: 2, cache: 1];
+         AAenable) [instance: 2, cache: 1];
     object = Switch(
-	     switchAAenable,
-	     object,
-	     AAobject) [instance:4, cache: 1];
+         switchAAenable,
+         object,
+         AAobject) [instance:4, cache: 1];
     SWapproximation_options =
         Switch(
             buttonState,
@@ -880,14 +880,14 @@ macro Image(
             buttonDownDensity,
             buttonUpDensity) [instance: 2, cache: 1];
     switchRenderMode = Compute(
-	     "$0+1",
-	     renderMode) [instance: 3, cache: 1];
+         "$0+1",
+         renderMode) [instance: 3, cache: 1];
     approximation_options = Switch(
-	     switchRenderMode,
+         switchRenderMode,
             SWapproximation_options,
-	     HWapproximation_options) [instance: 7, cache: 1];
+         HWapproximation_options) [instance: 7, cache: 1];
     density_options = Switch(
-	     switchRenderMode,
+         switchRenderMode,
             SWdensity_options,
             HWdensity_options) [instance: 8, cache: 1];
     renderModeString = Switch(
@@ -949,7 +949,7 @@ macro Image(
             RECresolution,
             ImageResolution,
             RECaspect,
-	     ImageAspect) [instance: 4, cache: 1];
+         ImageAspect) [instance: 4, cache: 1];
     NoRECobject, RECNoRerenderObject, RECNoRerHW, RECRerenderObject = Route(switchRECenable, annoted_object);
     Display(
         NoRECobject,
@@ -981,21 +981,21 @@ macro Image(
         RECfile,
         RECformat) [instance: 1, cache: 1];
     RECupdateCamera =
-	UpdateCamera(
-	    camera,
-	    resolution=RECresolution,
-	    aspect=RECaspect) [instance: 2, cache: 1];
+    UpdateCamera(
+        camera,
+        resolution=RECresolution,
+        aspect=RECaspect) [instance: 2, cache: 1];
     Display(
         RECRerenderObject,
         camera,
         where,
         throttle) [instance: 1, cache: 1];
     RECRerenderObject =
-	ScaleScreen(
-	    RECRerenderObject,
-	    NULL,
-	    RECresolution,
-	    camera) [instance: 1, cache: 1];
+    ScaleScreen(
+        RECRerenderObject,
+        NULL,
+        RECresolution,
+        camera) [instance: 1, cache: 1];
     image =
         Render(
             RECRerenderObject,

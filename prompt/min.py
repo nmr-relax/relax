@@ -5,7 +5,7 @@ from re import match
 
 class Min:
     def __init__(self, relax):
-        """Class containing functions specific to model-free analysis."""
+        """Class containing the fixed, grid_search, and minimise functions."""
 
         self.relax = relax
 
@@ -20,7 +20,8 @@ class Min:
 
         values:  An array of numbers of length equal to the number of parameters in the model.
 
-        print_flag:  (so is this)
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
 
 
         Examples
@@ -97,7 +98,24 @@ class Min:
     def grid_search(self, model=None, lower=None, upper=None, inc=21, print_flag=1):
         """The grid search function.
 
-        Generate the data structure of model-free grid options for the grid search.
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        model:  The name of the model.
+
+        lower:  An array of the lower bound parameter values for the grid search.  The length of the
+        array should be equal to the number of parameters in the model.
+
+        upper:  An array of the upper bound parameter values for the grid search.  The length of the
+        array should be equal to the number of parameters in the model.
+
+        inc:  The number of increments to search over.  If a single integer is given then the number
+        of increments will be equal in all dimensions.  Different numbers of increments in each
+        direction can be set if 'inc' is set to an array of integers of length equal to the number
+        of parameters.
+
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
         """
 
         # The model argument.
@@ -220,7 +238,7 @@ class Min:
         is to turn constraints on (constraints=1).
 
         print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
-        output, one is intermediate output, while two is maximal output.  The default value is 1.
+        output while higher values increase the amount of output.  The default value is 1.
         """
 
         # Minimization algorithm.
