@@ -80,9 +80,9 @@ class Threading:
 
             # Login command.
             if host_name == 'localhost':
-                login_cmd = ''
+                login_cmd = None
             else:
-                login_cmd = 'ssh ' + login
+                login_cmd = 'ssh ' + login + ' '
 
              # Program path.
             prog_path = file_data[i][2]
@@ -173,6 +173,17 @@ class Threading:
 
         # Final print out.
         print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_name)`
+
+
+    def remote_command(self, cmd, login_cmd):
+        """Return the string required for either local or remote execution of the command."""
+
+        # Remote execution.
+        if login_cmd:
+            return login_cmd + " \"" + cmd + "\""
+
+        # Local execution.
+        return cmd
 
 
 
@@ -273,12 +284,11 @@ class RelaxHostThread(RelaxThread):
 
         # Text.
         self.text = []
-        self.text.append("Host name:         " + self.host_name)
-        if self.user:
-            self.text.append("User name:         " + self.user)
-        self.text.append("Program path:      " + self.prog_path)
-        self.text.append("Working directory: " + self.swd)
-        self.text.append("Priority:          " + `self.priority`)
+        self.text.append("%-20s%-10s" % ("Host name:", self.host_name))
+        self.text.append("%-20s%-10s" % ("User name:", self.user))
+        self.text.append("%-20s%-10s" % ("Program path:", self.prog_path))
+        self.text.append("%-20s%-10s" % ("Working directory:", self.swd))
+        self.text.append("%-20s%-10i" % ("Priority:", self.priority))
 
         # Test the SSH connection.
         if self.host_name != 'localhost' and not fail and not self.test_ssh():
@@ -294,7 +304,7 @@ class RelaxHostThread(RelaxThread):
 
         # Host is accessible.
         if not fail:
-            self.text.append("Host OK.")
+            self.text.append("%-20s%-10s" % ("Host status:", "[ OK ]"))
 
         # Package the results.
         self.results = (self.text, job_index, fail)
@@ -304,7 +314,9 @@ class RelaxHostThread(RelaxThread):
         """Function for testing if the program path is valid and that relax can execute."""
 
         # Test command.
-        test_cmd = "%s %s --test" % (self.login_cmd, self.prog_path)
+        test_cmd = "%s --test" % self.prog_path
+        if self.login_cmd:
+            test_cmd = self.login_cmd + test_cmd
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
@@ -379,8 +391,7 @@ class RelaxHostThread(RelaxThread):
 
         # Test command.
         test_cmd = "if test -d %s; then echo 'OK'; fi" % self.swd
-        if self.login_cmd:
-            test_cmd = self.login_cmd + " \"" + test_cmd + "\""
+        test_cmd = self.relax.generic.threading.remote_command(cmd=test_cmd, login_cmd=self.login_cmd)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')

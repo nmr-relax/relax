@@ -129,7 +129,7 @@ class Minimise:
         """Function for the minimisation of Monte Carlo simulations using threading."""
 
         # Print out.
-        print "Minimisation of Monte Carlo simulations will be threaded.\n"
+        print "Threaded minimisation of Monte Carlo simulations.\n"
 
         # Generate a random string tag to add to all thread files.
         tag = ''
@@ -276,10 +276,9 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for running an instance of relax in threading mode on the host machine."""
 
         # Command.
-        if self.relax.data.thread.host_name[self.i] == 'localhost':
-            cmd = "%s '%s --thread --log %s %s'" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
-        else:
-            cmd = "%s --thread --log %s %s" % (self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
+        cmd = "%s --thread --log %s %s" % (self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
+        cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
+        print cmd
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
@@ -367,10 +366,8 @@ class RelaxMinimiseThread(RelaxThread):
         text = text + "self.relax.generic.results.display(run='%s')\n" % (self.thread_run)
 
         # Cat the text into the script file.
-        if self.relax.data.thread.login_cmd[self.i]:
-            cmd = "%s 'cat > %s'" % (self.relax.data.thread.login_cmd[self.i], self.script_file)
-        else:
-            cmd = "cat > %s" % self.script_file
+        cmd = "cat > %s" % self.script_file
+        cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
@@ -395,10 +392,8 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for creating the directory 'tag' in the working directory."""
 
         # Command for creating the directory.
-        if self.relax.data.thread.login_cmd[self.i]:
-            cmd = "%s 'mkdir %s/%s'" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.swd[self.i], self.tag)
-        else:
-            cmd = "mkdir %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
+        cmd = "mkdir %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
+        cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
@@ -420,10 +415,8 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for testing if the directory corresponding to tag exists."""
 
         # Command for testing if directory exists.
-        if self.relax.data.thread.login_cmd[self.i]:
-            test_cmd = "%s 'ls %s/%s'" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.swd[self.i], self.tag)
-        else:
-            test_cmd = "ls %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
+        test_cmd = "ls %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
+        test_cmd = self.relax.generic.threading.remote_command(cmd=test_cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
@@ -449,10 +442,8 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for testing if results file is already copied."""
 
         # Command for testing if results file is already copied.
-        if self.relax.data.thread.login_cmd[self.i]:
-            test_cmd = "%s 'ls %s'" % (self.relax.data.thread.login_cmd[self.i], self.results_file)
-        else:
-            test_cmd = "ls %s" % self.results_file
+        test_cmd = "ls %s" % self.results_file
+        test_cmd = self.relax.generic.threading.remote_command(cmd=test_cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')

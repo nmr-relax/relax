@@ -2758,6 +2758,16 @@ class Model_free(Common_functions):
                 self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(file_data[i][col['select']]))
                 res_index = res_index + 1
 
+            # Find the residue index.
+            else:
+                res_index = None
+                for j in xrange(len(self.relax.data.res[self.run])):
+                    if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                        res_index = j
+                        break
+                if res_index == None:
+                    raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+
 
             # Reassign data structure.
             ##########################
@@ -3004,34 +3014,37 @@ class Model_free(Common_functions):
 
         # Relaxation data exists.
         if ri_labels and remap_table and frq_labels and frq:
-            # Loop over the relaxation data sets.
+            # Loop over the relaxation data.
             for j in xrange(len(ri_labels)):
-                # Data and error column.
+                # Determine the data and error columns for this relaxation data set.
                 data_col = col['frq'] + j + 1
                 error_col = col['frq'] + len(ri_labels) + j + 1
 
-                # Reconstruct a data array.
-                data_array = []
+                # Initialise an array containing the residue number, residue name, relaxation data, and relaxation error for each residue.
+                relax_data = []
+
+                # For each residue append the residue number, residue name, relaxation data, and relaxation error.
                 for i in xrange(len(file_data)):
-                    # Skip all lines where the data_set column is not 'value'.
+                    # Only take data from the 'value' data_set.
                     if file_data[i][col['data_set']] != 'value':
                         continue
 
-                    # Skip when data_col does not exist or is None.
+                    # Skip when the data column does not exist (usually an unselected residue) or is None.
                     if len(file_data[i]) < data_col or eval(file_data[i][data_col]) == None:
                         continue
 
                     # Append an array containing the residue number and name and the data and error values.
-                    data_array.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
+                    relax_data.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
 
-                # Read the relaxation data.
-                self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=data_array)
+                # Pass the relaxation data set to the specific relaxation data reading function.
+                self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=relax_data)
 
-            # Simulation data.
+            # Simulation data.  This is done very differently!
             if len(sims):
+                # Loop over all the file data.
                 for i in xrange(len(file_data)):
-                    # Skip all lines where the data_set column is not 'value'.
-                    if file_data[i][col['data_set']] != 'value':
+                    # Skip all data from the 'value' or 'error' data_set.
+                    if file_data[i][col['data_set']] == 'value' or file_data[i][col['data_set']] == 'error':
                         continue
 
                     # Residue number and name.
@@ -3050,37 +3063,30 @@ class Model_free(Common_functions):
                     if res_index == None:
                         raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
 
-                    # Initialise the simulation data.
+                    # Reassign data structure.
+                    data = self.relax.data.res[self.run][res_index]
+
+                    # Skip unselected residues.
+                    if not data.select:
+                        continue
+
+                    # Initialise the data structure for the simulation's relaxation data.
                     sim_data = []
 
-                    # Loop over the simulations.
-                    for j in xrange(len(sims)):
-                        # Append an empty array to sim_data.
-                        sim_data.append([])
+                    # Append the relaxation data value by value.
+                    for j in xrange(len(ri_labels)):
+                        # Determine the data columns for this relaxation data value.
+                        data_col = col['frq'] + j + 1
 
-                        # Sim label.
-                        sim_label = 'sim_' + `j`
+                        # Append the data.
+                        sim_data.append(file_data[i][data_col])
 
-                        # Find the line of the data file corresponding to the residue number and name and the sim label.
-                        for k in xrange(len(file_data)):
-                            if int(file_data[k][col['num']]) == res_num and file_data[k][col['name']] == res_name and file_data[k][col['data_set']] == sim_label:
-                                # Loop over the relaxation data sets.
-                                for l in xrange(len(ri_labels)):
-                                    # Data column.
-                                    data_col = col['frq'] + l + 1
+                    # Test if the data structure exists and is an array.
+                    if not hasattr(data, 'relax_sim_data') or type(data.relax_sim_data) != list:
+                        data.relax_sim_data = []
 
-                                    # Skip when data_col is None.
-                                    if eval(file_data[k][data_col]) == None:
-                                        continue
-
-                                    # Add the data to sim_data.
-                                    try:
-                                        sim_data[j].append(eval(file_data[k][data_col]))
-                                    except ValueError:
-                                        raise RelaxError, "The relaxation data " + `file_data[k][data_col]` + " is not a floating point number."
-
-                    # Pack the simulation data.
-                    self.sim_pack_data(self.run, res_index, sim_data)
+                    # Append the simulation's relaxation data.
+                    data.relax_sim_data.append(sim_data)
 
 
         # Model-free data.
