@@ -83,17 +83,8 @@ class Selection:
     def sel_read(self, run=None, file=None, dir=None, change_all=None):
         """Function for selecting the residues contained in a file."""
 
-        # The file path.
-        self.file_path = file
-        if dir:
-            self.file_path = dir + '/' + self.file_path
-
-        # Test if the file exists.
-        if not access(self.file_path, F_OK):
-            raise RelaxFileError, self.file_path
-
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(self.file_path)
+        file_data = self.relax.file_ops.extract_data(file, dir)
 
         # Strip the data.
         file_data = self.relax.file_ops.strip(file_data)
@@ -229,17 +220,8 @@ class Selection:
     def unsel_read(self, run=None, file=None, dir=None, change_all=None):
         """Function for unselecting the residues contained in a file."""
 
-        # The file path.
-        self.file_path = file
-        if dir:
-            self.file_path = dir + '/' + self.file_path
-
-        # Test if the file exists.
-        if not access(self.file_path, F_OK):
-            raise RelaxFileError, self.file_path
-
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(self.file_path)
+        file_data = self.relax.file_ops.extract_data(file, dir)
 
         # Strip the data.
         file_data = self.relax.file_ops.strip(file_data)

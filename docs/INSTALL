@@ -30,17 +30,9 @@ command:
 
     $ tar jxvf relax.tar.bz2
 
-Then either make a link in usr/local/bin to the file relax/relax using the command,
+Then make a link in usr/local/bin to the file relax/relax using the command,
 
     $ ln -s /usr/local/relax/relax /usr/local/bin/relax
-
-or make an alias to the file by adding the following lines for the bash or csh/tcsh shells.
-
-Bash (global /etc/bashrc, local ~/.bashrc):
-    alias relax="/usr/local/relax/relax"
-
-Csh / Tcsh (global /etc/csh.cshrc, local ~/.csh or ~/.tcsh):
-    alias relax "/usr/local/relax/relax"
 
 
 

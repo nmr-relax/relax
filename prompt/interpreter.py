@@ -66,6 +66,7 @@ from relax_fit import Relax_fit
 from select import Select
 from sequence import Sequence
 from state import State
+from thread import Thread
 from unselect import Unselect
 from value import Value
 from vmd import Vmd
@@ -122,6 +123,7 @@ class Interpreter:
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
         self._State = State(relax)
+        self._Thread = Thread(relax)
         self._Unselect = Unselect(relax)
         self._Value = Value(relax)
         self._Vmd = Vmd(relax)
@@ -179,6 +181,7 @@ class Interpreter:
         select = self._Select
         sequence = self._Sequence
         state = self._State
+        thread = self._Thread
         unselect = self._Unselect
         vmd = self._Vmd
         value = self._Value

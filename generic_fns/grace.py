@@ -21,6 +21,7 @@
 ###############################################################################
 
 from os import system
+from os.path import expanduser
 from re import match
 
 
@@ -171,7 +172,7 @@ class Grace:
         # File path.
         self.file_path = file
         if dir:
-            self.file_path = dir + '/' + self.file_path
+            self.file_path = expanduser(dir + '/' + self.file_path)
 
         # Run Grace.
         system(grace_exe + " " + self.file_path + " &")

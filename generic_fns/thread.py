@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,82 +20,111 @@
 #                                                                             #
 ###############################################################################
 
-from math import acos, pi
-from Numeric import dot
+from os import popen3
+from re import search
 
 
-class Angles:
+class Thread:
     def __init__(self, relax):
         """Class containing the function to calculate the XH vector from the loaded structure."""
 
         self.relax = relax
 
 
-    def angles(self, run):
-        """Function for calculating the XH vector from the loaded structure."""
+    def read(self, file=None, dir=None):
+        """Function for reading a hosts file."""
 
-        # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        # Extract the data from the file.
+        file_data = self.relax.file_ops.extract_data(file, dir)
 
-        # Test if the PDB file has been loaded.
-        if not self.relax.data.pdb.has_key(run):
-            raise RelaxNoPdbError, run
+        # Strip data.
+        file_data = self.relax.file_ops.strip(file_data)
 
-        # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        # Do nothing if the file does not exist.
+        if not file_data:
+            raise RelaxFileEmptyError
 
-        # Test if the diffusion tensor data is loaded.
-        if not self.relax.data.diff.has_key(run):
-            raise RelaxNoTensorError, run
+        # Loop over the hosts.
+        for i in xrange(len(file_data)):
+            # Host name.
+            host_name = file_data[i][0]
+            if host_name == '-':
+                host_name = 'localhost'
 
-        # Arguments.
-        self.run = run
+            # User name.
+            user = file_data[i][1]
+            if user == '-':
+                user = None
 
-        # Isotropic diffusion.
-        if self.relax.data.diff[self.run].type == 'iso':
-            return
+            # Program path.
+            prog_path = file_data[i][2]
+            if prog_path == '-':
+                prog_path = 'relax'
 
-        # Axially symmetric diffusion.
-        elif self.relax.data.diff[self.run].type == 'axial':
-            self.axial()
+            # Working directory.
+            swd = file_data[i][3]
+            if swd == '-':
+                swd = '~/.relax'
 
-        # Fully anisotropic diffusion.
-        elif self.relax.data.diff[self.run].type == 'aniso':
-            raise RelaxError, "No coded yet."
-
-
-    def axial(self):
-        """Function for calculating the angle alpha
-
-        The angle alpha is between the XH vector and the main axis of the axially symmetric
-        diffusion tensor.
-        """
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Test if the vector has been calculated.
-            if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
-                print "No angles could be calculated for residue '" + `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + "'."
-                continue
-
-            # Calculate alpha.
-            self.relax.data.res[self.run][i].alpha = acos(dot(self.relax.data.diff[self.run].axis_unit, self.relax.data.res[self.run][i].xh_vect))
+            # Priority.
+            priority = file_data[i][4]
+            if priority == '-':
+                priority = 15
+            try:
+                int(priority)
+            except ValueError:
+                raise RelaxIntError, ('priority', priority)
 
             # Print out.
-            print `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + ":  alpha = " + `360.0 * self.relax.data.res[self.run][i].alpha / (2.0 * pi)` + " deg."
+            print "\n\nHost " + `i` + "\n"
+            print "Host name:         " + host_name
+            if user:
+                print "User name:         " + user
+            print "Program path:      " + prog_path
+            print "Working directory: " + swd
+            print "Priority:          " + `priority`
+
+            # Test the SSH connection.
+            if not self.test_ssh(host_name, user):
+                continue
 
 
-    def wrap_angles(self, angle, lower, upper):
-        """Convert the given angle to be between the lower and upper values."""
+    def test_ssh(self, host_name, user):
+        """Function for testing the SSH connection."""
 
-        while 1:
-            if angle > upper:
-                angle = angle - upper
-            elif angle < lower:
-                angle = angle + upper
-            else:
-                break
+        # Host login
+        if user:
+            login = user + "@" + host_name
+        else:
+            login = host_name
+        
+        # Test command.
+        test_cmd = "ssh -o PasswordAuthentication=no " + login + " echo 'relax, ssh ok'"
 
-        return angle
+        # Open a pipe.
+        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
+
+        # Stdout and stderr.
+        out = child_stdout.readlines()
+        err = child_stderr.readlines()
+
+        # Test if the string 'relax, ssh ok' is in child_stdout.
+        for line in out:
+            if search('relax, ssh ok', line):
+                return 1
+
+        # Print out.
+        print "Cannot establish a SSH connection to " + login + "."
+        if len(err) > 0:
+            # Public key auth fail.
+            key_auth = 1
+            for line in err:
+                if search('Permission denied', line):
+                    key_auth = 0
+            if not key_auth:
+                print "Public key authenication failed."
+                return
+
+            # All other errors.
+            for line in err:
+                print line[0:-1]

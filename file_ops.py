@@ -33,7 +33,8 @@ except ImportError, message:
 # Gzip compression module.
 from gzip import GzipFile
 
-from os import F_OK, access, makedirs, mkdir
+from os import F_OK, access, makedirs, mkdir, stat
+from os.path import expanduser
 from re import match, search
 from string import split
 
@@ -81,7 +82,7 @@ class File_ops:
         # File path.
         file_path = file_name
         if dir:
-            file_path = dir + '/' + file_path
+            file_path = expanduser(dir + '/' + file_path)
 
         # Test if the file exists and determine the compression type.
         if access(file_path, F_OK):
@@ -131,7 +132,7 @@ class File_ops:
         # File path.
         file_path = file_name
         if dir:
-            file_path = dir + '/' + file_path
+            file_path = expanduser(dir + '/' + file_path)
 
         # File extension.
         if compress_type == 1 and not search('.bz2$', file_path):

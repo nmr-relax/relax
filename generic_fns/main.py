@@ -40,6 +40,7 @@ from rw import RW
 from selection import Selection
 from sequence import Sequence
 from state import State
+from thread import Thread
 from value import Value
 from vmd import Vmd
 
@@ -72,5 +73,6 @@ class Generic:
         self.selection = Selection(self.relax)
         self.sequence = Sequence(self.relax)
         self.state = State(self.relax)
+        self.thread = Thread(self.relax)
         self.value = Value(self.relax)
         self.vmd = Vmd(self.relax)

@@ -110,14 +110,8 @@ class Intensity:
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
-        # File path.
-        self.file_path = file
-        if dir:
-            self.file_path = dir + '/' + self.file_path
-
         # Extract the data from the file.
-        if self.file_path:
-            file_data = self.relax.file_ops.extract_data(self.file_path)
+        file_data = self.relax.file_ops.extract_data(file, dir)
 
         # Remove the header.
         file_data = file_data[2:]

@@ -353,14 +353,8 @@ class Rx_data:
         if self.test_labels(run):
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
-        # File path.
-        self.file_path = file
-        if dir:
-            self.file_path = dir + '/' + self.file_path
-
         # Extract the data from the file.
-        if self.file_path:
-            file_data = self.relax.file_ops.extract_data(self.file_path)
+        file_data = self.relax.file_ops.extract_data(file, dir)
 
         # Count the number of header lines.
         header_lines = 0
