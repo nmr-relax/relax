@@ -95,7 +95,7 @@ def newton(func, dfunc, d2func, x0, line_search_type, line_search_func, args=(),
 		elif line_search_type == "temp":
 			xk_new = line_search_func(func, xk, pk, dfk, args)
 		elif line_search_type == "More and Thuente":
-			xk_new = line_search_func(func, dfunc, args, xk, pk)
+			xk_new = line_search_func(func, dfunc, args, xk, pk, fk, dfk)
 		else:
 			raise NameError, "Line search type " + `line_search_type` + " is currently unsupported."
 		xk_new = xk + pk

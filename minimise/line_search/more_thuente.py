@@ -1,5 +1,4 @@
 import sys
-
 from Numeric import copy, dot
 
 from interpolate import cubic, quadratic_fafbga, quadratic_gagb
@@ -8,7 +7,7 @@ quadratic = quadratic_fafbga
 secant = quadratic_gagb
 
 
-def more_thuente(func, func_prime, args, x, p, a_init=1.0, mu=0.001, eta=0.1, phi_min=0.0, dmax=1.1, dmin=7.0/12.0):
+def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, phi_min=0.0, mu=0.001, eta=0.1):
 	"""A line search algorithm from More and Thuente.
 
 	More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
@@ -46,12 +45,15 @@ def more_thuente(func, func_prime, args, x, p, a_init=1.0, mu=0.001, eta=0.1, ph
 
 	# Initialise values.
 	k = 0
-	type_flag = 1
+	dmax=1.1
+	dmin=7.0/12.0
+	mod_flag = 1
+	a0 = 0.0
 	a0 = {}
 	a0['a'] = 0.0
-	a0['phi'] = func_phi(func, args, x, 0.0, p)
-	a0['phi_prime'] = func_phi_prime(func_prime, args, x, 0.0, p)
-	a0['psi'] = - mu * a0['phi_prime'] * 0.0
+	a0['phi'] = apply(func, (x,)+args)
+	a0['phi_prime'] = dot(apply(func_prime, (x,)+args), p)
+	a0['psi'] = 0.0
 	a0['psi_prime'] = (1.0 - mu) * a0['phi_prime']
 
 	if a0['phi_prime'] >= 0:
@@ -62,8 +64,8 @@ def more_thuente(func, func_prime, args, x, p, a_init=1.0, mu=0.001, eta=0.1, ph
 	# Initialise sequence data.
 	a = {}
 	a['a'] = a_init
-	a['phi'] = func_phi(func, args, x, a['a'], p)
-	a['phi_prime'] = func_phi_prime(func_prime, args, x, a['a'], p)
+	a['phi'] = apply(func, (x + a['a']*p,)+args)
+	a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
 	a['psi'] = - mu * a0['phi_prime'] * a['a']
 	a['psi_prime'] = a0['phi_prime'] - mu * a0['phi_prime']
 
@@ -71,34 +73,37 @@ def more_thuente(func, func_prime, args, x, p, a_init=1.0, mu=0.001, eta=0.1, ph
 
 	# Initialise interval data.
 	Ik = {}
-	Ik['a'] = [0.0, 1e99]
-	Ik['phi'] = [func_phi(func, args, x, Ik['a'][0], p), func_phi(func, args, x, Ik['a'][1], p)]
-	Ik['phi_prime'] = [func_phi_prime(func_prime, args, x, Ik['a'][0], p), func_phi_prime(func_prime, args, x, Ik['a'][1], p)]
+	Ik['a'] = [0.0, 1e50]
+	Ik['phi'] = [apply(func, (x + Ik['a'][0]*p,)+args), apply(func, (x + Ik['a'][1]*p,)+args)]
+	Ik['phi_prime'] = [dot(apply(func_prime, (x + Ik['a'][0]*p,)+args), p), dot(apply(func_prime, (x + Ik['a'][1]*p,)+args), p)]
 	Ik['psi'] = [- mu * a0['phi_prime'] * Ik['a'][0], - mu * a0['phi_prime'] * Ik['a'][1]]
 	Ik['psi_prime'] = [(1.0 - mu) * a0['phi_prime'], (1.0 - mu) * a0['phi_prime']]
 
-	Ik_lim = [0.0, 1.0 / mu * ((a0['phi'] - phi_min) / -a0['phi_prime'])]
+	if not a_min:
+		a_min = 0.0
+	if not a_max:
+		a_max = 1.0 / mu * ((a0['phi'] - phi_min) / -a0['phi_prime'])
 
 	print_int_data(k, Ik)
 
 	while 1:
 		print "\n<Line search iteration k = " + `k` + " >"
 
-		# Type flag, 0 - phi, 1 - psi.
+		# Modification flag, 0 - phi, 1 - psi.
 		if a['psi'] <= 0.0 and a['phi_prime'] >= 0.0:
-			type_flag = 0
+			mod_flag = 0
 
 		# Choose a safeguarded ak in set Ik which is a subset of [a_min, a_max].
 		print "Choosing a safeguarded ak in set Ik which is a subset of [a_min, a_max]."
 		a_new = {}
-		if type_flag == 0:
+		if mod_flag == 0:
 			a_new['a'] = choose_a(Ik['a'][0], Ik['a'][1], a['a'], Ik['phi'][0], Ik['phi'][1], a['phi'], Ik['phi_prime'][0], Ik['phi_prime'][1], a['phi_prime'])
 		else:
 			a_new['a'] = choose_a(Ik['a'][0], Ik['a'][1], a['a'], Ik['psi'][0], Ik['psi'][1], a['psi'], Ik['psi_prime'][0], Ik['psi_prime'][1], a['psi_prime'])
 
 		# Calculate new values.
-		a_new['phi'] = func_phi(func, args, x, a_new['a'], p)
-		a_new['phi_prime'] = func_phi_prime(func_prime, args, x, a_new['a'], p)
+		a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
+		a_new['phi_prime'] = dot(apply(func_prime, (x + a_new['a']*p,)+args), p)
 		a_new['psi'] = - mu * a0['phi_prime'] * a_new['a']
 		a_new['psi_prime'] = a0['phi_prime'] - mu * a0['phi_prime']
 
@@ -108,7 +113,7 @@ def more_thuente(func, func_prime, args, x, p, a_init=1.0, mu=0.001, eta=0.1, ph
 		print "Testing for convergence using the strong Wolfe conditions."
 		if converged(mu, eta, a_new, a0):
 			print "<Line search has converged>\n"
-			return a_new
+			return a_new['a']
 
 		# Update the interval Ik.
 		print "Updating the interval Ik."
@@ -125,8 +130,8 @@ def more_thuente(func, func_prime, args, x, p, a_init=1.0, mu=0.001, eta=0.1, ph
 		a = a_new
 		Ik = Ik_new
 
-		#if k > 2:
-		#	sys.exit()
+		if k > 100:
+			return a['a']
 
 
 def print_seq_data(k, a):
@@ -223,7 +228,7 @@ def choose_a(al, au, at, fl, fu, ft, gl, gu, gt, d=0.66):
 
 
 	# Case 2.
-	elif ft <= fl and gt * gl < 0.0:
+	elif gt * gl < 0.0:
 		# Compute ac and as.
 		ac = cubic(al, at, fl, ft, gl, gt)
 		as = secant(al, at, gl, gt)
@@ -250,7 +255,7 @@ def choose_a(al, au, at, fl, fu, ft, gl, gu, gt, d=0.66):
 
 
 	# Case 3.
-	elif ft <= fl and gt * gl >= 0.0 and abs(gt) <= abs(gl):
+	elif abs(gt) <= abs(gl):
 		# Compute ac and as.
 		ac = cubic(al, at, fl, ft, gl, gt)
 		as = secant(al, at, gl, gt)
@@ -271,38 +276,26 @@ def choose_a(al, au, at, fl, fu, ft, gl, gu, gt, d=0.66):
 			at_new = as
 
 		# Redefine at+.
-		at_redef = at + d*(au - at)
 		if at > al:
-			# Return min{at + d(au - at), at+}.
-			if at_redef < at_new:
-				return at_redef
-			else:
-				return at_new
+			return min(at + d*(au - at), at_new)
 		else:
-			# Return max{at + d(au - at), at+}.
-			if at_redef > at_new:
-				return at_redef
-			else:
-				return at_new
+			return max(at + d*(au - at), at_new)
 
 
 	# Case 4.
-	elif ft <= fl and gt * gl >= 0.0 and abs(gt) > abs(gl):
+	else:
 		print "\tCase 4."
 		sys.exit()
 		return cubic(au, at, fu, ft, gu, gt)
 
 
-	# Cases 1 to 4 are not satisfied.
-	else:
-		raise NameError, "Should not be here"
-
-
 def converged(mu, eta, a, a0):
 	"""Test for convergence using the strong Wolfe conditions.
 
-	The conditions are:
+	The sufficient decrease condition is:
 		phi(alpha) <= phi(0) + mu.phi'(0).a
+
+	The curvature  condition is:
 		|phi'(a)| <= eta.|phi'(0)|
 	"""
 
@@ -310,31 +303,6 @@ def converged(mu, eta, a, a0):
 		return 1
 	else:
 		return 0
-
-
-def func_phi(func, args, x, a, p):
-	"""Calculate the function value phi(alpha).
-
-	Formula:
-		phi(alpha) = f(x + alpha*p)
-
-	"""
-
-	print "\tEvaluating the function phi(alpha)."
-	return apply(func, (x + a*p,)+args)
-
-
-def func_phi_prime(func_prime, args, x, a, p):
-	"""Calculate the gradient value phi'(alpha).
-
-	Formula:
-		phi'(alpha) = f'(x + alpha*p)
-
-	"""
-
-	print "\tEvaluating the gradient phi'(alpha)."
-	f_prime = apply(func_prime, (x + a*p,)+args)
-	return dot(f_prime, p)
 
 
 def func_psi(mu, a, a0):
