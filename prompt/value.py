@@ -23,6 +23,7 @@
 import sys
 
 import help
+from specific_fns.model_free import Model_free
 
 
 class Value:
@@ -36,85 +37,120 @@ class Value:
         self.__relax_help__ = help.relax_class_help
 
 
-    def set(self, run=None, data_type=None, val=None, err=None, res_num=None):
-        """Function for setting data structure values.
+    def set(self, run=None, value=None, data_type=None, res_num=None, force=0):
+        """Function for setting residue specific data values.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The run to assign the values to.
 
+        value:  The value(s).
+
+        data_type:  A string specifying the data type to assign the value to.
+
         res_num:  The residue number.
 
-        data_type:  A string specifying the data type.
-
-        val:  The value.
-
-        err:  The error.
+        force:  A flag specifying whether to force the setting of values.
 
 
         Description
         ~~~~~~~~~~~
 
+        Value argument.
+
+        The value argument can be a single value, an array of values, or None, the choice of which
+        determines the behaviour of this function.
+        
+        Single value:  If a single value is given, then the data_type argument must be supplied.
+        All data types matching the data_type string will be given the supplied value.
+        
+        Array of values:  If an array of values is given, then the data_type argument must be None.
+        The length of the array must equal the number of parameters in the model for a certain
+        residue.  The parameters will be set to the values of the array.
+        
+        None:  If None is given as the value, then the data_type argument can be either None or a
+        string.  If data_type is None then all residue specific data consisting of the parameters
+        of the model-free model will be set to the hard wired values.  Otherwise if data_types is a
+        string, then all data types matching that string will have their values set to the hard
+        wired values.
+        
+
+        Data type argument.
+
+
+        Residue number argument.
+
         If 'res_num' is set to the default of None, then all residues will have the value of
-        'data_type' given by 'val', otherwise the single residue will be set to 'val'.
+        'data_type' given by 'value', otherwise the single residue will be set to 'value'.
 
 
-        Data type
-        ~~~~~~~~~
+        The force flag.
 
-        The following types are currently supported:
-        _________________________________________________________________
-        |                         |                                     |
-        | Type                    | Pattern                             |
-        |-------------------------|-------------------------------------|
-        |                         |                                     |
-        | Bond length             | '[Bb]ond[ -_][Ll]ength'             |
-        |                         |                                     |
-        | CSA                     | '[Cc][Ss][Aa]'                      |
-        |-------------------------|-------------------------------------|
+        If this argument is set to the default of 0 and the data already has values, then an error
+        is raised and the values are not changed.  Otherwise if set to 1, then the data values will
+        be set even if data values already exist.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set the CSA value of all residues in the model-free run 'm1' to -170 ppm, type:
+
+        relax> value.set('m1', -170 * 1e-6, 'csa')
+        relax> value.set('m1', value=-170 * 1e-6, data_type='csa')
+
+        To set the NH bond length of all residues in the model-free run 'm5' to 1.02 Angstroms,
+        type:
+
+        relax> value.set('m5', 1.02 * 1e-10, 'bond_length')
+        relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
+
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "value.set("
             text = text + "run=" + `run`
+            text = text + ", value=" + `value`
             text = text + ", data_type=" + `data_type`
-            text = text + ", val=" + `val`
-            text = text + ", err=" + `err`
-            text = text + ", res_num=" + `res_num` + ")"
+            text = text + ", res_num=" + `res_num`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # The run name.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # Data type.
-        elif data_type == None:
-            raise RelaxNoneError, 'data type'
-        elif type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
-
         # Value.
-        elif val == None:
-            raise RelaxNoneError, 'value'
-        elif type(val) != float and type(val) != int:
-            raise RelaxFloatError, ('value', val)
+        if value != None and type(value) != list and type(value) != float and type(value) != int:
+            raise RelaxNoneFloatListError, ('value', value)
+        if type(value) == list:
+            for i in len(value):
+                if type(value[i]) != float and type(value[i]) != int:
+                    raise RelaxListFloatError, ('value', value)
 
-        # Error.
-        elif err != None:
-            if type(err) != float:
-                raise RelaxNoneFloatError, ('error', err)
+        # Data type.
+        if data_type != None and type(data_type) != str:
+            raise RelaxNoneStrError, ('data type', data_type)
+
+        # If the value argument is a single value, make sure the data_type argument is set.
+        if (type(value) == float or type(value) == int) and data_type == None:
+            raise RelaxError, "When the value is a single number, the data_type argument must be set."
+            
+        # If the value argument is an array, make sure data_type is None.
+        if type(value) == list and data_type != None:
+            raise RelaxError, "When the value are given as an array, the data_type argument must be None."
 
         # The residue number.
         if res_num != None and type(res_num) != int:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.relax.generic.value.set(run=run, res_num=res_num, data_type=data_type, val=val, err=err)
+        self.relax.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num)
 
 
-    def set(self, run=None, values=None, print_flag=1):
+    def set_old(self, run=None, values=None, print_flag=1):
         """Function for setting the initial parameter values.
 
         Keyword Arguments
@@ -173,5 +209,7 @@ class Value:
         self.relax.generic.minimise.set(run=run, values=values, print_flag=print_flag)
 
 
-    def write(self):
-        raise RelaxError, "Broken code."
+    # Modify the docstring of the set method to include the docstring of the model-free specific function get_data_name.
+    ####################################################################################################################
+
+    set.__doc__ = set.__doc__ + "\n" + Model_free.get_data_name.__doc__ + "\n"

@@ -689,6 +689,57 @@ class Model_free:
                     param_index = param_index + 1
 
 
+    def get_data_name(self, name):
+        """
+        Model-free data type string matching patterns.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Setting a parameter value may have no effect depending on which model-free model is chosen,
+        for example if S2f values and S2s values are set but the run corresponds to model-free model
+        'm4' then, because these data values are not parameters of the model, they will have no
+        effect.
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |------------------------|--------------|--------------------------------------------------|
+        |                        |              |                                                  |
+        | Bond length            | r            | '^r$' or '^[Bb]ond[ -_][Ll]ength$'               |
+        |------------------------|--------------|--------------------------------------------------|
+        |                        |              |                                                  |
+        | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
+        |------------------------|--------------|--------------------------------------------------|
+        |                        |              |                                                  |
+        | Order parameter S2     | s2           | '^[Ss]2$'                                        |
+        |------------------------|--------------|--------------------------------------------------|
+        |                        |              |                                                  |
+        | Order parameter S2f    | s2f          | '^[Ss]2f$'                                       |
+        |------------------------|--------------|--------------------------------------------------|
+        |                        |              |                                                  |
+        | Order parameter S2s    | s2s          | '^[Ss]2s$'                                       |
+        |------------------------|--------------|--------------------------------------------------|
+
+
+        The hard wired values are as follows:
+
+            r   = 1.02e-10
+            csa = -160e-6
+            s2  = 0.8
+            s2f = 0.8
+            s2s = 0.8
+            te  = 1000e-12
+            tf  = 100e-12
+            ts  = 1000e-12
+            tm  = 1e-9
+        """
+
+        # Bond length.
+        if match('^r$', name) or match('[Bb]ond[ -_][Ll]ength', name):
+            return 'r'
+
+        # CSA.
+
+
     def grid_search(self, run, lower, upper, inc, constraints, print_flag):
         """The grid search function."""
 
@@ -1993,12 +2044,24 @@ class Model_free:
         self.model_setup(run, model, equation, params, scaling, res_num)
 
 
-    def set(self, run, values, print_flag):
-        """The set function for setting parameter values."""
+    def set(self, run, value, data_type, res_num):
+        """The function for setting model-free residue specific data values."""
 
         # Arguments.
         self.run = run
-        self.print_flag = print_flag
+
+        # Individual data type.
+        #######################
+
+        if data_type != None:
+            # Get the name of the data object.
+            object = self.get_data_name(data_type)
+            print object
+            import sys; sys.exit()
+
+
+        # To be deleted.
+        ################
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()

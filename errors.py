@@ -182,10 +182,15 @@ class RelaxErrors:
         def __init__(self, name):
             self.text = "The " + name + " argument has not been supplied."
 
-    # None or Float.
+    # None or float.
     class RelaxNoneFloatError(BaseError):
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must either be a floating point number or None."
+
+    # None, float, or list.
+    class RelaxNoneFloatListError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be a floating point number, a list, or None."
 
     # None or integer.
     class RelaxNoneIntError(BaseError):

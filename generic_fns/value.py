@@ -31,8 +31,8 @@ class Value:
         self.relax = relax
 
 
-    def set(self, run=None, data_type=None, val=None, err=None, res_num=None):
-        """Function for setting data structure values."""
+    def set(self, run=None, value=None, data_type=None, res_num=None):
+        """Function for setting residue specific data values."""
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
@@ -50,9 +50,13 @@ class Value:
         if set == None:
             raise RelaxFuncSetupError, ('set', function_type)
 
-        # Minimisation.
-        set(run=run, values=values, print_flag=print_flag)
+        # Go to the specific code.
+        set(run=run, value=value, data_type=data_type, res_num=res_num)
+        return
 
+
+        # To be deleted.
+        ################
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res)):

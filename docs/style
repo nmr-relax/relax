@@ -9,15 +9,16 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 
-Recent versions of vim, 6.2 and above, contain a bug where the tabstop value cannot be changed
-using the '~/.vimrc' file (although typing ':set tabstop=4' in vim will fix it).  A permanent
-solution is to edit the file 'python.vim' which is located in the path '/usr/share/vim/ftplugin/'
-or equivalent.  It contains the two lines:
+Certain versions of vim, in the 6.2 series, contain a bug where the tabstop value cannot be changed
+using the '~/.vimrc' file (although typing ':set tabstop=4' in vim will fix it).  One solution is to
+edit the file 'python.vim' which is located in the path '/usr/share/vim/ftplugin/' or equivalent.
+It contains the two lines:
 
 " Python always uses a 'tabstop' of 8.
 setlocal ts=8
 
-If these lines are deleted, the bug will be permanently removed!
+If these lines are deleted, the bug will be removed.  Another way to fix the problem is to install
+newer versions of the runtime files.
 
 
 Doc strings
