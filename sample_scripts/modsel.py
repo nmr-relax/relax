@@ -4,7 +4,7 @@
 read.sequence('noe.500.out')
 
 # Set the run names.
-runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Loop over the run names.
 for run in runs:
@@ -25,5 +25,6 @@ for run in runs:
 model_selection('AIC', 'aic')
 
 # Write the results.
+state.save('save', force=1)
 write(run='aic', file='results', force=1)
 

@@ -65,26 +65,26 @@ class Model_selection:
                 continue
 
             # Loop over the runs.
-            for run in runs:
-                if type(run) == list:
-                    for run2 in run:
-                        if not hasattr(self.relax.data.res[i], 'params'):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
-                        elif not self.relax.data.res[i].params.has_key(run2):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
-                        elif not hasattr(self.relax.data.res[i], 'chi2'):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
-                        elif not self.relax.data.res[i].chi2.has_key(run2):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
-                else:
-                    if not hasattr(self.relax.data.res[i], 'params'):
-                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
-                    elif not self.relax.data.res[i].params.has_key(run):
-                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
-                    elif not hasattr(self.relax.data.res[i], 'chi2'):
-                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
-                    elif not self.relax.data.res[i].chi2.has_key(run):
-                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
+            #for run in runs:
+            #    if type(run) == list:
+            #        for run2 in run:
+            #            if not hasattr(self.relax.data.res[i], 'params'):
+            #                raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
+            #            elif not self.relax.data.res[i].params.has_key(run2):
+            #                raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
+            #            elif not hasattr(self.relax.data.res[i], 'chi2'):
+            #                raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
+            #            elif not self.relax.data.res[i].chi2.has_key(run2):
+            #                raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
+            #    else:
+            #        if not hasattr(self.relax.data.res[i], 'params'):
+            #            raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
+            #        elif not self.relax.data.res[i].params.has_key(run):
+            #            raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
+            #        elif not hasattr(self.relax.data.res[i], 'chi2'):
+            #            raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
+            #        elif not self.relax.data.res[i].chi2.has_key(run):
+            #            raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
 
 
         # Initialise.
@@ -106,13 +106,35 @@ class Model_selection:
         else:
             raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
 
-        # Add the new run name 'modsel_run' to self.relax.data.runs
-        self.relax.data.runs.append(self.modsel_run)
-
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
+                continue
+
+            # Test if data exists for this residue.
+            flag = 0
+            for run in runs:
+                if type(run) == list:
+                    for run2 in run:
+                        if not hasattr(self.relax.data.res[i], 'params'):
+                            flag = 1
+                        elif not self.relax.data.res[i].params.has_key(run2):
+                            flag = 1
+                        elif not hasattr(self.relax.data.res[i], 'chi2'):
+                            flag = 1
+                        elif not self.relax.data.res[i].chi2.has_key(run2):
+                            flag = 1
+                else:
+                    if not hasattr(self.relax.data.res[i], 'params'):
+                        flag = 1
+                    elif not self.relax.data.res[i].params.has_key(run):
+                        flag = 1
+                    elif not hasattr(self.relax.data.res[i], 'chi2'):
+                        flag = 1
+                    elif not self.relax.data.res[i].chi2.has_key(run):
+                        flag = 1
+            if flag:
                 continue
 
             # Model selection.
@@ -120,6 +142,9 @@ class Model_selection:
 
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
             self.duplicate_data(best_model, modsel_run, i)
+
+        # Add the new run name 'modsel_run' to self.relax.data.runs
+        self.relax.data.runs.append(self.modsel_run)
 
 
     def aic(self, i, model, k, n):

@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, array, matrixmultiply, ones, outerproduct, sum, zeros
+from Numeric import Float64, array, diagonal, matrixmultiply, ones, outerproduct, sum, zeros
 from math import pi
 
 from data import Data
@@ -321,7 +321,7 @@ class Mf:
         # Diagonal scaling data.
         if self.scaling_matrix:
             self.data.scaling_matrix = self.scaling_matrix
-            self.data.scaling_matrix2 = self.scaling_matrix ** 2
+            self.data.hessian_scaling_matrix = outerproduct(diagonal(self.scaling_matrix), diagonal(self.scaling_matrix))
 
         # Spectral density components.
         self.data.w_tm_sqrd = zeros((self.data.num_frq, 5), Float64)
@@ -452,7 +452,18 @@ class Mf:
     def scale_hessian(self):
         """Function for the diagonal scaling of the chi-squared Hessian."""
 
-        self.data.d2chi2 = matrixmultiply(self.data.scaling_matrix2, self.data.d2chi2)
+        self.data.d2chi2 = matrixmultiply(self.data.scaling_matrix, matrixmultiply(self.data.d2chi2, self.data.scaling_matrix))
+
+#        # Remove!
+#        temp1 = matrixmultiply(self.data.d2chi2, self.data.hessian_scaling_matrix)
+#        temp2 = matrixmultiply(self.data.scaling_matrix, matrixmultiply(self.data.d2chi2, self.data.scaling_matrix))
+#        print "\nself.data.d2chi2:\n" + `self.data.d2chi2`
+#        print "\nself.data.scaling_matrix:\n" + `self.data.scaling_matrix`
+#        print "\nself.data.hessian_scaling_matrix:\n" + `self.data.hessian_scaling_matrix`
+#        print "\ntemp1:\n" + `temp1`
+#        print "\ntemp2:\n" + `temp2`
+#        import sys
+#        sys.exit()
 
 
     def set_params_scaled(self, params):

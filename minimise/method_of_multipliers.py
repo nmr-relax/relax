@@ -188,7 +188,7 @@ class Method_of_multipliers(Min):
             self.init_failure = 1
             return
 
-        # Constraint scaling vector.
+        # Constraint scaling matrix.
         self.scaling_matrix = scaling_matrix
 
         # min_options.

@@ -42,3 +42,6 @@ class Data:
 
         # The name of the runs.
         self.runs = []
+
+        # The type of the runs.
+        self.types = {}

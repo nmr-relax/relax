@@ -57,10 +57,10 @@ class Constraint_linear:
         """
 
         # Initialise arguments.
-        if scaling_matrix:
-            self.A = matrixmultiply(A, scaling_matrix)
-        else:
-            self.A = A
+#        if scaling_matrix:
+#            self.A = matrixmultiply(A, scaling_matrix)
+#        else:
+        self.A = A
         self.b = b
 
 

@@ -89,6 +89,7 @@ class RW:
 
         # Equation type specific function setup.
         fns = self.relax.specific_setup.setup("write", self.relax.data.res[0].equations[run])
+        #fns = self.relax.specific_setup.setup("write", self.relax.data.types[run])
         if fns == None:
             raise RelaxFuncSetupError, ('write', self.relax.data.res[i].equations[run])
         self.write_header, self.write_results = fns
