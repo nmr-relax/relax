@@ -15,8 +15,7 @@ class Base_Map:
         fns = self.relax.specific_setup.setup("map_space", model)
         if fns == None:
             return
-        else:
-            self.map_bounds, self.main_loop = fns
+        self.map_bounds, self.main_loop = fns
 
         # Function arguments.
         self.model = model

@@ -20,6 +20,10 @@ class Specific_setup:
                 return self.relax.model_free.fixed_setup, self.relax.model_free.main_loop
             elif match("grid_search", type):
                 return self.relax.model_free.grid_setup, self.relax.model_free.main_loop
+            elif match("linear_constraints", type):
+                return self.relax.model_free.linear_constraints
+            elif match("map_labels", type):
+                return self.relax.model_free.map_labels
             elif match("map_space", type):
                 return self.relax.model_free.map_bounds, self.relax.model_free.main_loop
             elif match("minimise", type):

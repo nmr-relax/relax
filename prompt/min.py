@@ -75,8 +75,7 @@ class Min:
         fns = self.relax.specific_setup.setup("fixed", model)
         if fns == None:
             return
-        else:
-            self.fixed_setup, self.main_loop = fns
+        self.fixed_setup, self.main_loop = fns
 
         # Setup the fixed parameter options.
         if values:
@@ -170,8 +169,7 @@ class Min:
         fns = self.relax.specific_setup.setup("grid_search", model)
         if fns == None:
             return
-        else:
-            self.grid_setup, self.main_loop = fns
+        self.grid_setup, self.main_loop = fns
 
         # Setup the grid search options.
         min_options = self.grid_setup(model=model, inc_vector=inc_vector)
@@ -291,7 +289,7 @@ class Min:
             min_algor = 'Method of Multipliers'
             min_options = args
         elif constraints != 0:
-            print "The constraints flag (constraints=" + `self.constraints` + ") must be either 0 or 1."
+            print "The constraints flag (constraints=" + `constraints` + ") must be either 0 or 1."
             return
 
         # Print options.
@@ -306,4 +304,4 @@ class Min:
             return
 
         # Main iterative loop.
-        self.main_loop(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, print_flag=print_flag)
+        self.main_loop(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

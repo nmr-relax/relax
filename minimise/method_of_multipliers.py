@@ -126,35 +126,9 @@ class Method_of_multipliers(Min):
         self.generic_minimise = generic_minimise
 
         # Linear constraints.
-        #if A != None and b != None:
-        if A == None and b == None:
+        if A != None and b != None:
             self.A = A
             self.b = b
-
-            # Remove this test code!!!!
-            mod = 4
-            # Model 4.
-            if mod == 4:
-                self.A = zeros((4, 3), Float64)
-                self.b = zeros(4, Float64)
-                self.A[0, 0] = 1.0
-                self.A[1, 0] = -1.0
-                self.A[2, 1] = 1.0
-                self.A[3, 2] = 1.0
-                self.b[1] = -1.0
-            # Model 5.
-            else:
-                self.A = zeros((5, 3), Float64)
-                self.b = zeros(5, Float64)
-                self.A[0, 0] = 1.0
-                self.A[1, 0] = -1.0
-                self.A[2, 1] = 1.0
-                self.A[3, 1] = -1.0
-                self.A[4, 2] = 1.0
-                self.b[1] = -1.0
-                self.b[3] = -1.0
-            # Remove to here.
-
             self.constraint_linear = Constraint_linear(self.A, self.b)
             self.c = self.constraint_linear.func
             self.dc = self.constraint_linear.dfunc

@@ -25,8 +25,7 @@ class Write:
         fns = self.relax.specific_setup.setup("print", model)
         if fns == None:
             return
-        else:
-            self.print_header, self.print_results = fns
+        self.print_header, self.print_results = fns
 
         # The results file.
         file_name = model + "/results"

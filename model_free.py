@@ -1,5 +1,5 @@
 from math import pi
-from Numeric import Float64, ones, zeros
+from Numeric import Float64, array, ones, zeros
 from re import match
 
 from functions.mf import Mf
@@ -364,14 +364,110 @@ class Model_free:
         return min_options
 
 
-    def main_loop(self, model=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, print_flag=0):
+    def linear_constraints(self, model=None):
+        """Function for setting up the model-free linear constraint matrices A and b."""
+
+        # Initialisation.
+        A = []
+        b = []
+        types = self.relax.data.param_types[model]
+        n = len(types)
+        zero_array = zeros(n, Float64)
+        j = 0
+
+        # The original model-free equations.
+        for i in range(n):
+            # S2, S2f, and S2s (0 <= S2 <= 1).
+            if match("S2", types[i]):
+                # S2 >= 0
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j = j + 1
+
+                # -S2 >= -1
+                A.append(zero_array * 0.0)
+                A[j][i] = -1.0
+                b.append(-1.0)
+                j = j + 1
+
+            # te, tf, and ts (te >= 0).
+            elif match("t[efs]", types[i]):
+                if match("ts", types[i]):
+                    A.append(zero_array * 0.0)
+
+                    # Find the index of tf if the parameter exists.
+                    index = None
+                    for k in range(n):
+                        if match("tf", types[k]):
+                            index = k
+
+                    # Dual correlation times (tf <= ts) or (ts - tf >= 0).
+                    if index != None:
+                        A[j][index] = -1.0
+
+                    A[j][i] = 1.0
+                    b.append(0.0)
+                    j = j + 1
+                else:
+                    A.append(zero_array * 0.0)
+                    A[j][i] = 1.0
+                    b.append(0.0)
+                    j = j + 1
+
+            # Rex (Rex >= 0).
+            elif match("Rex", types[i]):
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j = j + 1
+
+            # Bond length (0.9e-10 <= r <= 2e-10)
+            elif match("Bond length", types[i]):
+                # r >= 0.9e-10
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.9e-10)
+                j = j + 1
+
+                # -r >= -2e-10
+                A.append(zero_array * 0.0)
+                A[j][i] = -1.0
+                b.append(-2e-10)
+                j = j + 1
+
+            # CSA (-300e-6 <= CSA <= -100e-6).
+            elif match("CSA", types[i]):
+                # CSA >= -300e-6
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(-300e-6)
+                j = j + 1
+
+                # -CSA >= 100e-6
+                A.append(zero_array * 0.0)
+                A[j][i] = -1.0
+                b.append(100e-6)
+                j = j + 1
+
+        # Convert to Numeric data structures.
+        A = array(A, Float64)
+        b = array(b, Float64)
+
+        return A, b
+
+
+    def main_loop(self, model=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
         """The main iterative minimisation loop."""
 
-        try:
-            self.constraints
-        except AttributeError:
-            self.constraints = 0
+        # Linear constraints.
+        if constraints:
+            constraint_function = self.relax.specific_setup.setup("linear_constraints", model)
+            if constraint_function == None:
+                return
+            A, b = constraint_function(model)
 
+        # Loop over the residues.
         for self.res in range(len(self.relax.data.seq)):
             if print_flag >= 1:
                 if print_flag >= 2:
@@ -411,11 +507,14 @@ class Model_free:
             if match('[Ll][Mm]$', min_algor) or match('[Ll]evenburg-[Mm]arquardt$', min_algor):
                 min_options = min_options + (self.mf.lm_dri, errors)
             # Levenberg-Marquardt minimisation with constraints.
-            elif self.constraints == 1 and (match('[Ll][Mm]$', min_options[0]) or match('[Ll]evenburg-[Mm]arquardt$', min_options[0])):
+            elif constraints == 1 and (match('[Ll][Mm]$', min_options[0]) or match('[Ll]evenburg-[Mm]arquardt$', min_options[0])):
                 min_options = min_options + (self.mf.lm_dri, errors)
 
             # Minimisation.
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][self.res], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+            if constraints:
+                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][self.res], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+            else:
+                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][self.res], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
             if results == None:
                 return
             self.params, self.func, iter, fc, gc, hc, self.warning = results
@@ -484,7 +583,7 @@ class Model_free:
 
                 # Rex.
                 elif match('Rex', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 3]
+                    bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
 
                 # Bond length.
                 elif match('Bond length', self.relax.data.param_types[model][i]):
@@ -500,6 +599,93 @@ class Model_free:
                     return bounds
 
         return bounds
+
+
+    def map_labels(self, model, bounds, swap, inc):
+        """Function for creating labels, tick locations, and tick values for an OpenDX map."""
+
+        # Initialise.
+        labels = "{"
+        tick_locations = []
+        tick_values = []
+        types = self.relax.data.param_types[model]
+        n = len(types)
+        axis_incs = 5.0
+        loc_inc = inc / axis_incs
+
+        # Increment over the model parameters.
+        for i in range(n):
+            # S2, S2f, and S2s.
+            if match("S2", types[swap[i]]):
+                # Labels.
+                labels = labels + "\"" + types[swap[i]] + "\""
+
+                # Tick values.
+                vals = bounds[swap[i], 0] * 1.0
+                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1.0
+
+            # te, tf, and ts.
+            elif match("t[efs]", types[i]):
+                # Labels.
+                labels = labels + "\"" + types[swap[i]] + " (ps)\""
+
+                # Tick values.
+                vals = bounds[swap[i], 0] * 1e12
+                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e12
+
+            # Rex.
+            elif match("Rex", types[i]):
+                # Labels.
+                labels = labels + "\"Rex (" + self.relax.data.frq_labels[0] + " MHz)\""
+
+                # Tick values.
+                vals = bounds[swap[i], 0] * (2.0 * pi * self.relax.data.frq[0])**2
+                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.frq[0])**2
+
+            # Bond length.
+            elif match("Bond length", types[i]):
+                # Labels.
+                labels = labels + "\"" + types[swap[i]] + " (A)\""
+
+                # Tick values.
+                vals = bounds[swap[i], 0] * 1e-10
+                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-10
+
+            # CSA.
+            elif match("CSA", types[i]):
+                # Labels.
+                labels = labels + "\"" + types[swap[i]] + " (ppm)\""
+
+                # Tick values.
+                vals = bounds[swap[i], 0] * 1e-6
+                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-6
+
+            if i < n - 1:
+                labels = labels + " "
+            else:
+                labels = labels + "}"
+
+            # Tick locations.
+            string = "{"
+            val = 0.0
+            for j in range(axis_incs + 1):
+                string = string + " " + `val`
+                val = val + loc_inc 
+            string = string + " }"
+            tick_locations.append(string)
+
+            # Tick values.
+            string = "{"
+            for j in range(axis_incs + 1):
+                if self.relax.data.scaling.has_key(model):
+                    string = string + "\"" + "%.2f" % (vals * self.relax.data.scaling[model][0][swap[i]]) + "\" "
+                else:
+                    string = string + "\"" + "%.2f" % vals + "\" "
+                vals = vals + val_inc
+            string = string + "}"
+            tick_values.append(string)
+
+        return labels, tick_locations, tick_values
 
 
     def print_header(self, file, model):
@@ -573,7 +759,7 @@ class Model_free:
 
                 # Rex.
                 elif match("Rex", types[j]):
-                    file.write("%-26s" % `params[j]`)
+                    file.write("%-26s" % `params[j] * (2.0 * pi * self.relax.data.frq[0])**2`)
 
                 # Bond length.
                 elif match("Bond length", types[j]):

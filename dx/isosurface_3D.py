@@ -37,8 +37,15 @@ class Iso3D(Base_Map):
             for j in range((self.inc + 1)):
                 values[self.swap[2]] = self.bounds[self.swap[2], 0]
                 for k in range((self.inc + 1)):
+                    # Calculate the function values.
                     self.main_loop(model=self.model, min_algor='fixed', min_options=values, print_flag=0)
-                    map_file.write("%30f\n" % self.relax.data.min_results[self.model][0][0])
+
+                    # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
+                    if self.relax.data.min_results[self.model][0][0] > 1e20:
+                        map_file.write("%30f\n" % 1e20)
+                    else:
+                        map_file.write("%30f\n" % self.relax.data.min_results[self.model][0][0])
+
                     values[self.swap[2]] = values[self.swap[2]] + self.step_size[self.swap[2]]
                 self.percent = self.percent + self.percent_inc
                 print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%, value: ", self.relax.data.min_results[self.model][0][0])
@@ -131,44 +138,56 @@ class Iso3D(Base_Map):
         else:
             program_file = open(self.file + ".net", "w")
 
-
         # Replacement strings
         #####################
 
-        # Axis increments.
-        axis_incs = 5.0
+        # Equation type specific function setup.
+        self.map_labels = self.relax.specific_setup.setup("map_labels", self.model)
 
-        # Labels.
-        labels = "{\"" + self.relax.data.param_types[self.model][self.swap[0]] + "\" \""
-        labels = labels + self.relax.data.param_types[self.model][self.swap[1]] + "\" \""
-        labels = labels + self.relax.data.param_types[self.model][self.swap[2]] + "\"}"
+        # Default labels.
+        if self.map_labels == None:
+            # Axis increments.
+            axis_incs = 5.0
+
+            # Labels.
+            labels = "{\"" + self.relax.data.param_types[self.model][self.swap[0]] + "\" \""
+            labels = labels + self.relax.data.param_types[self.model][self.swap[1]] + "\" \""
+            labels = labels + self.relax.data.param_types[self.model][self.swap[2]] + "\"}"
+
+            # Tick locations.
+            tick_locations = []
+            for i in range(3):
+                string = "{"
+                inc = self.inc / axis_incs
+                val = 0.0
+                for i in range(axis_incs + 1):
+                    string = string + " " + `val`
+                    val = val + inc 
+                string = string + " }"
+                tick_locations.append(string)
+
+            # Tick values.
+            tick_values = []
+            inc = (self.bounds[:, 1] - self.bounds[:, 0]) / axis_incs
+            for i in range(3):
+                vals = self.bounds[self.swap[i], 0] * 1.0
+                string = "{"
+                for j in range(axis_incs + 1):
+                    if self.relax.data.scaling.has_key(self.model):
+                        string = string + "\"" + "%.2g" % (vals * self.relax.data.scaling[self.model][0][self.swap[i]]) + "\" "
+                    else:
+                        string = string + "\"" + "%.2g" % vals + "\" "
+                    vals = vals + inc[self.swap[i]]
+                string = string + "}"
+                tick_values.append(string)
+
+        # Specific labels.
+        else:
+            labels, tick_locations, tick_values = self.map_labels(self.model, self.bounds, self.swap, self.inc)
+
 
         # Corners.
         corners = "{[0 0 0] [" + `self.inc` + " "  + `self.inc` + " " + `self.inc` + "]}"
-
-        # Tick locations.
-        tick_locations = "{"
-        inc = self.inc / axis_incs
-        val = 0.0
-        for i in range(axis_incs + 1):
-            tick_locations = tick_locations + " " + `val`
-            val = val + inc 
-        tick_locations = tick_locations + " }"
-
-        # Tick values.
-        tick_values = []
-        inc = (self.bounds[:, 1] - self.bounds[:, 0]) / axis_incs
-        for i in range(3):
-            vals = self.bounds[self.swap[i], 0] * 1.0
-            string = "{"
-            for j in range(axis_incs + 1):
-                if self.relax.data.scaling.has_key(self.model):
-                    string = string + "\"" + "%.2g" % (vals * self.relax.data.scaling[self.model][0][self.swap[i]]) + "\" "
-                else:
-                    string = string + "\"" + "%.2g" % vals + "\" "
-                vals = vals + inc[self.swap[i]]
-            string = string + "}"
-            tick_values.append(string)
 
         # Image setup.
         image_array1 = "[" + `0.6 * (self.inc + 1.0)` + " " + `0.3 * (self.inc + 1.0)` + " " + `0.6 * (self.inc + 1.0)` + "]"
@@ -181,8 +200,8 @@ class Iso3D(Base_Map):
         # Date.
         date = asctime(localtime())
 
-
         # Generate the text.
+        ####################
         text = """//
 // time: """ + date + """
 //
@@ -375,7 +394,7 @@ main_Isosurface_4_out_1 =
     // 
     // node Color[5]: x = 524, y = 122, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 32, value = "white"
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 1.0
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.55
     //
 main_Color_5_out_1 = 
     Color(
@@ -442,9 +461,9 @@ main_AutoCamera_1_out_1 =
     // input[9]: defaulting = 0, visible = 1, type = 3, value = 1
     // input[12]: defaulting = 0, visible = 0, type = 5, value = 0.4
     // input[13]: defaulting = 0, visible = 0, type = 32, value = "area"
-    // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations + """
-    // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations + """
-    // input[16]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations + """
+    // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[0] + """
+    // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[1] + """
+    // input[16]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[2] + """
     // input[17]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[0] + """
     // input[18]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[1] + """
     // input[19]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[2] + """
@@ -667,9 +686,9 @@ main_AutoAxes_1_in_10 = NULL;
 main_AutoAxes_1_in_11 = NULL;
 main_AutoAxes_1_in_12 = 0.4;
 main_AutoAxes_1_in_13 = "area";
-main_AutoAxes_1_in_14 = """ + tick_locations + """;
-main_AutoAxes_1_in_15 = """ + tick_locations + """;
-main_AutoAxes_1_in_16 = """ + tick_locations + """;
+main_AutoAxes_1_in_14 = """ + tick_locations[0] + """;
+main_AutoAxes_1_in_15 = """ + tick_locations[1] + """;
+main_AutoAxes_1_in_16 = """ + tick_locations[2] + """;
 main_AutoAxes_1_in_17 = """ + tick_values[0] + """;
 main_AutoAxes_1_in_18 = """ + tick_values[1] + """;
 main_AutoAxes_1_in_19 = """ + tick_values[2] + """;

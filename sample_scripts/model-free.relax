@@ -11,13 +11,13 @@ model_selection.set('AIC')
 value.set('bond_length', 1.02 * 1e-10)
 value.set('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-name = 'm5'
+name = 'm8'
 model.select_mf(name)
 #fixed(name, [ 0.6,  0.9,  5.0*1e-10 ])
 #from math import pi
 #fixed(name, [ 1.0,  10.0*1e-10, 0.0 / (2.0 * pi * 600000000.0)**2 ])
-grid_search(name, inc=11)
-#minimise('newton', model=name, constraints=0)
-minimise('newton', model=name)
+grid_search(name, inc=7)
+#minimise('bfgs', model=name, constraints=0)
+minimise('bfgs', model=name, print_flag=2)
 write(model=name, force=1)
 state.save('save', force=1)
