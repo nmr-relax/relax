@@ -64,6 +64,12 @@ class usr_param:
 		AICc:	Method of model-free analysis based on model selection using the Akaike Information
 			Criteria corrected for finit sample size.
 
+		QAIC:	Method of model-free analysis based on model selection using the quasi-likelihood modifed
+			Akaike Information Criteria.
+
+		QAICc:	Method of model-free analysis based on model selection using the quasi-likelihood modifed
+			Akaike Information Criteria corrected for finit sample size.
+
 		BIC:	Method of model-free analysis based on model selection using the Schwartz
 			Information Criteria.
 

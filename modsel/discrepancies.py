@@ -29,4 +29,10 @@ class kl:
 		#
 		#print "self.kl: " + `self.constant_term` + " + " + `self.ln_var_term` + " + " + `self.chi2_term` + "\t= " + `self.kl`
 
+		# Test K-L.
+		#a = n * log(chi2 / n)
+		#b = n * log(2.0 * pi)
+		#c = n
+		#self.kl = a + b + c
+		
 		return self.kl

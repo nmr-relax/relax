@@ -75,6 +75,12 @@ class asymptotic(common_operations):
 				elif match('^BIC$', self.mf.data.usr_param.method):
 					crit = crit + k*log(n) / (2.0 * n)
 
+				elif match('^QAIC$', self.mf.data.usr_param.method):
+					crit = crit / (chi2 / (n - k)) + k/n
+
+				elif match('^QAICc$', self.mf.data.usr_param.method):
+					crit = crit / (chi2 / (n - k)) + k/n + k*(k + 1.0)/((n - k - 1.0) * n)
+
 				data[model][res]['crit'] = crit
 
 			# Select model.

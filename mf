@@ -54,6 +54,10 @@ class mf:
 			asymptotic(self)
 		elif match('^AICc$', self.data.usr_param.method):
 			asymptotic(self)
+		elif match('^QAIC$', self.data.usr_param.method):
+			asymptotic(self)
+		elif match('^QAICc$', self.data.usr_param.method):
+			asymptotic(self)
 		elif match('^BIC$', self.data.usr_param.method):
 			asymptotic(self)
 		elif match('^Bootstrap$', self.data.usr_param.method):
