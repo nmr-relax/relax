@@ -4,39 +4,22 @@ from Numeric import Float64, copy, zeros
 from re import match
 
 
-class Ri:
-	def __init__(self, mf):
-		"Function for the back calculating relaxation values."
-
-		self.mf = mf
+class Ri_prime:
+	def __init__(self):
+		"Function for back calculating relaxation values."
 
 
-	def calc(self, mf_params, diff_type, diff_params, mf_model):
-		"""Function for the back calculation of relaxation values.
-
-		Function arguments
-		~~~~~~~~~~~~~~~~~~
-
-		1:  mf_params - a list containing the model-free parameter values specific for the given model.
-		The order of model-free parameters must be as follows:
-			m1 - {S2}
-			m2 - {S2, te}
-			m3 - {S2, Rex}
-			m4 - {S2, te, Rex}
-			m5 - {S2f, S2s, ts}
-		2:  diff_type - string.  The diffusion tensor, ie 'iso', 'axial', 'aniso'
-		3:  diff_params - array.  An array with the diffusion parameters
-		4:  mf_model - string.  The model-free model
-
+	def Ri_prime(self):
+		"""Function for back calculation of relaxation values.
 
 		The relaxation equations
 		~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Data structure:  self.ri
+		Data structure:  self.data.ri
 		Dimension:  1D, (relaxation data)
 		Type:  Numeric array, Float64
-		Dependencies:  self.jw
-		Required by:  self.chi2, self.dchi2, self.d2chi2
+		Dependencies:  self.data.jw
+		Required by:  self.data.chi2, self.data.dchi2, self.data.d2chi2
 		Stored:  Yes
 
 
@@ -71,42 +54,37 @@ class Ri:
 			         3
 
 
-		It is assumed that the spectral density matrix, self.mf.data.mf_data.jw, has not been calculated yet.
+		It is assumed that the spectral density matrix, self.data.jw, has not been calculated yet.
 		"""
-
-		self.mf_params = mf_params
-		self.diff_type = diff_type
-		self.diff_params = diff_params
-		self.mf_model = mf_model
 
 		# Debugging code.
 		#print "<<< Ri >>>"
 
 		# Initialise the relaxation array.
-		self.ri = zeros((self.mf.data.num_ri), Float64)
+		self.data.ri_prime = zeros((self.mf.data.num_ri), Float64)
 
 		# Calculate the spectral density values (if the relaxation array has not been made, then neither has the spectral density matrix).
-		self.mf.mf_functions.Jw.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
+		self.Jw()
 
 		# Calculate the frequency dependent chemical exchange values. (Fix to calculate num_frq times rather than i times!!!)
 		rex = zeros((self.mf.data.num_frq), Float64)
 		for frq in range(self.mf.data.num_frq):
-			if match('m3', self.mf_model):
-				rex[frq] = self.mf_params[1] * (1e-8 * self.mf.data.frq[frq])**2
-			elif match('m4', self.mf_model):
-				rex[frq] = self.mf_params[2] * (1e-8 * self.mf.data.frq[frq])**2
+			if match('m3', self.data.mf_model):
+				rex[frq] = self.data.mf_params[1] * (1e-8 * self.mf.data.frq[frq])**2
+			elif match('m4', self.data.mf_model):
+				rex[frq] = self.data.mf_params[2] * (1e-8 * self.mf.data.frq[frq])**2
 
 		# Loop over the relaxation values.
 		for i in range(self.mf.data.num_ri):
-			self.frq_num = self.mf.data.remap_table[i]
+			frq_num = self.mf.data.remap_table[i]
 
 			# Calculate the relaxation data.
 			if match('R1', self.mf.data.data_types[i]):
-				self.ri[i] = self.calc_r1()
+				self.data.ri_prime[i] = self.calc_r1(frq_num)
 			elif match('R2', self.mf.data.data_types[i]):
-				self.ri[i] = self.calc_r2(rex[self.frq_num])
+				self.data.ri_prime[i] = self.calc_r2(rex[frq_num], frq_num)
 			elif match('NOE', self.mf.data.data_types[i]):
-				self.ri[i] = self.calc_noe(i)
+				self.data.ri_prime[i] = self.calc_noe(i, frq_num)
 			else:
 				raise NameError, "Relaxation data type " + `self.mf.data.data_types[i]` + " unknown, quitting program."
 
@@ -125,42 +103,39 @@ class Ri:
 					self.mf.log.write("%-7.4f%2s" % (self.ri[i], " |"))
 				self.mf.log.write("\n")
 
-		# Store the relaxation array.
-		self.mf.data.mf_data.ri = copy.deepcopy(self.ri)
 
-
-	def calc_r1(self):
+	def calc_r1(self, frq_num):
 		"Calculate the R1 value."
 
-		r1_dipole = self.mf.data.dipole_const * (self.mf.data.mf_data.jw[self.frq_num, 2] + 3.0*self.mf.data.mf_data.jw[self.frq_num, 1] + 6.0*self.mf.data.mf_data.jw[self.frq_num, 4])
-		r1_csa = self.mf.data.csa_const[self.frq_num] * self.mf.data.mf_data.jw[self.frq_num, 1]
+		r1_dipole = self.mf.data.dipole_const * (self.data.jw[frq_num, 2] + 3.0*self.data.jw[frq_num, 1] + 6.0*self.data.jw[frq_num, 4])
+		r1_csa = self.mf.data.csa_const[frq_num] * self.data.jw[frq_num, 1]
 		r1 = r1_dipole + r1_csa
 		return r1
 
 
-	def calc_r2(self, rex):
+	def calc_r2(self, rex, frq_num):
 		"Calculate the R2 value."
 
-		r2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.mf.data.mf_data.jw[self.frq_num, 0] + self.mf.data.mf_data.jw[self.frq_num, 2] + 3.0*self.mf.data.mf_data.jw[self.frq_num, 1] + 6.0*self.mf.data.mf_data.jw[self.frq_num, 3] + 6.0*self.mf.data.mf_data.jw[self.frq_num, 4])
-		r2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * (4.0*self.mf.data.mf_data.jw[self.frq_num, 0] + 3.0*self.mf.data.mf_data.jw[self.frq_num, 1])
-		if match('m[34]', self.mf_model):
+		r2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.data.jw[frq_num, 0] + self.data.jw[frq_num, 2] + 3.0*self.data.jw[frq_num, 1] + 6.0*self.data.jw[frq_num, 3] + 6.0*self.data.jw[frq_num, 4])
+		r2_csa = (self.mf.data.csa_const[frq_num]/6.0) * (4.0*self.data.jw[frq_num, 0] + 3.0*self.data.jw[frq_num, 1])
+		if match('m[34]', self.data.mf_model):
 			r2 = r2_dipole + r2_csa + rex
 		else:
 			r2 = r2_dipole + r2_csa
 		return r2
 
 
-	def calc_noe(self, i):
+	def calc_noe(self, i, frq_num):
 		"Calculate the NOE value."
 
 		# May need debugging.
 		if self.mf.data.noe_r1_table[i] == None:
-			r1 = self.calc_r1()
+			r1 = self.calc_r1(frq_num)
 		else:
-			r1 = self.ri[self.mf.data.noe_r1_table[i]]
+			r1 = self.data.ri_prime[self.mf.data.noe_r1_table[i]]
 
 		if r1 == 0:
 			noe = 1e99
 		else:
-			noe = 1.0 + (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.mf.data.mf_data.jw[self.frq_num, 4] - self.mf.data.mf_data.jw[self.frq_num, 2])
+			noe = 1.0 + (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.data.jw[frq_num, 4] - self.data.jw[frq_num, 2])
 		return noe

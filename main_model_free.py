@@ -28,7 +28,7 @@ class main_model_free:
 		########
 
 		# Debugging flag
-		self.mf.min_debug = 2
+		self.mf.min_debug = 1
 
 		# Limits flag, 0 = no limits, 1 = set limits.
 		limits_flag = 0
@@ -95,7 +95,7 @@ class main_model_free:
 			function_ops = ( diff_type, diff_params, mf_model, relax_data, errors )
 
 			# Grid search.
-			params, chi2 = self.mf.minimise.grid.search(self.mf.mf_functions.chi2.calc, fargs=function_ops, args=grid_ops)
+			params, chi2 = self.mf.minimise.grid.search(self.mf.mf_functions.chi2, fargs=function_ops, args=grid_ops)
 			if self.mf.min_debug >= 1:
 				print "\nThe grid parameters are: " + `params`
 				print "The grid chi-squared value is: " + `chi2`
@@ -112,7 +112,7 @@ class main_model_free:
 			if match('Simplex', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Simplex minimisation >>>"
-				output = simplex(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
+				output = simplex(self.mf.mf_functions.chi2, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 				print "mf params:  " + `params`
 				print "chi2:       " + `chi2`
@@ -124,7 +124,7 @@ class main_model_free:
 			elif match('Powell', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Powell minimisation >>>"
-				output = powell(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
+				output = powell(self.mf.mf_functions.chi2, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 			
 			# Levenberg-Marquardt minimisation.
@@ -132,20 +132,20 @@ class main_model_free:
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Levenberg-Marquardt minimisation >>>"
 
-				#params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.mf_functions.chi2.calc, params, self.mf.mf_functions.dchi.calc, args=function_ops, relax_data, errors)
+				#params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.mf_functions.chi2, params, self.mf.mf_functions.dchi, args=function_ops, relax_data, errors)
 
 			# Quasi-Newton BFGS minimisation.
 			elif match('BFGS', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-				output = bfgs(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, args=function_ops, avegtol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+				output = bfgs(self.mf.mf_functions.chi2, params, fprime=self.mf.mf_functions.dchi2, args=function_ops, avegtol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, num_func_calls, num_grad_calls, warn_flag = output
 
 			# Newton Conjugate Gradient minimisation.
 			elif match('Newton', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-				output = newton(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, fhess_p=None, fhess=self.mf.mf_functions.d2chi2.calc, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+				output = newton(self.mf.mf_functions.chi2, params, fprime=self.mf.mf_functions.dchi2, fhess_p=None, fhess=self.mf.mf_functions.d2chi2, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
 
 			# None.

@@ -1,4 +1,3 @@
-from Numeric import array
 from math import pi
 
 
@@ -11,7 +10,6 @@ class data:
 		self.init_data()
 		self.init_constants()
 		self.mfin = self.mfin_data(self.mf)
-		self.mf_data = self.init_mf_data()
 		self.asymptotic = self.init_asymptotic()
 		self.bootstrap = self.init_bootstrap()
 		self.cv = self.init_cv()
@@ -52,18 +50,6 @@ class data:
 
 			self.name = 'Farrow'
 
-
-
-	class init_mf_data:
-		def __init__(self):
-			"Class to hold data for model-free analysis"
-
-			self.relax_test = []
-			self.deriv_relax_test = []
-			self.ri = array([])
-			self.dri = array([])
-			self.jw = array([])
-			self.djw = array([])
 
 
 	class init_overall_disc:

@@ -1,13 +1,11 @@
 from Numeric import Float64, equal, zeros
 
 class dchi2:
-	def __init__(self, mf):
+	def __init__(self):
 		"Function to create the chi-squared gradient vector."
 
-		self.mf = mf
 
-
-	def calc(self, mf_params, diff_type, diff_params, mf_model, relax_data, errors):
+	def dchi2(self, mf_params, diff_type, diff_params, mf_model, relax_data, errors):
 		"""Function to create the chi-squared gradient vector.
 
 		Function arguments
@@ -30,10 +28,10 @@ class dchi2:
 		The chi-sqared gradient
 		~~~~~~~~~~~~~~~~~~~~~~~
 
-		Data structure:  self.dchi2
+		Data structure:  self.data.dchi2
 		Dimension:  1D, (model-free parameters)
 		Type:  Numeric array, Float64
-		Dependencies:  self.ri, self.dri
+		Dependencies:  self.data.ri, self.data.dri
 		Required by:  None
 		Stored:  No
 
@@ -54,54 +52,55 @@ class dchi2:
 		Returned is the chi-squared gradient array.
 		"""
 
-		self.mf_params = mf_params
-		self.diff_type = diff_type
-		self.diff_params = diff_params
-		self.mf_model = mf_model
-		self.relax_data = relax_data
-		self.errors = errors
-
 		# debug.
 		if self.mf.min_debug == 2:
 			print "\n< dchi2 >"
-			print "Mf params: " + `self.mf_params`
+			print "Mf params: " + `mf_params`
+
+		self.data.mf_params = mf_params
+		self.data.diff_type = diff_type
+		self.data.diff_params = diff_params
+		self.data.mf_model = mf_model
+		self.data.relax_data = relax_data
+		self.data.errors = errors
 
 		# Test to see if relaxation array and spectral density matrix have previously been calculated for the current parameter values,
 		# ie, if the derivative is calculated before the function evaluation!
 		# If not, calculate the relaxation array which will then calculate the spectral density matrix, and store the current data and parameter
 		# values in self.mf.data.mf_data.relax_test.
-		test = [ self.relax_data[:], self.errors[:], self.mf_params.tolist(), self.mf_model ]
-		if test != self.mf.data.mf_data.relax_test:
-			self.mf.mf_functions.Ri.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
-			self.mf.data.mf_data.relax_test = test[:]
+		test = [ self.data.relax_data[:], self.data.errors[:], self.data.mf_params.tolist(), self.data.mf_model ]
+		if test != self.data.relax_test:
+			self.Ri()
+			self.data.relax_test = test[:]
+			self.init_param_types()
 
 		# Calculate the relaxation gradient matrix (important that the relaxation array has previously been calculated
 		# as the function dRi assumes this to be the case).
-		self.mf.mf_functions.dRi.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
-		self.mf.data.mf_data.gradient_test = test[:]
+		self.dRi()
+		self.data.gradient_test = test[:]
 
 		# Initialise the chi-squared gradient vector.
-		self.dchi2 = zeros((len(self.mf_params)), Float64)
+		self.data.dchi2 = zeros((len(self.data.mf_params)), Float64)
 
 		# Calculate the chi-squared gradient vector.
-		for i in range(len(self.relax_data)):
-			if self.errors[i] != 0.0:
+		for i in range(len(self.data.relax_data)):
+			if self.data.errors[i] != 0.0:
 				# Model-free parameter independent terms.
-				a = -2.0 * (self.relax_data[i] - self.mf.data.mf_data.ri[i]) / (self.errors[i]**2)
-				for mf_param in range(len(self.mf_params)):
-					self.dchi2[mf_param] = self.dchi2[mf_param] + a * self.mf.data.mf_data.dri[i, mf_param]
+				a = -2.0 * (self.data.relax_data[i] - self.data.ri[i]) / (self.data.errors[i]**2)
+				for mf_param in range(len(self.data.mf_params)):
+					self.data.dchi2[mf_param] = self.data.dchi2[mf_param] + a * self.data.dri[i, mf_param]
 			else:
 				for mf_param in range(len(self.mf_params)):
-					self.dchi2[mf_param] = 1e99
+					self.data.dchi2[mf_param] = 1e99
 				break
 
 		# debug.
 		if self.mf.min_debug == 2:
-			print "J(w):  " + `self.mf.data.mf_data.jw`
-			print "dJ(w): " + `self.mf.data.mf_data.djw`
-			print "Ri:    " + `self.mf.data.mf_data.ri`
-			print "dRi:   " + `self.mf.data.mf_data.dri`
-			print "dchi2: " + `self.dchi2`
+			print "J(w):  " + `self.data.jw`
+			print "dJ(w): " + `self.data.djw`
+			print "Ri:    " + `self.data.ri`
+			print "dRi:   " + `self.data.dri`
+			print "dchi2: " + `self.data.dchi2`
 			print "\n"
 
-		return self.dchi2
+		return self.data.dchi2
