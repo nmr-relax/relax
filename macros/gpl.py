@@ -1,7 +1,7 @@
 class gpl:
 	def __repr__(self):
 		help(GPL)
-		return "The GNU General Public Licence."
+		return "The GNU General Public License."
 
 def GPL():
 	"""

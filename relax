@@ -10,7 +10,7 @@
 #                                                                               #
 #################################################################################
 #                                                                               #
-#                                    Licence                                    #
+#                                    License                                    #
 #                                                                               #
 # relax, a program for relaxation data analysis.                                #
 # Copyright (C) 2003 Edward d'Auvergne                                          #
@@ -134,7 +134,7 @@ class relax:
 
 
 This is free software which you are welcome to modify and redistribute under the conditions of the
-GNU General Public Licence (GPL).  This program, including all modules, is licenced under the GPL
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
 and comes with absolutely no warranty.  For details type GPL.
 		"""
 
