@@ -36,7 +36,7 @@ class Sequence:
         return [ 'res' ]
 
 
-    def load_PDB_sequence(self):
+    def load_PDB_sequence(self, run):
         """Function for loading the sequence out of a PDB file.
 
         This needs to be modified to handle multiple peptide chains.
@@ -45,20 +45,20 @@ class Sequence:
         print "Loading the sequence from the PDB file.\n"
 
         # Reassign the sequence of the first structure.
-        if type(self.relax.data.pdb) == list:
-            res = self.relax.data.pdb[0].peptide_chains[0].residues
+        if type(self.relax.data.pdb[run]) == list:
+            res = self.relax.data.pdb[run][0].peptide_chains[0].residues
         else:
-            res = self.relax.data.pdb.peptide_chains[0].residues
+            res = self.relax.data.pdb[run].peptide_chains[0].residues
 
         # Loop over the sequence.
         for i in xrange(len(res)):
             # Append a data container.
-            self.relax.data.res.append(Residue())
+            self.relax.data.res[run].append(Residue())
 
             # Insert the data.
-            self.relax.data.res[i].num = res[i].number
-            self.relax.data.res[i].name = res[i].name
-            self.relax.data.res[i].select = 1
+            self.relax.data.res[run][i].num = res[i].number
+            self.relax.data.res[run][i].name = res[i].name
+            self.relax.data.res[run][i].select = 1
 
 
     def read(self, run=None, file_name=None, num_col=0, name_col=1, sep=None, header_lines=None):
@@ -92,7 +92,7 @@ class Sequence:
             except ValueError:
                 raise RelaxError, "Sequence data is invalid."
 
-        # Add the run to 'self.relax.data'.
+        # Add the run to 'self.relax.data.res'.
         self.relax.data.res.add_list(run)
 
         # Fill the array 'self.relax.data.res[run]' with data containers and place sequence data into the array.

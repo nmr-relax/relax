@@ -37,10 +37,6 @@ class Minimise:
     def calc(self, run=None, print_flag=1):
         """Function for calculating the function value."""
 
-        # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
-            raise RelaxSequenceError
-
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
@@ -49,9 +45,7 @@ class Minimise:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Equation type specific calculate function setup.
-        calculate = self.relax.specific_setup.setup('calc', function_type)
-        if calculate == None:
-            raise RelaxFuncSetupError, ('calculate', function_type)
+        calculate = self.relax.specific_setup.setup('calculate', function_type)
 
         # Minimisation.
         calculate(run=run, print_flag=print_flag)
@@ -59,10 +53,6 @@ class Minimise:
 
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):
         """The grid search function."""
-
-        # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
-            raise RelaxSequenceError
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -73,8 +63,6 @@ class Minimise:
 
         # Specific grid search function.
         grid_search = self.relax.specific_setup.setup('grid_search', function_type)
-        if grid_search == None:
-            raise RelaxFuncSetupError, ('grid search', function_type)
 
         # Grid search.
         grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
@@ -82,10 +70,6 @@ class Minimise:
 
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
         """Minimisation function."""
-
-        # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
-            raise RelaxSequenceError
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -96,8 +80,6 @@ class Minimise:
 
         # Specific minimisation function.
         minimise = self.relax.specific_setup.setup('minimise', function_type)
-        if minimise == None:
-            raise RelaxFuncSetupError, ('minimise', function_type)
 
         # Minimisation.
         minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

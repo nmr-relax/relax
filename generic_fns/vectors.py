@@ -31,43 +31,43 @@ class Vectors:
         self.relax = relax
 
 
-    def vectors(self, heteronuc, proton):
+    def vectors(self, run, heteronuc, proton):
         """Function for calculating the XH vector from the loaded structure."""
 
         # Test if the PDB file has been loaded.
-        if not hasattr(self.relax.data, 'pdb'):
+        if not self.relax.data.pdb.has_key(run):
             raise RelaxPdbError
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
+        if not len(self.relax.data.res[run]):
             raise RelaxSequenceError
 
         # Reassign the first peptide chain of the first structure.
-        if type(self.relax.data.pdb) == list:
+        if type(self.relax.data.pdb[run]) == list:
             raise RelaxError, "Calculation of vectors from multiple structures is not yet implemented."
         else:
-            pdb_residues = self.relax.data.pdb.peptide_chains[0].residues
+            pdb_residues = self.relax.data.pdb[run].peptide_chains[0].residues
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res[run])):
             # Find the corresponding residue in the PDB.
             pdb_res = None
             for j in xrange(len(pdb_residues)):
-                if self.relax.data.res[i].name == pdb_residues[j].name and self.relax.data.res[i].num == pdb_residues[j].number:
+                if self.relax.data.res[run][i].name == pdb_residues[j].name and self.relax.data.res[run][i].num == pdb_residues[j].number:
                     pdb_res = pdb_residues[j]
                     break
             if pdb_res == None:
-                raise RelaxNoResError, (self.relax.data.res[i].num, self.relax.data.res[i].name)
+                raise RelaxNoResError, (self.relax.data.res[run][i].num, self.relax.data.res[run][i].name)
 
             # Test if the proton atom exists for residue i.
             if not pdb_res.atoms.has_key(proton):
-                print "The proton atom " + `proton` + " could be found for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
-                self.relax.data.res[i].xh_vect = None
+                print "The proton atom " + `proton` + " could be found for residue '" + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + "'."
+                self.relax.data.res[run][i].xh_vect = None
 
             # Test if the heteronucleus atom exists for residue i.
             elif not pdb_res.atoms.has_key(heteronuc):
-                print "The heteronucleus atom " + `heteronuc` + " could be found for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
-                self.relax.data.res[i].xh_vect = None
+                print "The heteronucleus atom " + `heteronuc` + " could be found for residue '" + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + "'."
+                self.relax.data.res[run][i].xh_vect = None
 
             # Calculate the vector.
             else:
@@ -77,8 +77,8 @@ class Vectors:
                 # Get the heteronucleus position.
                 posX = pdb_res.atoms[heteronuc].position.array
 
-                # Calculate the vector and place it in 'self.relax.data.res[i].xh_vect'.
-                self.relax.data.res[i].xh_vect = posH - posX
+                # Calculate the vector and place it in 'self.relax.data.res[run][i].xh_vect'.
+                self.relax.data.res[run][i].xh_vect = posH - posX
 
                 # Calculate the normalised vector.
-                self.relax.data.res[i].xh_unit = self.relax.data.res[i].xh_vect / sqrt(dot(self.relax.data.res[i].xh_vect, self.relax.data.res[i].xh_vect))
+                self.relax.data.res[run][i].xh_unit = self.relax.data.res[run][i].xh_vect / sqrt(dot(self.relax.data.res[run][i].xh_vect, self.relax.data.res[run][i].xh_vect))

@@ -42,15 +42,15 @@ class Map:
 
         # Residue index.
         index = None
-        for i in xrange(len(self.relax.data.res)):
-            if self.relax.data.res[i].num == res_num:
+        for i in xrange(len(self.relax.data.res[run])):
+            if self.relax.data.res[run][i].num == res_num:
                 index = i
                 break
         if index == None:
             raise RelaxNoResError, res_num
 
         # The number of parameters.
-        n = len(self.relax.data.res[index].params[run])
+        n = len(self.relax.data.res[run][index].params)
 
         # Lower bounds.
         if lower != None:

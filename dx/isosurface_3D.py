@@ -62,20 +62,20 @@ class Iso3D(Base_Map):
 
                     # Set the parameter values.
                     for l in xrange(self.n):
-                        self.relax.generic.value.set(run=self.run, value=values[l], data_type=self.relax.data.res[self.index].params[self.run][l], res_num=self.relax.data.res[self.index].num)
+                        self.relax.generic.value.set(run=self.run, value=values[l], data_type=self.relax.data.res[self.run][self.index].params[l], res_num=self.relax.data.res[self.run][self.index].num)
 
                     # Calculate the function values.
-                    self.calculate(run=self.run, res_num=self.relax.data.res[self.index].num, print_flag=0)
+                    self.calculate(run=self.run, res_num=self.relax.data.res[self.run][self.index].num, print_flag=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
-                    if self.relax.data.res[self.index].chi2[self.run] > 1e20:
+                    if self.relax.data.res[self.run][self.index].chi2 > 1e20:
                         map_file.write("%30f\n" % 1e20)
                     else:
-                        map_file.write("%30f\n" % self.relax.data.res[self.index].chi2[self.run])
+                        map_file.write("%30f\n" % self.relax.data.res[self.run][self.index].chi2)
 
                     values[self.swap[2]] = values[self.swap[2]] + self.step_size[self.swap[2]]
                 self.percent = self.percent + self.percent_inc
-                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%,  " + `values` + ",  f(x): ", self.relax.data.res[self.index].chi2[self.run])
+                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%,  " + `values` + ",  f(x): ", self.relax.data.res[self.run][self.index].chi2)
                 values[self.swap[1]] = values[self.swap[1]] + self.step_size[self.swap[1]]
             values[self.swap[0]] = values[self.swap[0]] + self.step_size[self.swap[0]]
 
@@ -179,9 +179,9 @@ class Iso3D(Base_Map):
                 labels = labels + self.labels[self.swap[1]] + "\" \""
                 labels = labels + self.labels[self.swap[2]] + "\"}"
             else:
-                labels = "{\"" + self.relax.data.res[self.index].params[self.run][self.swap[0]] + "\" \""
-                labels = labels + self.relax.data.res[self.index].params[self.run][self.swap[1]] + "\" \""
-                labels = labels + self.relax.data.res[self.index].params[self.run][self.swap[2]] + "\"}"
+                labels = "{\"" + self.relax.data.res[self.run][self.index].params[self.swap[0]] + "\" \""
+                labels = labels + self.relax.data.res[self.run][self.index].params[self.swap[1]] + "\" \""
+                labels = labels + self.relax.data.res[self.run][self.index].params[self.swap[2]] + "\"}"
 
             # Tick locations.
             tick_locations = []
@@ -202,7 +202,7 @@ class Iso3D(Base_Map):
                 vals = self.bounds[self.swap[i], 0] * 1.0
                 string = "{"
                 for j in xrange(axis_incs + 1):
-                    if self.relax.data.res[self.index].scaling.has_key(self.run):
+                    if self.relax.data.res[self.run][self.index].scaling:
                         string = string + "\"" + "%.2g" % (vals * self.scaling_matrix[self.swap[i], self.swap[i]]) + "\" "
                     else:
                         string = string + "\"" + "%.2g" % vals + "\" "
@@ -212,7 +212,7 @@ class Iso3D(Base_Map):
 
         # Specific labels.
         else:
-            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.index].params[self.run], self.bounds, self.swap, self.inc)
+            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.run][self.index].params, self.bounds, self.swap, self.inc)
 
 
         # Corners.

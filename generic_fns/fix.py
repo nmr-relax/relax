@@ -36,17 +36,16 @@ class Fix:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-
         # Residue number.
         if type(element) == int:
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res):
+            if not len(self.relax.data.res[run]):
                 raise RelaxSequenceError
 
             # Loop over the sequence to find the residue.
             index = None
-            for i in xrange(len(self.relax.data.res)):
-                if self.relax.data.res[i].num == element:
+            for i in xrange(len(self.relax.data.res[run])):
+                if self.relax.data.res[run][i].num == element:
                     index = i
                     break
 
@@ -55,9 +54,7 @@ class Fix:
                 raise RelaxNoResError, element
 
             # Set the fixed flag.
-            if not hasattr(self.relax.data.res[index], 'fixed'):
-                self.relax.data.res[index].fixed = {}
-            self.relax.data.res[index].fixed[run] = fixed
+            self.relax.data.res[run][index].fixed = fixed
 
 
         # Diffusion tensor.
@@ -73,20 +70,18 @@ class Fix:
         # All residues.
         elif element == 'all_res':
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res):
+            if not len(self.relax.data.res[run]):
                 raise RelaxSequenceError
 
             # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(self.relax.data.res)):
-                if not hasattr(self.relax.data.res[i], 'fixed'):
-                    self.relax.data.res[i].fixed = {}
-                self.relax.data.res[i].fixed[run] = fixed
+            for i in xrange(len(self.relax.data.res[run])):
+                self.relax.data.res[run][i].fixed = fixed
 
 
         # All parameters.
         elif element == 'all':
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res):
+            if not len(self.relax.data.res[run]):
                 raise RelaxSequenceError
 
             # Test if the diffusion tensor data is loaded.
@@ -97,10 +92,8 @@ class Fix:
             self.relax.data.diff[run].fixed = fixed
 
             # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(self.relax.data.res)):
-                if not hasattr(self.relax.data.res[i], 'fixed'):
-                    self.relax.data.res[i].fixed = {}
-                self.relax.data.res[i].fixed[run] = fixed
+            for i in xrange(len(self.relax.data.res[run])):
+                self.relax.data.res[run][i].fixed = fixed
 
 
         # Unknown.

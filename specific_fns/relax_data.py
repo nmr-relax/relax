@@ -106,24 +106,14 @@ class Rx_data:
         for name in data_names:
             # If the name is not in 'data', add it.
             if not hasattr(data, name):
-                setattr(data, name, {})
-
-            # Get the data.
-            object = getattr(data, name)
-
-            # Get the initial data structure.
-            value = self.data_init(name)
-
-            # If the data structure does not have the key 'run', add it.
-            if not object.has_key(run):
-                object[run] = value
+                setattr(data, name, self.data_init(name))
 
 
     def read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for reading R1, R2, or NOE relaxation data."""
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
+        if not len(self.relax.data.res[run]):
             raise RelaxSequenceError
 
         # Test if the run exists.
@@ -156,70 +146,62 @@ class Rx_data:
             value = float(file_data[i][data_col])
             error = float(file_data[i][error_col])
 
-            # Find the index of self.relax.data.res which corresponds to the relaxation data set i.
+            # Find the index of self.relax.data.res[run] which corresponds to the relaxation data set i.
             index = None
-            for j in xrange(len(self.relax.data.res)):
-                if self.relax.data.res[j].num == res_num and self.relax.data.res[j].name == res_name:
+            for j in xrange(len(self.relax.data.res[run])):
+                if self.relax.data.res[run][j].num == res_num and self.relax.data.res[run][j].name == res_name:
                     index = j
                     break
             if index == None:
                 raise RelaxNoResError, (res_num, res_name)
 
             # Initialise the relaxation data structures (if needed).
-            self.initialise_relax_data(self.relax.data.res[index], run)
+            self.initialise_relax_data(self.relax.data.res[run][index], run)
 
             # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
-            for j in xrange(self.relax.data.res[index].num_ri[run]):
-               if ri_label == self.relax.data.res[index].ri_labels[run][j] and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][j]]:
+            for j in xrange(self.relax.data.res[run][index].num_ri):
+               if ri_label == self.relax.data.res[run][index].ri_labels[j] and frq_label == self.relax.data.res[run][index].frq_labels[self.relax.data.res[run][index].remap_table[j]]:
                     raise RelaxError, "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
 
             # Relaxation data and errors.
-            self.relax.data.res[index].relax_data[run].append(value)
-            self.relax.data.res[index].relax_error[run].append(error)
+            self.relax.data.res[run][index].relax_data.append(value)
+            self.relax.data.res[run][index].relax_error.append(error)
 
             # Update the number of relaxation data points.
-            self.relax.data.res[index].num_ri[run] = self.relax.data.res[index].num_ri[run] + 1
+            self.relax.data.res[run][index].num_ri = self.relax.data.res[run][index].num_ri + 1
 
             # Add ri_label to the data types.
-            self.relax.data.res[index].ri_labels[run].append(ri_label)
+            self.relax.data.res[run][index].ri_labels.append(ri_label)
 
             # Find if the frequency self.frq has already been loaded.
-            remap = len(self.relax.data.res[index].frq[run])
+            remap = len(self.relax.data.res[run][index].frq)
             flag = 0
-            for i in xrange(len(self.relax.data.res[index].frq[run])):
-                if frq == self.relax.data.res[index].frq[run][i]:
+            for i in xrange(len(self.relax.data.res[run][index].frq)):
+                if frq == self.relax.data.res[run][index].frq[i]:
                     remap = i
                     flag = 1
 
             # Update the data structures which have a length equal to the number of field strengths.
             if not flag:
-                self.relax.data.res[index].num_frq[run] = self.relax.data.res[index].num_frq[run] + 1
-                self.relax.data.res[index].frq_labels[run].append(frq_label)
-                self.relax.data.res[index].frq[run].append(frq)
+                self.relax.data.res[run][index].num_frq = self.relax.data.res[run][index].num_frq + 1
+                self.relax.data.res[run][index].frq_labels.append(frq_label)
+                self.relax.data.res[run][index].frq.append(frq)
 
             # Update the remap table.
-            self.relax.data.res[index].remap_table[run].append(remap)
+            self.relax.data.res[run][index].remap_table.append(remap)
 
             # Update the NOE R1 translation table.
-            self.relax.data.res[index].noe_r1_table[run].append(None)
+            self.relax.data.res[run][index].noe_r1_table.append(None)
             if ri_label == 'NOE':
                 # If the data corresponds to 'NOE', try to find if the corresponding 'R1' data has been read.
-                for i in xrange(self.relax.data.res[index].num_ri[run]):
-                    if self.relax.data.res[index].ri_labels[run][i] == 'R1' and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][i]]:
-                        self.relax.data.res[index].noe_r1_table[run][self.relax.data.res[index].num_ri[run] - 1] = i
+                for i in xrange(self.relax.data.res[run][index].num_ri):
+                    if self.relax.data.res[run][index].ri_labels[i] == 'R1' and frq_label == self.relax.data.res[run][index].frq_labels[self.relax.data.res[run][index].remap_table[i]]:
+                        self.relax.data.res[run][index].noe_r1_table[self.relax.data.res[run][index].num_ri - 1] = i
             if ri_label == 'R1':
                 # If the data corresponds to 'R1', try to find if the corresponding 'NOE' data has been read.
-                for i in xrange(self.relax.data.res[index].num_ri[run]):
-                    if self.relax.data.res[index].ri_labels[run][i] == 'NOE' and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][i]]:
-                        self.relax.data.res[index].noe_r1_table[run][i] = self.relax.data.res[index].num_ri[run] - 1
-
-            # Initialise the runs data structure.
-            if not hasattr(self.relax.data.res[index], 'runs'):
-                self.relax.data.res[index].runs = []
-
-            # Add the run to the runs list.
-            if not run in self.relax.data.res[index].runs:
-                self.relax.data.res[index].runs.append(run)
+                for i in xrange(self.relax.data.res[run][index].num_ri):
+                    if self.relax.data.res[run][index].ri_labels[i] == 'NOE' and frq_label == self.relax.data.res[run][index].frq_labels[self.relax.data.res[run][index].remap_table[i]]:
+                        self.relax.data.res[run][index].noe_r1_table[i] = self.relax.data.res[run][index].num_ri - 1
 
 
     def curvefit_input(self):

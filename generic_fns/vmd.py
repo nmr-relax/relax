@@ -30,22 +30,22 @@ class Vmd:
         self.relax = relax
 
 
-    def view(self):
+    def view(self, run):
         """Function for viewing the collection of molecules using VMD."""
 
         # Test if the PDB file has been loaded.
-        if not hasattr(self.relax.data, 'pdb'):
+        if not self.relax.data.pdb.has_key(run):
             raise RelaxPdbError
 
         # Create an empty scene.
         self.relax.data.vmd_scene = VMD.Scene()
 
         # Add the molecules to the scene.
-        if type(self.relax.data.pdb) == list:
-            for i in range(len(self.relax.data.pdb)):
-                self.relax.data.vmd_scene.addObject(VMD.Molecules(self.relax.data.pdb[i]))
+        if type(self.relax.data.pdb[run]) == list:
+            for i in range(len(self.relax.data.pdb[run])):
+                self.relax.data.vmd_scene.addObject(VMD.Molecules(self.relax.data.pdb[run][i]))
         else:
-            self.relax.data.vmd_scene.addObject(VMD.Molecules(self.relax.data.pdb))
+            self.relax.data.vmd_scene.addObject(VMD.Molecules(self.relax.data.pdb[run]))
 
         # View the scene.
         self.relax.data.vmd_scene.view()

@@ -48,6 +48,17 @@ class Data:
         # The type of the runs.
         self.run_types = []
 
+        # Global minimisation statistics.
+        self.chi2 = {}
+        self.iter = {}
+        self.f_count = {}
+        self.g_count = {}
+        self.h_count = {}
+        self.warning = {}
+
+        # PDB structures.
+        self.pdb = {}
+
 
     def __repr__(self):
         text = "The data class containing all permanent program data.\n"

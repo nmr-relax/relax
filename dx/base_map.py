@@ -37,18 +37,10 @@ class Base_Map:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Specific map bounds function.
+        # Specific map bounds, map labels, and calculation functions.
         self.map_bounds = self.relax.specific_setup.setup('map_bounds', function_type)
-        if self.map_bounds == None:
-            raise RelaxFuncSetupError, ('map bounds', function_type)
-
-        # Specific map labels function.
-        self.map_labels = self.relax.specific_setup.setup('map_labels', function_type)
-
-        # Specific minimisation function.
-        self.calculate = self.relax.specific_setup.setup('calc', function_type)
-        if self.calculate == None:
-            raise RelaxFuncSetupError, ('calculate', function_type)
+        self.map_labels = self.relax.specific_setup.setup('map_labels', function_type, raise_error=0)
+        self.calculate = self.relax.specific_setup.setup('calculate', function_type)
 
         # Function arguments.
         self.run = run
@@ -80,22 +72,12 @@ class Base_Map:
             except OSError:
                 pass
 
-        # Create the scaling matrix.
-        #self.scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[self.res_index], self.res_index)
-
         # Get the map bounds.
         self.bounds = self.map_bounds(self.run, self.index)
         if lower != None:
             self.bounds[:, 0] = array(lower, Float64)
         if upper != None:
             self.bounds[:, 1] = array(upper, Float64)
-
-        # Diagonal scaling.
-        #if self.relax.data.res[index].scaling.has_key(self.run):
-        #    for i in xrange(len(self.bounds[0])):
-        #        self.bounds[:, i] = matrixmultiply(inverse(self.scaling_matrix), self.bounds[:, i])
-        #    if point != None:
-        #        self.point = matrixmultiply(inverse(self.scaling_matrix), self.point)
 
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)

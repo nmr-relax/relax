@@ -34,58 +34,85 @@ class PDB:
         self.relax = relax
 
 
-    def pdb(self, file, model, load_seq):
+    def pdb(self, run, file, model, load_seq):
         """The pdb loading function."""
 
+        # Arguments.
+        self.run = run
+        self.file = file
+        self.model = model
+        self.load_seq = load_seq
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
         # Test if sequence data is loaded.
-        if not load_seq and not len(self.relax.data.res):
+        if not self.load_seq and not len(self.relax.data.res[self.run]):
             raise RelaxSequenceError
 
         # Test if the file exists.
-        if not access(file, F_OK):
-            raise RelaxFileError, ('PDB', file)
+        if not access(self.file, F_OK):
+            raise RelaxFileError, ('PDB', self.file)
+
+        # Load the structures.
+        self.load_structures()
+
+        # Print the PDB info.
+        print self.relax.data.pdb[self.run]
+
+        # Sequence loading.
+        if self.load_seq and not len(self.relax.data.res[self.run]):
+            self.relax.generic.sequence.load_PDB_sequence(self.run)
+
+        # Load into Molmol (if running).
+        self.relax.generic.molmol.open_pdb(self.run)
+
+
+    def load_structures(self):
+        """Function for loading the structures from the PDB file."""
 
         # Load the first structure in the PDB file.
-        if model == None:
+        if self.model == None:
             print "Loading the first structure from the PDB file."
 
             # Load the structure into 'str'.
-            str = Scientific.IO.PDB.Structure(file)
+            str = Scientific.IO.PDB.Structure(self.file)
 
             # Test the structure.
             if len(str) == 0:
-                raise RelaxPdbLoadError, file
+                raise RelaxPdbLoadError, self.file
 
-            # Place the structure in 'self.relax.data.pdb'.
-            self.relax.data.pdb = str
+            # Place the structure in 'self.relax.data.pdb[self.run]'.
+            self.relax.data.pdb[self.run] = str
 
 
         # Load the structure i from the PDB file.
-        elif type(model) == int:
+        elif type(self.model) == int:
             print "Loading the structure i from the PDB file."
 
             # Load the structure into 'str'.
-            str = Scientific.IO.PDB.Structure(file, model)
+            str = Scientific.IO.PDB.Structure(self.file, self.model)
 
             # Test the structure.
             if len(str) == 0:
-                raise RelaxPdbLoadError, file
+                raise RelaxPdbLoadError, self.file
 
-            # Place the structure in 'self.relax.data.pdb'.
-            self.relax.data.pdb = str
+            # Place the structure in 'self.relax.data.pdb[self.run]'.
+            self.relax.data.pdb[self.run] = str
 
         # Load all NMR structures.
-        elif match('[Aa][Ll][Ll]', model):
+        elif match('[Aa][Ll][Ll]', self.model):
             print "Loading all NMR structures from the PDB file."
 
             # Initialisation.
-            self.relax.data.pdb = []
+            self.relax.data.pdb[self.run] = []
             i = 1
 
             # Loop over all the other structures.
             while 1:
                 # Load the pdb files.
-                str = Scientific.IO.PDB.Structure(file, i)
+                str = Scientific.IO.PDB.Structure(self.file, i)
 
                 # Print out.
                 print str
@@ -93,26 +120,16 @@ class PDB:
                 # Test if the last structure has been reached.
                 if len(str) == 0:
                     if i == 1:
-                        raise RelaxPdbLoadError, file
+                        raise RelaxPdbLoadError, self.file
                     del str
                     break
 
-                # Add the structure to the list of structures in 'self.relax.data.pdb'.
-                self.relax.data.pdb.append(str)
+                # Add the structure to the list of structures in 'self.relax.data.pdb[self.run]'.
+                self.relax.data.pdb[self.run].append(str)
 
                 # Increment i.
                 i = i + 1
 
         # Bad model argument.
         else:
-            raise RelaxInvalidError, ('model', model)
-
-        # Print the PDB info.
-        print self.relax.data.pdb
-
-        # Sequence loading.
-        if load_seq and not len(self.relax.data.res):
-            self.relax.generic.sequence.load_PDB_sequence()
-
-        # Load into Molmol (if running).
-        self.relax.generic.molmol.open_pdb()
+            raise RelaxInvalidError, ('model', self.model)

@@ -236,6 +236,11 @@ class RelaxErrors:
         def __init__(self):
             self.text = "The sequence has not been loaded."
 
+    # The two sequences are different.
+    class RelaxDiffSeqError(BaseError):
+        def __init__(self, run1, run2):
+            self.text = "The sequences for the runs " + `run1` + " and " + `run2` + " are not the same."
+
     # Cannot find the residue in the sequence.
     class RelaxNoResError(BaseError):
         def __init__(self, number, name=None):

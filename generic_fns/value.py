@@ -35,7 +35,7 @@ class Value:
         """Function for setting residue specific data values."""
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
+        if not len(self.relax.data.res[run]):
             raise RelaxSequenceError
 
         # Test if the run exists.
@@ -61,26 +61,24 @@ class Value:
 
         # Specific set function.
         set = self.relax.specific_setup.setup('set', function_type)
-        if set == None:
-            raise RelaxFuncSetupError, ('set', function_type)
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res[run])):
             # Residue skipping.
             ###################
 
             # Skip unselected residues.
-            if not self.relax.data.res[i].select:
+            if not self.relax.data.res[run][i].select:
                 continue
 
             # If 'res_num' is not None, skip the residue if there is no match.
-            if type(res_num) == int and not self.relax.data.res[i].num == res_num:
+            if type(res_num) == int and not self.relax.data.res[run][i].num == res_num:
                 continue
-            elif type(res_num) == str and not match(res_num, `self.relax.data.res[i].num`):
+            elif type(res_num) == str and not match(res_num, `self.relax.data.res[run][i].num`):
                 continue
 
             # If 'res_name' is not None, skip the residue if there is no match.
-            if res_name != None and not match(res_name, self.relax.data.res[i].name):
+            if res_name != None and not match(res_name, self.relax.data.res[run][i].name):
                 continue
 
 
@@ -114,21 +112,25 @@ class Value:
             ####################################
 
             # Chi-squared.
-            if hasattr(self.relax.data.res[i], 'chi2') and self.relax.data.res[i].chi2.has_key(run):
-                self.relax.data.res[i].chi2[run] = None
+            if hasattr(self.relax.data.res[run][i], 'chi2'):
+                self.relax.data.res[run][i].chi2 = None
 
             # Iteration count.
-            if hasattr(self.relax.data.res[i], 'iter') and self.relax.data.res[i].iter.has_key(run):
-                self.relax.data.res[i].iter[run] = None
+            if hasattr(self.relax.data.res[run][i], 'iter'):
+                self.relax.data.res[run][i].iter = None
 
             # Function count.
-            if hasattr(self.relax.data.res[i], 'f_count') and self.relax.data.res[i].f_count.has_key(run):
-                self.relax.data.res[i].f_count[run] = None
+            if hasattr(self.relax.data.res[run][i], 'f_count'):
+                self.relax.data.res[run][i].f_count = None
 
             # Gradient count.
-            if hasattr(self.relax.data.res[i], 'g_count') and self.relax.data.res[i].g_count.has_key(run):
-                self.relax.data.res[i].g_count[run] = None
+            if hasattr(self.relax.data.res[run][i], 'g_count'):
+                self.relax.data.res[run][i].g_count = None
 
             # Hessian count.
-            if hasattr(self.relax.data.res[i], 'h_count') and self.relax.data.res[i].h_count.has_key(run):
-                self.relax.data.res[i].h_count[run] = None
+            if hasattr(self.relax.data.res[run][i], 'h_count'):
+                self.relax.data.res[run][i].h_count = None
+
+            # Warning.
+            if hasattr(self.relax.data.res[run][i], 'warning'):
+                self.relax.data.res[run][i].warning = None

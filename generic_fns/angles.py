@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,12 +34,16 @@ class Angles:
     def angles(self, run):
         """Function for calculating the XH vector from the loaded structure."""
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
         # Test if the PDB file has been loaded.
-        if not hasattr(self.relax.data, 'pdb'):
+        if not self.relax.data.pdb.has_key(run):
             raise RelaxPdbError
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
+        if not len(self.relax.data.res[run]):
             raise RelaxSequenceError
 
         # Test if the diffusion tensor data is loaded.
@@ -50,15 +54,15 @@ class Angles:
         self.run = run
 
         # Isotropic diffusion.
-        if self.relax.data.diff[run].type == 'iso':
+        if self.relax.data.diff[self.run].type == 'iso':
             return
 
         # Axially symmetric diffusion.
-        elif self.relax.data.diff[run].type == 'axial':
+        elif self.relax.data.diff[self.run].type == 'axial':
             self.axial()
 
         # Fully anisotropic diffusion.
-        elif self.relax.data.diff[run].type == 'aniso':
+        elif self.relax.data.diff[self.run].type == 'aniso':
             raise RelaxError, "No coded yet."
 
 
@@ -70,14 +74,14 @@ class Angles:
         """
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res[self.run])):
             # Test if the vector has been calculated.
-            if not hasattr(self.relax.data.res[i], 'xh_unit'):
-                print "No angles could be calculated for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
+            if not hasattr(self.relax.data.res[self.run][i], 'xh_unit'):
+                print "No angles could be calculated for residue '" + `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + "'."
                 continue
 
             # Calculate alpha.
-            self.relax.data.res[i].alpha = acos(dot(self.relax.data.diff[self.run].axis_unit, self.relax.data.res[i].xh_unit))
+            self.relax.data.res[self.run][i].alpha = acos(dot(self.relax.data.diff[self.run].axis_unit, self.relax.data.res[self.run][i].xh_unit))
 
             # Print out.
-            print `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + ":  alpha = " + `360.0 * self.relax.data.res[i].alpha / (2.0 * pi)` + " deg."
+            print `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + ":  alpha = " + `360.0 * self.relax.data.res[self.run][i].alpha / (2.0 * pi)` + " deg."

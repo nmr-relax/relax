@@ -71,19 +71,31 @@ class Molmol:
         self.relax.generic.molmol.write(command=command)
 
 
-    def view(self):
+    def view(self, run=None):
         """Function for viewing the collection of molecules extracted from the PDB file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run which the PDB belongs to.
+
 
         Example
         ~~~~~~~
 
-        relax> molmol.view()
+        relax> molmol.view('m1')
+        relax> molmol.view(run='pdb')
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "molmol.view()"
+            text = sys.ps3 + "molmol.view("
+            text = text + "run=" + `run` + ")"
             print text
 
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
         # Execute the functional code.
-        self.relax.generic.molmol.view()
+        self.relax.generic.molmol.view(run=run)

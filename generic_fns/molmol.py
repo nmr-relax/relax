@@ -52,15 +52,19 @@ class Molmol:
 
         # Test if the PDB file has been loaded.
         if hasattr(self.relax.data, 'pdb'):
-            self.open_pdb()
+            self.open_pdb(run)
 
         # Run InitAll to remove everything from molmol.
         else:
             self.write("InitAll yes")
 
 
-    def open_pdb(self):
+    def open_pdb(self, run=None):
         """Function for opening the PDB file in Molmol."""
+
+        # Argument.
+        if run:
+            self.run = run
 
         # Test if the pipe is open.
         if not self.pipe_open():
@@ -70,7 +74,7 @@ class Molmol:
         self.write("InitAll yes")
 
         # Open the PDB.
-        self.write("ReadPdb " + self.relax.data.pdb.filename)
+        self.write("ReadPdb " + self.relax.data.pdb[self.run].filename)
 
 
     def pipe_open(self):
@@ -90,8 +94,11 @@ class Molmol:
         return 1
 
 
-    def view(self):
+    def view(self, run=None):
         """Function for running Molmol."""
+
+        # Arguments.
+        self.run = run
 
         # Open a Molmol pipe.
         if self.pipe_open():

@@ -34,148 +34,123 @@ class Model_selection:
     def select(self, method=None, modsel_run=None, runs=None):
         """Model selection function."""
 
-        # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
-            raise RelaxSequenceError
-
         # The runs argument.
         if runs == None:
-            runs = deepcopy(self.relax.data.run_names)
+            # Use the runs from 'self.relax.data.run_names'.
+            self.runs = deepcopy(self.relax.data.run_names)
 
             # Remove the model selection run name if it is in the list.
-            if modsel_run in runs:
-                runs.remove(modsel_run)
+            if modsel_run in self.runs:
+                self.runs.remove(modsel_run)
         else:
-            if len(runs) == 0:
-                raise RelaxError, "The runs argument " + `runs` + " must be an array of length greater than zero."
-            for run in runs:
-                if type(run) == list:
-                    if len(run) == 0:
-                        raise RelaxError, "The runs argument element " + `run` + " must be an array of length greater than zero."
-                    for run2 in run:
-                        if not run2 in self.relax.data.run_names:
-                            raise RelaxNoRunError, run2
-                elif not run in self.relax.data.run_names:
-                    raise RelaxNoRunError, run
-
-        # Test that all the runs are of the same type.
-        run_type = 'None'
-        for run in runs:
-            if type(run) == list:
-                for run2 in run:
-                    # Find the index of run2.
-                    index = self.relax.data.run_names.index(run2)
-
-                    # Initialise the type.
-                    if run_type == 'None':
-                        run_type = self.relax.data.run_types[index]
-
-                    # Test if the run type is the same as 'run_type'.
-                    if self.relax.data.run_types[index] != run_type:
-                        raise RelaxError, "The run supplied are not all of the same type."
-            else:
-                # Find the index of run2.
-                index = self.relax.data.run_names.index(run)
-
-                # Initialise the type.
-                if run_type == 'None':
-                    run_type = self.relax.data.run_types[index]
-
-                # Test if the run type is the same as 'run_type'.
-                if self.relax.data.run_types[index] != run_type:
-                    raise RelaxError, "The run supplied are not all of the same type."
-
-        # Test if each run has a valid parameter and chi-squared data structure.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # Loop over the runs.
-            for run in runs:
-                if type(run) == list:
-                    for run2 in run:
-                        if not hasattr(self.relax.data.res[i], 'params'):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
-                        elif not self.relax.data.res[i].params.has_key(run2):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
-                        elif not hasattr(self.relax.data.res[i], 'chi2'):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
-                        elif not self.relax.data.res[i].chi2.has_key(run2):
-                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
-                else:
-                    if not hasattr(self.relax.data.res[i], 'params'):
-                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
-                    elif not self.relax.data.res[i].params.has_key(run):
-                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
-                    elif not hasattr(self.relax.data.res[i], 'chi2'):
-                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
-                    elif not self.relax.data.res[i].chi2.has_key(run):
-                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
-
-        # Initialise.
-        self.runs = deepcopy(runs)
+            self.runs = runs
 
         # Select the model selection technique.
         if method == 'AIC':
-            self.modsel = self.criteria_modsel
             self.formula = self.aic
         elif method == 'AICc':
-            self.modsel = self.criteria_modsel
             self.formula = self.aicc
         elif method == 'BIC':
-            self.modsel = self.criteria_modsel
             self.formula = self.bic
         elif method == 'CV':
-            self.modsel = self.cv
+            self.formula = self.cv
         else:
             raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
 
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
+        # No runs.
+        if len(self.runs) == 0:
+            raise RelaxError, "No runs are availible for use in model selection."
 
-            # Test if data exists for this residue.
-            flag = 0
-            for run in runs:
-                # Cross-validation.
-                if type(run) == list:
-                    for run2 in run:
-                        if not hasattr(self.relax.data.res[i], 'params'):
-                            flag = 1
-                        elif not self.relax.data.res[i].params.has_key(run2):
-                            flag = 1
-                        elif not hasattr(self.relax.data.res[i], 'chi2'):
-                            flag = 1
-                        elif not self.relax.data.res[i].chi2.has_key(run2):
-                            flag = 1
+        # Store the first run.
+        if type(self.runs[0]) == list:
+            self.first_run = self.runs[0][0]
+        else:
+            self.first_run = self.runs[0]
 
-                # All other selection methods.
+        # Function type.
+        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.first_run)]
+
+        # Specific duplicate data, number of instances, and model statistics functions.
+        self.duplicate_data = self.relax.specific_setup.setup('duplicate_data', self.function_type)
+        self.count_num_instances = self.relax.specific_setup.setup('num_instances', self.function_type)
+        self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
+        self.skip_function = self.relax.specific_setup.setup('skip_function', self.function_type)
+
+        # The number of instances.
+        self.num_instances = self.count_num_instances(self.first_run)
+
+        # Tests for all runs.
+        for run in self.runs:
+            # An array of arrays - for cross validation model selection.
+            if type(run) == list:
+                # No runs.
+                if len(run) == 0:
+                    raise RelaxError, "No runs are availible for use in model selection in the array " + `run` + "."
+
+                # Loop over the nested array.
+                for run2 in run:
+                    # Run various tests.
+                    self.tests(run2)
+
+            # runs is a normal array.
+            else:
+                # Run various tests.
+                self.tests(run)
+
+        # Loop over the number of instances.
+        for i in xrange(self.num_instances):
+            # Initial model.
+            best_model = None
+            best_crit = float('inf')
+
+            # Loop over the runs.
+            for j in xrange(len(self.runs)):
+                # Single-item-out cross validation.
+                if method == 'CV':
+                    # Sum of chi-squared values.
+                    sum_crit = 0.0
+
+                    # Loop over the validation samples and sum the chi-squared values.
+                    for k in xrange(len(self.runs[j])):
+                        # Skip function.
+                        if self.skip_function(run=run[j][k], instance=i):
+                            continue
+
+                        # Get the model statistics.
+                        k, n, chi2 = model_stats(run=run[j], instance=i)
+
+                        # Chi2 sum.
+                        sum_crit = sum_crit + chi2
+
+                    # Cross-validation criterion (average chi-squared value).
+                    crit = sum_crit / float(len(self.runs[j]))
+
+                # Other model selection methods.
                 else:
-                    if not hasattr(self.relax.data.res[i], 'params'):
-                        flag = 1
-                    elif not self.relax.data.res[i].params.has_key(run):
-                        flag = 1
-                    elif not hasattr(self.relax.data.res[i], 'chi2'):
-                        flag = 1
-                    elif not self.relax.data.res[i].chi2.has_key(run):
-                        flag = 1
-            if flag:
-                continue
+                    # Skip function.
+                    if self.skip_function(run=run[j], instance=i):
+                        continue
 
-            # Model selection.
-            best_model = self.modsel(i)
+                    # Get the model statistics.
+                    k, n, chi2 = model_stats(run=run[j], instance=i)
 
-            # Add the modsel_run to self.relax.data.res[i].runs
-            self.relax.data.res[i].runs.append(modsel_run)
+                    # Calculate the criterion value.
+                    crit = self.formula(chi2, float(k), float(n))
+
+                # Select model.
+                if crit < best_crit:
+                    best_model = run
+                    best_crit = crit
 
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
-            self.duplicate_data(best_model, modsel_run, i)
+            self.duplicate_data(new_run=modsel_run, old_run=best_model, instance=i)
+
+            # Add the modsel_run to 'self.relax.data.run_names' and 'self.relax.data.run_types'.
+            self.relax.data.run_names.append(modsel_run)
+            self.relax.data.run_types.append(self.function_type)
 
 
-    def aic(self, i, model, k, n):
+    def aic(self, chi2, k, n):
         """Akaike's Information Criteria (AIC).
 
         The formula is:
@@ -187,10 +162,10 @@ class Model_selection:
             k is the number of parameters in the model.
         """
 
-        return self.relax.data.res[i].chi2[model] + 2.0*k
+        return chi2 + 2.0*k
 
 
-    def aicc(self, i, model, k, n):
+    def aicc(self, chi2, k, n):
         """Small sample size corrected AIC.
 
         The formula is:
@@ -205,10 +180,10 @@ class Model_selection:
             n is the dimension of the relaxation data set.
         """
 
-        return self.relax.data.res[i].chi2[model] + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
+        return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
 
 
-    def bic(self, i, model, k, n):
+    def bic(self, chi2, k, n):
         """Bayesian or Schwarz Information Criteria.
 
         The formula is:
@@ -221,89 +196,42 @@ class Model_selection:
             n is the dimension of the relaxation data set.
         """
 
-        return self.relax.data.res[i].chi2[model] + k * log(n)
+        return chi2 + k * log(n)
 
 
-    def criteria_modsel(self, i):
-        """Generic function for Information Criteria model selection."""
+    def tests(self, run):
+        """Function containing tests the given run."""
 
-        # Initial model.
-        best_model = None
-        best_crit = float('inf')
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
 
-        # Loop over the models.
-        for model in self.runs:
-            # Count the number of parameters in the model.
-            k = len(self.relax.data.res[i].params[model])
+        # Find the index of the run.
+        index = self.relax.data.run_names.index(run)
 
-            # Calculate the dimension of the relaxation data set.
-            n = len(self.relax.data.res[i].relax_data[model])
+        # Test if the function type is the same as 'self.function_type'.
+        if self.relax.data.run_types[index] != self.function_type:
+            raise RelaxError, "The runs supplied are not all of the same function type."
 
-            # Calculate the criterion value.
-            crit = self.formula(i, model, k, n)
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res[run]):
+            raise RelaxSequenceError
 
-            # Select model.
-            if crit < best_crit:
-                best_model = model
-                best_crit = crit
+        # Sequence lengths.
+        if len(self.relax.data.res[self.first_run]) != len(self.relax.data.res[run]):
+            raise RelaxDiffSeqError, (self.first_run, run)
 
-        return best_model
+        # Loop over the sequence and test that the residue number and residue name are the same.
+        for i in xrange(len(self.relax.data.res[self.first_run])):
+            # Residue number.
+            if self.relax.data.res[self.first_run][i].num != self.relax.data.res[run][i].num:
+                raise RelaxDiffSeqError, (self.first_run, run)
 
+            # Residue name.
+            if self.relax.data.res[self.first_run][i].name != self.relax.data.res[run][i].name:
+                raise RelaxDiffSeqError, (self.first_run, run)
 
-    def cv(self, i):
-        """Single-item-out cross-validation."""
-
-        # Initial model.
-        best_model = None
-        best_crit = float('inf')
-
-        # Loop over the models.
-        for k in xrange(len(self.runs[0])):
-            # Sum of chi-squared values.
-            sum_crit = 0.0
-
-            # Loop over the validation samples and sum the chi-squared values.
-            for j in xrange(len(self.runs)):
-                sum_crit = sum_crit + self.relax.data.res[i].chi2[self.runs[j][k]]
-
-            # Cross-validation criterion (average chi-squared value).
-            crit = sum_crit / float(len(self.runs))
-
-            # Select model.
-            if crit < best_crit:
-                best_model = self.runs[0][k]
-                best_crit = crit
-
-        return best_model
-
-
-    def duplicate_data(self, best_model, modsel_run, i):
-        """Function for duplicating of run specific data.
-
-        The run specific data in self.relax.data.res[i] is copied from the run 'best_model' to the
-        run 'modsel_run'.
-        """
-
-        # Test if 'best_model' exists.
-        if not best_model in self.relax.data.run_names:
-            raise RelaxRunError, best_model
-
-        # Duplicate the diffusion tensor data.
-        if self.relax.data.diff.has_key(best_model):
-            self.relax.data.diff[modsel_run] = deepcopy(self.relax.data.diff[best_model])
-
-        # Duplicate the residue specific data.
-        for data in dir(self.relax.data.res[i]):
-            # Get the data object.
-            object = getattr(self.relax.data.res[i], data)
-
-            # Test if the object is a dictionary (hash).
-            if type(object) != dict:
-                continue
-
-            # Test if the object contains the key 'best_model'.
-            if not object.has_key(best_model):
-                continue
-
-            # Duplicate the data.
-            object[modsel_run] = deepcopy(object[best_model])
+        # Test if the number of instances are all the same.
+        local_num_instances = self.count_num_instances(run)
+        if self.num_instances != local_num_instances:
+            raise RelaxError, "The number of instances are not the same between runs " + `self.first_run` + " and " + `run` + "."

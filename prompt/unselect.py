@@ -36,8 +36,21 @@ class Unselect:
         self.__relax_help__ = help.relax_class_help
 
 
-    def all(self):
+    def all(self, run=None):
         """Function for unselecting all residues.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the run argument is set to the default of None, then all runs will be affected, otherwise
+        only the supplied run will be affected.
+
 
         Examples
         ~~~~~~~~
@@ -45,22 +58,35 @@ class Unselect:
         To unselect all residues type:
 
         relax> unselect.all()
+
+
+        To unselect all residues for the run 'srls_m1', type:
+
+        relax> select.all('srls_m1')
+        relax> select.all(run='srls_m1')
         """
 
         # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "unselect.all()"
+            text = sys.ps3 + "unselect.all("
+            text = text + "run=" + `run` + ")"
             print text
 
-        # Execture the functional code.
-        self.relax.generic.selection.unsel_all()
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.relax.generic.selection.unsel_all(run=run)
 
 
-    def res(self, num=None, name=None, change_all=0):
+    def res(self, run=None, num=None, name=None, change_all=0):
         """Function for unselecting specific residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
 
         num:  The residue number.
 
@@ -71,6 +97,9 @@ class Unselect:
 
         Description
         ~~~~~~~~~~~
+
+        If the run argument is set to the default of None, then all runs will be affected, otherwise
+        only the supplied run will be affected.
 
         The residue number can be either an integer for unselecting a single residue or a python
         regular expression, in string form, for unselecting multiple residues.  For details about
@@ -86,27 +115,32 @@ class Unselect:
         Examples
         ~~~~~~~~
 
-        To unselect all glycines type:
+        To unselect all glycines for the run 'm5', type:
 
-        relax> unselect.res(name='GLY|ALA')
-        relax> unselect.res(name='[GA]L[YA]')
+        relax> unselect.res(run='m5', name='GLY|ALA')
+        relax> unselect.res(run='m5', name='[GA]L[YA]')
 
         To unselect residue 12 MET type:
 
-        relax> unselect.res(12)
-        relax> unselect.res(12, 'MET')
-        relax> unselect.res('12')
-        relax> unselect.res('12', 'MET')
-        relax> unselect.res(num='12', name='MET')
+        relax> unselect.res('m5', 12)
+        relax> unselect.res('m5', 12, 'MET')
+        relax> unselect.res('m5', '12')
+        relax> unselect.res('m5', '12', 'MET')
+        relax> unselect.res(run='m5', num='12', name='MET')
         """
 
         # Function intro test.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "unselect.res("
-            text = text + "num=" + `num`
+            text = text + "run=" + `run`
+            text = text + ", num=" + `num`
             text = text + ", name=" + `name`
             text = text + ", change_all=" + `change_all` + ")"
             print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
 
         # Residue number.
         if num != None and type(num) != int and type(num) != str:
@@ -124,12 +158,25 @@ class Unselect:
         if type(change_all) != int or (change_all != 0 and change_all != 1):
             raise RelaxBinError, ('change_all', change_all)
 
-        # Execture the functional code.
-        self.relax.generic.selection.unsel_res(num=num, name=name, change_all=change_all)
+        # Execute the functional code.
+        self.relax.generic.selection.unsel_res(run=run, num=num, name=name, change_all=change_all)
 
 
-    def reverse(self):
+    def reverse(self, run=None):
         """Function for the reversal of the residue selection.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the run argument is set to the default of None, then all runs will be affected, otherwise
+        only the supplied run will be affected.
+
 
         Examples
         ~~~~~~~~
@@ -141,8 +188,13 @@ class Unselect:
 
         # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "unselect.reverse()"
+            text = sys.ps3 + "unselect.reverse("
+            text = text + "run=" + `run` + ")"
             print text
 
-        # Execture the functional code.
-        self.relax.generic.selection.reverse()
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.relax.generic.selection.reverse(run=run)

@@ -11,8 +11,8 @@ nuclei('N')
 read.sequence(name, 'noe.500.out')
 
 # Load a PDB file.
-#pdb('example.pdb')
-#vectors()
+#pdb(name, 'example.pdb')
+#vectors(name)
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')

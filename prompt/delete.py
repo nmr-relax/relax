@@ -46,12 +46,9 @@ class Delete:
 
         The data_type argument specifies what type of data is to be deleted and must be one of the
         following strings:
-            seq:  Sequence data.
+            res:  All residue specific data.
             diff:  Diffusion tensor.
-            relax_data:  Relaxation data.
-            mf:  Model-free data.
-            all:  All data associated with the run.
-
+            None:  All data associated with the run.
         """
 
         # Function intro text.
@@ -62,12 +59,12 @@ class Delete:
             print text
 
         # The run argument.
-        if run != None and type(run) != str:
-            raise RelaxNoneStrError, ('run', run)
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
 
         # Data_type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+        if type != None and type(data_type) != str:
+            raise RelaxNoneStrError, ('data type', data_type)
 
         # Execute the functional code.
         self.relax.generic.delete.data(run=run, data_type=data_type)

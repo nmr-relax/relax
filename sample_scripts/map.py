@@ -1,14 +1,14 @@
 # Script for mapping the model-free space.
 
-# Load the sequence.
-read.sequence('noe.500.out')
+# Set the run name (also the name of a preset model-free model).
+name = 'tm3'
+create_run(name, 'mf')
 
 # Nuclei type
 nuclei('N')
 
-# Set the run name (also the name of a preset model-free model).
-name = 'tm3'
-create_run(name, 'mf')
+# Load the sequence.
+read.sequence(name, 'noe.500.out')
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -28,7 +28,7 @@ model.select_mf(run=name, model=name)
 #model.create_mf(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Map data.
-inc = 50
+inc = 10
 from math import pi
 if name == 'x4':
     lower = [0, 0, 0]
@@ -45,5 +45,5 @@ else:
     upper = None
     swap = None
     point = None
-map(name, res_num=95, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
+map(name, res_num=1, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
 dx()

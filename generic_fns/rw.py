@@ -36,7 +36,7 @@ class RW:
         """Function for reading the data out of a file."""
 
         # Test if the sequence data has been read.
-        if not len(self.relax.data.res):
+        if not len(self.relax.data.res[run]):
             raise RelaxSequenceError
 
         # Test if the run exists.
@@ -45,8 +45,6 @@ class RW:
 
         # Equation type specific function setup.
         self.read_function = self.relax.specific_setup.setup('read', data_type)
-        if self.read_function == None:
-            raise RelaxFuncSetupError, ('read', data_type)
 
         # The results file.
         if dir == None:
@@ -91,15 +89,9 @@ class RW:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific header writing function setup.
+        # Specific header writing and results writing functions.
         self.write_header = self.relax.specific_setup.setup('write_header', function_type)
-        if self.write_header == None:
-            raise RelaxFuncSetupError, ('write_header', res.equations[run])
-
-        # Equation type specific function setup.
         self.write_function = self.relax.specific_setup.setup('write_results', function_type)
-        if self.write_function == None:
-            raise RelaxFuncSetupError, ('write_results', res.equations[run])
 
         # The results file.
         file_name = dir + '/' + file
@@ -111,12 +103,9 @@ class RW:
         self.write_header(results_file, run)
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Reassign data structure.
-            res = self.relax.data.res[i]
-
+        for i in xrange(len(self.relax.data.res[run])):
             # Skip unselected residues.
-            if not res.select:
+            if not self.relax.data.res[run][i].select:
                 continue
 
             # Write the results.

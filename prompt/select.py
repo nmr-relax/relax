@@ -36,31 +36,57 @@ class Select:
         self.__relax_help__ = help.relax_class_help
 
 
-    def all(self):
+    def all(self, run=None):
         """Function for selecting all residues.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the run argument is set to the default of None, then all runs will be affected, otherwise
+        only the supplied run will be affected.
+
 
         Examples
         ~~~~~~~~
 
-        To select all residues type:
+        To select all residues for all runs type:
 
         relax> select.all()
+
+
+        To select all residues for the run 'srls_m1', type:
+
+        relax> select.all('srls_m1')
+        relax> select.all(run='srls_m1')
         """
 
         # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "select.all()"
+            text = sys.ps3 + "select.all("
+            text = text + "run=" + `run` + ")"
             print text
 
-        # Execture the functional code.
-        self.relax.generic.selection.sel_all()
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.relax.generic.selection.sel_all(run=run)
 
 
-    def res(self, num=None, name=None, change_all=0):
+    def res(self, run=None, num=None, name=None, change_all=0):
         """Function for selecting specific residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
 
         num:  The residue number.
 
@@ -71,6 +97,9 @@ class Select:
 
         Description
         ~~~~~~~~~~~
+
+        If the run argument is set to the default of None, then all runs will be affected, otherwise
+        only the supplied run will be affected.
 
         The residue number can be either an integer for selecting a single residue or a python
         regular expression, in string form, for selecting multiple residues.  For details about
@@ -86,28 +115,33 @@ class Select:
         Examples
         ~~~~~~~~
 
-        To select only glycines and alanines, assuming they have been loaded with the names GLY and
-        ALA, type:
+        To select only glycines and alanines for the run 'm3', assuming they have been loaded with
+        the names GLY and ALA, type:
 
-        relax> select.res(name='GLY|ALA', change_all=1)
-        relax> select.res(name='[GA]L[YA]', change_all=1)
+        relax> select.res(run='m3', name='GLY|ALA', change_all=1)
+        relax> select.res(run='m3', name='[GA]L[YA]', change_all=1)
 
         To select residue 5 CYS in addition to the currently selected residues, type:
 
-        relax> select.res(5)
-        relax> select.res(5, 'CYS')
-        relax> select.res('5')
-        relax> select.res('5', 'CYS')
-        relax> select.res(num='5', name='CYS')
+        relax> select.res('m3', 5)
+        relax> select.res('m3', 5, 'CYS')
+        relax> select.res('m3', '5')
+        relax> select.res('m3', '5', 'CYS')
+        relax> select.res(run='m3', num='5', name='CYS')
         """
 
         # Function intro test.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "select.res("
-            text = text + "num=" + `num`
+            text = text + "run=" + `run`
+            text = text + ", num=" + `num`
             text = text + ", name=" + `name`
             text = text + ", change_all=" + `change_all` + ")"
             print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
 
         # Residue number.
         if num != None and type(num) != int and type(num) != str:
@@ -125,12 +159,25 @@ class Select:
         if type(change_all) != int or (change_all != 0 and change_all != 1):
             raise RelaxBinError, ('change_all', change_all)
 
-        # Execture the functional code.
-        self.relax.generic.selection.sel_res(num=num, name=name, change_all=change_all)
+        # Execute the functional code.
+        self.relax.generic.selection.sel_res(run=run, num=num, name=name, change_all=change_all)
 
 
-    def reverse(self):
+    def reverse(self, run=None):
         """Function for the reversal of the residue selection.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the run argument is set to the default of None, then all runs will be affected, otherwise
+        only the supplied run will be affected.
+
 
         Examples
         ~~~~~~~~
@@ -142,8 +189,13 @@ class Select:
 
         # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "select.reverse()"
+            text = sys.ps3 + "select.reverse("
+            text = text + "run=" + `run` + ")"
             print text
 
-        # Execture the functional code.
-        self.relax.generic.selection.reverse()
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.relax.generic.selection.reverse(run=run)

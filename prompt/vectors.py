@@ -30,11 +30,13 @@ class Vectors:
         self.relax = relax
 
 
-    def vectors(self, heteronuc='N', proton='H'):
+    def vectors(self, run=None, heteronuc='N', proton='H'):
         """Function for calculating XH vectors from the structure.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the vectors to.
 
         heteronuc:  The heteronucleus name as specified in the PDB file.
 
@@ -45,24 +47,30 @@ class Vectors:
         ~~~~~~~
 
         To calculate the XH vectors of the backbone amide nitrogens where in the PDB file the
-        backbone nitrogen is called 'N' and the attached proton is called 'H', type:
+        backbone nitrogen is called 'N' and the attached proton is called 'H', assuming the run
+        'test', type:
 
-        relax> vectors()
-        relax> vectors('N')
-        relax> vectors('N', 'H')
-        relax> vectors(heteronuc='N', proton='H')
+        relax> vectors('test')
+        relax> vectors('test', 'N')
+        relax> vectors('test', 'N', 'H')
+        relax> vectors('test', heteronuc='N', proton='H')
 
         If the attached proton is called 'HN', type:
 
-        relax> vectors(proton='HN')
+        relax> vectors('test', proton='HN')
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "vectors("
-            text = text + "heteronuc=" + `heteronuc`
+            text = text + "run=" + `run`
+            text = text + ", heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton` + ")"
             print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
 
         # The heteronucleus argument.
         if type(heteronuc) != str:
@@ -73,4 +81,4 @@ class Vectors:
             raise RelaxStrError, ('proton', proton)
 
         # Execute the functional code.
-        self.relax.generic.vectors.vectors(heteronuc=heteronuc, proton=proton)
+        self.relax.generic.vectors.vectors(run=run, heteronuc=heteronuc, proton=proton)
