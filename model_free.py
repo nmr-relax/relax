@@ -56,7 +56,7 @@ class Model_free:
             return
 
         # Test the parameter names.
-        s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
+        s2, te, s2f, tf, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0
         for i in range(len(param_types)):
             # Check if the parameter is a string.
             if type(param_types[i]) != str:
@@ -66,7 +66,7 @@ class Model_free:
             # Test the parameter.
             invalid_param = 0
             if param_types[i] == 'S2':
-                if equation == 'mf_ext' or s2:
+                if s2:
                     invalid_param = 1
                 s2 = 1
             elif param_types[i] == 'te':
@@ -93,25 +93,21 @@ class Model_free:
                 if not s2f_flag:
                     invalid_param = 1
                 tf = 1
-            elif param_types[i] == 'S2s':
-                if equation == 'mf_orig' or s2s:
-                    invalid_param = 1
-                s2s = 1
             elif param_types[i] == 'ts':
                 if equation == 'mf_orig' or ts:
                     invalid_param = 1
-                s2s_flag = 0
+                s2_flag = 0
                 for j in range(len(param_types)):
-                    if param_types[j] == 'S2s':
-                        s2s_flag = 1
-                if not s2s_flag:
+                    if param_types[j] == 'S2':
+                        s2_flag = 1
+                if not s2_flag:
                     invalid_param = 1
                 ts = 1
             elif param_types[i] == 'Rex':
                 if rex:
                     invalid_param = 1
                 rex = 1
-            elif param_types[i] == 'Bond length':
+            elif param_types[i] == 'r':
                 if r:
                     invalid_param = 1
                 r = 1
@@ -189,7 +185,7 @@ class Model_free:
         """The fixed parameter value setup function."""
 
         for i in range(len(param_types)):
-            # S2, S2f, and S2s.
+            # S2 and S2f.
             if match("S2", param_types[i]):
                 min_options[i] = 0.5
 
@@ -207,7 +203,7 @@ class Model_free:
                 min_options[i] = 0.0
 
             # Bond length.
-            elif match('Bond length', param_types[i]):
+            elif match('r', param_types[i]):
                 min_options[i] = 1.02 * 1e-10
 
             # CSA.
@@ -224,7 +220,7 @@ class Model_free:
         min_options = []
 
         for i in range(len(param_types)):
-            # S2, S2f, and S2s.
+            # S2 and S2f.
             if match("S2", param_types[i]):
                 min_options.append([inc_vector[i], 0.0, 1.0])
 
@@ -237,7 +233,7 @@ class Model_free:
                 min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
             # Bond length.
-            elif match('Bond length', param_types[i]):
+            elif match('r', param_types[i]):
                 min_options.append([inc_vector[i], 1.0 * 1e-10, 1.05 * 1e-10])
 
             # CSA.
@@ -259,7 +255,7 @@ class Model_free:
 
         # The original model-free equations.
         for i in range(n):
-            # S2, S2f, and S2s (0 <= S2 <= 1).
+            # S2 and S2f (0 <= S2 <= 1).
             if match("S2", param_types[i]):
                 # S2 >= 0
                 A.append(zero_array * 0.0)
@@ -305,7 +301,7 @@ class Model_free:
                 j = j + 1
 
             # Bond length (0.9e-10 <= r <= 2e-10)
-            elif match("Bond length", param_types[i]):
+            elif match("r", param_types[i]):
                 # r >= 0.9e-10
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -375,11 +371,11 @@ class Model_free:
         The following parameters are accepted for the extended model-free equation:
             S2f:         The square of the generalised order parameter of the faster motion.
             tf:          The effective correlation time of the faster motion.
-            S2s:         The square of the generalised order parameter of the slower motion.
+            S2:          The square of the generalised order parameter S2 = S2f*S2s.
             ts:          The effective correlation time of the slower motion.
         The following parameters are accepted for both the original and extended equations:
             Rex:         The chemical exchange relaxation.
-            Bond length: The average bond length <r>.
+            r: The average bond length <r>.
             CSA:         The chemical shift anisotropy.
 
 
@@ -407,13 +403,13 @@ class Model_free:
 
 
         The following commands will create the model-free model 'large_model' which is based on the
-        extended model-free equation and contains the seven parameters 'S2f', 'tf', 'S2s', 'ts',
-        'Rex', 'CSA', 'Bond length'.
+        extended model-free equation and contains the seven parameters 'S2f', 'tf', 'S2', 'ts',
+        'Rex', 'CSA', 'r'.
 
-        relax> model.create_mf('large_model', 'mf_ext', ['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA',
-                               'Bond length'])
-        relax> model.create_mf(model='large_model', param_types=['S2f', 'tf', 'S2s', 'ts', 'Rex',
-                               'CSA', 'Bond length'], equation='mf_ext')
+        relax> model.create_mf('large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts', 'Rex', 'CSA',
+                               'r'])
+        relax> model.create_mf(model='large_model', param_types=['S2f', 'tf', 'S2', 'ts', 'Rex',
+                               'CSA', 'r'], equation='mf_ext')
         """
 
         # Macro intro text.
@@ -475,10 +471,10 @@ class Model_free:
             'm2'    => [S2, te]
             'm3'    => [S2, Rex]
             'm4'    => [S2, te, Rex]
-            'm5'    => [S2f, S2s, ts]
-            'm6'    => [S2f, tf, S2s, ts]
-            'm7'    => [S2f, S2s, ts, Rex]
-            'm8'    => [S2f, tf, S2s, ts, Rex]
+            'm5'    => [S2f, S2, ts]
+            'm6'    => [S2f, tf, S2, ts]
+            'm7'    => [S2f, S2, ts, Rex]
+            'm8'    => [S2f, tf, S2, ts, Rex]
             'm9'    => [Rex]
 
             'm10'    => [CSA]
@@ -486,37 +482,37 @@ class Model_free:
             'm12'    => [CSA, S2, te]
             'm13'    => [CSA, S2, Rex]
             'm14'    => [CSA, S2, te, Rex]
-            'm15'    => [CSA, S2f, S2s, ts]
-            'm16'    => [CSA, S2f, tf, S2s, ts]
-            'm17'    => [CSA, S2f, S2s, ts, Rex]
-            'm18'    => [CSA, S2f, tf, S2s, ts, Rex]
+            'm15'    => [CSA, S2f, S2, ts]
+            'm16'    => [CSA, S2f, tf, S2, ts]
+            'm17'    => [CSA, S2f, S2, ts, Rex]
+            'm18'    => [CSA, S2f, tf, S2, ts, Rex]
             'm19'    => [CSA, Rex]
 
-            'm20'    => [Bond length]
-            'm21'    => [Bond length, S2]
-            'm22'    => [Bond length, S2, te]
-            'm23'    => [Bond length, S2, Rex]
-            'm24'    => [Bond length, S2, te, Rex]
-            'm25'    => [Bond length, S2f, S2s, ts]
-            'm26'    => [Bond length, S2f, tf, S2s, ts]
-            'm27'    => [Bond length, S2f, S2s, ts, Rex]
-            'm28'    => [Bond length, S2f, tf, S2s, ts, Rex]
-            'm29'    => [Bond length, CSA, Rex]
+            'm20'    => [r]
+            'm21'    => [r, S2]
+            'm22'    => [r, S2, te]
+            'm23'    => [r, S2, Rex]
+            'm24'    => [r, S2, te, Rex]
+            'm25'    => [r, S2f, S2, ts]
+            'm26'    => [r, S2f, tf, S2, ts]
+            'm27'    => [r, S2f, S2, ts, Rex]
+            'm28'    => [r, S2f, tf, S2, ts, Rex]
+            'm29'    => [r, CSA, Rex]
 
-            'm30'    => [Bond length, CSA]
-            'm31'    => [Bond length, CSA, S2]
-            'm32'    => [Bond length, CSA, S2, te]
-            'm33'    => [Bond length, CSA, S2, Rex]
-            'm34'    => [Bond length, CSA, S2, te, Rex]
-            'm35'    => [Bond length, CSA, S2f, S2s, ts]
-            'm36'    => [Bond length, CSA, S2f, tf, S2s, ts]
-            'm37'    => [Bond length, CSA, S2f, S2s, ts, Rex]
-            'm38'    => [Bond length, CSA, S2f, tf, S2s, ts, Rex]
-            'm39'    => [Bond length, CSA, Rex]
+            'm30'    => [r, CSA]
+            'm31'    => [r, CSA, S2]
+            'm32'    => [r, CSA, S2, te]
+            'm33'    => [r, CSA, S2, Rex]
+            'm34'    => [r, CSA, S2, te, Rex]
+            'm35'    => [r, CSA, S2f, S2, ts]
+            'm36'    => [r, CSA, S2f, tf, S2, ts]
+            'm37'    => [r, CSA, S2f, S2, ts, Rex]
+            'm38'    => [r, CSA, S2f, tf, S2, ts, Rex]
+            'm39'    => [r, CSA, Rex]
 
         Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
         relaxation data.  This is due to the extreme flexibly of these models where a change in the
-        parameter 'Bond length' is compensated by a corresponding change in the parameter 'CSA' and
+        parameter 'r' is compensated by a corresponding change in the parameter 'CSA' and
         vice versa.
 
 
@@ -640,7 +636,7 @@ class Model_free:
         bounds = zeros((len(param_types), 2), Float64)
 
         for i in range(len(param_types)):
-            # S2, S2f, and S2s.
+            # S2 and S2f.
             if match("S2", param_types[i]):
                 bounds[i] = [0, 1]
 
@@ -653,7 +649,7 @@ class Model_free:
                 bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
 
             # Bond length.
-            elif match('Bond length', param_types[i]):
+            elif match('r', param_types[i]):
                 bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
 
             # CSA.
@@ -676,7 +672,7 @@ class Model_free:
 
         # Increment over the model parameters.
         for i in range(n):
-            # S2, S2f, and S2s.
+            # S2 and S2f.
             if match("S2", param_types[swap[i]]):
                 # Labels.
                 labels = labels + "\"" + param_types[swap[i]] + "\""
@@ -704,7 +700,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.frq[0])**2
 
             # Bond length.
-            elif match("Bond length", param_types[swap[i]]):
+            elif match("r", param_types[swap[i]]):
                 # Labels.
                 labels = labels + "\"" + param_types[swap[i]] + " (A)\""
 
@@ -808,25 +804,17 @@ class Model_free:
             flag = 1
             for j in range(len(types)):
                 # S2.
-                if match("^S2$", types[j]):
+                if types[j] == 'S2':
                     file.write("%-26s" % `params[j]`)
                     flag = 0
                     continue
-
-                # S2f and S2s.
-                elif match("^S2f$", types[j]):
-                    for k in range(len(types)):
-                        if match("^S2s$", types[k]):
-                            file.write("%-26s" % `params[j]*params[k]`)
-                            flag = 0
-                            continue
             if flag:
                 file.write("%-26s" % "N/A")
 
             # S2f.
             flag = 1
             for j in range(len(types)):
-                if match("^S2f$", types[j]):
+                if types[j] == 'S2f':
                     file.write("%-26s" % `params[j]`)
                     flag = 0
                     continue
@@ -836,17 +824,19 @@ class Model_free:
             # S2s.
             flag = 1
             for j in range(len(types)):
-                if match("^S2s$", types[j]):
-                    file.write("%-26s" % `params[j]`)
-                    flag = 0
-                    continue
+                if types[j] == 'S2f':
+                    for k in range(len(types)):
+                        if types[k] == 'S2':
+                            file.write("%-26s" % `params[k]/params[j]`)
+                            flag = 0
+                            continue
             if flag:
                 file.write("%-26s" % "N/A")
 
             # tf.
             flag = 1
             for j in range(len(types)):
-                if match("^tf$", types[j]):
+                if types[j] == 'tf':
                     file.write("%-26s" % `params[j] / 1e-12`)
                     flag = 0
                     continue
@@ -856,11 +846,11 @@ class Model_free:
             # te or ts.
             flag = 1
             for j in range(len(types)):
-                if match("^te$", types[j]):
+                if types[j] == 'te':
                     file.write("%-26s" % `params[j] / 1e-12`)
                     flag = 0
                     continue
-                if match("^ts$", types[j]):
+                elif types[j] == 'ts':
                     file.write("%-26s" % `params[j] / 1e-12`)
                     flag = 0
                     continue
@@ -870,7 +860,7 @@ class Model_free:
             # Rex.
             flag = 1
             for j in range(len(types)):
-                if match("^Rex$", types[j]):
+                if types[j] == 'Rex':
                     file.write("%-26s" % `params[j] * (2.0 * pi * self.relax.data.frq[0])**2`)
                     flag = 0
                     continue
@@ -880,7 +870,7 @@ class Model_free:
             # Bond length.
             flag = 1
             for j in range(len(types)):
-                if match("^Bond length$", types[j]):
+                if types[j] == 'r':
                     file.write("%-26s" % `params[j] / 1e-10`)
                     flag = 0
                     continue
@@ -890,7 +880,7 @@ class Model_free:
             # CSA.
             flag = 1
             for j in range(len(types)):
-                if match("^CSA$", types[j]):
+                if types[j] == 'CSA':
                     file.write("%-26s" % `params[j] / 1e-6`)
                     flag = 0
                     continue
@@ -924,7 +914,7 @@ class Model_free:
                 self.scale_vect[i] = 1.0 / (2.0 * pi * self.relax.data.frq[0]) ** 2
 
             # Bond length.
-            elif param_types[i] == 'Bond length':
+            elif param_types[i] == 'r':
                 self.scale_vect[i] = 1e-10
 
             # CSA.
@@ -975,16 +965,16 @@ class Model_free:
             param_types = ['S2', 'te', 'Rex']
         elif model == 'm5':
             equation = 'mf_ext'
-            param_types = ['S2f', 'S2s', 'ts']
+            param_types = ['S2f', 'S2', 'ts']
         elif model == 'm6':
             equation = 'mf_ext'
-            param_types = ['S2f', 'tf', 'S2s', 'ts']
+            param_types = ['S2f', 'tf', 'S2', 'ts']
         elif model == 'm7':
             equation = 'mf_ext'
-            param_types = ['S2f', 'S2s', 'ts', 'Rex']
+            param_types = ['S2f', 'S2', 'ts', 'Rex']
         elif model == 'm8':
             equation = 'mf_ext'
-            param_types = ['S2f', 'tf', 'S2s', 'ts', 'Rex']
+            param_types = ['S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm9':
             equation = 'mf_orig'
             param_types = ['Rex']
@@ -1007,16 +997,16 @@ class Model_free:
             param_types = ['CSA', 'S2', 'te', 'Rex']
         elif model == 'm15':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'S2s', 'ts']
+            param_types = ['CSA', 'S2f', 'S2', 'ts']
         elif model == 'm16':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'tf', 'S2s', 'ts']
+            param_types = ['CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'm17':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'S2s', 'ts', 'Rex']
+            param_types = ['CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'm18':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'tf', 'S2s', 'ts', 'Rex']
+            param_types = ['CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm19':
             equation = 'mf_orig'
             param_types = ['CSA', 'Rex']
@@ -1024,66 +1014,66 @@ class Model_free:
         # Block 3.
         elif model == 'm20':
             equation = 'mf_orig'
-            param_types = ['Bond length']
+            param_types = ['r']
         elif model == 'm21':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'S2']
+            param_types = ['r', 'S2']
         elif model == 'm22':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'S2', 'te']
+            param_types = ['r', 'S2', 'te']
         elif model == 'm23':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'S2', 'Rex']
+            param_types = ['r', 'S2', 'Rex']
         elif model == 'm24':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'S2', 'te', 'Rex']
+            param_types = ['r', 'S2', 'te', 'Rex']
         elif model == 'm25':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'S2f', 'S2s', 'ts']
+            param_types = ['r', 'S2f', 'S2', 'ts']
         elif model == 'm26':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'S2f', 'tf', 'S2s', 'ts']
+            param_types = ['r', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'm27':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'S2f', 'S2s', 'ts', 'Rex']
+            param_types = ['r', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'm28':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'S2f', 'tf', 'S2s', 'ts', 'Rex']
+            param_types = ['r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm29':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'Rex']
+            param_types = ['r', 'Rex']
 
         # Block 4.
         elif model == 'm30':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'CSA']
+            param_types = ['r', 'CSA']
         elif model == 'm31':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'CSA', 'S2']
+            param_types = ['r', 'CSA', 'S2']
         elif model == 'm32':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'CSA', 'S2', 'te']
+            param_types = ['r', 'CSA', 'S2', 'te']
         elif model == 'm33':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'CSA', 'S2', 'Rex']
+            param_types = ['r', 'CSA', 'S2', 'Rex']
         elif model == 'm34':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'CSA', 'S2', 'te', 'Rex']
+            param_types = ['r', 'CSA', 'S2', 'te', 'Rex']
         elif model == 'm35':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'CSA', 'S2f', 'S2s', 'ts']
+            param_types = ['r', 'CSA', 'S2f', 'S2', 'ts']
         elif model == 'm36':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'CSA', 'S2f', 'tf', 'S2s', 'ts']
+            param_types = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'm37':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'CSA', 'S2f', 'S2s', 'ts', 'Rex']
+            param_types = ['r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'm38':
             equation = 'mf_ext'
-            param_types = ['Bond length', 'CSA', 'S2f', 'tf', 'S2s', 'ts', 'Rex']
+            param_types = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm39':
             equation = 'mf_orig'
-            param_types = ['Bond length', 'CSA', 'Rex']
+            param_types = ['r', 'CSA', 'Rex']
 
         # Invalid models.
         else:

@@ -78,11 +78,11 @@ def calc_iso_s2_te_jw_comps(data):
     data.te_num = data.te_tm * data.params[data.te_index]
 
 
-def calc_iso_s2f_s2s_ts_jw_comps(data):
+def calc_iso_s2f_s2_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
-    formula with the parameters S2f, S2s, and ts.
+    formula with the parameters S2f, S2, and ts.
 
     The formula is:
 
@@ -93,35 +93,33 @@ def calc_iso_s2f_s2s_ts_jw_comps(data):
 
     Simplified:
 
-                 2    /   S2f . S2s       S2f(1 - S2s)(ts + tm)ts  \ 
+                 2    /      S2            (S2f - S2)(ts + tm)ts   \ 
         J(w)  =  - tm | ------------  +  ------------------------- |
                  5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
 
 
     Replicated calculations are:
 
-        w_tm_sqrd =    (w.tm)^2        (pre-calculated during initialisation)
+        w_tm_sqrd = (w.tm)^2        (pre-calculated during initialisation)
 
-        ts_tm =        ts + tm
-        ts_tm_ts =    (ts + tm).ts
+        ts_tm = ts + tm
+        ts_tm_ts = (ts + tm).ts
 
 
     Calculations which are replicated in the gradient equations are:
 
-        two_fifths_tm =    2/5 * tm        (pre-calculated during initialisation)
-        fact_tm =    1 / (1 + (w.tm)^2)    (pre-calculated during initialisation)
+        two_fifths_tm = 2/5 * tm        (pre-calculated during initialisation)
+        fact_tm = 1 / (1 + (w.tm)^2)    (pre-calculated during initialisation)
 
-        one_s2s =    1 - S2s
-        s2f_s2 =    S2f(1 - S2s) = S2f - S2
+        s2f_s2 = S2f - S2
 
-        ts_tm_sqrd =    (ts + tm)^2
-        w_ts_tm_sqrd =    (w.ts.tm)^2
-        ts_denom =     (ts + tm)^2 + (w.ts.tm)^2
-        ts_num =    (ts + tm)ts
+        ts_tm_sqrd = (ts + tm)^2
+        w_ts_tm_sqrd = (w.ts.tm)^2
+        ts_denom = (ts + tm)^2 + (w.ts.tm)^2
+        ts_num = (ts + tm)ts
     """
 
-    data.one_s2s = 1.0 - data.params[data.s2s_index]
-    data.s2f_s2 = data.params[data.s2f_index] * data.one_s2s
+    data.s2f_s2 = data.params[data.s2f_index] - data.params[data.s2_index]
 
     data.ts_tm = data.params[data.ts_index] + data.diff_params[0]
     data.ts_tm_ts = data.ts_tm * data.params[data.ts_index]
@@ -131,11 +129,11 @@ def calc_iso_s2f_s2s_ts_jw_comps(data):
     data.ts_num = data.ts_tm * data.params[data.ts_index]
 
 
-def calc_iso_s2f_tf_s2s_ts_jw_comps(data):
+def calc_iso_s2f_tf_s2_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
-    formula with the parameters S2f, tf, S2s, and ts.
+    formula with the parameters S2f, tf, S2, and ts.
 
     The formula is:
 
@@ -146,43 +144,41 @@ def calc_iso_s2f_tf_s2s_ts_jw_comps(data):
 
     Simplified:
 
-                 2    /   S2f . S2s        (1 - S2f)(tf + tm)tf         S2f(1 - S2s)(ts + tm)ts  \ 
+                 2    /      S2            (1 - S2f)(tf + tm)tf          (S2f - S2)(ts + tm)ts   \ 
         J(w)  =  - tm | ------------  +  -------------------------  +  ------------------------- |
                  5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
 
 
     Replicated calculations are:
 
-        w_tm_sqrd =    (w.tm)^2        (pre-calculated during initialisation)
+        w_tm_sqrd = (w.tm)^2        (pre-calculated during initialisation)
 
-        tf_tm =        tf + tm
-        ts_tm =        ts + tm
-        tf_tm_tf =    (tf + tm).tf
-        ts_tm_ts =    (ts + tm).ts
+        tf_tm = tf + tm
+        ts_tm = ts + tm
+        tf_tm_tf = (tf + tm).tf
+        ts_tm_ts = (ts + tm).ts
 
 
     Calculations which are replicated in the gradient equations are:
 
-        two_fifths_tm =    2/5 * tm        (pre-calculated during initialisation)
-        fact_tm =    1 / (1 + (w.tm)^2)    (pre-calculated during initialisation)
+        two_fifths_tm = 2/5 * tm        (pre-calculated during initialisation)
+        fact_tm = 1 / (1 + (w.tm)^2)    (pre-calculated during initialisation)
 
-        one_s2s =    1 - S2s
-        one_s2f =    1 - S2f
-        s2f_s2 =    S2f(1 - S2s) = S2f - S2
+        one_s2f = 1 - S2f
+        s2f_s2 = S2f - S2
 
-        tf_tm_sqrd =    (tf + tm)^2
-        ts_tm_sqrd =    (ts + tm)^2
-        w_tf_tm_sqrd =    (w.tf.tm)^2
-        w_ts_tm_sqrd =    (w.ts.tm)^2
-        tf_denom =     (tf + tm)^2 + (w.tf.tm)^2
-        ts_denom =     (ts + tm)^2 + (w.ts.tm)^2
-        tf_num =    (tf + tm)tf
-        ts_num =    (ts + tm)ts
+        tf_tm_sqrd = (tf + tm)^2
+        ts_tm_sqrd = (ts + tm)^2
+        w_tf_tm_sqrd = (w.tf.tm)^2
+        w_ts_tm_sqrd = (w.ts.tm)^2
+        tf_denom = (tf + tm)^2 + (w.tf.tm)^2
+        ts_denom = (ts + tm)^2 + (w.ts.tm)^2
+        tf_num = (tf + tm)tf
+        ts_num = (ts + tm)ts
     """
 
-    data.one_s2s = 1.0 - data.params[data.s2s_index]
     data.one_s2f = 1.0 - data.params[data.s2f_index]
-    data.s2f_s2 = data.params[data.s2f_index] * data.one_s2s
+    data.s2f_s2 = data.params[data.s2f_index] - data.params[data.s2_index]
 
     data.tf_tm = data.params[data.tf_index] + data.diff_params[0]
     data.ts_tm = data.params[data.ts_index] + data.diff_params[0]
@@ -221,11 +217,11 @@ def calc_iso_s2_te_djw_comps(data):
 
 
 
-def calc_iso_s2f_s2s_ts_djw_comps(data):
+def calc_iso_s2f_s2_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
-    formula with the parameters S2f, S2s, and ts.
+    formula with the parameters S2f, S2, and ts.
 
     Replicated calculations are:
 
@@ -238,19 +234,19 @@ def calc_iso_s2f_s2s_ts_djw_comps(data):
 
 
                                2    /      1                 (ts + tm).ts        \ 
-        fact_djw_ds2s =        - tm | ------------  -  ------------------------- |
+        fact_djw_ds2 =         - tm | ------------  -  ------------------------- |
                                5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
     data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_tm_sqrd) / (data.ts_denom ** 2)
-    data.fact_djw_ds2s = data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)
+    data.fact_djw_ds2 = data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)
 
 
-def calc_iso_s2f_tf_s2s_ts_djw_comps(data):
+def calc_iso_s2f_tf_s2_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
-    formula with the parameters S2f, tf, S2s, and ts.
+    formula with the parameters S2f, tf, S2, and ts.
 
     Replicated calculations are:
 
@@ -268,10 +264,10 @@ def calc_iso_s2f_tf_s2s_ts_djw_comps(data):
 
 
                                2    /      1                 (ts + tm).ts        \ 
-        fact_djw_ds2s =        - tm | ------------  -  ------------------------- |
+        fact_djw_ds2 =         - tm | ------------  -  ------------------------- |
                                5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
     data.fact_djw_dtf = data.two_fifths_tm_sqrd * (data.tf_tm_sqrd - data.w_tf_tm_sqrd) / (data.tf_denom ** 2)
     data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_tm_sqrd) / (data.ts_denom ** 2)
-    data.fact_djw_ds2s = data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)
+    data.fact_djw_ds2 = data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)

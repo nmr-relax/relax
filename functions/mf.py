@@ -23,7 +23,6 @@
 
 from Numeric import Float64, array, multiply, ones, outerproduct, sum, zeros
 from math import pi
-from re import match
 
 from data import Data
 
@@ -104,7 +103,7 @@ class Mf:
 
         # Setup the equations.
         if not self.setup_equations():
-            print "The model-free equations could not be setup."
+            raise NameError, "The model-free equations could not be setup."
 
         # Initialise the R1 data class used only if an NOE data set is collected but the R1 data of the same frequency has not.
         self.init_r1_data()
@@ -473,24 +472,26 @@ class Mf:
         # The original model-free equations.
         ####################################
 
-        if match('mf_orig', self.equation):
+        if self.equation == 'mf_orig':
             # Find the indecies of the parameters in self.param_types
-            self.data.s2_index, self.data.te_index, self.data.rex_index, self.data.r_index, self.data.csa_index = None, None, None, None, None
+            self.data.tm_index, self.data.s2_index, self.data.te_index, self.data.rex_index, self.data.r_index, self.data.csa_index = None, None, None, None, None, None
             for i in range(len(self.param_types)):
-                if match('S2', self.param_types[i]):
+                if self.param_types[i] == 'tm':
+                    self.data.tm_index = i
+                elif self.param_types[i] == 'S2':
                     self.data.s2_index = i
-                elif match('te', self.param_types[i]):
+                elif self.param_types[i] == 'te':
                     self.data.te_index = i
-                elif match('Rex', self.param_types[i]):
+                elif self.param_types[i] == 'Rex':
                     self.data.rex_index = i
-                elif match('Bond length', self.param_types[i]):
+                elif self.param_types[i] == 'r':
                     self.data.r_index = i
-                elif match('CSA', self.param_types[i]):
+                elif self.param_types[i] == 'CSA':
                     self.data.csa_index = i
                 else:
                     return 0
 
-            # Setup the equations for the calculation of spectral density values.
+            # Spectral density parameters {S2, te}.
             if self.data.s2_index != None and self.data.te_index != None:
                 self.calc_jw = calc_iso_s2_te_jw
                 self.calc_jw_comps = calc_iso_s2_te_jw_comps
@@ -499,14 +500,15 @@ class Mf:
                 self.calc_djw[self.data.te_index] = calc_iso_S2_te_djw_dte
                 self.calc_d2jw[self.data.s2_index][self.data.te_index] = self.calc_d2jw[self.data.te_index][self.data.s2_index] = calc_iso_S2_te_d2jw_dS2dte
                 self.calc_d2jw[self.data.te_index][self.data.te_index] = calc_iso_S2_te_d2jw_dte2
+
+            # Spectral density parameters {S2}.
             elif self.data.s2_index != None:
                 self.calc_jw = calc_iso_s2_jw
                 self.calc_jw_comps = None
                 self.calc_djw_comps = None
                 self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
-            elif self.data.te_index != None and self.data.s2_index == None:
-                print "Invalid model, you cannot have te as a parameter without S2 existing as well."
-                return 0
+
+            # No spectral density parameters.
             else:
                 self.calc_jw = calc_iso_jw
                 self.calc_jw_comps = None
@@ -515,52 +517,56 @@ class Mf:
         # The extended model-free equations.
         ####################################
 
-        elif match('mf_ext', self.equation):
+        elif self.equation == 'mf_ext':
             # Find the indecies of the parameters in self.param_types
-            self.data.s2f_index, self.data.tf_index, self.data.s2s_index, self.data.ts_index, self.data.rex_index, self.data.r_index, self.data.csa_index,  = None, None, None, None, None, None, None
+            self.data.tm_index, self.data.s2f_index, self.data.tf_index, self.data.s2_index, self.data.ts_index, self.data.rex_index, self.data.r_index, self.data.csa_index,  = None, None, None, None, None, None, None, None
             for i in range(len(self.param_types)):
-                if match('S2f', self.param_types[i]):
+                if self.param_types[i] == 'tm':
+                    self.data.tm_index = i
+                elif self.param_types[i] == 'S2f':
                     self.data.s2f_index = i
-                elif match('tf', self.param_types[i]):
+                elif self.param_types[i] == 'tf':
                     self.data.tf_index = i
-                elif match('S2s', self.param_types[i]):
-                    self.data.s2s_index = i
-                elif match('ts', self.param_types[i]):
+                elif self.param_types[i] == 'S2':
+                    self.data.s2_index = i
+                elif self.param_types[i] == 'ts':
                     self.data.ts_index = i
-                elif match('Rex', self.param_types[i]):
+                elif self.param_types[i] == 'Rex':
                     self.data.rex_index = i
-                elif match('Bond length', self.param_types[i]):
+                elif self.param_types[i] == 'r':
                     self.data.r_index = i
-                elif match('CSA', self.param_types[i]):
+                elif self.param_types[i] == 'CSA':
                     self.data.csa_index = i
                 else: return 0
 
-            # Setup the equations for the calculation of spectral density values.
-            if self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
-                self.calc_jw = calc_iso_s2f_tf_s2s_ts_jw
-                self.calc_jw_comps = calc_iso_s2f_tf_s2s_ts_jw_comps
-                self.calc_djw_comps = calc_iso_s2f_tf_s2s_ts_djw_comps
-                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2f
-                self.calc_djw[self.data.tf_index] = calc_iso_S2f_tf_S2s_ts_djw_dtf
-                self.calc_djw[self.data.s2s_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2s
-                self.calc_djw[self.data.ts_index] = calc_iso_S2f_tf_S2s_ts_djw_dts
-                self.calc_d2jw[self.data.s2f_index][self.data.s2s_index] = self.calc_d2jw[self.data.s2s_index][self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdS2s
-                self.calc_d2jw[self.data.s2f_index][self.data.tf_index] = self.calc_d2jw[self.data.tf_index][self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdtf
-                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdts
-                self.calc_d2jw[self.data.s2s_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2s_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dS2sdts
-                self.calc_d2jw[self.data.tf_index][self.data.tf_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dtf2
-                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_tf_S2s_ts_d2jw_dts2
-            elif self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
-                self.calc_jw = calc_iso_s2f_s2s_ts_jw
-                self.calc_jw_comps = calc_iso_s2f_s2s_ts_jw_comps
-                self.calc_djw_comps = calc_iso_s2f_s2s_ts_djw_comps
-                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2s_ts_djw_dS2f
-                self.calc_djw[self.data.s2s_index] = calc_iso_S2f_S2s_ts_djw_dS2s
-                self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2s_ts_djw_dts
-                self.calc_d2jw[self.data.s2f_index][self.data.s2s_index] = self.calc_d2jw[self.data.s2s_index][self.data.s2f_index] = calc_iso_S2f_S2s_ts_d2jw_dS2fdS2s
-                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_S2s_ts_d2jw_dS2fdts
-                self.calc_d2jw[self.data.s2s_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2s_index] = calc_iso_S2f_S2s_ts_d2jw_dS2sdts
-                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_S2s_ts_d2jw_dts2
+            # Spectral density parameters {S2f, tf, S2, ts}.
+            if self.data.s2f_index != None and self.data.tf_index != None and self.data.s2_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_s2f_tf_s2_ts_jw
+                self.calc_jw_comps = calc_iso_s2f_tf_s2_ts_jw_comps
+                self.calc_djw_comps = calc_iso_s2f_tf_s2_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_tf_S2_ts_djw_dS2f
+                self.calc_djw[self.data.tf_index] = calc_iso_S2f_tf_S2_ts_djw_dtf
+                self.calc_djw[self.data.s2_index] = calc_iso_S2f_tf_S2_ts_djw_dS2
+                self.calc_djw[self.data.ts_index] = calc_iso_S2f_tf_S2_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.tf_index] = self.calc_d2jw[self.data.tf_index][self.data.s2f_index] = calc_iso_S2f_tf_S2_ts_d2jw_dS2fdtf
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_tf_S2_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2_index] = calc_iso_S2f_tf_S2_ts_d2jw_dS2dts
+                self.calc_d2jw[self.data.tf_index][self.data.tf_index] = calc_iso_S2f_tf_S2_ts_d2jw_dtf2
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_tf_S2_ts_d2jw_dts2
+
+            # Spectral density parameters {S2f, S2, ts}.
+            elif self.data.s2f_index != None and self.data.tf_index == None and self.data.s2_index != None and self.data.ts_index != None:
+                self.calc_jw = calc_iso_s2f_s2_ts_jw
+                self.calc_jw_comps = calc_iso_s2f_s2_ts_jw_comps
+                self.calc_djw_comps = calc_iso_s2f_s2_ts_djw_comps
+                self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2_ts_djw_dS2f
+                self.calc_djw[self.data.s2_index] = calc_iso_S2f_S2_ts_djw_dS2
+                self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2_ts_djw_dts
+                self.calc_d2jw[self.data.s2f_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2f_index] = calc_iso_S2f_S2_ts_d2jw_dS2fdts
+                self.calc_d2jw[self.data.s2_index][self.data.ts_index] = self.calc_d2jw[self.data.ts_index][self.data.s2_index] = calc_iso_S2f_S2_ts_d2jw_dS2dts
+                self.calc_d2jw[self.data.ts_index][self.data.ts_index] = calc_iso_S2f_S2_ts_d2jw_dts2
+
+            # Bad combination.
             else:
                 print "Invalid combination of parameters for the extended model-free equation."
                 return 0
@@ -573,21 +579,12 @@ class Mf:
         ##############################################
 
         # Relaxation equation components.
-        self.create_dip_func = []
-        self.create_dip_grad = []
-        self.create_dip_hess = []
-        self.create_csa_func = []
-        self.create_csa_grad = []
-        self.create_csa_hess = []
-        self.create_rex_func = []
-        self.create_rex_grad = []
+        self.create_dip_func, self.create_dip_grad, self.create_dip_hess = [], [], []
+        self.create_csa_func, self.create_csa_grad, self.create_csa_hess = [], [], []
+        self.create_rex_func, self.create_rex_grad = [], []
 
-        self.create_dip_jw_func = []
-        self.create_dip_jw_grad = []
-        self.create_dip_jw_hess = []
-        self.create_csa_jw_func = []
-        self.create_csa_jw_grad = []
-        self.create_csa_jw_hess = []
+        self.create_dip_jw_func, self.create_dip_jw_grad, self.create_dip_jw_hess = [], [], []
+        self.create_csa_jw_func, self.create_csa_jw_grad, self.create_csa_jw_hess = [], [], []
 
         # Ri'
         self.create_ri_prime = None
@@ -595,13 +592,8 @@ class Mf:
         self.create_d2ri_prime = []
 
         # Ri
-        self.create_ri = []
-        self.create_dri = []
-        self.create_d2ri = []
-
-        self.get_r1 = []
-        self.get_dr1 = []
-        self.get_d2r1 = []
+        self.create_ri, self.create_dri, self.create_d2ri = [], [], []
+        self.get_r1, self.get_dr1, self.get_d2r1 = [], [], []
 
         # Fill the structures with None.
         for i in range(self.relax.data.num_ri):
@@ -627,8 +619,8 @@ class Mf:
             self.get_d2r1.append(None)
 
 
-        # Make pointers to the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
-        #######################################################################################################
+        # Select the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
+        #############################################################################################
 
         for i in range(self.relax.data.num_ri):
             # The R1 equations.
@@ -678,8 +670,8 @@ class Mf:
                     self.get_d2r1[i] = extract_d2r1
 
 
-        # Make pointers to the functions for the calculation of ri_prime, dri_prime, and d2ri_prime.
-        ############################################################################################
+        # Select the functions for the calculation of ri_prime, dri_prime, and d2ri_prime.
+        ##################################################################################
 
         # ri_prime.
         if self.data.rex_index == None:
@@ -689,39 +681,39 @@ class Mf:
 
         # dri_prime and d2ri_prime.
         for i in range(len(self.data.params)):
-            if match('Rex', self.param_types[i]):
+            if self.param_types[i] == 'Rex':
                 self.create_dri_prime.append(func_dri_drex_prime)
                 self.create_d2ri_prime.append([])
                 for j in range(len(self.data.params)):
-                    if match('Rex', self.param_types[j]):
+                    if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
-                    elif match('Bond length', self.param_types[j]):
+                    elif self.param_types[j] == 'r':
                         self.create_d2ri_prime[i].append(None)
-                    elif match('CSA', self.param_types[j]):
+                    elif self.param_types[j] == 'CSA':
                         self.create_d2ri_prime[i].append(None)
                     else:
                         self.create_d2ri_prime[i].append(None)
-            elif match('Bond length', self.param_types[i]):
+            elif self.param_types[i] == 'r':
                 self.create_dri_prime.append(func_dri_dr_prime)
                 self.create_d2ri_prime.append([])
                 for j in range(len(self.data.params)):
-                    if match('Rex', self.param_types[j]):
+                    if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
-                    elif match('Bond length', self.param_types[j]):
+                    elif self.param_types[j] == 'r':
                         self.create_d2ri_prime[i].append(func_d2ri_dr2_prime)
-                    elif match('CSA', self.param_types[j]):
+                    elif self.param_types[j] == 'CSA':
                         self.create_d2ri_prime[i].append(None)
                     else:
                         self.create_d2ri_prime[i].append(func_d2ri_drdjw_prime)
-            elif match('CSA', self.param_types[i]):
+            elif self.param_types[i] == 'CSA':
                 self.create_dri_prime.append(func_dri_dcsa_prime)
                 self.create_d2ri_prime.append([])
                 for j in range(len(self.data.params)):
-                    if match('Rex', self.param_types[j]):
+                    if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
-                    elif match('Bond length', self.param_types[j]):
+                    elif self.param_types[j] == 'r':
                         self.create_d2ri_prime[i].append(None)
-                    elif match('CSA', self.param_types[j]):
+                    elif self.param_types[j] == 'CSA':
                         self.create_d2ri_prime[i].append(func_d2ri_dcsa2_prime)
                     else:
                         self.create_d2ri_prime[i].append(func_d2ri_dcsadjw_prime)
@@ -729,11 +721,11 @@ class Mf:
                 self.create_dri_prime.append(func_dri_djw_prime)
                 self.create_d2ri_prime.append([])
                 for j in range(len(self.data.params)):
-                    if match('Rex', self.param_types[j]):
+                    if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
-                    elif match('Bond length', self.param_types[j]):
+                    elif self.param_types[j] == 'r':
                         self.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
-                    elif match('CSA', self.param_types[j]):
+                    elif self.param_types[j] == 'CSA':
                         self.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
                     else:
                         self.create_d2ri_prime[i].append(func_d2ri_djwidjwj_prime)
