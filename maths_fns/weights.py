@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+from Numeric import outerproduct
+
 
 # Isotropic weight equation.
 ############################
@@ -108,9 +110,9 @@ def calc_axial_d2ci(data):
     """
 
     # Outer product.
-    op = outerproduct(data.ddelta_psi, data.ddelta_psi)
+    op = outerproduct(data.ddelta_dpsi, data.ddelta_dpsi)
 
     # Hessian.
-    data.dci[:, :, 0] = 3.0 ((9.0 * data.delta**2 - 1.0) * op + data.delta * (3.0 * data.delta**2 - 1.0) * data.d2delta_dpsi2)
-    data.dci[:, :, 1] = 6.0 ((1.0 - 6.0 * data.delta**2) * op + data.delta * (1.0 - 2.0 * data.delta**2) * data.d2delta_dpsi2)
-    data.dci[:, :, 2] = 3.0 ((3.0 * data.delta**2 - 1.0) * op + data.delta * (data.delta**2 - 1.0) * data.d2delta_dpsi2)
+    data.d2ci[:, :, 0] = 3.0 * ((9.0 * data.delta**2 - 1.0) * op + data.delta * (3.0 * data.delta**2 - 1.0) * data.d2delta_dpsi2)
+    data.d2ci[:, :, 1] = 6.0 * ((1.0 - 6.0 * data.delta**2) * op + data.delta * (1.0 - 2.0 * data.delta**2) * data.d2delta_dpsi2)
+    data.d2ci[:, :, 2] = 3.0 * ((3.0 * data.delta**2 - 1.0) * op + data.delta * (data.delta**2 - 1.0) * data.d2delta_dpsi2)

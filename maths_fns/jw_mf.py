@@ -1551,7 +1551,7 @@ def calc_diff_d2jw_dDjdDk(data, params, j, k, num_D_params):
                          i=m     \                    (1 + (w.ti)^2)^3                          /
     """
 
-    return -0.4 * sum(data.ci * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti[j] * data.dti[k] - (1.0 - data.frq_sqrd_list_ext**2) * data.d2ti[j, k]) * data.fact_ti**3, axis=2)
+    return -0.4 * sum(data.ci * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti[j] * data.dti[k] - (1.0 - data.w_ti_sqrd**2) * data.d2ti[j, k]) * data.fact_ti**3, axis=2)
 
 
 # {S2} with diffusion parameters.
@@ -1571,7 +1571,7 @@ def calc_diff_S2_d2jw_dDjdDk(data, params, j, k, num_D_params):
                            i=m     \                    (1 + (w.ti)^2)^3                          /
     """
 
-    return -0.4 * params[data.s2_index] * sum(data.ci * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti[j] * data.dti[k] - (1.0 - data.frq_sqrd_list_ext**2) * data.d2ti[j, k]) * data.fact_ti**3, axis=2)
+    return -0.4 * params[data.s2_index] * sum(data.ci * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti[j] * data.dti[k] - (1.0 - data.w_ti_sqrd**2) * data.d2ti[j, k]) * data.fact_ti**3, axis=2)
 
 
 # {S2, te} with diffusion parameters.
@@ -1598,7 +1598,7 @@ def calc_diff_S2_te_d2jw_dDjdDk(data, params, j, k, num_D_params):
     """
 
     # ti.
-    fact_ti = params[data.s2_index] * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti[j] * data.dti[k] - (1.0 - data.frq_sqrd_list_ext**2) * data.d2ti[j, k]) * data.fact_ti**3
+    fact_ti = params[data.s2_index] * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti[j] * data.dti[k] - (1.0 - data.w_ti_sqrd**2) * data.d2ti[j, k]) * data.fact_ti**3
 
     # te.
     fact_te = 2.0 * (data.te_ti**3 + 3.0 * data.frq_sqrd_list_ext * params[data.te_index]**3 * data.ti * data.te_ti - (data.frq_list_ext * params[data.te_index])**4 * data.ti**3) * data.dti[j] * data.dti[k]  +  (data.te_ti**4 - data.w_te_ti_sqrd**2) * data.d2ti[j, k]
@@ -1826,7 +1826,7 @@ def calc_diff_S2_d2jw_dPsijdS2(data, params, j, k, num_D_params):
                          i=m
     """
 
-    return 0.4 * sum(data.dci[k-num_D_params] * data.ti * data.fact_ti, axis=2)
+    return 0.4 * sum(data.dci[j-num_D_params] * data.ti * data.fact_ti, axis=2)
 
 
 # {S2, te} with diffusion parameters.
@@ -1951,7 +1951,7 @@ def calc_diff_S2f_S2_ts_d2jw_dDjdDk(data, params, j, k, num_D_params):
     """
 
     # ti.
-    fact_ti = params[data.s2_index] * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti * data.dti - (1.0 - data.frq_sqrd_list_ext**2) * data.d2ti) * data.fact_ti**3
+    fact_ti = params[data.s2_index] * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti * data.dti - (1.0 - data.w_ti_sqrd**2) * data.d2ti) * data.fact_ti**3
 
     # ts.
     fact_ts = 2.0 * (data.ts_ti**3 + 3.0 * data.frq_sqrd_list_ext * params[data.ts_index]**3 * data.ti * data.ts_ti - (data.frq_list_ext * params[data.ts_index])**4 * data.ti**3) * data.dti * data.dti  +  (data.ts_ti**4 - data.w_ts_ti_sqrd**2) * data.d2ti
@@ -1991,7 +1991,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk(data, params, j, k, num_D_params):
     """
 
     # ti.
-    fact_ti = params[data.s2_index] * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti * data.dti - (1.0 - data.frq_sqrd_list_ext**2) * data.d2ti) * data.fact_ti**3
+    fact_ti = params[data.s2_index] * (2 * data.ti * data.frq_sqrd_list_ext * (3.0 - data.w_ti_sqrd) * data.dti * data.dti - (1.0 - data.w_ti_sqrd**2) * data.d2ti) * data.fact_ti**3
 
     # tf.
     fact_tf = 2.0 * (data.tf_ti**3 + 3.0 * data.frq_sqrd_list_ext * params[data.tf_index]**3 * data.ti * data.tf_ti - (data.frq_list_ext * params[data.tf_index])**4 * data.ti**3) * data.dti * data.dti  +  (data.tf_ti**4 - data.w_tf_ti_sqrd**2) * data.d2ti

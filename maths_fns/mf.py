@@ -23,6 +23,7 @@
 
 from Numeric import Float64, matrixmultiply, ones, sum, zeros
 from math import pi
+import sys
 
 from geometry import *
 from weights import *
@@ -786,8 +787,8 @@ class Mf:
             params = matrixmultiply(params, self.scaling_matrix)
 
         # Calculate the spectral density Hessians.
-        for j in xrange(data.num_params):
-            for k in xrange(j + 1):
+        for k in xrange(data.num_params):
+            for j in xrange(k + 1):
                 if data.calc_d2jw[j][k]:
                     data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
@@ -795,8 +796,8 @@ class Mf:
         data.create_d2ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe Hessians.
-        for j in xrange(data.num_params):
-            for k in xrange(j + 1):
+        for k in xrange(data.num_params):
+            for j in xrange(k + 1):
                 if data.create_d2ri_prime[j][k]:
                     data.create_d2ri_prime[j][k](data, j, k)
 
@@ -835,8 +836,8 @@ class Mf:
         self.diff_data.params = params[0:1]
 
         # Calculate the spectral density Hessians.
-        for j in xrange(data.num_params):
-            for k in xrange(j + 1):
+        for k in xrange(data.num_params):
+            for j in xrange(k + 1):
                 if data.calc_d2jw[j][k]:
                     data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
@@ -844,8 +845,8 @@ class Mf:
         data.create_d2ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe Hessians.
-        for j in xrange(data.num_params):
-            for k in xrange(j + 1):
+        for k in xrange(data.num_params):
+            for j in xrange(k + 1):
                 if data.create_d2ri_prime[j][k]:
                     data.create_d2ri_prime[j][k](data, j, k)
 
@@ -902,8 +903,8 @@ class Mf:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
             # Calculate the spectral density Hessians.
-            for j in xrange(data.total_num_params):
-                for k in xrange(j + 1):
+            for k in xrange(data.total_num_params):
+                for j in xrange(k + 1):
                     if data.calc_d2jw[j][k]:
                         data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
@@ -911,8 +912,8 @@ class Mf:
             data.create_d2ri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe Hessians.
-            for j in xrange(data.total_num_params):
-                for k in xrange(j + 1):
+            for k in xrange(data.total_num_params):
+                for j in xrange(k + 1):
                     if data.create_d2ri_prime[j][k]:
                         data.create_d2ri_prime[j][k](data, j, k)
 
@@ -983,8 +984,8 @@ class Mf:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
             # Calculate the spectral density Hessians.
-            for j in xrange(data.total_num_params):
-                for k in xrange(j + 1):
+            for k in xrange(data.total_num_params):
+                for j in xrange(k + 1):
                     if data.calc_d2jw[j][k]:
                         data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
@@ -992,8 +993,8 @@ class Mf:
             data.create_d2ri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe Hessians.
-            for j in xrange(data.total_num_params):
-                for k in xrange(j + 1):
+            for k in xrange(data.total_num_params):
+                for j in xrange(k + 1):
                     if data.create_d2ri_prime[j][k]:
                         data.create_d2ri_prime[j][k](data, j, k)
 
@@ -1095,9 +1096,9 @@ class Mf:
             diff_data.dpar_unit_vector_dphi = zeros(3, Float64)
 
             # Unit vector Hessian.
-            diff_data.dpar_unit_vector_dtheta2 = zeros((3, 3), Float64)
-            diff_data.dpar_unit_vector_dthetadphi = zeros((3, 3), Float64)
-            diff_data.dpar_unit_vector_dphi2 = zeros((3, 3), Float64)
+            diff_data.dpar_unit_vector_dtheta2 = zeros(3, Float64)
+            diff_data.dpar_unit_vector_dthetadphi = zeros(3, Float64)
+            diff_data.dpar_unit_vector_dphi2 = zeros(3, Float64)
 
         # Anisotropic diffusion.
         elif diff_type == 'aniso':
