@@ -156,8 +156,9 @@ class Minimisation:
         Ignore all sections except those labelled as minimisation algorithms and minimisation
         options.  Also do not select the Method of Multipliers constraint algorithm as this is used
         in combination with the given minimisation algorithm if the keyword argument 'constraints'
-        is set to 1.  The first argument passed will be set to the minimisation algorithm while all
-        other arguments will be set to the minimisation options.
+        is set to 1.  The grid search algorithm should also not be selected as this is accessed
+        using the 'grid' function instead.  The first argument passed will be set to the
+        minimisation algorithm while all other arguments will be set to the minimisation options.
 
         Keyword arguments differ from normal arguments having the form "keyword = value".  All
         arguments must precede keyword arguments in python.  For more information see the examples
@@ -214,7 +215,9 @@ class Minimisation:
         ____________________________________________________________________________________________
 
         Reproduction of the docstring of the generic_minimise function.  Only take note of the
-        minimisation algorithms and minimisation options sections.
+        minimisation algorithms and minimisation options sections, the other sections are not
+        relevant for this function.  The Grid search and Method of Multipliers algorithms cannot be
+        selected as minimisation algorithms for this function.
         ____________________________________________________________________________________________
 
         """
