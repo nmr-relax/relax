@@ -102,6 +102,7 @@ class true(common_operations):
 		"Print all the data into the 'data_all' file."
 
 		file = open('data_all', 'w')
+		file_temp = open('crit', 'w')
 
 		sys.stdout.write("[")
 		for res in range(len(self.mf.data.results)):
@@ -114,6 +115,9 @@ class true(common_operations):
 			file.write('%-17s' % 'Model 3')
 			file.write('%-17s' % 'Model 4')
 			file.write('%-17s' % 'Model 5')
+
+			file_temp.write('%-6s' % self.mf.data.results[res]['res_num'])
+			file_temp.write('%-6s' % self.mf.data.results[res]['model'])
 
 			# S2.
 			file.write('\n%-20s' % 'S2')
@@ -159,6 +163,9 @@ class true(common_operations):
 			file.write('\n%-20s' % self.mf.data.usr_param.method)
 			for run in self.mf.data.runs:
 				file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
+
+				file_temp.write('%-25s' % `self.mf.data.data[run][res]['crit']`)
+			file_temp.write('\n')
 
 		file.write('\n')
 		sys.stdout.write("]\n")

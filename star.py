@@ -9,7 +9,7 @@ class star:
 		self.mf = mf
 
 
-	def extract(self, mfout, num_res, chi2_lim=0.90, ftest_lim=0.80, ftest='n'):
+	def extract(self, mfout, num_res, chi2_lim=0.90, ftest_lim=0.80, ftest='n', sims='y'):
 		"Extract the data from the mfout file and Return it as a 2D data structure."
 
 		self.mfout = mfout
@@ -17,6 +17,7 @@ class star:
 		self.chi2_lim = chi2_lim
 		self.ftest_lim = ftest_lim
 		self.ftest = ftest
+		self.sims = sims
 
 		self.data = []
 		for i in range(self.num_res):
@@ -141,17 +142,26 @@ class star:
 
 
 	def get_chi2(self):
-		self.line_num = self.line_num + self.num_res + 8
-		for i in range(self.num_res):
+		if match('y', self.sims):
+			self.line_num = self.line_num + self.num_res + 8
+			for i in range(self.num_res):
+				self.row = [[]]
+				self.row[0] = split(self.mfout[self.line_num])
+				percentile = int(self.chi2_lim * 100.0 / 5.0)
+				self.line_num = self.line_num + percentile
+				self.row.append(split(self.mfout[self.line_num]))
+				lines_next_res = 2 + ( 20 - int(percentile) )
+				self.line_num = self.line_num + lines_next_res
+				self.data[i]['chi2'] = float(self.row[0][1])
+				self.data[i]['chi2_lim'] = float(self.row[1][1])
+		else:
+			self.line_num = self.line_num + self.num_res + 5
 			self.row = [[]]
 			self.row[0] = split(self.mfout[self.line_num])
-			percentile = int(self.chi2_lim * 100.0 / 5.0)
-			self.line_num = self.line_num + percentile
-			self.row.append(split(self.mfout[self.line_num]))
-			lines_next_res = 2 + ( 20 - int(percentile) )
-			self.line_num = self.line_num + lines_next_res
-			self.data[i]['chi2'] = float(self.row[0][1])
-			self.data[i]['chi2_lim'] = float(self.row[1][1])
+			self.split_rows(self.line_num, self.num_res)
+			for i in range(self.num_res):
+				j = i + 1
+				self.data[i]['chi2'] = float(self.row[j][1])
 
 
 	def get_te(self):

@@ -46,7 +46,7 @@ class cv(common_operations):
 				mfout_lines = mfout.readlines()
 				mfout.close()
 				num_res = len(self.mf.data.relax_data[0])
-				self.mf.data.data[cv_model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n')
+				self.mf.data.data[cv_model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n', sims='n')
 
 
 	def fill_results(self, data, model='0'):
@@ -131,6 +131,7 @@ class cv(common_operations):
 		"Print all the data into the 'data_all' file."
 
 		file = open('data_all', 'w')
+		file_temp = open('crit', 'w')
 
 		sys.stdout.write("[")
 		for res in range(len(self.mf.data.results)):
@@ -143,6 +144,9 @@ class cv(common_operations):
 			file.write('%-17s' % 'Model 3')
 			file.write('%-17s' % 'Model 4')
 			file.write('%-17s' % 'Model 5')
+
+			file_temp.write('%-6s' % self.mf.data.results[res]['res_num'])
+			file_temp.write('%-6s' % self.mf.data.results[res]['model'])
 
 			for set in range(len(self.mf.data.relax_data)):
 				file.write("\n-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0])
@@ -191,6 +195,9 @@ class cv(common_operations):
 			file.write('\n%-20s' % 'CV')
 			for model in self.mf.data.runs:
 				file.write('%-17.3f' % self.mf.data.cv.cv_crit[res][model])
+
+				file_temp.write('%-25s' % `self.mf.data.cv.cv_crit[res][model]`)
+			file_temp.write('\n')
 
 		file.write('\n')
 		sys.stdout.write("]\n")

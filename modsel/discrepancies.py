@@ -12,7 +12,7 @@ class kl:
 		self.sum_ln_var = 0.0
 		for i in range(len(err)):
 			self.var = float(err[i]) ** 2
-			if var == 0.0:
+			if self.var == 0.0:
 				self.ln_var = -1000.0
 			else:
 				self.ln_var = log(self.var)
@@ -20,7 +20,7 @@ class kl:
 
 		# Discrepancy.
 		self.constant_term = log(2.0 * pi) / 2.0
-		self.ln_var_term = sum_ln_var / (2.0 * n)
+		self.ln_var_term = self.sum_ln_var / (2.0 * n)
 		self.chi2_term = chi2 / (2.0 * n)
 
 		self.kl = self.constant_term + self.ln_var_term + self.chi2_term
