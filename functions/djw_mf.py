@@ -81,13 +81,13 @@ def create_djw_struct(data, calc_djw):
 	"""
 
 	for i in range(data.num_frq):
-		for param in range(len(data.params)):
-			if calc_djw[param]:
-				data.djw[i, 0, param] = calc_djw[param](i, 0, data)
-				data.djw[i, 1, param] = calc_djw[param](i, 1, data)
-				data.djw[i, 2, param] = calc_djw[param](i, 2, data)
-				data.djw[i, 3, param] = calc_djw[param](i, 3, data)
-				data.djw[i, 4, param] = calc_djw[param](i, 4, data)
+		for j in range(len(data.params)):
+			if calc_djw[j]:
+				data.djw[i, 0, j] = calc_djw[j](i, 0, data)
+				data.djw[i, 1, j] = calc_djw[j](i, 1, data)
+				data.djw[i, 2, j] = calc_djw[j](i, 2, data)
+				data.djw[i, 3, j] = calc_djw[j](i, 3, data)
+				data.djw[i, 4, j] = calc_djw[j](i, 4, data)
 
 
 def calc_iso_S2_djw_dS2(i, frq_index, data):
@@ -143,7 +143,7 @@ def calc_iso_S2f_S2s_ts_djw_dS2f(i, frq_index, data):
 
 	"""
 
-	return 0.4 * (data.params[data.s2s_index] * data.diff_params[0] / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
+	return 0.4 * (data.s2s_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
 
 
 def calc_iso_S2f_S2s_ts_djw_dS2s(i, frq_index, data):
@@ -186,7 +186,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2f(i, frq_index, data):
 	"""
 
 	raise NameError, "Need to finish coding this func."
-	return 0.4 * (data.params[data.s2s_index] * data.diff_params[0] / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
+	return 0.4 * (data.s2s_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
 
 
 def calc_iso_S2f_tf_S2s_ts_djw_dS2s(i, frq_index, data):

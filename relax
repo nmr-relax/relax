@@ -20,6 +20,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
+import profile
 from re import match
 import sys
 
@@ -114,4 +115,4 @@ class relax:
 
 
 if __name__ == "__main__":
-	relax(sys.argv)
+	profile.run('relax(sys.argv)')

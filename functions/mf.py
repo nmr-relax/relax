@@ -156,8 +156,8 @@ class mf:
 		self.print_flag = print_flag
 
 		# Test if function self.func has been called with these parameter values.  If not, call it.
-		if self.data.func_test != params:
-			temp_chi2 = self.func(params, print_flag)
+		#if self.data.func_test != params:
+		#	temp_chi2 = self.func(params, print_flag)
 
 		# Calculate the spectral density values.
 		create_djw_struct(self.data, self.calc_djw)
