@@ -1472,7 +1472,7 @@ class Mf:
         # Create dri.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             dri = self.data[0].dri
-        else:
+        elif self.param_set == 'diff':
             # Set the total dri gradient to zero.
             self.total_dri = self.total_dri * 0.0
 
@@ -1485,12 +1485,38 @@ class Mf:
                 index = self.diff_data.num_params
 
                 # Diffusion parameter part of the global generic model-free gradient.
-                from Numeric import shape
-                print "Total dri: " + `shape(self.total_dri)`
-                print "dri: " + `shape(data.dri)`
-                print "total_dri[0:index]: " + `shape(self.total_dri[0:index])`
-                print "shape(data.dri[0:index]: " + `shape(data.dri[0:index])`
-                print "total_dri[data.start_index:data.end_index]: " + `shape(self.total_dri[data.start_index:data.end_index])`
+                #from Numeric import shape
+                #print "Total dri: " + `shape(self.total_dri)`
+                #print "dri: " + `shape(data.dri)`
+                #print "total_dri[0:index]: " + `shape(self.total_dri[0:index])`
+                #print "data.dri[0:index]: " + `shape(data.dri[0:index])`
+                self.total_dri[0:index] = self.total_dri[0:index] + data.dri[0:index]
+
+            # dri.
+            dri = self.total_dri
+
+        elif self.param_set == 'all':
+            # Set the total dri gradient to zero.
+            self.total_dri = self.total_dri * 0.0
+
+            # Loop over the residues.
+            for i in xrange(self.num_res):
+                # Set self.data[i] to data.
+                data = self.data[i]
+
+                # Index for the construction of the global generic model-free gradient.
+                index = self.diff_data.num_params
+
+                # Diffusion parameter part of the global generic model-free gradient.
+                #from Numeric import shape
+                #print "Total dri: " + `shape(self.total_dri)`
+                #print "dri: " + `shape(data.dri)`
+                #print "total_dri[0:index]: " + `shape(self.total_dri[0:index])`
+                #print "data.dri[0:index]: " + `shape(data.dri[0:index])`
+                #print "total_dri[data.start_index:data.end_index]: " + `shape(self.total_dri[data.start_index:data.end_index])`
+                #print "data.dri[index:]: " + `shape(data.dri[index:])`
+                #print "data.start_index: " + `data.start_index`
+                #print "data.end_index: " + `data.end_index`
                 self.total_dri[0:index] = self.total_dri[0:index] + data.dri[0:index]
 
                 # Model-free parameter part of the global generic model-free gradient.
@@ -1499,13 +1525,18 @@ class Mf:
             # dri.
             dri = self.total_dri
 
-        # Transpose dri.
-        dri = transpose(dri)
-
         # Diagonal scaling.
         if self.scaling_flag:
             for i in xrange(len(dri)):
+                #print "\ni: " + `i`
+                #print "dri: " + `shape(dri)`
+                #print "dri[i]: " + `shape(dri[i])`
+                #print "scaling_matrix: " + `shape(self.scaling_matrix)`
+                #print ""
                 dri[i] = matrixmultiply(dri[i], self.scaling_matrix)
+
+        # Transpose dri.
+        #dri = transpose(dri)
 
         # Return dri.
         return dri
