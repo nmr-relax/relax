@@ -50,6 +50,8 @@ from model_selection.model_selection import Model_selection
 from palmer import Palmer
 from prompt.interpreter import Interpreter
 from relax_fit import Relax_fit
+from specific_setup import Specific_setup
+from write import Write
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -72,6 +74,8 @@ class Relax:
         self.map = Map(self)
         #self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
+        self.specific_setup = Specific_setup(self)
+        self.write = Write(self)
 
         # Command line arguments.
         self.arguments()

@@ -15,6 +15,7 @@ from gpl import GPL
 from init_data import Init_data
 from map import Map
 from min import Min
+from write import Write
 
 # Macro classes.
 import echo_data
@@ -42,6 +43,7 @@ class Interpreter:
         self._map = Map(relax)
         self._min = Min(relax)
         self._system = system
+        self._write = Write(relax)
 
         # Place the classes into the interpreter class namespace.
         self._echo_data = echo_data.Skin(relax)
@@ -77,6 +79,7 @@ class Interpreter:
         init_data = self._init_data.init
         map = self._map.map
         minimise = self._min.minimise
+        write = self._write.write
 
         # Place the classes in the local namespace.
         echo_data = self._echo_data

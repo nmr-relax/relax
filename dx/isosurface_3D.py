@@ -54,9 +54,9 @@ class Iso3D(Base_Map):
 
         The formula used to calculate the coordinate position is:
 
-                      (V - L) * Inc
-            coord =   -------------
-                         (U - L)
+                            V - L
+            coord =   Inc * -----
+                            U - L
 
         where:
             V is the coordinate or parameter value.
@@ -76,7 +76,7 @@ class Iso3D(Base_Map):
             general_file = open(self.point_file + ".general", "w")
 
         # Calculate the coordinate values.
-        coords = (self.point - self.bounds[:, 0]) * self.inc / (self.bounds[:, 1] - self.bounds[:, 0])
+        coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
         for i in range(self.n):
             point_file.write("%-15.5g" % coords[self.swap[i]])
         point_file.write("1\n")

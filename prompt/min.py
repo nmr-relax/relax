@@ -71,24 +71,12 @@ class Min:
             print "The print_flag argument must be an integer."
             return
 
-
         # Equation type specific function setup.
-        ########################################
-
-        # Model-free analysis.
-        if match('mf', self.relax.data.equations[model]):
-            if not values:
-                fixed = self.relax.model_free.fixed
-            main_loop = self.relax.model_free.main_loop
-
-        # Unknown equation type.
-        else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the fixed parameter function."
+        fns = self.relax.specific_setup.setup("fixed", model)
+        if fns == None:
             return
-
-        ######
-        # End.
-
+        else:
+            self.fixed_setup, self.main_loop = fns
 
         # Setup the fixed parameter options.
         if values:
@@ -97,14 +85,14 @@ class Min:
         else:
             # Fixed values.
             empty = zeros(len(self.relax.data.param_types[model]), Float64)
-            min_options = fixed(min_options=empty, model=model)
+            min_options = self.fixed_setup(min_options=empty, model=model)
 
         # Diagonal scaling.
         if self.relax.data.scaling.has_key(model):
             min_options = min_options / self.relax.data.scaling[model][0]
 
         # Main iterative loop.
-        main_loop(model=model, min_algor='fixed', min_options=min_options, print_flag=print_flag)
+        self.main_loop(model=model, min_algor="fixed", min_options=min_options, print_flag=print_flag)
 
 
     def grid_search(self, model=None, lower=None, upper=None, inc=21, print_flag=1):
@@ -178,26 +166,15 @@ class Min:
             print "The print_flag argument must be an integer."
             return
 
-
         # Equation type specific function setup.
-        ########################################
-
-        # Model-free analysis.
-        if match('mf', self.relax.data.equations[model]):
-            grid_search = self.relax.model_free.grid_search
-            main_loop = self.relax.model_free.main_loop
-
-        # Unknown equation type.
-        else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search function."
+        fns = self.relax.specific_setup.setup("grid_search", model)
+        if fns == None:
             return
-
-        ######
-        # End.
-
+        else:
+            self.grid_setup, self.main_loop = fns
 
         # Setup the grid search options.
-        min_options = grid_search(model=model, inc_vector=inc_vector)
+        min_options = self.grid_setup(model=model, inc_vector=inc_vector)
 
         # Set the lower and upper bounds if these are supplied.
         for i in range(len(self.relax.data.param_types[model])):
@@ -213,7 +190,7 @@ class Min:
                 min_options[i][2] = min_options[i][2] / self.relax.data.scaling[model][0][i]
 
         # Main iterative loop.
-        main_loop(model=model, min_algor='grid', min_options=min_options, print_flag=print_flag)
+        self.main_loop(model=model, min_algor='grid', min_options=min_options, print_flag=print_flag)
 
 
     def minimise(self, *args, **keywords):
@@ -323,22 +300,10 @@ class Min:
         else:
             print_flag = 1
 
-
         # Equation type specific function setup.
-        ########################################
-
-        # Model-free analysis.
-        if match('mf', self.relax.data.equations[model]):
-            main_loop = self.relax.model_free.main_loop
-
-        # Unknown equation type.
-        else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search function."
+        self.main_loop = self.relax.specific_setup.setup("minimise", model)
+        if self.main_loop == None:
             return
 
-        ######
-        # End.
-
-
         # Main iterative loop.
-        main_loop(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, print_flag=print_flag)
+        self.main_loop(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, print_flag=print_flag)

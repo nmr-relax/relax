@@ -12,21 +12,11 @@ class Base_Map:
         """Generic function for mapping a space."""
 
         # Equation type specific function setup.
-        ########################################
-
-        # Model-free analysis.
-        if match('mf', self.relax.data.equations[model]):
-            map_bounds = self.relax.model_free.map_bounds
-            self.main_loop = self.relax.model_free.main_loop
-
-        # Unknown equation type.
-        else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search macro."
+        fns = self.relax.specific_setup.setup("map_space", model)
+        if fns == None:
             return
-
-        ######
-        # End.
-
+        else:
+            self.map_bounds, self.main_loop = fns
 
         # Function arguments.
         self.model = model
@@ -60,7 +50,7 @@ class Base_Map:
                 pass
 
         # Get the map bounds.
-        self.bounds = map_bounds(model=self.model)
+        self.bounds = self.map_bounds(model=self.model)
         if lower != None:
             self.bounds[:, 0] = array(lower, Float64)
         if upper != None:

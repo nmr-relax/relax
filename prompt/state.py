@@ -32,10 +32,10 @@ class Macro_class(Generic_functions):
     def load(self, file_name=None):
         """Macro for loading a saved program state.
 
-        Arguments
-        ~~~~~~~~~
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
 
-        file_name:    The file name, which must be a string, of a saved program state.
+        file_name:  The file name, which must be a string, of a saved program state.
 
 
         Examples
@@ -45,13 +45,7 @@ class Macro_class(Generic_functions):
 
         relax> state_load('save')
         relax> state_load(file_name='save')
-
-
-        FIN
         """
-
-        # Arguments.
-        self.file_name = file_name
 
         # Test arguments
         if type(file_name) != str:
@@ -75,11 +69,12 @@ class Macro_class(Generic_functions):
     def save(self, file_name=None, force=0):
         """Macro for saving the program state.
 
-        Arguments
-        ~~~~~~~~~
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
 
-        file_name:    The file name, which must be a string, to save the current program state in.
-        force:        A flag which if set to 1 will cause the file to be overwritten.
+        file_name:  The file name, which must be a string, to save the current program state in.
+
+        force:  A flag which if set to 1 will cause the file to be overwritten.
 
 
         Examples
@@ -96,17 +91,16 @@ class Macro_class(Generic_functions):
 
         relax> state_save('save', 1)
         relax> state_save(file_name='save', force=1)
-
-
-        FIN
         """
 
-        # Arguments.
-        self.file_name = file_name
-
-        # Test arguments
+        # File name.
         if type(file_name) != str:
             print "The file name argument " + `file_name` + " is not a string."
+            return
+
+        # The force flag.
+        if type(force) != int and force != 0 and force != 1:
+            print "The force flag should be the integer values of either 0 or 1."
             return
 
         # Open file for writing.
