@@ -240,13 +240,13 @@ class PDB:
                 # Test if the proton atom exists for residue i.
                 if not pdb_res.atoms.has_key(self.proton):
                     if self.print_flag:
-                        print "The proton atom " + `self.proton` + " could be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                        print "The proton atom " + `self.proton` + " could not be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Test if the heteronucleus atom exists for residue i.
                 elif not pdb_res.atoms.has_key(self.heteronuc):
                     if self.print_flag:
-                        print "The heteronucleus atom " + `self.heteronuc` + " could be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                        print "The heteronucleus atom " + `self.heteronuc` + " could not be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Calculate the vector.

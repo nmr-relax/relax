@@ -5,7 +5,7 @@ name = 'm4'
 run.create(name, 'mf')
 
 # Nuclei type
-nuclei('c')
+nuclei('N')
 
 # Load the sequence.
 sequence.read(name, 'noe.500.out')

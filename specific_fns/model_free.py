@@ -1181,19 +1181,20 @@ class Model_free(Common_functions):
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             # Create the sequence data if it does not exist.
-            if not self.relax.data.res.has_key(new_run) and not len(self.relax.data.res[new_run]):
-                # Add the new run to 'self.relax.data.res'.
-                self.relax.data.res.add_list(new_run)
+            if not self.relax.data.res.has_key(new_run):
+                if not len(self.relax.data.res[new_run]):
+                    # Add the new run to 'self.relax.data.res'.
+                    self.relax.data.res.add_list(new_run)
 
-                # Fill the array 'self.relax.data.res[new_run]' with empty data containers and place sequence data into the array.
-                for i in xrange(len(self.relax.data.res[old_run])):
-                    # Append a data container.
-                    self.relax.data.res[new_run].add_item()
+                    # Fill the array 'self.relax.data.res[new_run]' with empty data containers and place sequence data into the array.
+                    for i in xrange(len(self.relax.data.res[old_run])):
+                        # Append a data container.
+                        self.relax.data.res[new_run].add_item()
 
-                    # Insert the data.
-                    self.relax.data.res[new_run][i].num = self.relax.data.res[old_run][i].num
-                    self.relax.data.res[new_run][i].name = self.relax.data.res[old_run][i].name
-                    self.relax.data.res[new_run][i].select = self.relax.data.res[old_run][i].select
+                        # Insert the data.
+                        self.relax.data.res[new_run][i].num = self.relax.data.res[old_run][i].num
+                        self.relax.data.res[new_run][i].name = self.relax.data.res[old_run][i].name
+                        self.relax.data.res[new_run][i].select = self.relax.data.res[old_run][i].select
 
             # Duplicate the residue specific data.
             self.relax.data.res[new_run][instance] = deepcopy(self.relax.data.res[old_run][instance])

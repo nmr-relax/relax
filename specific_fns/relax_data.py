@@ -233,6 +233,10 @@ class Rx_data:
                 # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
                 index = self.find_index(data1)
 
+                # Catch any problems.
+                if index == None:
+                    continue
+
                 # Get the value and error from run1.
                 value = data1.relax_data[index]
                 error = data1.relax_error[index]
@@ -333,6 +337,10 @@ class Rx_data:
             # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
             index = self.find_index(data)
 
+            # Catch any problems.
+            if index == None:
+                continue
+
             # Relaxation data and errors.
             data.relax_data.pop(index)
             data.relax_error.pop(index)
@@ -394,6 +402,10 @@ class Rx_data:
 
     def find_index(self, data):
         """Function for finding the index corresponding to self.ri_label and self.frq_label."""
+
+        # No data.num_ri data structure.
+        if not hasattr(data, 'num_ri'):
+            return None
 
         # Find the index.
         index = None
