@@ -609,7 +609,7 @@ class Model_free:
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
                 b.append(0.0)
-                b.append(-10000.0)
+                b.append(-10e6)
                 j = j + 2
 
                 # tf <= ts.
