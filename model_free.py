@@ -1,11 +1,10 @@
-from math import pi
 from Numeric import Float64, array, zeros
 from re import match
 import sys
 
 from common_ops import common_ops
-from functions.mf_functions import mf_functions
-from functions.mf_trans_functions import mf_trans_functions
+#from functions.mf_functions import mf_functions
+#from functions.mf_trans_functions import mf_trans_functions
 
 
 class model_free(common_ops):
@@ -124,81 +123,6 @@ class model_free(common_ops):
 
 		print "\n[ Done ]\n\n"
 		self.relax.results.close()
-
-
-	def calc_constants(self):
-		"""Calculate the dipolar and CSA constants.
-
-		Dipolar constants
-		~~~~~~~~~~~~~~~~~
-			      1   / mu0  \ 2  (gH.gN.h_bar)**2
-			d  =  - . | ---- |  . ----------------
-			      4   \ 4.pi /         <r**6>
-
-
-			         3   / mu0  \ 2  (gH.gN.h_bar)**2
-			d'  =  - - . | ---- |  . ----------------
-			         2   \ 4.pi /         <r**7>
-
-
-			       21   / mu0  \ 2  (gH.gN.h_bar)**2
-			d"  =  -- . | ---- |  . ----------------
-			       2    \ 4.pi /         <r**8>
-
-
-		CSA constants
-		~~~~~~~~~~~~~
-			      (wN.csa)**2
-			c  =  -----------
-			           3
-
-
-			       2.wN**2.csa
-			c'  =  -----------
-			            3
-
-
-			       2.wN**2
-			c"  =  -------
-			          3
-
-		"""
-
-		# Dipolar constants.
-		self.relax.data.dipole_const = zeros(len(self.relax.data.bond_length), Float64)
-		self.relax.data.dipole_prime = zeros(len(self.relax.data.bond_length), Float64)
-		self.relax.data.dipole_2prime = zeros(len(self.relax.data.bond_length), Float64)
-		for i in range(len(self.relax.data.bond_length)):
-			temp = ((self.relax.data.mu0 / (4.0*pi)) * self.relax.data.h_bar * self.relax.data.gh * self.relax.data.gx) ** 2
-			self.relax.data.dipole_const[i] = 0.25 * temp * self.relax.data.bond_length[i][0]**-6
-			self.relax.data.dipole_prime[i] = -1.5 * temp * self.relax.data.bond_length[i][0]**-7
-			self.relax.data.dipole_2prime[i] = 10.5 * temp * self.relax.data.bond_length[i][0]**-8
-
-		# CSA constants.
-		self.relax.data.csa_const = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
-		self.relax.data.csa_prime = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
-		self.relax.data.csa_2prime = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
-		for i in range(self.relax.data.num_frq):
-			for j in range(len(self.relax.data.csa)):
-				temp = self.relax.data.frq_sqrd_list[i, 1] / 3.0
-				self.relax.data.csa_const[i, j] = temp * self.relax.data.csa[j][0]**2
-				self.relax.data.csa_prime[i, j] = 2.0 * temp * self.relax.data.csa[j][0]
-				self.relax.data.csa_2prime[i, j] = 2.0 * temp
-
-
-	def calc_frq_list(self):
-		"Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation."
-
-		self.relax.data.frq_list = zeros((self.relax.data.num_frq, 5), Float64)
-		for i in range(self.relax.data.num_frq):
-			frqH = 2.0 * pi * self.relax.data.frq[i]
-			frqX = frqH * (self.relax.data.gx / self.relax.data.gh)
-			self.relax.data.frq_list[i, 1] = frqX
-			self.relax.data.frq_list[i, 2] = frqH - frqX
-			self.relax.data.frq_list[i, 3] = frqH
-			self.relax.data.frq_list[i, 4] = frqH + frqX
-
-		self.relax.data.frq_sqrd_list = self.relax.data.frq_list ** 2
 
 
 	def init_fixed_params(self):

@@ -3,9 +3,7 @@ from Numeric import Float64, array, zeros
 from os import listdir, mkdir, remove
 from re import match
 
-#from common_ops import common_ops
-from functions.mf_functions import mf_functions
-from functions.mf_trans_functions import mf_trans_functions
+from functions.mf import mf
 
 
 class min:
@@ -110,44 +108,6 @@ class min:
 		return None
 
 
-	def function_init(self):
-		"Initialise the functions used in the minimisation."
-
-		if match('m[12345]', self.model):
-			funcs = mf_functions(self.relax)
-			self.func = funcs.chi2
-			self.dfunc = funcs.dchi2
-			self.d2func = funcs.d2chi2
-			if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
-				self.min_options.append(mf_functions.lm_dri)
-
-
-	def get_relax_data(self):
-		"""Extract the data from self.relax.data.relax_data
-
-		If any data is missing, None will be returned.
-		"""
-
-		data = zeros(self.relax.data.num_ri, Float64)
-		errors = zeros(self.relax.data.num_ri, Float64)
-
-		for i in range(self.relax.data.num_ri):
-			if self.relax.data.relax_data[i][self.res, 2] == 0.0:
-				return None, None
-			data[i] = self.relax.data.relax_data[i][self.res, 0]
-			errors[i] = self.relax.data.relax_data[i][self.res, 1]
-
-		return data, errors
-#			self.data, self.errors = self.get_data()
-#			if self.data == None:
-#				continue
-#			self.function_ops = (self.relax.data.diff_type, self.relax.data.diff_params, self.model, self.data, self.errors)
-#			self.params = self.relax.data.params[self.model_index][self.res]
-#			print "self.data: " + `self.data`
-#			print "self.errors: " + `self.errors`
-#			print "self.params: " + `self.params`
-#			print "self.function_ops: " + `self.function_ops`
-
 
 	def init_fixed_params(self):
 		"""Fix the inital model-free parameter values.
@@ -245,9 +205,6 @@ class min:
 			print "The model '" + self.model + "' has not been created yet."
 			return
 
-		# Function initialisation.
-		self.function_init()
-
 		# Set up the minimisation specific options.
 		self.minimisation_init()
 
@@ -265,13 +222,9 @@ class min:
 			self.h_count = 0
 
 			# Setup the specific options for the tuple self.function_ops
-			if match('mf', self.relax.data.equations[self.model_index]):
-				self.functions_ops = self.setup_relax_data()
-				if self.function_ops == None:
-					continue
-			else:
-				print "Function options cannot be created."
-				return
+			self.setup_data()
+			if self.function_ops == None:
+				continue
 
 			# Minimisation.
 			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.params, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.chi2_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
@@ -295,3 +248,37 @@ class min:
 		if match('^[Nn]ewton$', self.min_algor):
 			if self.min_options == None:
 				self.min_options = 'More Thuente'
+
+
+	def setup_data(self):
+		"""Extract the data from self.relax.data.relax_data
+
+		If any data is missing, None will be returned.
+		"""
+
+		if match('mf', self.relax.data.equations[self.model_index]):
+			self.data = zeros(self.relax.data.num_ri, Float64)
+			self.errors = zeros(self.relax.data.num_ri, Float64)
+
+			for i in range(self.relax.data.num_ri):
+				if self.relax.data.relax_data[i][self.res, 2] == 0.0:
+					return None
+				self.data[i] = self.relax.data.relax_data[i][self.res, 0]
+				self.errors[i] = self.relax.data.relax_data[i][self.res, 1]
+
+			self.function_ops = (self.relax.data.diff_type, self.relax.data.diff_params, self.data, self.errors)
+			self.params = self.relax.data.params[self.model_index][self.res]
+			print "self.data: " + `self.data`
+			print "self.errors: " + `self.errors`
+			print "self.params: " + `self.params`
+			print "self.function_ops: " + `self.function_ops`
+
+			# Initialise the functions used in the minimisation.
+			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model_index], param_types=self.relax.data.param_types[self.model_index], bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0])
+			self.func = self.mf.func
+			self.dfunc = self.mf.dfunc
+			self.d2func = self.mf.d2func
+			if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
+				self.min_options.append(mf.lm_dri)
+
+

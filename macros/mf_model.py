@@ -1,4 +1,4 @@
-from Numeric import Float64, zeros
+from Numeric import Float64, ones, zeros
 
 from generic_functions import generic_functions
 
@@ -91,5 +91,6 @@ class mf_model(generic_functions):
 
 
 		# Create the params data structure.
-		self.relax.data.params.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types)), Float64))
-		self.relax.data.param_errors.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types)), Float64))
+		index = len(self.relax.data.models) - 1
+		self.relax.data.params.append(ones((len(self.relax.data.seq), len(self.relax.data.param_types[index])), Float64))
+		self.relax.data.param_errors.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types[index])), Float64))
