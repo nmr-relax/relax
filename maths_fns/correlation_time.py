@@ -32,4 +32,4 @@ def calc_ti_iso(data):
     t0 = tm
     """
 
-    return array(1, Float64)
+    return data.diff_params

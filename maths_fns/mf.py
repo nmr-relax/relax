@@ -136,6 +136,16 @@ class Mf:
         # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
         self.init_r1_data()
 
+        # Set the function for packaging diffusion tensor parameters.
+        if self.data.diff_params:
+            self.pack_diff_params = None
+        elif self.data.diff_type == 'iso':
+            self.pack_diff_params = self.pack_diff_params_iso
+        elif self.data.diff_type == 'axial':
+            self.pack_diff_params = self.pack_diff_params_axial
+        elif self.data.diff_type == 'aniso':
+            self.pack_diff_params = self.pack_diff_params_aniso
+
         # Set the functions self.func, self.dfunc, and self.d2func for minimising model-free parameter for a single residue.
         if param_set == 'mf':
             # Set the index self.data.i to 0.
@@ -147,13 +157,13 @@ class Mf:
             self.d2func = self.d2func_mf
 
         # Set the functions self.func, self.dfunc, and self.d2func for minimising diffusion tensor parameters.
-        if param_set == 'diff':
+        elif param_set == 'diff':
             self.func = self.func_diff
             self.dfunc = self.dfunc_diff
             self.d2func = self.d2func_diff
 
         # Set the functions self.func, self.dfunc, and self.d2func for minimising diffusion tensor together with all model-free parameters.
-        if param_set == 'all':
+        elif param_set == 'all':
             self.func = self.func_all
             self.dfunc = self.dfunc_all
             self.d2func = self.d2func_all
@@ -179,6 +189,10 @@ class Mf:
         # Arguments
         self.set_params(params)
 
+        # Diffusion tensor parameters.
+        if self.pack_diff_params:
+            self.pack_diff_params()
+
         # Test if the function has already been calculated with these parameter values.
         if sum(self.data.params == self.data.func_test) == self.data.total_num_params:
             #if len(self.data.params):
@@ -192,7 +206,9 @@ class Mf:
 
         # Calculate the weights.
         self.data.ci = self.calc_ci(self.data)
-        print "ci: " + `self.data.ci`
+
+        # Calculate the correlation times.
+        self.data.ti = self.calc_ti(self.data)
 
         # Calculate the components of the spectral densities.
         if self.calc_jw_comps[0]:
@@ -533,6 +549,24 @@ class Mf:
             return self.data.dri
 
 
+    def pack_difF_params_iso(self):
+        """Function for extracting the iso diffusion parameters from the parameter vector."""
+
+        self.data.diff_params = self.data.params[0:1]
+
+
+    def pack_difF_params_axial(self):
+        """Function for extracting the axial diffusion parameters from the parameter vector."""
+
+        self.data.diff_params = self.data.params[0:4]
+
+
+    def pack_difF_params_iso(self):
+        """Function for extracting the aniso diffusion parameters from the parameter vector."""
+
+        self.data.diff_params = self.data.params[0:6]
+
+
     def scale_gradient(self):
         """Function for the diagonal scaling of the chi-squared gradient."""
 
@@ -681,10 +715,13 @@ class Mf:
         # Set up the weight functions.
         if self.data.diff_type == 'iso':
             self.calc_ci = calc_ci_iso
+            self.calc_ti = calc_ti_iso
         elif self.data.diff_type == 'axial':
             self.calc_ci = calc_ci_axial
+            self.calc_ti = calc_ti_axial
         elif self.data.diff_type == 'aniso':
             self.calc_ci = calc_ci_aniso
+            self.calc_ti = calc_ti_aniso
 
         # Loop over the data sets.
         for i in xrange(self.data.num_data_sets):
