@@ -2965,7 +2965,7 @@ class Model_free(Common_functions):
         if not pdb == 'None':
             try:
                 self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, calc_vectors=0)
-            except:
+            except IOError:
                 print "The PDB file " + `pdb` + " cannot be found, no structures will be loaded."
 
 
