@@ -74,24 +74,26 @@ class Value:
                 continue
 
             # If 'res_num' is not None, skip the residue if there is no match.
-            if type(res_num) == int:
-                if not self.relax.data.res[i].num == res_num:
-                    continue
-            elif type(res_num) == str:
-                if not match(res_num, `self.relax.data.res[i].num`):
-                    continue
+            if type(res_num) == int and not self.relax.data.res[i].num == res_num:
+                continue
+            elif type(res_num) == str and not match(res_num, `self.relax.data.res[i].num`):
+                continue
 
             # If 'res_name' is not None, skip the residue if there is no match.
-            if res_name != None:
-                if not match(res_name, self.relax.data.res[i].name):
-                    continue
+            if res_name != None and not match(res_name, self.relax.data.res[i].name):
+                continue
 
 
             # Go to the specific code.
             ##########################
 
-            set(run=run, value=value, data_type=data_type, index=i)
+            # Setting the model parameters prior to minimisation.
+            if data_type == None:
+                set(run=run, value=value, data_type=data_type, index=i)
 
+            # Single data type.
+            if type(data_type) == str:
+                set(run=run, value=value, data_type=data_type, index=i)
 
             # Reset the minimisation statistics.
             ####################################

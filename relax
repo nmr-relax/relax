@@ -34,7 +34,7 @@
 
 
 import __builtin__
-from os import F_OK, access
+from os import F_OK, access, putenv
 import profile
 import pstats
 from re import match
@@ -50,6 +50,7 @@ from specific_fns.specific_setup import Specific_setup
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
+putenv('PDBVIEWER', 'vmd')
 
 
 class Relax:

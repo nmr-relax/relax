@@ -62,8 +62,8 @@ class Value:
         and Hessian count) will be reset to None.
 
 
-        The value argument can be a single value, an array of values, or None while the data type
-        argument can be a string, array of strings, or None.  The choice of which combination
+        The value argument can be None, a single value, or an array of values while the data type
+        argument can be None, a string, or array of strings.  The choice of which combination
         determines the behaviour of this function.  The following table describes what occurs in
         each instance.  The Value column refers to the 'value' argument while the Type column refers
         to the 'data_type' argument.  In these columns, 'None' corresponds to None, '1' corresponds
@@ -85,7 +85,7 @@ class Value:
         |   n   | None  | This case is used to set the model parameters prior to minimisation.     |
         |       |       | The length of the value array must be equal to the number of model       |
         |       |       | parameters for an individual residue.  The parameters will be set to the |
-        |       |       | values of the array.                                                     |
+        |       |       | corresponding number.                                                    |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         | None  |   1   | The data type matching the string will be set to the hard wired value.   |
@@ -130,15 +130,34 @@ class Value:
 
         Residue number and name argument.
 
-        If the 'res_num' and 'res_name' arguments are left as the defaults of None, then values will
-        apply to all residues.  Otherwise the residue number can be set to either an integer for
-        selecting a single residue or a python regular expression string for selecting multiple
-        residues.  The residue name argument must be a string and can use regular expression as
-        well.
+        If the 'res_num' and 'res_name' arguments are left as the defaults of None, then the
+        function will be applied to all residues.  Otherwise the residue number can be set to either
+        an integer for selecting a single residue or a python regular expression string for
+        selecting multiple residues.  The residue name argument must be a string and can use regular
+        expression as well.
 
 
         Examples
         ~~~~~~~~
+
+        To set the parameter values for the run 'test' to the hard wired values, for all residues,
+        type:
+
+        relax> value.set('test')
+
+
+        To set the parameter values of residue 10, which is the model-free run 'm4' and has the
+        parameters {S2, te, Rex}, the following can be used.  Note that the Rex term should be the
+        chemical exchange value for the first given field strength.
+
+        relax> value.set('m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
+        relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
+
+
+        To set the CSA value for the model-free run 'tm3' to the hard wired value, type:
+
+        relax> value.set('tm3', data_type='csa')
+
 
         To set the CSA value of all residues in the model-free run 'm1' to -170 ppm, type:
 
@@ -153,25 +172,25 @@ class Value:
         relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
 
 
-        To set the parameter values of residue 10, which is the model-free run 'm4' and has the
-        parameters {S2, te, Rex}, the following can be used.  Note that the Rex term should be the
-        chemical exchange value for the first given field strength.
+        To set both the bond length and the CSA value for the model-free run 'tm3' to the hard wired
+        values, type:
 
-        relax> value.set('m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
-        relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
+        relax> value.set('tm3', data_type=['bond length', 'csa'])
+
+
+        To set both tf and ts in the model-free run 'm6' to 100 ps, type:
+
+        relax> value.set('m6', 100e-12, ['tf', 'ts'])
+        relax> value.set('m6', value=100e-12, data_type=['tf', 'ts'])
 
 
         To set the S2 and te parameter values for model-free run 'm4' which has the parameters
-        {S2, te, Rex} to 0.56 and 13e-12, type:
+        {S2, te, Rex} to 0.56 and 13 ps, type:
 
         relax> value.set('m4', [0.56, 13e-12], ['S2', 'te'], 10)
         relax> value.set('m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
+        relax> value.set(run='m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
 
-
-        To set the parameter values for the run 'test' to the hard wired values, for all residues,
-        type:
-
-        relax> value.set('test')
         """
 
         # Function intro text.
@@ -189,7 +208,7 @@ class Value:
             raise RelaxStrError, ('run', run)
 
         # Value.
-        if value != None and type(value) != list and type(value) != float and type(value) != int:
+        if value != None and type(value) != float and type(value) != int and type(value) != list:
             raise RelaxNoneFloatListError, ('value', value)
         if type(value) == list:
             for i in len(value):
@@ -204,21 +223,13 @@ class Value:
                 if type(data_type) != str:
                     raise RelaxListStrError, ('data type', data_type)
 
-        # If the value argument is a single value, make sure the data_type argument is set.
+        # The invalid combination of a single value and no data_type argument.
         if (type(value) == float or type(value) == int) and data_type == None:
-            raise RelaxError, "When the value is a single number, the data_type argument must be supplied."
+            raise RelaxError, "Invalid combination, view the docstring for details by typing 'help(value.set)'"
 
-        # If the value argument is an array, make sure data_type is None or an array of strings.
-        if type(value) == list and data_type != None and type(data_type) != list:
-            raise RelaxError, "When the value argument is an array, the data_type argument must either be None or an array of strings."
-
-        # If the data_type argument is a single string, make sure the value argument is a single value or None.
-        if type(data_type) == str and value != None and type(value) != float and type(value) != str:
-            raise RelaxError, "When the data type argument is a single string, the value argument must either be None or a single value."
-
-        # It the data_type argument is None, make sure the value argument is an array of numbers or None.
-        if data_type == None and value != None and type(value) != list:
-            raise RelaxError, "When the data type argument is None, the value argument must either be None or an array of numbers."
+        # The invalid combination of an array of values and a single data_type string.
+        if type(value) == list and type(data_type) == str:
+            raise RelaxError, "Invalid combination, view the docstring for details by typing 'help(value.set)'"
 
         # Residue number.
         if res_num != None and type(res_num) != int and type(res_num) != str:
