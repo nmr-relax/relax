@@ -497,6 +497,39 @@ class common_operations:
 		return text
 
 
+	def initialize(self):
+		"A few operations to start up the program."
+
+		self.mf.data.stage = self.ask_stage()
+		title = "<<< Stage " + self.mf.data.stage + " - " 
+		title = title + self.mf.usr_param.method + " model selection >>>\n\n\n"
+		self.mf.file_ops.init_log_file(title)
+		input = self.mf.file_ops.open_input()
+		self.extract_input(input)
+		self.extract_relax_data()
+		self.log_input_info()
+
+		if match('1', self.mf.data.stage):
+			print "\n[ Stage 1 ]\n"
+			self.initial_runs()
+			print "\n[ End of stage 1 ]\n\n"
+
+		if match('^2', self.mf.data.stage):
+			print "\n[ Stage 2 ]\n"
+			self.mf.file_ops.mkdir('final')
+			self.stage2()
+			if match('a$', self.mf.data.stage):
+				self.final_run()
+			if match('b$', self.mf.data.stage):
+				self.final_run_optimized()
+			print "\n[ End of stage 2 ]\n\n"
+
+		if match('3', self.mf.data.stage):
+			print "\n[ Stage 3 ]\n"
+			self.stage3()
+			print "\n[ End of stage 3 ]\n\n"
+
+
 	def log_input_info(self):
 		self.mf.log.write("The input info data structure is:\n" + `self.mf.data.input_info` + "\n\n")
 		for i in range(len(self.mf.data.input_info)):
@@ -682,11 +715,3 @@ class common_operations:
 		sys.exit()
 
 
-	def start_up(self, stage, title):
-		"A few operations to start up the program."
-
-		self.mf.file_ops.init_log_file(stage, title)
-		input = self.mf.file_ops.open_input()
-		self.extract_input(input)
-		self.extract_relax_data()
-		self.log_input_info()

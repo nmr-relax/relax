@@ -21,10 +21,10 @@ class file_ops:
 		chmod(dir + '/run', 0777)
 		
 	
-	def init_log_file(self, stage, title):
+	def init_log_file(self, title):
 		"Initialize the log file."
 		
-		self.mf.log = open('log.stage' + stage, 'w')
+		self.mf.log = open('log.stage' + self.mf.data.stage, 'w')
 		self.mf.log.write(title)
 
 

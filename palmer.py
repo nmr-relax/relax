@@ -22,35 +22,12 @@ class palmer(common_operations):
 		self.mf = mf
 
 		print "Palmer's method for model-free analysis. (Mandel et al., 1995)"
-		self.mf.data.stage = self.ask_stage()
-		title = "<<< Stage " + self.mf.data.stage + " of Palmer's method for model-free analysis >>>\n\n\n"
-		self.start_up(self.mf.data.stage, title)
 
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
 		if self.mf.data.num_data_sets > 3:
 			self.mf.data.runs.append('f-m2m4')
 			self.mf.data.runs.append('f-m2m5')
 			self.mf.data.runs.append('f-m3m4')
-
-		if match('1', self.mf.data.stage):
-			print "\n[ Stage 1 ]\n"
-			self.initial_runs()
-			print "\n[ End of stage 1 ]\n\n"
-
-		if match('^2', self.mf.data.stage):
-			print "\n[ Stage 2 ]\n"
-			self.mf.file_ops.mkdir('final')
-			self.stage2()
-			if match('a$', self.mf.data.stage):
-				self.final_run()
-			if match('b$', self.mf.data.stage):
-				self.final_run_optimized()
-			print "\n[ End of stage 2 ]\n\n"
-
-		if match('3', self.mf.data.stage):
-			print "\n[ Stage 3 ]\n"
-			self.stage3()
-			print "\n[ End of stage 3 ]\n\n"
 
 
 	def initial_runs(self):
