@@ -22,17 +22,17 @@ class model_free(common_ops):
 
 
 	def minimisation(self):
-		self.extract_relax_data()
-		self.relax.data.calc_frq()
-		self.relax.data.calc_constants()
+		#self.extract_relax_data()
+		#self.relax.data.calc_frq()
+		#self.relax.data.calc_constants()
 
-		self.relax.file_ops.mkdir(self.relax.data.model)
-		self.relax.results = open(self.relax.data.model + '/results', 'w')
+		#self.relax.file_ops.mkdir(self.relax.data.model)
+		#self.relax.results = open(self.relax.data.model + '/results', 'w')
 
-		print "\n\n[ Model-free fitting ]\n"
-		diff_type = 'iso'
-		diff_params = (float(10.0 * 1e-9))
-		mf_model = self.relax.data.model
+		#print "\n\n[ Model-free fitting ]\n"
+		#diff_type = 'iso'
+		#diff_params = (float(10.0 * 1e-9))
+		#mf_model = self.relax.data.model
 
 		# Flags.
 		########

@@ -1,4 +1,3 @@
-from functions.mf_functions import mf_functions
 from generic_functions import generic_functions
 
 
@@ -12,23 +11,17 @@ class mf_model(generic_functions):
 	def create(self, name=None, equation=None, param_types=None):
 		"Macro to create arbritary model-free models."
 
-		print "Executing macro create_mf_model"
-
 		if not name:
 			print "Model-free model name not given."
-			print "[ failed ]"
 			return
 		elif not equation:
 			print "Model-free equation type not selected."
-			print "[ failed ]"
 			return
 		elif not param_types:
 			print "Model-free parameters not given."
-			print "[ failed ]"
 			return
 		elif not equation == 'original' or not equation == 'extended':
 			print "Model-free equation '" + equation + "' not supported."
-			print "[ failed ]"
 			return
 
 		# Add the model.
@@ -43,31 +36,24 @@ class mf_model(generic_functions):
 			self.relax.data.mf_param_types = [param_types]
 			self.relax.data.mf_params = []
 
-		self.relax.data.func = mf_functions(self.relax)
 
 		# Create the mf_params data structure.
 		for i in range(len(self.relax.data.seq)):
 			self.relax.data.mf_params.append([None, None])
 
-		print "[ OK ]"
-
 
 	def list(self):
 		"Print the list of preset model-free models."
 
-		print "Executing macro list_preset_mf_model"
 		print "'m1' => [S2]"
 		print "'m2' => [S2, te]"
 		print "'m3' => [S2, Rex]"
 		print "'m4' => [S2, te, Rex]"
 		print "'m5' => [S2f, S2s, ts]"
-		print "[ OK ]"
 
 
 	def select(self, model):
 		"Select the preset model-free model."
-
-		print "Executing macro select_preset_mf_model"
 
 		# Test if sequence data is loaded.
 		if not self.sequence_data_test(): return
@@ -98,13 +84,9 @@ class mf_model(generic_functions):
 			self.relax.data.mf_param_types.append(['S2f', 'S2s', 'te'])
 		else:
 			print "The model '" + model + "' is invalid."
-			print "[ failed ]"
 			return
 
-		self.relax.data.func = mf_functions(self.relax)
 
 		# Create the mf_params data structure.
 		for i in range(len(self.relax.data.seq)):
 			self.relax.data.mf_params.append([None, None])
-
-		print "[ OK ]"

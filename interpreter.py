@@ -12,26 +12,37 @@ class interpreter:
 		del relax
 
 		# Place the macros in the local namespace.
-		bond_length = self.relax.macros.bond_length.set
 		create_mf_model = self.relax.macros.mf_model.create
-		csa = self.relax.macros.csa.set
+		diffusion_tensor = self.relax.macros.diffusion_tensor.set
 		echo_data = self.relax.macros.echo_data.echo
+		format = self.relax.macros.format.format
+		init_data = self.relax.macros.init_data.init
 		list_preset_mf_model = self.relax.macros.mf_model.list
-		load_bond_length = self.relax.macros.bond_length.load
-		load_csa = self.relax.macros.csa.load
-		load_relax_data = self.relax.macros.load_relax_data.load
-		load_seq = self.relax.macros.load_seq.load
-		load_state = self.relax.macros.load_state.load
+		load = self.relax.macros.load
 		ls = self.relax.macros.ls
 		pdb = self.relax.macros.pdb.set
-		save_state = self.relax.macros.save_state.save
+		print_all_data = self.relax.macros.print_all_data.go
 		select_preset_mf_model = self.relax.macros.mf_model.select
-		diffusion_tensor = self.relax.macros.diffusion_tensor.set
 		set_model_selection = self.relax.macros.set_model_selection.set
+		state = self.relax.macros.state
+		system = self.relax.macros.system
+		value_setup = self.relax.macros.value_setup
 
 		# Setup tab completion.
 		readline.set_completer(tab_completion(name_space=locals()).finish)
 		readline.parse_and_bind("tab: complete")
 
+		# Modify the function code.InteractiveConsole.raw_input to echo the input.
+		code.InteractiveConsole.raw_input = self.raw_input
+		#code.InteractiveConsole.raw_input(code.InteractiveConsole())
+
 		# Go to the prompt.
 		code.interact(banner=self.relax.intro_string, local=locals())
+
+
+	def raw_input(self, prompt=""):
+		"Function to modify code.InteractiveConsole.raw_input to echo the input."
+
+		input = raw_input(prompt)
+		print input
+		return input

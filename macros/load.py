@@ -1,99 +1,13 @@
 from re import match
-import sys
 
 from generic_functions import generic_functions
 
 
-class load_relax_data(generic_functions):
+class load(generic_functions):
 	def __init__(self, relax):
-		"Class containing the macro for loading R1, R2, or NOE relaxation data."
+		"Class containing macros for loading data."
 
 		self.relax = relax
-
-
-	def load(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-		"Macro for loading R1, R2, or NOE relaxation data."
-
-		# Macro intro print out.
-		print "Executing macro load_relax_data"
-
-		# Arguments
-		self.ri_label = ri_label
-		self.frq_label = frq_label
-		self.frq = frq
-		self.file_name = file_name
-		self.num_col = num_col
-		self.name_col = name_col
-		self.data_col = data_col
-		self.error_col = error_col
-		self.sep = sep
-
-		# Test if sequence data is loaded.
-		if not self.sequence_data_test(): return
-
-		# Test if all arguments are supplied correctly.
-		if self.test_args():
-			print "[ failed ]"
-			return
-
-		# Macro intro print out.
-		print "   Ri label:              " + self.ri_label
-		print "   Frequency label:       " + self.frq_label
-		print "   Frequency:             " + `self.frq`
-		print "   File name:             " + self.file_name
-		print "   Residue number column: " + `self.num_col`
-		print "   Residue name column:   " + `self.name_col`
-		print "   Data column:           " + `self.data_col`
-		print "   Error column:          " + `self.error_col`
-		if self.sep:
-			print "   Seperator:             " + `self.sep`
-		else:
-			print "   Seperator:             'Whitespace'"
-
-		# Extract the data from the file.
-		self.file_data = self.relax.file_ops.extract_data(self.file_name)
-
-		# Do nothing if the file does not exist.
-		if not self.file_data:
-			print "No relaxation data loaded."
-			print "[ failed ]"
-			return
-
-		# Strip data.
-		self.file_data = self.relax.file_ops.strip(self.file_data)
-
-		# Test if relaxation data has already been loaded.
-		try:
-			self.relax.data.relax_data
-
-		# Data initialisation.
-		except AttributeError:
-			self.init_data()
-
-		# Update data.
-		else:
-			# Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
-			for i in range(self.relax.data.num_ri):
-				if self.ri_label == self.relax.data.ri_labels[i] and self.frq_label == self.relax.data.frq_labels[self.relax.data.remap_table[i]]:
-					print "Relaxation data corresponding to 'ri_label' and 'frq_label' is already loaded.  To reload, delete the original data."
-					print "[ failed ]"
-					return
-
-			self.update_data()
-
-		# Add the relaxation data to self.relax.data.relax_data
-		temp = []
-		for i in range(len(self.relax.data.seq)):
-			temp.append([None, None])
-
-		for i in range(len(temp)):
-			for j in range(len(self.file_data)):
-				if int(self.file_data[j][self.num_col]) == self.relax.data.seq[i][0] and self.file_data[j][self.name_col] == self.relax.data.seq[i][1]:
-					temp[i] = [float(self.file_data[j][self.data_col]), float(self.file_data[j][self.error_col])]
-
-		self.relax.data.relax_data.append(temp)
-
-		print "[ OK ]"
 
 
 	def init_data(self):
@@ -132,6 +46,110 @@ class load_relax_data(generic_functions):
 		#	[res][2] - Relaxation value
 		#	[res][3] - Relaxation error
 		self.relax.data.relax_data = []
+
+
+	def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+		"Macro for loading R1, R2, or NOE relaxation data."
+
+		# Arguments
+		self.ri_label = ri_label
+		self.frq_label = frq_label
+		self.frq = frq
+		self.file_name = file_name
+		self.num_col = num_col
+		self.name_col = name_col
+		self.data_col = data_col
+		self.error_col = error_col
+		self.sep = sep
+
+		# Test if sequence data is loaded.
+		if not self.sequence_data_test(): return
+
+		# Test if all arguments are supplied correctly.
+		if self.test_args():
+			return
+
+		# Extract the data from the file.
+		file_data = self.relax.file_ops.extract_data(self.file_name)
+
+		# Do nothing if the file does not exist.
+		if not file_data:
+			print "No relaxation data loaded."
+			return
+
+		# Strip data.
+		file_data = self.relax.file_ops.strip(file_data)
+
+		# Test if relaxation data has already been loaded.
+		try:
+			self.relax.data.relax_data
+
+		# Data initialisation.
+		except AttributeError:
+			self.init_data()
+
+		# Update data.
+		else:
+			# Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
+			for i in range(self.relax.data.num_ri):
+				if self.ri_label == self.relax.data.ri_labels[i] and self.frq_label == self.relax.data.frq_labels[self.relax.data.remap_table[i]]:
+					print "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been loaded."
+					print "To load the data, either delete the original or use different labels."
+					return
+
+			self.update_data()
+
+		# Add the relaxation data to self.relax.data.relax_data
+		data = []
+		for i in range(len(file_data)):
+			data.append([int(file_data[i][self.num_col]), file_data[i][self.name_col], float(file_data[i][self.data_col]), float(file_data[i][self.error_col])])
+		self.relax.data.relax_data.append(self.create_data(data))
+
+
+	def sequence(self, file_name=None, num_col=0, name_col=1, sep=None):
+		"Macro for loading sequence data."
+
+		# Arguments
+		self.file_name = file_name
+		self.num_col = num_col
+		self.name_col = name_col
+		self.sep = sep
+
+		# Test if the file name is given.
+		if not file_name:
+			print "No file is specified."
+			return
+
+		# Test if the sequence data has already been loaded.
+		try:
+			self.relax.data.seq
+		except AttributeError:
+			"Do nothing."
+		else:
+			print "The sequence data has already been loaded."
+			print "To reload, delete the original sequence data (self.relax.data.seq)."
+			return
+
+		# Extract the data from the file.
+		file_data = self.relax.file_ops.extract_data(self.file_name)
+
+		# Do nothing if the file does not exist.
+		if not file_data:
+			print "No sequence data loaded."
+			return
+
+		# Strip data.
+		file_data = self.relax.file_ops.strip(file_data)
+
+		# Place the data in self.relax.data.seq
+		seq = []
+		for i in range(len(file_data)):
+			try:
+				seq.append([int(file_data[i][self.num_col]), file_data[i][self.name_col]])
+			except ValueError:
+				print "Sequence data is invalid."
+				return
+		self.relax.data.seq = seq
 
 
 	def test_args(self):

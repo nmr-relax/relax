@@ -13,47 +13,27 @@ class echo_data(generic_functions, select_res):
 
 
 	def echo(self, *args):
-		"Macro to print the names of all data structures in self.relax.data"
+		"""Macro to print the names of all data structures in self.relax.data
+
+		With no arguments, the names of all data structures in self.relax.data are printed along with the data type.
+		"""
 
 		self.args = args
 
 		# Print the names of all data structures in self.relax.data if no arguments are given.
 		if len(self.args) == 0:
-			self.print_data_structs()
+			print dir(self.relax.data)
 			return
 
-		# Sort out the arguments.
-		self.struct = self.args[0]
-		self.sel = self.args[1:]
-
-		# Test if the data structure exists.
-		try:
-			getattr(self.relax.data, self.struct)
-		except AttributeError:
-			print "Data structure " + self.struct + " does not exist."
-			return
-
-		# Sequence data.
-		if self.struct == 'seq':
-			# Test if sequence data is loaded.
+		for struct in args:
+			# Test if the data structure exists.
 			try:
-				self.relax.data.seq
+				getattr(self.relax.data, struct)
 			except AttributeError:
-				print "No sequence data loaded."
-				return
-			self.indecies = self.select_residues()
-			if not self.indecies:
-				return
-			self.print_data(self.relax.data.seq, seq_flag=1)
+				print "Data structure 'self.relax.data." + struct + "' does not exist."
+				continue
 
-		# Relaxation data.
-		#elif self.struct == 'relax_data':
-		#	self.print_data(self.relax.data.seq, seq_flag=0)
-
-		# Other data.
-		else:
-			print "Data structure " + self.struct + ":"
-			print `getattr(self.relax.data, self.struct)`
+			print `getattr(self.relax.data, struct)`
 
 
 	def print_data(self, data, seq_flag=0):
@@ -69,13 +49,3 @@ class echo_data(generic_functions, select_res):
 				print "%-5i%-5s" % (data[index][0], data[index][1])
 			else:
 				print "%-5i%-5s%-20e%-20e" % (data[index][0], data[index][1], data[index][2], data[index][3])
-
-
-	def print_data_structs(self):
-		"Function for printing the names of all data structures in self.relax.data"
-
-		print "Data structures:"
-		for name in dir(self.relax.data):
-			if not self.filter_data_structure(name):
-				print "   " + name + " " + `type(getattr(self.relax.data, name))`
-

@@ -52,15 +52,8 @@ class relax:
 		# Debugging option, 0 = off, 1 = on.
 		self.debug = 0
 
-		# Import the user parameters.
-		#self.usr_param = usr_param()
-		#if not self.version == self.usr_param.version:
-		#	print "The versions numbers of the program and the file 'usr_param.py' do not match."
-		#	print "Copy the correct version to the working directory, quitting program."
-		#	sys.exit()
-
 		self.macros = macros(self)
-		self.data = data(self)
+		self.data = data()
 		self.file_ops = file_ops(self)
 		self.model_selection = model_selection(self)
 		self.minimise = minimise
@@ -73,20 +66,6 @@ class relax:
 			interpreter(self)
 		else:
 			self.arguments()
-
-		sys.exit()
-
-		# Select the behaviour of the program.
-		#if match('^[Rr]elax[- _][Ff]it$', self.usr_param.program_type):
-		#	relax_fit(self)
-
-		#elif match('^[Mm][Ff]$', self.usr_param.program_type):
-
-		#elif match('^[Pp]almer$', self.usr_param.program_type):
-		#	palmer(self)
-
-		#else:
-		#	print "The program type " + `self.usr_param.program_type` + " does not exist."
 
 
 	def arguments(self):

@@ -1,7 +1,8 @@
+from generic_functions import generic_functions
 from value_setup import value_setup
 
 
-class bond_length(value_setup):
+class bond_length(generic_functions, value_setup):
 	def __init__(self, relax):
 		"Class containing the macro for setting bond length values."
 
@@ -30,10 +31,3 @@ class bond_length(value_setup):
 
 		self.string = "load bond length"
 		self.macro_name = "load_bond_length"
-
-
-	def init_data(self):
-		self.relax.data.bond_length = []
-		self.data = self.relax.data.bond_length
-
-

@@ -73,9 +73,9 @@ class tab_completion:
 		"Function to create the dictionary of options for tab completion."
 
 		self.list = self.name_space.keys()
-		for key in __builtin__.__dict__.keys():
-			if not key in self.list:
-				self.list.append(key)
+		#for key in __builtin__.__dict__.keys():
+		#	if not key in self.list:
+		#		self.list.append(key)
 
 		self.options = []
 		for name in self.list:

@@ -5,21 +5,27 @@ from generic_functions import generic_functions
 from select_res import select_res
 
 
-class echo_data(generic_functions, select_res):
+class format(generic_functions, select_res):
 	def __init__(self, relax):
 		"Macros for printing data to standard out."
 
 		self.relax = relax
 
 
-	def echo(self, *args):
-		"Macro to print the names of all data structures in self.relax.data"
+	def format(self, *args):
+		"""Macro to print the names of all data structures in self.relax.data
+
+		With no arguments, the names of all data structures in self.relax.data are printed along with the data type.
+		"""
 
 		self.args = args
 
 		# Print the names of all data structures in self.relax.data if no arguments are given.
 		if len(self.args) == 0:
-			self.print_data_structs()
+			print "Data structures:"
+			for name in dir(self.relax.data):
+				if not self.filter_data_structure(name):
+					print "   " + name + " " + `type(getattr(self.relax.data, name))`
 			return
 
 		# Sort out the arguments.
@@ -30,7 +36,7 @@ class echo_data(generic_functions, select_res):
 		try:
 			getattr(self.relax.data, self.struct)
 		except AttributeError:
-			print "Data structure " + self.struct + " does not exist."
+			print "Data structure 'self.relax.data." + self.struct + "' does not exist."
 			return
 
 		# Sequence data.
@@ -69,13 +75,3 @@ class echo_data(generic_functions, select_res):
 				print "%-5i%-5s" % (data[index][0], data[index][1])
 			else:
 				print "%-5i%-5s%-20e%-20e" % (data[index][0], data[index][1], data[index][2], data[index][3])
-
-
-	def print_data_structs(self):
-		"Function for printing the names of all data structures in self.relax.data"
-
-		print "Data structures:"
-		for name in dir(self.relax.data):
-			if not self.filter_data_structure(name):
-				print "   " + name + " " + `type(getattr(self.relax.data, name))`
-

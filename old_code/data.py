@@ -7,8 +7,13 @@ class data:
 
 		self.relax = relax
 
+		self.gh = 26.7522e7
+		self.gx = -2.7126e7
+		self.h = 6.6260755e-34
+		self.h_bar = self.h / ( 2.0*pi )
+		self.mu0 = 4.0*pi * 1e-7
+
 		#self.init_data()
-		self.init_constants()
 		#self.relax = self.mfin_data(self.relax)
 		#self.asymptotic = self.init_asymptotic()
 		#self.bootstrap = self.init_bootstrap()
@@ -187,14 +192,6 @@ class data:
 			self.frq_sqrd_list[i].append((frqH - frqN)**2)
 			self.frq_sqrd_list[i].append(frqH**2)
 			self.frq_sqrd_list[i].append((frqH + frqN)**2)
-
-
-	def init_constants(self):
-		self.gh = 26.7522e7
-		self.gx = -2.7126e7
-		self.h = 6.6260755e-34
-		self.h_bar = self.h / ( 2.0*pi )
-		self.mu0 = 4.0*pi * 1e-7
 
 
 	def init_data(self):
