@@ -1,7 +1,7 @@
 from Numeric import dot
 
 
-class linear_constraint:
+class constraint_linear:
 	def __init__(self, A=None, b=None):
 		"""Class for the creation of linear inequality constraint functions and gradients.
 
@@ -45,8 +45,7 @@ class linear_constraint:
 		A vector containing the constraint values is returned.
 		"""
 
-		self.c = dot(self.A, x) - self.b
-		return self.c
+		return dot(self.A, x) - self.b
 
 
 	def dfunc(self, x):

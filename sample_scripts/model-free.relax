@@ -14,9 +14,10 @@ diffusion_tensor('iso', 1e-8)
 model = 'm4'
 mf_model_select(model)
 #fixed(model, [ 0.6,  0.9,  5.0*1e-10 ])
-#from math import pi
 #fixed(model, [ 1.0,  10.0*1e-10, 0.0 / (2.0 * pi * 600000000.0)**2 ])
-#fixed(model, [ 0.95,  100.0*1e-10, 0.0 ])
-grid_search(model, inc=21)
-minimise('lm', model=model, constraints=1, min_debug=1)
+from math import pi
+fixed(model, [ 0.97,  4048*1e-12, 0.149 / (2.0 * pi * 600000000.0)**2 ])
+#grid_search(model, inc=11)
+#minimise('bfgs', model=model, constraints=0)
+minimise('bfgs', model=model, constraints=1, max_iter=1e7, print_flag=1)
 state_save('save', 1)

@@ -548,9 +548,6 @@ class Min:
 				print "tol:         " + `self.func_tol`
 			self.warning = None
 			return 1
-		else:
-			if self.print_flag == 2:
-				print "Pass function tol test."
 
 
 	def update(self):

@@ -12,7 +12,7 @@ class min:
 		self.relax = relax
 
 
-	def fixed(self, model, values=None, min_debug=1):
+	def fixed(self, model, values=None, print_flag=1):
 		"""Macro to fix the initial parameter values.
 
 		Arguments
@@ -21,7 +21,7 @@ class min:
 		model:		The name of the model.
 		values:		An array of numbers of length equal to the number of parameters in
 			the model.
-		min_debug:	(so is this)
+		print_flag:	(so is this)
 
 
 		Examples
@@ -73,11 +73,11 @@ class min:
 				return
 
 		# The debugging flag.
-		if type(min_debug) != int:
-			print "The min_debug argument must be an integer."
+		if type(print_flag) != int:
+			print "The print_flag argument must be an integer."
 			return
 		else:
-			self.relax.min_debug = min_debug
+			self.print_flag = print_flag
 
 		# Setup the fixed parameter options.
 		if self.values:
@@ -169,7 +169,7 @@ class min:
 		self.main_loop()
 
 
-	def grid_search(self, model, lower=None, upper=None, inc=21, min_debug=1):
+	def grid_search(self, model, lower=None, upper=None, inc=21, print_flag=1):
 		"""
 
 		Generate the data structure of model-free grid options for the grid search.
@@ -245,11 +245,11 @@ class min:
 
 
 		# The debugging flag.
-		if type(min_debug) != int:
-			print "The min_debug argument must be an integer."
+		if type(print_flag) != int:
+			print "The print_flag argument must be an integer."
 			return
 		else:
-			self.relax.min_debug = min_debug
+			self.print_flag = print_flag
 
 		# Setup the grid options.
 		self.min_options = []
@@ -349,7 +349,7 @@ class min:
 		"The main iterative loop which loops over the residues."
 
 		for self.res in range(len(self.relax.data.seq)):
-			if self.relax.min_debug >= 1:
+			if self.print_flag >= 1:
 				print "\n\n<<< Fitting to residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1] + " >>>"
 			else:
 				print "Residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1]
@@ -389,7 +389,7 @@ class min:
 					self.min_options = (self.mf.lm_dri, errors)
 
 			# Minimisation.
-			results = self.relax.minimise(func=self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
+			results = self.relax.minimise(func=self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.print_flag)
 			if results == None:
 				return
 			self.params, self.func, iter, fc, gc, hc, self.warning = results
@@ -400,7 +400,7 @@ class min:
 
 			self.relax.data.params[self.model][self.res] = self.params
 
-			if self.relax.min_debug:
+			if self.print_flag:
 				print "\n\n<<< Finished minimiser >>>"
 
 			# Write the results to file.
@@ -420,7 +420,7 @@ class min:
 			max_iter - the maximum number of iterations.  The default value is 1e7.
 			constraints - a flag specifying whether the parameters should be
 			   constrained.  The default is to turn constraints on (constraints=1).
-			min_debug - the amount of information to print to screen.  Zero corresponds
+			print_flag - the amount of information to print to screen.  Zero corresponds
 			   to minimal output, one is intermediate output, while two is maximal
 			   output.  The default value is 1.
 
@@ -438,7 +438,7 @@ class min:
 		self.min_options = args[1:]
 
 		# Test for invalid keywords.
-		valid_keywords = ['model', 'func_tol', 'max_iterations', 'max_iter', 'constraints', 'min_debug']
+		valid_keywords = ['model', 'func_tol', 'max_iterations', 'max_iter', 'constraints', 'print_flag']
 		for key in keywords:
 			valid = 0
 			for valid_key in valid_keywords:
@@ -491,10 +491,10 @@ class min:
 			return
 
 		# Debugging options.
-		if keywords.has_key('min_debug'):
-			self.relax.min_debug = keywords['min_debug']
+		if keywords.has_key('print_flag'):
+			self.print_flag = keywords['print_flag']
 		else:
-			self.relax.min_debug = 1
+			self.print_flag = 1
 
 		# Main iterative loop.
 		self.main_loop()

@@ -37,7 +37,7 @@ class model_free(common_ops):
 		########
 
 		# Debugging flag
-		self.relax.min_debug = 1
+		self.print_flag = 1
 
 		# Flag for the diagonal scaling of the model-free parameters.
 		self.scaling_flag = 1
@@ -82,7 +82,7 @@ class model_free(common_ops):
 
 		# Loop over all data sets.
 		for self.res in range(len(self.relax.data.relax_data[0])):
-			if self.relax.min_debug >= 1:
+			if self.print_flag >= 1:
 				print "\n\n<<< Fitting to residue: " + self.relax.data.relax_data[0][self.res][0] + " " + self.relax.data.relax_data[0][self.res][1] + " >>>"
 			else:
 				print "Residue: " + self.relax.data.relax_data[0][self.res][0] + " " + self.relax.data.relax_data[0][self.res][1]
@@ -104,18 +104,18 @@ class model_free(common_ops):
 				self.relax.usr_param.minimiser[2] = errors
 
 			# Initialisation of model-free parameter values.
-			results = self.relax.minimise(func, dfunc=dfunc, d2func=d2func, args=function_ops, x0=None, minimiser=init_params, full_output=1, print_flag=self.relax.min_debug)
+			results = self.relax.minimise(func, dfunc=dfunc, d2func=d2func, args=function_ops, x0=None, minimiser=init_params, full_output=1, print_flag=self.print_flag)
 			self.params, self.chi2, iter, fc, gc, hc, self.warning = results
 
 			# Minimisation.
-			results = self.relax.minimise(func, dfunc=dfunc, d2func=d2func, args=function_ops, x0=self.params, minimiser=self.relax.usr_param.minimiser, func_tol=chi2_tol, maxiter=max_iterations, full_output=1, print_flag=self.relax.min_debug)
+			results = self.relax.minimise(func, dfunc=dfunc, d2func=d2func, args=function_ops, x0=self.params, minimiser=self.relax.usr_param.minimiser, func_tol=chi2_tol, maxiter=max_iterations, full_output=1, print_flag=self.print_flag)
 			self.params, self.chi2, iter, fc, gc, hc, self.warning = results
 			self.iter_count = self.iter_count + iter
 			self.f_count = self.f_count + fc
 			self.g_count = self.g_count + gc
 			self.h_count = self.h_count + hc
 
-			if self.relax.min_debug:
+			if self.print_flag:
 				print "\n\n<<< Finished minimiser >>>"
 
 			# Write the results to file.

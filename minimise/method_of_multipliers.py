@@ -1,8 +1,9 @@
-from Numeric import Float64, zeros
+from Numeric import Float64, ones, zeros
+from re import match
 
 from generic import minimise
 #from bound_constraint import bound_constraint
-from linear_constraint import linear_constraint
+from constraint_linear import constraint_linear
 
 
 def method_of_multipliers(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
@@ -125,15 +126,17 @@ class Method_of_multipliers:
 				self.A[4, 2] = 1.0
 				self.b[1] = -1.0
 				self.b[3] = -1.0
-			print "A: " + `self.A`
-			print "b: " + `self.b`
 			# Remove to here.
 
-			self.linear_constraint = linear_constraint(self.A, self.b)
-			self.c = self.linear_constraint.func
-			self.dc = self.linear_constraint.dfunc
+			self.constraint_linear = constraint_linear(self.A, self.b)
+			self.c = self.constraint_linear.func
+			self.dc = self.constraint_linear.dfunc
 			self.d2c = None
 			self.m = len(self.b)
+			if print_flag == 2:
+				print "Linear constraint matrices."
+				print "A: " + `self.A`
+				print "b: " + `self.b`
 
 		# Bound constraints.
 		elif l != None and u != None:
@@ -202,13 +205,10 @@ class Method_of_multipliers:
 		self.warning = None
 
 		# Initialise data structures.
-		self.L = 0.0
+		self.test_str = zeros(self.m)
 		self.dL = zeros(len(self.xk), Float64)
 		self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
-		self.test_structure = zeros(self.m)
-
-		# Initial function value.
-		self.fk = apply(self.func_LA, (self.xk,)+self.args)
+		self.L = apply(self.func_LA, (self.xk,)+self.args)
 
 
 	def func_LA(self, *args):
@@ -225,18 +225,39 @@ class Method_of_multipliers:
 			                \  -ms^2/2		otherwise.
 		"""
 
-		self.aaa = self.L = apply(self.func, (args[0],)+args[1:])
+		self.fk = L = apply(self.func, (args[0],)+args[1:])
 		self.ck = apply(self.c, (args[0],))
 
 		for i in range(self.m):
-			if self.ck[i] - self.mu*self.lambda_k[i] <= 0:
-				self.L = self.L  -  0.5 * self.mu * self.lambda_k[i]**2
-				self.test_structure[i] = 1
-			else:
-				self.L = self.L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
-				self.test_structure[i] = 0
+			#if self.ck[i] - self.mu*self.lambda_k[i] == 0.0:
+			#	print "self.ck[i] - self.mu*self.lambda_k[i] == 0.0"
+			#	raise NameError, "this should not occur ever!"
 
-		return self.L
+			if self.ck[i] - self.mu*self.lambda_k[i] <= 0.0:
+				if self.print_flag == 3:
+					print "i: " + `i`
+					print "self.ck[i] - self.mu*self.lambda_k[i] <= 0"
+					print "comp: " + `-  0.5 * self.mu * self.lambda_k[i]**2`
+				L = L  -  0.5 * self.mu * self.lambda_k[i]**2
+				self.test_str[i] = 1
+			else:
+				if self.print_flag == 3:
+					print "i: " + `i`
+					print "self.ck[i] - self.mu*self.lambda_k[i] > 0"
+					print "comp: " + `-  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu`
+				L = L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
+				self.test_str[i] = 0
+
+		if self.print_flag == 3:
+			print "mu: " + `self.mu`
+			print "xk: " + `self.xk`
+			print "fk: " + `self.fk`
+			print "ck: " + `self.ck`
+			print "L:  " + `L`
+			print "lambda:  " + `self.lambda_k`
+			print "Test str: " + `self.test_str`
+
+		return L
 
 
 	def func_dLA(self, *args):
@@ -244,14 +265,14 @@ class Method_of_multipliers:
 
 		"""
 
-		self.dL = apply(self.dfunc, (args[0],)+args[1:])
+		dL = apply(self.dfunc, (args[0],)+args[1:])
 		self.dck = apply(self.dc, (args[0],))
 
 		for i in range(self.m):
-			if self.test_structure[i]:
-				self.dL = self.dL - (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
+			if self.test_str[i]:
+				dL = dL - (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
 
-		return self.dL
+		return dL
 
 
 	def func_d2LA(self, *args):
@@ -260,10 +281,10 @@ class Method_of_multipliers:
 		"""
 
 		raise NameError, "Incomplete code."
-		self.d2L = apply(self.d2func, (args[0],)+args[1:])
+		d2L = apply(self.d2func, (args[0],)+args[1:])
 		self.d2ck = apply(self.d2c, (args[0],))
 
-		return self.d2L
+		return d2L
 
 
 	def func_d2LA_simple(self, *args):
@@ -273,8 +294,8 @@ class Method_of_multipliers:
 		"""
 
 		raise NameError, "Incomplete code."
-		self.d2L = apply(self.d2func, (args[0],)+self.args)
-		return self.d2L
+		d2L = apply(self.d2func, (args[0],)+self.args)
+		return d2L
 
 
 	def minimise(self):
@@ -308,28 +329,51 @@ class Method_of_multipliers:
 				print "\n<Method of multipliers main loop.>"
 				print "Step: " + `self.k`
 				print "Parameter values: " + `self.xk`
+				print "Current function value: " + `self.L`
 				print "Current function value: " + `self.fk`
-				print "Current function value: " + `self.aaa`
 				print "Mu: " + `self.mu`
 				print "Lagrange multipliers: " + `self.lambda_k`
 				print "Entering subalgorithm.\n"
 
 			# Unconstrained minimisation sub-loop.
 			results = minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.maxiter, full_output=1, print_flag=self.print_flag)
-			self.xk_new, self.fk_new, j, f, g, h, self.warning = results
+			self.xk_new, self.L_new, j, f, g, h, self.warning = results
 			self.j = self.j + j
 			self.f_count = self.f_count + f
 			self.g_count = self.g_count + g
 			self.h_count = self.h_count + h
-			if self.warning != None:
-				break
+			#if self.warning != None and not match('Max', self.warning):
+			#	break
 
 			# Convergence test.
-			if self.tests():
+
+			# Test the function tolerance.
+			if abs(self.L_new - self.L) <= self.func_tol:
+				if self.print_flag == 2:
+					print "L:          " + `self.L`
+					print "L+1:        " + `self.L_new`
+					print "|L+1 - L|: " + `abs(self.L_new - self.L)`
+					print "tol:         " + `self.func_tol`
+				if self.print_flag:
+					print "Converged."
 				break
 
-			# Update function.
-			self.update_multipliers()
+			# Lagrange multiplier update function.
+			# The update is given by the following formula:
+			#	lambdai_k+1 = max(lambdai_k - ci(xk)/mu, 0)
+			if self.print_flag == 3:
+				print "\nUpdate function."
+			for i in range(self.m):
+				if self.print_flag == 3:
+					print "lambdai_k: " + `self.lambda_k[i]`
+					print "ci(xk):    " + `self.ck[i]`
+					print "mu:        " + `self.mu`
+					print "lambdai_k - ci(xk)/mu: " + `self.lambda_k[i] - self.ck[i]/self.mu`
+					print "max(lambdai_k - ci(xk)/mu, 0): " + `max(self.lambda_k[i] - self.ck[i]/self.mu, 0.0)`
+				self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i]/self.mu, 0.0)
+			if self.print_flag == 3:
+				import sys
+				sys.exit()
 
 			# Update mu.
 			self.mu = 0.1 * self.mu
@@ -339,22 +383,26 @@ class Method_of_multipliers:
 
 			# Iteration counter update.
 			self.xk = self.xk_new * 1.0
-			self.fk = self.fk_new
+			self.L = self.L_new
 			self.k = self.k + 1
 
-		print "\n<Method of multipliers end.>"
-		print "Step: " + `self.k`
-		print "Parameter values: " + `self.xk`
-		print "Current function value: " + `self.fk`
-		print "Current function value: " + `self.aaa`
-		print "Mu: " + `self.mu`
-		print "Lagrange multipliers: " + `self.lambda_k`
+		# Sum iterations.
+		self.k  = self.k + self.j
+
+		if self.print_flag:
+			print "\n<Method of multipliers end.>"
+			print "Step: " + `self.k`
+			print "Parameter values: " + `self.xk_new`
+			print "Current function value: " + `self.L`
+			print "Current function value: " + `self.fk`
+			print "Mu: " + `self.mu`
+			print "Lagrange multipliers: " + `self.lambda_k`
 
 		if self.full_output:
 			try:
-				return self.xk_new, self.aaa, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
+				return self.xk_new, self.fk, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
 			except AttributeError:
-				return self.xk, self.aaa, self.k, self.f_count, self.g_count, self.h_count, self.warning
+				return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
 		else:
 			try:
 				return self.xk_new
@@ -367,28 +415,3 @@ class Method_of_multipliers:
 
 		Test if the minimum function tolerance between fk and fk+1 has been reached.
 		"""
-
-		# Test the function tolerance.
-		if abs(self.fk_new - self.fk) <= self.func_tol:
-			if self.print_flag == 2:
-				print "fk:          " + `self.fk`
-				print "fk+1:        " + `self.fk_new`
-				print "|fk+1 - fk|: " + `abs(self.fk_new - self.fk)`
-				print "tol:         " + `self.func_tol`
-			self.warning = "Function tol reached."
-			return 1
-		else:
-			if self.print_flag == 2:
-				print "Pass function tol test."
-
-
-	def update_multipliers(self):
-		"""Lagrange multiplier update function.
-
-		The update is given by the following formula:
-
-			lambdai_k+1 = max(lambdai_k - ci(xk)/mu, 0)
-		"""
-
-		for i in range(self.m):
-			self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i]/self.mu, 0.0)
