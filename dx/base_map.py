@@ -35,10 +35,10 @@ class Base_Map:
         """Generic function for mapping a space."""
 
         # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("map_space", model)
+        fns = self.relax.specific_setup.setup("map_space", self.relax.data.equations[model][res_num])
         if fns == None:
             return
-        self.map_bounds, self.main_loop = fns
+        self.map_bounds, self.minimise = fns
 
         # Function arguments.
         self.model = model
@@ -76,7 +76,7 @@ class Base_Map:
                 pass
 
         # Get the map bounds.
-        self.bounds = self.map_bounds(model=self.model)
+        self.bounds = self.map_bounds(self.model, self.relax.data.param_types[self.model][self.res_num])
         if lower != None:
             self.bounds[:, 0] = array(lower, Float64)
         if upper != None:

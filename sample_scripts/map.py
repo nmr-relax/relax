@@ -22,14 +22,14 @@ if name == 'm4':
     swap = None
     point = [0.931, 8192e-12, 0.0 / (2.0 * pi * 600000000.0)**2]
 elif name == 'm5':
-    lower = [0.5, 0.5, 0]
-    upper = [1.0, 1.0, 100e-12]
+    lower = [0.0, 0.0, 0]
+    upper = [1.0, 0.01, 100e-12]
     swap = [0, 2, 1]
-    point = [0.952, 0.582, 32.0e-12]
+    point = [1.000, 0.00098352809884949435, 0.10105544919387284*1e-12]
 else:
     lower = None
     upper = None
     swap = None
     point = None
-map(name, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
+map(name, res_num=0, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
 dx()

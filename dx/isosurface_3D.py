@@ -35,11 +35,7 @@ class Iso3D(Base_Map):
 
 
     def create_map(self):
-        """Function for creating a 3D map.
-
-        This needs to be modified as the call to main_loop will not be able to handle multiple
-        residues.
-        """
+        """Function for creating a 3D map."""
 
         # Map file.
         if self.dir:
@@ -61,7 +57,7 @@ class Iso3D(Base_Map):
                 values[self.swap[2]] = self.bounds[self.swap[2], 0]
                 for k in range((self.inc + 1)):
                     # Calculate the function values.
-                    self.main_loop(model=self.model, min_algor='fixed', min_options=self.remap(values), print_flag=0)
+                    self.minimise(model=self.model, i=self.res_num, min_algor='fixed', min_options=self.remap(values), print_flag=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if self.relax.data.min_results[self.model][0][0] > 1e20:
@@ -165,7 +161,7 @@ class Iso3D(Base_Map):
         #####################
 
         # Equation type specific function setup.
-        self.map_labels = self.relax.specific_setup.setup("map_labels", self.model)
+        self.map_labels = self.relax.specific_setup.setup("map_labels", self.relax.data.equations[self.model][self.res_num])
 
         # Default labels.
         if self.map_labels == None or self.labels != None:
@@ -211,7 +207,7 @@ class Iso3D(Base_Map):
 
         # Specific labels.
         else:
-            labels, tick_locations, tick_values = self.map_labels(self.model, self.bounds, self.swap, self.inc)
+            labels, tick_locations, tick_values = self.map_labels(self.model, self.relax.data.param_types[self.model][self.res_num], self.bounds, self.swap, self.inc)
 
 
         # Corners.

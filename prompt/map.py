@@ -146,9 +146,6 @@ class Map:
             text = text + ", labels=" + `labels` + ")\n"
             print text
 
-        # The number of parameters.
-        n = len(self.relax.data.param_types[model][res_num])
-
         # The model argument.
         if type(model) != str:
             print "The model argument " + `model` + " must be a string."
@@ -156,6 +153,14 @@ class Map:
         if not self.relax.data.equations.has_key(model):
             print "The model '" + model + "' has not been created yet."
             return
+
+        # The residue number.
+        if type(res_num) != int:
+            print "The res_num argument must be an integer."
+            return
+
+        # The number of parameters.
+        n = len(self.relax.data.param_types[model][res_num])
 
         # Increment.
         if type(inc) != int:

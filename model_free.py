@@ -629,7 +629,7 @@ class Model_free:
         self.relax.data.min_results[model][i] = [self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning]
 
 
-    def map_bounds(self, model, param_type):
+    def map_bounds(self, model, param_types):
         """The function for creating bounds for the mapping function."""
 
         # Bounds array.
