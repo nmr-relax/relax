@@ -7,7 +7,7 @@ read.sequence('noe.500.out')
 nuclei('N')
 
 # Create the run.
-name = 'm6'
+name = 'm5'
 create_run(name, 'mf')
 
 # Load a PDB file.
@@ -23,7 +23,7 @@ read.relax_data(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
 read.relax_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
-#diffusion_tensor(name, 1e-8, fixed=1)
+#diffusion_tensor(name, 1e-8)
 diffusion_tensor(name, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
 #diffusion_tensor(name, (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568), fixed=0)
 value.set(name, 'bond_length', 1.02 * 1e-10)
@@ -41,13 +41,13 @@ model.select_mf(run=name, model=name)
 #set(name, [ 6.00000000e-01, 5.00000000e-01, 1.00000000e-9])
 
 # Grid search.
-grid_search(name, inc=21)
+grid_search(name, inc=7)
 
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)
 #minimise('newton', run=name, constraints=1, print_flag=20, max_iter=0)
-#minimise('newton', run=name, print_flag=9, max_iter=20)
-minimise('simplex', run=name, constraints=0, print_flag=1)
+minimise('newton', run=name)
+#minimise('simplex', run=name, constraints=0, print_flag=1)
 
 # Finish.
 write(run=name, file='results', force=1)

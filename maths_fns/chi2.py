@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, zeros
+from Numeric import Float64, sum, zeros
 
 
 # Chi-squared value.
@@ -47,11 +47,7 @@ def chi2(data, back_calc_vals, errors):
     """
 
     # Calculate the chi-squared statistic.
-    a = ((data - back_calc_vals) / errors)**2
-    chi2 = 0.0
-    for i in xrange(len(data)):
-        chi2 = chi2 + a[i]
-    return chi2
+    return sum(((data - back_calc_vals) / errors)**2)
 
 
 # Chi-squared gradient.
@@ -75,6 +71,9 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
 
     The chi-squared gradient vector is returned.
     """
+
+    # Test.
+    #return -2.0 * sum((data - back_calc_vals) / (errors**2) * back_calc_grad)
 
     # Count the number of parameters in the model.
     num_params = len(back_calc_grad[0])
@@ -126,6 +125,7 @@ def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
     for i in xrange(len(data)):
         # Loop over the parameters.
         for j in xrange(num_params):
+            #raise RelaxError, "Possible bug in the line below 'back_calc_grad[i, j]'."
             d2chi2[j] = d2chi2[j] + a[i] * (back_calc_grad[i, j] * back_calc_grad[i] - yi_diff[i] * back_calc_hess[i, j])
 
     return d2chi2

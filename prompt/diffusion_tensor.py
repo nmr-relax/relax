@@ -59,12 +59,17 @@ class Diffusion_tensor:
         Description
         ~~~~~~~~~~~
 
+        Isotropic diffusion.
+
         To select isotropic diffusion, the parameters argument should be a single floating point
         number.  The number is the value of the isotropic global correlation time in seconds.  To
         specify the time in nanoseconds, set the 'time_scale' argmuent to 1e-9.  Alternative
         parameters can be used by changing the 'param_types' flag to the following integers:
             0 - tm   (Default)
             1 - Diso
+
+
+        Axially symmetric diffusion.
 
         To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
@@ -74,9 +79,28 @@ class Diffusion_tensor:
             1 - (tm, Dratio, theta, phi)
         Dratio is defined as Dpar/Dper.
 
+        The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
+        vector with respect to the diffusion frame while the spherical angles {theta, phi} describe
+        the diffusion tensor with respect to the PDB frame.  Theta is the polar angle with
+        0 <= theta <= pi, and phi is the azimuthal angle with 0 <= phi <= 2pi.
+
+        The 'axial_type' argument should be 'oblate', 'prolate', or None.  The argument will be
+        ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the
+        constraint Dper >= Dpar is used.  If 'prolate' is given, then the constraint Dper <= Dpar is
+        used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
+        prevent minimisation of diffusion tensor parameters in a space with two minima, it is
+        recommended to specify which tensor to be minimised, thereby partitioning the two minima
+        into the two subspaces.
+
+
+        Anisotropic diffusion.
+
         To select fully anisotropic diffusion, the parameters argument should be a tuple of length
         six.  Alternative sets of parameters, 'param_types', are:
             0 - (Dx, Dy, Dz, alpha, beta, gamma)   (Default)
+
+
+        Units.
 
         The 'time_scale' argument should be a floating point number.  Parameters affected by this
         value are:  tm.
@@ -86,14 +110,6 @@ class Diffusion_tensor:
 
         The 'angle_units' argument should either be the string 'deg' or 'rad'.  Parameters affected
         are:  theta, phi, alpha, beta, gamma.
-
-        The 'axial_type' argument should be 'oblate', 'prolate', or None.  The argument will be
-        ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the
-        constraint Dper >= Dpar is used.  If 'prolate' is given, then the constraint Dper <= Dpar is
-        used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
-        prevent minimisation of diffusion tensor parameters in a space with two minima, it is
-        recommended to specify which tensor to be minimised, thereby partitioning the two minima
-        into the two subspaces.
 
 
         Diagonal scaling.

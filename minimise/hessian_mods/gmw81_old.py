@@ -26,7 +26,7 @@ from Numeric import Float64, array, dot, matrixmultiply, sort, sqrt, transpose
 
 
 def gmw_old(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
-    """Modified Cholesky hessian modification.
+    """Modified Cholesky Hessian modification.
 
     Algorithm 6.5 from page 148.
 

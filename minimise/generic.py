@@ -143,8 +143,8 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |                                   |                                                     |
     | Back-and-forth coordinate descent | '^[Cc][Dd]$' or '^[Cc]oordinate[ _-][Dd]escent$'    |
     | Steepest descent                  | '^[Ss][Dd]$' or '^[Ss]teepest[ _-][Dd]escent$'      |
-    | Quasi-Newton BFGS                 | '^[Nn]ewton$'                                       |
-    | Newton                            | '^[Bb][Ff][Gg][Ss]$'                                |
+    | Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
+    | Newton                            | '^[Nn]ewton$'                                       |
     | Newton-CG                         | '^[Nn]ewton[ _-][Cc][Gg]$' or '^[Nn][Cc][Gg]$'      |
     |-----------------------------------|-----------------------------------------------------|
 

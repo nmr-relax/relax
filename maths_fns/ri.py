@@ -192,7 +192,7 @@ def calc_d2noe(data, i, frq_num, get_d2r1, params):
     if data.r1[i] == 0.0:
         data.d2ri[i] = 1e99
     else:
-        for j in xrange(data.total_num_params):
+        for j in xrange(data.num_params):
             a = data.ri_prime[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
             b = data.r1[i] * (data.dri_prime[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri_prime[i] - data.r1[i] * data.d2ri_prime[i, j])
             data.d2ri[i, j] = data.g_ratio * (1.0 / data.r1[i]**3) * (a - b)
@@ -253,7 +253,7 @@ def calc_dr1(data, i, frq_num, params):
     dr1_comps(data.r1_data, i, params)
 
     # Calculate the dr1 value.
-    for j in xrange(data.total_num_params):
+    for j in xrange(data.num_params):
         data.r1_data.create_dri_prime[j](data.r1_data, j)
 
     return data.r1_data.dri_prime[i]
@@ -272,7 +272,7 @@ def calc_d2r1(data, i, frq_num, params):
     d2r1_comps(data.r1_data, i, params)
 
     # Calculate the dr1 value.
-    for j in xrange(data.total_num_params):
+    for j in xrange(data.num_params):
         for k in xrange(j + 1):
             if data.r1_data.create_d2ri_prime[j][k]:
                 data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)

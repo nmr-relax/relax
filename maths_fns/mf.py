@@ -26,6 +26,7 @@ from math import pi
 
 from geometry import *
 from weights import *
+from correlation_time_comps import *
 from correlation_time import *
 from jw_mf_comps import *
 from jw_mf import *
@@ -89,6 +90,7 @@ class Mf:
 
             # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
             self.data[i].frq_list = zeros((num_frq[i], 5), Float64)
+            self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), Float64)
             for j in xrange(num_frq[i]):
                 frqH = 2.0 * pi * frq[i][j]
                 frqX = frqH / g_ratio
@@ -97,6 +99,8 @@ class Mf:
                 self.data[i].frq_list[j, 3] = frqH
                 self.data[i].frq_list[j, 4] = frqH + frqX
             self.data[i].frq_sqrd_list = self.data[i].frq_list ** 2
+            for j in xrange(self.diff_data.num_indecies):
+                self.data[i].frq_sqrd_list_ext[:, :, j] = self.data[i].frq_sqrd_list
 
             # Store supplied data in self.data
             self.data[i].gh = gh
@@ -126,6 +130,10 @@ class Mf:
             if not self.setup_equations(self.data[i]):
                 raise RelaxError, "The model-free equations could not be setup."
 
+            # Calculate the correlation time components.
+            if self.diff_data.calc_ti_comps:
+                self.diff_data.calc_ti_comps(self.diff_data)
+
             # Calculate the correlation times ti.
             self.diff_data.calc_ti(self.data[i], self.diff_data)
 
@@ -138,10 +146,8 @@ class Mf:
 
             # Fixed spectral density components, ie tm is not a parameter.
             if self.param_set == 'mf' and 'tm' not in self.data[i].param_types:
-                # Loop over the indecies of the generic model-free equations.
-                for j in xrange(self.diff_data.num_indecies):
-                    self.data[i].w_ti_sqrd[:, :, j] = self.data[i].frq_sqrd_list * self.data[i].ti[j] ** 2
-                    self.data[i].fact_ti[:, :, j] = 1.0 / (1.0 + self.data[i].w_ti_sqrd[:, :, j])
+                self.data[i].w_ti_sqrd = self.data[i].frq_sqrd_list_ext * self.data[i].ti ** 2
+                self.data[i].fact_ti = 1.0 / (1.0 + self.data[i].w_ti_sqrd)
 
             # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
             missing_r1 = 0
@@ -219,7 +225,7 @@ class Mf:
         if sum(self.params == self.func_test) == self.total_num_params:
             return data.chi2
 
-        # Store the parameter values in self.data.func_test for testing on next call if the function has already been calculated.
+        # Store the parameter values in data.func_test for testing on next call if the function has already been calculated.
         self.func_test = self.params * 1.0
 
         # Diffusion tensor geometry calculations.
@@ -228,6 +234,10 @@ class Mf:
 
         # Diffusion tensor weight calculations.
         self.diff_data.calc_ci(data)
+
+        # Diffusion tensor correlation time components.
+        if self.diff_data.calc_ti_comps:
+            self.diff_data.calc_ti_comps(self.diff_data)
 
         # Diffusion tensor correlation times.
         self.diff_data.calc_ti(data, self.diff_data)
@@ -272,49 +282,60 @@ class Mf:
             sigma_i are the values of the error set.
         """
 
+        # Set self.data[0] to data.
+        data = self.data[0]
+
         # Arguments
         self.set_params(params)
 
         # Test if the gradient has already been calculated with these parameter values.
-        if sum(self.params == self.data.grad_test) == self.data.total_num_params:
-            #if len(self.params):
-            return self.data.dchi2
+        if sum(self.params == self.grad_test) == self.total_num_params:
+            return data.dchi2
 
-        # Test if the function has already been called
-        if sum(self.params == self.data.func_test) != self.data.total_num_params:
-            raise RelaxError, "Should not be here."
+        # Test if the function has already been called, otherwise run self.func_mf.
+        if sum(self.params == self.func_test) != self.total_num_params:
+            self.func_mf(params)
 
-        # Store the parameter values in self.data.grad_test for testing on next call if the gradient has already been calculated.
-        self.data.grad_test = self.params * 1.0
+        # Store the parameter values in data.grad_test for testing on next call if the gradient has already been calculated.
+        self.grad_test = self.params * 1.0
+
+        # Diffusion tensor geometry calculations.
+        #self.diff_data.calc_dgeom(data, self.diff_data)
+
+        # Diffusion tensor weight calculations.
+        #self.diff_data.calc_dci(data)
+
+        # Diffusion tensor correlation times.
+        #self.diff_data.calc_dti(data, self.diff_data)
 
         # Calculate the spectral density gradient components.
-        if self.calc_djw_comps[0]:
-            self.calc_djw_comps[0](self.data)
+        if data.calc_djw_comps:
+            data.calc_djw_comps(data, self.params)
 
         # Calculate the spectral density gradients.
-        for i in xrange(self.data.total_num_params):
-            if self.calc_djw[0]:
-                self.data.djw[0][:, :, i] = self.calc_djw[0][i](self.data)
+        for i in xrange(data.num_params):
+            if data.calc_djw[i]:
+                data.djw[:, :, i] = data.calc_djw[i](data, self.params)
 
         # Calculate the relaxation gradient components.
-        self.create_dri_comps[0](self.data, self.create_dip_grad[0], self.create_dip_jw_grad[0], self.create_csa_grad[0], self.create_csa_jw_grad[0], self.create_rex_grad[0])
+        data.create_dri_comps(data, self.params)
 
         # Calculate the R1, R2, and sigma_noe gradients.
-        for i in xrange(self.data.total_num_params):
-            self.create_dri_prime[0][i](self.data, i)
+        for i in xrange(data.num_params):
+            data.create_dri_prime[i](data, i)
 
         # Calculate the R1, R2, and NOE gradients.
-        self.data.dri[0] = self.data.dri_prime[0] * 1.0
-        dri(self.data, self.create_dri[0], self.get_dr1[0])
+        data.dri = data.dri_prime * 1.0
+        dri(data, self.params)
 
         # Calculate the chi-squared gradient.
-        self.data.dchi2[0] = dchi2(self.data.relax_data[0], self.data.ri[0], self.data.dri[0], self.data.errors[0])
+        data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
-            self.scale_gradient()
+            data.dchi2 = self.scale_gradient(data.dchi2)
 
-        return self.data.dchi2
+        return data.dchi2
 
 
     def d2func_mf(self, params):
@@ -334,56 +355,69 @@ class Mf:
             sigma_i are the values of the error set.
         """
 
+        # Set self.data[0] to data.
+        data = self.data[0]
+
         # Arguments
         self.set_params(params)
 
         # Test if the Hessian has already been calculated with these parameter values.
-        if sum(self.params == self.data.hess_test) == self.data.total_num_params:
-            #if len(self.params):
-            return self.data.d2chi2
+        if sum(self.params == self.hess_test) == self.total_num_params:
+            return data.d2chi2
 
-        # Test if the gradient has already been called
-        if sum(self.params == self.data.grad_test) != self.data.total_num_params:
-            raise RelaxError, "Should not be here."
+        # Test if the gradient has already been called, otherwise run self.dfunc_mf.
+        if sum(self.params == self.grad_test) != self.total_num_params:
+            self.dfunc_mf(params)
 
-        # Store the parameter values in self.data.hess_test for testing on next call if the Hessian has already been calculated.
-        self.data.hess_test = self.params * 1.0
+        # Store the parameter values in data.hess_test for testing on next call if the Hessian has already been calculated.
+        data.hess_test = self.params * 1.0
+
+        # Diffusion tensor geometry calculations.
+        #if self.diff_data.calc_d2geom:
+        #   self.diff_data.calc_d2geom(data, self.diff_data)
+
+        # Diffusion tensor weight calculations.
+        #self.diff_data.calc_d2ci(data)
+
+        # Diffusion tensor correlation times.
+        #if self.diff_data.calc_d2ti:
+        #   self.diff_data.calc_d2ti(data, self.diff_data)
 
         # Calculate the spectral density Hessians.
-        for i in xrange(self.data.total_num_params):
+        for i in xrange(data.num_params):
             for j in xrange(i + 1):
-                if self.calc_d2jw[0][i][j]:
-                    self.data.d2jw[0][:, :, i, j] = self.calc_d2jw[0][i][j](self.data)
+                if data.calc_d2jw[i][j]:
+                    data.d2jw[:, :, i, j] = data.calc_d2jw[i][j](data, self.params)
 
                     # Make the Hessian symmetric.
                     if i != j:
-                        self.data.d2jw[0][:, :, j, i] = self.data.d2jw[0][:, :, i, j]
+                        data.d2jw[:, :, j, i] = data.d2jw[:, :, i, j]
 
         # Calculate the relaxation Hessian components.
-        self.create_d2ri_comps[0](self.data, self.create_dip_hess[0], self.create_dip_jw_hess[0], self.create_csa_hess[0], self.create_csa_jw_hess[0], None)
+        data.create_d2ri_comps(data, self.params)
 
         # Calculate the R1, R2, and sigma_noe Hessians.
-        for i in xrange(self.data.total_num_params):
+        for i in xrange(data.num_params):
             for j in xrange(i + 1):
-                if self.create_d2ri_prime[0][i][j]:
-                    self.create_d2ri_prime[0][i][j](self.data, i, j)
+                if data.create_d2ri_prime[i][j]:
+                    data.create_d2ri_prime[i][j](data, i, j)
 
                     # Make the Hessian symmetric.
                     if i != j:
-                        self.data.d2ri_prime[0][:, j, i] = self.data.d2ri_prime[0][:, i, j]
+                        data.d2ri_prime[:, j, i] = data.d2ri_prime[:, i, j]
 
         # Calculate the R1, R2, and NOE Hessians.
-        self.data.d2ri[0] = self.data.d2ri_prime[0] * 1.0
-        d2ri(self.data, self.create_d2ri[0], self.get_d2r1[0])
+        data.d2ri = data.d2ri_prime * 1.0
+        d2ri(data, self.params)
 
         # Calculate the chi-squared Hessian.
-        self.data.d2chi2[0] = d2chi2(self.data.relax_data[0], self.data.ri[0], self.data.dri[0], self.data.d2ri[0], self.data.errors[0])
+        data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
-            self.scale_hessian()
+            data.d2chi2 = self.scale_hessian(data.d2chi2)
 
-        return self.data.d2chi2
+        return data.d2chi2
 
 
     def init_diff_data(self, diff_data):
@@ -391,36 +425,92 @@ class Mf:
 
         # Isotropic diffusion.
         if diff_data.type == 'iso':
+            # Number of diffusion parameters.
+            diff_data.num_params = 1
+
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 1
 
-            # Set up the weight functions.
+            # Geometry function, gradient, and Hessian.
             diff_data.calc_geom = None
-            diff_data.calc_ci = calc_ci_iso
-            diff_data.calc_ti = calc_ti_iso
+            diff_data.calc_dgeom = None
+            diff_data.calc_d2geom = None
+
+            # Weight function, gradient, and Hessian.
+            diff_data.calc_ci = calc_iso_ci
+            diff_data.calc_dci = None
+            diff_data.calc_d2ci = None
+
+            # Global correlation time function, gradient, and Hessian components.
+            diff_data.calc_ti_comps = None
+            diff_data.calc_dti_comps = None
+            diff_data.calc_d2ti_comps = None
+
+            # Global correlation time function, gradient, and Hessian.
+            diff_data.calc_ti = calc_iso_ti
+            diff_data.calc_dti = calc_iso_dti
+            diff_data.calc_d2ti = None
+
 
         # Axially symmetric diffusion.
         elif diff_data.type == 'axial':
+            # Number of diffusion parameters.
+            diff_data.num_params = 4
+
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 3
 
-            # Set up the weight functions.
-            diff_data.calc_geom = calc_geom_axial
-            diff_data.calc_ci = calc_ci_axial
-            diff_data.calc_ti = calc_ti_axial
+            # Geometry function, gradient, and Hessian.
+            diff_data.calc_geom = calc_axial_geom
+            diff_data.calc_dgeom = calc_axial_dgeom
+            diff_data.calc_d2geom = calc_axial_d2geom
+
+            # Weight function, gradient, and Hessian.
+            diff_data.calc_ci = calc_axial_ci
+            diff_data.calc_dci = calc_axial_dci
+            diff_data.calc_d2ci = calc_axial_d2ci
+
+            # Global correlation time function, gradient, and Hessian components.
+            diff_data.calc_ti_comps = calc_axial_ti_comps
+            diff_data.calc_dti_comps = calc_axial_dti_comps
+            diff_data.calc_d2ti_comps = calc_axial_d2ti_comps
+
+            # Global correlation time function, gradient, and Hessian.
+            diff_data.calc_ti = calc_axial_ti
+            diff_data.calc_dti = calc_axial_dti
+            diff_data.calc_d2ti = calc_axial_d2ti
 
             # Unit vectors.
             diff_data.dpar_unit_vector = zeros(3, Float64)
 
+
         # Anisotropic diffusion.
         elif diff_type == 'aniso':
+            # Number of diffusion parameters.
+            diff_data.num_params = 6
+
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 5
 
-            # Set up the weight functions.
-            diff_data.calc_geom = calc_geom_aniso
-            diff_data.calc_ci = calc_ci_aniso
-            diff_data.calc_ti = calc_ti_aniso
+            # Geometry function, gradient, and Hessian.
+            diff_data.calc_geom = calc_aniso_geom
+            diff_data.calc_dgeom = calc_aniso_dgeom
+            diff_data.calc_d2geom = calc_aniso_d2geom
+
+            # Weight function, gradient, and Hessian.
+            diff_data.calc_ci = calc_aniso_ci
+            diff_data.calc_dci = calc_aniso_dci
+            diff_data.calc_d2ci = calc_aniso_d2ci
+
+            # Global correlation time function, gradient, and Hessian components.
+            diff_data.calc_ti_comps = calc_aniso_ti_comps
+            diff_data.calc_dti_comps = calc_aniso_dti_comps
+            diff_data.calc_d2ti_comps = calc_aniso_d2ti_comps
+
+            # Global correlation time function, gradient, and Hessian.
+            diff_data.calc_ti = calc_aniso_ti
+            diff_data.calc_dti = calc_aniso_dti
+            diff_data.calc_d2ti = calc_aniso_d2ti
 
 
     def init_res_data(self, data, diff_data):
@@ -564,34 +654,34 @@ class Mf:
             return self.data.dri
 
 
-    def pack_difF_params_iso(self):
+    def pack_diff_params_iso(self):
         """Function for extracting the iso diffusion parameters from the parameter vector."""
 
         self.data.diff_params = self.params[0:1]
 
 
-    def pack_difF_params_axial(self):
+    def pack_diff_params_axial(self):
         """Function for extracting the axial diffusion parameters from the parameter vector."""
 
         self.data.diff_params = self.params[0:4]
 
 
-    def pack_difF_params_iso(self):
+    def pack_diff_params_iso(self):
         """Function for extracting the aniso diffusion parameters from the parameter vector."""
 
         self.data.diff_params = self.params[0:6]
 
 
-    def scale_gradient(self):
+    def scale_gradient(self, dchi2):
         """Function for the diagonal scaling of the chi-squared gradient."""
 
-        self.data.dchi2 = matrixmultiply(self.data.dchi2, self.scaling_matrix)
+        return matrixmultiply(dchi2, self.scaling_matrix)
 
 
-    def scale_hessian(self):
+    def scale_hessian(self, d2chi2):
         """Function for the diagonal scaling of the chi-squared Hessian."""
 
-        self.data.d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(self.data.d2chi2, self.scaling_matrix))
+        return matrixmultiply(self.scaling_matrix, matrixmultiply(d2chi2, self.scaling_matrix))
 
 
     def set_params_scaled(self, params):

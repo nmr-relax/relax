@@ -1342,6 +1342,13 @@ class Model_free:
                 # Count the number of model-free parameters for the residue index.
                 num_params.append(len(self.relax.data.res[index].params[self.run]))
 
+            # Convert to Numeric arrays.
+            relax_data = array(relax_data, Float64)
+            relax_error = array(relax_error, Float64)
+            r = array(r, Float64)
+            csa = array(csa, Float64)
+            frq = array(frq, Float64)
+
             # Package the diffusion tensor parameters.
             diff_params = None
             if self.param_set == 'mf':
