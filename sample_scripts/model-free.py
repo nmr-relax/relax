@@ -14,12 +14,12 @@ model.select_mf(name)
 
 # Fixed value.
 #from math import pi
-fixed(name, [ 1.0, 0.00098352809884949435, 0.10105544919387284*1e-12 ])
+#fixed(name, [ 1.0, 0.00098352809884949435, 0.10105544919387284*1e-12 ])
 #fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
 #write(model=name, file='results_fixed', force=1)
 
 # Grid search.
-#grid_search(name, inc=11)
+grid_search(name, inc=11)
 #write(model=name, file='results_grid', force=1)
 
 # Minimise.

@@ -24,6 +24,7 @@
 from math import pi
 from Numeric import Float64, array, ones, zeros
 from re import match
+from string import replace
 
 from functions.mf import Mf
 from minimise.generic import generic_minimise
@@ -55,7 +56,7 @@ class Model_free:
             print "The scaling flag is set incorrectly."
             return
 
-        # Test the parameter names.
+        # Check the validity of the parameter array.
         s2, te, s2f, tf, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0
         for i in range(len(param_types)):
             # Check if the parameter is a string.
@@ -63,58 +64,109 @@ class Model_free:
                 print "The parameter " + `param_types[i]` + " is not a string."
                 return
 
-            # Test the parameter.
+            # Invalid parameter flag.
             invalid_param = 0
+
+            # S2.
             if param_types[i] == 'S2':
+                # Does the array contain more than one instance of S2.
                 if s2:
                     invalid_param = 1
                 s2 = 1
+
+                # Does the array contain S2, S2f, and S2s simultaneously.
+                s2f_flag = 0
+                s2s_flag = 0
+                for j in range(len(param_types)):
+                    if param_types[j] == 'S2f':
+                        s2f_flag = 1
+                    elif param_types[j] == 'S2s':
+                        s2s_flag = 1
+                if s2f_flag and s2s_flag:
+                    invalid_param = 1
+
+            # te.
             elif param_types[i] == 'te':
+                # Does the array contain more than one instance of te and has the extended model-free formula been selected.
                 if equation == 'mf_ext' or te:
                     invalid_param = 1
+                te = 1
+
+                # Does the array contain the parameter S2.
                 s2_flag = 0
                 for j in range(len(param_types)):
                     if param_types[j] == 'S2':
                         s2_flag = 1
                 if not s2_flag:
                     invalid_param = 1
-                te = 1
+
+            # S2f.
             elif param_types[i] == 'S2f':
+                # Does the array contain more than one instance of S2f and has the original model-free formula been selected.
                 if equation == 'mf_orig' or s2f:
                     invalid_param = 1
                 s2f = 1
+
+                # Does the array contain S2, S2f, and S2s simultaneously.
+                s2_flag = 0
+                s2s_flag = 0
+                for j in range(len(param_types)):
+                    if param_types[j] == 'S2':
+                        s2_flag = 1
+                    elif param_types[j] == 'S2s':
+                        s2s_flag = 1
+                if s2_flag and s2s_flag:
+                    invalid_param = 1
+
+            # tf.
             elif param_types[i] == 'tf':
+                # Does the array contain more than one instance of tf and has the original model-free formula been selected.
                 if equation == 'mf_orig' or tf:
                     invalid_param = 1
+                tf = 1
+
+                # Does the array contain the parameter S2f.
                 s2f_flag = 0
                 for j in range(len(param_types)):
                     if param_types[j] == 'S2f':
                         s2f_flag = 1
                 if not s2f_flag:
                     invalid_param = 1
-                tf = 1
+
+            # ts.
             elif param_types[i] == 'ts':
+                # Does the array contain more than one instance of ts and has the original model-free formula been selected.
                 if equation == 'mf_orig' or ts:
                     invalid_param = 1
+                ts = 1
+
+                # Does the array contain the parameter S2.
                 s2_flag = 0
                 for j in range(len(param_types)):
                     if param_types[j] == 'S2':
                         s2_flag = 1
                 if not s2_flag:
                     invalid_param = 1
-                ts = 1
+
+            # Rex.
             elif param_types[i] == 'Rex':
                 if rex:
                     invalid_param = 1
                 rex = 1
+
+            # Bond length.
             elif param_types[i] == 'r':
                 if r:
                     invalid_param = 1
                 r = 1
+
+            # CSA.
             elif param_types[i] == 'CSA':
                 if csa:
                     invalid_param = 1
                 csa = 1
+
+            # Unknown parameter.
             else:
                 print "The parameter " + param_types[i] + " is not supported."
                 return
@@ -185,29 +237,29 @@ class Model_free:
         """The fixed parameter value setup function."""
 
         for i in range(len(param_types)):
-            # S2 and S2f.
-            if match("S2", param_types[i]):
+            # {S2, S2f, S2s}.
+            if match('S2', param_types[i]):
                 min_options[i] = 0.5
 
-            # te, tf, and ts.
-            elif match("t[efs]", param_types[i]):
-                if match("te", param_types[i]):
-                    min_options[i] = 100.0 * 1e-12
-                elif match("tf", param_types[i]):
+            # {te, tf, ts}.
+            elif match('t', param_types[i]):
+                if param_types[i] == 'tf':
                     min_options[i] = 10.0 * 1e-12
-                else:
+                elif param_types[i] == 'ts':
                     min_options[i] = 1000.0 * 1e-12
+                else:
+                    min_options[i] = 100.0 * 1e-12
 
             # Rex.
-            elif match('Rex', param_types[i]):
+            if param_types[i] == 'Rex':
                 min_options[i] = 0.0
 
             # Bond length.
-            elif match('r', param_types[i]):
+            if param_types[i] == 'r':
                 min_options[i] = 1.02 * 1e-10
 
             # CSA.
-            elif match('CSA', param_types[i]):
+            if param_types[i] == 'CSA':
                 min_options[i] = -170 * 1e-6
 
         return min_options
@@ -220,33 +272,126 @@ class Model_free:
         min_options = []
 
         for i in range(len(param_types)):
-            # S2 and S2f.
-            if match("S2", param_types[i]):
+            # {S2, S2f, S2s}.
+            if match('S2', param_types[i]):
                 min_options.append([inc_vector[i], 0.0, 1.0])
 
-            # te, tf, and ts.
-            elif match("t[efs]", param_types[i]):
+            # {te, tf, ts}.
+            elif match('t', param_types[i]):
                 min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
 
             # Rex.
-            elif match('Rex', param_types[i]):
+            elif param_types[i] == 'Rex':
                 min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
             # Bond length.
-            elif match('r', param_types[i]):
+            elif param_types[i] == 'r':
                 min_options.append([inc_vector[i], 1.0 * 1e-10, 1.05 * 1e-10])
 
             # CSA.
-            elif match('CSA', param_types[i]):
+            elif param_types[i] == 'CSA':
                 min_options.append([inc_vector[i], -120 * 1e-6, -200 * 1e-6])
 
         return min_options
 
 
     def linear_constraints(self, model=None, param_types=None):
-        """Function for setting up the model-free linear constraint matrices A and b."""
+        """Function for setting up the model-free linear constraint matrices A and b.
 
-        # Initialisation.
+        Standard notation
+        ~~~~~~~~~~~~~~~~~
+        The order parameter constraints are:
+
+            0 <= S2 <= 1
+            0 <= S2f <= 1
+            0 <= S2s <= 1
+
+        By substituting the formula S2 = S2f.S2s into the above inequalities, the additional two
+        inequalities can be derived:
+
+            S2 <= S2f
+            S2 <= S2s
+
+        Correlation time constraints are:
+
+            te >= 0
+            tf >= 0
+            ts >= 0
+
+            tf <= ts
+
+        Additional constraints used include:
+
+            Rex >= 0
+            0.9e-10 <= r <= 2e-10
+            -300e-6 <= CSA <= 0
+
+
+        Rearranged notation
+        ~~~~~~~~~~~~~~~~~~~
+        The above ineqality constraints can be rearranged into:
+
+            S2 >= 0
+            -S2 >= -1
+            S2f >= 0
+            -S2f >= -1
+            S2s >= 0
+            -S2s >= -1
+            S2f - S2 >= 0
+            S2s - S2 >= 0
+            te >= 0
+            tf >= 0
+            ts >= 0
+            ts - tf >= 0
+            Rex >= 0
+            r >= 0.9e-10
+            -r >= -2e-10
+            CSA >= -300e-6
+            -CSA >= 0
+
+
+        Matrix notation
+        ~~~~~~~~~~~~~~~
+        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
+        values, and b is a vector of scalars, these inequality constraints are:
+
+            | 1  0  0  0  0  0  0  0  0 |                  |    0    |
+            |                           |                  |         |
+            |-1  0  0  0  0  0  0  0  0 |                  |   -1    |
+            |                           |                  |         |
+            | 0  1  0  0  0  0  0  0  0 |                  |    0    |
+            |                           |                  |         |
+            | 0 -1  0  0  0  0  0  0  0 |                  |   -1    |
+            |                           |                  |         |
+            | 0  0  1  0  0  0  0  0  0 |     | S2  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0 -1  0  0  0  0  0  0 |     | S2f |      |   -1    |
+            |                           |     |     |      |         |
+            |-1  1  0  0  0  0  0  0  0 |     | S2s |      |    0    |
+            |                           |     |     |      |         |
+            |-1  0  1  0  0  0  0  0  0 |     | te  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  1  0  0  0  0  0 |  .  | tf  |  >=  |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0  1  0  0  0  0 |     | ts  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0  0  1  0  0  0 |     | Rex |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0 -1  1  0  0  0 |     |  r  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0  0  0  1  0  0 |     | CSA |      |    0    |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0  1  0 |                  | 0.9e-10 |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0 -1  0 |                  | -2e-10  |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0  0  1 |                  | -300e-6 |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0  0 -1 |                  |    0    |
+
+        """
+
+        # Initialisation (0..j..m).
         A = []
         b = []
         n = len(param_types)
@@ -255,87 +400,80 @@ class Model_free:
 
         # The original model-free equations.
         for i in range(n):
-            # S2 and S2f (0 <= S2 <= 1).
-            if match("S2", param_types[i]):
-                # S2 >= 0
+            # Order parameters {S2, S2f, S2s}.
+            if match('S2', param_types[i]):
+                # 0 <= S2 <= 1.
+                A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 b.append(0.0)
-                j = j + 1
-
-                # -S2 >= -1
-                A.append(zero_array * 0.0)
-                A[j][i] = -1.0
                 b.append(-1.0)
-                j = j + 1
+                j = j + 2
 
-            # te, tf, and ts (te >= 0).
-            elif match("t[efs]", param_types[i]):
-                if match("ts", param_types[i]):
-                    A.append(zero_array * 0.0)
-
-                    # Find the index of tf if the parameter exists.
-                    index = None
+                # S2 <= S2f and S2 <= S2s.
+                if param_types[i] == 'S2':
                     for k in range(n):
-                        if match("tf", param_types[k]):
-                            index = k
+                        if param_types[k] == 'S2f' or param_types[k] == 'S2s':
+                            A.append(zero_array * 0.0)
+                            A[j][i] = -1.0
+                            A[j][k] = 1.0
+                            b.append(0.0)
+                            j = j + 1
 
-                    # Dual correlation times (tf <= ts) or (ts - tf >= 0).
-                    if index != None:
-                        A[j][index] = -1.0
-
-                    A[j][i] = 1.0
-                    b.append(0.0)
-                    j = j + 1
-                else:
-                    A.append(zero_array * 0.0)
-                    A[j][i] = 1.0
-                    b.append(0.0)
-                    j = j + 1
-
-            # Rex (Rex >= 0).
-            elif match("Rex", param_types[i]):
+            # Correlation times {tm, te, tf, ts}.
+            elif match('t', param_types[i]):
+                # te >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j = j + 1
 
-            # Bond length (0.9e-10 <= r <= 2e-10)
-            elif match("r", param_types[i]):
-                # r >= 0.9e-10
+                # tf <= ts.
+                if param_types[i] == 'ts':
+                    for k in range(n):
+                        if param_types[k] == 'tf':
+                            A.append(zero_array * 0.0)
+                            A[j][i] = 1.0
+                            A[j][k] = -1.0
+                            b.append(0.0)
+                            j = j + 1
+
+            # Rex.
+            elif param_types[i] == 'Rex':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                b.append(0.0)
+                j = j + 1
+
+            # Bond length.
+            elif match('r', param_types[i]):
+                # 0.9e-10 <= r <= 2e-10.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 if self.relax.data.scaling.has_key(model):
                     b.append(0.9e-10 / self.relax.data.scaling[model][0][i])
-                else:
-                    b.append(0.9e-10)
-                j = j + 1
-
-                # -r >= -2e-10
-                A.append(zero_array * 0.0)
-                A[j][i] = -1.0
-                if self.relax.data.scaling.has_key(model):
                     b.append(-2e-10 / self.relax.data.scaling[model][0][i])
                 else:
+                    b.append(0.9e-10)
                     b.append(-2e-10)
-                j = j + 1
+                j = j + 2
 
-            # CSA (-300e-6 <= CSA <= 0).
-            elif match("CSA", param_types[i]):
-                # CSA >= -300e-6
+            # CSA.
+            elif match('CSA', param_types[i]):
+                # -300e-6 <= CSA <= 0.
+                A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 if self.relax.data.scaling.has_key(model):
                     b.append(-300e-6 / self.relax.data.scaling[model][0][i])
                 else:
                     b.append(-300e-6)
-                j = j + 1
-
-                # -CSA >= 0
-                A.append(zero_array * 0.0)
-                A[j][i] = -1.0
                 b.append(0.0)
-                j = j + 1
+                j = j + 2
 
         # Convert to Numeric data structures.
         A = array(A, Float64)
@@ -636,24 +774,24 @@ class Model_free:
         bounds = zeros((len(param_types), 2), Float64)
 
         for i in range(len(param_types)):
-            # S2 and S2f.
-            if match("S2", param_types[i]):
+            # {S2, S2f, S2s}.
+            if match('S2', param_types[i]):
                 bounds[i] = [0, 1]
 
-            # te, tf, and ts.
-            elif match("t[efs]", param_types[i]):
+            # {te, tf, ts}.
+            elif match('t', param_types[i]):
                 bounds[i] = [0, 1e-8]
 
             # Rex.
-            elif match('Rex', param_types[i]):
+            elif param_types[i] == 'Rex':
                 bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
 
             # Bond length.
-            elif match('r', param_types[i]):
+            elif param_types[i] == 'r':
                 bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
 
             # CSA.
-            elif match('CSA', param_types[i]):
+            elif param_types[i] == 'CSA':
                 bounds[i] = [-100 * 1e-6, -300 * 1e-6]
 
         return bounds
@@ -672,8 +810,8 @@ class Model_free:
 
         # Increment over the model parameters.
         for i in range(n):
-            # S2 and S2f.
-            if match("S2", param_types[swap[i]]):
+            # {S2, S2f, S2s}.
+            if match('S2', param_types[swap[i]]):
                 # Labels.
                 labels = labels + "\"" + param_types[swap[i]] + "\""
 
@@ -681,8 +819,8 @@ class Model_free:
                 vals = bounds[swap[i], 0] * 1.0
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1.0
 
-            # te, tf, and ts.
-            elif match("t[efs]", param_types[swap[i]]):
+            # {te, tf, and ts}.
+            elif match('t', param_types[swap[i]]):
                 # Labels.
                 labels = labels + "\"" + param_types[swap[i]] + " (ps)\""
 
@@ -691,7 +829,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e12
 
             # Rex.
-            elif match("Rex", param_types[swap[i]]):
+            elif param_types[swap[i]] == 'Rex':
                 # Labels.
                 labels = labels + "\"Rex (" + self.relax.data.frq_labels[0] + " MHz)\""
 
@@ -700,7 +838,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.frq[0])**2
 
             # Bond length.
-            elif match("r", param_types[swap[i]]):
+            elif param_types[swap[i]] == 'r':
                 # Labels.
                 labels = labels + "\"" + param_types[swap[i]] + " (A)\""
 
@@ -709,7 +847,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-10
 
             # CSA.
-            elif match("CSA", param_types[swap[i]]):
+            elif param_types[swap[i]] == 'CSA':
                 # Labels.
                 labels = labels + "\"" + param_types[swap[i]] + " (ppm)\""
 
@@ -727,7 +865,7 @@ class Model_free:
             val = 0.0
             for j in range(axis_incs + 1):
                 string = string + " " + `val`
-                val = val + loc_inc 
+                val = val + loc_inc
             string = string + " }"
             tick_locations.append(string)
 
@@ -755,17 +893,17 @@ class Model_free:
         # Model details.
         file.write("%-6s" % "Model")
         file.write("%-10s" % "Equation")
-        file.write("%-25s" % "Params")
+        file.write("%-36s" % "Params")
 
         # Parameters.
         file.write("%-26s" % "S2")
         file.write("%-26s" % "S2f")
         file.write("%-26s" % "S2s")
-        file.write("%-26s" % "tf (ps)")
-        file.write("%-26s" % "te or ts (ps)")
-        file.write("%-26s" % ("Rex (" + self.relax.data.frq_labels[0] + " MHz)"))
-        file.write("%-26s" % "Bond length (A)")
-        file.write("%-26s" % "CSA (ppm)")
+        file.write("%-26s" % "tf_(ps)")
+        file.write("%-26s" % "te_or_ts_(ps)")
+        file.write("%-26s" % ("Rex_(" + self.relax.data.frq_labels[0] + "_MHz)"))
+        file.write("%-26s" % "Bond_length_(A)")
+        file.write("%-26s" % "CSA_(ppm)")
 
         # Minimisation results.
         file.write("%-26s" % "Chi-squared")
@@ -798,7 +936,7 @@ class Model_free:
             # Model details.
             file.write("%-6s" % model)
             file.write("%-10s" % self.relax.data.equations[model][i])
-            file.write("%-25s" % `types`)
+            file.write("%-36s" % replace(`types`, ' ', ''))
 
             # S2.
             flag = 1
@@ -808,6 +946,14 @@ class Model_free:
                     file.write("%-26s" % `params[j]`)
                     flag = 0
                     continue
+
+                # S2f and S2s.
+                elif types[j] == 'S2f':
+                    for k in range(len(types)):
+                        if types[k] == 'S2s':
+                            file.write("%-26s" % `params[j]*params[k]`)
+                            flag = 0
+                            continue
             if flag:
                 file.write("%-26s" % "N/A")
 
@@ -824,7 +970,14 @@ class Model_free:
             # S2s.
             flag = 1
             for j in range(len(types)):
-                if types[j] == 'S2f':
+                # S2s.
+                if types[j] == 'S2s':
+                    file.write("%-26s" % `params[j]`)
+                    flag = 0
+                    continue
+
+                # S2f and S2.
+                elif types[j] == 'S2f':
                     for k in range(len(types)):
                         if types[k] == 'S2':
                             file.write("%-26s" % `params[k]/params[j]`)
@@ -846,11 +999,7 @@ class Model_free:
             # te or ts.
             flag = 1
             for j in range(len(types)):
-                if types[j] == 'te':
-                    file.write("%-26s" % `params[j] / 1e-12`)
-                    flag = 0
-                    continue
-                elif types[j] == 'ts':
+                if types[j] == 'te' or types[j] == 'ts':
                     file.write("%-26s" % `params[j] / 1e-12`)
                     flag = 0
                     continue
@@ -927,7 +1076,9 @@ class Model_free:
         """Function for the selection of a preset model-free model."""
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.seq):
+        try:
+            self.relax.data.seq
+        except AttributeError:
             print "Sequence data has to be loaded first."
             return
 
