@@ -266,7 +266,7 @@ class Minimise:
             self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
 
 
-    def min(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
         """Minimisation function."""
 
         # Test if sequence data is loaded.
@@ -280,39 +280,10 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific parameter vector function setup.
-        self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', function_type)
-        if self.assemble_param_vector == None:
-            raise RelaxFuncSetupError, ('parameter vector', function_type)
-
-        # Equation type specific scaling matrix function setup.
-        self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', function_type)
-        if self.assemble_scaling_matrix == None:
-            raise RelaxFuncSetupError, ('scaling matrix', function_type)
-
         # Equation type specific minimise function setup.
         self.minimise = self.relax.specific_setup.setup('minimise', function_type)
         if self.minimise == None:
             raise RelaxFuncSetupError, ('minimise', function_type)
 
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # Make sure that the length of the parameter array is > 0.
-            if len(self.relax.data.res[i].params[run]) == 0:
-                raise RelaxError, "Cannot minimise a model with zero parameters."
-
-            # Create the initial parameter vector.
-            init_params = self.assemble_param_vector(run, self.relax.data.res[i])
-
-            # Diagonal scaling.
-            scaling_matrix = None
-            if self.relax.data.res[i].scaling[run]:
-                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
-                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
-
-            # Minimisation.
-            self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        # Minimisation.
+        self.minimise(run=run, i=i, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

@@ -27,7 +27,7 @@ from dx.map import Map
 from dx.opendx import OpenDX
 from diffusion_tensor import Diffusion_tensor
 from fix import Fix
-from min import Minimise
+from minimise import Minimise
 from model_selection import Model_selection
 from nuclei import Nuclei
 from palmer import Palmer
@@ -55,7 +55,7 @@ class Generic:
         self.diffusion_tensor = Diffusion_tensor(self.relax)
         self.fix = Fix(self.relax)
         self.map = Map(self.relax)
-        self.min = Minimise(self.relax)
+        self.minimise = Minimise(self.relax)
         self.model_selection = Model_selection(self.relax)
         self.nuclei = Nuclei(self.relax)
         self.opendx = OpenDX(self.relax)

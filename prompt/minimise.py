@@ -50,7 +50,7 @@ class Minimise:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.min.calc(run=run)
+        self.relax.generic.minimise.calc(run=run)
 
 
     def fixed(self, run=None, values=None, print_flag=1):
@@ -109,7 +109,7 @@ class Minimise:
             raise RelaxIntError, ('print_flag', print_flag)
 
         # Execute the functional code.
-        self.relax.generic.min.fixed(run=run, values=values, print_flag=print_flag)
+        self.relax.generic.minimise.fixed(run=run, values=values, print_flag=print_flag)
 
 
     def grid_search(self, run=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
@@ -192,7 +192,7 @@ class Minimise:
             raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
-        self.relax.generic.min.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        self.relax.generic.minimise.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
 
 
     def minimise(self, *args, **keywords):
@@ -331,4 +331,4 @@ class Minimise:
             raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
-        self.relax.generic.min.min(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        self.relax.generic.minimise.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

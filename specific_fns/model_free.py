@@ -943,6 +943,26 @@ class Model_free:
     def minimise(self, run=None, i=None, init_params=None, scaling_matrix=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
         """Model-free minimisation."""
 
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Make sure that the length of the parameter array is > 0.
+            if len(self.relax.data.res[i].params[run]) == 0:
+                raise RelaxError, "Cannot minimise a model with zero parameters."
+
+            # Create the initial parameter vector.
+            init_params = self.assemble_param_vector(run, self.relax.data.res[i])
+
+            # Diagonal scaling.
+            scaling_matrix = None
+            if self.relax.data.res[i].scaling[run]:
+                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
+                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
+
         # Linear constraints.
         if constraints:
             A, b = self.linear_constraints(run, self.relax.data.res[i], i, scaling_matrix)
