@@ -3,9 +3,7 @@ from math import pi
 
 class data:
 	def __init__(self):
-		"""Class containing all the program data.
-		
-		"""
+		"Class containing all the program data"
 
 		self.gh = 26.7522e7
 		self.gx = -2.7126e7

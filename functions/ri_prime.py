@@ -1,4 +1,4 @@
-def ri_prime(data, create_ri_prime_comps, create_ri_prime):
+def calc_ri_prime(data, ri_prime_funcs):
 	"""Function for back calculation of the transformed relaxation values R1, R2, and sigma_noe.
 
 	The transformed relaxation equations
@@ -52,13 +52,13 @@ def ri_prime(data, create_ri_prime_comps, create_ri_prime):
 
 	# Calculate the components of the transformed relaxation equations.
 	for i in range(data.num_ri):
-		create_ri_prime_comps[i](data, i, data.remap_table[i])
+		ri_prime_funcs[i](data, i, data.remap_table[i])
 
 	# Calculate the transformed relaxation values.
-	create_ri_prime(data)
+	data.ri_prime = data.dip_comps * data.dip_jw_comps + data.csa_comps * data.csa_jw_comps + data.rex_comps
 
 
-def comp_r1_prime(data, i, frq_num):
+def calc_r1_prime(data, i, frq_num):
 	"""Calculate the r1 components.
 
 	R1()  =  d . J_R1_d  +  c . J_R1_c
@@ -74,7 +74,7 @@ def comp_r1_prime(data, i, frq_num):
 	data.csa_jw_comps[i] = data.jw[frq_num, 1]
 
 
-def comp_r2_prime(data, i, frq_num):
+def calc_r2_prime(data, i, frq_num):
 	"""Calculate the r2 components.
 
 	         d              c
@@ -93,7 +93,7 @@ def comp_r2_prime(data, i, frq_num):
 	data.csa_jw_comps[i] = 4.0*data.jw[frq_num, 0] + 3.0*data.jw[frq_num, 1]
 
 
-def comp_r2_prime_rex(data, i, frq_num):
+def calc_r2_rex_prime(data, i, frq_num):
 	"""Calculate the r2 components including chemical exchange.
 
 	         d              c
@@ -110,10 +110,10 @@ def comp_r2_prime_rex(data, i, frq_num):
 	data.dip_jw_comps[i] = 4.0*data.jw[frq_num, 0] + data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 3] + 6.0*data.jw[frq_num, 4]
 	data.csa_comps[i] = data.csa_const[frq_num] / 6.0
 	data.csa_jw_comps[i] = 4.0*data.jw[frq_num, 0] + 3.0*data.jw[frq_num, 1]
-	data.rex_comps[i] = data.params[data.rex_index] * (1e-8 * data.frq[frq_num])**2
+	data.rex_comps[i] = data.params[data.ri_indecies[0]] * (1e-8 * data.frq[frq_num])**2
 
 
-def comp_sigma_noe(data, i, frq_num):
+def calc_sigma_noe(data, i, frq_num):
 	"""Calculate the sigma_noe components.
 
 	sigma_noe()  =  d . J_sigma_noe
@@ -124,15 +124,3 @@ def comp_sigma_noe(data, i, frq_num):
 
 	data.dip_comps[i] = data.dipole_const
 	data.dip_jw_comps[i] = 6.0*data.jw[frq_num, 4] - data.jw[frq_num, 2]
-
-
-def func_ri_prime(data):
-	"Calculate the transformed relaxation values."
-
-	data.ri_prime = data.dip_comps * data.dip_jw_comps + data.csa_comps * data.csa_jw_comps
-
-
-def func_ri_prime_rex(data):
-	"Calculate the transformed relaxation values."
-
-	data.ri_prime = data.dip_comps * data.dip_jw_comps + data.csa_comps * data.csa_jw_comps + data.rex_comps
