@@ -14,8 +14,8 @@ for run in runs:
     create_run(run, 'mf')
 
     # Load a PDB file.
-    pdb('example.pdb')
-    vectors()
+    #pdb('example.pdb')
+    #vectors()
 
     # Load the relaxation data.
     read.relax_data(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -26,8 +26,8 @@ for run in runs:
     read.relax_data(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
     # Setup other values.
-    #diffusion_tensor(run, 1e-8)
-    diffusion_tensor(run, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
+    diffusion_tensor(run, 1e-8)
+    #diffusion_tensor(run, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
     value.set(run, 'bond_length', 1.02 * 1e-10)
     value.set(run, 'csa', -160 * 1e-6)
 
@@ -35,7 +35,7 @@ for run in runs:
     model.select_mf(run=run, model=run)
 
     # Minimise.
-    grid_search(run, inc=3)
+    grid_search(run, inc=5)
     minimise('simplex', run=run, max_iter=2000)
     minimise('newton', run=run)
 

@@ -29,7 +29,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, init_lambda=1e2, mu0=1e-5, epsilon0=1e-2, gamma0=1e-2, scale_mu=0.5, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, inner_maxiter=200, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, init_lambda=1e4, mu0=1e-5, epsilon0=1e-2, gamma0=1e-2, scale_mu=0.5, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, inner_maxiter=200, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
