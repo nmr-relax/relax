@@ -1,6 +1,6 @@
 # usr_param.py          v0.1                  10 November 2001        Edward d'Auvergne
 #
-# Class containing all the user specified parameters.  Used by the program modelfree.
+# Class containing all the user specified parameters.  Used by the program Modelfree.
 # Make sure the version numbers between the program and this class are identical.
 
 
@@ -16,22 +16,16 @@ class usr_param:
 
 
 	def init_method_param(self):
-		"""Modelfree analysis method info.
+		"""Model-free analysis method info.
 		
 		self.method can be set to the following strings:
 			Palmer - The method given by Mandel et al., 1995.
-			AIC - method of modelfree analysis based on model selection using the
+			AIC - method of model-free analysis based on model selection using the
 				Akaike Information Criteria.
-			AICc - method of modelfree analysis based on model selection using the
-				Akaike Information Criteria corrected for finit sample size.
-			BIC - method of modelfree analysis based on model selection using the
+			BIC - method of model-free analysis based on model selection using the
 				Schwartz Information Criteria.
-			True - calculate the exact overall discrepency.
 		"""
-		#self.method = 'Palmer'
-		#self.method = 'AICc'
-		#self.method = 'BIC'
-		self.method = 'True'
+		self.method = 'Bootstrap'
 
 		# The following three values are only used in Palmer's method and won't affect the others.
 		self.sse_lim = '0.90'       # Set the SSE limit (1 - alpha critical value).
@@ -52,7 +46,7 @@ class usr_param:
 
 		self.diff = 'isotropic'
 		#self.diff = 'axial'
-		self.no_sim = '100'
+		self.no_sim = '200'
 		self.trim = '0'               # Trim unconverged simulations.
 
 		# tm

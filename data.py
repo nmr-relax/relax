@@ -37,15 +37,12 @@ class data:
 
 			self.name = 'Palmer'
 
-
 	class init_true:
 		def __init__(self):
 			"Data specific for modelfree analysis using the overall discrepency."
 
 			self.name = 'True'
-			self.stage = '0'
 			self.op_data = []
-
 
 	def init_data(self):
 		"""Initilize the data

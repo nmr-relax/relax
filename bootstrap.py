@@ -22,33 +22,8 @@ class bootstrap(common_operations):
 		self.mf = mf
 
 		print "Model-free analysis based on bootstrap model selection."
-		self.mf.data.stage = self.ask_stage()
-
-		title = "<<< Stage " + self.mf.data.stage + " of the bootstrap criteria based model-free analysis >>>\n\n\n"
-		self.start_up(self.mf.data.stage, title)
-		
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-
-		if match('1', self.mf.data.stage):
-			print "\n[ Stage 1 ]\n"
-			self.initial_runs()
-			print "\n[ End of stage 1 ]\n\n"
-
-		if match('^2', self.mf.data.stage):
-			print "\n[ Stage 2 ]\n"
-			self.mf.file_ops.mkdir('final')
-			self.stage2()
-			if match('a$', self.mf.data.stage):
-				self.final_run()
-			if match('b$', self.mf.data.stage):
-				self.final_run_optimized()
-			print "\n[ End of stage 2 ]\n\n"
-
-		if match('3', self.mf.data.stage):
-			print "\n[ Stage 3 ]\n"
-			self.stage3()
-			print "\n[ End of stage 3 ]\n\n"
-
+		self.initialize()
 
 	def initial_runs(self):
 		"Creation of the files for the Modelfree calculations for models 1 to 5."

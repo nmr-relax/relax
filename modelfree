@@ -1,5 +1,5 @@
-#! /data03/dauvergne/bin/python
-# /usr/bin/python
+#! /usr/bin/python
+# /data03/dauvergne/bin/python
 
 
 # modelfree.py   v0.1            31 October 2001        Edward d'Auvergne
@@ -28,7 +28,8 @@ from data import data
 from file_ops import file_ops
 from star import star
 
-sys.path.append('.')
+sys.path.append(sys.path[0])
+sys.path[0] = '.'
 from usr_param import usr_param
 
 from asymptotic import asymptotic

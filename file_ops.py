@@ -28,6 +28,27 @@ class file_ops:
 		self.mf.log.write(title)
 
 
+	def open_file(self, file_name):
+		"Open the file 'file' and return all the data."
+		
+		file = open(file_name, 'r')
+		lines = file.readlines()
+		data = []
+		i = 0
+		for line in lines:
+			if i != 0:
+				j = i - 1
+				row = split(line)
+				data.append([])
+				data[j].append(row[0])
+				data[j].append(row[1])
+				for k in range(len(row)):
+					if k > 1:
+						data[j].append(float(row[k]))
+			i = i + 1
+		return data
+
+
 	def open_input(self):
 		"Open the input file."
 
@@ -51,27 +72,6 @@ class file_ops:
 			sys.exit()
 
 
-	def open_file(self, file_name):
-		"Open the file 'file' and return all the data."
-		
-		file = open(file_name, 'r')
-		lines = file.readlines()
-		data = []
-		i = 0
-		for line in lines:
-			if i != 0:
-				j = i - 1
-				row = split(line)
-				data.append([])
-				data[j].append(row[0])
-				data[j].append(row[1])
-				for k in range(len(row)):
-					if k > 1:
-						data[j].append(float(row[k]))
-			i = i + 1
-		return data
-	
-
 	def open_mf_files(self, dir):
 		"Open the mfin, mfdata, mfmodel, mfpar, and run files for writing."
 
@@ -82,14 +82,13 @@ class file_ops:
 		self.mf.run = open(dir + '/run', 'w')
 	
 	
-	def read_file(self, file_name, message=''):
+	def read_file(self, file_name):
 		"Attempt to read the file, or quit the script if it does not exist."
 
 		try:
 			open(file_name, 'r')
 		except IOError:
-			print "The file '" + file_name + "' does not exist, quitting script."
-			print message + "\n\n"
+			print "The file '" + file_name + "' does not exist, quitting script.\n\n"
 			sys.exit()
 		file = open(file_name, 'r')
 		return file
