@@ -21,6 +21,7 @@
 ###############################################################################
 
 import MMTK
+from MMTK.Proteins import Protein
 from os import stat
 from stat import S_ISREG, ST_MODE
 
@@ -40,7 +41,12 @@ class PDB:
             raise RelaxFileError, ('PDB', file)
 
         # Load the file.
-        self.relax.data.pdb = MMTK.PDB.PDBFile(file)
-
-        # Print out.
+        self.relax.data.pdb = MMTK.PDB.PDBConfiguration(file)
         print self.relax.data.pdb
+
+        # Strip the protons.
+        self.relax.data.pdb.deleteHydrogens()
+
+        # Create the protein.
+        self.relax.data.protein = Protein(self.relax.data.pdb.createPeptideChains())
+        print self.relax.data.protein
