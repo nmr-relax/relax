@@ -20,13 +20,13 @@ from d2jw_mf import d2Jw
 from data import data
 
 class mf_functions(chi2, dchi2, d2chi2, Ri, dRi, d2Ri, Ri_prime, dRi_prime, d2Ri_prime, Jw, dJw, d2Jw):
-	def __init__(self, mf):
+	def __init__(self, relax):
 		"""Class used to store all the model-free function classes.
 
 		See the respective files for descriptions of the functions and detials of the formulae.
 		"""
 
-		self.mf = mf
+		self.relax = relax
 
 		# Class containing data.
 		self.data = data()

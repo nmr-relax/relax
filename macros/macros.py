@@ -6,6 +6,7 @@ from command import *
 from csa import csa
 from diffusion_tensor import diffusion_tensor
 from echo_data import echo_data
+from fixed import fixed
 from format import format
 from init_data import init_data
 from load import load
@@ -25,6 +26,7 @@ class macros:
 		self.csa = csa(relax)
 		self.diffusion_tensor = diffusion_tensor(relax)
 		self.echo_data = echo_data(relax)
+		self.fixed = fixed(relax)
 		self.format = format(relax)
 		self.init_data = init_data(relax)
 		self.load = load(relax)

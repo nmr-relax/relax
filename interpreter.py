@@ -15,6 +15,7 @@ class interpreter:
 		create_mf_model = self.relax.macros.mf_model.create
 		diffusion_tensor = self.relax.macros.diffusion_tensor.set
 		echo_data = self.relax.macros.echo_data.echo
+		fixed = self.relax.macros.fixed.set
 		format = self.relax.macros.format.format
 		init_data = self.relax.macros.init_data.init
 		list_preset_mf_model = self.relax.macros.mf_model.list
