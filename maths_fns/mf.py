@@ -1225,8 +1225,8 @@ class Mf:
 
             # Geometry function, gradient, and Hessian.
             diff_data.calc_geom = calc_aniso_geom
-            #diff_data.calc_dgeom = calc_aniso_dgeom
-            #diff_data.calc_d2geom = calc_aniso_d2geom
+            diff_data.calc_dgeom = calc_aniso_dgeom
+            diff_data.calc_d2geom = calc_aniso_d2geom
 
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_aniso_ci

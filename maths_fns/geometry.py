@@ -198,7 +198,7 @@ def calc_aniso_geom(data, diff_data):
     # The unit Dx vector.
     diff_data.dx[0] = -data.sin_a * data.sin_g + data.cos_a * data.cos_b * data.cos_g
     diff_data.dx[1] = -data.sin_a * data.cos_g - data.cos_a * data.cos_b * data.sin_g
-    diff_data.dx[2] = data.cos_a * data.sin_b
+    diff_data.dx[2] =  data.cos_a * data.sin_b
 
     # The unit Dy vector.
     diff_data.dy[0] = data.cos_a * data.sin_g + data.sin_a * data.cos_b * data.cos_g
@@ -207,15 +207,380 @@ def calc_aniso_geom(data, diff_data):
 
     # The unit Dz vector.
     diff_data.dz[0] = -data.sin_b * data.cos_g
-    diff_data.dz[1] = data.sin_b * data.sin_g
-    diff_data.dz[2] = data.cos_b
+    diff_data.dz[1] =  data.sin_b * data.sin_g
+    diff_data.dz[2] =  data.cos_b
 
     # Deltas
     data.delta_alpha = dot(data.xh_unit_vector, diff_data.dx)
-    data.delta_beta = dot(data.xh_unit_vector, diff_data.dy)
+    data.delta_beta =  dot(data.xh_unit_vector, diff_data.dy)
     data.delta_gamma = dot(data.xh_unit_vector, diff_data.dz)
 
-    #debug
-    print data.delta_alpha
-    print data.delta_beta
-    print data.delta_gamma
+
+
+# Anisotropic delta gradient.
+#############################
+
+def calc_aniso_dgeom(data, diff_data):
+    """Function for calculating the partial derivative of delta_alpha, delta_beta, and delta_gamma.
+
+    Dx gradient
+    ~~~~~~~~~~~
+
+    The alpha partial derivative of the unit Dx vector is:
+
+         dDx       | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
+        ------  =  | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
+        dalpha     |                   -sin(alpha) * sin(beta)                      |
+
+    The beta partial derivative of the unit Dx vector is:
+
+         dDx      | -cos(alpha) * sin(beta) * cos(gamma) |
+        -----  =  |  cos(alpha) * sin(beta) * sin(gamma) |
+        dbeta     |       cos(alpha) * cos(beta)         |
+
+    The gamma partial derivative of the unit Dx vector is:
+
+         dDx       | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+        ------  =  |  sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
+        dgamma     |                             0                                  |
+
+
+    Dy gradient
+    ~~~~~~~~~~~
+
+    The alpha partial derivative of the unit Dy vector is:
+
+         dDy       | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        ------  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+        dalpha     |                    cos(alpha) * sin(beta)                      |
+
+    The beta partial derivative of the unit Dy vector is:
+
+         dDy      | -sin(alpha) * sin(beta) * cos(gamma) |
+        -----  =  |  sin(alpha) * sin(beta) * sin(gamma) |
+        dbeta     |       sin(alpha) * cos(beta)         |
+
+    The gamma partial derivative of the unit Dy vector is:
+
+         dDy       |  cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
+        ------  =  | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
+        dgamma     |                             0                                  |
+
+
+    Dz gradient
+    ~~~~~~~~~~~
+
+    The alpha partial derivative of the unit Dz vector is:
+
+         dDz       | 0 |
+        ------  =  | 0 |
+        dalpha     | 0 |
+
+    The beta partial derivative of the unit Dz vector is:
+
+         dDz      | -cos(beta) * cos(gamma) |
+        -----  =  |  cos(beta) * sin(gamma) |
+        dbeta     |        -sin(beta)       |
+
+    The gamma partial derivative of the unit Dz vector is:
+
+         dDz       | sin(beta) * sin(gamma) |
+        ------  =  | sin(beta) * cos(gamma) |
+        dgamma     |           0            |
+    """
+
+    # Dx gradient
+    #############
+
+    # The alpha partial derivative of the unit Dx vector.
+    diff_data.ddx_dalpha[0] = -data.cos_a * data.sin_g - data.sin_a * data.cos_b * data.cos_g
+    diff_data.ddx_dalpha[1] = -data.cos_a * data.cos_g + data.sin_a * data.cos_b * data.sin_g
+    diff_data.ddx_dalpha[2] = -data.sin_a * data.sin_b
+
+    # The beta partial derivative of the unit Dx vector.
+    diff_data.ddx_dbeta[0] = -data.cos_a * data.sin_b * data.cos_g
+    diff_data.ddx_dbeta[1] =  data.cos_a * data.sin_b * data.sin_g
+    diff_data.ddx_dbeta[2] =  data.cos_a * data.cos_b
+
+    # The gamma partial derivative of the unit Dx vector.
+    diff_data.ddx_dgamma[0] = -data.sin_a * data.cos_g - data.cos_a * data.cos_b * data.sin_g
+    diff_data.ddx_dgamma[1] =  data.sin_a * data.sin_g - data.cos_a * data.cos_b * data.cos_g
+
+
+    # Dy gradient
+    #############
+
+    # The alpha partial derivative of the unit Dy vector.
+    diff_data.ddy_dalpha[0] = -data.sin_a * data.sin_g + data.cos_a * data.cos_b * data.cos_g
+    diff_data.ddy_dalpha[1] = -data.sin_a * data.cos_g - data.cos_a * data.cos_b * data.sin_g
+    diff_data.ddy_dalpha[2] =  data.cos_a * data.sin_b
+
+    # The beta partial derivative of the unit Dy vector.
+    diff_data.ddy_dbeta[0] = -data.sin_a * data.sin_b * data.cos_g
+    diff_data.ddy_dbeta[1] =  data.sin_a * data.sin_b * data.sin_g
+    diff_data.ddy_dbeta[2] =  data.sin_a * data.cos_b
+
+    # The gamma partial derivative of the unit Dy vector.
+    diff_data.ddy_dgamma[0] =  data.cos_a * data.cos_g - data.sin_a * data.cos_b * data.sin_g
+    diff_data.ddy_dgamma[1] = -data.cos_a * data.sin_g - data.sin_a * data.cos_b * data.cos_g
+
+
+    # Dz gradient
+    #############
+
+    # The beta partial derivative of the unit Dz vector.
+    diff_data.ddz_dbeta[0] = -data.cos_b * data.cos_g
+    diff_data.ddz_dbeta[1] =  data.cos_b * data.sin_g
+    diff_data.ddz_dbeta[2] = -data.sin_b
+
+    # The gamma partial derivative of the unit Dz vector.
+    diff_data.ddz_dgamma[0] = data.sin_b * data.sin_g
+    diff_data.ddz_dgamma[1] = data.sin_b * data.cos_g
+
+
+    # Delta gradients
+    #################
+
+    data.ddelta_alpha_dpsi[0] = dot(data.xh_unit_vector, diff_data.ddx_dalpha)
+    data.ddelta_alpha_dpsi[1] = dot(data.xh_unit_vector, diff_data.ddx_dbeta)
+    data.ddelta_alpha_dpsi[2] = dot(data.xh_unit_vector, diff_data.ddx_dgamma)
+
+    data.ddelta_beta_dpsi[0] = dot(data.xh_unit_vector, diff_data.ddy_dalpha)
+    data.ddelta_beta_dpsi[1] = dot(data.xh_unit_vector, diff_data.ddy_dbeta)
+    data.ddelta_beta_dpsi[2] = dot(data.xh_unit_vector, diff_data.ddy_dgamma)
+
+    data.ddelta_gamma_dpsi[0] = dot(data.xh_unit_vector, diff_data.ddz_dalpha)
+    data.ddelta_gamma_dpsi[1] = dot(data.xh_unit_vector, diff_data.ddz_dbeta)
+    data.ddelta_gamma_dpsi[2] = dot(data.xh_unit_vector, diff_data.ddz_dgamma)
+
+
+
+# Anisotropic delta Hessian.
+############################
+
+def calc_aniso_d2geom(data, diff_data):
+    """Function calculating the second partial derivatives of delta_alpha, delta_beta, delta_gamma.
+
+    Dx Hessian
+    ~~~~~~~~~~
+
+    The alpha-alpha second partial derivative of the unit Dx vector is:
+
+         d2Dx       | sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
+        -------  =  | sin(alpha) * cos(gamma) + cos(alpha) * cos(beta) * sin(gamma) |
+        dalpha2     |                  -cos(alpha) * sin(beta)                      |
+
+    The alpha-beta second partial derivative of the unit Dx vector is:
+
+            d2Dx         |  sin(alpha) * sin(beta) * cos(gamma) |
+        ------------  =  | -sin(alpha) * sin(beta) * sin(gamma) |
+        dalpha.dbeta     |      -sin(alpha) * cos(beta)         |
+
+    The alpha-gamma second partial derivative of the unit Dx vector is:
+
+            d2Dx          | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
+        -------------  =  |  cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        dalpha.dgamma     |                             0                                  |
+
+    The beta-beta second partial derivative of the unit Dx vector is:
+
+         d2Dx      | -cos(alpha) * cos(beta) * cos(gamma) |
+        ------  =  |  cos(alpha) * cos(beta) * sin(gamma) |
+        dbeta2     |      -cos(alpha) * sin(beta)         |
+
+    The beta-gamma second partial derivative of the unit Dx vector is:
+
+            d2Dx         | cos(alpha) * sin(beta) * sin(gamma) |
+        ------------  =  | cos(alpha) * sin(beta) * cos(gamma) |
+        dbeta.dgamma     |                 0                   |
+
+    The gamma-gamma second partial derivative of the unit Dx vector is:
+
+         d2Dx       | sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
+        -------  =  | sin(alpha) * cos(gamma) + cos(alpha) * cos(beta) * sin(gamma) |
+        dgamma2     |                            0                                  |
+
+
+    Dy Hessian
+    ~~~~~~~~~~
+
+    The alpha-alpha second partial derivative of the unit Dy vector is:
+
+         d2Dy       | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
+        -------  =  | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
+        dalpha2     |                   -sin(alpha) * sin(beta)                      |
+
+    The alpha-beta second partial derivative of the unit Dy vector is:
+
+            d2Dy         | -cos(alpha) * sin(beta) * cos(gamma) |
+        ------------  =  |  cos(alpha) * sin(beta) * sin(gamma) |
+        dalpha.dbeta     |       cos(alpha) * cos(beta)         |
+
+    The alpha-gamma second partial derivative of the unit Dy vector is:
+
+            d2Dy          | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+        -------------  =  |  sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
+        dalpha.dgamma     |                             0                                  |
+
+    The beta-beta second partial derivative of the unit Dy vector is:
+
+         d2Dy      | -sin(alpha) * cos(beta) * cos(gamma) |
+        ------  =  |  sin(alpha) * cos(beta) * sin(gamma) |
+        dbeta2     |      -sin(alpha) * sin(beta)         |
+
+    The beta-gamma second partial derivative of the unit Dy vector is:
+
+            d2Dy         | sin(alpha) * sin(beta) * sin(gamma) |
+        ------------  =  | sin(alpha) * sin(beta) * cos(gamma) |
+        dbeta.dgamma     |                 0                   |
+
+    The gamma-gamma second partial derivative of the unit Dy vector is:
+
+         d2Dy       | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
+        -------  =  | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
+        dgamma2     |                             0                                  |
+
+
+    Dz Hessian
+    ~~~~~~~~~~
+
+    The alpha-alpha second partial derivative of the unit Dz vector is:
+
+         d2Dz       | 0 |
+        -------  =  | 0 |
+        dalpha2     | 0 |
+
+    The alpha-beta second partial derivative of the unit Dz vector is:
+
+            d2Dz         | 0 |
+        ------------  =  | 0 |
+        dalpha.dbeta     | 0 |
+
+    The alpha-gamma second partial derivative of the unit Dz vector is:
+
+             d2Dz         | 0 |
+        -------------  =  | 0 |
+        dalpha.dgamma     | 0 |
+
+    The beta-beta second partial derivative of the unit Dz vector is:
+
+         d2Dz      |  sin(beta) * cos(gamma) |
+        ------  =  | -sin(beta) * sin(gamma) |
+        dbeta2     |        -cos(beta)       |
+
+    The beta-gamma second partial derivative of the unit Dz vector is:
+
+            d2Dz         | cos(beta) * sin(gamma) |
+        ------------  =  | cos(beta) * cos(gamma) |
+        dbeta.dgamma     |           0            |
+
+    The gamma-gamma second partial derivative of the unit Dz vector is:
+
+         d2Dz       |  sin(beta) * cos(gamma) |
+        -------  =  | -sin(beta) * sin(gamma) |
+        dgamma2     |            0            |
+    """
+
+    # Dx Hessian
+    ############
+
+    # The alpha-alpha second partial derivative of the unit Dx vector.
+    diff_data.d2dx_dalpha2[0] =  data.sin_a * data.sin_g - data.cos_a * data.cos_b * data.cos_g
+    diff_data.d2dx_dalpha2[1] =  data.sin_a * data.cos_g + data.cos_a * data.cos_b * data.sin_g
+    diff_data.d2dx_dalpha2[2] = -data.cos_a * data.sin_b
+
+    # The alpha-beta second partial derivative of the unit Dx vector.
+    diff_data.d2dx_dalpha_dbeta[0] =  data.sin_a * data.sin_b * data.cos_g
+    diff_data.d2dx_dalpha_dbeta[1] = -data.sin_a * data.sin_b * data.sin_g
+    diff_data.d2dx_dalpha_dbeta[2] = -data.sin_a * data.cos_b
+
+    # The alpha-gamma second partial derivative of the unit Dx vector.
+    diff_data.d2dx_dalpha_dgamma[0] = -data.cos_a * data.cos_g + data.sin_a * data.cos_b * data.sin_g
+    diff_data.d2dx_dalpha_dgamma[1] =  data.cos_a * data.sin_g + data.sin_a * data.cos_b * data.cos_g
+    diff_data.d2dx_dalpha_dgamma[2] = -data.sin_a * data.cos_b
+
+    # The beta-beta second partial derivative of the unit Dx vector.
+    diff_data.d2dx_dbeta2[0] = -data.cos_a * data.cos_b * data.cos_g
+    diff_data.d2dx_dbeta2[1] =  data.cos_a * data.cos_b * data.sin_g
+    diff_data.d2dx_dbeta2[2] = -data.cos_a * data.sin_b
+
+    # The beta-gamma second partial derivative of the unit Dx vector.
+    diff_data.d2dx_dbeta_dgamma[0] = data.cos_a * data.sin_b * data.sin_g
+    diff_data.d2dx_dbeta_dgamma[1] = data.cos_a * data.sin_b * data.cos_g
+
+    # The gamma-gamma second partial derivative of the unit Dx vector.
+    diff_data.d2dx_dgamma2[0] = data.sin_a * data.sin_g - data.cos_a * data.cos_b * data.cos_g
+    diff_data.d2dx_dgamma2[1] = data.sin_a * data.cos_g + data.cos_a * data.cos_b * data.sin_g
+
+
+    # Dy Hessian
+    ############
+
+    # The alpha-alpha second partial derivative of the unit Dy vector.
+    diff_data.d2dy_dalpha2[0] = -data.cos_a * data.sin_g - data.sin_a * data.cos_b * data.cos_g
+    diff_data.d2dy_dalpha2[1] = -data.cos_a * data.cos_g + data.sin_a * data.cos_b * data.sin_g
+    diff_data.d2dy_dalpha2[2] = -data.sin_a * data.sin_b
+
+    # The alpha-beta second partial derivative of the unit Dy vector.
+    diff_data.d2dy_dalpha_dbeta[0] = -data.cos_a * data.sin_b * data.cos_g
+    diff_data.d2dy_dalpha_dbeta[1] =  data.cos_a * data.sin_b * data.sin_g
+    diff_data.d2dy_dalpha_dbeta[2] =  data.cos_a * data.cos_b
+
+    # The alpha-gamma second partial derivative of the unit Dy vector.
+    diff_data.d2dy_dalpha_dgamma[0] = -data.sin_a * data.cos_g - data.cos_a * data.cos_b * data.sin_g
+    diff_data.d2dy_dalpha_dgamma[1] =  data.sin_a * data.sin_g - data.cos_a * data.cos_b * data.cos_g
+
+    # The beta-beta second partial derivative of the unit Dy vector.
+    diff_data.d2dy_dbeta2[0] = -data.sin_a * data.cos_b * data.cos_g
+    diff_data.d2dy_dbeta2[1] =  data.sin_a * data.cos_b * data.sin_g
+    diff_data.d2dy_dbeta2[2] = -data.sin_a * data.sin_b
+
+    # The beta-gamma second partial derivative of the unit Dy vector.
+    diff_data.d2dy_dbeta_dgamma[0] = data.sin_a * data.sin_b * data.sin_g
+    diff_data.d2dy_dbeta_dgamma[1] = data.sin_a * data.sin_b * data.cos_g
+
+    # The gamma-gamma second partial derivative of the unit Dy vector.
+    diff_data.d2dy_dgamma2[0] = -data.cos_a * data.sin_g - data.sin_a * data.cos_b * data.cos_g
+    diff_data.d2dy_dgamma2[1] = -data.cos_a * data.cos_g + data.sin_a * data.cos_b * data.sin_g
+
+
+    # Dz Hessian
+    ############
+
+    # The beta-beta second partial derivative of the unit Dz vector.
+    diff_data.ddz_dbeta2[0] =  data.sin_b * data.cos_g
+    diff_data.ddz_dbeta2[1] = -data.sin_b * data.sin_g
+    diff_data.ddz_dbeta2[2] = -data.cos_b
+
+    # The beta-gamma second partial derivative of the unit Dz vector.
+    diff_data.ddz_dbeta_dgamma[0] = data.cos_b * data.sin_g
+    diff_data.ddz_dbeta_dgamma[1] = data.cos_b * data.cos_g
+
+    # The gamma partial derivative of the unit Dz vector.
+    diff_data.ddz_dgamma2[0] =  data.sin_b * data.cos_g
+    diff_data.ddz_dgamma2[1] = -data.sin_b * data.sin_g
+
+
+    # Delta Hessians
+    ################
+
+    data.d2delta_alpha_dpsi2[0, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha2)
+    data.d2delta_alpha_dpsi2[0, 1] = data.d2delta_alpha_dpsi2[1, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha_dbeta)
+    data.d2delta_alpha_dpsi2[0, 2] = data.d2delta_alpha_dpsi2[2, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha_dgamma)
+    data.d2delta_alpha_dpsi2[1, 1] = dot(data.xh_unit_vector, diff_data.d2dx_dbeta2)
+    data.d2delta_alpha_dpsi2[1, 2] = data.d2delta_alpha_dpsi2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dx_dbeta_dgamma)
+    data.d2delta_alpha_dpsi2[2, 2] = dot(data.xh_unit_vector, diff_data.d2dx_dgamma2)
+
+    data.d2delta_beta_dpsi2[0, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha2)
+    data.d2delta_beta_dpsi2[0, 1] = data.d2delta_alpha_dpsi2[1, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha_dbeta)
+    data.d2delta_beta_dpsi2[0, 2] = data.d2delta_alpha_dpsi2[2, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha_dgamma)
+    data.d2delta_beta_dpsi2[1, 1] = dot(data.xh_unit_vector, diff_data.d2dy_dbeta2)
+    data.d2delta_beta_dpsi2[1, 2] = data.d2delta_alpha_dpsi2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dy_dbeta_dgamma)
+    data.d2delta_beta_dpsi2[2, 2] = dot(data.xh_unit_vector, diff_data.d2dy_dgamma2)
+
+    data.d2delta_gamma_dpsi2[0, 0] = dot(data.xh_unit_vector, diff_data.d2dz_dalpha2)
+    data.d2delta_gamma_dpsi2[0, 1] = data.d2delta_alpha_dpsi2[1, 0] = dot(data.xh_unit_vector, diff_data.d2dz_dalpha_dbeta)
+    data.d2delta_gamma_dpsi2[0, 2] = data.d2delta_alpha_dpsi2[2, 0] = dot(data.xh_unit_vector, diff_data.d2dz_dalpha_dgamma)
+    data.d2delta_gamma_dpsi2[1, 1] = dot(data.xh_unit_vector, diff_data.d2dz_dbeta2)
+    data.d2delta_gamma_dpsi2[1, 2] = data.d2delta_alpha_dpsi2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dz_dbeta_dgamma)
+    data.d2delta_gamma_dpsi2[2, 2] = dot(data.xh_unit_vector, diff_data.d2dz_dgamma2)
