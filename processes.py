@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-from os import kill, popen
+from os import kill, popen3
 from popen2 import Popen3
 
 
@@ -45,7 +45,10 @@ class RelaxPopen3(Popen3):
                 kill_cmd = login_cmd + " \"" + kill_cmd + "\""
 
             # Kill relax.
-            popen(kill_cmd)
+            try:
+                stdin, stdout, stderr = popen3(kill_cmd)
+            except:
+                pass
 
         # Kill the child process.
         try:

@@ -351,9 +351,6 @@ class RelaxThread(Thread):
         # Catch the PID.
         self.child.relax_pid = self.child.fromchild.readline()
         self.child.relax_pid = int(self.child.relax_pid[0:-1])
-        print "Thread: " + `self.getName()`
-        print "Job: " + `self.job_number`
-        print "PID: " + `self.child.relax_pid`
 
         # Catch the results.
         self.results = self.child.fromchild.readlines()
