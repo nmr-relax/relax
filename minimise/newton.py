@@ -22,7 +22,8 @@
 
 
 from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_linear_equations
-from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, trace, transpose
+from math import acos
+from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, trace, transpose, zeros
 from re import match
 
 from base_classes import Hessian_mods, Line_search, Min
@@ -172,15 +173,27 @@ class Newton(Hessian_mods, Line_search, Min):
 
         # Debugging.
         if self.print_flag >= 2:
+            print "\n" + self.print_prefix + "New param function."
             print self.print_prefix + "pk:    " + `self.pk`
             print self.print_prefix + "alpha: " + `self.alpha`
             print self.print_prefix + "xk:    " + `self.xk`
             print self.print_prefix + "xk+1:  " + `self.xk_new`
             print self.print_prefix + "fk:    " + `self.fk`
             print self.print_prefix + "fk+1:  " + `self.fk_new`
-            eigen = eigenvectors(self.d2fk)
+            print self.print_prefix + "dfk:    " + `self.dfk`
+            print self.print_prefix + "dfk+1:  " + `self.dfk_new`
             print self.print_prefix + "d2fk:\n" + `self.d2fk`
+
+            eigen = eigenvectors(self.d2fk)
             print self.print_prefix + "Eigenvalues: " + `eigen[0]`
+
+            print self.print_prefix + "Angle to the unit vector pointing along the first dimension."
+            unit_vect = zeros(self.n, Float64)
+            unit_vect[0] = 1.0
+            dfk_angle = acos(dot(self.dfk, unit_vect) / sqrt(dot(self.dfk, self.dfk)))
+            pk_angle = acos(dot(self.pk, unit_vect) / sqrt(dot(self.pk, self.pk)))
+            print self.print_prefix + "steepest descent: " + `dfk_angle`
+            print self.print_prefix + "Newton step:      " + `pk_angle`
 
 
     def setup_newton(self):

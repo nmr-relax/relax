@@ -275,12 +275,12 @@ class Method_of_multipliers(Min):
 
         # Calculate the function and constraint values.
         self.fk = L = apply(self.func, (args[0],)+args[1:])
-        self.ck = apply(self.c, (args[0],))
+        self.cj = apply(self.c, (args[0],))
 
         # Calculate the quadratic augmented Lagrangian value.
         for i in range(self.m):
-            if self.ck[i] <= self.mu * self.lambda_k[i]:
-                L = L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
+            if self.cj[i] <= self.mu * self.lambda_k[i]:
+                L = L  -  self.lambda_k[i] * self.cj[i]  +  0.5 * self.cj[i]**2 / self.mu
                 self.test_str[i] = 1
             else:
                 L = L  -  0.5 * self.mu * self.lambda_k[i]**2
@@ -290,10 +290,10 @@ class Method_of_multipliers(Min):
             print ""
             print "\taug Lagr value:       " + `L`
             print "\tfunction value:       " + `self.fk`
-            print "\tck:                   " + `self.ck`
+            print "\tcj:                   " + `self.cj`
             print "\tMu:                   " + `self.mu`
-            print "\tck - mu.lambda_k:     " + `self.ck - self.mu * self.lambda_k`
-            print "\tlambda_k - ck/mu:     " + `self.lambda_k - self.ck / self.mu`
+            print "\tcj - mu.lambda_k:     " + `self.cj - self.mu * self.lambda_k`
+            print "\tlambda_k - cj/mu:     " + `self.lambda_k - self.cj / self.mu`
             print "\tepsilon:              " + `self.epsilon`
             print "\tgamma:                " + `self.gamma`
             print "\tLagrange multipliers: " + `self.lambda_k`
@@ -307,18 +307,18 @@ class Method_of_multipliers(Min):
 
         # Calculate the function and constraint gradients.
         dfk = dL = apply(self.dfunc, (args[0],)+args[1:])
-        self.dck = apply(self.dc, (args[0],))
+        self.dcj = apply(self.dc, (args[0],))
 
         # Calculate the quadratic augmented Lagrangian gradient.
         for i in range(self.m):
             if self.test_str[i]:
-                dL = dL  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
+                dL = dL  -  (self.lambda_k[i] - self.cj[i] / self.mu) * self.dcj[i]
 
         if self.print_flag >= 4:
             print ""
             print "\taug Lagr grad:       " + `dL`
             print "\tfunction grad:       " + `dfk`
-            print "\tdck:                   " + `self.dck`
+            print "\tdcj:                   " + `self.dcj`
             print "\tTest structure:       " + `self.test_str`
 
         return dL
@@ -329,12 +329,12 @@ class Method_of_multipliers(Min):
 
         # Calculate the function and constraint Hessians.
         d2L = apply(self.d2func, (args[0],)+args[1:])
-        self.d2ck = apply(self.d2c, (args[0],))
+        self.d2cj = apply(self.d2c, (args[0],))
 
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in range(self.m):
             if self.test_str[i]:
-                d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.d2ck[i]
+                d2L = d2L  +  outerproduct(self.dcj[i], self.dcj[i]) / self.mu  -  (self.lambda_k[i] - self.cj[i] / self.mu) * self.d2cj[i]
 
         return d2L
 
@@ -351,7 +351,7 @@ class Method_of_multipliers(Min):
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in range(self.m):
             if self.test_str[i]:
-                d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu
+                d2L = d2L  +  outerproduct(self.dcj[i], self.dcj[i]) / self.mu
 
         if self.print_flag >= 4:
             print ""
@@ -383,6 +383,9 @@ class Method_of_multipliers(Min):
                     self.printout()
                 print "Entering sub-algorithm."
 
+            # Calculate the constraint values at xk.
+            self.ck = apply(self.c, (self.xk,)+self.args)
+
             # Calculate the augmented Lagrangian gradient tolerance.
             self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
@@ -403,9 +406,7 @@ class Method_of_multipliers(Min):
                 break
 
             # Convergence test.
-            try:
-                self.dL
-            except AttributeError:
+            if not hasattr(self, 'dL'):
                 self.dL = apply(self.func_dLA, (self.xk_new,)+self.args)
             if self.conv_test(self.L_new, self.L, self.dL):
                 break
