@@ -96,7 +96,7 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific grid setup function setup.
+        # Specific grid search function.
         self.grid_search = self.relax.specific_setup.setup('grid_search', function_type)
         if self.grid_search == None:
             raise RelaxFuncSetupError, ('grid search', function_type)
@@ -119,7 +119,7 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific minimise function setup.
+        # Specific minimisation function.
         self.minimise = self.relax.specific_setup.setup('minimise', function_type)
         if self.minimise == None:
             raise RelaxFuncSetupError, ('minimise', function_type)
@@ -139,73 +139,15 @@ class Minimise:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-        # Test the validity of the arguments.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # The number of parameters.
-            n = len(self.relax.data.res[i].params[run])
-
-            # Make sure that the length of the parameter array is > 0.
-            if n == 0:
-                raise RelaxError, "Cannot set parameter values for a model with zero parameters."
-
-            # Values.
-            if values != None:
-                if len(values) != n:
-                    raise RelaxLenError, ('values', n)
-
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific parameter vector function setup.
-        self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', function_type)
-        if self.assemble_param_vector == None:
-            raise RelaxFuncSetupError, ('parameter vector', function_type)
+        # Specific set function.
+        self.set = self.relax.specific_setup.setup('set', function_type)
+        if self.set == None:
+            raise RelaxFuncSetupError, ('set', function_type)
 
-        # Equation type specific scaling matrix function setup.
-        self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', function_type)
-        if self.assemble_scaling_matrix == None:
-            raise RelaxFuncSetupError, ('scaling matrix', function_type)
-
-        # Equation type specific set setup function setup.
-        self.fixed_setup = self.relax.specific_setup.setup('fixed', function_type)
-        if self.fixed_setup == None:
-            raise RelaxFuncSetupError, ('fixed setup', function_type)
-
-        # Equation type specific minimise function setup.
-        self.minimise = self.relax.specific_setup.setup('minimise', function_type)
-        if self.minimise == None:
-            raise RelaxFuncSetupError, ('minimise', function_type)
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # Setup the fixed parameter options.
-            if values:
-                # User supplied values.
-                min_options = array(values)
-            else:
-                # Fixed values.
-                empty = zeros(len(self.relax.data.res[i].params[run]), Float64)
-                min_options = self.fixed_setup(self.relax.data.res[i].params[run], min_options=empty)
-
-            # Create the initial parameter vector.
-            init_params = self.assemble_param_vector(run, self.relax.data.res[i])
-
-            # Diagonal scaling.
-            scaling_matrix = None
-            if self.relax.data.res[i].scaling[run]:
-                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
-                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
-                min_options = matrixmultiply(inverse(scaling_matrix), min_options)
-
-            # Minimisation.
-            self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor="fixed", min_options=min_options, print_flag=print_flag)
+        # Minimisation.
+        self.set(run=run, values=values, print_flag=print_flag)
 
 

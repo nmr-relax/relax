@@ -69,11 +69,7 @@ class Specific_setup:
         if self.function_type == 'data_names':
             return self.relax.specific.model_free.data_names
 
-        # Fixed setup function.
-        if self.function_type == 'fixed':
-            return self.relax.specific.model_free.fixed
-
-        # Grid setup function.
+        # Grid search function.
         if self.function_type == 'grid_search':
             return self.relax.specific.model_free.grid_search
 
@@ -89,17 +85,13 @@ class Specific_setup:
         if self.function_type == 'minimise':
             return self.relax.specific.model_free.minimise
 
-        # Parameter vector.
-        if self.function_type == 'param_vector':
-            return self.relax.specific.model_free.assemble_param_vector
-
         # Read results file function.
         if self.function_type == 'read':
             return self.relax.specific.model_free.read_results
 
-        # Scaling matrix.
-        if self.function_type == 'scaling_matrix':
-            return self.relax.specific.model_free.assemble_scaling_matrix
+        # Set function.
+        if self.function_type == 'set':
+            return self.relax.specific.model_free.set
 
         # Write header function.
         if self.function_type == 'write_header':
