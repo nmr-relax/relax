@@ -15,8 +15,6 @@ The following packages need to be installed before using relax:
     ScientificPython:  The scientific python package is actually required by the Molecular
       Modelling Toolkit.  Version 2.2 or higher.
 
-    MMTK:  The Molecular Modelling Toolkit.  Version 2.2 or higher.
-
 Older versions of these packages may work but no guarantees can be made.
 
 
@@ -73,8 +71,8 @@ VMD:
 ----
 
 Version 1.8 or higher.  VMD is used for viewing the collection of molecules extracted from a PDB
-file.  It is executed through the MMTK function 'view()' which requires the environmental variable
-'PDBVIEWER' to be set to 'vmd'.
+file.  It is executed through the Scientific function 'view()' which requires the environmental
+variable 'PDBVIEWER' to be set to 'vmd'.
 
 For Bash, add the following line to either the global '/etc/profile' or local '~/.bash_profile'
 files:

@@ -192,14 +192,6 @@ and comes with absolutely no warranty.  For details type GPL.
             sys.stderr.write(error.__str__())
             deps_ok = 0
 
-        # MMTK.
-        try:
-            import MMTK
-        except ImportError:
-            error = RelaxDepError('MMTK')
-            sys.stderr.write(error.__str__())
-            deps_ok = 0
-
         # Quit if the deps are not installed.
         if not deps_ok:
             sys.stderr.write('\n')

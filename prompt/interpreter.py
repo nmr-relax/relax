@@ -27,7 +27,6 @@ import readline
 import sys
 
 # Python modules accessable on the command prompt.
-import MMTK
 import Numeric
 import Scientific
 
@@ -81,7 +80,6 @@ class Interpreter:
         self.intro = 0
 
         # Python modules.
-        self._MMTK = MMTK
         self._Numeric = Numeric
         self._Scientific = Scientific
 
@@ -123,7 +121,6 @@ class Interpreter:
         """
 
         # Python modules.
-        MMTK = self._MMTK
         Numeric = self._Numeric
         Scientific = self._Scientific
 
