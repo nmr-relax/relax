@@ -26,6 +26,7 @@ class usr_param:
 				Schwartz Information Criteria.
 		"""
 		self.method = 'Palmer'
+		#self.method = 'AIC'
 
 		self.SSEtile = '0.90'       # Set the SSE limit (1 - alpha critical value).
 		self.Ftest_lim = '0.80'     # Set the F-test limit (1 - alpha critical value).

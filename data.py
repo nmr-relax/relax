@@ -13,6 +13,7 @@ class data:
 			"Data specific for the modelfree analysis using AIC model selection."
 
 			self.name = 'AIC'
+			self.stage = '0'
 
 
 	class init_bic:
@@ -20,6 +21,7 @@ class data:
 			"Data specific for the modelfree analysis using BIC model selection."
 
 			self.name = 'BIC'
+			self.stage = '0'
 
 
 	class init_palmer:

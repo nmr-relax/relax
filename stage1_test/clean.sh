@@ -10,3 +10,4 @@ rm -rf f-m1m3
 rm -rf f-m2m4
 rm -rf f-m2m5
 rm -rf f-m3m4
+rm -f log*

@@ -55,10 +55,16 @@ class mf:
 
 		if match('AIC', self.data.usr_param.method):
 			aic(self)
-		if match('BIC', self.data.usr_param.method):
+		elif match('BIC', self.data.usr_param.method):
 			bic(self)
-		if match('Palmer', self.data.usr_param.method):
+		elif match('Palmer', self.data.usr_param.method):
 			palmer(self)
+		else:
+			print "The modelfree analysis method is not set correctly.  Check self.method in"
+			print "the file 'usr_param.py' which should be in the working directory."
+			print "Quitting script!"
+			sys.exit()
+			
 
 
 	def print_header(self):
