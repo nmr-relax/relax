@@ -83,9 +83,15 @@ class generic_minimise:
 				self.k2 = self.k2 + 1
 
 		if self.full_output:
-			return self.xk_new, self.fk_new, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
+			try:
+				return self.xk_new, self.fk_new, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
+			except AttributeError:
+				return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
 		else:
-			return self.xk_new
+			try:
+				return self.xk_new
+			except AttributeError:
+				return self.xk
 
 
 	def setup(self):

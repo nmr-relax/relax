@@ -80,8 +80,6 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 			print "\tlS: " + `self.lS`
 
 		# Iterative loop.
-		self.xk_new = self.xk
-		self.fk_new = self.fk
 		return
 		while 1:
 			# Safeguard lambda.

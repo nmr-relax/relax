@@ -1,15 +1,15 @@
 import sys
 from re import match
 
-try:
-	from scipy.optimize import fmin, fmin_bfgs, fmin_ncg
-	simplex_scipy = fmin
-	bfgs_scipy = fmin_bfgs
-	ncg_scipy = fmin_ncg
-	noscipy_flag = 0
-except ImportError:
-	print "Scipy is not installed, cannot use simplex, BFGS, or Newton conjugate gradient minimisation from the scipy package."
-	noscipy_flag = 1
+#try:
+#	from scipy.optimize import fmin, fmin_bfgs, fmin_ncg
+#	simplex_scipy = fmin
+#	bfgs_scipy = fmin_bfgs
+#	ncg_scipy = fmin_ncg
+#	noscipy_flag = 0
+#except ImportError:
+#	print "Scipy is not installed, cannot use simplex, BFGS, or Newton conjugate gradient minimisation from the scipy package."
+noscipy_flag = 1
 
 # Grid search.
 from minimise.grid import grid
@@ -215,6 +215,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 			print "\tEigenvalue modification."
 		elif match("^[Cc]hol", hessian_mod):
 			print "\tCholesky with added multiple of the identity."
+		elif match("^[Mm]odified[ -_][Cc]holesky$", hessian_mod) or match("^[Mm]od$", hessian_mod):
+			print "\tModified Cholesky."
 
 		print ""
 

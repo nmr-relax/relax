@@ -1,5 +1,5 @@
-from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse
-from Numeric import dot, identity, matrixmultiply, sort, sqrt
+from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_linear_equations
+from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, transpose
 from re import match
 
 from generic_line_search import generic_line_search
@@ -49,10 +49,10 @@ class newton(generic_line_search, generic_minimise):
 
 		# The hessian modification functions.
 		if match("^[Ee]igen", hessian_mod):
-			self.hessian_modification = self.eigenvalue_mod
+			self.hessian_modification = self.eigenvalue
 			self.delta = sqrt(self.mach_acc)
 		elif match("^[Cc]hol", hessian_mod):
-			self.hessian_modification = self.cholesky_mod
+			self.hessian_modification = self.cholesky
 		elif match("^[Mm]odified[ -_][Cc]holesky$", hessian_mod) or match("^[Mm]od$", hessian_mod):
 			self.hessian_modification = self.modified_cholesky
 
@@ -61,7 +61,7 @@ class newton(generic_line_search, generic_minimise):
 		self.I = identity(len(self.xk))
 
 
-	def cholesky_mod(self):
+	def cholesky(self):
 		"""Cholesky with added multiple of the identity.
 
 		Algorithm 6.3 from page 145.
@@ -81,7 +81,7 @@ class newton(generic_line_search, generic_minimise):
 			tk = 0.0
 		else:
 			tk = half_norm
-			
+
 		if self.print_flag == 2:
 			print "Frobenius norm: " + `norm`
 			print "min aii: " + `min_aii`
@@ -109,7 +109,7 @@ class newton(generic_line_search, generic_minimise):
 			k = k + 1
 
 
-	def eigenvalue_mod(self):
+	def eigenvalue(self):
 		"""The eigenvalue hessian modification.
 
 		This modification is based on equation 6.14 from page 144.
@@ -134,7 +134,162 @@ class newton(generic_line_search, generic_minimise):
 		"""Modified Cholesky hessian modification.
 
 		Algorithm 6.5 from page 148.
+
+		Somehow the data structures l, d, and c can be stored in self.d2fk!
 		"""
+
+		# Debugging (REMOVE!!!).
+		#self.d2fk = array([[4, 2, 1], [2, 6, 3], [1, 3, -0.004]], Float64)
+		if self.print_flag == 2:
+			print "d2fk: " + `self.d2fk`
+			eigen = eigenvectors(self.d2fk)
+			eigenvals = sort(eigen[0])
+			print "Eigenvalues: " + `eigenvals`
+
+		# Calculate gamma(A) and xi(A).
+		gamma = 0.0
+		xi = 0.0
+		for i in range(self.n):
+			gamma = max(abs(self.d2fk[i, i]), gamma)
+			for j in range(i+1, self.n):
+				xi = max(abs(self.d2fk[i, j]), xi)
+
+		# Calculate delta and beta.
+		delta = self.mach_acc * max(gamma + xi, 1)
+		beta = sqrt(max(gamma, xi / sqrt(self.n**2 - 1.0), self.mach_acc))
+
+		# Initialise data structures.
+		d2fk_orig = 1.0 * self.d2fk
+		c = 0.0 * self.d2fk
+		d = 0.0 * self.xk
+		l = 1.0 * self.I
+		e = 0.0 * self.xk
+
+		# Initial diagonal elements of c.
+		for k in range(self.n):
+			c[k, k] = self.d2fk[k, k]
+
+		# Main loop.
+		for j in range(self.n):
+			if self.print_flag == 2:
+				print "\n<j: " + `j` + ">"
+
+			# Row and column swapping.
+			#p = 1.0 * self.I
+			#q = j
+			#for i in range(j, self.n):
+			#	if abs(c[q, q]) <= abs(c[i, i]):
+			#		q = i
+			#if self.print_flag == 2:
+			#	print "Row and column swapping."
+			#	print "i range: " + `range(j, self.n)`
+			#	print "q: " + `q`
+			#	print "c: " + `c`
+			#	print "d: " + `d`
+			#	print "l: " + `l`
+			#if q != j:
+			#	p[q, j] = p[j, q] = 1.0
+			#	p[q, q] = p[j, j] = 0.0
+			#	c = dot(p, dot(c, p))
+			#	d = dot(p, dot(d, p))
+			#	l = dot(p, dot(l, p))
+			#	self.d2fk = dot(p, dot(self.d2fk, p))
+			#	if self.print_flag == 2:
+			#		print "p: " + `p`
+			#		print "c(mod): " + `c`
+			#		print "d(mod): " + `d`
+			#		print "l(mod): " + `l`
+
+			# Calculate the elements of l.
+			if self.print_flag == 2:
+				print "\nCalculate the elements of l."
+				print "s range: " + `range(j)`
+			for s in range(j):
+				if self.print_flag == 2:
+					print "s: " + `s`
+				l[j, s] = c[j, s] / d[s]
+			if self.print_flag == 2:
+				print "l: " + `l`
+
+			# Calculate c[i, j].
+			if self.print_flag == 2:
+				print "\nCalculate c[i, j]."
+				print "i range: " + `range(j+1, self.n)`
+			for i in range(j+1, self.n):
+				sum = 0.0
+				for s in range(j):
+					if self.print_flag == 2:
+						print "s range: " + `range(j)`
+					sum = sum + l[j, s] * c[i, s]
+				c[i, j] = self.d2fk[i, j] - sum
+			if self.print_flag == 2:
+				print "c: " + `c`
+
+			# Calculate d.
+			if self.print_flag == 2:
+				print "\nCalculate d."
+			theta_j = 0.0
+			if j < self.n-1:
+				if self.print_flag == 2:
+					print "j < n, " + `j` + " < " + `self.n-1`
+					print "i range: " + `range(j+1, self.n)`
+				for i in range(j+1, self.n):
+					theta_j = max(theta_j, abs(c[i, j]))
+			else:
+				if self.print_flag == 2:
+					print "j >= n, " + `j` + " >= " + `self.n-1`
+			d[j] = max(abs(c[j, j]), (theta_j/beta)**2, delta)
+			if self.print_flag == 2:
+				print "theta_j: " + `theta_j`
+				print "d: " + `d`
+
+			# Calculate c[i, i].
+			if self.print_flag == 2:
+				print "\nCalculate c[i, i]."
+			if j < self.n-1:
+				if self.print_flag == 2:
+					print "j < n, " + `j` + " < " + `self.n-1`
+					print "i range: " + `range(j+1, self.n)`
+				for i in range(j+1, self.n):
+					c[i, i] = c[i, i] - c[i, j]**2 / d[j]
+			else:
+				if self.print_flag == 2:
+					print "j >= n, " + `j` + " >= " + `self.n-1`
+			if self.print_flag == 2:
+				print "c: " + `c`
+
+			#if q != j:
+			#	self.d2fk = dot(p, dot(self.d2fk, p))
+
+			# Calculate e.
+			e[j] = d[j] - c[j, j]
+
+		self.d2fk = d2fk_orig
+		for i in range(self.n):
+			self.d2fk[i, i] = self.d2fk[i, i] + e[i]
+
+		# Debugging.
+		if self.print_flag == 2:
+			print "\nFin:"
+			print "gamma(A): " + `gamma`
+			print "xi(A): " + `xi`
+			print "delta: " + `delta`
+			print "beta: " + `beta`
+			print "c: " + `c`
+			print "d: " + `d`
+			print "l: " + `l`
+			temp = 0.0 * self.I
+			for i in range(len(d)):
+				temp[i, i] = d[i]
+			print "m: " + `dot(l, sqrt(temp))`
+			print "mmT: " + `dot(dot(l, sqrt(temp)), transpose(dot(l, sqrt(temp))))`
+			print "e: " + `e`
+			print "d2fk: " + `self.d2fk`
+			eigen = eigenvectors(self.d2fk)
+			eigenvals = sort(eigen[0])
+			print "Eigenvalues: " + `eigenvals`
+			import sys
+			sys.exit()
 
 
 	def new_param_func(self):
@@ -149,7 +304,8 @@ class newton(generic_line_search, generic_minimise):
 		self.hessian_modification()
 
 		# Calculate the Newton direction.
-		self.pk = -matrixmultiply(inverse(self.d2fk), self.dfk)
+		#self.pk = -matrixmultiply(inverse(self.d2fk), self.dfk)
+		self.pk = -solve_linear_equations(self.d2fk, self.dfk)
 
 		# Take a steepest descent step if self.pk is not a descent dir.
 		#if dot(self.dfk, self.pk) >= 0.0:
