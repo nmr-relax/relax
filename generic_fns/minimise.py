@@ -132,17 +132,18 @@ class Minimise:
         print "Threaded minimisation of Monte Carlo simulations.\n"
 
         # Generate a random string tag to add to all thread files.
+        print "Generating a random tag:"
         tag = ''
         for i in xrange(5):
             index = randint(0, len(ascii_letters)-1)
             tag = tag + ascii_letters[index]
-        print "All files generated for or by the threads will be placed in the directory " + `tag` + "."
+        print "    %s\n" % tag
+        print "All files will be placed in the directory '%s' within the thread's working directory.\n" % tag
 
         # Generate a temporary results file.
-        self.temp_file = tag + '_initial_results'
-        print "Saving the current results for run " + `run` + " in the file 'initial_results' for initialising all threads."
-        self.relax.generic.results.write(run=run, file=self.temp_file, directory='/tmp', force=1, compress_type=0)
-        print ""
+        self.temp_file = 'save_%s.gz' % tag
+        print "Saving the program state."
+        self.relax.generic.state.save(file=self.temp_file, force=1, compress_type=2)
 
         # Initialise the job and results queues.
         job_queue = Queue()
@@ -153,6 +154,7 @@ class Minimise:
             job_queue.put(i)
 
         # Start all threads.
+        print "\nStarting all threads.\n"
         self.threads = []
         for i in xrange(len(self.relax.data.thread.host_name)):
             self.threads.append(RelaxMinimiseThread(self.relax, i, job_queue, results_queue, tag, run, min_args))
@@ -214,7 +216,7 @@ class Minimise:
             thread.stop(killed=1)
 
         # Delete the temporary results file.
-        self.relax.IO.delete(file_name=self.temp_file, dir='/tmp')
+        self.relax.IO.delete(file_name=self.temp_file)
 
 
 
@@ -240,7 +242,7 @@ class RelaxMinimiseThread(RelaxThread):
             self.mkdir()
 
         # Results file.
-        self.results_file = "%s/%s/initial_results" % (self.relax.data.thread.swd[self.i], self.tag)
+        self.results_file = "%s/%s/save.gz" % (self.relax.data.thread.swd[self.i], self.tag)
 
         # Copy the temporary results file to the thread's working directory once during initialisation.
         if not self.test_results_file():
@@ -252,9 +254,9 @@ class RelaxMinimiseThread(RelaxThread):
 
         # Copy command.
         if self.relax.data.thread.host_name[self.i] == 'localhost':
-            cmd = "cp -p /tmp/%s_initial_results %s/%s/initial_results" % (self.tag, self.relax.data.thread.swd[self.i], self.tag)
+            cmd = "cp -p save_%s.gz %s/%s/save.gz" % (self.tag, self.relax.data.thread.swd[self.i], self.tag)
         else:
-            cmd = "scp -p /tmp/%s_initial_results %s:%s/%s/initial_results" % (self.tag, self.relax.data.thread.login[self.i], self.relax.data.thread.swd[self.i], self.tag)
+            cmd = "scp -p save_%s.gz %s:%s/%s/save.gz" % (self.tag, self.relax.data.thread.login[self.i], self.relax.data.thread.swd[self.i], self.tag)
 
         # Open a pipe for the copy.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
@@ -343,14 +345,11 @@ class RelaxMinimiseThread(RelaxThread):
         # Function array.
         fn = []
 
-        # Function: Create the run.
-        fn.append("self.relax.generic.runs.create(run='%s', run_type='%s')" % (self.thread_run, self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)]))
-
-        # Function: Read the results.
-        fn.append("self.relax.generic.results.read(run='%s', file='%s')" % (self.thread_run, self.results_file))
+        # Function: Load the program state.
+        fn.append("self.relax.generic.state.load(file='%s')" % self.results_file)
 
         # Function: Minimise.
-        fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.thread_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.sim))
+        fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.parent_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.sim))
 
         # Function: Turn logging off.  This is so that the results can come back through the pipe's stdout.
         fn.append("self.relax.IO.logging_off()")

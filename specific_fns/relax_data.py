@@ -91,6 +91,25 @@ class Rx_data:
             data.num_ri = len(ri_labels)
             data.num_frq = len(frq)
 
+            # Create an array of None for the NOE R1 translation table.
+            for i in xrange(data.num_ri):
+                data.noe_r1_table.append(None)
+
+            # Update the NOE R1 translation table.
+            for i in xrange(data.num_ri):
+                # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
+                if data.ri_labels[i] == 'NOE':
+                    for j in xrange(data.num_ri):
+                        if data.ri_labels[j] == 'R1' and data.frq_labels[data.remap_table[i]] == data.frq_labels[data.remap_table[j]]:
+                            data.noe_r1_table[data.num_ri - 1] = j
+
+                # If the data corresponds to 'R1', try to find if the corresponding NOE data.
+                if data.ri_labels[i] == 'R1':
+                    for j in xrange(data.num_ri):
+                        if data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[i]] == data.frq_labels[data.remap_table[j]]:
+                            data.noe_r1_table[j] = data.num_ri - 1
+
+
         # Simulation data.
         else:
             # Create the data structure if necessary.
