@@ -24,7 +24,7 @@ from copy import deepcopy
 from LinearAlgebra import inverse
 from math import pi
 from Numeric import Float64, array, identity, matrixmultiply, ones, transpose, zeros
-from re import match
+from re import match, search
 from string import replace
 import sys
 
@@ -855,7 +855,8 @@ class Model_free:
 
         # Test if the diffusion tensor data is loaded.
         if not self.relax.data.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
+            return None
+            #raise RelaxNoTensorError, self.run
 
         # 'diff' parameter set.
         if mf_all_fixed:
@@ -2505,40 +2506,107 @@ class Model_free:
         # Arguments.
         self.run = run
 
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
+        # Get the minimisation statistic object names.
+        min_names = self.data_names(set='min')
+
         # Extract and remove the header.
         header = file_data[0]
         file_data = file_data[1:]
 
+        # Sort the column numbers.
+        for i in xrange(len(header)):
+            if header[i] == 'Num':
+                col_num = i
+            elif header[i] == 'Name':
+                col_name = i
+            elif header[i] == 'Data_set':
+                col_data_set = i
+            elif header[i] == 'Nucleus':
+                col_nucleus = i
+            elif header[i] == 'Model':
+                col_model = i
+            elif header[i] == 'Equation':
+                col_eqi = i
+            elif header[i] == 'Params':
+                col_params = i
+            elif header[i] == 'S2':
+                col_s2 = i
+            elif header[i] == 'S2f':
+                col_s2f = i
+            elif header[i] == 'S2s':
+                col_s2s = i
+            elif header[i] == 'Local_tm_(ns)':
+                col_local_tm = i
+            elif header[i] == 'tf_(ps)':
+                col_tf = i
+            elif header[i] == 'te_or_ts_(ps)':
+                col_te = i
+            elif header[i] == 'Rex_(1st_field)':
+                col_rex = i
+            elif header[i] == 'Bond_length_(A)':
+                col_r = i
+            elif header[i] == 'CSA_(ppm)':
+                col_csa = i
+            elif header[i] == 'Chi-squared':
+                col_chi2 = i
+            elif header[i] == 'Iter':
+                col_iter = i
+            elif header[i] == 'f_count':
+                col_f_count = i
+            elif header[i] == 'g_count':
+                col_g_count = i
+            elif header[i] == 'h_count':
+                col_h_count = i
+            elif header[i] == 'Warning':
+                col_warn = i
+
         # Generate the sequence.
         for i in xrange(len(file_data)):
             # Skip all lines where the data_set column is not 'value'.
-            if file_data[i][2] != 'value':
+            if file_data[i][col_data_set] != 'value':
                 continue
 
             # Residue number and name.
             try:
-                res_num = int(file_data[i][0])
+                res_num = int(file_data[i][col_num])
             except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][0] + " is not an integer."
-            res_name = file_data[i][1]
+                raise RelaxError, "The residue number " + file_data[i][col_num] + " is not an integer."
+            res_name = file_data[i][col_name]
 
             # Add the residue.
             self.relax.generic.sequence.add(self.run, res_num, res_name)
 
         # Set the nucleus type.
-        self.relax.generic.nuclei.set_values(file_data[0][3])
+        self.relax.generic.nuclei.set_values(file_data[0][col_nucleus])
+
+        # Determine the number of simulations.
+        sims = []
+        for i in xrange(len(file_data)):
+            # The data set.
+            data_set = file_data[i][col_data_set]
+
+            # Add the data set to 'sims' if it is a simulation and if it isn't already in the array.
+            if search('sim', data_set) and data_set not in sims:
+                sims.append(data_set)
+
+        # Set up the simulations.
+        if len(sims):
+            self.relax.generic.monte_carlo.setup(self.run, len(sims))
 
         # Loop over the file data.
         for i in xrange(len(file_data)):
             # The data set.
-            data_set = file_data[i][2]
+            data_set = file_data[i][col_data_set]
 
             # Residue number and name.
             try:
-                res_num = int(file_data[i][0])
+                res_num = int(file_data[i][col_num])
             except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][0] + " is not an integer."
-            res_name = file_data[i][1]
+                raise RelaxError, "The residue number " + file_data[i][col_num] + " is not an integer."
+            res_name = file_data[i][col_name]
 
             # Find the residue index.
             index = None
@@ -2554,102 +2622,286 @@ class Model_free:
 
             # Set up the model-free models.
             if data_set == 'value':
-                self.model_setup(self.run, model=file_data[i][4], equation=file_data[i][5], params=eval(file_data[i][6]), res_num=res_num)
+                self.model_setup(self.run, model=file_data[i][col_model], equation=file_data[i][col_eqi], params=eval(file_data[i][col_params]), res_num=res_num)
 
-            # S2.
-            try:
-                res.s2 = float(file_data[i][7])
-            except ValueError:
-                res.s2 = None
+            # Values.
+            if data_set == 'value':
+                # S2.
+                try:
+                    res.s2 = float(file_data[i][col_s2])
+                except ValueError:
+                    res.s2 = None
 
-            # S2f.
-            try:
-                res.s2f = float(file_data[i][8])
-            except ValueError:
-                res.s2f = None
+                # S2f.
+                try:
+                    res.s2f = float(file_data[i][col_s2f])
+                except ValueError:
+                    res.s2f = None
 
-            # S2s.
-            try:
-                res.s2s = float(file_data[i][9])
-            except ValueError:
-                res.s2s = None
+                # S2s.
+                try:
+                    res.s2s = float(file_data[i][col_s2s])
+                except ValueError:
+                    res.s2s = None
 
-            # tm.
-            try:
-                res.tm = float(file_data[i][10]) * 1e-9
-            except ValueError:
-                res.tm = None
+                # Local tm.
+                try:
+                    res.tm = float(file_data[i][col_local_tm]) * 1e-9
+                except ValueError:
+                    res.tm = None
 
-            # tf.
-            try:
-                res.tf = float(file_data[i][11]) * 1e-12
-            except ValueError:
-                res.tf = None
+                # tf.
+                try:
+                    res.tf = float(file_data[i][col_tf]) * 1e-12
+                except ValueError:
+                    res.tf = None
 
-            # te and ts.
-            try:
-                res.te = float(file_data[i][12]) * 1e-12
-            except ValueError:
-                res.te = None
-            if "te" in res.params:
-                res.ts = None
-            else:
-                res.ts = res.te
-                res.te = None
+                # te and ts.
+                try:
+                    te = float(file_data[i][col_te]) * 1e-12
+                except ValueError:
+                    te = None
+                if "te" in res.params:
+                    res.te = te
+                    res.ts = None
+                else:
+                    res.te = None
+                    res.ts = te
 
-            # Rex.
-            try:
-                res.rex = float(file_data[i][13]) / (2.0 * pi * self.relax.data.res[run][i].frq[0])**2
-            except ValueError:
-                res.rex = None
+                # Rex.
+                try:
+                    res.rex = float(file_data[i][col_rex]) / (2.0 * pi * res.frq[0])**2
+                except:
+                    res.rex = None
 
-            # Bond length.
-            try:
-                res.r = float(file_data[i][14]) * 1e-10
-            except ValueError:
-                res.r = None
+                # Bond length.
+                try:
+                    res.r = float(file_data[i][col_r]) * 1e-10
+                except ValueError:
+                    res.r = None
 
-            # CSA.
-            try:
-                res.csa = float(file_data[i][15]) * 1e-6
-            except ValueError:
-                res.csa = None
+                # CSA.
+                try:
+                    res.csa = float(file_data[i][col_csa]) * 1e-6
+                except ValueError:
+                    res.csa = None
 
-            # Chi-squared.
-            try:
-                res.chi2 = float(file_data[i][16])
-            except ValueError:
-                res.chi2 = None
+                # Chi-squared.
+                try:
+                    res.chi2 = float(file_data[i][col_chi2])
+                except ValueError:
+                    res.chi2 = None
 
-            # Number of iterations.
-            try:
-                res.iter = int(file_data[i][17])
-            except ValueError:
-                res.iter = None
+                # Number of iterations.
+                try:
+                    res.iter = int(file_data[i][col_iter])
+                except ValueError:
+                    res.iter = None
 
-            # Function count.
-            try:
-                res.f_count = int(file_data[i][18])
-            except ValueError:
-                res.f_count = None
+                # Function count.
+                try:
+                    res.f_count = int(file_data[i][col_f_count])
+                except ValueError:
+                    res.f_count = None
 
-            # Gradient count.
-            try:
-                res.g_count = int(file_data[i][19])
-            except ValueError:
-                res.g_count = None
+                # Gradient count.
+                try:
+                    res.g_count = int(file_data[i][col_g_count])
+                except ValueError:
+                    res.g_count = None
 
-            # Hessian count.
-            try:
-                res.h_count = int(file_data[i][20])
-            except ValueError:
-                res.h_count = None
+                # Hessian count.
+                try:
+                    res.h_count = int(file_data[i][col_h_count])
+                except ValueError:
+                    res.h_count = None
 
-            # Warning.
-            if file_data[i][19] == 'None':
-                res.warning = None
-            else:
-                res.warning = replace(file_data[i][21], '_', ' ')
+                # Warning.
+                if file_data[i][19] == 'None':
+                    res.warning = None
+                else:
+                    res.warning = replace(file_data[i][col_warn], '_', ' ')
+
+
+            # Errors.
+            if data_set == 'error':
+                # S2.
+                try:
+                    res.s2_err = float(file_data[i][col_s2])
+                except ValueError:
+                    res.s2_err = None
+
+                # S2f.
+                try:
+                    res.s2f_err = float(file_data[i][col_s2f])
+                except ValueError:
+                    res.s2f_err = None
+
+                # S2s.
+                try:
+                    res.s2s_err = float(file_data[i][col_s2s])
+                except ValueError:
+                    res.s2s_err = None
+
+                # Local tm.
+                try:
+                    res.tm_err = float(file_data[i][col_local_tm]) * 1e-9
+                except ValueError:
+                    res.tm_err = None
+
+                # tf.
+                try:
+                    res.tf_err = float(file_data[i][col_tf]) * 1e-12
+                except ValueError:
+                    res.tf_err = None
+
+                # te and ts.
+                try:
+                    te_err = float(file_data[i][col_te]) * 1e-12
+                except ValueError:
+                    te_err = None
+                if "te" in res.params:
+                    res.te_err = te_err
+                    res.ts_err = None
+                else:
+                    res.te_err = None
+                    res.ts_err = te_err
+
+                # Rex.
+                try:
+                    res.rex_err = float(file_data[i][col_rex]) / (2.0 * pi * res.frq[0])**2
+                except:
+                    res.rex_err = None
+
+                # Bond length.
+                try:
+                    res.r_err = float(file_data[i][col_r]) * 1e-10
+                except ValueError:
+                    res.r_err = None
+
+                # CSA.
+                try:
+                    res.csa_err = float(file_data[i][col_csa]) * 1e-6
+                except ValueError:
+                    res.csa_err = None
+
+
+            # Construct the simulation data structures.
+            if data_set == 'sim_0':
+                # Loop over all the parameter names.
+                for object_name in param_names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Create the simulation object.
+                    setattr(res, sim_object_name, [])
+
+                # Loop over all the minimisation object names.
+                #if self.param_set != 'all':
+                for object_name in min_names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Create the simulation object.
+                    setattr(res, sim_object_name, [])
+
+            # Simulations.
+            if search('sim', data_set):
+                # S2.
+                try:
+                    res.s2_sim.append(float(file_data[i][col_s2]))
+                except ValueError:
+                    res.s2_sim.append(None)
+
+                # S2f.
+                try:
+                    res.s2f_sim.append(float(file_data[i][col_s2f]))
+                except ValueError:
+                    res.s2f_sim.append(None)
+
+                # S2s.
+                try:
+                    res.s2s_sim.append(float(file_data[i][col_s2s]))
+                except ValueError:
+                    res.s2s_sim.append(None)
+
+                # Local tm.
+                try:
+                    res.tm_sim.append(float(file_data[i][col_local_tm]) * 1e-9)
+                except ValueError:
+                    res.tm_sim.append(None)
+
+                # tf.
+                try:
+                    res.tf_sim.append(float(file_data[i][col_tf]) * 1e-12)
+                except ValueError:
+                    res.tf_sim.append(None)
+
+                # te and ts.
+                try:
+                    te = float(file_data[i][col_te]) * 1e-12
+                except ValueError:
+                    te = None
+                if "te" in res.params:
+                    res.te_sim.append(te)
+                    res.ts_sim.append(None)
+                else:
+                    res.te_sim.append(None)
+                    res.ts_sim.append(te)
+
+                # Rex.
+                try:
+                    res.rex_sim.append(float(file_data[i][col_rex]) / (2.0 * pi * res.frq[0])**2)
+                except:
+                    res.rex_sim.append(None)
+
+                # Bond length.
+                try:
+                    res.r_sim.append(float(file_data[i][col_r]) * 1e-10)
+                except ValueError:
+                    res.r_sim.append(None)
+
+                # CSA.
+                try:
+                    res.csa_sim.append(float(file_data[i][col_csa]) * 1e-6)
+                except ValueError:
+                    res.csa_sim.append(None)
+
+                # Chi-squared.
+                try:
+                    res.chi2_sim.append(float(file_data[i][col_chi2]))
+                except ValueError:
+                    res.chi2_sim.append(None)
+
+                # Number of iterations.
+                try:
+                    res.iter_sim.append(int(file_data[i][col_iter]))
+                except ValueError:
+                    res.iter_sim.append(None)
+
+                # Function count.
+                try:
+                    res.f_count_sim.append(int(file_data[i][col_f_count]))
+                except ValueError:
+                    res.f_count_sim.append(None)
+
+                # Gradient count.
+                try:
+                    res.g_count_sim.append(int(file_data[i][col_g_count]))
+                except ValueError:
+                    res.g_count_sim.append(None)
+
+                # Hessian count.
+                try:
+                    res.h_count_sim.append(int(file_data[i][col_h_count]))
+                except ValueError:
+                    res.h_count_sim.append(None)
+
+                # Warning.
+                if file_data[i][19] == 'None':
+                    res.warning_sim.append(None)
+                else:
+                    res.warning_sim.append(replace(file_data[i][col_warn], '_', ' '))
 
 
     def return_data(self, run, i):
@@ -3547,11 +3799,7 @@ class Model_free:
 
         # Diffusion parameters.
         diff_params = None
-        if self.param_set != 'local_tm':
-            # No data.
-            if not hasattr(self.relax.data, 'diff') or not self.relax.data.diff.has_key(self.run):
-                pass
-
+        if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
             # Isotropic.
             if self.relax.data.diff[self.run].type == 'iso':
                 diff_params = [`self.relax.data.diff[self.run].tm`]
@@ -3580,11 +3828,7 @@ class Model_free:
 
         # Diffusion parameters.
         diff_params = None
-        if self.param_set != 'local_tm':
-            # No data.
-            if not hasattr(self.relax.data, 'diff') or not self.relax.data.diff.has_key(self.run):
-                pass
-
+        if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
             # Isotropic.
             if self.relax.data.diff[self.run].type == 'iso':
                 diff_params = [`self.relax.data.diff[self.run].tm`]
@@ -3685,11 +3929,7 @@ class Model_free:
 
         # Diffusion parameters.
         diff_params = None
-        if self.param_set != 'local_tm':
-            # No data.
-            if not hasattr(self.relax.data, 'diff') or not self.relax.data.diff.has_key(self.run):
-                pass
-
+        if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
             # Diffusion parameter errors.
             if self.param_set == 'diff' or self.param_set == 'all':
                 # Isotropic.
@@ -3780,11 +4020,7 @@ class Model_free:
         for i in xrange(self.relax.data.sim_number[self.run]):
             # Diffusion parameters.
             diff_params = None
-            if self.param_set != 'local_tm':
-                # No data.
-                if not hasattr(self.relax.data, 'diff') or not self.relax.data.diff.has_key(self.run):
-                    pass
-
+            if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
                 # Diffusion parameter simulation values.
                 if self.param_set == 'diff' or self.param_set == 'all':
                     # Isotropic.
