@@ -1430,27 +1430,27 @@ class Model_free(Common_functions):
         if self.param_set == 'diff' or self.param_set == 'all':
             # Isotropic diffusion {tm}.
             if self.relax.data.diff[self.run].type == 'iso':
-                min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
+                min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
                 m = m + 1
 
             # Axially symmetric diffusion {tm, Da, theta, phi}.
             if self.relax.data.diff[self.run].type == 'axial':
-                min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
+                min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
                 if self.relax.data.diff[self.run].axial_type == 'prolate':
-                    min_options.append([inc[1], 0.0, 10.0 * 1e9])
+                    min_options.append([inc[1], 0.0, 10.0 * 1e8])
                 elif self.relax.data.diff[self.run].axial_type == 'oblate':
-                    min_options.append([inc[1], -10.0 * 1e9, 0.0])
+                    min_options.append([inc[1], -10.0 * 1e8, 0.0])
                 else:
-                    min_options.append([inc[1], -10.0 * 1e9, 10.0 * 1e9])
+                    min_options.append([inc[1], -10.0 * 1e8, 10.0 * 1e8])
                 min_options.append([inc[2], 0.0, pi])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 m = m + 4
 
             # Anisotropic diffusion {tm, Da, Dr, alpha, beta, gamma}.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
-                min_options.append([inc[1], -10.0 * 1e9, 10.0 * 1e9])
-                min_options.append([inc[2], -10.0 * 1e9, 10.0 * 1e9])
+                min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
+                min_options.append([inc[1], -10.0 * 1e8, 10.0 * 1e8])
+                min_options.append([inc[2], -10.0 * 1e8, 10.0 * 1e8])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 min_options.append([inc[4], 0.0, pi])
                 min_options.append([inc[5], 0.0, 2 * pi])
@@ -1471,7 +1471,7 @@ class Model_free(Common_functions):
                 for j in xrange(len(self.relax.data.res[self.run][i].params)):
                     # Local tm.
                     if self.relax.data.res[self.run][i].params[j] == 'tm':
-                        min_options.append([inc[m], 1.0 * 1e-9, 10.0 * 1e-9])
+                        min_options.append([inc[m], 1.0 * 1e-9, 20.0 * 1e-9])
 
                     # {S2, S2f, S2s}.
                     elif match('S2', self.relax.data.res[self.run][i].params[j]):
@@ -1479,7 +1479,7 @@ class Model_free(Common_functions):
 
                     # {te, tf, ts}.
                     elif match('t', self.relax.data.res[self.run][i].params[j]):
-                        min_options.append([inc[m], 0.0, 5000.0 * 1e-12])
+                        min_options.append([inc[m], 0.0, 500.0 * 1e-12])
 
                     # Rex.
                     elif self.relax.data.res[self.run][i].params[j] == 'Rex':
