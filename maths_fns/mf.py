@@ -210,6 +210,9 @@ class Mf:
         self.diff_data.params = diff_params
         self.init_diff_data(self.diff_data)
 
+        # Total number of ri.
+        self.total_num_ri = 0
+
         # Set the function for packaging diffusion tensor parameters.
         if self.diff_data.type == 'iso':
             self.param_index = 1
@@ -226,6 +229,9 @@ class Mf:
         # Create the data array used to store data.
         self.data = []
         for i in xrange(self.num_res):
+            # Total number of ri.
+            self.total_num_ri = self.total_num_ri + num_ri[i]
+
             # Append the class instance Data to the data array.
             self.data.append(Data())
 
@@ -329,7 +335,7 @@ class Mf:
         self.total_d2chi2 = zeros((self.total_num_params, self.total_num_params), Float64)
 
         # Initialise the total ri gradient data structure (for Levenberg-Marquardt minimisation).
-        self.total_dri = zeros((self.total_num_params), Float64)
+        self.total_dri = zeros((self.total_num_params, self.total_num_ri), Float64)
 
         # Set the functions self.func, self.dfunc, and self.d2func.
         ###########################################################
