@@ -41,16 +41,25 @@ import pstats
 from re import match
 import sys
 
-# Numeric and Scientific.
+# Numeric.
 try:
     import Numeric
 except ImportError:
     sys.stderr.write("The dependency 'Numeric' has not been installed.\n")
     sys.exit()
+
+# Scientific.
 try:
     import Scientific
 except ImportError:
     sys.stderr.write("The dependency 'Scientific' has not been installed.\n")
+    sys.exit()
+
+# Command line option parser.
+try:
+    from optparse import OptionParser
+except ImportError:
+    sys.stderr.write("The dependency 'Optik' has not been installed.\n")
     sys.exit()
 
 # relax modules.
@@ -68,11 +77,8 @@ putenv('PDBVIEWER', 'vmd')
 
 
 class Relax:
-    def __init__(self, argv):
+    def __init__(self):
         """The top level class for initialising the program."""
-
-        # Command line arguments.
-        self.argv = argv
 
         # Set up the program internal errors.
         RelaxErrors()
@@ -98,56 +104,88 @@ class Relax:
         # Setup the object containing the specific functions.
         self.specific = Specific(self)
 
-        # Process the command line arguments.
-        self.arguments()
+        # Process the command line arguments and determine the relax mode.
+        mode = self.arguments()
 
-        # Run the interpreter.
-        self.interpreter = Interpreter(self)
-        self.interpreter.run()
+        # Run the interpreter for the prompt or script modes.
+        if mode == 'prompt' or mode == 'script':
+            self.interpreter = Interpreter(self)
+            self.interpreter.run()
+
+        # Test mode.
+        if mode == 'test':
+            self.test_mode()
 
 
     def arguments(self):
         """Function for processing the command line arguments."""
 
-        # Initialise.
+        # Parser object.
+        parser = OptionParser(usage="usage: %prog [options] [script_file]", version="%prog unknown")
+
+        # Recognised command line options.
+        parser.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
+        parser.add_option('-t', '--test', action='store_true', dest='test', default=0, help='run relax in test mode')
+        parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (a user should not invoke this mode)')
+        parser.add_option('-l', '--log', action='store', type='string', dest='log', default='log', help='log relax output, not implemented yet')
+
+        # Parse the options.
+        (options, args) = parser.parse_args()
+
+        # Debugging flag.
+        if options.debug:
+            __builtin__.Debug = 1
+
+        # Number of positional arguements should only be 0 or 1.  1 should be the script file.
+        if len(args) > 1:
+            parser.error("incorrect number of arguments")
+
+        # Script file.
         self.script_file = None
+        if len(args) == 1:
+            self.script_file = args[0]
 
-        # No arguments are given.
-        if len(self.argv) == 1:
-            return
-
-        # Loop over the arguments.
-        for i in xrange(len(self.argv)):
-            # Skip the first argument.
-            if i == 0:
-                continue
-
-            # Help arguments.
-            elif match('--help', self.argv[i]) or match('-h', self.argv[i]):
-                self.print_help()
-                sys.exit()
-
-            # Debugging argument.
-            elif self.argv[i] == '--debug':
-                __builtin__.Debug = 1
-
-            # Script file.
-            elif access(self.argv[i], F_OK):
-                self.script_file = self.argv[i]
-
-            # Unknown argument.
-            else:
-                print "Unknown argument, try \"relax --help\" for more information."
-                sys.exit()
+            # Test if the script file exists.
+            if not access(self.script_file, F_OK):
+                parser.error("the script file " + `self.script_file` + " does not exist")
 
 
-    def print_help(self):
-        """Print the help message."""
+        # Determine the relax mode and test for mutually exclusive modes.
+        #################################################################
 
-        sys.stderr.write("\nUsage: relax [-h] [--help] [--debug] [script_file]\n")
-        sys.stderr.write("Options:\n")
-        sys.stderr.write("   -h or --help  Display this help and exit.\n")
-        sys.stderr.write("   --debug       Allow debugging information to be printed.\n\n")
+        # Test mode.
+        if options.test:
+            # Make sure no script is supplied.
+            if self.script_file:
+                parser.error("a script should not be supplied in test mode")
+
+            # Exclusive modes.
+            if options.thread:
+                parser.error("the relax modes test and thread are mutually exclusive")
+
+            # Return the mode.
+            return 'test'
+
+        # Threaded mode.
+        if options.thread:
+            # Make sure no script is supplied.
+            if self.script_file:
+                parser.error("a script should not be supplied in test mode")
+
+            # Exclusive modes.
+            if options.test:
+                parser.error("the relax modes thread and test are mutually exclusive")
+
+            # Return the mode.
+            return 'thread'
+
+        # Script mode.
+        if self.script_file:
+            return 'script'
+
+        # Prompt mode (default).
+        return 'prompt'
+
 
 
     def set_intro_string(self):
@@ -170,15 +208,22 @@ can be accessed by typing 'help'.
 """
 
 
+    def test_mode(self):
+        """Relax test mode code."""
+
+        # Don't actually do anything.
+        return
+
+
 if __name__ == "__main__":
     # Change this flag to 1 for code profiling.
     profile_flag = 0
 
     if not profile_flag:
-        Relax(sys.argv)
+        Relax()
     else:
         def print_stats(stats):
             pstats.Stats(stats).sort_stats('time', 'name').print_stats()
 
         profile.Profile.print_stats = print_stats
-        profile.run('Relax(sys.argv)')
+        profile.run('Relax()')

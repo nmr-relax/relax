@@ -14,6 +14,8 @@ The following packages need to be installed before using relax:
 
     ScientificPython:  Version 2.2 or higher.
 
+    Optik:  Version 1.4 or higher.  This is only needed if running python 2.2.
+
 Older versions of these packages may work, use at your own risk.
 
 

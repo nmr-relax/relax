@@ -56,7 +56,13 @@ class Thread:
             if user == '-':
                 user = None
 
-            # Program path.
+            # Host login
+            if user:
+                login = user + "@" + host_name
+            else:
+                login = host_name
+
+             # Program path.
             prog_path = file_data[i][2]
             if prog_path == '-':
                 prog_path = 'relax'
@@ -85,37 +91,69 @@ class Thread:
             print "Priority:          " + `priority`
 
             # Test the SSH connection.
-            if not self.test_ssh(host_name, user):
+            if not self.test_ssh(login):
                 continue
 
+            # Test the working directory.
+            if not self.test_wd(login, swd):
+                continue
 
-    def test_ssh(self, host_name, user):
-        """Function for testing the SSH connection."""
+            # Test if relax works.
+            if not self.test_relax(login, prog_path):
+                continue
 
-        # Host login
-        if user:
-            login = user + "@" + host_name
-        else:
-            login = host_name
-        
+            # Host is accessible.
+            print "Host OK."
+
+
+    def test_relax(self, login, prog_path):
+        """Function for testing if the program path is valid and that relax can execute."""
+
         # Test command.
-        test_cmd = "ssh -o PasswordAuthentication=no " + login + " echo 'relax, ssh ok'"
+        test_cmd = "ssh %s %s -t" % (login, prog_path)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
 
-        # Stdout and stderr.
-        out = child_stdout.readlines()
+        # Error. 
         err = child_stderr.readlines()
+        if len(err):
+            # Print out.
+            print "Cannot execute relax on %s using the program path %s" % (login, `prog_path`)
+            for line in err:
+                print line[0:-1]
+
+            # Return fail.
+            return 0
+
+        # No errors.
+        else:
+            return 1
+
+
+    def test_ssh(self, login):
+        """Function for testing the SSH connection."""
+
+        # Test command.
+        test_cmd = "ssh -o PasswordAuthentication=no %s echo 'relax, ssh ok'" % login
+
+        # Open a pipe.
+        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
+
+        # Stdout.
+        out = child_stdout.readlines()
 
         # Test if the string 'relax, ssh ok' is in child_stdout.
         for line in out:
             if search('relax, ssh ok', line):
                 return 1
 
-        # Print out.
-        print "Cannot establish a SSH connection to " + login + "."
-        if len(err) > 0:
+        # Error.
+        err = child_stderr.readlines()
+        if len(err):
+            # Print out.
+            print "Cannot establish a SSH connection to %s." % login
+
             # Public key auth fail.
             key_auth = 1
             for line in err:
@@ -128,3 +166,28 @@ class Thread:
             # All other errors.
             for line in err:
                 print line[0:-1]
+
+
+    def test_wd(self, login, swd):
+        """Function for testing if the working directory on the host machine exist."""
+
+        # Test command.
+        test_cmd = "ssh %s ls %s" % (login, swd)
+
+        # Open a pipe.
+        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
+
+        # Error. 
+        err = child_stderr.readlines()
+        if len(err):
+            # Print out.
+            print "Cannot find the working directory %s on %s." % (swd, login)
+            for line in err:
+                print line[0:-1]
+
+            # Return fail.
+            return 0
+
+        # No errors.
+        else:
+            return 1
