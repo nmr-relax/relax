@@ -9,9 +9,10 @@ load_relax_data('R1', '500', 500.0 * 1e6, 'r1.500.out')
 set_model_selection('AIC')
 bond_length(1.02 * 1e-10)
 csa(-160 * 1e-6)
-set_diffusion_tensor('iso', 1e-8)
+diffusion_tensor('iso', 1e-8)
 select_preset_mf_model('m1')
 select_preset_mf_model('m2')
+save_state("save.relax", 1)
 print "Finished main."
 
 print "\n\n\n<<< Print out >>>\n"

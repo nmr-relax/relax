@@ -62,31 +62,31 @@ class file_ops:
 #		return file
 
 
-	def relax_data(self, file):
-		"""Open the relaxation data in the file 'file' and return all the data.
-
-		It is assumed that the file has four columns separated by whitespace.  The columns should be:
-			0 - Residue numbers
-			1 - Residue names
-			2 - R1, R2, or NOE values
-			3 - The errors
-		"""
-
-		lines = open(file, 'r')
-		lines = lines.readlines()
-		data = []
-		i = 0
-		for line in lines:
-			if i != 0:
-				j = i - 1
-				row = split(line)
-				data.append([])
-				data[j].append(row[0])
-				data[j].append(row[1])
-				data[j].append(float(row[2]))
-				data[j].append(float(row[3]))
-			i = i + 1
-		return data
+#	def relax_data(self, file):
+#		"""Open the relaxation data in the file 'file' and return all the data.
+#
+#		It is assumed that the file has four columns separated by whitespace.  The columns should be:
+#			0 - Residue numbers
+#			1 - Residue names
+#			2 - R1, R2, or NOE values
+#			3 - The errors
+#		"""
+#
+#		lines = open(file, 'r')
+#		lines = lines.readlines()
+#		data = []
+#		i = 0
+#		for line in lines:
+#			if i != 0:
+#				j = i - 1
+#				row = split(line)
+#				data.append([])
+#				data[j].append(row[0])
+#				data[j].append(row[1])
+#				data[j].append(float(row[2]))
+#				data[j].append(float(row[3]))
+#			i = i + 1
+#		return data
 
 
 	def strip(self, data):

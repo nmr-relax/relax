@@ -1,4 +1,3 @@
-from Numeric import Float64, zeros
 from generic_functions import generic_functions
 
 
@@ -44,7 +43,8 @@ class mf_model(generic_functions):
 			self.relax.data.mf_params = []
 
 		# Create the mf_params data structure.
-		self.relax.data.mf_params.append(zeros((len(self.relax.data.seq), len(self.relax.data.mf_param_types)), Float64))
+		for i in range(len(self.relax.data.seq)):
+			self.relax.data.mf_params.append([None, None])
 
 		print "[ OK ]"
 
@@ -99,6 +99,7 @@ class mf_model(generic_functions):
 			return
 
 		# Create the mf_params data structure.
-		self.relax.data.mf_params.append(zeros((len(self.relax.data.seq), len(self.relax.data.mf_param_types)), Float64))
+		for i in range(len(self.relax.data.seq)):
+			self.relax.data.mf_params.append([None, None])
 
 		print "[ OK ]"

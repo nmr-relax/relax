@@ -1,11 +1,11 @@
 from re import match
 import sys
-import types
 
+from generic_functions import generic_functions
 from select_res import select_res
 
 
-class echo_data(select_res):
+class echo_data(generic_functions, select_res):
 	def __init__(self, relax):
 		"Macros for printing data to standard out."
 
@@ -76,17 +76,6 @@ class echo_data(select_res):
 
 		print "Data structures:"
 		for name in dir(self.relax.data):
-			# Only print the data.
-			if match("__", name):
-				continue
-			elif type(getattr(self.relax.data, name)) == types.ClassType:
-				continue
-			elif type(getattr(self.relax.data, name)) == types.InstanceType:
-				continue
-			elif type(getattr(self.relax.data, name)) == types.MethodType:
-				continue
-			elif type(getattr(self.relax.data, name)) == types.NoneType:
-				continue
-			else:
+			if not self.filter_data_structure(name):
 				print "   " + name + " " + `type(getattr(self.relax.data, name))`
 
