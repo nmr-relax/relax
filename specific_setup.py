@@ -57,25 +57,6 @@ class Specific_setup:
         elif eqi == 'mf':
             return self.mf_funcs()
 
-            #if match('calc', function_type):
-            #    return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.calculate
-            #if match('data_names', function_type):
-            #    return self.relax.model_free.data_names
-            #if match('fixed', function_type):
-            #    return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.fixed_setup, self.relax.model_free.minimise
-            #if match('grid_search', function_type):
-            #    return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.grid_setup, self.relax.model_free.minimise
-            #if match('map_labels', function_type):
-            #    return self.relax.model_free.map_labels
-            #if match('map_space', function_type):
-            #    return self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.map_bounds, self.relax.model_free.minimise
-            #if match('minimise', function_type):
-            #    return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.minimise
-            #if match('read', function_type):
-            #    return self.relax.model_free.read_results
-            #if match('write', function_type):
-            #    return self.relax.model_free.write_header, self.relax.model_free.write_results
-
 
     def mf_funcs(self):
         """Model-free analysis specific functions."""
