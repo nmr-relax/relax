@@ -8,10 +8,12 @@ class print_all_data(generic_functions):
 		self.relax = relax
 
 
-	def go(self):
+	def __repr__(self):
 		"Macro for printing all the data in self.relax.data"
 
+		string = ""
 		# Loop over the data structures in self.relax.data
 		for name in dir(self.relax.data):
 			if not self.filter_data_structure(name):
-				print "self.relax.data." + name + ":\n" + `getattr(self.relax.data, name)` + "\n"
+				string = string +  "self.relax.data." + name + ":\n" + `getattr(self.relax.data, name)` + "\n\n"
+		return string

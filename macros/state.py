@@ -24,9 +24,10 @@ class state(generic_functions):
 		Examples
 		~~~~~~~~
 
-		The following will load the state saved in the file 'save'.
-		>>> state.load('save')
-		>>> state.load(file_name='save')
+		The following commands will load the state saved in the file 'save'.
+
+		>>> state_load('save')
+		>>> state_load(file_name='save')
 
 		"""
 
@@ -35,14 +36,14 @@ class state(generic_functions):
 
 		# Test arguments
 		if type(file_name) != str:
-			print "File name is invalid."
+			print "The file name argument " + `file_name` + " is not a string."
 			return
 
 		# Open file for reading.
 		try:
 			file = open(file_name, 'r')
 		except IOError:
-			print "Save file does not exist."
+			print "The save file " + `file_name` + " does not exist."
 			return
 
 		# Reinitialise self.relax.data
@@ -59,19 +60,23 @@ class state(generic_functions):
 		~~~~~~~~~
 
 		file_name:	The file name, which must be a string, to save the current program state in.
-		force:		A flag which if set to 1 will cause the file, if existant, to be overwritten.
+		force:		A flag which if set to 1 will cause the file to be overwritten.
 
 
 		Examples
 		~~~~~~~~
 
-		The following will save the current program state into the file 'save'.
-		>>> state.save('save')
+		The following commands will save the current program state into the file 'save'.
 
-		If the file 'save' already exists, the following will save the current program state by overwriting
+		>>> state_save('save')
+		>>> state_save(file_name='save')
+
+
+		If the file 'save' already exists, the following commands will save the current program state by overwriting
 		the file.
-		>>> state.save('save', 1)
-		>>> state.save(file_name='save', force=1)
+
+		>>> state_save('save', 1)
+		>>> state_save(file_name='save', force=1)
 
 		"""
 
@@ -80,12 +85,12 @@ class state(generic_functions):
 
 		# Test arguments
 		if type(file_name) != str:
-			print "File name is invalid."
+			print "The file name argument " + `file_name` + " is not a string."
 			return
 
 		# Open file for writing.
 		if access(file_name, F_OK) and not force:
-			print "File already exists.  Set the force flag to 1 to overwrite."
+			print "The file " + `file_name` + " already exists.  Set the force flag to 1 to overwrite."
 			return
 		else:
 			file = open(file_name, 'w')

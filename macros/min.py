@@ -31,16 +31,38 @@ class min:
 		return None
 
 
-	def fixed(self, model=None, values=None, scaling_flag=0, min_debug=1):
-		"""Fix the inital parameter values.
+	def fixed(self, model, values=None, scaling_flag=0, min_debug=1):
+		"""Macro to fix the initial parameter values.
 
-		The function needs to be modified so the user can specify the fixed values.
+		Arguments
+		~~~~~~~~~
+
+		model:		The name of the model.
+		values:		An array of numbers of length equal to the number of parameters in the model.
+		scaling_flag:	(This is temporary)
+		min_debug:	(so is this)
+
+
+		Examples
+		~~~~~~~~
+
+		This command will fix the parameter values of the model 'm2', which is the original model-free
+		equation with parameters [S2, te], before minimisation to the preselected values of this macro.
+
+		>>> fixed('m2')
+
+
+		This command will do the same except the S2 and te values will be set to one and ten ps respectively.
+
+		>>> fixed('m2', [1.0, 10 * 10e-12])
+		>>> fixed('m2', values = [1.0, 10 * 10e-12])
+
 		"""
 
 		# The model argument.
 		self.model = model
-		if not self.model:
-			print "No model is given."
+		if type(self.model) != str:
+			print "The model argument " + `self.model` + " must be a string."
 			return
 
 		# Find the index of the model.
@@ -67,10 +89,11 @@ class min:
 			return
 
 		# The debugging flag.
-		self.relax.min_debug = min_debug
-		if type(self.relax.min_debug) != int:
+		if type(min_debug) != int:
 			print "The min_debug argument must be an integer."
 			return
+		else:
+			self.relax.min_debug = min_debug
 
 		# Setup the fixed parameter options.
 		if self.values:
@@ -167,7 +190,7 @@ class min:
 		self.main_loop()
 
 
-	def grid_search(self, model=None, lower=None, upper=None, inc=21, scaling_flag=0, min_debug=1):
+	def grid_search(self, model, lower=None, upper=None, inc=21, scaling_flag=0, min_debug=1):
 		"""
 
 		Generate the data structure of model-free grid options for the grid search.
@@ -175,8 +198,8 @@ class min:
 
 		# The model argument.
 		self.model = model
-		if not self.model:
-			print "No model is given."
+		if type(self.model) != str:
+			print "The model argument " + `self.model` + " must be a string."
 			return
 
 		# Find the index of the model.
@@ -245,10 +268,11 @@ class min:
 			return
 
 		# The debugging flag.
-		self.relax.min_debug = min_debug
-		if type(self.relax.min_debug) != int:
+		if type(min_debug) != int:
 			print "The min_debug argument must be an integer."
 			return
+		else:
+			self.relax.min_debug = min_debug
 
 		# Setup the grid options.
 		self.min_options = []
@@ -384,14 +408,17 @@ class min:
 		print "\n[ Done ]\n\n"
 
 
-	def minimise(self, model=None, min_algor=None, min_options=None, chi2_tol=1e-15, max_iterations=5000, scaling_flag=0, min_debug=1):
+	def minimise(self, model, min_algor=None, min_options=None, chi2_tol=1e-15, max_iterations=5000, scaling_flag=0, min_debug=1):
 		"Minimisation macro."
 
-		# Arguments.
+		# The model argument.
 		self.model = model
-		if not self.model:
-			print "No model is given."
+		if type(self.model) != str:
+			print "The model argument " + `self.model` + " must be a string."
 			return
+
+		self.model = model
+
 		self.min_algor = min_algor
 		if not self.min_algor:
 			print "The minimisation algorithm has not been specified."
