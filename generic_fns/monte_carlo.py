@@ -66,6 +66,10 @@ class Monte_carlo:
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[run][i].select:
+                continue
+
             # Create the Monte Carlo data.
             if method == 'back_calc':
                 data = create_mc_data(run, i)

@@ -826,11 +826,12 @@ class Model_free:
         local_tm = 0
         for i in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
-            #if not self.relax.data.res[self.run][i].select:
-            #    continue
+            if not self.relax.data.res[self.run][i].select:
+                continue
 
             if local_tm == 0 and 'tm' in self.relax.data.res[self.run][i].params:
                 local_tm = 1
+
             elif local_tm == 1 and not 'tm' in self.relax.data.res[self.run][i].params:
                 raise RelaxError, "All residues must either have a local tm parameter or not."
 
@@ -2522,6 +2523,8 @@ class Model_free:
                 col_num = i
             elif header[i] == 'Name':
                 col_name = i
+            elif header[i] == 'Selected':
+                col_select = i
             elif header[i] == 'Data_set':
                 col_data_set = i
             elif header[i] == 'Nucleus':
@@ -2532,6 +2535,8 @@ class Model_free:
                 col_eqi = i
             elif header[i] == 'Params':
                 col_params = i
+            elif header[i] == 'Param_set':
+                col_param_set = i
             elif header[i] == 'S2':
                 col_s2 = i
             elif header[i] == 'S2f':
@@ -2577,10 +2582,13 @@ class Model_free:
             res_name = file_data[i][col_name]
 
             # Add the residue.
-            self.relax.generic.sequence.add(self.run, res_num, res_name)
+            self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(file_data[i][col_select]))
 
         # Set the nucleus type.
-        self.relax.generic.nuclei.set_values(file_data[0][col_nucleus])
+        for i in xrange(len(file_data)):
+            if int(file_data[i][col_select]):
+                self.relax.generic.nuclei.set_values(file_data[i][col_nucleus])
+                break
 
         # Determine the number of simulations.
         sims = []
@@ -2619,6 +2627,10 @@ class Model_free:
 
             # Reassign data structure.
             res = self.relax.data.res[self.run][index]
+
+            # Skip unselected residues.
+            if not res.select:
+                continue
 
             # Set up the model-free models.
             if data_set == 'value':
@@ -3733,25 +3745,26 @@ class Model_free:
             self.relax.data.select[self.run] = 0
 
 
-    def write_columnar_line(self, file=None, select=1, num=None, name=None, data_set=None, nucleus=None, model=None, equation=None, params=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_params=None, frq=None, ri=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_params=None, frq=None, ri=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
         file.write("%-5s%-6s" % (num, name))
 
-        # Unselected residues.
+        # Selected flag and data set.
+        file.write("%-10s%-10s" % (select, data_set))
         if not select:
             file.write("\n")
             return
-
-        # Data set.
-        file.write("%-10s" % data_set)
 
         # Nucleus.
         file.write("%-8s" % nucleus)
 
         # Model details.
         file.write("%-6s%-10s%-36s" % (model, equation, params))
+
+        # Parameter set.
+        file.write("%-11s" % param_set)
 
         # Parameters.
         file.write("%-26s" % s2)
@@ -3817,7 +3830,7 @@ class Model_free:
 
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_params=diff_params)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_params=diff_params)
 
 
         # Values.
@@ -3848,7 +3861,7 @@ class Model_free:
 
             # Unselected residues.
             if not res.select:
-                self.write_columnar_line(file=file, select=0)
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='value')
                 continue
 
             # Model details.
@@ -3917,7 +3930,7 @@ class Model_free:
                     warn = res.warning
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, data_set='value', nucleus=nucleus, model=res.model, equation=res.equation, params=params, s2=`res.s2`, s2f=`res.s2f`, s2s=`res.s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_params=diff_params)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2`, s2f=`res.s2f`, s2s=`res.s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_params=diff_params)
 
 
         # Errors.
@@ -3965,7 +3978,7 @@ class Model_free:
 
             # Unselected residues.
             if not res.select:
-                self.write_columnar_line(file=file, select=0)
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='error')
                 continue
 
             # Model details.
@@ -4010,7 +4023,7 @@ class Model_free:
                 csa = res.csa_err / 1e-6
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, s2=`res.s2_err`, s2f=`res.s2f_err`, s2s=`res.s2s_err`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_params=diff_params)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_err`, s2f=`res.s2f_err`, s2s=`res.s2s_err`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_params=diff_params)
 
 
         # Simulation values.
@@ -4056,7 +4069,7 @@ class Model_free:
 
                 # Unselected residues.
                 if not res.select:
-                    self.write_columnar_line(file=file, select=0)
+                    self.write_columnar_line(file=file, num=res.num, name=res.name, select=0, data_set='sim_'+`i`)
                     continue
 
                 # Model details.
@@ -4125,4 +4138,4 @@ class Model_free:
                         warn = res.warning_sim[i]
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=res.num, name=res.name, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, s2=`res.s2_sim[i]`, s2f=`res.s2f_sim[i]`, s2s=`res.s2s_sim[i]`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_params=diff_params)
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_sim[i]`, s2f=`res.s2f_sim[i]`, s2s=`res.s2s_sim[i]`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_params=diff_params)
