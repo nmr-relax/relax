@@ -82,7 +82,10 @@ class asymptotic(common_operations):
 			for run in self.mf.data.runs:
 				if data[run][res]['crit'] < data[min][res]['crit']:
 					min = run
-			self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
+			if data[min][res]['crit'] == float('inf'):
+				self.mf.data.results[res] = self.fill_results(data[min][res], model='0')
+			else:
+				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
 			if self.mf.debug == 1:
 				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
