@@ -30,33 +30,82 @@ class Nuclei:
         self.relax = relax
 
 
-    def nuclei(self, heteronuc):
+    def find_nucleus(self):
+        """Function for finding the nucleus corresponding to 'self.relax.data.gx'."""
+
+        # Nitrogen.
+        if self.relax.data.gx == self.gn():
+            return 'N'
+
+        # Carbon
+        if self.relax.data.gx == self.gc():
+            return 'C'
+
+        # Oxygen.
+        if self.relax.data.gx == self.go():
+            return 'O'
+
+        # Phosphate.
+        if self.relax.data.gx == self.gp():
+            return 'P'
+
+
+    def gc(self):
+        """The 13C gyromagnetic ratio."""
+
+        return 6.728e7
+
+
+    def gh(self):
+        """The 1H gyromagnetic ratio."""
+
+        #return 26.7522e7
+        return 26.7522212e7
+
+
+    def gn(self):
+        """The 15N gyromagnetic ratio."""
+
+        return -2.7126e7
+
+
+    def go(self):
+        """The 17O gyromagnetic ratio."""
+
+        return -3.628e7
+
+
+    def gp(self):
+        """The 31P gyromagnetic ratio."""
+
+        return 1.0841e8
+
+
+    def set_values(self, heteronuc):
         """Function for setting the gyromagnetic ratio of the heteronucleus."""
 
         # Nitrogen.
         if match('[Nn]', heteronuc):
-            self.relax.data.gx = -2.7126e7
+            self.relax.data.gx = self.gn()
 
         # Carbon
         elif match('[Cc]', heteronuc):
-            self.relax.data.gx = 6.728e7
+            self.relax.data.gx = self.gc()
 
         # Oxygen.
         elif match('[Oo]', heteronuc):
-            self.relax.data.gx = -3.628e7
+            self.relax.data.gx = self.go()
 
         # Phosphate.
         elif match('[Pp]', heteronuc):
-            self.relax.data.gx = 1.0841e8
+            self.relax.data.gx = self.gp()
 
         # Incorrect arguement.
         else:
             raise RelaxInvalidError, ('heteronucleus', heteronuc)
 
         # Set the proton gyromagnetic ratio.
-        #self.relax.data.gh = 26.7522e7
-        self.relax.data.gh = 26.7522212e7
-
+        self.relax.data.gh = self.gh()
 
         # Calculate the ratio of the gyromagnetic ratios.
         self.relax.data.g_ratio = self.relax.data.gh / self.relax.data.gx
