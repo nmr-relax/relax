@@ -161,7 +161,7 @@ class Iso3D(Base_Map):
         #####################
 
         # Equation type specific function setup.
-        self.map_labels = self.relax.specific_setup.setup("map_labels", self.relax.data.res[self.index].equations[self.run])
+        self.map_labels = self.relax.specific_setup.setup("map_labels", self.relax.data.run_types[self.relax.data.run_names.index(run)])
 
         # Default labels.
         if self.map_labels == None or self.labels != None:

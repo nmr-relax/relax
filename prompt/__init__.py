@@ -22,6 +22,7 @@
 
 
 __all__ = ['command',
+           'create_run',
            'diffusion_tensor',
            'echo_data',
            'fixed',

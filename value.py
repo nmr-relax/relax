@@ -38,9 +38,9 @@ class Value:
         if not len(self.relax.data.res):
             raise RelaxSequenceError
 
-        # Add the run to the runs list.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res)):

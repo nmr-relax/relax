@@ -46,8 +46,8 @@ class Palmer:
         """
 
         # Test if the run exists.
-        if not run in self.relax.data.runs:
-            raise RelaxRunError, run
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):

@@ -120,17 +120,18 @@ class Delete:
                     if not key in keep_runs:
                         keep_runs.append(key)
 
-        # Remove the run from 'self.relax.data.runs'.
-        for run in self.relax.data.runs:
+        # Remove the run from 'self.relax.data.run_names'.
+        for run in self.relax.data.run:
             if not run in keep_runs:
-                self.relax.data.runs.remove(run)
+                self.relax.data.run_names.remove(run)
+                self.relax.data.run_types.remove(run)
 
 
     def delete_seq_types(self):
         """Function for deleting residue specific data types."""
 
         # Check if the run exists and if not, return without deleting anything.
-        if self.run == None or not self.run in self.relax.data.runs:
+        if self.run == None or not self.run in self.relax.data.run_names:
             return
 
 
@@ -173,7 +174,7 @@ class Delete:
             if type(object) != dict:
                 continue
 
-            # If the data contains the key 'run', exit this function without removing the run from 'self.relax.data.runs'.
+            # If the data contains the key 'run', exit this function without removing the run from 'self.relax.data.run_names'.
             if object.has_key(self.run):
                 return
 
@@ -185,9 +186,10 @@ class Delete:
                 if type(object) != dict:
                     continue
 
-                # If the data contains the key 'run', exit this function without removing the run from 'self.relax.data.runs'.
+                # If the data contains the key 'run', exit this function without removing the run from 'self.relax.data.run_names'.
                 if object.has_key(self.run):
                     return
 
-        # Remove the run from 'self.relax.data.runs'.
-        self.relax.data.runs.remove(self.run)
+        # Remove the run from 'self.relax.data.run_names'.
+        self.relax.data.run_names.remove(self.run)
+        self.relax.data.run_types.remove(self.run)

@@ -51,16 +51,16 @@ class Diffusion_tensor:
         self.angle_units = angle_units
         self.param_types = param_types
 
-        # Test if the run already exists.
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if diffusion tensor data corresponding to the run already exists.
         if self.relax.data.diff.has_key(run):
-            raise RelaxRunError, run
+            raise RelaxTensorError, run
 
         # Add the run to the diffusion tensor data structure.
         self.relax.data.diff.add_item(run)
-
-        # Add the run to the runs list.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
 
         # Set the fixed flag.
         self.relax.data.diff[run].fixed = fixed

@@ -246,6 +246,10 @@ class Rx_data:
     def read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for reading R1, R2, or NOE relaxation data."""
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
 
@@ -336,10 +340,6 @@ class Rx_data:
             # Add the run to the runs list.
             if not run in self.relax.data.res[index].runs:
                 self.relax.data.res[index].runs.append(run)
-
-        # Add the run to the runs list.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
 
 
     def curvefit_input(self):

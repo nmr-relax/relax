@@ -44,10 +44,10 @@ class Data:
         self.res = []
 
         # The name of the runs.
-        self.runs = []
+        self.run_names = []
 
         # The type of the runs.
-        self.types = {}
+        self.run_types = []
 
 
     def __repr__(self):

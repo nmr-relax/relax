@@ -6,8 +6,9 @@ read.sequence('noe.500.out')
 # Nuclei type
 nuclei('N')
 
-# Set the run name (also the name of a preset model-free model).
+# Create the run.
 name = 'm5'
+create_run(name, 'mf')
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')

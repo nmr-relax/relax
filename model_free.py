@@ -141,6 +141,10 @@ class Model_free:
         if not len(self.relax.data.res):
             raise RelaxSequenceError
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
         # Check the validity of the model-free equation type.
         valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
         if not equation in valid_types:
@@ -251,10 +255,6 @@ class Model_free:
             # The invalid parameter flag is set.
             if invalid_param:
                 raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
-
-        # Add the run to the runs list.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
 
         # Set up the model.
         self.model_setup(run, model, equation, params, scaling)
@@ -1411,6 +1411,10 @@ class Model_free:
         if not len(self.relax.data.res):
             raise RelaxSequenceError
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
 
         # Preset models.
         ################
@@ -1678,10 +1682,6 @@ class Model_free:
         # Invalid models.
         else:
             raise RelaxError, "The model '" + model + "' is invalid."
-
-        # Add the run to the runs list.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
 
         # Set up the model.
         self.model_setup(run, model, equation, params, scaling)

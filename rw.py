@@ -38,6 +38,10 @@ class RW:
         if not len(self.relax.data.res):
             raise RelaxSequenceError
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
         # Equation type specific function setup.
         self.read_results = self.relax.specific_setup.setup('read', data_type)
         if self.read_results == None:
@@ -63,10 +67,6 @@ class RW:
         # Read the results.
         self.read_results(file_data, run)
 
-        # Add the run to 'self.relax.data.runs'.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
-
 
     def write_data(self, run=None, file="results", dir=None, force=0):
         """Create the directories and files for output.
@@ -76,8 +76,8 @@ class RW:
         """
 
         # Test if the run exists.
-        if not run in self.relax.data.runs:
-            raise RelaxRunError, run
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
 
         # Directory creation.
         if dir == None:

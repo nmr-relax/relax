@@ -44,10 +44,13 @@ class Base_Map:
         if index == None:
             raise RelaxNoResError, res_num
 
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
         # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("map_space", self.relax.data.res[index].equations[run])
+        fns = self.relax.specific_setup.setup("map_space", function_type)
         if fns == None:
-            raise RelaxFuncSetupError, ('space mapping', self.relax.data.res[index].equations[run])
+            raise RelaxFuncSetupError, ('space mapping', function_type)
         self.assemble_scaling_matrix, self.map_bounds, self.minimise = fns
 
         # Function arguments.

@@ -37,6 +37,7 @@ from print_all_data import Print_all_data
 
 # Macro functions.
 from angles import Angles
+from create_run import Create_run
 from delete import Delete
 from diffusion_tensor import Diffusion_tensor
 from dx import OpenDX
@@ -84,6 +85,7 @@ class Interpreter:
 
         # Place the functions into the namespace of the interpreter class.
         self._Angles = Angles(relax)
+        self._Create_run = Create_run(relax)
         self._Delete = Delete(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._Fix = Fix(relax)
@@ -135,6 +137,7 @@ class Interpreter:
         # Place the functions in the local namespace.
         angles = self._Angles.angles
         calc = self._Minimise.calc
+        create_run = self._Create_run.create
         delete = self._Delete.delete
         diffusion_tensor = self._Diffusion_tensor.diffusion_tensor
         dx = self._OpenDX.dx

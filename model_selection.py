@@ -40,7 +40,7 @@ class Model_selection:
 
         # The runs argument.
         if runs == None:
-            runs = self.relax.data.runs
+            runs = self.relax.data.run_names
         else:
             if len(runs) == 0:
                 raise RelaxError, "The runs argument " + `runs` + " must be an array of length greater than zero."
@@ -49,43 +49,69 @@ class Model_selection:
                     if len(run) == 0:
                         raise RelaxError, "The runs argument element " + `run` + " must be an array of length greater than zero."
                     for run2 in run:
-                        if not run2 in self.relax.data.runs:
-                            raise RelaxError, "The run " + `run2` + " cannot be found."
-                elif not run in self.relax.data.runs:
-                    raise RelaxError, "The run " + `run` + " cannot be found."
+                        if not run2 in self.relax.data.run_names:
+                            raise RelaxNoRunError, run2
+                elif not run in self.relax.data.run_names:
+                    raise RelaxNoRunError, run
 
         # Test if the run 'modsel_run' does not already exist.
-        if modsel_run in self.relax.data.runs:
-            raise RelaxError, "The run " + `modsel_run` + " already exists."
+        if modsel_run in self.relax.data.run_names:
+            raise RelaxRunError, modsel_run
+
+        # Test that all the runs are of the same type.
+        run_type = 'None'
+        for run in runs:
+            if type(run) == list:
+                for run2 in run:
+                    # Find the index of run2.
+                    index = self.relax.data.run_names.index(run2)
+
+                    # Initialise the type.
+                    if run_type == 'None':
+                        run_type = self.relax.data.run_types[index]
+
+                    # Test if the run type is the same as 'run_type'.
+                    if self.relax.data.run_types[index] != run_type:
+                        raise RelaxError, "The run supplied are not all of the same type."
+            else:
+                # Find the index of run2.
+                index = self.relax.data.run_names.index(run)
+
+                # Initialise the type.
+                if run_type == 'None':
+                    run_type = self.relax.data.run_types[index]
+
+                # Test if the run type is the same as 'run_type'.
+                if self.relax.data.run_types[index] != run_type:
+                    raise RelaxError, "The run supplied are not all of the same type."
 
         # Test if each run has a valid parameter and chi-squared data structure.
-        #for i in xrange(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
-            #if not self.relax.data.res[i].select:
-            #    continue
+            if not self.relax.data.res[i].select:
+                continue
 
             # Loop over the runs.
-            #for run in runs:
-            #    if type(run) == list:
-            #        for run2 in run:
-            #            if not hasattr(self.relax.data.res[i], 'params'):
-            #                raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
-            #            elif not self.relax.data.res[i].params.has_key(run2):
-            #                raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
-            #            elif not hasattr(self.relax.data.res[i], 'chi2'):
-            #                raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
-            #            elif not self.relax.data.res[i].chi2.has_key(run2):
-            #                raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
-            #    else:
-            #        if not hasattr(self.relax.data.res[i], 'params'):
-            #            raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
-            #        elif not self.relax.data.res[i].params.has_key(run):
-            #            raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
-            #        elif not hasattr(self.relax.data.res[i], 'chi2'):
-            #            raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
-            #        elif not self.relax.data.res[i].chi2.has_key(run):
-            #            raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
-
+            for run in runs:
+                if type(run) == list:
+                    for run2 in run:
+                        if not hasattr(self.relax.data.res[i], 'params'):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
+                        elif not self.relax.data.res[i].params.has_key(run2):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
+                        elif not hasattr(self.relax.data.res[i], 'chi2'):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
+                        elif not self.relax.data.res[i].chi2.has_key(run2):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
+                else:
+                    if not hasattr(self.relax.data.res[i], 'params'):
+                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
+                    elif not self.relax.data.res[i].params.has_key(run):
+                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
+                    elif not hasattr(self.relax.data.res[i], 'chi2'):
+                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
+                    elif not self.relax.data.res[i].chi2.has_key(run):
+                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
 
         # Initialise.
         self.runs = deepcopy(runs)
@@ -147,9 +173,6 @@ class Model_selection:
 
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
             self.duplicate_data(best_model, modsel_run, i)
-
-        # Add the new run name 'modsel_run' to self.relax.data.runs
-        self.relax.data.runs.append(modsel_run)
 
 
     def aic(self, i, model, k, n):
@@ -262,8 +285,8 @@ class Model_selection:
         """
 
         # Test if 'best_model' exists.
-        if not best_model in self.relax.data.runs:
-            raise RelaxError, "The run " + `best_model` + " cannot be found."
+        if not best_model in self.relax.data.run_names:
+            raise RelaxRunError, best_model
 
         # Duplicate the diffusion tensor data.
         if self.relax.data.diff.has_key(best_model):

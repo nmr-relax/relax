@@ -44,7 +44,7 @@ class Angles:
 
         # Test if the diffusion tensor data is loaded.
         if not self.relax.data.diff.has_key(run):
-            raise RelaxTensorError, run
+            raise RelaxNoTensorError, run
 
         # Arguments.
         self.run = run

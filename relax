@@ -40,6 +40,7 @@ from re import match
 import sys
 
 from angles import Angles
+from create_run import Create_run
 from data.main import Data
 from delete import Delete
 from diffusion_tensor import Diffusion_tensor
@@ -92,6 +93,7 @@ class Relax:
 
         # Various functions.
         self.angles = Angles(self)
+        self.create_run = Create_run(self)
         self.delete = Delete(self)
         self.diffusion_tensor = Diffusion_tensor(self)
         self.file_ops = File_ops(self)

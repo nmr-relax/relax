@@ -228,8 +228,13 @@ class RelaxErrors:
     # Tensor errors.
     ################
 
-    # No diffusion tensor data loaded.
+    # Diffusion tensor data corresponding to the run already exists.
     class RelaxTensorError(BaseError):
+        def __init__(self, run):
+            self.text = "Diffusion tensor data corresponding to the run " + `run` + " already exists."
+
+    # No diffusion tensor data loaded.
+    class RelaxNoTensorError(BaseError):
         def __init__(self, run):
             self.text = "No diffusion tensor data is loaded for the run " + `run` + "."
 
@@ -275,7 +280,7 @@ class RelaxErrors:
     # No run.
     class RelaxNoRunError(BaseError):
         def __init__(self, run):
-            self.text = "The run " + `run` + " does not exist."
+            self.text = "The run " + `run` + " has not been created yet."
 
 
     # Setup errors.
