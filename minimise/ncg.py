@@ -1,7 +1,7 @@
 from LinearAlgebra import inverse
 from Numeric import Float64, dot, matrixmultiply, sqrt, zeros
 
-from generic import Line_search, Min
+from base_classes import Line_search, Min
 
 
 def ncg(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.9, full_output=0, print_flag=0, print_prefix=""):
@@ -81,6 +81,11 @@ class Ncg(Line_search, Min):
 		# Set the convergence test function.
 		self.setup_conv_tests()
 
+		# Calculate the initial Newton function value, gradient vector, and Hessian matrix.
+		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
+
 
 	def get_pk(self):
 		"The CG algorithm."
@@ -145,7 +150,6 @@ class Ncg(Line_search, Min):
 			i = i + 1
 
 
-
 	def new_param_func(self):
 		"""The new parameter function.
 
@@ -162,17 +166,6 @@ class Ncg(Line_search, Min):
 		self.xk_new = self.xk + self.alpha * self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
-
-
-	def setup(self):
-		"""Setup function.
-
-		The initial Newton function value, gradient vector, and Hessian matrix are calculated.
-		"""
-
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
-		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
 
 
 	def update(self):

@@ -2,7 +2,7 @@ from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_l
 from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, transpose
 from re import match
 
-from generic import Line_search, Min
+from base_classes import Line_search, Min
 
 
 def newton(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16, full_output=0, print_flag=0, print_prefix=""):
@@ -86,7 +86,7 @@ class Newton(Line_search, Min):
 
 		# Default Hessian modification.
 		if self.hessian_mod == None:
-			self.hessian_mod = 'Chol'
+			self.hessian_mod = 'GMW'
 
 		# Line search and Hessian modification initialisation.
 		self.setup_line_search()
@@ -107,8 +107,10 @@ class Newton(Line_search, Min):
 		# Set the convergence test function.
 		self.setup_conv_tests()
 
-		# Set the setup and update functions.
-		self.setup = self.setup_newton
+		# Newton setup function.
+		self.setup_newton()
+
+		# Set the update function.
 		self.update = self.update_newton
 
 

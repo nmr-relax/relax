@@ -3,10 +3,10 @@ from re import match
 
 #from bound_constraint import bound_constraint
 from constraint_linear import constraint_linear
-from generic import Min, generic_minimise
+from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-1, lambda0=None, epsilon0=1e-10, gamma0=1e-10, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-2, lambda0=None, epsilon0=1e-10, gamma0=1e-10, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
 	"""The method of multipliers, also known as the augmented Lagrangian method.
 
 	Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999,
@@ -119,6 +119,13 @@ class Method_of_multipliers(Min):
 		Unless you know what you are doing, you should call the function
 		'method_of_multipliers' rather than using this class.
 		"""
+
+		# Import the 'generic_minimise' function from 'generic.py'.  It is important that
+		# this import statment occurs here otherwise a recursive import between the module
+		# 'generic' and this module occurs.  This means that the function 'generic_minimise'
+		# has not been initialised and is therefore not in the namespace.
+		from generic import generic_minimise
+		self.generic_minimise = generic_minimise
 
 		# Linear constraints.
 		#if A != None and b != None:
@@ -342,21 +349,22 @@ class Method_of_multipliers(Min):
 			self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
 			# Unconstrained minimisation sub-loop.
-			try:
-				results = generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
-			except "LinearAlgebraError", message:
-				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
-				break
-			except OverflowError, message:
-				if type(message.args[0]) == int:
-					text = message.args[1]
-				else:
-					text = message.args[0]
-				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
-				break
-			except NameError, message:
-				self.warning = message.args[0] + " (fatal minimisation error)."
-				break
+			results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
+			#try:
+			#	results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
+			#except "LinearAlgebraError", message:
+			#	self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
+			#	break
+			#except OverflowError, message:
+			#	if type(message.args[0]) == int:
+			#		text = message.args[1]
+			#	else:
+			#		text = message.args[0]
+			#	self.warning = "OverflowError: " + text + " (fatal minimisation error)."
+			#	break
+			#except NameError, message:
+			#	self.warning = message.args[0] + " (fatal minimisation error)."
+			#	break
 
 			# Unpack the results.
 			if results == None:

@@ -1,6 +1,6 @@
 from Numeric import dot
 
-from generic import Conjugate_gradient, Line_search, Min
+from base_classes import Conjugate_gradient, Line_search, Min
 
 
 def polak_ribiere(func=None, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.1, full_output=0, print_flag=0, print_prefix=""):
@@ -80,6 +80,12 @@ class Polak_ribiere(Conjugate_gradient, Line_search, Min):
 
 		# Set the convergence test function.
 		self.setup_conv_tests()
+
+		# Calculate the initial function value and gradient vector.
+		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.pk = -self.dfk
+		self.dot_dfk = dot(self.dfk, self.dfk)
 
 
 	def calc_bk(self):

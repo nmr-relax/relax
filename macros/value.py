@@ -5,7 +5,7 @@ from generic_functions import generic_functions
 from select_res import select_res
 
 
-class value_setup(generic_functions, select_res):
+class value(generic_functions, select_res):
 	def __init__(self, relax):
 		"Base class containing functions for the setting up of data structures."
 
@@ -79,7 +79,7 @@ class value_setup(generic_functions, select_res):
 				self.relax.data.csa = self.create_data(data)
 			else:
 				print "The CSA values have already been specified."
-				print "To reset the values, delete the original data (self.relax.data.csa)."
+				print "To reset the values, delete the original data (self.self.x.data.csa)."
 
 		# Bad type.
 		else:

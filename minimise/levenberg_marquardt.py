@@ -1,7 +1,7 @@
 from LinearAlgebra import solve_linear_equations
 from Numeric import Float64, zeros
 
-from generic import Min
+from base_classes import Min
 
 
 def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0, print_prefix=""):
@@ -75,6 +75,18 @@ class Levenberg_marquardt(Min):
 		self.orig_conv_test = self.conv_test
 		self.conv_test = self.test_mod
 
+		# The initial chi-squared value, chi-squared gradient vector, and derivative function matrix.
+		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
+		self.df = self.dfunc()
+		self.dfk_new = None
+
+		# Initial value of lambda (the Levenberg-Marquardt fudge factor).
+		self.l = 0.001
+
+		# N.
+		self.n = len(self.xk)
+
 
 	def create_lm_matrix(self):
 		"""Function to create the Levenberg-Marquardt matrix.
@@ -131,13 +143,15 @@ class Levenberg_marquardt(Min):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.chi2_func, (self.xk_new,)+self.args), self.f_count + 1
-		self.dfk_new, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk_new,)+self.args), self.g_count + 1
 
 		if self.fk_new <= self.fk:
+			# Move to xk+1 and shrink lambda.
+			self.dfk_new, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk_new,)+self.args), self.g_count + 1
 			if self.l >= 1e-99:
 				self.l = self.l * 0.1
 			self.move_flag = 1
 		else:
+			# Don't move and increase lambda.
 			if self.l <= 1e99:
 				self.l = self.l * 10.0
 			self.move_flag = 0
@@ -151,22 +165,6 @@ class Levenberg_marquardt(Min):
 			print self.print_prefix + "fk+1: " + `self.fk_new`
 			print self.print_prefix + "fk:   " + `self.fk`
 			print self.print_prefix + "move_flag: " + `self.move_flag`
-
-
-	def setup(self):
-		"""Setup function.
-
-		Calculate the initial data required for Levenberg-Marquardt minimisation.
-		"""
-
-		# The initial chi-squared value, chi-squared gradient vector, and derivative function matrix.
-		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
-		self.df = self.dfunc()
-
-		# Initial value of lambda (the Levenberg-Marquardt fudge factor).
-		self.l = 0.001
-		self.n = len(self.xk)
 
 
 	def test_mod(self, fk_new, fk, dfk_new):

@@ -1,6 +1,6 @@
 from Numeric import Float64, add, argsort, average, take, zeros
 
-from generic import Min
+from base_classes import Min
 
 
 def simplex(func=None, args=(), x0=None, func_tol=1e-25, maxiter=1e6, full_output=0, print_flag=0, print_prefix=""):
@@ -44,6 +44,33 @@ class Simplex(Min):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Initialise some constants.
+		self.n = len(self.xk)
+		self.m = self.n + 1
+
+		# Create the simplex
+		self.simplex = zeros((self.m, self.n), Float64)
+		self.simplex_vals = zeros(self.m, Float64)
+
+		self.simplex[0] = self.xk * 1.0
+		self.simplex_vals[0], self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+
+		for i in range(self.n):
+			j = i + 1
+			self.simplex[j] = self.xk
+			if self.xk[i] == 0.0:
+				self.simplex[j, i] = 2.5 * 1e-4
+			else:
+				self.simplex[j, i] = 1.05 * self.simplex[j, i]
+			self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
+
+		# Order the simplex.
+		self.order_simplex()
+
+		# Set xk and fk as the vertex of the simplex with the lowest function value.
+		self.xk = self.simplex[0] * 1.0
+		self.fk = self.simplex_vals[0]
 
 
 	def new_param_func(self):
@@ -124,40 +151,6 @@ class Simplex(Min):
 		self.reflect_val, self.f_count = apply(self.func, (self.reflect_vector,)+self.args), self.f_count + 1
 
 
-	def setup(self):
-		"""Setup function.
-
-		This function initialises some constants and creates the initial simplex.
-		"""
-
-		# Initialise some constants.
-		self.n = len(self.xk)
-		self.m = self.n + 1
-
-		# Create the simplex
-		self.simplex = zeros((self.m, self.n), Float64)
-		self.simplex_vals = zeros(self.m, Float64)
-
-		self.simplex[0] = self.xk * 1.0
-		self.simplex_vals[0], self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-
-		for i in range(self.n):
-			j = i + 1
-			self.simplex[j] = self.xk
-			if self.xk[i] == 0.0:
-				self.simplex[j, i] = 2.5 * 1e-4
-			else:
-				self.simplex[j, i] = 1.05 * self.simplex[j, i]
-			self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
-
-		# Order the simplex.
-		self.order_simplex()
-
-		# Set xk and fk as the vertex of the simplex with the lowest function value.
-		self.xk = self.simplex[0] * 1.0
-		self.fk = self.simplex_vals[0]
-
-
 	def shrink(self):
 		"Shrinking step."
 
@@ -176,6 +169,8 @@ class Simplex(Min):
 
 		if self.print_flag >= 2:
 			print self.print_prefix + "diff = " + `self.simplex_vals[-1] - self.simplex_vals[0]`
+			print self.print_prefix + "|diff| = " + `abs(self.simplex_vals[-1] - self.simplex_vals[0])`
+			print self.print_prefix + "f_tol = " + `self.func_tol`
 		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) <= self.func_tol:
 			if self.print_flag >= 2:
 				print "\n" + self.print_prefix + "Function tolerance reached."

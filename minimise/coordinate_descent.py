@@ -1,6 +1,6 @@
 from Numeric import Float64, dot, identity
 
-from generic import Line_search, Min
+from base_classes import Line_search, Min
 
 
 def coordinate_descent(func=None, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.1, full_output=0, print_flag=0, print_prefix=""):
@@ -67,6 +67,15 @@ class Coordinate_descent(Line_search, Min):
 		# Set the convergence test function.
 		self.setup_conv_tests()
 
+		# The initial function value and gradient vector.
+		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+
+		# Create the coordinate descent directions, and initialise the coordinate descent iteration number and direction flag.
+		self.cd_dir = identity(len(self.xk), Float64)
+		self.n = 0
+		self.back = 0
+
 
 	def new_param_func(self):
 		"""The new parameter function.
@@ -90,23 +99,6 @@ class Coordinate_descent(Line_search, Min):
 
 		# Scale the coordinate direction to minimise the number of function calls.
 		self.cd_dir[self.n] = self.alpha * self.pk
-
-
-	def setup(self):
-		"""Setup function.
-
-		Calculate the initial function value and gradient and setup the coordinate descent
-		directions.
-		"""
-
-		# The initial function value and gradient vector.
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
-
-		# Create the coordinate descent directions, and initialise the coordinate descent iteration number and direction flag.
-		self.cd_dir = identity(len(self.xk), Float64)
-		self.n = 0
-		self.back = 0
 
 
 	def update(self):

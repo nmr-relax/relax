@@ -1,6 +1,6 @@
 from Numeric import dot, sqrt
 
-from generic import Trust_region, Min
+from base_classes import Trust_region, Min
 
 
 def cauchy_point(func=None, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, delta_max=1e5, delta0=1.0, eta=0.2, full_output=0, print_flag=0, print_prefix=""):
@@ -68,6 +68,11 @@ class Cauchy_point(Trust_region, Min):
 		# Set the convergence test function.
 		self.setup_conv_tests()
 
+		# Initial values before the first iteration.
+		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
+
 
 	def new_param_func(self):
 		"Find the Cauchy point."
@@ -93,17 +98,6 @@ class Cauchy_point(Trust_region, Min):
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
-
-
-	def setup(self):
-		"""Setup function.
-
-		"""
-
-		# Initial values before the first iteration.
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
-		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
 
 
 	def update(self):

@@ -2,7 +2,7 @@ from LinearAlgebra import inverse
 from Numeric import Float64, dot, matrixmultiply, outerproduct, sqrt, zeros
 
 from newton import Newton
-from generic import Min, Trust_region
+from base_classes import Min, Trust_region
 
 
 def steihaug(func=None, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2, full_output=0, print_flag=0, print_prefix=""):
@@ -80,6 +80,12 @@ class Steihaug(Min, Trust_region, Newton):
 
 		# Set the convergence test function.
 		self.setup_conv_tests()
+
+		# Newton setup function.
+		self.setup_newton()
+
+		# Set the update function.
+		self.specific_update = self.update_newton
 
 
 	def get_pk(self):
@@ -180,15 +186,6 @@ class Steihaug(Min, Trust_region, Newton):
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
-
-
-	def setup(self):
-		"""Setup function.
-
-		"""
-
-		self.setup_newton()
-		self.specific_update = self.update_newton
 
 
 	def update(self):

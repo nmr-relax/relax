@@ -4,7 +4,7 @@ from re import match
 
 from bfgs import Bfgs
 from newton import Newton
-from generic import Min, Trust_region
+from base_classes import Min, Trust_region
 
 
 def exact_trust_region(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-25, grad_tol=None, maxiter=1e6, lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16, full_output=0, print_flag=0, print_prefix=""):
@@ -73,6 +73,16 @@ class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
 
 		# Set the convergence test function.
 		self.setup_conv_tests()
+
+		# Type specific functions.
+		if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
+			self.setup_bfgs()
+			self.specific_update = self.update_bfgs
+			self.d2fk = inverse(self.Hk)
+			self.warning = "Incomplete code."
+		elif match('[Nn]ewton', self.hessian_type):
+			self.setup_newton()
+			self.specific_update = self.update_newton
 
 
 	def new_param_func(self):
@@ -293,22 +303,6 @@ class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
 			if self.print_flag >= 2:
 				print self.print_prefix + "\tSafeguarding. lambda(l)=0"
 			self.lambda_l = 0.0
-
-
-	def setup(self):
-		"""Setup function.
-
-		"""
-
-		# Type specific functions.
-		if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
-			self.setup_bfgs()
-			self.specific_update = self.update_bfgs
-			self.d2fk = inverse(self.Hk)
-			self.warning = "Incomplete code."
-		elif match('[Nn]ewton', self.hessian_type):
-			self.setup_newton()
-			self.specific_update = self.update_newton
 
 
 	def update(self):

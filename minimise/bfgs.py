@@ -1,6 +1,6 @@
 from Numeric import Float64, dot, identity, matrixmultiply, outerproduct
 
-from generic import Line_search, Min
+from base_classes import Line_search, Min
 
 
 def bfgs(func=None, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.9, full_output=0, print_flag=0, print_prefix=""):
@@ -67,8 +67,10 @@ class Bfgs(Line_search, Min):
 		# Set the convergence test function.
 		self.setup_conv_tests()
 
-		# Set the setup and update functions.
-		self.setup = self.setup_bfgs
+		# BFGS setup function.
+		self.setup_bfgs()
+
+		# Set the update function.
 		self.update = self.update_bfgs
 
 
@@ -116,7 +118,7 @@ class Bfgs(Line_search, Min):
 
 		# rho k.
 		if dot_yk_sk == 0:
-			raise NameError, "The BFGS matrix is indefinite.  This should not occur."
+			self.warning = "The BFGS matrix is indefinite.  This should not occur."
 			rk = 1e99
 		else:
 			rk = 1.0 / dot_yk_sk

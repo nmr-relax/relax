@@ -4,7 +4,7 @@ from re import match
 
 from bfgs import Bfgs
 from newton import Newton
-from generic import Trust_region, Min
+from base_classes import Trust_region, Min
 
 
 def dogleg(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-25, grad_tol=None, maxiter=1e6, delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16, full_output=0, print_flag=0, print_prefix=""):
@@ -100,6 +100,17 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 		# Set the convergence test function.
 		self.setup_conv_tests()
 
+		# Type specific functions.
+		if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
+			self.setup_bfgs()
+			self.specific_update = self.update_bfgs
+			self.hessian_update = self.hessian_update_bfgs
+			self.d2fk = inverse(self.Hk)
+		elif match('[Nn]ewton', self.hessian_type):
+			self.setup_newton()
+			self.specific_update = self.update_newton
+			self.hessian_update = self.hessian_update_newton
+
 
 	def dogleg(self):
 		"The dogleg algorithm."
@@ -150,7 +161,7 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 		sk = self.xk_new - self.xk
 		yk = self.dfk_new - self.dfk
 		if dot(yk, sk) == 0:
-			raise NameError, "The BFGS matrix is indefinite.  This should not occur."
+			self.warning = "The BFGS matrix is indefinite.  This should not occur."
 			rk = 1e99
 		else:
 			rk = 1.0 / dot(yk, sk)
@@ -189,23 +200,6 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 			print self.print_prefix + "   xk_new: " + `self.xk_new`
 			print self.print_prefix + "   fk:     " + `self.fk`
 			print self.print_prefix + "   fk_new: " + `self.fk_new`
-
-
-	def setup(self):
-		"""Setup function.
-
-		"""
-
-		# Type specific functions.
-		if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
-			self.setup_bfgs()
-			self.specific_update = self.update_bfgs
-			self.hessian_update = self.hessian_update_bfgs
-			self.d2fk = inverse(self.Hk)
-		elif match('[Nn]ewton', self.hessian_type):
-			self.setup_newton()
-			self.specific_update = self.update_newton
-			self.hessian_update = self.hessian_update_newton
 
 
 	def update(self):

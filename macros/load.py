@@ -1,9 +1,24 @@
-from re import match
-
 from generic_functions import generic_functions
 
 
-class load(generic_functions):
+class load_macro:
+	def __init__(self, relax):
+		"""The class accessible to the interpreter.
+
+		The purpose of this class is to hide the variables and functions inside the
+		namespace of 'load_main', except for those required for interactive use, from the
+		user.
+		"""
+
+		# Load the parent class into this namespace.
+		x = parent(relax)
+
+		# Interactive functions.
+		self.relax_data = x.relax_data
+		self.sequence = x.sequence
+
+
+class parent(generic_functions):
 	def __init__(self, relax):
 		"Class containing macros for loading data."
 
