@@ -122,7 +122,7 @@ class levenberg_marquardt(generic_minimise):
 		self.df = self.dfunc()
 
 		# Initial value of lambda (the Levenberg-Marquardt fudge factor).
-		self.l = 1.0
+		self.l = 0.001
 		self.n = len(self.xk)
 
 
@@ -137,7 +137,7 @@ class levenberg_marquardt(generic_minimise):
 			if abs(self.fk - self.fk_new) < self.func_tol:
 				return 1
 			if self.l >= 1e-99:
-				self.l = self.l / 10.0
+				self.l = self.l * 0.1
 		return 0
 
 
