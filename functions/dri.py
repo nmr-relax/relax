@@ -38,27 +38,27 @@ def dri(data, create_dri, get_dr1):
 	"""
 
 	# Loop over the relaxation values and modify the NOE gradients.
-	for k in range(data.num_ri):
-		if create_dri[k]:
-			create_dri[k](data, k, data.remap_table[k], get_dr1)
+	for i in range(data.num_ri):
+		if create_dri[i]:
+			create_dri[i](data, i, data.remap_table[i], get_dr1)
 
 
-def calc_dnoe(data, k, frq_num, get_dr1):
+def calc_dnoe(data, i, frq_num, get_dr1):
 	"""Calculate the derivative of the NOE value.
 
 	Half this code needs to be shifted into the function initialisation code.
 	"""
 
 	# Calculate the NOE derivative.
-	for i in range(len(data.params)):
-		data.dr1[i, k] = get_dr1[k](data, k, frq_num, i)
-		if data.r1[k] == 0.0:
+	for k in range(len(data.params)):
+		data.dr1[i, k] = get_dr1[i](data, i, frq_num, k)
+		if data.r1[i] == 0.0:
 			data.dri[i, k] = 1e99
 		else:
-			data.dri[i, k] = data.g_ratio * (1.0 / data.r1[k]**2) * (data.r1[k] * data.dri_prime[i, k] - data.ri_prime[k] * data.dr1[i, k])
+			data.dri[i, k] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[i, k] - data.ri_prime[i] * data.dr1[i, k])
 
 
-def calc_dr1(data, k, frq_num, i):
+def calc_dr1(data, i, frq_num, k):
 	"""Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
 	"""
@@ -66,7 +66,7 @@ def calc_dr1(data, k, frq_num, i):
 	raise NameError, "Incomplete code, need to calculate the dr1 value!"
 
 
-def extract_dr1(data, k, frq_num, i):
+def extract_dr1(data, i, frq_num, k):
 	"Get the dR1 value from data.dri_prime"
 
-	return data.dri_prime[i, data.noe_r1_table[k]]
+	return data.dri_prime[data.noe_r1_table[i], k]

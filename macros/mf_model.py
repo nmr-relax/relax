@@ -72,6 +72,7 @@ class mf_model(generic_functions):
 		"""Macro for the selection of a preset model-free model.
 
 		The preset models are:
+			'm0'	=> []
 			'm1'	=> [S2]
 			'm2'	=> [S2, te]
 			'm3'	=> [S2, Rex]
@@ -125,7 +126,10 @@ class mf_model(generic_functions):
 		if not self.sequence_data_test(): return
 
 		# Block 1.
-		if model == 'm1':
+		if model == 'm0':
+			self.equation = 'mf_orig'
+			self.types = []
+		elif model == 'm1':
 			self.equation = 'mf_orig'
 			self.types = ['S2']
 		elif model == 'm2':

@@ -297,7 +297,7 @@ class min:
 
 				# Bond length.
 				elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
-					self.min_options.append([self.inc[i], 1.0 * 1e-10, 1.1 * 1e-10])
+					self.min_options.append([self.inc[i], 1.0 * 1e-10, 1.05 * 1e-10])
 
 				# CSA.
 				elif match('CSA', self.relax.data.param_types[self.model_index][i]):
