@@ -35,12 +35,14 @@ class generic_trust_region:
 		else:
 			self.rho = act_red / pred_red
 
+		# Calculate the Euclidean norm of pk.
+		self.norm_pk = sqrt(dot(self.pk, self.pk))
+
 		if self.print_flag == 2:
 			print "Actual reduction: " + `act_red`
 			print "Predicted reduction: " + `pred_red`
-
-		# Calculate the Euclidean norm of pk.
-		self.norm_pk = sqrt(dot(self.pk, self.pk))
+			print "rho: " + `self.rho`
+			print "||pk||: " + `self.norm_pk`
 
 		# Rho is close to zero or negative, therefore the trust region is shrunk.
 		if self.rho < 0.25 or pred_red < 0.0:
