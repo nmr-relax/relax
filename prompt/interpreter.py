@@ -340,6 +340,8 @@ def interact_script(self, intro, local, script_file, quit):
             self.showtraceback()
         else:
             sys.stdout.write(instance.__str__())
+    except:
+        raise
 
     sys.stdout.write("\n")
 

@@ -21,6 +21,8 @@
 ###############################################################################
 
 
+from generic_fns.thread import RelaxThread
+
 from math import pi
 from LinearAlgebra import inverse
 from Numeric import Float64, array, matrixmultiply, zeros
@@ -101,6 +103,51 @@ class Minimise:
 
         # Monte Carlo simulation minimisation.
         if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
+            # Initialise the job and results queues and finished hosts array.
+            job_queue = Queue()
+            results_queue = Queue()
+            finished_thread = []
+
+            # Fill the job queue.
+            for i in xrange(self.relax.data.sim_number[run]):
+                job_queue.put(i)
+
+            # Loop over all threads.
+            for i in xrange(len(self.relax.data.thread.host_data)):
+                # Fill in the finished thread array with zeros.
+                finished_thread.append(0)
+
+                # Start thread i.
+                RelaxMinimiseThread(self.relax, job_queue, results_queue).start()
+
+            # The main loop.
+            terminated = 0
+            num_fin = 0
+            while not terminated:
+                # Get the next results off the results_queue.
+                job_index = results_queue.get()
+                num_fin = num_fin + 1
+
+                # Test which host job has finished.
+                finished_thread[job_index] = 1
+
+                # Print the results.
+                print "\n\nThread " + `job_index` + "\n"
+                for line in results:
+                    print line
+
+                # Add all good hosts to self.relax.data.thread
+                if not fail:
+                    self.add_host(self.host_data[job_index])
+
+                # All jobs have finished.
+                if num_fin == self.relax.data.sim_number[run]:
+                    # Add None to the job_queue to signal the threads to finish.
+                    job_queue.put(None)
+
+                    # Set the terminate flag to 1 to stop this main loop.
+                    terminated = 1
+
             # Loop over the simulations.
             for i in xrange(self.relax.data.sim_number[run]):
                 if print_flag:

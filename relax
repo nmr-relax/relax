@@ -127,7 +127,7 @@ class Relax:
         parser.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
         parser.add_option('-t', '--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (a user should not invoke this mode)')
-        parser.add_option('-l', '--log', action='store', type='string', dest='log', default='log', help='log relax output, not implemented yet')
+        parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output, not implemented yet')
 
         # Parse the options.
         (options, args) = parser.parse_args()
@@ -135,6 +135,10 @@ class Relax:
         # Debugging flag.
         if options.debug:
             __builtin__.Debug = 1
+
+        # Logging.
+        if options.log:
+            parser.error("not implemented yet")
 
         # Number of positional arguements should only be 0 or 1.  1 should be the script file.
         if len(args) > 1:

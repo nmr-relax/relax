@@ -61,7 +61,7 @@ class Threading:
                 user = None
 
             # Host login
-            if user:
+            if host_name != 'localhost' and user:
                 login = user + "@" + host_name
             else:
                 login = host_name
@@ -95,57 +95,50 @@ class Threading:
         # Threading.
         ############
 
-        # Initialise the job and results queues and finished hosts array.
+        # Initialise the job and results queues.
         host_queue = Queue()
         results_queue = Queue()
-        finished_hosts = []
 
-        # Fill the job queue and finished hosts array.
+        # Fill the job queue.
         for i in xrange(num_hosts):
-            host_queue.put(self.host_data[i])
-            finished_hosts.append(0)
+            host_queue.put((self.host_data[i], i))
 
         # Start threads for each host where each thread will run on the local machine.
-        for i in xrange(2):
+        for i in xrange(num_hosts):
             RelaxHostThread(self.relax, host_queue, results_queue).start()
 
-        # Determine if all results have been collected.
+        # The main loop.
+        terminated = 0
         num_fin = 0
-        while num_fin <= num_hosts:
-            print "Inside main loop."
+        while not terminated:
             # Get the next results off the results_queue.
-            results, host_data, fail = results_queue.get()
-
-            # Test which host job has finished.
-            for i in xrange(num_hosts):
-                if self.host_data[i] == host_data:
-                    finished_hosts[i] == 1
-                    host = i
+            results, job_index, fail = results_queue.get()
+            num_fin = num_fin + 1
 
             # Print the results.
-            print "\n\nHost " + `host` + "\n"
+            print "\n\nThread " + `job_index` + "\n"
             for line in results:
                 print line
 
-            # Add all good hosts to self.relax.data.
+            # Add all good hosts to self.relax.data.thread
             if not fail:
-                pass
+                # Status.
+                if not self.relax.data.thread.status:
+                    self.relax.data.thread.status = 1
 
-            num_fin = num_fin + 1
+                # Details.
+                self.relax.data.thread.host_data.append(self.host_data[job_index])
 
             # All jobs have finished.
-            all_finished = 1
-            for i in xrange(num_hosts):
-                if finished_hosts[i] == 0:
-                    all_finished = 0
-            print all_finished
-            if all_finished:
-                print "\n\n\nAll finished.\n\n\n"""
-                # Add None to the host_queue to signal to the threads to finish.
+            if num_fin == num_hosts:
+                # Add None to the host_queue to signal the threads to finish.
                 host_queue.put(None)
 
                 # Set the terminate flag to 1 to stop this main loop.
                 terminated = 1
+
+        # Final print out.
+        print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_data)`
 
 
 class RelaxThread(Thread):
@@ -174,16 +167,19 @@ class RelaxHostThread(RelaxThread):
 
         # Run until all results are returned.
         while 1:
-            print "Inside RelaxHostThread.run loop."
             # Get the data for the next queued job.
-            host_data = self.job_queue.get()
-            print "Host data: " + `host_data`
+            data = self.job_queue.get()
 
-            # Quit if host_data is None.  When this is the case, all jobs have been completed.
-            if host_data == None:
+            # Quit if the queue data is None.  None is the signal for when all jobs have been completed.
+            if data == None:
+                # Place None back into the job queue so that all the other waiting threads will terminate.
+                self.job_queue.put(None)
+
+                # Thread termination.
                 break
 
-            # Expand the host_data structure.
+            # Expand the data structures.
+            host_data, job_index = data
             host_name, user, login, prog_path, swd, priority = host_data
 
             # Host failure flag.
@@ -199,7 +195,7 @@ class RelaxHostThread(RelaxThread):
             self.results.append("Priority:          " + `priority`)
 
             # Test the SSH connection.
-            if not fail and not self.test_ssh(login):
+            if host_name != 'localhost' and not fail and not self.test_ssh(login):
                 fail = 1
 
             # Test the working directory.
@@ -215,20 +211,30 @@ class RelaxHostThread(RelaxThread):
                 self.results.append("Host OK.")
 
             # Place the results in the results queue.
-            self.results_queue.put((self.results, host_data, fail))
+            self.results_queue.put((self.results, job_index, fail))
 
 
     def test_relax(self, login, prog_path):
         """Function for testing if the program path is valid and that relax can execute."""
 
         # Test command.
-        test_cmd = "ssh %s %s -t" % (login, prog_path)
+        if login == 'localhost':
+            test_cmd = "%s --test" % prog_path
+        else:
+            test_cmd = "ssh %s %s --test" % (login, prog_path)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
 
-        # Error. 
+        # Stdout and stderr.
         err = child_stderr.readlines()
+
+        # Close all pipes.
+        child_stdin.close()
+        child_stdout.close()
+        child_stderr.close()
+
+        # Error. 
         if len(err):
             # Print out.
             self.results.append("Cannot execute relax on %s using the program path %s" % (login, `prog_path`))
@@ -252,8 +258,14 @@ class RelaxHostThread(RelaxThread):
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
 
-        # Stdout.
+        # Stdout and stderr.
         out = child_stdout.readlines()
+        err = child_stderr.readlines()
+
+        # Close all pipes.
+        child_stdin.close()
+        child_stdout.close()
+        child_stderr.close()
 
         # Test if the string 'relax, ssh ok' is in child_stdout.
         for line in out:
@@ -261,7 +273,6 @@ class RelaxHostThread(RelaxThread):
                 return 1
 
         # Error.
-        err = child_stderr.readlines()
         if len(err):
             # Print out.
             self.results.append("Cannot establish a SSH connection to %s." % login)
@@ -284,13 +295,23 @@ class RelaxHostThread(RelaxThread):
         """Function for testing if the working directory on the host machine exist."""
 
         # Test command.
-        test_cmd = "ssh %s ls %s" % (login, swd)
+        if login == 'localhost':
+            test_cmd = "ls %s" % swd
+        else:
+            test_cmd = "ssh %s ls %s" % (login, swd)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
 
-        # Error. 
+        # Stderr.
         err = child_stderr.readlines()
+
+        # Close all pipes.
+        child_stdin.close()
+        child_stdout.close()
+        child_stderr.close()
+
+        # Error. 
         if len(err):
             # Print out.
             self.results.append("Cannot find the working directory %s on %s." % (swd, login))

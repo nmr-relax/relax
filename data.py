@@ -62,6 +62,11 @@ class Data:
         self.h_count = {}
         self.warning = {}
 
+        # Host data for threading.
+        self.thread = Element()
+        self.thread.status = 0
+        self.thread.host_data = []
+
 
     def __repr__(self):
         text = "The data class containing all permanent program data.\n"
