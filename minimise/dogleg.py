@@ -1,12 +1,14 @@
 from LinearAlgebra import inverse
-from Numeric import dot, matrixmultiply, sqrt
-from trust_region import trust_region
+from Numeric import dot, matrixmultiply, outerproduct, sqrt
+from re import match
 
+from bfgs import bfgs
+from newton import newton
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class dogleg(generic_trust_region, generic_minimise):
+class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, hessian_type=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e5, delta0=1.0, eta=0.2):
 		"""Dogleg trust-region algorithm.
 
@@ -53,6 +55,12 @@ class dogleg(generic_trust_region, generic_minimise):
 		self.delta = delta0
 		self.eta = eta
 
+		# Matrix type.
+		if hessian_type == None:
+			self.hessian_type = 'bfgs'
+		else:
+			self.hessian_type = hessian_type
+
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
@@ -61,29 +69,69 @@ class dogleg(generic_trust_region, generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
-		# Initial values before the first iteration.
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
-		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
 
-		# Minimisation.
-		self.minimise = self.generic_minimise
+	def get_pB_bfgs(self):
+		"Get the newton full step."
+
+		return -matrixmultiply(self.Hk, self.dfk)
 
 
-	def backup_current_data(self):
-		"Function to backup the current data into fk_last."
+	def get_pB_newton(self):
+		"Get the newton full step."
 
-		self.fk_last = self.fk
+		return -matrixmultiply(inverse(self.d2fk), self.dfk)
 
 
-	def calc_pk(self):
-		"Find the Cauchy point."
+	def hessian_update(self):
+		"BFGS hessian update."
 
-		print "d2fk: " + `self.d2fk`
+		try:
+			self.Hk
+		except AttributeError:
+			return
+
+		# BFGS matrix update.
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
+		sk = self.xk_new - self.xk
+		yk = self.dfk_new - self.dfk
+		if dot(yk, sk) == 0:
+			raise NameError, "The BFGS matrix is indefinite.  This should not occur."
+			rk = 1e99
+		else:
+			rk = 1.0 / dot(yk, sk)
+
+		if self.k == 0:
+			self.Hk = dot(yk, sk) / dot(yk, yk) * self.I
+
+		a = self.I - rk*outerproduct(sk, yk)
+		b = self.I - rk*outerproduct(yk, sk)
+		c = rk*outerproduct(sk, sk)
+		matrix = matrixmultiply(matrixmultiply(a, self.Hk), b) + c
+		self.Hk = matrix
+
+
+	def new_param_func(self):
+		"Find the dogleg minimiser."
+
 		# Calculate the full step and its norm.
-		pB = -matrixmultiply(inverse(self.d2fk), self.dfk)
+		pB = self.get_pB()
 		norm_pB = sqrt(dot(pB, pB))
+
+		# Debugging.
+		try:
+			temp = dot(pB, dot(self.Hk, pB))
+		except AttributeError:
+			temp = dot(pB, dot(inverse(self.d2fk), pB))
+		if temp <= 0.0:
+			self.warning = "The model is not convex, dogleg minimisation has failed."
+			self.xk_new = self.xk * 1.0
+			self.fk_new = self.fk
+			return
 		if self.print_flag == 2:
+			print "xk: " + `self.xk`
+			print "fk: " + `self.fk`
+			print "dfk: " + `self.dfk`
+			print "d2fk: " + `self.d2fk`
 			print "The full step (pB) is: " + `pB`
 
 		# Test if the full step is within the trust region.
@@ -91,43 +139,81 @@ class dogleg(generic_trust_region, generic_minimise):
 			if self.print_flag == 2:
 				print "Taking the full step"
 			self.pk = pB
-			return
-		if self.print_flag == 2:
-			print "Not taking the full step"
-
-		# Calculate pU.
-		curv = dot(self.dfk, dot(self.d2fk, self.dfk))
-		norm_g = sqrt(dot(self.dfk, self.dfk))
-		pU = - norm_g / curv * self.dfk
-		if self.print_flag == 2:
-			print "pU: " + `pU`
-			print "\tFunc value at xk is: "+ `apply(self.func, (self.xk,)+self.args)`
-			print "\tFunc value at pB is: "+ `apply(self.func, (self.xk + pB,)+self.args)`
-			print "\tFunc value at pU is: "+ `apply(self.func, (self.xk + pU,)+self.args)`
-
-		# Find the solution to the scalar quadratic equation.
-		pB_pU = pB - pU
-		norm_pB_pU_sqrd = dot(pB_pU, pB_pU)
-		pUT_pB_pU = dot(pU, pB_pU)
-		tau = - pUT_pB_pU + sqrt(pUT_pB_pU**2 - norm_pB_pU_sqrd * (dot(pU, pU) - self.delta**2))
-		tau = tau / norm_pB_pU_sqrd + 1.0
-		if self.print_flag == 2:
-			print "tau: " + `tau`
-
-		# Decide on which part of the trajectory to take.
-		if tau >= 0 and tau <= 1:
-			self.pk = tau * pU
-		elif tau >= 1 and tau <= 2:
-			self.pk = pU + (tau - 1.0)* pB_pU
 		else:
-			raise NameError, "Invalid value of tau."
+			if self.print_flag == 2:
+				print "Not taking the full step"
+
+			# Calculate pU.
+			curv = dot(self.dfk, dot(self.d2fk, self.dfk))
+			norm_g = sqrt(dot(self.dfk, self.dfk))
+			pU = - norm_g / curv * self.dfk
+			if self.print_flag == 2:
+				print "pU: " + `pU`
+				print "\tFunc value at xk is: "+ `apply(self.func, (self.xk,)+self.args)`
+				print "\tFunc value at pB is: "+ `apply(self.func, (self.xk + pB,)+self.args)`
+				print "\tFunc value at pU is: "+ `apply(self.func, (self.xk + pU,)+self.args)`
+
+			# Find the solution to the scalar quadratic equation.
+			pB_pU = pB - pU
+			norm_pB_pU_sqrd = dot(pB_pU, pB_pU)
+			pUT_pB_pU = dot(pU, pB_pU)
+			fact = pUT_pB_pU**2 - norm_pB_pU_sqrd * (dot(pU, pU) - self.delta**2)
+			if fact < 0.0:
+				self.warning = "No solution to the quadratic equation (minimisation failure)."
+				return
+			else:
+				tau = - pUT_pB_pU + sqrt(fact)
+			tau = tau / norm_pB_pU_sqrd + 1.0
+			if self.print_flag == 2:
+				print "tau: " + `tau`
+
+			# Decide on which part of the trajectory to take.
+			if tau >= 0 and tau <= 1:
+				self.pk = tau * pU
+			elif tau >= 1 and tau <= 2:
+				self.pk = pU + (tau - 1.0)* pB_pU
+			else:
+				raise NameError, "Invalid value of tau: " + `tau`
+
+		# Find the new parameter vector and function value at that point.
+		self.xk_new = self.xk + self.pk
+		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 
 
-	def update_data(self):
-		"Function to update the function value, gradient vector, and hessian matrix"
+	def setup(self):
+		"""Setup function.
 
-		self.delta = self.delta_new
-		self.xk = self.xk_new * 1.0
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
-		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
+		"""
+
+		# Type specific functions.
+		if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
+			self.setup_bfgs()
+			self.specific_update = self.update_bfgs
+			self.get_pB = self.get_pB_bfgs
+			self.d2fk = inverse(self.Hk)
+		elif match('[Nn]ewton', self.hessian_type):
+			self.setup_newton()
+			self.specific_update = self.update_newton
+			self.get_pB = self.get_pB_newton
+		else:
+			raise NameError, "Matrix type " + `self.hessian_type` + " invalid for dogleg minimisation."
+
+
+	def update(self):
+		"""Update function.
+
+		Run the trust region update.  If this update decides to shift xk+1 to xk, then run
+		the BFGS or Newton updates.
+		"""
+
+		self.trust_region_update()
+		if self.k == 0 and self.shift_flag == 0:
+			self.hessian_update()
+
+		if self.shift_flag:
+			self.specific_update()
+
+		try:
+			self.d2fk = inverse(self.Hk)
+		except AttributeError:
+			pass

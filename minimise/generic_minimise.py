@@ -1,89 +1,50 @@
 class generic_minimise:
 	def __init__(self):
-		"""Generic code for iterative minimisers.
+		"""Base class containing the main minimisation iterative loop algorithm.
 
-
-		Function options
-		~~~~~~~~~~~~~~~~
-
-		func			- The function to minimise.
-		dfunc			- The function which returns the gradient vector.
-		d2func			- The function which returns the hessian matrix or approximation.
-
-		f_args			- The tuple of arguments to supply to the function func.
-		df_args			- The tuple of arguments to supply to the function dfunc.
-		d2f_args		- The tuple of arguments to supply to the function d2func.
-
-		xk			- The parameter vector which on input is the initial values, x0.
-		fk			- The function value which on input corresponds to x0.
-		dfk			- The gradient vector which on input corresponds to x0.
-		d2fk			- The hessian matrix or approximation which on input corresponds to x0.
-
-		xk_new			- The parameter vector for the next iteration which on input can be anything.
-		fk_new			- The function value for the next iteration which on input can be anything.
-		dfk_new			- The gradient vector for the next iteration which on input can be anything.
-		d2fk_new		- The hessian matrix for the next iteration which on input can be anything.
-
-		func_tol		- The cutoff value used to terminate minimisation by comparison to the difference in function values between iterations.
-		maxiter			- The maximum number of iterations.
-		print_flag		- A flag specifying how much information should be printed to standard output during minimisation:
-
-		The print flag corresponds to:
-			0 - No output.
-			1 - Minimal output.
-			2 - Full output.
-
-
-		Returned objects
-		~~~~~~~~~~~~~~~~
-
-		The minimised parameter vector, function value at the minimum, number of iterations, and a warning flag are returned.
-		The warning flag corresponds to:
-			0 - Minimisation terminated successfully.
-			1 - Maximum number of iterations have been reached.
+		The algorithm is defined in the minimise function.
+		Also supplied are generic setup, convergence tests, and update functions.
 		"""
 
 
-	def generic_minimise(self):
-		"""Generic code for iterative minimisers.
+	def minimise(self):
+		"""Main minimisation iterative loop algorithm.
 
+		This algorithm is designed to be compatible with all iterative minimisers.  The
+		outline is:
+
+		k = 0
+		Setup function
+		while 1:
+			New parameter function
+			Convergence tests
+			Update function
+			k = k + 1
 		"""
 
 		# Start the iteration counter.
-		self.k = 1
-
-		# Debugging code.
+		self.k = 0
 		if self.print_flag:
-			print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
-			self.k2 = 1
+			self.k2 = 0
+
+		# Setup function.
+		self.setup()
 
 		# Iterate until the local minima is found.
 		while 1:
-			if self.print_flag == 2:
-				print "\n\n<<<Main iteration k=" + `self.k` + " >>>"
-
-			# Debugging code.
+			# Print out.
 			if self.print_flag:
 				if self.print_flag == 2:
+					print "\n\n<<<Main iteration k=" + `self.k` + " >>>"
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 				else:
-					if self.k2 == 101:
+					if self.k2 == 100:
 						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
-						self.k2 = 1
+						self.k2 = 0
 
+			# Get xk+1 (new parameter function).
 			try:
-				# Execute the function used to find the new parameters.
 				self.new_param_func()
-
-				# Make a backup of the current data.
-				self.backup_current_data()
-
-				# Update the data.
-				self.update_data()
-
-			except AttributeError:
-				"No need to backup or update the current data."
-				pass
 			except "LinearAlgebraError", message:
 				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
 				break
@@ -95,31 +56,60 @@ class generic_minimise:
 				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
 				break
 
-			# Test if maximum number of iterations have been reached.
+			# Test for warnings.
+			if self.warning != None:
+				break
+
+			# Maximum number of iteration test.
 			if self.k >= self.maxiter:
 				self.warning = "Maximum number of iterations reached"
 				break
 
-			# Tests.
-			if self.tests():
+			# Convergence test.
+			if self.converge_test():
 				break
 
-			# Update data for the next iteration.
-			self.k = self.k + 1
+			# Update function.
+			self.update()
 
-			# Debugging code.
+			# Iteration counter update.
+			self.k = self.k + 1
 			if self.print_flag:
 				self.k2 = self.k2 + 1
 
 		if self.full_output:
-			return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
+			return self.xk_new, self.fk_new, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
 		else:
-			return self.xk
+			return self.xk_new
 
 
-	def tests(self):
-		"Test for the local minimum."
+	def setup(self):
+		"""Default base class setup function.
 
-		if abs(self.fk_last - self.fk) <= self.func_tol:
+		This function does nothing.
+		"""
+
+		pass
+
+
+	def converge_test(self):
+		"""Default base class convergence test function.
+
+		Test if the minimum function tolerance between fk and fk+1 has been reached.
+		"""
+
+		# Test the function tolerance.
+		if abs(self.fk_new - self.fk) <= self.func_tol:
 			self.warning = "Function tol reached."
 			return 1
+
+
+	def update(self):
+		"""Default base class update function.
+
+		xk+1 is shifted to xk
+		fk+1 is shifted to fk
+		"""
+
+		self.xk = self.xk_new * 1.0
+		self.fk = self.fk_new

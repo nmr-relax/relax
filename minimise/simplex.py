@@ -25,23 +25,12 @@ class simplex(generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
-		# Initialise some constants.
-		self.n = len(self.xk)
-		self.m = self.n + 1
-
-		# Initialise the simplex.
-		self.create_simplex()
-		self.order_simplex()
-
-		self.xk = self.simplex[0]
-		self.fk = self.simplex_vals[0]
-
-		# Minimisation.
-		self.minimise = self.generic_minimise
-
 
 	def new_param_func(self):
-		"Simplex movement."
+		"""The new parameter function.
+		
+		Simplex movement.
+		"""
 
 		self.reflect_flag = 1
 		self.shrink_flag = 0
@@ -64,8 +53,8 @@ class simplex(generic_minimise):
 
 		self.order_simplex()
 
-		self.xk = self.simplex[0]
-		self.fk = self.simplex_vals[0]
+		self.xk_new = self.simplex[0]
+		self.fk_new = self.simplex_vals[0]
 
 
 	def contract(self):
@@ -90,27 +79,15 @@ class simplex(generic_minimise):
 			self.shrink_flag = 1
 
 
-	def create_simplex(self):
-		"""Function to create the initial simplex and calculate the vertex function values.
+	def converge_test(self):
+		"""Convergence test.
 
-		self.xk will become the first point of the simplex.
+		Finish minimising when the function difference between the highest and lowest
+		simplex vertecies is insignificant.
 		"""
 
-		self.simplex = zeros((self.m, self.n), Float64)
-		self.simplex_vals = zeros(self.m, Float64)
-
-		self.simplex[0] = self.xk
-		self.simplex_vals[0], self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-
-		for i in range(self.n):
-			j = i + 1
-			self.simplex[j] = self.xk
-			if self.xk[i] == 0.0:
-				self.simplex[j, i] = 2.5 * 1e-4
-			else:
-				self.simplex[j, i] = 1.05 * self.simplex[j, i]
-			self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
-
+		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
+			return 1
 
 
 	def extend(self):
@@ -137,6 +114,40 @@ class simplex(generic_minimise):
 		self.reflect_val, self.f_count = apply(self.func, (self.reflect_vector,)+self.args), self.f_count + 1
 
 
+	def setup(self):
+		"""Setup function.
+
+		This function initialises some constants and creates the initial simplex.
+		"""
+
+		# Initialise some constants.
+		self.n = len(self.xk)
+		self.m = self.n + 1
+
+		# Create the simplex
+		self.simplex = zeros((self.m, self.n), Float64)
+		self.simplex_vals = zeros(self.m, Float64)
+
+		self.simplex[0] = self.xk
+		self.simplex_vals[0], self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+
+		for i in range(self.n):
+			j = i + 1
+			self.simplex[j] = self.xk
+			if self.xk[i] == 0.0:
+				self.simplex[j, i] = 2.5 * 1e-4
+			else:
+				self.simplex[j, i] = 1.05 * self.simplex[j, i]
+			self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
+
+		# Order the simplex.
+		self.order_simplex()
+
+		# Set xk and fk as the vertex of the simplex with the lowest function value.
+		self.xk = self.simplex[0]
+		self.fk = self.simplex_vals[0]
+
+
 	def shrink(self):
 		"Shrinking step."
 
@@ -144,9 +155,3 @@ class simplex(generic_minimise):
 			j = i + 1
 			self.simplex[j] = 0.5 * (self.simplex[0] + self.simplex[j])
 			self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
-
-
-	def tests(self):
-		# Finish minimising when the function difference is insignificant.
-		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
-			return 1

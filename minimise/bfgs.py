@@ -1,4 +1,4 @@
-from Numeric import Float64, dot, identity, matrixmultiply, outerproduct
+from Numeric import Float64, dot, identity, matrixmultiply, outerproduct, sum
 
 from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
@@ -37,58 +37,73 @@ class bfgs(generic_line_search, generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
+		# Set the setup and update functions.
+		self.setup = self.setup_bfgs
+		self.update = self.update_bfgs
+
+
+	def new_param_func(self):
+		"""The new parameter function.
+
+		Find the search direction, do a line search, and get xk+1 and fk+1.
+		"""
+
+		# Calculate the BFGS direction.
+		self.pk = -matrixmultiply(self.Hk, self.dfk)
+
+		# Take a steepest descent step if self.pk is not a descent dir.
+		if dot(self.dfk, self.pk) >= 0.0:
+			print "Step: " + `self.k` + ".  Switching to a steepest descent step to avoid an ascent direction."
+			self.pk = -self.dfk
+
+		# Line search.
+		self.line_search()
+
+		# Find the new parameter vector and function value at that point.
+		self.xk_new = self.xk + self.alpha * self.pk
+		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+
+
+	def setup_bfgs(self):
+		"""Setup function.
+		
+		Create the identity matrix I and calculate the function, gradient and initial BFGS
+		inverse hessian matrix.
+		"""
+
 		# Set the Identity matrix I.
 		self.I = identity(len(self.xk), Float64)
 
 		# The initial BFGS function value, gradient vector, and BFGS approximation to the inverse hessian matrix.
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
-		self.d2fk = self.I * 1.0
-
-		# Minimisation.
-		self.minimise = self.generic_minimise
+		self.Hk = self.I * 1.0
 
 
-	def backup_current_data(self):
-		"Function to backup the current data into fk_last, xk_last, dfk_last, and d2fk_last."
-
-		self.fk_last = self.fk
-		self.xk_last = self.xk * 1.0
-		self.dfk_last = self.dfk * 1.0
-		self.d2fk_last = self.d2fk * 1.0
-
-
-	def dir(self):
-		"Calculate the BFGS direction."
-
-		self.pk = -matrixmultiply(self.d2fk, self.dfk)
-
-		# Take a steepest descent step if self.pk is not a descent dir.
-		if dot(self.dfk, self.pk) >= 0.0:
-			print "Step: " + `self.k` + ".  Switching to a steepest descent step to avoid an ascent direction."
-			#print "dfk: " + `self.dfk`
-			#print "d2fk: " + `self.d2fk`
-			self.pk = -self.dfk
-
-
-	def update_data(self):
+	def update_bfgs(self):
 		"Function to update the function value, gradient vector, and the BFGS matrix"
 
-		self.xk = self.xk_new * 1.0
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 		# BFGS matrix update.
-		sk = self.xk - self.xk_last
-		yk = self.dfk - self.dfk_last
+		sk = self.xk_new - self.xk
+		yk = self.dfk_new - self.dfk
 		if dot(yk, sk) == 0:
-			#raise NameError, "The BFGS matrix is indefinite.  This should not occur."
+			raise NameError, "The BFGS matrix is indefinite.  This should not occur."
 			rk = 1e99
 		else:
 			rk = 1.0 / dot(yk, sk)
 
+		if self.k == 0:
+			self.Hk = dot(yk, sk) / dot(yk, yk) * self.I
+
 		a = self.I - rk*outerproduct(sk, yk)
 		b = self.I - rk*outerproduct(yk, sk)
 		c = rk*outerproduct(sk, sk)
-		matrix = matrixmultiply(matrixmultiply(a, self.d2fk), b) + c
-		self.d2fk = matrix
+		matrix = matrixmultiply(matrixmultiply(a, self.Hk), b) + c
+		self.Hk = matrix
+
+		# Shift xk+1 data to xk.
+		self.xk = self.xk_new * 1.0
+		self.fk = self.fk_new
+		self.dfk = self.dfk_new * 1.0

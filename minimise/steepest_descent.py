@@ -37,36 +37,49 @@ class steepest_descent(generic_line_search, generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
-		# The initial function value and gradient vector.
+
+	def new_param_func(self):
+		"""The new parameter function.
+
+		Find the search direction, do a line search, and get xk+1 and fk+1.
+		"""
+
+		# Calculate the steepest descent direction.
+		self.pk = -self.dfk
+
+		# Update a0 using information about the last iteration.
+		try:
+			self.a0 = self.alpha * dot(self.dfk_last, -self.dfk_last) / dot(self.dfk, -self.dfk)
+		except AttributeError:
+			"First iteration."
+			pass
+
+		# Line search.
+		self.line_search()
+
+		# Find the new parameter vector and function value at that point.
+		self.xk_new = self.xk + self.alpha * self.pk
+		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+
+
+	def setup(self):
+		"""Setup function.
+
+		The function value fk and gradient vector gk (dfk) are calculated.
+		"""
+
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 
-		# Minimisation.
-		self.minimise = self.generic_minimise
 
+	def update(self):
+		"Function to update the function value, gradient vector, and hessian matrix"
 
-	def backup_current_data(self):
-		"Function to backup the current data dfk into dfk_last."
-
+		# Store old data.
 		self.fk_last = self.fk
 		self.dfk_last = self.dfk * 1.0
 
-
-	def dir(self):
-		"Return the steepest descent direction."
-
-		self.pk = -self.dfk
-
-
-	def get_a0(self):
-		"Update a0 using information about the last iteration."
-
-		self.a0 = self.alpha * dot(self.dfk_last, -self.dfk_last) / dot(self.dfk, -self.dfk)
-
-
-	def update_data(self):
-		"Function to update the function value, gradient vector, and hessian matrix"
-
+		# Shift k+1 data to k.
 		self.xk = self.xk_new * 1.0
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+		self.fk = self.fk_new
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1

@@ -1,5 +1,5 @@
 from Numeric import dot, sqrt
-from trust_region import trust_region
+#from trust_region import trust_region
 
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
@@ -47,22 +47,8 @@ class cauchy_point(generic_trust_region, generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
-		# Initial values before the first iteration.
-		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
-		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
 
-		# Minimisation.
-		self.minimise = self.generic_minimise
-
-
-	def backup_current_data(self):
-		"Function to backup the current data into fk_last."
-
-		self.fk_last = self.fk
-
-
-	def calc_pk(self):
+	def new_param_func(self):
 		"Find the Cauchy point."
 
 		# Calculate the curvature and norm.
@@ -82,12 +68,29 @@ class cauchy_point(generic_trust_region, generic_minimise):
 		# Cauchy point.
 		self.pk = - self.tau_k * self.delta * self.dfk / norm_dfk
 
+		# Find the new parameter vector and function value at that point.
+		self.xk_new = self.xk + self.pk
+		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 
-	def update_data(self):
-		"Function to update the function value, gradient vector, and hessian matrix"
 
-		self.delta = self.delta_new
-		self.xk = self.xk_new * 1.0
+	def setup(self):
+		"""Setup function.
+
+		"""
+
+		# Initial values before the first iteration.
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
+
+
+	def update(self):
+		"""Update function.
+		
+		Function to update the function value, gradient vector, and hessian matrix
+		"""
+
+		self.xk = self.xk_new * 1.0
+		self.fk = self.fk_new
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1

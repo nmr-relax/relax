@@ -49,24 +49,6 @@ class levenberg_marquardt(generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
-		# The initial chi-squared value, chi-squared gradient vector, and derivative function matrix.
-		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
-		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
-		self.df = self.dfunc()
-
-		# Initial value of lambda (the Levenberg-Marquardt fudge factor).
-		self.l = 1.0
-		self.n = len(self.xk)
-
-		# Minimisation.
-		self.minimise = self.generic_minimise
-
-
-	def backup_current_data(self):
-		"Function to backup the current data into fk_last."
-
-		self.fk_last = self.fk
-
 
 	def create_lm_matrix(self):
 		"""Function to create the Levenberg-Marquardt matrix.
@@ -118,32 +100,48 @@ class levenberg_marquardt(generic_minimise):
 		self.create_lm_matrix()
 
 		# Solve the Levenberg-Marquardt equation to get the vector of function parameter changes.
-		self.param_change = solve_linear_equations(self.lm_matrix, self.dfk)
+		self.pk = solve_linear_equations(self.lm_matrix, self.dfk)
 
-		# Add the current parameter vector to the parameter change vector to find the new parameter vector.
-		self.xk_new = zeros(self.n, Float64)
-		self.xk_new = self.xk + self.param_change
+		# Find the new parameter vector and function value at that point.
+		self.xk_new = self.xk + self.pk
+		self.fk_new, self.f_count = apply(self.chi2_func, (self.xk_new,)+self.args), self.f_count + 1
 
 
-	def tests(self):
-		"Levenberg-Marquardt tests."
+	def setup(self):
+		"""Setup function.
 
-		if self.fk > self.fk_last:
+		Calculate the initial data required for Levenberg-Marquardt minimisation.
+		"""
+
+		# The initial chi-squared value, chi-squared gradient vector, and derivative function matrix.
+		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
+		self.df = self.dfunc()
+
+		# Initial value of lambda (the Levenberg-Marquardt fudge factor).
+		self.l = 1.0
+		self.n = len(self.xk)
+
+
+	def converge_test(self):
+		"Levenberg-Marquardt convergence test."
+
+		if self.fk_new > self.fk:
 			if self.l <= 1e99:
 				self.l = self.l * 10.0
 		else:
 			# Finish minimising when the chi-squared difference is insignificant.
-			if abs(self.fk_last - self.fk) < self.func_tol:
+			if abs(self.fk - self.fk_new) < self.func_tol:
 				return 1
 			if self.l >= 1e-99:
 				self.l = self.l / 10.0
 		return 0
 
 
-	def update_data(self):
+	def update(self):
 		"Function to update the chi-squared value, chi-squared gradient vector, and derivative function matrix."
 
 		self.xk = self.xk_new * 1.0
-		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
+		self.fk = self.fk_new
 		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
 		self.df = self.dfunc()
