@@ -2860,15 +2860,6 @@ class Model_free:
     def write_header(self, file, run):
         """Function for printing the header of the results file."""
 
-        # Get the frequency label.
-        label = None
-        for i in xrange(len(self.relax.data.res[run])):
-            if hasattr(self.relax.data.res[run][i], 'frq_labels'):
-                if label == None:
-                    label = self.relax.data.res[run][i].frq_labels[0]
-                elif label != self.relax.data.res[run][i].frq_labels[0]:
-                    raise RelaxError, "The frequency labels are not the same for all residues."
-
         # Residue number and name.
         file.write("%-5s" % "Num")
         file.write("%-6s" % "Name")
@@ -2885,7 +2876,7 @@ class Model_free:
         file.write("%-26s" % "tm_(ns)")
         file.write("%-26s" % "tf_(ps)")
         file.write("%-26s" % "te_or_ts_(ps)")
-        file.write("%-26s" % ("Rex_(" + label + "_MHz)"))
+        file.write("%-26s" % ("Rex_(1st_field)"))
         file.write("%-26s" % "Bond_length_(A)")
         file.write("%-26s" % "CSA_(ppm)")
 

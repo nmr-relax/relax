@@ -84,6 +84,20 @@ class Palmer:
         self.atom1 = atom1
         self.atom2 = atom2
 
+        # Number of field strengths and values.
+        self.num_frq = 0
+        self.frq = []
+        for i in xrange(len(self.relax.data.res[self.run])):
+            if hasattr(self.relax.data.res[self.run][i], 'num_frq'):
+                if self.relax.data.res[self.run][i].num_frq > self.num_frq:
+                    # Number of field strengths.
+                    self.num_frq = self.relax.data.res[self.run][i].num_frq
+
+                    # Field strength values.
+                    for frq in self.relax.data.res[self.run][i].frq:
+                        if frq not in self.frq:
+                            self.frq.append(frq)
+
         # The 'mfin' file.
         mfin = self.open_file('mfin')
         self.create_mfin(mfin)
@@ -129,13 +143,13 @@ class Palmer:
         written = 0
 
         # Loop over the frequencies.
-        for j in xrange(self.relax.data.res[self.run][i].num_frq):
+        for j in xrange(self.num_frq):
             # Set the data to None.
             r1, r2, noe = None, None, None
 
             # Loop over the relevant relaxation data.
             for k in xrange(self.relax.data.res[self.run][i].num_ri):
-                if self.relax.data.res[self.run][i].remap_table[k] != j:
+                if self.frq[j] != self.relax.data.res[self.run][i].frq[self.relax.data.res[self.run][i].remap_table[k]]:
                     continue
 
                 # Find the corresponding R1.
@@ -155,21 +169,21 @@ class Palmer:
 
             # Test if the R1 exists for this frequency, otherwise skip the data.
             if r1:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.relax.data.res[self.run][i].frq[j]*1e-6, r1, r1_err, 1))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.frq[j]*1e-6, r1, r1_err, 1))
             else:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.relax.data.res[self.run][i].frq[j]*1e-6, 0, 0, 0))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.frq[j]*1e-6, 0, 0, 0))
 
             # Test if the R2 exists for this frequency, otherwise skip the data.
             if r2:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.relax.data.res[self.run][i].frq[j]*1e-6, r2, r2_err, 1))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.frq[j]*1e-6, r2, r2_err, 1))
             else:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.relax.data.res[self.run][i].frq[j]*1e-6, 0, 0, 0))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.frq[j]*1e-6, 0, 0, 0))
 
             # Test if the NOE exists for this frequency, otherwise skip the data.
             if noe:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.relax.data.res[self.run][i].frq[j]*1e-6, noe, noe_err, 1))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.frq[j]*1e-6, noe, noe_err, 1))
             else:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.relax.data.res[self.run][i].frq[j]*1e-6, 0, 0, 0))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.frq[j]*1e-6, 0, 0, 0))
 
             written = 1
 
@@ -224,13 +238,10 @@ class Palmer:
         file.write("selection       " + selection + "\n\n")
         file.write("sim_algorithm   " + algorithm + "\n\n")
 
-        for i in xrange(len(self.relax.data.res[self.run])):
-            if hasattr(self.relax.data.res[self.run][i], 'num_frq'):
-                file.write("fields          " + `self.relax.data.res[self.run][i].num_frq`)
-                for frq in xrange(self.relax.data.res[self.run][i].num_frq):
-                    file.write("  " + `self.relax.data.res[self.run][i].frq[frq]*1e-6`)
-                file.write("\n")
-                break
+        file.write("fields          " + `self.num_frq`)
+        for frq in self.frq:
+            file.write("  " + `frq*1e-6`)
+        file.write("\n")
 
         # tm.
         file.write('%-7s' % 'tm')
@@ -437,7 +448,7 @@ class Palmer:
         else:
             test = spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
             if test:
-                raise RelaxProgError, 'Modelfree4'
+                raise RelaxProgFailError, 'Modelfree4'
 
         # Change back to the original directory.
         chdir('..')

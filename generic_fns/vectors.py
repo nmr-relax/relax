@@ -53,11 +53,11 @@ class Vectors:
             # Find the corresponding residue in the PDB.
             pdb_res = None
             for j in xrange(len(pdb_residues)):
-                if self.relax.data.res[run][i].name == pdb_residues[j].name and self.relax.data.res[run][i].num == pdb_residues[j].number:
+                if self.relax.data.res[run][i].num == pdb_residues[j].number:
                     pdb_res = pdb_residues[j]
                     break
             if pdb_res == None:
-                raise RelaxNoResError, (self.relax.data.res[run][i].num, self.relax.data.res[run][i].name)
+                raise RelaxNoResError, self.relax.data.res[run][i].num
 
             # Test if the proton atom exists for residue i.
             if not pdb_res.atoms.has_key(proton):

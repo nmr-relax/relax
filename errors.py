@@ -79,6 +79,10 @@ class RelaxErrors:
         def __init__(self, name):
             self.text = "The program " + `name` + " cannot be found."
 
+    class RelaxProgFailError(BaseError):
+        def __init__(self, name):
+            self.text = "Execution of the program " + name + " has failed."
+
 
     # PDB errors.
     #############
