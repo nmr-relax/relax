@@ -64,7 +64,7 @@ class Angles:
 
     def axial(self):
         """Function for calculating the angle alpha
-        
+
         The angle alpha is between the XH vector and the main axis of the axially symmetric
         diffusion tensor.
         """

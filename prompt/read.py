@@ -36,64 +36,6 @@ class Read:
         self.__relax_help__ = help.relax_class_help
 
 
-    def read_results(self, run=None, data_type=None, file='results', dir=None):
-        """Function for reading results from a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        data_type:  The type of data.
-
-        file:  The name of the file to read results from.
-
-        dir:  The directory where the file is located.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The name of the run can be any string.
-
-        The data_type argument specifies what type of data is to be read and must be one of the
-        following:
-            'mf' - model-free data.
-
-        If no directory name is given, the results file will be seached for in a directory named
-        after the run name.
-        """
-
-        # Function intro text.
-        if self.relax.interpreter.intro:
-            text = sys.ps3 + "read.read_results("
-            text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # The data_type argument.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data_type', data_type)
-
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None:
-            if type(dir) != str:
-                raise RelaxNoneStrError, ('directory name', dir)
-
-        # Execute the functional code.
-        self.relax.rw.read_results(run=run, data_type=data_type, file=file, dir=dir)
-
-
     def relax_data(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
         """Function for reading R1, R2, or NOE relaxation data.
 
@@ -216,6 +158,64 @@ class Read:
 
         # Execute the functional code.
         self.relax.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
+
+
+    def results(self, run=None, data_type=None, file='results', dir=None):
+        """Function for reading results from a file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        data_type:  The type of data.
+
+        file:  The name of the file to read results from.
+
+        dir:  The directory where the file is located.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The name of the run can be any string.
+
+        The data_type argument specifies what type of data is to be read and must be one of the
+        following:
+            'mf' - model-free data.
+
+        If no directory name is given, the results file will be seached for in a directory named
+        after the run name.
+        """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "read.results("
+            text = text + "run=" + `run`
+            text = text + ", data_type=" + `data_type`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # The data_type argument.
+        if type(data_type) != str:
+            raise RelaxStrError, ('data_type', data_type)
+
+        # File.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None:
+            if type(dir) != str:
+                raise RelaxNoneStrError, ('directory name', dir)
+
+        # Execute the functional code.
+        self.relax.generic.rw.read_results(run=run, data_type=data_type, file=file, dir=dir)
 
 
     def sequence(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):

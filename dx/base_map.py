@@ -37,10 +37,18 @@ class Base_Map:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific function setup.
-        map_bounds = self.relax.specific_setup.setup('map_bounds', function_type)
-        if map_bounds == None:
+        # Specific map bounds function.
+        self.map_bounds = self.relax.specific_setup.setup('map_bounds', function_type)
+        if self.map_bounds == None:
             raise RelaxFuncSetupError, ('map bounds', function_type)
+
+        # Specific map labels function.
+        self.map_labels = self.relax.specific_setup.setup('map_labels', function_type)
+
+        # Specific minimisation function.
+        self.calculate = self.relax.specific_setup.setup('calc', function_type)
+        if self.calculate == None:
+            raise RelaxFuncSetupError, ('calculate', function_type)
 
         # Function arguments.
         self.run = run
@@ -51,8 +59,7 @@ class Base_Map:
         self.file = file
         self.dir = dir
         self.point_file = point_file
-        if remap != None:
-            self.remap = remap
+        self.remap = remap
         self.labels = labels
 
         # Axis swapping.
@@ -74,8 +81,7 @@ class Base_Map:
                 pass
 
         # Create the scaling matrix.
-        self.scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[self.res_index], self.res_index)
-        import sys; sys.exit()
+        #self.scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[self.res_index], self.res_index)
 
         # Get the map bounds.
         self.bounds = self.map_bounds(self.run, self.index)
@@ -96,15 +102,15 @@ class Base_Map:
         for i in xrange(self.n):
             self.step_size[i] = (self.bounds[i, 1] - self.bounds[i, 0]) / self.inc
 
-        # Map the space.
+        # Create the OpenDX .net program file.
         self.program()
+
+        # Create the OpenDX .general file.
         self.general()
+
+        # Create the OpenDX .general and data files for the given point.
         if self.num_points == 1:
             self.create_point()
+
+        # Generate the map.
         self.create_map()
-
-
-    def remap(self, values):
-        """Base class remapping function which returns the values unmodified."""
-
-        return values

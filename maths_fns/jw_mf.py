@@ -1540,7 +1540,7 @@ def calc_tm_S2f_S2_ts_d2jw_dDjdS2(data, params):
     """Spectral density Hessian.
 
     Calculate the spectral desity values for the Dj - S2 double partial derivative of the extended
-    model-free formula with the parameters {tm, S2f, S2, ts} or the parameters 
+    model-free formula with the parameters {tm, S2f, S2, ts} or the parameters
     {tm, S2f, tf, S2, ts}.
 
     The model-free Hessian is:

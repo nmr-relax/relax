@@ -56,8 +56,16 @@ class Iso3D(Base_Map):
             for j in xrange((self.inc + 1)):
                 values[self.swap[2]] = self.bounds[self.swap[2], 0]
                 for k in xrange((self.inc + 1)):
+                    # Remap function.
+                    if self.remap:
+                        values = self.remap(values)
+
+                    # Set the parameter values.
+                    for l in xrange(self.n):
+                        self.relax.generic.value.set(run=self.run, value=values[l], data_type=self.relax.data.res[self.index].params[self.run][l], res_num=self.relax.data.res[self.index].num)
+
                     # Calculate the function values.
-                    self.minimise(run=self.run, i=self.index, init_params=self.remap(values), scaling_matrix=self.scaling_matrix, min_algor='fixed', min_options=self.remap(values), print_flag=0)
+                    self.calculate(self.run, 0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if self.relax.data.res[self.index].chi2[self.run] > 1e20:
@@ -67,7 +75,7 @@ class Iso3D(Base_Map):
 
                     values[self.swap[2]] = values[self.swap[2]] + self.step_size[self.swap[2]]
                 self.percent = self.percent + self.percent_inc
-                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%, value: ", self.relax.data.res[self.index].chi2[self.run])
+                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%,  " + `values` + ",  f(x): ", self.relax.data.res[self.index].chi2[self.run])
                 values[self.swap[1]] = values[self.swap[1]] + self.step_size[self.swap[1]]
             values[self.swap[0]] = values[self.swap[0]] + self.step_size[self.swap[0]]
 
@@ -160,9 +168,6 @@ class Iso3D(Base_Map):
         # Replacement strings
         #####################
 
-        # Equation type specific function setup.
-        self.map_labels = self.relax.specific_setup.setup("map_labels", self.relax.data.run_types[self.relax.data.run_names.index(run)])
-
         # Default labels.
         if self.map_labels == None or self.labels != None:
             # Axis increments.
@@ -207,7 +212,7 @@ class Iso3D(Base_Map):
 
         # Specific labels.
         else:
-            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.index].params[self.run], self.bounds, self.swap, self.inc, self.scaling_matrix)
+            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.index].params[self.run], self.bounds, self.swap, self.inc)
 
 
         # Corners.

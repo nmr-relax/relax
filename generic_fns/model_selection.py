@@ -291,7 +291,7 @@ class Model_selection:
         # Duplicate the diffusion tensor data.
         if self.relax.data.diff.has_key(best_model):
             self.relax.data.diff[modsel_run] = deepcopy(self.relax.data.diff[best_model])
-        
+
         # Duplicate the residue specific data.
         for data in dir(self.relax.data.res[i]):
             # Get the data object.

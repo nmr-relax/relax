@@ -85,7 +85,7 @@ def calc_iso_dti(data, diff_data):
     """Diffusional correlation times for isotropic diffusion.
 
     The tm partial derivatives are:
-    
+
         dt0
         ---  =  1
         dtm

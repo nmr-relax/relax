@@ -3,12 +3,18 @@
 # Load the sequence.
 read.sequence('noe.500.out')
 
+# Nuclei type
+nuclei('N')
+
 # Set the run names.
 runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Loop over the run names.
 for run in runs:
     print "\n\n# " + run + " #"
+
+    # Create the run.
+    create_run(run, 'mf')
 
     # Load the relaxation data.
     read.relax_data(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -19,9 +25,10 @@ for run in runs:
     read.relax_data(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
     # Reload precalculated results from the file 'm1/results', etc.
-    read.read_data(run=run, data_type='mf', file='results', dir=run)
+    read.results(run=run, data_type='mf', file='results', dir=run)
 
 # Model selection.
+create_run('aic', 'mf')
 model_selection('AIC', 'aic')
 
 # Write the results.

@@ -21,21 +21,21 @@ read.relax_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 # Setup other values.
 diffusion_tensor(name, 1e-8)
 value.set(name, 1.02 * 1e-10, 'bond_length')
-value.set(name, -160 * 1e-6, 'csa')
+value.set(name, -170 * 1e-6, 'csa')
 
 # Select the model-free model.
 model.select_mf(run=name, model=name)
 #model.create_mf(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Map data.
-inc = 100
+inc = 20
 from math import pi
-if name == 'm4':
+if name == 'x4':
     lower = [0, 0, 0]
     upper = [0.6, 1000e-12, 3.0 / (2.0 * pi * 600000000.0)**2]
     swap = None
     point = [0.263, 526.32e-12, 1.053 / (2.0 * pi * 600000000.0)**2]
-elif name == 'm5':
+elif name == 'x5':
     lower = [0.5, 0.5, 0]
     upper = [1.0, 1.0, 300e-12]
     swap = [0, 2, 1]
@@ -46,4 +46,4 @@ else:
     swap = None
     point = None
 map(name, res_num=5, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
-#dx()
+dx()

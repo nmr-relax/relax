@@ -28,15 +28,15 @@ for run in runs:
     # Setup other values.
     diffusion_tensor(run, 1e-8, fixed=0)
     #diffusion_tensor(run, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
-    value.set(run, 'bond_length', 1.02 * 1e-10)
-    value.set(run, 'csa', -160 * 1e-6)
+    value.set(run, 1.02 * 1e-10, 'bond_length')
+    value.set(run, -160 * 1e-6, 'csa')
 
     # Select the model-free model.
     model.select_mf(run=run, model=run)
 
     # Minimise.
     grid_search(run, inc=7)
-    minimise('bfgs', run=run, constraints=1)
+    minimise('newton', run=run)
 
     # Print results.
     write(run=run, file='results', force=1)

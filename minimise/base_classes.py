@@ -227,7 +227,7 @@ class Min:
                     if self.k2 == 0:
                         out = 1
                 if out == 1:
-                    print self.print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", self.k, "xk:", `self.xk`, "fk:", `self.fk`)
+                    print self.print_prefix + "%-3s%-8i%-4s%-65s %-4s%-20s" % ("k:", self.k, "xk:", `self.xk`, "fk:", `self.fk`)
 
             # Get xk+1 (new parameter function).
             #self.new_param_func()

@@ -81,7 +81,7 @@ class Select:
         The 'change_all' flag argument default is zero meaning that all residues currently either
         selected or unselected will remain that way.  Setting the argument to 1 will cause all
         residues not specified by 'num' or 'name' to become unselected.
-        
+
 
         Examples
         ~~~~~~~~

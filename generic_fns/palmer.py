@@ -380,7 +380,7 @@ class Palmer:
 
     def execute(self, run, dir, force):
         """Function for executing Modelfree4.
-        
+
         BUG:  Control-C during execution causes the cwd to stay as dir.
         """
 

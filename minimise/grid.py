@@ -109,6 +109,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         raise NameError, "A grid search of size " + `total_steps` + " is too large."
 
     # Search the grid.
+    k = 0
     for i in xrange(total_steps):
         # Check that the grid point does not violate a constraint, and if it does, skip the function call.
         skip = 0
@@ -129,32 +130,34 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
                 # Print out code.
                 if print_flag:
-                    print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `min_params`, "fk:", `f_min`)
+                    print print_prefix + "%-3s%-8i%-4s%-65s %-4s%-20s" % ("k:", k, "xk:", `min_params`, "fk:", `f_min`)
 
             # Grid count.
             grid_size = grid_size + 1
 
-        # Print out code.
-        if print_flag >= 2:
-            if f != f_min:
-                print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `params`, "fk:", `f`)
-            if print_flag >= 3:
-                print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
-                print print_prefix + "%-20s%-20s" % ("Params:", `params`)
-                print print_prefix + "%-20s%-20s" % ("Min params:", `min_params`)
-                print print_prefix + "%-20s%-20g\n" % ("f:", f)
-                print print_prefix + "%-20s%-20g\n" % ("Min f:", f_min)
+            # Print out code.
+            if print_flag >= 2:
+                if f != f_min:
+                    print print_prefix + "%-3s%-8i%-4s%-65s %-4s%-20s" % ("k:", k, "xk:", `params`, "fk:", `f`)
+                if print_flag >= 3:
+                    print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
+                    print print_prefix + "%-20s%-20s" % ("Params:", `params`)
+                    print print_prefix + "%-20s%-20s" % ("Min params:", `min_params`)
+                    print print_prefix + "%-20s%-20g\n" % ("f:", f)
+                    print print_prefix + "%-20s%-20g\n" % ("Min f:", f_min)
 
-        # Loop over the parameters.
-        for k in xrange(n):
-            if step_num[k] < grid_ops[k][0]:
-                step_num[k] = step_num[k] + 1
-                params[k] = param_values[k][step_num[k]-1]
+            # Increment k.
+            k = k + 1
+
+        # Increment the grid search.
+        for j in xrange(n):
+            if step_num[j] < grid_ops[j][0]:
+                step_num[j] = step_num[j] + 1
+                params[j] = param_values[j][step_num[j]-1]
                 break    # Exit so that the other step numbers are not incremented.
             else:
-                step_num[k] = 1
-                params[k] = grid_ops[k][1]
-
+                step_num[j] = 1
+                params[j] = grid_ops[j][1]
 
     # Return the results.
     return min_params, f_min, grid_size
