@@ -2100,6 +2100,10 @@ class Model_free(Common_functions):
                 if not self.relax.data.res[self.run][i].select:
                     continue
 
+                # Skip residues where there is no data or errors.
+                if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not hasattr(self.relax.data.res[self.run][i], 'relax_error'):
+                    continue
+
                 # Single residue.
                 if min_algor == 'calc' and min_options != None and min_options != self.relax.data.res[self.run][i].num:
                     continue
@@ -2208,37 +2212,44 @@ class Model_free(Common_functions):
                 else:
                     seq_index = j
 
+                # Alias the data structure.
+                data = self.relax.data.res[self.run][seq_index]
+
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][seq_index].select:
+                if not data.select:
+                    continue
+
+                # Skip residues where there is no data or errors.
+                if not hasattr(data, 'relax_data') or not hasattr(data, 'relax_error'):
                     continue
 
                 # Make sure that the errors are strictly positive numbers.
-                for k in xrange(len(self.relax.data.res[self.run][seq_index].relax_error)):
-                    if self.relax.data.res[self.run][seq_index].relax_error[k] == 0.0:
-                        raise RelaxError, "Zero error for residue '" + `self.relax.data.res[self.run][seq_index].num` + " " + self.relax.data.res[self.run][seq_index].name + "', minimisation not possible."
-                    elif self.relax.data.res[self.run][seq_index].relax_error[k] < 0.0:
-                        raise RelaxError, "Negative error for residue '" + `self.relax.data.res[self.run][seq_index].num` + " " + self.relax.data.res[self.run][seq_index].name + "', minimisation not possible."
+                for k in xrange(len(data.relax_error)):
+                    if data.relax_error[k] == 0.0:
+                        raise RelaxError, "Zero error for residue '" + `data.num` + " " + data.name + "', minimisation not possible."
+                    elif data.relax_error[k] < 0.0:
+                        raise RelaxError, "Negative error for residue '" + `data.num` + " " + data.name + "', minimisation not possible."
 
                 # Repackage the data.
                 if sim_index == None:
-                    relax_data.append(self.relax.data.res[self.run][seq_index].relax_data)
+                    relax_data.append(data.relax_data)
                 else:
-                    relax_data.append(self.relax.data.res[self.run][seq_index].relax_sim_data[sim_index])
-                relax_error.append(self.relax.data.res[self.run][seq_index].relax_error)
-                equations.append(self.relax.data.res[self.run][seq_index].equation)
-                param_types.append(self.relax.data.res[self.run][seq_index].params)
-                num_frq.append(self.relax.data.res[self.run][seq_index].num_frq)
-                frq.append(self.relax.data.res[self.run][seq_index].frq)
-                num_ri.append(self.relax.data.res[self.run][seq_index].num_ri)
-                remap_table.append(self.relax.data.res[self.run][seq_index].remap_table)
-                noe_r1_table.append(self.relax.data.res[self.run][seq_index].noe_r1_table)
-                ri_labels.append(self.relax.data.res[self.run][seq_index].ri_labels)
+                    relax_data.append(data.relax_sim_data[sim_index])
+                relax_error.append(data.relax_error)
+                equations.append(data.equation)
+                param_types.append(data.params)
+                num_frq.append(data.num_frq)
+                frq.append(data.frq)
+                num_ri.append(data.num_ri)
+                remap_table.append(data.remap_table)
+                noe_r1_table.append(data.noe_r1_table)
+                ri_labels.append(data.ri_labels)
                 if sim_index == None:
-                    r.append(self.relax.data.res[self.run][seq_index].r)
-                    csa.append(self.relax.data.res[self.run][seq_index].csa)
+                    r.append(data.r)
+                    csa.append(data.csa)
                 else:
-                    r.append(self.relax.data.res[self.run][seq_index].r_sim[sim_index])
-                    csa.append(self.relax.data.res[self.run][seq_index].csa_sim[sim_index])
+                    r.append(data.r_sim[sim_index])
+                    csa.append(data.csa_sim[sim_index])
 
                 # Model-free parameter values.
                 if self.param_set == 'local_tm':
@@ -2246,12 +2257,12 @@ class Model_free(Common_functions):
 
                 # Vectors.
                 if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
-                    xh_unit_vectors.append(self.relax.data.res[self.run][seq_index].xh_unit)
+                    xh_unit_vectors.append(data.xh_unit)
                 else:
                     xh_unit_vectors.append(None)
 
                 # Count the number of model-free parameters for the residue index.
-                num_params.append(len(self.relax.data.res[self.run][seq_index].params))
+                num_params.append(len(data.params))
 
                 # Repackage the parameter values for minimising just the diffusion tensor parameters.
                 if self.param_set == 'diff':

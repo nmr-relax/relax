@@ -452,6 +452,10 @@ class Rx_data:
             value = eval(file_data[i][data_col])
             error = eval(file_data[i][error_col])
 
+            # Skip all rows where the value or error is None.
+            if value == None or error == None:
+                continue
+
             # Find the index of self.relax.data.res[self.run] which corresponds to the relaxation data set i.
             index = None
             for j in xrange(len(self.relax.data.res[self.run])):
