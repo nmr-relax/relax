@@ -1229,6 +1229,8 @@ class Model_free:
 
             tf <= ts
 
+            te, tf, ts <= 2 * tm
+
         Additional constraints used include:
 
             Rex >= 0
@@ -1426,14 +1428,11 @@ class Model_free:
 
                     # Correlation times {te, tf, ts}.
                     elif match('t[efs]', self.relax.data.res[self.run][k].params[l]):
-                        # 0 <= te <= 10000 ps.
-                        A.append(zero_array * 0.0)
+                        # te, tf, tm >= 0.
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
-                        A[j+1][i] = -1.0
                         b.append(0.0 / self.scaling_matrix[i, i])
-                        b.append(-10e-9 / self.scaling_matrix[i, i])
-                        j = j + 2
+                        j = j + 1
 
                         # tf <= ts.
                         if self.relax.data.res[self.run][k].params[l] == 'ts':
@@ -1444,6 +1443,15 @@ class Model_free:
                                     A[j][old_i+m] = -1.0
                                     b.append(0.0)
                                     j = j + 1
+
+                        # te, tf, ts <= 2 * tm.
+                        A.append(zero_array * 0.0)
+                        if self.param_set == 'mf':
+                            A[j][i] = -1.0
+                            b.append(-2 * self.relax.data.diff[self.run].tm / self.scaling_matrix[i, i])
+                        elif self.relax.data.diff[self.run].type == 'iso':
+
+                        j = j + 1
 
                     # Rex.
                     elif self.relax.data.res[self.run][k].params[l] == 'Rex':
