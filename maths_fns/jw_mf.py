@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -110,7 +110,7 @@ def calc_jw(data):
 
     jw = data.ci[0] * data.ti[0] * data.fact_ti[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         jw = jw + data.ci[i] * data.ti[i] * data.fact_ti[i]
 
     return 0.4 * jw
@@ -137,7 +137,7 @@ def calc_S2_jw(data):
 
     jw = data.ci[0] * data.ti[0] * data.fact_ti[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         jw = jw + data.ci[i] * data.ti[i] * data.fact_ti[i]
 
     return 0.4 * data.params[data.s2_index] * jw
@@ -164,7 +164,7 @@ def calc_S2_te_jw(data):
 
     jw = data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2 * data.te_ti_te[0] * data.inv_te_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.one_s2 * data.te_ti_te[i] * data.inv_te_denom[i])
 
     return 0.4 * jw
@@ -191,7 +191,7 @@ def calc_S2f_S2_ts_jw(data):
 
     jw = data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
 
     return 0.4 * jw
@@ -218,7 +218,7 @@ def calc_S2f_tf_S2_ts_jw(data):
 
     jw = data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.one_s2f * data.tf_ti_tf[i] * data.inv_tf_denom[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
 
     return 0.4 * jw
@@ -245,7 +245,7 @@ def calc_S2f_S2s_ts_jw(data):
 
     jw = data.ci[0] * data.ti[0] * (data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2s * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2s_index] * data.fact_ti[i] + data.one_s2s * data.ts_ti_ts[i] * data.inv_ts_denom[i])
 
     return 0.4 * data.params[data.s2f_index] * jw
@@ -272,7 +272,7 @@ def calc_S2f_tf_S2s_ts_jw(data):
 
     jw = data.ci[0] * data.ti[0] * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_ti[i] + data.one_s2f * data.tf_ti_tf[i] * data.inv_tf_denom[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
 
     return 0.4 * jw
@@ -445,7 +445,7 @@ def create_djw_struct(data, calc_djw):
          dr
     """
 
-    for j in xrange(len(data.params)):
+    for j in xrange(data.total_num_params):
         if calc_djw[j]:
             data.djw[:, :, j] = calc_djw[j](data)
 
@@ -473,7 +473,7 @@ def calc_tm_djw_dDj(data):
 
     djw = data.ci[0] * data.dti[0] * data.fact_ti_djw_dti[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.dti[i] * data.fact_ti_djw_dti[i]
 
     return 0.4 * djw
@@ -498,7 +498,7 @@ def calc_tm_S2_djw_dDj(data):
 
     djw = data.ci[0] * data.dti[0] * data.fact_ti_djw_dti[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.dti[i] * data.fact_ti_djw_dti[i]
 
     return 0.4 * data.params[data.s2_index] * djw
@@ -523,7 +523,7 @@ def calc_tm_S2_te_djw_dDj(data):
 
     djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact_ti_djw_dti[0] + data.one_s2 * data.fact_te_djw_dti[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact_ti_djw_dti[i] + data.one_s2 * data.fact_te_djw_dti[i])
 
     return 0.4 * djw
@@ -559,7 +559,7 @@ def calc_S2_djw_dS2(data):
 
     djw = data.ci[0] * data.ti[0] * data.fact_ti[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.ti[i] * data.fact_ti[i]
 
     return 0.4 * djw
@@ -584,7 +584,7 @@ def calc_S2_te_djw_dS2(data):
 
     djw = data.ci[0] * data.ti[0] * (data.fact_ti[0] - data.te_ti_te[0] * data.inv_te_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.ti[i] * (data.fact_ti[i] - data.te_ti_te[i] * data.inv_te_denom[i])
 
     return 0.4 * djw
@@ -613,7 +613,7 @@ def calc_S2_te_djw_dte(data):
 
     djw = data.ci[0] * data.fact_djw_dte[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.fact_djw_dte[i]
 
     return 0.4 * data.one_s2 * djw
@@ -642,7 +642,7 @@ def calc_tm_S2f_S2_ts_djw_dDj(data):
 
     djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact_ti_djw_dti[0] + data.s2f_s2 * data.fact_ts_djw_dti[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact_ti_djw_dti[i] + data.s2f_s2 * data.fact_ts_djw_dti[i])
 
     return 0.4 * djw
@@ -667,7 +667,7 @@ def calc_tm_S2f_tf_S2_ts_djw_dDj(data):
 
     djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact_ti_djw_dti[0] + data.one_s2f * data.fact_tf_djw_dti[0] + data.s2f_s2 * data.fact_ts_djw_dti[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact_ti_djw_dti[i] + data.one_s2f * data.fact_tf_djw_dti[i] + data.s2f_s2 * data.fact_ts_djw_dti[i])
 
     return 0.4 * djw
@@ -703,7 +703,7 @@ def calc_S2f_S2_ts_djw_dS2(data):
 
     djw = data.ci[0] * data.ti[0] * (data.fact_ti[0] - data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.ti[i] * (data.fact_ti[i] - data.ts_ti_ts[i] * data.inv_ts_denom[i])
 
     return 0.4 * djw
@@ -732,7 +732,7 @@ def calc_S2f_S2_ts_djw_dS2f(data):
 
     djw = data.ci[0] * data.ti[0] * data.ts_ti_ts[0] * data.inv_ts_denom[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.ti[i] * data.ts_ti_ts[i] * data.inv_ts_denom[i]
 
     return 0.4 * djw
@@ -757,7 +757,7 @@ def calc_S2f_tf_S2_ts_djw_dS2f(data):
 
     djw = data.ci[0] * data.ti[0] * (data.tf_ti_tf[0] * data.inv_tf_denom[0] - data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.ti[i] * (data.tf_ti_tf[i] * data.inv_tf_denom[i] - data.ts_ti_ts[i] * data.inv_ts_denom[i])
 
     return -0.4 * djw
@@ -786,7 +786,7 @@ def calc_S2f_tf_S2_ts_djw_dtf(data):
 
     djw = data.ci[0] * data.fact_djw_dtf[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.fact_djw_dtf[i]
 
     return 0.4 * data.one_s2f * djw
@@ -816,7 +816,7 @@ def calc_S2f_S2_ts_djw_dts(data):
 
     djw = data.ci[0] * data.fact_djw_dts[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         djw = djw + data.ci[i] * data.fact_djw_dts[i]
 
     return 0.4 * data.s2f_s2 * djw
@@ -1343,7 +1343,7 @@ def create_d2jw_struct(data, calc_d2jw):
         dr**2
     """
 
-    for j in xrange(len(data.params)):
+    for j in xrange(data.total_num_params):
         for k in xrange(j + 1):
             if calc_d2jw[j][k]:
                 data.d2jw[:, :, j, k] = calc_d2jw[j][k](data)
@@ -1375,7 +1375,7 @@ def calc_tm_d2jw_dDj2(data):
 
     d2jw = data.ci[0] * (2 * data.ti[0] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[0]) * data.dti[0] * data.dti[0] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[0]) * data.fact_ti[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
 
     return -0.4 * d2jw
@@ -1400,7 +1400,7 @@ def calc_tm_S2_d2jw_dDj2(data):
 
     d2jw = data.ci[0] * (2 * data.ti[0] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[0]) * data.dti[0] * data.dti[0] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[0]) * data.fact_ti[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
 
     return -0.4 * data.params[data.s2_index] * d2jw
@@ -1438,7 +1438,7 @@ def calc_tm_S2_te_d2jw_dtDj(data):
 
     d2jw = data.ci[0] + (fact_ti + fact_te)
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         # ti.
         fact_ti = data.params[data.s2_index] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
 
@@ -1481,7 +1481,7 @@ def calc_tm_S2_d2jw_dDjdS2(data):
 
     d2jw = data.ci[0] * data.dti[0] * data.fact_ti_djw_dti[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i] * data.fact_ti_djw_dti[i]
 
     return 0.4 * d2jw
@@ -1506,7 +1506,7 @@ def calc_tm_S2_te_d2jw_dDjdS2(data):
 
     d2jw = data.ci[0] * data.dti[0] * (data.fact_ti_djw_dti[0] - data.fact_te_djw_dti[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i] * (data.fact_ti_djw_dti[i] - data.fact_te_djw_dti[i])
 
     return 0.4 * d2jw
@@ -1535,7 +1535,7 @@ def calc_tm_S2_te_d2jw_dDjdte(data):
 
     d2jw = data.ci[0] * data.dti[0] * data.params[data.ti_index] * data.te_ti[0] * (data.te_ti_sqrd[0] - 3.0 * data.w_te_ti_sqrd[0]) * data.inv_te_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i] * data.params[data.ti_index] * data.te_ti[i] * (data.te_ti_sqrd[i] - 3.0 * data.w_te_ti_sqrd[i]) * data.inv_te_denom[i]**3
 
     return 0.8 * data.one_s2 * data.params[data.te_index] * d2jw
@@ -1571,7 +1571,7 @@ def calc_S2_te_d2jw_dS2dte(data):
 
     d2jw = data.ci[0] * data.fact_djw_dte[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.fact_djw_dte[i]
 
     return -0.4 * d2jw
@@ -1601,7 +1601,7 @@ def calc_S2_te_d2jw_dte2(data):
     num = data.te_ti[0]**3 + 3.0 * data.diff_params[0]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.te_index]**3
     d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_te_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         num = data.te_ti[i]**3 + 3.0 * data.diff_params[i]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.te_index]**3
         d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_te_denom[i]**3
 
@@ -1628,7 +1628,7 @@ def calc_tm_S2_te_d2jw_dte2(data):
     num = data.te_ti[0]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.te_index]**3
     d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_te_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         num = data.te_ti[i]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.te_index]**3
         d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_te_denom[i]**3
 
@@ -1671,7 +1671,7 @@ def calc_tm_S2f_S2_ts_d2jw_dDj2(data):
 
     d2jw = data.ci[0] * (fact_ti + fact_ts)
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         # ti.
         fact_ti = data.params[data.s2_index] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
 
@@ -1726,7 +1726,7 @@ def calc_tm_S2f_tf_S2_ts_d2jw_dDj2(data):
 
     d2jw = data.ci[0] * (fact_ti + fact_tf + fact_ts)
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         # ti.
         fact_ti = data.params[data.s2_index] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
 
@@ -1774,7 +1774,7 @@ def calc_tm_S2f_S2_ts_d2jw_dDjdS2(data):
 
     d2jw = data.ci[0] * data.dti[0] * (data.fact_ti_djw_dti[0] - data.fact_ts_djw_dti[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i] * (data.fact_ti_djw_dti[i] - data.fact_ts_djw_dti[i])
 
     return 0.4 * d2jw
@@ -1803,7 +1803,7 @@ def calc_tm_S2f_S2_ts_d2jw_dDjdS2f(data):
 
     d2jw = data.ci[0] * data.dti[0] * data.fact_ts_djw_dti[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i] * data.fact_ts_djw_dti[i]
 
     return 0.4 * d2jw
@@ -1828,7 +1828,7 @@ def calc_tm_S2f_tf_S2_ts_d2jw_dDjdS2f(data):
 
     d2jw = data.ci[0] * data.dti[0] * (data.fact_tf_djw_dti[0] - data.fact_ts_djw_dti[0])
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i] * (data.fact_tf_djw_dti[i] - data.fact_ts_djw_dti[i])
 
     return -0.4 * d2jw
@@ -1857,7 +1857,7 @@ def calc_tm_S2f_tf_S2_ts_d2jw_dDjdtf(data):
 
     d2jw = data.ci[0] * data.dti[0]* data.params[data.ti_index] * data.tf_ti[0] * (data.tf_ti_sqrd[0] - 3.0 * data.w_tf_ti_sqrd[0]) * data.inv_tf_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i]* data.params[data.ti_index] * data.tf_ti[i] * (data.tf_ti_sqrd[i] - 3.0 * data.w_tf_ti_sqrd[i]) * data.inv_tf_denom[i]**3
 
     return 0.8 * data.one_s2f * data.params[data.tf_index] * d2jw
@@ -1887,7 +1887,7 @@ def calc_tm_S2f_S2_ts_d2jw_dDjdts(data):
 
     d2jw = data.ci[0] * data.dti[0]* data.params[data.ti_index] * data.ts_ti[0] * (data.ts_ti_sqrd[0] - 3.0 * data.w_ts_ti_sqrd[0]) * data.inv_ts_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.dti[i]* data.params[data.ti_index] * data.ts_ti[i] * (data.ts_ti_sqrd[i] - 3.0 * data.w_ts_ti_sqrd[i]) * data.inv_ts_denom[i]**3
 
     return 0.8 * data.s2f_s2 * data.params[data.ts_index] * d2jw
@@ -1924,7 +1924,7 @@ def calc_S2f_S2_ts_d2jw_dS2dts(data):
 
     d2jw = data.ci[0] * data.fact_djw_dts[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.fact_djw_dts[i]
 
     return -0.4 * d2jw
@@ -1954,7 +1954,7 @@ def calc_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
 
     d2jw = data.ci[0] * data.fact_djw_dtf[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.fact_djw_dtf[i]
 
     return -0.4 * d2jw
@@ -1984,7 +1984,7 @@ def calc_S2f_S2_ts_d2jw_dS2fdts(data):
 
     d2jw = data.ci[0] * data.fact_djw_dts[0]
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         d2jw = d2jw + data.ci[i] * data.fact_djw_dts[i]
 
     return 0.4 * d2jw
@@ -2014,7 +2014,7 @@ def calc_S2f_tf_S2_ts_d2jw_dtf2(data):
     num = data.tf_ti[0]**3 + 3.0 * data.diff_params[0]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.tf_index]**3
     d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_tf_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         num = data.tf_ti[i]**3 + 3.0 * data.diff_params[i]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.tf_index]**3
         d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_tf_denom[i]**3
 
@@ -2041,7 +2041,7 @@ def calc_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
     num = data.tf_ti[0]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.tf_index]**3
     d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_tf_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         num = data.tf_ti[i]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.tf_index]**3
         d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_tf_denom[i]**3
 
@@ -2072,7 +2072,7 @@ def calc_S2f_S2_ts_d2jw_dts2(data):
     num = data.ts_ti[0]**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.ts_index]**3
     d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_ts_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         num = data.ts_ti[i]**3 + 3.0 * data.diff_params[i]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.ts_index]**3
         d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_ts_denom[i]**3
 
@@ -2100,7 +2100,7 @@ def calc_tm_S2f_S2_ts_d2jw_dts2(data):
     num = data.ts_ti[0]**3 + 3.0 * data.params[data.ti_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.ts_index]**3
     d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_ts_denom[0]**3
 
-    for i in xrange(1, data.len):
+    for i in xrange(1, data.num_indecies):
         num = data.ts_ti[i]**3 + 3.0 * data.params[data.ti_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.ts_index]**3
         d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_ts_denom[i]**3
 

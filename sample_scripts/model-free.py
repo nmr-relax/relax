@@ -19,8 +19,8 @@ read.relax_data(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
 read.relax_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
-#diffusion_tensor(name, 1e-8, fixed=0)
-diffusion_tensor(name, (1e-8, 1.2, 60, 90), param_types=1, axial_type='oblate', fixed=0)
+diffusion_tensor(name, 1e-8, fixed=1)
+#diffusion_tensor(name, (1e-8, 1.2, 60, 90), param_types=1, axial_type='oblate', fixed=1)
 #diffusion_tensor(name, (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568), fixed=0)
 value.set(name, 'bond_length', 1.02 * 1e-10)
 value.set(name, 'csa', -160 * 1e-6)

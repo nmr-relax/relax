@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -1038,9 +1038,9 @@ def comp_dip_const_func(data, bond_length):
     """
 
     if bond_length == 0.0:
-        data.dip_const_func = 1e99
+        data.dip_const_func[data.i] = 1e99
     else:
-        data.dip_const_func = 0.25 * data.dip_const_fixed * bond_length**-6
+        data.dip_const_func[data.i] = 0.25 * data.dip_const_fixed * bond_length**-6
 
 
 # Gradient.
@@ -1096,8 +1096,8 @@ def comp_csa_const_func(data, csa):
                                 3
     """
 
-    for i in xrange(data.num_frq):
-        data.csa_const_func[i] = data.csa_const_fixed[i] * csa**2
+    for i in xrange(data.num_frq[data.i]):
+        data.csa_const_func[data.i][i] = data.csa_const_fixed[data.i][i] * csa**2
 
 
 # Gradient.
