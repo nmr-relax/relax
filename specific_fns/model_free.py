@@ -1515,6 +1515,8 @@ class Model_free(Common_functions):
             grid_size = grid_size * min_options[i][0]
         if type(grid_size) == long:
             raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
+        if self.print_flag >= 1:
+            print "The unconstrained grid search size is " + `grid_size` + " (constraints may decrease this size)."
 
         # Diagonal scaling of minimisation options.
         for j in xrange(len(min_options)):
