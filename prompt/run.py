@@ -104,7 +104,7 @@ class Run:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "run.delete("
             text = text + "run=" + `run` + ")"
             print text
@@ -114,4 +114,4 @@ class Run:
             raise RelaxNoneStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.runs.delete(run=run)
+        self.__relax__.generic.runs.delete(run=run)

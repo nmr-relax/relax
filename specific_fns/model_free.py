@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -839,7 +839,7 @@ class Model_free(Common_functions):
                 delattr(data, name)
 
         # Clean up the runs.
-        self.relax.generic.delete.clean_runs()
+        self.relax.generic.runs.eliminate_unused_runs()
 
 
     def determine_param_set_type(self):

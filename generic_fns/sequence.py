@@ -111,7 +111,7 @@ class Sequence:
         del(self.relax.data.res[run])
 
         # Clean up the runs.
-        self.relax.generic.delete.clean_runs()
+        self.relax.generic.runs.eliminate_unused_runs()
 
 
     def display(self, run=None):

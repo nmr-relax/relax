@@ -103,6 +103,7 @@ class Runs:
                 # Remove from run_types.
                 temp = self.relax.data.run_types.pop(index)
 
+
     def list_of_runs(self, run):
         """Function for creating a list of runs."""
 

@@ -292,7 +292,7 @@ class Diffusion_tensor:
         del(self.relax.data.diff[run])
 
         # Clean up the runs.
-        self.relax.generic.delete.clean_runs()
+        self.relax.generic.runs.eliminate_unused_runs()
 
 
     def display(self, run=None):

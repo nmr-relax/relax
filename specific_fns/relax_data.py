@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -373,7 +373,7 @@ class Rx_data:
                     data.noe_r1_table[j] = data.noe_r1_table[j] - 1
 
         # Clean up the runs.
-        self.relax.generic.delete.clean_runs()
+        self.relax.generic.runs.eliminate_unused_runs()
 
 
     def display(self, run=None, ri_label=None, frq_label=None):

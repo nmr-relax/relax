@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,7 @@ except ImportError, message:
 # Gzip compression module.
 from gzip import GzipFile
 
-from os import F_OK, access, mkdir, remove, stat
+from os import F_OK, access, makedirs, remove, stat
 from os.path import expanduser
 from re import match, search
 from string import split
@@ -194,7 +194,7 @@ class IO:
 
         # Make the directory.
         try:
-            mkdir(dir)
+            makedirs(dir)
         except OSError:
             if print_flag:
                 print "Directory ./" + dir + " already exists.\n"
@@ -246,7 +246,7 @@ class IO:
         """Function for opening a file for writing and creating directories if necessary."""
 
         # Create the directories.
-        self.mkdir(dir, print_flag=0)
+        self.makedirs(dir, print_flag=0)
 
         # File path.
         file_path = self.file_path(file_name, dir)
