@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import message
+
 
 class Model:
     def __init__(self, relax):
@@ -29,3 +31,6 @@ class Model:
 
         self.create_mf = self.relax.model_free.macro_create
         self.select_mf = self.relax.model_free.macro_select
+
+        # __repr__.
+        self.__repr__ = message.macro_class

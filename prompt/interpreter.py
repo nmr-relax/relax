@@ -181,13 +181,13 @@ class Interpreter:
 
         # Turn on the macro intro flag.
         self.intro = 1
-        
+
         # Execute the script.
         script(file, self.local)
 
         # Turn off the macro intro flag.
         self.intro = 0
-        
+
 
 class _Exit:
     def __repr__(self):

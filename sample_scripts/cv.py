@@ -16,15 +16,14 @@ for i in range(len(ri_labels)):
 read.sequence('noe.500.out')
 
 # Precalculated flag.
-precalc = 0
-
-
-print "\n\n\n\n"
-print "# Calibration set."
-print "##################"
-print "\n"
+precalc = 1
 
 if not precalc:
+    print "\n\n\n\n"
+    print "# Calibration set."
+    print "##################"
+    print "\n"
+
     # Loop over the relaxation data for single-item-out cross-validation.
     for i in range(len(ri_labels)):
         # Loop over the preset model-free models 1 to 5.
@@ -62,6 +61,9 @@ print "\n"
 for i in range(len(ri_labels)):
     # Loop over the model-free models.
     for j in range(len(cv_runs[i])):
+        # Delete the relaxation data from the calibration set.
+        delete(cv_runs[i][j], data_type='rx_data')
+
         # Create the validation set by loading the relaxation data excluded from the calibration set.
         read.rx_data(cv_runs[i][j], ri_labels[j], frq_labels[j], frqs[j], file_names[j])
 
@@ -70,6 +72,18 @@ for i in range(len(ri_labels)):
 
         # Reload the model-free results.
         read.read_data(run=cv_runs[i][j], data_type='mf')
+
+        from math import pi
+        if runs[j] == 'm1':
+            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0]
+        elif runs[j] == 'm2':
+            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, 1e-12]
+        elif runs[j] == 'm3':
+            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, (2.0 * pi * 600000000.0)**2]
+        elif runs[j] == 'm4':
+            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, 1e-12, (2.0 * pi * 600000000.0)**2]
+        elif runs[j] == 'm5':
+            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, 1.0, 1e-12]
 
         # Calculate the chi-squared value for the validation set.
         calc(cv_runs[i][j])
@@ -88,7 +102,8 @@ print "# Final minimisation using all relaxation data."
 print "###############################################"
 print "\n"
 
-# Load all the relaxation data.
+# Delete the relaxation data copied over to the run 'cv' and then load all the data.
+delete('cv', data_type='rx_data')
 for i in range(len(ri_labels)):
     read.rx_data('cv', ri_labels[i], frq_labels[i], frqs[i], file_names[i])
 

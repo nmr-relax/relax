@@ -25,13 +25,13 @@ import sys
 
 class Delete:
     def __init__(self, relax):
-        """Class containing functions for writing data to a file."""
+        """Class containing functions for deleting data."""
 
         self.relax = relax
 
 
     def delete(self, run=None, data_type=None):
-        """Function for data removal.
+        """Function for deleting data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -45,10 +45,12 @@ class Delete:
         ~~~~~~~~~~~
 
         The data_type argument specifies what type of data is to be deleted and must be one of the
-        following:
-            'seq' - sequence data.
-            'rx_data' - relaxation data data.
-            'mf' - model-free data.
+        following strings:
+            seq:  sequence data.
+            diff:  Diffusion tensor
+            rx_data:  relaxation data data.
+            mf:  model-free data.
+            all:  all data associated with the run.
 
         """
 
@@ -60,12 +62,12 @@ class Delete:
             print text
 
         # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        if run != None and type(run) != str:
+            raise RelaxNoneStrError, ('run', run)
 
         # Data_type.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+        if type(data_type) != str:
+            raise RelaxStrError, ('data type', data_type)
 
         # Execute the functional code.
-        self.relax.rw.write_data(run=run, file=file, dir=dir, force=force)
+        self.relax.delete.data(run=run, data_type=data_type)

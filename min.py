@@ -49,7 +49,7 @@ class Minimise:
             # Equation type specific function setup.
             fns = self.relax.specific_setup.setup("calc", self.relax.data.res[i].equations[run])
             if fns == None:
-                return
+                raise RelaxFuncSetupError, ('function value calculation', self.relax.data.res[i].equations[run])
             self.create_param_vector, self.calculate = fns
 
             # Create the parameter vector.
@@ -97,7 +97,7 @@ class Minimise:
             # Equation type specific function setup.
             fns = self.relax.specific_setup.setup("fixed", self.relax.data.res[i].equations[run])
             if fns == None:
-                return
+                raise RelaxFuncSetupError, ('fixed initial parameter value', self.relax.data.res[i].equations[run])
             self.create_param_vector, self.fixed_setup, self.minimise = fns
 
             # Setup the fixed parameter options.
@@ -156,8 +156,6 @@ class Minimise:
                 if len(inc) != n:
                     raise RelaxLenError, ('increment', n)
 
-            print "hello"
-            print n
             if lower:
                 print lower
                 print len(lower)
@@ -170,7 +168,7 @@ class Minimise:
             # Equation type specific function setup.
             fns = self.relax.specific_setup.setup("grid_search", self.relax.data.res[i].equations[run])
             if fns == None:
-                return
+                raise RelaxFuncSetupError, ('grid search', self.relax.data.res[i].equations[run])
             self.create_param_vector, self.grid_setup, self.minimise = fns
 
             # Setup the grid search options.
@@ -226,7 +224,7 @@ class Minimise:
             # Equation type specific function setup.
             fns = self.relax.specific_setup.setup("minimise", self.relax.data.res[i].equations[run])
             if fns == None:
-                return
+                raise RelaxFuncSetupError, ('minimisation', self.relax.data.res[i].equations[run])
             self.create_param_vector, self.minimise = fns
 
             # Create the initial parameter vector.

@@ -117,7 +117,7 @@ class Model_selection:
 
             # Model selection.
             best_model = self.modsel(i)
- 
+
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
             self.duplicate_data(best_model, modsel_run, i)
 

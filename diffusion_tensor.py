@@ -28,6 +28,15 @@ class Diffusion_tensor:
         self.relax = relax
 
 
+    def data_names(self):
+        """Function for returning a list of names of data structures associated with the sequence."""
+
+        names = [ 'diff_type',
+                  'diff_params' ]
+
+        return names
+
+
     def set(self, run=None, diff=None, params=None):
         """Function for setting up the diffusion tensor."""
 

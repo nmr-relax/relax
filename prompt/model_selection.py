@@ -68,7 +68,7 @@ class Modsel:
 
 
         If the runs argument is not supplied then all runs currently set or loaded will be used for
-        model selection, although this could cause problems.  
+        model selection, although this could cause problems.
 
 
         Example

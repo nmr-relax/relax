@@ -29,8 +29,68 @@ class Rx_data:
         self.relax = relax
 
 
-    def delete_rx_data(self, run):
-        """Funciton for removal of relaxation data structures."""
+    def data_init(self, name):
+        """Function for returning an initial data structure corresponding to 'name'."""
+
+        # Empty arrays.
+        list_data = [ 'relax_data',
+                      'relax_error',
+                      'ri_labels',
+                      'remap_table',
+                      'noe_r1_table',
+                      'frq_labels',
+                      'frq' ]
+        if name in list_data:
+            return []
+
+        # Zero.
+        zero_data = [ 'num_ri', 'num_frq' ]
+        if name in zero_data:
+            return 0
+
+
+    def data_names(self):
+        """Function for returning a list of names of data structures associated with rx_data.
+
+        Description
+        ~~~~~~~~~~~
+
+        The names are as follows:
+
+        relax_data:  Relaxation data.
+
+        relax_error:  Relaxation error.
+
+        num_ri:  Number of data points, eg 6.
+
+        num_frq:  Number of field strengths, eg 2.
+
+        ri_labels:  Labels corresponding to the data type, eg ['NOE', 'R1', 'R2', 'NOE', 'R1',
+        'R2'].
+
+        remap_table:  A translation table to map relaxation data points to their frequencies, eg [0,
+        0, 0, 1, 1, 1].
+
+        noe_r1_table:  A translation table to direct the NOE data points to the R1 data points.
+        This is used to speed up calculations by avoiding the recalculation of R1 values.  eg [None,
+        None, 0, None, None, 3]
+
+        frq_labels:  NMR frequency labels, eg ['600', '500']
+
+        frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
+        """
+
+        names = [ 'relax_data',
+                  'relax_error',
+                  'num_ri',
+                  'num_frq',
+                  'ri_labels',
+                  'remap_table',
+                  'noe_r1_table',
+                  'frq_labels',
+                  'frq' ]
+
+        return names
 
 
     def initialise_rx_data(self, data, run):
@@ -39,60 +99,24 @@ class Rx_data:
         Only data structures which do not exist are created.
         """
 
-        # Relaxation data.
-        if not hasattr(data, 'relax_data'):
-            data.relax_data = {}
-        if not data.relax_data.has_key(run):
-            data.relax_data[run] = []
+        # Get the data names.
+        data_names = self.data_names()
 
-        # Relaxation error.
-        if not hasattr(data, 'relax_error'):
-            data.relax_error = {}
-        if not data.relax_error.has_key(run):
-            data.relax_error[run] = []
+        # Loop over the names.
+        for name in data_names:
+            # If the name is not in 'data', add it.
+            if not hasattr(data, name):
+                setattr(data, name, {})
 
-        # Number of data points, eg 6.
-        if not hasattr(data, 'num_ri'):
-            data.num_ri = {}
-        if not data.num_ri.has_key(run):
-            data.num_ri[run] = 0
+            # Get the data.
+            object = getattr(data, name)
 
-        # Number of field strengths, eg 2.
-        if not hasattr(data, 'num_frq'):
-            data.num_frq = {}
-        if not data.num_frq.has_key(run):
-            data.num_frq[run] = 0
+            # Get the initial data structure.
+            value = self.data_init(name)
 
-        # Labels corresponding to the data type, eg ['NOE', 'R1', 'R2', 'NOE', 'R1', 'R2']
-        if not hasattr(data, 'ri_labels'):
-            data.ri_labels = {}
-        if not data.ri_labels.has_key(run):
-            data.ri_labels[run] = []
-
-        # A translation table to map relaxation data points to their frequencies, eg [0, 0, 0, 1, 1, 1]
-        if not hasattr(data, 'remap_table'):
-            data.remap_table = {}
-        if not data.remap_table.has_key(run):
-            data.remap_table[run] = []
-
-        # A translation table to direct the NOE data points to the R1 data points.  Used to speed up
-        # calculations by avoiding the recalculation of R1 values.  eg [None, None, 0, None, None, 3]
-        if not hasattr(data, 'noe_r1_table'):
-            data.noe_r1_table = {}
-        if not data.noe_r1_table.has_key(run):
-            data.noe_r1_table[run] = []
-
-        # NMR frequency labels, eg ['600', '500']
-        if not hasattr(data, 'frq_labels'):
-            data.frq_labels = {}
-        if not data.frq_labels.has_key(run):
-            data.frq_labels[run] = []
-
-        # NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
-        if not hasattr(data, 'frq'):
-            data.frq = {}
-        if not data.frq.has_key(run):
-            data.frq[run] = []
+            # If the data structure does not have the key 'run', add it.
+            if not object.has_key(run):
+                object[run] = value
 
 
     def macro_read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
@@ -222,16 +246,8 @@ class Rx_data:
     def read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for reading R1, R2, or NOE relaxation data."""
 
-        # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
-            raise RelaxSequenceError
-
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxFileEmptyError
 
         # Remove the header.
         file_data = file_data[header_lines:]
@@ -247,10 +263,6 @@ class Rx_data:
                 float(file_data[i][error_col])
             except ValueError:
                 raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
-
-        # Add the run to the runs list.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
 
         # Loop over the relaxation data.
         for i in range(len(file_data)):
@@ -316,3 +328,8 @@ class Rx_data:
                 for i in range(self.relax.data.res[index].num_ri[run]):
                     if self.relax.data.res[index].ri_labels[run][i] == 'NOE' and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][i]]:
                         self.relax.data.res[index].noe_r1_table[run][i] = self.relax.data.res[index].num_ri[run] - 1
+
+        # Add the run to the runs list.
+        if not run in self.relax.data.runs:
+            self.relax.data.runs.append(run)
+

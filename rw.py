@@ -38,14 +38,10 @@ class RW:
         if not len(self.relax.data.res):
             raise RelaxSequenceError
 
-        # Add the run to 'self.relax.data.runs'.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
-
         # Equation type specific function setup.
         self.read_results = self.relax.specific_setup.setup("read", data_type)
         if self.read_results == None:
-            raise NameError, "Read error, no function corresponding to the data type exists."
+            raise RelaxFuncSetupError, ('read', data_type)
 
         # The results file.
         if dir == None:
@@ -60,8 +56,16 @@ class RW:
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
 
+        # Do nothing if the file does not exist.
+        if not file_data:
+            raise RelaxFileEmptyError
+
         # Read the results.
         self.read_results(file_data, run)
+
+        # Add the run to 'self.relax.data.runs'.
+        if not run in self.relax.data.runs:
+            self.relax.data.runs.append(run)
 
 
     def write_data(self, run=None, file="results", dir=None, force=0):
@@ -86,7 +90,7 @@ class RW:
         # Equation type specific function setup.
         fns = self.relax.specific_setup.setup("write", self.relax.data.res[0].equations[run])
         if fns == None:
-            return
+            raise RelaxFuncSetupError, ('write', self.relax.data.res[i].equations[run])
         self.write_header, self.write_results = fns
 
         # The results file.

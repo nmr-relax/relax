@@ -46,6 +46,7 @@ except ImportError:
 
 from data import Data
 from file_ops import File_ops
+from delete import Delete
 from diffusion_tensor import Diffusion_tensor
 from dx.map import Map
 from dx.opendx import OpenDX
@@ -86,6 +87,7 @@ class Relax:
         RelaxErrors()
 
         # Various functions.
+        self.delete = Delete(self)
         self.diffusion_tensor = Diffusion_tensor(self)
         self.file_ops = File_ops(self)
         self.map = Map(self)

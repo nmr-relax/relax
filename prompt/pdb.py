@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import message
+
 
 class Skin:
     def __init__(self, relax):
@@ -36,6 +38,9 @@ class Skin:
 
         # Place references to the interactive functions within the namespace of this skin class.
         self.set = x.set
+
+        # __repr__.
+        self.__repr__ = message.macro_class
 
 
 class Macro_class:

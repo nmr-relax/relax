@@ -30,6 +30,12 @@ class Sequence:
         self.relax = relax
 
 
+    def data_names(self):
+        """Function for returning a list of names of data structures associated with the sequence."""
+
+        return [ 'res' ]
+
+
     def macro_read(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):
         """Macro for reading sequence data.
 

@@ -24,6 +24,7 @@
 from re import match
 import sys
 
+import message
 from select_res import Select_res
 
 
@@ -43,6 +44,9 @@ class Skin:
         # Place references to the interactive functions within the namespace of this skin class.
         self.load = x.load
         self.set = x.set
+
+        # __repr__.
+        self.__repr__ = message.macro_class
 
 
 class Macro_class(Select_res):

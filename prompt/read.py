@@ -22,6 +22,8 @@
 
 import sys
 
+import message
+
 
 class Skin:
     def __init__(self, relax):
@@ -40,6 +42,9 @@ class Skin:
         self.read_data = x.read_data
         self.rx_data = x.rx_data
         self.sequence = x.sequence
+
+        # __repr__.
+        self.__repr__ = message.macro_class
 
 
 class Macro_class:

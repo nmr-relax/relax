@@ -46,7 +46,7 @@ class Base_Map:
         # Equation type specific function setup.
         fns = self.relax.specific_setup.setup("map_space", self.relax.data.res[index].equations[run])
         if fns == None:
-            return
+            raise RelaxFuncSetupError, ('space mapping', self.relax.data.res[index].equations[run])
         self.create_param_vector, self.map_bounds, self.minimise = fns
 
         # Function arguments.

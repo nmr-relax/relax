@@ -137,7 +137,7 @@ class RelaxErrors:
     # No sequence loaded.
     class RelaxSequenceError(BaseError):
         def __init__(self):
-            self.text = "Sequence data has not been loaded."
+            self.text = "The sequence has not been loaded."
 
     # Cannot find the residue in the sequence.
     class RelaxNoResError(BaseError):
@@ -177,3 +177,12 @@ class RelaxErrors:
     class RelaxRunError(BaseError):
         def __init__(self, run):
             self.text = "The run " + `run` + " does not exist."
+
+
+    # Setup errors.
+    ###############
+
+    # Cannot setup the functions.
+    class RelaxFuncSetupError(BaseError):
+        def __init__(self, name, equation):
+            self.text = "The " + `name` + " functions for the equation type " + `equation` + " cannot be setup."

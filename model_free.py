@@ -177,8 +177,12 @@ class Model_free:
             if invalid_param:
                 raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
 
-        # Update the data structures.
-        self.data_update(run, model, equation, params, scaling)
+        # Add the run to the runs list.
+        if not run in self.relax.data.runs:
+            self.relax.data.runs.append(run)
+
+        # Set up the model.
+        self.model_setup(run, model, equation, params, scaling)
 
 
     def create_param_vector(self, run, data):
@@ -228,17 +232,122 @@ class Model_free:
         return param_vector
 
 
-    def data_update(self, run, model, equation, params, scaling_flag):
+    def data_init(self, name):
+        """Function for returning an initial data structure corresponding to 'name'."""
+
+        # Empty arrays.
+        list_data = [ 'models',
+                      'params',
+                      'scaling' ]
+        if name in list_data:
+            return []
+
+        # None.
+        none_data = [ 'equations',
+                      's2',
+                      's2f',
+                      's2s',
+                      'tm',
+                      'te',
+                      'tf',
+                      'ts',
+                      'rex',
+                      'r',
+                      'csa',
+                      'chi2',
+                      'iter',
+                      'f_count',
+                      'g_count',
+                      'h_count',
+                      'warning' ]
+        if name in none_data:
+            return None
+
+
+    def data_names(self):
+        """Function for returning a list of names of data structures associated with model-free.
+
+        Description
+        ~~~~~~~~~~~
+
+        The names are as follows:
+
+        model: The model-free model name.
+
+        equations:  The model-free equation type.
+
+        params:  An array of the model-free parameter names associated with the model.
+
+        scaling:  The scaling vector.
+
+        s2:  S2.
+
+        s2f:  S2f.
+
+        s2s:  S2s.
+
+        tm:  tm.
+
+        te:  te.
+
+        tf:  tf.
+
+        ts:  ts.
+
+        rex:  Rex.
+
+        r:  Bond length.
+
+        csa:  CSA value.
+
+        chi2:  Chi-squared value.
+
+        iter:  Iterations.
+
+        f_count:  Function count.
+
+        g_count:  Gradient count.
+
+        h_count:  Hessian count.
+
+        warning:  Minimisation warning.
+        """
+
+        names = [ 'models',
+                  'equations',
+                  'params',
+                  'scaling',
+                  's2',
+                  's2f',
+                  's2s',
+                  'tm',
+                  'te',
+                  'tf',
+                  'ts',
+                  'rex',
+                  'r',
+                  'csa',
+                  'chi2',
+                  'iter',
+                  'f_count',
+                  'g_count',
+                  'h_count',
+                  'warning' ]
+
+        return names
+
+
+    def model_setup(self, run, model, equation, params, scaling_flag):
         """Function for updating various data structures depending on the model selected."""
 
-        # Add the run to the runs list.
-        if not run in self.relax.data.runs:
-            self.relax.data.runs.append(run)
-
-        # Loop over the sequence
+        # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
             # Initialise the data structures (if needed).
-            self.initialise_mf_data(self.relax.data.res[i])
+            self.initialise_mf_data(self.relax.data.res[i], run)
 
             # Model-free models, equations, and parameter types.
             self.relax.data.res[i].models[run] = model
@@ -248,27 +357,6 @@ class Model_free:
             # Diagonal scaling.
             if scaling_flag:
                 self.relax.data.res[i].scaling[run] = self.scaling_vector(run, params, i)
-
-            # Others.
-            self.relax.data.res[i].s2[run] = None
-            self.relax.data.res[i].s2f[run] = None
-            self.relax.data.res[i].s2s[run] = None
-            self.relax.data.res[i].te[run] = None
-            self.relax.data.res[i].tf[run] = None
-            self.relax.data.res[i].ts[run] = None
-            self.relax.data.res[i].rex[run] = None
-            self.relax.data.res[i].chi2[run] = None
-            self.relax.data.res[i].iter[run] = None
-            self.relax.data.res[i].f_count[run] = None
-            self.relax.data.res[i].g_count[run] = None
-            self.relax.data.res[i].h_count[run] = None
-            self.relax.data.res[i].warning[run] = None
-
-            # Bond length and CSA.
-            if not self.relax.data.res[i].r[run]:
-                self.relax.data.res[i].r[run] = None
-            if not self.relax.data.res[i].csa[run]:
-                self.relax.data.res[i].csa[run] = None
 
 
     def fixed_setup(self, params=None, min_options=None):
@@ -333,91 +421,30 @@ class Model_free:
         return min_options
 
 
-    def initialise_mf_data(self, data):
+    def initialise_mf_data(self, data, run):
         """Function for the initialisation of model-free data structures.
 
         Only data structures which do not exist are created.
         """
 
-        # Model name.
-        if not hasattr(data, 'models'):
-            data.models = {}
+        # Get the data names.
+        data_names = self.data_names()
 
-        # Equation type.
-        if not hasattr(data, 'equations'):
-            data.equations = {}
+        # Loop over the names.
+        for name in data_names:
+            # If the name is not in 'data', add it.
+            if not hasattr(data, name):
+                setattr(data, name, {})
 
-        # Parameters.
-        if not hasattr(data, 'params'):
-            data.params = {}
+            # Get the data.
+            object = getattr(data, name)
 
-        # Scaling vector.
-        if not hasattr(data, 'scaling'):
-            data.scaling = {}
+            # Get the initial data structure.
+            value = self.data_init(name)
 
-        # S2.
-        if not hasattr(data, 's2'):
-            data.s2 = {}
-
-        # S2f.
-        if not hasattr(data, 's2f'):
-            data.s2f = {}
-
-        # S2s.
-        if not hasattr(data, 's2s'):
-            data.s2s = {}
-
-        # tm.
-        if not hasattr(data, 'tm'):
-            data.tm = {}
-
-        # te.
-        if not hasattr(data, 'te'):
-            data.te = {}
-
-        # tf.
-        if not hasattr(data, 'tf'):
-            data.tf = {}
-
-        # ts.
-        if not hasattr(data, 'ts'):
-            data.ts = {}
-
-        # Rex.
-        if not hasattr(data, 'rex'):
-            data.rex = {}
-
-        # r.
-        if not hasattr(data, 'r'):
-            data.r = {}
-
-        # CSA.
-        if not hasattr(data, 'csa'):
-            data.csa = {}
-
-        # Chi-squared value.
-        if not hasattr(data, 'chi2'):
-            data.chi2 = {}
-
-        # Iterations.
-        if not hasattr(data, 'iter'):
-            data.iter = {}
-
-        # Function count.
-        if not hasattr(data, 'f_count'):
-            data.f_count = {}
-
-        # Gradient count.
-        if not hasattr(data, 'g_count'):
-            data.g_count = {}
-
-        # Hessian count.
-        if not hasattr(data, 'h_count'):
-            data.h_count = {}
-
-        # Warning.
-        if not hasattr(data, 'warning'):
-            data.warning = {}
+            # If the data structure does not have the key 'run', add it.
+            if not object.has_key(run):
+                object[run] = value
 
 
     def linear_constraints(self, data=None, run=None, params=None):
@@ -897,7 +924,7 @@ class Model_free:
         if constraints:
             constraint_function = self.relax.specific_setup.setup("linear_constraints", self.relax.data.res[i].equations[run])
             if constraint_function == None:
-                return
+                raise RelaxFuncSetupError, ('linear constraint', self.relax.data.res[i].equations[run])
             A, b = constraint_function(self.relax.data.res[i], run, self.relax.data.res[i].params[run])
 
         if print_flag >= 1:
@@ -1287,7 +1314,7 @@ class Model_free:
                 warning = None
 
             # Initialise the data structures (if needed).
-            self.initialise_mf_data(self.relax.data.res[index])
+            self.initialise_mf_data(self.relax.data.res[index], run)
 
             # Place the data into 'self.relax.data'.
             self.relax.data.res[index].models[run] = model
@@ -1618,8 +1645,12 @@ class Model_free:
         else:
             raise RelaxError, "The model '" + model + "' is invalid."
 
-        # Update the data structures.
-        self.data_update(run, model, equation, params, scaling)
+        # Add the run to the runs list.
+        if not run in self.relax.data.runs:
+            self.relax.data.runs.append(run)
+
+        # Set up the model.
+        self.model_setup(run, model, equation, params, scaling)
 
 
     def write_header(self, file, run):
@@ -1662,6 +1693,10 @@ class Model_free:
 
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
             # Initialise.
             types = self.relax.data.res[i].params[run]
 
@@ -1693,7 +1728,7 @@ class Model_free:
                 file.write("%-26s" % `self.relax.data.res[i].s2s[run]`)
 
             # tm.
-            if hasattr(self.relax.data.res[i], 'tm') and self.relax.data.res[i].tm.has_key(run):
+            if hasattr(self.relax.data.res[i], 'tm') and self.relax.data.res[i].tm.has_key(run) and self.relax.data.res[i].tm[run] != None:
                 file.write("%-26s" % `self.relax.data.res[i].tm[run] / 1e-12`)
             else:
                 file.write("%-26s" % `self.relax.data.diff_params[run][0] / 1e-12`)
