@@ -1211,7 +1211,12 @@ class Model_free:
             # Axially symmetric diffusion {tm, Dratio, theta, phi}.
             if self.relax.data.diff[self.run].type == 'axial':
                 min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
-                min_options.append([inc[1], 0.0, 3.0])
+                if self.relax.data.diff[self.run].axial_type == 'prolate':
+                    min_options.append([inc[1], 1.0, 3.0])
+                elif self.relax.data.diff[self.run].axial_type == 'oblate':
+                    min_options.append([inc[1], 0.0, 1.0])
+                else:
+                    min_options.append([inc[1], 0.0, 3.0])
                 min_options.append([inc[2], 0.0, 2 * pi])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 m = m + 4
