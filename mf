@@ -40,7 +40,7 @@ class mf:
 		self.star = star(self)
 
 		# Debugging option.
-		self.debug = 1
+		self.debug = 0
 
 		self.print_header()
 
