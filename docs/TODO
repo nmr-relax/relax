@@ -1,8 +1,6 @@
 # General.
 ##########
 
-key -> "m1"
-key -> res_num (eg seq["-5"] = "Gly")
 Get the GPL text and place it in a file.
 change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
 data.grid_search["m1"]
@@ -41,6 +39,13 @@ Map model-free space.
 Grace.
 OpenDX.
 Molmol.
+
+
+# Minimisation.
+###############
+
+log grid search.
+
 
 # Functions.
 ############

@@ -46,8 +46,8 @@ class mf_model(generic_functions):
 		>>> mf_model_create(model='m1', param_types=['S2'], equation='mf_orig')
 
 
-		The following commands will create the model-free model 'large_model' which is based on the the extended model-free equation and contains
-		the seven parameters 'S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'.
+		The following commands will create the model-free model 'large_model' which is based on the the extended model-free equation
+		and contains the seven parameters 'S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'.
 
 		>>> mf_model_create('large_model', 'mf_ext', ['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'])
 		>>> mf_model_create(model='large_model', param_types=['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'], equation='mf_ext')
