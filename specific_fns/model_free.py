@@ -1461,8 +1461,12 @@ class Model_free:
 
                 # Loop over the model-free parameters.
                 for l in xrange(len(self.relax.data.res[self.run][k].params)):
+                    # Local tm (skip).
+                    if self.relax.data.res[self.run][k].params[l] == 'tm':
+                        continue
+
                     # Order parameters {S2, S2f, S2s}.
-                    if match('S2', self.relax.data.res[self.run][k].params[l]):
+                    elif match('S2', self.relax.data.res[self.run][k].params[l]):
                         # 0 <= S2 <= 1.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
@@ -2911,36 +2915,71 @@ class Model_free:
         else:
             file.write("%-26s" % `res.csa / 1e-6`)
 
-        # Chi-squared.
-        file.write("%-26s" % `res.chi2`)
+        # Minimisation details (global minimisation results).
+        if res.chi2 == None:
+            # Chi-squared.
+            file.write("%-26s" % `self.relax.data.chi2[run]`)
 
-        # Iterations
-        if res.iter == None:
-            file.write("%-9s" % "None")
+            # Iterations
+            if self.relax.data.iter[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.iter[run])
+
+            # Function count.
+            if self.relax.data.f_count[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.f_count[run])
+
+            # Gradient count.
+            if self.relax.data.g_count[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.g_count[run])
+
+            # Hessian count.
+            if self.relax.data.h_count[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.h_count[run])
+
+            # Warning
+            if self.relax.data.warning[run] != None:
+                file.write(self.relax.data.warning[run])
+
+        # Minimisation details (individual residue results).
         else:
-            file.write("%-9i" % res.iter)
+            # Chi-squared.
+            file.write("%-26s" % `res.chi2`)
 
-        # Function count.
-        if res.f_count == None:
-            file.write("%-9s" % "None")
-        else:
-            file.write("%-9i" % res.f_count)
+            # Iterations
+            if res.iter == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % res.iter)
 
-        # Gradient count.
-        if res.g_count == None:
-            file.write("%-9s" % "None")
-        else:
-            file.write("%-9i" % res.g_count)
+            # Function count.
+            if res.f_count == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % res.f_count)
 
-        # Hessian count.
-        if res.h_count == None:
-            file.write("%-9s" % "None")
-        else:
-            file.write("%-9i" % res.h_count)
+            # Gradient count.
+            if res.g_count == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % res.g_count)
 
-        # Warning
-        if res.warning != None:
-            file.write(res.warning)
+            # Hessian count.
+            if res.h_count == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % res.h_count)
+
+            # Warning
+            if res.warning != None:
+                file.write(res.warning)
 
         # End of line.
         file.write("\n")

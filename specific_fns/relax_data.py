@@ -63,11 +63,20 @@ class Rx_data:
             # Remap the data structure 'self.relax.data.res[self.run][i]'.
             data = self.relax.data.res[self.run][i]
 
+            # Store a copy of all the data in 'self.relax.data.res[self.run][i]' for backing up if the back_calculation function fails.
+            back_up = deepcopy(data)
+
             # Initialise all data structures.
             self.update_data_structures(data)
 
             # Back-calculate the relaxation value.
-            value = back_calculate(run=self.run, index=i, ri_label=self.ri_label, frq_label=frq_label, frq=self.frq)
+            try:
+                value = back_calculate(run=self.run, index=i, ri_label=self.ri_label, frq_label=frq_label, frq=self.frq)
+            except:
+                # Restore the data.
+                self.relax.data.res[self.run][i] = deepcopy(back_up)
+                del back_up
+                raise
 
             # Update all data structures.
             self.update_data_structures(data, value)

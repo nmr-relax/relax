@@ -2221,7 +2221,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdPsik(data, params, j, k, num_D_params):
 
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdS2(data, params, j, k, num_D_params):
+def calc_diff_S2f_S2_ts_d2jw_dPsijdS2(data, params, j, k, num_D_params):
     """Spectral density Hessian.
 
     Calculate the spectral desity values for the Psij - S2 double partial derivative of the extended
