@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-from os import kill, system
+from os import kill, popen3, system
 from popen2 import Popen3
 
 
@@ -39,8 +39,11 @@ class RelaxPopen3(Popen3):
         if self.poll() != -1:
             return
 
-        # Kill the child process.
-        kill(self.pid, sig)
+        # Kill the child process (or pass silently if the PID no longer exists).
+        try:
+            kill(self.pid, sig)
+        except:
+            pass
 
         # Kill the relax process spawned by the thread.
         if hasattr(self, 'relax_pid') and self.relax_pid != None:
@@ -52,4 +55,4 @@ class RelaxPopen3(Popen3):
                 kill_cmd = login_cmd + " \"" + kill_cmd + "\""
 
             # Kill relax.
-            system(kill_cmd)
+            stdin, stdout, stderr = popen3(kill_cmd)

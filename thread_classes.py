@@ -173,7 +173,7 @@ class RelaxParentThread:
         if tag:
             print "Generating a random tag:"
             self.tag = ''
-            for i in xrange(5):
+            for i in xrange(8):
                 index = randint(0, len(ascii_letters)-1)
                 self.tag = self.tag + ascii_letters[index]
             print "    %s\n" % self.tag
