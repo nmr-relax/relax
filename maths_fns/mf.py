@@ -26,7 +26,6 @@ from math import pi
 
 from geometry import *
 from weights import *
-from correlation_time_comps import *
 from correlation_time import *
 from jw_mf_comps import *
 from jw_mf import *
@@ -207,10 +206,6 @@ class Mf:
             elif self.param_set == 'diff' or self.param_set == 'all':
                 self.diff_data.params = self.params[0:self.diff_end_index]
 
-            # Calculate the correlation time components.
-            if self.diff_data.calc_ti_comps:
-                self.diff_data.calc_ti_comps(self.diff_data)
-
             # Calculate the correlation times ti.
             self.diff_data.calc_ti(self.data[i], self.diff_data)
 
@@ -295,10 +290,6 @@ class Mf:
 
         # Diffusion tensor weight calculations.
         self.diff_data.calc_ci(data)
-
-        # Diffusion tensor correlation time components.
-        if self.diff_data.calc_ti_comps:
-            self.diff_data.calc_ti_comps(self.diff_data)
 
         # Diffusion tensor correlation times.
         self.diff_data.calc_ti(data, self.diff_data)
@@ -410,10 +401,6 @@ class Mf:
             # Diffusion tensor weight calculations.
             self.diff_data.calc_ci(data)
 
-            # Diffusion tensor correlation time components.
-            if self.diff_data.calc_ti_comps:
-                self.diff_data.calc_ti_comps(self.diff_data)
-
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
 
@@ -478,10 +465,6 @@ class Mf:
 
             # Diffusion tensor weight calculations.
             self.diff_data.calc_ci(data)
-
-            # Diffusion tensor correlation time components.
-            if self.diff_data.calc_ti_comps:
-                self.diff_data.calc_ti_comps(self.diff_data)
 
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
@@ -659,10 +642,6 @@ class Mf:
             if self.diff_data.calc_dci:
                 self.diff_data.calc_dci(data)
 
-            # Diffusion tensor correlation time gradient components.
-            if self.diff_data.calc_dti_comps:
-                self.diff_data.calc_dti_comps(self.diff_data)
-
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
 
@@ -742,10 +721,6 @@ class Mf:
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_dci:
                 self.diff_data.calc_dci(data)
-
-            # Diffusion tensor correlation time gradient components.
-            if self.diff_data.calc_dti_comps:
-                self.diff_data.calc_dti_comps(self.diff_data)
 
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
@@ -1078,11 +1053,6 @@ class Mf:
             diff_data.calc_dci = None
             diff_data.calc_d2ci = None
 
-            # Global correlation time function, gradient, and Hessian components.
-            diff_data.calc_ti_comps = None
-            diff_data.calc_dti_comps = None
-            diff_data.calc_d2ti_comps = None
-
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_iso_ti
             diff_data.calc_dti = calc_iso_dti
@@ -1106,11 +1076,6 @@ class Mf:
             diff_data.calc_ci = calc_axial_ci
             diff_data.calc_dci = calc_axial_dci
             diff_data.calc_d2ci = calc_axial_d2ci
-
-            # Global correlation time function, gradient, and Hessian components.
-            diff_data.calc_ti_comps = calc_axial_ti_comps
-            diff_data.calc_dti_comps = calc_axial_dti_comps
-            diff_data.calc_d2ti_comps = calc_axial_d2ti_comps
 
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_axial_ti
@@ -1141,11 +1106,6 @@ class Mf:
             diff_data.calc_ci = calc_aniso_ci
             diff_data.calc_dci = calc_aniso_dci
             diff_data.calc_d2ci = calc_aniso_d2ci
-
-            # Global correlation time function, gradient, and Hessian components.
-            diff_data.calc_ti_comps = calc_aniso_ti_comps
-            diff_data.calc_dti_comps = calc_aniso_dti_comps
-            diff_data.calc_d2ti_comps = calc_aniso_d2ti_comps
 
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_aniso_ti

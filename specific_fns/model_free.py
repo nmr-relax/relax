@@ -53,8 +53,8 @@ class Model_free:
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                self.param_names.append('Dper')
-                self.param_names.append('Dpar')
+                self.param_names.append('tm')
+                self.param_names.append('Dratio')
                 self.param_names.append('theta')
                 self.param_names.append('phi')
 
@@ -97,8 +97,8 @@ class Model_free:
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                self.param_vector.append(self.relax.data.diff[self.run].Dper)
-                self.param_vector.append(self.relax.data.diff[self.run].Dpar)
+                self.param_vector.append(self.relax.data.diff[self.run].tm)
+                self.param_vector.append(self.relax.data.diff[self.run].Dratio)
                 self.param_vector.append(self.relax.data.diff[self.run].theta)
                 self.param_vector.append(self.relax.data.diff[self.run].phi)
 
@@ -225,9 +225,9 @@ class Model_free:
             elif self.relax.data.diff[self.run].type == 'axial':
                 # Test if the diffusion parameters should be scaled.
                 if self.relax.data.diff[self.run].scaling:
-                    # Dper, Dpar, theta, phi
-                    self.scaling_matrix[i, i] = 1e9
-                    self.scaling_matrix[i+1, i+1] = 1e9
+                    # tm, Dratio, theta, phi
+                    self.scaling_matrix[i, i] = 1e-9
+                    self.scaling_matrix[i+1, i+1] = 1.0
                     self.scaling_matrix[i+2, i+2] = 1.0
                     self.scaling_matrix[i+3, i+3] = 1.0
 
@@ -767,8 +767,8 @@ class Model_free:
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                self.relax.data.diff[self.run].Dper = self.param_vector[0]
-                self.relax.data.diff[self.run].Dpar = self.param_vector[1]
+                self.relax.data.diff[self.run].tm = self.param_vector[0]
+                self.relax.data.diff[self.run].Dratio = self.param_vector[1]
                 self.relax.data.diff[self.run].theta = self.param_vector[2]
                 self.relax.data.diff[self.run].phi = self.param_vector[3]
                 param_index = param_index + 4
@@ -1100,10 +1100,10 @@ class Model_free:
                 min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
                 m = m + 1
 
-            # Axially symmetric diffusion {Dper, Dpar, theta, phi}.
+            # Axially symmetric diffusion {tm, Dratio, theta, phi}.
             if self.relax.data.diff[self.run].type == 'axial':
-                min_options.append([inc[0], 0.0, 10.0 * 1e9])
-                min_options.append([inc[1], 0.0, 10.0 * 1e9])
+                min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
+                min_options.append([inc[1], 0.0, 3.0])
                 min_options.append([inc[2], 0.0, 2 * pi])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 m = m + 4
@@ -1324,34 +1324,38 @@ class Model_free:
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                # Dper >= 0.
+                # tm >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0 / self.scaling_matrix[i, i])
                 i = i + 1
                 j = j + 1
 
-                # Dpar >= 0.
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 1
-
-                # Oblate diffusion, Dper >= Dpar.
-                if self.relax.data.diff[self.run].axial_type == 'oblate':
-                    A.append(zero_array * 0.0)
-                    A[j][i-2] = 1.0
-                    A[j][i-1] = -1.0
-                    b.append(0.0)
-                    j = j + 1
-
-                # Prolate diffusion, Dper <= Dpar.
+                # Prolate diffusion, Dratio >= 1.
                 if self.relax.data.diff[self.run].axial_type == 'prolate':
                     A.append(zero_array * 0.0)
-                    A[j][i-2] = -1.0
-                    A[j][i-1] = 1.0
-                    b.append(0.0)
+                    A[j][i] = 1.0
+                    b.append(1.0 / self.scaling_matrix[i, i])
+                    i = i + 1
+                    j = j + 1
+
+                # Oblate diffusion, 0 <= Dratio <= 1.
+                elif self.relax.data.diff[self.run].axial_type == 'oblate':
+                    A.append(zero_array * 0.0)
+                    A.append(zero_array * 0.0)
+                    A[j][i] = 1.0
+                    A[j+1][i] = -1.0
+                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(-1.0 / self.scaling_matrix[i, i])
+                    i = i + 1
+                    j = j + 2
+
+                # Dratio >= 0.
+                else:
+                    A.append(zero_array * 0.0)
+                    A[j][i] = 1.0
+                    b.append(0.0 / self.scaling_matrix[i, i])
+                    i = i + 1
                     j = j + 1
 
             # Anisotropic diffusion.
@@ -1444,15 +1448,19 @@ class Model_free:
                                     b.append(0.0)
                                     j = j + 1
 
-                        # te, tf, ts <= 2 * tm.
-                        A.append(zero_array * 0.0)
-                        if self.param_set == 'mf':
-                            A[j][i] = -1.0
-                            b.append(-2 * self.relax.data.diff[self.run].tm / self.scaling_matrix[i, i])
-                        elif self.relax.data.diff[self.run].type == 'iso':
-                            pass
+                        # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
+                        if not self.relax.data.res[self.run][k].params[l] == 'tf':
+                            if self.param_set == 'mf':
+                                A.append(zero_array * 0.0)
+                                A[j][i] = -1.0
+                                b.append(-2.0 * self.relax.data.diff[self.run].tm / self.scaling_matrix[i, i])
+                            else:
+                                A.append(zero_array * 0.0)
+                                A[j][0] = 2.0
+                                A[j][i] = -1.0
+                                b.append(0.0)
 
-                        j = j + 1
+                            j = j + 1
 
                     # Rex.
                     elif self.relax.data.res[self.run][k].params[l] == 'Rex':
@@ -1490,6 +1498,10 @@ class Model_free:
         A = array(A, Float64)
         b = array(b, Float64)
 
+        self.assemble_param_names()
+        print "params:\n" + `self.param_names`
+        print "A:\n" + `A`
+        print "b:\n" + `b`
         return A, b
 
 

@@ -55,26 +55,40 @@ def calc_axial_ti(data, diff_data):
                2Dper + 4Dpar
 
 
+    The equations for the parameter {tm, Dratio} are:
+
+               1    /       1    \ 
+        t0  =  - tm | 2 + ------ |
+               3    \     Dratio /
+
+
+               2    /          3      \ 
+        t1  =  - tm | 2 + ----------- |
+               5    \     1 + 5Dratio /
+
+
+                  /         3      \ 
+        t2  =  tm | 2 - ---------- |
+                  \     2 + Dratio /
+
     The diffusion parameter set in data.diff_params is {tm, Dratio, theta, phi}.
     """
 
     # t0.
-    if diff_data.params[0] == 0:
-        data.ti[0] = 1e99
+    if diff_data.params[1] == 0:
+        if diff_data.params[0] == 0:
+            data.ti[0] = 0.0
+        else:
+            data.ti[0] = 1e99
     else:
-        data.ti[0] = 1.0 / (6.0 * diff_data.params[0])
+        data.ti[0] = diff_data.params[0]/3.0 * (2.0 + 1.0/diff_data.params[1])
 
     # t1.
-    if diff_data.five_Dper_plus_Dpar == 0:
-        data.ti[1] = 1e99
-    else:
-        data.ti[1] = 1.0 / diff_data.five_Dper_plus_Dpar
+    data.ti[1] = 0.4 * diff_data.params[0] * (2.0 + 3.0/(1.0 + 5.0*diff_data.params[1]))
 
     # t2.
-    if diff_data.Dper_plus_two_Dpar == 0:
-        data.ti[2] = 1e99
-    else:
-        data.ti[2] = 1.0 / (2.0 * diff_data.Dper_plus_two_Dpar)
+    data.ti[2] = diff_data.params[0] * (2.0 - 3.0/(2.0 + diff_data.params[1]))
+
 
 
 
@@ -101,47 +115,59 @@ def calc_iso_dti(data, diff_data):
 def calc_axial_dti(data, diff_data):
     """Partial derivatives of the diffusional correlation times.
 
-    The Dper partial derivatives are:
+    The tm partial derivatives are:
 
-         dt0           1
-        -----  =  - --------
-        dDper       6Dper**2
-
-         dt1                5
-        -----  =  - -----------------
-        dDper       (5Dper + Dpar)**2
-
-         dt1                1
-        -----  =  - ------------------
-        dDper       2(Dper + 2Dpar)**2
+        dt0     1 /       1    \ 
+        ---  =  - | 2 + ------ |
+        dtm     3 \     Dratio /
 
 
-    The Dpar partial derivatives are:
-
-         dt0
-        -----  =  0
-        dDpar
-
-         dt1                1
-        -----  =  - -----------------
-        dDpar       (5Dper + Dpar)**2
-
-         dt1                1
-        -----  =  - -----------------
-        dDpar       (Dper + 2Dpar)**2
+        dt1     2 /          3      \ 
+        ---  =  - | 2 + ----------- |
+        dtm     5 \     1 + 5Dratio /
 
 
-    The diffusion parameter set in data.diff_params is {Dper, Dpar, theta, phi}.
+        dt2             3
+        ---  =  2 - ----------
+        dtm         2 + Dratio
+
+
+    The Dratio partial derivatives are:
+
+          dt0             tm
+        -------  =  - ----------
+        dDratio       3Dratio**2
+
+          dt1               6tm
+        -------  =  - ----------------
+        dDratio       (1 + 5Dratio)**2
+
+          dt2             3tm
+        -------  =  ---------------
+        dDratio     (2 + Dratio)**2
+
+
+    The diffusion parameter set in data.diff_params is {tm, Dratio, theta, phi}.
     """
 
-    # Dper partial derivatives.
-    data.dti[0, 0] = -1.0 / (6.0 * diff_data.params[0]**2)
-    data.dti[0, 1] = -5.0 / diff_data.five_Dper_plus_Dpar_sqrd
-    data.dti[0, 2] = -1.0 / (2.0 * diff_data.Dper_plus_two_Dpar_sqrd)
+    # tm partial derivatives.
+    if diff_data.params[1] == 0:
+        data.dti[0, 0] = 1e99
+    else:
+        data.dti[0, 0] = (2.0 + 1.0/diff_data.params[1]) / 3.0
+    data.dti[0, 1] = 0.4 * (2.0 + 3.0/(1.0 + 5.0*diff_data.params[1]))
+    data.dti[0, 2] = 2.0 - 3.0/(2.0 + diff_data.params[1])
 
-    # Dpar partial derivatives.
-    data.dti[1, 1] = -1.0 / diff_data.five_Dper_plus_Dpar_sqrd
-    data.dti[1, 2] = -1.0 / diff_data.Dper_plus_two_Dpar_sqrd
+    # Dratio partial derivatives.
+    if diff_data.params[1] == 0:
+        if diff_data.params[0] == 0:
+            data.dti[1, 0] = 0.0
+        else:
+            data.dti[1, 0] = -1e99
+    else:
+        data.dti[1, 0] = - diff_data.params[0] / (3.0 * diff_data.params[1]**2)
+    data.dti[1, 1] = - 6.0 * diff_data.params[0] / (1.0 + 5.0*diff_data.params[1])**2
+    data.dti[1, 2] = 3.0 * diff_data.params[0] / (2.0 + diff_data.params[1])**2
 
 
 
@@ -151,63 +177,71 @@ def calc_axial_dti(data, diff_data):
 def calc_axial_d2ti(data, diff_data):
     """Second partial derivatives of the diffusional correlation times.
 
-    The Dper-Dper second partial derivatives are:
+    The tm-tm second partial derivatives are:
 
-         d2t0         1
-        ------  =  --------
-        dDper2     3Dper**3
+        d2t0
+        ----  =  0
+        dtm2
 
-         d2t1             50
-        ------  =  -----------------
-        dDper2     (5Dper + Dpar)**3
+        d2t1
+        ----  =  0
+        dtm2
 
-         d2t1             1
-        ------  =  -----------------
-        dDper2     (Dper + 2Dpar)**3
-
-
-    The Dper-Dpar second partial derivatives are:
-
-           d2t0
-        -----------  =  0
-        dDper.dDpar
-
-           d2t1               10
-        -----------  =  -----------------
-        dDper.dDpar     (5Dper + Dpar)**3
-
-           d2t1                2
-        --------- -  =  -----------------
-        dDper.dDpar     (Dper + 2Dpar)**3
+        d2t1
+        ----  =  0
+        dtm2
 
 
-    The Dpar-Dpar second partial derivatives are:
+    The tm-Dratio second partial derivatives are:
 
-         d2t0
-        ------  =  0
-        dDpar2
+           d2t0               1
+        -----------  =  - ----------
+        dtm.dDratio       3Dratio**2
 
-         d2t1             2
-        ------  =  -----------------
-        dDpar2     (5Dper + Dpar)**3
+           d2t1                  6
+        -----------  =  - ----------------
+        dtm.dDratio       (1 + 5Dratio)**2
 
-         d2t1             4
-        ------  =  -----------------
-        dDpar2     (Dper + 2Dpar)**3
+           d2t1                3
+        -----------  =  ---------------
+        dtm.dDratio     (2 + Dratio)**2
 
 
-    The diffusion parameter set in data.diff_params is {Dper, Dpar, theta, phi}.
+    The Dratio-Dratio second partial derivatives are:
+
+          d2t0          2tm
+        --------  =  ----------
+        dDratio2     3Dratio**3
+
+          d2t1             60tm
+        --------  =  ----------------
+        dDratio2     (1 + 5Dratio)**3
+
+          d2t1               6tm
+        --------  =  - ---------------
+        dDratio2       (2 + Dratio)**3
+
+
+    The diffusion parameter set in data.diff_params is {tm, Dratio, theta, phi}.
     """
 
-    # Dper-Dper second partial derivatives.
-    data.d2ti[0, 0, 0] = 1.0 / (3.0 * diff_data.params[0]**3)
-    data.d2ti[0, 0, 1] = 50.0 / diff_data.five_Dper_plus_Dpar_cubed
-    data.d2ti[0, 0, 2] = 1.0 / diff_data.Dper_plus_two_Dpar_cubed
+    # tm-tm second partial derivatives (don't do anything).
 
-    # Dper-Dpar second partial derivatives.
-    data.d2ti[0, 1, 1] = data.d2ti[1, 0, 1] = 10.0 / diff_data.five_Dper_plus_Dpar_cubed
-    data.d2ti[0, 1, 2] = data.d2ti[1, 0, 2] = 2.0 / diff_data.Dper_plus_two_Dpar_cubed
+    # tm-Dratio second partial derivatives.
+    if diff_data.params[1] == 0:
+        data.d2ti[0, 1, 0] = data.d2ti[1, 0, 0] = -1e99
+    else:
+        data.d2ti[0, 1, 0] = data.d2ti[1, 0, 0] = - 1.0/(3.0 * diff_data.params[1]**2)
+    data.d2ti[0, 1, 1] = data.d2ti[1, 0, 1] = - 6.0 / (1.0 + 5.0*diff_data.params[1])**2
+    data.d2ti[0, 1, 2] = data.d2ti[1, 0, 2] = 3.0 / (2.0 + diff_data.params[1])**2
 
-    # Dpar-Dpar second partial derivatives.
-    data.d2ti[1, 1, 1] = 2.0 / diff_data.five_Dper_plus_Dpar_cubed
-    data.d2ti[1, 1, 2] = 4.0 / diff_data.Dper_plus_two_Dpar_cubed
+    # Dratio-Dratio second partial derivatives.
+    if diff_data.params[1] == 0:
+        if diff_data.params[0] == 0:
+            data.dti[1, 0] = 0.0
+        else:
+            data.dti[1, 0] = 1e99
+    else:
+        data.d2ti[1, 1, 0] = 2.0 * diff_data.params[0] / (3.0 * diff_data.params[1]**3)
+    data.d2ti[1, 1, 1] = 60.0 * diff_data.params[0] / (1.0 + 5.0*diff_data.params[1])**3
+    data.d2ti[1, 1, 2] = -6.0 * diff_data.params[0] / (2.0 + diff_data.params[1])**3
