@@ -46,7 +46,7 @@ class Minimise:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        model:  The name of the model.
+        run:  The name of the run.
 
         func_tol:  The function tolerance.  This is used to terminate minisation once the function
         value between iterations is less than the tolerance.  The default value is 1e-25.
@@ -65,11 +65,11 @@ class Minimise:
 
         # Macro intro text is found at the end.
 
-        # Keyword: model.
-        if keywords.has_key('model'):
-            model = keywords['model']
+        # Keyword: run.
+        if keywords.has_key('run'):
+            run = keywords['run']
         else:
-            model = None
+            run = None
 
         # Keyword: func_tol.
         if keywords.has_key('func_tol'):
@@ -107,7 +107,7 @@ class Minimise:
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "minimise("
             text = text + "*args=" + `args`
-            text = text + ", model=" + `model`
+            text = text + ", run=" + `run`
             text = text + ", func_tol=" + `func_tol`
             text = text + ", max_iterations=" + `max_iterations`
             text = text + ", constraints=" + `constraints`
@@ -127,7 +127,7 @@ class Minimise:
         min_options = args[1:]
 
         # Test for invalid keywords.
-        valid_keywords = ['model', 'func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'print_flag']
+        valid_keywords = ['run', 'func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'print_flag']
         for key in keywords:
             valid = 0
             for valid_key in valid_keywords:
@@ -137,19 +137,12 @@ class Minimise:
                 print "The keyword " + `key` + " is invalid."
                 return
 
-        # The model keyword.
-        if model == None:
-            print "No model has been given."
+        # The run keyword.
+        if run == None:
+            print "No run has been given."
             return
-        elif type(model) != str:
-            print "The model argument " + `model` + " must be a string."
-            return
-        # self.res causing problems here!
-        #if len(self.relax.data.params[model][self.res]) == 0:
-        #    print "The minimisation of a zero parameter model is not allowed."
-        #    return
-        elif not self.relax.data.equations.has_key(model):   # Find the index of the model.
-            print "The model '" + model + "' has not been created yet."
+        elif type(run) != str:
+            print "The run argument " + `run` + " must be a string."
             return
 
         # The function tolerance value.
@@ -181,4 +174,4 @@ class Minimise:
             return
 
         # Execute the functional code.
-        self.relax.min.min(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        self.relax.min.min(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

@@ -31,13 +31,13 @@ class Fixed:
         self.relax = relax
 
 
-    def fixed(self, model=None, values=None, print_flag=1):
+    def fixed(self, run=None, values=None, print_flag=1):
         """Macro for fixing the initial parameter values.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        model:  The name of the model.
+        run:  The name of the run.
 
         values:  An array of numbers of length equal to the number of parameters in the model.
 
@@ -48,7 +48,7 @@ class Fixed:
         Examples
         ~~~~~~~~
 
-        This command will fix the parameter values of the model 'm2', which is the original
+        This command will fix the parameter values of the run 'm2', which is the original
         model-free equation with parameters {S2, te}, before minimisation to the preselected values
         of this function.
 
@@ -59,25 +59,20 @@ class Fixed:
         respectively.
 
         relax> fixed('m2', [1.0, 10 * 10e-12])
-        relax> fixed('m2', values=[1.0, 10 * 10e-12])
+        relax> fixed(run='m2', values=[1.0, 10 * 10e-12])
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "fixed("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
             text = text + ", values=" + `values`
             text = text + ", print_flag=" + `print_flag` + ")\n"
             print text
 
-        # The model argument.
-        if type(model) != str:
-            print "The model argument " + `model` + " must be a string."
-            return
-
-        # Find the index of the model.
-        if not self.relax.data.equations.has_key(model):
-            print "The model '" + model + "' has not been created yet."
+        # The run argument.
+        if type(run) != str:
+            print "The run argument " + `run` + " must be a string."
             return
 
         # User defined values.
@@ -96,4 +91,4 @@ class Fixed:
             return
 
         # Execute the functional code.
-        self.relax.min.fixed(model=model, values=values, print_flag=print_flag)
+        self.relax.min.fixed(run=run, values=values, print_flag=print_flag)

@@ -31,17 +31,28 @@ class Base_Map:
         """The space mapping base class."""
 
 
-    def map_space(self, model=None, res_num=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
+    def map_space(self, run=None, res_num=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
         """Generic function for mapping a space."""
 
+        # Residue index.
+        index = None
+        for i in range(len(self.relax.data.res)):
+            if self.relax.data.res[i].num == res_num:
+                index = i
+                break
+        if index == None:
+            print "The residue " + `res_num` + " cannot be found in the sequence."
+            return
+
         # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("map_space", self.relax.data.equations[model][res_num])
+        fns = self.relax.specific_setup.setup("map_space", self.relax.data.res[index].equations[run])
         if fns == None:
             return
-        self.map_bounds, self.minimise = fns
+        self.create_param_vector, self.map_bounds, self.minimise = fns
 
         # Function arguments.
-        self.model = model
+        self.index = index
+        self.run = run
         self.res_num = res_num
         self.inc = inc
         self.swap = swap
@@ -52,7 +63,7 @@ class Base_Map:
         self.labels = labels
 
         # Number of parameters.
-        self.n = len(self.relax.data.param_types[self.model][self.res_num])
+        self.n = len(self.relax.data.res[index].params[run])
 
         # Axis swapping.
         if swap == None:
@@ -62,7 +73,7 @@ class Base_Map:
 
         # Points.
         if point != None:
-            self.point = point
+            self.point = array(point, Float64)
             self.point_file = point_file
             self.num_points = 1
         else:
@@ -76,18 +87,18 @@ class Base_Map:
                 pass
 
         # Get the map bounds.
-        self.bounds = self.map_bounds(self.model, self.relax.data.param_types[self.model][self.res_num])
+        self.bounds = self.map_bounds(self.index, self.relax.data.res[index].params[self.run])
         if lower != None:
             self.bounds[:, 0] = array(lower, Float64)
         if upper != None:
             self.bounds[:, 1] = array(upper, Float64)
 
         # Diagonal scaling.
-        if self.relax.data.scaling.has_key(self.model):
+        if self.relax.data.res[index].scaling.has_key(self.run):
             for i in range(len(self.bounds[0])):
-                self.bounds[:, i] = self.bounds[:, i] / self.relax.data.scaling[self.model][self.res_num]
+                self.bounds[:, i] = self.bounds[:, i] / self.relax.data.res[index].scaling[self.run]
             if point != None:
-                self.point = self.point / self.relax.data.scaling[self.model][self.res_num]
+                self.point = self.point / array(self.relax.data.res[index].scaling[self.run], Float64)
 
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)

@@ -21,9 +21,6 @@
 ###############################################################################
 
 
-from generic_functions import Generic_functions
-
-
 class Skin:
     def __init__(self, relax):
         """The class accessible to the interpreter.
@@ -43,7 +40,7 @@ class Skin:
         self.sequence = x.sequence
 
 
-class Macro_class(Generic_functions):
+class Macro_class:
     def __init__(self, relax):
         """Class containing macros for loading data."""
 
@@ -52,13 +49,13 @@ class Macro_class(Generic_functions):
         self.sequence = self.relax.sequence.macro_read
 
 
-    def read(self, model=None, file=None, dir=None):
+    def read(self, run=None, file=None, dir=None):
         """Function for reading results from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        model:  The name of the model.
+        run:  The name of the run.
 
         file:  The name of the file to read results from.
 
@@ -68,14 +65,14 @@ class Macro_class(Generic_functions):
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "write("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
             text = text + ", file=" + `file` + ")\n"
             text = text + ", dir=" + `dir` + ")\n"
             print text
 
-        # The model argument.
-        if type(model) != str:
-            print "The model argument " + `model` + " must be a string."
+        # The run argument.
+        if type(run) != str:
+            print "The run argument " + `run` + " must be a string."
             return
 
         # File.
@@ -89,4 +86,4 @@ class Macro_class(Generic_functions):
             return
 
         # Execute the functional code.
-        self.relax.read.read_data(model=model, file=file, dir=dir)
+        self.relax.read.read_data(run=run, file=file, dir=dir)

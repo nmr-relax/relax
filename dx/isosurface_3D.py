@@ -57,17 +57,17 @@ class Iso3D(Base_Map):
                 values[self.swap[2]] = self.bounds[self.swap[2], 0]
                 for k in range((self.inc + 1)):
                     # Calculate the function values.
-                    self.minimise(model=self.model, i=self.res_num, min_algor='fixed', min_options=self.remap(values), print_flag=0)
+                    self.minimise(run=self.run, i=self.index, init_params=self.remap(values), min_algor='fixed', min_options=self.remap(values), print_flag=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
-                    if self.relax.data.min_results[self.model][0][0] > 1e20:
+                    if self.relax.data.res[self.index].chi2[self.run] > 1e20:
                         map_file.write("%30f\n" % 1e20)
                     else:
-                        map_file.write("%30f\n" % self.relax.data.min_results[self.model][0][0])
+                        map_file.write("%30f\n" % self.relax.data.res[self.index].chi2[self.run])
 
                     values[self.swap[2]] = values[self.swap[2]] + self.step_size[self.swap[2]]
                 self.percent = self.percent + self.percent_inc
-                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%, value: ", self.relax.data.min_results[self.model][self.res_num][0])
+                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%, value: ", self.relax.data.res[self.index].chi2[self.run])
                 values[self.swap[1]] = values[self.swap[1]] + self.step_size[self.swap[1]]
             values[self.swap[0]] = values[self.swap[0]] + self.step_size[self.swap[0]]
 
@@ -161,7 +161,7 @@ class Iso3D(Base_Map):
         #####################
 
         # Equation type specific function setup.
-        self.map_labels = self.relax.specific_setup.setup("map_labels", self.relax.data.equations[self.model][self.res_num])
+        self.map_labels = self.relax.specific_setup.setup("map_labels", self.relax.data.res[self.index].equations[self.run])
 
         # Default labels.
         if self.map_labels == None or self.labels != None:
@@ -174,9 +174,9 @@ class Iso3D(Base_Map):
                 labels = labels + self.labels[self.swap[1]] + "\" \""
                 labels = labels + self.labels[self.swap[2]] + "\"}"
             else:
-                labels = "{\"" + self.relax.data.param_types[self.model][self.res_num][self.swap[0]] + "\" \""
-                labels = labels + self.relax.data.param_types[self.model][self.res_num][self.swap[1]] + "\" \""
-                labels = labels + self.relax.data.param_types[self.model][self.res_num][self.swap[2]] + "\"}"
+                labels = "{\"" + self.relax.data.res[self.index].params[self.run][self.swap[0]] + "\" \""
+                labels = labels + self.relax.data.res[self.index].params[self.run][self.swap[1]] + "\" \""
+                labels = labels + self.relax.data.res[self.index].params[self.run][self.swap[2]] + "\"}"
 
             # Tick locations.
             tick_locations = []
@@ -197,8 +197,8 @@ class Iso3D(Base_Map):
                 vals = self.bounds[self.swap[i], 0] * 1.0
                 string = "{"
                 for j in range(axis_incs + 1):
-                    if self.relax.data.scaling.has_key(self.model):
-                        string = string + "\"" + "%.2g" % (vals * self.relax.data.scaling[self.model][self.res_num][self.swap[i]]) + "\" "
+                    if self.relax.data.res[self.index].scaling.has_key(self.run):
+                        string = string + "\"" + "%.2g" % (vals * self.relax.data.res[self.index].scaling[self.run][self.swap[i]]) + "\" "
                     else:
                         string = string + "\"" + "%.2g" % vals + "\" "
                     vals = vals + inc[self.swap[i]]
@@ -207,7 +207,7 @@ class Iso3D(Base_Map):
 
         # Specific labels.
         else:
-            labels, tick_locations, tick_values = self.map_labels(self.model, self.relax.data.param_types[self.model][self.res_num], self.bounds, self.swap, self.inc)
+            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.index].params[self.run], self.bounds, self.swap, self.inc)
 
 
         # Corners.

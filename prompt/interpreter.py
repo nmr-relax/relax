@@ -131,7 +131,7 @@ class Interpreter:
         intro_off = self._off
         intro_on = self._on
         execfile = __builtin__.execfile
-        exit = bye = quit = q = _Exit
+        exit = bye = quit = q = _Exit()
 
         # Modify the help system.
         help_python = _Helper_python()

@@ -20,11 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+from re import match
+import types
 
-from generic_functions import Generic_functions
 
-
-class Print_all_data(Generic_functions):
+class Print_all_data:
     def __init__(self, relax):
         """Class containing the macros for manipulating the program state."""
 
@@ -37,6 +37,35 @@ class Print_all_data(Generic_functions):
         string = ""
         # Loop over the data structures in self.relax.data
         for name in dir(self.relax.data):
-            if not self.filter_data_structure(name):
-                string = string +  "self.relax.data." + name + ":\n" + `getattr(self.relax.data, name)` + "\n\n"
+            if not self.filter_data_structure(self.relax.data, name):
+                string = string + "self.relax.data." + name + ":\n" + `getattr(self.relax.data, name)` + "\n\n"
+
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            string = string + "\nResidue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "\n\n"
+            for name in dir(self.relax.data.res[i]):
+                if not self.filter_data_structure(self.relax.data.res[i], name):
+                    string = string + "self.relax.data." + name + ":\n" + `getattr(self.relax.data.res[i], name)` + "\n\n"
+
         return string
+
+
+    def filter_data_structure(self, data, name):
+        """Function to filter out unwanted data structures from self.relax.data
+
+        If name is unwanted, 1 is returned, otherwise 0 is returned.
+        """
+
+        attrib = type(getattr(data, name))
+        if match("__", name):
+            return 1
+        elif attrib == types.ClassType:
+            return 1
+        elif attrib == types.InstanceType:
+            return 1
+        elif attrib == types.MethodType:
+            return 1
+        elif attrib == types.NoneType:
+            return 1
+        else:
+            return 0

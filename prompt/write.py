@@ -28,13 +28,13 @@ class Write:
         self.relax = relax
 
 
-    def write(self, model=None, file="results", force=0):
+    def write(self, run=None, file="results", force=0):
         """Function for writing results to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        model:  The name of the model.
+        run:  The name of the run.
 
         file:  The name of the file to output results to.  The default is 'results'.
 
@@ -45,14 +45,14 @@ class Write:
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "write("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", force=" + `force` + ")\n"
             print text
 
-        # The model argument.
-        if type(model) != str:
-            print "The model argument " + `model` + " must be a string."
+        # The run argument.
+        if type(run) != str:
+            print "The run argument " + `run` + " must be a string."
             return
 
         # File.
@@ -66,4 +66,4 @@ class Write:
             return
 
         # Execute the functional code.
-        self.relax.write.write_data(model=model, file=file, force=force)
+        self.relax.write.write_data(run=run, file=file, force=force)

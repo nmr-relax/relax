@@ -33,16 +33,20 @@ class Minimise:
         self.relax = relax
 
 
-    def fixed(self, model=None, values=None, print_flag=1):
+    def fixed(self, run=None, values=None, print_flag=1):
         """Function for fixing the initial parameter values."""
 
-        # Loop over the residues.
-        for i in range(len(self.relax.data.seq)):
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
             # Equation type specific function setup.
-            fns = self.relax.specific_setup.setup("fixed", self.relax.data.equations[model][i])
+            fns = self.relax.specific_setup.setup("fixed", self.relax.data.res[i].equations[run])
             if fns == None:
                 return
-            self.fixed_setup, self.minimise = fns
+            self.create_param_vector, self.fixed_setup, self.minimise = fns
 
             # Setup the fixed parameter options.
             if values:
@@ -50,65 +54,90 @@ class Minimise:
                 min_options = array(values)
             else:
                 # Fixed values.
-                empty = zeros(len(self.relax.data.param_types[model][i]), Float64)
-                min_options = self.fixed_setup(self.relax.data.param_types[model][i], min_options=empty)
+                empty = zeros(len(self.relax.data.res[i].params[run]), Float64)
+                min_options = self.fixed_setup(self.relax.data.res[i].params[run], min_options=empty)
+
+            # Create the initial parameter vector.
+            init_params = self.create_param_vector(run, self.relax.data.res[i])
 
             # Diagonal scaling.
-            if self.relax.data.scaling.has_key(model):
-                min_options = min_options / self.relax.data.scaling[model][0]
+            if self.relax.data.res[i].scaling.has_key(run):
+                init_params = init_params / self.relax.data.res[i].scaling[run]
+                min_options = min_options / self.relax.data.res[i].scaling[run]
 
             # Minimisation.
-            self.minimise(model=model, i=i, min_algor="fixed", min_options=min_options, print_flag=print_flag)
+            self.minimise(run=run, i=i, init_params=init_params, min_algor="fixed", min_options=min_options, print_flag=print_flag)
 
 
-    def grid_search(self, model=None, lower=None, upper=None, inc=None, constraints=0, print_flag=1):
+    def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=0, print_flag=1):
         """The grid search function."""
 
-        # Loop over the residues.
-        for i in range(len(self.relax.data.seq)):
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
             # Equation type specific function setup.
-            fns = self.relax.specific_setup.setup("grid_search", self.relax.data.equations[model][i])
+            fns = self.relax.specific_setup.setup("grid_search", self.relax.data.res[i].equations[run])
             if fns == None:
                 return
-            self.grid_setup, self.minimise = fns
+            self.create_param_vector, self.grid_setup, self.minimise = fns
 
             # Setup the grid search options.
             if type(inc) == int:
                 temp = []
-                for j in range(len(self.relax.data.param_types[model][i])):
+                for j in range(len(self.relax.data.res[i].params[run])):
                     temp.append(inc)
                 inc = temp
-            min_options = self.grid_setup(param_types=self.relax.data.param_types[model][i], inc_vector=inc)
+
+            min_options = self.grid_setup(params=self.relax.data.res[i].params[run], index=i, inc_vector=inc)
 
             # Set the lower and upper bounds if these are supplied.
             if lower != None:
-                for j in range(len(self.relax.data.param_types[model][i])):
+                for j in range(len(self.relax.data.res[i].params[run])):
                     if lower[j] != None:
                         min_options[j][1] = lower[j]
             if upper != None:
-                for j in range(len(self.relax.data.param_types[model][i])):
+                for j in range(len(self.relax.data.res[i].params[run])):
                     if upper[j] != None:
                         min_options[j][2] = upper[j]
 
+            # Create the initial parameter vector.
+            init_params = self.create_param_vector(run, self.relax.data.res[i])
+
             # Diagonal scaling.
-            if self.relax.data.scaling.has_key(model):
+            if self.relax.data.res[i].scaling.has_key(run):
+                init_params = init_params / self.relax.data.res[i].scaling[run]
                 for j in range(len(min_options)):
-                    min_options[j][1] = min_options[j][1] / self.relax.data.scaling[model][0][j]
-                    min_options[j][2] = min_options[j][2] / self.relax.data.scaling[model][0][j]
+                    min_options[j][1] = min_options[j][1] / self.relax.data.res[i].scaling[run][j]
+                    min_options[j][2] = min_options[j][2] / self.relax.data.res[i].scaling[run][j]
 
             # Minimisation.
-            self.minimise(model=model, i=i, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
+            self.minimise(run=run, i=i, init_params=init_params, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
 
 
-    def min(self, model=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
+    def min(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
         """Minimisation function."""
 
-        # Loop over the residues.
-        for i in range(len(self.relax.data.seq)):
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
             # Equation type specific function setup.
-            self.minimise = self.relax.specific_setup.setup("minimise", self.relax.data.equations[model][i])
-            if self.minimise == None:
+            fns = self.relax.specific_setup.setup("minimise", self.relax.data.res[i].equations[run])
+            if fns == None:
                 return
+            self.create_param_vector, self.minimise = fns
+
+            # Create the initial parameter vector.
+            init_params = self.create_param_vector(run, self.relax.data.res[i])
+
+            # Diagonal scaling.
+            if self.relax.data.res[i].scaling.has_key(run):
+                init_params = init_params / self.relax.data.res[i].scaling[run]
 
             # Minimisation.
-            self.minimise(model=model, i=i, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+            self.minimise(run=run, i=i, init_params=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

@@ -6,7 +6,7 @@ class Sequence:
 
 
     def macro_read(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):
-        """Macro for loading sequence data.
+        """Macro for reading sequence data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -25,35 +25,35 @@ class Sequence:
         Examples
         ~~~~~~~~
 
-        The following commands will load the sequence data out of a file called 'seq' where the
+        The following commands will read the sequence data out of a file called 'seq' where the
         residue numbers and names are in the first and second columns respectively.
 
-        relax> load.sequence('seq')
-        relax> load.sequence('seq', 0, 1)
-        relax> load.sequence('seq', 0, 1, None)
-        relax> load.sequence('seq', num_col=0, name_col=1)
-        relax> load.sequence(file_name='seq', num_col=0, name_col=1, seq=None, header_lines=1)
+        relax> read.sequence('seq')
+        relax> read.sequence('seq', 0, 1)
+        relax> read.sequence('seq', 0, 1, None)
+        relax> read.sequence('seq', num_col=0, name_col=1)
+        relax> read.sequence(file_name='seq', num_col=0, name_col=1, seq=None, header_lines=1)
 
 
-        The following commands will load the sequence out of the file 'noe.out' which also contains
+        The following commands will read the sequence out of the file 'noe.out' which also contains
         the NOE values.
 
-        relax> load.sequence('noe.out')
-        relax> load.sequence('noe.out', 0, 1)
+        relax> read.sequence('noe.out')
+        relax> read.sequence('noe.out', 0, 1)
 
 
-        The following commands will load the sequence out of the file 'noe.600.out' where the
+        The following commands will read the sequence out of the file 'noe.600.out' where the
         residue numbers are in the second column, the names are in the sixth column and the columns
         are separated by commas.
 
-        relax> load.sequence('noe.600.out', 1, 5, ',')
-        relax> load.sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',',
+        relax> read.sequence('noe.600.out', 1, 5, ',')
+        relax> read.sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',',
                              header_lines=1)
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "load.sequence("
+            text = self.relax.interpreter.macro_prompt + "read.sequence("
             text = text + "file_name=" + `file_name`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
@@ -89,12 +89,11 @@ class Sequence:
 
 
     def read(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=None):
-        """Function for loading sequence data."""
+        """Function for reading sequence data."""
 
-        # Test if the sequence data has already been loaded.
+        # Test if the sequence data has already been read.
         if len(self.relax.data.res):
-            print "The sequence data has already been loaded."
-            print "To reload, reinitialise all data."
+            print "The sequence data has already been read."
             return
 
         # Extract the data from the file.
@@ -102,7 +101,7 @@ class Sequence:
 
         # Do nothing if the file does not exist.
         if not file_data:
-            print "No sequence data loaded."
+            print "No sequence data read."
             return
 
         # Remove the header.

@@ -34,19 +34,19 @@ class Rx_data:
         Only data structures which do not exist are created.
         """
 
-        # The Relaxation data.
+        # Relaxation data.
         if not hasattr(data, 'relax_data'):
             data.relax_data = []
 
-        # The Relaxation error.
+        # Relaxation error.
         if not hasattr(data, 'relax_error'):
             data.relax_error = []
 
-        # The number of data points, eg 6.
+        # Number of data points, eg 6.
         if not hasattr(data, 'num_ri'):
             data.num_ri = 0
 
-        # The number of field strengths, eg 2.
+        # Number of field strengths, eg 2.
         if not hasattr(data, 'num_frq'):
             data.num_frq = 0
 
@@ -63,17 +63,17 @@ class Rx_data:
         if not hasattr(data, 'noe_r1_table'):
             data.noe_r1_table = []
 
-        # The NMR frequency labels, eg ['600', '500']
+        # NMR frequency labels, eg ['600', '500']
         if not hasattr(data, 'frq_labels'):
             data.frq_labels = []
 
-        # The NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
+        # NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
         if not hasattr(data, 'frq'):
             data.frq = []
 
 
     def macro_read(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
-        """Macro for loading R1, R2, or NOE relaxation data.
+        """Macro for reading R1, R2, or NOE relaxation data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -103,34 +103,34 @@ class Rx_data:
         Examples
         ~~~~~~~~
 
-        The following commands will load the NOE relaxation data collected at 600 MHz out of a file
+        The following commands will read the NOE relaxation data collected at 600 MHz out of a file
         called 'noe.600.out' where the residue numbers, residue names, data, errors are in the
         first, second, third, and forth columns respectively.
 
-        relax> load.relax_data('NOE', '600', 599.7 * 1e6, 'noe.600.out')
-        relax> load.relax_data(ri_label='NOE', frq_label='600', frq=600.0 * 1e6,
+        relax> read.relax_data('NOE', '600', 599.7 * 1e6, 'noe.600.out')
+        relax> read.relax_data(ri_label='NOE', frq_label='600', frq=600.0 * 1e6,
                                file_name='noe.600.out')
 
 
-        The following commands will load the R2 data out of the file 'r2.out' where the residue
+        The following commands will read the R2 data out of the file 'r2.out' where the residue
         numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
         respectively.  The columns are separated by commas.
 
-        relax> load.relax_data('R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
-        relax> load.relax_data(ri_label='R2', frq_label='800 MHz', frq=8.0*1e8, file_name='r2.out',
+        relax> read.relax_data('R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
+        relax> read.relax_data(ri_label='R2', frq_label='800 MHz', frq=8.0*1e8, file_name='r2.out',
                                num_col=1, name_col=2, data_col=4, error_col=5, sep=',',
                                header_lines=1)
 
 
-        The following commands will load the R1 data out of the file 'r1.out' where the columns are
+        The following commands will read the R1 data out of the file 'r1.out' where the columns are
         separated by the symbol '%'
 
-        relax> load.relax_data('R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
+        relax> read.relax_data('R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "load.relax_data("
+            text = self.relax.interpreter.macro_prompt + "read.relax_data("
             text = text + "ri_label=" + `ri_label`
             text = text + ", frq_label=" + `frq_label`
             text = text + ", frq=" + `frq`
@@ -186,7 +186,7 @@ class Rx_data:
 
 
     def read(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
-        """Function for loading R1, R2, or NOE relaxation data."""
+        """Function for reading R1, R2, or NOE relaxation data."""
 
         # Arguments
         self.ri_label = ri_label
@@ -209,7 +209,7 @@ class Rx_data:
 
         # Do nothing if the file does not exist.
         if not file_data:
-            print "No relaxation data loaded."
+            print "No relaxation data read."
             return
 
         # Remove the header.
@@ -252,7 +252,7 @@ class Rx_data:
             # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
             for j in range(self.relax.data.res[index].num_ri):
                 if self.ri_label == self.relax.data.res[index].ri_labels[j] and self.frq_label == self.relax.data.res[index].frq_labels[self.relax.data.res[index].remap_table[j]]:
-                    print "Warning: The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been loaded."
+                    print "Warning: The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
                     continue
 
             # Relaxation data and errors.
@@ -285,12 +285,12 @@ class Rx_data:
             # Update the NOE R1 translation table.
             self.relax.data.res[index].noe_r1_table.append(None)
             if self.ri_label == 'NOE':
-                # If the data corresponds to 'NOE', try to find if the corresponding 'R1' data has been loaded.
+                # If the data corresponds to 'NOE', try to find if the corresponding 'R1' data has been read.
                 for i in range(self.relax.data.res[index].num_ri):
                     if self.relax.data.res[index].ri_labels[i] == 'R1' and self.frq_label == self.relax.data.res[index].frq_labels[self.relax.data.res[index].remap_table[i]]:
                         self.relax.data.res[index].noe_r1_table[self.relax.data.res[index].num_ri - 1] = i
             if self.ri_label == 'R1':
-                # If the data corresponds to 'R1', try to find if the corresponding 'NOE' data has been loaded.
+                # If the data corresponds to 'R1', try to find if the corresponding 'NOE' data has been read.
                 for i in range(self.relax.data.res[index].num_ri):
                     if self.relax.data.res[index].ri_labels[i] == 'NOE' and self.frq_label == self.relax.data.res[index].frq_labels[self.relax.data.res[index].remap_table[i]]:
                         self.relax.data.res[index].noe_r1_table[i] = self.relax.data.res[index].num_ri - 1

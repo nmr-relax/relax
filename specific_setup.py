@@ -37,17 +37,17 @@ class Specific_setup:
         # Model-free analysis.
         if match('mf', eqi):
             if match('fixed', type):
-                return self.relax.model_free.fixed_setup, self.relax.model_free.minimise
+                return self.relax.model_free.create_param_vector, self.relax.model_free.fixed_setup, self.relax.model_free.minimise
             elif match('grid_search', type):
-                return self.relax.model_free.grid_setup, self.relax.model_free.minimise
+                return self.relax.model_free.create_param_vector, self.relax.model_free.grid_setup, self.relax.model_free.minimise
             elif match('linear_constraints', type):
                 return self.relax.model_free.linear_constraints
             elif match('map_labels', type):
                 return self.relax.model_free.map_labels
             elif match('map_space', type):
-                return self.relax.model_free.map_bounds, self.relax.model_free.minimise
+                return self.relax.model_free.create_param_vector, self.relax.model_free.map_bounds, self.relax.model_free.minimise
             elif match('minimise', type):
-                return self.relax.model_free.minimise
+                return self.relax.model_free.create_param_vector, self.relax.model_free.minimise
             elif match('print', type):
                 return self.relax.model_free.print_header, self.relax.model_free.print_results
 

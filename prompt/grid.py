@@ -28,13 +28,13 @@ class Grid:
         self.relax = relax
 
 
-    def grid_search(self, model=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
+    def grid_search(self, run=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
         """The grid search macro.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        model:  The name of the model.
+        run:  The name of the run to apply the grid search to.
 
         lower:  An array of the lower bound parameter values for the grid search.  The length of the
         array should be equal to the number of parameters in the model.
@@ -57,7 +57,7 @@ class Grid:
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "grid_search("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
             text = text + ", lower=" + `lower`
             text = text + ", upper=" + `upper`
             text = text + ", inc=" + `inc`
@@ -65,14 +65,9 @@ class Grid:
             text = text + ", print_flag=" + `print_flag` + ")\n"
             print text
 
-        # The model argument.
-        if type(model) != str:
-            print "The model argument " + `model` + " must be a string."
-            return
-
-        # Find the index of the model.
-        if not self.relax.data.equations.has_key(model):
-            print "The model '" + model + "' has not been created yet."
+        # The run argument.
+        if type(run) != str:
+            print "The run argument " + `run` + " must be a string."
             return
 
         # The lower bounds.
@@ -82,7 +77,7 @@ class Grid:
                 if type(lower[i]) != float and type(lower[i]) != int:
                     bad_arg = 1
             if bad_arg:
-                print "The argument 'lower' must be an array of numbers of length equal to the number of parameters in the model."
+                print "The argument 'lower' must be an array of numbers."
                 return
 
         # The upper bounds.
@@ -92,7 +87,7 @@ class Grid:
                 if type(upper[i]) != float and type(upper[i]) != int:
                     bad_arg = 1
             if bad_arg:
-                print "The argument 'upper' must be an array of numbers of length equal to the number of parameters in the model."
+                print "The argument 'upper' must be an array of numbers."
                 return
 
         # The incrementation value.
@@ -104,7 +99,7 @@ class Grid:
                 if type(inc[i]) != int:
                     bad_arg = 1
         if bad_arg:
-            print "The argument 'inc' must be either an integer or an array of integers of length equal to the number of parameters in the model."
+            print "The argument 'inc' must be either an integer or an array of integers."
 
         # Constraint flag.
         if type(constraints) != int or (constraints != 0 and constraints != 1):
@@ -117,4 +112,4 @@ class Grid:
             return
 
         # Execute the functional code.
-        self.relax.min.grid_search(model=model, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        self.relax.min.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)

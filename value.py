@@ -23,58 +23,62 @@
 
 from re import match
 
-from generic_functions import Generic_functions
 
-
-class Value(Generic_functions):
+class Value:
     def __init__(self, relax):
         """Class containing functions for the setting up of data structures."""
 
         self.relax = relax
 
 
-    def init_data(self, data, type):
-        """Function for initialisation of the data type."""
-
-        # Bond length.
-        if match('[Bb]ond[ -_][Ll]ength', type):
-            try:
-                self.relax.data.bond_length
-            except AttributeError:
-                self.relax.data.bond_length = self.create_data(data)
-            else:
-                print "The bond lengths have already been specified."
-                print "To reset the values, delete the original data (self.relax.data.bond_length)."
-
-        # CSA.
-        elif match('[Cc][Ss][Aa]', type):
-            try:
-                self.relax.data.csa
-            except AttributeError:
-                self.relax.data.csa = self.create_data(data)
-            else:
-                print "The CSA values have already been specified."
-                print "To reset the values, delete the original data (self.relax.data.csa)."
-
-        # Bad type.
-        else:
-            print "The type '" + type + "' is not supported."
-
-
-    def set(self, data_type=None, val=None, err=0.0):
+    def set(self, run=None, data_type=None, val=None, err=None):
         """Function for setting data structure values."""
 
         # Test if sequence data is loaded.
-        try:
-            self.relax.data.seq
-        except AttributeError:
+        if not len(self.relax.data.res):
             print "Sequence data has to be loaded first."
             return
 
-        # Create a temporary data structure.
-        temp = []
-        for i in range(len(self.relax.data.seq)):
-            temp.append([self.relax.data.seq[i][0], self.relax.data.seq[i][1], val, err])
+        # Add the run to the runs list.
+        if not run in self.relax.data.runs:
+            self.relax.data.runs.append(run)
 
-        # Initialise the type specific data.
-        self.init_data(temp, data_type)
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Bond length.
+            if match('[Bb]ond[ -_][Ll]ength', data_type):
+                if hasattr(self.relax.data.res[i], 'r'):
+                    if self.relax.data.res[i].r.has_key('run'):
+                        print "Warning: The bond length of residue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + " has already been specified."
+                        continue
+                else:
+                    self.relax.data.res[i].r = {}
+                    if err:
+                        self.relax.data.res[i].r_error = {}
+
+                self.relax.data.res[i].r[run] = float(val)
+                if err:
+                    self.relax.data.res[i].r_error[run] = float(err)
+
+            # CSA.
+            elif match('[Cc][Ss][Aa]', data_type):
+                if hasattr(self.relax.data.res[i], 'csa'):
+                    if self.relax.data.res[i].csa.has_key('run'):
+                        print "Warning: The CSA of residue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + " has already been specified."
+                        continue
+                else:
+                    self.relax.data.res[i].csa = {}
+                    if err:
+                        self.relax.data.res[i].csa_error = {}
+
+                self.relax.data.res[i].csa[run] = float(val)
+                if err:
+                    self.relax.data.res[i].csa_error[run] = float(err)
+
+            # Bad type.
+            else:
+                print "Warning: The type '" + type + "' is not supported."

@@ -39,3 +39,6 @@ class Data:
 
         # The residue specific data
         self.res = []
+
+        # The name of the runs.
+        self.runs = []

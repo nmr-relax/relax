@@ -26,10 +26,9 @@ from os import F_OK, access
 from cPickle import dump, load
 
 from data import Data
-from generic_functions import Generic_functions
 
 
-class State(Generic_functions):
+class State:
     def __init__(self, relax):
         """Class containing the functions for manipulating the program state."""
 

@@ -33,13 +33,13 @@ class Map:
         self.relax = relax
 
 
-    def map(self, model=None, res_num=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
+    def map(self, run=None, res_num=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
         """Function for creating a map of the given space in OpenDX format.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        model:  The name of the model.
+        run:  The name of the run.
 
         res_num:  Specification of the residue by number.
 
@@ -104,34 +104,34 @@ class Map:
         Examples
         ~~~~~~~~
 
-        The following commands will generate a map of the extended model-free space defined as model
+        The following commands will generate a map of the extended model-free space defined as run
         'm5' which consists of the parameters {S2f, S2s, ts}.  Files will be output into the
         directory 'dx' and will be prefixed by 'map'.
 
         relax> map('m5')
         relax> map('m5', 20, "map", "dx")
         relax> map('m5', file="map", dir="dx")
-        relax> map(model='m5', inc=20, file="map", dir="dx")
-        relax> map(model='m5', type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx")
+        relax> map(run='m5', inc=20, file="map", dir="dx")
+        relax> map(run='m5', type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx")
 
 
         The following commands will swap the S2s and ts axes of this map.
 
         relax> map('m5', swap=[0, 2, 1])
-        relax> map(model='m5', type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx")
+        relax> map(run='m5', type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx")
 
 
         To map the model-free space 'm4' defined by the parameters {S2, te, Rex}, name the results
         'test', and not place the files in a subdirectory, use the following commands.
 
         relax> map('m4', file='test', dir=None)
-        relax> map(model='m4', inc=100, file='test', dir=None)
+        relax> map(run='m4', inc=100, file='test', dir=None)
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "map("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
             text = text + ", res_num=" + `res_num`
             text = text + ", map_type=" + `map_type`
             text = text + ", inc=" + `inc`
@@ -146,12 +146,9 @@ class Map:
             text = text + ", labels=" + `labels` + ")\n"
             print text
 
-        # The model argument.
-        if type(model) != str:
-            print "The model argument " + `model` + " must be a string."
-            return
-        if not self.relax.data.equations.has_key(model):
-            print "The model '" + model + "' has not been created yet."
+        # The run argument.
+        if type(run) != str:
+            print "The run argument " + `run` + " must be a string."
             return
 
         # The residue number.
@@ -159,8 +156,18 @@ class Map:
             print "The res_num argument must be an integer."
             return
 
+        # Residue index.
+        index = None
+        for i in range(len(self.relax.data.res)):
+            if self.relax.data.res[i].num == res_num:
+                index = i
+                break
+        if index == None:
+            print "The residue " + `res_num` + " cannot be found in the sequence."
+            return
+
         # The number of parameters.
-        n = len(self.relax.data.param_types[model][res_num])
+        n = len(self.relax.data.res[index].params[run])
 
         # Increment.
         if type(inc) != int:
@@ -270,7 +277,7 @@ class Map:
             if n != 3:
                 print "The 3D isosurface map requires a strictly 3 parameter model."
                 return
-            self.relax.map.Iso3D.map_space(model=model, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
+            self.relax.map.Iso3D.map_space(run=run, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
         else:
             print "The map type '" + map_type + "' is not supported."
             return

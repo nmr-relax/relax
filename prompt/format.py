@@ -21,7 +21,6 @@
 ###############################################################################
 
 
-from generic_functions import Generic_functions
 from select_res import Select_res
 
 
@@ -43,7 +42,7 @@ class Skin:
         self.print_data = x.print_data
 
 
-class Macro_class(Generic_functions, Select_res):
+class Macro_class(Select_res):
     def __init__(self, relax):
         """Macros for printing data to standard out."""
 

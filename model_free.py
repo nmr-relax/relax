@@ -37,38 +37,27 @@ class Model_free:
         self.relax = relax
 
 
-    def create(self, model=None, equation=None, param_types=None, scaling=1):
+    def create(self, run=None, model=None, equation=None, params=None, scaling=1):
         """Function to create a model-free model."""
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.seq):
+        if not len(self.relax.data.res):
             print "Sequence data has to be loaded first."
-            return
-
-        # Arguments
-        equation = equation
-        param_types = param_types
-
-        # Test the scaling flag.
-        if scaling == 0 or scaling == 1:
-            self.scaling = scaling
-        else:
-            print "The scaling flag is set incorrectly."
             return
 
         # Check the validity of the parameter array.
         s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
-        for i in range(len(param_types)):
+        for i in range(len(params)):
             # Check if the parameter is a string.
-            if type(param_types[i]) != str:
-                print "The parameter " + `param_types[i]` + " is not a string."
+            if type(params[i]) != str:
+                print "The parameter " + `params[i]` + " is not a string."
                 return
 
             # Invalid parameter flag.
             invalid_param = 0
 
             # S2.
-            if param_types[i] == 'S2':
+            if params[i] == 'S2':
                 # Does the array contain more than one instance of S2.
                 if s2:
                     invalid_param = 1
@@ -76,14 +65,14 @@ class Model_free:
 
                 # Does the array contain S2s.
                 s2s_flag = 0
-                for j in range(len(param_types)):
-                    if param_types[j] == 'S2s':
+                for j in range(len(params)):
+                    if params[j] == 'S2s':
                         s2s_flag = 1
                 if s2s_flag:
                     invalid_param = 1
 
             # te.
-            elif param_types[i] == 'te':
+            elif params[i] == 'te':
                 # Does the array contain more than one instance of te and has the extended model-free formula been selected.
                 if equation == 'mf_ext' or te:
                     invalid_param = 1
@@ -91,28 +80,28 @@ class Model_free:
 
                 # Does the array contain the parameter S2.
                 s2_flag = 0
-                for j in range(len(param_types)):
-                    if param_types[j] == 'S2':
+                for j in range(len(params)):
+                    if params[j] == 'S2':
                         s2_flag = 1
                 if not s2_flag:
                     invalid_param = 1
 
             # S2f.
-            elif param_types[i] == 'S2f':
+            elif params[i] == 'S2f':
                 # Does the array contain more than one instance of S2f and has the original model-free formula been selected.
                 if equation == 'mf_orig' or s2f:
                     invalid_param = 1
                 s2f = 1
 
             # S2s.
-            elif param_types[i] == 'S2s':
+            elif params[i] == 'S2s':
                 # Does the array contain more than one instance of S2s and has the original model-free formula been selected.
                 if equation == 'mf_orig' or s2s:
                     invalid_param = 1
                 s2s = 1
 
             # tf.
-            elif param_types[i] == 'tf':
+            elif params[i] == 'tf':
                 # Does the array contain more than one instance of tf and has the original model-free formula been selected.
                 if equation == 'mf_orig' or tf:
                     invalid_param = 1
@@ -120,14 +109,14 @@ class Model_free:
 
                 # Does the array contain the parameter S2f.
                 s2f_flag = 0
-                for j in range(len(param_types)):
-                    if param_types[j] == 'S2f':
+                for j in range(len(params)):
+                    if params[j] == 'S2f':
                         s2f_flag = 1
                 if not s2f_flag:
                     invalid_param = 1
 
             # ts.
-            elif param_types[i] == 'ts':
+            elif params[i] == 'ts':
                 # Does the array contain more than one instance of ts and has the original model-free formula been selected.
                 if equation == 'mf_orig' or ts:
                     invalid_param = 1
@@ -135,160 +124,280 @@ class Model_free:
 
                 # Does the array contain the parameter S2 or S2s.
                 flag = 0
-                for j in range(len(param_types)):
-                    if param_types[j] == 'S2' or param_types[j] == 'S2f':
+                for j in range(len(params)):
+                    if params[j] == 'S2' or params[j] == 'S2f':
                         flag = 1
                 if not flag:
                     invalid_param = 1
 
             # Rex.
-            elif param_types[i] == 'Rex':
+            elif params[i] == 'Rex':
                 if rex:
                     invalid_param = 1
                 rex = 1
 
             # Bond length.
-            elif param_types[i] == 'r':
+            elif params[i] == 'r':
                 if r:
                     invalid_param = 1
                 r = 1
 
             # CSA.
-            elif param_types[i] == 'CSA':
+            elif params[i] == 'CSA':
                 if csa:
                     invalid_param = 1
                 csa = 1
 
             # Unknown parameter.
             else:
-                print "The parameter " + param_types[i] + " is not supported."
+                print "The parameter " + params[i] + " is not supported."
                 return
 
             # The invalid parameter flag is set.
             if invalid_param:
-                print "The parameter array " + `param_types` + " contains an invalid parameter or combination of parameters."
+                print "The parameter array " + `params` + " contains an invalid parameter or combination of parameters."
                 return
 
-        # Create the scaling vector.
-        self.scaling_vector(param_types)
-
         # Update the data structures.
-        self.data_update(model, equation, param_types)
+        self.data_update(run, model, equation, params, scaling)
 
 
-    def data_update(self, model, equation, param_types):
+    def create_param_vector(self, run, data):
+        """Function for assembling various pieces of data into a Numeric parameter array."""
+
+        # Initialise.
+        param_vector = zeros(len(data.params[run]), Float64)
+
+        # Loop over the parameters.
+        for i in range(len(data.params[run])):
+            # S2.
+            if data.params[run][i] == 'S2' and data.s2[run] != None:
+                param_vector[i] = data.s2[run]
+
+            # S2f.
+            if data.params[run][i] == 'S2f' and data.s2f[run] != None:
+                param_vector[i] = data.s2f[run]
+
+            # S2s.
+            if data.params[run][i] == 'S2s' and data.s2s[run] != None:
+                param_vector[i] = data.s2s[run]
+
+            # te.
+            if data.params[run][i] == 'te' and data.te[run] != None:
+                param_vector[i] = data.te[run]
+
+            # tf.
+            if data.params[run][i] == 'tf' and data.tf[run] != None:
+                param_vector[i] = data.tf[run]
+
+            # ts.
+            if data.params[run][i] == 'ts' and data.ts[run] != None:
+                param_vector[i] = data.ts[run]
+
+            # Rex.
+            if data.params[run][i] == 'Rex' and data.rex[run] != None:
+                param_vector[i] = data.rex[run]
+
+            # r.
+            if data.params[run][i] == 'r' and data.r[run] != None:
+                param_vector[i] = data.r[run]
+
+            # CSA.
+            if data.params[run][i] == 'CSA' and data.csa[run] != None:
+                param_vector[i] = data.csa[run]
+
+        return param_vector
+
+
+    def data_update(self, run, model, equation, params, scaling_flag):
         """Function for updating various data structures depending on the model selected."""
 
-        # Update the equation and param_types data structures.
-        try:
-            self.relax.data.equations
-        except AttributeError:
-            self.relax.data.equations = {}
-        try:
-            self.relax.data.params
-        except AttributeError:
-            self.relax.data.params = {}
-        try:
-            self.relax.data.param_types
-        except AttributeError:
-            self.relax.data.param_types = {}
-        try:
-            self.relax.data.param_errors
-        except AttributeError:
-            self.relax.data.param_errors = {}
-        try:
-            self.relax.data.scaling
-        except AttributeError:
-            self.relax.data.scaling = {}
-        try:
-            self.relax.data.min_results
-        except AttributeError:
-            self.relax.data.min_results = {}
+        # Add the run to the runs list.
+        if not run in self.relax.data.runs:
+            self.relax.data.runs.append(run)
 
-        self.relax.data.equations[model] = []
-        self.relax.data.param_types[model] = []
-        for i in range(len(self.relax.data.seq)):
-            self.relax.data.equations[model].append(equation)
-            self.relax.data.param_types[model].append(param_types)
+        # Loop over the sequence
+        for i in range(len(self.relax.data.res)):
+            # Initialise the data structures (if needed).
+            self.initialise_mf_data(self.relax.data.res[i])
 
-        # Create the params data structure.
-        self.relax.data.params[model] = zeros((len(self.relax.data.seq), len(param_types)), Float64)
-        self.relax.data.param_errors[model] = zeros((len(self.relax.data.seq), len(param_types)), Float64)
+            # Model-free models, equations, and parameter types.
+            self.relax.data.res[i].models[run] = model
+            self.relax.data.res[i].equations[run] = equation
+            self.relax.data.res[i].params[run] = params
 
-        # Diagonal scaling.
-        if self.scaling:
-            self.relax.data.scaling[model] = zeros((len(self.relax.data.seq), len(param_types)), Float64)
-            self.relax.data.scaling[model][:] = self.scale_vect
+            # Diagonal scaling.
+            if scaling_flag:
+                self.relax.data.res[i].scaling[run] = self.scaling_vector(params, i)
 
-        # Minimisation results.
-        self.relax.data.min_results[model] = []
-        for i in range(len(self.relax.data.seq)):
-            self.relax.data.min_results[model].append([0.0, 0, 0, 0, 0, None])
+            # Others.
+            self.relax.data.res[i].s2[run] = None
+            self.relax.data.res[i].s2f[run] = None
+            self.relax.data.res[i].s2s[run] = None
+            self.relax.data.res[i].te[run] = None
+            self.relax.data.res[i].tf[run] = None
+            self.relax.data.res[i].ts[run] = None
+            self.relax.data.res[i].rex[run] = None
+            self.relax.data.res[i].chi2[run] = None
+            self.relax.data.res[i].iter[run] = None
+            self.relax.data.res[i].f_count[run] = None
+            self.relax.data.res[i].g_count[run] = None
+            self.relax.data.res[i].h_count[run] = None
+            self.relax.data.res[i].warning[run] = None
+
+            # Bond length and CSA.
+            if not self.relax.data.res[i].r[run]:
+                self.relax.data.res[i].r[run] = None
+            if not self.relax.data.res[i].csa[run]:
+                self.relax.data.res[i].csa[run] = None
 
 
-    def fixed_setup(self, param_types=None, min_options=None):
+    def fixed_setup(self, params=None, min_options=None):
         """The fixed parameter value setup function."""
 
-        for i in range(len(param_types)):
+        for i in range(len(params)):
             # {S2, S2f, S2s}.
-            if match('S2', param_types[i]):
+            if match('S2', params[i]):
                 min_options[i] = 0.5
 
             # {te, tf, ts}.
-            elif match('t', param_types[i]):
-                if param_types[i] == 'tf':
+            elif match('t', params[i]):
+                if params[i] == 'tf':
                     min_options[i] = 10.0 * 1e-12
-                elif param_types[i] == 'ts':
+                elif params[i] == 'ts':
                     min_options[i] = 1000.0 * 1e-12
                 else:
                     min_options[i] = 100.0 * 1e-12
 
             # Rex.
-            if param_types[i] == 'Rex':
+            if params[i] == 'Rex':
                 min_options[i] = 0.0
 
             # Bond length.
-            if param_types[i] == 'r':
+            if params[i] == 'r':
                 min_options[i] = 1.02 * 1e-10
 
             # CSA.
-            if param_types[i] == 'CSA':
+            if params[i] == 'CSA':
                 min_options[i] = -170 * 1e-6
 
         return min_options
 
 
-    def grid_setup(self, param_types=None, inc_vector=None):
+    def grid_setup(self, params=None, index=None, inc_vector=None):
         """The grid search setup function."""
 
         # Initialise.
         min_options = []
 
-        for i in range(len(param_types)):
+        for i in range(len(params)):
             # {S2, S2f, S2s}.
-            if match('S2', param_types[i]):
+            if match('S2', params[i]):
                 min_options.append([inc_vector[i], 0.0, 1.0])
 
             # {te, tf, ts}.
-            elif match('t', param_types[i]):
+            elif match('t', params[i]):
                 min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
 
             # Rex.
-            elif param_types[i] == 'Rex':
-                min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
+            elif params[i] == 'Rex':
+                min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[index].frq[0])**2])
 
             # Bond length.
-            elif param_types[i] == 'r':
+            elif params[i] == 'r':
                 min_options.append([inc_vector[i], 1.0 * 1e-10, 1.05 * 1e-10])
 
             # CSA.
-            elif param_types[i] == 'CSA':
+            elif params[i] == 'CSA':
                 min_options.append([inc_vector[i], -120 * 1e-6, -200 * 1e-6])
 
         return min_options
 
 
-    def linear_constraints(self, model=None, param_types=None):
+    def initialise_mf_data(self, data):
+        """Function for the initialisation of model-free data structures.
+
+        Only data structures which do not exist are created.
+        """
+
+        # Model name.
+        if not hasattr(data, 'models'):
+            data.models = {}
+
+        # Equation type.
+        if not hasattr(data, 'equations'):
+            data.equations = {}
+
+        # Parameters.
+        if not hasattr(data, 'params'):
+            data.params = {}
+
+        # Scaling vector.
+        if not hasattr(data, 'scaling'):
+            data.scaling = {}
+
+        # S2.
+        if not hasattr(data, 's2'):
+            data.s2 = {}
+
+        # S2f.
+        if not hasattr(data, 's2f'):
+            data.s2f = {}
+
+        # S2s.
+        if not hasattr(data, 's2s'):
+            data.s2s = {}
+
+        # te.
+        if not hasattr(data, 'te'):
+            data.te = {}
+
+        # tf.
+        if not hasattr(data, 'tf'):
+            data.tf = {}
+
+        # ts.
+        if not hasattr(data, 'ts'):
+            data.ts = {}
+
+        # Rex.
+        if not hasattr(data, 'rex'):
+            data.rex = {}
+
+        # r.
+        if not hasattr(data, 'r'):
+            data.r = {}
+
+        # CSA.
+        if not hasattr(data, 'csa'):
+            data.csa = {}
+
+        # Chi-squared value.
+        if not hasattr(data, 'chi2'):
+            data.chi2 = {}
+
+        # Iterations.
+        if not hasattr(data, 'iter'):
+            data.iter = {}
+
+        # Function count.
+        if not hasattr(data, 'f_count'):
+            data.f_count = {}
+
+        # Gradient count.
+        if not hasattr(data, 'g_count'):
+            data.g_count = {}
+
+        # Hessian count.
+        if not hasattr(data, 'h_count'):
+            data.h_count = {}
+
+        # Warning.
+        if not hasattr(data, 'warning'):
+            data.warning = {}
+
+
+    def linear_constraints(self, data=None, run=None, params=None):
         """Function for setting up the model-free linear constraint matrices A and b.
 
         Standard notation
@@ -387,14 +496,14 @@ class Model_free:
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(param_types)
+        n = len(params)
         zero_array = zeros(n, Float64)
         j = 0
 
         # The original model-free equations.
         for i in range(n):
             # Order parameters {S2, S2f, S2s}.
-            if match('S2', param_types[i]):
+            if match('S2', params[i]):
                 # 0 <= S2 <= 1.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -405,9 +514,9 @@ class Model_free:
                 j = j + 2
 
                 # S2 <= S2f and S2 <= S2s.
-                if param_types[i] == 'S2':
+                if params[i] == 'S2':
                     for k in range(n):
-                        if param_types[k] == 'S2f' or param_types[k] == 'S2s':
+                        if params[k] == 'S2f' or params[k] == 'S2s':
                             A.append(zero_array * 0.0)
                             A[j][i] = -1.0
                             A[j][k] = 1.0
@@ -415,7 +524,7 @@ class Model_free:
                             j = j + 1
 
             # Correlation times {tm, te, tf, ts}.
-            elif match('t', param_types[i]):
+            elif match('t', params[i]):
                 # te >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -423,9 +532,9 @@ class Model_free:
                 j = j + 1
 
                 # tf <= ts.
-                if param_types[i] == 'ts':
+                if params[i] == 'ts':
                     for k in range(n):
-                        if param_types[k] == 'tf':
+                        if params[k] == 'tf':
                             A.append(zero_array * 0.0)
                             A[j][i] = 1.0
                             A[j][k] = -1.0
@@ -433,36 +542,36 @@ class Model_free:
                             j = j + 1
 
             # Rex.
-            elif param_types[i] == 'Rex':
+            elif params[i] == 'Rex':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j = j + 1
 
             # Bond length.
-            elif match('r', param_types[i]):
+            elif match('r', params[i]):
                 # 0.9e-10 <= r <= 2e-10.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                if self.relax.data.scaling.has_key(model):
-                    b.append(0.9e-10 / self.relax.data.scaling[model][0][i])
-                    b.append(-2e-10 / self.relax.data.scaling[model][0][i])
+                if data.scaling.has_key(run):
+                    b.append(0.9e-10 / data.scaling[run][i])
+                    b.append(-2e-10 / data.scaling[run][i])
                 else:
                     b.append(0.9e-10)
                     b.append(-2e-10)
                 j = j + 2
 
             # CSA.
-            elif match('CSA', param_types[i]):
+            elif match('CSA', params[i]):
                 # -300e-6 <= CSA <= 0.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                if self.relax.data.scaling.has_key(model):
-                    b.append(-300e-6 / self.relax.data.scaling[model][0][i])
+                if data.scaling.has_key(run):
+                    b.append(-300e-6 / data.scaling[run][i])
                 else:
                     b.append(-300e-6)
                 b.append(0.0)
@@ -475,26 +584,25 @@ class Model_free:
         return A, b
 
 
-    def macro_create(self, model=None, equation=None, param_types=None, scaling=1):
+    def macro_create(self, run=None, model=None, equation=None, params=None, scaling=1):
         """Macro to create a model-free model.
 
         Arguments
         ~~~~~~~~~
 
+        run:  The run to assign the values to.
+
         model:  The name of the model-free model.
 
         equation:  The model-free equation.
 
-        param_types:  The parameters of the model.
+        params:  The parameters of the model.
 
         scaling:  The diagonal scaling flag.
 
 
         Description
         ~~~~~~~~~~~
-
-        The model-free model name can be any string.
-
 
         Model-free equation.
 
@@ -543,28 +651,34 @@ class Model_free:
         The following commands will create the model-free model 'm1' which is based on the original
         model-free equation and contains the single parameter 'S2'.
 
-        relax> model.create_mf('m1', 'mf_orig', ['S2'])
-        relax> model.create_mf(model='m1', param_types=['S2'], equation='mf_orig')
+        relax> model.create_mf('m1', 'm1', 'mf_orig', ['S2'])
+        relax> model.create_mf(run='m1', model='m1', params=['S2'], equation='mf_orig')
 
 
         The following commands will create the model-free model 'large_model' which is based on the
         extended model-free equation and contains the seven parameters 'S2f', 'tf', 'S2', 'ts',
         'Rex', 'CSA', 'r'.
 
-        relax> model.create_mf('large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts', 'Rex', 'CSA',
-                               'r'])
-        relax> model.create_mf(model='large_model', param_types=['S2f', 'tf', 'S2', 'ts', 'Rex',
-                               'CSA', 'r'], equation='mf_ext')
+        relax> model.create_mf('test', 'large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts', 'Rex',
+                               'CSA', 'r'])
+        relax> model.create_mf(run='test', model='large_model', params=['S2f', 'tf', 'S2', 'ts',
+                               'Rex', 'CSA', 'r'], equation='mf_ext')
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "model.create_mf("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
+            text = text + ", model=" + `model`
             text = text + ", equation=" + `equation`
-            text = text + ", param_types=" + `param_types`
+            text = text + ", params=" + `params`
             text = text + ", scaling=" + `scaling` + ")\n"
             print text
+
+        # Run argument.
+        if type(run) != str:
+            print "The run argument must be a string."
+            return
 
         # Model argument.
         if type(model) != str:
@@ -580,10 +694,10 @@ class Model_free:
             return
 
         # Parameter types.
-        elif param_types == None:
+        elif params == None:
             print "No parameter types have been supplied."
             return
-        elif type(param_types) != list:
+        elif type(params) != list:
             print "The parameter types argument must be an array."
             return
 
@@ -593,14 +707,16 @@ class Model_free:
             return
 
         # Execute the functional code.
-        self.create(model=model, equation=equation, param_types=param_types, scaling=scaling)
+        self.create(run=run, model=model, equation=equation, params=params, scaling=scaling)
 
 
-    def macro_select(self, model=None, scaling=1):
+    def macro_select(self, run=None, model=None, scaling=1):
         """Macro for the selection of a preset model-free model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the values to.
 
         model:  The name of the preset model.
 
@@ -725,20 +841,27 @@ class Model_free:
         Examples
         ~~~~~~~~
 
-        To pick model 'm1', run:
+        To pick model 'm1' for all selected residues and assign it to the run 'mixed', type:
 
-        relax> model.select_mf('m1')
+        relax> model.select_mf('mixed', 'm1')
+        relax> model.select_mf(run='mixed', model='m1', scaling=1)
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "model.select_mf("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
+            text = text + ", model=" + `model`
             text = text + ", scaling=" + `scaling` + ")\n"
             print text
 
+        # Run argument.
+        if type(run) != str:
+            print "The run argument must be a string."
+            return
+
         # Model argument.
-        if type(model) != str:
+        elif type(model) != str:
             print "The model argument must be a string."
             return
 
@@ -748,23 +871,23 @@ class Model_free:
             return
 
         # Execute the functional code.
-        self.select(model=model, scaling=scaling)
+        self.select(run=run, model=model, scaling=scaling)
 
 
-    def minimise(self, model=None, i=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
+    def minimise(self, run=None, i=None, init_params=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
         """Model-free minimisation."""
 
         # Linear constraints.
         if constraints:
-            constraint_function = self.relax.specific_setup.setup("linear_constraints", self.relax.data.equations[model][i])
+            constraint_function = self.relax.specific_setup.setup("linear_constraints", self.relax.data.res[i].equations[run])
             if constraint_function == None:
                 return
-            A, b = constraint_function(model, self.relax.data.param_types[model][i])
+            A, b = constraint_function(self.relax.data.res[i], run, self.relax.data.res[i].params[run])
 
         if print_flag >= 1:
             if print_flag >= 2:
                 print "\n\n"
-            string = "Fitting to residue: " + `self.relax.data.seq[i][0]` + " " + self.relax.data.seq[i][1]
+            string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
             print string
             string2 = ""
             for j in range(len(string)):
@@ -779,21 +902,16 @@ class Model_free:
 
         # Diagonal scaling.
         scaling_vector = None
-        if self.relax.data.scaling.has_key(model):
-            scaling_vector = self.relax.data.scaling[model][i]
+        if self.relax.data.res[i].scaling.has_key(run):
+            scaling_vector = self.relax.data.res[i].scaling[run]
 
         # If any data is missing jump to the next residue.
-        data = zeros(self.relax.data.num_ri, Float64)
-        errors = zeros(self.relax.data.num_ri, Float64)
-        for j in range(self.relax.data.num_ri):
-            if self.relax.data.relax_data[j][i, 2] == 0.0:
-                continue
-            data[j] = self.relax.data.relax_data[j][i, 0]
-            errors[j] = self.relax.data.relax_data[j][i, 1]
+        relax_data = array(self.relax.data.res[i].relax_data, Float64)
+        relax_error = array(self.relax.data.res[i].relax_error, Float64)
         self.function_ops = ()
 
         # Initialise the functions used in the minimisation.
-        self.mf = Mf(self.relax, equation=self.relax.data.equations[model][i], param_types=self.relax.data.param_types[model][i], init_params=self.relax.data.params[model][i], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[i][0], csa=self.relax.data.csa[i][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
+        self.mf = Mf(self.relax, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
 
         # Levenberg-Marquardt minimisation.
         if constraints and not match('^[Gg]rid', min_algor):
@@ -806,9 +924,9 @@ class Model_free:
 
         # Minimisation.
         if constraints:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][i], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
         else:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][i], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
         if results == None:
             return
         self.params, self.func, iter, fc, gc, hc, self.warning = results
@@ -817,94 +935,164 @@ class Model_free:
         self.g_count = self.g_count + gc
         self.h_count = self.h_count + hc
 
-        # Place the results in various data structures.
-        self.relax.data.params[model][i] = self.params
-        self.relax.data.min_results[model][i] = [self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning]
+        # Scaling.
+        if self.relax.data.res[i].scaling.has_key(run):
+            self.params = self.params * self.relax.data.res[i].scaling[run]
+
+        # Types.
+        types = self.relax.data.res[i].params[run]
+
+        # Loop over the minimised parameters.
+        for j in range(len(self.params)):
+            # S2.
+            if types[j] == 'S2':
+                self.relax.data.res[i].s2[run] = self.params[j]
+
+            # S2f.
+            elif types[j] == 'S2f':
+                # S2f.
+                self.relax.data.res[i].s2f[run] = self.params[j]
+
+                # Other order parameters.
+                for k in range(len(types)):
+                    # S2 = S2f.S2s
+                    if types[k] == 'S2s':
+                        self.relax.data.res[i].s2[run] = self.params[j] * self.params[k]
+
+                    # S2s = S2/S2f
+                    elif types[k] == 'S2':
+                        self.relax.data.res[i].s2s[run] = self.params[k] / self.params[j]
+
+            # S2s.
+            elif types[j] == 'S2s':
+                self.relax.data.res[i].s2s[run] = self.params[j]
+
+            # te.
+            elif types[j] == 'te':
+                self.relax.data.res[i].te[run] = self.params[j]
+
+            # tf.
+            elif types[j] == 'tf':
+                self.relax.data.res[i].tf[run] = self.params[j]
+
+            # ts.
+            elif types[j] == 'ts':
+                self.relax.data.res[i].ts[run] = self.params[j]
+
+            # Rex.
+            elif types[j] == 'Rex':
+                self.relax.data.res[i].rex[run] = self.params[j]
+
+            # Bond length.
+            elif types[j] == 'r':
+                self.relax.data.res[i].r[run] = self.params[j]
+
+            # CSA.
+            elif types[j] == 'CSA':
+                self.relax.data.res[i].csa[run] = self.params[j]
+
+        # Chi-squared statistic.
+        self.relax.data.res[i].chi2[run] = self.func
+
+        # Iterations.
+        self.relax.data.res[i].iter[run] = self.iter_count
+
+        # Function evaluations.
+        self.relax.data.res[i].f_count[run] = self.f_count
+
+        # Gradient evaluations.
+        self.relax.data.res[i].g_count[run] = self.g_count
+
+        # Hessian evaluations.
+        self.relax.data.res[i].h_count[run] = self.h_count
+
+        # Warning.
+        self.relax.data.res[i].warning[run] = self.warning
 
 
-    def map_bounds(self, model, param_types):
+    def map_bounds(self, index, params):
         """The function for creating bounds for the mapping function."""
 
         # Bounds array.
-        bounds = zeros((len(param_types), 2), Float64)
+        bounds = zeros((len(params), 2), Float64)
 
-        for i in range(len(param_types)):
+        for i in range(len(params)):
             # {S2, S2f, S2s}.
-            if match('S2', param_types[i]):
+            if match('S2', params[i]):
                 bounds[i] = [0, 1]
 
             # {te, tf, ts}.
-            elif match('t', param_types[i]):
+            elif match('t', params[i]):
                 bounds[i] = [0, 1e-8]
 
             # Rex.
-            elif param_types[i] == 'Rex':
-                bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
+            elif params[i] == 'Rex':
+                bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.res[index].frq[0])**2]
 
             # Bond length.
-            elif param_types[i] == 'r':
+            elif params[i] == 'r':
                 bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
 
             # CSA.
-            elif param_types[i] == 'CSA':
+            elif params[i] == 'CSA':
                 bounds[i] = [-100 * 1e-6, -300 * 1e-6]
 
         return bounds
 
 
-    def map_labels(self, model, param_types, bounds, swap, inc):
+    def map_labels(self, run, index, params, bounds, swap, inc):
         """Function for creating labels, tick locations, and tick values for an OpenDX map."""
 
         # Initialise.
         labels = "{"
         tick_locations = []
         tick_values = []
-        n = len(param_types)
+        n = len(params)
         axis_incs = 5.0
         loc_inc = inc / axis_incs
 
         # Increment over the model parameters.
         for i in range(n):
             # {S2, S2f, S2s}.
-            if match('S2', param_types[swap[i]]):
+            if match('S2', params[swap[i]]):
                 # Labels.
-                labels = labels + "\"" + param_types[swap[i]] + "\""
+                labels = labels + "\"" + params[swap[i]] + "\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1.0
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1.0
 
             # {te, tf, and ts}.
-            elif match('t', param_types[swap[i]]):
+            elif match('t', params[swap[i]]):
                 # Labels.
-                labels = labels + "\"" + param_types[swap[i]] + " (ps)\""
+                labels = labels + "\"" + params[swap[i]] + " (ps)\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1e12
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e12
 
             # Rex.
-            elif param_types[swap[i]] == 'Rex':
+            elif params[swap[i]] == 'Rex':
                 # Labels.
-                labels = labels + "\"Rex (" + self.relax.data.frq_labels[0] + " MHz)\""
+                labels = labels + "\"Rex (" + self.relax.data.res[index].frq_labels[0] + " MHz)\""
 
                 # Tick values.
-                vals = bounds[swap[i], 0] * (2.0 * pi * self.relax.data.frq[0])**2
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.frq[0])**2
+                vals = bounds[swap[i], 0] * (2.0 * pi * self.relax.data.res[index].frq[0])**2
+                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.res[index].frq[0])**2
 
             # Bond length.
-            elif param_types[swap[i]] == 'r':
+            elif params[swap[i]] == 'r':
                 # Labels.
-                labels = labels + "\"" + param_types[swap[i]] + " (A)\""
+                labels = labels + "\"" + params[swap[i]] + " (A)\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1e-10
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-10
 
             # CSA.
-            elif param_types[swap[i]] == 'CSA':
+            elif params[swap[i]] == 'CSA':
                 # Labels.
-                labels = labels + "\"" + param_types[swap[i]] + " (ppm)\""
+                labels = labels + "\"" + params[swap[i]] + " (ppm)\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1e-6
@@ -927,8 +1115,8 @@ class Model_free:
             # Tick values.
             string = "{"
             for j in range(axis_incs + 1):
-                if self.relax.data.scaling.has_key(model):
-                    string = string + "\"" + "%.2f" % (vals * self.relax.data.scaling[model][0][swap[i]]) + "\" "
+                if self.relax.data.res[index].scaling.has_key(run):
+                    string = string + "\"" + "%.2f" % (vals * self.relax.data.res[index].scaling[run][swap[i]]) + "\" "
                 else:
                     string = string + "\"" + "%.2f" % vals + "\" "
                 vals = vals + val_inc
@@ -957,7 +1145,7 @@ class Model_free:
         file.write("%-26s" % "tm_(ps)")
         file.write("%-26s" % "tf_(ps)")
         file.write("%-26s" % "te_or_ts_(ps)")
-        file.write("%-26s" % ("Rex_(" + self.relax.data.frq_labels[0] + "_MHz)"))
+        file.write("%-26s" % ("Rex_(" + self.relax.data.res[0].frq_labels[0] + "_MHz)"))
         file.write("%-26s" % "Bond_length_(A)")
         file.write("%-26s" % "CSA_(ppm)")
 
@@ -973,207 +1161,140 @@ class Model_free:
         file.write("\n")
 
 
-    def print_results(self, file, model, param_types):
+    def print_results(self, file, run):
         """Function for printing the core of the results file."""
 
-        # Loop over the residues.
-        for i in range(len(self.relax.data.seq)):
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
             # Initialise.
-            types = param_types[i]
-            if self.relax.data.scaling.has_key(model):
-                params = self.relax.data.params[model][i] * self.relax.data.scaling[model][i]
-            else:
-                params = self.relax.data.params[model][i]
+            types = self.relax.data.res[i].params[run]
 
             # Residue number and name.
-            file.write("%-5s" % self.relax.data.seq[i][0])
-            file.write("%-6s" % self.relax.data.seq[i][1])
+            file.write("%-5s" % self.relax.data.res[i].num)
+            file.write("%-6s" % self.relax.data.res[i].name)
 
             # Model details.
-            file.write("%-6s" % model)
-            file.write("%-10s" % self.relax.data.equations[model][i])
+            file.write("%-6s" % self.relax.data.res[i].models[run])
+            file.write("%-10s" % self.relax.data.res[i].equations[run])
             file.write("%-36s" % replace(`types`, ' ', ''))
 
             # S2.
-            flag = 1
-            for j in range(len(types)):
-                # S2.
-                if types[j] == 'S2':
-                    file.write("%-26s" % `params[j]`)
-                    flag = 0
-                    continue
-
-                # S2f and S2s.
-                elif types[j] == 'S2f':
-                    for k in range(len(types)):
-                        if types[k] == 'S2s':
-                            file.write("%-26s" % `params[j]*params[k]`)
-                            flag = 0
-                            continue
-            if flag:
+            if self.relax.data.res[i].s2[run] == None:
                 file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].s2[run]`)
 
             # S2f.
-            flag = 1
-            for j in range(len(types)):
-                if types[j] == 'S2f':
-                    file.write("%-26s" % `params[j]`)
-                    flag = 0
-                    continue
-            if flag:
+            if self.relax.data.res[i].s2f[run] == None:
                 file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].s2f[run]`)
 
             # S2s.
-            flag = 1
-            for j in range(len(types)):
-                # S2s.
-                if types[j] == 'S2s':
-                    file.write("%-26s" % `params[j]`)
-                    flag = 0
-                    continue
-
-                # S2f and S2.
-                elif types[j] == 'S2f':
-                    for k in range(len(types)):
-                        if types[k] == 'S2':
-                            file.write("%-26s" % `params[k]/params[j]`)
-                            flag = 0
-                            continue
-            if flag:
+            if self.relax.data.res[i].s2s[run] == None:
                 file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].s2s[run]`)
 
             # tm.
-            flag = 1
-            for j in range(len(types)):
-                if types[j] == 'tm':
-                    file.write("%-26s" % `params[j] / 1e-12`)
-                    flag = 0
-                    continue
-            if flag:
-                file.write("%-26s" % "N/A")
+            if hasattr(self.relax.data.res[i], 'tm'):
+                file.write("%-26s" % `self.relax.data.res[i].tm[run] / 1e-12`)
+            else:
+                file.write("%-26s" % `self.relax.data.diff_params[0] / 1e-12`)
 
             # tf.
-            flag = 1
-            for j in range(len(types)):
-                if types[j] == 'tf':
-                    file.write("%-26s" % `params[j] / 1e-12`)
-                    flag = 0
-                    continue
-            if flag:
+            if self.relax.data.res[i].tf[run] == None:
                 file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].tf[run] / 1e-12`)
 
             # te or ts.
-            flag = 1
-            for j in range(len(types)):
-                if types[j] == 'te' or types[j] == 'ts':
-                    file.write("%-26s" % `params[j] / 1e-12`)
-                    flag = 0
-                    continue
-            if flag:
+            if self.relax.data.res[i].te[run] == None and self.relax.data.res[i].ts[run] == None:
                 file.write("%-26s" % "N/A")
+            elif self.relax.data.res[i].te[run] != None:
+                file.write("%-26s" % `self.relax.data.res[i].te[run] / 1e-12`)
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].ts[run] / 1e-12`)
 
             # Rex.
-            flag = 1
-            for j in range(len(types)):
-                if types[j] == 'Rex':
-                    file.write("%-26s" % `params[j] * (2.0 * pi * self.relax.data.frq[0])**2`)
-                    flag = 0
-                    continue
-            if flag:
+            if self.relax.data.res[i].rex[run] == None:
                 file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].rex[run] * (2.0 * pi * self.relax.data.res[i].frq[0])**2`)
 
             # Bond length.
-            flag = 1
-            for j in range(len(types)):
-                if types[j] == 'r':
-                    file.write("%-26s" % `params[j] / 1e-10`)
-                    flag = 0
-                    continue
-            if self.relax.data.bond_length[i][0]:
-                file.write("%-26s" % `self.relax.data.bond_length[i][0] / 1e-10`)
-                flag = 0
-            if flag:
+            if self.relax.data.res[i].r[run] == None:
                 file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].r[run] / 1e-10`)
 
             # CSA.
-            flag = 1
-            for j in range(len(types)):
-                if types[j] == 'CSA':
-                    file.write("%-26s" % `params[j] / 1e-6`)
-                    flag = 0
-                    continue
-            if self.relax.data.csa[i][0]:
-                file.write("%-26s" % `self.relax.data.csa[i][0] / 1e-6`)
-                flag = 0
-            if flag:
+            if self.relax.data.res[i].csa[run] == None:
                 file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].csa[run] / 1e-6`)
 
-            # Minimisation results.
-            file.write("%-26s" % `self.relax.data.min_results[model][i][0]`)
-            file.write("%-9i" % self.relax.data.min_results[model][i][1])
-            file.write("%-9i" % self.relax.data.min_results[model][i][2])
-            file.write("%-9i" % self.relax.data.min_results[model][i][3])
-            file.write("%-9i" % self.relax.data.min_results[model][i][4])
-            if self.relax.data.min_results[model][i][5] != None:
-                file.write(self.relax.data.min_results[model][i][5])
+            # Chi-squared.
+            file.write("%-26s" % `self.relax.data.res[i].chi2[run]`)
+
+            # Iterations
+            file.write("%-9i" % self.relax.data.res[i].iter[run])
+
+            # Function count.
+            file.write("%-9i" % self.relax.data.res[i].f_count[run])
+
+            # Gradient count.
+            file.write("%-9i" % self.relax.data.res[i].g_count[run])
+
+            # Hessian count.
+            file.write("%-9i" % self.relax.data.res[i].h_count[run])
+
+            # Warning
+            if self.relax.data.res[i].warning[run] != None:
+                file.write(self.relax.data.res[i].warning[run])
 
             # End of line.
             file.write("\n")
 
 
-    def scaling_vector(self, param_types):
+    def scaling_vector(self, params, index):
         """Function for creating the scaling vector."""
 
-        self.scale_vect = ones(len(param_types), Float64)
-        for i in range(len(param_types)):
+        scaling_vector = []
+        for i in range(len(params)):
             # tm.
-            if param_types[i] == 'tm':
-                self.scale_vect[i] = 1e-9
+            if params[i] == 'tm':
+                scaling_vector.append(1e-9)
 
             # te, tf, and ts.
-            elif match('t', param_types[i]):
-                self.scale_vect[i] = 1e-9
+            elif match('t', params[i]):
+                scaling_vector.append(1e-9)
 
             # Rex.
-            elif param_types[i] == 'Rex':
-                self.scale_vect[i] = 1.0 / (2.0 * pi * self.relax.data.frq[0]) ** 2
+            elif params[i] == 'Rex':
+                scaling_vector.append(1.0 / (2.0 * pi * self.relax.data.res[index].frq[0]) ** 2)
 
             # Bond length.
-            elif param_types[i] == 'r':
-                self.scale_vect[i] = 1e-10
+            elif params[i] == 'r':
+                scaling_vector.append(1e-10)
 
             # CSA.
-            elif param_types[i] == 'CSA':
-                self.scale_vect[i] = 1e-4
+            elif params[i] == 'CSA':
+                scaling_vector.append(1e-4)
+
+            # No scaling.
+            else:
+                scaling_vector.append(1.0)
+
+        return scaling_vector
 
 
-
-    def select(self, model=None, scaling=1):
+    def select(self, run=None, model=None, scaling=1):
         """Function for the selection of a preset model-free model."""
 
         # Test if sequence data is loaded.
-        try:
-            self.relax.data.seq
-        except AttributeError:
+        if not len(self.relax.data.res):
             print "Sequence data has to be loaded first."
-            return
-
-        # Test if the model already exists.
-        try:
-            self.relax.data.equations[model]
-        except AttributeError:
-            pass
-        except KeyError:
-            pass
-        else:
-            print "Models have already been set."
-            return
-
-        # Test the scaling flag.
-        if scaling == 0 or scaling == 1:
-            self.scaling = scaling
-        else:
-            print "The scaling flag is set incorrectly."
             return
 
 
@@ -1183,130 +1304,130 @@ class Model_free:
         # Block 1.
         if model == 'm0':
             equation = 'mf_orig'
-            param_types = []
+            params = []
         elif model == 'm1':
             equation = 'mf_orig'
-            param_types = ['S2']
+            params = ['S2']
         elif model == 'm2':
             equation = 'mf_orig'
-            param_types = ['S2', 'te']
+            params = ['S2', 'te']
         elif model == 'm3':
             equation = 'mf_orig'
-            param_types = ['S2', 'Rex']
+            params = ['S2', 'Rex']
         elif model == 'm4':
             equation = 'mf_orig'
-            param_types = ['S2', 'te', 'Rex']
+            params = ['S2', 'te', 'Rex']
         elif model == 'm5':
             equation = 'mf_ext'
-            param_types = ['S2f', 'S2', 'ts']
+            params = ['S2f', 'S2', 'ts']
         elif model == 'm6':
             equation = 'mf_ext'
-            param_types = ['S2f', 'tf', 'S2', 'ts']
+            params = ['S2f', 'tf', 'S2', 'ts']
         elif model == 'm7':
             equation = 'mf_ext'
-            param_types = ['S2f', 'S2', 'ts', 'Rex']
+            params = ['S2f', 'S2', 'ts', 'Rex']
         elif model == 'm8':
             equation = 'mf_ext'
-            param_types = ['S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm9':
             equation = 'mf_orig'
-            param_types = ['Rex']
+            params = ['Rex']
 
         # Block 2.
         elif model == 'm10':
             equation = 'mf_orig'
-            param_types = ['CSA']
+            params = ['CSA']
         elif model == 'm11':
             equation = 'mf_orig'
-            param_types = ['CSA', 'S2']
+            params = ['CSA', 'S2']
         elif model == 'm12':
             equation = 'mf_orig'
-            param_types = ['CSA', 'S2', 'te']
+            params = ['CSA', 'S2', 'te']
         elif model == 'm13':
             equation = 'mf_orig'
-            param_types = ['CSA', 'S2', 'Rex']
+            params = ['CSA', 'S2', 'Rex']
         elif model == 'm14':
             equation = 'mf_orig'
-            param_types = ['CSA', 'S2', 'te', 'Rex']
+            params = ['CSA', 'S2', 'te', 'Rex']
         elif model == 'm15':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'S2', 'ts']
+            params = ['CSA', 'S2f', 'S2', 'ts']
         elif model == 'm16':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'm17':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'm18':
             equation = 'mf_ext'
-            param_types = ['CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm19':
             equation = 'mf_orig'
-            param_types = ['CSA', 'Rex']
+            params = ['CSA', 'Rex']
 
         # Block 3.
         elif model == 'm20':
             equation = 'mf_orig'
-            param_types = ['r']
+            params = ['r']
         elif model == 'm21':
             equation = 'mf_orig'
-            param_types = ['r', 'S2']
+            params = ['r', 'S2']
         elif model == 'm22':
             equation = 'mf_orig'
-            param_types = ['r', 'S2', 'te']
+            params = ['r', 'S2', 'te']
         elif model == 'm23':
             equation = 'mf_orig'
-            param_types = ['r', 'S2', 'Rex']
+            params = ['r', 'S2', 'Rex']
         elif model == 'm24':
             equation = 'mf_orig'
-            param_types = ['r', 'S2', 'te', 'Rex']
+            params = ['r', 'S2', 'te', 'Rex']
         elif model == 'm25':
             equation = 'mf_ext'
-            param_types = ['r', 'S2f', 'S2', 'ts']
+            params = ['r', 'S2f', 'S2', 'ts']
         elif model == 'm26':
             equation = 'mf_ext'
-            param_types = ['r', 'S2f', 'tf', 'S2', 'ts']
+            params = ['r', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'm27':
             equation = 'mf_ext'
-            param_types = ['r', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['r', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'm28':
             equation = 'mf_ext'
-            param_types = ['r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm29':
             equation = 'mf_orig'
-            param_types = ['r', 'Rex']
+            params = ['r', 'Rex']
 
         # Block 4.
         elif model == 'm30':
             equation = 'mf_orig'
-            param_types = ['r', 'CSA']
+            params = ['r', 'CSA']
         elif model == 'm31':
             equation = 'mf_orig'
-            param_types = ['r', 'CSA', 'S2']
+            params = ['r', 'CSA', 'S2']
         elif model == 'm32':
             equation = 'mf_orig'
-            param_types = ['r', 'CSA', 'S2', 'te']
+            params = ['r', 'CSA', 'S2', 'te']
         elif model == 'm33':
             equation = 'mf_orig'
-            param_types = ['r', 'CSA', 'S2', 'Rex']
+            params = ['r', 'CSA', 'S2', 'Rex']
         elif model == 'm34':
             equation = 'mf_orig'
-            param_types = ['r', 'CSA', 'S2', 'te', 'Rex']
+            params = ['r', 'CSA', 'S2', 'te', 'Rex']
         elif model == 'm35':
             equation = 'mf_ext'
-            param_types = ['r', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['r', 'CSA', 'S2f', 'S2', 'ts']
         elif model == 'm36':
             equation = 'mf_ext'
-            param_types = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'm37':
             equation = 'mf_ext'
-            param_types = ['r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'm38':
             equation = 'mf_ext'
-            param_types = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'm39':
             equation = 'mf_orig'
-            param_types = ['r', 'CSA', 'Rex']
+            params = ['r', 'CSA', 'Rex']
 
 
         # Preset models with local correlation time.
@@ -1315,138 +1436,135 @@ class Model_free:
         # Block 1.
         elif model == 'tm0':
             equation = 'mf_orig'
-            param_types = ['tm']
+            params = ['tm']
         elif model == 'tm1':
             equation = 'mf_orig'
-            param_types = ['tm', 'S2']
+            params = ['tm', 'S2']
         elif model == 'tm2':
             equation = 'mf_orig'
-            param_types = ['tm', 'S2', 'te']
+            params = ['tm', 'S2', 'te']
         elif model == 'tm3':
             equation = 'mf_orig'
-            param_types = ['tm', 'S2', 'Rex']
+            params = ['tm', 'S2', 'Rex']
         elif model == 'tm4':
             equation = 'mf_orig'
-            param_types = ['tm', 'S2', 'te', 'Rex']
+            params = ['tm', 'S2', 'te', 'Rex']
         elif model == 'tm5':
             equation = 'mf_ext'
-            param_types = ['tm', 'S2f', 'S2', 'ts']
+            params = ['tm', 'S2f', 'S2', 'ts']
         elif model == 'tm6':
             equation = 'mf_ext'
-            param_types = ['tm', 'S2f', 'tf', 'S2', 'ts']
+            params = ['tm', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm7':
             equation = 'mf_ext'
-            param_types = ['tm', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['tm', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm8':
             equation = 'mf_ext'
-            param_types = ['tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm9':
             equation = 'mf_orig'
-            param_types = ['tm', 'Rex']
+            params = ['tm', 'Rex']
 
         # Block 2.
         elif model == 'tm10':
             equation = 'mf_orig'
-            param_types = ['tm', 'CSA']
+            params = ['tm', 'CSA']
         elif model == 'tm11':
             equation = 'mf_orig'
-            param_types = ['tm', 'CSA', 'S2']
+            params = ['tm', 'CSA', 'S2']
         elif model == 'tm12':
             equation = 'mf_orig'
-            param_types = ['tm', 'CSA', 'S2', 'te']
+            params = ['tm', 'CSA', 'S2', 'te']
         elif model == 'tm13':
             equation = 'mf_orig'
-            param_types = ['tm', 'CSA', 'S2', 'Rex']
+            params = ['tm', 'CSA', 'S2', 'Rex']
         elif model == 'tm14':
             equation = 'mf_orig'
-            param_types = ['tm', 'CSA', 'S2', 'te', 'Rex']
+            params = ['tm', 'CSA', 'S2', 'te', 'Rex']
         elif model == 'tm15':
             equation = 'mf_ext'
-            param_types = ['tm', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['tm', 'CSA', 'S2f', 'S2', 'ts']
         elif model == 'tm16':
             equation = 'mf_ext'
-            param_types = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm17':
             equation = 'mf_ext'
-            param_types = ['tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm18':
             equation = 'mf_ext'
-            param_types = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm19':
             equation = 'mf_orig'
-            param_types = ['tm', 'CSA', 'Rex']
+            params = ['tm', 'CSA', 'Rex']
 
         # Block 3.
         elif model == 'tm20':
             equation = 'mf_orig'
-            param_types = ['tm', 'r']
+            params = ['tm', 'r']
         elif model == 'tm21':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'S2']
+            params = ['tm', 'r', 'S2']
         elif model == 'tm22':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'S2', 'te']
+            params = ['tm', 'r', 'S2', 'te']
         elif model == 'tm23':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'S2', 'Rex']
+            params = ['tm', 'r', 'S2', 'Rex']
         elif model == 'tm24':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'S2', 'te', 'Rex']
+            params = ['tm', 'r', 'S2', 'te', 'Rex']
         elif model == 'tm25':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'S2f', 'S2', 'ts']
+            params = ['tm', 'r', 'S2f', 'S2', 'ts']
         elif model == 'tm26':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts']
+            params = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm27':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm28':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm29':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'Rex']
+            params = ['tm', 'r', 'Rex']
 
         # Block 4.
         elif model == 'tm30':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'CSA']
+            params = ['tm', 'r', 'CSA']
         elif model == 'tm31':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'CSA', 'S2']
+            params = ['tm', 'r', 'CSA', 'S2']
         elif model == 'tm32':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'CSA', 'S2', 'te']
+            params = ['tm', 'r', 'CSA', 'S2', 'te']
         elif model == 'tm33':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'CSA', 'S2', 'Rex']
+            params = ['tm', 'r', 'CSA', 'S2', 'Rex']
         elif model == 'tm34':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'CSA', 'S2', 'te', 'Rex']
+            params = ['tm', 'r', 'CSA', 'S2', 'te', 'Rex']
         elif model == 'tm35':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
         elif model == 'tm36':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm37':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm38':
             equation = 'mf_ext'
-            param_types = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm39':
             equation = 'mf_orig'
-            param_types = ['tm', 'r', 'CSA', 'Rex']
+            params = ['tm', 'r', 'CSA', 'Rex']
 
         # Invalid models.
         else:
             print "The model '" + model + "' is invalid."
             return
 
-        # Create the scaling vector.
-        self.scaling_vector(param_types)
-
         # Update the data structures.
-        self.data_update(model, equation, param_types)
+        self.data_update(run, model, equation, params, scaling)

@@ -23,7 +23,6 @@
 
 from re import match
 
-from generic_functions import Generic_functions
 from select_res import Select_res
 
 
@@ -45,7 +44,7 @@ class Skin:
         self.set = x.set
 
 
-class Macro_class(Generic_functions, Select_res):
+class Macro_class(Select_res):
     def __init__(self, relax):
         """Class containing macros for the setting up of data structures."""
 
@@ -101,11 +100,13 @@ class Macro_class(Generic_functions, Select_res):
         self.data = self.create_data(file_data)
 
 
-    def set(self, data_type=None, val=None, err=0.0):
+    def set(self, run=None, data_type=None, val=None, err=None):
         """Macro for setting data structure values.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the values to.
 
         data_type:  The data type.  This argument should be a string.
 
@@ -132,13 +133,19 @@ class Macro_class(Generic_functions, Select_res):
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "value.set("
-            text = text + "data_type=" + `data_type`
+            text = text + "run=" + `run`
+            text = text + ", data_type=" + `data_type`
             text = text + ", val=" + `val`
             text = text + ", err=" + `err` + ")\n"
             print text
 
+        # The run name.
+        if type(run) != str:
+            print "The run argument must be a string."
+            return
+
         # Data type.
-        if data_type == None:
+        elif data_type == None:
             print "The data type argument has not been supplied."
             return
         elif type(data_type) != str:
@@ -154,9 +161,10 @@ class Macro_class(Generic_functions, Select_res):
             return
 
         # Error.
-        elif type(err) != float:
-            print "The error argument must be a floating point number."
-            return
+        elif err != None:
+            if type(err) != float:
+                print "The error argument must either be None or be a floating point number."
+                return
 
         # Execute the functional code.
-        self.relax.value.set(data_type=data_type, val=val, err=err)
+        self.relax.value.set(run=run, data_type=data_type, val=val, err=err)
