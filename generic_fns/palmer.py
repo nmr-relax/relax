@@ -24,7 +24,6 @@ from math import pi
 from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, mkdir, remove, spawnlp, system
 from re import match, search
 from string import split
-import sys
 
 
 class Palmer:
@@ -54,7 +53,7 @@ class Palmer:
             raise RelaxNoSequenceError, run
 
         # Test if the PDB file is loaded (axially symmetric and anisotropic diffusion).
-        if not match('iso', self.relax.data.diff[run].type):
+        if self.relax.data.diff[run].type != 'iso':
             if not self.relax.data.pdb.has_key(run):
                 raise RelaxPdbError, run
 
@@ -153,17 +152,17 @@ class Palmer:
                     continue
 
                 # Find the corresponding R1.
-                if match('R1', self.relax.data.res[self.run][i].ri_labels[k]):
+                if self.relax.data.res[self.run][i].ri_labels[k] == 'R1':
                     r1 = self.relax.data.res[self.run][i].relax_data[k]
                     r1_err = self.relax.data.res[self.run][i].relax_error[k]
 
                 # Find the corresponding R2.
-                elif match('R2', self.relax.data.res[self.run][i].ri_labels[k]):
+                elif self.relax.data.res[self.run][i].ri_labels[k] == 'R2':
                     r2 = self.relax.data.res[self.run][i].relax_data[k]
                     r2_err = self.relax.data.res[self.run][i].relax_error[k]
 
                 # Find the corresponding NOE.
-                elif match('NOE', self.relax.data.res[self.run][i].ri_labels[k]):
+                elif self.relax.data.res[self.run][i].ri_labels[k] == 'NOE':
                     noe = self.relax.data.res[self.run][i].relax_data[k]
                     noe_err = self.relax.data.res[self.run][i].relax_error[k]
 
@@ -194,21 +193,21 @@ class Palmer:
         """Create the Modelfree4 input file 'mfin'."""
 
         # Set the diffusion tensor specific values.
-        if match('iso', self.relax.data.diff[self.run].type):
+        if self.relax.data.diff[self.run].type == 'iso':
             diff = 'isotropic'
             algorithm = 'brent'
             tm = self.relax.data.diff[self.run].tm / 1e-9
             dratio = 1
             theta = 0
             phi = 0
-        elif match('axial', self.relax.data.diff[self.run].type):
+        elif self.relax.data.diff[self.run].type == 'axial':
             diff = 'axial'
             algorithm = 'powell'
             tm = self.relax.data.diff[self.run].tm / 1e-9
             dratio = self.relax.data.diff[self.run].Dratio
             theta = self.relax.data.diff[self.run].theta * 360.0 / (2.0 * pi)
             phi = self.relax.data.diff[self.run].phi * 360.0 / (2.0 * pi)
-        elif match('aniso', self.relax.data.diff[self.run].type):
+        elif self.relax.data.diff[self.run].type == 'aniso':
             diff = 'anisotropic'
             algorithm = 'powell'
             tm = self.relax.data.diff[self.run].tm / 1e-9
@@ -391,7 +390,7 @@ class Palmer:
 
         file.write("#! /bin/sh\n")
         file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out\n")
-        if not match('iso', self.relax.data.diff[self.run].type):
+        if self.relax.data.diff[self.run].type != 'iso':
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
             system('cp ' + self.relax.data.pdb[self.run].filename + ' ' + self.dir)
             file.write(" -s " + self.relax.data.pdb[self.run].filename.split('/')[-1])
@@ -430,7 +429,7 @@ class Palmer:
             raise RelaxFileError, ('mfpar input', 'mfpar')
 
         # Test if the 'PDB' input file exists.
-        if not match('iso', self.relax.data.diff[run].type):
+        if self.relax.data.diff[run].type != 'iso':
             pdb = self.relax.data.pdb[self.run].filename.split('/')[-1]
             if not access(pdb, F_OK):
                 raise RelaxFileError, ('PDB', pdb)
@@ -579,8 +578,13 @@ class Palmer:
             row = split(mfout[k])
             if `res` == row[0]:
                 try:
-                    return float(row[1]), float(row[4])
-                except ValueError:
+                    # Catch a series of '*' joining two columns.
+                    val = split(row[1], '*')
+                    err = split(row[4], '*')
+
+                    # Return the values.
+                    return float(val[0]), float(err[0])
+                except:
                     return None, None
 
             # Catch the end.

@@ -1035,11 +1035,15 @@ class Model_free:
             data = getattr(self.relax.data, data_name)
 
             # Skip the data if it is not a dictionary.
-            if type(data) != dict:
+            if not hasattr(data, 'has_key'):
                 continue
 
-            # If the dictionary already contains the key 'new_run', but the data is different, raise an error.
-            if data.has_key(new_run) and data[old_run] != data[new_run]:
+            # Skip the data if it doesn't contain the key 'old_run'.
+            if not data.has_key(old_run):
+                continue
+
+            # If the dictionary already contains the key 'new_run', but the data is different, raise an error (skip PDB and diffusion data).
+            if data_name != 'pdb' and data_name != 'diff' and data.has_key(new_run) and data[old_run] != data[new_run]:
                 raise RelaxError, "The data between run " + `new_run` + " and run " + `old_run` + " is not consistent."
 
             # Skip the data if it contains the key 'new_run'.
