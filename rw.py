@@ -39,14 +39,14 @@ class RW:
             raise RelaxSequenceError
 
         # Equation type specific function setup.
-        self.read_results = self.relax.specific_setup.setup("read", data_type)
+        self.read_results = self.relax.specific_setup.setup('read', data_type)
         if self.read_results == None:
             raise RelaxFuncSetupError, ('read', data_type)
 
         # The results file.
         if dir == None:
             dir = run
-        file_name = dir + "/" + file
+        file_name = dir + '/' + file
         if not access(file_name, F_OK):
             raise RelaxFileError, ('relaxation data', file_name)
 
@@ -87,43 +87,21 @@ class RW:
         except OSError:
             pass
 
-        # Empty functions.
-        self.write_header = None
-        self.write_results = []
-        header_fn = None
+        # Determine the equation type.
+        equation = self.relax.specific_setup.get_equation(run)
 
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Append None to the write_results function array.
-            self.write_results.append(None)
+        # Equation type specific header writing function setup.
+        self.write_header = self.relax.specific_setup.setup('write_header', equation)
+        if self.write_header == None:
+            raise RelaxFuncSetupError, ('write_header', res.equations[run])
 
-            # Reassign data structure.
-            res = self.relax.data.res[i]
-
-            # Skip unselected residues.
-            if not res.select:
-                continue
-
-            # Equation type specific function setup.
-            fns = self.relax.specific_setup.setup('write', res.equations[run])
-            if fns == None:
-                raise RelaxFuncSetupError, ('write', res.equations[run])
-
-            # Assign the header function.
-            if self.write_header == None:
-                self.write_header, self.write_results[i] = fns
-            else:
-                header_fn, self.write_results[i] = fns
-
-                # Make sure the header functions are the same.
-                if self.write_header != header_fn:
-                    print "Res: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
-                    print "self.write_header: " + `self.write_header`
-                    print "header_fn: " + `header_fn`
-                    raise RelaxError, "The write header functions for the run " + `run` + " are not consistent between residues."
+        # Equation type specific function setup.
+        self.write_results = self.relax.specific_setup.setup('write_results', equation)
+        if self.write_results == None:
+            raise RelaxFuncSetupError, ('write_results', res.equations[run])
 
         # The results file.
-        file_name = dir + "/" + file
+        file_name = dir + '/' + file
         if access(file_name, F_OK) and not force:
             raise RelaxFileOverwriteError, (file_name, 'force flag')
         results_file = open(file_name, 'w')
@@ -141,7 +119,7 @@ class RW:
                 continue
 
             # Write the results.
-            self.write_results[i](results_file, run, i)
+            self.write_results(results_file, run, i)
 
         # Close the results file.
         results_file.close()

@@ -54,7 +54,7 @@ class Minimise:
 
             # Equation type specific scaling matrix function setup.
             self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
-            if self.assemble_scaling matrix == None:
+            if self.assemble_scaling_matrix == None:
                 raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
 
             # Equation type specific calculate function setup.
@@ -113,7 +113,7 @@ class Minimise:
 
             # Equation type specific scaling matrix function setup.
             self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
-            if self.assemble_scaling matrix == None:
+            if self.assemble_scaling_matrix == None:
                 raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
 
             # Equation type specific fixed setup function setup.
@@ -197,7 +197,7 @@ class Minimise:
 
             # Equation type specific scaling matrix function setup.
             self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
-            if self.assemble_scaling matrix == None:
+            if self.assemble_scaling_matrix == None:
                 raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
 
             # Equation type specific grid setup function setup.
@@ -269,7 +269,7 @@ class Minimise:
 
             # Equation type specific scaling matrix function setup.
             self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
-            if self.assemble_scaling matrix == None:
+            if self.assemble_scaling_matrix == None:
                 raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
 
             # Equation type specific minimise function setup.
