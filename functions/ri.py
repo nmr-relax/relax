@@ -1,5 +1,3 @@
-from Numeric import copy
-
 class Ri:
 	def __init__(self):
 		"An additional layer of equations to simplify the relaxation equations, gradients, and hessians."
@@ -20,7 +18,6 @@ class Ri:
 		Type:  Numeric array, Float64
 		Dependencies:  self.data.ri_prime
 		Required by:  self.data.chi2, self.data.dchi2, self.data.d2chi2
-		Stored:  Yes
 
 
 		Formulae

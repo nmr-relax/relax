@@ -1,18 +1,16 @@
-from Numeric import Float64, equal, zeros
-
 class d2chi2:
 	def __init__(self):
-		"Function to create the chi-squared hessian matrix."
+		"Function to create the chi-squared hessian."
 
 
-	def d2chi2(self, mf_params, diff_type, diff_params, mf_model, relax_data, errors):
-		"""Function to create the chi-squared hessian matrix.
+	def d2chi2(self, params, diff_type, diff_params, model, relax_data, errors):
+		"""Function to create the chi-squared hessian.
 
 		Function arguments
 		~~~~~~~~~~~~~~~~~~
 
-		1:  mf_params - a list containing the model-free parameter values specific for the given model.
-		The order of model-free parameters must be as follows:
+		1:  params - a list containing the parameter values specific for the given model.
+		The order of parameters must be as follows:
 			m1 - {S2}
 			m2 - {S2, te}
 			m3 - {S2, Rex}
@@ -20,7 +18,7 @@ class d2chi2:
 			m5 - {S2f, S2s, ts}
 		2:  diff_type - string.  The diffusion tensor, ie 'iso', 'axial', 'aniso'
 		3:  diff_params - array.  An array with the diffusion parameters
-		4:  mf_model - string.  The model-free model
+		4:  model - string.  The model
 		5:  relax_data - array.  An array containing the experimental relaxation values.
 		6:  errors - array.  An array containing the experimental errors.
 
@@ -29,61 +27,56 @@ class d2chi2:
 		~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.data.d2chi2
-		Dimension:  2D, (model-free parameters, model-free parameters)
+		Dimension:  2D, (parameters, parameters)
 		Type:  Numeric array, Float64
 		Dependencies:  self.data.ri, self.data.dri, self.data.d2ri
 		Required by:  None
-		Stored:  No
 
 
 		Formula
 		~~~~~~~
-			                _n_
-			 d2chi2         \       1      / dRi()   dRi()                     d2 Ri()   \ 
-			---------  =  2  >  ---------- | ----- . -----  -  (Ri - Ri()) . ----------- |
-			dmfj.dmfk       /__ sigma_i**2 \ dmf_j   dmf_k                   dmfj . dmfk / 
-			                i=1
-
-		Returned is the chi-squared hessian matrix.
+			                      _n_
+			     d2chi2           \       1      /  dRi()     dRi()                         d2Ri()     \ 
+			---------------  =  2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
+			dthetaj.dthetak       /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak / 
+			                      i=1
 		"""
 
 		# debug.
 		if self.mf.min_debug == 2:
 			print "\n< d2chi2 >"
-			print "Mf params: " + `mf_params`
+			print "Params: " + `params`
 
-		self.data.mf_params = mf_params
+		self.data.params = params
 		self.data.diff_type = diff_type
 		self.data.diff_params = diff_params
-		self.data.mf_model = mf_model
+		self.data.model = model
 		self.data.relax_data = relax_data
 		self.data.errors = errors
 
-		# Test to see if relaxation array and spectral density matrix have previously been calculated for the current parameter values,
-		# ie, if the derivative is calculated before the function evaluation!
-		# If not, calculate the relaxation array which will then calculate the spectral density matrix, and store the current data and parameter
-		# values in self.data.relax_test.
-		test = [ self.data.relax_data[:], self.data.errors[:], self.data.mf_params.tolist(), self.data.mf_model ]
+		# Test to see if relaxation values and spectral density values have previously been calculated for the current parameter values,
+		# If not, calculate the relaxation values which will then calculate the spectral density values, and store the current data and parameter
+		# values in self.data.relax_test and self.data.gradient_test.
+		test = [ self.data.relax_data[:], self.data.errors[:], self.data.params.tolist(), self.data.model ]
 		if test != self.data.relax_test:
+			self.init_param_types()
 			self.Ri()
 			self.data.relax_test = test[:]
-			self.init_param_types()
 		if test != self.data.gradient_test:
+			self.init_param_types()
 			self.dRi()
 			self.data.gradient_test = test[:]
-			self.init_param_types()
 
-		# Calculate the relaxation hessian matrix (important that the relaxation gradient matrix has previously been calculated
-		# as the function d2Ri assumes this to be the case).
+		# Calculate the relaxation hessians.
 		self.d2Ri()
 
-		# Initialise the chi-squared hessian matrix.
-		self.data.d2chi2 = zeros((len(self.data.mf_params), len(self.data.mf_params)), Float64)
+		# Initialise the chi-squared hessian.
+		self.data.d2chi2 = zeros((len(self.data.params), len(self.data.params)), Float64)
 
-		# Calculate the chi-squared hessian matrix.
+		# Calculate the chi-squared hessian.
 		for i in range(len(self.data.relax_data)):
 			if self.data.errors[i] != 0.0:
-				# Model-free parameter independent terms.
+				# Parameter independent terms.
 				a = 2.0 / (self.data.errors[i]**2)
 				b = self.data.relax_data[i] - self.data.ri[i]
 				print "Relax data: " + `self.data.relax_data[i]`
@@ -91,37 +84,37 @@ class d2chi2:
 				print "Diff:       " + `self.data.relax_data[i] - self.data.ri[i]`
 				print "a:          " + `a`
 
-				# Loop over the model-free parameters.
-				for mfj in range(len(self.data.mf_params)):
-					print "\tmfj: " + `mfj`
-					# Loop over the model-free parameters from 1 to mfk.
-					for mfk in range(mfj + 1):
-						print "\t\tmfk: " + `mfk`
-						c = self.data.dri[i, mfj] * self.data.dri[i, mfk]
-						print "\t\t\tdrij:                  " + `self.data.dri[i, mfj]`
-						print "\t\t\tdrik:                  " + `self.data.dri[i, mfk]`
+				# Loop over the parameters.
+				for param_j in range(len(self.data.params)):
+					print "\tparam_j: " + `param_j`
+					# Loop over the parameters from 1 to param_k.
+					for param_k in range(param_j + 1):
+						print "\t\tparam_k: " + `param_k`
+						c = self.data.dri[param_j, i] * self.data.dri[param_k, i]
+						print "\t\t\tdrij:                  " + `self.data.dri[param_j, i]`
+						print "\t\t\tdrik:                  " + `self.data.dri[param_k, i]`
 						print "\t\t\tdrij*drik:             " + `c`
-						print "\t\t\td2ri:                  " + `self.data.d2ri[i, mfj, mfk]`
-						print "\t\t\tdiff*d2ri:             " + `b * self.data.d2ri[i, mfj, mfk]`
-						print "\t\t\tdrij*drik - diff*d2ri: " + `c - b * self.data.d2ri[i, mfj, mfk]`
-						if mfj == mfk:
-							self.data.d2chi2[mfj][mfj] = self.data.d2chi2[mfj][mfj] + a * c
-							#self.data.d2chi2[mfj][mfj] = self.data.d2chi2[mfj][mfj] + a * (c - b * self.data.d2ri[i, mfj, mfj])
+						print "\t\t\td2ri:                  " + `self.data.d2ri[param_j, param_k, i]`
+						print "\t\t\tdiff*d2ri:             " + `b * self.data.d2ri[param_j, param_k, i]`
+						print "\t\t\tdrij*drik - diff*d2ri: " + `c - b * self.data.d2ri[param_j, param_k, i]`
+						if param_j == param_k:
+							self.data.d2chi2[param_j, param_j] = self.data.d2chi2[param_j, param_j] + a * c
+							#self.data.d2chi2[param_j, param_j] = self.data.d2chi2[param_j, param_j] + a * (c - b * self.data.d2ri[param_j, param_j, i])
 						else:
-							self.data.d2chi2[mfj][mfk] = self.data.d2chi2[mfj][mfk] + a * c
-							self.data.d2chi2[mfk][mfj] = self.data.d2chi2[mfk][mfj] + a * c
-							#self.data.d2chi2[mfj][mfk] = self.data.d2chi2[mfj][mfk] + a * (c - b * self.data.d2ri[i, mfj, mfk])
-							#self.data.d2chi2[mfk][mfj] = self.data.d2chi2[mfk][mfj] + a * (c - b * self.data.d2ri[i, mfk, mfj])
+							self.data.d2chi2[param_j, param_k] = self.data.d2chi2[param_j, param_k] + a * c
+							self.data.d2chi2[param_k, param_j] = self.data.d2chi2[param_k, param_j] + a * c
+							#self.data.d2chi2[param_j, param_k] = self.data.d2chi2[param_j, param_k] + a * (c - b * self.data.d2ri[param_j, param_k, i])
+							#self.data.d2chi2[param_k, param_j] = self.data.d2chi2[param_k, param_j] + a * (c - b * self.data.d2ri[param_k, param_j, i])
 			else:
-				# Loop over the model-free parameters.
-				for mfk in range(len(self.data.mf_params)):
-					# Loop over the model-free parameters from 1 to mfk.
-					for mfj in range(mfk + 1):
-						if mfj == mfk:
-							self.data.d2chi2[mfj][mfj] = 1e99
+				# Loop over the parameters.
+				for param_k in range(len(self.data.params)):
+					# Loop over the parameters from 1 to param_k.
+					for param_j in range(param_k + 1):
+						if param_j == param_k:
+							self.data.d2chi2[param_j, param_j] = 1e99
 						else:
-							self.data.d2chi2[mfj][mfk] = 1e99
-							self.data.d2chi2[mfk][mfj] = 1e99
+							self.data.d2chi2[param_j, param_k] = 1e99
+							self.data.d2chi2[param_k, param_j] = 1e99
 				break
 
 		# debug.

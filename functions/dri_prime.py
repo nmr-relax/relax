@@ -1,26 +1,19 @@
-import sys
-from math import pi
-from Numeric import Float64, copy, zeros
-from re import match
-
-
 class dRi_prime:
 	def __init__(self):
-		"Function for the calculation of the transformed relaxation gradient."
+		"Function for the calculation of the transformed relaxation gradients."
 
 
 	def dRi_prime(self):
-		"""Function for the calculation of the transformed relaxation gradient.
+		"""Function for the calculation of the transformed relaxation gradients.
 
-		The transformed relaxation gradient
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		The transformed relaxation gradients
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.data.dri_prime
-		Dimension:  2D, (transformed relaxation data, model-free parameters)
+		Dimension:  2D, (parameters, transformed relaxation data)
 		Type:  Numeric matrix, Float64
 		Dependencies:  self.data.jw, self.data.djw
 		Required by:  self.data.dri, self.data.d2ri
-		Stored:  Yes
 
 
 		Formulae
@@ -94,22 +87,22 @@ class dRi_prime:
 				                             dmf           dmf
 
 
-		Model-free parameter
-		~~~~~~~~~~~~~~~~~~~~
+		Spectral density parameter
+		~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 			dR1()
 			-----  =  d . J_R1_d_prime  +  c . J_R1_c_prime
-			 dmf
+			 dJj
 
 
 			dR2()     d                    c
 			-----  =  - . J_R2_d_prime  +  - . J_R2_c_prime
-			 dmf      2                    6
+			 dJj      2                    6
 
 
 			dsigma_noe()
 			------------  = d . J_sigma_noe_prime
-			    dmf
+			    dJj
 
 
 		Chemical exchange
@@ -172,65 +165,63 @@ class dRi_prime:
 
 		"""
 
-		# Debugging code.
-		#print "<<< dRi >>>"
-
-		# Calculate the spectral density derivatives.
+		# Calculate the spectral density gradients.
 		self.dJw()
 
-		# Initialise the relaxation gradient matrix.
-		self.data.dri = zeros((self.mf.data.num_ri, len(self.data.mf_params)), Float64)
+		# Initialise the components of the transformed relaxation equations.
+		self.data.j_dip_comps_prime = zeros((self.mf.data.num_ri), Float64)
+		self.data.j_csa_comps_prime = zeros((self.mf.data.num_ri), Float64)
+		if match('m[34]', self.data.model):
+			self.data.rex_comps_prime = zeros((self.mf.data.num_ri), Float64)
+		if match('m6', self.data.model):
+			self.data.dip_comps_prime = zeros((self.mf.data.num_ri), Float64)
+			self.data.csa_comps_prime = zeros((self.mf.data.num_ri), Float64)
 
 		# Loop over the relaxation values.
 		for i in range(self.mf.data.num_ri):
 			frq_num = self.mf.data.remap_table[i]
 
-			for param in range(len(self.data.ri_param_types)):
-				# Model-free parameter derivatives.
-				if self.mf.data.data_types[i]  == 'R1' and self.data.ri_param_types[param] == 'mf':
-					self.data.dri[i, param] = self.calc_dr1_dmf(param, frq_num)
-				elif self.mf.data.data_types[i] == 'R2' and self.data.ri_param_types[param] == 'mf':
-					self.data.dri[i, param] = self.calc_dr2_dmf(param, frq_num)
-				elif self.mf.data.data_types[i] == 'NOE' and self.data.ri_param_types[param] == 'mf':
-					self.data.dri[i, param] = self.calc_dnoe_dmf(i, param, frq_num)
+			# R1 components.
+			if self.mf.data.data_types[i]  == 'R1':
+				self.data.j_dip_comps_prime[i] = self.data.djw[frq_num, 2] + 3.0*self.data.djw[frq_num, 1] + 6.0*self.data.djw[frq_num, 4]
+				self.data.j_csa_comps_prime[i] = self.data.djw[frq_num, 1]
+				if match('m6', self.data.model):
+					self.data.dip_comps_prime[i] = self.mf.data.dipole_prime
+					self.data.csa_comps_prime[i] = self.mf.data.csa_prime[frq_num]
 
-				# Chemical exchange derivatives (matrix already filled with zeros).
-				elif self.mf.data.data_types[i] == 'R2' and self.data.ri_param_types[param] == 'rex':
-					self.data.dri[i, param] = (1e-8 * self.mf.data.frq[frq_num])**2
+			# R2 components.
+			elif self.mf.data.data_types[i] == 'R2':
+				self.data.j_dip_comps_prime[i] = 4.0*self.data.djw[frq_num, 0] + self.data.djw[frq_num, 2] + 3.0*self.data.djw[frq_num, 1] + 6.0*self.data.djw[frq_num, 3] + 6.0*self.data.djw[frq_num, 4]
+				self.data.j_csa_comps_prime[i] = 4.0*self.data.djw[frq_num, 0] + 3.0*self.data.djw[frq_num, 1]
+				if match('m[34]', self.data.model):
+					self.data.rex_comps_prime = (1e-8 * self.mf.data.frq[frq_num])**2
+				if match('m6', self.data.model):
+					self.data.dip_comps_prime[i] = self.mf.data.dipole_prime / 2.0
+					self.data.csa_comps_prime[i] = self.mf.data.csa_prime[frq_num] / 6.0
 
+			# sigma_noe components.
+			elif self.mf.data.data_types[i] == 'NOE':
+				self.data.j_dip_comps_prime[i] = 6.0*self.data.djw[frq_num, 4] - self.data.djw[frq_num, 2]
+				if match('m6', self.data.model):
+					self.data.dip_comps_prime[i] = self.mf.data.dipole_prime
 
-	def calc_dr1_dmf(self, param, frq_num):
-		"Calculate the derivative of the R1 value."
+		# Initialise the transformed relaxation gradients.
+		self.data.dri_prime = zeros((len(self.data.params), self.mf.data.num_ri), Float64)
 
-		dr1_dipole = self.mf.data.dipole_const * (self.data.djw[frq_num, 2, param] + 3.0*self.data.djw[frq_num, 1, param] + 6.0*self.data.djw[frq_num, 4, param])
-		dr1_csa = self.mf.data.csa_const[frq_num] * self.data.djw[frq_num, 1, param]
-		dr1 = dr1_dipole + dr1_csa
-		return dr1
+		# Calculate the transformed relaxation gradients.
+		for param in range(len(self.data.ri_param_types)):
+			# Spectral density parameter derivatives.
+			if self.data.ri_param_types[param] == 'Jj':
+				self.data.dri_prime[param] = self.data.dip_comps * self.data.j_dip_comps_prime + self.data.csa_comps * self.data.j_csa_comps_prime
 
+			# Chemical exchange derivatives.
+			elif self.data.ri_param_types[param] == 'Rex':
+				self.data.dri_prime[param] = self.data.rex_comps_prime
 
-	def calc_dr2_dmf(self, param, frq_num):
-		"Calculate the derivative of the R2 value."
+			# CSA derivatives.
+			elif self.data.ri_param_types[param] == 'CSA':
+				self.data.dri_prime[param] = self.data.csa_comps_prime * self.data.j_csa_comps
 
-		dr2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.data.djw[frq_num, 0, param] + self.data.djw[frq_num, 2, param] + 3.0*self.data.djw[frq_num, 1, param] + 6.0*self.data.djw[frq_num, 3, param] + 6.0*self.data.djw[frq_num, 4, param])
-		dr2_csa = (self.mf.data.csa_const[frq_num]/6.0) * (4.0*self.data.djw[frq_num, 0, param] + 3.0*self.data.djw[frq_num, 1, param])
-		dr2 = dr2_dipole + dr2_csa
-		return dr2
-
-
-	def calc_dnoe_dmf(self, i, param, frq_num):
-		"Calculate the derivative of the NOE value."
-
-		if self.mf.data.noe_r1_table[i] == None:
-			raise NameError, "Incomplete code, need to somehow calculate the r1 value (R1 of this NOE frq is missing in original set)."
-
-		r1 = self.data.ri[self.mf.data.noe_r1_table[i]]
-		dr1 = self.data.dri[self.mf.data.noe_r1_table[i], param]
-
-		if r1 == 0.0:
-			print "R1 is zero, this should not occur."
-			dnoe = 1e99
-		elif dr1 == 0.0:
-			dnoe = (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.data.djw[frq_num, 4, param] - self.data.djw[frq_num, 2, param])
-		else:
-			dnoe = - (self.mf.data.dipole_const / r1**2) * (self.mf.data.gh/self.mf.data.gx) * ((6.0*self.data.jw[frq_num, 4] - self.data.jw[frq_num, 2]) * dr1  -  (6.0*self.data.djw[frq_num, 4, param] - self.data.djw[frq_num, 2, param]) * r1)
-		return dnoe
+			# Bond length derivatives.
+			elif self.data.ri_param_types[param] == 'r':
+				self.data.dri_prime[param] = self.data.dip_comps_prime * self.data.j_dip_comps
