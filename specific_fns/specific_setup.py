@@ -45,8 +45,8 @@ class Specific_setup:
         elif match('diff', eqi):
             function = self.diff_funcs()
 
-        # Relaxation data.
-        elif match('relax_data', eqi):
+        # Relaxation curve fitting.
+        elif match('relax_fit', eqi):
             function = self.relax_funcs()
 
         # Model-free analysis.
@@ -72,6 +72,10 @@ class Specific_setup:
 
     def mf_funcs(self):
         """Model-free analysis specific functions."""
+
+        # Back-calculate function.
+        if self.function_type == 'back_calc':
+            return self.relax.specific.model_free.back_calc
 
         # Calculate function.
         if self.function_type == 'calculate':

@@ -248,6 +248,19 @@ class Model_free:
                     i = i + 1
 
 
+    def back_calc(self, run=None, index=None, ri_label=None, frq_label=None, frq=None):
+        """Back-calculation of relaxation data from the model-free parameter values."""
+
+        # Run argument.
+        self.run = run
+
+        # Get the relaxation value from the minimise function.
+        value = self.minimise(run=self.run, min_algor='back_calc', min_options=(index, ri_label, frq_label, frq))
+
+        # Return the relaxation value.
+        return value
+
+
     def calculate(self, run=None, res_num=None, print_flag=1):
         """Calculation of the model-free chi-squared value."""
 
@@ -255,7 +268,7 @@ class Model_free:
         self.run = run
 
         # Go to the minimise function.
-        self.minimise(run=run, min_algor='calc', res_num=res_num)
+        self.minimise(run=self.run, min_algor='calc', min_options=res_num)
 
 
     def create(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
@@ -391,13 +404,13 @@ class Model_free:
         """Function for returning an initial data structure corresponding to 'name'."""
 
         # Empty arrays.
-        list_data = [ 'models',
-                      'params' ]
+        list_data = [ 'params' ]
         if name in list_data:
             return []
 
         # None.
-        none_data = [ 'equations',
+        none_data = [ 'equation',
+                      'model',
                       'scaling',
                       's2',
                       's2f',
@@ -429,7 +442,7 @@ class Model_free:
 
         model: The model-free model name.
 
-        equations:  The model-free equation type.
+        equation:  The model-free equation type.
 
         params:  An array of the model-free parameter names associated with the model.
 
@@ -468,8 +481,8 @@ class Model_free:
         warning:  Minimisation warning.
         """
 
-        names = [ 'models',
-                  'equations',
+        names = [ 'model',
+                  'equation',
                   'params',
                   'scaling',
                   's2',
@@ -1410,7 +1423,7 @@ class Model_free:
         return labels, tick_locations, tick_values
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, res_num=None, print_flag=0):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
         """Model-free minimisation.
 
         Three types of parameter sets exist for which minimisation is different.  These are:
@@ -1424,8 +1437,22 @@ class Model_free:
         self.run = run
         self.print_flag = print_flag
 
+        # Test if the model-free model has been setup.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][i].select:
+                continue
+
+            # Not setup.
+            if not self.relax.data.res[self.run][i].model:
+                raise RelaxError, "The model-free models have not been setup."
+
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
+
+        # Parameter set for the back-calculate function.
+        if min_algor == 'back_calc':
+            self.param_set = 'mf'
 
         # Tests for the PDB file and unit vectors.
         if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
@@ -1476,7 +1503,7 @@ class Model_free:
             # Increment the number of residues.
             num_res = num_res + 1
 
-        # The number of residues, minimisation instances, and data sets for each parameter set type.
+        # Number of residues, minimisation instances, and data sets for each parameter set type.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             num_instances = len(self.relax.data.res[self.run])
             num_data_sets = 1
@@ -1486,7 +1513,13 @@ class Model_free:
             num_data_sets = len(self.relax.data.res[self.run])
 
         # Number of residues for the calculate function.
-        if min_algor == 'calc' and res_num != None:
+        if min_algor == 'calc' and min_options != None:
+            num_res = 1
+
+        # Number of residues, minimisation instances, and data sets for the back-calculate function.
+        if min_algor == 'back_calc':
+            num_instances = 1
+            num_data_sets = 1
             num_res = 1
 
         # Loop over the minimisation instances.
@@ -1501,11 +1534,15 @@ class Model_free:
                     continue
 
                 # Single residue.
-                if res_num != None and res_num != self.relax.data.res[self.run][i].num:
+                if min_algor == 'calc' and min_options != None and min_options != self.relax.data.res[self.run][i].num:
                     continue
 
                 # Set the index to i.
                 index = i
+
+            # Index for the back_calc function.
+            if min_algor == 'back_calc':
+                index = min_options[0]
 
             # Create the initial parameter vector.
             self.assemble_param_vector(index=index)
@@ -1560,6 +1597,29 @@ class Model_free:
             if self.param_set == 'local_tm':
                 mf_params = []
 
+            # Set up the data for the back_calc function.
+            if min_algor == 'back_calc':
+                # The data.
+                relax_data.append(0.0)
+                relax_error.append(0.000001)
+                equations.append(self.relax.data.res[self.run][index].equation)
+                param_types.append(self.relax.data.res[self.run][index].params)
+                r.append(self.relax.data.res[self.run][index].r)
+                csa.append(self.relax.data.res[self.run][index].csa)
+                num_frq.append(1)
+                frq.append([min_options[3]])
+                num_ri.append(1)
+                remap_table.append([0])
+                noe_r1_table.append([None])
+                ri_labels.append([min_options[1]])
+                xh_unit_vectors.append(None)
+
+                # Count the number of model-free parameters for the residue index.
+                num_params.append(len(self.relax.data.res[self.run][index].params))
+
+                # Set the number of data sets to zero to skip the following section.
+                num_data_sets = 0
+
             # Loop over the number of data sets.
             for j in xrange(num_data_sets):
                 # Set the sequence index.
@@ -1582,7 +1642,7 @@ class Model_free:
                 # Repackage the data.
                 relax_data.append(self.relax.data.res[self.run][seq_index].relax_data)
                 relax_error.append(self.relax.data.res[self.run][seq_index].relax_error)
-                equations.append(self.relax.data.res[self.run][seq_index].equations)
+                equations.append(self.relax.data.res[self.run][seq_index].equation)
                 param_types.append(self.relax.data.res[self.run][seq_index].params)
                 r.append(self.relax.data.res[self.run][seq_index].r)
                 csa.append(self.relax.data.res[self.run][seq_index].csa)
@@ -1652,7 +1712,7 @@ class Model_free:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(total_num_params=len(self.param_vector), param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -1674,7 +1734,7 @@ class Model_free:
             # Chi-squared calculation.
             ##########################
 
-            if algor == 'calc':
+            if min_algor == 'calc':
                 # Chi-squared.
                 try:
                     self.relax.data.res[self.run][i].chi2 = self.mf.func(self.param_vector)
@@ -1683,6 +1743,14 @@ class Model_free:
 
                 # Exit the function.
                 return
+
+
+            # Back-calculation.
+            ###################
+
+            if min_algor == 'back_calc':
+                return self.mf.calc_ri()
+
 
             # Minimisation.
             ###############
@@ -1763,9 +1831,9 @@ class Model_free:
             # Initialise the data structures (if needed).
             self.initialise_mf_data(self.relax.data.res[run][i], run)
 
-            # Model-free models, equations, and parameter types.
-            self.relax.data.res[run][i].models = model
-            self.relax.data.res[run][i].equations = equation
+            # Model-free model, equation, and parameter types.
+            self.relax.data.res[run][i].model = model
+            self.relax.data.res[run][i].equation = equation
             self.relax.data.res[run][i].params = params
 
             # Diagonal scaling.
@@ -1992,8 +2060,8 @@ class Model_free:
             self.initialise_mf_data(self.relax.data.res[run][index], run)
 
             # Place the data into 'self.relax.data'.
-            self.relax.data.res[run][index].models = model
-            self.relax.data.res[run][index].equations = equation
+            self.relax.data.res[run][index].model = model
+            self.relax.data.res[run][index].equation = equation
             self.relax.data.res[run][index].params = params
             self.relax.data.res[run][index].s2 = s2
             self.relax.data.res[run][index].s2f = s2f
@@ -2019,13 +2087,13 @@ class Model_free:
         # Run argument.
         self.run = run
 
-        # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
-
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError
 
 
         # Preset models.
@@ -2296,7 +2364,7 @@ class Model_free:
             raise RelaxError, "The model '" + model + "' is invalid."
 
         # Set up the model.
-        self.model_setup(run, model, equation, params, scaling, res_num)
+        self.model_setup(self.run, model, equation, params, scaling, res_num)
 
 
     def set(self, run, value, data_type, index):
@@ -2428,8 +2496,8 @@ class Model_free:
             return
 
         # Model details.
-        file.write("%-6s" % res.models)
-        file.write("%-10s" % res.equations)
+        file.write("%-6s" % res.model)
+        file.write("%-10s" % res.equation)
         file.write("%-36s" % replace(`res.params`, ' ', ''))
 
         # S2.

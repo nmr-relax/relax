@@ -37,7 +37,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, total_num_params=0, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
+    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -108,15 +108,15 @@ class Mf:
 
         # Arguments.
         self.param_set = param_set
-        self.total_num_params = total_num_params
+        self.total_num_params = len(init_params)
         self.scaling_matrix = scaling_matrix
         self.num_res = num_res
-        params = zeros(total_num_params, Float64)
+        self.params = 1.0 * init_params
 
         # Data structures for tests set to some random array (in this case all pi).
-        self.func_test = pi * ones(total_num_params, Float64)
-        self.grad_test = pi * ones(total_num_params, Float64)
-        self.hess_test = pi * ones(total_num_params, Float64)
+        self.func_test = pi * ones(self.total_num_params, Float64)
+        self.grad_test = pi * ones(self.total_num_params, Float64)
+        self.hess_test = pi * ones(self.total_num_params, Float64)
 
         # Initialise the data class for storing diffusion tensor data.
         self.diff_data = Data()
@@ -203,9 +203,9 @@ class Mf:
 
             # Diffusion tensor parameters.
             if self.param_set == 'local_tm':
-                self.diff_data.params = params[0:1]
+                self.diff_data.params = self.params[0:1]
             elif self.param_set == 'diff' or self.param_set == 'all':
-                self.diff_data.params = params[0:self.diff_end_index]
+                self.diff_data.params = self.params[0:self.diff_end_index]
 
             # Calculate the correlation time components.
             if self.diff_data.calc_ti_comps:
@@ -1045,6 +1045,16 @@ class Mf:
             self.total_d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(self.total_d2chi2, self.scaling_matrix))
 
         return self.total_d2chi2
+
+
+    def calc_ri(self):
+        """Function for calculating relaxation values."""
+
+        # Function call.
+        chi2 = self.func_mf(self.params)
+
+        # Return the single value.
+        return self.data[0].ri[0]
 
 
     def init_diff_data(self, diff_data):

@@ -44,7 +44,7 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific calculate function setup.
+        # Specific calculate function setup.
         calculate = self.relax.specific_setup.setup('calculate', function_type)
 
         # Minimisation.
