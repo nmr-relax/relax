@@ -49,7 +49,7 @@ def run():
 		f, df = func456, dfunc456
 		beta1, beta2 = 0.001, 0.01
 		mu, eta = 0.001, 0.001
-		
+
 	xk = array([0.0], Float64)
 	pk = array([1.0], Float64)
 	if func >= 4:

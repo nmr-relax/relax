@@ -171,6 +171,7 @@ def calc_iso_s2f_tf_s2s_ts_jw_comps(data):
 	data.s2_tm = data.s2 * data.diff_params[0]
 
 	data.omega_tm_sqrd = zeros((data.num_frq, 5), Float64)
+	data.omega_tf_prime_sqrd = zeros((data.num_frq, 5), Float64)
 	data.omega_ts_prime_sqrd = zeros((data.num_frq, 5), Float64)
 	for i in range(data.num_frq):
 		for frq_index in range(5):

@@ -185,8 +185,21 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2f(i, frq_index, data):
 
 	"""
 
-	raise NameError, "Need to finish coding this func."
-	return 0.4 * (data.s2s_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
+	return 0.4 * (data.s2s_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) - data.params[data.tf_index] / (1.0 - data.omega_tf_prime_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
+
+
+def calc_iso_S2f_tf_S2s_ts_djw_dtf(i, frq_index, data):
+	"""Calculate the isotropic spectral desity value for the tf partial derivative of the extended model-free formula with the parameters S2f, tf, S2s and ts.
+
+	The formula is:
+
+		dJ(w)     2                 1 - (w.tf')**2      /   tm    \ 2
+		-----  =  - . (1 - S2f) . ------------------- . | ------- |
+		 dtf      5               (1 + (w.tf')**2)**2   \ tf + tm /
+
+	"""
+
+	return 0.4 * (1.0 - data.params[data.s2f_index]) * ((1.0 - data.omega_tf_prime_sqrd[i, frq_index]) / ((1.0 + data.omega_tf_prime_sqrd[i, frq_index])**2)) * data.fact_f**2
 
 
 def calc_iso_S2f_tf_S2s_ts_djw_dS2s(i, frq_index, data):
@@ -201,5 +214,19 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2s(i, frq_index, data):
 	"""
 
 	return 0.4 * data.params[data.s2f_index] * (data.diff_params[0] / (1.0 + data.omega_tm_sqrd[i, frq_index]) - data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
+
+
+def calc_iso_S2f_tf_S2s_ts_djw_dts(i, frq_index, data):
+	"""Calculate the isotropic spectral desity value for the ts partial derivative of the extended model-free formula with the parameters S2f, S2s and ts.
+
+	The formula is:
+
+		dJ(w)     2.S2f                 1 - (w.ts')**2      /   tm    \ 2
+		-----  =  ----- . (1 - S2s) . ------------------- . | ------- |
+		 dts        5                 (1 + (w.ts')**2)**2   \ ts + tm /
+
+	"""
+
+	return 0.4 * data.params[data.s2f_index] * (1.0 - data.params[data.s2s_index]) * ((1.0 - data.omega_ts_prime_sqrd[i, frq_index]) / ((1.0 + data.omega_ts_prime_sqrd[i, frq_index])**2)) * data.fact_s**2
 
 

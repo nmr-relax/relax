@@ -19,120 +19,337 @@ class min:
 		If the model does not exist in self.relax.data.models, 'None' is returned, otherwise the index is returned.
 		"""
 
-		# See if the data structure exists.
-		try:
-			self.relax.data.models
-		except AttributeError:
-			return None
-
 		# Test if the model is within the data structure.
-		for i in range(len(self.relax.data.models)):
-			if self.model == self.relax.data.models[i]:
-				return i
+		try:
+			for i in range(len(self.relax.data.models)):
+				if self.model == self.relax.data.models[i]:
+					return i
+		except AttributeError:
+			"Don't do anything."
 
+		print "The model '" + self.model + "' has not been created yet."
 		return None
 
 
-
-	def init_fixed_params(self):
-		"""Fix the inital model-free parameter values.
+	def fixed(self, model=None, values=None, scaling_flag=0, min_debug=1):
+		"""Fix the inital parameter values.
 
 		The function needs to be modified so the user can specify the fixed values.
 		"""
 
-		if len(self.min_options) == 0:
-			if match('m1', self.model):
-				params = array([0.5], Float64)
-			elif match('m2', self.model):
-				if self.scaling_flag:
-					params = array([0.5, 100.0 * 1e-12 * self.c], Float64)
-				else:
-					params = array([0.5, 100.0 * 1e-12], Float64)
-			elif match('m3', self.model):
-				params = array([0.5, 0.0], Float64)
-			elif match('m4', self.model):
-				if self.scaling_flag:
-					params = array([0.5, 0.0, 100.0 * 1e-12 * self.c], Float64)
-				else:
-					params = array([0.5, 0.0, 100.0 * 1e-12], Float64)
-			elif match('m5', self.model):
-				if self.scaling_flag:
-					params = array([0.5, 0.5, 100.0 * 1e-12 * self.c], Float64)
-				else:
-					params = array([0.5, 0.5, 100.0 * 1e-12], Float64)
-
-		elif len(self.min_options) == len(self.relax.data.model_parameters[self.model_index]):
-			print "aaa"
-		else:
-			sys.exit()
-		return params
-
-
-	def init_grid_ops(self):
-		"""Generate the data structure of grid options for the grid search.
-
-		The function needs to be modified so the user can specify the number of iterations for each parameter.
-		"""
-
-		inc = self.relax.usr_param.init_params[1]
-		grid_ops = []
-		if match('m1', self.relax.data.model):
-			grid_ops.append([inc, 0.0, 1.0])
-		elif match('m2', self.relax.data.model):
-			grid_ops.append([inc, 0.0, 1.0])
-			if self.scaling_flag:
-				grid_ops.append([inc, 0.0, 10000.0 * 1e-12 * self.c])
-			else:
-				grid_ops.append([inc, 0.0, 10000.0 * 1e-12])
-		elif match('m3', self.relax.data.model):
-			grid_ops.append([inc, 0.0, 1.0])
-			grid_ops.append([inc, 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
-		elif match('m4', self.relax.data.model):
-			grid_ops.append([inc, 0.0, 1.0])
-			if self.scaling_flag:
-				grid_ops.append([inc, 0.0, 10000.0 * 1e-12 * self.c])
-			else:
-				grid_ops.append([inc, 0.0, 10000.0 * 1e-12])
-			grid_ops.append([inc, 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
-		elif match('m5', self.relax.data.model):
-			grid_ops.append([inc, 0.0, 1.0])
-			grid_ops.append([inc, 0.0, 1.0])
-			if self.scaling_flag:
-				grid_ops.append([inc, 0.0, 10000.0 * 1e-12 * self.c])
-			else:
-				grid_ops.append([inc, 0.0, 10000.0 * 1e-12])
-
-		return grid_ops
-
-
-	def min(self, model=None, min_algor=None, min_options=None, min_debug=1, scaling_flag=0, chi2_tol=1e-15, max_iterations=5000):
-		"Minimisation macro."
-
-		# Arguments.
+		# The model argument.
 		self.model = model
 		if not self.model:
 			print "No model is given."
 			return
-		self.min_algor = min_algor
-		if not self.min_algor:
-			print "The minimisation algorithm has not been specified."
-			return
-		self.min_options = min_options
-		self.relax.min_debug = min_debug
-		self.scaling_flag = scaling_flag
-		self.chi2_tol = chi2_tol
-		self.max_iterations = max_iterations
 
 		# Find the index of the model.
 		self.model_index = self.find_model_index()
-		if self.model_index == None:
-			print "The model '" + self.model + "' has not been created yet."
+		if self.model_index == None: return
+
+		# User defined values.
+		self.values = values
+		if self.values:
+			if len(self.values) != len(self.relax.data.param_types[self.model_index]):
+				print "The argument 'values' must be an array of length equal to the number of parameters in the model."
+				print "Number of parameters = " + `len(self.relax.data.param_types[self.model_index])`
+				print "Length of 'values' = " + `len(self.values)`
+				return
+			for i in range(len(self.values)):
+				if type(self.values[i]) != float and type(self.values[i]) != int:
+					print "The argument 'values' must be an array of numbers."
+					return
+
+		# The scaling_flag.
+		self.scaling_flag = scaling_flag
+		if type(self.scaling_flag) != int:
+			print "The scaling flag argument must be an integer."
 			return
 
-		# Set up the minimisation specific options.
-		self.minimisation_init()
+		# The debugging flag.
+		self.relax.min_debug = min_debug
+		if type(self.relax.min_debug) != int:
+			print "The min_debug argument must be an integer."
+			return
+
+		# Setup the fixed parameter options.
+		if self.values:
+			# User supplied values.
+			self.min_options = array(self.values)
+		else:
+			# Fixed values.
+			self.min_options = zeros(len(self.relax.data.param_types[self.model_index]), Float64)
+
+			# The original model-free equations.
+			if match('mf_orig', self.relax.data.equations[self.model_index]):
+				for i in range(len(self.relax.data.param_types[self.model_index])):
+					# S2.
+					if match('S2', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = 0.5
+
+					# te.
+					elif match('te', self.relax.data.param_types[self.model_index][i]):
+						if self.scaling_flag:
+							self.min_options[i] = 100.0 * 1e-12 * self.c
+						else:
+							self.min_options[i] = 100.0 * 1e-12
+
+					# Rex.
+					elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = 0.0
+
+					# Bond length.
+					elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = 1.02 * 1e-10
+
+					# CSA.
+					elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = -170 * 1e-6
+
+					# Unknown parameter.
+					else:
+						print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the original model-free equation."
+						return
+
+			# The extended model-free equations.
+			elif match('mf_ext', self.relax.data.equations[self.model_index]):
+				for i in range(len(self.relax.data.param_types[self.model_index])):
+					# S2f.
+					if match('S2f', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = 0.5
+
+					# tf.
+					elif match('tf', self.relax.data.param_types[self.model_index][i]):
+						if self.scaling_flag:
+							self.min_options[i] = 100.0 * 1e-12 * self.c
+						else:
+							self.min_options[i] = 100.0 * 1e-12
+
+					# S2f.
+					elif match('S2s', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = 0.5
+
+					# tf.
+					elif match('ts', self.relax.data.param_types[self.model_index][i]):
+						if self.scaling_flag:
+							self.min_options[i] = 100.0 * 1e-12 * self.c
+						else:
+							self.min_options[i] = 100.0 * 1e-12
+
+					# Rex.
+					elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = 0.0
+
+					# Bond length.
+					elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = 1.02 * 1e-10
+
+					# CSA.
+					elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+						self.min_options[i] = -170 * 1e-6
+
+					# Unknown parameter.
+					else:
+						print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the extended model-free equation."
+						return
+
+			# Unknown eqation type.
+			else:
+				print "The equation " + `self.relax.data.equations[self.model_index]` + " has not been coded into the fixed parameter macro."
+				return
+
+		# Setup values used in the main iterative loop.
+		self.min_algor = 'fixed'
+		self.chi2_tol = 0.0
+		self.max_iterations = 0
 
 		# Main iterative loop.
+		self.main_loop()
+
+
+	def grid_search(self, model=None, lower=None, upper=None, inc=21, scaling_flag=0, min_debug=1):
+		"""
+
+		Generate the data structure of model-free grid options for the grid search.
+		"""
+
+		# The model argument.
+		self.model = model
+		if not self.model:
+			print "No model is given."
+			return
+
+		# Find the index of the model.
+		self.model_index = self.find_model_index()
+		if self.model_index == None: return
+
+		# The lower bounds.
+		self.lower = lower
+		if self.lower:
+			bad_arg = 0
+			if len(self.lower) != len(self.relax.data.param_types[self.model_index]):
+				bad_arg = 1
+			for i in range(len(self.lower)):
+				if type(self.lower[i]) != float and type(self.lower[i]) != int:
+					bad_arg = 1
+			if bad_arg:
+				print "The argument 'lower' must be an array of numbers of length equal to the number of parameters in the model."
+				return
+		else:
+			self.lower = []
+			for i in range(len(self.relax.data.param_types[self.model_index])):
+				self.lower.append(None)
+
+		# The upper bounds.
+		self.upper = upper
+		if self.upper:
+			bad_arg = 0
+			if len(self.upper) != len(self.relax.data.param_types[self.model_index]):
+				bad_arg = 1
+			for i in range(len(self.upper)):
+				if type(self.upper[i]) != float and type(self.upper[i]) != int:
+					bad_arg = 1
+			if bad_arg:
+				print "The argument 'upper' must be an array of numbers of length equal to the number of parameters in the model."
+				return
+		else:
+			self.upper = []
+			for i in range(len(self.relax.data.param_types[self.model_index])):
+				self.upper.append(None)
+
+		# The incrementation value.
+		bad_arg = 0
+		if type(inc) != int and type(inc) != list:
+			bad_arg = 1
+		if type(inc) == list:
+			if len(inc) != len(self.relax.data.param_types[self.model_index]):
+				bad_arg = 1
+			for i in range(len(inc)):
+				if type(inc[i]) != int:
+					bad_arg = 1
+		if bad_arg:
+			print "The argument 'inc' must be either an integer or an array of integers of length equal to the number of parameters in the model."
+			return
+		elif type(inc) == int:
+			self.inc = []
+			for i in range(len(self.relax.data.param_types[self.model_index])):
+				self.inc.append(inc)
+		else:
+			self.inc = inc
+
+
+		# The scaling_flag.
+		self.scaling_flag = scaling_flag
+		if type(self.scaling_flag) != int:
+			print "The scaling flag argument must be an integer."
+			return
+
+		# The debugging flag.
+		self.relax.min_debug = min_debug
+		if type(self.relax.min_debug) != int:
+			print "The min_debug argument must be an integer."
+			return
+
+		# Setup the grid options.
+		self.min_options = []
+
+		# The original model-free equations.
+		if match('mf_orig', self.relax.data.equations[self.model_index]):
+			for i in range(len(self.relax.data.param_types[self.model_index])):
+				# S2.
+				if match('S2', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], 0.0, 1.0])
+
+				# te.
+				elif match('te', self.relax.data.param_types[self.model_index][i]):
+					if self.scaling_flag:
+						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
+					else:
+						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
+
+				# Rex.
+				elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
+
+				# Bond length.
+				elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], 1.0 * 1e-10, 1.1 * 1e-10])
+
+				# CSA.
+				elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], -120 * 1e-6, -200 * 1e-6])
+
+				# Unknown parameter.
+				else:
+					print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the original model-free equation."
+					return
+
+		# The extended model-free equations.
+		elif match('mf_ext', self.relax.data.equations[self.model_index]):
+			for i in range(len(self.relax.data.param_types[self.model_index])):
+				# S2f.
+				if match('S2f', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], 0.0, 1.0])
+
+				# tf.
+				elif match('tf', self.relax.data.param_types[self.model_index][i]):
+					if self.scaling_flag:
+						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
+					else:
+						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
+
+				# S2f.
+				elif match('S2s', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], 0.0, 1.0])
+
+				# tf.
+				elif match('ts', self.relax.data.param_types[self.model_index][i]):
+					if self.scaling_flag:
+						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
+					else:
+						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
+
+				# Rex.
+				elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
+
+				# Bond length.
+				elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], 1.0 * 1e-10, 1.1 * 1e-10])
+
+				# CSA.
+				elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+					self.min_options.append([self.inc[i], -120 * 1e-6, -200 * 1e-6])
+
+				# Unknown parameter.
+				else:
+					print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the extended model-free equation."
+					return
+
+		# Unknown eqation type.
+		else:
+			print "The equation " + `self.relax.data.equations[self.model_index]` + " has not been coded into the grid search macro."
+			return
+
+		# Set the lower and upper bounds if these are supplied.
+		for i in range(len(self.relax.data.param_types[self.model_index])):
+			if not self.lower[i] == None:
+				self.min_options[i][1] = self.lower[i]
+			if not self.upper[i] == None:
+				self.min_options[i][2] = self.upper[i]
+
+		# Setup values used in the main iterative loop.
+		self.min_algor = 'grid'
+		self.chi2_tol = 0.0
+		self.max_iterations = 0
+
+		# Main iterative loop.
+		self.main_loop()
+
+
+	def main_loop(self):
+		"The main iterative loop which loops over the residues."
+
 		for self.res in range(len(self.relax.data.seq)):
 			if self.relax.min_debug >= 1:
 				print "\n\n<<< Fitting to residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1] + " >>>"
@@ -167,12 +384,36 @@ class min:
 		print "\n[ Done ]\n\n"
 
 
-	def minimisation_init(self):
-		"Set up the minimisation specific options."
+	def minimise(self, model=None, min_algor=None, min_options=None, chi2_tol=1e-15, max_iterations=5000, scaling_flag=0, min_debug=1):
+		"Minimisation macro."
 
-		if match('^[Cc][Dd]$', self.min_algor) or match('^[Cc]oordinate-[Dd]escent$', self.min_algor) or match('^[Ss][Dd]$', self.min_algor) or match('^[Ss]teepest[ _][Dd]escent$', self.min_algor) or match('^[Bb][Ff][Gg][Ss]$', self.min_algor) or match('^[Nn]ewton$', self.min_algor):
+		# Arguments.
+		self.model = model
+		if not self.model:
+			print "No model is given."
+			return
+		self.min_algor = min_algor
+		if not self.min_algor:
+			print "The minimisation algorithm has not been specified."
+			return
+		self.min_options = min_options
+		self.relax.min_debug = min_debug
+		self.scaling_flag = scaling_flag
+		self.chi2_tol = chi2_tol
+		self.max_iterations = max_iterations
+
+		# Find the index of the model.
+		self.model_index = self.find_model_index()
+		if self.model_index == None: return
+
+		# Set up the minimisation specific options.
+		# Line search methods.
+		if match('^[Cc][Dd]$', self.min_algor) or match('^[Cc]oordinate[ _-][Dd]escent$', self.min_algor) or match('^[Ss][Dd]$', self.min_algor) or match('^[Ss]teepest[ _-][Dd]escent$', self.min_algor) or match('^[Bb][Ff][Gg][Ss]$', self.min_algor) or match('^[Nn]ewton$', self.min_algor):
 			if self.min_options == None:
 				self.min_options = 'More Thuente'
+
+		# Main iterative loop.
+		self.main_loop()
 
 
 	def setup_data(self):

@@ -67,6 +67,14 @@ def calc_d2noe(data, k, frq_num, get_d2r1):
 				data.d2ri[j, i, k] = data.d2ri[i, j, k]
 
 
+def calc_d2r1(data, k, frq_num, i, j):
+	"""Calculate the R1 value if there is no R1 data corresponding to the NOE data.
+
+	"""
+
+	raise NameError, "Incomplete code, need to calculate the d2r1 value!"
+
+
 def extract_d2r1(data, k, frq_num, i, j):
 	"Get the dR1 value from data.dri_prime"
 

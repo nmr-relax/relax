@@ -61,12 +61,6 @@ def calc_dnoe(data, k, frq_num, get_dr1):
 def calc_dr1(data, k, frq_num, i):
 	"""Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
-	R1()  =  d . J_R1_d  +  c . J_R1_c
-
-	J_R1_d  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
-
-	J_R1_c  =  J(wN)
-
 	"""
 
 	raise NameError, "Incomplete code, need to calculate the dr1 value!"

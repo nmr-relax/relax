@@ -142,7 +142,7 @@ def zoom(func, func_prime, args, f_count, g_count, x, f, g, p, mu, eta, i, a0, a
 
 		# Interpolate to find a trial step length aj between a_lo and a_hi.
 		aj_new = quadratic(a_lo['a'], a_hi['a'], a_lo['phi'], a_hi['phi'], a_lo['phi_prime'])
-		
+
 		# Safeguarding aj['a']
 		aj['a'] = max(aj_last['a'] + 0.66*(a_hi['a'] - aj_last['a']), aj_new)
 
@@ -167,7 +167,7 @@ def zoom(func, func_prime, args, f_count, g_count, x, f, g, p, mu, eta, i, a0, a
 					print "aj: " + `aj`
 					print "<Finished zooming>"
 				return aj['a'], f_count, g_count
-	
+
 			# Determine if a_hi needs to be reset.
 			if aj['phi_prime'] * (a_hi['a'] - a_lo['a']) >= 0.0:
 				a_hi = copy.deepcopy(a_lo)

@@ -356,10 +356,10 @@ class mf:
 			if self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
 				self.calc_jw = calc_iso_s2f_tf_s2s_ts_jw
 				self.calc_jw_comps = calc_iso_s2f_tf_s2s_ts_jw_comps
-				self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2s_ts_djw_dS2f
-				self.calc_djw[self.data.tf_index] = calc_iso_S2f_S2s_ts_djw_dtf
-				self.calc_djw[self.data.s2s_index] = calc_iso_S2f_S2s_ts_djw_dS2s
-				self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2s_ts_djw_dts
+				self.calc_djw[self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2f
+				self.calc_djw[self.data.tf_index] = calc_iso_S2f_tf_S2s_ts_djw_dtf
+				self.calc_djw[self.data.s2s_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2s
+				self.calc_djw[self.data.ts_index] = calc_iso_S2f_tf_S2s_ts_djw_dts
 			elif self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
 				self.calc_jw = calc_iso_s2f_s2s_ts_jw
 				self.calc_jw_comps = calc_iso_s2f_s2s_ts_jw_comps
@@ -378,25 +378,57 @@ class mf:
 			return 0
 
 
-		# Initialise the ri prime function pointer data structures.
+		# Initialise the ri and ri_prime function pointer data structures.
 		self.create_ri_prime = None
-		self.create_ri_prime_comps = []
 		self.create_dri_prime = []
-		self.create_dri_prime_comps = []
 		self.create_d2ri_prime = []
+		self.create_ri_prime_comps = []
+		self.create_dri_prime_comps = []
 		self.create_d2ri_prime_comps = []
-
-		# Initialise the ri function pointer data structures.
 		self.create_ri = []
 		self.create_dri = []
 		self.create_d2ri = []
-
-		# Initialise the data structures containing the R1 values at the position of and corresponding to the NOE.
 		self.get_r1 = []
 		self.get_dr1 = []
 		self.get_d2r1 = []
+
+		# Make pointers to the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
 		for i in range(self.relax.data.num_ri):
-			if self.relax.data.ri_labels[i] == 'NOE':
+			# The R1 equations.
+			if self.relax.data.ri_labels[i]  == 'R1':
+				self.create_ri_prime_comps.append(comp_r1_prime)
+				self.create_dri_prime_comps.append(comp_dr1_djw_prime)
+				self.create_d2ri_prime_comps.append(comp_d2r1_djwidjwj_prime)
+				self.create_ri.append(None)
+				self.create_dri.append(None)
+				self.create_d2ri.append(None)
+				self.get_r1.append(None)
+				self.get_dr1.append(None)
+				self.get_d2r1.append(None)
+
+			# The R2 equations.
+			elif self.relax.data.ri_labels[i] == 'R2':
+				if self.data.rex_index == None:
+					self.create_ri_prime_comps.append(comp_r2_prime)
+				else:
+					self.create_ri_prime_comps.append(comp_r2_prime_rex)
+				self.create_dri_prime_comps.append(comp_dr2_djw_prime)
+				self.create_d2ri_prime_comps.append(comp_d2r2_djwidjwj_prime)
+				self.create_ri.append(None)
+				self.create_dri.append(None)
+				self.create_d2ri.append(None)
+				self.get_r1.append(None)
+				self.get_dr1.append(None)
+				self.get_d2r1.append(None)
+
+			# The NOE equations.
+			elif self.relax.data.ri_labels[i] == 'NOE':
+				self.create_ri_prime_comps.append(comp_sigma_noe)
+				self.create_dri_prime_comps.append(comp_dsigma_noe_djw_prime)
+				self.create_d2ri_prime_comps.append(comp_d2sigma_noe_djwidjwj_prime)
+				self.create_ri.append(calc_noe)
+				self.create_dri.append(calc_dnoe)
+				self.create_d2ri.append(calc_d2noe)
 				if self.relax.data.noe_r1_table[i] == None:
 					self.get_r1.append(calc_r1)
 					self.get_dr1.append(calc_dr1)
@@ -405,49 +437,13 @@ class mf:
 					self.get_r1.append(extract_r1)
 					self.get_dr1.append(extract_dr1)
 					self.get_d2r1.append(extract_d2r1)
-			else:
-				self.get_r1.append(None)
-				self.get_dr1.append(None)
-				self.get_d2r1.append(None)
 
 
 		# Both the bond length and CSA are fixed.
 		if self.data.r_index == None and self.data.csa_index == None:
-			# Calculate the dipolar and CSA constants.
-			calc_dip_const(self.data)
-			calc_csa_const(self.data)
-
-			# Make pointers to the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
-			for i in range(self.relax.data.num_ri):
-				# The R1 equations.
-				if self.relax.data.ri_labels[i]  == 'R1':
-					self.create_ri.append(None)
-					self.create_dri.append(None)
-					self.create_d2ri.append(None)
-					self.create_ri_prime_comps.append(comp_r1_prime)
-					self.create_dri_prime_comps.append(comp_dr1_djw_prime)
-					self.create_d2ri_prime_comps.append(comp_d2r1_djwidjwj_prime)
-
-				# The R2 equations.
-				elif self.relax.data.ri_labels[i] == 'R2':
-					self.create_ri.append(None)
-					self.create_dri.append(None)
-					self.create_d2ri.append(None)
-					if self.data.rex_index == None:
-						self.create_ri_prime_comps.append(comp_r2_prime)
-					else:
-						self.create_ri_prime_comps.append(comp_r2_prime_rex)
-					self.create_dri_prime_comps.append(comp_dr2_djw_prime)
-					self.create_d2ri_prime_comps.append(comp_d2r2_djwidjwj_prime)
-
-				# The NOE equations.
-				elif self.relax.data.ri_labels[i] == 'NOE':
-					self.create_ri.append(calc_noe)
-					self.create_dri.append(calc_dnoe)
-					self.create_d2ri.append(calc_d2noe)
-					self.create_ri_prime_comps.append(comp_sigma_noe)
-					self.create_dri_prime_comps.append(comp_dsigma_noe_djw_prime)
-					self.create_d2ri_prime_comps.append(comp_d2sigma_noe_djwidjwj_prime)
+			# Calculate the dipolar and CSA constant components.
+			comp_dip_const_func(self.data)
+			comp_csa_const_func(self.data)
 
 			# Make pointers to the function for the calculation of ri_prime values.
 			if self.data.rex_index == None:
@@ -508,11 +504,19 @@ class mf:
 
 		# The bond length is part of the parameter vector.
 		elif self.data.r_index != None and self.data.csa_index == None:
-			calc_csa_const(self.data)
+			# Calculate the CSA constant.
+			comp_csa_const_func(self.data)
+
+			# Make pointers to the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
 				if self.relax.data.ri_labels[i]  == 'R1':
 					self.create_ri.append(None)
+					self.create_dri.append(None)
+					self.create_d2ri.append(None)
+					self.create_ri_prime_comps.append(comp_r1_prime)
+					self.create_dri_prime_comps.append(comp_dr1_djw_prime)
+					self.create_d2ri_prime_comps.append(comp_d2r1_djwidjwj_prime)
 					self.create_ri_prime_comps.append(comp_r1_prime_r)
 
 				# The R2 equations.
@@ -530,7 +534,7 @@ class mf:
 
 		# The CSA is part of the parameter vector.
 		elif self.data.r_index == None and self.data.csa_index != None:
-			calc_dip_const(self.data)
+			comp_dip_const_func(self.data)
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
 				if self.relax.data.ri_labels[i]  == 'R1':

@@ -4,7 +4,7 @@ from math import pi
 class data:
 	def __init__(self):
 		"""Class containing all the program data.
-		
+
 		"""
 
 		self.gh = 26.7522e7

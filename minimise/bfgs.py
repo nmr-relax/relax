@@ -75,9 +75,10 @@ class bfgs(generic_line_search, generic_minimise):
 		sk = self.xk - self.xk_last
 		yk = self.dfk - self.dfk_last
 		if dot(yk, sk) == 0:
-			raise NameError, "The BFGS matrix is indefinite.  This should not occur."
-
-		rk = 1.0 / dot(yk, sk)
+			#raise NameError, "The BFGS matrix is indefinite.  This should not occur."
+			rk = 1e99
+		else:
+			rk = 1.0 / dot(yk, sk)
 
 		a = self.I - rk*outerproduct(sk, yk)
 		b = self.I - rk*outerproduct(yk, sk)

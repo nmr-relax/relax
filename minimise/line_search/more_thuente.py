@@ -299,7 +299,7 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 			       / min{at + d(au - at), at+},		if at > al.
 			at+ = <
 			       \ max{at + d(au - at), at+},		otherwise,
-	
+
 		for some d < 1.
 
 
@@ -350,7 +350,7 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 			print "\tat selection, case 2."
 		# The minimum is bracketed.
 		bracketed = 1
-		
+
 		# Interpolation.
 		ac = cubic(al, at, fl, ft, gl, gt)
 		as = secant(al, at, gl, gt)
