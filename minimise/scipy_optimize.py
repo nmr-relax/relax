@@ -41,7 +41,8 @@ __all__ = ['fmin', 'fmin_powell','fmin_bfgs', 'fmin_ncg', 'fminbound', 'brent',
 from __future__ import nested_scopes
 import Numeric
 import MLab
-from scipy_base import atleast_1d, eye
+import sys
+#from scipy_base import atleast_1d, eye
 from Numeric import absolute, sqrt, asarray
 from MLab import squeeze
 Num = Numeric
@@ -121,6 +122,8 @@ def fmin(func, x0, args=(), xtol=1e-4, ftol=1e-4, maxiter=None, maxfun=None,
       """
     x0 = asarray(x0)
     N = len(x0)
+    print "n: " + `N`
+    print "m: " + `N+1`
     rank = len(x0.shape)
     if not -1 < rank < 2:
         raise ValueError, "Initial guess must be a scalar or rank-1 sequence."
@@ -155,25 +158,42 @@ def fmin(func, x0, args=(), xtol=1e-4, ftol=1e-4, maxiter=None, maxfun=None,
     ind = Num.argsort(fsim)
     fsim = Num.take(fsim,ind)  # sort so sim[0,:] has the lowest function value
     sim = Num.take(sim,ind,0)
+    print "\n\nMinimisation run number: " + `0`
+    print "Initial simplex:\n" + `sim`
+    print "Initial function vector:\n" + `fsim`
     
     iterations = 1
     funcalls = N+1
     
     while (funcalls < maxfun and iterations < maxiter):
-        if (max(Num.ravel(abs(sim[1:]-sim[0]))) <= xtol \
-            and max(abs(fsim[0]-fsim[1:])) <= ftol):
+        #if (max(Num.ravel(abs(sim[1:]-sim[0]))) <= xtol \
+        #    and max(abs(fsim[0]-fsim[1:])) <= ftol):
+        #    break
+        if max(abs(fsim[0]-fsim[1:])) <= ftol:
             break
 
+        print "\n\n< Minimisation run number: " + `iterations` + " >"
+	print "Function diff: " + `max(abs(fsim[0]-fsim[1:]))`
+	print "Function diff limit:" + `ftol`
+        print "Simplex:\n" + `sim`
+        print "Function vector:\n" + `fsim`
         xbar = Num.add.reduce(sim[:-1],0) / N
+	print "Pivot point: " + `xbar`
         xr = (1+rho)*xbar - rho*sim[-1]
         fxr = apply(func,(xr,)+args)
         funcalls = funcalls + 1
         doshrink = 0
+        print "\nReflecting."
+        print "\t%-29s%-40s" % ("Reflection vector:", `xr`)
+        print "\t%-29s%-40s" % ("Reflection function value:", `fxr`)
 
         if fxr < fsim[0]:
             xe = (1+rho*chi)*xbar - rho*chi*sim[-1]
             fxe = apply(func,(xe,)+args)
             funcalls = funcalls + 1
+            print "\nExtending."
+            print "\t%-29s%-40s" % ("Extension vector:", `xe`)
+            print "\t%-29s%-40s" % ("Extension function value:", `fxe`)
 
             if fxe < fxr:
                 sim[-1] = xe
@@ -191,6 +211,9 @@ def fmin(func, x0, args=(), xtol=1e-4, ftol=1e-4, maxiter=None, maxfun=None,
                     xc = (1+psi*rho)*xbar - psi*rho*sim[-1]
                     fxc = apply(func,(xc,)+args)
                     funcalls = funcalls + 1
+                    print "\nContracting."
+		    print "\t%-29s%-40s" % ("Contraction vector:", `xc`)
+		    print "\t%-29s%-40s" % ("Contraction function value:", `fxc`)
 
                     if fxc <= fxr:
                         sim[-1] = xc
@@ -202,6 +225,9 @@ def fmin(func, x0, args=(), xtol=1e-4, ftol=1e-4, maxiter=None, maxfun=None,
                     xcc = (1-psi)*xbar + psi*sim[-1]
                     fxcc = apply(func,(xcc,)+args)
                     funcalls = funcalls + 1
+                    print "\nOriginal contracting."
+		    print "\t%-29s%-40s" % ("Contraction orig vector:", `xcc`)
+		    print "\t%-29s%-40s" % ("Contraction orig function value:", `fxcc`)
 
                     if fxcc < fsim[-1]:
                         sim[-1] = xcc
@@ -214,10 +240,13 @@ def fmin(func, x0, args=(), xtol=1e-4, ftol=1e-4, maxiter=None, maxfun=None,
                         sim[j] = sim[0] + sigma*(sim[j] - sim[0])
                         fsim[j] = apply(func,(sim[j],)+args)
                     funcalls = funcalls + N
+		    print "\nShrinking."
 
         ind = Num.argsort(fsim)
         sim = Num.take(sim,ind,0)
         fsim = Num.take(fsim,ind)
+        print "Final simplex:\n" + `sim`
+        print "Final function vector:\n" + `fsim`
         iterations = iterations + 1
 
     x = sim[0]

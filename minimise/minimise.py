@@ -12,6 +12,11 @@ except ImportError:
 	print "Scipy is not installed, cannot use simplex, BFGS, or Newton conjugate gradient minimisation from the scipy package."
 	noscipy_flag = 1
 
+# Temp.
+from scipy_optimize import fmin
+simplex_scipy = fmin
+noscipy_flag = 0
+
 # Grid search.
 from grid import grid
 
@@ -211,9 +216,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Ss]implex$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Simplex minimisation >>>"
-		min = simplex()
-		results = min.minimise(func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
-		#results = simplex_scipy(func, x0, args=args, xtol=1e-30, ftol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
+		min = simplex(func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = min.minimise()
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
 		else:
