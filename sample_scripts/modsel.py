@@ -16,14 +16,6 @@ for run in runs:
     # Create the run.
     create_run(run, 'mf')
 
-    # Load the relaxation data.
-    relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
-    relax_data.read(run, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
-    relax_data.read(run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
-    relax_data.read(run, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
-    relax_data.read(run, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
-    relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
-
     # Reload precalculated results from the file 'm1/results', etc.
     read.results(run=run, data_type='mf', file='results', dir=run)
 

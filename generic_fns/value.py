@@ -348,6 +348,9 @@ class Value:
     def write(self, run=None, data_type=None, file=None, dir=None, force=0):
         """Function for writing data to a file."""
 
+        # Arguments.
+        self.run = run
+
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run

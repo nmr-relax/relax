@@ -47,7 +47,7 @@ def exec_stage_1(runs):
         model_free.select_model(run=run, model=run)
 
         # Create the Modelfree4 files.
-        palmer.create(run=run, force=0, sims=200)
+        palmer.create(run=run, force=0, sims=0)
 
         # Run Modelfree4.
         palmer.execute(run=run, force=1)
