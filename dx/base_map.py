@@ -48,9 +48,10 @@ class Base_Map:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Equation type specific function setup.
-        map_bounds = self.relax.specific_setup.setup('map_bounds', function_type)
-        if map_bounds == None:
-            raise RelaxFuncSetupError, ('map bounds', function_type)
+        fns = self.relax.specific_setup.setup("map_space", function_type)
+        if fns == None:
+            raise RelaxFuncSetupError, ('space mapping', function_type)
+        self.assemble_scaling_matrix, self.map_bounds, self.minimise = fns
 
         # Function arguments.
         self.index = index
@@ -98,7 +99,7 @@ class Base_Map:
                 pass
 
         # Create the scaling matrix.
-        #self.scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[self.res_index], self.res_index)
+        self.scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[self.res_index], self.res_index)
 
         # Get the map bounds.
         self.bounds = self.map_bounds(self.index, self.relax.data.res[index].params[self.run], self.run)
@@ -108,11 +109,11 @@ class Base_Map:
             self.bounds[:, 1] = array(upper, Float64)
 
         # Diagonal scaling.
-        #if self.relax.data.res[index].scaling.has_key(self.run):
-        #    for i in xrange(len(self.bounds[0])):
-        #        self.bounds[:, i] = matrixmultiply(inverse(self.scaling_matrix), self.bounds[:, i])
-        #    if point != None:
-        #        self.point = matrixmultiply(inverse(self.scaling_matrix), self.point)
+        if self.relax.data.res[index].scaling.has_key(self.run):
+            for i in xrange(len(self.bounds[0])):
+                self.bounds[:, i] = matrixmultiply(inverse(self.scaling_matrix), self.bounds[:, i])
+            if point != None:
+                self.point = matrixmultiply(inverse(self.scaling_matrix), self.point)
 
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)

@@ -45,5 +45,5 @@ else:
     upper = None
     swap = None
     point = None
-map(name, res_num=5, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
+map(name, res_num=36, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
 #dx()
