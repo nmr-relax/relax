@@ -1120,9 +1120,13 @@ class Model_free:
 
         self.scale_vect = ones(len(param_types), Float64)
         for i in range(len(param_types)):
+            # tm.
+            if param_types[i] == 'tm':
+                self.scale_vect[i] = 1e-9
+
             # te, tf, and ts.
-            if match('t', param_types[i]):
-                self.scale_vect[i] = 1e-12
+            elif match('t', param_types[i]):
+                self.scale_vect[i] = 1e-9
 
             # Rex.
             elif param_types[i] == 'Rex':

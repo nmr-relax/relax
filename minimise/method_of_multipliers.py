@@ -389,8 +389,10 @@ class Method_of_multipliers(Min):
         # Return.
         if self.full_output:
             try:
+                self.fk = apply(self.func, (self.xk_new,)+self.args)
                 return self.xk_new, self.fk, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
             except AttributeError:
+                self.fk = apply(self.func, (self.xk,)+self.args)
                 return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
         else:
             try:

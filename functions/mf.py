@@ -732,8 +732,8 @@ class Mf:
             # Spectral density parameters {S2f, S2s, ts}.
             if self.data.tm_index == None and self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
                 # Equation.
-                self.calc_jw = calc_iso_S2f_S2s_ts_jw
                 self.calc_jw_comps = calc_iso_S2f_S2s_ts_jw_comps
+                self.calc_jw = calc_iso_S2f_S2s_ts_jw
 
                 # Gradient.
                 self.calc_djw_comps = calc_iso_S2f_S2s_ts_djw_comps
@@ -749,8 +749,8 @@ class Mf:
             # Spectral density parameters {S2f, tf, S2s, ts}.
             elif self.data.tm_index == None and self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
                 # Equation.
-                self.calc_jw = calc_iso_S2f_tf_S2s_ts_jw
                 self.calc_jw_comps = calc_iso_S2f_tf_S2s_ts_jw_comps
+                self.calc_jw = calc_iso_S2f_tf_S2s_ts_jw
 
                 # Gradient.
                 self.calc_djw_comps = calc_iso_S2f_tf_S2s_ts_djw_comps
