@@ -62,3 +62,5 @@ class data:
 		self.relax_data = []
 		self.num_data_sets = 0
 		self.runs = []
+
+		self.data = {}

@@ -1,4 +1,5 @@
 import sys
+from re import match
 from string import split
 
 class file_ops:
@@ -9,6 +10,7 @@ class file_ops:
 
 	def input(self):
 		"Extract all the information from the input file"
+		### Change structure so data is returned, ie no refs to self.mf ###
 
 		try:
 			open("input", 'r')
@@ -26,7 +28,7 @@ class file_ops:
 				row[0][0]
 			except IndexError:
 				continue
-			if row[0][0] == "NMR_frq_label":
+			if match('NMR_frq_label', row[0][0]):
 				self.mf.data.nmr_frq.append([])
 				row.append(split(lines[i+1]))
 				row.append(split(lines[i+2]))
@@ -36,7 +38,7 @@ class file_ops:
 				self.mf.data.nmr_frq[frq].append(row[0][1])
 				self.mf.data.nmr_frq[frq].append(row[1][1])
 				# R1 data.
-				if row[2][1] != "none":
+				if not match('none', row[2][1]):
 					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
 					self.mf.data.input_info[num_data].append("R1")
@@ -45,7 +47,7 @@ class file_ops:
 					self.mf.data.input_info[num_data].append(row[2][1])
 					num_data = num_data + 1
 				# R2 data.
-				if row[3][1] != "none":
+				if not match('none', row[3][1]):
 					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
 					self.mf.data.input_info[num_data].append("R2")
@@ -54,7 +56,7 @@ class file_ops:
 					self.mf.data.input_info[num_data].append(row[3][1])
 					num_data = num_data + 1
 				# NOE data.
-				if row[4][1] != "none":
+				if not match('none', row[4][1]):
 					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
 					self.mf.data.input_info[num_data].append("NOE")

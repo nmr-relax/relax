@@ -35,6 +35,8 @@ from re import match
 
 from data import data
 from file_ops import file_ops
+from star import star
+
 sys.path.append('.')
 from usr_param import usr_param
 
@@ -50,6 +52,7 @@ class mf:
 		self.data = data()
 		self.data.usr_param = usr_param()
 		self.file_ops = file_ops(self)
+		self.star = star()
 
 		self.print_header()
 
