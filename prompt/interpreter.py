@@ -28,6 +28,7 @@ import signal
 import sys
 
 # Python modules accessable on the command prompt.
+from math import pi
 import Numeric
 import Scientific
 
@@ -88,6 +89,7 @@ class Interpreter:
         self.intro = 0
 
         # Python modules.
+        self._pi = pi
         self._Numeric = Numeric
         self._Scientific = Scientific
 
@@ -135,6 +137,7 @@ class Interpreter:
         """
 
         # Python modules.
+        pi = self._pi
         Numeric = self._Numeric
         Scientific = self._Scientific
 
