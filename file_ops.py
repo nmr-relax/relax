@@ -27,11 +27,14 @@ class file_ops:
 			except IndexError:
 				continue
 			if row[0][0] == "NMR_frq_label":
-				#self.mf.data.input_info.append([])
+				self.mf.data.nmr_frq.append([])
 				row.append(split(lines[i+1]))
 				row.append(split(lines[i+2]))
 				row.append(split(lines[i+3]))
 				row.append(split(lines[i+4]))
+				# NMR data.
+				self.mf.data.nmr_frq[frq].append(row[0][1])
+				self.mf.data.nmr_frq[frq].append(row[1][1])
 				# R1 data.
 				if row[2][1] != "none":
 					self.mf.data.input_info.append([])
@@ -73,11 +76,11 @@ class file_ops:
 
 	def relax_data(self, file):
 		"Open the relaxation data in the file 'file' and return a 2D array with the data."
-		temp = open(file, 'r')
-		temp = temp.readlines()
+		lines = open(file, 'r')
+		lines = lines.readlines()
 		data = []
 		i = 0
-		for line in temp:
+		for line in lines:
 			if i != 0:
 				j = i - 1
 				row = split(line)

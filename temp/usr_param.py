@@ -25,24 +25,25 @@ class usr_param:
 		"Run file parameters"
 		
 		self.pdb_file = 'Ap4Aase_new_3.pdb'
-		self.pdb_path = '../../'
+		self.pdb_path = './'
 		self.pdb_full = self.pdb_path + self.pdb_file
 
 	def init_mfin_param(self):
 		"mfin file parameters"
 
 		self.diff = 'isotropic'
+		#self.diff = 'axial'
 		self.no_sim = 500
 		self.trim = 0               # Trim unconverged simulations.
 
 		# tm
 		self.tm = {}
 		self.tm['val']    = 11.09
-		self.tm['flag ']  = 1
-		self.tm['bound '] = 2
-		self.tm['lower '] = 9.0
-		self.tm['upper '] = 13.0
-		self.tm['steps '] = 100
+		self.tm['flag']  = 1
+		self.tm['bound'] = 2
+		self.tm['lower'] = 9.0
+		self.tm['upper'] = 13.0
+		self.tm['steps'] = 100
 
 		# dratio
 		self.dratio = {}
@@ -125,7 +126,7 @@ class usr_param:
 		self.md1['te']['flag']  = 0
 		self.md1['te']['bound'] = 2
 		self.md1['te']['lower'] = '0.000'
-		self.md1['te']['upper'] = '5000.000'
+		self.md1['te']['upper'] = '10000.000'
 		self.md1['te']['steps'] = 20
 
 		self.md1['rex'] = {}
