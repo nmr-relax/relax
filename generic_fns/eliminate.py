@@ -30,25 +30,24 @@ class Eliminate:
         self.relax = relax
 
 
-    def eliminate(self, run=None, function=None):
+    def eliminate(self, run=None, function=None, args=None):
         """Function for model elimination."""
 
         # Create the list of runs.
-        if run == None:
-            self.runs = deepcopy(self.relax.data.run_names)
-        elif type(run) == str:
-            self.runs = [run]
-        else:
-            self.runs = run
+        self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
-        for run in self.runs:
+        for self.run in self.runs:
             # Test if the run exists.
-            if not run in self.relax.data.run_names:
-                raise RelaxNoRunError, run
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
+            # Test if sequence data is loaded.
+            if not self.relax.data.res.has_key(self.run):
+                raise RelaxNoSequenceError, self.run
 
             # Function type.
-            function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+            function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
             # Specific eliminate, parameter names, parameter values, number of instances, and unselect function setup.
             eliminate = self.relax.specific_setup.setup('eliminate', function_type)
@@ -58,10 +57,10 @@ class Eliminate:
             unselect = self.relax.specific_setup.setup('unselect', function_type)
 
             # Get the number of instances and loop over them.
-            for i in xrange(num_instances(run)):
+            for i in xrange(num_instances(self.run)):
                 # Get the parameter names and values.
-                names = param_names(run, i)
-                values = param_values(run, i)
+                names = param_names(self.run, i)
+                values = param_values(self.run, i)
 
                 # Test that the names and values vectors are of equal length.
                 if len(names) != len(values):
@@ -71,9 +70,9 @@ class Eliminate:
                 flag = 0
                 for j in xrange(len(names)):
                     # Eliminate function.
-                    if eliminate(names[j], values[j]):
+                    if eliminate(names[j], values[j], self.run, i, args):
                         flag = 1
 
                 # Unselect.
                 if flag:
-                    unselect(run, i)
+                    unselect(self.run, i)

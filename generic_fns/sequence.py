@@ -70,7 +70,7 @@ class Sequence:
 
         # Test if the sequence data for run1 is loaded.
         if not self.relax.data.res.has_key(run1):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run1
 
         # Test if the sequence data already exists.
         if self.relax.data.res.has_key(run2):
@@ -105,7 +105,7 @@ class Sequence:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Delete the data.
         del(self.relax.data.res[run])
@@ -123,7 +123,7 @@ class Sequence:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Print a header.
         print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
@@ -215,7 +215,7 @@ class Sequence:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Sort the sequence.
         self.relax.data.res[run].sort(self.sort_cmpfunc)
@@ -241,7 +241,7 @@ class Sequence:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Open the file for writing.
         seq_file = self.relax.file_ops.open_write_file(file, dir, force)

@@ -70,12 +70,12 @@ class Model_free:
         # Model-free parameters (residue specific parameters).
         if self.param_set != 'diff':
             for i in xrange(len(self.relax.data.res[self.run])):
-                # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
-                    continue
-
                 # Only add parameters for a single residue if index has a value.
                 if index != None and i != index:
+                    continue
+
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
                     continue
 
                 # Loop over the model-free parameters and add the names.
@@ -328,11 +328,11 @@ class Model_free:
 
         # Test if the sequence data for run1 is loaded.
         if not self.relax.data.res.has_key(run1):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run1
 
         # Test if the sequence data for run2 is loaded.
         if not self.relax.data.res.has_key(run2):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run2
 
         # Get all data structure names.
         names = self.data_names()
@@ -372,7 +372,7 @@ class Model_free:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -674,7 +674,7 @@ class Model_free:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Get all data structure names.
         names = self.data_names()
@@ -704,8 +704,8 @@ class Model_free:
         local_tm = 0
         for i in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
-                continue
+            #if not self.relax.data.res[self.run][i].select:
+            #    continue
 
             if local_tm == 0 and 'tm' in self.relax.data.res[self.run][i].params:
                 local_tm = 1
@@ -892,12 +892,69 @@ class Model_free:
             self.relax.data.warning[new_run] = deepcopy(self.relax.data.warning[old_run])
 
 
-    def eliminate(self, name, value):
+    def eliminate(self, name, value, run, i, args):
         """
         Model-free model elimination rules
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+        Local tm.
+
+        The local tm, in some cases, may exceed the value expected for a global correlation time.
+        Generally the tm value will be stuck at the upper limit defined for the parameter.  These
+        models are eliminated using the rule:
+
+            tm >= c
+
+        The default value of c is 50 ns, although this can be overriden by supplying the value (in
+        seconds) as the first element of the args tuple.
+
+
+        Internal correlation times {te, tf, ts}.
+
+        These parameters may experience the same problem as the local tm in that the model fails and
+        the parameter value is stuck at the upper limit.  These parameters are constrained using the
+        formula 'te, tf, ts <= 2.tm'.  These failed models are eliminated using the rule:
+
+            te, tf, ts >= c.tm
+
+        The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
+        setting c to 2 will result in no models being eliminated as the minimised parameters will
+        always be less than 2.tm.  The value can be changed by supplying the value as the second
+        element of the tuple.
+
+
+        Arguments.
+
+        The 'args' argument must be a tuple of length 2, the element of which must be numbers.  For
+        example to eliminate models which have a local tm value greater than 25 ns and models with
+        internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
         """
+
+        # Default values.
+        c1 = 50.0 * 1e-9
+        c2 = 1.5
+
+        # Depack the arguments.
+        if args != None:
+            c1, c2 = args
+
+        # Get the tm value.
+        if self.param_set == 'local_tm':
+            tm = self.relax.data.res[run][i].tm
+        else:
+            tm = self.relax.data.diff[run].tm
+
+        # Local tm.
+        if name == 'tm' and value >= c1:
+            return 1
+
+        # Internal correlation times.
+        if match('t[efs]', name) and value >= c2 * tm:
+            return 1
+
+        # Accept model.
+        return 0
+
 
     def get_data_name(self, name):
         """
@@ -989,13 +1046,13 @@ class Model_free:
         self.run = run
 
         # Test if the model-free model has been setup.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for j in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not self.relax.data.res[self.run][j].select:
                 continue
 
             # Not setup.
-            if not self.relax.data.res[self.run][i].model:
+            if not self.relax.data.res[self.run][j].model:
                 raise RelaxError, "The model-free models have not been setup."
 
         # Determine the parameter set type.
@@ -1021,13 +1078,13 @@ class Model_free:
         self.run = run
 
         # Test if the model-free model has been setup.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for j in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not self.relax.data.res[self.run][j].select:
                 continue
 
             # Not setup.
-            if not self.relax.data.res[self.run][i].model:
+            if not self.relax.data.res[self.run][j].model:
                 raise RelaxError, "The model-free models have not been setup."
 
         # Determine the parameter set type.
@@ -1498,10 +1555,6 @@ class Model_free:
         A = array(A, Float64)
         b = array(b, Float64)
 
-        self.assemble_param_names()
-        print "params:\n" + `self.param_names`
-        print "A:\n" + `A`
-        print "b:\n" + `b`
         return A, b
 
 
@@ -1672,7 +1725,7 @@ class Model_free:
         if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
             # Test if the PDB file has been loaded.
             if not self.relax.data.pdb.has_key(self.run):
-                raise RelaxPdbError
+                raise RelaxPdbError, self.run
 
             # Test if unit vectors exist.
             for i in xrange(len(self.relax.data.res[self.run])):
@@ -1682,7 +1735,7 @@ class Model_free:
 
                 # Unit vector.
                 if not hasattr(self.relax.data.res[self.run][i], 'xh_unit'):
-                    raise RelaxNoVectorsError
+                    raise RelaxNoVectorsError, self.run
 
         # Test if the nucleus type has been set.
         if not hasattr(self.relax.data, 'gx'):
@@ -1905,8 +1958,8 @@ class Model_free:
 
                 # Axially symmetric diffusion.
                 elif diff_type == 'axial':
-                    diff_params.append(self.relax.data.diff[self.run].Dper)
-                    diff_params.append(self.relax.data.diff[self.run].Dpar)
+                    diff_params.append(self.relax.data.diff[self.run].tm)
+                    diff_params.append(self.relax.data.diff[self.run].Dratio)
                     diff_params.append(self.relax.data.diff[self.run].theta)
                     diff_params.append(self.relax.data.diff[self.run].phi)
 
@@ -2335,7 +2388,7 @@ class Model_free:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
 
         # Preset models.
@@ -2728,6 +2781,15 @@ class Model_free:
     def write_header(self, file, run):
         """Function for printing the header of the results file."""
 
+        # Get the frequency label.
+        label = None
+        for i in xrange(len(self.relax.data.res[run])):
+            if hasattr(self.relax.data.res[run][i], 'frq_labels'):
+                if label == None:
+                    label = self.relax.data.res[run][i].frq_labels[0]
+                elif label != self.relax.data.res[run][i].frq_labels[0]:
+                    raise RelaxError, "The frequency labels are not the same for all residues."
+
         # Residue number and name.
         file.write("%-5s" % "Num")
         file.write("%-6s" % "Name")
@@ -2744,7 +2806,7 @@ class Model_free:
         file.write("%-26s" % "tm_(ns)")
         file.write("%-26s" % "tf_(ps)")
         file.write("%-26s" % "te_or_ts_(ps)")
-        file.write("%-26s" % ("Rex_(" + self.relax.data.res[run][0].frq_labels[0] + "_MHz)"))
+        file.write("%-26s" % ("Rex_(" + label + "_MHz)"))
         file.write("%-26s" % "Bond_length_(A)")
         file.write("%-26s" % "CSA_(ppm)")
 

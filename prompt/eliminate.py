@@ -22,6 +22,8 @@
 
 import sys
 
+from specific_fns.model_free import Model_free
+
 
 class Eliminate:
     def __init__(self, relax):
@@ -30,7 +32,7 @@ class Eliminate:
         self.relax = relax
 
 
-    def eliminate(self, run=None, function=None):
+    def eliminate(self, run=None, function=None, args=None):
         """Function for model elimination.
 
         Keyword arguments
@@ -38,6 +40,10 @@ class Eliminate:
 
         run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
         single run, multiple runs, or all runs will be selected respectively.
+
+        function:  A user supplied function for model elimination.
+
+        args:  A tuple of argments for model elimination.
 
 
         Description
@@ -48,20 +54,27 @@ class Eliminate:
         accepted or rejected.
 
         Empirical rules are used for model rejection and are listed below.  However these can be
-        overriden by supplying a function.  The function should accept two arguments, a string
-        defining a certain parameter and the value of the parameter.  If the model is rejected, the
-        function should return 1, otherwise it should return 0.  The function will be executed
-        multiple times, once for each parameter of the model.
+        overriden by supplying a function.  The function should accept five arguments, a string
+        defining a certain parameter, the value of the parameter, the run name, the minimisation
+        instance (ie the residue index if the model is residue specific), and the function
+        arguments.  If the model is rejected, the function should return 1, otherwise it should
+        return 0.  The function will be executed multiple times, once for each parameter of the
+        model.
+        
+        The 'args' keyword argument should be a tuple, a list enclosed in round brackets, and will
+        be passed to the user supplied function or the inbuilt function.  For a description of the
+        arguments accepted by the inbuilt functions, see below.
         
         Once a model is rejected, the select flag corresponding to that model will be set to 0 so
-        that model selection, or any other function, will then skip that model.
+        that model selection, or any other function, will then skip the model.
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "eliminate("
             text = text + "run=" + `run`
-            text = text + ", function=" + `function` + ")"
+            text = text + ", function=" + `function`
+            text = text + ", args=" + `args` + ")"
             print text
 
         # The run argument.
@@ -76,5 +89,15 @@ class Eliminate:
         if function != None and type(function) != FunctionType:
             raise RelaxFunctionError, ('function', function)
 
+        # Function arguments.
+        if args != None and type(args) != tuple:
+            raise RelaxNoneTupleError, ('args', args)
+
         # Execute the functional code.
-        self.relax.generic.eliminate.eliminate(run=run, function=function)
+        self.relax.generic.eliminate.eliminate(run=run, function=function, args=args)
+
+
+    # Docstring modification.
+    #########################
+
+    eliminate.__doc__ = eliminate.__doc__ + "\n\n" + Model_free.eliminate.__doc__ + "\n"

@@ -36,7 +36,7 @@ class RW:
 
         # Test if the sequence data has been read.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:

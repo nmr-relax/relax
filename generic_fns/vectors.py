@@ -36,11 +36,11 @@ class Vectors:
 
         # Test if the PDB file has been loaded.
         if not self.relax.data.pdb.has_key(run):
-            raise RelaxPdbError
+            raise RelaxPdbError, run
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Reassign the first peptide chain of the first structure.
         if type(self.relax.data.pdb[run]) == list:

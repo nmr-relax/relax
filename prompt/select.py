@@ -44,14 +44,8 @@ class Select:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        If the run argument is set to the default of None, then all runs will be affected, otherwise
-        only the supplied run will be affected.
+        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+        single run, multiple runs, or all runs will be selected respectively.
 
 
         Examples
@@ -75,8 +69,12 @@ class Select:
             print text
 
         # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        if run != None and type(run) != str and type(run) != list:
+            raise RelaxNoneStrListError, ('run', run)
+        if type(run) == list:
+            for i in xrange(len(run)):
+                if type(run[i]) != str:
+                    raise RelaxListStrError, ('run', run)
 
         # Execute the functional code.
         self.__relax__.generic.selection.sel_all(run=run)
@@ -88,7 +86,8 @@ class Select:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+        single run, multiple runs, or all runs will be selected respectively.
 
         num:  The residue number.
 
@@ -99,9 +98,6 @@ class Select:
 
         Description
         ~~~~~~~~~~~
-
-        If the run argument is set to the default of None, then all runs will be affected, otherwise
-        only the supplied run will be affected.
 
         The residue number can be either an integer for selecting a single residue or a python
         regular expression, in string form, for selecting multiple residues.  For details about
@@ -142,8 +138,12 @@ class Select:
             print text
 
         # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        if run != None and type(run) != str and type(run) != list:
+            raise RelaxNoneStrListError, ('run', run)
+        if type(run) == list:
+            for i in xrange(len(run)):
+                if type(run[i]) != str:
+                    raise RelaxListStrError, ('run', run)
 
         # Residue number.
         if num != None and type(num) != int and type(num) != str:
@@ -171,14 +171,8 @@ class Select:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        If the run argument is set to the default of None, then all runs will be affected, otherwise
-        only the supplied run will be affected.
+        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+        single run, multiple runs, or all runs will be selected respectively.
 
 
         Examples
@@ -196,8 +190,12 @@ class Select:
             print text
 
         # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        if run != None and type(run) != str and type(run) != list:
+            raise RelaxNoneStrListError, ('run', run)
+        if type(run) == list:
+            for i in xrange(len(run)):
+                if type(run[i]) != str:
+                    raise RelaxListStrError, ('run', run)
 
         # Execute the functional code.
         self.__relax__.generic.selection.reverse(run=run)

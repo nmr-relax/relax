@@ -20,15 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+from copy import deepcopy
 
-class Create_run:
+
+class Runs:
     def __init__(self, relax):
         """Class containing the function for creating a run."""
 
         self.relax = relax
 
 
-    def create(self, run=None, run_type=None):
+    def create_run(self, run=None, run_type=None):
         """Function for creating a run."""
 
         # Test if the run already exists.
@@ -45,3 +47,22 @@ class Create_run:
         # Add the run and type.
         self.relax.data.run_names.append(run)
         self.relax.data.run_types.append(run_type)
+
+
+    def list_of_runs(self, run):
+        """Function for creating a list of runs."""
+
+        # All runs.
+        if run == None:
+            runs = deepcopy(self.relax.data.run_names)
+
+        # Single run.
+        elif type(run) == str:
+            runs = [run]
+
+        # List of runs.
+        else:
+            runs = run
+
+        # Return the list.
+        return runs

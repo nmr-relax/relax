@@ -21,7 +21,7 @@
 ###############################################################################
 
 from angles import Angles
-from create_run import Create_run
+from runs import Runs
 from delete import Delete
 from dx.map import Map
 from dx.opendx import OpenDX
@@ -52,7 +52,7 @@ class Generic:
 
         # Set up all the classes.
         self.angles = Angles(self.relax)
-        self.create_run = Create_run(self.relax)
+        self.runs = Runs(self.relax)
         self.delete = Delete(self.relax)
         self.diffusion_tensor = Diffusion_tensor(self.relax)
         self.eliminate = Eliminate(self.relax)

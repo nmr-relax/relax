@@ -33,61 +33,51 @@ class Selection:
     def reverse(self, run=None):
         """Function for the reversal of residue selection."""
 
-        # Test if the run exists.
-        if run and not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
-
-        # Loop structure.
-        if run == None:
-            loop = self.relax.data.run_names
-        else:
-            loop = [run]
+        # Create the list of runs.
+        self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
-        for run_name in loop:
+        for self.run in self.runs:
+            # Test if the run exists.
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run_name]):
-                raise RelaxNoSequenceError
+            if not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence and reverse the selection flag.
-            for i in xrange(len(self.relax.data.res[run_name])):
-                if self.relax.data.res[run_name][i].select:
-                    self.relax.data.res[run_name][i].select = 0
+            for i in xrange(len(self.relax.data.res[self.run])):
+                if self.relax.data.res[self.run][i].select:
+                    self.relax.data.res[self.run][i].select = 0
                 else:
-                    self.relax.data.res[run_name][i].select = 1
+                    self.relax.data.res[self.run][i].select = 1
 
 
     def sel_all(self, run=None):
         """Function for selecting all residues."""
 
-        # Test if the run exists.
-        if run and not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
-
-        # Loop structure.
-        if run == None:
-            loop = self.relax.data.run_names
-        else:
-            loop = [run]
+        # Create the list of runs.
+        self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
-        for run_name in loop:
+        for self.run in self.runs:
+            # Test if the run exists.
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run_name]):
-                raise RelaxNoSequenceError
+            if not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence and set the selection flag to 1.
-            for i in xrange(len(self.relax.data.res[run_name])):
-                self.relax.data.res[run_name][i].select = 1
+            for i in xrange(len(self.relax.data.res[self.run])):
+                self.relax.data.res[self.run][i].select = 1
 
 
     def sel_res(self, run=None, num=None, name=None, change_all=None):
         """Function for selecting specific residues."""
 
-        # Test if the run exists.
-        if run and not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
-
         # Test if the residue number is a valid regular expression.
         if type(num) == str:
             try:
@@ -102,71 +92,65 @@ class Selection:
             except:
                 raise RelaxRegExpError, ('residue name', name)
 
-        # Loop structure.
-        if run == None:
-            loop = self.relax.data.run_names
-        else:
-            loop = [run]
+        # Create the list of runs.
+        self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
-        for run_name in loop:
+        for self.run in self.runs:
+            # Test if the run exists.
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run_name]):
-                raise RelaxNoSequenceError
+            if not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[run_name])):
+            for i in xrange(len(self.relax.data.res[self.run])):
                 # Unselect all residues.
                 if change_all:
-                    self.relax.data.res[run_name][i].select = 0
+                    self.relax.data.res[self.run][i].select = 0
 
                 # Skip the residue if there is no match to 'num'.
                 if type(num) == int:
-                    if not self.relax.data.res[run_name][i].num == num:
+                    if not self.relax.data.res[self.run][i].num == num:
                         continue
                 elif type(num) == str:
-                    if not match(num, `self.relax.data.res[run_name][i].num`):
+                    if not match(num, `self.relax.data.res[self.run][i].num`):
                         continue
 
                 # Skip the residue if there is no match to 'name'.
                 if name != None:
-                    if not match(name, self.relax.data.res[run_name][i].name):
+                    if not match(name, self.relax.data.res[self.run][i].name):
                         continue
 
                 # Select the residue.
-                self.relax.data.res[run_name][i].select = 1
+                self.relax.data.res[self.run][i].select = 1
 
 
     def unsel_all(self, run=None):
         """Function for unselecting all residues."""
 
-        # Test if the run exists.
-        if run and not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
-
-        # Loop structure.
-        if run == None:
-            loop = self.relax.data.run_names
-        else:
-            loop = [run]
+        # Create the list of runs.
+        self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
-        for run_name in loop:
+        for self.run in self.runs:
+            # Test if the run exists.
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run_name]):
-                raise RelaxNoSequenceError
+            if not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence and set the selection flag to 0.
-            for i in xrange(len(self.relax.data.res[run_name])):
-                self.relax.data.res[run_name][i].select = 0
+            for i in xrange(len(self.relax.data.res[self.run])):
+                self.relax.data.res[self.run][i].select = 0
 
 
     def unsel_res(self, run=None, num=None, name=None, change_all=None):
         """Function for unselecting specific residues."""
-
-        # Test if the run exists.
-        if run and not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
 
         # Test if the residue number is a valid regular expression.
         if type(num) == str:
@@ -182,36 +166,37 @@ class Selection:
             except:
                 raise RelaxRegExpError, ('residue name', name)
 
-        # Loop structure.
-        if run == None:
-            loop = self.relax.data.run_names
-        else:
-            loop = [run]
+        # Create the list of runs.
+        self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
-        for run_name in loop:
+        for self.run in self.runs:
+            # Test if the run exists.
+            if not self.run in self.relax.data.run_names:
+                raise RelaxNoRunError, self.run
+
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run_name]):
-                raise RelaxNoSequenceError
+            if not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[run_name])):
+            for i in xrange(len(self.relax.data.res[self.run])):
                 # Select all residues.
                 if change_all:
-                    self.relax.data.res[run_name][i].select = 1
+                    self.relax.data.res[self.run][i].select = 1
 
                 # Skip the residue if there is no match to 'num'.
                 if type(num) == int:
-                    if not self.relax.data.res[run_name][i].num == num:
+                    if not self.relax.data.res[self.run][i].num == num:
                         continue
                 if type(num) == str:
-                    if not match(num, `self.relax.data.res[run_name][i].num`):
+                    if not match(num, `self.relax.data.res[self.run][i].num`):
                         continue
 
                 # Skip the residue if there is no match to 'name'.
                 if name != None:
-                    if not match(name, self.relax.data.res[run_name][i].name):
+                    if not match(name, self.relax.data.res[self.run][i].name):
                         continue
 
                 # Unselect the residue.
-                self.relax.data.res[run_name][i].select = 0
+                self.relax.data.res[self.run][i].select = 0

@@ -40,11 +40,11 @@ class Angles:
 
         # Test if the PDB file has been loaded.
         if not self.relax.data.pdb.has_key(run):
-            raise RelaxPdbError
+            raise RelaxPdbError, run
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Test if the diffusion tensor data is loaded.
         if not self.relax.data.diff.has_key(run):

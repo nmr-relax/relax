@@ -76,4 +76,4 @@ class Create_run:
             raise RelaxStrError, ('run_type', run_type)
 
         # Execute the functional code.
-        self.relax.generic.create_run.create(run=run, run_type=run_type)
+        self.relax.generic.runs.create_run(run=run, run_type=run_type)

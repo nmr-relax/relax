@@ -34,6 +34,10 @@ class Model_selection:
     def select(self, method=None, modsel_run=None, runs=None):
         """Model selection function."""
 
+        # Test if the model selection run exists.
+        if not modsel_run in self.relax.data.run_names:
+            raise RelaxNoRunError, modsel_run
+
         # The runs argument.
         if runs == None:
             # Use the runs from 'self.relax.data.run_names'.
@@ -149,11 +153,8 @@ class Model_selection:
                     best_crit = crit
 
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
-            self.duplicate_data(new_run=modsel_run, old_run=best_model, instance=i)
-
-            # Add the modsel_run to 'self.relax.data.run_names' and 'self.relax.data.run_types'.
-            self.relax.data.run_names.append(modsel_run)
-            self.relax.data.run_types.append(self.function_type)
+            if best_model != None:
+                self.duplicate_data(new_run=modsel_run, old_run=best_model, instance=i)
 
 
     def aic(self, chi2, k, n):
@@ -221,7 +222,7 @@ class Model_selection:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Sequence lengths.
         if len(self.relax.data.res[self.first_run]) != len(self.relax.data.res[run]):

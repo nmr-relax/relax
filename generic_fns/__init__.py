@@ -22,7 +22,6 @@
 
 
 __all__ = [ 'angles',
-            'create_run',
             'delete',
             'diffusion_tensor',
             'eliminate',
@@ -34,6 +33,7 @@ __all__ = [ 'angles',
             'nuclei',
             'palmer',
             'pdb',
+            'runs',
             'rw',
             'selection',
             'sequence',

@@ -48,11 +48,11 @@ class Value:
 
         # Test if the sequence data for run1 is loaded.
         if not self.relax.data.res.has_key(run1):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run1
 
         # Test if the sequence data for run2 is loaded.
         if not self.relax.data.res.has_key(run2):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run2
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
@@ -97,7 +97,7 @@ class Value:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Print the data.
         self.write_data(run, data_type, sys.stdout)
@@ -116,7 +116,7 @@ class Value:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
@@ -210,7 +210,7 @@ class Value:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run
 
         # Test if the residue number is a valid regular expression.
         if type(res_num) == str:
@@ -340,7 +340,7 @@ class Value:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
         relax_file = self.relax.file_ops.open_write_file(file, dir, force)

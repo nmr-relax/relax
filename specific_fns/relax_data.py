@@ -46,7 +46,7 @@ class Rx_data:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
         if self.test_labels(run):
@@ -87,11 +87,11 @@ class Rx_data:
 
         # Test if the sequence data for run1 is loaded.
         if not self.relax.data.res.has_key(run1):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run1
 
         # Test if the sequence data for run2 is loaded.
         if not self.relax.data.res.has_key(run2):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, run2
 
         # Copy all data.
         if ri_label == None and frq_label == None:
@@ -218,7 +218,7 @@ class Rx_data:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
         if not self.test_labels(run):
@@ -281,7 +281,7 @@ class Rx_data:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
         if not self.test_labels(run):
@@ -335,7 +335,7 @@ class Rx_data:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
         if self.test_labels(run):
@@ -500,7 +500,7 @@ class Rx_data:
 
         # Test if the sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError
+            raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
         if not self.test_labels(run):

@@ -85,8 +85,8 @@ class RelaxErrors:
 
     # No PDB loaded.
     class RelaxPdbError(BaseError):
-        def __init__(self):
-            self.text = "No PDB file has been loaded."
+        def __init__(self, run):
+            self.text = "No PDB file has been loaded for the run " + `run` + "."
 
     # Loading error.
     class RelaxPdbLoadError(BaseError):
@@ -95,8 +95,8 @@ class RelaxErrors:
 
     # No unit vectors.
     class RelaxNoVectorsError(BaseError):
-        def __init__(self):
-            self.text = "The unit XH bond vectors have not been calculated."
+        def __init__(self, run):
+            self.text = "The unit XH bond vectors for the run " + `run` + " have not been calculated."
 
 
     # Nuclear errors.
@@ -231,6 +231,11 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must either be a string or None."
 
+    # None or tuple.
+    class RelaxNoneTupleError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be a tuple or None."
+
     # String.
     class RelaxStrError(BaseError):
         def __init__(self, name, value):
@@ -242,8 +247,8 @@ class RelaxErrors:
 
     # No sequence loaded.
     class RelaxNoSequenceError(BaseError):
-        def __init__(self):
-            self.text = "The sequence has not been loaded."
+        def __init__(self, run):
+            self.text = "The sequence data for the run " + `run` + " has not been loaded."
 
     # The sequence already exists.
     class RelaxSequenceError(BaseError):
