@@ -10,7 +10,7 @@ class generic_trust_region:
 		"""An algorithm for trust region radius selection.
 
 		Page 68 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
-		
+
 		First calculate rho using the formula:
 
 			        f(xk) - f(xk + pk)

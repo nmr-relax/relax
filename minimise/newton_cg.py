@@ -20,7 +20,7 @@ class newton_cg(generic_minimise, line_search_functions):
 			   if negative curvature is encountered.
 			Set xk+1 = xk + ak.pk, where ak satisfies the Wolfe, Goldstein, or Armijo
 			   backtracking conditions.
-			
+
 		"""
 
 		self.func = func
@@ -44,7 +44,7 @@ class newton_cg(generic_minimise, line_search_functions):
 		self.mu = mu
 		self.eta = eta
 
-		# Initialise the function, gradient, and hessian evaluation counters.
+		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -139,7 +139,7 @@ class newton_cg(generic_minimise, line_search_functions):
 	def setup(self):
 		"""Setup function.
 
-		The initial Newton function value, gradient vector, and hessian matrix are calculated.
+		The initial Newton function value, gradient vector, and Hessian matrix are calculated.
 		"""
 
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
@@ -148,7 +148,7 @@ class newton_cg(generic_minimise, line_search_functions):
 
 
 	def update(self):
-		"Function to update the function value, gradient vector, and hessian matrix"
+		"Function to update the function value, gradient vector, and Hessian matrix"
 
 		self.xk = self.xk_new * 1.0
 		self.fk = self.fk_new

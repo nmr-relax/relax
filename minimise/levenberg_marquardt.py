@@ -41,7 +41,7 @@ class levenberg_marquardt(generic_minimise):
 		self.full_output = full_output
 		self.print_flag = print_flag
 
-		# Initialise the function, gradient, and hessian evaluation counters.
+		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -140,7 +140,7 @@ class levenberg_marquardt(generic_minimise):
 		"Levenberg-Marquardt convergence test."
 
 		# Finish minimising when the chi-squared difference is insignificant.
-		if self.move_flag and abs(self.fk - self.fk_new) < self.func_tol:
+		if abs(self.fk - self.fk_new) < self.func_tol and self.move_flag:
 			return 1
 		return 0
 

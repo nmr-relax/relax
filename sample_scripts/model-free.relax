@@ -11,12 +11,12 @@ set_model_selection('AIC')
 value_setup('bond_length', 1.02 * 1e-10)
 value_setup('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-model = 'm4'
+model = 'm5'
 mf_model_select(model)
 #fixed(model, [ 0.6,  0.9,  5.0*1e-10 ])
 #from math import pi
 #fixed(model, [ 1.0,  10.0*1e-10, 0.0 / (2.0 * pi * 600000000.0)**2 ])
-fixed(model, [ 0.5,  10.0*1e-10, 0.0 ])
-#grid_search(model, inc=11)
-minimise('lm', model=model, min_debug=2)
+#fixed(model, [ 0.95,  10.0*1e-10, 0.0 ])
+grid_search(model, inc=21)
+minimise('lm', model=model, constraints=0)
 state_save('save', 1)
