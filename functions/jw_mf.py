@@ -74,7 +74,7 @@ def calc_iso_s2_jw(i, frq_index, data):
 
 	The formula is:
 
-		         2 /    S2 . tm    \ 7.77052445e-01
+		         2 /    S2 . tm    \ 
 		J(w)  =  - | ------------- |
 		         5 \ 1 + (w.tm)**2 /
 
