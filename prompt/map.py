@@ -156,18 +156,6 @@ class Map:
         if type(res_num) != int:
             raise RelaxIntError, ('residue number', res_num)
 
-        # Residue index.
-        index = None
-        for i in xrange(len(self.relax.data.res)):
-            if self.relax.data.res[i].num == res_num:
-                index = i
-                break
-        if index == None:
-            raise RelaxNoResError, res_num
-
-        # The number of parameters.
-        n = len(self.relax.data.res[index].params[run])
-
         # Increment.
         if type(inc) != int:
             raise RelaxIntError, ('increment', inc)
@@ -178,9 +166,7 @@ class Map:
         if lower != None:
             if type(lower) != list:
                 raise RelaxListError, ('lower bounds', lower)
-            if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
-            for i in xrange(n):
+            for i in xrange(len(lower)):
                 if type(lower[i]) != int and type(lower[i]) != float:
                     raise RelaxListNumError, ('lower bounds', lower)
 
@@ -188,9 +174,7 @@ class Map:
         if upper != None:
             if type(upper) != list:
                 raise RelaxListError, ('upper bounds', upper)
-            if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
-            for i in xrange(n):
+            for i in xrange(len(upper)):
                 if type(upper[i]) != int and type(upper[i]) != float:
                     raise RelaxListNumError, ('upper bounds', upper)
 
@@ -198,64 +182,44 @@ class Map:
         if swap != None:
             if type(swap) != list:
                 raise RelaxListError, ('axes swapping', swap)
-            if len(swap) != n:
-                raise RelaxLenError, ('axes swapping', n)
-            test = zeros(n)
-            for i in xrange(n):
+            for i in xrange(len(swap)):
                 if type(swap[i]) != int:
                     raise RelaxListIntError, ('axes swapping', swap)
-                if swap[i] >= n:
-                    raise RelaxError, "The integer " + `swap[i]` + " is greater than the final array element."
-                elif swap[i] < 0:
-                    raise RelaxError, "All integers of the swap argument must be positive."
-                test[swap[i]] = 1
-            for i in xrange(n):
-                if test[i] != 1:
-                    raise RelaxError, "The swap argument is invalid (possibly duplicated integer values)."
 
         # File name.
         if type(file) != str:
             raise RelaxStrError, ('file name', file)
 
         # Directory name.
-        if dir == None:
-            pass
-        elif type(dir) != str:
+        if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # Point.
         if point != None:
             if type(point) != list:
                 raise RelaxListError, ('point', point)
-            elif len(point) != n:
-                raise RelaxLenError, ('point', n)
-            elif type(point_file) != str:
+            if type(point_file) != str:
                 raise RelaxStrError, ('point file name', point_file)
-            for i in xrange(n):
+            for i in xrange(len(point)):
                 if type(point[i]) != int and type(point[i]) != float:
                     raise RelaxListNumError, ('point', point)
 
         # Remap function.
-        if remap != None:
-            if type(remap) is not FunctionType:
-                raise RelaxFunctionError, ('remap function', remap)
+        if remap != None and type(remap) is not FunctionType:
+            raise RelaxFunctionError, ('remap function', remap)
 
         # Axis labels.
         if labels != None:
             if type(labels) != list:
                 raise RelaxListError, ('axis labels', labels)
-            elif len(labels) != n:
-                raise RelaxLenError, ('axis labels', n)
-            for i in xrange(n):
+            for i in xrange(len(labels)):
                 if type(labels[i]) != str:
                     raise RelaxListStrError, ('axis labels', labels)
 
         # Space type.
         if type(map_type) != str:
             raise RelaxStrError, ('map type', map_type)
-        if match("^[Ii]so3[Dd]", map_type):
-            if n != 3:
-                raise RelaxError, "The 3D isosurface map requires a strictly 3 parameter model."
+
+        # Execute the functional code.
             self.relax.generic.map.Iso3D.map_space(run=run, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
-        else:
-            raise RelaxError, "The map type '" + map_type + "' is not supported."
+            self.relax.generic.map.Iso3D.map_space(run=run, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
