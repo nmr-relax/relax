@@ -101,8 +101,8 @@ class _Echo:
 	def echo_off(self):
 		"""Macro for turning off the echoing of commands.
 
-		The default program state is no echoing but if the macro echo_on() has been run 
-		and you no longer want the echoing, this macro will turn it off.
+		The default program state is no echoing but if the macro echo_on() has been run and
+		you no longer want the echoing, this macro will turn it off.
 
 
 		Example
@@ -111,6 +111,9 @@ class _Echo:
 		To run the macro, type the following.
 		
 		>>> echo_off()
+
+
+		FIN
 		"""
 
 		code.InteractiveConsole.raw_input = self.raw_input
@@ -120,9 +123,9 @@ class _Echo:
 	def echo_on(self):
 		"""Macro for turning on the echoing of commands.
 
-		The default program state is no echoing but if this macro is run all commands will be
-		echoed exactly as typed.  This is useful for scipting as commands run from a script are
-		not printed to screen.  To turn echoing off, run the macro echo_off()
+		The default program state is no echoing but if this macro is run all commands will
+		be echoed exactly as typed.  This is useful for scipting as commands run from a
+		script are not printed to screen.  To turn echoing off, run the macro echo_off()
 
 
 		Example
@@ -132,6 +135,8 @@ class _Echo:
 		
 		>>> echo_on()
 
+
+		FIN
 		"""
 
 		code.InteractiveConsole.raw_input = self.raw_input_echo
@@ -162,10 +167,13 @@ class _Exit:
 
 
 class _Helper:
-	text = "For assistence in using a macro, simply type help(macro).  In addition to macros, if help(object) is typed,\n"
-	text = text + "the help for the python object is returned.  This system is similar to the help function built into the\n"
-	text = text + "python interpreter, which has been renamed to help_python, with the interactive component removed.  For\n"
-	text = text + "the interactive python help system, type help_python()."
+	text = """\
+For assistence in using a macro, simply type help(macro).  In addition to macros, if help(object)
+is typed, the help for the python object is returned.  This system is similar to the help function
+built into the python interpreter, which has been renamed to help_python, with the interactive
+component removed.  For the interactive python help the interactive python help system, type
+help_python().\
+	"""
 
 	def __repr__(self):
 		return self.text
@@ -179,10 +187,13 @@ class _Helper:
 
 
 class _Helper_python:
+	text = """\
+For the interactive python help system, type help_python().  The help_python function is identical
+to the help function built into the normal python interpreter.\
+	"""
+
 	def __repr__(self):
-		text = "For the interactive python help system, type help_python().  The help_python function\n"
-		text = text + "is identical to the help function built into the normal python interpreter."
-		return text
+		return self.text
 
 	def __call__(self, *args, **kwds):
 		import pydoc

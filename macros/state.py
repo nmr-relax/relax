@@ -26,12 +26,11 @@ class state(generic_functions):
 
 		The following commands will load the state saved in the file 'save'.
 
-		>>> state_load('save')
-		>>> state_load(file_name='save')
+		relax> state_load('save')
+		relax> state_load(file_name='save')
 
 
-		________________
-		End of docstring
+		FIN
 		"""
 
 		# Arguments.
@@ -62,7 +61,8 @@ class state(generic_functions):
 		Arguments
 		~~~~~~~~~
 
-		file_name:	The file name, which must be a string, to save the current program state in.
+		file_name:	The file name, which must be a string, to save the current program
+			state in.
 		force:		A flag which if set to 1 will cause the file to be overwritten.
 
 
@@ -71,19 +71,18 @@ class state(generic_functions):
 
 		The following commands will save the current program state into the file 'save'.
 
-		>>> state_save('save')
-		>>> state_save(file_name='save')
+		relax> state_save('save')
+		relax> state_save(file_name='save')
 
 
-		If the file 'save' already exists, the following commands will save the current program state by overwriting
-		the file.
+		If the file 'save' already exists, the following commands will save the current
+		program state by overwriting the file.
 
-		>>> state_save('save', 1)
-		>>> state_save(file_name='save', force=1)
+		relax> state_save('save', 1)
+		relax> state_save(file_name='save', force=1)
 
 
-		________________
-		End of docstring
+		FIN
 		"""
 
 		# Arguments.

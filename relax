@@ -123,15 +123,21 @@ class relax:
 	def set_intro_string(self):
 		"Create the program introduction."
 
-		a = "\n\n\n"
-		a = a + "                                     relax\n\n"
-		a = a + "                    a program for relaxation data analysis\n\n"
-		a = a + "                     Copyright (C) 2003 Edward d'Auvergne\n\n\n"
-		a = a + "This is free software which you are welcome to modify and redistribute under the\n"
-		a = a + "conditions of the GNU General Public Licence (GPL).  This program, including all\n"
-		a = a + "modules, is licenced under the GPL and comes with absolutely no warranty.  For\n"
-		a = a + "details type GPL.\n"
-		self.intro_string = a
+		self.intro_string = """
+
+
+                                            relax
+
+                           a program for relaxation data analysis
+
+                            Copyright (C) 2003 Edward d'Auvergne
+
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public Licence (GPL).  This program, including all modules, is licenced under the GPL
+and comes with absolutely no warranty.  For details type GPL.
+		"""
+
 
 
 if __name__ == "__main__":

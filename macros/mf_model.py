@@ -19,18 +19,26 @@ class mf_model(generic_functions):
 		~~~~~~~~~
 
 		model:		The name of the model-free model
-		equation:	The model-free equation to use.  To select the original model-free equation set the equation to 'mf_orig'.
-			To select the extended model-free equation set the equation to 'mf_ext'.
+		equation:	The model-free equation.
 		param_type:	The parameters of the model.
 
+
+		Description
+		~~~~~~~~~~~
+
+		For selection of the model-free equation the string 'mf_orig' will select the
+		original model-free equation while the string 'mf_ext' will select the extended
+		model-free equation.
 
 		The following parameters are accepted for the original model-free equation:
 			S2:		The square of the generalised order parameter.
 			te:		The effective correlation time.
 		The following parameters are accepted for the extended model-free equation:
-			S2f:		The square of the generalised order parameter of the faster motion.
+			S2f:		The square of the generalised order parameter of the faster
+				motion.
 			tf:		The effective correlation time of the faster motion.
-			S2s:		The square of the generalised order parameter of the slower motion.
+			S2s:		The square of the generalised order parameter of the slower
+				motion.
 			ts:		The effective correlation time of the slower motion.
 		The following parameters are accepted for both the original and extended equations:
 			Rex:		The chemical exchange relaxation.
@@ -41,22 +49,24 @@ class mf_model(generic_functions):
 		Examples
 		~~~~~~~~
 
-		The following commands will create the model-free model 'm1' which is based on the the original model-free equation and contains
-		the single parameter 'S2'
+		The following commands will create the model-free model 'm1' which is based on the
+		original model-free equation and contains the single parameter 'S2'.
 
-		>>> mf_model_create('m1', 'mf_orig', ['S2'])
-		>>> mf_model_create(model='m1', param_types=['S2'], equation='mf_orig')
-
-
-		The following commands will create the model-free model 'large_model' which is based on the the extended model-free equation
-		and contains the seven parameters 'S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'.
-
-		>>> mf_model_create('large_model', 'mf_ext', ['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'])
-		>>> mf_model_create(model='large_model', param_types=['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'], equation='mf_ext')
+		relax> mf_model_create('m1', 'mf_orig', ['S2'])
+		relax> mf_model_create(model='m1', param_types=['S2'], equation='mf_orig')
 
 
-		________________
-		End of docstring
+		The following commands will create the model-free model 'large_model' which is based
+		on the the extended model-free equation and contains the seven parameters 'S2f',
+		'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'.
+
+		relax> mf_model_create('large_model', 'mf_ext', ['S2f', 'tf', 'S2s', 'ts', 'Rex',
+		'CSA', 'Bond length'])
+		relax> mf_model_create(model='large_model', param_types=['S2f', 'tf', 'S2s', 'ts',
+		'Rex', 'CSA', 'Bond length'], equation='mf_ext')
+
+
+		FIN
 		"""
 
 		if not model or type(model) != str:
@@ -261,20 +271,22 @@ class mf_model(generic_functions):
 			'm38'	=> [Bond length, CSA, S2f, tf, S2s, ts, Rex]
 			'm39'	=> [Bond length, CSA, Rex]
 
-		Warning:  A few of the models in the thirties range fail when using standard R1, R2, and NOE
-		relaxation data.
+		Warning:  A few of the models in the thirties range fail when using standard R1, R2,
+		and NOE relaxation data.
 
 
 		Diagonal scaling.
 		
-		This is the scaling of parameter values with the intent of having the same order of magnitude
-		for all parameters values.  For example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz,
-		the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18] (Rex is divided by
-		(2*pi*600,000,000)**2 to make it field strength independent).  The scaling vector for this model
-		is [1.0, 1e-10, 1/(2*pi*6*1e8)**2].  By dividing the unscaled parameter vector by the scaling
-		vector the scaled parameter vector is [0.5, 2.0, 15.0].  To revert to the original unscaled
-		parameter vector, the scaled parameter vector and scaling vector are multiplied.  The reason for
-		diagonal scaling is that certain minimisation techniques fail when the model is not properly scaled.
+		This is the scaling of parameter values with the intent of having the same order of
+		magnitude for all parameters values.  For example, if S2 = 0.5, te = 200 ps, and
+		Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10,
+		1.055e-18] (Rex is divided by (2*pi*600,000,000)**2 to make it field strength
+		independent).  The scaling vector for this model is [1.0, 1e-10, 1/(2*pi*6*1e8)**2].
+		By dividing the unscaled parameter vector by the scaling vector the scaled parameter
+		vector is [0.5, 2.0, 15.0].  To revert to the original unscaled parameter vector,
+		the scaled parameter vector and scaling vector are multiplied.  The reason for
+		diagonal scaling is that certain minimisation techniques fail when the model is not
+		properly scaled.
 
 
 		Examples
@@ -282,11 +294,10 @@ class mf_model(generic_functions):
 
 		To pick model 'm1', run:
 
-		>>> mf_model_select('m1')
+		relax> mf_model_select('m1')
 
 
-		________________
-		End of docstring
+		FIN
 		"""
 
 		# Arguments.

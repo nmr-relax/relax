@@ -264,7 +264,7 @@ def calc_d2r1(data, i, frq_num):
 				data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
 				# Make the hessian symmetric.
 				if i != j:
-					data.r1_data.d2ri_prime[:, k, j] = data.r1_data.d2ri_prime[:, j, k]
+					data.r1_data.d2ri_prime[i, k, j] = data.r1_data.d2ri_prime[i, j, k]
 
 	return data.r1_data.d2ri_prime[i]
 

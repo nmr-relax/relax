@@ -15,7 +15,11 @@ class format(generic_functions, select_res):
 	def format(self, *args):
 		"""Macro to print the names of all data structures in self.relax.data
 
-		With no arguments, the names of all data structures in self.relax.data are printed along with the data type.
+		With no arguments, the names of all data structures in self.relax.data are printed
+		along with the data type.
+
+
+		FIN
 		"""
 
 		self.args = args

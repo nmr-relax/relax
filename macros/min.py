@@ -20,27 +20,29 @@ class min:
 		~~~~~~~~~
 
 		model:		The name of the model.
-		values:		An array of numbers of length equal to the number of parameters in the model.
+		values:		An array of numbers of length equal to the number of parameters in
+			the model.
 		min_debug:	(so is this)
 
 
 		Examples
 		~~~~~~~~
 
-		This command will fix the parameter values of the model 'm2', which is the original model-free
-		equation with parameters [S2, te], before minimisation to the preselected values of this macro.
+		This command will fix the parameter values of the model 'm2', which is the original
+		model-free equation with parameters [S2, te], before minimisation to the preselected
+		values of this macro.
 
-		>>> fixed('m2')
-
-
-		This command will do the same except the S2 and te values will be set to one and ten ps respectively.
-
-		>>> fixed('m2', [1.0, 10 * 10e-12])
-		>>> fixed('m2', values = [1.0, 10 * 10e-12])
+		relax> fixed('m2')
 
 
-		________________
-		End of docstring
+		This command will do the same except the S2 and te values will be set to one and ten
+		ps respectively.
+
+		relax> fixed('m2', [1.0, 10 * 10e-12])
+		relax> fixed('m2', values = [1.0, 10 * 10e-12])
+
+
+		FIN
 		"""
 
 		# The model argument.
@@ -174,8 +176,7 @@ class min:
 		Generate the data structure of model-free grid options for the grid search.
 
 
-		________________
-		End of docstring
+		FIN
 		"""
 
 		# The model argument.
@@ -407,8 +408,7 @@ class min:
 		"""Minimisation macro.
 
 
-		________________
-		End of docstring
+		FIN
 		"""
 
 		# The model argument.
