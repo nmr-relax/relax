@@ -23,6 +23,7 @@
 from Queue import Queue
 from os import popen3
 from re import search
+import sys
 from threading import Thread
 
 
@@ -218,18 +219,20 @@ class RelaxThread(Thread):
                     # Place None back into the job queue so that all the other waiting threads will terminate.
                     self.job_queue.put(None)
 
-                    # Thread termination.
+                    # Job termination.
                     break
 
                 # Run the thread specific code.
                 self.exec_thread_code(data)
 
-                # Place the results in the results queue.
-                self.results_queue.put(self.results)
+                # If the job terminated successfully, place the results in the results queue.
+                if self.terminated():
+                    # Place the results in the results queue.
+                    self.results_queue.put(self.results)
 
         # RelaxError.
         except RelaxError, message:
-            print message
+            sys.stderr.write(message)
             self.results_queue.put(RelaxError)
 
         # KeyboardInterupt.

@@ -32,6 +32,9 @@ class PDB:
 
         self.relax = relax
 
+        # Print flag.
+        self.print_flag = 1
+
 
     def load_structures(self):
         """Function for loading the structures from the PDB file."""
@@ -43,9 +46,10 @@ class PDB:
                 self.relax.data.pdb[self.run].structures = self.relax.data.pdb[run].structures
 
                 # Print out.
-                print "Using the structures from the run " + `run` + "."
-                for i in xrange(len(self.relax.data.pdb[self.run].structures)):
-                    print self.relax.data.pdb[self.run].structures[i]
+                if self.print_flag:
+                    print "Using the structures from the run " + `run` + "."
+                    for i in xrange(len(self.relax.data.pdb[self.run].structures)):
+                        print self.relax.data.pdb[self.run].structures[i]
 
                 # Exit this function.
                 return
@@ -56,7 +60,8 @@ class PDB:
         # Load the structure i from the PDB file.
         if type(self.model) == int:
             # Print out.
-            print "Loading structure " + `self.model` + " from the PDB file."
+            if self.print_flag:
+                print "Loading structure " + `self.model` + " from the PDB file."
 
             # Load the structure into 'str'.
             str = Scientific.IO.PDB.Structure(self.file_path, self.model)
@@ -66,7 +71,8 @@ class PDB:
                 raise RelaxPdbLoadError, self.file_path
 
             # Print the PDB info.
-            print str
+            if self.print_flag:
+                print str
 
             # Place the structure in 'self.relax.data.pdb[self.run]'.
             self.relax.data.pdb[self.run].structures.append(str)
@@ -75,7 +81,8 @@ class PDB:
         # Load all structures.
         else:
             # Print out.
-            print "Loading all structures from the PDB file."
+            if self.print_flag:
+                print "Loading all structures from the PDB file."
 
             # First model.
             i = 1
@@ -97,7 +104,8 @@ class PDB:
                     break
 
                 # Print the PDB info.
-                print str
+                if self.print_flag:
+                    print str
 
                 # Place the structure in 'self.relax.data.pdb[self.run]'.
                 self.relax.data.pdb[self.run].structures.append(str)
@@ -106,7 +114,7 @@ class PDB:
                 i = i + 1
 
 
-    def load(self, run=None, file=None, dir=None, model=None, heteronuc=None, proton=None, load_seq=1, calc_vectors=1, fail=1):
+    def load(self, run=None, file=None, dir=None, model=None, heteronuc=None, proton=None, load_seq=1, calc_vectors=1, fail=1, print_flag=1):
         """The pdb loading function."""
 
         # Arguments.
@@ -117,6 +125,9 @@ class PDB:
         self.heteronuc = heteronuc
         self.proton = proton
         self.load_seq = load_seq
+        self.calc_vectors = calc_vectors
+        self.fail = fail
+        self.print_flag = print_flag
 
         # Tests.
         ########
@@ -162,7 +173,8 @@ class PDB:
             if fail:
                 raise RelaxFileError, ('PDB', self.file_path)
             else:
-                print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
+                if self.print_flag:
+                    print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
                 return
 
         # Load the structures.
@@ -195,7 +207,8 @@ class PDB:
         """Function for calculating the XH unit vector from the loaded structure."""
 
         # Print out.
-        print "\nCalculating unit XH vectors.\n"
+        if self.print_flag:
+            print "\nCalculating unit XH vectors.\n"
 
         # Number of structures.
         num_str = len(self.relax.data.pdb[self.run].structures)
@@ -207,7 +220,8 @@ class PDB:
         # Loop over the structures.
         for i in xrange(num_str):
             # Print out.
-            print "\nStructure " + `i + 1` + "\n"
+            if self.print_flag:
+                print "\nStructure " + `i + 1` + "\n"
 
             # Reassign the first peptide chain of the first structure.
             pdb_residues = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
@@ -225,12 +239,14 @@ class PDB:
 
                 # Test if the proton atom exists for residue i.
                 if not pdb_res.atoms.has_key(self.proton):
-                    print "The proton atom " + `self.proton` + " could be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                    if self.print_flag:
+                        print "The proton atom " + `self.proton` + " could be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Test if the heteronucleus atom exists for residue i.
                 elif not pdb_res.atoms.has_key(self.heteronuc):
-                    print "The heteronucleus atom " + `self.heteronuc` + " could be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                    if self.print_flag:
+                        print "The heteronucleus atom " + `self.heteronuc` + " could be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Calculate the vector.
@@ -246,10 +262,11 @@ class PDB:
                     self.relax.data.res[self.run][j].xh_vect.append(vector / sqrt(dot(vector, vector)))
 
         # Print out.
-        if num_str > 1:
-            print "\nCalculating and averaging the unit XH vectors from all structures."
-        else:
-            print "\nCalculating the unit XH vectors from the structure."
+        if self.print_flag:
+            if num_str > 1:
+                print "\nCalculating and averaging the unit XH vectors from all structures."
+            else:
+                print "\nCalculating the unit XH vectors from the structure."
 
         # Average the vectors and convert xh_vect from an array of vectors to a vector.
         for i in xrange(len(self.relax.data.res[self.run])):

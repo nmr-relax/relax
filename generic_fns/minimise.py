@@ -22,6 +22,7 @@
 
 
 from Queue import Queue
+from Numeric import sum, zeros
 from exceptions import Exception
 from os import popen3, popen4
 from random import randint
@@ -153,21 +154,25 @@ class Minimise:
         for i in xrange(self.relax.data.sim_number[run]):
             job_queue.put(i)
 
+        # Initialise an array of finished jobs.
+        self.finished_jobs = zeros(self.relax.data.sim_number[run])
+
         # Start all threads.
         print "\nStarting all threads.\n"
         self.threads = []
         for i in xrange(len(self.relax.data.thread.host_name)):
-            self.threads.append(RelaxMinimiseThread(self.relax, i, job_queue, results_queue, tag, run, min_args))
+            self.threads.append(RelaxMinimiseThread(self.relax, i, job_queue, results_queue, tag, run, min_args, self.finished_jobs))
             self.threads[i].start()
 
         # The main loop.
         terminated = 0
-        num_fin = 0
         try:
             while not terminated:
                 # Get the next results off the results_queue.
                 sim_number = results_queue.get()
-                num_fin = num_fin + 1
+
+                # Update the finished jobs.
+                self.finished_jobs[sim_number] = 1
 
                 # A thread has caused a RelaxError.
                 if sim_number == RelaxError:
@@ -182,7 +187,7 @@ class Minimise:
                     raise KeyboardInterrupt
 
                 # All jobs have finished.
-                if num_fin == self.relax.data.sim_number[run]:
+                if sum(self.finished_jobs) == self.relax.data.sim_number[run]:
                     # Add None to the job_queue to signal the threads to finish.
                     job_queue.put(None)
 
@@ -190,7 +195,7 @@ class Minimise:
                     terminated = 1
 
                 # Print the simulation number.
-                print "Simulation " + `sim_number+1`
+                print "Simulation " + `sim_number`
 
         # Catch RelaxErrors and Exceptions.
         except RelaxError:
@@ -221,7 +226,7 @@ class Minimise:
 
 
 class RelaxMinimiseThread(RelaxThread):
-    def __init__(self, relax, i, job_queue, results_queue, tag, parent_run, min_args):
+    def __init__(self, relax, i, job_queue, results_queue, tag, parent_run, min_args, finished_jobs):
         """Initialisation of the thread."""
 
         # Arguments.
@@ -230,6 +235,7 @@ class RelaxMinimiseThread(RelaxThread):
         self.tag = tag
         self.parent_run = parent_run
         self.min_args = min_args
+        self.finished_jobs = finished_jobs
 
         # Run the RelaxThread __init__ function (this is 'asserted' by the Thread class).
         RelaxThread.__init__(self, job_queue, results_queue)
@@ -307,8 +313,18 @@ class RelaxMinimiseThread(RelaxThread):
         This code is for the minimisation of a single Monte Carlo simulation.
         """
 
-        # Place the job queue data, which in this case is the simulation number, in self.
+        # Initialise the job termination flag.
+        self.terminated_flag = 0
+
+        # Place the job queue data, which in this case is the simulation number, in 'self'.
         self.sim = data
+
+        # Job termination if the job has been finished by a faster thread.
+        if self.finished_jobs[self.sim] == 1:
+            return
+
+        # Place the job back into the job queue.  This is to make the threads fail safe and so that idle faster threads will pick up the jobs of the slower threads.
+        self.job_queue.put(self.sim)
 
         # Thread run name.
         self.thread_run = '%s_sim_%s' % (self.tag, self.sim)
@@ -317,17 +333,21 @@ class RelaxMinimiseThread(RelaxThread):
         self.script_file = "%s/%s/script_sim_%s.py" % (self.relax.data.thread.swd[self.i], self.tag, self.sim)
         self.log_file = "%s/%s/sim_%s.log" % (self.relax.data.thread.swd[self.i], self.tag, self.sim)
 
-        # Generate the script file for the minimisation of sim number `sim`.
+        # Generate the script file for the minimisation of sim number 'sim'.
         self.generate_script()
 
         # Execute relax and run the script.
         self.exec_relax()
 
+        # Job termination if the job has been finished by a faster thread.
+        if self.finished_jobs[self.sim] == 1:
+            return
+
         # Create a run in the parent to temporarily store the data prior to copying into the main run.
         self.relax.generic.runs.create(run=self.thread_run, run_type=self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)])
 
         # Read the data into the run.
-        self.relax.generic.results.read(run=self.thread_run, file_data=self.results)
+        self.relax.generic.results.read(run=self.thread_run, file_data=self.results, print_flag=0)
 
         # Copy the results from the thread run to the parent run.
         self.relax.generic.results.copy(run1=self.thread_run, run2=self.parent_run, sim=self.sim)
@@ -337,6 +357,9 @@ class RelaxMinimiseThread(RelaxThread):
 
         # Set the results to the completed simulation number.
         self.results = self.sim
+
+        # Job terminated successfully.
+        self.terminated_flag = 1
 
 
     def generate_script(self):
@@ -461,3 +484,11 @@ class RelaxMinimiseThread(RelaxThread):
         # File exists.
         else:
             return 1
+
+
+    def terminated(self):
+        """Function for determining if a job has terminated successfully."""
+
+        # The job has been finished by a faster thread.
+        if self.finished_jobs[self.sim] == 1:
+            return 0

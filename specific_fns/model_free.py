@@ -3208,7 +3208,7 @@ class Model_free(Common_functions):
                 self.relax.data.res[self.run][i].fixed = res_fixed
 
 
-    def read_columnar_pdb(self):
+    def read_columnar_pdb(self, print_flag=1):
         """Function for reading the PDB file."""
 
         # File name.
@@ -3227,7 +3227,7 @@ class Model_free(Common_functions):
 
         # Load the PDB.
         if not pdb == 'None':
-            self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, heteronuc=pdb_heteronuc, proton=pdb_proton, calc_vectors=0, fail=0)
+            self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, heteronuc=pdb_heteronuc, proton=pdb_proton, calc_vectors=0, fail=0, print_flag=print_flag)
             return 1
         else:
             return 0
@@ -3278,7 +3278,7 @@ class Model_free(Common_functions):
         self.relax.specific.relax_data.add_residue(run=self.run, res_index=self.res_index, ri_labels=self.ri_labels, remap_table=self.remap_table, frq_labels=self.frq_labels, frq=self.frq, values=values, errors=errors, sim=sim)
 
 
-    def read_columnar_results(self, run, file_data):
+    def read_columnar_results(self, run, file_data, print_flag=1):
         """Function for reading the results file."""
 
         # Arguments.
@@ -3377,7 +3377,7 @@ class Model_free(Common_functions):
 
             # PDB.
             if not pdb:
-                if self.read_columnar_pdb():
+                if self.read_columnar_pdb(print_flag):
                     pdb = 1
 
             # XH vector.

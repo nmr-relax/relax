@@ -156,9 +156,9 @@ class IO:
 
         # Print out.
         if print_flag:
-            print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
+            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
             print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
-            print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
+            print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
 
         # Set the logging IO streams.
         self.log_stdout = self.log_file
@@ -175,9 +175,9 @@ class IO:
 
         # Print out.
         if print_flag:
-            print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
-            print "Redirecting the sys.stdout IO stream to the standard python stdout IO stream."
-            print "Redirecting the sys.stderr IO stream to the standard python stderr IO stream."
+            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
+            print "Redirecting the sys.stdout IO stream to the python stdout IO stream."
+            print "Redirecting the sys.stderr IO stream to the python stderr IO stream."
 
         # IO stream redirection.
         sys.stdin  = self.python_stdin 
@@ -322,9 +322,9 @@ class IO:
 
         # Print out.
         if print_flag:
-            print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
-            print "Redirecting the sys.stdout IO stream to both the standard python stdout IO stream and the log file '%s'." % file_path
-            print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
+            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
+            print "Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path
+            print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
 
         # Set the tee IO streams.
         self.tee_stdout.split(self.python_stdout, self.tee_file)

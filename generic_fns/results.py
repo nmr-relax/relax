@@ -78,7 +78,7 @@ class Results:
         self.write_function(sys.stdout, run)
 
 
-    def read(self, run=None, file='results', directory=None, file_data=None, format='columnar'):
+    def read(self, run=None, file='results', directory=None, file_data=None, format='columnar', print_flag=1):
         """Function for reading the data out of a file."""
 
         # Test if the run exists.
