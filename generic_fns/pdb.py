@@ -85,10 +85,14 @@ class PDB:
                 # Load the pdb files.
                 str = Scientific.IO.PDB.Structure(self.file_path, i)
 
+                # No model 1.
+                if len(str) == 0 and i == 1:
+                    str = Scientific.IO.PDB.Structure(self.file_path)
+                    if len(str) == 0:
+                        raise RelaxPdbLoadError, self.file_path
+
                 # Test if the last structure has been reached.
                 if len(str) == 0:
-                    if i == 1:
-                        raise RelaxPdbLoadError, self.file_path
                     del str
                     break
 
