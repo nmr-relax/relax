@@ -65,7 +65,7 @@ class Iso3D(Base_Map):
                         self.relax.generic.value.set(run=self.run, value=values[l], data_type=self.relax.data.res[self.index].params[self.run][l], res_num=self.relax.data.res[self.index].num)
 
                     # Calculate the function values.
-                    self.calculate(self.run, 0)
+                    self.calculate(run=self.run, res_num=self.relax.data.res[self.index].num, print_flag=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if self.relax.data.res[self.index].chi2[self.run] > 1e20:

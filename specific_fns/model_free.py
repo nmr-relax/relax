@@ -248,11 +248,11 @@ class Model_free:
                     i = i + 1
 
 
-    def calculate(self, run, print_flag):
+    def calculate(self, run=None, res_num=None, print_flag=1):
         """Calculation of the model-free chi-squared value."""
 
         # Go to the minimise function.
-        self.minimise(run=run, min_algor='calc')
+        self.minimise(run=run, min_algor='calc', res_num=res_num)
 
 
     def create(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
@@ -1367,7 +1367,7 @@ class Model_free:
         return labels, tick_locations, tick_values
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, res_num=None, print_flag=0):
         """Model-free minimisation.
 
         Three types of parameter sets exist for which minimisation is different.  These are:
@@ -1438,6 +1438,10 @@ class Model_free:
             num_instances = 1
             num_data_sets = len(self.relax.data.res)
 
+        # Number of residues for the calculate function.
+        if min_algor == 'calc' and res_num != None:
+            num_res = 1
+
         # Loop over the minimisation instances.
         for i in xrange(num_instances):
             # Set the index to None.
@@ -1447,6 +1451,10 @@ class Model_free:
             if self.param_set == 'mf' or self.param_set == 'local_tm':
                 # Skip unselected residues.
                 if not self.relax.data.res[i].select:
+                    continue
+
+                # Single residue.
+                if res_num != None and res_num != self.relax.data.res[i].num:
                     continue
 
                 # Set the index to i.

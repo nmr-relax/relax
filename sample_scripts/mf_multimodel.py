@@ -7,7 +7,8 @@ read.sequence('noe.500.out')
 nuclei('N')
 
 # Set the run names (also the names of preset model-free models).
-runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11', 'm12', 'm13', 'm14', 'm15', 'm16', 'm17', 'm18', 'm19', 'm20', 'm21', 'm22', 'm23', 'm24', 'm25', 'm26', 'm27', 'm28', 'm29']
+runs = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+#runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11', 'm12', 'm13', 'm14', 'm15', 'm16', 'm17', 'm18', 'm19', 'm20', 'm21', 'm22', 'm23', 'm24', 'm25', 'm26', 'm27', 'm28', 'm29']
 
 for run in runs:
     # Create the run.
@@ -26,7 +27,7 @@ for run in runs:
     read.relax_data(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
     # Setup other values.
-    diffusion_tensor(run, 1e-8, fixed=0)
+    #diffusion_tensor(run, 1e-8, fixed=0)
     #diffusion_tensor(run, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
     value.set(run, 1.02 * 1e-10, 'bond_length')
     value.set(run, -160 * 1e-6, 'csa')
