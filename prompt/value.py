@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -56,7 +56,7 @@ class Macro_class:
     def load(self, type=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Macro for loading data structure values from file.
 
-        Incomplete and broken code (and should probably be placed under the 'load' macro class.
+        Incomplete and broken code (and should probably be placed under the 'load' macro class).
         """
 
         raise NameError, "Broken code."
