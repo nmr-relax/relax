@@ -20,8 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+from math import pi
 from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, mkdir, remove, spawnlp, system
 from re import match, search
+from string import split
 import sys
 
 
@@ -172,7 +174,6 @@ class Palmer:
             dratio = 0
             theta = 0
             phi = 0
-
 
         # Add the main options.
         file.write("optimization    tval\n\n")
@@ -359,7 +360,10 @@ class Palmer:
 
 
     def execute(self, run, dir, force):
-        """Function for executing Modelfree4."""
+        """Function for executing Modelfree4.
+        
+        BUG:  Control-C during execution causes the cwd to stay as dir.
+        """
 
         # The directory.
         if dir == None:
@@ -410,382 +414,132 @@ class Palmer:
         chdir('..')
 
 
+    def extract(self, run, dir):
+        """Function for extracting the Modelfree4 results out of the 'mfout' file."""
+
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
+        # The directory.
+        if dir == None:
+            dir = run
+        if not access(dir, F_OK):
+            raise RelaxDirError, ('Modelfree4', dir)
+
+        # Test if the file exists.
+        if not access(dir + "/mfout", F_OK):
+            raise RelaxFileError, ('Modelfree4', file)
+
+        # Open the file.
+        mfout_file = open(dir + "/mfout", 'r')
+        mfout = mfout_file.readlines()
+        mfout_file.close()
+
+        # Find out if simulations were carried out.
+        for i in xrange(len(mfout)):
+            if search('_iterations', mfout[i]):
+                row = split(mfout[i])
+                sims = int(row[1])
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res)):
+            # Get the S2 data.
+            data = self.get_mf_data('S2', mfout, self.relax.data.res[i].num)
+            if data != None:
+                s2, s2_err = data
+                self.relax.data.res[i].s2[run] = s2
+                #self.relax.data.res[i].s2_err[run] = s2_err
+
+            # Get the S2f data.
+            if 'S2f' in self.relax.data.res[i].params[self.run] or 'S2s' in self.relax.data.res[i].params[self.run]:
+                data = self.get_mf_data('S2f', mfout, self.relax.data.res[i].num)
+                if data != None:
+                    s2f, s2f_err = data
+                    self.relax.data.res[i].s2f[run] = s2f
+                    #self.relax.data.res[i].s2f_err[run] = s2f_err
+
+            # Get the S2s data.
+            if 'S2f' in self.relax.data.res[i].params[self.run] or 'S2s' in self.relax.data.res[i].params[self.run]:
+                data = self.get_mf_data('S2s', mfout, self.relax.data.res[i].num)
+                if data != None:
+                    s2s, s2s_err = data
+                    self.relax.data.res[i].s2s[run] = s2s
+                    #self.relax.data.res[i].s2s_err[run] = s2s_err
+
+            # Get the te and ts data.
+            if 'te' in self.relax.data.res[i].params[self.run] or 'ts' in self.relax.data.res[i].params[self.run]:
+                data = self.get_mf_data('te', mfout, self.relax.data.res[i].num)
+                if data != None:
+                    te, te_err = data
+                    self.relax.data.res[i].te[run] = te / 1e12
+                    #self.relax.data.res[i].te_err[run] = te_err / 1e12
+                    if 'ts' in self.relax.data.res[i].params[self.run]:
+                        self.relax.data.res[i].ts[run] = te / 1e12
+                        #self.relax.data.res[i].ts_err[run] = te_err / 1e12
+
+            # Get the Rex data.
+            if 'Rex' in self.relax.data.res[i].params[self.run]:
+                data = self.get_mf_data('Rex', mfout, self.relax.data.res[i].num)
+                if data != None:
+                    rex, rex_err = data
+                    self.relax.data.res[i].rex[run] = rex * (2.0 * pi * self.relax.data.res[i].frq[run][0])**2
+                    #self.relax.data.res[i].rex_err[run] = rex_err * (2.0 * pi * self.relax.data.res[i].frq[run][0])**2
+
+            # Get the chi-squared data.
+            self.relax.data.res[i].chi2[run] = self.get_chi2(sims, mfout, self.relax.data.res[i].num)
+
+
+    def get_chi2(self, sims, mfout, res):
+        """Extract the chi-squared data from the mfout file."""
+
+        # Move to the section starting with 'data_sse'.
+        for i in xrange(len(mfout)):
+            if match('data_sse', mfout[i]):
+                break
+
+        # Get the chi-squared value.
+        for j in xrange(i+3, len(mfout)):
+            row = split(mfout[j])
+            if `res` == row[0]:
+                return float(row[1])
+
+            # Catch the end.
+            if row[0] == 'data_correlation_matrix':
+                return
+
+
+    def get_mf_data(self, data_type, mfout, res):
+        """Extract the model-free data from the mfout file."""
+
+        # Move to the section starting with 'data_model_1'.
+        for i in xrange(len(mfout)):
+            if match('data_model_1', mfout[i]):
+                break
+
+        # Move to the subsection starting with data_type.
+        for j in xrange(i, len(mfout)):
+            row = split(mfout[j])
+            if len(row) == 0:
+                continue
+            elif match(data_type, row[0]):
+                break
+
+        # Find the residue specific information.
+        for k in xrange(j+1, len(mfout)):
+            row = split(mfout[k])
+            if `res` == row[0]:
+                return float(row[1]), float(row[4])
+
+            # Catch the end.
+            if row[0] == 'stop_':
+                return
+
+
     def open_file(self, file_name):
+        """Function for opening a file to write to."""
+
         file_name = self.dir + "/" + file_name
         if access(file_name, F_OK) and not self.force:
             raise RelaxFileOverwriteError, (file_name, 'force flag')
         return open(file_name, 'w')
-
-
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-########################### Delete everything below ################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-####################################################################################################
-class Palmer_old:
-    def __init__(self, relax):
-        """Class used to create and process input and output for the program Modelfree 4."""
-
-        self.relax = relax
-
-        print "Model-free analysis based on " + self.relax.usr_param.method + " model selection."
-        self.ask_stage()
-        title = "<<< Stage " + self.relax.data.stage + " - "
-        title = title + self.relax.usr_param.method + " model selection >>>\n\n\n"
-
-        if self.relax.debug:
-            self.relax.file_ops.init_log_file(title)
-
-        self.update_data()
-        self.extract_relax_data()
-
-        if self.relax.debug:
-            self.log_input_info()
-
-        if match('^AIC$', self.relax.usr_param.method) or match('^AICc$', self.relax.usr_param.method):
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-            self.model_selection = self.relax.modsel.asymptotic
-        elif match('^BIC$', self.relax.usr_param.method):
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-            self.model_selection = self.relax.modsel.asymptotic
-        elif match('^Bootstrap$', self.relax.usr_param.method):
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-            self.model_selection = self.relax.modsel.bootstrap
-        elif match('^CV$', self.relax.usr_param.method):
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-            self.model_selection = self.relax.modsel.cv
-        elif match('^Expect$', self.relax.usr_param.method):
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-            self.model_selection = self.relax.modsel.exp_overall_disc
-        elif match('^Farrow$', self.relax.usr_param.method):
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-            self.model_selection = self.relax.modsel.farrow
-        elif match('^Palmer$', self.relax.usr_param.method):
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
-            if self.relax.data.num_data_sets > 3:
-                self.relax.data.runs.append('f-m2m4')
-                self.relax.data.runs.append('f-m2m5')
-                self.relax.data.runs.append('f-m3m4')
-            self.model_selection = self.relax.modsel.palmer
-        elif match('^Overall$', self.relax.usr_param.method):
-            message = "See the file 'modsel/overall_disc.py' for details.\n"
-            self.relax.file_ops.read_file('op_data', message)
-            self.relax.data.overall_disc.op_data = self.relax.file_ops.open_file(file_name='op_data')
-            self.relax.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-            #self.relax.modsel.overall_disc(self.mf)
-        else:
-            raise NameError, "The model-free analysis method is not set correctly.  Check self.method in the file 'usr_param.py', quitting program."
-
-        self.relax.data.mfin.default_data()
-        self.goto_stage()
-
-
-    def ask_stage(self):
-        """User input of stage number."""
-
-        print "\n[ Select the stage for model-free analysis ]\n"
-        print "The stages are:"
-        print "   Stage 1 (1):  Creation of the files for the model-free calculations for models 1 to 5."
-        print "   Stage 2 (2):  Model selection and creation of a final run."
-        print "   Stage 3 (3):  Extraction of the data."
-
-        while 1:
-            input = raw_input('> ')
-            valid_stages = ['1', '2', '3']
-            if input in valid_stages:
-                self.relax.data.stage = input
-                break
-            else:
-                print "Invalid stage number.  Choose either 1, 2, or 3."
-        if match('2', self.relax.data.stage):
-            while 1:
-                print "Stage 2 has the following two options for the final run:"
-                print "   (a):   No optimization of the diffusion tensor."
-                print "   (b):   Optimization of the diffusion tensor."
-                input = raw_input('> ')
-                valid_stages = ['a', 'b']
-                if input in valid_stages:
-                    self.relax.data.stage = self.relax.data.stage + input
-                    break
-                else:
-                    print "Invalid option, choose either a or b."
-
-        print "The stage chosen is " + self.relax.data.stage + "\n"
-
-
-    def close_mf_files(self, dir):
-        """Close the mfin, mfdata, mfmodel, mfpar, and run files, and make the run file executable."""
-
-        self.relax.mfin.close()
-        self.relax.mfdata.close()
-        self.relax.mfmodel.close()
-        self.relax.mfpar.close()
-        self.relax.run.close()
-        chmod(dir + '/run', 0777)
-
-
-    def extract_mf_data(self):
-        """Extract the model-free results."""
-
-        for model in self.relax.data.runs:
-            mfout = self.relax.file_ops.read_file(model + '/mfout')
-            mfout_lines = mfout.readlines()
-            mfout.close()
-            print "Extracting model-free data from " + model + "/mfout."
-            num_res = len(self.relax.data.relax_data[0])
-            if match('^m', model):
-                self.relax.data.model = self.relax.star.extract(mfout_lines, num_res, self.relax.usr_param.chi2_lim, self.relax.usr_param.ftest_lim, ftest='n')
-            if match('^f', model):
-                self.relax.data.model = self.relax.star.extract(mfout_lines, num_res, self.relax.usr_param.chi2_lim, self.relax.usr_param.ftest_lim, ftest='y')
-
-
-    def final_run(self):
-        """Creation of the final run.  Files are placed in the directory 'final'."""
-
-        self.relax.file_ops.mkdir('final')
-        open_mf_files(dir='final')
-        self.create_mfin()
-
-        self.create_run(dir='final')
-        for res in xrange(len(self.relax.data.relax_data[0])):
-            if match('0', self.relax.data.results[res]['model']):
-                model = 'none'
-            elif match('2+3', self.relax.data.results[res]['model']):
-                model = 'none'
-            elif match('4+5', self.relax.data.results[res]['model']):
-                model = 'none'
-            elif match('^1', self.relax.data.results[res]['model']):
-                model = "m1"
-            else:
-                model = 'm' + self.relax.data.results[res]['model']
-            self.set_run_flags(model)
-            # Mfdata.
-            if match('none', model):
-                self.create_mfdata(res, flag='0')
-            else:
-                self.create_mfdata(res, flag='1')
-            # Mfmodel.
-            self.create_mfmodel(res, self.relax.usr_param.md1, type='M1')
-            # Mfpar.
-            self.create_mfpar(res)
-        self.close_mf_files(dir='final')
-
-
-    def goto_stage(self):
-        if match('1', self.relax.data.stage):
-            print "\n[ Stage 1 ]\n"
-            self.set_vars_stage_initial()
-            if match('^CV$', self.relax.usr_param.method):
-                self.stage_initial_cv()
-            else:
-                self.stage_initial()
-            print "\n[ End of stage 1 ]\n\n"
-
-        if match('^2', self.relax.data.stage):
-            print "\n[ Stage 2 ]\n"
-            self.set_vars_stage_selection()
-            self.stage_selection()
-            if match('2a', self.relax.data.stage):
-                self.final_run()
-            if match('2b', self.relax.data.stage):
-                if match('isotropic', self.relax.data.mfin.diff):
-                    self.relax.data.mfin.algorithm = 'brent'
-                    self.relax.data.mfin.diff_search = 'grid'
-                elif match('axial', self.relax.data.mfin.diff):
-                    self.relax.data.mfin.algorithm = 'powell'
-                self.final_run()
-            print "\n[ End of stage 2 ]\n\n"
-
-        if match('3', self.relax.data.stage):
-            print "\n[ Stage 3 ]\n"
-            self.stage_final()
-            print "\n[ End of stage 3 ]\n\n"
-
-
-    def open_mf_files(self, dir):
-        """Open the mfin, mfdata, mfmodel, mfpar, and run files for writing."""
-
-        self.relax.mfin = open(dir + '/mfin', 'w')
-        self.relax.mfdata = open(dir + '/mfdata', 'w')
-        self.relax.mfmodel = open(dir + '/mfmodel', 'w')
-        self.relax.mfpar = open(dir + '/mfpar', 'w')
-        self.relax.run = open(dir + '/run', 'w')
-
-
-    def set_run_flags(self, model):
-        """Reset, and then set the flags in self.relax.usr_param.md1 and md2."""
-
-        self.relax.usr_param.md1['sf2']['flag'] = '0'
-        self.relax.usr_param.md1['ss2']['flag'] = '0'
-        self.relax.usr_param.md1['te']['flag']  = '0'
-        self.relax.usr_param.md1['rex']['flag'] = '0'
-
-        self.relax.usr_param.md2['sf2']['flag'] = '0'
-        self.relax.usr_param.md2['ss2']['flag'] = '0'
-        self.relax.usr_param.md2['te']['flag']  = '0'
-        self.relax.usr_param.md2['rex']['flag'] = '0'
-
-        # Normal runs.
-        if model == "m1":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-        if model == "m2":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md1['te']['flag']  = '1'
-        if model == "m3":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md1['rex']['flag'] = '1'
-        if model == "m4":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md1['te']['flag']  = '1'
-            self.relax.usr_param.md1['rex']['flag'] = '1'
-        if model == "m5":
-            self.relax.usr_param.md1['sf2']['flag'] = '1'
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md1['te']['flag']  = '1'
-
-        # F-tests.
-        if model == "f-m1m2":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['te']['flag']  = '1'
-        if model == "f-m1m3":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['rex']['flag'] = '1'
-        if model == "f-m1m4":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['te']['flag']  = '1'
-            self.relax.usr_param.md2['rex']['flag'] = '1'
-        if model == "f-m1m5":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['sf2']['flag'] = '1'
-            self.relax.usr_param.md2['te']['flag']  = '1'
-        if model == "f-m2m4":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md1['te']['flag']  = '1'
-            self.relax.usr_param.md2['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['te']['flag']  = '1'
-            self.relax.usr_param.md2['rex']['flag'] = '1'
-        if model == "f-m2m5":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md1['te']['flag']  = '1'
-            self.relax.usr_param.md2['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['sf2']['flag'] = '1'
-            self.relax.usr_param.md2['te']['flag']  = '1'
-        if model == "f-m3m4":
-            self.relax.usr_param.md1['ss2']['flag'] = '1'
-            self.relax.usr_param.md1['rex']['flag'] = '1'
-            self.relax.usr_param.md2['ss2']['flag'] = '1'
-            self.relax.usr_param.md2['te']['flag']  = '1'
-            self.relax.usr_param.md2['rex']['flag'] = '1'
-
-
-    def stage_final(self):
-        raise NameError, "Stage 3 not implemented yet.\n"
-
-
-    def stage_initial(self):
-        """Initial stage function.
-
-        Creation of the files for the Modelfree calculations for the models in self.relax.data.runs
-        """
-
-        for model in self.relax.data.runs:
-            if match('^m', model):
-                print "Creating input files for model " + model
-                if self.relax.debug:
-                    self.relax.log.write("\n\n<<< Model " + model + " >>>\n\n")
-            elif match('^f', model):
-                print "Creating input files for the F-test " + model
-                if self.relax.debug:
-                    self.relax.log.write("\n\n<<< F-test " + model + " >>>\n\n")
-            else:
-                raise NameError, "The run '" + model + "'does not start with an m or f, quitting program!\n\n"
-            self.relax.file_ops.mkdir(dir=model)
-            self.open_mf_files(dir=model)
-            self.set_run_flags(model)
-
-            if self.relax.debug:
-                self.log_params('M1', self.relax.usr_param.md1)
-                self.log_params('M2', self.relax.usr_param.md2)
-
-            if match('^m', model):
-                self.relax.data.mfin.selection = 'none'
-                self.create_mfin()
-            elif match('^f', model):
-                self.relax.data.mfin.selection = 'ftest'
-                self.create_mfin()
-            self.create_run(dir=model)
-            for res in xrange(len(self.relax.data.relax_data[0])):
-                # Mfdata.
-                self.create_mfdata(res)
-                # Mfmodel.
-                self.create_mfmodel(res, self.relax.usr_param.md1, type='M1')
-                if match('^f', model):
-                    self.create_mfmodel(res, self.relax.usr_param.md2, type='M2')
-                # Mfpar.
-                self.create_mfpar(res)
-            self.close_mf_files(dir=model)
-
-
-    def stage_initial_cv(self):
-        """Initial stage function for cross validation.
-
-        Creation of the files for the Modelfree calculations for the models in self.relax.data.runs
-        """
-
-        for model in self.relax.data.runs:
-            print "Creating input files for model " + model
-
-            if self.relax.debug:
-                self.relax.log.write("\n\n<<< Model " + model + " >>>\n\n")
-
-            self.relax.file_ops.mkdir(dir=model)
-            self.set_run_flags(model)
-
-            if self.relax.debug:
-                self.log_params('M1', self.relax.usr_param.md1)
-                self.log_params('M2', self.relax.usr_param.md2)
-
-            for i in xrange(self.relax.data.num_ri):
-                cv_dir = model + "/" + model + "-" + self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i]
-                self.relax.file_ops.mkdir(dir=cv_dir)
-                open_mf_files(dir=cv_dir)
-                self.relax.data.mfin.selection = 'none'
-                self.create_mfin()
-                self.create_run(dir=model)
-                for res in xrange(len(self.relax.data.relax_data[0])):
-                    # Mfdata.
-                    self.create_mfdata(res, i)
-                    # Mfmodel.
-                    self.create_mfmodel(res, self.relax.usr_param.md1, type='M1')
-                    # Mfpar.
-                    self.create_mfpar(res)
-                self.close_mf_files(dir=cv_dir)
-
-
-    def set_vars_stage_initial(self):
-        """Set the options for the initial runs."""
-
-        self.relax.data.mfin.sims = 'n'
-
-
-    def set_vars_stage_selection(self):
-        """Set the options for the final run."""
-
-        self.relax.data.mfin.sims = 'y'
