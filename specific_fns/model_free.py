@@ -1396,22 +1396,22 @@ class Model_free:
                     i = i + 1
                     j = j + 1
 
-                # Oblate diffusion, 0 <= Dratio <= 1.
+                # Oblate diffusion, 1e-3 <= Dratio <= 1.
                 elif self.relax.data.diff[self.run].axial_type == 'oblate':
                     A.append(zero_array * 0.0)
                     A.append(zero_array * 0.0)
                     A[j][i] = 1.0
                     A[j+1][i] = -1.0
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(1e-3 / self.scaling_matrix[i, i])
                     b.append(-1.0 / self.scaling_matrix[i, i])
                     i = i + 1
                     j = j + 2
 
-                # Dratio >= 0.
+                # Dratio >= 1e-3.
                 else:
                     A.append(zero_array * 0.0)
                     A[j][i] = 1.0
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(1e-3 / self.scaling_matrix[i, i])
                     i = i + 1
                     j = j + 1
 

@@ -2,7 +2,7 @@
 
 # Set the run names (also the names of preset model-free models).
 #runs = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
-runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+runs = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Nuclei type
 nuclei('N')
@@ -37,7 +37,7 @@ for run in runs:
 
     # Minimise.
     grid_search(run, inc=5)
-    minimise('bfgs', run=run)
+    minimise('newton', run=run, max_iter=5000)
 
     # Print results.
     write(run=run, file='results', force=1)
