@@ -41,7 +41,7 @@ grid_search(name, inc=5)
 
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)
-minimise('bfgs', run=name)
+minimise('newton', run=name)
 
 # Finish.
 eliminate()

@@ -291,14 +291,14 @@ def calc_S2f_tf_S2s_ts_jw_comps(data, params):
 ###############################
 
 
-# Original {tm} and {tm, S2}.
-#############################
+# Original {} and {S2} with diffusion parameters.
+#################################################
 
-def calc_tm_djw_comps(data, params):
+def calc_diff_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the original model-free formula
-    with the single parameter {tm} or the parameters {tm, S2}.
+    with no parameters {} or the parameter {S2} together with diffusion tensor parameters.
 
     Replicated calculations are:
 
@@ -331,14 +331,14 @@ def calc_S2_te_djw_comps(data, params):
 
 
 
-# Original {tm, S2, te}.
-########################
+# Original {S2, te} with diffusion parameters.
+##############################################
 
-def calc_tm_S2_te_djw_comps(data, params):
+def calc_diff_S2_te_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the original model-free formula
-    with the parameters {tm, S2, te}.
+    with the parameters {S2, te} together with diffusion tensor parameters.
 
     Replicated calculations are:
 
@@ -387,14 +387,14 @@ def calc_S2f_S2_ts_djw_comps(data, params):
 
 
 
-# Extended {tm, S2f, S2, ts}.
-#############################
+# Extended {S2f, S2, ts} with diffusion parameters.
+###################################################
 
-def calc_tm_S2f_S2_ts_djw_comps(data, params):
+def calc_diff_S2f_S2_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
-    with the parameters {tm, S2f, S2, ts}.
+    with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
     Replicated calculations are:
 
@@ -452,14 +452,14 @@ def calc_S2f_tf_S2_ts_djw_comps(data, params):
 
 
 
-# Extended {tm, S2f, tf, S2, ts}.
-#################################
+# Extended {S2f, tf, S2, ts} with diffusion parameters.
+#######################################################
 
-def calc_tm_S2f_tf_S2_ts_djw_comps(data, params):
+def calc_diff_S2f_tf_S2_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
-    with the parameters {tm, S2f, tf, S2, ts}.
+    with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
     Replicated calculations are:
 
@@ -533,14 +533,14 @@ def calc_S2f_S2s_ts_djw_comps(data, params):
 
 
 
-# Extended 2 {tm, S2f, S2s, ts}.
-################################
+# Extended 2 {S2f, S2s, ts} with diffusion parameters.
+######################################################
 
-def calc_tm_S2f_S2s_ts_djw_comps(data, params):
+def calc_diff_S2f_S2s_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
-    with the parameters {tm, S2f, S2s, ts}.
+    with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
     Replicated calculations are:
 
@@ -597,14 +597,14 @@ def calc_S2f_tf_S2s_ts_djw_comps(data, params):
 
 
 
-# Extended 2 {tm, S2f, tf, S2s, ts}.
-####################################
+# Extended 2 {S2f, tf, S2s, ts} with diffusion parameters.
+##########################################################
 
-def calc_tm_S2f_tf_S2s_ts_djw_comps(data, params):
+def calc_diff_S2f_tf_S2s_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
-    with the parameters {tm, S2f, tf, S2, ts}.
+    with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
     Replicated calculations are:
 

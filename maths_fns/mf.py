@@ -527,16 +527,16 @@ class Mf:
             data.calc_djw_comps(data, params)
 
         # Calculate the spectral density gradients.
-        for i in xrange(data.num_params):
-            if data.calc_djw[i]:
-                data.djw[:, :, i] = data.calc_djw[i](data, params, i, self.diff_data.num_D_params)
+        for j in xrange(data.num_params):
+            if data.calc_djw[j]:
+                data.djw[:, :, j] = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
 
         # Calculate the relaxation gradient components.
         data.create_dri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe gradients.
-        for i in xrange(data.num_params):
-            data.create_dri_prime[i](data, i)
+        for j in xrange(data.num_params):
+            data.create_dri_prime[j](data, j)
 
         # Calculate the R1, R2, and NOE gradients.
         data.dri = data.dri_prime * 1.0
@@ -583,16 +583,16 @@ class Mf:
             data.calc_djw_comps(data, params)
 
         # Calculate the spectral density gradients.
-        for i in xrange(data.num_params):
-            if data.calc_djw[i]:
-                data.djw[:, :, i] = data.calc_djw[i](data, params, i, self.diff_data.num_D_params)
+        for j in xrange(data.num_params):
+            if data.calc_djw[j]:
+                data.djw[:, :, j] = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
 
         # Calculate the relaxation gradient components.
         data.create_dri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe gradients.
-        for i in xrange(data.num_params):
-            data.create_dri_prime[i](data, i)
+        for j in xrange(data.num_params):
+            data.create_dri_prime[i](data, j)
 
         # Calculate the R1, R2, and NOE gradients.
         data.dri = data.dri_prime * 1.0
@@ -653,16 +653,16 @@ class Mf:
                 data.calc_djw_comps(data, params)
 
             # Calculate the spectral density gradients.
-            for i in xrange(data.total_num_params):
-                if data.calc_djw[i]:
-                    data.djw[:, :, i] = data.calc_djw[i](data, params, i, self.diff_data.num_D_params)
+            for j in xrange(data.total_num_params):
+                if data.calc_djw[j]:
+                    data.djw[:, :, j] = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
 
             # Calculate the relaxation gradient components.
             data.create_dri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe gradients.
-            for i in xrange(data.total_num_params):
-                data.create_dri_prime[i](data, i)
+            for j in xrange(data.total_num_params):
+                data.create_dri_prime[j](data, j)
 
             # Calculate the R1, R2, and NOE gradients.
             data.dri = data.dri_prime * 1.0
@@ -733,16 +733,16 @@ class Mf:
                 data.calc_djw_comps(data, params)
 
             # Calculate the spectral density gradients.
-            for i in xrange(data.total_num_params):
-                if data.calc_djw[i]:
-                    data.djw[:, :, i] = data.calc_djw[i](data, params, i, self.diff_data.num_D_params)
+            for j in xrange(data.total_num_params):
+                if data.calc_djw[j]:
+                    data.djw[:, :, j] = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
 
             # Calculate the relaxation gradient components.
             data.create_dri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe gradients.
-            for i in xrange(data.total_num_params):
-                data.create_dri_prime[i](data, i)
+            for j in xrange(data.total_num_params):
+                data.create_dri_prime[i](data, j)
 
             # Calculate the R1, R2, and NOE gradients.
             data.dri = data.dri_prime * 1.0
@@ -786,19 +786,19 @@ class Mf:
             params = matrixmultiply(params, self.scaling_matrix)
 
         # Calculate the spectral density Hessians.
-        for i in xrange(data.num_params):
-            for j in xrange(i + 1):
-                if data.calc_d2jw[i][j]:
-                    data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, params, i, j, self.diff_data.num_D_params)
+        for j in xrange(data.num_params):
+            for k in xrange(j + 1):
+                if data.calc_d2jw[j][k]:
+                    data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
         # Calculate the relaxation Hessian components.
         data.create_d2ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe Hessians.
-        for i in xrange(data.num_params):
-            for j in xrange(i + 1):
-                if data.create_d2ri_prime[i][j]:
-                    data.create_d2ri_prime[i][j](data, i, j)
+        for j in xrange(data.num_params):
+            for k in xrange(j + 1):
+                if data.create_d2ri_prime[j][k]:
+                    data.create_d2ri_prime[j][k](data, j, k)
 
         # Calculate the R1, R2, and NOE Hessians.
         data.d2ri = data.d2ri_prime * 1.0
@@ -835,19 +835,19 @@ class Mf:
         self.diff_data.params = params[0:1]
 
         # Calculate the spectral density Hessians.
-        for i in xrange(data.num_params):
-            for j in xrange(i + 1):
-                if data.calc_d2jw[i][j]:
-                    data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, params, i, j, self.diff_data.num_D_params)
+        for j in xrange(data.num_params):
+            for k in xrange(j + 1):
+                if data.calc_d2jw[j][k]:
+                    data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
         # Calculate the relaxation Hessian components.
         data.create_d2ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe Hessians.
-        for i in xrange(data.num_params):
-            for j in xrange(i + 1):
-                if data.create_d2ri_prime[i][j]:
-                    data.create_d2ri_prime[i][j](data, i, j)
+        for j in xrange(data.num_params):
+            for k in xrange(j + 1):
+                if data.create_d2ri_prime[j][k]:
+                    data.create_d2ri_prime[j][k](data, j, k)
 
         # Calculate the R1, R2, and NOE Hessians.
         data.d2ri = data.d2ri_prime * 1.0
@@ -902,19 +902,19 @@ class Mf:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
             # Calculate the spectral density Hessians.
-            for i in xrange(data.total_num_params):
-                for j in xrange(i + 1):
-                    if data.calc_d2jw[i][j]:
-                        data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, params, i, j, self.diff_data.num_D_params)
+            for j in xrange(data.total_num_params):
+                for k in xrange(j + 1):
+                    if data.calc_d2jw[j][k]:
+                        data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
             # Calculate the relaxation Hessian components.
             data.create_d2ri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe Hessians.
-            for i in xrange(data.total_num_params):
-                for j in xrange(i + 1):
-                    if data.create_d2ri_prime[i][j]:
-                        data.create_d2ri_prime[i][j](data, i, j)
+            for j in xrange(data.total_num_params):
+                for k in xrange(j + 1):
+                    if data.create_d2ri_prime[j][k]:
+                        data.create_d2ri_prime[j][k](data, j, k)
 
             # Calculate the R1, R2, and NOE Hessians.
             data.d2ri = data.d2ri_prime * 1.0
@@ -983,19 +983,19 @@ class Mf:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
             # Calculate the spectral density Hessians.
-            for i in xrange(data.total_num_params):
-                for j in xrange(i + 1):
-                    if data.calc_d2jw[i][j]:
-                        data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, params, i, j, self.diff_data.num_D_params)
+            for j in xrange(data.total_num_params):
+                for k in xrange(j + 1):
+                    if data.calc_d2jw[j][k]:
+                        data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
 
             # Calculate the relaxation Hessian components.
             data.create_d2ri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe Hessians.
-            for i in xrange(data.total_num_params):
-                for j in xrange(i + 1):
-                    if data.create_d2ri_prime[i][j]:
-                        data.create_d2ri_prime[i][j](data, i, j)
+            for j in xrange(data.total_num_params):
+                for k in xrange(j + 1):
+                    if data.create_d2ri_prime[j][k]:
+                        data.create_d2ri_prime[j][k](data, j, k)
 
             # Calculate the R1, R2, and NOE Hessians.
             data.d2ri = data.d2ri_prime * 1.0
@@ -1094,6 +1094,11 @@ class Mf:
             diff_data.dpar_unit_vector_dtheta = zeros(3, Float64)
             diff_data.dpar_unit_vector_dphi = zeros(3, Float64)
 
+            # Unit vector Hessian.
+            diff_data.dpar_unit_vector_dtheta2 = zeros((3, 3), Float64)
+            diff_data.dpar_unit_vector_dthetadphi = zeros((3, 3), Float64)
+            diff_data.dpar_unit_vector_dphi2 = zeros((3, 3), Float64)
+
         # Anisotropic diffusion.
         elif diff_type == 'aniso':
             # Number of diffusion parameters.
@@ -1149,6 +1154,11 @@ class Mf:
             data.ddelta_dtheta = zeros(3, Float64)
             data.ddelta_dphi = zeros(3, Float64)
             data.ddelta_dpsi = zeros(2, Float64)
+
+            # Dot product Hessian.
+            #data.d2delta_dtheta2 = zeros((3, 3), Float64)
+            #data.d2delta_dphi2 = zeros((3, 3), Float64)
+            data.d2delta_dpsi2 = zeros((2, 2), Float64)
 
         # Anisotropic diffusion.
         elif self.diff_data.type == 'aniso':
@@ -1415,30 +1425,66 @@ class Mf:
                     data.calc_jw = calc_jw
 
                     # Gradient.
-                    data.calc_djw_comps = calc_tm_djw_comps
+                    data.calc_djw_comps = calc_diff_djw_comps
 
                     # Isotropic diffusion.
                     if self.diff_data.type == 'iso':
                         # Gradient.
-                        data.calc_djw[0] = calc_tm_djw_dDj
+                        data.calc_djw[0] = calc_diff_djw_dDj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_d2jw_dDjdDk
 
                     # Axially symmetric diffusion.
                     elif self.diff_data.type == 'axial':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_tm_djw_dDj
-                        data.calc_djw[2] = data.calc_djw[3] = calc_tm_djw_dPsij
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_djw_dDj
+                        data.calc_djw[2] = data.calc_djw[3] = calc_diff_djw_dPsij
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_tm_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] = calc_tm_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] = calc_tm_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] = calc_tm_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] = calc_tm_d2jw_dDjdDk
-                        data.calc_d2jw[3][3] = calc_tm_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[1][1] = calc_diff_d2jw_dDjdDk
+
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] = calc_diff_d2jw_dDjdPsij
+
+                        data.calc_d2jw[2][2] = calc_diff_d2jw_dPsijdPsik
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_d2jw_dPsijdPsik
+                        data.calc_d2jw[3][3] = calc_diff_d2jw_dPsijdPsik
+
+                    # Anisotropic diffusion.
+                    elif self.diff_data.type == 'aniso':
+                        # Gradient.
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_diff_djw_dDj
+                        data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_djw_dPsij
+
+                        # Hessian.
+                        data.calc_d2jw[0][0] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[1][1] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[2][2] = calc_diff_d2jw_dDjdDk
+
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] = calc_diff_d2jw_dDjdPsij
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] = calc_diff_d2jw_dDjdPsij
+
+                        data.calc_d2jw[3][3] = calc_diff_d2jw_dPsijdPsik
+                        data.calc_d2jw[3][4] = data.calc_d2jw[4][3] = calc_diff_d2jw_dPsijdPsik
+                        data.calc_d2jw[3][5] = data.calc_d2jw[5][3] = calc_diff_d2jw_dPsijdPsik
+                        data.calc_d2jw[4][4] = calc_diff_d2jw_dPsijdPsik
+                        data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_d2jw_dPsijdPsik
+                        data.calc_d2jw[5][5] = calc_diff_d2jw_dPsijdPsik
 
                 # Diffusion parameters and model-free parameters {S2}.
                 elif data.s2_index != None and data.te_index == None:
@@ -1447,27 +1493,81 @@ class Mf:
                     data.calc_jw = calc_S2_jw
 
                     # Gradient.
-                    data.calc_djw_comps = calc_tm_djw_comps
+                    data.calc_djw_comps = calc_diff_djw_comps
                     data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
 
                     # Isotropic diffusion.
                     if self.diff_data.type == 'iso':
                         # Gradient.
-                        data.calc_djw[0] = calc_tm_S2_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2_djw_dDj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_d2jw_dDjdS2
+                        data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_d2jw_dDjdS2
 
                     # Axially symmetric diffusion.
                     elif self.diff_data.type == 'axial':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_tm_S2_djw_dDj
-                        data.calc_djw[2] = data.calc_djw[3] = calc_tm_S2_djw_dPsij
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_djw_dDj
+                        data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2_djw_dPsij
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_d2jw_dDjdS2
+                        data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[1][1] = calc_diff_S2_d2jw_dDjdDk
+
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] = calc_diff_S2_d2jw_dDjdPsij
+
+                        data.calc_d2jw[2][2] = calc_diff_S2_d2jw_dPsijdPsik
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2_d2jw_dPsijdPsik
+                        data.calc_d2jw[3][3] = calc_diff_S2_d2jw_dPsijdPsik
+
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_d2jw_dDjdS2
+                        data.calc_d2jw[1][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][1] = calc_diff_S2_d2jw_dDjdS2
+                        data.calc_d2jw[2][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][2] = calc_diff_S2_d2jw_dPsijdS2
+                        data.calc_d2jw[3][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][3] = calc_diff_S2_d2jw_dPsijdS2
+
+                    # Anisotropic diffusion.
+                    elif self.diff_data.type == 'aniso':
+                        # Gradient.
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_diff_S2_djw_dDj
+                        data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2_djw_dPsij
+
+                        # Hessian.
+                        data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[1][1] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[2][2] = calc_diff_S2_d2jw_dDjdDk
+
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] = calc_diff_S2_d2jw_dDjdPsij
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] = calc_diff_S2_d2jw_dDjdPsij
+
+                        data.calc_d2jw[3][3] = calc_diff_S2_d2jw_dPsijdPsik
+                        data.calc_d2jw[3][4] = data.calc_d2jw[4][3] = calc_diff_S2_d2jw_dPsijdPsik
+                        data.calc_d2jw[3][5] = data.calc_d2jw[5][3] = calc_diff_S2_d2jw_dPsijdPsik
+                        data.calc_d2jw[4][4] = calc_diff_S2_d2jw_dPsijdPsik
+                        data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_S2_d2jw_dPsijdPsik
+                        data.calc_d2jw[5][5] = calc_diff_S2_d2jw_dPsijdPsik
+
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_d2jw_dDjdS2
+                        data.calc_d2jw[1][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][1] = calc_diff_S2_d2jw_dDjdS2
+                        data.calc_d2jw[2][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][2] = calc_diff_S2_d2jw_dDjdS2
+                        data.calc_d2jw[3][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][3] = calc_diff_S2_d2jw_dPsijdS2
+                        data.calc_d2jw[4][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][4] = calc_diff_S2_d2jw_dPsijdS2
+                        data.calc_d2jw[5][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][5] = calc_diff_S2_d2jw_dPsijdS2
+
 
                 # Diffusion parameters and model-free parameters {S2, te}.
                 elif data.s2_index != None and data.te_index != None:
@@ -1476,7 +1576,7 @@ class Mf:
                     data.calc_jw = calc_S2_te_jw
 
                     # Gradient.
-                    data.calc_djw_comps = calc_tm_S2_te_djw_comps
+                    data.calc_djw_comps = calc_diff_S2_te_djw_comps
                     data.calc_djw[data.s2_local_index] = calc_S2_te_djw_dS2
                     data.calc_djw[data.te_local_index] = calc_S2_te_djw_dte
 
@@ -1487,23 +1587,23 @@ class Mf:
                     # Isotropic diffusion.
                     if self.diff_data.type == 'iso':
                         # Gradient.
-                        data.calc_djw[0] = calc_tm_S2_te_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2_te_djw_dDj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_te_d2jw_dDjdS2
-                        data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_tm_S2_te_d2jw_dDjdte
+                        data.calc_d2jw[0][0] = calc_diff_S2_te_d2jw_dDjdDk
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_te_d2jw_dDjdS2
+                        data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_diff_S2_te_d2jw_dDjdte
 
                     # Axially symmetric diffusion.
                     elif self.diff_data.type == 'axial':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_tm_S2_te_djw_dDj
-                        data.calc_djw[2] = data.calc_djw[3] = calc_tm_S2_te_djw_dPsij
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_te_djw_dDj
+                        data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2_te_djw_dPsij
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_te_d2jw_dDjdS2
-                        data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_tm_S2_te_d2jw_dDjdte
+                        data.calc_d2jw[0][0] = calc_diff_S2_te_d2jw_dDjdDk
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_te_d2jw_dDjdS2
+                        data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_diff_S2_te_d2jw_dDjdte
 
                 # Bad parameter combination.
                 else:
@@ -1601,7 +1701,7 @@ class Mf:
                     data.calc_jw = calc_S2f_S2_ts_jw
 
                     # Gradient.
-                    data.calc_djw_comps = calc_tm_S2f_S2_ts_djw_comps
+                    data.calc_djw_comps = calc_diff_S2f_S2_ts_djw_comps
                     data.calc_djw[data.s2f_local_index] = calc_S2f_S2_ts_djw_dS2f
                     data.calc_djw[data.s2_local_index] = calc_S2f_S2_ts_djw_dS2
                     data.calc_djw[data.ts_local_index] = calc_S2f_S2_ts_djw_dts
@@ -1614,25 +1714,25 @@ class Mf:
                     # Isotropic diffusion.
                     if self.diff_data.type == 'iso':
                         # Gradient.
-                        data.calc_djw[0] = calc_tm_S2f_S2_ts_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2f_S2_ts_djw_dDj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2f
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2
-                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdts
+                        data.calc_d2jw[0][0] = calc_diff_S2f_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2
+                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdts
 
                     # Axially symmetric diffusion.
                     elif self.diff_data.type == 'axial':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_tm_S2f_S2_ts_djw_dDj
-                        data.calc_djw[2] = data.calc_djw[3] = calc_tm_S2f_S2_ts_djw_dPsij
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2_ts_djw_dDj
+                        data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_S2_ts_djw_dPsij
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2f
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2
-                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdts
+                        data.calc_d2jw[0][0] = calc_diff_S2f_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2
+                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdts
 
                 # Diffusion parameters and model-free parameters {S2f, tf, S2, ts}.
                 elif data.s2f_index != None and data.tf_index != None and data.s2_index != None and data.ts_index != None:
@@ -1641,7 +1741,7 @@ class Mf:
                     data.calc_jw = calc_S2f_tf_S2_ts_jw
 
                     # Gradient.
-                    data.calc_djw_comps = calc_tm_S2f_tf_S2_ts_djw_comps
+                    data.calc_djw_comps = calc_diff_S2f_tf_S2_ts_djw_comps
                     data.calc_djw[data.s2f_local_index] = calc_S2f_tf_S2_ts_djw_dS2f
                     data.calc_djw[data.tf_local_index] = calc_S2f_tf_S2_ts_djw_dtf
                     data.calc_djw[data.s2_local_index] = calc_S2f_S2_ts_djw_dS2
@@ -1657,27 +1757,27 @@ class Mf:
                     # Isotropic diffusion.
                     if self.diff_data.type == 'iso':
                         # Gradient.
-                        data.calc_djw[0] = calc_tm_S2f_tf_S2_ts_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2f_tf_S2_ts_djw_dDj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2f
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2
-                        data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_tm_S2f_tf_S2_ts_d2jw_dDjdtf
-                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdts
+                        data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2
+                        data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdtf
+                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdts
 
                     # Axially symmetric diffusion.
                     elif self.diff_data.type == 'axial':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_tm_S2f_tf_S2_ts_djw_dDj
-                        data.calc_djw[2] = data.calc_djw[3] = calc_tm_S2f_tf_S2_ts_djw_dPsij
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2_ts_djw_dDj
+                        data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_tf_S2_ts_djw_dPsij
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_tm_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2f
-                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2
-                        data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_tm_S2f_tf_S2_ts_d2jw_dDjdtf
-                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdts
+                        data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
+                        data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2
+                        data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdtf
+                        data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdts
 
                 # Bad parameter combination.
                 else:
@@ -1761,50 +1861,50 @@ class Mf:
             # Diffusion parameters and model-free parameters {S2f, S2s, ts}.
             elif data.s2f_index != None and data.tf_index == None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
-                data.calc_jw_comps = calc_tm_S2f_S2s_ts_jw_comps
+                data.calc_jw_comps = calc_diff_S2f_S2s_ts_jw_comps
                 data.calc_jw = calc_S2f_S2s_ts_jw
 
                 # Gradient.
-                data.calc_djw_comps = calc_tm_S2f_S2s_ts_djw_comps
-                data.calc_djw[0] = calc_tm_S2f_S2s_ts_djw_dDj
-                data.calc_djw[data.s2f_local_index] = calc_tm_S2f_S2s_ts_djw_dS2f
-                data.calc_djw[data.s2s_local_index] = calc_tm_S2f_S2s_ts_djw_dS2s
-                data.calc_djw[data.ts_local_index] = calc_tm_S2f_S2s_ts_djw_dts
+                data.calc_djw_comps = calc_diff_S2f_S2s_ts_djw_comps
+                data.calc_djw[0] = calc_diff_S2f_S2s_ts_djw_dDj
+                data.calc_djw[data.s2f_local_index] = calc_diff_S2f_S2s_ts_djw_dS2f
+                data.calc_djw[data.s2s_local_index] = calc_diff_S2f_S2s_ts_djw_dS2s
+                data.calc_djw[data.ts_local_index] = calc_diff_S2f_S2s_ts_djw_dts
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdDk
-                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdS2f
-                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdS2s
-                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdts
-                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_tm_S2f_S2s_ts_d2jw_dS2fdts
-                data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_tm_S2f_S2s_ts_d2jw_dS2sdts
-                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_tm_S2f_S2s_ts_d2jw_dts2
+                data.calc_d2jw[0][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
+                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2s
+                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdts
+                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_diff_S2f_S2s_ts_d2jw_dS2fdts
+                data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_diff_S2f_S2s_ts_d2jw_dS2sdts
+                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_diff_S2f_S2s_ts_d2jw_dts2
 
             # Diffusion parameters and model-free parameters {S2f, tf, S2s, ts}.
             elif data.s2f_index != None and data.tf_index != None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
-                data.calc_jw_comps = calc_tm_S2f_tf_S2s_ts_jw_comps
+                data.calc_jw_comps = calc_diff_S2f_tf_S2s_ts_jw_comps
                 data.calc_jw = calc_S2f_tf_S2s_ts_jw
 
                 # Gradient.
-                data.calc_djw_comps = calc_tm_S2f_tf_S2s_ts_djw_comps
-                data.calc_djw[0] = calc_tm_S2f_tf_S2s_ts_djw_dDj
-                data.calc_djw[data.s2f_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dS2f
-                data.calc_djw[data.tf_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dtf
-                data.calc_djw[data.s2s_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dS2s
-                data.calc_djw[data.ts_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dts
+                data.calc_djw_comps = calc_diff_S2f_tf_S2s_ts_djw_comps
+                data.calc_djw[0] = calc_diff_S2f_tf_S2s_ts_djw_dDj
+                data.calc_djw[data.s2f_local_index] = calc_diff_S2f_tf_S2s_ts_djw_dS2f
+                data.calc_djw[data.tf_local_index] = calc_diff_S2f_tf_S2s_ts_djw_dtf
+                data.calc_djw[data.s2s_local_index] = calc_diff_S2f_tf_S2s_ts_djw_dS2s
+                data.calc_djw[data.ts_local_index] = calc_diff_S2f_tf_S2s_ts_djw_dts
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdDk
-                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdS2f
-                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdS2s
-                data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdtf
-                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdts
-                data.calc_d2jw[data.s2f_local_index][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][data.s2f_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2fdtf
-                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2fdts
-                data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2sdts
-                data.calc_d2jw[data.tf_local_index][data.tf_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dtf2
-                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dts2
+                data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
+                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2s
+                data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdtf
+                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdts
+                data.calc_d2jw[data.s2f_local_index][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][data.s2f_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dS2fdts
+                data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dS2sdts
+                data.calc_d2jw[data.tf_local_index][data.tf_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dtf2
+                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dts2
 
             # Bad parameter combination.
             else:

@@ -129,6 +129,6 @@ def calc_axial_d2geom(data, diff_data):
     diff_data.dpar_unit_vector_dphi2[2] = 0.0
 
     # The dot product.
-    data.d2delta_dpsi2[2, 2] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta2)
-    data.d2delta_dpsi2[2, 3] = data.d2delta_dpsi2[3, 2] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dthetadphi)
-    data.d2delta_dpsi2[3, 3] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi2)
+    data.d2delta_dpsi2[0, 0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta2)
+    data.d2delta_dpsi2[0, 1] = data.d2delta_dpsi2[3, 2] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dthetadphi)
+    data.d2delta_dpsi2[1, 1] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi2)
