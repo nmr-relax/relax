@@ -46,11 +46,11 @@ class Delete:
 
         The data_type argument specifies what type of data is to be deleted and must be one of the
         following strings:
-            seq:  sequence data.
-            diff:  Diffusion tensor
-            relax_data:  relaxation data data.
-            mf:  model-free data.
-            all:  all data associated with the run.
+            seq:  Sequence data.
+            diff:  Diffusion tensor.
+            relax_data:  Relaxation data.
+            mf:  Model-free data.
+            all:  All data associated with the run.
 
         """
 

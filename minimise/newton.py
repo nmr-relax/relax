@@ -22,7 +22,7 @@
 
 
 from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_linear_equations
-from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, transpose
+from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, trace, transpose
 from re import match
 
 from base_classes import Line_search, Min
@@ -162,54 +162,53 @@ class Newton(Line_search, Min):
         Returns the modified Newton step.
         """
 
-        # Calculate the Frobenius norm of the Hessian and the minimum diagonal value.
-        norm = 0.0
+        # Find the minimum diagonal value of the Hessian.
         min_aii = 1e99
         for i in range(self.n):
             min_aii = min(self.d2fk[i, i], min_aii)
-            for j in range(self.n):
-                norm = norm + self.d2fk[i, j]**2
-        norm = sqrt(norm)
+
+        # Calculate the Frobenius norm of the Hessian.
+        norm = sqrt(trace(dot(self.d2fk, self.d2fk)))
         half_norm = norm / 2.0
 
+        # Choose the initial tk value.
         if min_aii > 0.0:
             tk = 0.0
         else:
             tk = half_norm
 
+        # Debugging.
         if self.print_flag >= 3:
             print self.print_prefix + "Frobenius norm: " + `norm`
             print self.print_prefix + "min aii: " + `min_aii`
             print self.print_prefix + "tk: " + `tk`
 
-        k = 0
+        # Loop until the matrix is positive definite.
         while 1:
             if self.print_flag >= 3:
-                print self.print_prefix + "Iteration " + `k`
+                print self.print_prefix + "Iteration"
 
             # Calculate the matrix A + tk.I
             matrix = self.d2fk + tk * self.I
 
             try:
-                self.L = cholesky_decomposition(matrix)
+                L = cholesky_decomposition(matrix)
                 if self.print_flag >= 3:
                     print self.print_prefix + "\tCholesky matrix L:"
                     for i in range(self.n):
-                        print self.print_prefix + "\t\t" + `self.L[i]`
+                        print self.print_prefix + "\t\t" + `L[i]`
                 break
             except "LinearAlgebraError":
                 if self.print_flag >= 3:
                     print self.print_prefix + "\tLinearAlgebraError, matrix is not positive definite."
                 tk = max(2.0*tk, half_norm)
 
-            k = k + 1
-
         # Calculate the Newton direction.
-        y = solve_linear_equations(self.L, self.dfk)
+        y = solve_linear_equations(L, self.dfk)
         if return_matrix:
-            return -solve_linear_equations(transpose(self.L), y), matrix
+            return -solve_linear_equations(transpose(L), y), matrix
         else:
-            return -solve_linear_equations(transpose(self.L), y)
+            return -solve_linear_equations(transpose(L), y)
 
 
     def eigenvalue(self, return_matrix=0):
@@ -221,19 +220,26 @@ class Newton(Line_search, Min):
         Returns the modified Newton step.
         """
 
-        if self.print_flag >= 3:
-            print self.print_prefix + "d2fk: " + `self.d2fk`
-
+        # Calculate the eigenvalues.
         eigen = eigenvectors(self.d2fk)
         eigenvals = sort(eigen[0])
-        tau = max(0.0, self.delta - eigenvals[0])
-        matrix = self.d2fk + tau * self.I
+
+        # Modify the Hessian if the smallest eigenvalue is negative.
+        if eigenvals[0] < 0.0:
+            tau = max(0.0, 1e-2 - eigenvals[0])
+            matrix = self.d2fk + tau * self.I
+        else:
+            matrix = self.d2fk
 
         # Debugging.
         if self.print_flag >= 3:
-            print self.print_prefix + "Eigenvalues: " + `eigenvals`
+            eigen_new = eigenvectors(matrix)
+            eigenvals_new = sort(eigen_new[0])
+            print self.print_prefix + "d2fk:\n" + `self.d2fk`
+            print self.print_prefix + "eigenvals(d2fk): " + `eigenvals`
             print self.print_prefix + "tau: " + `tau`
-            print self.print_prefix + "d2fk: " + `matrix`
+            print self.print_prefix + "matrix:\n" + `matrix`
+            print self.print_prefix + "eigenvals(matrix): " + `eigenvals_new`
 
         # Calculate the Newton direction.
         if return_matrix:
@@ -269,17 +275,16 @@ class Newton(Line_search, Min):
             beta = sqrt(max(gamma, xi / sqrt(self.n**2 - 1.0), self.mach_acc))
 
         # Initialise data structures.
-        a = self.d2fk
+        a = 1.0 * self.d2fk
         r = 0.0 * self.d2fk
         e = 0.0 * self.xk
         P = 1.0 * self.I
 
+        # Debugging.
         if self.print_flag >= 3:
             old_eigen = eigenvectors(self.d2fk)
             print self.print_prefix + "dfk: " + `self.dfk`
-            print self.print_prefix + "d2fk:"
-            for i in range(len(self.d2fk)):
-                print self.print_prefix + "\t" + `self.d2fk[i]`
+            print self.print_prefix + "d2fk:\n" + `self.d2fk`
 
         # Main loop.
         for j in range(self.n):
@@ -300,6 +305,7 @@ class Newton(Line_search, Min):
                 # Permute a and r.
                 a = dot(p, dot(a, p))
                 r = dot(p, dot(r, p))
+                e = dot(p, e)
 
             # Calculate ljj.
             theta_j = 0.0
@@ -321,25 +327,15 @@ class Newton(Line_search, Min):
         # The Cholesky factor.
         self.L = dot(P, transpose(r))
 
+        # Debugging.
         if self.print_flag >= 3:
-            print self.print_prefix + "e: " + `dot(P, dot(e, transpose(P)))`
-            print self.print_prefix + "P:"
-            for i in range(len(P)):
-                print self.print_prefix + "\t" + `P[i]`
+            print self.print_prefix + "e: " + `dot(P, e)`
+            print self.print_prefix + "P:\n" + `P`
             temp = dot(self.L,transpose(self.L))
-            print self.print_prefix + "d2fk reconstruted:"
-            for i in range(len(temp)):
-                print self.print_prefix + "\t" + `temp[i]`
+            print self.print_prefix + "d2fk reconstruted:\n" + `temp`
             eigen = eigenvectors(temp)
             print self.print_prefix + "Old eigenvalues: " + `old_eigen[0]`
             print self.print_prefix + "New eigenvalues: " + `eigen[0]`
-            sorted = sort(old_eigen[0])
-            if sorted[0] > 0.0:
-                for i in range(len(e)):
-                    if e[i] != 0.0:
-                        print self.print_prefix + "\n### Fail ###\n"
-                        import sys
-                        sys.exit()
 
         # Calculate the Newton direction.
         y = solve_linear_equations(self.L, self.dfk)
@@ -547,9 +543,7 @@ class Newton(Line_search, Min):
             print self.print_prefix + "fk:    " + `self.fk`
             print self.print_prefix + "fk+1:  " + `self.fk_new`
             eigen = eigenvectors(self.d2fk)
-            print self.print_prefix + "B:"
-            for i in range(self.n):
-                print self.print_prefix + `self.d2fk[i]`
+            print self.print_prefix + "d2fk:\n" + `self.d2fk`
             print self.print_prefix + "Eigenvalues: " + `eigen[0]`
 
 
@@ -564,7 +558,6 @@ class Newton(Line_search, Min):
             if self.print_flag:
                 print self.print_prefix + "Hessian modification:  Eigenvalue modification."
             self.get_pk = self.eigenvalue
-            self.delta = sqrt(self.mach_acc)
         elif match('^[Cc]hol', self.hessian_mod):
             if self.print_flag:
                 print self.print_prefix + "Hessian modification:  Cholesky with added multiple of the identity."

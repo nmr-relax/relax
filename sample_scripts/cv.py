@@ -73,18 +73,6 @@ for i in range(len(ri_labels)):
         # Reload the model-free results.
         read.read_data(run=cv_runs[i][j], data_type='mf')
 
-        from math import pi
-        if runs[j] == 'm1':
-            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0]
-        elif runs[j] == 'm2':
-            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, 1e-12]
-        elif runs[j] == 'm3':
-            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, (2.0 * pi * 600000000.0)**2]
-        elif runs[j] == 'm4':
-            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, 1e-12, (2.0 * pi * 600000000.0)**2]
-        elif runs[j] == 'm5':
-            self.relax.data.res[0].scaling[cv_runs[i][j]] = [1.0, 1.0, 1e-12]
-
         # Calculate the chi-squared value for the validation set.
         calc(cv_runs[i][j])
 
