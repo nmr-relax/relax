@@ -165,5 +165,7 @@ class Simplex(Min):
 		simplex vertecies is insignificant.
 		"""
 
+		if self.print_flag == 2:
+			print "diff = " + `self.simplex_vals[-1] - self.simplex_vals[0]`
 		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
 			return 1

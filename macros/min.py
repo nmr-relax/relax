@@ -379,9 +379,6 @@ class min:
 
 				# Initialise the functions used in the minimisation.
 				self.mf = mf(self.relax, equation=self.relax.data.equations[self.model], param_types=self.relax.data.param_types[self.model], init_params=self.relax.data.params[self.model][self.res], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
-				self.func = self.mf.func
-				self.dfunc = self.mf.dfunc
-				self.d2func = self.mf.d2func
 				if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
 					if len(self.min_options) > 0:
 						print "No minimisation options should be given for the Levenberg-Marquardt algorithm."
@@ -389,7 +386,7 @@ class min:
 					self.min_options = (self.mf.lm_dri, errors)
 
 			# Minimisation.
-			results = self.relax.minimise(func=self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.print_flag)
+			results = self.relax.minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.print_flag)
 			if results == None:
 				return
 			self.params, self.func, iter, fc, gc, hc, self.warning = results

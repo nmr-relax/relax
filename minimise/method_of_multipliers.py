@@ -1,9 +1,9 @@
-from Numeric import Float64, ones, zeros
+from Numeric import Float64, dot, ones, zeros
 from re import match
 
-from generic import minimise
 #from bound_constraint import bound_constraint
 from constraint_linear import constraint_linear
+from generic import minimise
 
 
 def method_of_multipliers(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
@@ -105,7 +105,7 @@ class Method_of_multipliers:
 			self.b = b
 
 			# Remove this test code!!!!
-			mod = 4
+			mod = 5
 			# Model 4.
 			if mod == 4:
 				self.A = zeros((4, 3), Float64)
@@ -173,15 +173,15 @@ class Method_of_multipliers:
 
 		# Initial Lagrange multipliers.
 		if lambda0 == None:
-			self.lambda_k = zeros(self.m, Float64)
+			self.lambda_k = self.lambda_k = zeros(self.m, Float64)
 		else:
-			self.lambda_k = lambda0
+			self.lambda_k = self.lambda_k = lambda0
 
 		# Arguments.
+		self.args = args
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
-		self.args = args
 		self.xk = x0
 		self.mu = mu0
 		self.tau = tau0
@@ -209,6 +209,7 @@ class Method_of_multipliers:
 		self.dL = zeros(len(self.xk), Float64)
 		self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
 		self.L = apply(self.func_LA, (self.xk,)+self.args)
+		self.dL = apply(self.func_dLA, (self.xk,)+self.args)
 
 
 	def func_LA(self, *args):
@@ -234,21 +235,21 @@ class Method_of_multipliers:
 			#	raise NameError, "this should not occur ever!"
 
 			if self.ck[i] - self.mu*self.lambda_k[i] <= 0.0:
-				if self.print_flag == 3:
+				if self.print_flag == 2:
 					print "i: " + `i`
 					print "self.ck[i] - self.mu*self.lambda_k[i] <= 0"
 					print "comp: " + `-  0.5 * self.mu * self.lambda_k[i]**2`
 				L = L  -  0.5 * self.mu * self.lambda_k[i]**2
 				self.test_str[i] = 1
 			else:
-				if self.print_flag == 3:
+				if self.print_flag == 2:
 					print "i: " + `i`
 					print "self.ck[i] - self.mu*self.lambda_k[i] > 0"
 					print "comp: " + `-  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu`
 				L = L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
 				self.test_str[i] = 0
 
-		if self.print_flag == 3:
+		if self.print_flag == 2:
 			print "mu: " + `self.mu`
 			print "xk: " + `self.xk`
 			print "fk: " + `self.fk`
@@ -265,14 +266,14 @@ class Method_of_multipliers:
 
 		"""
 
-		dL = apply(self.dfunc, (args[0],)+args[1:])
+		self.dfk = self.dL = apply(self.dfunc, (args[0],)+args[1:])
 		self.dck = apply(self.dc, (args[0],))
 
 		for i in range(self.m):
 			if self.test_str[i]:
-				dL = dL - (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
+				self.dL = self.dL - dot((self.lambda_k[i] - self.ck[i] / self.mu), self.dck[i])
 
-		return dL
+		return self.dL
 
 
 	def func_d2LA(self, *args):
@@ -329,14 +330,18 @@ class Method_of_multipliers:
 				print "\n<Method of multipliers main loop.>"
 				print "Step: " + `self.k`
 				print "Parameter values: " + `self.xk`
-				print "Current function value: " + `self.L`
-				print "Current function value: " + `self.fk`
+				print "aug Lagr value: " + `self.L`
+				print "function value: " + `self.fk`
+				print "aug grad value: " + `self.dL`
+				print "gradient value: " + `self.dfk`
+				print "ck: " + `self.ck`
 				print "Mu: " + `self.mu`
 				print "Lagrange multipliers: " + `self.lambda_k`
+				print "Test structure: " + `self.test_str`
 				print "Entering subalgorithm.\n"
 
 			# Unconstrained minimisation sub-loop.
-			results = minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.maxiter, full_output=1, print_flag=self.print_flag)
+			results = minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.maxiter, full_output=1, print_flag=1)
 			self.xk_new, self.L_new, j, f, g, h, self.warning = results
 			self.j = self.j + j
 			self.f_count = self.f_count + f
@@ -393,10 +398,14 @@ class Method_of_multipliers:
 			print "\n<Method of multipliers end.>"
 			print "Step: " + `self.k`
 			print "Parameter values: " + `self.xk_new`
-			print "Current function value: " + `self.L`
-			print "Current function value: " + `self.fk`
+			print "aug Lagr value: " + `self.L`
+			print "function value: " + `self.fk`
+			print "aug grad value: " + `self.dL`
+			print "gradient value: " + `self.dfk`
+			print "ck: " + `self.ck`
 			print "Mu: " + `self.mu`
 			print "Lagrange multipliers: " + `self.lambda_k`
+			print "Test structure: " + `self.test_str`
 
 		if self.full_output:
 			try:
