@@ -47,7 +47,6 @@ grid_search(name, inc=5)
 #value.set(name)
 
 # Minimise.
-#minimise('newton', run=name, constraints=1, max_iter=500)
 minimise('newton', run=name)
 
 # Monte Carlo simulations.
@@ -56,7 +55,6 @@ monte_carlo.create_data(name)
 monte_carlo.initial_values(name)
 minimise('newton', run=name)
 monte_carlo.error_analysis(name)
-#print self.relax.data.res[name][0]
 
 # Finish.
 write(run=name, file='results', force=1)

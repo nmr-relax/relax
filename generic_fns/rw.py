@@ -31,26 +31,49 @@ class RW:
         self.relax = relax
 
 
-    def read_results(self, run=None, data_type=None, file='results', dir=None):
+    def read_results(self, run=None, data_type=None, file='results', directory=None, format='columnar'):
         """Function for reading the data out of a file."""
-
-        # Test if the sequence data has been read.
-        if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError, run
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
         # Equation type specific function setup.
-        self.read_function = self.relax.specific_setup.setup('read', data_type)
+        if format == 'xml':
+            try:
+                self.read_function = self.relax.specific_setup.setup('read_xml_results', data_type)
+            except:
+                raise RelaxError, "The XML format is not currently supported for the run " + `run` + "."
+        elif format == 'columnar':
+            try:
+                self.read_function = self.relax.specific_setup.setup('read_columnar_results', function_type)
+            except:
+                raise RelaxError, "The columnar format is not currently supported for the run " + `run` + "."
+        else:
+            raise RelaxError, "Unknown format."
 
         # The results file.
-        if dir == None:
-            dir = run
-        file_name = dir + '/' + file
+        if directory == None:
+            directory = run
+        file_name = directory + '/' + file
         if not access(file_name, F_OK):
             raise RelaxFileError, ('relaxation data', file_name)
+
+        # Make sure that there are no data structures corresponding to the run.
+        for data_name in dir(self.relax.data):
+            # Get the object.
+            data = getattr(self.relax.data, data_name)
+
+            # Skip the data if it is not a dictionary (or equivalent).
+            if not hasattr(data, 'has_key'):
+                continue
+
+            # Skip the data if it doesn't contain the key 'old_run'.
+            if data.has_key(run):
+                raise RelaxError, "Data corresponding to the run " + `run` + " exists."
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
@@ -66,7 +89,7 @@ class RW:
         self.read_function(file_data, run)
 
 
-    def write_results(self, run=None, file="results", dir=None, force=0, format='columnar'):
+    def write_results(self, run=None, file="results", directory=None, force=0, format='columnar'):
         """Create the directories and files for output.
 
         The directory with the name of the run will be created.  The results will be placed in the
@@ -78,10 +101,10 @@ class RW:
             raise RelaxNoRunError, run
 
         # Open the file for writing.
-        if dir == None:
+        if directory == None:
             results_file = self.relax.file_ops.open_write_file(file, run, force)
         else:
-            results_file = self.relax.file_ops.open_write_file(file, dir, force)
+            results_file = self.relax.file_ops.open_write_file(file, directory, force)
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
@@ -97,6 +120,8 @@ class RW:
                 self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type)
             except:
                 raise RelaxError, "The columnar format is not currently supported for the run " + `run` + "."
+        else:
+            raise RelaxError, "Unknown format."
 
         # Write the results.
         self.write_function(results_file, run)

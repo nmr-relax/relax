@@ -129,9 +129,13 @@ class Specific_setup:
         if self.function_type == 'param_values':
             return self.relax.specific.model_free.get_param_values
 
-        # Read results file function.
-        if self.function_type == 'read':
-            return self.relax.specific.model_free.read_results
+        # Read results file function (Columnar format).
+        if self.function_type == 'read_columnar_results':
+            return self.relax.specific.model_free.read_columnar_results
+
+        # Read results file function (XML format).
+        if self.function_type == 'read_xml_results':
+            return self.relax.specific.model_free.read_xml_results
 
         # Data returning function.
         if self.function_type == 'return_data':
@@ -169,13 +173,13 @@ class Specific_setup:
         if self.function_type == 'unselect':
             return self.relax.specific.model_free.unselect
 
-        # Write results function (XML format).
-        if self.function_type == 'write_xml_results':
-            return self.relax.specific.model_free.write_xml_results
-
         # Write results function (Columnar format).
         if self.function_type == 'write_columnar_results':
             return self.relax.specific.model_free.write_columnar_results
+
+        # Write results function (XML format).
+        if self.function_type == 'write_xml_results':
+            return self.relax.specific.model_free.write_xml_results
 
 
     def relax_funcs(self):

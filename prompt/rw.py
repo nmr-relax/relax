@@ -22,31 +22,21 @@
 
 import sys
 
-import help
 
-
-class Read:
+class RW:
     def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for loading data."""
+        """Class for writing data to a file."""
 
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
+        self.relax = relax
 
 
-    def results(self, run=None, data_type=None, file='results', dir=None):
+    def read(self, run=None, file='results', dir=None, format='columnar'):
         """Function for reading results from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The name of the run.
-
-        data_type:  The type of data.
 
         file:  The name of the file to read results from.
 
@@ -58,30 +48,22 @@ class Read:
 
         The name of the run can be any string.
 
-        The data_type argument specifies what type of data is to be read and must be one of the
-        following:
-            'mf' - model-free data.
-
         If no directory name is given, the results file will be searched for in a directory named
         after the run name.
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.relax.interpreter.intro:
             text = sys.ps3 + "read.results("
             text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
             text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
+            text = text + ", dir=" + `dir`
+            text = text + ", format=" + `format` + ")"
             print text
 
         # The run argument.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
-
-        # The data_type argument.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data_type', data_type)
 
         # File.
         if type(file) != str:
@@ -91,5 +73,65 @@ class Read:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
+        # Format.
+        if type(format) != str:
+            raise RelaxStrError, ('format', format)
+
         # Execute the functional code.
-        self.__relax__.generic.rw.read_results(run=run, data_type=data_type, file=file, dir=dir)
+        self.relax.generic.rw.read_results(run=run, file=file, directory=dir, format=format)
+
+
+    def write(self, run=None, file="results", dir=None, force=0, format='columnar'):
+        """Function for writing results to a file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        file:  The name of the file to output results to.  The default is 'results'.
+
+        dir:  The directory name.
+
+        force:  A flag which, if set to 1, will cause the results file to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If no directory name is given, the results file will be placed in a directory named after
+        the run name.
+        """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "write("
+            text = text + "run=" + `run`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
+            text = text + ", format=" + `format` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # File.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The force flag.
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
+
+        # Format.
+        if type(format) != str:
+            raise RelaxStrError, ('format', format)
+
+        # Execute the functional code.
+        self.relax.generic.rw.write_results(run=run, file=file, directory=dir, force=force, format=format)

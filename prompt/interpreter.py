@@ -53,7 +53,7 @@ from model_selection import Modsel
 from nuclei import Nuclei
 from pdb import PDB
 from vectors import Vectors
-from write import Write
+from rw import RW
 
 # User classes.
 from diffusion_tensor import Diffusion_tensor
@@ -64,7 +64,6 @@ from molmol import Molmol
 from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
-from read import Read
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from select import Select
@@ -111,7 +110,7 @@ class Interpreter:
         self._PDB = PDB(relax)
         self._system = system
         self._Vectors = Vectors(relax)
-        self._Write = Write(relax)
+        self._RW = RW(relax)
 
         # Place the user classes into the interpreter class namespace.
         self._Diffusion_tensor = Diffusion_tensor(relax)
@@ -122,7 +121,6 @@ class Interpreter:
         self._Monte_carlo = Monte_carlo(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
-        self._Read = Read(relax)
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Select = Select(relax)
@@ -170,8 +168,9 @@ class Interpreter:
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei
         pdb = self._PDB.pdb
+        read = self._RW.read
         vectors = self._Vectors.vectors
-        write = self._Write.write
+        write = self._RW.write
 
         # Place the user classes in the local namespace.
         diffusion_tensor = self._Diffusion_tensor
@@ -182,7 +181,6 @@ class Interpreter:
         monte_carlo = self._Monte_carlo
         noe = self._Noe
         palmer = self._Palmer
-        read = self._Read
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
         select = self._Select

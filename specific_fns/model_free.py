@@ -385,24 +385,6 @@ class Model_free:
                     i = i + 1
 
 
-    def create_mc_data(self, run, i):
-        """Function for creating the Monte Carlo Ri data."""
-
-        # Initialise the data data structure.
-        data = []
-
-        # Loop over the relaxation data.
-        for j in xrange(len(self.relax.data.res[run][i].relax_data)):
-            # Back calculate the value.
-            value = self.back_calc(run=run, index=i, ri_label=self.relax.data.res[run][i].ri_labels[j], frq_label=self.relax.data.res[run][i].frq_labels[self.relax.data.res[run][i].remap_table[j]], frq=self.relax.data.res[run][i].frq[self.relax.data.res[run][i].remap_table[j]])
-
-            # Append the value.
-            data.append(value)
-
-        # Return the data.
-        return data
-
-
     def back_calc(self, run=None, index=None, ri_label=None, frq_label=None, frq=None):
         """Back-calculation of relaxation data from the model-free parameter values."""
 
@@ -473,6 +455,24 @@ class Model_free:
 
                 # Copy the data structure.
                 setattr(data2, name, deepcopy(getattr(data1, name)))
+
+
+    def create_mc_data(self, run, i):
+        """Function for creating the Monte Carlo Ri data."""
+
+        # Initialise the data data structure.
+        data = []
+
+        # Loop over the relaxation data.
+        for j in xrange(len(self.relax.data.res[run][i].relax_data)):
+            # Back calculate the value.
+            value = self.back_calc(run=run, index=i, ri_label=self.relax.data.res[run][i].ri_labels[j], frq_label=self.relax.data.res[run][i].frq_labels[self.relax.data.res[run][i].remap_table[j]], frq=self.relax.data.res[run][i].frq[self.relax.data.res[run][i].remap_table[j]])
+
+            # Append the value.
+            data.append(value)
+
+        # Return the data.
+        return data
 
 
     def create_model(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
@@ -2397,7 +2397,7 @@ class Model_free:
                     self.relax.data.warning[self.run] = self.warning
 
 
-    def model_setup(self, run, model, equation, params, scaling_flag, res_num):
+    def model_setup(self, run=None, model=None, equation=None, params=None, scaling_flag=1, res_num=None):
         """Function for updating various data structures depending on the model selected."""
 
         # Test that no diffusion tensor exists for the run if tm is a parameter in the model.
@@ -2499,177 +2499,157 @@ class Model_free:
             return 1
 
 
-    def read_results(self, file_data, run):
+    def read_columnar_results(self, file_data, run):
         """Function for printing the core of the results file."""
 
-        # Remove the header.
+        # Arguments.
+        self.run = run
+
+        # Extract and remove the header.
+        header = file_data[0]
         file_data = file_data[1:]
+
+        # Generate the sequence.
+        for i in xrange(len(file_data)):
+            # Skip all lines where the data_set column is not 'value'.
+            if file_data[i][2] != 'value':
+                continue
+
+            # Residue number and name.
+            try:
+                res_num = int(file_data[i][0])
+            except ValueError:
+                raise RelaxError, "The residue number " + file_data[i][0] + " is not an integer."
+            res_name = file_data[i][1]
+
+            # Add the residue.
+            self.relax.generic.sequence.add(self.run, res_num, res_name)
+
+        # Set the nucleus type.
+        self.relax.generic.nuclei.set_values(file_data[0][3])
 
         # Loop over the file data.
         for i in xrange(len(file_data)):
+            # The data set.
+            data_set = file_data[i][2]
+
             # Residue number and name.
             try:
-                num = int(file_data[i][0])
+                res_num = int(file_data[i][0])
             except ValueError:
-                print "Warning, the residue number " + file_data[i][0] + " is not an integer."
-                continue
-            name = file_data[i][1]
+                raise RelaxError, "The residue number " + file_data[i][0] + " is not an integer."
+            res_name = file_data[i][1]
 
             # Find the residue index.
             index = None
-            for j in xrange(len(self.relax.data.res[run])):
-                if self.relax.data.res[run][j].num == num and self.relax.data.res[run][j].name == name:
+            for j in xrange(len(self.relax.data.res[self.run])):
+                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
                     index = j
                     break
             if index == None:
-                print "Warning, residue " + `num` + " " + name + " cannot be found in the sequence."
-                continue
+                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
 
-            # Test if relaxation data has been loaded.
-            if not hasattr(self.relax.data.res[run][index], 'relax_data'):
-                print "Relaxation data has not been loaded.  This is required for the frequency data for Rex values."
-                break
+            # Reassign data structure.
+            res = self.relax.data.res[self.run][index]
 
-            # Model details.
-            model = file_data[i][2]
-            equation = file_data[i][3]
-
-            # Paramters.
-            params = eval(file_data[i][4])
-            if type(params) != list:
-                print "Warning, the parameters " + file_data[i][4] + " is not an array."
-                continue
+            # Set up the model-free models.
+            if data_set == 'value':
+                self.model_setup(self.run, model=file_data[i][4], equation=file_data[i][5], params=eval(file_data[i][6]), res_num=res_num)
 
             # S2.
             try:
-                s2 = float(file_data[i][5])
+                res.s2 = float(file_data[i][7])
             except ValueError:
-                s2 = None
+                res.s2 = None
 
             # S2f.
             try:
-                s2f = float(file_data[i][6])
+                res.s2f = float(file_data[i][8])
             except ValueError:
-                s2f = None
+                res.s2f = None
 
             # S2s.
             try:
-                s2s = float(file_data[i][7])
+                res.s2s = float(file_data[i][9])
             except ValueError:
-                s2s = None
+                res.s2s = None
 
             # tm.
             try:
-                tm = float(file_data[i][8])
-                tm = tm * 1e-9
+                res.tm = float(file_data[i][10]) * 1e-9
             except ValueError:
-                tm = None
+                res.tm = None
 
             # tf.
             try:
-                tf = float(file_data[i][9])
-                tf = tf * 1e-12
+                res.tf = float(file_data[i][11]) * 1e-12
             except ValueError:
-                tf = None
+                res.tf = None
 
             # te and ts.
             try:
-                te = float(file_data[i][10])
-                te = te * 1e-12
+                res.te = float(file_data[i][12]) * 1e-12
             except ValueError:
-                te = None
-            if "te" in params:
-                ts = None
+                res.te = None
+            if "te" in res.params:
+                res.ts = None
             else:
-                ts = te
-                te = None
+                res.ts = res.te
+                res.te = None
 
             # Rex.
             try:
-                rex = float(file_data[i][11])
-                rex = rex / (2.0 * pi * self.relax.data.res[run][i].frq[0])**2
+                res.rex = float(file_data[i][13]) / (2.0 * pi * self.relax.data.res[run][i].frq[0])**2
             except ValueError:
-                rex = None
+                res.rex = None
 
             # Bond length.
             try:
-                r = float(file_data[i][12])
-                r = r * 1e-10
+                res.r = float(file_data[i][14]) * 1e-10
             except ValueError:
-                r = None
+                res.r = None
 
             # CSA.
             try:
-                csa = float(file_data[i][13])
-                csa = csa * 1e-6
+                res.csa = float(file_data[i][15]) * 1e-6
             except ValueError:
-                csa = None
+                res.csa = None
 
             # Chi-squared.
             try:
-                chi2 = float(file_data[i][14])
+                res.chi2 = float(file_data[i][16])
             except ValueError:
-                chi2 = None
+                res.chi2 = None
 
             # Number of iterations.
             try:
-                iter = int(file_data[i][15])
+                res.iter = int(file_data[i][17])
             except ValueError:
-                iter = None
+                res.iter = None
 
             # Function count.
             try:
-                f_count = int(file_data[i][16])
+                res.f_count = int(file_data[i][18])
             except ValueError:
-                f_count = None
+                res.f_count = None
 
             # Gradient count.
             try:
-                g_count = int(file_data[i][17])
+                res.g_count = int(file_data[i][19])
             except ValueError:
-                g_count = None
+                res.g_count = None
 
             # Hessian count.
             try:
-                h_count = int(file_data[i][18])
+                res.h_count = int(file_data[i][20])
             except ValueError:
-                h_count = None
+                res.h_count = None
 
             # Warning.
-            if len(file_data[i]) > 19:
-                warning = file_data[i][19]
-                for j in xrange(20, len(file_data[i])):
-                    warning = warning + " " + file_data[i][j]
+            if file_data[i][19] == 'None':
+                res.warning = None
             else:
-                warning = None
-
-            # Initialise the runs data structure.
-            if not hasattr(self.relax.data.res[run][index], 'runs'):
-                self.relax.data.res[run][index].runs = []
-
-            # Initialise the data structures (if needed).
-            self.initialise_mf_data(self.relax.data.res[run][index], run)
-
-            # Place the data into 'self.relax.data'.
-            self.relax.data.res[run][index].model = model
-            self.relax.data.res[run][index].equation = equation
-            self.relax.data.res[run][index].params = params
-            self.relax.data.res[run][index].s2 = s2
-            self.relax.data.res[run][index].s2f = s2f
-            self.relax.data.res[run][index].s2s = s2s
-            self.relax.data.res[run][index].tm = tm
-            self.relax.data.res[run][index].tf = tf
-            self.relax.data.res[run][index].te = te
-            self.relax.data.res[run][index].ts = ts
-            self.relax.data.res[run][index].rex = rex
-            self.relax.data.res[run][index].r = r
-            self.relax.data.res[run][index].csa = csa
-            self.relax.data.res[run][index].chi2 = chi2
-            self.relax.data.res[run][index].iter = iter
-            self.relax.data.res[run][index].f_count = f_count
-            self.relax.data.res[run][index].g_count = g_count
-            self.relax.data.res[run][index].h_count = h_count
-            self.relax.data.res[run][index].warning = warning
+                res.warning = replace(file_data[i][21], '_', ' ')
 
 
     def return_data(self, run, i):
