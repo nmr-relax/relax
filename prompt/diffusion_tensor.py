@@ -52,8 +52,8 @@ class Diffusion_tensor:
         Description
         ~~~~~~~~~~~
 
-        This function will copy the diffusion tensor data from 'run1' to 'run2'.  'run2' must not
-        contain any diffusion tensor data.
+        This function will copy diffusion tensor data from 'run1' to 'run2'.  'run2' must contain no
+        diffusion tensor data.
 
 
         Examples
@@ -171,12 +171,8 @@ class Diffusion_tensor:
         number.  The number is the value of the isotropic global correlation time in seconds.  To
         specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
         parameters can be used by changing the 'param_types' flag to the following integers:
-
             0 - tm   (Default)
             1 - Diso
-
-        where:
-            tm = 1 / 6Diso
 
 
         Axially symmetric diffusion.
@@ -185,27 +181,14 @@ class Diffusion_tensor:
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
         round brackets, the elements of which are separated by commas.  Alternative sets of
         parameters, 'param_types', are:
-
             0 - (tm, Dratio, theta, phi)   (Default)
             1 - (Dpar, Dper, theta, phi)
-            2 - (Diso, Dratio, theta, phi)
-            3 - (tm, Da, theta, phi)
-            4 - (Diso, Da, theta, phi)
-
-        where:
-            tm = 1 / 6Diso
-            Dratio = Dpar / Dper
-            Diso = 1/3 (Dpar + 2Dper)
-            Da = 1/3 (Dpar - Dper)
+        Dratio is defined as Dpar/Dper.
 
         The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
         vector with respect to the diffusion frame while the spherical angles {theta, phi} describe
-        the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and phi is the
-        azimuthal angle defined between:
-            0 <= theta <= pi
-            0 <= phi <= 2pi
-        The angle alpha is defined between:
-            0 <= alpha <= 2pi
+        the diffusion tensor with respect to the PDB frame.  Theta is the polar angle with
+        0 <= theta <= pi, and phi is the azimuthal angle with 0 <= phi <= 2pi.
 
         The 'axial_type' argument should be 'oblate', 'prolate', or None.  The argument will be
         ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the
@@ -219,31 +202,8 @@ class Diffusion_tensor:
         Anisotropic diffusion.
 
         To select fully anisotropic diffusion, the parameters argument should be a tuple of length
-        six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
-        are separated by commas.  Alternative sets of parameters, 'param_types', are:
-
-            0 - (tm, Da, Dr, alpha, beta, gamma)   (Default)
-            1 - (Diso, Da, Dr, alpha, beta, gamma)
-            2 - (Dx, Dy, Dz, alpha, beta, gamma)
-
-        where:
-            tm = 1 / 6Diso
-            Diso = 1/3 (Dx + Dy + Dz)
-            Da = 1/3 (Dz - (Dx + Dy)/2)
-            Dr = (Dx - Dy)/2
-
-        The angles alpha, beta, and gamma are the Euler angles describing the diffusion tensor
-        within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where
-        alpha is the initial rotation angle around the z-axis, beta is the rotation angle around the
-        y-axis, and gamma is the final rotation around the z-axis again.  The angles are defined
-        between:
-            0 <= alpha <= 2pi
-            0 <= beta <= pi
-            0 <= gamma <= 2pi
-        Within the PDB frame, the bond vector is described using the spherical angels theta and phi
-        where theta is the polar angle and phi is the azimuthal angle defined between:
-            0 <= theta <= pi
-            0 <= phi <= 2pi
+        six.  Alternative sets of parameters, 'param_types', are:
+            0 - (Dx, Dy, Dz, alpha, beta, gamma)   (Default)
 
 
         Units.
@@ -252,10 +212,10 @@ class Diffusion_tensor:
         value are:  tm.
 
         The 'd_scale' argument should also be a floating point number.  Parameters affected by this
-        value are:  Diso; Dpar; Dper; Da; Dr; Dx; Dy; Dz.
+        value are:  Diso; Dratio; Dpar; Dper; Dx; Dy; Dz.
 
         The 'angle_units' argument should either be the string 'deg' or 'rad'.  Parameters affected
-        are:  theta; phi; alpha; beta; gamma.
+        are:  theta, phi, alpha, beta, gamma.
 
 
         Diagonal scaling.
@@ -276,37 +236,34 @@ class Diffusion_tensor:
         relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9, fixed=1)
 
 
-        To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, theta value
-        of 20 degrees, and phi value of 20 degrees, and assign it to the run 'm8', type:
-
-        relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0))
-
-
         To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
-        1.417e7, theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to
+        1.417e7, Theta value of 67.174 degrees, and Phi value of -83.718 degrees, and assign it to
         the run 'axial', type one of:
 
-        relax> diffusion_tensor('axial', (1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
-        relax> diffusion_tensor(run='axial', params=(1.698e7, 1.417e7, 67.174, -83.718),
-                                param_types=1)
-        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
-                                d_scale=1e8)
+        relax> diffusion_tensor('axial', (1.698e7, 1.417e7, 67.174, -83.718))
+        relax> diffusion_tensor(run='axial', params=(1.698e7, 1.417e7, 67.174, -83.718))
+        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 67.174, -83.718), d_scale=1e8)
         relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
-                                param_types=1, d_scale=1e8)
-        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
-                                d_scale=1e8, angle_units='rad')
+                                d_scale=1e8)
+        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), d_scale=1e8,
+                                angle_units='rad')
         relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
-                                param_types=1, d_scale=1e8, angle_units='rad', fixed=1)
+                                d_scale=1e8, angle_units='rad', fixed=1)
+
+
+        To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, Theta value
+        of 20 degrees, and Phi value of 20 degrees, and assign it to the run '26', type:
+
+        relax> diffusion_tensor('axial', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
 
 
         To select fully anisotropic diffusion, type:
 
-        relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
-                                param_types=2)
+        relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568))
 
 
-        To select and minimise an isotropic diffusion tensor, type (followed by a minimisation
-        command):
+        To select and minimise an isotropic diffusion tensor, type something like (followed by some
+        minimisation command):
 
         relax> diffusion_tensor('diff', 10e-9, fixed=0, scaling=1)
         """
