@@ -321,7 +321,7 @@ class Model_free(Common_functions):
             elif self.relax.data.diff[self.run].type == 'axial':
                 # tm, Da, theta, phi
                 self.scaling_matrix[i, i] = 1e-9
-                self.scaling_matrix[i+1, i+1] = 1e9
+                self.scaling_matrix[i+1, i+1] = 1e7
                 self.scaling_matrix[i+2, i+2] = 1.0
                 self.scaling_matrix[i+3, i+3] = 1.0
 
@@ -332,8 +332,8 @@ class Model_free(Common_functions):
             elif self.relax.data.diff[self.run].type == 'aniso':
                 # tm, Da, Dr, alpha, beta, gamma.
                 self.scaling_matrix[i, i] = 1e-9
-                self.scaling_matrix[i+1, i+1] = 1e9
-                self.scaling_matrix[i+2, i+2] = 1e9
+                self.scaling_matrix[i+1, i+1] = 1e7
+                self.scaling_matrix[i+2, i+2] = 1e7
                 self.scaling_matrix[i+3, i+3] = 1.0
                 self.scaling_matrix[i+4, i+4] = 1.0
                 self.scaling_matrix[i+5, i+5] = 1.0
@@ -1436,11 +1436,11 @@ class Model_free(Common_functions):
             if self.relax.data.diff[self.run].type == 'axial':
                 min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
                 if self.relax.data.diff[self.run].axial_type == 'prolate':
-                    min_options.append([inc[1], 0.0, 10.0 * 1e8])
+                    min_options.append([inc[1], 0.0, 1e7])
                 elif self.relax.data.diff[self.run].axial_type == 'oblate':
-                    min_options.append([inc[1], -10.0 * 1e8, 0.0])
+                    min_options.append([inc[1], -1e7, 0.0])
                 else:
-                    min_options.append([inc[1], -10.0 * 1e8, 10.0 * 1e8])
+                    min_options.append([inc[1], -1e7, 1e7])
                 min_options.append([inc[2], 0.0, pi])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 m = m + 4
@@ -1448,8 +1448,8 @@ class Model_free(Common_functions):
             # Anisotropic diffusion {tm, Da, Dr, alpha, beta, gamma}.
             elif self.relax.data.diff[self.run].type == 'aniso':
                 min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
-                min_options.append([inc[1], -10.0 * 1e8, 10.0 * 1e8])
-                min_options.append([inc[2], -10.0 * 1e8, 10.0 * 1e8])
+                min_options.append([inc[1], -1e7, 1e7])
+                min_options.append([inc[2], -1e7, 1e7])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 min_options.append([inc[4], 0.0, pi])
                 min_options.append([inc[5], 0.0, 2 * pi])
@@ -2569,15 +2569,15 @@ class Model_free(Common_functions):
                 col['diff_type'] = i
             elif header[i] == 'tm_(s)':
                 col['tm'] = i
-            elif header[i] == 'Da':
+            elif header[i] == 'Da_(1/s)':
                 col['da'] = i
             elif header[i] == 'theta_(deg)':
                 col['theta'] = i
             elif header[i] == 'phi_(deg)':
                 col['phi'] = i
-            elif header[i] == 'Da':
+            elif header[i] == 'Da_(1/s)':
                 col['da'] = i
-            elif header[i] == 'Dr':
+            elif header[i] == 'Dr_(1/s)':
                 col['dr'] = i
             elif header[i] == 'alpha_(deg)':
                 col['alpha'] = i
