@@ -108,7 +108,7 @@ class File_ops:
                 if bz2_module:
                     file = BZ2File(file_path, 'r')
                 else:
-                    raise RelaxError, "Cannot open the file " + `file_path` + ".  " + bz2_module_message + "."
+                    raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + bz2_module_message + "."
             elif compress_type == 2:
                 file = GzipFile(file_path, 'r')
         except IOError, message:
@@ -135,7 +135,7 @@ class File_ops:
 
         # File extension.
         if compress_type == 1 and not search('.bz2$', file_path):
-            if not bz2_module:
+            if bz2_module:
                 file_path = file_path + '.bz2'
             else:
                 print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
