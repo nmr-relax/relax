@@ -230,7 +230,7 @@ class Model_free:
 
                     # te, tf, and ts.
                     elif match('t', self.relax.data.res[j].params[self.run][k]):
-                        self.scaling_matrix[i, i] = 1e-12
+                        self.scaling_matrix[i, i] = 1e-9
 
                     # Rex.
                     elif self.relax.data.res[j].params[self.run][k] == 'Rex':
@@ -897,7 +897,7 @@ class Model_free:
 
                     # Rex.
                     elif self.relax.data.res[i].params[self.run][j] == 'Rex':
-                        min_options.append([inc[m], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[i].frq[self.run][0])**2])
+                        min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * self.relax.data.res[i].frq[self.run][0])**2])
 
                     # Bond length.
                     elif self.relax.data.res[i].params[self.run][j] == 'r':
@@ -1297,13 +1297,13 @@ class Model_free:
                         j = j + 1
 
                         # t[efs] <= tm.
-                        for m in xrange(len(self.relax.data.res[k].params[self.run])):
-                            if match('t[efs]', self.relax.data.res[k].params[self.run][m]):
-                                A.append(zero_array * 0.0)
-                                A[j][i] = 1.0
-                                A[j][old_i+m] = -1.0
-                                b.append(0.0)
-                                j = j + 1
+                        #for m in xrange(len(self.relax.data.res[k].params[self.run])):
+                        #    if match('t[efs]', self.relax.data.res[k].params[self.run][m]):
+                        #        A.append(zero_array * 0.0)
+                        #        A[j][i] = 1.0
+                        #        A[j][old_i+m] = -1.0
+                        #        b.append(0.0)
+                        #        j = j + 1
 
                     # Increment i.
                     i = i + 1
