@@ -39,5 +39,5 @@ Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C and use swig t
 Bootstrap
 Expected
 Overall
-Farrow
-Palmer
+Farrow (Farrow et. al., 1994)
+Palmer (Mandel et. al., 1995)
