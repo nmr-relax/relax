@@ -20,8 +20,8 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
-import sys
 from re import match
+import sys
 
 from model_free import model_free
 from palmer import palmer
@@ -29,6 +29,8 @@ from relax_fit import relax_fit
 
 from data import data
 from file_ops import file_ops
+
+from interpreter import interpreter
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -42,7 +44,7 @@ class mf:
 		"The top level class."
 
 		self.version = 0.5
-		self.print_intro()
+		self.set_intro_string()
 
 		# Debugging option, 0 = off, 1 = on.
 		self.debug = 0
@@ -60,6 +62,9 @@ class mf:
 		self.model_selection = model_selection(self)
 		self.minimise = minimise
 
+		interpreter(self)
+		sys.exit()
+
 		# Select the behaviour of the program.
 		if match('^[Rr]elax[- _][Ff]it$', self.usr_param.program_type):
 			relax_fit(self)
@@ -73,10 +78,11 @@ class mf:
 		else:
 			print "The program type " + `self.usr_param.program_type` + " does not exist."
 
-	def print_intro(self):
-		"Print the program introduction."
 
-		print """
+	def set_intro_string(self):
+		"Create the program introduction."
+
+		self.intro_string = """
 
 		                      mf v0.5
 
