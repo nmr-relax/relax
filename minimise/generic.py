@@ -131,7 +131,6 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |-----------------------------------|-----------------------------------------------------|
     |                                   |                                                     |
     | Grid search                       | '^[Gg]rid'                                          |
-    | Set parameter values              | '^[Ss]et'                                           |
     |-----------------------------------|-----------------------------------------------------|
 
 
@@ -211,21 +210,6 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
         xk, fk, k = grid(func=func, args=args, grid_ops=min_options, A=A, b=b, l=l, u=u, c=c, print_flag=print_flag)
         if full_output:
             results = (xk, fk, k, k, 0, 0, None)
-        else:
-            results = xk
-
-    # Set parameter values.
-    elif match('^[Ss]et', min_algor):
-        if print_flag:
-            if print_flag >= 2:
-                print print_prefix
-            print print_prefix
-            print print_prefix + "Set parameter values"
-            print print_prefix + "~~~~~~~~~~~~~~~~~~~~"
-        xk = min_options
-        fk = apply(func, (xk,)+args)
-        if full_output:
-            results = (xk, fk, 1, 1, 0, 0, None)
         else:
             results = xk
 

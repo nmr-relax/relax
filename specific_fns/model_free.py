@@ -2126,12 +2126,6 @@ class Model_free:
                         if self.relax.data.res[index].params[self.run][k] == 'CSA':
                             min_options.append(-170 * 1e-6)
 
-            # Convert the values to Numeric array.
-            min_options = array(min_options, Float64)
-
-            # Minimisation.
-            self.minimise(run=self.run, min_algor='set', min_options=min_options, print_flag=print_flag)
-
 
     def write_header(self, file, run):
         """Function for printing the header of the results file."""

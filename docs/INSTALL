@@ -59,11 +59,24 @@ The following is a list of programs which can be used by relax, although they ar
 normal use.
 
 
+Grace:
+------
+
+Viewer for parameter values.
+
+
 OpenDX:
 -------
 
 Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping function,
 and is executed by passing the command 'dx' to the command line with various options.
+
+
+Molmol:
+-------
+
+Molmol is used for viewing the PDB structures and to display parameter values mapped onto the
+structure.
 
 
 VMD:

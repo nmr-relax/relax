@@ -61,9 +61,9 @@ import molmol
 import palmer
 import read
 import select
+import set_value
 import state
 import unselect
-import value
 import vmd
 
 
@@ -112,9 +112,9 @@ class Interpreter:
         self._Palmer = palmer.Shell(relax)
         self._Read = read.Shell(relax)
         self._Select = select.Shell(relax)
+        self._Set_value = set_value.Shell(relax)
         self._State = state.Shell(relax)
         self._Unselect = unselect.Shell(relax)
-        self._Value = value.Shell(relax)
         self._Vmd = vmd.Shell(relax)
 
 
@@ -166,9 +166,9 @@ class Interpreter:
         model = self._Model
         molmol = self._Molmol
         select = self._Select
+        set_value = self._Set_value
         state = self._State
         unselect = self._Unselect
-        value = self._Value
         vmd = self._Vmd
 
         # Builtin interpreter functions.

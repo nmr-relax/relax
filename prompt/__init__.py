@@ -40,9 +40,9 @@ __all__ = ['command',
            'pdb',
            'print_all_data',
            'select_res',
+           'set_value',
            'state',
            'tab_completion',
-           'value',
            'write']
 
 __doc__ = \
