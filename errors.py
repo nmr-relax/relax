@@ -64,14 +64,6 @@ class RelaxErrors:
             self.text = text
 
 
-    # Dependency errors.
-    ####################
-
-    class RelaxDepError(BaseError):
-        def __init__(self, name):
-            self.text = "The dependency " + `name` + " has not been installed."
-
-
     # Program errors.
     #################
 
