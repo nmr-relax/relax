@@ -1,4 +1,4 @@
-from Numeric import Float64, copy, dot, identity
+from Numeric import Float64, dot, identity
 
 from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
@@ -54,7 +54,7 @@ class coordinate_descent(generic_line_search, generic_minimise):
 		"Function to backup the current data dfk into dfk_last."
 
 		self.fk_last = self.fk
-		self.dfk_last = copy.deepcopy(self.dfk)
+		self.dfk_last = self.dfk * 1.0
 
 
 	def dir(self):
@@ -90,6 +90,6 @@ class coordinate_descent(generic_line_search, generic_minimise):
 	def update_data(self):
 		"Function to update the function value, gradient vector, and hessian matrix"
 
-		self.xk = copy.deepcopy(self.xk_new)
+		self.xk = self.xk_new * 1.0
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1

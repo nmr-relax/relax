@@ -1,5 +1,5 @@
 from LinearAlgebra import solve_linear_equations
-from Numeric import Float64, copy, zeros
+from Numeric import Float64, zeros
 
 from generic_minimise import generic_minimise
 
@@ -143,7 +143,7 @@ class levenberg_marquardt(generic_minimise):
 	def update_data(self):
 		"Function to update the chi-squared value, chi-squared gradient vector, and derivative function matrix."
 
-		self.xk = copy.deepcopy(self.xk_new)
+		self.xk = self.xk_new * 1.0
 		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
 		self.df = self.dfunc()

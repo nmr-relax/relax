@@ -1,4 +1,4 @@
-from Numeric import copy, dot, sqrt
+from Numeric import dot, sqrt
 from trust_region import trust_region
 
 from generic_trust_region import generic_trust_region
@@ -9,7 +9,7 @@ class cauchy_point(generic_trust_region, generic_minimise):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e5, delta0=1.0, eta=0.2):
 		"""Cauchy Point trust-region algorithm.
 
-		Page 70 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+		Page 69 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
 		The Cauchy point is defined by:
 
 			                 delta
@@ -65,27 +65,29 @@ class cauchy_point(generic_trust_region, generic_minimise):
 	def calc_pk(self):
 		"Find the Cauchy point."
 
-		# tau_k.
-		temp = dot(self.dfk, dot(self.d2fk, self.dfk))
+		# Calculate the curvature and norm.
+		curv = dot(self.dfk, dot(self.d2fk, self.dfk))
+		norm_dfk = sqrt(dot(self.dfk, self.dfk))
 
-		if temp <= 0.0:
+		# tau_k.
+		if curv <= 0.0:
 			self.tau_k = 1.0
 		else:
-			self.tau_k = min(dot(self.dfk, self.dfk) / (self.delta * temp), 1.0)
+			self.tau_k = min(norm_dfk ** 3 / (self.delta * curv), 1.0)
 
 		if self.print_flag == 2:
-			print "dfk . Bk . dfk: " + `temp`
+			print "dfk . Bk . dfk: " + `curv`
 			print "tau_k:          " + `self.tau_k`
 
 		# Cauchy point.
-		self.pk = - self.tau_k * self.delta * self.dfk / sqrt(dot(self.dfk, self.dfk))
+		self.pk = - self.tau_k * self.delta * self.dfk / norm_dfk
 
 
 	def update_data(self):
 		"Function to update the function value, gradient vector, and hessian matrix"
 
 		self.delta = self.delta_new
-		self.xk = copy.deepcopy(self.xk_new)
+		self.xk = self.xk_new * 1.0
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1

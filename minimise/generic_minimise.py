@@ -1,6 +1,3 @@
-from Numeric import copy
-
-
 class generic_minimise:
 	def __init__(self):
 		"""Generic code for iterative minimisers.

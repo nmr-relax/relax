@@ -1,5 +1,5 @@
 import sys
-from Numeric import Float64, ones, copy, zeros
+from Numeric import Float64, ones, zeros
 from re import match
 
 def grid(func, grid_ops, args=(), print_flag=0):
@@ -75,7 +75,7 @@ def grid(func, grid_ops, args=(), print_flag=0):
 		# Test if the current function value is less than the least function value.
 		if f < f_min:
 			f_min = f
-			min_params = copy.deepcopy(params)
+			min_params = params * 1.0
 
 			# Debugging code.
 			if print_flag:

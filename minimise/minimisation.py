@@ -1,5 +1,4 @@
 import sys
-from Numeric import copy
 from re import match
 
 #try:
@@ -22,8 +21,9 @@ from minimise.bfgs import bfgs
 from minimise.newton import newton
 
 # Trust region algorithms.
-from minimise.levenberg_marquardt import levenberg_marquardt
 from minimise.cauchy_point import cauchy_point
+from minimise.dogleg import dogleg
+from minimise.levenberg_marquardt import levenberg_marquardt
 
 # Other algorithms.
 from minimise.simplex import simplex
@@ -183,21 +183,31 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	# Trust-region algorithms.
 	##########################
 
-	# Levenberg-Marquardt minimisation.
-	elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):
-		if print_flag:
-			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
-		if full_output:
-			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
-		else:
-			xk = min.minimise()
-
 	# Cauchy point minimisation.
 	elif match('^[Cc]auchy', min_algor):
 		if print_flag:
 			print "\n\n<<< Cauchy point minimisation >>>"
 		min = cauchy_point(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Dogleg minimisation.
+	elif match('^[Dd]ogleg', min_algor):
+		if print_flag:
+			print "\n\n<<< Dogleg minimisation >>>"
+		min = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Levenberg-Marquardt minimisation.
+	elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):
+		if print_flag:
+			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
+		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
