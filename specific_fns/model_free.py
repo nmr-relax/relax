@@ -2686,14 +2686,25 @@ class Model_free(Common_functions):
             raise RelaxInvalidFileError, file_name
 
 
-        # Sequence.
-        ###########
+        # Initialise some data structures and flags.
+        res_index = -1
+        nucleus_set = 0
+        sims = []
+        diff_type = None
+        diff_params = []
+        self.param_set = None
+        pdb = None
+        pdb_model = None
+        ri_labels = None
 
-        # Generate the sequence.
+        # Loop over the file data.
         for i in xrange(len(file_data)):
-            # Skip all lines where the data_set column is not 'value'.
-            if file_data[i][col['data_set']] != 'value':
-                continue
+            # The data set.
+            data_set = file_data[i][col['data_set']]
+
+
+            # Sequence.
+            ###########
 
             # Residue number and name.
             try:
@@ -2702,157 +2713,116 @@ class Model_free(Common_functions):
                 raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
             res_name = file_data[i][col['name']]
 
-            # Add the residue.
-            self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(file_data[i][col['select']]))
+            # Generate the sequence.
+            if data_set == 'value':
+                self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(file_data[i][col['select']]))
+                res_index = res_index + 1
 
 
-        # Nucleus.
-        ##########
+            # Reassign data structure.
+            ##########################
 
-        # Set the nucleus type.
-        for i in xrange(len(file_data)):
-            if int(file_data[i][col['select']]):
+            data = self.relax.data.res[self.run][res_index]
+
+
+            # Skip unselected residues.
+            ###########################
+
+            if not data.select:
+                continue
+
+
+            # Nucleus.
+            ##########
+
+            # Set the nucleus type.
+            if not nucleus_set:
                 self.relax.generic.nuclei.set_values(file_data[i][col['nucleus']])
-                break
+                nucleus_set = 1
 
 
-        # Simulations.
-        ##############
-
-        # Determine the number of simulations.
-        sims = []
-        for i in xrange(len(file_data)):
-            # The data set.
-            data_set = file_data[i][col['data_set']]
+            # Simulations.
+            ##############
 
             # Add the data set to 'sims' if it is a simulation and if it isn't already in the array.
             if search('sim', data_set) and data_set not in sims:
                 sims.append(data_set)
 
-        # Set up the simulations.
-        if len(sims):
-            self.relax.generic.monte_carlo.setup(self.run, len(sims))
-
-
-        # Diffusion tensor.
-        ###################
-
-        # Get the diffusion tensor.
-        diff_type = None
-        diff_params = []
-        for i in xrange(len(file_data)):
-            # Skip all lines where the data_set column is not 'value'.
-            if file_data[i][col['data_set']] != 'value':
-                continue
-
-            # The diffusion tensor type.
-            if not diff_type:
-                diff_type = file_data[i][col['diff_type']]
-
-            # Test if diff_type is the same for all residues.
-            if diff_type != file_data[i][col['diff_type']]:
-                raise RelaxError, "The diffusion tensor is not of the same type for all residues."
-
-            # Temporary diffusion tensor parameters.
-            temp_diff_params = []
-
-            # No tensor.
-            if diff_type == 'None':
-                diff_type = None
-
-            # Isotropic.
-            if diff_type == 'iso':
-                try:
-                    temp_diff_params.append(float(file_data[i][col['tm']]))
-                except ValueError:
-                    raise RelaxError, "The diffusion tensor parameters are not numbers."
-
-            # Axial symmetery.
-            if diff_type == 'axial' or diff_type == 'oblate' or diff_type == 'prolate':
-                try:
-                    temp_diff_params.append(float(file_data[i][col['tm']]))
-                    temp_diff_params.append(float(file_data[i][col['da']]))
-                    temp_diff_params.append(float(file_data[i][col['theta']]))
-                    temp_diff_params.append(float(file_data[i][col['phi']]))
-                except ValueError:
-                    raise RelaxError, "The diffusion tensor parameters are not numbers."
-
-            # Anisotropic.
-            if diff_type == 'aniso':
-                try:
-                    temp_diff_params.append(float(file_data[i][col['tm']]))
-                    temp_diff_params.append(float(file_data[i][col['da']]))
-                    temp_diff_params.append(float(file_data[i][col['dr']]))
-                    temp_diff_params.append(float(file_data[i][col['alpha']]))
-                    temp_diff_params.append(float(file_data[i][col['beta']]))
-                    temp_diff_params.append(float(file_data[i][col['gamma']]))
-                except ValueError:
-                    raise RelaxError, "The diffusion tensor parameters are not numbers."
 
             # Diffusion tensor.
-            if len(diff_params) == 0:
-                diff_params = deepcopy(temp_diff_params)
+            ###################
 
-            # Test if the diffusion tensor parameter are the same for all residues.
-            if diff_params != temp_diff_params:
-                raise RelaxError, "The diffusion tensor is not the same for all residues."
+            # Skip all lines where the data_set column is not 'value'.
+            if data_set == 'value':
+                # The diffusion tensor type (if not already set).
+                if not diff_type:
+                    diff_type = file_data[i][col['diff_type']]
 
-        # Set the diffusion tensor.
-        axial_type = None
-        if diff_type == 'oblate' or diff_type == 'prolate':
-            axial_type = diff_type
-        if diff_type == 'iso':
-            diff_params = diff_params[0]
-        if diff_type:
-            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
+                # Test if diff_type is the same for all residues.
+                if diff_type != file_data[i][col['diff_type']]:
+                    raise RelaxError, "The diffusion tensor is not of the same type for all residues."
+
+                # Temporary diffusion tensor parameters.
+                temp_diff_params = []
+
+                # No tensor.
+                if diff_type == 'None':
+                    diff_type = None
+
+                # Isotropic.
+                if diff_type == 'iso':
+                    try:
+                        temp_diff_params.append(float(file_data[i][col['tm']]))
+                    except ValueError:
+                        raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+                # Axial symmetery.
+                if diff_type == 'axial' or diff_type == 'oblate' or diff_type == 'prolate':
+                    try:
+                        temp_diff_params.append(float(file_data[i][col['tm']]))
+                        temp_diff_params.append(float(file_data[i][col['da']]))
+                        temp_diff_params.append(float(file_data[i][col['theta']]))
+                        temp_diff_params.append(float(file_data[i][col['phi']]))
+                    except ValueError:
+                        raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+                # Anisotropic.
+                if diff_type == 'aniso':
+                    try:
+                        temp_diff_params.append(float(file_data[i][col['tm']]))
+                        temp_diff_params.append(float(file_data[i][col['da']]))
+                        temp_diff_params.append(float(file_data[i][col['dr']]))
+                        temp_diff_params.append(float(file_data[i][col['alpha']]))
+                        temp_diff_params.append(float(file_data[i][col['beta']]))
+                        temp_diff_params.append(float(file_data[i][col['gamma']]))
+                    except ValueError:
+                        raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+                # Diffusion tensor.
+                if len(diff_params) == 0:
+                    diff_params = deepcopy(temp_diff_params)
+
+                # Test if the diffusion tensor parameter are the same for all residues.
+                if diff_params != temp_diff_params:
+                    raise RelaxError, "The diffusion tensor is not the same for all residues."
 
 
-        # Parameter set.
-        ################
+            # Parameter set.
+            ################
 
-        # Initialise.
-        self.param_set = None
+            if file_data[i][col['param_set']] != 'None':
+                # The parameter set.
+                if self.param_set == None:
+                    self.param_set = file_data[i][col['param_set']]
 
-        # The parameter set.
-        for i in xrange(len(file_data)):
-            if self.param_set == None:
-                self.param_set = file_data[i][col['param_set']]
-
-            # Test if diff_type is the same for all residues.
-            if self.param_set != file_data[i][col['param_set']]:
-                raise RelaxError, "The parameter set is not the same for all residues."
-
-        # Local tm and model-free only parameter sets.
-        if self.param_set == 'local_tm' or self.param_set == 'mf':
-            diff_fixed = 1
-            res_fixed = 0
-
-        # Diffusion tensor parameter set.
-        elif self.param_set == 'diff':
-            diff_fixed = 0
-            res_fixed = 1
-
-        # 'all' parameter set.
-        elif self.param_set == 'all':
-            diff_fixed = 0
-            res_fixed = 0
-
-        # Set the diffusion tensor fixed flag.
-        if self.param_set != 'local_tm':
-            self.relax.data.diff[run].fixed = diff_fixed
-
-        # Set the residue specific fixed flag.
-        for i in xrange(len(self.relax.data.res[run])):
-            self.relax.data.res[run][i].fixed = res_fixed
+                # Test if param_set is the same for all residues.
+                if self.param_set != file_data[i][col['param_set']]:
+                    raise RelaxError, "The parameter set is not the same for all residues."
 
 
-        # PDB and XH vector.
-        ####################
+            # PDB and XH vector.
+            ####################
 
-        # Test if the relaxation data is consistent.
-        pdb = None
-        pdb_model = None
-        for i in xrange(len(file_data)):
             # File name.
             if not pdb:
                 pdb = file_data[i][col['pdb']]
@@ -2866,51 +2836,40 @@ class Model_free(Common_functions):
             if pdb_model != eval(file_data[i][col['pdb_model']]):
                 raise RelaxError, "The PDB model number is not consistent for all residues."
 
-        # Load the PDB.
-        if not pdb == 'None':
-            self.relax.generic.pdb.pdb(run=self.run, file=pdb, model=pdb_model)
-
-        # XH vectors.
-        for i in xrange(len(file_data)):
             # Skip all lines where the data_set column is not 'value'.
-            if file_data[i][col['data_set']] != 'value':
-                continue
-
-            # Residue number.
-            try:
-                res_num = int(file_data[i][col['num']])
-            except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-            res_name = file_data[i][col['name']]
-
-            # Find the residue index.
-            index = None
-            for j in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
-                    index = j
-                    break
-            if index == None:
-                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
-
-            # The vector.
-            xh_vect = eval(file_data[i][col['xh_vect']])
-            if xh_vect:
+            if data_set == 'value':
+                # Residue number.
                 try:
-                    xh_vect = array(xh_vect, Float64)
-                except:
-                    raise RelaxError, "The XH vector " + file_data[i][col['xh_vect']] + " is invalid."
+                    res_num = int(file_data[i][col['num']])
+                except ValueError:
+                    raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+                res_name = file_data[i][col['name']]
 
-            # Set the vector.
-            if xh_vect:
-                self.relax.generic.vectors.set(run=self.run, res=index, xh_vect=xh_vect)
+                # Find the residue index.
+                index = None
+                for j in xrange(len(self.relax.data.res[self.run])):
+                    if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                        index = j
+                        break
+                if index == None:
+                    raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+
+                # The vector.
+                xh_vect = eval(file_data[i][col['xh_vect']])
+                if xh_vect:
+                    try:
+                        xh_vect = array(xh_vect, Float64)
+                    except:
+                        raise RelaxError, "The XH vector " + file_data[i][col['xh_vect']] + " is invalid."
+
+                # Set the vector.
+                if xh_vect:
+                    self.relax.generic.vectors.set(run=self.run, res=index, xh_vect=xh_vect)
 
 
-        # Relaxation data.
-        ##################
+            # Relaxation data.
+            ##################
 
-        # Test if the relaxation data is consistent.
-        ri_labels = None
-        for i in xrange(len(file_data)):
             # Relaxation data structures.
             if not ri_labels:
                 ri_labels = eval(file_data[i][col['ri_labels']])
@@ -2918,121 +2877,13 @@ class Model_free(Common_functions):
                 frq_labels = eval(file_data[i][col['frq_labels']])
                 frq = eval(file_data[i][col['frq']])
 
-            # Test the data.
+            # Test if the relaxation data is consistent.
             if ri_labels != eval(file_data[i][col['ri_labels']]) or remap_table != eval(file_data[i][col['remap_table']]) or frq_labels != eval(file_data[i][col['frq_labels']]) or frq != eval(file_data[i][col['frq']]):
                 raise RelaxError, "The relaxation data is not consistent for all residues."
 
-        # Relaxation data exists.
-        if ri_labels and remap_table and frq_labels and frq:
-            # Loop over the relaxation data sets.
-            for j in xrange(len(ri_labels)):
-                # Data and error column.
-                data_col = col['frq'] + j + 1
-                error_col = col['frq'] + len(ri_labels) + j + 1
 
-                # Reconstruct a data array.
-                data_array = []
-                for i in xrange(len(file_data)):
-                    # Skip all lines where the data_set column is not 'value'.
-                    if file_data[i][col['data_set']] != 'value':
-                        continue
-
-                    # Skip when data_col is None.
-                    if eval(file_data[i][data_col]) == None:
-                        continue
-
-                    # Append an array containing the residue number and name and the data and error values.
-                    data_array.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
-
-                # Read the relaxation data.
-                self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=data_array)
-
-            # Simulation data.
-            if len(sims):
-                for i in xrange(len(file_data)):
-                    # Skip all lines where the data_set column is not 'value'.
-                    if file_data[i][col['data_set']] != 'value':
-                        continue
-
-                    # Residue number and name.
-                    try:
-                        res_num = int(file_data[i][col['num']])
-                    except ValueError:
-                        raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-                    res_name = file_data[i][col['name']]
-
-                    # Find the residue index.
-                    res_index = None
-                    for j in xrange(len(self.relax.data.res[self.run])):
-                        if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
-                            res_index = j
-                            break
-                    if res_index == None:
-                        raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
-
-                    # Initialise the simulation data.
-                    sim_data = []
-
-                    # Loop over the simulations.
-                    for j in xrange(len(sims)):
-                        # Append an empty array to sim_data.
-                        sim_data.append([])
-
-                        # Sim label.
-                        sim_label = 'sim_' + `j`
-
-                        # Find the line of the data file corresponding to the residue number and name and the sim label.
-                        for k in xrange(len(file_data)):
-                            if int(file_data[k][col['num']]) == res_num and file_data[k][col['name']] == res_name and file_data[k][col['data_set']] == sim_label:
-                                # Loop over the relaxation data sets.
-                                for l in xrange(len(ri_labels)):
-                                    # Data column.
-                                    data_col = col['frq'] + l + 1
-
-                                    # Skip when data_col is None.
-                                    if eval(file_data[k][data_col]) == None:
-                                        continue
-
-                                    # Add the data to sim_data.
-                                    try:
-                                        sim_data[j].append(eval(file_data[k][data_col]))
-                                    except ValueError:
-                                        raise RelaxError, "The relaxation data " + `file_data[k][data_col]` + " is not a floating point number."
-
-                    # Pack the simulation data.
-                    self.sim_pack_data(self.run, res_index, sim_data)
-
-
-        # Model-free data.
-        ##################
-
-        # Loop over the file data.
-        for i in xrange(len(file_data)):
-            # The data set.
-            data_set = file_data[i][col['data_set']]
-
-            # Residue number and name.
-            try:
-                res_num = int(file_data[i][col['num']])
-            except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-            res_name = file_data[i][col['name']]
-
-            # Find the residue index.
-            index = None
-            for j in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
-                    index = j
-                    break
-            if index == None:
-                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
-
-            # Reassign data structure.
-            data = self.relax.data.res[self.run][index]
-
-            # Skip unselected residues.
-            if not data.select:
-                continue
+            # Model-free data.
+            ##################
 
             # Set up the model-free models.
             if data_set == 'value':
@@ -3299,6 +3150,151 @@ class Model_free(Common_functions):
                         data.warning_sim.append(None)
                     else:
                         data.warning_sim.append(replace(file_data[i][col['warn']], '_', ' '))
+
+
+        # Simulations.
+        ##############
+
+        # Set up the simulations.
+        if len(sims):
+            self.relax.generic.monte_carlo.setup(self.run, len(sims))
+
+
+        # Diffusion tensor.
+        ###################
+
+        # Set the diffusion tensor.
+        axial_type = None
+        if diff_type == 'oblate' or diff_type == 'prolate':
+            axial_type = diff_type
+        elif diff_type == 'iso':
+            diff_params = diff_params[0]
+        if diff_type:
+            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
+
+
+        # Parameter set.
+        ################
+
+        # Invalid parameter set.
+        if self.param_set == None:
+            raise RelaxError, "The parameter set is set to None."
+
+        # Local tm and model-free only parameter sets.
+        if self.param_set == 'local_tm' or self.param_set == 'mf':
+            diff_fixed = 1
+            res_fixed = 0
+
+        # Diffusion tensor parameter set.
+        elif self.param_set == 'diff':
+            diff_fixed = 0
+            res_fixed = 1
+
+        # 'all' parameter set.
+        elif self.param_set == 'all':
+            diff_fixed = 0
+            res_fixed = 0
+
+        # Set the diffusion tensor fixed flag.
+        if self.param_set != 'local_tm':
+            self.relax.data.diff[run].fixed = diff_fixed
+
+        # Set the residue specific fixed flag.
+        for i in xrange(len(self.relax.data.res[run])):
+            self.relax.data.res[run][i].fixed = res_fixed
+
+
+        # PDB and XH vector.
+        ####################
+
+        # Load the PDB.
+        if not pdb == 'None':
+            self.relax.generic.pdb.pdb(run=self.run, file=pdb, model=pdb_model)
+
+
+        # Relaxation data.
+        ##################
+
+        # Relaxation data exists.
+        if ri_labels and remap_table and frq_labels and frq:
+            # Loop over the relaxation data sets.
+            for j in xrange(len(ri_labels)):
+                # Data and error column.
+                data_col = col['frq'] + j + 1
+                error_col = col['frq'] + len(ri_labels) + j + 1
+
+                # Reconstruct a data array.
+                data_array = []
+                for i in xrange(len(file_data)):
+                    # Skip all lines where the data_set column is not 'value'.
+                    if file_data[i][col['data_set']] != 'value':
+                        continue
+
+                    # Skip when data_col is None.
+                    if eval(file_data[i][data_col]) == None:
+                        continue
+
+                    # Append an array containing the residue number and name and the data and error values.
+                    data_array.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
+
+                # Read the relaxation data.
+                self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=data_array)
+
+            # Simulation data.
+            if len(sims):
+                for i in xrange(len(file_data)):
+                    # Skip all lines where the data_set column is not 'value'.
+                    if file_data[i][col['data_set']] != 'value':
+                        continue
+
+                    # Residue number and name.
+                    try:
+                        res_num = int(file_data[i][col['num']])
+                    except ValueError:
+                        raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+                    res_name = file_data[i][col['name']]
+
+                    # Find the residue index.
+                    res_index = None
+                    for j in xrange(len(self.relax.data.res[self.run])):
+                        if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                            res_index = j
+                            break
+                    if res_index == None:
+                        raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+
+                    # Initialise the simulation data.
+                    sim_data = []
+
+                    # Loop over the simulations.
+                    for j in xrange(len(sims)):
+                        # Append an empty array to sim_data.
+                        sim_data.append([])
+
+                        # Sim label.
+                        sim_label = 'sim_' + `j`
+
+                        # Find the line of the data file corresponding to the residue number and name and the sim label.
+                        for k in xrange(len(file_data)):
+                            if int(file_data[k][col['num']]) == res_num and file_data[k][col['name']] == res_name and file_data[k][col['data_set']] == sim_label:
+                                # Loop over the relaxation data sets.
+                                for l in xrange(len(ri_labels)):
+                                    # Data column.
+                                    data_col = col['frq'] + l + 1
+
+                                    # Skip when data_col is None.
+                                    if eval(file_data[k][data_col]) == None:
+                                        continue
+
+                                    # Add the data to sim_data.
+                                    try:
+                                        sim_data[j].append(eval(file_data[k][data_col]))
+                                    except ValueError:
+                                        raise RelaxError, "The relaxation data " + `file_data[k][data_col]` + " is not a floating point number."
+
+                    # Pack the simulation data.
+                    self.sim_pack_data(self.run, res_index, sim_data)
+
 
 
     def remove_tm(self, run, res_num):
