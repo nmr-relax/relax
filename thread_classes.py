@@ -108,7 +108,7 @@ class Threading:
             # Priority.
             priority = file_data[i][4]
             if priority == '-':
-                priority = 5
+                priority = 15
             try:
                 priority = int(priority)
             except ValueError:
