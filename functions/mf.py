@@ -3,11 +3,12 @@ from math import pi
 from re import match
 
 from data import data
-from ri_comps import *
 
 from jw_mf import *
 from djw_mf import *
 from d2jw_mf import *
+
+from ri_comps import *
 
 from ri_prime import *
 from dri_prime import *
@@ -123,10 +124,8 @@ class mf:
 		self.create_ri_comps(self.data, self.create_dip_func, self.create_dip_jw_func, self.create_csa_func, self.create_csa_jw_func, self.create_rex_func)
 
 		# Calculate the R1, R2, and sigma_noe values.
-		ri_prime(self.data, self.create_ri_prime_comps, self.create_ri_prime)
+		self.create_ri_prime(self.data)
 
-		import sys
-		sys.exit()
 
 		# Calculate the R1, R2, and NOE values.
 		self.data.ri = copy.deepcopy(self.data.ri_prime)
@@ -134,6 +133,16 @@ class mf:
 
 		# Calculate the chi-squared value.
 		self.data.chi2 = chi2(self.data.relax_data, self.data.ri, self.data.errors)
+
+#		print "dip_const_func: " + `self.data.dip_const_func`
+#		print "csa_const_func: " + `self.data.csa_const_func`
+#		print "dip_comps_func: " + `self.data.dip_comps_func`
+#		print "csa_comps_func: " + `self.data.csa_comps_func`
+#		print "dip_jw_comps_func: " + `self.data.dip_jw_comps_func`
+#		print "csa_jw_comps_func: " + `self.data.csa_jw_comps_func`
+#		print "ri_prime: " + `self.data.ri_prime`
+#		print "ri: " + `self.data.ri`
+#		print "chi2: " + `self.data.chi2`
 
 		return self.data.chi2
 
@@ -169,7 +178,7 @@ class mf:
 		create_djw_struct(self.data, self.calc_djw)
 
 		# Calculate the relaxation formula components.
-		self.create_ri_comps(self.data, self.create_dip_grad, self.create_dip_jw_grad, self.create_csa_grad, self.create_csa_jw_grad, self.create_rex_grad)
+		self.create_dri_comps(self.data, self.create_dip_grad, self.create_dip_jw_grad, self.create_csa_grad, self.create_csa_jw_grad, self.create_rex_grad)
 
 		import sys
 		sys.exit()
@@ -419,10 +428,6 @@ class mf:
 		self.create_dri_prime = []
 		self.create_d2ri_prime = []
 
-		#self.create_ri_prime_comps = []
-		#self.create_dri_prime_comps = []
-		#self.create_d2ri_prime_comps = []
-
 		self.create_ri = []
 		self.create_dri = []
 		self.create_d2ri = []
@@ -435,15 +440,20 @@ class mf:
 		for i in range(self.relax.data.num_ri):
 			# The R1 equations.
 			if self.relax.data.ri_labels[i]  == 'R1':
+				self.create_dip_func.append(None)
+				self.create_dip_grad.append(None)
+				self.create_dip_hess.append(None)
+				self.create_csa_func.append(comp_r1_csa_const)
+				self.create_csa_grad.append(comp_r1_csa_const)
+				self.create_csa_hess.append(comp_r1_csa_const)
+				self.create_rex_func.append(None)
+				self.create_rex_grad.append(None)
 				self.create_dip_jw_func.append(comp_r1_dip_jw)
 				self.create_dip_jw_grad.append(comp_r1_dip_jw)
 				self.create_dip_jw_hess.append(comp_r1_dip_jw)
 				self.create_csa_jw_func.append(comp_r1_csa_jw)
 				self.create_csa_jw_grad.append(comp_r1_csa_jw)
 				self.create_csa_jw_hess.append(comp_r1_csa_jw)
-				#self.create_ri_prime_comps.append(comp_r1_prime)
-				#self.create_dri_prime_comps.append(comp_dr1_djw_prime)
-				#self.create_d2ri_prime_comps.append(comp_d2r1_djwidjwj_prime)
 				self.create_ri.append(None)
 				self.create_dri.append(None)
 				self.create_d2ri.append(None)
@@ -453,18 +463,20 @@ class mf:
 
 			# The R2 equations.
 			elif self.relax.data.ri_labels[i] == 'R2':
+				self.create_dip_func.append(comp_r2_dip_const)
+				self.create_dip_grad.append(comp_r2_dip_const)
+				self.create_dip_hess.append(comp_r2_dip_const)
+				self.create_csa_func.append(comp_r2_csa_const)
+				self.create_csa_grad.append(comp_r2_csa_const)
+				self.create_csa_hess.append(comp_r2_csa_const)
+				self.create_rex_func.append(comp_rex_const_func)
+				self.create_rex_grad.append(comp_rex_const_grad)
 				self.create_dip_jw_func.append(comp_r2_dip_jw)
 				self.create_dip_jw_grad.append(comp_r2_dip_jw)
 				self.create_dip_jw_hess.append(comp_r2_dip_jw)
 				self.create_csa_jw_func.append(comp_r2_csa_jw)
 				self.create_csa_jw_grad.append(comp_r2_csa_jw)
 				self.create_csa_jw_hess.append(comp_r2_csa_jw)
-				#if self.data.rex_index == None:
-				#	self.create_ri_prime_comps.append(comp_r2_prime)
-				#else:
-				#	self.create_ri_prime_comps.append(comp_r2_prime_rex)
-				#self.create_dri_prime_comps.append(comp_dr2_djw_prime)
-				#self.create_d2ri_prime_comps.append(comp_d2r2_djwidjwj_prime)
 				self.create_ri.append(None)
 				self.create_dri.append(None)
 				self.create_d2ri.append(None)
@@ -474,15 +486,20 @@ class mf:
 
 			# The NOE equations.
 			elif self.relax.data.ri_labels[i] == 'NOE':
+				self.create_dip_func.append(None)
+				self.create_dip_grad.append(None)
+				self.create_dip_hess.append(None)
+				self.create_csa_func.append(None)
+				self.create_csa_grad.append(None)
+				self.create_csa_hess.append(None)
+				self.create_rex_func.append(None)
+				self.create_rex_grad.append(None)
 				self.create_dip_jw_func.append(comp_sigma_noe_dip_jw)
 				self.create_dip_jw_grad.append(comp_sigma_noe_dip_jw)
 				self.create_dip_jw_hess.append(comp_sigma_noe_dip_jw)
 				self.create_csa_jw_func.append(None)
 				self.create_csa_jw_grad.append(None)
 				self.create_csa_jw_hess.append(None)
-				#self.create_ri_prime_comps.append(comp_sigma_noe)
-				#self.create_dri_prime_comps.append(comp_dsigma_noe_djw_prime)
-				#self.create_d2ri_prime_comps.append(comp_d2sigma_noe_djwidjwj_prime)
 				self.create_ri.append(calc_noe)
 				self.create_dri.append(calc_dnoe)
 				self.create_d2ri.append(calc_d2noe)
@@ -511,6 +528,12 @@ class mf:
 			# Calculate the dipolar and CSA constant components.
 			comp_dip_const_func(self.data)
 			comp_csa_const_func(self.data)
+			for i in range(self.data.num_ri):
+				self.data.dip_comps_func[i] = self.data.dip_const_func
+				if self.create_dip_func[i]:
+					self.data.dip_comps_func[i] = self.create_dip_func[i](self.data.dip_const_func)
+				if self.create_csa_func[i]:
+					self.data.csa_comps_func[i] = self.create_csa_func[i](self.data.csa_const_func[self.data.remap_table[i]])
 
 			# Make pointers to the function for the calculation of ri_prime values.
 			if self.data.rex_index == None:

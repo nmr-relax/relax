@@ -1,7 +1,7 @@
 from Numeric import array
 
 from data import data
-from ri_prime import comp_r1_prime, func_ri_prime
+from ri_prime import func_ri_prime
 data_class = data
 
 
