@@ -69,9 +69,9 @@ class Ri:
 		rex = zeros((self.mf.data.num_frq), Float64)
 		for frq in range(self.mf.data.num_frq):
 			if match('m3', self.mf_model):
-				rex[frq] = self.mf_params[1] * self.mf.data.frq[frq]**2
+				rex[frq] = self.mf_params[1] * (1e-8 * self.mf.data.frq[frq])**2
 			elif match('m4', self.mf_model):
-				rex[frq] = self.mf_params[2] * self.mf.data.frq[frq]**2
+				rex[frq] = self.mf_params[2] * (1e-8 * self.mf.data.frq[frq])**2
 
 		# Loop over the relaxation values.
 		for i in range(self.mf.data.num_ri):

@@ -123,7 +123,7 @@ class dRi:
 
 				# Chemical exchange derivatives (matrix already filled with zeros).
 				elif match('R2', self.mf.data.data_types[i]) and match('rex', self.param_types[param]):
-					self.dri[i, param] = self.mf.data.frq[self.frq_num]**2
+					self.dri[i, param] = (1e-8 * self.mf.data.frq[self.frq_num])**2
 
 		# Store the relaxation gradient matrix.
 		self.mf.data.mf_data.dri = copy.deepcopy(self.dri)

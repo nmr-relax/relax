@@ -50,18 +50,18 @@ class main_model_free:
 			self.mf.results.write("%-30s" % "te (ps)")
 		elif match('m3', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
-			grid_ops.append([20.0, 0.0, 30.0 / self.mf.data.frq[0]**2])
+			grid_ops.append([20.0, 0.0, 30.0 / (1e-8 * self.mf.data.frq[0])**2])
 			limits.append([0.0, 1.0])
-			limits.append([0.0, 100.0 / self.mf.data.frq[0]**2])
+			limits.append([0.0, 100.0 / (1e-8 * self.mf.data.frq[0])**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % ("Rex (" + self.mf.data.frq_label[0] + " MHz)"))
 		elif match('m4', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
-			grid_ops.append([20.0, 0.0, 30.0 / self.mf.data.frq[0]**2])
+			grid_ops.append([20.0, 0.0, 30.0 / (1e-8 * self.mf.data.frq[0])**2])
 			limits.append([0.0, 1.0])
 			limits.append([0.0 * 1e-12, 10000.0 * 1e-12])
-			limits.append([0.0, 100.0 / self.mf.data.frq[0]**2])
+			limits.append([0.0, 100.0 / (1e-8 * self.mf.data.frq[0])**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "te (ps)")
 			self.mf.results.write("%-30s" % ("Rex (" + self.mf.data.frq_label[0] + " MHz)"))
@@ -103,7 +103,7 @@ class main_model_free:
 			#params = [0.368]
 			#params = [0.368, 0.0]
 			#params = [0.950, 0.585, 33.0*1e-12]
-			#params = [0.900, 0.0*1e-12, 0.0/self.mf.data.frq[0]**2]
+			#params = [0.900, 0.0*1e-12, 0.0/(1e-8 * self.mf.data.frq[0])**2]
 			#params = [0.900, 100*1e-12, 2.76038451e-17]
 			#chi2 = 0.0
 
@@ -111,7 +111,7 @@ class main_model_free:
 			if match('Simplex', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Simplex minimisation >>>"
-				output = simplex(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=5000, maxfun=5000, full_output=1, disp=1)
+				output = simplex(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 				print "mf params:  " + `params`
 				print "chi2:       " + `chi2`
@@ -123,7 +123,7 @@ class main_model_free:
 			elif match('Powell', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Powell minimisation >>>"
-				output = powell(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=5000, maxfun=5000, full_output=1, disp=1)
+				output = powell(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 			
 			# Levenberg-Marquardt minimisation.
@@ -137,14 +137,14 @@ class main_model_free:
 			elif match('BFGS', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-				output = bfgs(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, args=function_ops, avegtol=1e-15, maxiter=5000, full_output=1, disp=1)
+				output = bfgs(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, args=function_ops, avegtol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, num_func_calls, num_grad_calls, warn_flag = output
 
 			# Newton Conjugate Gradient minimisation.
 			elif match('Newton', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-				output = newton(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, fhess_p=None, fhess=None, args=function_ops, maxiter=5000, full_output=1, disp=1)
+				output = newton(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, fhess_p=None, fhess=None, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
 
 			# None.
@@ -166,11 +166,11 @@ class main_model_free:
 				self.mf.results.write("%-30s" % `params[1] * 1e12`)
 			elif match('m3', self.mf.data.model):
 				self.mf.results.write("%-30s" % `params[0]`)
-				self.mf.results.write("%-30s" % `params[1] * self.mf.data.frq[0]**2`)
+				self.mf.results.write("%-30s" % `params[1] * (1e-8 * self.mf.data.frq[0])**2`)
 			elif match('m4', self.mf.data.model):
 				self.mf.results.write("%-30s" % `params[0]`)
 				self.mf.results.write("%-30s" % `params[1] * 1e12`)
-				self.mf.results.write("%-30s" % `params[2] * self.mf.data.frq[0]**2`)
+				self.mf.results.write("%-30s" % `params[2] * (1e-8 * self.mf.data.frq[0])**2`)
 			elif match('m5', self.mf.data.model):
 				self.mf.results.write("%-30s" % `params[0]`)
 				self.mf.results.write("%-30s" % `params[1]`)
