@@ -98,7 +98,7 @@ class usr_param:
 
 		self.md1['theta'] = {}
 		self.md1['theta']['start'] = '0.0'
-		self.md1['theta']['flag '] = 0
+		self.md1['theta']['flag'] = 0
 		self.md1['theta']['bound'] = 2
 		self.md1['theta']['lower'] = '0.000'
 		self.md1['theta']['upper'] = '90.000'
@@ -106,7 +106,7 @@ class usr_param:
 
 		self.md1['sf2'] = {}
 		self.md1['sf2']['start'] = '1.0'
-		self.md1['sf2']['flag '] = 0
+		self.md1['sf2']['flag'] = 0
 		self.md1['sf2']['bound'] = 2
 		self.md1['sf2']['lower'] = '0.000'
 		self.md1['sf2']['upper'] = '1.000'
@@ -114,7 +114,7 @@ class usr_param:
 
 		self.md1['ss2'] = {}
 		self.md1['ss2']['start'] = '1.0'
-		self.md1['ss2']['flag '] = 0
+		self.md1['ss2']['flag'] = 0
 		self.md1['ss2']['bound'] = 2
 		self.md1['ss2']['lower'] = '0.000'
 		self.md1['ss2']['upper'] = '1.000'
@@ -135,3 +135,9 @@ class usr_param:
 		self.md1['rex']['lower'] = '0.000'
 		self.md1['rex']['upper'] = '20.000'
 		self.md1['rex']['steps'] = 20
+
+		self.md2 = {}
+		for param in self.md1.keys():
+			self.md2[param] = {}
+			for value in self.md1[param].keys():
+				self.md2[param][value] = self.md1[param][value]

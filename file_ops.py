@@ -27,36 +27,37 @@ class file_ops:
 			except IndexError:
 				continue
 			if row[0][0] == "NMR_frq_label":
-				self.mf.data.input_info.append([])
+				#self.mf.data.input_info.append([])
 				row.append(split(lines[i+1]))
 				row.append(split(lines[i+2]))
 				row.append(split(lines[i+3]))
 				row.append(split(lines[i+4]))
-				self.mf.data.input_info[frq].append(row[0][1])
-				self.mf.data.input_info[frq].append(float(row[1][1]))
-				self.mf.data.input_info[frq].append(row[2][1])
-				self.mf.data.input_info[frq].append(row[3][1])
-				self.mf.data.input_info[frq].append(row[4][1])
 				# R1 data.
 				if row[2][1] != "none":
+					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
-					self.mf.data.relax_data[num_data].append("R1")
-					self.mf.data.relax_data[num_data].append(float(row[1][1]))
-					self.mf.data.relax_data[num_data].append(row[2][1])
+					self.mf.data.input_info[num_data].append("R1")
+					self.mf.data.input_info[num_data].append(row[0][1])
+					self.mf.data.input_info[num_data].append(float(row[1][1]))
+					self.mf.data.input_info[num_data].append(row[2][1])
 					num_data = num_data + 1
 				# R2 data.
 				if row[3][1] != "none":
+					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
-					self.mf.data.relax_data[num_data].append("R2")
-					self.mf.data.relax_data[num_data].append(float(row[1][1]))
-					self.mf.data.relax_data[num_data].append(row[3][1])
+					self.mf.data.input_info[num_data].append("R2")
+					self.mf.data.input_info[num_data].append(row[0][1])
+					self.mf.data.input_info[num_data].append(float(row[1][1]))
+					self.mf.data.input_info[num_data].append(row[3][1])
 					num_data = num_data + 1
 				# NOE data.
 				if row[4][1] != "none":
+					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
-					self.mf.data.relax_data[num_data].append("NOE")
-					self.mf.data.relax_data[num_data].append(float(row[1][1]))
-					self.mf.data.relax_data[num_data].append(row[4][1])
+					self.mf.data.input_info[num_data].append("NOE")
+					self.mf.data.input_info[num_data].append(row[0][1])
+					self.mf.data.input_info[num_data].append(float(row[1][1]))
+					self.mf.data.input_info[num_data].append(row[4][1])
 					num_data = num_data + 1
 				frq = frq + 1
 		self.mf.data.num_frq = frq
