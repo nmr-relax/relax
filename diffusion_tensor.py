@@ -40,7 +40,7 @@ class Diffusion_tensor:
         return names
 
 
-    def set(self, run, params, time_scale, d_scale, angle_units, param_types):
+    def set(self, run, params, time_scale, d_scale, angle_units, param_types, fixed):
         """Function for setting up the diffusion tensor."""
 
         # Arguments.
@@ -61,6 +61,9 @@ class Diffusion_tensor:
         # Add the run to the runs list.
         if not run in self.relax.data.runs:
             self.relax.data.runs.append(run)
+
+        # Set the fixed flag.
+        self.relax.data.diff[run].fixed = fixed
 
         # Isotropic diffusion.
         if type(params) == float:

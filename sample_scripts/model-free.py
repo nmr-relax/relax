@@ -7,7 +7,7 @@ read.sequence('noe.500.out')
 nuclei('N')
 
 # Set the run name (also the name of a preset model-free model).
-name = 'm4'
+name = 'm5'
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -32,13 +32,13 @@ model.select_mf(run=name, model=name)
 #fixed(name, [ 6.00000000e-01, 0.00000000e+00, 5.00000000e-01, 1.00000000e-9])
 
 # Grid search.
-grid_search(name, inc=11)
+grid_search(name, inc=21)
 
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)
 #minimise('newton', run=name, constraints=1, print_flag=20, max_iter=0)
 #minimise('newton', run=name, print_flag=9, max_iter=20)
-minimise('newton', run=name, print_flag=1)
+minimise('simplex', run=name, print_flag=1)
 
 # Finish.
 write(run=name, file='results_temp', force=1)

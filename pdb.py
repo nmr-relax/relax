@@ -23,6 +23,7 @@
 from os import stat
 from re import match
 import Scientific
+import Scientific.IO.PDB
 from stat import S_ISREG, ST_MODE
 from sys import exc_info
 

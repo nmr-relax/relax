@@ -126,7 +126,7 @@ class Minimise:
             self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor="fixed", min_options=min_options, print_flag=print_flag)
 
 
-    def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=0, print_flag=1):
+    def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):
         """The grid search function."""
 
         # Test if sequence data is loaded.

@@ -229,6 +229,14 @@ class RelaxErrors:
     # File errors.
     ##############
 
+    # No directory.
+    class RelaxDirError(BaseError):
+        def __init__(self, name, dir):
+            if name == None:
+                self.text = "The directory " + `dir` + " does not exist."
+            else:
+                self.text = "The " + name + " directory " + `dir` + " does not exist."
+
     # No file.
     class RelaxFileError(BaseError):
         def __init__(self, name, file_name):

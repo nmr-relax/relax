@@ -30,7 +30,7 @@ class Diffusion_tensor:
         self.relax = relax
 
 
-    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0):
+    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, fixed=1):
         """Macro for setting up the diffusion tensor.
 
         Keyword Arguments
@@ -47,6 +47,8 @@ class Diffusion_tensor:
         angle_units:  The units for the angle parameters.
 
         param_types:  A flag to select different parameter combinations.
+
+        fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
 
 
         Description
@@ -90,7 +92,7 @@ class Diffusion_tensor:
         relax> diffusion_tensor('m1', 10e-9)
         relax> diffusion_tensor(run='m1', params=10e-9)
         relax> diffusion_tensor('m1', 10.0, 1e-9)
-        relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9)
+        relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9, fixed=1)
 
 
         To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
@@ -105,7 +107,7 @@ class Diffusion_tensor:
         relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), d_scale=1e8,
                                 angle_units='rad')
         relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
-                                d_scale=1e8, angle_units='rad')
+                                d_scale=1e8, angle_units='rad', fixed=1)
 
 
         To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, Theta value
@@ -117,6 +119,12 @@ class Diffusion_tensor:
         To select fully anisotropic diffusion, type:
 
         relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568))
+
+
+        To select and minimise an isotropic diffusion tensor, type something like (followed by some
+        minimisation command):
+
+        relax> diffusion_tensor('diff', 10e-9, fixed=0)
         """
 
         # Macro intro text.
@@ -127,7 +135,8 @@ class Diffusion_tensor:
             text = text + ", time_scale=" + `time_scale`
             text = text + ", d_scale=" + `d_scale`
             text = text + ", angle_units=" + `angle_units`
-            text = text + ", param_types=" + `param_types` + ")"
+            text = text + ", param_types=" + `param_types`
+            text = text + ", fixed=" + `fixed` + ")"
             print text
 
         # The name of the run.
@@ -165,5 +174,9 @@ class Diffusion_tensor:
         if not angle_units in valid_types:
             raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
+        # The fixed flag.
+        if type(fixed) != int or (fixed != 0 and fixed != 1):
+            raise RelaxBinError, ('fixed flag', fixed)
+
         # Execute the functional code.
-        self.relax.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types)
+        self.relax.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, fixed=fixed)

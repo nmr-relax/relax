@@ -58,6 +58,7 @@ from write import Write
 import echo_data
 import format
 import model
+import palmer
 import read
 import select
 import state
@@ -107,6 +108,7 @@ class Interpreter:
         self._Echo_data = echo_data.Skin(relax)
         self._Format = format.Skin(relax)
         self._Model = model.Model(relax)
+        self._Palmer = palmer.Skin(relax)
         self._Read = read.Skin(relax)
         self._Select = select.Skin(relax)
         self._State = state.Skin(relax)
@@ -155,6 +157,7 @@ class Interpreter:
         # Place the classes in the local namespace.
         echo_data = self._Echo_data
         format = self._Format
+        palmer = self._Palmer
         read = self._Read
         model = self._Model
         select = self._Select

@@ -51,7 +51,7 @@ from min import Minimise
 from model_free import Model_free
 from model_selection import Model_selection
 from nuclei import Nuclei
-from palmer import Palmer
+from palmer.main import Palmer
 from pdb import PDB
 from prompt.interpreter import Interpreter
 from relax_data import Rx_data
@@ -100,6 +100,7 @@ class Relax:
         self.model_selection = Model_selection(self)
         self.nuclei = Nuclei(self)
         self.opendx = OpenDX(self)
+        self.palmer = Palmer(self)
         self.pdb = PDB(self)
         self.relax_data = Rx_data(self)
         self.rw = RW(self)

@@ -20,12 +20,422 @@
 #                                                                             #
 ###############################################################################
 
-
-from re import match
-from os import chmod
+from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, mkdir, remove, spawnlp, system
+from re import match, search
 import sys
 
+
 class Palmer:
+    def __init__(self, relax):
+        """Class used to create and process input and output for the program Modelfree 4."""
+
+        self.relax = relax
+
+
+    def create(self, run, dir, force, sims, sim_type, trim, steps, constraints, nucleus, atom1, atom2):
+        """Function for creating the Modelfree4 input files.
+
+        The following files are created:
+            dir/mfin
+            dir/mfdata
+            dir/mfpar
+            dir/mfmodel
+            dir/run.sh
+        """
+
+        # Test if the run exists.
+        if not run in self.relax.data.runs:
+            raise RelaxRunError, run
+
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
+        # Directory creation.
+        if dir == None:
+            dir = run
+        try:
+            mkdir(dir)
+        except OSError:
+            pass
+
+        # Place the arguments into 'self'.
+        self.run = run
+        self.dir = dir
+        self.force = force
+        self.sims = sims
+        self.sim_type = sim_type
+        self.trim = trim
+        self.steps = steps
+        self.constraints = constraints
+        self.nucleus = nucleus
+        self.atom1 = atom1
+        self.atom2 = atom2
+
+        # The 'mfin' file.
+        mfin = self.open_file('mfin')
+        self.create_mfin(mfin)
+        mfin.close()
+
+        # Open the 'mfdata', 'mfmodel', and 'mfpar' files.
+        mfdata = self.open_file('mfdata')
+        mfmodel = self.open_file('mfmodel')
+        mfpar = self.open_file('mfpar')
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res)):
+            # The 'mfdata' file.
+            if not self.create_mfdata(i, mfdata):
+                continue
+
+            # The 'mfmodel' file.
+            self.create_mfmodel(i, mfmodel)
+
+            # The 'mfpar' file.
+            self.create_mfpar(i, mfpar)
+
+        # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
+        mfdata.close()
+        mfmodel.close()
+        mfpar.close()
+
+        # The 'run.sh' script.
+        run = self.open_file('run.sh')
+        self.create_run(run)
+        run.close()
+        chmod(self.dir + '/run.sh', 0755)
+
+
+    def create_mfdata(self, i, file):
+        """Create the Modelfree4 input file 'mfmodel'."""
+
+        # Spin title.
+        file.write("\nspin     " + self.relax.data.res[i].name + "_" + `self.relax.data.res[i].num` + "\n")
+
+        # Data written flag.
+        written = 0
+
+        # Loop over the frequencies.
+        for j in xrange(self.relax.data.res[i].num_frq[self.run]):
+            # Loop over the relevant relaxation data.
+            for k in xrange(self.relax.data.res[i].num_ri[self.run]):
+                if self.relax.data.res[i].remap_table[self.run][k] != j:
+                    continue
+
+                # Find the corresponding R1.
+                if match('R1', self.relax.data.res[i].ri_labels[self.run][k]):
+                    r1 = self.relax.data.res[i].relax_data[self.run][k]
+                    r1_err = self.relax.data.res[i].relax_error[self.run][k]
+
+                # Find the corresponding R2.
+                elif match('R2', self.relax.data.res[i].ri_labels[self.run][k]):
+                    r2 = self.relax.data.res[i].relax_data[self.run][k]
+                    r2_err = self.relax.data.res[i].relax_error[self.run][k]
+
+                # Find the corresponding NOE.
+                elif match('NOE', self.relax.data.res[i].ri_labels[self.run][k]):
+                    noe = self.relax.data.res[i].relax_data[self.run][k]
+                    noe_err = self.relax.data.res[i].relax_error[self.run][k]
+
+            # Test if the R1, R2, and NOE exists for this frequency, otherwise skip the data.
+            if r1 and r2 and noe:
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.relax.data.res[i].frq[self.run][j]*1e-6, r1, r1_err, 1))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.relax.data.res[i].frq[self.run][j]*1e-6, r2, r2_err, 1))
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.relax.data.res[i].frq[self.run][j]*1e-6, noe, noe_err, 1))
+                written = 1
+
+        return written
+
+
+    def create_mfin(self, file):
+        """Create the Modelfree4 input file 'mfin'."""
+
+        # Set the diffusion tensor specific values.
+        if match('iso', self.relax.data.diff[self.run].type):
+            diff = 'isotropic'
+            algorithm = 'brent'
+            tm = self.relax.data.diff[self.run].tm / 1e-9
+            dratio = 1
+            theta = 0
+            phi = 0
+        elif match('axial', self.relax.data.diff[self.run].type):
+            diff = 'axial'
+            algorithm = 'powell'
+            tm = self.relax.data.diff[self.run].tm / 1e-9
+            dratio = self.relax.data.diff[self.run].dratio
+            theta = self.relax.data.diff[self.run].theta
+            phi = self.relax.data.diff[self.run].phi
+        elif match('aniso', self.relax.data.diff[self.run].type):
+            diff = 'anisotropic'
+            algorithm = 'powell'
+            tm = self.relax.data.diff[self.run].tm / 1e-9
+            dratio = 0
+            theta = 0
+            phi = 0
+
+
+        # Add the main options.
+        file.write("optimization    tval\n\n")
+        file.write("seed            0\n\n")
+        file.write("search          grid\n\n")
+
+        # Diffusion type.
+        if self.relax.data.diff[self.run].fixed:
+            diff_search = 'none'
+            algorithm = 'fix'
+        else:
+            diff_search = 'grid'
+
+        file.write("diffusion       " + diff + " " + diff_search + "\n\n")
+        file.write("algorithm       " + algorithm + "\n\n")
+
+        # Monte Carlo simulations.
+        if self.sims:
+            file.write("simulations     " + self.sim_type + "    " + `self.sims` + "       " + `self.trim` + "\n\n")
+        else:
+            file.write("simulations     none\n\n")
+
+        selection = 'none'    # To be changed.
+        file.write("selection       " + selection + "\n\n")
+        file.write("sim_algorithm   " + algorithm + "\n\n")
+
+        file.write("fields          " + `self.relax.data.res[0].num_frq[self.run]`)
+        for frq in xrange(self.relax.data.res[0].num_frq[self.run]):
+            file.write("  " + `self.relax.data.res[0].frq[self.run][frq]*1e-6`)
+        file.write("\n")
+
+        # tm.
+        file.write('%-7s' % 'tm')
+        file.write('%14.3f' % tm)
+        file.write('%2i' % 1)
+        file.write('%3i' % 0)
+        file.write('%5i' % 0)
+        file.write('%6i' % 0)
+        file.write('%4i\n' % self.steps)
+
+        # dratio.
+        file.write('%-7s' % 'Dratio')
+        file.write('%14s' % dratio)
+        file.write('%2i' % 1)
+        file.write('%3i' % 0)
+        file.write('%5i' % 0)
+        file.write('%6i' % 0)
+        file.write('%4i\n' % self.steps)
+
+        # theta.
+        file.write('%-7s' % 'Theta')
+        file.write('%14s' % theta)
+        file.write('%2i' % 1)
+        file.write('%3i' % 0)
+        file.write('%5i' % 0)
+        file.write('%6i' % 0)
+        file.write('%4i\n' % self.steps)
+
+        # phi.
+        file.write('%-7s' % 'Phi')
+        file.write('%14s' % phi)
+        file.write('%2i' % 1)
+        file.write('%3i' % 0)
+        file.write('%5i' % 0)
+        file.write('%6i' % 0)
+        file.write('%4i\n' % self.steps)
+
+
+    def create_mfmodel(self, i, file):
+        """Create the Modelfree4 input file 'mfmodel'."""
+
+        # Spin title.
+        file.write("\nspin     " + self.relax.data.res[i].name + "_" + `self.relax.data.res[i].num` + "\n")
+
+        # tloc.
+        file.write('%-3s%-6s%-6.1f' % ('M1', 'tloc', 0))
+        if 'tm' in self.relax.data.res[i].params[self.run]:
+            file.write('%-4i' % 1)
+        else:
+            file.write('%-4i' % 0)
+
+        if self.constraints:
+            file.write('%-2i' % 2)
+        else:
+            file.write('%-2i' % 0)
+
+        file.write('%11.3f%12.3f %-4s\n' % (0, 20, self.steps))
+
+        # Theta.
+        file.write('%-3s%-6s%-6.1f' % ('M1', 'Theta', 0))
+        file.write('%-4i' % 0)
+
+        if self.constraints:
+            file.write('%-2i' % 2)
+        else:
+            file.write('%-2i' % 0)
+
+        file.write('%11.3f%12.3f %-4s\n' % (0, 90, self.steps))
+
+        # S2f.
+        file.write('%-3s%-6s%-6.1f' % ('M1', 'Sf2', 1))
+        if 'S2f' in self.relax.data.res[i].params[self.run]:
+            file.write('%-4i' % 1)
+        else:
+            file.write('%-4i' % 0)
+
+        if self.constraints:
+            file.write('%-2i' % 2)
+        else:
+            file.write('%-2i' % 0)
+
+        file.write('%11.3f%12.3f %-4s\n' % (0, 1, self.steps))
+
+        # S2s.
+        file.write('%-3s%-6s%-6.1f' % ('M1', 'Ss2', 1))
+        if 'S2s' in self.relax.data.res[i].params[self.run] or 'S2' in self.relax.data.res[i].params[self.run]:
+            file.write('%-4i' % 1)
+        else:
+            file.write('%-4i' % 0)
+
+        if self.constraints:
+            file.write('%-2i' % 2)
+        else:
+            file.write('%-2i' % 0)
+
+        file.write('%11.3f%12.3f %-4s\n' % (0, 1, self.steps))
+
+        # te.
+        file.write('%-3s%-6s%-6.1f' % ('M1', 'te', 0))
+        if 'te' in self.relax.data.res[i].params[self.run] or 'ts' in self.relax.data.res[i].params[self.run]:
+            file.write('%-4i' % 1)
+        else:
+            file.write('%-4i' % 0)
+
+        if self.constraints:
+            file.write('%-2i' % 2)
+        else:
+            file.write('%-2i' % 0)
+
+        file.write('%11.3f%12.3f %-4s\n' % (0, 10000, self.steps))
+
+        # Rex.
+        file.write('%-3s%-6s%-6.1f' % ('M1', 'Rex', 0))
+        if 'Rex' in self.relax.data.res[i].params[self.run]:
+            file.write('%-4i' % 1)
+        else:
+            file.write('%-4i' % 0)
+
+        if self.constraints:
+            file.write('%-2i' % -1)
+        else:
+            file.write('%-2i' % 0)
+
+        file.write('%11.3f%12.3f %-4s\n' % (0, 20, self.steps))
+
+
+    def create_mfpar(self, i, file):
+        """Create the Modelfree4 input file 'mfpar'."""
+
+        # Spin title.
+        file.write("\nspin     " + self.relax.data.res[i].name + "_" + `self.relax.data.res[i].num` + "\n")
+
+        file.write('%-14s' % "constants")
+        file.write('%-6i' % self.relax.data.res[i].num)
+        file.write('%-7s' % self.nucleus)
+        file.write('%-8.3f' % (self.relax.data.gx / 1e7))
+        file.write('%-8.3f' % (self.relax.data.res[i].r[self.run] * 1e10))
+        file.write('%-8.3f\n' % (self.relax.data.res[i].csa[self.run] * 1e6))
+
+        file.write('%-10s' % "vector")
+        file.write('%-4s' % self.atom1)
+        file.write('%-4s\n' % self.atom2)
+
+
+    def create_run(self, file):
+        """Create the script 'run.sh' for the execution of Modelfree4."""
+
+        file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
+        if not match('iso', self.relax.data.diff[self.run].type):
+            # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
+            system('cp ' + self.relax.data.pdb.filename + ' ' + self.dir)
+            file.write(" -s " + self.relax.data.pdb.filename.split('/')[-1])
+        file.write("\n")
+
+
+    def execute(self, run, dir, force):
+        """Function for executing Modelfree4."""
+
+        # The directory.
+        if dir == None:
+            dir = run
+        if not access(dir, F_OK):
+            raise RelaxDirError, ('Modelfree4', dir)
+
+        # Change to this directory.
+        chdir(dir)
+
+        # Test if the 'mfin' input file exists.
+        if not access('mfin', F_OK):
+            raise RelaxFileError, ('mfin input', 'mfin')
+
+        # Test if the 'mfdata' input file exists.
+        if not access('mfdata', F_OK):
+            raise RelaxFileError, ('mfdata input', 'mfdata')
+
+        # Test if the 'mfmodel' input file exists.
+        if not access('mfmodel', F_OK):
+            raise RelaxFileError, ('mfmodel input', 'mfmodel')
+
+        # Test if the 'mfpar' input file exists.
+        if not access('mfpar', F_OK):
+            raise RelaxFileError, ('mfpar input', 'mfpar')
+
+        # Test if the 'PDB' input file exists.
+        if not match('iso', self.relax.data.diff[run].type):
+            pdb = self.relax.data.pdb.filename.split('/')[-1]
+            if not access(pdb, F_OK):
+                raise RelaxFileError, ('PDB', pdb)
+        else:
+            pdb = None
+
+        # Remove the file 'mfout' and '*.out' if the force flag is set.
+        if force:
+            for file in listdir(getcwd()):
+                if search('out$', file):
+                    remove(file)
+
+        # Execute Modelfree4.
+        if pdb:
+            spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
+        else:
+            spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
+
+        # Change back to the original directory.
+        chdir('..')
+
+
+    def open_file(self, file_name):
+        file_name = self.dir + "/" + file_name
+        if access(file_name, F_OK) and not self.force:
+            raise RelaxFileOverwriteError, (file_name, 'force flag')
+        return open(file_name, 'w')
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+########################### Delete everything below ################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+class Palmer_old:
     def __init__(self, relax):
         """Class used to create and process input and output for the program Modelfree 4."""
 
@@ -125,178 +535,6 @@ class Palmer:
         self.relax.mfpar.close()
         self.relax.run.close()
         chmod(dir + '/run', 0777)
-
-
-    def create_mfdata(self, res, flag='1'):
-        """Create the Modelfree input file mfdata.
-
-        This function is run once for each residue.  If the flag variable is set to 0, all data for
-        this residue will be excluded.  If the exclude_set variable is given, the data flag
-        corresponding to that set will be set to 0 (Used by the cross-validation method).
-        """
-
-        mfdata = self.relax.mfdata
-
-        mfdata.write("\nspin     " + self.relax.data.relax_data[0][res][1] + "_" + self.relax.data.relax_data[0][res][0] + "\n")
-        for i in xrange(self.relax.data.num_ri):
-            mfdata.write('%-7s' % self.relax.data.data_types[i])
-            mfdata.write('%-10s' % self.relax.data.frq_label[self.relax.data.remap_table[i]])
-            mfdata.write('%20s' % self.relax.data.relax_data[i][res][2])
-            mfdata.write('%20s' % self.relax.data.relax_data[i][res][3])
-            mfdata.write(' %-3s\n' % flag)
-
-
-    def create_mfin(self):
-        """Create the Modelfree input file mfin."""
-
-        mfin = self.relax.mfin
-
-        mfin.write("optimization    tval\n\n")
-        mfin.write("seed            0\n\n")
-        mfin.write("search          grid\n\n")
-        mfin.write("diffusion       " + self.relax.data.mfin.diff + " " + self.relax.data.mfin.diff_search + "\n\n")
-        mfin.write("algorithm       " + self.relax.data.mfin.algorithm + "\n\n")
-        if match('y', self.relax.data.mfin.sims):
-            mfin.write("simulations     " + self.relax.data.mfin.sim_type + "    " + self.relax.data.mfin.num_sim)
-            mfin.write("       " + self.relax.data.mfin.trim + "\n\n")
-        elif match('n', self.relax.data.mfin.sims):
-            mfin.write("simulations     none\n\n")
-        mfin.write("selection       " + self.relax.data.mfin.selection + "\n\n")
-        mfin.write("sim_algorithm   " + self.relax.data.mfin.algorithm + "\n\n")
-        mfin.write("fields          " + `self.relax.data.num_frq`)
-        for frq in xrange(self.relax.data.num_frq):
-            mfin.write("  " + `self.relax.data.frq[frq]*1e-6`)
-        mfin.write("\n")
-        # tm.
-        mfin.write('%-7s' % 'tm')
-        mfin.write('%14s' % self.relax.usr_param.tm['val'])
-        mfin.write('%2s' % self.relax.usr_param.tm['flag'])
-        mfin.write('%3s' % self.relax.usr_param.tm['bound'])
-        mfin.write('%5s' % self.relax.usr_param.tm['lower'])
-        mfin.write('%6s' % self.relax.usr_param.tm['upper'])
-        mfin.write('%4s\n' % self.relax.usr_param.tm['steps'])
-        # dratio.
-        mfin.write('%-7s' % 'Dratio')
-        mfin.write('%14s' % self.relax.usr_param.dratio['val'])
-        mfin.write('%2s' % self.relax.usr_param.dratio['flag'])
-        mfin.write('%3s' % self.relax.usr_param.dratio['bound'])
-        mfin.write('%5s' % self.relax.usr_param.dratio['lower'])
-        mfin.write('%6s' % self.relax.usr_param.dratio['upper'])
-        mfin.write('%4s\n' % self.relax.usr_param.dratio['steps'])
-        # theta.
-        mfin.write('%-7s' % 'Theta')
-        mfin.write('%14s' % self.relax.usr_param.theta['val'])
-        mfin.write('%2s' % self.relax.usr_param.theta['flag'])
-        mfin.write('%3s' % self.relax.usr_param.theta['bound'])
-        mfin.write('%5s' % self.relax.usr_param.theta['lower'])
-        mfin.write('%6s' % self.relax.usr_param.theta['upper'])
-        mfin.write('%4s\n' % self.relax.usr_param.theta['steps'])
-        # phi.
-        mfin.write('%-7s' % 'Phi')
-        mfin.write('%14s' % self.relax.usr_param.phi['val'])
-        mfin.write('%2s' % self.relax.usr_param.phi['flag'])
-        mfin.write('%3s' % self.relax.usr_param.phi['bound'])
-        mfin.write('%5s' % self.relax.usr_param.phi['lower'])
-        mfin.write('%6s' % self.relax.usr_param.phi['upper'])
-        mfin.write('%4s\n' % self.relax.usr_param.phi['steps'])
-
-
-    def create_mfmodel(self, res, md, type='M1'):
-        """Create the M1 or M2 section of the Modelfree input file mfmodel"""
-
-        mfmodel = self.relax.mfmodel
-
-        if match('M1', type):
-            mfmodel.write("\nspin     " + self.relax.data.relax_data[0][res][1] + "_" + self.relax.data.relax_data[0][res][0] + "\n")
-        else:
-            mfmodel.write("\n")
-
-        # tloc.
-        mfmodel.write('%-3s' % type)
-        mfmodel.write('%-6s' % 'tloc')
-        mfmodel.write('%-6s' % md['tloc']['start'])
-        mfmodel.write('%-4s' % md['tloc']['flag'])
-        mfmodel.write('%-2s' % md['tloc']['bound'])
-        mfmodel.write('%11s' % md['tloc']['lower'])
-        mfmodel.write('%12s' % md['tloc']['upper'])
-        mfmodel.write(' %-4s\n' % md['tloc']['steps'])
-        # Theta.
-        mfmodel.write('%-3s' % type)
-        mfmodel.write('%-6s' % 'Theta')
-        mfmodel.write('%-6s' % md['theta']['start'])
-        mfmodel.write('%-4s' % md['theta']['flag'])
-        mfmodel.write('%-2s' % md['theta']['bound'])
-        mfmodel.write('%11s' % md['theta']['lower'])
-        mfmodel.write('%12s' % md['theta']['upper'])
-        mfmodel.write(' %-4s\n' % md['theta']['steps'])
-        # S2f.
-        mfmodel.write('%-3s' % type)
-        mfmodel.write('%-6s' % 'Sf2')
-        mfmodel.write('%-6s' % md['sf2']['start'])
-        mfmodel.write('%-4s' % md['sf2']['flag'])
-        mfmodel.write('%-2s' % md['sf2']['bound'])
-        mfmodel.write('%11s' % md['sf2']['lower'])
-        mfmodel.write('%12s' % md['sf2']['upper'])
-        mfmodel.write(' %-4s\n' % md['sf2']['steps'])
-        # S2s.
-        mfmodel.write('%-3s' % type)
-        mfmodel.write('%-6s' % 'Ss2')
-        mfmodel.write('%-6s' % md['ss2']['start'])
-        mfmodel.write('%-4s' % md['ss2']['flag'])
-        mfmodel.write('%-2s' % md['ss2']['bound'])
-        mfmodel.write('%11s' % md['ss2']['lower'])
-        mfmodel.write('%12s' % md['ss2']['upper'])
-        mfmodel.write(' %-4s\n' % md['ss2']['steps'])
-        # te.
-        mfmodel.write('%-3s' % type)
-        mfmodel.write('%-6s' % 'te')
-        mfmodel.write('%-6s' % md['te']['start'])
-        mfmodel.write('%-4s' % md['te']['flag'])
-        mfmodel.write('%-2s' % md['te']['bound'])
-        mfmodel.write('%11s' % md['te']['lower'])
-        mfmodel.write('%12s' % md['te']['upper'])
-        mfmodel.write(' %-4s\n' % md['te']['steps'])
-        # Rex.
-        mfmodel.write('%-3s' % type)
-        mfmodel.write('%-6s' % 'Rex')
-        mfmodel.write('%-6s' % md['rex']['start'])
-        mfmodel.write('%-4s' % md['rex']['flag'])
-        mfmodel.write('%-2s' % md['rex']['bound'])
-        mfmodel.write('%11s' % md['rex']['lower'])
-        mfmodel.write('%12s' % md['rex']['upper'])
-        mfmodel.write(' %-4s\n' % md['rex']['steps'])
-
-
-    def create_mfpar(self, res):
-        """Create the Modelfree input file mfpar"""
-
-        mfpar = self.relax.mfpar
-
-        mfpar.write("\nspin     " + self.relax.data.relax_data[0][res][1] + "_" + self.relax.data.relax_data[0][res][0] + "\n")
-
-        mfpar.write('%-14s' % "constants")
-        mfpar.write('%-6s' % self.relax.data.relax_data[0][res][0])
-        mfpar.write('%-7s' % self.relax.usr_param.const['nucleus'])
-        mfpar.write('%-8s' % self.relax.usr_param.const['gamma'])
-        mfpar.write('%-8s' % `self.relax.usr_param.const['rxh']*1e10`)
-        mfpar.write('%-8s\n' % `self.relax.usr_param.const['csa']*1e6`)
-
-        mfpar.write('%-10s' % "vector")
-        mfpar.write('%-4s' % self.relax.usr_param.vector['atom1'])
-        mfpar.write('%-4s\n' % self.relax.usr_param.vector['atom2'])
-
-
-    def create_run(self, dir):
-        """Create the file 'run' to execute the model-free run"""
-
-        self.relax.run.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
-        if self.relax.usr_param.diff == 'axial':
-            # Copy the pdb file to the model directory so there are no problems with the *.rotate
-            # file already existing.
-            cmd = 'cp ' + self.relax.usr_param.pdb_full + ' ' + dir
-            system(cmd)
-            self.relax.run.write(" -s " + self.relax.usr_param.pdb_file)
-        self.relax.run.write("\n")
 
 
     def extract_mf_data(self):
