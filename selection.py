@@ -20,65 +20,94 @@
 #                                                                             #
 ###############################################################################
 
-
-class Select_res:
-    def __init__(self):
-        """Base class containing functions for the selection of residues."""
+from re import compile, match
 
 
-    def select_residues(self):
-        """Function for the selection of residues.
+class Selection:
+    def __init__(self, relax):
+        """Base class containing functions for the manipulation of residue selection."""
 
-        A list of the indecies of the selected residues is returned.
-        """
+        self.relax = relax
 
-        # Test if too many arguments are given.
-        if len(self.sel) > 2:
-            print "A maximum of two arguments for residue selection is allowed."
-            return
 
-        # Initialise the list of indecies.
-        indecies = []
+    def all(self):
+        """Function for selecting all residues."""
 
-        # Both residue name and number are given.
-        if len(self.sel) == 2:
-            if type(self.sel[0]) == int and type(self.sel[1]) == str:
-                num = self.sel[0]
-                name = self.sel[1]
-            elif type(self.sel[0]) == str and type(self.sel[1]) == int:
-                name = self.sel[0]
-                num = self.sel[1]
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
+        # Loop over the sequence and set the selection flag to 1.
+        for i in range(len(self.relax.data.res)):
+            self.relax.data.res[i].select = 1
+
+
+    def none(self):
+        """Function for unselecting all residues."""
+
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
+        # Loop over the sequence and set the selection flag to 0.
+        for i in range(len(self.relax.data.res)):
+            self.relax.data.res[i].select = 0
+
+
+    def reverse(self):
+        """Function for the reversal of residue selection."""
+
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
+        # Loop over the sequence and reverse the selection flag.
+        for i in range(len(self.relax.data.res)):
+            if self.relax.data.res[i].select:
+                self.relax.data.res[i].select = 0
             else:
-                print "If two arguments for residue selection are given, then they should be an integer and string."
-                return
+                self.relax.data.res[i].select = 1
 
-            for i in range(len(self.relax.data.seq)):
-                if num == self.relax.data.seq[i][0] and name == self.relax.data.seq[i][1]:
-                    indecies.append(i)
 
-        # A single argument is given.
-        elif len(self.sel) == 1:
-            # Residue number.
-            if type(self.sel[0]) == int:
-                for i in range(len(self.relax.data.seq)):
-                    if self.sel[0] == self.relax.data.seq[i][0]:
-                        indecies.append(i)
+    def res(self, num=None, name=None, unselect=None):
+        """Function for selecting specific residues."""
 
-            # Residue  name.
-            elif type(self.sel[0]) == str:
-                for i in range(len(self.relax.data.seq)):
-                    if self.sel[0] == self.relax.data.seq[i][1]:
-                        indecies.append(i)
+        # Test if the residue number is a valid regular expression.
+        if type(num) == str:
+            try:
+                compile(num)
+            except:
+                raise RelaxRegExpError, ('residue number', num)
 
-            # Unknown argument.
-            else:
-                print "Unknown argument, should be either an integer or string."
-                return
+        # Test if the residue name is a valid regular expression.
+        if name:
+            try:
+                compile(name)
+            except:
+                raise RelaxRegExpError, ('residue name', name)
 
-        # No arguments are given, therefore select all.
-        else:
-            for i in range(len(self.relax.data.seq)):
-                indecies.append(i)
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
 
-        # Return the list of indecies.
-        return indecies
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Unselect all residues.
+            if unselect:
+                self.relax.data.res[i].select = 0
+
+            # Skip the residue if there is no match to 'num'.
+            if type(num) == int:
+                if not self.relax.data.res[i].num == num:
+                    continue
+            if type(num) == str:
+                if not match(num, `self.relax.data.res[i].num`):
+                    continue
+
+            # Skip the residue if there is no match to 'name'.
+            if name != None:
+                if not match(name, self.relax.data.res[i].name):
+                    continue
+
+            # Select the residue.
+            self.relax.data.res[i].select = 1

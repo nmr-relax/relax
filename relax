@@ -58,6 +58,7 @@ from palmer import Palmer
 from prompt.interpreter import Interpreter
 from relax_data import Rx_data
 from rw import RW
+from selection import Selection
 from sequence import Sequence
 from specific_setup import Specific_setup
 from state import State
@@ -96,6 +97,7 @@ class Relax:
         self.opendx = OpenDX(self)
         self.relax_data = Rx_data(self)
         self.rw = RW(self)
+        self.selection = Selection(self)
         self.sequence = Sequence(self)
         self.specific_setup = Specific_setup(self)
         self.state = State(self)

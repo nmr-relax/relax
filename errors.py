@@ -92,6 +92,11 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must either be an integer or an array of integers."
 
+    # Integer or string
+    class RelaxIntStrError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be an integer or a string."
+
     # Length of the list.
     class RelaxLenError(BaseError):
         def __init__(self, name, len):
@@ -131,6 +136,11 @@ class RelaxErrors:
     class RelaxNoneFloatError(BaseError):
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must either be a floating point number or None."
+
+    # None, integer, or string.
+    class RelaxNoneIntStrError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be an integer, a string, or None."
 
     # None or list.
     class RelaxNoneListError(BaseError):
@@ -208,3 +218,12 @@ class RelaxErrors:
     class RelaxFuncSetupError(BaseError):
         def __init__(self, name, equation):
             self.text = "The " + `name` + " functions for the equation type " + `equation` + " cannot be setup."
+
+
+    # Regular expression errors.
+    ############################
+
+    # Bad regular expression.
+    class RelaxRegExpError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " is not valid regular expression."

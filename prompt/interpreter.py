@@ -50,6 +50,7 @@ import format
 import model
 import pdb
 import read
+import select
 import state
 import value
 
@@ -90,6 +91,7 @@ class Interpreter:
         self._Model = model.Model(relax)
         self._Pdb = pdb.Skin(relax)
         self._Read = read.Skin(relax)
+        self._Select = select.Skin(relax)
         self._State = state.Skin(relax)
         self._Value = value.Skin(relax)
 
@@ -130,6 +132,7 @@ class Interpreter:
         read = self._Read
         pdb = self._Pdb
         model = self._Model
+        select = self._Select
         state = self._State
         value = self._Value
 

@@ -59,8 +59,6 @@ class Specific_setup:
                 return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_vector, self.relax.model_free.fixed_setup, self.relax.model_free.minimise
             if match('grid_search', function_type):
                 return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_vector, self.relax.model_free.grid_setup, self.relax.model_free.minimise
-            if match('linear_constraints', function_type):
-                return self.relax.model_free.linear_constraints
             if match('map_labels', function_type):
                 return self.relax.model_free.map_labels
             if match('map_space', function_type):

@@ -21,8 +21,6 @@
 ###############################################################################
 
 
-from select_res import Select_res
-
 import message
 
 
@@ -47,7 +45,7 @@ class Skin:
         self.__repr__ = message.macro_class
 
 
-class Macro_class(Select_res):
+class Macro_class:
     def __init__(self, relax):
         """Macros for printing data to standard out."""
 
@@ -59,9 +57,6 @@ class Macro_class(Select_res):
 
         With no arguments, the names of all data structures in self.relax.data are printed
         along with the data type.
-
-
-        FIN
         """
 
         self.args = args

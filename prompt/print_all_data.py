@@ -34,20 +34,19 @@ class Print_all_data:
     def __repr__(self):
         """Macro for printing all the data in self.relax.data"""
 
-        string = ""
         # Loop over the data structures in self.relax.data
         for name in dir(self.relax.data):
             if not self.filter_data_structure(self.relax.data, name):
-                string = string + "self.relax.data." + name + ":\n" + `getattr(self.relax.data, name)` + "\n\n"
+                print "self.relax.data." + name + ":\n" + `getattr(self.relax.data, name)` + "\n"
 
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
-            string = string + "\nResidue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "\n\n"
+            print "\nResidue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "\n"
             for name in dir(self.relax.data.res[i]):
                 if not self.filter_data_structure(self.relax.data.res[i], name):
-                    string = string + "self.relax.data.res[" + `i` + "]." + name + ": " + `getattr(self.relax.data.res[i], name)` + "\n"
+                    print "self.relax.data.res[" + `i` + "]." + name + ": " + `getattr(self.relax.data.res[i], name)`
 
-        return string
+        return ""
 
 
     def filter_data_structure(self, data, name):

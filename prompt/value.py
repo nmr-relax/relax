@@ -20,12 +20,9 @@
 #                                                                             #
 ###############################################################################
 
-
-from re import match
 import sys
 
 import message
-from select_res import Select_res
 
 
 class Skin:
@@ -49,7 +46,7 @@ class Skin:
         self.__repr__ = message.macro_class
 
 
-class Macro_class(Select_res):
+class Macro_class:
     def __init__(self, relax):
         """Class containing macros for the setting up of data structures."""
 

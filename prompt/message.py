@@ -22,5 +22,8 @@
 
 
 def macro_class():
-    text = "This is a macro class which contains macro functions."
+    text = ""
+    text = text + "This is a macro class which contains macro functions.  To see the available functions, either\n"
+    text = text + "supply the class name to the dir function by typing dir(macro_class) or by placing a period at\n"
+    text = text + "the end of class name and hitting the tab key.\n"
     return text

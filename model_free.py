@@ -475,7 +475,7 @@ class Model_free:
                 object[run] = value
 
 
-    def linear_constraints(self, data=None, run=None, params=None):
+    def linear_constraints(self, run=None, data=None, index=None):
         """Function for setting up the model-free linear constraint matrices A and b.
 
         Standard notation
@@ -574,14 +574,18 @@ class Model_free:
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(params)
+        n = len(data.params[run])
         zero_array = zeros(n, Float64)
         j = 0
+        S = None
+        if data.scaling:
+            S = []
+            scaling_vector = self.assemble_scaling_vector(run, data, index)
 
         # The original model-free equations.
         for i in range(n):
             # Order parameters {S2, S2f, S2s}.
-            if match('S2', params[i]):
+            if match('S2', data.params[run][i]):
                 # 0 <= S2 <= 1.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -589,45 +593,56 @@ class Model_free:
                 A[j+1][i] = -1.0
                 b.append(0.0)
                 b.append(-1.0)
+                if data.scaling:
+                    S.append(1.0 / scaling_vector[i])
+                    S.append(1.0 / scaling_vector[i])
                 j = j + 2
 
                 # S2 <= S2f and S2 <= S2s.
-                if params[i] == 'S2':
+                if data.params[run][i] == 'S2':
                     for k in range(n):
-                        if params[k] == 'S2f' or params[k] == 'S2s':
+                        if data.params[run][k] == 'S2f' or data.params[run][k] == 'S2s':
                             A.append(zero_array * 0.0)
                             A[j][i] = -1.0
                             A[j][k] = 1.0
                             b.append(0.0)
+                            if data.scaling:
+                                S.append(1.0 / scaling_vector[i])
                             j = j + 1
 
             # Correlation times {tm, te, tf, ts}.
-            elif match('t', params[i]):
+            elif match('t', data.params[run][i]):
                 # te >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
+                if data.scaling:
+                    S.append(1.0 / scaling_vector[i])
                 j = j + 1
 
                 # tf <= ts.
-                if params[i] == 'ts':
+                if data.params[run][i] == 'ts':
                     for k in range(n):
-                        if params[k] == 'tf':
+                        if data.params[run][k] == 'tf':
                             A.append(zero_array * 0.0)
                             A[j][i] = 1.0
                             A[j][k] = -1.0
                             b.append(0.0)
+                            if data.scaling:
+                                S.append(1.0 / scaling_vector[i])
                             j = j + 1
 
             # Rex.
-            elif params[i] == 'Rex':
+            elif data.params[run][i] == 'Rex':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
+                if data.scaling:
+                    S.append(1.0 / scaling_vector[i])
                 j = j + 1
 
             # Bond length.
-            elif match('r', params[i]):
+            elif match('r', data.params[run][i]):
                 # 0.9e-10 <= r <= 2e-10.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -639,10 +654,13 @@ class Model_free:
                 else:
                     b.append(0.9e-10)
                     b.append(-2e-10)
+                if data.scaling:
+                    S.append(1.0 / scaling_vector[i])
+                    S.append(1.0 / scaling_vector[i])
                 j = j + 2
 
             # CSA.
-            elif match('CSA', params[i]):
+            elif match('CSA', data.params[run][i]):
                 # -300e-6 <= CSA <= 0.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -653,13 +671,18 @@ class Model_free:
                 else:
                     b.append(-300e-6)
                 b.append(0.0)
+                if data.scaling:
+                    S.append(1.0 / scaling_vector[i])
+                    S.append(1.0 / scaling_vector[i])
                 j = j + 2
 
         # Convert to Numeric data structures.
         A = array(A, Float64)
         b = array(b, Float64)
+        if data.scaling:
+            S = array(S, Float64)
 
-        return A, b
+        return A, b, S
 
 
     def macro_create(self, run=None, model=None, equation=None, params=None, scaling=1):
@@ -950,10 +973,7 @@ class Model_free:
 
         # Linear constraints.
         if constraints:
-            constraint_function = self.relax.specific_setup.setup("linear_constraints", self.relax.data.res[i].equations[run])
-            if constraint_function == None:
-                raise RelaxFuncSetupError, ('linear constraint', self.relax.data.res[i].equations[run])
-            A, b = constraint_function(self.relax.data.res[i], run, self.relax.data.res[i].params[run])
+            A, b, S = self.linear_constraints(run, self.relax.data.res[i], i)
 
         if print_flag >= 1:
             if print_flag >= 2:
@@ -990,7 +1010,7 @@ class Model_free:
 
         # Minimisation.
         if constraints:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, S=S, full_output=1, print_flag=print_flag)
         else:
             results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
         if results == None:
