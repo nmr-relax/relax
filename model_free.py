@@ -46,7 +46,7 @@ class model_free(common_ops):
 		chi2_tol = 1e-15
 		max_iterations = 5000
 
-		# Set the function, gradient, and Hessian functions.
+		# Set the function, gradient, and hessian functions.
 		if self.scaling_flag:
 			self.functions = mf_trans_functions(self.mf)
 			func = self.functions.chi2
@@ -87,7 +87,7 @@ class model_free(common_ops):
 			else:
 				print "Residue: " + self.relax.data.relax_data[0][self.res][0] + " " + self.relax.data.relax_data[0][self.res][1]
 
-			# Initialise the iteration counter and function, gradient, and Hessian call counters.
+			# Initialise the iteration counter and function, gradient, and hessian call counters.
 			self.iter_count = 0
 			self.f_count = 0
 			self.g_count = 0

@@ -35,7 +35,7 @@ class exact_trust_region(generic_trust_region, generic_minimise, bfgs, newton):
 		self.hessian_type_and_mod(min_options)
 		if self.init_failure: return
 
-		# Initialise the function, gradient, and Hessian evaluation counters.
+		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -253,7 +253,7 @@ class exact_trust_region(generic_trust_region, generic_minimise, bfgs, newton):
 			self.l = self.l + self.l_corr
 
 			iter = iter + 1
-
+				
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1

@@ -208,7 +208,7 @@ class mf:
 	def d2func(self, params, print_flag=0):
 		"""The function for calculating the model-free chi-squared gradient vector.
 
-		The chi-sqared Hessian
+		The chi-sqared hessian
 		~~~~~~~~~~~~~~~~~~~~~~
 			                      _n_
 			     d2chi2           \       1      /  dRi()     dRi()                         d2Ri()     \ 
@@ -227,7 +227,7 @@ class mf:
 		self.set_params(params)
 		self.print_flag = print_flag
 
-		# Test if the Hessian has already been calculated with these parameter values.
+		# Test if the hessian has already been calculated with these parameter values.
 		if sum(self.data.params == self.data.hess_test) == len(self.data.params):
 			if len(self.data.params):
 				return self.data.d2chi2
@@ -236,30 +236,30 @@ class mf:
 		if sum(self.data.params == self.data.grad_test) != len(self.data.params):
 			temp_dchi2 = self.dfunc(params, print_flag)
 
-		# Store the parameter values in self.data.hess_test for testing on next call if the Hessian has already been calculated.
+		# Store the parameter values in self.data.hess_test for testing on next call if the hessian has already been calculated.
 		self.data.hess_test = self.data.params * 1.0
 
-		# Calculate the spectral density Hessians.
+		# Calculate the spectral density hessians.
 		create_d2jw_struct(self.data, self.calc_d2jw)
 
-		# Calculate the relaxation Hessian components.
+		# Calculate the relaxation hessian components.
 		self.create_d2ri_comps(self.data, self.create_dip_hess, self.create_dip_jw_hess, self.create_csa_hess, self.create_csa_jw_hess, None)
 
-		# Calculate the R1, R2, and sigma_noe Hessians.
+		# Calculate the R1, R2, and sigma_noe hessians.
 		for i in range(len(self.data.params)):
 			for j in range(i + 1):
 				if self.create_d2ri_prime[i][j]:
 					self.create_d2ri_prime[i][j](self.data, i, j)
 
-					# Make the Hessian symmetric.
+					# Make the hessian symmetric.
 					if i != j:
 						self.data.d2ri_prime[:, j, i] = self.data.d2ri_prime[:, i, j]
 
-		# Calculate the R1, R2, and NOE Hessians.
+		# Calculate the R1, R2, and NOE hessians.
 		self.data.d2ri = self.data.d2ri_prime * 1.0
 		d2ri(self.data, self.create_d2ri, self.get_d2r1)
 
-		# Calculate the chi-squared Hessian.
+		# Calculate the chi-squared hessian.
 		self.data.d2chi2 = d2chi2(self.data.relax_data, self.data.ri, self.data.dri, self.data.d2ri, self.data.errors)
 
 		# Diagonal scaling.
@@ -300,7 +300,7 @@ class mf:
 		self.data.two_fifths_tm = 0.4 * self.data.diff_params[0]
 		self.data.two_fifths_tm_sqrd = 0.4 * self.data.diff_params[0] ** 2
 
-		# Spectral density values, gradients, and Hessians.
+		# Spectral density values, gradients, and hessians.
 		self.data.jw = zeros((self.relax.data.num_frq, 5), Float64)
 		self.data.djw = zeros((self.relax.data.num_frq, 5, len(self.params)), Float64)
 		self.data.d2jw = zeros((self.relax.data.num_frq, 5, len(self.params), len(self.params)), Float64)
@@ -338,7 +338,7 @@ class mf:
 		self.data.dip_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
 		self.data.csa_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
 
-		# Initialise the transformed relaxation values, gradients, and Hessians.
+		# Initialise the transformed relaxation values, gradients, and hessians.
 		self.data.ri_prime = zeros((self.relax.data.num_ri), Float64)
 		self.data.dri_prime = zeros((self.relax.data.num_ri, len(self.params)), Float64)
 		self.data.d2ri_prime = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
@@ -380,7 +380,7 @@ class mf:
 		self.data.r1_data.dip_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
 		self.data.r1_data.csa_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
 
-		# Initialise the transformed relaxation values, gradients, and Hessians.
+		# Initialise the transformed relaxation values, gradients, and hessians.
 		self.data.r1_data.ri_prime = zeros((self.relax.data.num_ri), Float64)
 		self.data.r1_data.dri_prime = zeros((self.relax.data.num_ri, len(self.params)), Float64)
 		self.data.r1_data.d2ri_prime = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
@@ -431,7 +431,7 @@ class mf:
 	def setup_equations(self):
 		"Setup the equations used to calculate the chi-squared statistic."
 
-		# Initialise the spectral density gradient and Hessian function lists.
+		# Initialise the spectral density gradient and hessian function lists.
 		self.calc_djw = []
 		self.calc_d2jw = []
 		for i in range(len(self.params)):

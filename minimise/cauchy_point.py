@@ -38,7 +38,7 @@ class cauchy_point(generic_trust_region, generic_minimise):
 		self.delta = delta0
 		self.eta = eta
 
-		# Initialise the function, gradient, and Hessian evaluation counters.
+		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -88,8 +88,8 @@ class cauchy_point(generic_trust_region, generic_minimise):
 
 	def update(self):
 		"""Update function.
-
-		Function to update the function value, gradient vector, and Hessian matrix
+		
+		Function to update the function value, gradient vector, and hessian matrix
 		"""
 
 		self.xk = self.xk_new * 1.0

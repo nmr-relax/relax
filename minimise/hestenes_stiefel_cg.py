@@ -44,7 +44,7 @@ class hestenes_stiefel(generic_conjugate_gradient, generic_minimise, line_search
 		self.mu = mu
 		self.eta = eta
 
-		# Initialise the function, gradient, and Hessian evaluation counters.
+		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0

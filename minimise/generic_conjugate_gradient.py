@@ -37,7 +37,7 @@ class generic_conjugate_gradient:
 	def setup(self):
 		"""Setup function.
 
-		The initial Newton function value, gradient vector, and Hessian matrix are calculated.
+		The initial Newton function value, gradient vector, and hessian matrix are calculated.
 		"""
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
@@ -62,7 +62,7 @@ class generic_conjugate_gradient:
 
 
 	def update(self):
-		"Function to update the function value, gradient vector, and Hessian matrix"
+		"Function to update the function value, gradient vector, and hessian matrix"
 
 		# Gradient dot product at k+1.
 		self.dot_dfk_new = dot(self.dfk_new, self.dfk_new)

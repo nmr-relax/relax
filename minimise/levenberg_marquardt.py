@@ -41,7 +41,7 @@ class levenberg_marquardt(generic_minimise):
 		self.full_output = full_output
 		self.print_flag = print_flag
 
-		# Initialise the function, gradient, and Hessian evaluation counters.
+		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -108,6 +108,16 @@ class levenberg_marquardt(generic_minimise):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.chi2_func, (self.xk_new,)+self.args), self.f_count + 1
+		if self.fk_new < self.fk:
+			if self.l >= 1e-99:
+				self.l = self.l * 0.1
+			self.move_flag = 1
+		else:
+			if self.l <= 1e99:
+				self.l = self.l * 10.0
+			self.xk_new = self.xk
+			self.fk_new = self.fk
+			self.move_flag = 0
 
 
 	def setup(self):
@@ -129,15 +139,9 @@ class levenberg_marquardt(generic_minimise):
 	def tests(self):
 		"Levenberg-Marquardt convergence test."
 
-		if self.fk_new > self.fk:
-			if self.l <= 1e99:
-				self.l = self.l * 10.0
-		else:
-			# Finish minimising when the chi-squared difference is insignificant.
-			if abs(self.fk - self.fk_new) < self.func_tol:
-				return 1
-			if self.l >= 1e-99:
-				self.l = self.l * 0.1
+		# Finish minimising when the chi-squared difference is insignificant.
+		if self.move_flag and abs(self.fk - self.fk_new) < self.func_tol:
+			return 1
 		return 0
 
 

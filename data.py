@@ -24,7 +24,7 @@ class data:
 
 		# The number of field strengths, eg 2.
 		self.num_frq = 0
-
+		
 		# Labels corresponding to the data type, eg ['NOE', 'R1', 'R2', 'NOE', 'R1', 'R2']
 		self.ri_labels = []
 

@@ -19,8 +19,8 @@ from macros.mf_model import mf_model
 from macros.pdb import pdb
 from macros.set_model_selection import set_model_selection
 from macros.state import state
-from macros.tab import tab
 from macros.value_setup import value_setup
+
 
 
 class interpreter:
@@ -42,9 +42,7 @@ class interpreter:
 		self.pdb = pdb(relax)
 		self.set_model_selection = set_model_selection(relax)
 		self.state = state(relax)
-		self.tab = tab(readline)
 		self.value_setup = value_setup(relax)
-
 
 	def run(self):
 		"""Run the python interpreter.
@@ -80,7 +78,6 @@ class interpreter:
 		set_model_selection = self.set_model_selection.set
 		state_load = self.state.load
 		state_save = self.state.save
-		tab = self.tab.run
 		value_setup = self.value_setup.set
 
 		# Builtin interpreter functions.
@@ -112,7 +109,7 @@ class _Echo:
 		~~~~~~~
 
 		To run the macro, type the following.
-
+		
 		>>> echo_off()
 
 
@@ -135,7 +132,7 @@ class _Echo:
 		~~~~~~~
 
 		To run the macro, type the following.
-
+		
 		>>> echo_on()
 
 

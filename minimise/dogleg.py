@@ -60,7 +60,7 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.hessian_type_and_mod(min_options)
 		if self.init_failure: return
 
-		# Initialise the function, gradient, and Hessian evaluation counters.
+		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -86,13 +86,13 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		try:
 			pB = -matrixmultiply(self.Hk, self.dfk)
 		except AttributeError:
-			# Backup the Hessian as the function self.get_pk may modify it.
+			# Backup the hessian as the function self.get_pk may modify it.
 			d2fk_backup = 1.0 * self.d2fk
 
 			# The modified Newton step.
 			pB = self.get_pk()
 
-			# Restore the Hessian.
+			# Restore the hessian.
 			self.d2fk = d2fk_backup
 		norm_pB = sqrt(dot(pB, pB))
 
@@ -109,7 +109,7 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		# Test if the step pU exits the trust region.
 		if norm_pU >= self.delta:
 			return self.delta * pU / norm_pU
-
+			
 		# Find the solution to the scalar quadratic equation.
 		pB_pU = pB - pU
 		dot_pB_pU = dot(pB_pU, pB_pU)
@@ -122,7 +122,7 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 
 
 	def hessian_update_bfgs(self):
-		"BFGS Hessian update."
+		"BFGS hessian update."
 
 		# BFGS matrix update.
 		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1

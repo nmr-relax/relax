@@ -17,7 +17,7 @@ class simplex(generic_minimise):
 		self.full_output = full_output
 		self.print_flag = print_flag
 
-		# Initialise the function, gradient, and Hessian evaluation counters.
+		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -31,7 +31,7 @@ class simplex(generic_minimise):
 
 	def new_param_func(self):
 		"""The new parameter function.
-
+		
 		Simplex movement.
 		"""
 

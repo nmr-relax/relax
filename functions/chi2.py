@@ -71,13 +71,13 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
 	return dchi2
 
 
-# Chi-squared Hessian.
+# Chi-squared hessian.
 ######################
 
 def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
-	"""Function to create the chi-squared Hessian.
+	"""Function to create the chi-squared hessian.
 
-	The chi-squared Hessian
+	The chi-squared hessian
 	~~~~~~~~~~~~~~~~~~~~~~~
 	                      _n_
 	     d2chi2           \       1      /  dyi()     dyi()                         d2yi()     \ 
@@ -95,14 +95,14 @@ def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
 	# Count the number of parameters in the model.
 	num_params = len(back_calc_grad[0])
 
-	# Initialise the chi-squared Hessian.
+	# Initialise the chi-squared hessian.
 	d2chi2 = zeros((num_params, num_params), Float64)
 
 	# Parameter independent terms.
 	a = 2.0 / (errors**2)
 	yi_diff = data - back_calc_vals
 
-	# Calculate the chi-squared Hessian.
+	# Calculate the chi-squared hessian.
 	for i in range(len(data)):
 		# Loop over the parameters.
 		for j in range(num_params):

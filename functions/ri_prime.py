@@ -115,7 +115,7 @@
 #
 #
 #
-# The transformed relaxation Hessians
+# The transformed relaxation hessians
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 #	Spectral density parameter - Spectral density parameter
@@ -131,9 +131,9 @@
 #		dJwi.dJwj           2                                   6
 #
 #
-#		d2sigma_noe()
+#		d2sigma_noe()      
 #		-------------  =  dip_const_func . dip_Jw_sigma_noe_hess
-#		  dJwi.dJwj
+#		  dJwi.dJwj     
 #
 #
 #		  d2Ri()
@@ -157,7 +157,7 @@
 #		dJw.dcsa
 #
 #
-#		 d2R2()      csa_const_grad
+#		 d2R2()      csa_const_grad 
 #		--------  =  -------------- . csa_Jw_R2_grad
 #		dJw.dcsa           6
 #
@@ -180,7 +180,7 @@
 #		dJw.dr
 #
 #
-#		d2R2()     dip_const_grad
+#		d2R2()     dip_const_grad 
 #		------  =  -------------- . dip_Jw_R2_grad
 #		dJw.dr           2
 #
@@ -227,7 +227,7 @@
 #		dcsa**2
 #
 #
-#		 d2R2()     csa_const_hess
+#		 d2R2()     csa_const_hess 
 #		-------  =  -------------- . csa_Jw_R2_func
 #		dcsa**2           6
 #
@@ -323,13 +323,13 @@ def func_dri_dcsa_prime(data, csa_index):
 
 
 
-# Transformed relaxation Hessians.
+# Transformed relaxation hessians.
 ##################################
 
 
 # d2Ri/dJ(w)i.dJ(w)j
 def func_d2ri_djwidjwj_prime(data, jw_i_index, jw_j_index):
-	"""Spectral density parameter / spectral density parameter Hessian.
+	"""Spectral density parameter / spectral density parameter hessian.
 
 	  d2R1()
 	---------  =  dip_const_func . dip_Jw_R1_hess  +  csa_const_func . csa_Jw_R1_hess
@@ -339,9 +339,9 @@ def func_d2ri_djwidjwj_prime(data, jw_i_index, jw_j_index):
 	---------  =  -------------- . dip_Jw_R2_hess  +  -------------- . csa_Jw_R2_hess
 	dJwi.dJwj           2                                   6
 
-	d2sigma_noe()
+	d2sigma_noe()      
 	-------------  =  dip_const_func . dip_Jw_sigma_noe_hess
-	  dJwi.dJwj
+	  dJwi.dJwj     
 
 	  d2Ri()
 	---------  =  dip_comps_func . dip_jw_comps_hess  +  csa_comps_func . csa_jw_comps_hess
@@ -354,13 +354,13 @@ def func_d2ri_djwidjwj_prime(data, jw_i_index, jw_j_index):
 
 # d2Ri/dJ(w).dCSA
 def func_d2ri_djwdcsa_prime(data, jw_index, csa_index):
-	"""Spectral density parameter / CSA Hessian.
+	"""Spectral density parameter / CSA hessian.
 
 	 d2R1()
 	--------  =  csa_const_grad . csa_Jw_R1_grad
 	dJw.dcsa
 
-	 d2R2()      csa_const_grad
+	 d2R2()      csa_const_grad 
 	--------  =  -------------- . csa_Jw_R2_grad
 	dJw.dcsa           6
 
@@ -379,13 +379,13 @@ def func_d2ri_djwdcsa_prime(data, jw_index, csa_index):
 
 # d2Ri/dCSA.dJ(w)
 def func_d2ri_dcsadjw_prime(data, csa_index, jw_index):
-	"""Spectral density parameter / CSA Hessian.
+	"""Spectral density parameter / CSA hessian.
 
 	 d2R1()
 	--------  =  csa_const_grad . csa_Jw_R1_grad
 	dJw.dcsa
 
-	 d2R2()      csa_const_grad
+	 d2R2()      csa_const_grad 
 	--------  =  -------------- . csa_Jw_R2_grad
 	dJw.dcsa           6
 
@@ -404,13 +404,13 @@ def func_d2ri_dcsadjw_prime(data, csa_index, jw_index):
 
 # d2Ri/dJ(w).dr
 def func_d2ri_djwdr_prime(data, jw_index, r_index):
-	"""Spectral density parameter / bond length Hessian.
+	"""Spectral density parameter / bond length hessian.
 
 	d2R1()
 	------  =  dip_const_grad . dip_Jw_R1_grad
 	dJw.dr
 
-	d2R2()     dip_const_grad
+	d2R2()     dip_const_grad 
 	------  =  -------------- . dip_Jw_R2_grad
 	dJw.dr           2
 
@@ -429,13 +429,13 @@ def func_d2ri_djwdr_prime(data, jw_index, r_index):
 
 # d2Ri/dr.dJ(w)
 def func_d2ri_drdjw_prime(data, r_index, jw_index):
-	"""Spectral density parameter / bond length Hessian.
+	"""Spectral density parameter / bond length hessian.
 
 	d2R1()
 	------  =  dip_const_grad . dip_Jw_R1_grad
 	dJw.dr
 
-	d2R2()     dip_const_grad
+	d2R2()     dip_const_grad 
 	------  =  -------------- . dip_Jw_R2_grad
 	dJw.dr           2
 
@@ -454,13 +454,13 @@ def func_d2ri_drdjw_prime(data, r_index, jw_index):
 
 # d2Ri/dCSA^2
 def func_d2ri_dcsa2_prime(data, csa_i_index, csa_j_index):
-	"""CSA / CSA Hessian.
+	"""CSA / CSA hessian.
 
 	 d2R1()
 	-------  =  csa_const_hess  . csa_Jw_R1_func
 	dcsa**2
 
-	 d2R2()     csa_const_hess
+	 d2R2()     csa_const_hess 
 	-------  =  -------------- . csa_Jw_R2_func
 	dcsa**2           6
 
@@ -479,7 +479,7 @@ def func_d2ri_dcsa2_prime(data, csa_i_index, csa_j_index):
 
 # d2Ri/dr^2
 def func_d2ri_dr2_prime(data, r_i_index, r_j_index):
-	"""Bond length / bond length Hessian.
+	"""Bond length / bond length hessian.
 
 	d2R1()
 	------  =  dip_const_hess . dip_Jw_R1_func

@@ -5,7 +5,7 @@ data_class = data
 
 
 def ri(data, create_ri, get_r1):
-	"""An additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
+	"""An additional layer of equations to simplify the relaxation equations, gradients, and hessians.
 
 	The R1 and R2 equations are left alone, while the NOE is calculated from the R1 and sigma_noe values.
 
@@ -41,7 +41,7 @@ def ri(data, create_ri, get_r1):
 
 
 def dri(data, create_dri, get_dr1):
-	"""An additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
+	"""An additional layer of equations to simplify the relaxation equations, gradients, and hessians.
 
 	The R1 and R2 equations are left alone, while the NOE is decomposed into the cross relaxation rate equation and the R1 equation.
 
@@ -83,12 +83,12 @@ def dri(data, create_dri, get_dr1):
 
 
 def d2ri(data, create_d2ri, get_d2r1):
-	"""An additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
+	"""An additional layer of equations to simplify the relaxation equations, gradients, and hessians.
 
 	The R1 and R2 equations are left alone, while the NOE is decomposed into the cross relaxation rate equation and the R1 equation.
 
 
-	The relaxation Hessians
+	The relaxation hessians
 	~~~~~~~~~~~~~~~~~~~~~~~
 
 	Data structure:  data.d2ri
@@ -120,7 +120,7 @@ def d2ri(data, create_d2ri, get_d2r1):
 			          \   dthetai      dthetaj     dthetai     dthetaj               dthetai.dthetaj / /
 	"""
 
-	# Loop over the relaxation values and modify the NOE Hessians.
+	# Loop over the relaxation values and modify the NOE hessians.
 	for i in range(data.num_ri):
 		if create_d2ri[i]:
 			create_d2ri[i](data, i, data.remap_table[i], get_d2r1)
@@ -262,7 +262,7 @@ def calc_d2r1(data, i, frq_num):
 		for k in range(j + 1):
 			if data.r1_data.create_d2ri_prime[j][k]:
 				data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
-				# Make the Hessian symmetric.
+				# Make the hessian symmetric.
 				if i != j:
 					data.r1_data.d2ri_prime[i, k, j] = data.r1_data.d2ri_prime[i, j, k]
 

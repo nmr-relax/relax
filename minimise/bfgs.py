@@ -28,7 +28,7 @@ class bfgs(generic_minimise, line_search_functions):
 		self.mu = mu
 		self.eta = eta
 
-		# Initialise the function, gradient, and Hessian evaluation counters.
+		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -63,15 +63,15 @@ class bfgs(generic_minimise, line_search_functions):
 
 	def setup_bfgs(self):
 		"""Setup function.
-
+		
 		Create the identity matrix I and calculate the function, gradient and initial BFGS
-		inverse Hessian matrix.
+		inverse hessian matrix.
 		"""
 
 		# Set the Identity matrix I.
 		self.I = identity(len(self.xk), Float64)
 
-		# The initial BFGS function value, gradient vector, and BFGS approximation to the inverse Hessian matrix.
+		# The initial BFGS function value, gradient vector, and BFGS approximation to the inverse hessian matrix.
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 		self.Hk = self.I * 1.0
