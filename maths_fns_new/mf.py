@@ -400,9 +400,10 @@ class Mf:
         data.create_ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe values.
-        data.ri = data.create_ri_prime(data)
+        data.ri_prime = data.create_ri_prime(data)
 
         # Calculate the NOE values.
+        data.ri = data.ri_prime * 1.0
         for m in xrange(data.num_ri):
             if data.create_ri[m]:
                 data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
@@ -453,9 +454,10 @@ class Mf:
         data.create_ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe values.
-        data.ri = data.create_ri_prime(data)
+        data.ri_prime = data.create_ri_prime(data)
 
         # Calculate the NOE values.
+        data.ri = data.ri_prime * 1.0
         for m in xrange(data.num_ri):
             if data.create_ri[m]:
                 data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
@@ -516,9 +518,10 @@ class Mf:
             data.create_ri_comps(data, data.param_values)
 
             # Calculate the R1, R2, and sigma_noe values.
-            data.ri = data.create_ri_prime(data)
+            data.ri_prime = data.create_ri_prime(data)
 
             # Calculate the NOE values.
+            data.ri = data.ri_prime * 1.0
             for m in xrange(data.num_ri):
                 if data.create_ri[m]:
                     data.create_ri[m](data, m, data.remap_table[m], data.get_r1, data.param_values)
@@ -582,9 +585,10 @@ class Mf:
             data.create_ri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe values.
-            data.ri = data.create_ri_prime(data)
+            data.ri_prime = data.create_ri_prime(data)
 
             # Calculate the NOE values.
+            data.ri = data.ri_prime * 1.0
             for m in xrange(data.num_ri):
                 if data.create_ri[m]:
                     data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
@@ -604,6 +608,7 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue.
         """
 
+        print "\nParams: " + `params`
         # Test if the function has already been called, otherwise run self.func.
         if sum(params == self.func_test) != self.total_num_params:
             self.func(params)
@@ -632,13 +637,21 @@ class Mf:
             data.create_dri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe gradients.
-            data.dri = data.create_dri_prime[j](data)
-            print data.dri
+            data.dri_prime = data.create_dri_prime[j](data)
 
             # Loop over the relaxation values and modify the NOE gradients.
+            data.dri = data.dri_prime * 1.0
             for m in xrange(data.num_ri):
                 if data.create_dri[m]:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params)
+
+            print "jw:\n" + `data.jw`
+            print "ri_prime:\n" + `data.ri_prime`
+            print "ri:\n" + `data.ri`
+
+            print "djw:\n" + `data.djw`
+            print "dri_prime:\n" + `data.dri_prime`
+            print "dri:\n" + `data.dri`
 
             # Calculate the chi-squared gradient.
             data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri, data.errors)
@@ -646,6 +659,8 @@ class Mf:
         # Diagonal scaling.
         if self.scaling_flag:
             data.dchi2 = matrixmultiply(data.dchi2, self.scaling_matrix)
+
+        print "dchi2:\n" + `data.dchi2`
 
         return data.dchi2
 

@@ -55,14 +55,14 @@ def calc_noe(data, i, frq_num, get_r1, params):
     Half this code needs to be shifted into the function initialisation code.
     """
 
-    # Get the r1 value either from data.ri or by calculation if the value is not in data.ri
+    # Get the r1 value either from data.ri_prime or by calculation if the value is not in data.ri_prime
     data.r1[i] = get_r1[i](data, i, frq_num, params)
 
     # Calculate the NOE.
     if data.r1[i] == 0.0:
         data.ri[i] = 1e99
     else:
-        data.ri[i] = 1.0 + data.g_ratio*(data.ri[i] / data.r1[i])
+        data.ri[i] = 1.0 + data.g_ratio*(data.ri_prime[i] / data.r1[i])
 
 
 def calc_dnoe(data, i, frq_num, get_dr1, params):
@@ -76,7 +76,13 @@ def calc_dnoe(data, i, frq_num, get_dr1, params):
     if data.r1[i] == 0.0:
         data.dri[i] = 1e99
     else:
-        data.dri[i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri[i] - data.ri[i] * data.dr1[i])
+        print "\n"
+        print "r1:        %-40.66g" % data.r1[i]
+        print "dri_prime: %-40.66g" % data.dri_prime[i]
+        print "ri_prime:  %-40.66g" % data.ri_prime[i]
+        print "dr1:       %-40.66g" % data.dr1[i]
+        data.dri[i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[i] - data.ri_prime[i] * data.dr1[i])
+        print "dri:       %-40.66g" % data.dri[i]
 
 
 def calc_d2noe(data, i, frq_num, get_d2r1, params):
@@ -92,8 +98,8 @@ def calc_d2noe(data, i, frq_num, get_d2r1, params):
     else:
         print "Num params: " + `data.num_params`
         for j in xrange(data.num_params):
-            a = data.ri[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
-            b = data.r1[i] * (data.dri[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri[i] - data.r1[i] * data.d2ri[i, j])
+            a = data.ri_prime[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
+            b = data.r1[i] * (data.dri_prime[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri_prime[i] - data.r1[i] * data.d2ri_prime[i, j])
             data.d2ri[i, j] = data.g_ratio * (1.0 / data.r1[i]**3) * (a - b)
 
 
@@ -119,7 +125,7 @@ def calc_r1(data, i, frq_num, params):
     # Calculate the r1 value.
     func_ri_prime(data.r1_data)
 
-    return data.r1_data.ri[i]
+    return data.r1_data.ri_prime[i]
 
 
 def calc_dr1(data, i, frq_num, params):
@@ -153,9 +159,9 @@ def calc_dr1(data, i, frq_num, params):
 
     # Calculate the dr1 value.
     for j in xrange(data.num_params):
-        data.r1_data.create_dri[j](data.r1_data, j)
+        data.r1_data.create_dri_prime[j](data.r1_data, j)
 
-    return data.r1_data.dri[i]
+    return data.r1_data.dri_prime[i]
 
 
 def calc_d2r1(data, i, frq_num, params):
@@ -173,13 +179,13 @@ def calc_d2r1(data, i, frq_num, params):
     # Calculate the dr1 value.
     for j in xrange(data.num_params):
         for k in xrange(j + 1):
-            if data.r1_data.create_d2ri[j][k]:
-                data.r1_data.create_d2ri[j][k](data.r1_data, j, k)
+            if data.r1_data.create_d2ri_prime[j][k]:
+                data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
                 # Make the Hessian symmetric.
                 if i != j:
-                    data.r1_data.d2ri[i, k, j] = data.r1_data.d2ri[i, j, k]
+                    data.r1_data.d2ri_prime[i, k, j] = data.r1_data.d2ri_prime[i, j, k]
 
-    return data.r1_data.d2ri[i]
+    return data.r1_data.d2ri_prime[i]
 
 
 
@@ -187,18 +193,18 @@ def calc_d2r1(data, i, frq_num, params):
 #######################
 
 def extract_r1(data, i, frq_num, params):
-    """Get the R1 value from data.ri"""
+    """Get the R1 value from data.ri_prime"""
 
-    return data.ri[data.noe_r1_table[i]]
+    return data.ri_prime[data.noe_r1_table[i]]
 
 
 def extract_dr1(data, i, frq_num, params):
-    """Get the dR1 value from data.dri"""
+    """Get the dR1 value from data.dri_prime"""
 
-    return data.dri[data.noe_r1_table[i]]
+    return data.dri_prime[data.noe_r1_table[i]]
 
 
 def extract_d2r1(data, i, frq_num, params):
-    """Get the d2R1 value from data.d2ri"""
+    """Get the d2R1 value from data.d2ri_prime"""
 
-    return data.d2ri[data.noe_r1_table[i]]
+    return data.d2ri_prime[data.noe_r1_table[i]]
