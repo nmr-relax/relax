@@ -33,10 +33,7 @@ sys.path.append(sys.path[0])
 sys.path[0] = '.'
 from usr_param import usr_param
 
-from functions.functions import functions
-from functions.chi2 import chi2
-from functions.jw import jw
-from functions.relax import relax
+from functions.mf_functions import mf_functions
 
 from minimise.minimise import minimise
 from minimise.grid import grid
@@ -74,7 +71,7 @@ class mf:
 			sys.exit()
 
 		# Initialise the class self.mf.function to place program functions into.
-		self.functions = functions(self)
+		self.mf_functions = mf_functions(self)
 		self.modsel = modsel(self)
 
 		# Select the behaviour of the program.
@@ -88,9 +85,6 @@ class mf:
 			self.common_ops = common_ops(self)
 			self.common_ops.update_data()
 			self.file_ops = file_ops(self)
-			self.functions.relax = relax(self)
-			self.functions.chi2 = chi2()
-			self.functions.jw = jw(self)
 			self.modsel.asymptotic = asymptotic(self)
 			self.modsel.bootstrap = bootstrap(self)
 			self.modsel.cv = cv(self)
@@ -109,9 +103,6 @@ class mf:
 			self.common_ops = common_ops(self)
 			self.common_ops.update_data()
 			self.file_ops = file_ops(self)
-			self.functions.relax = relax(self)
-			self.functions.chi2 = chi2()
-			self.functions.jw = jw(self)
 			self.modsel.asymptotic = asymptotic(self)
 			self.modsel.bootstrap = bootstrap(self)
 			self.modsel.cv = cv(self)

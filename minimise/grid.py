@@ -1,4 +1,5 @@
 import sys
+from Numeric import Float64, ones, copy, zeros
 from re import match
 
 class grid:
@@ -7,64 +8,63 @@ class grid:
 		self.mf = mf
 
 
-	def search(self, function, function_options, derivative_flag, chi2_func, values, errors, grid_options):
-		"""Levenberg-Marquardt minimisation function.
+	def search(self, function, fargs=(), args=[[]]):
+		"""Grid search function.
 
-		'function' is the function to minimise, and should return a single value.
-		'function_options' are the function options to pass to 'function'.
-		'values' is an array containing the values, eg peak heights or relaxation rates.
-		'errors' is an array containing the errors associated with 'values'
-		'grid_options' is an array of arrays of options for the grid search with the first dimension
-		correponding to the parameters of the grid, and the second has the following elements:
+		Function arguments
+		~~~~~~~~~~~~~~~~~~
+
+		1:  function - the function to minimise which should return a single value.
+		2:  fargs - tuple.  The function options.
+		3:  args - matrix.  Options for the grid search with the first dimension correponding to the parameters of
+		the grid, and the second has the following elements:
 			0 - The number of increments.
 			1 - Lower limit.
 			2 - Upper limit.
 
-		The following are returned:
-			1. An array with the parameter values with the minimum chi-squared value.
-			2. The minimum chi-squared value.
+
+		Returned by the function
+		~~~~~~~~~~~~~~~~~~~~~~~~
+
+		1:  An array with the parameter values at the minimum chi-squared value.
+		2:  The minimum chi-squared value.
+
 		"""
 
-		self.function = function
-		self.function_options = function_options
-		self.derivative_flag = derivative_flag
-		self.chi2_func = chi2_func
-		self.values = values
-		self.errors = errors
-		self.grid_options = grid_options
+		self.grid_options = args
 
 		# Initialise data structures.
-		self.num_params = len(grid_options)
+		self.num_params = len(self.grid_options)
 		total_steps = 1.0
-		self.step_size = []
-		self.step_num = []
-		self.params = []
-		self.min_params = []
+		self.step_num = ones((self.num_params))
+		self.step_size = zeros((self.num_params), Float64)
+		self.params = zeros((self.num_params), Float64)
+		self.min_params = zeros((self.num_params), Float64)
 		for k in range(self.num_params):
-			step = (self.grid_options[k][2] - self.grid_options[k][1]) / (self.grid_options[k][0] - 1)
-			self.step_size.append(step)
-			self.step_num.append(1)
-			self.params.append(self.grid_options[k][1])
-			self.min_params.append(self.grid_options[k][1])
+			self.step_size[k] = (self.grid_options[k][2] - self.grid_options[k][1]) / (self.grid_options[k][0] - 1)
+			self.params[k] = self.grid_options[k][1]
+			self.min_params[k] = self.grid_options[k][1]
 			total_steps = total_steps * self.grid_options[k][0]
 
 		# Back calculate the initial function values and the chi-squared statistic.
-		self.chi2 = self.chi2_func(self.values, function(self.function_options, self.derivative_flag, self.params), self.errors)
+		self.chi2 = apply(function, (self.params,)+fargs)
 		self.min_chi2 = self.chi2
 
+		# Debugging code.
 		if self.mf.min_debug >= 1:
 			print "%-20s%-20i" % ("Total_steps:", total_steps)
-		if self.mf.min_debug == 2:
-			print "%-20s%-20s\n" % ("Step size:", `self.step_size`)
-		if self.mf.min_debug >= 1:
+			if self.mf.min_debug == 2:
+				print "%-20s%-20s\n" % ("Step size:", `self.step_size`)
 			print "%-6s%-8i%-12s%-20s" % ("Step:", 1, "Min params:", `self.params`)
-		if self.mf.min_debug == 2:
-			print "%-20s%-20i" % ("Step number:", 1)
-			print "%-20s%-20s" % ("Increment:", `self.step_num`)
-			print "%-20s%-20s" % ("Init params:", `self.params`)
-			print "%-20s%-20g\n" % ("Init chi2:", self.chi2)
+			if self.mf.min_debug == 2:
+				print "%-20s%-20i" % ("Step number:", 1)
+				print "%-20s%-20s" % ("Increment:", `self.step_num`)
+				print "%-20s%-20s" % ("Init params:", `self.params`)
+				print "%-20s%-20g\n" % ("Init chi2:", self.chi2)
 
-		for step in range(2, total_steps - 1):
+
+		# Grid search.
+		for step in range(2, total_steps + 1):
 			# Loop over the parameters.
 			for k in range(self.num_params):
 				if self.step_num[k] < self.grid_options[k][0]:
@@ -75,16 +75,20 @@ class grid:
 				else:
 					self.step_num[k] = 1
 					self.params[k] = self.grid_options[k][1]
-	
+
 			# Back calculate the initial function values and the chi-squared statistic.
-			self.chi2 = self.chi2_func(self.values, function(self.function_options, self.derivative_flag, self.params), self.errors)
-	
+			self.chi2 = apply(function, (self.params,)+fargs)
+
+			# Test if the chi-squared value is less than the least chi-squared value.
 			if self.chi2 < self.min_chi2:
 				self.min_chi2 = self.chi2
-				self.min_params = self.params[:]
-				if self.mf.min_debug >= 1:
-					print "%-6s%-8i%-12s%-20s" % ("Step:", step, "Min params:", `self.min_params`)
+				self.min_params = copy.deepcopy(self.params)
 
+				# Debugging code.
+				if self.mf.min_debug >= 1:
+					print "%-6s%-8i%-12s%-65s%-6s%-20s" % ("Step:", step, "Min params:", `self.min_params`, "Chi2:", `self.min_chi2`)
+
+			# Debugging code.
 			if self.mf.min_debug == 2:
 				print "%-20s%-20i" % ("Step number:", step)
 				print "%-20s%-20s" % ("Increment:", `self.step_num`)

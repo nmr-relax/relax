@@ -9,13 +9,13 @@ class levenberg_marquardt:
 		self.mf = mf
 
 
-	def fit(self, function, function_options, derivative_flag, chi2_func, values, errors, start_params, limits_flag, limits):
+	def fit(self, function, dfunction, function_options, chi2_func, values, errors, start_params, limits_flag, limits):
 		"""Levenberg-Marquardt minimisation function.
 
-		'function' is the function to minimise, and should return:
-			1 - an array with the back calculated values.
-			2 - an array of arrays with the first dimension corresponding to the values, and the second corrresponding to the
-				derivative of the relaxation values with respect to function parameters.
+		'function' is the function to minimise, and should return an array with the back calculated values.
+		'dfunction' is the derivative function and should return an array of arrays with the first dimension corresponding
+			to the values, and the second corrresponding to the derivative of the relaxation values with respect to
+			function parameters.
 		'function_options' are the function options to pass to 'function'.
 		'values' is an array containing the values to minimise on, eg peak heights or relaxation rates.
 		'errors' is an array containing the errors associated with 'values'
@@ -28,7 +28,6 @@ class levenberg_marquardt:
 
 		self.function = function
 		self.function_options = function_options
-		self.derivative_flag = derivative_flag
 		self.chi2_func = chi2_func
 		self.values = values
 		self.errors = errors
@@ -40,7 +39,8 @@ class levenberg_marquardt:
 		self.l = 1.0
 
 		# Back calculate the initial function values and the chi-squared statistic.
-		self.back_calc, self.df = function(self.function_options, self.derivative_flag, self.params)
+		self.back_calc = function(self.function_options, self.params)
+		self.df = dfunction(self.function_options, self.params)
 		self.chi2 = self.chi2_func(self.values, self.back_calc, self.errors)
 
 		minimise_num = 1
@@ -80,7 +80,8 @@ class levenberg_marquardt:
 					self.new_params.append(new_param)
 
 			# Back calculate the new function values.
-			self.back_calc, self.df = function(self.function_options, self.derivative_flag, self.new_params)
+			self.back_calc = function(self.function_options, self.new_params)
+			self.df = dfunction(self.function_options, self.new_params)
 
 			# Calculate the new chi-squared statistic.
 			self.chi2_new = self.chi2_func(self.values, self.back_calc, self.errors)

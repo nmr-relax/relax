@@ -1,5 +1,10 @@
 import sys
 from re import match
+from scipy.optimize import fmin, fmin_bfgs, fmin_ncg, fmin_powell
+simplex = fmin
+powell = fmin_powell
+bfgs = fmin_bfgs
+newton = fmin_ncg
 
 class main_model_free:
 	def __init__(self, mf):
@@ -13,9 +18,11 @@ class main_model_free:
 		self.mf.results = open(self.mf.data.model + '/results', 'w')
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
-		
+
 		print "\n\n[ Model-free fitting ]\n"
-		function_ops = ['iso', [float(10.0 * 1e-9)], self.mf.data.model]
+		diff_type = 'iso'
+		diff_params = (float(10.0 * 1e-9))
+		mf_model = self.mf.data.model
 
 		# Flags.
 		########
@@ -23,14 +30,13 @@ class main_model_free:
 		# Debugging flag
 		self.mf.min_debug = 1
 
-		# Derivative flag, 0 = no derivatives, 1 = calculate derivatives.
-		derivatives_flag = 0
-
 		# Limits flag, 0 = no limits, 1 = set limits.
 		limits_flag = 0
-		
+
 		grid_ops = []
 		limits = []
+		self.mf.results.write("%-5s" % "Num")
+		self.mf.results.write("%-6s" % "Name")
 		if match('m1', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			limits.append([0.0, 1.0])
@@ -48,7 +54,7 @@ class main_model_free:
 			limits.append([0.0, 1.0])
 			limits.append([0.0, 100.0 / self.mf.data.frq[0]**2])
 			self.mf.results.write("%-30s" % "S2")
-			self.mf.results.write("%-30s" % "Rex")
+			self.mf.results.write("%-30s" % ("Rex (" + self.mf.data.frq_label[0] + " MHz)"))
 		elif match('m4', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
@@ -58,7 +64,7 @@ class main_model_free:
 			limits.append([0.0, 100.0 / self.mf.data.frq[0]**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "te (ps)")
-			self.mf.results.write("%-30s" % "Rex")
+			self.mf.results.write("%-30s" % ("Rex (" + self.mf.data.frq_label[0] + " MHz)"))
 		elif match('m5', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 1.0])
@@ -69,7 +75,7 @@ class main_model_free:
 			self.mf.results.write("%-30s" % "S2f")
 			self.mf.results.write("%-30s" % "S2s")
 			self.mf.results.write("%-30s" % "ts (ps)")
-		self.mf.results.write("%-30s\n" % "chi-squared statistic")
+		self.mf.results.write("%-30s\n" % "Chi-squared statistic")
 
 
 		# Loop over all data sets.
@@ -80,17 +86,16 @@ class main_model_free:
 			else:
 				print "Residue: " + self.mf.data.relax_data[0][res][0] + " " + self.mf.data.relax_data[0][res][1]
 
-			# Initialise some data structures.
-			values = []
+			# Initialise the relaxation data and error data structures.
+			relax_data = []
 			errors = []
 			for data in range(len(self.mf.data.relax_data)):
-				values.append(self.mf.data.relax_data[data][res][2])
+				relax_data.append(self.mf.data.relax_data[data][res][2])
 				errors.append(self.mf.data.relax_data[data][res][3])
-
+			function_ops = ( diff_type, diff_params, mf_model, relax_data, errors )
 
 			# Grid search.
-			derivative_flag = 0   # Derivative flag, turned off because not needed in grid search.
-			params, chi2 = self.mf.minimise.grid.search(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, grid_ops)
+			params, chi2 = self.mf.minimise.grid.search(self.mf.mf_functions.chi2.calc, fargs=function_ops, args=grid_ops)
 			if self.mf.min_debug >= 1:
 				print "\nThe grid parameters are: " + `params`
 				print "The grid chi-squared value is: " + `chi2`
@@ -98,37 +103,62 @@ class main_model_free:
 			#params = [0.368]
 			#params = [0.368, 0.0]
 			#params = [0.950, 0.585, 33.0*1e-12]
+			#params = [0.900, 0.0*1e-12, 0.0/self.mf.data.frq[0]**2]
+			#params = [0.900, 100*1e-12, 2.76038451e-17]
+			#chi2 = 0.0
 
 			# Simplex minimisation.
 			if match('Simplex', self.mf.usr_param.minimiser):
-				if match('m1', self.mf.data.model):
-					print "One dimensional simplex minimisation, quitting program!"
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Simplex minimisation >>>"
-				factor = 1.0
-				num_runs = 0.0
-				for i in range(10):
-					self.simplex = self.create_simplex(params, grid_ops, factor)
-					if self.mf.min_debug >= 1:
-						print "\nThe initial simplex is: " + `self.simplex`
-					params, chi2, runs = self.mf.minimise.simplex.fit(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, self.simplex)
-					factor = factor / 10.0
-					num_runs = num_runs + runs
-				print "\n\nTotal number of runs: " + `num_runs`
+				output = simplex(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=5000, maxfun=5000, full_output=1, disp=1)
+				params, chi2, iter, num_func_calls, warn_flag = output
+				print "mf params:  " + `params`
+				print "chi2:       " + `chi2`
+				print "iter:       " + `iter`
+				print "func calls: " + `num_func_calls`
+				print "warn flag:  " + `warn_flag`
 
+			# Modified Powell minimisation.
+			elif match('Powell', self.mf.usr_param.minimiser):
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Powell minimisation >>>"
+				output = powell(self.mf.mf_functions.chi2.calc, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=5000, maxfun=5000, full_output=1, disp=1)
+				params, chi2, iter, num_func_calls, warn_flag = output
+			
 			# Levenberg-Marquardt minimisation.
 			elif match('LM', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Levenberg-Marquardt minimisation >>>"
 
-				derivative_flag = 1   # Derivative flag, turned no because needed by Levenberg-Marquardt minimisation.
-				params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, params, limits_flag, limits)
-		
+				#params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.mf_functions.chi2.calc, params, self.mf.mf_functions.dchi.calc, args=function_ops, relax_data, errors)
+
+			# Quasi-Newton BFGS minimisation.
+			elif match('BFGS', self.mf.usr_param.minimiser):
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
+				output = bfgs(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, args=function_ops, avegtol=1e-15, maxiter=5000, full_output=1, disp=1)
+				params, chi2, num_func_calls, num_grad_calls, warn_flag = output
+
+			# Newton Conjugate Gradient minimisation.
+			elif match('Newton', self.mf.usr_param.minimiser):
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
+				output = newton(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, fhess_p=None, fhess=None, args=function_ops, maxiter=5000, full_output=1, disp=1)
+				params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
+
+			# None.
+			else:
+				raise NameError, "Minimiser type set incorrectly\n"
+				sys.exit()
+
 			if self.mf.min_debug >= 1:
 				print "\n\n<<< Finished minimiser >>>"
 				print "The final parameters are: " + `params`
 				print "The final chi-squared value is: " + `chi2` + "\n"
 
+			self.mf.results.write("%-5s" % self.mf.data.relax_data[data][res][0])
+			self.mf.results.write("%-6s" % self.mf.data.relax_data[data][res][1])
 			if match('m1', self.mf.data.model):
 				self.mf.results.write("%-30s" % `params[0]`)
 			elif match('m2', self.mf.data.model):
@@ -146,6 +176,7 @@ class main_model_free:
 				self.mf.results.write("%-30s" % `params[1]`)
 				self.mf.results.write("%-30s" % `params[2] * 1e12`)
 			self.mf.results.write("%-30s\n" % `chi2`)
+
 
 		print "\n[ Done ]\n\n"
 		self.mf.results.close()
@@ -189,25 +220,3 @@ class main_model_free:
 		print "\n"
 
 		return stage, 'm' + model
-
-
-	def create_simplex(self, params, grid_ops, factor):
-		"""Function to create the initial simplex.
-
-		params will become the first point of the simplex.
-		grid_ops is used to create the other points of the simplex.
-		"""
-		simplex = []
-		simplex.append(params)
-		for i in range(len(params)):
-			delta = factor * (grid_ops[i][2] - grid_ops[i][1]) / (grid_ops[i][0] - 1)
-			new_point = []
-			for j in range(len(params)):
-				if i == j:
-					new_point.append(params[j] + delta)
-				else:
-					new_point.append(params[j])
-			simplex.append(new_point)
-		return simplex
-
-
