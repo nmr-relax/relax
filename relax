@@ -38,7 +38,7 @@ sys.path[0] = '.'
 from usr_param import usr_param
 
 from model_selection.model_selection import model_selection
-from minimise.minimise import minimise
+from minimisation import minimise
 
 class relax:
 	def __init__(self, argv):

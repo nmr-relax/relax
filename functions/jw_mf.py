@@ -107,7 +107,7 @@ class Jw:
 
 		# Isotropic dependent values.
 		if match(self.data.diff_type, 'iso'):
-			self.data.tm = self.data.diff_params
+			self.data.tm = self.data.diff_params[0]
 			self.data.tm_sqrd = self.data.tm ** 2
 			self.data.omega_tm_sqrd = zeros((self.relax.data.num_frq, 5), Float64)
 

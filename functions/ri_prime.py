@@ -74,14 +74,14 @@ class Ri_prime:
 			frq_num = self.relax.data.remap_table[i]
 
 			# R1 components.
-			if self.relax.data.data_types[i]  == 'R1':
+			if self.relax.data.ri_labels[i]  == 'R1':
 				self.data.dip_comps[i] = self.relax.data.dipole_const
 				self.data.j_dip_comps[i] = self.data.jw[frq_num, 2] + 3.0*self.data.jw[frq_num, 1] + 6.0*self.data.jw[frq_num, 4]
 				self.data.csa_comps[i] = self.relax.data.csa_const[frq_num]
 				self.data.j_csa_comps[i] = self.data.jw[frq_num, 1]
 
 			# R2 components.
-			elif self.relax.data.data_types[i] == 'R2':
+			elif self.relax.data.ri_labels[i] == 'R2':
 				self.data.dip_comps[i] = self.relax.data.dipole_const / 2.0
 				self.data.j_dip_comps[i] = 4.0*self.data.jw[frq_num, 0] + self.data.jw[frq_num, 2] + 3.0*self.data.jw[frq_num, 1] + 6.0*self.data.jw[frq_num, 3] + 6.0*self.data.jw[frq_num, 4]
 				self.data.csa_comps[i] = self.relax.data.csa_const[frq_num] / 6.0
@@ -92,7 +92,7 @@ class Ri_prime:
 					self.data.rex_comps[i] = self.data.params[2] * (1e-8 * self.relax.data.frq[frq_num])**2
 
 			# sigma_noe components.
-			elif self.relax.data.data_types[i] == 'NOE':
+			elif self.relax.data.ri_labels[i] == 'NOE':
 				self.data.dip_comps[i] = self.relax.data.dipole_const
 				self.data.j_dip_comps[i] = 6.0*self.data.jw[frq_num, 4] - self.data.jw[frq_num, 2]
 

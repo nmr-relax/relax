@@ -11,6 +11,7 @@ from format import format
 from init_data import init_data
 from load import load
 from mf_model import mf_model
+from min import min
 from pdb import pdb
 from print_all_data import print_all_data
 from set_model_selection import set_model_selection
@@ -32,6 +33,7 @@ class macros:
 		self.load = load(relax)
 		self.ls = ls
 		self.mf_model = mf_model(relax)
+		self.min = min(relax)
 		self.pdb = pdb(relax)
 		self.print_all_data = print_all_data(relax)
 		self.set_model_selection = set_model_selection(relax)

@@ -1,3 +1,5 @@
+from Numeric import Float64, zeros
+
 from generic_functions import generic_functions
 
 
@@ -20,26 +22,26 @@ class mf_model(generic_functions):
 		elif not param_types:
 			print "Model-free parameters not given."
 			return
-		elif not equation == 'original' or not equation == 'extended':
+		elif not equation == 'mf_orig' or not equation == 'mf_ext':
 			print "Model-free equation '" + equation + "' not supported."
 			return
 
 		# Add the model.
 		try:
-			self.relax.data.mf_model.append(model)
-			self.relax.data.mf_equation.append(equation)
-			self.relax.data.mf_param_types.append(param_types)
-			self.relax.data.mf_params.append([])
+			self.relax.data.models.append(model)
+			self.relax.data.equations.append(equation)
+			self.relax.data.param_types.append(param_types)
+			self.relax.data.params.append([])
 		except AttributeError:
-			self.relax.data.mf_model = [model]
-			self.relax.data.mf_equation = [equation]
-			self.relax.data.mf_param_types = [param_types]
-			self.relax.data.mf_params = []
+			self.relax.data.models = [model]
+			self.relax.data.equations = [equation]
+			self.relax.data.param_types = [param_types]
+			self.relax.data.params = []
 
 
-		# Create the mf_params data structure.
+		# Create the params data structure.
 		for i in range(len(self.relax.data.seq)):
-			self.relax.data.mf_params.append([None, None])
+			self.relax.data.params.append([None, None])
 
 
 	def list(self):
@@ -60,33 +62,34 @@ class mf_model(generic_functions):
 
 		# Add the model.
 		try:
-			self.relax.data.mf_model.append(model)
+			self.relax.data.models.append(model)
 		except AttributeError:
-			self.relax.data.mf_model = [model]
-			self.relax.data.mf_equation = []
-			self.relax.data.mf_param_types = []
-			self.relax.data.mf_params = []
+			self.relax.data.models = [model]
+			self.relax.data.equations = []
+			self.relax.data.param_types = []
+			self.relax.data.params = []
+			self.relax.data.param_errors = []
 
 		if model == 'm1':
-			self.relax.data.mf_equation.append('original')
-			self.relax.data.mf_param_types.append(['S2'])
+			self.relax.data.equations.append('mf_orig')
+			self.relax.data.param_types.append(['S2'])
 		elif model == 'm2':
-			self.relax.data.mf_equation.append('original')
-			self.relax.data.mf_param_types.append(['S2', 'te'])
+			self.relax.data.equations.append('mf_orig')
+			self.relax.data.param_types.append(['S2', 'te'])
 		elif model == 'm3':
-			self.relax.data.mf_equation.append('original')
-			self.relax.data.mf_param_types.append(['S2', 'Rex'])
+			self.relax.data.equations.append('mf_orig')
+			self.relax.data.param_types.append(['S2', 'Rex'])
 		elif model == 'm4':
-			self.relax.data.mf_equation.append('original')
-			self.relax.data.mf_param_types.append(['S2', 'te', 'Rex'])
+			self.relax.data.equations.append('mf_orig')
+			self.relax.data.param_types.append(['S2', 'te', 'Rex'])
 		elif model == 'm5':
-			self.relax.data.mf_equation.append('extended')
-			self.relax.data.mf_param_types.append(['S2f', 'S2s', 'te'])
+			self.relax.data.equations.append('mf_ext')
+			self.relax.data.param_types.append(['S2f', 'S2s', 'te'])
 		else:
 			print "The model '" + model + "' is invalid."
 			return
 
 
-		# Create the mf_params data structure.
-		for i in range(len(self.relax.data.seq)):
-			self.relax.data.mf_params.append([None, None])
+		# Create the params data structure.
+		self.relax.data.params.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types)), Float64))
+		self.relax.data.param_errors.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types)), Float64))

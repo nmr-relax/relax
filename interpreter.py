@@ -21,6 +21,7 @@ class interpreter:
 		list_preset_mf_model = self.relax.macros.mf_model.list
 		load = self.relax.macros.load
 		ls = self.relax.macros.ls
+		min = self.relax.macros.min.min
 		pdb = self.relax.macros.pdb.set
 		print_all_data = self.relax.macros.print_all_data.go
 		select_preset_mf_model = self.relax.macros.mf_model.select

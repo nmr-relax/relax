@@ -13,23 +13,23 @@ except ImportError:
 	noscipy_flag = 1
 
 # Grid search.
-from grid import grid
+from minimise.grid import grid
 
 # Line search algorithms.
-from coordinate_descent import coordinate_descent
-from steepest_descent import steepest_descent
-from bfgs import bfgs
-from newton import newton
+from minimise.coordinate_descent import coordinate_descent
+from minimise.steepest_descent import steepest_descent
+from minimise.bfgs import bfgs
+from minimise.newton import newton
 
 # Trust region algorithms.
-from levenberg_marquardt import levenberg_marquardt
-from cauchy_point import cauchy_point
+from minimise.levenberg_marquardt import levenberg_marquardt
+from minimise.cauchy_point import cauchy_point
 
 # Other algorithms.
-from simplex import simplex
+from minimise.simplex import simplex
 
 
-def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
 	"""Generic code for iterative minimisers.
 
 
@@ -83,17 +83,17 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	###################################
 
 	# Grid search.
-	if match('^[Gg]rid', minimiser[0]):
+	if match('^[Gg]rid', min_algor):
 		if print_flag:
 			print "\n\n<<< Grid search >>>"
-		xk, fk, k = grid(func, args=args, grid_ops=minimiser[1], print_flag=print_flag)
+		xk, fk, k = grid(func, args=args, grid_ops=min_options, print_flag=print_flag)
 		f_count = k
 
 	# Fixed parameter values.
-	elif match('^[Ff]ixed', minimiser[0]):
+	elif match('^[Ff]ixed', min_algor):
 		if print_flag:
 			print "\n\n<<< Fixed initial parameter values >>>"
-		fk = apply(func, (minimiser[1],)+args)
+		fk = apply(func, (min_options,)+args)
 		k, f_count = 1, 1
 
 
@@ -101,7 +101,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	#############################
 
 	# Simplex minimisation (scipy).
-	elif match('^[Ss]implex[ _][Ss]cipy$', minimiser[0]):
+	elif match('^[Ss]implex[ _][Ss]cipy$', min_algor):
 		if print_flag:
 			print "\n\n<<< Simplex minimisation (scipy) >>>"
 		if noscipy_flag:
@@ -112,7 +112,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 		warning = `warning`
 
 	# Quasi-Newton BFGS minimisation (scipy).
-	elif match('^[Bb][Ff][Gg][Ss][ _][Ss]cipy$', minimiser[0]):
+	elif match('^[Bb][Ff][Gg][Ss][ _][Ss]cipy$', min_algor):
 		if print_flag:
 			print "\n\n<<< Quasi-Newton BFGS minimisation (scipy) >>>"
 		if noscipy_flag:
@@ -124,7 +124,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 
 
 	# Newton Conjugate Gradient minimisation (scipy).
-	elif match('^[Nn][Cc][Gg][ _][Ss]cipy$', minimiser[0]):
+	elif match('^[Nn][Cc][Gg][ _][Ss]cipy$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton Conjugate Gradient minimisation (scipy) >>>"
 		if noscipy_flag:
@@ -139,40 +139,40 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	#########################
 
 	# Back-and-forth coordinate descent minimisation.
-	elif match('^[Cc][Dd]$', minimiser[0]) or match('^[Cc]oordinate-[Dd]escent$', minimiser[0]):
+	elif match('^[Cc][Dd]$', min_algor) or match('^[Cc]oordinate-[Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
-		min = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
 			xk = min.minimise()
 
 	# Steepest descent minimisation.
-	elif match('^[Ss][Dd]$', minimiser[0]) or match('^[Ss]teepest[ _][Dd]escent$', minimiser[0]):
+	elif match('^[Ss][Dd]$', min_algor) or match('^[Ss]teepest[ _][Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Steepest descent minimisation >>>"
-		min = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
 			xk = min.minimise()
 
 	# Quasi-Newton BFGS minimisation.
-	elif match('^[Bb][Ff][Gg][Ss]$', minimiser[0]):
+	elif match('^[Bb][Ff][Gg][Ss]$', min_algor):
 		if print_flag:
 			print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-		min = bfgs(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = bfgs(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
 			xk = min.minimise()
 
 	# Newton minimisation.
-	elif match('^[Nn]ewton$', minimiser[0]):
+	elif match('^[Nn]ewton$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton minimisation >>>"
-		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -183,17 +183,17 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	##########################
 
 	# Levenberg-Marquardt minimisation.
-	elif match('^[Ll][Mm]$', minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', minimiser[0]):
+	elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):
 		if print_flag:
 			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=minimiser[1], errors=minimiser[2], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options, errors=minimiser[2], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
 			xk = min.minimise()
 
 	# Cauchy point minimisation.
-	elif match('^[Cc]auchy', minimiser[0]):
+	elif match('^[Cc]auchy', min_algor):
 		if print_flag:
 			print "\n\n<<< Cauchy point minimisation >>>"
 		min = cauchy_point(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
@@ -207,7 +207,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	###################
 
 	# Simplex minimisation.
-	elif match('^[Ss]implex$', minimiser[0]):
+	elif match('^[Ss]implex$', min_algor):
 		if print_flag:
 			print "\n\n<<< Simplex minimisation >>>"
 		min = simplex(func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
@@ -221,7 +221,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	###############################
 
 	else:
-		print "Minimiser type set incorrectly.  The minimiser " + minimiser[0] + " is not programmed.\n"
+		print "Minimiser type set incorrectly.  The minimiser " + min_algor + " is not programmed.\n"
 		sys.exit()
 
 
