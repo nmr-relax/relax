@@ -57,7 +57,7 @@ class Macro_class(Generic_functions):
 
         ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
-        frq_label:  The field strength in MHz, ie '600'.  This string can be anything as long as 
+        frq_label:  The field strength in MHz, ie '600'.  This string can be anything as long as
         data collected at the same field strength have the same label.
 
         frq:  The spectrometer frequency in Hz.

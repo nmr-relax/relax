@@ -103,7 +103,7 @@ def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
                           _n_
          d2chi2           \       1      /  dyi()     dyi()                         d2yi()     \ 
     ---------------  =  2  >  ---------- | ------- . -------  -  (yi - yi()) . --------------- |
-    dthetaj.dthetak       /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak / 
+    dthetaj.dthetak       /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
                           i=1
 
     where:

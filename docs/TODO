@@ -38,7 +38,6 @@ Molmol.
 ###############
 
 log grid search.
-Constrained grid search.
 
 
 # Functions.
@@ -55,7 +54,6 @@ Relaxation dispersion.
 # Speed.
 ########
 
-Create the grid search grid prior to the search.
 Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C and use swig to integrate the C functions.
 
 

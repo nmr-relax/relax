@@ -954,6 +954,7 @@ class Model_free:
         file.write("%-26s" % "S2")
         file.write("%-26s" % "S2f")
         file.write("%-26s" % "S2s")
+        file.write("%-26s" % "tm_(ps)")
         file.write("%-26s" % "tf_(ps)")
         file.write("%-26s" % "te_or_ts_(ps)")
         file.write("%-26s" % ("Rex_(" + self.relax.data.frq_labels[0] + "_MHz)"))
@@ -1038,6 +1039,16 @@ class Model_free:
                             file.write("%-26s" % `params[k]/params[j]`)
                             flag = 0
                             continue
+            if flag:
+                file.write("%-26s" % "N/A")
+
+            # tm.
+            flag = 1
+            for j in range(len(types)):
+                if types[j] == 'tm':
+                    file.write("%-26s" % `params[j] / 1e-12`)
+                    flag = 0
+                    continue
             if flag:
                 file.write("%-26s" % "N/A")
 

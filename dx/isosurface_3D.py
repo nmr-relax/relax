@@ -186,7 +186,7 @@ class Iso3D(Base_Map):
                 val = 0.0
                 for i in range(axis_incs + 1):
                     string = string + " " + `val`
-                    val = val + inc 
+                    val = val + inc
                 string = string + " }"
                 tick_locations.append(string)
 
