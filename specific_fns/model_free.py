@@ -1315,8 +1315,17 @@ class Model_free:
         return A, b
 
 
-    def map_bounds(self, index, params, run):
+    def map_bounds(self, run, index):
         """The function for creating bounds for the mapping function."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Parameter array.
+        params = self.relax.data.res[index].params[self.run]
 
         # Bounds array.
         bounds = zeros((len(params), 2), Float64)
@@ -1341,6 +1350,13 @@ class Model_free:
             # CSA.
             elif params[i] == 'CSA':
                 bounds[i] = [-100 * 1e-6, -300 * 1e-6]
+
+        # Diagonal scaling.
+        self.assemble_scaling_matrix(index=index)
+        for i in xrange(len(self.bounds[0])):
+            self.bounds[:, i] = matrixmultiply(inverse(self.scaling_matrix), self.bounds[:, i])
+        if point != None:
+            self.point = matrixmultiply(inverse(self.scaling_matrix), self.point)
 
         return bounds
 

@@ -49,7 +49,7 @@ class Generic:
         # Place the program class structure under self.relax
         self.relax = relax
 
-        # Set up all the functions
+        # Set up all the classes.
         self.angles = Angles(self.relax)
         self.create_run = Create_run(self.relax)
         self.delete = Delete(self.relax)
