@@ -65,10 +65,6 @@ class Specific_setup:
     def diff_funcs(self):
         """Diffusion tensor specific functions."""
 
-        # Data names function.
-        if self.function_type == 'data_names':
-            return self.relax.generic.diffusion_tensor.data_names
-
 
     def mf_funcs(self):
         """Model-free analysis specific functions."""
@@ -85,10 +81,6 @@ class Specific_setup:
         if self.function_type == 'create_mc_data':
             return self.relax.specific.model_free.create_mc_data
 
-        # Data names function.
-        if self.function_type == 'data_names':
-            return self.relax.specific.model_free.data_names
-
         # Duplicate data function.
         if self.function_type == 'duplicate_data':
             return self.relax.specific.model_free.duplicate_data
@@ -103,7 +95,7 @@ class Specific_setup:
 
         # Initial Monte Carlo parameter value search function.
         if self.function_type == 'init_sim_values':
-            return self.relax.specific.model_free.init_sim_values
+            return self.relax.specific.model_free.sim_init_values
 
         # Map labels.
         if self.function_type == 'map_labels':
@@ -127,7 +119,7 @@ class Specific_setup:
 
         # Pack Monte Carlo simulation data function.
         if self.function_type == 'pack_sim_data':
-            return self.relax.specific.model_free.pack_sim_data
+            return self.relax.specific.model_free.sim_pack_data
 
         # Parameter names function.
         if self.function_type == 'param_names':
@@ -153,6 +145,14 @@ class Specific_setup:
         if self.function_type == 'return_value':
             return self.relax.specific.model_free.return_value
 
+        # Simulation chi-squared array returning function.
+        if self.function_type == 'return_sim_chi2':
+            return self.relax.specific.model_free.sim_return_chi2
+
+        # Simulation parameter array returning function.
+        if self.function_type == 'return_sim_param':
+            return self.relax.specific.model_free.sim_return_param
+
         # Set function.
         if self.function_type == 'set':
             return self.relax.specific.model_free.set
@@ -177,10 +177,6 @@ class Specific_setup:
     def relax_funcs(self):
         """Relaxation curve fitting functions."""
 
-        # Data names function.
-        if self.function_type == 'data_names':
-            return self.relax.specific.relax_data.data_names
-
         # Value and error returning function.
         if self.function_type == 'return_value':
             return self.relax.specific.relax_data.return_value
@@ -188,7 +184,3 @@ class Specific_setup:
 
     def seq_funcs(self):
         """Sequence specific functions."""
-
-        # Data names function.
-        if self.function_type == 'data_names':
-            return self.relax.generic.sequence.data_names

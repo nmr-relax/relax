@@ -1,7 +1,7 @@
 # Script for model-free analysis.
 
 # Create the run.
-name = 'm4'
+name = 'm5'
 create_run(name, 'mf')
 
 # Nuclei type

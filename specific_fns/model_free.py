@@ -636,7 +636,7 @@ class Model_free:
             return None
 
 
-    def data_names(self):
+    def data_names(self, set='all'):
         """Function for returning a list of names of data structures associated with model-free.
 
         Description
@@ -685,26 +685,37 @@ class Model_free:
         warning:  Minimisation warning.
         """
 
-        names = [ 'model',
-                  'equation',
-                  'params',
-                  'scaling',
-                  's2',
-                  's2f',
-                  's2s',
-                  'tm',
-                  'te',
-                  'tf',
-                  'ts',
-                  'rex',
-                  'r',
-                  'csa',
-                  'chi2',
-                  'iter',
-                  'f_count',
-                  'g_count',
-                  'h_count',
-                  'warning' ]
+        # Initialise.
+        names = []
+
+        # Generic.
+        if set == 'all' or set == 'generic':
+            names.append('model')
+            names.append('equation')
+            names.append('params')
+            names.append('scaling')
+
+        # Parameters.
+        if set == 'all' or set == 'params':
+            names.append('s2')
+            names.append('s2f')
+            names.append('s2s')
+            names.append('tm')
+            names.append('te')
+            names.append('tf')
+            names.append('ts')
+            names.append('rex')
+            names.append('r')
+            names.append('csa')
+
+        # Minimisation statistics.
+        if set == 'all' or set == 'min':
+            names.append('chi2')
+            names.append('iter')
+            names.append('f_count')
+            names.append('g_count')
+            names.append('h_count')
+            names.append('warning')
 
         return names
 
@@ -1422,154 +1433,6 @@ class Model_free:
             min_options[j][2] = min_options[j][2] / self.scaling_matrix[j, j]
 
         return min_options
-
-
-    def init_sim_values(self, run):
-        """Function for initialising Monte Carlo parameter values."""
-
-        # Arguments.
-        self.run = run
-
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
-
-        # Get the data names.
-        data_names = self.data_names()
-
-        # Exclusion list.
-        excluded_names = ['model', 'equation', 'params', 'scaling']
-
-        # List of diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
-                diff_params = ['tm']
-
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
-                diff_params = ['tm', 'Dratio', 'theta', 'phi']
-
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
-                diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
-
-        # Minimisation statistic object names.
-        min_objects = ['chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning']
-
-
-        # Test if Monte Carlo parameter values have already been set.
-        #############################################################
-
-        # Diffusion tensor parameters and non residue specific minimisation statistics.
-        if self.param_set == 'diff' or self.param_set == 'all':
-            # Loop over the parameters.
-            for object_name in diff_params:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Test if the simulation object already exists.
-                if hasattr(self.relax.data.diff[self.run], sim_object_name):
-                    raise RelaxError, "Monte Carlo parameter values have already been set."
-
-            # Loop over the minimisation stats objects.
-            for object_name in min_objects:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Test if the simulation object already exists.
-                if hasattr(self.relax.data, sim_object_name):
-                    raise RelaxError, "Monte Carlo parameter values have already been set."
-
-        # Residue specific parameters.
-        if self.param_set != 'diff':
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
-                    continue
-
-                # Loop over all the data names.
-                for object_name in data_names:
-                    # Skip excluded names.
-                    if object_name in excluded_names:
-                        continue
-
-                    # Name for the simulation object.
-                    sim_object_name = object_name + '_sim'
-
-                    # Test if the simulation object already exists.
-                    if hasattr(self.relax.data.res[self.run][i], sim_object_name):
-                        raise RelaxError, "Monte Carlo parameter values have already been set."
-
-
-        # Set the Monte Carlo parameter values.
-        #######################################
-
-        # Diffusion tensor parameters and non residue specific minimisation statistics.
-        if self.param_set == 'diff' or self.param_set == 'all':
-            # Loop over the parameters.
-            for object_name in diff_params:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Create the simulation object.
-                setattr(self.relax.data.diff[self.run], sim_object_name, [])
-
-                # Get the simulation object.
-                sim_object = getattr(self.relax.data.diff[self.run], sim_object_name)
-
-                # Loop over the simulations.
-                for j in xrange(self.relax.data.sim_number[self.run]):
-                    # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(self.relax.data.diff[self.run], object_name)))
-
-            # Loop over the minimisation stats objects.
-            for object_name in min_objects:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Create the simulation object.
-                setattr(self.relax.data, sim_object_name, {})
-
-                # Get the simulation object.
-                sim_object = getattr(self.relax.data, sim_object_name)
-
-                # Add the run.
-                sim_object[self.run] = []
-
-                # Loop over the simulations.
-                for j in xrange(self.relax.data.sim_number[self.run]):
-                    # Get the object.
-                    object = getattr(self.relax.data, object_name)
-
-                    # Copy and append the data.
-                    sim_object[self.run].append(deepcopy(object[self.run]))
-
-        # Residue specific parameters.
-        if self.param_set != 'diff':
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
-                    continue
-
-                # Loop over all the data names.
-                for object_name in data_names:
-                    # Skip excluded names.
-                    if object_name in excluded_names:
-                        continue
-
-                    # Name for the simulation object.
-                    sim_object_name = object_name + '_sim'
-
-                    # Create the simulation object.
-                    setattr(self.relax.data.res[self.run][i], sim_object_name, [])
-
-                    # Get the simulation object.
-                    sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
-
-                    # Loop over the simulations.
-                    for j in xrange(self.relax.data.sim_number[self.run]):
-                        # Copy and append the data.
-                        sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
 
 
     def initialise_mf_data(self, data, run):
@@ -2571,17 +2434,6 @@ class Model_free:
             return 1
 
 
-    def pack_sim_data(self, run, i, sim_data):
-        """Function for packing Monte Carlo simulation data."""
-
-        # Test if the simulation data already exists.
-        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
-
-        # Create the data structure.
-        self.relax.data.res[run][i].relax_sim_data = sim_data
-
-
     def read_results(self, file_data, run):
         """Function for printing the core of the results file."""
 
@@ -3162,6 +3014,288 @@ class Model_free:
             # Set the error.
             if error != None:
                 setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
+
+
+    def sim_init_values(self, run):
+        """Function for initialising Monte Carlo parameter values."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
+        # Get the minimisation statistic object names.
+        min_names = self.data_names(set='min')
+
+        # List of diffusion tensor parameters.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                diff_params = ['tm']
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                diff_params = ['tm', 'Dratio', 'theta', 'phi']
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+
+
+        # Test if Monte Carlo parameter values have already been set.
+        #############################################################
+
+        # Diffusion tensor parameters and non residue specific minimisation statistics.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Loop over the parameters.
+            for object_name in diff_params:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Test if the simulation object already exists.
+                if hasattr(self.relax.data.diff[self.run], sim_object_name):
+                    raise RelaxError, "Monte Carlo parameter values have already been set."
+
+            # Loop over the minimisation stats objects.
+            for object_name in min_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Test if the simulation object already exists.
+                if hasattr(self.relax.data, sim_object_name):
+                    raise RelaxError, "Monte Carlo parameter values have already been set."
+
+        # Residue specific parameters.
+        if self.param_set != 'diff':
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Loop over all the parameter names.
+                for object_name in param_names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Test if the simulation object already exists.
+                    if hasattr(self.relax.data.res[self.run][i], sim_object_name):
+                        raise RelaxError, "Monte Carlo parameter values have already been set."
+
+
+        # Set the Monte Carlo parameter values.
+        #######################################
+
+        # Diffusion tensor parameters and non residue specific minimisation statistics.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Loop over the parameters.
+            for object_name in diff_params:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(self.relax.data.diff[self.run], sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(self.relax.data.diff[self.run], sim_object_name)
+
+                # Loop over the simulations.
+                for j in xrange(self.relax.data.sim_number[self.run]):
+                    # Copy and append the data.
+                    sim_object.append(deepcopy(getattr(self.relax.data.diff[self.run], object_name)))
+
+            # Loop over the minimisation stats objects.
+            for object_name in min_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(self.relax.data, sim_object_name, {})
+
+                # Get the simulation object.
+                sim_object = getattr(self.relax.data, sim_object_name)
+
+                # Add the run.
+                sim_object[self.run] = []
+
+                # Loop over the simulations.
+                for j in xrange(self.relax.data.sim_number[self.run]):
+                    # Get the object.
+                    object = getattr(self.relax.data, object_name)
+
+                    # Copy and append the data.
+                    sim_object[self.run].append(deepcopy(object[self.run]))
+
+        # Residue specific parameters.
+        if self.param_set != 'diff':
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Loop over all the data names.
+                for object_name in param_names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Create the simulation object.
+                    setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+
+                    # Get the simulation object.
+                    sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+
+                    # Loop over the simulations.
+                    for j in xrange(self.relax.data.sim_number[self.run]):
+                        # Copy and append the data.
+                        sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+
+                # Loop over all the minimisation object names.
+                if self.param_set != 'all':
+                    for object_name in min_names:
+                        # Name for the simulation object.
+                        sim_object_name = object_name + '_sim'
+
+                        # Create the simulation object.
+                        setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+
+                        # Get the simulation object.
+                        sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+
+                        # Loop over the simulations.
+                        for j in xrange(self.relax.data.sim_number[self.run]):
+                            # Copy and append the data.
+                            sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+
+
+    def sim_pack_data(self, run, i, sim_data):
+        """Function for packing Monte Carlo simulation data."""
+
+        # Test if the simulation data already exists.
+        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
+            raise RelaxError, "Monte Carlo simulation data already exists."
+
+        # Create the data structure.
+        self.relax.data.res[run][i].relax_sim_data = sim_data
+
+
+    def sim_return_chi2(self, run, instance):
+        """Function for returning the array of simulation chi-squared values."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Single instance.
+        if self.param_set == 'all' or self.param_set == 'diff':
+            return self.relax.data.chi2_sim[self.run]
+
+        # Multiple instances.
+        else:
+            return self.relax.data.res[self.run][instance].chi2_sim
+
+
+    def sim_return_param(self, run, instance, index):
+        """Function for returning the array of simulation parameter values."""
+
+        # Arguments.
+        self.run = run
+
+        # Increment counter for the parameter set 'all'.
+        inc = 0
+
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
+
+        # Diffusion tensor parameters.
+        ##############################
+
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                # Return the parameter array.
+                if index == 0:
+                    return self.relax.data.diff[self.run].tm_sim
+
+                # Increment.
+                inc = inc + 1
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                # Return the parameter array.
+                if index == 0:
+                    return self.relax.data.diff[self.run].tm_sim
+                elif index == 1:
+                    return self.relax.data.diff[self.run].Dratio_sim
+                elif index == 2:
+                    return self.relax.data.diff[self.run].theta_sim
+                elif index == 3:
+                    return self.relax.data.diff[self.run].phi_sim
+
+                # Increment.
+                inc = inc + 4
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                # Return the parameter array.
+                if index == 0:
+                    return self.relax.data.diff[self.run].tm_sim
+                elif index == 1:
+                    return self.relax.data.diff[self.run].Da_sim
+                elif index == 2:
+                    return self.relax.data.diff[self.run].Dr_sim
+                elif index == 3:
+                    return self.relax.data.diff[self.run].alpha_sim
+                elif index == 4:
+                    return self.relax.data.diff[self.run].beta_sim
+                elif index == 5:
+                    return self.relax.data.diff[self.run].gamma_sim
+
+                # Increment.
+                inc = inc + 6
+
+
+        # Model-free parameters for the parameter set 'all'.
+        ####################################################
+
+        if self.param_set == 'all':
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Loop over the residue specific parameters.
+                for param in param_names:
+                    # Return the parameter array.
+                    if index == inc:
+                        return getattr(self.relax.data.res[self.run][i], param + "_sim")
+
+                    # Increment.
+                    inc = inc + 1
+
+
+        # Model-free parameters for the parameter sets 'mf' and 'local_tm'.
+        ###################################################################
+
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][instance].select:
+                return
+
+            # Loop over the residue specific parameters.
+            for param in param_names:
+                # Return the parameter array.
+                if index == inc:
+                    return getattr(self.relax.data.res[self.run][instance], param + "_sim")
+
+                # Increment.
+                inc = inc + 1
 
 
     def skip_function(self, run=None, instance=None):

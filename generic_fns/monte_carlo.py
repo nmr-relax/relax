@@ -101,6 +101,34 @@ class Monte_carlo:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
+        # Specific number of instances function.
+        count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
+        return_sim_chi2 = self.relax.specific_setup.setup('return_sim_chi2', function_type)
+        return_sim_param = self.relax.specific_setup.setup('return_sim_param', function_type)
+
+        # Count the number of instances.
+        num_instances = count_num_instances(run)
+
+        # Loop over the instances.
+        for instance in xrange(num_instances):
+            # Get the array of simulation chi-squared values.
+            chi2_array = return_sim_chi2(run, instance)
+            print chi2_array
+
+            # Loop over the parameters.
+            index = 0
+            while 1:
+                # Get the array of simulation parameters for the index.
+                param_array = return_sim_param(run, instance, index)
+                print param_array
+
+                # Break.
+                if param_array == None:
+                    break
+
+                # Increment the parameter index.
+                index = index + 1
+
 
     def initial_values(self, run=None):
         """Function for setting the initial simulation parameter values."""
