@@ -242,6 +242,11 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must be a string."
 
+    # String or list of strings.
+    class RelaxStrListStrError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be an string or an array of strings."
+
 
     # Sequence errors.
     ##################

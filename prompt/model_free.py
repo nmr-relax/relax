@@ -226,6 +226,55 @@ class Model_free:
         self.__relax__.specific.model_free.delete(run=run)
 
 
+    def remove_tm(self, run=None, res_num=None):
+        """Function for removing the local tm parameter from a model.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the values to.
+
+        res_num:  The residue number.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will remove the local tm parameter from the model-free parameters of the given
+        run.  Model-free parameters must already exist within the run yet, if there is no local tm,
+        nothing will happen.
+
+        If no residue number is given, then the function will apply to all residues.
+
+
+        Examples
+        ~~~~~~~~
+
+        The following commands will remove the parameter 'tm' from the run 'local_tm':
+
+        relax> model_free.remove_tm('local_tm')
+        relax> model_free.remove_tm(run='local_tm')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "model_free.remove_tm("
+            text = text + "run=" + `run`
+            text = text + ", res_num=" + `res_num` + ")"
+            print text
+
+        # Run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
+
+        # Execute the functional code.
+        self.__relax__.specific.model_free.remove_tm(run=run, res_num=res_num)
+
+
     def select_model(self, run=None, model=None, res_num=None):
         """Function for the selection of a preset model-free model.
 

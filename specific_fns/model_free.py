@@ -883,7 +883,6 @@ class Model_free(Common_functions):
         # Test if the diffusion tensor data is loaded.
         if not self.relax.data.diff.has_key(self.run):
             return None
-            #raise RelaxNoTensorError, self.run
 
         # 'diff' parameter set.
         if mf_all_fixed:
@@ -2483,7 +2482,7 @@ class Model_free(Common_functions):
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+            return 0
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -3193,6 +3192,69 @@ class Model_free(Common_functions):
                     res.warning_sim.append(eval(replace(file_data[i][col['warn']], '_', ' ')))
 
 
+    def remove_tm(self, run, res_num):
+        """Function for removing the local tm parameter from the model-free parameters."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the run type is set to 'mf'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        if function_type != 'mf':
+            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Remap the data structure.
+            data = self.relax.data.res[self.run][i]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
+            # If res_num is set, then skip all other residues.
+            if res_num != None and res_num != data.num:
+                continue
+
+            # Test if a local tm parameter exists.
+            if not hasattr(data, 'params') or not 'tm' in data.params:
+                continue
+
+            # Remove tm.
+            data.params.remove('tm')
+
+            # Model name.
+            if match('^tm', data.model):
+                data.model = data.model[1:]
+
+            # Set the tm value to None.
+            data.tm = None
+
+            # Set all the minimisation details to None.
+            data.chi2 = None
+            data.iter = None
+            data.f_count = None
+            data.g_count = None
+            data.h_count = None
+            data.warning = None
+
+        # Set the global minimisation details to None.
+        self.relax.data.chi2[self.run] = None
+        self.relax.data.iter[self.run] = None
+        self.relax.data.f_count[self.run] = None
+        self.relax.data.g_count[self.run] = None
+        self.relax.data.h_count[self.run] = None
+        self.relax.data.warning[self.run] = None
+
+
     def return_value(self, run, i, data_type):
         """Function for returning the value and error corresponding to 'data_type'."""
 
@@ -3224,7 +3286,7 @@ class Model_free(Common_functions):
     def select_model(self, run=None, model=None, res_num=None):
         """Function for the selection of a preset model-free model."""
 
-        # Run argument.
+        # Arguments.
         self.run = run
 
         # Test if the run exists.

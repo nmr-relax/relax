@@ -323,7 +323,15 @@ def interact_script(self, intro, local, script_file, quit):
     local['self'].intro = 1
 
     # Print the script.
-    file = open(script_file, 'r')
+    try:
+        file = open(script_file, 'r')
+    except IOError, warning:
+        try:
+            raise RelaxError, "The script file '" + script_file + "' does not exist."
+        except AllRelaxErrors, instance:
+            sys.stdout.write(instance.__str__())
+            sys.stdout.write("\n")
+            return
     sys.stdout.write("script = " + `script_file` + "\n")
     sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
     sys.stdout.write(file.read())

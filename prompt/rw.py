@@ -54,7 +54,7 @@ class RW:
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "read.results("
+            text = sys.ps3 + "read("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
