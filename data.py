@@ -5,6 +5,7 @@ class data:
 		self.init_data()
 		self.asymptotic = self.init_asymptotic()
 		self.palmer = self.init_palmer()
+		self.true = self.init_true()
 
 
 	class init_asymptotic:
@@ -21,6 +22,15 @@ class data:
 
 			self.name = 'Palmer'
 			self.stage = '0'
+
+
+	class init_true:
+		def __init__(self):
+			"Data specific for modelfree analysis using the overall discrepency."
+
+			self.name = 'True'
+			self.stage = '0'
+			self.op_data = []
 
 
 	def init_data(self):

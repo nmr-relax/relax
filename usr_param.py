@@ -22,12 +22,16 @@ class usr_param:
 			Palmer - The method given by Mandel et al., 1995.
 			AIC - method of modelfree analysis based on model selection using the
 				Akaike Information Criteria.
+			AICc - method of modelfree analysis based on model selection using the
+				Akaike Information Criteria corrected for finit sample size.
 			BIC - method of modelfree analysis based on model selection using the
 				Schwartz Information Criteria.
+			True - calculate the exact overall discrepency.
 		"""
 		#self.method = 'Palmer'
-		#self.method = 'AIC'
-		self.method = 'BIC'
+		#self.method = 'AICc'
+		#self.method = 'BIC'
+		self.method = 'True'
 
 		# The following three values are only used in Palmer's method and won't affect the others.
 		self.sse_lim = '0.90'       # Set the SSE limit (1 - alpha critical value).

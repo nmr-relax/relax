@@ -11,170 +11,170 @@ class common_operations:
 	def create_mfdata(self, res, flag='1'):
 		"Create the Modelfree input file mfdata"
 
-		text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
+		mfdata = self.mf.mfdata
+
+		mfdata.write("\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n")
 		k = 0
 		for i in range(len(self.mf.data.nmr_frq)):
 			for j in range(3):
 				if match('1', self.mf.data.nmr_frq[i][j+2]):
-					text = text + '%-7s' % self.mf.data.input_info[k][0]
-					text = text + '%-10s' % self.mf.data.input_info[k][1]
-					text = text + '%10s' % self.mf.data.relax_data[k][res][2]
-					text = text + '%10s' % self.mf.data.relax_data[k][res][3]
-					text = text + ' %-3s\n' % flag
+					mfdata.write('%-7s' % self.mf.data.input_info[k][0])
+					mfdata.write('%-10s' % self.mf.data.input_info[k][1])
+					mfdata.write('%10s' % self.mf.data.relax_data[k][res][2])
+					mfdata.write('%10s' % self.mf.data.relax_data[k][res][3])
+					mfdata.write(' %-3s\n' % flag)
 					k = k + 1
 				else:
 					if j == 0:
-						text = text + '%-7s' % 'R1'
+						mfdata.write('%-7s' % 'R1')
 					if j == 1:
-						text = text + '%-7s' % 'R2'
+						mfdata.write('%-7s' % 'R2')
 					if j == 2:
-						text = text + '%-7s' % 'NOE'
-					text = text + '%-10s' % self.mf.data.nmr_frq[i][0]
-					text = text + '%10s' % '0.000'
-					text = text + '%10s' % '0.000'
-					text = text + ' %-3s\n' % '0'
-		self.mf.mfdata.write(text)
+						mfdata.write('%-7s' % 'NOE')
+					mfdata.write('%-10s' % self.mf.data.nmr_frq[i][0])
+					mfdata.write('%10s' % '0.000')
+					mfdata.write('%10s' % '0.000')
+					mfdata.write(' %-3s\n' % '0')
 
 
 	def create_mfin(self, sel='none', algorithm='fix', diffusion_search='none', sims='y'):
 		"Create the Modelfree input file mfin"
 
-		text = ""
-		text = text + "optimization    tval\n\n"
-		text = text + "seed            0\n\n"
-		text = text + "search          grid\n\n"
-		text = text + "diffusion       " + self.mf.data.usr_param.diff + " " + diffusion_search + "\n\n"
-		text = text + "algorithm       " + algorithm + "\n\n"
-		if match('y', sims):
-			text = text + "simulations     pred    " + self.mf.data.usr_param.no_sim
-			text = text + "       " + self.mf.data.usr_param.trim + "\n\n"
-		elif match('n', sims):
-			text = text + "simulations     none\n\n"
-		text = text + "selection       " + sel + "\n\n"
-		text = text + "sim_algorithm   " + algorithm + "\n\n"
-		text = text + "fields          " + `len(self.mf.data.nmr_frq)`
-		for frq in range(len(self.mf.data.nmr_frq)):
-			text = text + "  " + self.mf.data.nmr_frq[frq][0]
-		text = text + "\n"
-		# tm.
-		text = text + '%-7s' % 'tm'
-		text = text + '%14s' % self.mf.data.usr_param.tm['val']
-		text = text + '%2s' % self.mf.data.usr_param.tm['flag']
-		text = text + '%3s' % self.mf.data.usr_param.tm['bound']
-		text = text + '%5s' % self.mf.data.usr_param.tm['lower']
-		text = text + '%6s' % self.mf.data.usr_param.tm['upper']
-		text = text + '%4s\n' % self.mf.data.usr_param.tm['steps']
-		# dratio.
-		text = text + '%-7s' % 'Dratio'
-		text = text + '%14s' % self.mf.data.usr_param.dratio['val']
-		text = text + '%2s' % self.mf.data.usr_param.dratio['flag']
-		text = text + '%3s' % self.mf.data.usr_param.dratio['bound']
-		text = text + '%5s' % self.mf.data.usr_param.dratio['lower']
-		text = text + '%6s' % self.mf.data.usr_param.dratio['upper']
-		text = text + '%4s\n' % self.mf.data.usr_param.dratio['steps']
-		# theta.
-		text = text + '%-7s' % 'Theta'
-		text = text + '%14s' % self.mf.data.usr_param.theta['val']
-		text = text + '%2s' % self.mf.data.usr_param.theta['flag']
-		text = text + '%3s' % self.mf.data.usr_param.theta['bound']
-		text = text + '%5s' % self.mf.data.usr_param.theta['lower']
-		text = text + '%6s' % self.mf.data.usr_param.theta['upper']
-		text = text + '%4s\n' % self.mf.data.usr_param.theta['steps']
-		# phi.
-		text = text + '%-7s' % 'Phi'
-		text = text + '%14s' % self.mf.data.usr_param.phi['val']
-		text = text + '%2s' % self.mf.data.usr_param.phi['flag']
-		text = text + '%3s' % self.mf.data.usr_param.phi['bound']
-		text = text + '%5s' % self.mf.data.usr_param.phi['lower']
-		text = text + '%6s' % self.mf.data.usr_param.phi['upper']
-		text = text + '%4s\n' % self.mf.data.usr_param.phi['steps']
-		
-		self.mf.mfin.write(text)
+		mfin = self.mf.mfin
 
+		mfin.write("optimization    tval\n\n")
+		mfin.write("seed            0\n\n")
+		mfin.write("search          grid\n\n")
+		mfin.write("diffusion       " + self.mf.data.usr_param.diff + " " + diffusion_search + "\n\n")
+		mfin.write("algorithm       " + algorithm + "\n\n")
+		if match('y', sims):
+			mfin.write("simulations     pred    " + self.mf.data.usr_param.no_sim)
+			mfin.write("       " + self.mf.data.usr_param.trim + "\n\n")
+		elif match('n', sims):
+			mfin.write("simulations     none\n\n")
+		mfin.write("selection       " + sel + "\n\n")
+		mfin.write("sim_algorithm   " + algorithm + "\n\n")
+		mfin.write("fields          " + `len(self.mf.data.nmr_frq)`)
+		for frq in range(len(self.mf.data.nmr_frq)):
+			mfin.write("  " + self.mf.data.nmr_frq[frq][0])
+		mfin.write("\n")
+		# tm.
+		mfin.write('%-7s' % 'tm')
+		mfin.write('%14s' % self.mf.data.usr_param.tm['val'])
+		mfin.write('%2s' % self.mf.data.usr_param.tm['flag'])
+		mfin.write('%3s' % self.mf.data.usr_param.tm['bound'])
+		mfin.write('%5s' % self.mf.data.usr_param.tm['lower'])
+		mfin.write('%6s' % self.mf.data.usr_param.tm['upper'])
+		mfin.write('%4s\n' % self.mf.data.usr_param.tm['steps'])
+		# dratio.
+		mfin.write('%-7s' % 'Dratio')
+		mfin.write('%14s' % self.mf.data.usr_param.dratio['val'])
+		mfin.write('%2s' % self.mf.data.usr_param.dratio['flag'])
+		mfin.write('%3s' % self.mf.data.usr_param.dratio['bound'])
+		mfin.write('%5s' % self.mf.data.usr_param.dratio['lower'])
+		mfin.write('%6s' % self.mf.data.usr_param.dratio['upper'])
+		mfin.write('%4s\n' % self.mf.data.usr_param.dratio['steps'])
+		# theta.
+		mfin.write('%-7s' % 'Theta')
+		mfin.write('%14s' % self.mf.data.usr_param.theta['val'])
+		mfin.write('%2s' % self.mf.data.usr_param.theta['flag'])
+		mfin.write('%3s' % self.mf.data.usr_param.theta['bound'])
+		mfin.write('%5s' % self.mf.data.usr_param.theta['lower'])
+		mfin.write('%6s' % self.mf.data.usr_param.theta['upper'])
+		mfin.write('%4s\n' % self.mf.data.usr_param.theta['steps'])
+		# phi.
+		mfin.write('%-7s' % 'Phi')
+		mfin.write('%14s' % self.mf.data.usr_param.phi['val'])
+		mfin.write('%2s' % self.mf.data.usr_param.phi['flag'])
+		mfin.write('%3s' % self.mf.data.usr_param.phi['bound'])
+		mfin.write('%5s' % self.mf.data.usr_param.phi['lower'])
+		mfin.write('%6s' % self.mf.data.usr_param.phi['upper'])
+		mfin.write('%4s\n' % self.mf.data.usr_param.phi['steps'])
+		
 
 	def create_mfmodel(self, res, md, type='M1'):
 		"Create the M1 or M2 section of the Modelfree input file mfmodel"
 
+		mfmodel = self.mf.mfmodel
+
 		if match('M1', type):
-			text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
+			mfmodel.write("\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n")
 		else:
-			text = "\n"
+			mfmodel.write("\n")
 
 		# tloc.
-		text = text + '%-3s' % type
-		text = text + '%-6s' % 'tloc'
-		text = text + '%-6s' % md['tloc']['start']
-		text = text + '%-4s' % md['tloc']['flag']
-		text = text + '%-2s' % md['tloc']['bound']
-		text = text + '%11s' % md['tloc']['lower']
-		text = text + '%12s' % md['tloc']['upper']
-		text = text + ' %-4s\n' % md['tloc']['steps']
+		mfmodel.write('%-3s' % type)
+		mfmodel.write('%-6s' % 'tloc')
+		mfmodel.write('%-6s' % md['tloc']['start'])
+		mfmodel.write('%-4s' % md['tloc']['flag'])
+		mfmodel.write('%-2s' % md['tloc']['bound'])
+		mfmodel.write('%11s' % md['tloc']['lower'])
+		mfmodel.write('%12s' % md['tloc']['upper'])
+		mfmodel.write(' %-4s\n' % md['tloc']['steps'])
 		# Theta.
-		text = text + '%-3s' % type
-		text = text + '%-6s' % 'Theta'
-		text = text + '%-6s' % md['theta']['start']
-		text = text + '%-4s' % md['theta']['flag']
-		text = text + '%-2s' % md['theta']['bound']
-		text = text + '%11s' % md['theta']['lower']
-		text = text + '%12s' % md['theta']['upper']
-		text = text + ' %-4s\n' % md['theta']['steps']
+		mfmodel.write('%-3s' % type)
+		mfmodel.write('%-6s' % 'Theta')
+		mfmodel.write('%-6s' % md['theta']['start'])
+		mfmodel.write('%-4s' % md['theta']['flag'])
+		mfmodel.write('%-2s' % md['theta']['bound'])
+		mfmodel.write('%11s' % md['theta']['lower'])
+		mfmodel.write('%12s' % md['theta']['upper'])
+		mfmodel.write(' %-4s\n' % md['theta']['steps'])
 		# S2f.
-		text = text + '%-3s' % type
-		text = text + '%-6s' % 'Sf2'
-		text = text + '%-6s' % md['sf2']['start']
-		text = text + '%-4s' % md['sf2']['flag']
-		text = text + '%-2s' % md['sf2']['bound']
-		text = text + '%11s' % md['sf2']['lower']
-		text = text + '%12s' % md['sf2']['upper']
-		text = text + ' %-4s\n' % md['sf2']['steps']
+		mfmodel.write('%-3s' % type)
+		mfmodel.write('%-6s' % 'Sf2')
+		mfmodel.write('%-6s' % md['sf2']['start'])
+		mfmodel.write('%-4s' % md['sf2']['flag'])
+		mfmodel.write('%-2s' % md['sf2']['bound'])
+		mfmodel.write('%11s' % md['sf2']['lower'])
+		mfmodel.write('%12s' % md['sf2']['upper'])
+		mfmodel.write(' %-4s\n' % md['sf2']['steps'])
 		# S2s.
-		text = text + '%-3s' % type
-		text = text + '%-6s' % 'Ss2'
-		text = text + '%-6s' % md['ss2']['start']
-		text = text + '%-4s' % md['ss2']['flag']
-		text = text + '%-2s' % md['ss2']['bound']
-		text = text + '%11s' % md['ss2']['lower']
-		text = text + '%12s' % md['ss2']['upper']
-		text = text + ' %-4s\n' % md['ss2']['steps']
+		mfmodel.write('%-3s' % type)
+		mfmodel.write('%-6s' % 'Ss2')
+		mfmodel.write('%-6s' % md['ss2']['start'])
+		mfmodel.write('%-4s' % md['ss2']['flag'])
+		mfmodel.write('%-2s' % md['ss2']['bound'])
+		mfmodel.write('%11s' % md['ss2']['lower'])
+		mfmodel.write('%12s' % md['ss2']['upper'])
+		mfmodel.write(' %-4s\n' % md['ss2']['steps'])
 		# te.
-		text = text + '%-3s' % type
-		text = text + '%-6s' % 'te'
-		text = text + '%-6s' % md['te']['start']
-		text = text + '%-4s' % md['te']['flag']
-		text = text + '%-2s' % md['te']['bound']
-		text = text + '%11s' % md['te']['lower']
-		text = text + '%12s' % md['te']['upper']
-		text = text + ' %-4s\n' % md['te']['steps']
+		mfmodel.write('%-3s' % type)
+		mfmodel.write('%-6s' % 'te')
+		mfmodel.write('%-6s' % md['te']['start'])
+		mfmodel.write('%-4s' % md['te']['flag'])
+		mfmodel.write('%-2s' % md['te']['bound'])
+		mfmodel.write('%11s' % md['te']['lower'])
+		mfmodel.write('%12s' % md['te']['upper'])
+		mfmodel.write(' %-4s\n' % md['te']['steps'])
 		# Rex.
-		text = text + '%-3s' % type
-		text = text + '%-6s' % 'Rex'
-		text = text + '%-6s' % md['rex']['start']
-		text = text + '%-4s' % md['rex']['flag']
-		text = text + '%-2s' % md['rex']['bound']
-		text = text + '%11s' % md['rex']['lower']
-		text = text + '%12s' % md['rex']['upper']
-		text = text + ' %-4s\n' % md['rex']['steps']
-
-		self.mf.mfmodel.write(text)
+		mfmodel.write('%-3s' % type)
+		mfmodel.write('%-6s' % 'Rex')
+		mfmodel.write('%-6s' % md['rex']['start'])
+		mfmodel.write('%-4s' % md['rex']['flag'])
+		mfmodel.write('%-2s' % md['rex']['bound'])
+		mfmodel.write('%11s' % md['rex']['lower'])
+		mfmodel.write('%12s' % md['rex']['upper'])
+		mfmodel.write(' %-4s\n' % md['rex']['steps'])
 
 
 	def create_mfpar(self, res):
 		"Create the Modelfree input file mfpar"
 
-		text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
+		mfpar = self.mf.mfpar
 
-		text = text + '%-14s' % "constants"
-		text = text + '%-6s' % self.mf.data.relax_data[0][res][0]
-		text = text + '%-7s' % self.mf.data.usr_param.const['nucleus']
-		text = text + '%-8s' % self.mf.data.usr_param.const['gamma']
-		text = text + '%-8s' % self.mf.data.usr_param.const['rxh']
-		text = text + '%-8s\n' % self.mf.data.usr_param.const['csa']
+		mfpar.write("\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n")
 
-		text = text + '%-10s' % "vector"
-		text = text + '%-4s' % self.mf.data.usr_param.vector['atom1']
-		text = text + '%-4s\n' % self.mf.data.usr_param.vector['atom2']
+		mfpar.write('%-14s' % "constants")
+		mfpar.write('%-6s' % self.mf.data.relax_data[0][res][0])
+		mfpar.write('%-7s' % self.mf.data.usr_param.const['nucleus'])
+		mfpar.write('%-8s' % self.mf.data.usr_param.const['gamma'])
+		mfpar.write('%-8s' % self.mf.data.usr_param.const['rxh'])
+		mfpar.write('%-8s\n' % self.mf.data.usr_param.const['csa'])
 
-		self.mf.mfpar.write(text)
+		mfpar.write('%-10s' % "vector")
+		mfpar.write('%-4s' % self.mf.data.usr_param.vector['atom1'])
+		mfpar.write('%-4s\n' % self.mf.data.usr_param.vector['atom2'])
 
 
 	def create_run(self, dir):
@@ -370,35 +370,35 @@ class common_operations:
 	def grace(self, file_name, type, subtitle):
 		"Create grace files for the results."
 
-		text = self.grace_header('S2 values', subtitle, 'Residue Number', 'S2', 'xydy')
+		file = open(file_name, 'w')
+
+		file.write(self.grace_header('S2 values', subtitle, 'Residue Number', 'S2', 'xydy'))
 		for res in range(len(self.mf.data.results)):
 			if match('S2', type) and match('^[0-9]', self.mf.data.results[res]['s2']):
-				text = text + self.mf.data.results[res]['res_num'] + " "
-				text = text + self.mf.data.results[res]['s2'] + " "
-				text = text + self.mf.data.results[res]['s2_err'] + "\n"
+				file.write(self.mf.data.results[res]['res_num'] + " ")
+				file.write(self.mf.data.results[res]['s2'] + " ")
+				file.write(self.mf.data.results[res]['s2_err'] + "\n")
 			elif match('S2s', type) and match('^[0-9]', self.mf.data.results[res]['s2s']):
-				text = text + self.mf.data.results[res]['res_num'] + " "
-				text = text + self.mf.data.results[res]['s2s'] + " "
-				text = text + self.mf.data.results[res]['s2s_err'] + "\n"
+				file.write(self.mf.data.results[res]['res_num'] + " ")
+				file.write(self.mf.data.results[res]['s2s'] + " ")
+				file.write(self.mf.data.results[res]['s2s_err'] + "\n")
 			elif match('S2f', type) and match('^[0-9]', self.mf.data.results[res]['s2f']):
-				text = text + self.mf.data.results[res]['res_num'] + " "
-				text = text + self.mf.data.results[res]['s2f'] + " "
-				text = text + self.mf.data.results[res]['s2f_err'] + "\n"
+				file.write(self.mf.data.results[res]['res_num'] + " ")
+				file.write(self.mf.data.results[res]['s2f'] + " ")
+				file.write(self.mf.data.results[res]['s2f_err'] + "\n")
 			elif match('te', type) and match('^[0-9]', self.mf.data.results[res]['te']):
-				text = text + self.mf.data.results[res]['res_num'] + " "
-				text = text + self.mf.data.results[res]['te'] + " "
-				text = text + self.mf.data.results[res]['te_err'] + "\n"
+				file.write(self.mf.data.results[res]['res_num'] + " ")
+				file.write(self.mf.data.results[res]['te'] + " ")
+				file.write(self.mf.data.results[res]['te_err'] + "\n")
 			elif match('Rex', type) and match('^[0-9]', self.mf.data.results[res]['rex']):
-				text = text + self.mf.data.results[res]['res_num'] + " "
-				text = text + self.mf.data.results[res]['rex'] + " "
-				text = text + self.mf.data.results[res]['rex_err'] + "\n"
+				file.write(self.mf.data.results[res]['res_num'] + " ")
+				file.write(self.mf.data.results[res]['rex'] + " ")
+				file.write(self.mf.data.results[res]['rex_err'] + "\n")
 			elif match('SSE', type):
-				text = text + self.mf.data.results[res]['res_num'] + " "
-				text = text + `self.mf.data.results[res]['sse']` + "\n"
-		text = text + "&\n"
+				file.write(self.mf.data.results[res]['res_num'] + " ")
+				file.write(`self.mf.data.results[res]['sse']` + "\n")
+		file.write("&\n")
 
-		file = open(file_name, 'w')
-		file.write(text)
 		file.close()
 
 
@@ -501,12 +501,10 @@ class common_operations:
 	def log_input_info(self):
 		self.mf.log.write("The input info data structure is:\n" + `self.mf.data.input_info` + "\n\n")
 		for i in range(len(self.mf.data.input_info)):
-			text = ""
-			text = text + '%-25s%-20s\n' % ("Data label:", self.mf.data.input_info[i][0])
-			text = text + '%-25s%-20s\n' % ("NMR frequency label:", self.mf.data.input_info[i][1])
-			text = text + '%-25s%-20s\n' % ("NMR proton frequency:", `self.mf.data.input_info[i][2]`)
-			text = text + '%-25s%-20s\n\n' % ("File name:", self.mf.data.input_info[i][3])
-			self.mf.log.write(text)
+			self.mf.log.write('%-25s%-20s\n' % ("Data label:", self.mf.data.input_info[i][0]))
+			self.mf.log.write('%-25s%-20s\n' % ("NMR frequency label:", self.mf.data.input_info[i][1]))
+			self.mf.log.write('%-25s%-20s\n' % ("NMR proton frequency:", `self.mf.data.input_info[i][2]`))
+			self.mf.log.write('%-25s%-20s\n\n' % ("File name:", self.mf.data.input_info[i][3]))
 		self.mf.log.write("Number of frequencies:\t" + `self.mf.data.num_frq` + "\n")
 		self.mf.log.write("Number of data sets:\t" + `self.mf.data.num_data_sets` + "\n\n")
 
@@ -514,98 +512,102 @@ class common_operations:
 	def log_params(self, name, mdx):
 		"Put the parameter data structures into the log file."
 
-		text = "\n" + name + " data structure\n"
+		self.mf.log.write("\n" + name + " data structure\n")
 		for param in ['tloc', 'theta', 'ss2', 'sf2', 'te', 'rex']:
-			text = text + '%-10s' % ( param + ":" )
-			text = text + '%-15s' % ( "start = " + mdx[param]['start'] )
-			text = text + '%-11s' % ( "flag = " + mdx[param]['flag'] )
-			text = text + '%-13s' % ( "bound = " + mdx[param]['bound'] )
-			text = text + '%-20s' % ( "lower = " + mdx[param]['lower'] )
-			text = text + '%-20s' % ( "upper = " + mdx[param]['upper'] )
-			text = text + '%-10s\n' % ( "steps = " + mdx[param]['steps'] )
-		self.mf.log.write(text)
+			self.mf.log.write('%-10s' % ( param + ":" ))
+			self.mf.log.write('%-15s' % ( "start = " + mdx[param]['start'] ))
+			self.mf.log.write('%-11s' % ( "flag = " + mdx[param]['flag'] ))
+			self.mf.log.write('%-13s' % ( "bound = " + mdx[param]['bound'] ))
+			self.mf.log.write('%-20s' % ( "lower = " + mdx[param]['lower'] ))
+			self.mf.log.write('%-20s' % ( "upper = " + mdx[param]['upper'] ))
+			self.mf.log.write('%-10s\n' % ( "steps = " + mdx[param]['steps'] ))
 
 
 	def print_data(self, ftests='n'):
 		"Print the results into the results file."
 
-		text = ''
+		file = open('data_all', 'w')
+
+		sys.stdout.write("[")
 		for res in range(len(self.mf.data.results)):
-			text = text + "<<< Residue " + self.mf.data.results[res]['res_num']
-			text = text + ", Model " + self.mf.data.results[res]['model'] + " >>>\n"
-			text = text + '%-10s' % ''
-			text = text + '%-8s%-8s%-8s%-8s' % ( 'S2', 'S2_err', 'S2f', 'S2f_err' )
-			text = text + '%-8s%-8s' % ( 'S2s', 'S2s_err' )
-			text = text + '%-10s%-10s%-8s%-8s' % ( 'te', 'te_err', 'Rex', 'Rex_err' )
-			text = text + '%-10s%-10s%-10s' % ( 'SSE', 'SSElim', 'SSEtest' )
-			text = text + '%-10s%-10s\n' % ( 'LargeSSE', 'ZeroSSE' )
+			sys.stdout.write("-")
+			file.write("<<< Residue " + self.mf.data.results[res]['res_num'])
+			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
+			file.write('%-10s' % '')
+			file.write('%-8s%-8s%-8s%-8s' % ( 'S2', 'S2_err', 'S2f', 'S2f_err' ))
+			file.write('%-8s%-8s' % ( 'S2s', 'S2s_err' ))
+			file.write('%-10s%-10s%-8s%-8s' % ( 'te', 'te_err', 'Rex', 'Rex_err' ))
+			file.write('%-10s%-10s%-10s' % ( 'SSE', 'SSElim', 'SSEtest' ))
+			file.write('%-10s%-10s\n' % ( 'LargeSSE', 'ZeroSSE' ))
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					text = text + '%-10s' % run
-					text = text + '%-8s' % self.mf.data.data[run][res]['s2']
-					text = text + '%-8s' % self.mf.data.data[run][res]['s2_err']
-					text = text + '%-8s' % self.mf.data.data[run][res]['s2f']
-					text = text + '%-8s' % self.mf.data.data[run][res]['s2f_err']
-					text = text + '%-8s' % self.mf.data.data[run][res]['s2s']
-					text = text + '%-8s' % self.mf.data.data[run][res]['s2s_err']
-					text = text + '%-10s' % self.mf.data.data[run][res]['te']
-					text = text + '%-10s' % self.mf.data.data[run][res]['te_err']
-					text = text + '%-8s' % self.mf.data.data[run][res]['rex']
-					text = text + '%-8s' % self.mf.data.data[run][res]['rex_err']
-					text = text + '%-10s' % self.mf.data.data[run][res]['sse']
-					text = text + '%-10s' % self.mf.data.data[run][res]['sse_lim']
-					text = text + '%-10s' % self.mf.data.data[run][res]['sse_test']
-					text = text + '%-10s' % self.mf.data.data[run][res]['large_sse']
-					text = text + '%-10s\n' % self.mf.data.data[run][res]['zero_sse']
+					file.write('%-10s' % run)
+					file.write('%-8s' % self.mf.data.data[run][res]['s2'])
+					file.write('%-8s' % self.mf.data.data[run][res]['s2_err'])
+					file.write('%-8s' % self.mf.data.data[run][res]['s2f'])
+					file.write('%-8s' % self.mf.data.data[run][res]['s2f_err'])
+					file.write('%-8s' % self.mf.data.data[run][res]['s2s'])
+					file.write('%-8s' % self.mf.data.data[run][res]['s2s_err'])
+					file.write('%-10s' % self.mf.data.data[run][res]['te'])
+					file.write('%-10s' % self.mf.data.data[run][res]['te_err'])
+					file.write('%-8s' % self.mf.data.data[run][res]['rex'])
+					file.write('%-8s' % self.mf.data.data[run][res]['rex_err'])
+					file.write('%-10s' % self.mf.data.data[run][res]['sse'])
+					file.write('%-10s' % self.mf.data.data[run][res]['sse_lim'])
+					file.write('%-10s' % self.mf.data.data[run][res]['sse_test'])
+					file.write('%-10s' % self.mf.data.data[run][res]['large_sse'])
+					file.write('%-10s\n' % self.mf.data.data[run][res]['zero_sse'])
 			if match('y', ftests):
-				text = text + '%-10s' % ''
-				text = text + '%-18s' % 'F-stat'
-				text = text + '%-18s' % 'F-stat limit'
-				text = text + '%-18s\n' % 'F-test result'
+				file.write('%-10s' % '')
+				file.write('%-18s' % 'F-stat')
+				file.write('%-18s' % 'F-stat limit')
+				file.write('%-18s\n' % 'F-test result')
 				for run in self.mf.data.runs:
 					if match('^f', run):
-						text = text + '%-10s' % run
-						text = text + '%-18s' % self.mf.data.data[run][res]['fstat']
-						text = text + '%-18s' % self.mf.data.data[run][res]['fstat_lim']
-						text = text + '%-18s\n' % self.mf.data.data[run][res]['ftest']
-			text = text + '\n'
+						file.write('%-10s' % run)
+						file.write('%-18s' % self.mf.data.data[run][res]['fstat'])
+						file.write('%-18s' % self.mf.data.data[run][res]['fstat_lim'])
+						file.write('%-18s\n' % self.mf.data.data[run][res]['ftest'])
+			file.write('\n')
+		sys.stdout.write("]\n")
 
-		self.data_file = open('data_all', 'w')
-		self.data_file.write(text)
-		self.data_file.close()
+		file.close()
 
 
 	def print_results(self):
 		"Print the results into the results file."
 		
-		text = '%-6s%-6s%-13s%-13s%-13s' % ( 'ResNo', 'Model', '    S2', '    S2f', '    S2s' )
-		text = text + '%-19s%-13s%-10s\n' % ( '       te', '    Rex', '    SSE' )
+		file = open('results', 'w')
+
+		file.write('%-6s%-6s%-13s%-13s%-13s' % ( 'ResNo', 'Model', '    S2', '    S2f', '    S2s' ))
+		file.write('%-19s%-13s%-10s\n' % ( '       te', '    Rex', '    SSE' ))
+		sys.stdout.write("[")
 		for res in range(len(self.mf.data.results)):
-			text = text + '%-6s' % self.mf.data.results[res]['res_num']
-			text = text + '%-6s' % self.mf.data.results[res]['model']
+			sys.stdout.write("-")
+			file.write('%-6s' % self.mf.data.results[res]['res_num'])
+			file.write('%-6s' % self.mf.data.results[res]['model'])
 			
 			if match('[1,2,3,4,5]', self.mf.data.results[res]['model']):
-				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] )
+				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] ))
 			else:
-				text = text + '%13s' % ''
+				file.write('%13s' % '')
 			if match('5', self.mf.data.results[res]['model']):
-				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] )
-				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] )
+				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] ))
+				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] ))
 			else:
-				text = text + '%26s' % ''
+				file.write('%26s' % '')
 			if match('[2,4,5]', self.mf.data.results[res]['model']):
-				text = text + '%8s%1s%-8s  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] )
+				file.write('%8s%1s%-8s  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] ))
 			else:
-				text = text + '%19s' % ''
+				file.write('%19s' % '')
 			if match('[3,4]', self.mf.data.results[res]['model']):
-				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] )
+				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] ))
 			else:
-				text = text + '%13s' % ''
-			text = text + '%10s\n' % self.mf.data.results[res]['sse']
+				file.write('%13s' % '')
+			file.write('%10s\n' % self.mf.data.results[res]['sse'])
+		sys.stdout.write("]\n")
 
-		self.results_file = open('results', 'w')
-		self.results_file.write(text)
-		self.results_file.close()
+		file.close()
 
 
 	def set_run_flags(self, run):

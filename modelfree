@@ -1,5 +1,5 @@
-#! /usr/bin/python
-# /data03/dauvergne/bin/python
+#! /data03/dauvergne/bin/python
+# /usr/bin/python
 
 
 # modelfree.py   v0.1            31 October 2001        Edward d'Auvergne
@@ -42,6 +42,7 @@ from usr_param import usr_param
 
 from asymptotic import asymptotic
 from palmer import palmer
+from true import true
 
 
 class mf:
@@ -55,12 +56,16 @@ class mf:
 
 		self.print_header()
 
-		if match('AIC', self.data.usr_param.method):
+		if match('^AIC$', self.data.usr_param.method):
 			asymptotic(self)
-		elif match('BIC', self.data.usr_param.method):
+		elif match('^AICc$', self.data.usr_param.method):
 			asymptotic(self)
-		elif match('Palmer', self.data.usr_param.method):
+		elif match('^BIC$', self.data.usr_param.method):
+			asymptotic(self)
+		elif match('^Palmer$', self.data.usr_param.method):
 			palmer(self)
+		elif match('^True$', self.data.usr_param.method):
+			true(self)
 		else:
 			print "The modelfree analysis method is not set correctly.  Check self.method in"
 			print "the file 'usr_param.py' which should be in the working directory."
