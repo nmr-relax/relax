@@ -21,9 +21,9 @@
 ###############################################################################
 
 
-from LinearAlgebra import LinAlgError, cholesky_decomposition, eigenvectors, solve_linear_equations
-from MLab import tril, triu
-from Numeric import Float64, array, dot, identity, sqrt, transpose
+from LinearAlgebra import LinAlgError, cholesky_decomposition, eigenvalues, inverse, solve_linear_equations
+from math import sqrt
+from Numeric import Float64, array, dot, identity, matrixmultiply, transpose
 
 
 def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
@@ -63,31 +63,38 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
 
     # Debugging.
     if print_flag >= 3:
-        old_eigen = eigenvectors(d2fk)
+        old_eigen = eigenvalues(d2fk)
         print print_prefix + "dfk: " + `dfk`
         print print_prefix + "d2fk:\n" + `d2fk`
 
     # Main loop.
     for j in range(n):
-        # Row and column swapping.
+        # Row and column swapping, find the index > j of the largest diagonal element.
         q = j
-        for i in range(j, n):
+        for i in range(j+1, n):
             if abs(a[i, i]) >= abs(a[q, q]):
                 q = i
 
-        # Interchange row and column j and q.
-        p = 1.0 * I
+        # Interchange row and column j and q (if j != q).
         if q != j:
-            # Modify the permutation matrices by swaping columns.
-            row_p, row_P = 1.0*p[:, q], 1.0*P[:, q]
-            p[:, q], P[:, q] = p[:, j], P[:, j]
-            p[:, j], P[:, j] = row_p, row_P
+            # Temporary permutation matrix for swaping 2 rows or columns.
+            p = 1.0 * I
+
+            # Modify the permutation matrix P by swaping columns.
+            row_P = 1.0*P[:, q]
+            P[:, q] = P[:, j]
+            P[:, j] = row_P
+
+            # Modify the permutation matrix p by swaping rows (same as columns because p = pT).
+            row_p = 1.0*p[q]
+            p[q] = p[j]
+            p[j] = row_p
 
             # Permute a and r (p = pT).
             a = dot(p, dot(a, p))
             r = dot(r, p)
 
-        # Calculate ljj.
+        # Calculate dj.
         theta_j = 0.0
         if j < n-1:
             for i in range(j+1, n):
@@ -98,14 +105,14 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         if print_flag >= 3:
             e[j] = dj - a[j, j]
 
-        # Calculate r and a.
-        r[j, j] = sqrt(dj)
+        # Calculate row j of r and update a.
+        r[j, j] = sqrt(dj)     # Damned sqrt introduces roundoff error.
         for i in range(j+1, n):
             r[j, i] = a[j, i] / r[j, j]
             for k in range(j+1, i+1):
-                a[i, k] = a[k, i] = a[k, i] - r[j, i] * r[j, k]
+                a[i, k] = a[k, i] = a[k, i] - r[j, i] * r[j, k]     # Keep matrix a symmetric.
 
-    # The Cholesky factor.
+    # The Cholesky factor of d2fk.
     L = dot(P, transpose(r))
 
     # Debugging.
@@ -134,9 +141,11 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
             print print_prefix + "chol reconstructed:\n" + `dot(chol, transpose(chol))`
         except LinAlgError:
             print print_prefix + "Matrix is not positive definite - Cholesky decomposition cannot be computed."
-        eigen = eigenvectors(r)
-        print print_prefix + "Old eigenvalues: " + `old_eigen[0]`
-        print print_prefix + "New eigenvalues: " + `eigen[0]`
+        eigen = eigenvalues(dot(L, transpose(L)))
+        print print_prefix + "Old eigenvalues: " + `old_eigen`
+        print print_prefix + "New eigenvalues: " + `eigen`
+        print print_prefix + "Newton dir: " + `-solve_linear_equations(transpose(L), solve_linear_equations(L, dfk))`
+        print print_prefix + "Newton dir using inverse: " + `-matrixmultiply(inverse(d2fk+E), dfk)`
 
     #import sys
     #sys.exit()
