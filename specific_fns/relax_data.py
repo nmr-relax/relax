@@ -332,7 +332,7 @@ class Rx_data:
                 setattr(data, name, self.data_init(name))
 
 
-    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
+    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, file_data=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for reading R1, R2, or NOE relaxation data."""
 
         # Arguments.
@@ -354,7 +354,8 @@ class Rx_data:
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file)
+        if file:
+            file_data = self.relax.file_ops.extract_data(file)
 
         # Remove the header.
         file_data = file_data[header_lines:]
@@ -366,8 +367,8 @@ class Rx_data:
         for i in xrange(len(file_data)):
             try:
                 int(file_data[i][num_col])
-                float(file_data[i][data_col])
-                float(file_data[i][error_col])
+                eval(file_data[i][data_col])
+                eval(file_data[i][error_col])
             except ValueError:
                 raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
 
@@ -433,8 +434,8 @@ class Rx_data:
             # Convert the data.
             res_num = int(file_data[i][num_col])
             res_name = file_data[i][name_col]
-            value = float(file_data[i][data_col])
-            error = float(file_data[i][error_col])
+            value = eval(file_data[i][data_col])
+            error = eval(file_data[i][error_col])
 
             # Find the index of self.relax.data.res[self.run] which corresponds to the relaxation data set i.
             index = None

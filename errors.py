@@ -349,6 +349,11 @@ class RelaxErrors:
         def __init__(self, file_name, flag):
             self.text = "The file " + `file_name` + " already exists.  Set the " + flag + " to 1 to overwrite."
 
+    # Invalid file format.
+    class RelaxInvalidFileError(BaseError):
+        def __init__(self, file_name):
+            self.text = "The format of the file " + `file_name` + " is invalid."
+
 
     # Run errors.
     #############

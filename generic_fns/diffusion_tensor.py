@@ -162,12 +162,12 @@ class Diffusion_tensor:
         self.axial_type = axial_type
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if diffusion tensor data corresponding to the run already exists.
-        if self.relax.data.diff.has_key(run):
-            raise RelaxTensorError, run
+        if self.relax.data.diff.has_key(self.run):
+            raise RelaxTensorError, self.run
 
         # Check the validity of the angle_units argument.
         valid_types = ['deg', 'rad']
@@ -175,13 +175,13 @@ class Diffusion_tensor:
             raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
         # Add the run to the diffusion tensor data structure.
-        self.relax.data.diff.add_item(run)
+        self.relax.data.diff.add_item(self.run)
 
         # Set the fixed flag.
-        self.relax.data.diff[run].fixed = fixed
+        self.relax.data.diff[self.run].fixed = fixed
 
         # Set the scaling flag.
-        self.relax.data.diff[run].scaling = scaling
+        self.relax.data.diff[self.run].scaling = scaling
 
         # Isotropic diffusion.
         if type(params) == float:

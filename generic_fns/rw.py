@@ -86,7 +86,7 @@ class RW:
             raise RelaxFileEmptyError
 
         # Read the results.
-        self.read_function(file_data, run)
+        self.read_function(run, file_name, file_data)
 
 
     def write_results(self, run=None, file="results", directory=None, force=0, format='columnar'):
