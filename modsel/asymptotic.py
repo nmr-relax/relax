@@ -171,11 +171,11 @@ class asymptotic(common_operations):
 
 	def set_vars_stage_initial(self):
 		"Set the options for the initial runs."
-		
+
 		self.mf.data.mfin.sims = 'n'
 
 
 	def set_vars_stage_selection(self):
 		"Set the options for the final run."
-		
+
 		self.mf.data.mfin.sims = 'y'

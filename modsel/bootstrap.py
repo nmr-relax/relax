@@ -30,22 +30,28 @@ class bootstrap(common_operations):
 		self.goto_stage()
 
 
-	def calc_crit(self, res, model, file):
+	def calc_crit(self, res, model, file, n):
 		"Calculate the criteria."
 
+		real = []
+		real_err = []
+		types = []
 		sum_ln_err = 0.0
-		for i in range(len(self.mf.data.relax_data)):
-			var = float(self.mf.data.relax_data[i][res][3]) ** 2
+
+		for set in range(len(self.mf.data.input_info)):
+			# Sum ln(errors).
+			var = float(self.mf.data.relax_data[set][res][3]) ** 2
 			if var == 0.0:
-				ln_err = -100.0
+				ln_err = -1000.0
 			else:
 				ln_err = log(var)
 			sum_ln_err = sum_ln_err + ln_err
 
+			# Real data and errors.
+			real.append(float(self.mf.data.relax_data[set][res][2]))
+			real_err.append(float(self.mf.data.relax_data[set][res][3]))
+			types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 
-		sum_chi2 = 0.0
-		num_sims = float(len(file))
-		n = len(self.mf.data.input_info)
 
 		#self.mf.log.write("\nCalculating bootstrap estimate for res " + `res` + ", model " + model + "\n\n")
 		#for set in range(len(self.mf.data.input_info)):
@@ -58,13 +64,7 @@ class bootstrap(common_operations):
 		#	self.mf.log.write("%-8.4f" % self.mf.data.relax_data[set][res][3])
 		#self.mf.log.write("\n\n")
 
-		real = []
-		real_err = []
-		types = []
-		for set in range(len(self.mf.data.input_info)):
-			real.append(float(self.mf.data.relax_data[set][res][2]))
-			real_err.append(float(self.mf.data.relax_data[set][res][3]))
-			types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
+		sum_chi2 = 0.0
 		for sim in range(len(file)):
 			if match('m1', model):
 				back_calc = self.mf.calc_relax_data.calc(self.tm, model, types, [ file[sim][2] ])
@@ -86,6 +86,7 @@ class bootstrap(common_operations):
 			#self.mf.log.write(" | Sum Chi2: ")
 			#self.mf.log.write("%-7.4f" % sum_chi2)
 
+		num_sims = float(len(file))
 		ave_chi2 = sum_chi2 / num_sims
 		#self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
 
@@ -104,6 +105,7 @@ class bootstrap(common_operations):
 		data = self.mf.data.data
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
+		n = len(self.mf.data.input_info)
 
 		print "Calculating the bootstrap criteria"
 		self.mf.log.write("\n\n<<< Bootstrap model selection >>>")
@@ -116,23 +118,23 @@ class bootstrap(common_operations):
 
 			# Model 1.
 			file = self.mf.file_ops.open_file("m1/" + file_name)
-			data['m1'][res]['bootstrap'] = self.calc_crit(res, 'm1', file)
+			data['m1'][res]['bootstrap'] = self.calc_crit(res, 'm1', file, n)
 
 			# Model 2.
 			file = self.mf.file_ops.open_file("m2/" + file_name)
-			data['m2'][res]['bootstrap'] = self.calc_crit(res, 'm2', file)
+			data['m2'][res]['bootstrap'] = self.calc_crit(res, 'm2', file, n)
 
 			# Model 3.
 			file = self.mf.file_ops.open_file("m3/" + file_name)
-			data['m3'][res]['bootstrap'] = self.calc_crit(res, 'm3', file)
+			data['m3'][res]['bootstrap'] = self.calc_crit(res, 'm3', file, n)
 
 			# Model 4.
 			file = self.mf.file_ops.open_file("m4/" + file_name)
-			data['m4'][res]['bootstrap'] = self.calc_crit(res, 'm4', file)
+			data['m4'][res]['bootstrap'] = self.calc_crit(res, 'm4', file, n)
 
 			# Model 5.
 			file = self.mf.file_ops.open_file("m5/" + file_name)
-			data['m5'][res]['bootstrap'] = self.calc_crit(res, 'm5', file)
+			data['m5'][res]['bootstrap'] = self.calc_crit(res, 'm5', file, n)
 
 			# Select model.
 			min = 'm1'

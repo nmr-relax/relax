@@ -2,6 +2,8 @@
 #########
 
 merge `input` and `usr_param.py`
+usr numpy
+merge print_data functions
 
 
 # Bugs
