@@ -389,7 +389,8 @@ class Palmer:
     def create_run(self, file):
         """Create the script 'run.sh' for the execution of Modelfree4."""
 
-        file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
+        file.write("#! /bin/sh\n")
+        file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out\n")
         if not match('iso', self.relax.data.diff[self.run].type):
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
             system('cp ' + self.relax.data.pdb[self.run].filename + ' ' + self.dir)
