@@ -822,6 +822,10 @@ class Model_free:
     def determine_param_set_type(self):
         """Determine the type of parameter set."""
 
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = 0
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -2489,6 +2493,14 @@ class Model_free:
         # Arguments.
         self.run = run
 
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Test if the diffusion tensor data is loaded.
+        if not self.relax.data.diff.has_key(self.run):
+            raise RelaxNoTensorError, self.run
+
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
@@ -3937,7 +3949,9 @@ class Model_free:
         #########
 
         # Skip this section and the next if no simulations have been setup.
-        if not hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[self.run] == 0:
+        if not hasattr(self.relax.data, 'sim_state'):
+            return
+        elif self.relax.data.sim_state[self.run] == 0:
             return
 
         # Diffusion parameters.

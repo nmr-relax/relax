@@ -42,10 +42,6 @@ class Eliminate:
             if not self.run in self.relax.data.run_names:
                 raise RelaxNoRunError, self.run
 
-            # Test if sequence data is loaded.
-            if not self.relax.data.res.has_key(self.run):
-                raise RelaxNoSequenceError, self.run
-
             # Function type.
             function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
