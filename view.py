@@ -21,6 +21,7 @@
 ###############################################################################
 
 import os
+from Scientific.Visualization import VMD
 
 
 class View:
@@ -34,14 +35,15 @@ class View:
         """Function for viewing the collection of molecules using VMD."""
 
         # Test if the PDB file has been loaded.
-        if not hasattr(self.relax.data, 'molecs'):
+        if not hasattr(self.relax.data, 'pdb'):
             raise RelaxPdbError
 
-        # Test if the environmental variable PDBVIEWER has been set.
-        try:
-            os.environ['PDBVIEWER']
-        except KeyError:
-            raise RelaxPdbviewerError
+        # Create an empty scene.
+        self.relax.data.scene = VMD.Scene()
 
-        # View the collection.
-        self.relax.data.molecs.view()
+        # Add the molecules to the scene.
+        for i in range(len(self.relax.data.pdb)):
+            self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb[i]))
+
+        # View the scene.
+        self.relax.data.scene.view()

@@ -20,9 +20,9 @@
 #                                                                             #
 ###############################################################################
 
-import MMTK
 from os import stat
 from re import match
+import Scientific
 from stat import S_ISREG, ST_MODE
 from sys import exc_info
 
@@ -41,48 +41,26 @@ class PDB:
         if not S_ISREG(stat(file)[ST_MODE]):
             raise RelaxFileError, ('PDB', file)
 
-        # Load the file.
+        # Initialisation.
         print "Loading the PDB file into 'self.relax.data.pdb'."
-        self.relax.data.pdb = MMTK.PDB.PDBConfiguration(file)
-        print self.relax.data.pdb
+        self.relax.data.pdb = []
+        i = 1
 
-        # Strip the protons from the peptide chains.
-        for object in self.relax.data.pdb.objects:
-            if hasattr(object, 'createPeptideChain'):
-                object.deleteHydrogens()
+        # Loop over all models.
+        while 1:
+            # Load the pdb files.
+            str = Scientific.IO.PDB.Structure(file, i)
 
-        # Create an empty collection of molecules.
-        self.relax.data.molecs = MMTK.Collection()
-        print "Creating an empty collection of molecules:  " + `self.relax.data.molecs.objects`
+            # Test if the last structure has been reached.
+            if len(str) == 0:
+                del str
+                break
 
-        # Try to place the proteins in the collection of molecules.
-        print "\nPlacing the proteins into the collection of molecules."
-        try:
-            self.relax.data.molecs.addObject(self.relax.data.pdb.createPeptideChains())
-        except:
-            print exc_info()[0].__doc__ + "  " + exc_info()[1].args[0]
-        print "Collection:  " + `self.relax.data.molecs.objects`
+            # Add the structure to the list of structures in self.relax.data.pdb
+            self.relax.data.pdb.append(str)
 
-        # Try to place any RNA or DNA in the collection of molecules.
-        print "\nPlacing the nucleaic acids into the collection of molecules."
-        try:
-            self.relax.data.molecs.addObject(self.relax.data.pdb.createNucleotideChains())
-        except:
-            print exc_info()[0].__doc__ + "  " + exc_info()[1].args[0]
-        print "Collection:  " + `self.relax.data.molecs.objects`
+            # Print out.
+            print self.relax.data.pdb[i-1]
 
-        # Try to place other molecules in the collection.
-        print "\nPlacing the molecules into the collection."
-        try:
-            self.relax.data.molecs.addObject(self.relax.data.pdb.createMolecules())
-        except:
-            print exc_info()[0].__doc__ + "  " + exc_info()[1].args[0]
-        print "Collection:  " + `self.relax.data.molecs.objects`
-
-        # Test if the collection contains any proteins, and raise an exception otherwise.
-        contains_protein = 0
-        for object in self.relax.data.molecs.objects:
-            if match('Pep', `object`):
-                contains_protein = 1
-        if not contains_protein:
-            raise RelaxPdbLoadError, file
+            # Increment i.
+            i = i + 1
