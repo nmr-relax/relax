@@ -23,7 +23,6 @@
 import __builtin__
 from code import InteractiveConsole, softspace
 from os import F_OK, access
-import pydoc
 import readline
 import signal
 import sys
@@ -33,9 +32,10 @@ import Numeric
 import Scientific
 
 # Auxillary modules.
-from tab_completion import Tab_completion
+from help import _Helper, _Helper_python
 from command import Ls, Lh, Ll, system
 from print_all_data import Print_all_data
+from tab_completion import Tab_completion
 
 # User functions.
 from angles import Angles
@@ -47,7 +47,7 @@ from fix import Fix
 from gpl import GPL
 from init_data import Init_data
 from map import Map
-from minimise import Minimise
+from minimisation import Minimisation
 from model_selection import Modsel
 from nuclei import Nuclei
 from pdb import PDB
@@ -96,7 +96,7 @@ class Interpreter:
         self._GPL = GPL
         self._Init_data = Init_data(relax)
         self._Map = Map(relax)
-        self._Minimise = Minimise(relax)
+        self._Minimisation = Minimisation(relax)
         self._Modsel = Modsel(relax)
         self._Nuclei = Nuclei(relax)
         self._OpenDX = OpenDX(relax)
@@ -142,16 +142,16 @@ class Interpreter:
 
         # Place the user functions in the local namespace.
         angles = self._Angles.angles
-        calc = self._Minimise.calc
+        calc = self._Minimisation.calc
         create_run = self._Create_run.create
         delete = self._Delete.delete
         diffusion_tensor = self._Diffusion_tensor.diffusion_tensor
         dx = self._OpenDX.dx
         fix = self._Fix.fix
-        grid_search = self._Minimise.grid_search
+        grid_search = self._Minimisation.grid_search
         init_data = self._Init_data.init
         map = self._Map.map
-        minimise = self._Minimise.minimise
+        minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei
         pdb = self._PDB.pdb
@@ -191,8 +191,17 @@ class Interpreter:
         #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
         readline.parse_and_bind("tab: complete")
 
+        # Execute the script file if given.
+        if self.relax.script_file:
+            # Turn on the function intro flag.
+            self.intro = 1
+
+            # Run the script.
+            run_script(intro=self.relax.intro_string, local=self.local, script_file=self.relax.script_file, quit=1)
+
         # Go to the prompt.
-        prompt(intro=self.relax.intro_string, local=self.local, script_file=self.relax.script_file)
+        else:
+            prompt(intro=self.relax.intro_string, local=self.local)
 
 
     def _off(self):
@@ -209,7 +218,7 @@ class Interpreter:
         print "Function intro's have been enabled."
 
 
-    def script(self, file=None):
+    def script(self, file=None, quit=0):
         """Function for executing a script file."""
 
         # File argument.
@@ -218,11 +227,19 @@ class Interpreter:
         elif type(file) != str:
             raise RelaxStrError, ('file', file)
 
+        # Test if the script file exists.
+        if not access(file, F_OK):
+            raise RelaxError, "The script file '" + file + "' does not exist."
+
+        # Quit argument.
+        if type(quit) != int or (quit != 0 and quit != 1):
+            raise RelaxBinError, ('quit', quit)
+
         # Turn on the function intro flag.
         self.intro = 1
 
         # Execute the script.
-        prompt(intro=self.relax.intro_string, local=self.local, script_file=file)
+        run_script(local=self.local, script_file=file, quit=quit)
 
         # Turn off the function intro flag.
         self.intro = 0
@@ -236,86 +253,15 @@ class _Exit:
         sys.exit()
 
 
-class _Helper:
-    text = """\
-For assistence in using a function, simply type help(function).  In addition to functions, if
-help(object) is typed, the help for the python object is returned.  This system is similar to the
-help function built into the python interpreter, which has been renamed to help_python, with the
-interactive component removed.  For the interactive python help the interactive python help system,
-type help_python().\
-    """
-
-    def __repr__(self):
-        return self.text
-
-    def __call__(self, *args, **kwds):
-        if len(args) != 1 or type(args[0]) == str:
-            print self.text
-            return
-        if hasattr(args[0], '__relax_help__'):
-            sys.stdout.write(args[0].__relax_help__ + "\n")
-            return
-        return pydoc.help(*args, **kwds)
-
-
-class _Helper_python:
-    text = """\
-For the interactive python help system, type help_python().  The help_python function is identical
-to the help function built into the normal python interpreter.\
-    """
-
-    def __repr__(self):
-        return self.text
-
-    def __call__(self, *args, **kwds):
-        return pydoc.help(*args, **kwds)
-
-
-def interact(self, intro=None, local=None, script_file=None):
+def interact_prompt(self, intro, local):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
-    This will either execute a command line specified script file or enter into the prompt.
+    This will enter into the prompt.
     """
 
     # Print the program introduction.
-    self.write("%s\n" % intro)
-
-    # Execute the script file, if given on the command line, and then exit.
-    if script_file != None:
-        # Turn the intro flag on so functions will print there intro strings.
-        local['self'].intro = 1
-
-        # Test if the script file exists.
-        if not access(script_file, F_OK):
-            sys.stderr.write("The script file '" + script_file + "' does not exist.\n")
-            return
-
-        # Print the script.
-        file = open(script_file, 'r')
-        sys.stdout.write("script = " + `script_file` + "\n")
-        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
-        sys.stdout.write(file.read())
-        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
-        file.close()
-
-        # Execute the script.
-        try:
-            execfile(script_file, local)
-        except KeyboardInterrupt:
-            sys.stdout.write("\nScript execution cancelled.\n")
-        except AllRelaxErrors, instance:
-            if Debug:
-                self.showtraceback()
-            else:
-                sys.stdout.write(instance.__str__())
-        sys.stdout.write("\n")
-
-        # Quit.
-        sys.exit()
-
-
-    # Interactive prompt.
-    #####################
+    if intro:
+        self.write("%s\n" % intro)
 
     # Ignore SIGINT.
     signal.signal(2, 1)
@@ -341,19 +287,73 @@ def interact(self, intro=None, local=None, script_file=None):
             more = 0
 
 
-def prompt(intro=None, local=None, script_file=None):
+def interact_script(self, intro, local, script_file, quit):
+    """Replacement function for 'code.InteractiveConsole.interact'.
+
+    This will execute the script file.
+    """
+
+    # Print the program introduction.
+    if intro:
+        self.write("%s\n" % intro)
+
+    # Turn the intro flag on so functions will print their intro strings.
+    local['self'].intro = 1
+
+    # Print the script.
+    file = open(script_file, 'r')
+    sys.stdout.write("script = " + `script_file` + "\n")
+    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+    sys.stdout.write(file.read())
+    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+    file.close()
+
+    # Execute the script.
+    try:
+        execfile(script_file, local)
+    except KeyboardInterrupt:
+        sys.stdout.write("\nScript execution cancelled.\n")
+    except AllRelaxErrors, instance:
+        if Debug:
+            self.showtraceback()
+        else:
+            sys.stdout.write(instance.__str__())
+
+    sys.stdout.write("\n")
+
+    # Quit.
+    if quit:
+        sys.exit()
+
+
+def prompt(intro=None, local=None):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
     """
 
     # Replace the 'InteractiveConsole.interact' and 'InteractiveConsole.runcode' functions.
-    InteractiveConsole.interact = interact
+    InteractiveConsole.interact = interact_prompt
     InteractiveConsole.runcode = runcode
 
     # The console.
     console = InteractiveConsole(local)
-    console.interact(intro, local, script_file)
+    console.interact(intro, local)
+
+
+def run_script(intro=None, local=None, script_file=None, quit=1):
+    """Python interpreter emulation.
+
+    This function replaces 'code.interact'.
+    """
+
+    # Replace the 'InteractiveConsole.interact' and 'InteractiveConsole.runcode' functions.
+    InteractiveConsole.interact = interact_script
+    InteractiveConsole.runcode = runcode
+
+    # The console.
+    console = InteractiveConsole(local)
+    console.interact(intro, local, script_file, quit)
 
 
 def runcode(self, code):

@@ -34,54 +34,6 @@ class Value:
 
         # Help.
         self.__relax_help__ = help.relax_class_help
-        #self.__repr__ = help.repr
-
-
-    def load(self, type=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-        """Function for loading data structure values from file.
-
-        Incomplete and broken code (and should probably be placed under the 'load' function class).
-        """
-
-        raise RelaxError, "Broken code."
-
-        # Arguments
-        if not type:
-            raise RelaxNoneError, 'data type'
-        else:
-            self.type = type
-        if not file_name:
-            raise RelaxNoneError, 'file name'
-        else:
-            self.file_name = file_name
-        self.num_col = num_col
-        self.name_col = name_col
-        self.data_col = data_col
-        self.error_col = error_col
-        self.sep = sep
-
-        # Test if sequence data is loaded.
-        try:
-            self.relax.data.res
-        except AttributeError:
-            raise RelaxSequenceError
-
-        # Initialise the type specific data.
-        if not self.init_data():
-            return
-
-        # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(self.file_name)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxError, "No sequence data loaded."
-
-        # Strip data.
-        file_data = self.relax.file_ops.strip(file_data)
-
-        # Create the data.
-        self.data = self.create_data(file_data)
 
 
     def set(self, run=None, data_type=None, val=None, err=None, res_num=None):

@@ -33,7 +33,6 @@ class Echo_data:
 
         # Help.
         self.__relax_help__ = help.relax_class_help
-        self.__repr__ = help.repr
 
 
     def echo(self, *args):

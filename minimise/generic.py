@@ -70,6 +70,8 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     func_tol:  The function tolerance value.  Once the function value between iterations decreases
     below this value, minimisation is terminated.
 
+    grad_tol:  The gradient tolerance value.
+
     maxiter:  The maximum number of iterations.
 
     A:  Linear constraint matrix m*n (A.x >= b).
@@ -100,10 +102,8 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
         warning: The warning string.
 
     print_flag:  A flag specifying how much information should be printed to standard output during
-    minimisation.  The print flag corresponds to:
-        0 - No output.
-        1 - Minimal output.
-        2 - Full output.
+    minimisation.  0 means no output, 1 means minimal output, and values above 1 increase the amount
+    of output printed.
 
 
     Minimisation algorithms

@@ -20,10 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+from string import split
 import sys
 
+from minimise.generic import generic_minimise
 
-class Minimise:
+
+class Minimisation:
     def __init__(self, relax):
         """Class containing the calc, grid, minimisation, and set functions."""
 
@@ -147,13 +150,18 @@ class Minimise:
         Arguments
         ~~~~~~~~~
 
-        The arguments are all strings which specify the minimiser to use as well as its options.  A
-        minimum of one argument is required.  As this calls the function 'generic_minimise', to see
-        the full list of allowed arguments import 'generic_minimise' and view its docstring by
-        typing:
+        The arguments, which should all be strings, specify the minimiser as well as its options.  A
+        minimum of one argument is required.  As this calls the function 'generic_minimise' the full
+        list of allowed arguments is shown below in the reproduced 'generic_minimise' docstring.
+        Ignore all sections except those labelled as minimisation algorithms and minimisation
+        options.  Also do not select the Method of Multipliers constraint algorithm as this is used
+        in combination with the given minimisation algorithm if the keyword argument 'constraints'
+        is set to 1.  The first argument passed will be set to the minimisation algorithm while all
+        other arguments will be set to the minimisation options.
 
-        relax> from minimise.generic import generic_minimise
-        relax> help(generic_minimise)
+        Keyword arguments differ from normal arguments having the form "keyword = value".  All
+        arguments must precede keyword arguments in python.  For more information see the examples
+        section below or the python tutorial.
 
 
         Keyword Arguments
@@ -174,6 +182,41 @@ class Minimise:
 
         print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
+
+
+        Examples
+        ~~~~~~~~
+
+        To minimise the model-free run 'm4' using Newton minimisation together with the GMW81
+        Hessian modification algorithm, the More and Thuente line search algorithm, a function
+        tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints
+        turned on to limit parameter values, and have normal printout, type any combination of:
+
+        relax> minimise('newton', run='m4')
+        relax> minimise('Newton', run='m4')
+        relax> minimise('newton', 'gmw', run='m4')
+        relax> minimise('newton', 'mt', run='m4')
+        relax> minimise('newton', 'gmw', 'mt', run='m4')
+        relax> minimise('newton', 'mt', 'gmw', run='m4')
+        relax> minimise('newton', run='m4', func_tol=1e-25)
+        relax> minimise('newton', run='m4', func_tol=1e-25, grad_tol=None)
+        relax> minimise('newton', run='m4', max_iter=1e7)
+        relax> minimise('newton', run=name, constraints=1, max_iter=1e7)
+        relax> minimise('newton', run='m4', print_flag=1)
+
+        To minimise the model-free run 'm5' using constrained Simplex minimisation with a maximum of
+        5000 iterations, type:
+
+        relax> minimise('simplex', run='m5', constraints=1, max_iter=5000)
+
+
+
+        ____________________________________________________________________________________________
+
+        Reproduction of the docstring of the generic_minimise function.  Only take note of the
+        minimisation algorithms and minimisation options sections.
+        ____________________________________________________________________________________________
+
         """
 
         # Function intro text is found at the end.
@@ -278,3 +321,15 @@ class Minimise:
 
         # Execute the functional code.
         self.relax.generic.minimise.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+
+
+
+    # Modify the docstring of the minimise method to include the docstring of the generic_minimise function in minimise.generic.
+    ############################################################################################################################
+
+    minimise.__doc__ = minimise.__doc__ + "\n    "
+
+    # Add four spaces to the start of the generic minimise docstring lines to align with the minimise method docstring.
+    doc = split(generic_minimise.__doc__, sep='\n')
+    for i in range(len(doc)):
+        minimise.__doc__ = minimise.__doc__ + "    " + doc[i] + "\n"

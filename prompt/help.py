@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+import pydoc
+import sys
+
 
 # Generic string printed out for function classes.
 ##################################################
@@ -38,3 +41,40 @@ relax_class_help = relax_class_help[1:]
 
 def repr():
     return relax_class_help
+
+
+# Helper classes.
+#################
+
+class _Helper:
+    text = """\
+For assistence in using a function, simply type 'help(function)'.  In addition to functions, if
+'help(object)' is typed, the help for the python object is returned.  This system is similar to the
+help function built into the python interpreter, which has been renamed to help_python, with the
+interactive component removed.  For the interactive python help system, type 'help_python()'.
+    """
+
+    def __repr__(self):
+        return self.text
+
+    def __call__(self, *args, **kwds):
+        if len(args) != 1 or type(args[0]) == str:
+            print self.text
+            return
+        if hasattr(args[0], '__relax_help__'):
+            sys.stdout.write(args[0].__relax_help__ + "\n")
+            return
+        return pydoc.help(*args, **kwds)
+
+
+class _Helper_python:
+    text = """\
+For the interactive python help system, type 'help_python()'.  The help_python function is identical
+to the help function built into the normal python interpreter.
+    """
+
+    def __repr__(self):
+        return self.text
+
+    def __call__(self, *args, **kwds):
+        return pydoc.help(*args, **kwds)

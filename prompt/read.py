@@ -34,7 +34,6 @@ class Read:
 
         # Help.
         self.__relax_help__ = help.relax_class_help
-        self.__repr__ = help.repr
 
 
     def read_results(self, run=None, data_type=None, file='results', dir=None):

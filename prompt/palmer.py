@@ -34,7 +34,6 @@ class Palmer:
 
         # Help.
         self.__relax_help__ = help.relax_class_help
-        self.__repr__ = help.repr
 
 
     def create(self, run=None, dir=None, force=0, diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
