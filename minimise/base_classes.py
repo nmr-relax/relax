@@ -32,7 +32,7 @@
 # Inbuilt python modules.
 #########################
 
-from LinearAlgebra import inverse
+from LinearAlgebra import LinAlgError, inverse
 from Numeric import dot, matrixmultiply, sqrt
 from re import match
 
@@ -235,8 +235,12 @@ class Min:
             except "LinearAlgebraError", message:
                 self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
                 break
-            except "LinearAlgebra.LinAlgError", message:
-                self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
+            except LinAlgError, message:
+                if type(message.args[0]) == int:
+                    text = message.args[1]
+                else:
+                    text = message.args[0]
+                self.warning = "LinearAlgebraError: " + text + " (fatal minimisation error)."
                 break
             except OverflowError, message:
                 if type(message.args[0]) == int:
