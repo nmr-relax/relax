@@ -64,13 +64,11 @@ class mf:
 
 		# Set the functions.
 		if self.scaling_vector:
+			self.scaling_flag = 1
 			self.set_params = self.set_params_scaled
-			self.grad_scaling = self.scale_gradient_func
-			self.hess_scaling = self.scale_hessian_func
 		else:
+			self.scaling_flag = 0
 			self.set_params = self.set_params_unscaled
-			self.grad_scaling = None
-			self.hess_scaling = None
 
 		# Setup the equations.
 		if not self.setup_equations():
@@ -156,6 +154,7 @@ class mf:
 		self.set_params(params)
 		self.print_flag = print_flag
 
+		# IMPORTANT.
 		# It is assumed that the function self.func has been called before with these parameter values.
 		# This may not always be the case depending on the minimisation technique.  Therefore, for debugging
 		# a broken minimiser uncomment this line.
@@ -179,8 +178,8 @@ class mf:
 		self.data.dchi2 = dchi2(self.data.relax_data, self.data.ri, self.data.dri, self.data.errors)
 
 		# Diagonal scaling.
-		if self.grad_scaling:
-			self.grad_scaling()
+		if self.scaling_flag:
+			self.scale_gradient()
 
 		return self.data.dchi2
 
@@ -207,6 +206,7 @@ class mf:
 		self.set_params(params)
 		self.print_flag = print_flag
 
+		# IMPORTANT.
 		# It is assumed that the function self.func has been called before with these parameter values.
 		# This may not always be the case depending on the minimisation technique.  Therefore, for debugging
 		# a broken minimiser uncomment the following lines.
@@ -236,25 +236,9 @@ class mf:
 		# Calculate the chi-squared hessian.
 		self.data.d2chi2 = d2chi2(self.data.relax_data, self.data.ri, self.data.dri, self.data.d2ri, self.data.errors)
 
-#		print "\nd2jw: " + `self.data.d2jw`
-#		print "\nrex_comps_func: " + `self.data.rex_comps_func`
-#		print "\nrex_comps_grad: " + `self.data.rex_comps_grad`
-#		print "\ncreate_d2ri_prime: " + `self.create_d2ri_prime`
-#		print "\n"
-#		for i in range(self.data.num_ri):
-#			print "dri_prime[" +`i` + "]: " + `self.data.dri_prime[i]`
-#		print "\n"
-#		for i in range(self.data.num_ri):
-#			print "dri[" +`i` + "]: " + `self.data.dri[i]`
-#		print "\nchi2: " + `self.data.chi2`
-#		print "dchi2: " + `self.data.dchi2`
-#		print "d2chi2: " + `self.data.d2chi2`
-#		import sys
-#		sys.exit()
-
 		# Diagonal scaling.
-		if self.hess_scaling:
-			self.hess_scaling()
+		if self.scaling_flag:
+			self.scale_hessian()
 
 		return self.data.d2chi2
 
@@ -335,13 +319,13 @@ class mf:
 		return self.data.dri
 
 
-	def scale_gradient_func(self):
+	def scale_gradient(self):
 		"Function for the diagonal scaling of the chi-squared gradient."
 
 		self.data.dchi2 = self.data.dchi2 * self.data.scaling_vector
 
 
-	def scale_hessian_func(self):
+	def scale_hessian(self):
 		"Function for the diagonal scaling of the chi-squared gradient."
 
 		self.data.d2chi2 = self.data.d2chi2 * self.data.scaling_matrix

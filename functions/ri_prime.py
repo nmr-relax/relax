@@ -8,7 +8,7 @@
 #
 #
 #		         dip_const_func                      csa_const_func
-#		R2()  =  -------------- . dip_Jw_R2_func  +  -------------- . csa_Jw_R2_func  +  Rex
+#		R2()  =  -------------- . dip_Jw_R2_func  +  -------------- . csa_Jw_R2_func  +  rex_const_func
 #		               2                                   6
 #
 #
@@ -54,7 +54,7 @@
 #
 #
 #		dR2()
-#		-----  =  (2.pi.wH)**2
+#		-----  =  rex_const_grad
 #		dRex
 #
 #
