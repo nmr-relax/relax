@@ -28,9 +28,10 @@ class usr_param:
 		self.method = 'Palmer'
 		#self.method = 'AIC'
 
-		self.SSEtile = '0.90'       # Set the SSE limit (1 - alpha critical value).
-		self.Ftest_lim = '0.80'     # Set the F-test limit (1 - alpha critical value).
-		self.largeSSE = '20'        # Set the SSE limit for when much greater than the SSE limit.
+		# The following three values are only used in Palmer's method and won't affect the others.
+		self.sse_lim = '0.90'       # Set the SSE limit (1 - alpha critical value).
+		self.ftest_lim = '0.80'     # Set the F-test limit (1 - alpha critical value).
+		self.large_sse = '20'        # Set the SSE limit for when much greater than the SSE limit.
 
 		
 	def init_run_param(self):

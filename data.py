@@ -64,3 +64,4 @@ class data:
 		self.runs = []
 
 		self.data = {}
+		self.results = []
