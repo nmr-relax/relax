@@ -241,9 +241,14 @@ class RelaxErrors:
     ##################
 
     # No sequence loaded.
-    class RelaxSequenceError(BaseError):
+    class RelaxNoSequenceError(BaseError):
         def __init__(self):
             self.text = "The sequence has not been loaded."
+
+    # The sequence already exists.
+    class RelaxSequenceError(BaseError):
+        def __init__(self, run):
+            self.text = "The sequence data for the run " + `run` + " already exists."
 
     # The two sequences are different.
     class RelaxDiffSeqError(BaseError):

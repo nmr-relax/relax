@@ -221,7 +221,7 @@ class Model_selection:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxSequenceError
+            raise RelaxNoSequenceError
 
         # Sequence lengths.
         if len(self.relax.data.res[self.first_run]) != len(self.relax.data.res[run]):

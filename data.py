@@ -153,7 +153,7 @@ class ResidueList(ListType):
     def __repr__(self):
         text = "Sequence data.\n\n"
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
-        for i in range(len(self)):
+        for i in xrange(len(self)):
             text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'self.relax.data.res[key][index]'.\n"
         return text

@@ -28,14 +28,14 @@ model.select_mf(run=name, model=name)
 #model.create_mf(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Map data.
-inc = 10
+inc = 20
 from math import pi
 if name == 'x4':
     lower = [0, 0, 0]
     upper = [0.6, 1000e-12, 3.0 / (2.0 * pi * 600000000.0)**2]
     swap = None
     point = [0.263, 526.32e-12, 1.053 / (2.0 * pi * 600000000.0)**2]
-elif name == 'x5':
+elif name == 'm5':
     lower = [0.5, 0.5, 0]
     upper = [1.0, 1.0, 300e-12]
     swap = [0, 2, 1]

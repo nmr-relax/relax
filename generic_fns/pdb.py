@@ -49,7 +49,7 @@ class PDB:
 
         # Test if sequence data is loaded.
         if not self.load_seq and not len(self.relax.data.res[self.run]):
-            raise RelaxSequenceError
+            raise RelaxNoSequenceError
 
         # Test if the file exists.
         if not access(self.file, F_OK):

@@ -47,7 +47,7 @@ class Selection:
         for run_name in loop:
             # Test if sequence data is loaded.
             if not len(self.relax.data.res[run_name]):
-                raise RelaxSequenceError
+                raise RelaxNoSequenceError
 
             # Loop over the sequence and reverse the selection flag.
             for i in xrange(len(self.relax.data.res[run_name])):
@@ -74,7 +74,7 @@ class Selection:
         for run_name in loop:
             # Test if sequence data is loaded.
             if not len(self.relax.data.res[run_name]):
-                raise RelaxSequenceError
+                raise RelaxNoSequenceError
 
             # Loop over the sequence and set the selection flag to 1.
             for i in xrange(len(self.relax.data.res[run_name])):
@@ -112,7 +112,7 @@ class Selection:
         for run_name in loop:
             # Test if sequence data is loaded.
             if not len(self.relax.data.res[run_name]):
-                raise RelaxSequenceError
+                raise RelaxNoSequenceError
 
             # Loop over the sequence.
             for i in xrange(len(self.relax.data.res[run_name])):
@@ -154,7 +154,7 @@ class Selection:
         for run_name in loop:
             # Test if sequence data is loaded.
             if not len(self.relax.data.res[run_name]):
-                raise RelaxSequenceError
+                raise RelaxNoSequenceError
 
             # Loop over the sequence and set the selection flag to 0.
             for i in xrange(len(self.relax.data.res[run_name])):
@@ -192,7 +192,7 @@ class Selection:
         for run_name in loop:
             # Test if sequence data is loaded.
             if not len(self.relax.data.res[run_name]):
-                raise RelaxSequenceError
+                raise RelaxNoSequenceError
 
             # Loop over the sequence.
             for i in xrange(len(self.relax.data.res[run_name])):

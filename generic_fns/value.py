@@ -36,7 +36,7 @@ class Value:
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
-            raise RelaxSequenceError
+            raise RelaxNoSequenceError
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
