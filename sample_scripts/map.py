@@ -1,7 +1,7 @@
 # Script for mapping the model-free space.
 
 # Set the run name (also the name of a preset model-free model).
-name = 'm5'
+name = 'm4'
 create_run(name, 'mf')
 
 # Nuclei type
@@ -30,11 +30,12 @@ model_free.select_model(run=name, model=name)
 # Map data.
 inc = 5
 from math import pi
-if name == 'x4':
+if name == 'm4':
     lower = [0, 0, 0]
-    upper = [0.6, 1000e-12, 3.0 / (2.0 * pi * 600000000.0)**2]
+    upper = [1.0, 1000e-12, 1.0 / (2.0 * pi * 600000000.0)**2]
     swap = None
-    point = [0.263, 526.32e-12, 1.053 / (2.0 * pi * 600000000.0)**2]
+    point = None
+    #point = [0.263, 526.32e-12, 1.053 / (2.0 * pi * 600000000.0)**2]
 elif name == 'm5':
     lower = [0.5, 0.5, 0]
     upper = [1.0, 1.0, 300e-12]

@@ -6,7 +6,7 @@
 #   Stage 1:  Initial model-free minimisation.
 #   Stage 2:  Model-free model selection.
 #   Stage 3:  Final optimisation of diffusion tensor parameters together with model-free parameters.
-stage = 1
+stage = 2
 
 
 # Functions.

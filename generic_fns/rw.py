@@ -83,7 +83,7 @@ class RW:
         self.read_function(run, file, file_data)
 
 
-    def write_results(self, run=None, file="results", directory=None, force=0, format='columnar', compress_type=1):
+    def write_results(self, run=None, file="results", directory=None, force=0, format='columnar', compress_type=1, print_flag=1):
         """Create the results file."""
 
         # Test if the run exists.
@@ -111,7 +111,7 @@ class RW:
             raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
         # Open the file for writing.
-        results_file = self.relax.file_ops.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type)
+        results_file = self.relax.file_ops.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, print_flag=print_flag)
 
         # Write the results.
         self.write_function(results_file, run)

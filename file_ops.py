@@ -76,7 +76,7 @@ class File_ops:
             print "Directory ./" + dir + " already exists.\n"
 
 
-    def open_read_file(self, file_name=None, dir=None, compress_type=0):
+    def open_read_file(self, file_name=None, dir=None, compress_type=0, print_flag=1):
         """Open the file 'file' and return all the data."""
 
         # File path.
@@ -102,7 +102,8 @@ class File_ops:
 
         # Open the file for reading.
         try:
-            print "Opening the file " + `file_path` + " for reading."
+            if print_flag:
+                print "Opening the file " + `file_path` + " for reading."
             if compress_type == 0:
                 file = open(file_path, 'r')
             elif compress_type == 1:
@@ -119,7 +120,7 @@ class File_ops:
         return file
 
 
-    def open_write_file(self, file_name=None, dir=None, force=0, compress_type=0):
+    def open_write_file(self, file_name=None, dir=None, force=0, compress_type=0, print_flag=1):
         """Function for opening a file for writing and creating directories if necessary."""
 
         # Create the directories.
@@ -150,7 +151,8 @@ class File_ops:
 
         # Open the file for writing.
         try:
-            print "Opening the file " + `file_path` + " for writing."
+            if print_flag:
+                print "Opening the file " + `file_path` + " for writing."
             if compress_type == 0:
                 file = open(file_path, 'w')
             elif compress_type == 1 and bz2_module:

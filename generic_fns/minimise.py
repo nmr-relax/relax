@@ -25,7 +25,9 @@ from Queue import Queue
 from math import pi
 from LinearAlgebra import inverse
 from Numeric import Float64, array, matrixmultiply, zeros
+from random import randint
 from re import match
+from string import ascii_uppercase
 from threading import Thread
 
 
@@ -108,10 +110,11 @@ class Minimise:
                 self.minimise_sim_thread(run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag)
 
             # Non-threaded minimisation of simulations.
-            for i in xrange(self.relax.data.sim_number[run]):
-                if print_flag:
-                    print "Simulation " + `i+1`
-                minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag-1, sim_index=i)
+            else:
+                for i in xrange(self.relax.data.sim_number[run]):
+                    if print_flag:
+                        print "Simulation " + `i+1`
+                    minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag-1, sim_index=i)
 
         # Standard minimisation.
         else:
@@ -120,6 +123,16 @@ class Minimise:
 
     def minimise_sim_thread(self, run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag):
         """Function for the minimisation of Monte Carlo simulations using threading."""
+
+        # Generate a random string tag to add to all thread files.
+        tag = ''
+        for i in xrange(5):
+            index = randint(0, len(ascii_uppercase)-1)
+            tag = tag + ascii_uppercase[index]
+
+        # Generate a temporary results file.
+        temp_file = 'init_results_' + tag
+        self.relax.generic.rw.write_results(run=run, file=temp_file, directory='/tmp/', force=1, print_flag=0)
 
         # Initialise the job and results queues.
         job_queue = Queue()
@@ -131,7 +144,7 @@ class Minimise:
 
         # Start all threads.
         for i in xrange(len(self.relax.data.thread.host_data)):
-            RelaxMinimiseThread(self.relax, job_queue, results_queue).start()
+            RelaxMinimiseThread(self.relax, i, job_queue, results_queue, tag).start()
 
         # The main loop.
         terminated = 0
@@ -151,5 +164,37 @@ class Minimise:
 
 
 class RelaxMinimiseThread(Thread):
-    def __init__(self, relax, job_queue, results_queue):
+    def __init__(self, relax, i, job_queue, results_queue, tag):
         """Initialisation of the thread."""
+
+        # Arguments.
+        self.relax = relax
+        self.i = i
+        self.job_queue = job_queue
+        self.results_queue = results_queue
+        self.tag = tag
+
+        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
+        Thread.__init__(self)
+
+        # 
+        print self.relax.data.thread.thread_data[5]
+
+    def run(self):
+        """Function for the minimisation of a single simulation."""
+
+        # Run until all simulations are completed.
+        while 1:
+            # Get the next simulation on the job queue.
+            sim = self.job_queue.get()
+
+            # Quit if the queue data is None.  None is the signal for when all jobs have been completed.
+            if sim == None:
+                # Place None back into the job queue so that all the other waiting threads will terminate.
+                self.job_queue.put(None)
+
+                # Thread termination.
+                break
+
+            # Place the results in the results queue.
+            self.results_queue.put(sim)
