@@ -235,6 +235,9 @@ class Min:
             except "LinearAlgebraError", message:
                 self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
                 break
+            except "LinearAlgebra.LinAlgError", message:
+                self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
+                break
             except OverflowError, message:
                 if type(message.args[0]) == int:
                     text = message.args[1]
