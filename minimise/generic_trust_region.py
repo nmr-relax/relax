@@ -36,7 +36,7 @@ class generic_trust_region:
 				print "Shrinking the trust region."
 
 		# Rho is close to one and pk has reached the boundary of the trust region, therefore the trust region is expanded.
-		elif self.rho > 0.75 and self.norm_pk == self.delta:
+		elif self.rho > 0.75 and abs(self.norm_pk - self.delta) < 1e-10:
 			self.delta_new = min(2.0*self.delta, self.delta_max)
 			if self.print_flag == 2:
 				print "Expanding the trust region."
@@ -89,6 +89,11 @@ class generic_trust_region:
 		if self.print_flag == 2:
 			print "Actual reduction: " + `act_red`
 			print "Predicted reduction: " + `pred_red`
+			print "fk: " + `self.fk`
+			print "mk_pk: " + `mk_pk`
+			if pred_red < 0.0:
+				import sys
+				sys.exit()
 
 
 	def tests(self):

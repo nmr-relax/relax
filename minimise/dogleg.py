@@ -79,6 +79,7 @@ class dogleg(generic_trust_region, generic_minimise):
 	def calc_pk(self):
 		"Find the Cauchy point."
 
+		print "d2fk: " + `self.d2fk`
 		# Calculate the full step and its norm.
 		pB = -matrixmultiply(inverse(self.d2fk), self.dfk)
 		norm_pB = sqrt(dot(pB, pB))
