@@ -68,7 +68,10 @@ class asymptotic(common_operations):
 					crit = crit + k / n
 
 				elif match('^AICc$', self.mf.data.usr_param.method):
-					crit = crit + k/n + k*(k + 1.0)/((n - k - 1.0) * n)
+					if n - k == 1:
+						crit = 1e99
+					else:
+						crit = crit + k/n + k*(k + 1.0)/((n - k - 1.0) * n)
 
 				elif match('^BIC$', self.mf.data.usr_param.method):
 					crit = crit + k*log(n) / (2.0 * n)
