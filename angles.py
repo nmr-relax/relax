@@ -20,19 +20,19 @@
 #                                                                             #
 ###############################################################################
 
-from math import sqrt
+from math import acos, pi
 from Numeric import dot
 
 
-class Vectors:
+class Angles:
     def __init__(self, relax):
-        """Class containing the function to calculate the X-H vector from the loaded structure."""
+        """Class containing the function to calculate the XH vector from the loaded structure."""
 
         self.relax = relax
 
 
-    def vectors(self, heteronuc, proton):
-        """Function for calculating the X-H vector from the loaded structure."""
+    def angles(self, run):
+        """Function for calculating the XH vector from the loaded structure."""
 
         # Test if the PDB file has been loaded.
         if not hasattr(self.relax.data, 'pdb'):
@@ -42,43 +42,42 @@ class Vectors:
         if not len(self.relax.data.res):
             raise RelaxSequenceError
 
-        # Reassign the first peptide chain of the first structure.
-        if type(self.relax.data.pdb) == list:
-            raise RelaxError, "Calculation of vectors from multiple structures is not yet implemented."
-        else:
-            pdb_residues = self.relax.data.pdb.peptide_chains[0].residues
+        # Test if the diffusion tensor data is loaded.
+        if not self.relax.data.diff.has_key(run):
+            raise RelaxTensorError, run
+
+        # Arguments.
+        self.run = run
+
+        # Isotropic diffusion.
+        if self.relax.data.diff[run].type == 'iso':
+            return
+
+        # Axially symmetric diffusion.
+        elif self.relax.data.diff[run].type == 'axial':
+            self.axial()
+
+        # Fully anisotropic diffusion.
+        elif self.relax.data.diff[run].type == 'aniso':
+            raise RelaxError, "No coded yet."
+
+
+    def axial(self):
+        """Function for calculating the angle alpha
+        
+        The angle alpha is between the XH vector and the main axis of the axially symmetric
+        diffusion tensor.
+        """
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res)):
-            # Find the corresponding residue in the PDB.
-            pdb_res = None
-            for j in xrange(len(pdb_residues)):
-                if self.relax.data.res[i].name == pdb_residues[j].name and self.relax.data.res[i].num == pdb_residues[j].number:
-                    pdb_res = pdb_residues[j]
-                    break
-            if pdb_res == None:
-                raise RelaxNoResError, (self.relax.data.res[i].num, self.relax.data.res[i].name)
+            # Test if the vector has been calculated.
+            if not hasattr(self.relax.data.res[i], 'xh_unit'):
+                print "No angles could be calculated for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
+                continue
 
-            # Test if the proton atom exists for residue i.
-            if not pdb_res.atoms.has_key(proton):
-                print "The proton atom " + `proton` + " could be found for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
-                self.relax.data.res[i].xh_vect = None
+            # Calculate alpha.
+            self.relax.data.res[i].alpha = acos(dot(self.relax.data.diff[self.run].axis_unit, self.relax.data.res[i].xh_unit))
 
-            # Test if the heteronucleus atom exists for residue i.
-            elif not pdb_res.atoms.has_key(heteronuc):
-                print "The heteronucleus atom " + `heteronuc` + " could be found for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
-                self.relax.data.res[i].xh_vect = None
-
-            # Calculate the vector.
-            else:
-                # Get the proton position.
-                posH = pdb_res.atoms[proton].position.array
-
-                # Get the heteronucleus position.
-                posX = pdb_res.atoms[heteronuc].position.array
-
-                # Calculate the vector and place it in 'self.relax.data.res[i].xh_vect'.
-                self.relax.data.res[i].xh_vect = posH - posX
-
-                # Calculate the normalised vector.
-                self.relax.data.res[i].xh_norm = self.relax.data.res[i].xh_vect / sqrt(dot(self.relax.data.res[i].xh_vect, self.relax.data.res[i].xh_vect))
+            # Print out.
+            print `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + ":  alpha = " + `360.0 * self.relax.data.res[i].alpha / (2.0 * pi)` + " deg."

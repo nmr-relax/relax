@@ -39,13 +39,14 @@ import pstats
 from re import match
 import sys
 
+from angles import Angles
 from data.main import Data
-from file_ops import File_ops
 from delete import Delete
 from diffusion_tensor import Diffusion_tensor
 from dx.map import Map
 from dx.opendx import OpenDX
 from errors import RelaxErrors
+from file_ops import File_ops
 from min import Minimise
 from model_free import Model_free
 from model_selection import Model_selection
@@ -59,9 +60,9 @@ from selection import Selection
 from sequence import Sequence
 from specific_setup import Specific_setup
 from state import State
+from value import Value
 from vectors import Vectors
 from view import View
-from value import Value
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -89,6 +90,7 @@ class Relax:
         self.data = Data()
 
         # Various functions.
+        self.angles = Angles(self)
         self.delete = Delete(self)
         self.diffusion_tensor = Diffusion_tensor(self)
         self.file_ops = File_ops(self)

@@ -3,6 +3,9 @@
 # Load the sequence.
 read.sequence('noe.500.out')
 
+# Nuclei type
+nuclei('N')
+
 # Set the run name (also the name of a preset model-free model).
 name = 'm5'
 
@@ -15,7 +18,7 @@ read.relax_data(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
 read.relax_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
-diffusion_tensor(name, 'iso', 1e-8)
+diffusion_tensor(name, 1e-8)
 value.set(name, 'bond_length', 1.02 * 1e-10)
 value.set(name, 'csa', -160 * 1e-6)
 

@@ -25,13 +25,13 @@ import sys
 
 class Vectors:
     def __init__(self, relax):
-        """Class containing the macro to calculate X-H vectors from the structure."""
+        """Class containing the macro to calculate XH vectors from the structure."""
 
         self.relax = relax
 
 
     def vectors(self, heteronuc='N', proton='H'):
-        """Macro for calculating X-H vectors from the structure.
+        """Macro for calculating XH vectors from the structure.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
@@ -44,7 +44,7 @@ class Vectors:
         Example
         ~~~~~~~
 
-        To calculate the X-H vectors of the backbone amide nitrogens where in the PDB file the
+        To calculate the XH vectors of the backbone amide nitrogens where in the PDB file the
         backbone nitrogen is called 'N' and the attached proton is called 'H', type:
 
         relax> vectors()

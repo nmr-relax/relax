@@ -129,7 +129,7 @@ class Model_free:
         self.function_ops = ()
 
         # Initialise the functions used in the minimisation.
-        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_matrix=scaling_matrix)
+        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff[run].type, diff_params=[self.relax.data.diff[run].tm], scaling_matrix=scaling_matrix)
 
         # Chi-squared calculation.
         self.relax.data.res[i].chi2[run] = self.mf.func(params, 0)
@@ -985,7 +985,7 @@ class Model_free:
                 return
 
         # Initialise the functions used in the minimisation.
-        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_matrix=scaling_matrix)
+        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff[run].type, diff_params=[self.relax.data.diff[run].tm], scaling_matrix=scaling_matrix)
 
         # Levenberg-Marquardt minimisation.
         if constraints and not match('^[Gg]rid', min_algor):
@@ -1736,7 +1736,7 @@ class Model_free:
         if hasattr(res, 'tm') and res.tm.has_key(run) and res.tm[run] != None:
             file.write("%-26s" % `res.tm[run] / 1e-12`)
         else:
-            file.write("%-26s" % `self.relax.data.diff_params[run][0] / 1e-12`)
+            file.write("%-26s" % `self.relax.data.diff[run].tm / 1e-12`)
 
         # tf.
         if res.tf[run] == None:

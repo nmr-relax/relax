@@ -37,6 +37,7 @@ from command import Ls, Lh, Ll, system
 from print_all_data import Print_all_data
 
 # Macro functions.
+from angles import Angles
 from calc import Calc
 from delete import Delete
 from diffusion_tensor import Diffusion_tensor
@@ -85,6 +86,7 @@ class Interpreter:
         self._Scientific = Scientific
 
         # Place the functions into the namespace of the interpreter class.
+        self._Angles = Angles(relax)
         self._Calc = Calc(relax)
         self._Delete = Delete(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
@@ -136,6 +138,7 @@ class Interpreter:
         gpl = GPL = self._GPL()
 
         # Place the functions in the local namespace.
+        angles = self._Angles.angles
         calc = self._Calc.calc
         delete = self._Delete.delete
         diffusion_tensor = self._Diffusion_tensor.diffusion_tensor

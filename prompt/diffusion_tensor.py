@@ -46,7 +46,7 @@ class Diffusion_tensor:
 
         angle_units:  The units for the angle parameters.
 
-        param_types:  A flag.
+        param_types:  A flag to select different parameter combinations.
 
 
         Description
@@ -62,21 +62,23 @@ class Diffusion_tensor:
         To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
         round brakets, the elements of which are separated by commas.  Alternative sets of
-        parameters are (0 is the default):
+        parameters are:
             0 - (Dpar, Dper, theta, phi)   (Default)
             1 - (tm, Dratio, theta, phi)
-            2 - (tpar, tper, theta, phi)
+        Dratio is defined as Dpar/Dper.
 
         To select fully anisotropic diffusion, the parameters argument should be a tuple of length
         six.  Alternative sets of parameters are:
             0 - (Dx, Dy, Dz, alpha, beta, gamma)   (Default)
-            1 - (tx, ty, tz, alpha, beta, gamma)
 
-        Parameters affected by the 'time_scale' argument are tm.
+        The 'time_scale' argument should be a floating point number.  Parameters affected by this
+        value are:  tm.
 
-        Parameters affected by the 'd_scale' argument are Diso, Dratio, Dpar, Dper, Dx, Dy, Dz.
+        The 'd_scale' argument should also be a floating point number.  Parameters affected by this
+        value are:  Diso; Dratio; Dpar; Dper; Dx; Dy; Dz.
 
-        Parameters affected by the 'angle_units' argument are theta, phi, alpha, beta, gamma.
+        The 'angle_units' argument should either be the string 'deg' or 'rad'.  Parameters affected
+        are:  theta, phi, alpha, beta, gamma.
 
 
         Examples
@@ -89,6 +91,7 @@ class Diffusion_tensor:
         relax> diffusion_tensor(run='m1', params=10e-9)
         relax> diffusion_tensor('m1', 10.0, 1e-9)
         relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9)
+
 
         To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
         1.417e7, Theta value of 67.174°, and Phi value of -83.718°, and assign it to the run 'axial',
@@ -104,17 +107,17 @@ class Diffusion_tensor:
         relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
                                 d_scale=1e8, angle_units='rad')
 
+
         To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, Theta value
         of 20°, and Phi value of 20°, and assign it to the run '26', type:
 
         relax> diffusion_tensor('axial', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
 
+
         To select fully anisotropic diffusion, type:
 
         relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568))
         """
-
-    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0):
 
         # Macro intro text.
         if self.relax.interpreter.intro:
@@ -156,6 +159,11 @@ class Diffusion_tensor:
         # Parameter types argument.
         if type(param_types) != int:
             raise RelaxIntError, ('parameter types', param_types)
+
+        # Check the validity of the angle_units argument.
+        valid_types = ['deg', 'rad']
+        if not angle_units in valid_types:
+            raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
         # Execute the functional code.
         self.relax.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types)

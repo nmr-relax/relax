@@ -26,13 +26,13 @@ from Numeric import dot
 
 class Vectors:
     def __init__(self, relax):
-        """Class containing the function to calculate the X-H vector from the loaded structure."""
+        """Class containing the function to calculate the XH vector from the loaded structure."""
 
         self.relax = relax
 
 
     def vectors(self, heteronuc, proton):
-        """Function for calculating the X-H vector from the loaded structure."""
+        """Function for calculating the XH vector from the loaded structure."""
 
         # Test if the PDB file has been loaded.
         if not hasattr(self.relax.data, 'pdb'):
@@ -81,4 +81,4 @@ class Vectors:
                 self.relax.data.res[i].xh_vect = posH - posX
 
                 # Calculate the normalised vector.
-                self.relax.data.res[i].xh_norm = self.relax.data.res[i].xh_vect / sqrt(dot(self.relax.data.res[i].xh_vect, self.relax.data.res[i].xh_vect))
+                self.relax.data.res[i].xh_unit = self.relax.data.res[i].xh_vect / sqrt(dot(self.relax.data.res[i].xh_vect, self.relax.data.res[i].xh_vect))

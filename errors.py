@@ -217,6 +217,15 @@ class RelaxErrors:
                 self.text = "The residue '" + `number` + " " + name + "' cannot be found in the sequence."
 
 
+    # Tensor errors.
+    ################
+
+    # No diffusion tensor data loaded.
+    class RelaxTensorError(BaseError):
+        def __init__(self, run):
+            self.text = "No diffusion tensor data is loaded for the run " + `run` + "."
+
+
     # File errors.
     ##############
 
@@ -269,3 +278,12 @@ class RelaxErrors:
     class RelaxRegExpError(BaseError):
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " is not valid regular expression."
+
+
+    # Parameter combination errors.
+    ###############################
+
+    # Unknown parameter combination.
+    class RelaxUnknownParamCombError(BaseError):
+        def __init__(self, name, data):
+            self.text = "The " + `name` + " argument " + `data` + " represents an unknown parameter combination."
