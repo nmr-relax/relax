@@ -11,8 +11,9 @@ from d2jw_mf import *
 from ri_comps import *
 from ri_prime import *
 from ri import *
-from chi2 import dchi2, d2chi2
-from c_chi2 import chi2
+from chi2 import *
+#from chi2 import dchi2, d2chi2
+#from c_chi2 import chi2
 
 
 class mf:
