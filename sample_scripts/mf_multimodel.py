@@ -36,7 +36,7 @@ for run in runs:
 
     # Minimise.
     grid_search(run, inc=7)
-    minimise('simplex', run=run, constraints=0)
+    minimise('bfgs', run=run, constraints=1)
 
     # Print results.
     write(run=run, file='results', force=1)

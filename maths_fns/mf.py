@@ -462,10 +462,15 @@ class Mf:
             self.total_dchi2[0:index] = self.total_dchi2[0:index] + data.dchi2[0:index]
             self.total_dchi2[data.start_index:data.end_index] = self.total_dchi2[data.start_index:data.end_index] + data.dchi2[index:]
 
+            #print "djw:\n" + `data.djw`
+            #print "dri_prime:\n" + `data.dri_prime`
+            #print "dri:\n" + `data.dri`
+            #print "dchi2:\n" + `data.dchi2`
         # Diagonal scaling.
         if self.scaling_flag:
             self.total_dchi2 = self.scale_gradient(self.total_dchi2)
 
+        #import sys; sys.exit()
         return self.total_dchi2
 
 
@@ -535,10 +540,16 @@ class Mf:
         # Calculate the chi-squared gradient.
         data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
 
+        #print "djw:\n" + `data.djw`
+        #print "dri_prime:\n" + `data.dri_prime`
+        #print "dri:\n" + `data.dri`
+        #print "dchi2:\n" + `data.dchi2`
+
         # Diagonal scaling.
         if self.scaling_flag:
             data.dchi2 = self.scale_gradient(data.dchi2)
 
+        #import sys; sys.exit()
         return data.dchi2
 
 
@@ -847,7 +858,7 @@ class Mf:
         r1_data.dri_prime = zeros((data.num_ri, data.total_num_params), Float64)
         r1_data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
-        # Place a few function pointer arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
+        # Place a few function arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
         r1_data.create_dri_prime = data.create_dri_prime
         r1_data.create_d2ri_prime = data.create_d2ri_prime
 
@@ -919,7 +930,7 @@ class Mf:
         #################
 
         # The number of diffusion parameters.
-        if self.diff_data.params:
+        if self.param_set == 'mf':
             num_diff_params = 0
         elif self.diff_data.type == 'iso':
             num_diff_params = 1
@@ -1036,6 +1047,12 @@ class Mf:
 
                     # Hessian.
                     data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
+                    #if self.diff_data.type == 'iso':
+                    #    data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
+                    #elif self.diff_data.type == 'axial':
+                    #    data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
+                    #    data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_tm_d2jw_dDjdDk
+                    #    data.calc_d2jw[1][1] = calc_tm_d2jw_dDjdDk
 
                 # Diffusion parameters and model-free parameters {S2}.
                 elif data.s2_index != None and data.te_index == None:
@@ -1333,8 +1350,8 @@ class Mf:
             return 0
 
 
-        # Initialise function pointer data structures.
-        ##############################################
+        # Initialise function data structures.
+        ######################################
 
         # Relaxation equation components.
         data.create_dip_func, data.create_dip_grad, data.create_dip_hess = [], [], []
@@ -1439,52 +1456,124 @@ class Mf:
 
         # dri_prime and d2ri_prime.
         for i in xrange(data.total_num_params):
-            if data.param_types[i-num_diff_params] == 'Rex':
+            # Residue specific parameter index.
+            index = i - num_diff_params
+            if index < 0:
+                index = None
+
+            # Rex.
+            if index != None and data.param_types[index] == 'Rex':
+                # Gradient.
                 data.create_dri_prime.append(func_dri_drex_prime)
+
+                # Hessian.
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.total_num_params):
-                    if data.param_types[k-num_diff_params] == 'Rex':
+                for j in xrange(data.total_num_params):
+                    # Residue specific parameter index.
+                    index2 = j - num_diff_params
+                    if index2 < 0:
+                        index2 = None
+
+                    # Rex.
+                    if index2 != None and data.param_types[index2] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k-num_diff_params] == 'r':
+
+                    # Bond length.
+                    elif index2 != None and data.param_types[index2] == 'r':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k-num_diff_params] == 'CSA':
+
+                    # CSA.
+                    elif index2 != None and data.param_types[index2] == 'CSA':
                         data.create_d2ri_prime[i].append(None)
+
+                    # Any other parameter.
                     else:
                         data.create_d2ri_prime[i].append(None)
-            elif data.param_types[i-num_diff_params] == 'r':
+
+            # Bond length.
+            elif index != None and data.param_types[index] == 'r':
+                # Gradient.
                 data.create_dri_prime.append(func_dri_dr_prime)
+
+                # Hessian.
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.total_num_params):
-                    if data.param_types[k-num_diff_params] == 'Rex':
+                for j in xrange(data.total_num_params):
+                    # Residue specific parameter index.
+                    index2 = j - num_diff_params
+                    if index2 < 0:
+                        index2 = None
+
+                    # Rex.
+                    if index2 != None and data.param_types[index2] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k-num_diff_params] == 'r':
+
+                    # Bond length.
+                    elif index2 != None and data.param_types[index2] == 'r':
                         data.create_d2ri_prime[i].append(func_d2ri_dr2_prime)
-                    elif data.param_types[k-num_diff_params] == 'CSA':
+
+                    # CSA.
+                    elif index2 != None and data.param_types[index2] == 'CSA':
                         data.create_d2ri_prime[i].append(None)
+
+                    # Any other parameter.
                     else:
                         data.create_d2ri_prime[i].append(func_d2ri_drdjw_prime)
-            elif data.param_types[i-num_diff_params] == 'CSA':
+
+            # CSA.
+            elif index != None and data.param_types[index] == 'CSA':
+                # Gradient.
                 data.create_dri_prime.append(func_dri_dcsa_prime)
+
+                # Hessian.
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.total_num_params):
-                    if data.param_types[k-num_diff_params] == 'Rex':
+                for j in xrange(data.total_num_params):
+                    # Residue specific parameter index.
+                    index2 = j - num_diff_params
+                    if index2 < 0:
+                        index2 = None
+
+                    # Rex.
+                    if index2 != None and data.param_types[index2] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k-num_diff_params] == 'r':
+
+                    # Bond length.
+                    elif index2 != None and data.param_types[index2] == 'r':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k-num_diff_params] == 'CSA':
+
+                    # CSA.
+                    elif index2 != None and data.param_types[index2] == 'CSA':
                         data.create_d2ri_prime[i].append(func_d2ri_dcsa2_prime)
+
+                    # Any other parameter.
                     else:
                         data.create_d2ri_prime[i].append(func_d2ri_dcsadjw_prime)
+
+            # Any other parameter.
             else:
+                # Gradient.
                 data.create_dri_prime.append(func_dri_djw_prime)
+
+                # Hessian.
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.total_num_params):
-                    if data.param_types[k-num_diff_params] == 'Rex':
+                for j in xrange(data.total_num_params):
+                    # Residue specific parameter index.
+                    index2 = j - num_diff_params
+                    if index2 < 0:
+                        index2 = None
+
+                    # Rex.
+                    if index2 != None and data.param_types[index2] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k-num_diff_params] == 'r':
+
+                    # Bond length.
+                    elif index2 != None and data.param_types[index2] == 'r':
                         data.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
-                    elif data.param_types[k-num_diff_params] == 'CSA':
+
+                    # CSA.
+                    elif index2 != None and data.param_types[index2] == 'CSA':
                         data.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
+
+                    # Any other parameter.
                     else:
                         data.create_d2ri_prime[i].append(func_d2ri_djwidjwj_prime)
 

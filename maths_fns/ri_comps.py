@@ -1147,7 +1147,7 @@ def comp_rex_const_func(rhoex, frq):
         rex_const_func  =  rhoex * wH**2
     """
 
-    return rhoex * (2.0 * pi * frq)**2
+    return rhoex * (2.0 * pi * frq) ** 2
 
 
 # Gradient.

@@ -2103,7 +2103,7 @@ class Model_free:
                     for k in xrange(len(self.relax.data.res[index].params[self.run])):
                         # {S2, S2f, S2s}.
                         if match('S2', self.relax.data.res[index].params[self.run][k]):
-                            min_options.append(0.9)
+                            min_options.append(0.5)
 
                         # {te, tf, ts}.
                         elif match('t', self.relax.data.res[index].params[self.run][k]):

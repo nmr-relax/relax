@@ -303,12 +303,12 @@ def calc_tm_djw_comps(data, params):
 
     Replicated calculations are:
 
-                           1 - (w.ti)^2
-        fact_djw_dti  =  ----------------
-                         (1 + (w.ti)^2)^2
+                              1 - (w.ti)^2
+        fact_ti_djw_dti  =  ----------------
+                            (1 + (w.ti)^2)^2
     """
 
-    data.fact_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
+    data.fact_ti_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
 
 
 
@@ -500,16 +500,16 @@ def calc_tm_S2f_tf_S2_ts_djw_comps(data, params):
     """
 
     # tm.
-    data.fact_ti_djw_dtm = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
+    data.fact_ti_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
 
     # tf.
-    data.fact_tf_djw = (data.tf_tm_sqrd - data.w_tf_ti_sqrd) * data.inv_tf_denom ** 2
-    data.fact_tf_djw_dtm = params[data.tf_index]**2 * data.fact_tf_djw
+    data.fact_tf_djw = (data.tf_ti_sqrd - data.w_tf_ti_sqrd) * data.inv_tf_denom ** 2
+    data.fact_tf_djw_dti = params[data.tf_index]**2 * data.fact_tf_djw
     data.fact_djw_dtf = data.ti**2 * data.fact_tf_djw
 
     # ts.
-    data.fact_ts_djw = (data.ts_tm_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
-    data.fact_ts_djw_dtm = params[data.ts_index]**2 * data.fact_ts_djw
+    data.fact_ts_djw = (data.ts_ti_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
+    data.fact_ts_djw_dti = params[data.ts_index]**2 * data.fact_ts_djw
     data.fact_djw_dts = data.ti**2 * data.fact_ts_djw
 
 
