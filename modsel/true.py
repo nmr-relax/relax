@@ -26,6 +26,7 @@ from math import log, pi
 from re import match
 
 from common_ops import common_operations
+from discrepancies import kl
 
 
 class true(common_operations):
@@ -33,6 +34,7 @@ class true(common_operations):
 		"Calculation of the theoretical overall discrepency."
 
 		self.mf = mf
+		self.kl = kl()
 
 		print "Modelfree analysis based on the overall discrepency for model selection."
 		self.initialize()
@@ -44,80 +46,49 @@ class true(common_operations):
 		self.goto_stage()
 
 
-	def calc_crit(self, res, model, mf_data, n):
-		"Calculate the criteria"
-
-		real = []
-		real_err = []
-		types = []
-		sum_ln_err = 0.0
-
-		for set in range(len(self.mf.data.input_info)):
-			# Sum ln(errors).
-			var = float(self.mf.data.relax_data[set][res][3]) ** 2
-			if var == 0.0:
-				ln_err = -1000.0
-			else:
-				ln_err = log(var)
-			sum_ln_err = sum_ln_err + ln_err
-
-			# Real data and errors.
-			real.append(float(self.mf.data.true.op_data[res][set+2]))
-			real_err.append(self.mf.data.relax_data[set][res][3])
-			types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
-
-		if match('m1', model):
-			back_calc = self.mf.calc_relax_data.calc(self.tm, model, types, mf_data)
-		elif match('m2', model) or match('m3', model):
-			back_calc = self.mf.calc_relax_data.calc(self.tm, model, types, mf_data)
-		elif match('m4', model) or match('m5', model):
-			back_calc = self.mf.calc_relax_data.calc(self.tm, model, types, mf_data)
-
-		chi2 = self.mf.calc_chi2.relax_data(real, real_err, back_calc)
-
-		self.mf.log.write("\nReal: " + `real`)
-		self.mf.log.write("\nReal error: " + `real_err`)
-		self.mf.log.write("\nBack calc: " + `back_calc`)
-
-		crit = n*log(2.0*pi) + sum_ln_err + chi2
-		crit = crit / (2.0*n)
-		return crit
-
 	def model_selection(self):
 		"Model selection."
 
 		data = self.mf.data.data
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
-		n = len(self.mf.data.input_info)
+		n = float(self.mf.data.num_data_sets)
+		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
 
 		self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>")
-		self.tm = float(self.mf.data.usr_param.tm['val'])*1e-9
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
 			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
 
-			n = self.mf.data.num_data_sets
+			err = []
+			real = []
+			types = []
+			for set in range(len(self.mf.data.relax_data)):
+				err.append(float(self.mf.data.relax_data[set][res][3]))
+				real.append(float(self.mf.data.relax_data[set][res][2]))
+				types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 
-			# Model 1.
-			mf_data = [ data['m1'][res]['s2'] ]
-			data['m1'][res]['crit'] = self.calc_crit(res, 'm1', mf_data, n)
+			for model in self.mf.data.runs:
+				if match('m1', model):
+					mf_data = [ data[model][res]['s2'] ]
+				elif match('m2', model):
+					mf_data = [ data[model][res]['s2'], data[model][res]['te'] ]
+				elif match('m3', model):
+					mf_data = [ data[model][res]['s2'], data[model][res]['rex'] ]
+				elif match('m4', model):
+					mf_data = [ data[model][res]['s2'], data[model][res]['te'], data[model][res]['rex'] ]
+				elif match('m5', model):
+					mf_data = [ data[model][res]['s2f'], data[model][res]['s2s'], data[model][res]['te'] ]
+				back_calc = self.mf.calc_relax_data.calc(tm, model, types, mf_data)
 
-			# Model 2.
-			mf_data = [ data['m2'][res]['s2'], data['m2'][res]['te'] ]
-			data['m2'][res]['crit'] = self.calc_crit(res, 'm2', mf_data, n)
+				chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
 
-			# Model 3.
-			mf_data = [ data['m3'][res]['s2'], data['m3'][res]['rex'] ]
-			data['m3'][res]['crit'] = self.calc_crit(res, 'm3', mf_data, n)
+				self.mf.log.write("\nReal: " + `real`)
+				self.mf.log.write("\nError: " + `err`)
+				self.mf.log.write("\nBack calc: " + `back_calc`)
 
-			# Model 4.
-			mf_data = [ data['m4'][res]['s2'], data['m4'][res]['te'], data['m4'][res]['rex'] ]
-			data['m4'][res]['crit'] = self.calc_crit(res, 'm4', mf_data, n)
-
-			# Model 5.
-			mf_data = [ data['m5'][res]['s2f'], data['m5'][res]['s2s'], data['m5'][res]['te'] ]
-			data['m5'][res]['crit'] = self.calc_crit(res, 'm5', mf_data, n)
+				crit = self.kl.calc(n, chi2, err)
+				data[model][res]['crit'] = crit / (2.0 * n)
 
 			# Select model.
 			min = 'm1'

@@ -39,7 +39,7 @@ class bootstrap(common_operations):
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
 		n = float(self.mf.data.num_data_sets)
-		tm = float(self.mf.data.usr_param.tm['val'])*1e-9
+		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
 
 		self.mf.log.write("\n\n<<< Bootstrap model selection >>>")
 		print "Calculating the bootstrap criteria"
@@ -104,7 +104,6 @@ class bootstrap(common_operations):
 
 				bootstrap = self.kl.calc(n, ave_chi2, err)
 				data[model][res]['bootstrap'] = bootstrap / (2.0 * n)
-
 
 			# Select model.
 			min = 'm1'
