@@ -21,9 +21,9 @@
 ###############################################################################
 
 
-from LinearAlgebra import cholesky_decomposition, eigenvectors, solve_linear_equations
+from LinearAlgebra import LinAlgError, cholesky_decomposition, eigenvectors, solve_linear_equations
 from MLab import tril, triu
-from Numeric import Float64, array, dot, sqrt, transpose
+from Numeric import Float64, array, dot, identity, sqrt, transpose
 
 
 def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
@@ -35,7 +35,10 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
     Returns the modified Newton step.
     """
 
+    # Test matrix.
     #d2fk = array([[4, 2, 1], [2, 6, 3], [1, 3, -0.004]], Float64)
+    #n = len(d2fk)
+    #I = identity(n, Float64)
 
     # Calculate gamma(A) and xi(A).
     gamma = 0.0
@@ -75,19 +78,14 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         # Interchange row and column j and q.
         p = 1.0 * I
         if q != j:
-            # Modify the permutation matrices.
-            temp_p, temp_P = 1.0*p[:, q], 1.0*P[:, q]
-            p[:, q], P[:, q] = p[:, j], P[:, j]
-            p[:, j], P[:, j] = temp_p, temp_P
+            # Modify the permutation matrices by swaping rows.
+            row_p, row_P = 1.0*p[q], 1.0*P[q]
+            p[q], P[q] = p[j], P[j]
+            p[j], P[j] = row_p, row_P
 
-            # Permute a and r.
-            #a = a + transpose(tril(a, -1))
+            # Permute a.
             a = dot(p, dot(a, transpose(p)))
-            #a = tril(a)
-            #r = r + transpose(triu(r, 1))
-            #r = dot(p, dot(r, transpose(p)))
-            #r = triu(r)
-            e = dot(p, e)
+            r = dot(p, dot(r, transpose(p)))
 
         # Calculate ljj.
         theta_j = 0.0
@@ -98,33 +96,34 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         r[j, j] = sqrt(dj)
 
         # Calculate e (not really needed!).
-        e[j] = dj - a[j, j]
+        if print_flag >= 3:
+            e[j] = dj - a[j, j]
 
         # Calculate l and a.
         for i in range(j+1, n):
             r[j, i] = a[j, i] / r[j, j]
             for k in range(j+1, i+1):
-                a[k, i] = a[k, i] - dot(r[j, i], r[j, k])
+                a[k, i] = a[k, i] - r[j, i]*r[j, k]
 
     # The Cholesky factor.
-    #L = transpose(r)
-    print print_prefix + "r:\n" + `r`
-    r = r + transpose(triu(r, 1))
-    print print_prefix + "r:\n" + `r`
-    r = dot(P, dot(r, transpose(P)))
-    print print_prefix + "r:\n" + `r`
-    L = tril(r)
+    L = dot(P, transpose(r))
 
     # Debugging.
     if print_flag >= 3:
         print print_prefix + "e: " + `dot(P, e)`
         print print_prefix + "P:\n" + `P`
         print print_prefix + "L:\n" + `L`
-        print print_prefix + "chol:\n" + `cholesky_decomposition(d2fk)`
+        try:
+            print print_prefix + "chol:\n" + `cholesky_decomposition(d2fk)`
+        except LinAlgError:
+            print print_prefix + "Matrix is not positive definite - Cholesky decomposition cannot be computed."
         print print_prefix + "d2fk reconstruted:\n" + `dot(L, transpose(L))`
         eigen = eigenvectors(r)
         print print_prefix + "Old eigenvalues: " + `old_eigen[0]`
         print print_prefix + "New eigenvalues: " + `eigen[0]`
+
+    #import sys
+    #sys.exit()
 
     # Calculate the Newton direction.
     y = solve_linear_equations(L, dfk)
