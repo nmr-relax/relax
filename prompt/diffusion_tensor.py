@@ -30,7 +30,7 @@ class Diffusion_tensor:
         self.relax = relax
 
 
-    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, fixed=1):
+    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, fixed=1, scaling=1):
         """Function for setting up the diffusion tensor.
 
         Keyword Arguments
@@ -50,6 +50,8 @@ class Diffusion_tensor:
 
         fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
 
+        scaling:  The diagonal scaling flag.
+
 
         Description
         ~~~~~~~~~~~
@@ -64,13 +66,13 @@ class Diffusion_tensor:
         To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
         round brakets, the elements of which are separated by commas.  Alternative sets of
-        parameters are:
+        parameters, 'param_types', are:
             0 - (Dpar, Dper, theta, phi)   (Default)
             1 - (tm, Dratio, theta, phi)
         Dratio is defined as Dpar/Dper.
 
         To select fully anisotropic diffusion, the parameters argument should be a tuple of length
-        six.  Alternative sets of parameters are:
+        six.  Alternative sets of parameters, 'param_types', are:
             0 - (Dx, Dy, Dz, alpha, beta, gamma)   (Default)
 
         The 'time_scale' argument should be a floating point number.  Parameters affected by this
@@ -81,6 +83,12 @@ class Diffusion_tensor:
 
         The 'angle_units' argument should either be the string 'deg' or 'rad'.  Parameters affected
         are:  theta, phi, alpha, beta, gamma.
+
+
+        Diagonal scaling.
+
+        For a description of diagonal scaling, view the docstring of the model-free model selection
+        function by typing 'help(model.select_mf)'.
 
 
         Examples
@@ -124,19 +132,20 @@ class Diffusion_tensor:
         To select and minimise an isotropic diffusion tensor, type something like (followed by some
         minimisation command):
 
-        relax> diffusion_tensor('diff', 10e-9, fixed=0)
+        relax> diffusion_tensor('diff', 10e-9, fixed=0, scaling=1)
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.set("
+            text = sys.ps3 + "diffusion_tensor("
             text = text + "run=" + `run`
             text = text + ", params=" + `params`
             text = text + ", time_scale=" + `time_scale`
             text = text + ", d_scale=" + `d_scale`
             text = text + ", angle_units=" + `angle_units`
             text = text + ", param_types=" + `param_types`
-            text = text + ", fixed=" + `fixed` + ")"
+            text = text + ", fixed=" + `fixed`
+            text = text + ", scaling=" + `scaling` + ")"
             print text
 
         # The name of the run.
@@ -144,14 +153,14 @@ class Diffusion_tensor:
             raise RelaxStrError, ('run', run)
 
         # Parameter argument.
-        if type(params) != float and type(params) != tuple:
-            raise RelaxTupleFloatError, ('diffusion parameters', params)
+        if type(params) != int and type(params) != float and type(params) != tuple:
+            raise RelaxTupleNumError, ('diffusion parameters', params)
         if type(params) == tuple:
             if len(params) != 4 and len(params) != 6:
                 raise RelaxError, "The diffusion parameters argument should either be a floating point number or a tuple of length 4 or 6."
             for i in xrange(len(params)):
-                if type(params[i]) != float:
-                    raise RelaxTupleFloatError, ('diffusion parameters', params)
+                if type(params[i]) != float and type(params[i]) != int:
+                    raise RelaxTupleNumError, ('diffusion parameters', params)
 
         # Time scale argument.
         if type(time_scale) != float:
@@ -178,5 +187,9 @@ class Diffusion_tensor:
         if type(fixed) != int or (fixed != 0 and fixed != 1):
             raise RelaxBinError, ('fixed flag', fixed)
 
+        # Scaling.
+        if type(scaling) != int or (scaling != 0 and scaling != 1):
+            raise RelaxBinError, ('scaling', scaling)
+
         # Execute the functional code.
-        self.relax.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, fixed=fixed)
+        self.relax.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, fixed=fixed, scaling=scaling)

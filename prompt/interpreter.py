@@ -277,8 +277,32 @@ def interact(self, intro=None, local=None, script_file=None):
         # Turn the intro flag on so functions will print there intro strings.
         local['self'].intro = 1
 
+        # Test if the script file exists.
+        if not access(script_file, F_OK):
+            sys.stderr.write("The script file '" + script_file + "' does not exist.\n")
+            return
+
+        # Print the script.
+        file = open(script_file, 'r')
+        sys.stdout.write("script = " + `script_file` + "\n")
+        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+        sys.stdout.write(file.read())
+        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+        file.close()
+
         # Execute the script.
-        script(script_file, local)
+        try:
+            execfile(script_file, local)
+        except KeyboardInterrupt:
+            sys.stdout.write("\nScript execution cancelled.\n")
+        except AllRelaxErrors, instance:
+            if Debug:
+                self.showtraceback()
+            else:
+                sys.stdout.write(instance.__str__())
+        sys.stdout.write("\n")
+
+        # Quit.
         sys.exit()
 
     # Interactive prompt.
@@ -332,29 +356,3 @@ def runcode(self, code):
     else:
         if softspace(sys.stdout, 0):
             print
-
-
-def script(script_file, local):
-    """Function for executing the script file."""
-
-    # Test if the script file exists.
-    if not access(script_file, F_OK):
-        sys.stderr.write("The script file '" + script_file + "' does not exist.\n")
-        return
-
-    # Print the script.
-    file = open(script_file, 'r')
-    sys.stdout.write("script = " + `script_file` + "\n")
-    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
-    sys.stdout.write(file.read())
-    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
-    file.close()
-
-    # Execute the script.
-    try:
-        execfile(script_file, local)
-    except KeyboardInterrupt:
-        sys.stdout.write("\nScript execution cancelled.\n")
-    except AllRelaxErrors, instance:
-        sys.stdout.write(instance.__str__())
-    sys.stdout.write("\n")

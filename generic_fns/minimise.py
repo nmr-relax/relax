@@ -93,96 +93,16 @@ class Minimise:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-        # Test the validity of the arguments.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # The number of parameters.
-            n = len(self.relax.data.res[i].params[run])
-
-            # Make sure that the length of the parameter array is > 0.
-            if n == 0:
-                raise RelaxError, "Cannot run a grid search on a model with zero parameters."
-
-            # Lower bounds.
-            if lower != None:
-                if len(lower) != n:
-                    raise RelaxLenError, ('lower bounds', n)
-
-            # Upper bounds.
-            if upper != None:
-                if len(upper) != n:
-                    raise RelaxLenError, ('upper bounds', n)
-
-            # Increment.
-            if type(inc) == list:
-                if len(inc) != n:
-                    raise RelaxLenError, ('increment', n)
-
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific parameter vector function setup.
-        self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', function_type)
-        if self.assemble_param_vector == None:
-            raise RelaxFuncSetupError, ('parameter vector', function_type)
-
-        # Equation type specific scaling matrix function setup.
-        self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', function_type)
-        if self.assemble_scaling_matrix == None:
-            raise RelaxFuncSetupError, ('scaling matrix', function_type)
-
         # Equation type specific grid setup function setup.
-        self.grid_setup = self.relax.specific_setup.setup('grid_search', function_type)
-        if self.grid_setup == None:
-            raise RelaxFuncSetupError, ('grid setup', function_type)
+        self.grid_search = self.relax.specific_setup.setup('grid_search', function_type)
+        if self.grid_search == None:
+            raise RelaxFuncSetupError, ('grid search', function_type)
 
-        # Equation type specific minimise function setup.
-        self.minimise = self.relax.specific_setup.setup('minimise', function_type)
-        if self.minimise == None:
-            raise RelaxFuncSetupError, ('minimise', function_type)
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # Setup the grid search options.
-            if type(inc) == int:
-                temp = []
-                for j in xrange(len(self.relax.data.res[i].params[run])):
-                    temp.append(inc)
-                inc = temp
-
-            min_options = self.grid_setup(run=run, params=self.relax.data.res[i].params[run], index=i, inc_vector=inc)
-
-            # Set the lower and upper bounds if these are supplied.
-            if lower != None:
-                for j in xrange(len(self.relax.data.res[i].params[run])):
-                    if lower[j] != None:
-                        min_options[j][1] = lower[j]
-            if upper != None:
-                for j in xrange(len(self.relax.data.res[i].params[run])):
-                    if upper[j] != None:
-                        min_options[j][2] = upper[j]
-
-            # Create the initial parameter vector.
-            init_params = self.assemble_param_vector(run, self.relax.data.res[i])
-
-            # Diagonal scaling.
-            scaling_matrix = None
-            if self.relax.data.res[i].scaling[run]:
-                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
-                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
-                for j in xrange(len(min_options)):
-                    min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
-                    min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
-
-            # Minimisation.
-            self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
+        # Grid search.
+        self.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
 
 
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):

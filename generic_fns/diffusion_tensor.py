@@ -40,7 +40,7 @@ class Diffusion_tensor:
         return names
 
 
-    def set(self, run, params, time_scale, d_scale, angle_units, param_types, fixed):
+    def set(self, run, params, time_scale, d_scale, angle_units, param_types, fixed, scaling):
         """Function for setting up the diffusion tensor."""
 
         # Arguments.
@@ -65,6 +65,9 @@ class Diffusion_tensor:
         # Set the fixed flag.
         self.relax.data.diff[run].fixed = fixed
 
+        # Set the scaling flag.
+        self.relax.data.diff[run].scaling = scaling
+
         # Isotropic diffusion.
         if type(params) == float:
             self.isotropic()
@@ -82,9 +85,31 @@ class Diffusion_tensor:
         """Function for setting up fully anisotropic diffusion."""
 
         # The diffusion type.
-        self.relax.data.diff[self.run].type = 'iso'
+        self.relax.data.diff[self.run].type = 'aniso'
 
-        raise RelaxError, "Fully anisotropic diffusion not coded yet."
+        # (Dx, Dy, Dz, alpha, beta, gamma).
+        if self.param_types == 0:
+            # Unpack the tuple.
+            Dx, Dy, Dz, alpha, beta, gamma = self.params
+
+            # Diffusion tensor eigenvalues: Dx, Dy, Dz.
+            self.relax.data.diff[self.run].Dx = Dx * self.d_scale
+            self.relax.data.diff[self.run].Dy = Dy * self.d_scale
+            self.relax.data.diff[self.run].Dz = Dz * self.d_scale
+
+        # Unknown parameter combination.
+        else:
+            raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+
+        # Angles in radians.
+        if self.angle_units == 'deg':
+            self.relax.data.diff[self.run].alpha = (alpha / 360.0) * 2.0 * pi
+            self.relax.data.diff[self.run].beta = (beta / 360.0) * 2.0 * pi
+            self.relax.data.diff[self.run].gamma = (gamma / 360.0) * 2.0 * pi
+        else:
+            self.relax.data.diff[self.run].alpha = alpha
+            self.relax.data.diff[self.run].beta = beta
+            self.relax.data.diff[self.run].gamma = gamma
 
 
     def axial(self):
@@ -123,7 +148,7 @@ class Diffusion_tensor:
 
         # Unknown parameter combination.
         else:
-            raise RelaxUnknownParamCombError, ('param_types', param_types)
+            raise RelaxUnknownParamCombError, ('param_types', self.param_types)
 
         # Correlation times:  t1, t2, t3.
         self.relax.data.diff[self.run].t1 = 1.0 / (6.0 * self.relax.data.diff[self.run].Dper)

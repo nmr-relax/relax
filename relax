@@ -34,6 +34,7 @@
 
 
 import __builtin__
+from os import F_OK, access
 import profile
 import pstats
 from re import match
@@ -67,8 +68,8 @@ class Relax:
         # Create a string to pass to the interpreter to print.
         self.set_intro_string()
 
-        # Debugging option, 0 = off, 1 = on.
-        self.debug = 0
+        # Debugging option set by the command line argument '--debug', 0 = off, 1 = on.
+        __builtin__.Debug = 0
 
         # The program data storage object.
         self.data = Data()
@@ -103,27 +104,38 @@ class Relax:
         if len(self.argv) == 1:
             return
 
-        # Help.
-        elif match('--help', self.argv[1]) or match('-h', self.argv[1]):
-            self.print_help()
-            sys.exit()
+        # Loop over the arguments.
+        for i in range(len(self.argv)):
+            # Skip the first argument.
+            if i == 0:
+                continue
 
-        # Script file.
-        elif type(self.argv[1]) == str and len(self.argv) == 2:
-            self.script_file = self.argv[1]
+            # Help arguments.
+            elif match('--help', self.argv[i]) or match('-h', self.argv[i]):
+                self.print_help()
+                sys.exit()
 
-        # Unknown argument.
-        else:
-            print "Try \"relax --help\" for more information."
-            sys.exit()
+            # Debugging argument.
+            elif self.argv[i] == '--debug':
+                __builtin__.Debug = 1
+
+            # Script file.
+            elif access(self.argv[i], F_OK):
+                self.script_file = self.argv[i]
+
+            # Unknown argument.
+            else:
+                print "Unknown argument, try \"relax --help\" for more information."
+                sys.exit()
 
 
     def print_help(self):
         """Print the help message."""
 
-        sys.stderr.write("\nUsage: relax [-h] [--help] [script]\n")
+        sys.stderr.write("\nUsage: relax [-h] [--help] [--debug] [script_file]\n")
         sys.stderr.write("Options:\n")
-        sys.stderr.write("   --help       Display this help and exit.\n\n")
+        sys.stderr.write("   -h or --help  Display this help and exit.\n")
+        sys.stderr.write("   --debug       Allow debugging information to be printed.\n\n")
 
 
     def set_intro_string(self):

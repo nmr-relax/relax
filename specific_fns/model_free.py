@@ -23,7 +23,7 @@
 from copy import deepcopy
 from LinearAlgebra import inverse
 from math import pi
-from Numeric import Float64, array, matrixmultiply, ones, transpose, zeros
+from Numeric import Float64, array, identity, matrixmultiply, ones, transpose, zeros
 from re import match
 from string import replace
 import sys
@@ -39,86 +39,218 @@ class Model_free:
         self.relax = relax
 
 
-    def assemble_param_vector(self, data):
+    def assemble_param_vector(self, index=None):
         """Function for assembling various pieces of data into a Numeric parameter array."""
 
         # Initialise.
-        param_vector = zeros(len(data.params[self.run]), Float64)
+        self.param_vector = []
 
-        # Loop over the parameters.
-        for i in xrange(len(data.params[self.run])):
-            # S2.
-            if data.params[self.run][i] == 'S2' and data.s2[self.run] != None:
-                param_vector[i] = data.s2[self.run]
+        # Diffusion tensor parameters.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                self.param_vector.append(self.relax.data.diff[self.run].tm)
 
-            # S2f.
-            if data.params[self.run][i] == 'S2f' and data.s2f[self.run] != None:
-                param_vector[i] = data.s2f[self.run]
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                self.param_vector.append(self.relax.data.diff[self.run].tm)
+                self.param_vector.append(self.relax.data.diff[self.run].Diso)
+                self.param_vector.append(self.relax.data.diff[self.run].theta)
+                self.param_vector.append(self.relax.data.diff[self.run].phi)
 
-            # S2s.
-            if data.params[self.run][i] == 'S2s' and data.s2s[self.run] != None:
-                param_vector[i] = data.s2s[self.run]
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                self.param_vector.append(self.relax.data.diff[self.run].Dx)
+                self.param_vector.append(self.relax.data.diff[self.run].Dy)
+                self.param_vector.append(self.relax.data.diff[self.run].Dz)
+                self.param_vector.append(self.relax.data.diff[self.run].alpha)
+                self.param_vector.append(self.relax.data.diff[self.run].beta)
+                self.param_vector.append(self.relax.data.diff[self.run].gamma)
 
-            # te.
-            if data.params[self.run][i] == 'te' and data.te[self.run] != None:
-                param_vector[i] = data.te[self.run]
+        # Model-free parameters.
+        if self.param_set == 'mf' or self.param_set == 'all':
+            # Loop over all residues.
+            for i in xrange(len(self.relax.data.res)):
+                # Skip unselected residues.
+                if not self.relax.data.res[i].select:
+                    continue
 
-            # tf.
-            if data.params[self.run][i] == 'tf' and data.tf[self.run] != None:
-                param_vector[i] = data.tf[self.run]
+                # Only add parameters for a single residue if index has a value.
+                if index != None and i != index:
+                    continue
 
-            # ts.
-            if data.params[self.run][i] == 'ts' and data.ts[self.run] != None:
-                param_vector[i] = data.ts[self.run]
+                # Loop over the model-free parameters.
+                for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                    # tm.
+                    if self.relax.data.res[i].params[self.run][j] == 'tm':
+                        if self.relax.data.res[i].tm[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].tm[self.run])
 
-            # Rex.
-            if data.params[self.run][i] == 'Rex' and data.rex[self.run] != None:
-                param_vector[i] = data.rex[self.run]
+                    # S2.
+                    if self.relax.data.res[i].params[self.run][j] == 'S2':
+                        if self.relax.data.res[i].s2[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].s2[self.run])
 
-            # r.
-            if data.params[self.run][i] == 'r' and data.r[self.run] != None:
-                param_vector[i] = data.r[self.run]
+                    # S2f.
+                    if self.relax.data.res[i].params[self.run][j] == 'S2f':
+                        if self.relax.data.res[i].s2f[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].s2f[self.run])
 
-            # CSA.
-            if data.params[self.run][i] == 'CSA' and data.csa[self.run] != None:
-                param_vector[i] = data.csa[self.run]
+                    # S2s.
+                    if self.relax.data.res[i].params[self.run][j] == 'S2s':
+                        if self.relax.data.res[i].s2s[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].s2s[self.run])
 
-        return param_vector
+                    # te.
+                    if self.relax.data.res[i].params[self.run][j] == 'te':
+                        if self.relax.data.res[i].te[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].te[self.run])
+
+                    # tf.
+                    if self.relax.data.res[i].params[self.run][j] == 'tf':
+                        if self.relax.data.res[i].tf[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].tf[self.run])
+
+                    # ts.
+                    if self.relax.data.res[i].params[self.run][j] == 'ts':
+                        if self.relax.data.res[i].ts[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].ts[self.run])
+
+                    # Rex.
+                    if self.relax.data.res[i].params[self.run][j] == 'Rex':
+                        if self.relax.data.res[i].rex[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].rex[self.run])
+
+                    # r.
+                    if self.relax.data.res[i].params[self.run][j] == 'r':
+                        if self.relax.data.res[i].r[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].r[self.run])
+
+                    # CSA.
+                    if self.relax.data.res[i].params[self.run][j] == 'CSA':
+                        if self.relax.data.res[i].csa[self.run] == None:
+                            self.param_vector.append(0.0)
+                        else:
+                            self.param_vector.append(self.relax.data.res[i].csa[self.run])
+
+        # Convert to a Numeric array.
+        self.param_vector = array(self.param_vector, Float64)
+
+        # Debug.
+        if Debug:
+            print "Param vector: " + `self.param_vector`
 
 
-    def assemble_scaling_matrix(self, run, data, index):
+    def assemble_scaling_matrix(self, index=None):
         """Function for creating the scaling matrix."""
 
         # Initialise.
-        scaling_matrix = zeros((len(data.params[run]), len(data.params[run])), Float64)
+        self.scaling_matrix = identity(len(self.param_vector), Float64)
+        i = 0
 
-        # Loop over the parameters.
-        for i in xrange(len(data.params[run])):
-            # tm.
-            if data.params[run][i] == 'tm':
-                scaling_matrix[i, i] = 1e-15
+        # Diffusion tensor parameters.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                # Test if the diffusion parameters should be scaled.
+                if self.relax.data.diff[self.run].scaling:
+                    # tm.
+                    self.scaling_matrix[i, i] = 1e-15
 
-            # te, tf, and ts.
-            elif match('t', data.params[run][i]):
-                scaling_matrix[i, i] = 1e-15
+                # Increment i.
+                i = i + 1
 
-            # Rex.
-            elif data.params[run][i] == 'Rex':
-                scaling_matrix[i, i] = 1.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0]) ** 2
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                # Test if the diffusion parameters should be scaled.
+                if self.relax.data.diff[self.run].scaling:
+                    # tm, Diso, theta, phi
+                    self.scaling_matrix[i, i] = 1e-15
+                    self.scaling_matrix[i+1, i+1] = 1.0
+                    self.scaling_matrix[i+2, i+2] = 1.0
+                    self.scaling_matrix[i+3, i+3] = 1.0
 
-            # Bond length.
-            elif data.params[run][i] == 'r':
-                scaling_matrix[i, i] = 1e-10
+                # Increment i.
+                i = i + 4
 
-            # CSA.
-            elif data.params[run][i] == 'CSA':
-                scaling_matrix[i, i] = 1e-4
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                # Test if the diffusion parameters should be scaled.
+                if self.relax.data.diff[self.run].scaling:
+                    # Dx, Dy, Dz, alpha, beta, gamma.
+                    self.scaling_matrix[i, i] = 1e9
+                    self.scaling_matrix[i+1, i+1] = 1e9
+                    self.scaling_matrix[i+2, i+2] = 1e9
+                    self.scaling_matrix[i+3, i+3] = 1.0
+                    self.scaling_matrix[i+4, i+4] = 1.0
+                    self.scaling_matrix[i+5, i+5] = 1.0
 
-            # No scaling.
-            else:
-                scaling_matrix[i, i] = 1.0
+                # Increment i.
+                i = i + 6
 
-        return scaling_matrix
+        # Model-free parameters.
+        if self.param_set == 'mf' or self.param_set == 'all':
+            # Loop over all residues.
+            for j in xrange(len(self.relax.data.res)):
+                # Skip unselected residues.
+                if not self.relax.data.res[j].select:
+                    continue
+
+                # Only add parameters for a single residue if index has a value.
+                if index != None and j != index:
+                    continue
+
+                # Skip residues which should not be scaled.
+                if not self.relax.data.res[j].scaling[self.run]:
+                    i = i + len(self.relax.data.res[j].params[self.run])
+                    continue
+
+                # Loop over the model-free parameters.
+                for k in xrange(len(self.relax.data.res[j].params[self.run])):
+                    # tm.
+                    if self.relax.data.res[j].params[self.run][k] == 'tm':
+                        self.scaling_matrix[i, i] = 1e-15
+
+                    # te, tf, and ts.
+                    elif match('t', self.relax.data.res[j].params[self.run][k]):
+                        self.scaling_matrix[i, i] = 1e-15
+
+                    # Rex.
+                    elif self.relax.data.res[j].params[self.run][k] == 'Rex':
+                        self.scaling_matrix[i, i] = 1.0 / (2.0 * pi * self.relax.data.res[j].frq[self.run][0]) ** 2
+
+                    # Bond length.
+                    elif self.relax.data.res[j].params[self.run][k] == 'r':
+                        self.scaling_matrix[i, i] = 1e-10
+
+                    # CSA.
+                    elif self.relax.data.res[j].params[self.run][k] == 'CSA':
+                        self.scaling_matrix[i, i] = 1e-4
+
+                    # Increment i.
+                    i = i + 1
+
+        # Debug.
+        if Debug:
+            print "Scaling matrix:\n" + `self.scaling_matrix`
 
 
     def calculate(self, run=None, i=None, params=None, scaling_matrix=None):
@@ -366,25 +498,39 @@ class Model_free:
         return names
 
 
-    def model_setup(self, run, model, equation, params, scaling_flag):
-        """Function for updating various data structures depending on the model selected."""
+    def determine_param_set_type(self):
+        """Determine the type of parameter set."""
 
-        # Loop over the sequence.
+        # Check if any model-free parameters are allowed to vary.
+        mf_all_fixed = 1
         for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
 
-            # Initialise the data structures (if needed).
-            self.initialise_mf_data(self.relax.data.res[i], run)
+            # Test the fixed flag.
+            if not hasattr(self.relax.data.res[i], 'fixed'):
+                mf_all_fixed = 0
+                break
+            if not self.relax.data.res[i].fixed[self.run]:
+                mf_all_fixed = 0
+                break
 
-            # Model-free models, equations, and parameter types.
-            self.relax.data.res[i].models[run] = model
-            self.relax.data.res[i].equations[run] = equation
-            self.relax.data.res[i].params[run] = params
-
-            # Diagonal scaling.
-            self.relax.data.res[i].scaling[run] = scaling_flag
+        # Find the type.
+        if mf_all_fixed and self.relax.data.diff[self.run].fixed:
+            raise RelaxError, "All parameters are fixed."
+        elif mf_all_fixed and not self.relax.data.diff[self.run].fixed:
+            if self.print_flag:
+                print "Only diffusion tensor parameters will be used."
+            return 'diff'
+        elif self.relax.data.diff[self.run].fixed:
+            if self.print_flag:
+                print "Only the model-free parameters for single residues will be used."
+            return 'mf'
+        else:
+            if self.print_flag:
+                print "The diffusion tensor parameters together with the model-free parameters for all residues will be used."
+            return 'all'
 
 
     def fixed_setup(self, params=None, min_options=None):
@@ -419,34 +565,124 @@ class Model_free:
         return min_options
 
 
-    def grid_setup(self, run=None, params=None, index=None, inc_vector=None):
+    def grid_search(self, run, lower, upper, inc, constraints, print_flag):
         """The grid search setup function."""
 
-        # Initialise.
-        min_options = []
+        # Arguments.
+        self.run = run
+        self.lower = lower
+        self.upper = upper
+        self.inc = inc
+        self.constraints = constraints
+        self.print_flag = print_flag
 
-        for i in xrange(len(params)):
-            # {S2, S2f, S2s}.
-            if match('S2', params[i]):
-                min_options.append([inc_vector[i], 0.0, 1.0])
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
 
-            # {te, tf, ts}.
-            elif match('t', params[i]):
-                min_options.append([inc_vector[i], 0.0, 5000.0 * 1e-12])
+        # The parameter set 'mf'.
+        if self.param_set == 'mf':
+            self.grid_search_mf_params()
 
-            # Rex.
-            elif params[i] == 'Rex':
-                min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0])**2])
+        # The parameter set 'diff'.
+        elif self.param_set == 'diff':
+            self.grid_search_diff_params()
 
-            # Bond length.
-            elif params[i] == 'r':
-                min_options.append([inc_vector[i], 1.0 * 1e-10, 1.05 * 1e-10])
+        # The parameter set 'all'.
+        elif self.param_set == 'all':
+            self.grid_search_all_params()
 
-            # CSA.
-            elif params[i] == 'CSA':
-                min_options.append([inc_vector[i], -120 * 1e-6, -200 * 1e-6])
 
-        return min_options
+    def grid_search_mf_params(self):
+        """Function for the grid search of model-free parameters for single residues."""
+
+        # Test the validity of the arguments.
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # The number of parameters.
+            n = len(self.relax.data.res[i].params[self.run])
+
+            # Make sure that the length of the parameter array is > 0.
+            if n == 0:
+                raise RelaxError, "Cannot run a grid search on a model with zero parameters."
+
+            # Lower bounds.
+            if self.lower != None:
+                if len(self.lower) != n:
+                    raise RelaxLenError, ('lower bounds', n)
+
+            # Upper bounds.
+            if self.upper != None:
+                if len(self.upper) != n:
+                    raise RelaxLenError, ('upper bounds', n)
+
+            # Increment.
+            if type(self.inc) == list:
+                if len(self.inc) != n:
+                    raise RelaxLenError, ('increment', n)
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Setup the grid search options.
+            if type(self.inc) == int:
+                temp = []
+                for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                    temp.append(self.inc)
+                self.inc = temp
+
+            # Minimisation options.
+            min_options = []
+            for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                # {S2, S2f, S2s}.
+                if match('S2', self.relax.data.res[i].params[self.run][j]):
+                    min_options.append([self.inc[j], 0.0, 1.0])
+
+                # {te, tf, ts}.
+                elif match('t', self.relax.data.res[i].params[self.run][j]):
+                    min_options.append([self.inc[j], 0.0, 5000.0 * 1e-12])
+
+                # Rex.
+                elif self.relax.data.res[i].params[self.run][j] == 'Rex':
+                    min_options.append([self.inc[j], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[i].frq[self.run][0])**2])
+
+                # Bond length.
+                elif self.relax.data.res[i].params[self.run][j] == 'r':
+                    min_options.append([self.inc[j], 1.0 * 1e-10, 1.05 * 1e-10])
+
+                # CSA.
+                elif self.relax.data.res[i].params[self.run][j] == 'CSA':
+                    min_options.append([self.inc[j], -120 * 1e-6, -200 * 1e-6])
+
+            # Set the lower and upper bounds if these are supplied.
+            if self.lower != None:
+                for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                    if self.lower[j] != None:
+                        min_options[j][1] = self.lower[j]
+            if self.upper != None:
+                for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                    if self.upper[j] != None:
+                        min_options[j][2] = self.upper[j]
+
+            # Create the initial parameter vector.
+            self.assemble_param_vector(index=i)
+
+            # Diagonal scaling.
+            scaling_matrix = None
+            if self.relax.data.res[i].scaling[self.run]:
+                scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[i], i)
+                self.param_vector = matrixmultiply(inverse(scaling_matrix), self.param_vector)
+                for j in xrange(len(min_options)):
+                    min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
+                    min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
+
+            # Minimisation.
+            self.minimise(run=self.run, i=i, init_params=self.param_vector, scaling_matrix=scaling_matrix, min_algor='grid', min_options=min_options, constraints=self.constraints, print_flag=self.print_flag)
 
 
     def initialise_mf_data(self, data, run):
@@ -475,11 +711,12 @@ class Model_free:
                 object[run] = value
 
 
-    def linear_constraints(self, run=None, data=None, index=None, scaling_matrix=None):
+    def linear_constraints(self, index=None):
         """Function for setting up the model-free linear constraint matrices A and b.
 
         Standard notation
         ~~~~~~~~~~~~~~~~~
+
         The order parameter constraints are:
 
             0 <= S2 <= 1
@@ -532,6 +769,7 @@ class Model_free:
 
         Matrix notation
         ~~~~~~~~~~~~~~~
+
         In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
         values, and b is a vector of scalars, these inequality constraints are:
 
@@ -574,86 +812,210 @@ class Model_free:
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(data.params[run])
+        n = len(self.param_vector)
         zero_array = zeros(n, Float64)
+        i = 0
         j = 0
 
-        # The original model-free equations.
-        for i in xrange(n):
-            # Order parameters {S2, S2f, S2s}.
-            if match('S2', data.params[run][i]):
-                # 0 <= S2 <= 1.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / scaling_matrix[i, i])
-                b.append(-1.0 / scaling_matrix[i, i])
-                j = j + 2
-
-                # S2 <= S2f and S2 <= S2s.
-                if data.params[run][i] == 'S2':
-                    for k in xrange(n):
-                        if data.params[run][k] == 'S2f' or data.params[run][k] == 'S2s':
-                            A.append(zero_array * 0.0)
-                            A[j][i] = -1.0
-                            A[j][k] = 1.0
-                            b.append(0.0 / scaling_matrix[i, i])
-                            j = j + 1
-
-            # Correlation times {tm, te, tf, ts}.
-            elif match('t', data.params[run][i]):
-                # 0 <= te <= 10000 ps.
-                A.append(zero_array * 0.0)
+        # Diffusion tensor parameters.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                # tm >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / scaling_matrix[i, i])
-                b.append(-10e-9 / scaling_matrix[i, i])
-                j = j + 2
-
-                # tf <= ts.
-                if data.params[run][i] == 'ts':
-                    for k in xrange(n):
-                        if data.params[run][k] == 'tf':
-                            A.append(zero_array * 0.0)
-                            A[j][i] = 1.0
-                            A[j][k] = -1.0
-                            b.append(0.0)
-                            j = j + 1
-
-            # Rex.
-            elif data.params[run][i] == 'Rex':
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0 / scaling_matrix[i, i])
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
                 j = j + 1
 
-            # Bond length.
-            elif match('r', data.params[run][i]):
-                # 0.9e-10 <= r <= 2e-10.
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                # tm >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # Diso >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # 0 <= theta <= 2*pi.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.9e-10 / scaling_matrix[i, i])
-                b.append(-2e-10 / scaling_matrix[i, i])
+                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-2.0 * pi / self.scaling_matrix[i, i])
+                i = i + 1
                 j = j + 2
 
-            # CSA.
-            elif match('CSA', data.params[run][i]):
-                # -300e-6 <= CSA <= 0.
+                # 0 <= phi <= 2*pi.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(-300e-6 / scaling_matrix[i, i])
-                b.append(0.0 / scaling_matrix[i, i])
+                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-2.0 * pi / self.scaling_matrix[i, i])
+                i = i + 1
                 j = j + 2
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                # Dx >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # Dy >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # Dz >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # 0 <= alpha <= 2*pi.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-2.0 * pi / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+                # 0 <= beta <= 2*pi.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-2.0 * pi / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+                # 0 <= gamma <= 2*pi.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-2.0 * pi / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+        # Model-free parameters.
+        if self.param_set == 'mf' or self.param_set == 'all':
+            # Loop over all residues.
+            for k in xrange(len(self.relax.data.res)):
+                # Skip unselected residues.
+                if not self.relax.data.res[k].select:
+                    continue
+
+                # Only add parameters for a single residue if index has a value.
+                if index != None and j != index:
+                    continue
+
+                # Save current value of i.
+                old_i = i
+
+                # Loop over the model-free parameters.
+                for l in xrange(len(self.relax.data.res[k].params[self.run])):
+                    # Order parameters {S2, S2f, S2s}.
+                    if match('S2', self.relax.data.res[k].params[self.run][l]):
+                        # 0 <= S2 <= 1.
+                        A.append(zero_array * 0.0)
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j+1][i] = -1.0
+                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(-1.0 / self.scaling_matrix[i, i])
+                        j = j + 2
+
+                        # S2 <= S2f and S2 <= S2s.
+                        if self.relax.data.res[k].params[self.run][l] == 'S2':
+                            for m in xrange(len(self.relax.data.res[k].params[self.run])):
+                                if self.relax.data.res[k].params[self.run][m] == 'S2f' or self.relax.data.res[k].params[self.run][m] == 'S2s':
+                                    A.append(zero_array * 0.0)
+                                    A[j][i] = -1.0
+                                    A[j][old_i+m] = 1.0
+                                    b.append(0.0 / self.scaling_matrix[i, i])
+                                    j = j + 1
+
+                    # Correlation times {tm, te, tf, ts}.
+                    elif match('t', self.relax.data.res[k].params[self.run][l]):
+                        # 0 <= te <= 10000 ps.
+                        A.append(zero_array * 0.0)
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j+1][i] = -1.0
+                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(-10e-9 / self.scaling_matrix[i, i])
+                        j = j + 2
+
+                        # tf <= ts.
+                        if self.relax.data.res[k].params[self.run][l] == 'ts':
+                            for m in xrange(len(self.relax.data.res[k].params[self.run])):
+                                if self.relax.data.res[k].params[self.run][m] == 'tf':
+                                    A.append(zero_array * 0.0)
+                                    A[j][i] = 1.0
+                                    A[j][old_i+m] = -1.0
+                                    b.append(0.0)
+                                    j = j + 1
+
+                    # Rex.
+                    elif self.relax.data.res[k].params[self.run][l] == 'Rex':
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        b.append(0.0 / self.scaling_matrix[i, i])
+                        j = j + 1
+
+                    # Bond length.
+                    elif match('r', self.relax.data.res[k].params[self.run][l]):
+                        # 0.9e-10 <= r <= 2e-10.
+                        A.append(zero_array * 0.0)
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j+1][i] = -1.0
+                        b.append(0.9e-10 / self.scaling_matrix[i, i])
+                        b.append(-2e-10 / self.scaling_matrix[i, i])
+                        j = j + 2
+
+                    # CSA.
+                    elif match('CSA', self.relax.data.res[k].params[self.run][l]):
+                        # -300e-6 <= CSA <= 0.
+                        A.append(zero_array * 0.0)
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j+1][i] = -1.0
+                        b.append(-300e-6 / self.scaling_matrix[i, i])
+                        b.append(0.0 / self.scaling_matrix[i, i])
+                        j = j + 2
+
+                    # Increment i.
+                    i = i + 1
 
         # Convert to Numeric data structures.
         A = array(A, Float64)
         b = array(b, Float64)
+
+        # Debug.
+        if Debug:
+            print "Linear constraints, A:\n" + `A`
+            print "Linear constraints, b:\n" + `b`
 
         return A, b
 
@@ -776,12 +1138,12 @@ class Model_free:
 
     def minimise(self, run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, print_flag):
         """Model-free minimisation.
-        
+
         Three types of parameter sets exist for which minimisation is different.  These are:
             'mf' - Model-free parameters for single residues.
             'diff' - Diffusion tensor parameters.
             'all' - All model-free and all diffusion tensor parameters.
-        
+
         """
 
         # Arguments.
@@ -794,30 +1156,8 @@ class Model_free:
         self.constraints = constraints
         self.print_flag = print_flag
 
-        # Check if any model-free parameters are allowed to vary.
-        mf_all_fixed = 1
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # Test the fixed flag.
-            if not hasattr(self.relax.data.res[i], 'fixed'):
-                mf_all_fixed = 0
-                break
-            if not self.relax.data.res[i].fixed[run]:
-                mf_all_fixed = 0
-                break
-
-        # Determine the type of parameter set.
-        if mf_all_fixed and self.relax.data.diff[run].fixed:
-            raise RelaxError, "All parameters are fixed."
-        elif mf_all_fixed and not self.relax.data.diff[run].fixed:
-            self.param_set = 'diff'
-        elif self.relax.data.diff[run].fixed:
-            self.param_set = 'mf'
-        else:
-            self.param_set = 'all'
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
 
         # The parameter set 'mf'.
         if self.param_set == 'mf':
@@ -831,6 +1171,39 @@ class Model_free:
         elif self.param_set == 'all':
             self.minimise_all_params()
 
+
+    def minimise_all_params(self):
+        """Function for minimising all diffusion tensor and model-free parameters simultaneously."""
+
+        # Create the initial parameter vector.
+        self.assemble_param_vector()
+
+        # Diagonal scaling.
+        self.assemble_scaling_matrix()
+        self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+
+        # Linear constraints.
+        if self.constraints:
+            A, b = self.linear_constraints()
+
+        raise RelaxError, "Not coded yet."
+
+
+    def minimise_diff_params(self):
+        """Function for minimising just the diffusion tensor parameters."""
+
+        # Create the initial parameter vector.
+        self.assemble_param_vector()
+
+        # Diagonal scaling.
+        self.assemble_scaling_matrix()
+        self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+
+        # Linear constraints.
+        if self.constraints:
+            A, b = self.linear_constraints()
+
+        raise RelaxError, "Not coded yet."
 
     def minimise_mf_params(self):
         """Function for minimising model-free parameters for single residues."""
@@ -846,180 +1219,199 @@ class Model_free:
                 raise RelaxError, "Cannot minimise a model with zero parameters."
 
             # Create the initial parameter vector.
-            init_params = self.assemble_param_vector(self.relax.data.res[i])
+            self.assemble_param_vector(index=i)
 
             # Diagonal scaling.
-            scaling_matrix = None
+            self.assemble_scaling_matrix(index=i)
+            self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+
+            # Linear constraints.
+            if self.constraints:
+                A, b = self.linear_constraints(index=i)
+
+            # Print out.
+            if self.print_flag >= 1:
+                if self.print_flag >= 2:
+                    print "\n\n"
+                string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
+                string2 = ""
+                for j in xrange(len(string)):
+                    string2 = string2 + "~"
+                print string
+                print string2
+
+            # Initialise the iteration counter and function, gradient, and Hessian call counters.
+            self.iter_count = 0
+            self.f_count = 0
+            self.g_count = 0
+            self.h_count = 0
+
+            # Set up the relaxation data and errors and the function options.
+            relax_data = array(self.relax.data.res[i].relax_data[self.run], Float64)
+            relax_error = array(self.relax.data.res[i].relax_error[self.run], Float64)
+
+            # Make sure that the errors are all positive numbers.
+            for j in xrange(len(relax_error)):
+                if relax_error[j] == 0.0:
+                    message = "Zero error, minimisation not possible."
+                    if self.print_flag >= 1:
+                        print message + "  Skipping residue."
+                    self.relax.data.res[i].warning[run] = message
+                    return
+                elif relax_error[j] < 0.0:
+                    message = "Negative error."
+                    if self.print_flag >= 1:
+                        print message + "  Skipping residue."
+                    self.relax.data.res[i].warning[run] = message
+                    return
+
+            # Initialise the function to minimise.
+            ######################################
+
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                vectors = None
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                vectors = None
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                vectors = None
+                raise RelaxError, "Not coded yet."
+
+            self.mf = Mf(self.relax, run=self.run, i=i, equation=self.relax.data.res[i].equations[self.run], param_types=self.relax.data.res[i].params[self.run], init_params=self.param_vector, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[self.run], csa=self.relax.data.res[i].csa[self.run], diff_type=self.relax.data.diff[self.run].type, diff_params=[self.relax.data.diff[self.run].tm], scaling_matrix=self.scaling_matrix)
+
+
+            # Setup the minimisation algorithm when constraints are present.
+            ################################################################
+
+            if constraints and not match('^[Gg]rid', min_algor):
+                algor = min_options[0]
+            else:
+                algor = min_algor
+
+
+            # Levenberg-Marquardt minimisation.
+            ###################################
+
+            if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
+                min_options = min_options + (self.mf.lm_dri, relax_error)
+
+
+            # Minimisation.
+            ###############
+
+            if self.constraints:
+                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+            else:
+                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+            if results == None:
+                return
+            self.params, self.func, iter, fc, gc, hc, self.warning = results
+            self.iter_count = self.iter_count + iter
+            self.f_count = self.f_count + fc
+            self.g_count = self.g_count + gc
+            self.h_count = self.h_count + hc
+
+            # Scaling.
             if self.relax.data.res[i].scaling[self.run]:
-                scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[i], i)
-                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
+                self.params = matrixmultiply(self.scaling_matrix, self.params)
 
-        # Linear constraints.
-        if self.constraints:
-            A, b = self.linear_constraints(self.run, self.relax.data.res[i], i, scaling_matrix)
+            # Types.
+            types = self.relax.data.res[i].params[self.run]
 
-        # Print out.
-        if self.print_flag >= 1:
-            if self.print_flag >= 2:
-                print "\n\n"
-            string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
-            string2 = ""
-            for j in xrange(len(string)):
-                string2 = string2 + "~"
-            print string
-            print string2
+            # Loop over the minimised parameters.
+            for j in xrange(len(self.params)):
+                # S2.
+                if types[j] == 'S2':
+                    self.relax.data.res[i].s2[self.run] = self.params[j]
 
-        # Initialise the iteration counter and function, gradient, and Hessian call counters.
-        self.iter_count = 0
-        self.f_count = 0
-        self.g_count = 0
-        self.h_count = 0
-
-        # Set up the relaxation data and errors and the function options.
-        relax_data = array(self.relax.data.res[i].relax_data[self.run], Float64)
-        relax_error = array(self.relax.data.res[i].relax_error[self.run], Float64)
-
-        # Make sure that the errors are all positive numbers.
-        for j in xrange(len(relax_error)):
-            if relax_error[j] == 0.0:
-                message = "Zero error, minimisation not possible."
-                if self.print_flag >= 1:
-                    print message + "  Skipping residue."
-                self.relax.data.res[i].warning[run] = message
-                return
-            elif relax_error[j] < 0.0:
-                message = "Negative error."
-                if self.print_flag >= 1:
-                    print message + "  Skipping residue."
-                self.relax.data.res[i].warning[run] = message
-                return
-
-        # Initialise the function to minimise.
-        ######################################
-
-        # Isotropic diffusion.
-        if self.relax.data.diff[self.run].type == 'iso':
-            vectors = None
-
-        # Axially symmetric diffusion.
-        elif self.relax.data.diff[self.run].type == 'axial':
-            vectors = None
-
-        # Anisotropic diffusion.
-        elif self.relax.data.diff[self.run].type == 'aniso':
-            vectors = None
-            raise RelaxError, "Not coded yet."
-
-        self.mf = Mf(self.relax, run=self.run, i=i, equation=self.relax.data.res[i].equations[self.run], param_types=self.relax.data.res[i].params[self.run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[self.run], csa=self.relax.data.res[i].csa[self.run], diff_type=self.relax.data.diff[self.run].type, diff_params=[self.relax.data.diff[self.run].tm], scaling_matrix=scaling_matrix)
-
-
-        # Setup the minimisation algorithm when constraints are present.
-        ################################################################
-
-        if constraints and not match('^[Gg]rid', min_algor):
-            algor = min_options[0]
-        else:
-            algor = min_algor
-
-
-        # Levenberg-Marquardt minimisation.
-        ###################################
-
-        if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-            min_options = min_options + (self.mf.lm_dri, relax_error)
-
-
-        # Minimisation.
-        ###############
-
-        if self.constraints:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
-        else:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
-        if results == None:
-            return
-        self.params, self.func, iter, fc, gc, hc, self.warning = results
-        self.iter_count = self.iter_count + iter
-        self.f_count = self.f_count + fc
-        self.g_count = self.g_count + gc
-        self.h_count = self.h_count + hc
-
-        # Scaling.
-        if self.relax.data.res[i].scaling[self.run]:
-            self.params = matrixmultiply(scaling_matrix, self.params)
-
-        # Types.
-        types = self.relax.data.res[i].params[self.run]
-
-        # Loop over the minimised parameters.
-        for j in xrange(len(self.params)):
-            # S2.
-            if types[j] == 'S2':
-                self.relax.data.res[i].s2[self.run] = self.params[j]
-
-            # S2f.
-            elif types[j] == 'S2f':
                 # S2f.
-                self.relax.data.res[i].s2f[self.run] = self.params[j]
+                elif types[j] == 'S2f':
+                    # S2f.
+                    self.relax.data.res[i].s2f[self.run] = self.params[j]
 
-                # Other order parameters.
-                for k in xrange(len(types)):
-                    # S2 = S2f.S2s
-                    if types[k] == 'S2s':
-                        self.relax.data.res[i].s2[self.run] = self.params[j] * self.params[k]
+                    # Other order parameters.
+                    for k in xrange(len(types)):
+                        # S2 = S2f.S2s
+                        if types[k] == 'S2s':
+                            self.relax.data.res[i].s2[self.run] = self.params[j] * self.params[k]
 
-                    # S2s = S2/S2f
-                    elif types[k] == 'S2':
-                        if self.params[j] == 0.0:
-                            self.relax.data.res[i].s2s[self.run] = 1e99
-                        else:
-                            self.relax.data.res[i].s2s[self.run] = self.params[k] / self.params[j]
+                        # S2s = S2/S2f
+                        elif types[k] == 'S2':
+                            if self.params[j] == 0.0:
+                                self.relax.data.res[i].s2s[self.run] = 1e99
+                            else:
+                                self.relax.data.res[i].s2s[self.run] = self.params[k] / self.params[j]
 
-            # S2s.
-            elif types[j] == 'S2s':
-                self.relax.data.res[i].s2s[self.run] = self.params[j]
+                # S2s.
+                elif types[j] == 'S2s':
+                    self.relax.data.res[i].s2s[self.run] = self.params[j]
 
-            # te.
-            elif types[j] == 'te':
-                self.relax.data.res[i].te[self.run] = self.params[j]
+                # te.
+                elif types[j] == 'te':
+                    self.relax.data.res[i].te[self.run] = self.params[j]
 
-            # tf.
-            elif types[j] == 'tf':
-                self.relax.data.res[i].tf[self.run] = self.params[j]
+                # tf.
+                elif types[j] == 'tf':
+                    self.relax.data.res[i].tf[self.run] = self.params[j]
 
-            # ts.
-            elif types[j] == 'ts':
-                self.relax.data.res[i].ts[self.run] = self.params[j]
+                # ts.
+                elif types[j] == 'ts':
+                    self.relax.data.res[i].ts[self.run] = self.params[j]
 
-            # Rex.
-            elif types[j] == 'Rex':
-                self.relax.data.res[i].rex[self.run] = self.params[j]
+                # Rex.
+                elif types[j] == 'Rex':
+                    self.relax.data.res[i].rex[self.run] = self.params[j]
 
-            # Bond length.
-            elif types[j] == 'r':
-                self.relax.data.res[i].r[self.run] = self.params[j]
+                # Bond length.
+                elif types[j] == 'r':
+                    self.relax.data.res[i].r[self.run] = self.params[j]
 
-            # CSA.
-            elif types[j] == 'CSA':
-                self.relax.data.res[i].csa[self.run] = self.params[j]
+                # CSA.
+                elif types[j] == 'CSA':
+                    self.relax.data.res[i].csa[self.run] = self.params[j]
 
-        # Chi-squared statistic.
-        self.relax.data.res[i].chi2[self.run] = self.func
+            # Chi-squared statistic.
+            self.relax.data.res[i].chi2[self.run] = self.func
 
-        # Iterations.
-        self.relax.data.res[i].iter[self.run] = self.iter_count
+            # Iterations.
+            self.relax.data.res[i].iter[self.run] = self.iter_count
 
-        # Function evaluations.
-        self.relax.data.res[i].f_count[self.run] = self.f_count
+            # Function evaluations.
+            self.relax.data.res[i].f_count[self.run] = self.f_count
 
-        # Gradient evaluations.
-        self.relax.data.res[i].g_count[self.run] = self.g_count
+            # Gradient evaluations.
+            self.relax.data.res[i].g_count[self.run] = self.g_count
 
-        # Hessian evaluations.
-        self.relax.data.res[i].h_count[self.run] = self.h_count
+            # Hessian evaluations.
+            self.relax.data.res[i].h_count[self.run] = self.h_count
 
-        # Warning.
-        self.relax.data.res[i].warning[self.run] = self.warning
+            # Warning.
+            self.relax.data.res[i].warning[self.run] = self.warning
+
+
+    def model_setup(self, run, model, equation, params, scaling_flag):
+        """Function for updating various data structures depending on the model selected."""
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Initialise the data structures (if needed).
+            self.initialise_mf_data(self.relax.data.res[i], run)
+
+            # Model-free models, equations, and parameter types.
+            self.relax.data.res[i].models[run] = model
+            self.relax.data.res[i].equations[run] = equation
+            self.relax.data.res[i].params[run] = params
+
+            # Diagonal scaling.
+            self.relax.data.res[i].scaling[run] = scaling_flag
 
 
     def read_results(self, file_data, run):
