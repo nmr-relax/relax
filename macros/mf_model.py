@@ -203,7 +203,7 @@ class mf_model(generic_functions):
 		for i in range(len(self.types)):
 			# te, tf, and ts.
 			if match('t', self.types[i]):
-				self.scale_vect[i] = 1e-10
+				self.scale_vect[i] = 1e-9
 			elif self.types[i] == 'Rex':
 				self.scale_vect[i] = 1.0 / (2.0 * pi * self.relax.data.frq[0]) ** 2
 			elif self.types[i] == 'Bond length':

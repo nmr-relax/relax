@@ -32,8 +32,6 @@ class generic_trust_region:
 		# Rho.
 		if pred_red == 0.0:
 			self.rho = 1e99
-		elif pred_red < 0.0:
-			self.rho = -act_red / pred_red
 		else:
 			self.rho = act_red / pred_red
 
@@ -45,8 +43,8 @@ class generic_trust_region:
 		self.norm_pk = sqrt(dot(self.pk, self.pk))
 
 		# Rho is close to zero or negative, therefore the trust region is shrunk.
-		if self.rho < 0.25:
-			self.delta = 0.25 * self.norm_pk
+		if self.rho < 0.25 or pred_red < 0.0:
+			self.delta = 0.25 * self.delta
 			if self.print_flag == 2:
 				print "Shrinking the trust region."
 
@@ -65,7 +63,7 @@ class generic_trust_region:
 			print "New trust region: " + `self.delta`
 
 		# Choose the position for the next iteration.
-		if self.rho > self.eta:
+		if self.rho > self.eta and pred_red > 0.0:
 			self.shift_flag = 1
 			if self.print_flag == 2:
 				print "rho > eta, " + `self.rho` + " > " + `self.eta`
