@@ -42,13 +42,13 @@ from init_data import Init_data
 from map import Map
 from minimise import Minimise
 from model_selection import Modsel
+from pdb import PDB
 from write import Write
 
 # Macro classes.
 import echo_data
 import format
 import model
-import pdb
 import read
 import select
 import state
@@ -82,6 +82,7 @@ class Interpreter:
         self._Minimise = Minimise(relax)
         self._Modsel = Modsel(relax)
         self._OpenDX = OpenDX(relax)
+        self._PDB = PDB(relax)
         self._system = system
         self._Write = Write(relax)
 
@@ -89,7 +90,6 @@ class Interpreter:
         self._Echo_data = echo_data.Skin(relax)
         self._Format = format.Skin(relax)
         self._Model = model.Model(relax)
-        self._Pdb = pdb.Skin(relax)
         self._Read = read.Skin(relax)
         self._Select = select.Skin(relax)
         self._State = state.Skin(relax)
@@ -124,13 +124,13 @@ class Interpreter:
         map = self._Map.map
         minimise = self._Minimise.minimise
         model_selection = self._Modsel.model_selection
+        pdb = self._PDB.pdb
         write = self._Write.write
 
         # Place the classes in the local namespace.
         echo_data = self._Echo_data
         format = self._Format
         read = self._Read
-        pdb = self._Pdb
         model = self._Model
         select = self._Select
         state = self._State

@@ -50,6 +50,7 @@ from min import Minimise
 from model_free import Model_free
 from model_selection import Model_selection
 from palmer import Palmer
+from pdb import PDB
 from prompt.interpreter import Interpreter
 from relax_data import Rx_data
 from rw import RW
@@ -93,6 +94,7 @@ class Relax:
         self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
         self.opendx = OpenDX(self)
+        self.pdb = PDB(self)
         self.relax_data = Rx_data(self)
         self.rw = RW(self)
         self.selection = Selection(self)
