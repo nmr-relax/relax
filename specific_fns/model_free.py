@@ -838,16 +838,6 @@ class Model_free(Common_functions):
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
-        # Test if the params data structure exists for all residues.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
-                continue
-
-            # No params.
-            if not hasattr(self.relax.data.res[self.run][i], 'params'):
-                return None
-
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = 0
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -855,9 +845,15 @@ class Model_free(Common_functions):
             if not self.relax.data.res[self.run][i].select:
                 continue
 
+            # No params.
+            if not hasattr(self.relax.data.res[self.run][i], 'params'):
+                continue
+
+            # Local tm.
             if local_tm == 0 and 'tm' in self.relax.data.res[self.run][i].params:
                 local_tm = 1
 
+            # Inconsistencies.
             elif local_tm == 1 and not 'tm' in self.relax.data.res[self.run][i].params:
                 raise RelaxError, "All residues must either have a local tm parameter or not."
 

@@ -110,6 +110,7 @@ class Selection:
         self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
+        no_match = 1
         for self.run in self.runs:
             # Test if the run exists.
             if not self.run in self.relax.data.run_names:
@@ -131,6 +132,13 @@ class Selection:
                 # Select the residue if it is in the list select.
                 if data.num in select:
                     data.select = 1
+
+                # Match flag.
+                no_match = 0
+
+        # No residue matched.
+        if no_match:
+            print "No residues match."
 
 
     def sel_res(self, run=None, num=None, name=None, change_all=None):
@@ -154,6 +162,7 @@ class Selection:
         self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
+        no_match = 1
         for self.run in self.runs:
             # Test if the run exists.
             if not self.run in self.relax.data.run_names:
@@ -187,6 +196,13 @@ class Selection:
 
                 # Select the residue.
                 data.select = 1
+
+                # Match flag.
+                no_match = 0
+
+        # No residue matched.
+        if no_match:
+            print "No residues match."
 
 
     def unsel_all(self, run=None):
@@ -240,6 +256,7 @@ class Selection:
         self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
+        no_match = 1
         for self.run in self.runs:
             # Test if the run exists.
             if not self.run in self.relax.data.run_names:
@@ -261,6 +278,13 @@ class Selection:
                 # Unselect the residue if it is in the list unselect.
                 if data.num in unselect:
                     data.select = 0
+
+                # Match flag.
+                no_match = 0
+
+        # No residue matched.
+        if no_match:
+            print "No residues match."
 
 
     def unsel_res(self, run=None, num=None, name=None, change_all=None):
@@ -284,6 +308,7 @@ class Selection:
         self.runs = self.relax.generic.runs.list_of_runs(run)
 
         # Loop over the runs.
+        no_match = 1
         for self.run in self.runs:
             # Test if the run exists.
             if not self.run in self.relax.data.run_names:
@@ -317,3 +342,10 @@ class Selection:
 
                 # Unselect the residue.
                 data.select = 0
+
+                # Match flag.
+                no_match = 0
+
+        # No residue matched.
+        if no_match:
+            print "No residues match."

@@ -444,6 +444,9 @@ class Rx_data:
         # Residue specific data.
         ########################
 
+        # Store the indecies for which relaxation data has been added.
+        index_list = []
+
         # Loop over the relaxation data.
         for i in xrange(len(file_data)):
             # Convert the data.
@@ -470,6 +473,24 @@ class Rx_data:
 
             # Update all data structures.
             self.update_data_structures(data, value, error)
+
+            # Add the index to the list.
+            index_list.append(index)
+
+
+        # Selection flag.
+        #################
+
+        # Loop over the sequence.
+        for index in xrange(len(self.relax.data.res[self.run])):
+            # Remap the data structure 'self.relax.data.res[self.run][index]'.
+            data = self.relax.data.res[self.run][index]
+
+            # No data loaded for this residue.
+            if index not in index_list:
+                # If no relaxation data exists, unselect the residue.
+                if not hasattr(data, 'relax_data'):
+                    data.select = 0
 
 
     def return_value(self, run, i, data_type):
