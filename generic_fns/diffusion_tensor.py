@@ -195,6 +195,10 @@ class Diffusion_tensor:
         elif len(params) == 6:
             self.anisotropic()
 
+        # Unknown.
+        else:
+            raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
+
 
     def anisotropic(self):
         """Function for setting up fully anisotropic diffusion."""

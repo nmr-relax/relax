@@ -2648,6 +2648,22 @@ class Model_free:
                 break
 
 
+        # Parameter set.
+        ################
+
+        # Initialise.
+        self.param_set = None
+
+        # The parameter set.
+        for i in xrange(len(file_data)):
+            if self.param_set == None:
+                self.param_set = file_data[i][col['param_set']]
+
+            # Test if diff_type is the same for all residues.
+            if self.param_set != file_data[i][col['param_set']]:
+                raise RelaxError, "The parameter set is not the same for all residues."
+
+
         # Simulations.
         ##############
 
@@ -2729,6 +2745,8 @@ class Model_free:
         axial_type = None
         if diff_type == 'oblate' or diff_type == 'prolate':
             axial_type = diff_type
+        if diff_type == 'iso':
+            diff_params = diff_params[0]
         self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
 
 
@@ -2865,7 +2883,6 @@ class Model_free:
 
             # Values.
             if data_set == 'value':
-                # Relaxation data.
                 # S2.
                 try:
                     res.s2 = float(file_data[i][col['s2']])
@@ -2926,42 +2943,23 @@ class Model_free:
                 except ValueError:
                     res.csa = None
 
-                # Chi-squared.
-                try:
-                    res.chi2 = float(file_data[i][col['chi2']])
-                except ValueError:
-                    res.chi2 = None
+                # Minimisation details (global minimisation results).
+                if self.param_set == 'diff' or self.param_set == 'all':
+                    self.relax.data.chi2[self.run] = eval(file_data[i][col['chi2']])
+                    self.relax.data.iter[self.run] = eval(file_data[i][col['iter']])
+                    self.relax.data.f_count[self.run] = eval(file_data[i][col['f_count']])
+                    self.relax.data.g_count[self.run] = eval(file_data[i][col['g_count']])
+                    self.relax.data.h_count[self.run] = eval(file_data[i][col['h_count']])
+                    self.relax.data.warning[self.run] = eval(replace(file_data[i][col['warn']], '_', ' '))
 
-                # Number of iterations.
-                try:
-                    res.iter = int(file_data[i][col['iter']])
-                except ValueError:
-                    res.iter = None
-
-                # Function count.
-                try:
-                    res.f_count = int(file_data[i][col['f_count']])
-                except ValueError:
-                    res.f_count = None
-
-                # Gradient count.
-                try:
-                    res.g_count = int(file_data[i][col['g_count']])
-                except ValueError:
-                    res.g_count = None
-
-                # Hessian count.
-                try:
-                    res.h_count = int(file_data[i][col['h_count']])
-                except ValueError:
-                    res.h_count = None
-
-                # Warning.
-                if file_data[i][col['warn']] == 'None':
-                    res.warning = None
+                # Minimisation details (individual residue results).
                 else:
-                    res.warning = replace(file_data[i][col['warn']], '_', ' ')
-
+                    res.chi2 = eval(file_data[i][col['chi2']])
+                    res.iter = eval(file_data[i][col['iter']])
+                    res.f_count = eval(file_data[i][col['f_count']])
+                    res.g_count = eval(file_data[i][col['g_count']])
+                    res.h_count = eval(file_data[i][col['h_count']])
+                    res.warning = eval(replace(file_data[i][col['warn']], '_', ' '))
 
             # Errors.
             if data_set == 'error':
@@ -3037,13 +3035,17 @@ class Model_free:
                     setattr(res, sim_object_name, [])
 
                 # Loop over all the minimisation object names.
-                #if self.param_set != 'all':
                 for object_name in min_names:
                     # Name for the simulation object.
                     sim_object_name = object_name + '_sim'
 
                     # Create the simulation object.
-                    setattr(res, sim_object_name, [])
+                    if self.param_set == 'diff' or self.param_set == 'all':
+                        setattr(self.relax.data, sim_object_name, {})
+                        object = getattr(self.relax.data, sim_object_name)
+                        object[self.run] = []
+                    else:
+                        setattr(res, sim_object_name, [])
 
             # Simulations.
             if search('sim', data_set):
@@ -3107,41 +3109,23 @@ class Model_free:
                 except ValueError:
                     res.csa_sim.append(None)
 
-                # Chi-squared.
-                try:
-                    res.chi2_sim.append(float(file_data[i][col['chi2']]))
-                except ValueError:
-                    res.chi2_sim.append(None)
+                # Minimisation details (global minimisation results).
+                if self.param_set == 'diff' or self.param_set == 'all':
+                    self.relax.data.chi2_sim[self.run].append(eval(file_data[i][col['chi2']]))
+                    self.relax.data.iter_sim[self.run].append(eval(file_data[i][col['iter']]))
+                    self.relax.data.f_count_sim[self.run].append(eval(file_data[i][col['f_count']]))
+                    self.relax.data.g_count_sim[self.run].append(eval(file_data[i][col['g_count']]))
+                    self.relax.data.h_count_sim[self.run].append(eval(file_data[i][col['h_count']]))
+                    self.relax.data.warning_sim[self.run].append(eval(replace(file_data[i][col['warn']], '_', ' ')))
 
-                # Number of iterations.
-                try:
-                    res.iter_sim.append(int(file_data[i][col['iter']]))
-                except ValueError:
-                    res.iter_sim.append(None)
-
-                # Function count.
-                try:
-                    res.f_count_sim.append(int(file_data[i][col['f_count']]))
-                except ValueError:
-                    res.f_count_sim.append(None)
-
-                # Gradient count.
-                try:
-                    res.g_count_sim.append(int(file_data[i][col['g_count']]))
-                except ValueError:
-                    res.g_count_sim.append(None)
-
-                # Hessian count.
-                try:
-                    res.h_count_sim.append(int(file_data[i][col['h_count']]))
-                except ValueError:
-                    res.h_count_sim.append(None)
-
-                # Warning.
-                if file_data[i][col['warn']] == 'None':
-                    res.warning_sim.append(None)
+                # Minimisation details (individual residue results).
                 else:
-                    res.warning_sim.append(replace(file_data[i][col['warn']], '_', ' '))
+                    res.chi2_sim.append(eval(file_data[i][col['chi2']]))
+                    res.iter_sim.append(eval(file_data[i][col['iter']]))
+                    res.f_count_sim.append(eval(file_data[i][col['f_count']]))
+                    res.g_count_sim.append(eval(file_data[i][col['g_count']]))
+                    res.h_count_sim.append(eval(file_data[i][col['h_count']]))
+                    res.warning_sim.append(eval(replace(file_data[i][col['warn']], '_', ' ')))
 
 
     def return_data(self, run, i):
