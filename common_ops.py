@@ -1,3 +1,4 @@
+from os import system
 from re import match
 from string import split
 import sys
@@ -71,7 +72,7 @@ class common_operations:
 					mfdata.write(' %-3s\n' % '0')
 
 
-	def create_mfin(self, sel='none', algorithm='fix', diffusion_search='none', sims='n', sim_type='pred'):
+	def create_mfin(self):
 		"Create the Modelfree input file mfin"
 
 		mfin = self.mf.mfin
@@ -79,16 +80,16 @@ class common_operations:
 		mfin.write("optimization    tval\n\n")
 		mfin.write("seed            0\n\n")
 		mfin.write("search          grid\n\n")
-		mfin.write("diffusion       " + self.mf.data.usr_param.diff + " " + diffusion_search + "\n\n")
-		mfin.write("algorithm       " + algorithm + "\n\n")
-		if match('y', sims):
-			mfin.write("simulations     " + sim_type + "    " + self.mf.data.usr_param.no_sim)
-			mfin.write("       " + self.mf.data.usr_param.trim + "\n\n")
-		elif match('n', sims):
+		mfin.write("diffusion       " + self.mf.data.mfin.diff + " " + self.mf.data.mfin.diff_search + "\n\n")
+		mfin.write("algorithm       " + self.mf.data.mfin.algorithm + "\n\n")
+		if match('y', self.mf.data.mfin.sims):
+			mfin.write("simulations     " + self.mf.data.mfin.sim_type + "    " + self.mf.data.mfin.num_sim)
+			mfin.write("       " + self.mf.data.mfin.trim + "\n\n")
+		elif match('n', self.mf.data.mfin.sims):
 			mfin.write("simulations     none\n\n")
-		mfin.write("selection       " + sel + "\n\n")
-		mfin.write("sim_algorithm   " + algorithm + "\n\n")
-		mfin.write("fields          " + `len(self.mf.data.nmr_frq)`)
+		mfin.write("selection       " + self.mf.data.mfin.selection + "\n\n")
+		mfin.write("sim_algorithm   " + self.mf.data.mfin.algorithm + "\n\n")
+		mfin.write("fields          " + self.mf.data.mfin.num_fields)
 		for frq in range(len(self.mf.data.nmr_frq)):
 			mfin.write("  " + self.mf.data.nmr_frq[frq][0])
 		mfin.write("\n")
@@ -214,14 +215,14 @@ class common_operations:
 	def create_run(self, dir):
 		"Create the file 'run' to execute the model-free run"
 
-		text = "modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out"
+		self.mf.run.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
 		if self.mf.data.usr_param.diff == 'axial':
 			# Copy the pdb file to the model directory so there are no problems with the *.rotate
 			# file already existing.
-			copy(self.mf.data.usr_param.pdb_full, dir)
-			text = text + " -s " + self.mf.data.usr_param.pdb_file
-		text = text + "\n"
-		self.mf.run.write(text)
+			cmd = 'cp ' + self.mf.data.usr_param.pdb_full + ' ' + dir
+			system(cmd)
+			self.mf.run.write(" -s " + self.mf.data.usr_param.pdb_file)
+		self.mf.run.write("\n")
 
 
 	def extract_input(self, input):
@@ -312,7 +313,7 @@ class common_operations:
 			results['te_err']  = ''
 			results['rex']     = ''
 			results['rex_err'] = ''
-			results['sse']     = data['sse']
+			results['chi2']     = data['chi2']
 		else:
 			results['s2']      = data['s2']
 			results['s2_err']  = data['s2_err']
@@ -324,57 +325,15 @@ class common_operations:
 			results['te_err']  = data['te_err']
 			results['rex']     = data['rex']
 			results['rex_err'] = data['rex_err']
-			results['sse']     = data['sse']
+			results['chi2']     = data['chi2']
 		return results
 
 
 	def final_run(self):
-		"""Model selection and the creation of the final run.
-		
-		Monte Carlo simulations are used to find errors, and the diffusion tensor is unoptimized.
-		Files are placed in the directory 'final'.
-		"""
+		"Creation of the final run.  Files are placed in the directory 'final'."
 
 		self.mf.file_ops.open_mf_files(dir='final')
-		self.create_mfin(sims='y')
-
-		self.create_run(dir='final')
-		for res in range(len(self.mf.data.relax_data[0])):
-			if match('0', self.mf.data.results[res]['model']):
-				model = 'none'
-			elif match('2+3', self.mf.data.results[res]['model']):
-				model = 'none'
-			elif match('4+5', self.mf.data.results[res]['model']):
-				model = 'none'
-			elif match('^1', self.mf.data.results[res]['model']):
-				model = "m1"
-			else:
-				model = 'm' + self.mf.data.results[res]['model']
-			self.set_run_flags(model)
-			# Mfdata.
-			if match('none', model):
-				self.create_mfdata(res, flag='0')
-			else:
-				self.create_mfdata(res, flag='1')
-			# Mfmodel.
-			self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-			# Mfpar.
-			self.create_mfpar(res)
-		self.mf.file_ops.close_mf_files(dir='final')
-
-
-	def final_run_optimized(self):
-		"""The final optimization run.
-		
-		Create the modelfree4 files for the optimization of the diffusion tensor together with
-		the model free parameters for the selected models.
-		"""
-
-		self.mf.file_ops.open_mf_files(dir='final')
-		if match('isotropic', self.mf.data.usr_param.diff):
-			self.create_mfin(algorithm='brent', diffusion_search='grid')
-		elif match('axial', self.mf.data.usr_param.diff):
-			self.create_mfin(algorithm='powell')
+		self.create_mfin()
 
 		self.create_run(dir='final')
 		for res in range(len(self.mf.data.relax_data[0])):
@@ -404,22 +363,29 @@ class common_operations:
 	def goto_stage(self):
 		if match('1', self.mf.data.stage):
 			print "\n[ Stage 1 ]\n"
-			self.initial_runs()
+			self.set_vars_stage_initial()
+			self.stage_initial()
 			print "\n[ End of stage 1 ]\n\n"
 
 		if match('^2', self.mf.data.stage):
 			print "\n[ Stage 2 ]\n"
+			self.set_vars_stage_selection()
 			self.mf.file_ops.mkdir('final')
-			self.stage2()
-			if match('a$', self.mf.data.stage):
+			self.stage_selection()
+			if match('2a', self.mf.data.stage):
 				self.final_run()
-			if match('b$', self.mf.data.stage):
-				self.final_run_optimized()
+			if match('2b', self.mf.data.stage):
+				if match('isotropic', self.mf.data.mfin.diff):
+					self.mf.data.mfin.algorithm = 'brent'
+					self.mf.data.mfin.diff_search = 'grid'
+				elif match('axial', self.mf.data.mfin.diff):
+					self.mf.data.mfin.algorithm = 'powell'
+				self.final_run()
 			print "\n[ End of stage 2 ]\n\n"
 
 		if match('3', self.mf.data.stage):
 			print "\n[ Stage 3 ]\n"
-			self.stage3()
+			self.stage_final()
 			print "\n[ End of stage 3 ]\n\n"
 
 
@@ -428,7 +394,7 @@ class common_operations:
 
 		file = open(file_name, 'w')
 
-		if match('SSE', type):
+		if match('Chi2', type):
 			file.write(self.grace_header(type + ' values', subtitle, 'Residue Number', type, 'xy'))
 		else:
 			file.write(self.grace_header(type + ' values', subtitle, 'Residue Number', type, 'xydy'))
@@ -454,9 +420,9 @@ class common_operations:
 				file.write(self.mf.data.results[res]['res_num'] + " ")
 				file.write(self.mf.data.results[res]['rex'] + " ")
 				file.write(self.mf.data.results[res]['rex_err'] + "\n")
-			elif match('SSE', type):
+			elif match('Chi2', type):
 				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['sse']` + "\n")
+				file.write(`self.mf.data.results[res]['chi2']` + "\n")
 		file.write("&\n")
 		file.close()
 
@@ -468,17 +434,17 @@ class common_operations:
 		text = text + "@with g0\n"
 		if match('Residue Number', x):
 			text = text + "@    world xmax 165\n"
-		if match('R1', x) and match('SSE', y):
+		if match('R1', x) and match('Chi2', y):
 			text = text + "@    world xmin 0.8\n"
 			text = text + "@    world xmax 2\n"
 			text = text + "@    world ymin 0\n"
 			text = text + "@    world ymax 2000\n"
-		if match('R2', x) and match('SSE', y):
+		if match('R2', x) and match('Chi2', y):
 			text = text + "@    world xmin 5\n"
 			text = text + "@    world xmax 45\n"
 			text = text + "@    world ymin 0\n"
 			text = text + "@    world ymax 2000\n"
-		if match('NOE', x) and match('SSE', y):
+		if match('NOE', x) and match('Chi2', y):
 			text = text + "@    world xmin 0\n"
 			text = text + "@    world xmax 1\n"
 			text = text + "@    world ymin 0\n"
@@ -489,11 +455,11 @@ class common_operations:
 		text = text + "@    xaxis  label \"" + x + "\"\n"
 		if match('Residue Number', x):
 			text = text + "@    xaxis  tick major 10\n"
-		if match('R1', x) and match('SSE', y):
+		if match('R1', x) and match('Chi2', y):
 			text = text + "@    xaxis  tick major 0.2\n"
-		if match('R2', x) and match('SSE', y):
+		if match('R2', x) and match('Chi2', y):
 			text = text + "@    xaxis  tick major 5\n"
-		if match('NOE', x) and match('SSE', y):
+		if match('NOE', x) and match('Chi2', y):
 			text = text + "@    xaxis  tick major 0.1\n"
 		text = text + "@    xaxis  tick major size 0.480000\n"
 		text = text + "@    xaxis  tick major linewidth 0.5\n"
@@ -501,11 +467,11 @@ class common_operations:
 		text = text + "@    xaxis  tick minor size 0.240000\n"
 		text = text + "@    xaxis  ticklabel char size 0.790000\n"
 		text = text + "@    yaxis  label \"" + y + "\"\n"
-		if match('R1', x) and match('SSE', y):
+		if match('R1', x) and match('Chi2', y):
 			text = text + "@    yaxis  tick major 200\n"
-		if match('R2', x) and match('SSE', y):
+		if match('R2', x) and match('Chi2', y):
 			text = text + "@    yaxis  tick major 200\n"
-		if match('NOE', x) and match('SSE', y):
+		if match('NOE', x) and match('Chi2', y):
 			text = text + "@    yaxis  tick major 200\n"
 		text = text + "@    yaxis  tick major size 0.480000\n"
 		text = text + "@    yaxis  tick major linewidth 0.5\n"
@@ -560,70 +526,19 @@ class common_operations:
 			self.mf.log.write('%-10s\n' % ( "steps = " + mdx[param]['steps'] ))
 
 
-	def print_data(self, ftests='n'):
-		"Print the results into the results file."
-
-		file = open('data_all', 'w')
-
-		sys.stdout.write("[")
-		for res in range(len(self.mf.data.results)):
-			sys.stdout.write("-")
-			file.write("<<< Residue " + self.mf.data.results[res]['res_num'])
-			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
-			file.write('%-10s' % '')
-			file.write('%-8s%-8s%-8s%-8s' % ( 'S2', 'S2_err', 'S2f', 'S2f_err' ))
-			file.write('%-8s%-8s' % ( 'S2s', 'S2s_err' ))
-			file.write('%-10s%-10s%-8s%-8s' % ( 'te', 'te_err', 'Rex', 'Rex_err' ))
-			file.write('%-10s%-10s%-10s' % ( 'SSE', 'SSElim', 'SSEtest' ))
-			file.write('%-10s%-10s\n' % ( 'LargeSSE', 'ZeroSSE' ))
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-10s' % run)
-					file.write('%-8s' % self.mf.data.data[run][res]['s2'])
-					file.write('%-8s' % self.mf.data.data[run][res]['s2_err'])
-					file.write('%-8s' % self.mf.data.data[run][res]['s2f'])
-					file.write('%-8s' % self.mf.data.data[run][res]['s2f_err'])
-					file.write('%-8s' % self.mf.data.data[run][res]['s2s'])
-					file.write('%-8s' % self.mf.data.data[run][res]['s2s_err'])
-					file.write('%-10s' % self.mf.data.data[run][res]['te'])
-					file.write('%-10s' % self.mf.data.data[run][res]['te_err'])
-					file.write('%-8s' % self.mf.data.data[run][res]['rex'])
-					file.write('%-8s' % self.mf.data.data[run][res]['rex_err'])
-					file.write('%-10s' % self.mf.data.data[run][res]['sse'])
-					file.write('%-10s' % self.mf.data.data[run][res]['sse_lim'])
-					file.write('%-10s' % self.mf.data.data[run][res]['sse_test'])
-					file.write('%-10s' % self.mf.data.data[run][res]['large_sse'])
-					file.write('%-10s\n' % self.mf.data.data[run][res]['zero_sse'])
-			if match('y', ftests):
-				file.write('%-10s' % '')
-				file.write('%-18s' % 'F-stat')
-				file.write('%-18s' % 'F-stat limit')
-				file.write('%-18s\n' % 'F-test result')
-				for run in self.mf.data.runs:
-					if match('^f', run):
-						file.write('%-10s' % run)
-						file.write('%-18s' % self.mf.data.data[run][res]['fstat'])
-						file.write('%-18s' % self.mf.data.data[run][res]['fstat_lim'])
-						file.write('%-18s\n' % self.mf.data.data[run][res]['ftest'])
-			file.write('\n')
-		sys.stdout.write("]\n")
-
-		file.close()
-
-
 	def print_results(self):
 		"Print the results into the results file."
-		
+
 		file = open('results', 'w')
 
 		file.write('%-6s%-6s%-13s%-13s%-13s' % ( 'ResNo', 'Model', '    S2', '    S2f', '    S2s' ))
-		file.write('%-19s%-13s%-10s\n' % ( '       te', '    Rex', '    SSE' ))
+		file.write('%-19s%-13s%-10s\n' % ( '       te', '    Rex', '    Chi2' ))
 		sys.stdout.write("[")
 		for res in range(len(self.mf.data.results)):
 			sys.stdout.write("-")
 			file.write('%-6s' % self.mf.data.results[res]['res_num'])
 			file.write('%-6s' % self.mf.data.results[res]['model'])
-			
+
 			if match('[1,2,3,4,5]', self.mf.data.results[res]['model']):
 				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] ))
 			else:
@@ -641,7 +556,7 @@ class common_operations:
 				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] ))
 			else:
 				file.write('%13s' % '')
-			file.write('%10s\n' % self.mf.data.results[res]['sse'])
+			file.write('%10s\n' % self.mf.data.results[res]['chi2'])
 		sys.stdout.write("]\n")
 
 		file.close()
@@ -649,7 +564,7 @@ class common_operations:
 
 	def set_run_flags(self, run):
 		"Reset, and then set the flags in self.mf.data.usr_param.md1 and md2."
-		
+
 		self.mf.data.usr_param.md1['sf2']['flag'] = '0'
 		self.mf.data.usr_param.md1['ss2']['flag'] = '0'
 		self.mf.data.usr_param.md1['te']['flag']  = '0'
@@ -717,7 +632,77 @@ class common_operations:
 			self.mf.data.usr_param.md2['rex']['flag'] = '1'
 
 
-	def stage3(self):
+	def stage_initial(self):
+		"Creation of the files for the Modelfree calculations for the models in self.mf.data.runs."
+
+		for run in self.mf.data.runs:
+			if match('^m', run):
+				print "Creating input files for model " + run
+				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
+			elif match('^f', run):
+				print "Creating input files for the F-test " + run
+				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
+			else:
+				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
+				sys.exit()
+			self.mf.file_ops.mkdir(dir=run)
+			self.mf.file_ops.open_mf_files(dir=run)
+			self.set_run_flags(run)
+			self.log_params('M1', self.mf.data.usr_param.md1)
+			self.log_params('M2', self.mf.data.usr_param.md2)
+			if match('^m', run):
+				self.mf.data.mfin.selection = 'none'
+				self.create_mfin()
+			elif match('^f', run):
+				self.mf.data.mfin.selection = 'ftest'
+				self.create_mfin()
+			self.create_run(dir=run)
+			for res in range(len(self.mf.data.relax_data[0])):
+				# Mfdata.
+				self.create_mfdata(res)
+				# Mfmodel.
+				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+				if match('^f', run):
+					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
+				# Mfpar.
+				self.create_mfpar(res)
+			self.mf.file_ops.close_mf_files(dir=run)
+
+
+	def stage_selection(self):
+		self.mf.file_ops.mkdir('grace')
+
+		print "\n[ Model-free data extraction ]\n"
+		for run in self.mf.data.runs:
+			mfout = self.mf.file_ops.read_file(run + '/mfout')
+			mfout_lines = mfout.readlines()
+			mfout.close()
+			print "Extracting model-free data from " + run + "/mfout."
+			num_res = len(self.mf.data.relax_data[0])
+			if match('^m', run):
+				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, float(self.mf.data.usr_param.large_chi2), ftest='n')
+			if match('^f', run):
+				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, float(self.mf.data.usr_param.large_chi2), ftest='y')
+
+ 		print "\n[ " + self.mf.data.usr_param.method + " model selection ]\n"
+		self.model_selection()
+
+		print "\n[ Printing results ]\n"
+		self.print_results()
+
+		print "\n[ Placing data structures into \"data_all\" ]\n"
+		self.print_data()
+
+		print "\n[ Grace file creation ]\n"
+		self.grace('grace/S2.agr', 'S2', subtitle="After model selection, unoptimized")
+		self.grace('grace/S2f.agr', 'S2f', subtitle="After model selection, unoptimized")
+		self.grace('grace/S2s.agr', 'S2s', subtitle="After model selection, unoptimized")
+		self.grace('grace/te.agr', 'te', subtitle="After model selection, unoptimized")
+		self.grace('grace/Rex.agr', 'Rex', subtitle="After model selection, unoptimized")
+		self.grace('grace/Chi2.agr', 'Chi2', subtitle="After model selection, unoptimized")
+
+
+	def stage_final(self):
 		print "Stage 3 not implemented yet.\n"
 		sys.exit()
 

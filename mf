@@ -2,7 +2,7 @@
 # /data03/dauvergne/bin/python
 
 
-# modelfree.py   v0.1            31 October 2001        Edward d'Auvergne
+# mf v0.2            15 December 2001        Edward d'Auvergne
 #
 # Program to process all model-free input and output.
 #
@@ -14,7 +14,7 @@
 #	R1            R1.600.out
 #	R2            R2.600.out
 #	NOE           noe.600.out
-#	
+#
 #	NMR_frq_label 500
 #	NMR_frq       500.241
 #	R1            R1.500.out
@@ -43,7 +43,7 @@ class mf:
 	def __init__(self):
 		"The top level class."
 
-		self.data = data()
+		self.data = data(self)
 		self.data.usr_param = usr_param()
 		self.file_ops = file_ops(self)
 		self.star = star()
@@ -69,7 +69,7 @@ class mf:
 			print "the file 'usr_param.py' which should be in the working directory."
 			print "Quitting script!"
 			sys.exit()
-			
+
 
 
 	def print_header(self):
@@ -77,10 +77,10 @@ class mf:
 
 		print """
 
-		              Modelfree.py v0.1
+		                      mf v0.2
 
 		Program to process all model-free input and output.
-		
+
 		"""
 
 

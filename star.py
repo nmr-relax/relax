@@ -7,14 +7,14 @@ class star:
 		"Class to extract model-free data from the STAR formatted mfout file."
 
 
-	def extract(self, mfout, num_res, sse_lim='0.90', ftest_lim='0.80', large_sse=20, ftest='n'):
+	def extract(self, mfout, num_res, chi2_lim='0.90', ftest_lim='0.80', large_chi2=20, ftest='n'):
 		"Extract the data from the mfout file and Return it as a 2D data structure."
 
 		self.mfout = mfout
 		self.num_res = num_res
-		self.sse_lim = sse_lim
+		self.chi2_lim = chi2_lim
 		self.ftest_lim = ftest_lim
-		self.large_sse = large_sse
+		self.large_chi2 = large_chi2
 
 		self.data = []
 		for i in range(self.num_res):
@@ -38,7 +38,7 @@ class star:
 			self.get_s2s()
 			self.get_te()
 			self.get_rex()
-			self.get_sse()
+			self.get_chi2()
 
 		if match('y', ftest):
 			# Jump to first line of data.
@@ -124,36 +124,36 @@ class star:
 			self.data[i]['s2s_err'] = self.row[j][5]
 
 
-	def get_sse(self):
+	def get_chi2(self):
 		self.line_num = self.line_num + self.num_res + 8
 		for i in range(self.num_res):
 			self.row = [[]]
 			self.row[0] = split(self.mfout[self.line_num])
-			percentile = int(float(self.sse_lim) * 100 / 5)
+			percentile = int(float(self.chi2_lim) * 100 / 5)
 			self.line_num = self.line_num + percentile
 			self.row.append(split(self.mfout[self.line_num]))
 			lines_next_res = 2 + ( 20 - percentile )
 			self.line_num = self.line_num + lines_next_res
-			self.data[i]['sse'] = float(self.row[0][1])
-			self.data[i]['sse_lim'] = float(self.row[1][1])
+			self.data[i]['chi2'] = float(self.row[0][1])
+			self.data[i]['chi2_lim'] = float(self.row[1][1])
 
-			# Chi-squared test.
-			if self.data[i]['sse'] <= self.data[i]['sse_lim']:
-				self.data[i]['sse_test'] = 1
+			# Chi squared test.
+			if self.data[i]['chi2'] <= self.data[i]['chi2_lim']:
+				self.data[i]['chi2_test'] = 1
 			else:
-				self.data[i]['sse_test'] = 0
+				self.data[i]['chi2_test'] = 0
 
-			# Large SSE test.
-			if self.data[i]['sse'] >= self.large_sse:
-				self.data[i]['large_sse'] = 1
+			# Large chi squared test.
+			if self.data[i]['chi2'] >= self.large_chi2:
+				self.data[i]['large_chi2'] = 1
 			else:
-				self.data[i]['large_sse'] = 0
+				self.data[i]['large_chi2'] = 0
 
-			# Zero SSE test.
-			if self.data[i]['sse'] == 0:
-				self.data[i]['zero_sse'] = 1
+			# Zero chi squared test.
+			if self.data[i]['chi2'] == 0:
+				self.data[i]['zero_chi2'] = 1
 			else:
-				self.data[i]['zero_sse'] = 0
+				self.data[i]['zero_chi2'] = 0
 
 
 	def get_te(self):

@@ -27,41 +27,6 @@ class farrow(common_operations):
 		self.goto_stage()
 
 
-	def initial_runs(self):
-		"Creation of the files for the Modelfree calculations for models 1 to 5 and the F-tests."
-		
-		for run in self.mf.data.runs:
-			if match('^m', run):
-				print "Creating input files for model " + run
-				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
-			elif match('^f', run):
-				print "Creating input files for the F-test " + run
-				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
-			else:
-				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
-				sys.exit()
-			self.mf.file_ops.mkdir(dir=run)
-			self.mf.file_ops.open_mf_files(dir=run)
-			self.set_run_flags(run)
-			self.log_params('M1', self.mf.data.usr_param.md1)
-			self.log_params('M2', self.mf.data.usr_param.md2)
-			if match('^m', run):
-				self.create_mfin(sims='y', sim_type='pred')
-			elif match('^f', run):
-				self.create_mfin(sel='ftest', sims='y', sim_type='pred')
-			self.create_run(dir=run)
-			for res in range(len(self.mf.data.relax_data[0])):
-				# Mfdata.
-				self.create_mfdata(res)
-				# Mfmodel.
-				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-				if match('^f', run):
-					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
-				# Mfpar.
-				self.create_mfpar(res)
-			self.mf.file_ops.close_mf_files(dir=run)
-
-
 	def model_selection(self):
 		"Farrow's model selection."
 
@@ -73,43 +38,43 @@ class farrow(common_operations):
 			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
 
 			# Model 1 test.
-			if data['m1'][res]['sse_test'] == 1:
+			if data['m1'][res]['chi2_test'] == 1:
 				self.mf.log.write('%-12s' % '[Model 1]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='1')
 
 			# Test if both model 2 and 3 fit!!! (Should not occur)
-			elif data['m2'][res]['sse_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1 \
-				and data['m3'][res]['sse_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
+			elif data['m2'][res]['chi2_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1 \
+				and data['m3'][res]['chi2_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
 				self.mf.log.write('%-12s' % '[Model 2 and 3]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='2+3')
 
 			# Model 2 test.
-			elif data['m2'][res]['sse_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1:
+			elif data['m2'][res]['chi2_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1:
 				self.mf.log.write('%-12s' % '[Model 2]')
 				self.mf.data.results[res] = self.fill_results(data['m2'][res], model='2')
 
 			# Model 3 test.
-			elif data['m3'][res]['sse_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
+			elif data['m3'][res]['chi2_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
 				self.mf.log.write('%-12s' % '[Model 3]')
 				self.mf.data.results[res] = self.fill_results(data['m3'][res], model='3')
 
-			# Large SSE test for model 1.
-			elif data['m1'][res]['large_sse'] == 0:
+			# Large chi squared test for model 1.
+			elif data['m1'][res]['large_chi2'] == 0:
 				self.mf.log.write('%-12s' % '[Model 1*]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='1')
 
 			# Test if both model 4 and 5 fit!!! (Should not occur)
-			elif data['m4'][res]['zero_sse'] == 1 and data['m5'][res]['zero_sse'] == 1:
+			elif data['m4'][res]['zero_chi2'] == 1 and data['m5'][res]['zero_chi2'] == 1:
 				self.mf.log.write('%-12s' % '[Model 4 and 5]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='4+5')
-				
+
 			# Model 4 test.
-			elif data['m4'][res]['zero_sse'] == 1:
+			elif data['m4'][res]['zero_chi2'] == 1:
 				self.mf.log.write('%-12s' % '[Model 4]')
 				self.mf.data.results[res] = self.fill_results(data['m4'][res], model='4')
 
 			# Model 5 test.
-			elif data['m5'][res]['zero_sse'] == 1:
+			elif data['m5'][res]['zero_chi2'] == 1:
 				self.mf.log.write('%-12s' % '[Model 5]')
 				self.mf.data.results[res] = self.fill_results(data['m5'][res], model='5')
 
@@ -117,37 +82,3 @@ class farrow(common_operations):
 			else:
 				self.mf.log.write('%-12s' % '[Model 0]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='0')
-
-
-	def stage2(self):
-		self.mf.file_ops.mkdir('grace')
-
-		print "\n[ Model-free data extraction ]\n"
-		for run in self.mf.data.runs:
-			mfout = self.mf.file_ops.read_file(run + '/mfout')
-			mfout_lines = mfout.readlines()
-			mfout.close()
-			print "Extracting model-free data from " + run + "/mfout."
-			num_res = len(self.mf.data.relax_data[0])
-			if match('^m', run):
-				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.sse_lim, self.mf.data.usr_param.ftest_lim, float(self.mf.data.usr_param.large_sse), ftest='n')
-			if match('^f', run):
-				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.sse_lim, self.mf.data.usr_param.ftest_lim, float(self.mf.data.usr_param.large_sse), ftest='y')
-
-		print "\n[ Farrow's model selection ]\n"
-		self.mf.log.write("Farrow's model selection.\n\n")
-		self.model_selection()
-
-		print "\n[ Printing results ]\n"
-		self.print_results()
-
-		print "\n[ Placing data structures into \"data_all\" ]\n"
-		self.print_data(ftests='y')
-
-		print "\n[ Grace file creation ]\n"
-		self.grace('grace/S2.agr', 'S2', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2f.agr', 'S2f', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2s.agr', 'S2s', subtitle="After model selection, unoptimized")
-		self.grace('grace/te.agr', 'te', subtitle="After model selection, unoptimized")
-		self.grace('grace/Rex.agr', 'Rex', subtitle="After model selection, unoptimized")
-		self.grace('grace/SSE.agr', 'SSE', subtitle="After model selection, unoptimized")

@@ -10,6 +10,7 @@
 #		model-free parameters.
 #	Stage 3:  Extraction of the data.
 
+import sys
 from re import match
 
 from common_ops import common_operations
@@ -21,29 +22,100 @@ class bootstrap(common_operations):
 
 		self.mf = mf
 
-		print "Model-free analysis based on bootstrap model selection."
+		print "Model-free analysis based on bootstrap criteria model selection."
 		self.initialize()
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+		self.mf.data.mfin.default_data()
 		self.goto_stage()
 
-	def initial_runs(self):
-		"Creation of the files for the Modelfree calculations for models 1 to 5."
+
+	def model_selection(self):
+		print "\n[ Bootstrap criteria model selection ]\n"
+
+
+	def print_data(self):
+		"Print all the data into the 'data_all' file."
+
+		file = open('data_all', 'w')
+
+		sys.stdout.write("[")
+		for res in range(len(self.mf.data.results)):
+			sys.stdout.write("-")
+			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
+			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
+			file.write('%-20s' % '')
+			file.write('%-17s' % 'Model 1')
+			file.write('%-17s' % 'Model 2')
+			file.write('%-17s' % 'Model 3')
+			file.write('%-17s' % 'Model 4')
+			file.write('%-17s' % 'Model 5')
+
+			# S2.
+			file.write('\n%-20s' % 'S2')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['s2'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['s2_err'])
+
+			# S2f.
+			file.write('\n%-20s' % 'S2f')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['s2f'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['s2f_err'])
+
+			# S2s.
+			file.write('\n%-20s' % 'S2s')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['s2s'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['s2s_err'])
+
+			# te.
+			file.write('\n%-20s' % 'te')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['te'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['te_err'])
+
+			# Rex.
+			file.write('\n%-20s' % 'Rex')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['rex'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['rex_err'])
+
+			# Chi2.
+			file.write('\n%-20s' % 'Chi2')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%-17s' % self.mf.data.data[run][res]['chi2'])
+
+			# Bootstrap criteria.
+			file.write('\n%-20s' % 'Bootstrap criteria')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%-17s' % self.mf.data.data[run][res]['bootstrap'])
+
+		file.write('\n')
+		sys.stdout.write("]\n")
+		file.close()
+
+
+	def set_vars_stage_initial(self):
+		"Set the options for the initial runs."
 		
-		for run in self.mf.data.runs:
-			print "Creating input files for model " + run
-			self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
-			self.mf.file_ops.mkdir(dir=run)
-			self.mf.file_ops.open_mf_files(dir=run)
-			self.set_run_flags(run)
-			self.log_params('M1', self.mf.data.usr_param.md1)
-			self.log_params('M2', self.mf.data.usr_param.md2)
-			self.create_mfin(sims='y', sim_type='expr')
-			self.create_run(dir=run)
-			for res in range(len(self.mf.data.relax_data[0])):
-				# Mfdata.
-				self.create_mfdata(res)
-				# Mfmodel.
-				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-				# Mfpar.
-				self.create_mfpar(res)
-			self.mf.file_ops.close_mf_files(dir=run)
+		self.mf.data.mfin.sims = 'y'
+		self.mf.data.mfin.sim_type = 'expr'
+
+
+	def set_vars_stage_selection(self):
+		"Set the options for the final run."
+		
+		self.mf.data.mfin.sims = 'y'
+		self.mf.data.mfin.sim_type = 'pred'

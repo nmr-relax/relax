@@ -1,6 +1,6 @@
-# usr_param.py          v0.1                  10 November 2001        Edward d'Auvergne
+# usr_param.py v0.2                  15 December 2001        Edward d'Auvergne
 #
-# Class containing all the user specified parameters.  Used by the program Modelfree.
+# Class containing all the user specified parameters.  Used by the program mf.
 # Make sure the version numbers between the program and this class are identical.
 
 
@@ -17,27 +17,42 @@ class usr_param:
 
 	def init_method_param(self):
 		"""Model-free analysis method info.
-		
-		self.method can be set to the following strings:
-			Palmer - The method given by Mandel et al., 1995.
-			AIC - method of model-free analysis based on model selection using the
-				Akaike Information Criteria.
-			BIC - method of model-free analysis based on model selection using the
-				Schwartz Information Criteria.
+
+		self.method can be set to the following:
+
+		AIC:	Method of modelfree analysis based on model selection using the Akaike Information
+			Criteria.
+
+		AICc:	Method of modelfree analysis based on model selection using the Akaike Information
+			Criteria corrected for finit sample size.
+
+		BIC:	Method of modelfree analysis based on model selection using the Schwartz
+			Information Criteria.
+
+		Bootstrap:	Modelfree analysis based on model selection using bootstrap methods to
+				estimate the overall discrepency.
+
+		Farrow:	The method given by Farrow et al., 1994.
+
+		Palmer:	The method given by Mandel et al., 1995.
+
+		True:	Calculate the exact overall discrepency (real model-free parameters
+			must be known).
 		"""
-		self.method = 'BIC'
+
+		self.method = 'Bootstrap'
 
 		# The following three values are only used in Palmer's method and won't affect the others.
-		self.sse_lim = '0.90'       # Set the SSE limit (1 - alpha critical value).
-		self.ftest_lim = '0.80'     # Set the F-test limit (1 - alpha critical value).
-		self.large_sse = '20'        # Set the SSE limit for when much greater than the SSE limit.
+		self.chi2_lim = '0.90'      # Set the chi squared cutoff (1 - alpha critical value).
+		self.ftest_lim = '0.80'     # Set the F-test cutoff (1 - alpha critical value).
+		self.large_chi2 = '20'      # Set the maximum chi squared value.
 
-		
+
 	def init_run_param(self):
 		"Run file parameters"
-		
+
 		self.pdb_file = 'Ap4Aase_new_3.pdb'
-		self.pdb_path = './'
+		self.pdb_path = '../../'
 		self.pdb_full = self.pdb_path + self.pdb_file
 
 
@@ -46,7 +61,7 @@ class usr_param:
 
 		self.diff = 'isotropic'
 		#self.diff = 'axial'
-		self.no_sim = '100'
+		self.num_sim = '500'
 		self.trim = '0'               # Trim unconverged simulations.
 
 		# tm
@@ -135,7 +150,7 @@ class usr_param:
 		self.md1['ss2']['lower'] = '0.000'
 		self.md1['ss2']['upper'] = '1.000'
 		self.md1['ss2']['steps'] = '20'
-		
+
 		self.md1['te'] = {}
 		self.md1['te']['start'] = '0.0'
 		self.md1['te']['flag']  = '0'

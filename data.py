@@ -1,8 +1,11 @@
 class data:
-	def __init__(self):
+	def __init__(self, mf):
 		"Class containing all the data"
 
+		self.mf = mf
+
 		self.init_data()
+		self.mfin = self.mfin_data(self.mf)
 		self.asymptotic = self.init_asymptotic()
 		self.bootstrap = self.init_bootstrap()
 		self.farrow = self.init_farrow()
@@ -37,12 +40,33 @@ class data:
 
 			self.name = 'Palmer'
 
+
 	class init_true:
 		def __init__(self):
 			"Data specific for modelfree analysis using the overall discrepency."
 
 			self.name = 'True'
 			self.op_data = []
+
+
+	class mfin_data:
+		def __init__(self, mf):
+			"Variables for the file mfin"
+
+			self.mf = mf
+
+		def default_data(self):
+
+			self.diff = self.mf.data.usr_param.diff
+			self.diff_search = 'none'
+			self.algorithm = 'fix'
+			self.sims = 'n'
+			self.sim_type = 'pred'
+			self.trim = self.mf.data.usr_param.trim
+			self.selection = 'none'
+			self.num_sim = self.mf.data.usr_param.num_sim
+			self.num_fields = `len(self.mf.data.nmr_frq)`
+
 
 	def init_data(self):
 		"""Initilize the data
@@ -62,7 +86,7 @@ class data:
 			1 - NMR frequency label
 			2 - NMR proton frequency in MHz
 			3 - The name of the file containing the relaxation data
-		
+
 		The structure of self.relax_data is as follows:  The first dimension corresponds to each
 		relaxation data set as in self.input_info.  The fields point to 2D data structures containing
 		the data from the relaxation file (missing the single header line), ie:

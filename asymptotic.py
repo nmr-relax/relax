@@ -2,6 +2,7 @@
 #
 # The following asymptotic methods are supported:
 #	AIC - Akaike Information Criteria
+#	AICc - Akaike Information Criteria corrected for small sample sizes 
 #	BIC - Schwartz Criteria
 #
 # The program is divided into the following stages:
@@ -29,6 +30,7 @@ class asymptotic(common_operations):
 		print "Model-free analysis based on " + self.mf.data.usr_param.method + " model selection."
 		self.initialize()
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+		self.mf.data.mfin.default_data()
 		self.goto_stage()
 
 
@@ -59,32 +61,9 @@ class asymptotic(common_operations):
 			return bic
 
 
-	def initial_runs(self):
-		"Creation of the files for the Modelfree calculations for models 1 to 5."
-		
-		for run in self.mf.data.runs:
-			print "Creating input files for model " + run
-			self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
-			self.mf.file_ops.mkdir(dir=run)
-			self.mf.file_ops.open_mf_files(dir=run)
-			self.set_run_flags(run)
-			self.log_params('M1', self.mf.data.usr_param.md1)
-			self.log_params('M2', self.mf.data.usr_param.md2)
-			self.create_mfin(sims='n', sim_type='pred')
-			self.create_run(dir=run)
-			for res in range(len(self.mf.data.relax_data[0])):
-				# Mfdata.
-				self.create_mfdata(res)
-				# Mfmodel.
-				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-				# Mfpar.
-				self.create_mfpar(res)
-			self.mf.file_ops.close_mf_files(dir=run)
-
-
 	def model_selection(self):
 		"Model selection."
-		
+
 		data = self.mf.data.data
 
 		self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>")
@@ -94,11 +73,11 @@ class asymptotic(common_operations):
 
 			n = self.mf.data.num_data_sets
 
-			data['m1'][res]['crit'] = self.calc_crit(res, n, k=1, chisq=data['m1'][res]['sse'])
-			data['m2'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m2'][res]['sse'])
-			data['m3'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m3'][res]['sse'])
-			data['m4'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m4'][res]['sse'])
-			data['m5'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m5'][res]['sse'])
+			data['m1'][res]['crit'] = self.calc_crit(res, n, k=1, chisq=data['m1'][res]['chi2'])
+			data['m2'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m2'][res]['chi2'])
+			data['m3'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m3'][res]['chi2'])
+			data['m4'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m4'][res]['chi2'])
+			data['m5'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m5'][res]['chi2'])
 
 			# Select model.
 			min = 'm1'
@@ -115,31 +94,87 @@ class asymptotic(common_operations):
 			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
 
 
-	def stage2(self):
-		self.mf.file_ops.mkdir('grace')
+	def print_data(self):
+		"Print all the data into the 'data_all' file."
+
+		file = open('data_all', 'w')
+
+		sys.stdout.write("[")
+		for res in range(len(self.mf.data.results)):
+			sys.stdout.write("-")
+			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
+			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
+			file.write('%-20s' % '')
+			file.write('%-17s' % 'Model 1')
+			file.write('%-17s' % 'Model 2')
+			file.write('%-17s' % 'Model 3')
+			file.write('%-17s' % 'Model 4')
+			file.write('%-17s' % 'Model 5')
+
+			# S2.
+			file.write('\n%-20s' % 'S2')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['s2'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['s2_err'])
+
+			# S2f.
+			file.write('\n%-20s' % 'S2f')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['s2f'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['s2f_err'])
+
+			# S2s.
+			file.write('\n%-20s' % 'S2s')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['s2s'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['s2s_err'])
+
+			# te.
+			file.write('\n%-20s' % 'te')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['te'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['te_err'])
+
+			# Rex.
+			file.write('\n%-20s' % 'Rex')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%8s' % self.mf.data.data[run][res]['rex'])
+					file.write('%1s' % '±')
+					file.write('%-8s' % self.mf.data.data[run][res]['rex_err'])
+
+			# Chi2.
+			file.write('\n%-20s' % 'Chi2')
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%-17s' % self.mf.data.data[run][res]['chi2'])
+
+			# Model selection criteria.
+			file.write('\n%-20s' % self.mf.data.usr_param.method)
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					file.write('%-17.6s' % self.mf.data.data[run][res]['crit'])
+
+		file.write('\n')
+		sys.stdout.write("]\n")
+		file.close()
+
+
+	def set_vars_stage_initial(self):
+		"Set the options for the initial runs."
 		
-		print "\n[ Model-free data extraction ]\n"
-		for run in self.mf.data.runs:
-			mfout = self.mf.file_ops.read_file(run + '/mfout')
-			mfout_lines = mfout.readlines()
-			mfout.close()
-			print "Extracting model-free data from " + run + "/mfout."
-			num_res = len(self.mf.data.relax_data[0])
-			self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res)
+		self.mf.data.mfin.sims = 'n'
 
- 		print "\n[ " + self.mf.data.usr_param.method + " model selection ]\n"
-		self.model_selection()
 
-		print "\n[ Printing results ]\n"
-		self.print_results()
-
-		print "\n[ Placing data structures into \"data_all\" ]\n"
-		self.print_data()
-
-		print "\n[ Grace file creation ]\n"
-		self.grace('grace/S2.agr', 'S2', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2f.agr', 'S2f', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2s.agr', 'S2s', subtitle="After model selection, unoptimized")
-		self.grace('grace/te.agr', 'te', subtitle="After model selection, unoptimized")
-		self.grace('grace/Rex.agr', 'Rex', subtitle="After model selection, unoptimized")
-		self.grace('grace/SSE.agr', 'SSE', subtitle="After model selection, unoptimized")
+	def set_vars_stage_selection(self):
+		"Set the options for the final run."
+		
+		self.mf.data.mfin.sims = 'y'

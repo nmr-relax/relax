@@ -74,7 +74,7 @@ class true(common_operations):
 
 	def model_selection(self):
 		"Model selection."
-		
+
 		data = self.mf.data.data
 
 		self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>")
@@ -84,11 +84,11 @@ class true(common_operations):
 
 			n = self.mf.data.num_data_sets
 
-			data['m1'][res]['crit'] = self.calc_crit(res, n, k=1, chisq=data['m1'][res]['sse'])
-			data['m2'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m2'][res]['sse'])
-			data['m3'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m3'][res]['sse'])
-			data['m4'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m4'][res]['sse'])
-			data['m5'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m5'][res]['sse'])
+			data['m1'][res]['crit'] = self.calc_crit(res, n, k=1, chisq=data['m1'][res]['chi2'])
+			data['m2'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m2'][res]['chi2'])
+			data['m3'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m3'][res]['chi2'])
+			data['m4'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m4'][res]['chi2'])
+			data['m5'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m5'][res]['chi2'])
 
 			# Select model.
 			min = 'm1'
@@ -103,33 +103,3 @@ class true(common_operations):
 			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
 			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
 			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
-
-
-	def stage2(self):
-		self.mf.file_ops.mkdir('grace')
-		
-		print "\n[ Modelfree data extraction ]\n"
-		for run in self.mf.data.runs:
-			mfout = self.mf.file_ops.read_file(run + '/mfout')
-			mfout_lines = mfout.readlines()
-			mfout.close()
-			print "Extracting modelfree data from " + run + "/mfout."
-			num_res = len(self.mf.data.relax_data[0])
-			self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res)
-
-		print "\n[ " + self.mf.data.usr_param.method + " model selection ]\n"
-		self.model_selection()
-
-		print "\n[ Printing results ]\n"
-		self.print_results()
-
-		print "\n[ Placing data structures into \"data_all\" ]\n"
-		self.print_data()
-
-		print "\n[ Grace file creation ]\n"
-		self.grace('grace/S2.agr', 'S2', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2f.agr', 'S2f', subtitle="After model selection, unoptimized")
-		self.grace('grace/S2s.agr', 'S2s', subtitle="After model selection, unoptimized")
-		self.grace('grace/te.agr', 'te', subtitle="After model selection, unoptimized")
-		self.grace('grace/Rex.agr', 'Rex', subtitle="After model selection, unoptimized")
-		self.grace('grace/SSE.agr', 'SSE', subtitle="After model selection, unoptimized")

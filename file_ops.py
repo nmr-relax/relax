@@ -19,18 +19,18 @@ class file_ops:
 		self.mf.mfpar.close()
 		self.mf.run.close()
 		chmod(dir + '/run', 0777)
-		
-	
+
+
 	def init_log_file(self, title):
 		"Initialize the log file."
-		
+
 		self.mf.log = open('log.stage' + self.mf.data.stage, 'w')
 		self.mf.log.write(title)
 
 
 	def open_file(self, file_name):
 		"Open the file 'file' and return all the data."
-		
+
 		file = open(file_name, 'r')
 		lines = file.readlines()
 		data = []
@@ -80,8 +80,8 @@ class file_ops:
 		self.mf.mfmodel = open(dir + '/mfmodel', 'w')
 		self.mf.mfpar = open(dir + '/mfpar', 'w')
 		self.mf.run = open(dir + '/run', 'w')
-	
-	
+
+
 	def read_file(self, file_name):
 		"Attempt to read the file, or quit the script if it does not exist."
 
@@ -96,14 +96,14 @@ class file_ops:
 
 	def relax_data(self, file):
 		"""Open the relaxation data in the file 'file' and return all the data.
-		
+
 		It is assumed that the file has four columns separated by whitespace.  The columns should be:
 			0 - Residue numbers
 			1 - Residue names
 			2 - R1, R2, or NOE values
 			3 - The errors
 		"""
-		
+
 		lines = open(file, 'r')
 		lines = lines.readlines()
 		data = []
