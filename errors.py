@@ -338,9 +338,9 @@ class RelaxErrors:
 
     # No file.
     class RelaxFileError(BaseError):
-        def __init__(self, name, file_name):
-            if name == None:
-                self.text = "The file " + `file_name` + " does not exist."
+        def __init__(self, name, file_name=None):
+            if file_name == None:
+                self.text = "The file " + `name` + " does not exist."
             else:
                 self.text = "The " + name + " file " + `file_name` + " does not exist."
 
