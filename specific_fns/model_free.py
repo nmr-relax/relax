@@ -3226,8 +3226,8 @@ class Model_free(Common_functions):
                     if file_data[i][col['data_set']] != 'value':
                         continue
 
-                    # Skip when data_col is None.
-                    if eval(file_data[i][data_col]) == None:
+                    # Skip when data_col does not exist or is None.
+                    if len(file_data[i]) < data_col or eval(file_data[i][data_col]) == None:
                         continue
 
                     # Append an array containing the residue number and name and the data and error values.
