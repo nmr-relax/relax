@@ -839,11 +839,11 @@ def calc_aniso_d2ti(data, diff_data):
 
     # t0.
     a = 3.0 * data.mu**2 * data.t_0_comp_cubed
-    b = -6.0 * data.mu**3 * data.t_0_comp_sqrd
+    b = -6.0 * data.mu * data.t_0_comp_sqrd
     if a == 0.0 or b == 0.0:
         data.d2ti[1, 1, 2] = 1e99
     else:
-        data.d2ti[1, 1, 2] = 1.0 / a + 1.0 / b
+        data.d2ti[1, 1, 2] = diff_data.params[1]**2 / a  +  (diff_data.params[1]**2 / data.mu**2 - 1.0) / b
 
     # t1.
     a = 12.0 * data.t_1_comp_cubed
@@ -853,12 +853,77 @@ def calc_aniso_d2ti(data, diff_data):
         data.d2ti[1, 1, 3] = 1.0 / a
 
     # t2.
-    a = 3.0 * data.inv_dDiso_dtm**2 * data.t_2_comp_cubed
-    b = -6.0 * data.inv_d2Diso_dtm2 * data.t_2_comp_sqrd
+    a = 3.0 * data.mu**2 * data.t_2_comp_cubed
+    b = 6.0 * data.mu * data.t_2_comp_sqrd
     if a == 0.0 or b == 0.0:
         data.d2ti[1, 1, 4] = 1e99
     else:
-        data.d2ti[1, 1, 4] = 1.0 / a + 1.0 / b
+        data.d2ti[1, 1, 4] = diff_data.params[1]**2 / a  +  (diff_data.params[1]**2 / data.mu**2 - 1.0) / b
 
 
+    # Da-Dr partial derivative.
+    ###########################
 
+    # t-1.
+    a = 12.0 * data.t_m1_comp_cubed
+    if a == 0.0:
+        data.d2ti[1, 2, 1] = data.d2ti[2, 1, 1] = 1e99
+    else:
+        data.d2ti[1, 2, 1] = data.d2ti[2, 1, 1] = 1.0 / a
+
+    # t0.
+    a = 9.0 * data.mu**2 * data.t_0_comp_cubed
+    b = -18.0 * data.mu**3 * data.t_0_comp_sqrd
+    if a == 0.0 or b == 0.0:
+        data.d2ti[1, 2, 2] = data.d2ti[2, 1, 2] = 1e99
+    else:
+        data.d2ti[1, 2, 2] = data.d2ti[2, 1, 2] = diff_data.params[1] * diff_data.params[2] / a  +  diff_data.params[1] * diff_data.params[2] / b
+
+    # t1.
+    a = -12.0 * data.t_1_comp_cubed
+    if a == 0.0:
+        data.d2ti[1, 2, 3] = data.d2ti[2, 1, 3] = 1e99
+    else:
+        data.d2ti[1, 2, 3] = data.d2ti[2, 1, 3] = 1.0 / a
+
+    # t2.
+    a = 9.0 * data.mu**2 * data.t_2_comp_cubed
+    b = 18.0 * data.mu**3 * data.t_2_comp_sqrd
+    if a == 0.0 or b == 0.0:
+        data.d2ti[1, 2, 4] = data.d2ti[2, 1, 4] = 1e99
+    else:
+        data.d2ti[1, 2, 4] = data.d2ti[2, 1, 4] = diff_data.params[1] * diff_data.params[2] / a  +  diff_data.params[1] * diff_data.params[2] / b
+
+
+    # Dr-Dr partial derivative.
+    ###########################
+
+    # t-1.
+    a = 12.0 * data.t_m1_comp_cubed
+    if a == 0.0:
+        data.d2ti[1, 1, 1] = 1e99
+    else:
+        data.d2ti[1, 1, 1] = 1.0 / a
+
+    # t0.
+    a = 27.0 * data.mu**2 * data.t_0_comp_cubed
+    b = -18.0 * data.mu * data.t_0_comp_sqrd
+    if a == 0.0 or b == 0.0:
+        data.d2ti[1, 1, 2] = 1e99
+    else:
+        data.d2ti[1, 1, 2] = diff_data.params[2]**2 / a  +  (diff_data.params[2]**2 / (3.0 * data.mu**2) - 1.0) / b
+
+    # t1.
+    a = 12.0 * data.t_1_comp_cubed
+    if a == 0.0:
+        data.d2ti[1, 1, 3] = 1e99
+    else:
+        data.d2ti[1, 1, 3] = 1.0 / a
+
+    # t2.
+    a = 27.0 * data.mu**2 * data.t_2_comp_cubed
+    b = 18.0 * data.mu * data.t_2_comp_sqrd
+    if a == 0.0 or b == 0.0:
+        data.d2ti[1, 1, 4] = 1e99
+    else:
+        data.d2ti[1, 1, 4] = diff_data.params[2]**2 / a  +  (diff_data.params[2]**2 / (3.0 * data.mu**2) - 1.0) / b

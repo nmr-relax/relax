@@ -47,7 +47,7 @@ fix(name, 'all_res')
 #value.set(name)
 
 # Minimise.
-minimise('bfgs', run=name)
+minimise('bfgs', run=name, constraints=0)
 
 # Monte Carlo simulations.
 #monte_carlo.setup(name, number=10)
