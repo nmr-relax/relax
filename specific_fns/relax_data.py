@@ -371,6 +371,62 @@ class Rx_data:
             except ValueError:
                 raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
 
+
+        # Global (non-residue specific) data.
+        #####################################
+
+        # Initialise.
+        if not hasattr(self.relax.data, 'ri_labels'):
+            # Dictionary init.
+            self.relax.data.ri_labels = {}
+            self.relax.data.remap_table = {}
+            self.relax.data.frq_labels = {}
+            self.relax.data.frq = {}
+            self.relax.data.num_ri = {}
+            self.relax.data.num_frq = {}
+
+            self.relax.data.ri_labels[self.run] = []
+            self.relax.data.remap_table[self.run] = []
+            self.relax.data.frq_labels[self.run] = []
+            self.relax.data.frq[self.run] = []
+            self.relax.data.num_ri[self.run] = 0
+            self.relax.data.num_frq[self.run] = 0
+
+        # The index.
+        i = len(self.relax.data.ri_labels[self.run]) - 1
+
+        # Update the number of relaxation data points.
+        self.relax.data.num_ri[self.run] = self.relax.data.num_ri[self.run] + 1
+
+        # Add ri_label to the data types.
+        self.relax.data.ri_labels[self.run].append(self.ri_label)
+
+        # Find if the frequency self.frq has already been loaded.
+        remap = len(self.relax.data.frq[self.run])
+        flag = 0
+        for j in xrange(len(self.relax.data.frq[self.run])):
+            if self.frq == self.relax.data.frq[self.run][j]:
+                remap = j
+                flag = 1
+
+        # Update the remap table.
+        self.relax.data.remap_table[self.run].append(remap)
+
+        # Update the data structures which have a length equal to the number of field strengths.
+        if not flag:
+            # Update the number of frequencies.
+            self.relax.data.num_frq[self.run] = self.relax.data.num_frq[self.run] + 1
+
+            # Update the frequency labels.
+            self.relax.data.frq_labels[self.run].append(self.frq_label)
+
+            # Update the frequency array.
+            self.relax.data.frq[self.run].append(self.frq)
+
+
+        # Residue specific data.
+        ########################
+
         # Loop over the relaxation data.
         for i in xrange(len(file_data)):
             # Convert the data.
