@@ -265,7 +265,7 @@ class min:
 			self.h_count = 0
 
 			# Setup the specific options for the tuple self.function_ops
-			if match('mf', self.model):
+			if match('mf', self.relax.data.equations[self.model_index]):
 				self.functions_ops = self.setup_relax_data()
 				if self.function_ops == None:
 					continue
