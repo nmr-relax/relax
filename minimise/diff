@@ -1,0 +1,28 @@
+32c32
+< def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, scaling_matrix=None, mu0=1e-2, lambda0=None, epsilon0=1e5, gamma0=1e5, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+---
+> def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-2, lambda0=None, epsilon0=1e5, gamma0=1e5, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+127c127
+<     min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, scaling_matrix, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
+---
+>     min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
+137c137
+<     def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, scaling_matrix, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
+---
+>     def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
+155c155
+<             self.constraint_linear = Constraint_linear(self.A, self.b, scaling_matrix)
+---
+>             self.constraint_linear = Constraint_linear(self.A, self.b)
+191,193d190
+<         # Constraint scaling vector.
+<         self.scaling_matrix = scaling_matrix
+< 
+266c263
+<             if self.ck[i] <= self.mu * self.lambda_k[i]:
+---
+>             if self.ck[i] - self.mu*self.lambda_k[i] <= 0.0:
+371c368
+<                 self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i] / self.mu, 0.0)
+---
+>                 self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i]/self.mu, 0.0)
