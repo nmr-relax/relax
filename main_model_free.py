@@ -131,7 +131,10 @@ class main_model_free:
 			#params = [0.900, 0.0*1e-12, 0.0/(1e-8 * self.mf.data.frq[0])**2]
 			#params = [0.900, 100*1e-12, 2.76038451e-17]
 			#params = [6.31578947e-01, 8.42105263e-01, 5.26315789e-10]
-			#params = array([0.350, 5.000, 0.0])
+			#if trans_flag:
+			#	params = array([0.5, 0.5, 1e-12 * self.c])
+			#else:
+			#	params = array([0.5, 0.5, 1e-12])
 			#chi2 = 0.0
 			#print "Params: " + `params`
 			#print "Chi2: " + `chi2`

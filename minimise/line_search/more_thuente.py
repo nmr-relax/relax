@@ -9,7 +9,7 @@ quadratic = quadratic_fafbga
 secant = quadratic_gagb
 
 
-def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=1):
+def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=0):
 	"""A line search algorithm from More and Thuente.
 
 	More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
@@ -186,13 +186,15 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 			print "Limiting"
 			print "   Ik_lim: " + `Ik_lim`
 		if bracketed:
-			print "   Bracketed."
+			if print_flag:
+				print "   Bracketed."
 			Ik_lim[0] = min(Ik_new['a'][0], Ik_new['a'][1])
 			Ik_lim[1] = max(Ik_new['a'][0], Ik_new['a'][1])
 		else:
-			print "   Not bracketed."
-			print "   a_new['a']: " + `a_new['a']`
-			print "   xtrapl:     " + `1.1`
+			if print_flag:
+				print "   Not bracketed."
+				print "   a_new['a']: " + `a_new['a']`
+				print "   xtrapl:     " + `1.1`
 			Ik_lim[0] = a_new['a'] + 1.1 * (a_new['a'] - Ik_new['a'][0])
 			Ik_lim[1] = a_new['a'] + 4.0 * (a_new['a'] - Ik_new['a'][0])
 		if print_flag:
@@ -245,7 +247,7 @@ def print_data(text, k, a, Ik, Ik_lim, x, p, print_flag=0):
 #	print "   xi:          " + `x + a['a']*p`
 
 
-def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66, print_flag=1):
+def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66, print_flag=0):
 	"""Trial value selection and interval updating.
 
 	Trial value selection

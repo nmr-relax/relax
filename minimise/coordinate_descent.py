@@ -1,6 +1,6 @@
-from Numeric import Float64, copy, identity, zeros
+from Numeric import Float64, copy, dot, identity, zeros
 
-def coordinate_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def coordinate_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
 	"""Back-and-forth coordinate descent minimisation.
 
 	Function options
@@ -84,9 +84,14 @@ def coordinate_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
 					k2 = 0
 
-		# Calculate the back-and-forth coordinate descent search direction for iteration k.
-		pk = dir[n]
-		print "pk: " + `pk`
+		# Calculate the back-and-forth coordinate search direction for iteration k.
+		# The direction pk is forced to be a descent direction.
+		if dot(dfk, dir[n]) > 0.0:
+			pk = -dir[n]
+		else:
+			pk = dir[n]
+
+		# Update the coordinate descent iteration number and direction flag.
 		if not back:
 			if n < len(xk) - 1:
 				n = n + 1
@@ -102,7 +107,8 @@ def coordinate_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=
 
 
 		# Find the parameter vector, function value, and gradient vector for iteration k+1.
-		xk_new = line_search(func, dfunc, args, xk, fk, dfk, pk)
+		alpha = line_search(func, dfunc, args, xk, pk, fk, dfk)
+		xk_new = xk + alpha * pk
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
 

@@ -1,6 +1,6 @@
 from Numeric import copy
 
-def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
 	"""Steepest descent minimisation.
 
 
@@ -77,7 +77,9 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 
 		# Find the parameter vector, function value, and gradient vector for iteration k.
 		# The search direction, pk, is equal to -dfk for the steepest descent method.
-		xk_new = line_search(func, dfunc, args, xk, fk, dfk, -dfk)
+		pk = -dfk
+		alpha = line_search(func, dfunc, args, xk, pk, fk, dfk)
+		xk_new = xk + alpha * pk
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
 

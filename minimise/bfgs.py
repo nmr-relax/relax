@@ -1,6 +1,6 @@
 from Numeric import Float64, copy, dot, identity, matrixmultiply, outerproduct
 
-def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=2):
+def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
 	"""Quasi-Newton BFGS minimisation.
 
 	Function options
