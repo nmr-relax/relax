@@ -25,13 +25,10 @@ def chi2(data, back_calc_vals, errors):
 	"""
 
 	# Calculate the chi-squared statistic.
+	a = ((data - back_calc_vals) / errors)**2
 	chi2 = 0.0
 	for i in range(len(data)):
-		if errors[i] != 0.0:
-			chi2 = chi2 + ((data[i] - back_calc_vals[i]) / errors[i])**2
-		else:
-			chi2 = 1e99
-			continue
+		chi2 = chi2 + a[i]
 	return chi2
 
 
@@ -64,17 +61,12 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
 	# Initialise the chi-squared gradient.
 	dchi2 = zeros((num_params), Float64)
 
+	# Parameter independent terms.
+	a = -2.0 * (data - back_calc_vals) / (errors**2)
+
 	# Calculate the chi-squared gradient.
 	for i in range(len(data)):
-		if errors[i] != 0.0:
-			# Parameter independent terms.
-			a = -2.0 * (data[i] - back_calc_vals[i]) / (errors[i]**2)
-			for j in range(num_params):
-				dchi2[j] = dchi2[j] + a * back_calc_grad[i, j]
-		else:
-			for j in range(num_params):
-				dchi2[j] = 1e99
-			break
+		dchi2 = dchi2 + a[i] * back_calc_grad[i]
 
 	return dchi2
 
@@ -88,14 +80,14 @@ def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
 	The chi-squared hessian
 	~~~~~~~~~~~~~~~~~~~~~~~
 	                      _n_
-	     d2chi2           \       1      /  dRi()     dRi()                         d2Ri()     \ 
-	---------------  =  2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
+	     d2chi2           \       1      /  dyi()     dyi()                         d2yi()     \ 
+	---------------  =  2  >  ---------- | ------- . -------  -  (yi - yi()) . --------------- |
 	dthetaj.dthetak       /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak / 
 	                      i=1
 
      	where:
-		Ri are the values of the measured relaxation data set.
-		Ri() are the values of the back calculated relaxation data set.
+		yi are the values of the measured relaxation data set.
+		yi() are the values of the back calculated relaxation data set.
 		sigma_i are the values of the error set.
 
 	"""
@@ -106,32 +98,14 @@ def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
 	# Initialise the chi-squared hessian.
 	d2chi2 = zeros((num_params, num_params), Float64)
 
+	# Parameter independent terms.
+	a = 2.0 / (errors**2)
+	yi_diff = data - back_calc_vals
+
 	# Calculate the chi-squared hessian.
 	for i in range(len(data)):
-		if errors[i] != 0.0:
-			# Parameter independent terms.
-			a = 2.0 / (errors[i]**2)
-			b = data[i] - back_calc_vals[i]
-
-			# Loop over the parameters.
-			for j in range(num_params):
-				# Loop over the parameters from 1 to k.
-				for k in range(j + 1):
-					d2chi2[j, k] = d2chi2[j, k] + a * (back_calc_grad[i, j] * back_calc_grad[i, k] - b * back_calc_hess[i, j, k])
-
-					# Make the hessian symmetric.
-					if j != k:
-						d2chi2[k, j] = d2chi2[j, k]
-		else:
-			# Loop over the parameters.
-			for j in range(num_params):
-				# Loop over the parameters from 1 to k.
-				for k in range(j + 1):
-					d2chi2[j, k] = 1e99
-
-					# Make the hessian symmetric.
-					if j != k:
-						d2chi2[k, j] = 1e99
-			break
+		# Loop over the parameters.
+		for j in range(num_params):
+			d2chi2[j] = d2chi2[j] + a[i] * (back_calc_grad[i, j] * back_calc_grad[i] - yi_diff[i] * back_calc_hess[i, j])
 
 	return d2chi2
