@@ -201,7 +201,7 @@ class Sequence:
         self.__relax__.generic.sequence.display(run=run)
 
 
-    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None, header_lines=1):
+    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
         """Function for reading sequence data.
 
         Keyword Arguments
@@ -219,8 +219,6 @@ class Sequence:
 
         sep:  The column separator (the default is white space).
 
-        header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
-
 
         Description
         ~~~~~~~~~~~
@@ -237,7 +235,7 @@ class Sequence:
 
         relax> sequence.read('m1', 'seq')
         relax> sequence.read('m1', 'seq', num_col=0, name_col=1)
-        relax> sequence.read(run='m1', file='seq', num_col=0, name_col=1, sep=None, header_lines=1)
+        relax> sequence.read(run='m1', file='seq', num_col=0, name_col=1, sep=None)
 
 
         The following commands will read the sequence out of the file 'noe.out' which also contains
@@ -253,8 +251,7 @@ class Sequence:
         are separated by commas and assign it to the run 'm5'.
 
         relax> sequence.read('m5', 'noe.600.out', num_col=1, name_col=5, sep=',')
-        relax> sequence.read(run='m5', file='noe.600.out', num_col=1, name_col=5, sep=',',
-                             header_lines=1)
+        relax> sequence.read(run='m5', file='noe.600.out', num_col=1, name_col=5, sep=',')
         """
 
         # Function intro text.
@@ -265,8 +262,7 @@ class Sequence:
             text = text + ", dir=" + `dir`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
-            text = text + ", sep=" + `sep`
-            text = text + ", header_lines=" + `header_lines` + ")"
+            text = text + ", sep=" + `sep` + ")"
             print text
 
         # The run argument.
@@ -293,12 +289,8 @@ class Sequence:
         if sep != None and type(sep) != str:
             raise RelaxNoneStrError, ('column separator', sep)
 
-        # Header lines.
-        if type(header_lines) != int:
-            raise RelaxIntError, ('number of header lines', header_lines)
-
         # Execute the functional code.
-        self.__relax__.generic.sequence.read(run=run, file=file, dir=dir, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)
+        self.__relax__.generic.sequence.read(run=run, file=file, dir=dir, num_col=num_col, name_col=name_col, sep=sep)
 
 
     def sort(self, run=None):

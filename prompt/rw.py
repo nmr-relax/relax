@@ -46,11 +46,14 @@ class RW:
         Description
         ~~~~~~~~~~~
 
-        The name of the run can be any string.
-
         If no directory name is given, the results file will be searched for in a directory named
         after the run name.  To search for the results file in the current working directory, set
         dir to None.
+
+        This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
+        files automatically.  The full file name including extension can be supplied, however, if
+        the file cannot be found, this function will search for the file name with '.bz2' appended
+        followed by the file name with '.gz' appended.
         """
 
         # Function intro text.
@@ -108,12 +111,14 @@ class RW:
         If no directory name is given, the results file will be placed in a directory named after
         the run name.  To place the results file in the current working directory, set dir to None.
 
-        The compress_type argument can be set to:
-            0 - No compression (no extension).
-            1 - bzip2 compression ('.bz2' extension).
-            2 - gzip compression ('.gz' extension).
-        The default is for bzip2 compression.  It is not necessary to supply the file extension to
-        this function.
+        The default behaviour of this function is to compress the file using bzip2 compression.  If
+        the extension '.bz2' is not included in the file name, it will be added.  The compression
+        can, however, be changed to either no compression or gzip compression.  This is controlled
+        by the compress_type argument which can be set to:
+            0 - No compression (no file extension).
+            1 - bzip2 compression ('.bz2' file extension).
+            2 - gzip compression ('.gz' file extension).
+        The complementary read function will automatically handle the compressed files.
         """
 
         # Function intro text.

@@ -140,7 +140,7 @@ class Value:
         self.__relax__.generic.value.display(run=run, data_type=data_type)
 
 
-    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
+    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Function for reading residue specific data values from a file.
 
         Keyword Arguments
@@ -164,8 +164,6 @@ class Value:
 
         sep:  The column separator (the default is white space).
 
-        header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
-
 
         Description
         ~~~~~~~~~~~
@@ -187,7 +185,7 @@ class Value:
         relax> value.read('m1', 'CSA', 'data/csa_value')
         relax> value.read('m1', 'CSA', 'data/csa_value', 0, 1, 2, 3, None, 1)
         relax> value.read(run='m1', data_type='CSA', file='data/csa_value', num_col=0, name_col=1,
-                          data_col=2, error_col=3, sep=None, header_lines=1)
+                          data_col=2, error_col=3, sep=None)
         """
 
         # Function intro text.
@@ -200,8 +198,7 @@ class Value:
             text = text + ", name_col=" + `name_col`
             text = text + ", data_col=" + `data_col`
             text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep`
-            text = text + ", header_lines=" + `header_lines` + ")"
+            text = text + ", sep=" + `sep` + ")"
             print text
 
         # The run name.
@@ -236,12 +233,8 @@ class Value:
         if sep != None and type(sep) != str:
             raise RelaxNoneStrError, ('column separator', sep)
 
-        # Header lines.
-        if type(header_lines) != int:
-            raise RelaxIntError, ('number of header lines', header_lines)
-
         # Execute the functional code.
-        self.__relax__.generic.value.read(run=run, data_type=data_type, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
+        self.__relax__.generic.value.read(run=run, data_type=data_type, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
     def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):

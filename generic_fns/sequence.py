@@ -161,7 +161,7 @@ class Sequence:
             self.relax.data.res[run][i].select = 1
 
 
-    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None, header_lines=None):
+    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
         """Function for reading sequence data."""
 
         # Test if the run exists.
@@ -174,6 +174,16 @@ class Sequence:
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file, dir)
+
+        # Count the number of header lines.
+        header_lines = 0
+        for i in xrange(len(file_data)):
+            try:
+                int(file_data[i][num_col])
+            except:
+                header_lines = header_lines + 1
+            else:
+                break
 
         # Remove the header.
         file_data = file_data[header_lines:]

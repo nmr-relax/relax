@@ -244,7 +244,7 @@ class Relax_data:
         self.__relax__.specific.relax_data.display(run=run, ri_label=ri_label, frq_label=frq_label)
 
 
-    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, dir=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
+    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, dir=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Function for reading R1, R2, or NOE relaxation data from a file.
 
         Keyword Arguments
@@ -271,8 +271,6 @@ class Relax_data:
         error_col:  The experimental error column (the default is 3).
 
         sep:  The column separator (the default is white space).
-
-        header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
 
 
         Description
@@ -301,7 +299,7 @@ class Relax_data:
         relax> relax_data.read('m1', 'R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
         relax> relax_data.read('m1', ri_label='R2', frq_label='800 MHz', frq=8.0*1e8,
                                file='r2.out', num_col=1, name_col=2, data_col=4, error_col=5,
-                               sep=',', header_lines=1)
+                               sep=',')
 
 
         The following commands will read the R1 data out of the file 'r1.out' where the columns are
@@ -323,8 +321,7 @@ class Relax_data:
             text = text + ", name_col=" + `name_col`
             text = text + ", data_col=" + `data_col`
             text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep`
-            text = text + ", header_lines=" + `header_lines` + ")"
+            text = text + ", sep=" + `sep` + ")"
             print text
 
         # The run name.
@@ -371,12 +368,8 @@ class Relax_data:
         if sep != None and type(sep) != str:
             raise RelaxNoneStrError, ('column separator', sep)
 
-        # Header lines.
-        if type(header_lines) != int:
-            raise RelaxIntError, ('number of header lines', header_lines)
-
         # Execute the functional code.
-        self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
+        self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
     def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):

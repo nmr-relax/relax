@@ -37,39 +37,8 @@ class File_ops:
     def extract_data(self, file_name=None, dir=None, sep=None, compress_type=1):
         """Open the file 'file' and return all the data."""
 
-        # File path.
-        file_path = file_name
-        if dir:
-            file_path = dir + '/' + file_path
-
-        # Test if the file exists and determine the compression type.
-        if access(file_path, F_OK):
-            compress_type = 0
-            if search('.bz2$', file_path):
-                compress_type = 1
-            elif search('.gz$', file_path):
-                compress_type = 2
-        elif access(file_path + '.bz2', F_OK):
-            file_path = file_path + '.bz2'
-            compress_type = 1
-        elif access(file_path + '.gz', F_OK):
-            file_path = file_path + '.gz'
-            compress_type = 2
-        else:
-            raise RelaxFileError, file_path
-
         # Open the file.
-        try:
-            print "Opening the file " + `file_path` + " for reading."
-            if compress_type == 0:
-                file = open(file_path, 'r')
-            elif compress_type == 1:
-                file = BZ2File(file_path, 'r')
-            elif compress_type == 2:
-                file = GzipFile(file_path, 'r')
-        except IOError, message:
-            raise RelaxError, "Cannot open the file " + `file_name` + ".  " + message.args[1] + "."
-
+        file = self.open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
 
         # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
         lines = file.readlines()
@@ -95,6 +64,46 @@ class File_ops:
             print "Directory ./" + dir + " already exists.\n"
 
 
+    def open_read_file(self, file_name=None, dir=None, compress_type=1):
+        """Open the file 'file' and return all the data."""
+
+        # File path.
+        file_path = file_name
+        if dir:
+            file_path = dir + '/' + file_path
+
+        # Test if the file exists and determine the compression type.
+        if access(file_path, F_OK):
+            compress_type = 0
+            if search('.bz2$', file_path):
+                compress_type = 1
+            elif search('.gz$', file_path):
+                compress_type = 2
+        elif access(file_path + '.bz2', F_OK):
+            file_path = file_path + '.bz2'
+            compress_type = 1
+        elif access(file_path + '.gz', F_OK):
+            file_path = file_path + '.gz'
+            compress_type = 2
+        else:
+            raise RelaxFileError, file_path
+
+        # Open the file for reading.
+        try:
+            print "Opening the file " + `file_path` + " for reading."
+            if compress_type == 0:
+                file = open(file_path, 'r')
+            elif compress_type == 1:
+                file = BZ2File(file_path, 'r')
+            elif compress_type == 2:
+                file = GzipFile(file_path, 'r')
+        except IOError, message:
+            raise RelaxError, "Cannot open the file " + `file_name` + ".  " + message.args[1] + "."
+
+        # Return the opened file.
+        return file
+
+
     def open_write_file(self, file_name=None, dir=None, force=0, compress_type=1):
         """Function for opening a file for writing and creating directories if necessary."""
 
@@ -109,10 +118,12 @@ class File_ops:
         file_path = file_name
         if dir:
             file_path = dir + '/' + file_path
-            if compress_type == 1 and not search('.bz2$', file_path):
-                file_path = file_path + '.bz2'
-            elif compress_type == 2 and not search('.gz$', file_path):
-                file_path = file_path + '.gz'
+
+        # File extension.
+        if compress_type == 1 and not search('.bz2$', file_path):
+            file_path = file_path + '.bz2'
+        elif compress_type == 2 and not search('.gz$', file_path):
+            file_path = file_path + '.gz'
 
         # Fail if the file already exists and the force flag is set to 0.
         if access(file_path, F_OK) and not force:

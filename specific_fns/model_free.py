@@ -1663,21 +1663,27 @@ class Model_free(Common_functions):
         if self.param_set != 'mf' and self.relax.data.diff.has_key(self.run):
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
-                # tm >= 0.
+                # 0 <= tm <= 200 ns.
+                A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
                 i = i + 1
-                j = j + 1
+                j = j + 2
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                # tm >= 0.
+                # 0 <= tm <= 200 ns.
+                A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
                 i = i + 1
-                j = j + 1
+                j = j + 2
 
                 # Prolate diffusion, Da >= 0.
                 if self.relax.data.diff[self.run].axial_type == 'prolate':
@@ -1707,12 +1713,15 @@ class Model_free(Common_functions):
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                # tm >= 0.
+                # 0 <= tm <= 200 ns.
+                A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
                 i = i + 1
-                j = j + 1
+                j = j + 2
 
                 # Add five to i for the Da, Dr, alpha, beta, and gamma parameters.
                 i = i + 5
@@ -1734,13 +1743,16 @@ class Model_free(Common_functions):
 
                 # Loop over the model-free parameters.
                 for l in xrange(len(self.relax.data.res[self.run][k].params)):
-                    # Local tm (do nothing).
+                    # Local tm.
                     if self.relax.data.res[self.run][k].params[l] == 'tm':
-                        # tm >= 0.
+                        # 0 <= tm <= 200 ns.
+                        A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
+                        A[j+1][i] = -1.0
                         b.append(0.0 / self.scaling_matrix[i, i])
-                        j = j + 1
+                        b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                        j = j + 2
 
                     # Order parameters {S2, S2f, S2s}.
                     elif match('S2', self.relax.data.res[self.run][k].params[l]):
@@ -1765,7 +1777,7 @@ class Model_free(Common_functions):
 
                     # Correlation times {te, tf, ts}.
                     elif match('t[efs]', self.relax.data.res[self.run][k].params[l]):
-                        # te, tf, tm >= 0.
+                        # te, tf, ts >= 0.
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         b.append(0.0 / self.scaling_matrix[i, i])

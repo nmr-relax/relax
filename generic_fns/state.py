@@ -30,20 +30,11 @@ class State:
         self.relax = relax
 
 
-    def load(self, file=None, dir=None):
+    def load(self, file=None, dir=None, compress_type=1):
         """Function for loading a saved program state."""
 
-        # File path.
-        if dir:
-            file_path = dir + '/' + file
-        else:
-            file_path = file
-
-        # Open file for reading.
-        try:
-            file = open(file_path, 'r')
-        except IOError:
-            raise RelaxFileError, ('save', file_path)
+        # Open the file for reading.
+        file = self.relax.file_ops.open_read_file(file_name=file, dir=dir, compress_type=compress_type)
 
         # Unpickle the data class.
         self.relax.data = load(file)
@@ -52,11 +43,11 @@ class State:
         file.close()
 
 
-    def save(self, file=None, dir=None, force=0):
+    def save(self, file=None, dir=None, force=0, compress_type=1):
         """Function for saving the program state."""
 
         # Open the file for writing.
-        file = self.relax.file_ops.open_write_file(file, dir, force)
+        file = self.relax.file_ops.open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
 
         # Pickle the data class and write it to file
         dump(self.relax.data, file, 1)

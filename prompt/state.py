@@ -49,6 +49,15 @@ class State:
         dir:  Directory which the file is found in.
 
 
+        Description
+        ~~~~~~~~~~~
+
+        This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
+        files automatically.  The full file name including extension can be supplied, however, if
+        the file cannot be found, this function will search for the file name with '.bz2' appended
+        followed by the file name with '.gz' appended.
+
+
         Examples
         ~~~~~~~~
 
@@ -56,6 +65,14 @@ class State:
 
         relax> state.load('save')
         relax> state.load(file='save')
+
+
+        The following commands will load the state saved in the bzip2 compressed file 'save.bz2'.
+
+        relax> state.load('save')
+        relax> state.load(file='save')
+        relax> state.load('save.bz2')
+        relax> state.load(file='save.bz2')
         """
 
         # Function intro text.
@@ -77,7 +94,7 @@ class State:
         self.__relax__.generic.state.load(file=file, dir=dir)
 
 
-    def save(self, file=None, dir=None, force=0):
+    def save(self, file=None, dir=None, force=0, compress_type=1):
         """Function for saving the program state.
 
         Keyword Arguments
@@ -90,13 +107,34 @@ class State:
         force:  A flag which if set to 1 will cause the file to be overwritten.
 
 
+        Description
+        ~~~~~~~~~~~
+
+        The default behaviour of this function is to compress the file using bzip2 compression.  If
+        the extension '.bz2' is not included in the file name, it will be added.  The compression
+        can, however, be changed to either no compression or gzip compression.  This is controlled
+        by the compress_type argument which can be set to:
+            0 - No compression (no file extension).
+            1 - bzip2 compression ('.bz2' file extension).
+            2 - gzip compression ('.gz' file extension).
+
+
         Examples
         ~~~~~~~~
 
-        The following commands will save the current program state into the file 'save'.
+        The following commands will save the current program state into the file 'save':
+
+        relax> state.save('save', compress_type=0)
+        relax> state.save(file='save', compress_type=0)
+
+
+        The following commands will save the current program state into the bzip2 compressed file
+        'save.bz2':
 
         relax> state.save('save')
         relax> state.save(file='save')
+        relax> state.save('save.bz2')
+        relax> state.save(file='save.bz2')
 
 
         If the file 'save' already exists, the following commands will save the current program
@@ -111,7 +149,8 @@ class State:
             text = sys.ps3 + "state.save("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + ", force=" + `force`
+            text = text + ", compress_type=" + `compress_type` + ")"
             print text
 
         # File name.
@@ -126,5 +165,9 @@ class State:
         if type(force) != int or (force != 0 and force != 1):
             raise RelaxBinError, ('force flag', force)
 
+        # Compression type.
+        if type(compress_type) != int:
+            raise RelaxIntError, ('compression type', compress_type)
+
         # Execute the functional code.
-        self.__relax__.generic.state.save(file=file, dir=dir, force=force)
+        self.__relax__.generic.state.save(file=file, dir=dir, force=force, compress_type=compress_type)

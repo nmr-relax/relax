@@ -103,7 +103,7 @@ class Value:
         self.write_data(run, data_type, sys.stdout)
 
 
-    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
+    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Function for reading residue specific data values from a file."""
 
         # Arguments.
@@ -139,11 +139,25 @@ class Value:
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file)
 
+        # Count the number of header lines.
+        header_lines = 0
+        for i in xrange(len(file_data)):
+            try:
+                int(file_data[i][num_col])
+            except:
+                header_lines = header_lines + 1
+            else:
+                break
+
         # Remove the header.
         file_data = file_data[header_lines:]
 
         # Strip the data.
         file_data = self.relax.file_ops.strip(file_data)
+
+        # Do nothing if the file does not exist.
+        if not file_data:
+            raise RelaxFileEmptyError
 
         # Test the validity of the data.
         for i in xrange(len(file_data)):
