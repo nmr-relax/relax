@@ -32,8 +32,46 @@ class palmer(common_operations):
 		self.goto_stage()
 
 
+	def anova_tests(self):
+		"Do the chi squared and F-tests."
+
+		for res in range(len(self.mf.data.relax_data[0])):
+			for run in self.mf.data.runs:
+				if match('^m', run):
+					# Chi squared test.
+					if self.mf.data.data[run][res]['chi2'] <= self.mf.data.data[run][res]['chi2_lim']:
+						self.mf.data.data[run][res]['chi2_test'] = 1
+					else:
+						self.mf.data.data[run][res]['chi2_test'] = 0
+
+					# Large chi squared test.
+					if self.mf.data.data[run][res]['chi2'] >= float(self.mf.data.usr_param.large_chi2):
+						self.mf.data.data[run][res]['large_chi2'] = 1
+					else:
+						self.mf.data.data[run][res]['large_chi2'] = 0
+
+					# Zero chi squared test.
+					if self.mf.data.data[run][res]['chi2'] == 0.0:
+						self.mf.data.data[run][res]['zero_chi2'] = 1
+					else:
+						self.mf.data.data[run][res]['zero_chi2'] = 0
+
+				else:
+					# F-test.
+					if self.mf.data.data[run][res]['fstat_lim'] < 1.5:
+						if self.mf.data.data[run][res]['fstat'] > 1.5:
+							self.mf.data.data[run][res]['ftest'] = 1
+						else:
+							self.mf.data.data[run][res]['ftest'] = 0
+					elif self.mf.data.data[run][res]['fstat_lim'] >= 1.5:
+						if self.mf.data.data[run][res]['fstat'] > self.mf.data.data[run][res]['fstat_lim']:
+							self.mf.data.data[run][res]['ftest'] = 1
+						else:
+							self.mf.data.data[run][res]['ftest'] = 0
+
 	def model_selection(self):
 		print "\n[ Palmer's model selection ]\n"
+		self.anova_tests()
 		if self.mf.data.num_data_sets > 3:
 			# ie degrees of freedom > 0 in all models.
 			self.mf.log.write("Extended model selection.\n\n")
@@ -189,53 +227,53 @@ class palmer(common_operations):
 			file.write('\n%-20s' % 'S2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2f'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2f_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2s'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2s_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['te'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['te_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['rex'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['rex_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['chi2'])
+					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Chi2 limit.
 			file.write('\n%-20s' % 'Chi2 limit')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['chi2_lim'])
+					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2_lim'])
 
 			# Chi2 test.
 			file.write('\n%-20s' % 'Chi2 test')
@@ -262,11 +300,11 @@ class palmer(common_operations):
 
 	def set_vars_stage_initial(self):
 		"Set the options for the initial runs."
-		
+
 		self.mf.data.mfin.sims = 'y'
 
 
 	def set_vars_stage_selection(self):
 		"Set the options for the final run."
-		
+
 		self.mf.data.mfin.sims = 'y'

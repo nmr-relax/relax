@@ -87,15 +87,29 @@ class data:
 
 		# Dipolar constant.
 
-		dip = (4*pi/self.mu0) * (self.h_bar*self.gn*self.gh) / (2 * self.rnh**3)
-		self.dipole_const = dip**2
-		print self.dipole_const
+		dip = (self.mu0/(4.0*pi)) * self.h_bar * self.gh * self.gn * self.rnh**-3
+		self.dipole_const = (dip**2) / 4.0
+		dip_temp = self.dipole_const / 1e9
 
 		self.csa_const = []
+		csa_temp = []
 		for i in range(len(self.nmr_frq)):
-			csa_const = ( self.frq[i][1] * self.csa ) ** 2 / 3
+			csa_const = (self.csa**2) * (self.frq[i][1]**2) / 3.0
 			self.csa_const.append(csa_const)
-		print self.csa_const
+			csa_temp.append(csa_const/1e9)
+
+		# Print section.
+		#print "r(NH): " + `self.rnh`
+		#print "CSA: " + `self.csa`
+		#print "CSA^2: " + `self.csa**2`
+		#print "gH: " + `self.gh`
+		#print "gN: " + `self.gn`
+		#print "h-bar: " + `self.h_bar`
+		#print "mu0: " + `self.mu0`
+		#print "frq1: " + `self.frq[0][1]`
+		#print "frq2: " + `self.frq[1][1]`
+		#print dip_temp
+		#print csa_temp
 
 
 
@@ -105,21 +119,21 @@ class data:
 		self.frq = []
 		for i in range(len(self.nmr_frq)):
 			self.frq.append([])
-			frqN = 2*pi * ( float(self.nmr_frq[i][1]) * 1e6 ) * ( self.gh / self.gn )
-			frqH = 2*pi * ( float(self.nmr_frq[i][1]) * 1e6 )
-			self.frq[i].append(0)
+			frqH = 2.0*pi * ( float(self.nmr_frq[i][1]) * 1e6 )
+			frqN = frqH * ( self.gn / self.gh )
+			self.frq[i].append(0.0)
 			self.frq[i].append(frqN)
-			self.frq[i].append(frqH + frqN)
-			self.frq[i].append(frqH)
 			self.frq[i].append(frqH - frqN)
+			self.frq[i].append(frqH)
+			self.frq[i].append(frqH + frqN)
 
 
 	def init_constants(self):
-		self.gn = -2.71e-7
-		self.gh = 0.27e-7
-		self.h = 6.626e32
-		self.h_bar = self.h / ( 2*pi )
-		self.mu0 = 4*pi*1e7
+		self.gh = 26.7522e7
+		self.gn = -2.7126e7
+		self.h = 6.6260755e-34
+		self.h_bar = self.h / ( 2.0*pi )
+		self.mu0 = 4.0*pi * 1e-7
 
 
 	def init_data(self):

@@ -30,25 +30,51 @@ class bootstrap(common_operations):
 
 
 	def calc_crit(self, res, model, file):
-		sum_chi2 = 0
-		num_sims = len(file)
+		sum_chi2 = 0.0
+		num_sims = float(len(file))
+
+		#self.mf.log.write("\nCalculating bootstrap estimate for res " + `res` + ", model " + model + "\n\n")
+		#for set in range(len(self.mf.data.input_info)):
+		#	name = "Orig " + self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0]
+		#	self.mf.log.write("%-17s" % name)
+		#self.mf.log.write("\n")
+		#for set in range(len(self.mf.data.input_info)):
+		#	self.mf.log.write("%8.4f" % self.mf.data.relax_data[set][res][2])
+		#	self.mf.log.write("%1s" % "±")
+		#	self.mf.log.write("%-8.4f" % self.mf.data.relax_data[set][res][3])
+		#self.mf.log.write("\n\n")
+
+		real = []
+		real_err = []
+		types = []
+		for set in range(len(self.mf.data.input_info)):
+			real.append(float(self.mf.data.relax_data[set][res][2]))
+			real_err.append(float(self.mf.data.relax_data[set][res][3]))
+			types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 		for sim in range(len(file)):
-			real = []
-			real_err = []
-			back_calc = []
-			for set in range(len(self.mf.data.input_info)):
-				real.append(self.mf.data.relax_data[set][res][2])
-				real_err.append(self.mf.data.relax_data[set][res][3])
-				type = self.mf.data.input_info[set][0]
-				frq = self.mf.data.input_info[set][2]
-				if match('m1', model):
-					back_calc.append(self.mf.calc_relax_data.calc(model, type, frq, [ file[sim][2] ]))
-				elif match('m2', model) or match('m3', model):
-					back_calc.append(self.mf.calc_relax_data.calc(model, type, frq, [ file[sim][2], file[sim][3] ]))
-				elif match('m4', model) or match('m5', model):
-					back_calc.append(self.mf.calc_relax_data.calc(model, type, frq, [ file[sim][2], file[sim][3], file[sim][4] ]))
-			sum_chi2 = sum_chi2 + self.mf.calc_chi2.relax_data(real, real_err, back_calc)
+			if match('m1', model):
+				back_calc = self.mf.calc_relax_data.calc(model, types, [ file[sim][2] ])
+			elif match('m2', model) or match('m3', model):
+				back_calc = self.mf.calc_relax_data.calc(model, types, [ file[sim][2], file[sim][3] ])
+			elif match('m4', model) or match('m5', model):
+				back_calc = self.mf.calc_relax_data.calc(model, types, [ file[sim][2], file[sim][3], file[sim][4] ])
+			chi2 = self.mf.calc_chi2.relax_data(real, real_err, back_calc)
+			sum_chi2 = sum_chi2 + chi2
+
+			#self.mf.log.write("\n\nSim: " + `sim`)
+			#self.mf.log.write("\n")
+			#for set in range(len(self.mf.data.input_info)):
+			#	self.mf.log.write(self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0] + ": ")
+			#	self.mf.log.write("%-7.4f" % back_calc[set])
+			#	self.mf.log.write(" | ")
+			#self.mf.log.write("\nChi2: ")
+			#self.mf.log.write("%-7.4f" % chi2)
+			#self.mf.log.write(" | Sum Chi2: ")
+			#self.mf.log.write("%-7.4f" % sum_chi2)
+
 		ave_chi2 = sum_chi2 / num_sims
+		#self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
+
 		return ave_chi2
 
 
@@ -64,7 +90,7 @@ class bootstrap(common_operations):
 		for res in range(len(self.mf.data.relax_data[0])):
 			print "Residue: " + self.mf.data.relax_data[0][res][1] + " " + self.mf.data.relax_data[0][res][0]
 			self.mf.data.results.append({})
-			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
+			self.mf.log.write('\n%-22s' % ( "< Checking res " + data['m1'][res]['res_num'] + " >\n"))
 			file_name = self.mf.data.relax_data[0][res][1] + '_' + self.mf.data.relax_data[0][res][0] + '.out'
 
 			# Model 1.
@@ -125,53 +151,53 @@ class bootstrap(common_operations):
 			file.write('\n%-20s' % 'S2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2f'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2f_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2s'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2s_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['te'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['te_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['rex'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['rex_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['chi2'])
+					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Bootstrap criteria.
-			file.write('\n%-20s' % 'Bootstrap criteria')
+			file.write('\n%-20s' % 'Bootstrap')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['bootstrap'])
+					file.write('%-17.3f' % self.mf.data.data[run][res]['bootstrap'])
 
 		file.write('\n')
 		sys.stdout.write("]\n")

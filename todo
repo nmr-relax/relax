@@ -11,6 +11,6 @@ merge `input` and `usr_param.py`
 # Methods
 #########
 
-bootstrap
+anisotropic bootstrap
 farrow
 true

@@ -8,14 +8,15 @@ class calc_relax_data:
 		self.mf = mf
 
 
-	def calc(self, model, type, frq, mf_params):
+	def calc(self, model, types, mf_params):
 		"""Main function for the calculation of all relaxation values.
 
 		The arguments are:
 		1: model - one of the following, {m1, m2, m3, m4, m5}
-		2: type - one of the following, {NOE, R1, R2}
-		3: frq - the proton Lamor frequency in MHz
-		4: mf_params - a list containing the model-free parameters specific for the given model.
+		2: types - a 2D data structure where the first dimension is a list of each data set, and the second is:
+			[0] - one of the following, {NOE, R1, R2}
+			[1] - the proton Lamor frequency in MHz
+		3: mf_params - a list containing the model-free parameters specific for the given model.
 		The order of model-free parameters must be as follows:
 			m1 - {S2}
 			m2 - {S2, te}
@@ -25,97 +26,138 @@ class calc_relax_data:
 		"""
 
 		self.model = model
-		self.type = type
-		self.frq = frq
+		self.types = types
 		self.mf_params = mf_params
-		tm = float(self.mf.data.usr_param.tm['val'])
-		for i in range(len(self.mf.data.nmr_frq)):
-			if float(self.frq) == float(self.mf.data.nmr_frq[i][1]):
-				self.frq_num = i
+		self.tm = float(self.mf.data.usr_param.tm['val'])*1e-9
+		self.rex = []
 
 		if match('m1', self.model):
-			self.s2 = float(self.mf_params[0])
-			self.te = 0
-			self.rex = 0
+			self.s2  = float(self.mf_params[0])
+			self.s2f = float(self.mf_params[0])
+			self.s2s = 1.0
+			self.tf  = 0.0 * 1e-12
+			self.ts  = 0.0 * 1e-12
+			for i in range(len(self.mf.data.nmr_frq)):
+				self.rex.append(0.0)
 		elif match('m2', self.model):
-			self.s2 = float(self.mf_params[0])
-			self.te = float(self.mf_params[1])
-			self.rex = 0
+			self.s2  = float(self.mf_params[0])
+			self.s2f = float(self.mf_params[0])
+			self.s2s = 1.0
+			self.tf  = float(self.mf_params[1]) * 1e-12
+			self.ts  = 0.0 * 1e-12
+			for i in range(len(self.mf.data.nmr_frq)):
+				self.rex.append(0.0)
 		elif match('m3', self.model):
-			self.s2 = float(self.mf_params[0])
-			self.te = 0
-			self.rex = float(self.mf_params[1])
+			self.s2  = float(self.mf_params[0])
+			self.s2f = float(self.mf_params[0])
+			self.s2s = 1.0
+			self.tf  = 0.0 * 1e-12
+			self.ts  = 0.0 * 1e-12
+			for i in range(len(self.mf.data.nmr_frq)):
+				self.rex.append(float(self.mf_params[1]) * ( (float(self.mf.data.nmr_frq[i][1]) / float(self.mf.data.nmr_frq[0][1]))**2 ))
 		elif match('m4', self.model):
-			self.s2 = float(self.mf_params[0])
-			self.te = float(self.mf_params[1])
-			self.rex = float(self.mf_params[2])
+			self.s2  = float(self.mf_params[0])
+			self.s2f = float(self.mf_params[0])
+			self.s2s = 1.0
+			self.tf  = float(self.mf_params[1]) * 1e-12
+			self.ts  = 0.0 * 1e-12
+			for i in range(len(self.mf.data.nmr_frq)):
+				self.rex.append(float(self.mf_params[2]) * ( (float(self.mf.data.nmr_frq[i][1]) / float(self.mf.data.nmr_frq[0][1]))**2 ))
 		elif match('m5', self.model):
+			self.s2  = float(self.mf_params[0]) * float(self.mf_params[1])
 			self.s2f = float(self.mf_params[0])
 			self.s2s = float(self.mf_params[1])
-			self.ts = float(self.mf_params[2])
-			self.rex = 0
+			self.tf  = 0.0 * 1e-12
+			self.ts  = float(self.mf_params[2]) * 1e-12
+			for i in range(len(self.mf.data.nmr_frq)):
+				self.rex.append(0.0)
 
-		self.j = [0, 0, 0, 0, 0]
-		if match('m[1-4]', self.model):
-			self.j[0] = self.calc_jw_single(self.mf.data.frq[self.frq_num][0], tm, self.s2, self.te)
-			self.j[1] = self.calc_jw_single(self.mf.data.frq[self.frq_num][1], tm, self.s2, self.te)
-			self.j[2] = self.calc_jw_single(self.mf.data.frq[self.frq_num][2], tm, self.s2, self.te)
-			self.j[3] = self.calc_jw_single(self.mf.data.frq[self.frq_num][3], tm, self.s2, self.te)
-			self.j[4] = self.calc_jw_single(self.mf.data.frq[self.frq_num][4], tm, self.s2, self.te)
-		else:
-			self.j[0] = self.calc_jw_double(self.mf.data.frq[self.frq_num][0], tm, self.s2f, self.s2s, self.ts)
-			self.j[1] = self.calc_jw_double(self.mf.data.frq[self.frq_num][1], tm, self.s2f, self.s2s, self.ts)
-			self.j[2] = self.calc_jw_double(self.mf.data.frq[self.frq_num][2], tm, self.s2f, self.s2s, self.ts)
-			self.j[3] = self.calc_jw_double(self.mf.data.frq[self.frq_num][3], tm, self.s2f, self.s2s, self.ts)
-			self.j[4] = self.calc_jw_double(self.mf.data.frq[self.frq_num][4], tm, self.s2f, self.s2s, self.ts)
+		#self.mf.log.write("\nS2: ")
+		#self.mf.log.write("%-7.4f" % self.s2)
+		#self.mf.log.write(" | S2f: ")
+		#self.mf.log.write("%-7.4f" % self.s2f)
+		#self.mf.log.write(" | S2s: ")
+		#self.mf.log.write("%-7.4f" % self.s2s)
+		#self.mf.log.write(" | tf: ")
+		#self.mf.log.write("%-7s" % `self.tf`)
+		#self.mf.log.write(" | ts: ")
+		#self.mf.log.write("%-7s" % `self.ts`)
+		#for i in range(len(self.mf.data.nmr_frq)):
+		#	self.mf.log.write(" | " + self.mf.data.nmr_frq[i][0] + " rex: ")
+		#	self.mf.log.write("%-7.4f" % self.rex[i])
+
+		self.tf_prime = ( self.tf * self.tm ) / ( self.tf + self.tm )
+		self.ts_prime = ( self.ts * self.tm ) / ( self.ts + self.tm )
+
+		self.j = []
+		for i in range(len(self.mf.data.nmr_frq)):
+			self.j.append([0.0, 0.0, 0.0, 0.0, 0.0])
+			self.j[i][0] = self.calc_jw(self.mf.data.frq[i][0])
+			self.j[i][1] = self.calc_jw(self.mf.data.frq[i][1])
+			self.j[i][2] = self.calc_jw(self.mf.data.frq[i][2])
+			self.j[i][3] = self.calc_jw(self.mf.data.frq[i][3])
+			self.j[i][4] = self.calc_jw(self.mf.data.frq[i][4])
+
+		self.back_calc = []
+		for i in range(len(self.types)):
+			for j in range(len(self.mf.data.nmr_frq)):
+				if self.types[i][1] == float(self.mf.data.nmr_frq[j][1]):
+					self.frq_num = j
+			if match('NOE', self.types[i][0]):
+				self.back_calc.append(self.calc_noe(self.types[i][1]))
+			elif match('R1', self.types[i][0]):
+				self.back_calc.append(self.calc_r1(self.types[i][1]))
+			elif match('R2', self.types[i][0]):
+				self.back_calc.append(self.calc_r2(self.types[i][1]))
+
+		return self.back_calc
 
 
-		if match('NOE', self.type):
-			self.value = self.calc_noe()
-		elif match('R1', self.type):
-			self.value = self.calc_r1()
-		elif match('R2', self.type):
-			self.value = self.calc_r2()
-		return self.value
+	def calc_jw(self, frq):
+		# Lorentzian 1:
+		top = self.s2 * self.tm
+		bottom = 1.0 + ( frq * self.tm )**2
+		loren1 = top / bottom
 
+		# Lorentzian 2:
+		top = ( 1.0 - self.s2f ) * self.tf_prime
+		bottom = 1.0 + ( frq * self.tf_prime )**2
+		loren2 = top / bottom
 
-	def calc_jw_single(self, frq, tm, s2, te):
-		jw = ( s2*tm ) / ( 1 + (tm*frq)**2 )
-		if te != 0:
-			te_prime = 1 / ( 1/tm + 1/te )
-			jw = jw + ( 1-s2 )*te_prime / ( 1 + (te_prime*frq)**2 )
+		# Lorentzian 3:
+		top = ( self.s2f - self.s2 ) * self.ts_prime
+		bottom = 1.0 + ( frq * self.ts_prime )**2
+		loren3 = top / bottom
+
+		# Spectral density value.
+		jw = 2.0/5.0 * ( loren1 + loren2 + loren3 )
 		return jw
 
 
-	def calc_jw_double(self, frq, tm, s2f, s2s, ts):
-		jw = ( s2f*tm ) / ( 1 + (tm*frq)**2 )
-		if ts != 0:
-			ts_prime = 1 / ( 1/tm + 1/ts )
-			jw = jw + ( 1-s2s )*ts_prime / ( 1 + (ts_prime*frq)**2 )
-		return jw
-
-
-	def calc_noe(self):
+	def calc_noe(self, frq):
 		"Calculate the NOE value."
 
-		r1 = self.calc_r1()
-		noe = 1 + ( self.mf.data.gh/self.mf.data.gn ) * ( 1/r1 ) * ( 6*self.j[4] - self.j[2] )
+		r1 = self.calc_r1(frq)
+		if r1 == 0:
+			noe = 1e99
+		else
+			noe = 1.0 + ( self.mf.data.dipole_const / r1 ) * ( self.mf.data.gh/self.mf.data.gn ) * ( 6.0*self.j[self.frq_num][4] - self.j[self.frq_num][2] )
 		return noe
 
 
-	def calc_r1(self):
+	def calc_r1(self, frq):
 		"Calculate the R1 value."
 
-		r1_dipole = self.mf.data.dipole_const * ( self.j[2] + 3*self.j[1] + 6*self.j[4] )
-		r1_csa = self.mf.data.csa_const[self.frq_num] * ( self.j[1] )
+		r1_dipole = self.mf.data.dipole_const * ( self.j[self.frq_num][2] + 3.0*self.j[self.frq_num][1] + 6.0*self.j[self.frq_num][4] )
+		r1_csa = self.mf.data.csa_const[self.frq_num] * ( self.j[self.frq_num][1] )
 		r1 = r1_dipole + r1_csa
 		return r1
 
 
-	def calc_r2(self):
+	def calc_r2(self, frq):
 		"Calculate the R2 value."
 
-		r2_dipole = self.mf.data.dipole_const/2 * ( 4*self.j[0] + self.j[1] + 3*self.j[2] + 6*self.j[3] + 6*self.j[4])
-		r2_csa = self.mf.data.csa_const[self.frq_num] * ( 4*self.j[0] + 3*self.j[1] )
-		r2 = r2_dipole + r2_csa + self.rex
+		r2_dipole = (self.mf.data.dipole_const/2.0) * ( 4.0*self.j[self.frq_num][0] + self.j[self.frq_num][2] + 3.0*self.j[self.frq_num][1] + 6.0*self.j[self.frq_num][3] + 6.0*self.j[self.frq_num][4])
+		r2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * ( 4.0*self.j[self.frq_num][0] + 3.0*self.j[self.frq_num][1] )
+		r2 = r2_dipole + r2_csa + self.rex[self.frq_num]
 		return r2

@@ -400,27 +400,27 @@ class common_operations:
 			file.write(self.grace_header(type + ' values', subtitle, 'Residue Number', type, 'xydy'))
 
 		for res in range(len(self.mf.data.results)):
-			if match('S2', type) and match('^[0-9]', self.mf.data.results[res]['s2']):
+			if match('S2', type) and self.mf.data.results[res]['s2']:
 				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(self.mf.data.results[res]['s2'] + " ")
-				file.write(self.mf.data.results[res]['s2_err'] + "\n")
-			elif match('S2s', type) and match('^[0-9]', self.mf.data.results[res]['s2s']):
+				file.write(`self.mf.data.results[res]['s2']` + " ")
+				file.write(`self.mf.data.results[res]['s2_err']` + "\n")
+			elif match('S2s', type) and self.mf.data.results[res]['s2s']:
 				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(self.mf.data.results[res]['s2s'] + " ")
-				file.write(self.mf.data.results[res]['s2s_err'] + "\n")
-			elif match('S2f', type) and match('^[0-9]', self.mf.data.results[res]['s2f']):
+				file.write(`self.mf.data.results[res]['s2s']` + " ")
+				file.write(`self.mf.data.results[res]['s2s_err']` + "\n")
+			elif match('S2f', type) and self.mf.data.results[res]['s2f']:
 				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(self.mf.data.results[res]['s2f'] + " ")
-				file.write(self.mf.data.results[res]['s2f_err'] + "\n")
-			elif match('te', type) and match('^[0-9]', self.mf.data.results[res]['te']):
+				file.write(`self.mf.data.results[res]['s2f']` + " ")
+				file.write(`self.mf.data.results[res]['s2f_err']` + "\n")
+			elif match('te', type) and self.mf.data.results[res]['te']:
 				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(self.mf.data.results[res]['te'] + " ")
-				file.write(self.mf.data.results[res]['te_err'] + "\n")
-			elif match('Rex', type) and match('^[0-9]', self.mf.data.results[res]['rex']):
+				file.write(`self.mf.data.results[res]['te']` + " ")
+				file.write(`self.mf.data.results[res]['te_err']` + "\n")
+			elif match('Rex', type) and self.mf.data.results[res]['rex']:
 				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(self.mf.data.results[res]['rex'] + " ")
-				file.write(self.mf.data.results[res]['rex_err'] + "\n")
-			elif match('Chi2', type):
+				file.write(`self.mf.data.results[res]['rex']` + " ")
+				file.write(`self.mf.data.results[res]['rex_err']` + "\n")
+			elif match('Chi2', type) and self.mf.data.results[res]['chi2']:
 				file.write(self.mf.data.results[res]['res_num'] + " ")
 				file.write(`self.mf.data.results[res]['chi2']` + "\n")
 		file.write("&\n")
@@ -540,23 +540,23 @@ class common_operations:
 			file.write('%-6s' % self.mf.data.results[res]['model'])
 
 			if match('[1,2,3,4,5]', self.mf.data.results[res]['model']):
-				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] ))
+				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] ))
 			else:
 				file.write('%13s' % '')
 			if match('5', self.mf.data.results[res]['model']):
-				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] ))
-				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] ))
+				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] ))
+				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] ))
 			else:
 				file.write('%26s' % '')
 			if match('[2,4,5]', self.mf.data.results[res]['model']):
-				file.write('%8s%1s%-8s  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] ))
+				file.write('%8.3f%1s%-8.3f  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] ))
 			else:
 				file.write('%19s' % '')
 			if match('[3,4]', self.mf.data.results[res]['model']):
-				file.write('%5s%1s%-5s  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] ))
+				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] ))
 			else:
 				file.write('%13s' % '')
-			file.write('%10s\n' % self.mf.data.results[res]['chi2'])
+			file.write('%10.3f\n' % self.mf.data.results[res]['chi2'])
 		sys.stdout.write("]\n")
 
 		file.close()
@@ -680,9 +680,9 @@ class common_operations:
 			print "Extracting model-free data from " + run + "/mfout."
 			num_res = len(self.mf.data.relax_data[0])
 			if match('^m', run):
-				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, float(self.mf.data.usr_param.large_chi2), ftest='n')
+				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n')
 			if match('^f', run):
-				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, float(self.mf.data.usr_param.large_chi2), ftest='y')
+				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='y')
 
  		print "\n[ " + self.mf.data.usr_param.method + " model selection ]\n"
 		self.model_selection()

@@ -43,9 +43,9 @@ class usr_param:
 		self.method = 'BIC'
 
 		# The following three values are only used in Palmer's method and won't affect the others.
-		self.chi2_lim = '0.90'      # Set the chi squared cutoff (1 - alpha critical value).
-		self.ftest_lim = '0.80'     # Set the F-test cutoff (1 - alpha critical value).
-		self.large_chi2 = '20'      # Set the maximum chi squared value.
+		self.chi2_lim = 0.90      # Set the chi squared cutoff (1 - alpha critical value).
+		self.ftest_lim = 0.80     # Set the F-test cutoff (1 - alpha critical value).
+		self.large_chi2 = 20.0      # Set the maximum chi squared value.
 
 
 	def init_run_param(self):
@@ -66,7 +66,7 @@ class usr_param:
 
 		# tm
 		self.tm = {}
-		self.tm['val']   = '11.09'
+		self.tm['val']   = 11.09
 		self.tm['flag']  = '1'
 		self.tm['bound'] = '2'
 		self.tm['lower'] = '9.0'
@@ -75,7 +75,7 @@ class usr_param:
 
 		# dratio
 		self.dratio = {}
-		self.dratio['val']   = '1.123'
+		self.dratio['val']   = 1.123
 		self.dratio['flag']  = '1'
 		self.dratio['bound'] = '0'
 		self.dratio['lower'] = '0.6'
@@ -84,7 +84,7 @@ class usr_param:
 
 		# theta
 		self.theta = {}
-		self.theta['val']   = '87.493'
+		self.theta['val']   = 87.493
 		self.theta['flag']  = '1'
 		self.theta['bound'] = '0'
 		self.theta['lower'] = '-90'
@@ -93,7 +93,7 @@ class usr_param:
 
 		# phi
 		self.phi = {}
-		self.phi['val']   = '-52.470'
+		self.phi['val']   = -52.470
 		self.phi['flag']  = '1'
 		self.phi['bound'] = '0'
 		self.phi['lower'] = '-90'
@@ -106,9 +106,9 @@ class usr_param:
 
 		self.const = {}
 		self.const['nucleus'] = 'N15'
-		self.const['gamma']   = '-2.710'
-		self.const['rxh']     = '1.020'
-		self.const['csa']     = '-170.00'
+		self.const['gamma']   = -2.710
+		self.const['rxh']     = 1.020
+		self.const['csa']     = -170.00
 
 		self.vector = {}
 		self.vector['atom1'] = 'N'

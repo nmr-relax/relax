@@ -6,7 +6,7 @@ class calc_chi2:
 	def relax_data(self, real, real_err, back_calc):
 		"Calculate the chi squared value for the relaxation data."
 
-		self.chi2 = 0
+		self.chi2 = 0.0
 		for set in range(len(real)):
 			chi2_set = ( real[set] - back_calc[set] ) ** 2
 			chi2_set = chi2_set / real_err[set]

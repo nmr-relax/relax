@@ -37,27 +37,27 @@ class asymptotic(common_operations):
 	def calc_crit(self, res, n, k, chisq):
 		"Calculate the criteria"
 
-		sum_ln_err = 0
+		sum_ln_err = 0.0
 		for i in range(len(self.mf.data.relax_data)):
 			if self.mf.data.relax_data[i][res][3] == 0:
-				ln_err = -99
+				ln_err = -99.0
 			else:
 				ln_err = log(float(self.mf.data.relax_data[i][res][3]))
 			sum_ln_err = sum_ln_err + ln_err
 
 		if match('^AIC$', self.mf.data.usr_param.method):
-			aic = n*log(2*pi) + sum_ln_err + chisq + 2*k
-			aic = aic / (2*n)
+			aic = n*log(2.0*pi) + sum_ln_err + chisq + 2.0*k
+			aic = aic / (2.0*n)
 			return aic
 
 		elif match('^AICc$', self.mf.data.usr_param.method):
-			aicc = n*log(2*pi) + sum_ln_err + chisq + 2*k + 2*k*(k+1)/(n-k-1)
-			aicc = aicc / (2*n)
+			aicc = n*log(2.0*pi) + sum_ln_err + chisq + 2.0*k + 2.0*k*(k+1.0)/(n-k-1.0)
+			aicc = aicc / (2.0*n)
 			return aicc
 
 		elif match('^BIC$', self.mf.data.usr_param.method):
-			bic = n*log(2*pi) + sum_ln_err + chisq + k*log(n)
-			bic = bic / ( 2 * n )
+			bic = n*log(2.0*pi) + sum_ln_err + chisq + k*log(n)
+			bic = bic / ( 2.0 * n )
 			return bic
 
 
@@ -71,13 +71,13 @@ class asymptotic(common_operations):
 			self.mf.data.results.append({})
 			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
 
-			n = self.mf.data.num_data_sets
+			n = float(self.mf.data.num_data_sets)
 
-			data['m1'][res]['crit'] = self.calc_crit(res, n, k=1, chisq=data['m1'][res]['chi2'])
-			data['m2'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m2'][res]['chi2'])
-			data['m3'][res]['crit'] = self.calc_crit(res, n, k=2, chisq=data['m3'][res]['chi2'])
-			data['m4'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m4'][res]['chi2'])
-			data['m5'][res]['crit'] = self.calc_crit(res, n, k=3, chisq=data['m5'][res]['chi2'])
+			data['m1'][res]['crit'] = self.calc_crit(res, n, k=1.0, chisq=data['m1'][res]['chi2'])
+			data['m2'][res]['crit'] = self.calc_crit(res, n, k=2.0, chisq=data['m2'][res]['chi2'])
+			data['m3'][res]['crit'] = self.calc_crit(res, n, k=2.0, chisq=data['m3'][res]['chi2'])
+			data['m4'][res]['crit'] = self.calc_crit(res, n, k=3.0, chisq=data['m4'][res]['chi2'])
+			data['m5'][res]['crit'] = self.calc_crit(res, n, k=3.0, chisq=data['m5'][res]['chi2'])
 
 			# Select model.
 			min = 'm1'
@@ -115,53 +115,53 @@ class asymptotic(common_operations):
 			file.write('\n%-20s' % 'S2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2f'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2f_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['s2s'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['s2s_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['te'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['te_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8s' % self.mf.data.data[run][res]['rex'])
+					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
 					file.write('%1s' % '±')
-					file.write('%-8s' % self.mf.data.data[run][res]['rex_err'])
+					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['chi2'])
+					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Model selection criteria.
 			file.write('\n%-20s' % self.mf.data.usr_param.method)
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17.6s' % self.mf.data.data[run][res]['crit'])
+					file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
 
 		file.write('\n')
 		sys.stdout.write("]\n")

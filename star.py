@@ -7,21 +7,21 @@ class star:
 		"Class to extract model-free data from the STAR formatted mfout file."
 
 
-	def extract(self, mfout, num_res, chi2_lim='0.90', ftest_lim='0.80', large_chi2=20, ftest='n'):
+	def extract(self, mfout, num_res, chi2_lim=0.90, ftest_lim=0.80, ftest='n'):
 		"Extract the data from the mfout file and Return it as a 2D data structure."
 
 		self.mfout = mfout
 		self.num_res = num_res
 		self.chi2_lim = chi2_lim
 		self.ftest_lim = ftest_lim
-		self.large_chi2 = large_chi2
+		self.ftest = ftest
 
 		self.data = []
 		for i in range(self.num_res):
 			self.data.append({})
 		self.line_num = 0
 
-		if match('n', ftest):
+		if match('n', self.ftest):
 			# Jump to first line of data.
 			for line in range(len(self.mfout)):
 				self.row = [[]]
@@ -40,7 +40,7 @@ class star:
 			self.get_rex()
 			self.get_chi2()
 
-		if match('y', ftest):
+		if match('y', self.ftest):
 			# Jump to first line of data.
 			for line in range(len(self.mfout)):
 				self.row = [[]]
@@ -62,24 +62,14 @@ class star:
 		for i in range(self.num_res):
 			self.row = [[]]
 			self.row[0] = split(self.mfout[self.line_num])
-			percentile = int(float(self.ftest_lim) * 100 / 5)
+			percentile = int(self.ftest_lim * 100.0 / 5.0)
 			self.line_num = self.line_num + percentile
 			self.row.append(split(self.mfout[self.line_num]))
-			lines_next_res = 2 + ( 20 - percentile )
+			lines_next_res = 2 + ( 20 - int(percentile) )
 			self.line_num = self.line_num + lines_next_res
 			self.data[i]['res_num'] = self.row[0][0]
 			self.data[i]['fstat'] = float(self.row[0][1])
 			self.data[i]['fstat_lim'] = float(self.row[1][1])
-			if self.data[i]['fstat_lim'] < 1.5:
-				if self.data[i]['fstat'] > 1.5:
-					self.data[i]['ftest'] = 1
-				else:
-					self.data[i]['ftest'] = 0
-			elif self.data[i]['fstat_lim'] >= 1.5:
-				if self.data[i]['fstat'] > self.data[i]['fstat_lim']:
-					self.data[i]['ftest'] = 1
-				else:
-					self.data[i]['ftest'] = 0
 
 
 	def get_rex(self):
@@ -89,8 +79,8 @@ class star:
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
 			j = i + 1
-			self.data[i]['rex'] = self.row[j][1]
-			self.data[i]['rex_err'] = self.row[j][5]
+			self.data[i]['rex'] = float(self.row[j][1])
+			self.data[i]['rex_err'] = float(self.row[j][5])
 
 
 	def get_s2(self):
@@ -98,8 +88,8 @@ class star:
 		for i in range(self.num_res):
 			j = i + 1
 			self.data[i]['res_num'] = self.row[j][0]
-			self.data[i]['s2'] = self.row[j][1]
-			self.data[i]['s2_err'] = self.row[j][5]
+			self.data[i]['s2'] = float(self.row[j][1])
+			self.data[i]['s2_err'] = float(self.row[j][5])
 
 
 	def get_s2f(self):
@@ -109,8 +99,8 @@ class star:
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
 			j = i + 1
-			self.data[i]['s2f'] = self.row[j][1]
-			self.data[i]['s2f_err'] = self.row[j][5]
+			self.data[i]['s2f'] = float(self.row[j][1])
+			self.data[i]['s2f_err'] = float(self.row[j][5])
 
 
 	def get_s2s(self):
@@ -120,8 +110,8 @@ class star:
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
 			j = i + 1
-			self.data[i]['s2s'] = self.row[j][1]
-			self.data[i]['s2s_err'] = self.row[j][5]
+			self.data[i]['s2s'] = float(self.row[j][1])
+			self.data[i]['s2s_err'] = float(self.row[j][5])
 
 
 	def get_chi2(self):
@@ -129,31 +119,13 @@ class star:
 		for i in range(self.num_res):
 			self.row = [[]]
 			self.row[0] = split(self.mfout[self.line_num])
-			percentile = int(float(self.chi2_lim) * 100 / 5)
+			percentile = int(self.chi2_lim * 100.0 / 5.0)
 			self.line_num = self.line_num + percentile
 			self.row.append(split(self.mfout[self.line_num]))
-			lines_next_res = 2 + ( 20 - percentile )
+			lines_next_res = 2 + ( 20 - int(percentile) )
 			self.line_num = self.line_num + lines_next_res
 			self.data[i]['chi2'] = float(self.row[0][1])
 			self.data[i]['chi2_lim'] = float(self.row[1][1])
-
-			# Chi squared test.
-			if self.data[i]['chi2'] <= self.data[i]['chi2_lim']:
-				self.data[i]['chi2_test'] = 1
-			else:
-				self.data[i]['chi2_test'] = 0
-
-			# Large chi squared test.
-			if self.data[i]['chi2'] >= self.large_chi2:
-				self.data[i]['large_chi2'] = 1
-			else:
-				self.data[i]['large_chi2'] = 0
-
-			# Zero chi squared test.
-			if self.data[i]['chi2'] == 0:
-				self.data[i]['zero_chi2'] = 1
-			else:
-				self.data[i]['zero_chi2'] = 0
 
 
 	def get_te(self):
@@ -163,8 +135,8 @@ class star:
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
 			j = i + 1
-			self.data[i]['te'] = self.row[j][1]
-			self.data[i]['te_err'] = self.row[j][5]
+			self.data[i]['te'] = float(self.row[j][1])
+			self.data[i]['te_err'] = float(self.row[j][5])
 
 
 	def split_rows(self, line_num, num_lines):
