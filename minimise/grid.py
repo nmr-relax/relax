@@ -62,7 +62,6 @@ class grid:
 				print "%-20s%-20s" % ("Init params:", `self.params`)
 				print "%-20s%-20g\n" % ("Init chi2:", self.chi2)
 
-
 		# Grid search.
 		for step in range(2, total_steps + 1):
 			# Loop over the parameters.

@@ -1,3 +1,5 @@
+from Numeric import Float64, zeros
+
 class d2chi2:
 	def __init__(self):
 		"Function to create the chi-squared hessian."
@@ -79,41 +81,21 @@ class d2chi2:
 				# Parameter independent terms.
 				a = 2.0 / (self.data.errors[i]**2)
 				b = self.data.relax_data[i] - self.data.ri[i]
-				print "Relax data: " + `self.data.relax_data[i]`
-				print "Back calc:  " + `self.data.ri[i]`
-				print "Diff:       " + `self.data.relax_data[i] - self.data.ri[i]`
-				print "a:          " + `a`
 
 				# Loop over the parameters.
 				for param_j in range(len(self.data.params)):
-					print "\tparam_j: " + `param_j`
 					# Loop over the parameters from 1 to param_k.
 					for param_k in range(param_j + 1):
-						print "\t\tparam_k: " + `param_k`
-						c = self.data.dri[param_j, i] * self.data.dri[param_k, i]
-						print "\t\t\tdrij:                  " + `self.data.dri[param_j, i]`
-						print "\t\t\tdrik:                  " + `self.data.dri[param_k, i]`
-						print "\t\t\tdrij*drik:             " + `c`
-						print "\t\t\td2ri:                  " + `self.data.d2ri[param_j, param_k, i]`
-						print "\t\t\tdiff*d2ri:             " + `b * self.data.d2ri[param_j, param_k, i]`
-						print "\t\t\tdrij*drik - diff*d2ri: " + `c - b * self.data.d2ri[param_j, param_k, i]`
-						if param_j == param_k:
-							self.data.d2chi2[param_j, param_j] = self.data.d2chi2[param_j, param_j] + a * c
-							#self.data.d2chi2[param_j, param_j] = self.data.d2chi2[param_j, param_j] + a * (c - b * self.data.d2ri[param_j, param_j, i])
-						else:
-							self.data.d2chi2[param_j, param_k] = self.data.d2chi2[param_j, param_k] + a * c
-							self.data.d2chi2[param_k, param_j] = self.data.d2chi2[param_k, param_j] + a * c
-							#self.data.d2chi2[param_j, param_k] = self.data.d2chi2[param_j, param_k] + a * (c - b * self.data.d2ri[param_j, param_k, i])
-							#self.data.d2chi2[param_k, param_j] = self.data.d2chi2[param_k, param_j] + a * (c - b * self.data.d2ri[param_k, param_j, i])
+						self.data.d2chi2[param_j, param_k] = self.data.d2chi2[param_j, param_k] + a * (self.data.dri[param_j, i] * self.data.dri[param_k, i] - b * self.data.d2ri[param_j, param_k, i])
+						if param_j != param_k:
+							self.data.d2chi2[param_k, param_j] = self.data.d2chi2[param_j, param_k]
 			else:
 				# Loop over the parameters.
 				for param_k in range(len(self.data.params)):
 					# Loop over the parameters from 1 to param_k.
 					for param_j in range(param_k + 1):
-						if param_j == param_k:
-							self.data.d2chi2[param_j, param_j] = 1e99
-						else:
-							self.data.d2chi2[param_j, param_k] = 1e99
+						self.data.d2chi2[param_j, param_j] = 1e99
+						if param_j != param_k:
 							self.data.d2chi2[param_k, param_j] = 1e99
 				break
 

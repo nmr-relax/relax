@@ -1,3 +1,6 @@
+from Numeric import Float64, zeros
+from re import match
+
 class d2Ri_prime:
 	def __init__(self):
 		"Function for the calculation of the trasformed relaxation hessians."
@@ -250,11 +253,11 @@ class d2Ri_prime:
 		self.d2Jw()
 
 		# Initialise the components of the transformed relaxation equations.
-		self.data.j_dip_comps_2prime = zeros((self.mf.data.num_ri), Float64)
-		self.data.j_csa_comps_2prime = zeros((self.mf.data.num_ri), Float64)
+		self.data.j_dip_comps_2prime = zeros((len(self.data.params), len(self.data.params), self.mf.data.num_ri), Float64)
+		self.data.j_csa_comps_2prime = zeros((len(self.data.params), len(self.data.params), self.mf.data.num_ri), Float64)
 		if match('m6', self.data.model):
-			self.data.dip_comps_2prime = zeros((self.mf.data.num_ri), Float64)
-			self.data.csa_comps_2prime = zeros((self.mf.data.num_ri), Float64)
+			self.data.dip_comps_2prime = zeros((len(self.data.params), len(self.data.params), self.mf.data.num_ri), Float64)
+			self.data.csa_comps_2prime = zeros((len(self.data.params), len(self.data.params), self.mf.data.num_ri), Float64)
 
 		# Loop over the relaxation values.
 		for i in range(self.mf.data.num_ri):
@@ -262,35 +265,35 @@ class d2Ri_prime:
 
 			# R1 components.
 			if self.mf.data.data_types[i]  == 'R1':
-				self.data.j_dip_comps_2prime[i] = self.data.d2jw[frq_num, 2] + 3.0*self.data.d2jw[frq_num, 1] + 6.0*self.data.d2jw[frq_num, 4]
-				self.data.j_csa_comps_2prime[i] = self.data.d2jw[frq_num, 1]
+				self.data.j_dip_comps_2prime[:, :, i] = self.data.d2jw[frq_num, 2] + 3.0*self.data.d2jw[frq_num, 1] + 6.0*self.data.d2jw[frq_num, 4]
+				self.data.j_csa_comps_2prime[:, :, i] = self.data.d2jw[frq_num, 1]
 				if match('m6', self.data.model):
-					self.data.dip_comps_2prime[i] = self.mf.data.dipole_prime
-					self.data.csa_comps_2prime[i] = self.mf.data.csa_prime[frq_num]
+					self.data.dip_comps_2prime[:, :, i] = self.mf.data.dipole_prime
+					self.data.csa_comps_2prime[:, :, i] = self.mf.data.csa_prime[frq_num]
 
 			# R2 components.
 			elif self.mf.data.data_types[i] == 'R2':
-				self.data.j_dip_comps_2prime[i] = 4.0*self.data.d2jw[frq_num, 0] + self.data.d2jw[frq_num, 2] + 3.0*self.data.d2jw[frq_num, 1] + 6.0*self.data.d2jw[frq_num, 3] + 6.0*self.data.d2jw[frq_num, 4]
-				self.data.j_csa_comps_2prime[i] = 4.0*self.data.d2jw[frq_num, 0] + 3.0*self.data.d2jw[frq_num, 1]
+				self.data.j_dip_comps_2prime[:, :, i] = 4.0*self.data.d2jw[frq_num, 0] + self.data.d2jw[frq_num, 2] + 3.0*self.data.d2jw[frq_num, 1] + 6.0*self.data.d2jw[frq_num, 3] + 6.0*self.data.d2jw[frq_num, 4]
+				self.data.j_csa_comps_2prime[:, :, i] = 4.0*self.data.d2jw[frq_num, 0] + 3.0*self.data.d2jw[frq_num, 1]
 				if match('m6', self.data.model):
-					self.data.dip_comps_2prime[i] = self.mf.data.dipole_2prime / 2.0
-					self.data.csa_comps_2prime[i] = self.mf.data.csa_2prime[frq_num] / 6.0
+					self.data.dip_comps_2prime[:, :, i] = self.mf.data.dipole_2prime / 2.0
+					self.data.csa_comps_2prime[:, :, i] = self.mf.data.csa_2prime[frq_num] / 6.0
 
 			# sigma_noe components.
 			elif self.mf.data.data_types[i] == 'NOE':
-				self.data.j_dip_comps_2prime[i] = 6.0*self.data.d2jw[frq_num, 4] - self.data.d2jw[frq_num, 2]
+				self.data.j_dip_comps_2prime[:, :, i] = 6.0*self.data.d2jw[frq_num, 4] - self.data.d2jw[frq_num, 2]
 				if match('m6', self.data.model):
-					self.data.dip_comps_2prime[i] = self.mf.data.dipole_2prime
+					self.data.dip_comps_2prime[:, :, i] = self.mf.data.dipole_2prime
 
 		# Initialise the transformed relaxation hessians.
-		self.data.d2ri_prime = zeros((len(self.data.params), len(self.data.params, self.mf.data.num_ri)), Float64)
+		self.data.d2ri_prime = zeros((len(self.data.params), len(self.data.params), self.mf.data.num_ri), Float64)
 
 		# Calculate the transformed relaxation hessians.
 		for param1 in range(len(self.data.ri_param_types)):
 			for param2 in range(param1 + 1):
 				# Spectral density parameter - Spectral density parameter.
 				if self.data.ri_param_types[param1] == 'Jj' and self.data.ri_param_types[param2] == 'Jj':
-					self.data.d2ri_prime[param1, param2] = self.data.dip_comps * self.data.j_dip_comps_2prime + self.data.csa_comps * self.data.j_csa_comps_2prime
+					self.data.d2ri_prime[param1, param2] = self.data.dip_comps * self.data.j_dip_comps_2prime[param1, param2] + self.data.csa_comps * self.data.j_csa_comps_2prime[param1, param2]
 
 				# Spectral density parameter - CSA.
 				elif (self.data.ri_param_types[param1] == 'Jj' and self.data.ri_param_types[param2] == 'CSA') \

@@ -1,3 +1,6 @@
+from Numeric import Float64, zeros
+from re import match
+
 class dJw:
 	def __init__(self):
 		"Function for creating the model-free spectral density gradients."

@@ -1,3 +1,6 @@
+from Numeric import Float64, zeros
+from re import match
+
 class Jw:
 	def __init__(self):
 		"Function for creating the model-free spectral density values."
@@ -95,7 +98,7 @@ class Jw:
 	def calc_jw_iso_m5(self, i, frq_index):
 		"Calculate the model 5 spectral density values for isotropic rotational diffusion."
 
-		temp = 0.4 * self.data.s2f * (self.data.s2s_tm / (1.0 + self.data.omega_tm_sqrd) + (1.0 - self.data.s2s) * self.data.ts_prime / (1.0 + self.data.omega_ts_prime_sqrd[i, frq_index]))
+		temp = 0.4 * self.data.s2f * (self.data.s2s_tm / (1.0 + self.data.omega_tm_sqrd[i, frq_index]) + (1.0 - self.data.s2s) * self.data.ts_prime / (1.0 + self.data.omega_ts_prime_sqrd[i, frq_index]))
 		return temp
 
 
@@ -135,8 +138,8 @@ class Jw:
 
 		for i in range(self.mf.data.num_frq):
 			for frq_index in range(5):
-				omega_tm_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.tm_sqrd
+				self.data.omega_tm_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.tm_sqrd
 				if match('m[24]', self.data.model):
-					omega_te_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.te_prime_sqrd
+					self.data.omega_te_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.te_prime_sqrd
 				elif match('m5', self.data.model):
-					omega_ts_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.ts_prime_sqrd
+					self.data.omega_ts_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.ts_prime_sqrd

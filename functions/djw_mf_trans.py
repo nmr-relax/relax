@@ -1,3 +1,6 @@
+from Numeric import Float64, zeros
+from re import match
+
 class dJw:
 	def __init__(self):
 		"Function for creating the model-free spectral density gradients."
@@ -19,6 +22,36 @@ class dJw:
 		Formulae
 		~~~~~~~~
 
+		Parameter transformations
+		~~~~~~~~~~~~~~~~~~~~~~~~~
+			                  1
+			alpha_e  =  ---------------
+			            1e12 . te  +  1
+
+			                  1
+			alpha_f  =  ---------------
+			            1e12 . tf  +  1
+
+			                  1
+			alpha_s  =  ---------------
+			            1e12 . ts  +  1
+
+
+			therefore:
+
+				 1      1      /      1                 \ -1
+				---  =  --  +  | ------------  -  1e-12 |
+				te'     tm     \ 1e12.alpha_e           /
+
+				 1      1      /      1                 \ -1
+				---  =  --  +  | ------------  -  1e-12 |
+				tf'     tm     \ 1e12.alpha_f           /
+
+				 1      1      /      1                 \ -1
+				---  =  --  +  | ------------  -  1e-12 |
+				ts'     tm     \ 1e12.alpha_s           /
+
+
 		Original
 		~~~~~~~~
 
@@ -27,9 +60,9 @@ class dJw:
 			 dS2      5 \ 1 + (w.tm)**2     1 + (w.te')**2 /
 
 
-			dJ(w)     2                1 - (w.te')**2      /   tm    \ 2
-			-----  =  - . (1 - S2) . ------------------- . | ------- |
-			 dte      5              (1 + (w.te')**2)**2   \ te + tm /
+			  dJ(w)               2                       1 - (w.te')**2      /   tm    \ 2
+			--------  =  - --------------- . (1 - S2) . ------------------- . | ------- |
+			dalpha_e       5e12.alpha_e**2              (1 + (w.te')**2)**2   \ te + tm /
 
 
 			dJ(w)
@@ -60,14 +93,14 @@ class dJw:
 			dS2s        5     \ 1 + (w.tm)**2     1 + (w.ts')**2 /
 
 
-			dJ(w)     2                 1 - (w.tf')**2      /   tm    \ 2
-			-----  =  - . (1 - S2f) . ------------------- . | ------- |
-			 dtf      5               (1 + (w.tf')**2)**2   \ tf + tm /
+			  dJ(w)               2                        1 - (w.tf')**2      /   tm    \ 2
+			--------  =  - --------------- . (1 - S2f) . ------------------- . | ------- |
+			dalpha_f       5e12.alpha_f**2               (1 + (w.tf')**2)**2   \ tf + tm /
 
 
-			dJ(w)     2.S2f                 1 - (w.ts')**2      /   tm    \ 2
-			-----  =  ----- . (1 - S2s) . ------------------- . | ------- |
-			 dts        5                 (1 + (w.ts')**2)**2   \ ts + tm /
+			  dJ(w)             2.S2f                      1 - (w.ts')**2      /   tm    \ 2
+			--------  =  - --------------- . (1 - S2s) . ------------------- . | ------- |
+			dalpha_s       5e12.alpha_s**2               (1 + (w.ts')**2)**2   \ ts + tm /
 
 
 			dJ(w)
@@ -109,11 +142,11 @@ class dJw:
 							self.data.djw[i, 3, param] = self.calc_djw_dS2_iso_m24(i, 3)
 							self.data.djw[i, 4, param] = self.calc_djw_dS2_iso_m24(i, 4)
 						elif self.data.jw_param_types[param] == 'te':
-							self.data.djw[i, 0, param] = self.calc_djw_dte_iso_m24(i, 0)
-							self.data.djw[i, 1, param] = self.calc_djw_dte_iso_m24(i, 1)
-							self.data.djw[i, 2, param] = self.calc_djw_dte_iso_m24(i, 2)
-							self.data.djw[i, 3, param] = self.calc_djw_dte_iso_m24(i, 3)
-							self.data.djw[i, 4, param] = self.calc_djw_dte_iso_m24(i, 4)
+							self.data.djw[i, 0, param] = self.calc_djw_dalpha_e_iso_m24(i, 0)
+							self.data.djw[i, 1, param] = self.calc_djw_dalpha_e_iso_m24(i, 1)
+							self.data.djw[i, 2, param] = self.calc_djw_dalpha_e_iso_m24(i, 2)
+							self.data.djw[i, 3, param] = self.calc_djw_dalpha_e_iso_m24(i, 3)
+							self.data.djw[i, 4, param] = self.calc_djw_dalpha_e_iso_m24(i, 4)
 			elif match('m5', self.data.model):
 				for i in range(self.mf.data.num_frq):
 					for param in range(len(self.data.jw_param_types)):
@@ -130,11 +163,11 @@ class dJw:
 							self.data.djw[i, 3, param] = self.calc_djw_dS2s_iso_m5(i, 3)
 							self.data.djw[i, 4, param] = self.calc_djw_dS2s_iso_m5(i, 4)
 						if self.data.jw_param_types[param] == 'ts':
-							self.data.djw[i, 0, param] = self.calc_djw_dts_iso_m5(i, 0)
-							self.data.djw[i, 1, param] = self.calc_djw_dts_iso_m5(i, 1)
-							self.data.djw[i, 2, param] = self.calc_djw_dts_iso_m5(i, 2)
-							self.data.djw[i, 3, param] = self.calc_djw_dts_iso_m5(i, 3)
-							self.data.djw[i, 4, param] = self.calc_djw_dts_iso_m5(i, 4)
+							self.data.djw[i, 0, param] = self.calc_djw_dalpha_s_iso_m5(i, 0)
+							self.data.djw[i, 1, param] = self.calc_djw_dalpha_s_iso_m5(i, 1)
+							self.data.djw[i, 2, param] = self.calc_djw_dalpha_s_iso_m5(i, 2)
+							self.data.djw[i, 3, param] = self.calc_djw_dalpha_s_iso_m5(i, 3)
+							self.data.djw[i, 4, param] = self.calc_djw_dalpha_s_iso_m5(i, 4)
 
 		# Axially symmetric rotational diffusion.
 		elif match(self.data.diff_type, 'axail'):
@@ -176,15 +209,21 @@ class dJw:
 		return temp
 
 
-	def calc_djw_dte_iso_m24(self, i, frq_index):
+	def calc_djw_dalpha_e_iso_m24(self, i, frq_index):
 		"Calculate the model 2 and 4 te derivative of the spectral density function for isotropic rotational diffusion."
 
-		temp = 0.4 * (1.0 - self.data.s2) * ((1.0 - self.data.omega_te_prime_sqrd[i, frq_index]) / ((1.0 + self.data.omega_te_prime_sqrd[i, frq_index])**2)) * self.data.fact_a**2
+		if self.data.alpha_e == 0.0:
+			temp = -1e99
+		else:
+			temp = -(0.4e-12 / self.data.alpha_e**2) * (1.0 - self.data.s2) * ((1.0 - self.data.omega_te_prime_sqrd[i, frq_index]) / ((1.0 + self.data.omega_te_prime_sqrd[i, frq_index])**2)) * self.data.fact_a**2
 		return temp
 
 
-	def calc_djw_dts_iso_m5(self, i, frq_index):
+	def calc_djw_dalpha_s_iso_m5(self, i, frq_index):
 		"Calculate the model 5 ts derivative of the spectral density function for isotropic rotational diffusion."
 
-		temp = 0.4 * self.data.s2f * (1.0 - self.data.s2s) * ((1.0 - self.data.omega_ts_prime_sqrd[i, frq_index]) / ((1.0 + self.data.omega_ts_prime_sqrd[i, frq_index])**2)) * self.data.fact_a**2
+		if self.data.alpha_s == 0.0:
+			temp = -1e99
+		else:
+			temp = -(0.4e-12 / self.data.alpha_s**2) * self.data.s2f * (1.0 - self.data.s2s) * ((1.0 - self.data.omega_ts_prime_sqrd[i, frq_index]) / ((1.0 + self.data.omega_ts_prime_sqrd[i, frq_index])**2)) * self.data.fact_a**2
 		return temp

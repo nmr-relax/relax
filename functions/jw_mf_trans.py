@@ -1,10 +1,13 @@
+from Numeric import Float64, zeros
+from re import match
+
 class Jw:
 	def __init__(self):
-		"Function for creating the model-free spectral density values."
+		"Function for creating the model-free spectral density values using parameter transformations."
 
 
 	def Jw(self):
-		"""Function to create the model-free spectral density values."
+		"""Function to create the model-free spectral density values using parameter transformations."
 
 		The spectral density equation
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,6 +21,36 @@ class Jw:
 
 		Formulae
 		~~~~~~~~
+
+		Parameter transformations
+		~~~~~~~~~~~~~~~~~~~~~~~~~
+			                  1
+			alpha_e  =  ---------------
+			            1e12 . te  +  1
+
+			                  1
+			alpha_f  =  ---------------
+			            1e12 . tf  +  1
+
+			                  1
+			alpha_s  =  ---------------
+			            1e12 . ts  +  1
+
+
+			therefore:
+
+				 1      1      /      1                 \ -1
+				---  =  --  +  | ------------  -  1e-12 |
+				te'     tm     \ 1e12.alpha_e           /
+
+				 1      1      /      1                 \ -1
+				---  =  --  +  | ------------  -  1e-12 |
+				tf'     tm     \ 1e12.alpha_f           /
+
+				 1      1      /      1                 \ -1
+				---  =  --  +  | ------------  -  1e-12 |
+				ts'     tm     \ 1e12.alpha_s           /
+
 
 		Original
 		~~~~~~~~
@@ -95,7 +128,7 @@ class Jw:
 	def calc_jw_iso_m5(self, i, frq_index):
 		"Calculate the model 5 spectral density values for isotropic rotational diffusion."
 
-		temp = 0.4 * self.data.s2f * (self.data.s2s_tm / (1.0 + self.data.omega_tm_sqrd) + (1.0 - self.data.s2s) * self.data.ts_prime / (1.0 + self.data.omega_ts_prime_sqrd[i, frq_index]))
+		temp = 0.4 * self.data.s2f * (self.data.s2s_tm / (1.0 + self.data.omega_tm_sqrd[i, frq_index]) + (1.0 - self.data.s2s) * self.data.ts_prime / (1.0 + self.data.omega_ts_prime_sqrd[i, frq_index]))
 		return temp
 
 
@@ -115,9 +148,15 @@ class Jw:
 
 		elif match('m[24]', self.data.model):
 			self.data.s2 = self.data.params[0]
-			self.data.te = self.data.params[1]
-			self.data.fact_a = self.data.tm / (self.data.te + self.data.tm)
-			self.data.te_prime = self.data.te * self.data.fact_a
+			self.data.alpha_e = self.data.params[1]
+			if self.data.alpha_e == 0.0:
+				self.data.te = 1e99
+				self.data.fact_a = 0.0
+				self.data.te_prime = self.data.tm
+			else:
+				self.data.te = (1.0/self.data.params[1] - 1.0) * 1e-12
+				self.data.fact_a = self.data.tm / (self.data.te + self.data.tm)
+				self.data.te_prime = self.data.te * self.data.fact_a
 			self.data.te_prime_sqrd = self.data.te_prime ** 2
 			self.data.s2_tm = self.data.s2 * self.data.tm
 			self.data.omega_te_prime_sqrd = zeros((self.mf.data.num_frq, 5), Float64)
@@ -126,17 +165,23 @@ class Jw:
 			self.data.s2f = self.data.params[0]
 			self.data.s2s = self.data.params[1]
 			self.data.s2 = self.data.s2f * self.data.s2s
-			self.data.ts = self.data.params[2]
-			self.data.fact_a = self.data.tm / (self.data.ts + self.data.tm)
-			self.data.ts_prime = self.data.ts * self.data.fact_a
+			self.data.alpha_s = self.data.params[2]
+			if self.data.alpha_s == 0.0:
+				self.data.ts = 1e99
+				self.data.fact_a = 0.0
+				self.data.ts_prime = self.data.tm
+			else:
+				self.data.ts = (1.0/self.data.params[2] - 1.0) * 1e-12
+				self.data.fact_a = self.data.tm / (self.data.ts + self.data.tm)
+				self.data.ts_prime = self.data.ts * self.data.fact_a
 			self.data.ts_prime_sqrd = self.data.ts_prime ** 2
 			self.data.s2s_tm = self.data.s2s * self.data.tm
 			self.data.omega_ts_prime_sqrd = zeros((self.mf.data.num_frq, 5), Float64)
 
 		for i in range(self.mf.data.num_frq):
 			for frq_index in range(5):
-				omega_tm_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.tm_sqrd
+				self.data.omega_tm_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.tm_sqrd
 				if match('m[24]', self.data.model):
-					omega_te_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.te_prime_sqrd
+					self.data.omega_te_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.te_prime_sqrd
 				elif match('m5', self.data.model):
-					omega_ts_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.ts_prime_sqrd
+					self.data.omega_ts_prime_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.ts_prime_sqrd

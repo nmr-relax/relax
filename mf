@@ -34,6 +34,7 @@ sys.path[0] = '.'
 from usr_param import usr_param
 
 from functions.mf_functions import mf_functions
+from functions.mf_trans_functions import mf_trans_functions
 
 from minimise.minimise import minimise
 from minimise.grid import grid
@@ -72,6 +73,7 @@ class mf:
 
 		# Initialise the class self.mf.function to place program functions into.
 		self.mf_functions = mf_functions(self)
+		self.mf_trans_functions = mf_trans_functions(self)
 		self.modsel = modsel(self)
 
 		# Select the behaviour of the program.

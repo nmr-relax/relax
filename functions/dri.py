@@ -1,3 +1,5 @@
+from Numeric import copy
+
 class dRi:
 	def __init__(self):
 		"An additional layer of equations to simplify the relaxation equations, gradients, and hessians."

@@ -30,48 +30,45 @@ class main_model_free:
 		# Debugging flag
 		self.mf.min_debug = 1
 
-		# Limits flag, 0 = no limits, 1 = set limits.
-		limits_flag = 0
+		# Transformation flag.
+		trans_flag = 0
 
 		grid_ops = []
-		limits = []
 		self.mf.results.write("%-5s" % "Num")
 		self.mf.results.write("%-6s" % "Name")
 		if match('m1', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
-			limits.append([0.0, 1.0])
 			self.mf.results.write("%-30s" % "S2")
 		elif match('m2', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
-			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
-			limits.append([0.0, 1.0])
-			limits.append([0.0 * 1e-12, 10000.0 * 1e-12])
+			if trans_flag:
+				grid_ops.append([20.0, 0.001, 1.0])
+			else:
+				grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "te (ps)")
 		elif match('m3', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 30.0 / (1e-8 * self.mf.data.frq[0])**2])
-			limits.append([0.0, 1.0])
-			limits.append([0.0, 100.0 / (1e-8 * self.mf.data.frq[0])**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % ("Rex (" + self.mf.data.frq_label[0] + " MHz)"))
 		elif match('m4', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
-			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
+			if trans_flag:
+				grid_ops.append([20.0, 0.001, 1.0])
+			else:
+				grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
 			grid_ops.append([20.0, 0.0, 30.0 / (1e-8 * self.mf.data.frq[0])**2])
-			limits.append([0.0, 1.0])
-			limits.append([0.0 * 1e-12, 10000.0 * 1e-12])
-			limits.append([0.0, 100.0 / (1e-8 * self.mf.data.frq[0])**2])
 			self.mf.results.write("%-30s" % "S2")
 			self.mf.results.write("%-30s" % "te (ps)")
 			self.mf.results.write("%-30s" % ("Rex (" + self.mf.data.frq_label[0] + " MHz)"))
 		elif match('m5', self.mf.data.model):
 			grid_ops.append([20.0, 0.0, 1.0])
 			grid_ops.append([20.0, 0.0, 1.0])
-			grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
-			limits.append([0.0, 1.0])
-			limits.append([0.0, 1.0])
-			limits.append([0.0 * 1e-12, 10000.0 * 1e-12])
+			if trans_flag:
+				grid_ops.append([20.0, 0.001, 1.0])
+			else:
+				grid_ops.append([20.0, 0.0, 10000.0 * 1e-12])
 			self.mf.results.write("%-30s" % "S2f")
 			self.mf.results.write("%-30s" % "S2s")
 			self.mf.results.write("%-30s" % "ts (ps)")
@@ -95,7 +92,7 @@ class main_model_free:
 			function_ops = ( diff_type, diff_params, mf_model, relax_data, errors )
 
 			# Grid search.
-			params, chi2 = self.mf.minimise.grid.search(self.mf.mf_functions.chi2, fargs=function_ops, args=grid_ops)
+			params, chi2 = self.mf.minimise.grid.search(self.mf.mf_trans_functions.chi2, fargs=function_ops, args=grid_ops)
 			if self.mf.min_debug >= 1:
 				print "\nThe grid parameters are: " + `params`
 				print "The grid chi-squared value is: " + `chi2`
@@ -112,7 +109,7 @@ class main_model_free:
 			if match('Simplex', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Simplex minimisation >>>"
-				output = simplex(self.mf.mf_functions.chi2, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
+				output = simplex(self.mf.mf_trans_functions.chi2, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 				print "mf params:  " + `params`
 				print "chi2:       " + `chi2`
@@ -124,7 +121,7 @@ class main_model_free:
 			elif match('Powell', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Powell minimisation >>>"
-				output = powell(self.mf.mf_functions.chi2, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
+				output = powell(self.mf.mf_trans_functions.chi2, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 			
 			# Levenberg-Marquardt minimisation.
@@ -132,21 +129,33 @@ class main_model_free:
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Levenberg-Marquardt minimisation >>>"
 
-				#params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.mf_functions.chi2, params, self.mf.mf_functions.dchi, args=function_ops, relax_data, errors)
+				#params, chi2 = self.mf.minimise.levenberg_marquardt.fit(self.mf.mf_trans_functions.chi2, params, self.mf.mf_trans_functions.dchi, args=function_ops, relax_data, errors)
 
 			# Quasi-Newton BFGS minimisation.
 			elif match('BFGS', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-				output = bfgs(self.mf.mf_functions.chi2, params, fprime=self.mf.mf_functions.dchi2, args=function_ops, avegtol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
-				params, chi2, num_func_calls, num_grad_calls, warn_flag = output
+				for i in range(5):
+					if trans_flag:
+						output = bfgs(self.mf.mf_trans_functions.chi2, params, fprime=self.mf.mf_trans_functions.dchi2, args=function_ops, avegtol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+					else:
+						output = bfgs(self.mf.mf_functions.chi2, params, fprime=self.mf.mf_functions.dchi2, args=function_ops, avegtol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+					params, chi2, num_func_calls, num_grad_calls, warn_flag = output
+					print "The final parameters are: " + `params`
+					print "The final chi-squared value is: " + `chi2` + "\n"
 
 			# Newton Conjugate Gradient minimisation.
 			elif match('Newton', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-				output = newton(self.mf.mf_functions.chi2, params, fprime=self.mf.mf_functions.dchi2, fhess_p=None, fhess=self.mf.mf_functions.d2chi2, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
-				params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
+				for i in range(5):
+					if trans_flag:
+						output = newton(self.mf.mf_trans_functions.chi2, params, fprime=self.mf.mf_trans_functions.dchi2, fhess=self.mf.mf_trans_functions.d2chi2, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+					else:
+						output = newton(self.mf.mf_functions.chi2, params, fprime=self.mf.mf_functions.dchi2, fhess=self.mf.mf_functions.d2chi2, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+					params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
+					print "The final parameters are: " + `params`
+					print "The final chi-squared value is: " + `chi2` + "\n"
 
 			# None.
 			else:
@@ -161,21 +170,46 @@ class main_model_free:
 			self.mf.results.write("%-5s" % self.mf.data.relax_data[data][res][0])
 			self.mf.results.write("%-6s" % self.mf.data.relax_data[data][res][1])
 			if match('m1', self.mf.data.model):
-				self.mf.results.write("%-30s" % `params[0]`)
+				s2 = params[0]
+				print "S2: " + `s2` + " Chi2: " + `chi2`
+				self.mf.results.write("%-30s" % `s2`)
 			elif match('m2', self.mf.data.model):
-				self.mf.results.write("%-30s" % `params[0]`)
-				self.mf.results.write("%-30s" % `params[1] * 1e12`)
+				s2 = params[0]
+				if trans_flag:
+					te = (1.0/params[1] - 1.0) * 1e0
+				else:
+					te = params[1] * 1e12
+				print "S2: " + `s2` + " te: " + `te` + " Chi2: " + `chi2`
+				self.mf.results.write("%-30s" % `s2`)
+				self.mf.results.write("%-30s" % `te`)
 			elif match('m3', self.mf.data.model):
-				self.mf.results.write("%-30s" % `params[0]`)
-				self.mf.results.write("%-30s" % `params[1] * (1e-8 * self.mf.data.frq[0])**2`)
+				s2 = params[0]
+				rex = params[1] * (1e-8 * self.mf.data.frq[0])**2
+				print "S2: " + `s2` + " Rex: " + `rex` + " Chi2: " + `chi2`
+				self.mf.results.write("%-30s" % `s2`)
+				self.mf.results.write("%-30s" % `rex`)
 			elif match('m4', self.mf.data.model):
-				self.mf.results.write("%-30s" % `params[0]`)
-				self.mf.results.write("%-30s" % `params[1] * 1e12`)
-				self.mf.results.write("%-30s" % `params[2] * (1e-8 * self.mf.data.frq[0])**2`)
+				s2 = params[0]
+				if trans_flag:
+					te = (1.0/params[1] - 1.0) * 1e0
+				else:
+					te = params[1] * 1e12
+				rex = params[2] * (1e-8 * self.mf.data.frq[0])**2
+				print "S2: " + `s2` + " te: " + `te` + " Rex: " + `rex` + " Chi2: " + `chi2`
+				self.mf.results.write("%-30s" % `s2`)
+				self.mf.results.write("%-30s" % `te`)
+				self.mf.results.write("%-30s" % `rex`)
 			elif match('m5', self.mf.data.model):
-				self.mf.results.write("%-30s" % `params[0]`)
-				self.mf.results.write("%-30s" % `params[1]`)
-				self.mf.results.write("%-30s" % `params[2] * 1e12`)
+				s2f = params[0]
+				s2s = params[1]
+				if trans_flag:
+					ts = (1.0/params[1] - 1.0) * 1e0
+				else:
+					ts = params[1] * 1e12
+				print "S2f: " + `s2f` + " S2s: " + `s2s` + " ts: " + `ts` + " Chi2: " + `chi2`
+				self.mf.results.write("%-30s" % `s2f`)
+				self.mf.results.write("%-30s" % `s2s`)
+				self.mf.results.write("%-30s" % `ts`)
 			self.mf.results.write("%-30s\n" % `chi2`)
 
 

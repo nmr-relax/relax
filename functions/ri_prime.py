@@ -1,3 +1,6 @@
+from Numeric import Float64, zeros
+from re import match
+
 class Ri_prime:
 	def __init__(self):
 		"Function for back calculating the transformed relaxation values R1, R2, and sigma_noe."

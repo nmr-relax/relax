@@ -1,3 +1,5 @@
+from Numeric import Float64, zeros
+
 class dchi2:
 	def __init__(self):
 		"Function to create the chi-squared gradient."

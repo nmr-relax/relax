@@ -1,3 +1,5 @@
+from Numeric import copy
+
 class d2Ri:
 	def __init__(self):
 		"An additional layer of equations to simplify the relaxation equations, gradients, and hessians."
@@ -52,7 +54,7 @@ class d2Ri:
 				if r1 == None:
 					raise NameError, "Incomplete code, need to somehow calculate the r1 value."
 				for param1 in range(len(self.data.ri_param_types)):
-					for param2 in range(param1 + 1)):
+					for param2 in range(param1 + 1):
 						if r1 == 0:
 							self.data.d2ri[param1, param2, i] = 1e99
 						else:

@@ -1,3 +1,6 @@
+from Numeric import Float64, zeros
+from re import match
+
 class d2Jw:
 	def __init__(self):
 		"Function for creating the model-free spectral density hessians."
@@ -250,20 +253,6 @@ class d2Jw:
 
 		else:
 			raise NameError, "Function option not set correctly, quitting program."
-
-
-	def calc_d2jw_dS2dte_iso_m13(self, i, frq_index):
-		"Calculate the model 1 and 3 S2/te partial derivative of the spectral density function for isotropic rotational diffusion."
-
-		temp = -0.4
-		return temp
-
-
-	def calc_d2jw_dte2_iso_m13(self, i, frq_index):
-		"Calculate the model 1 and 3 te/te partial derivative of the spectral density function for isotropic rotational diffusion."
-
-		temp = -0.8 * (1.0 - self.data.s2) * (1.0 + 1.0 / self.data.tm)
-		return temp
 
 
 	def calc_d2jw_dS2dte_iso_m24(self, i, frq_index):
