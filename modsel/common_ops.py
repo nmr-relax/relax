@@ -43,7 +43,7 @@ class common_operations:
 		return stage
 
 
-	def create_mfdata(self, res, exclude_set=-1, flag='1'):
+	def create_mfdata(self, res, flag='1'):
 		"""Create the Modelfree input file mfdata.
 
 		This function is run once for each residue.  If the flag variable is set to 0, all data
@@ -62,10 +62,7 @@ class common_operations:
 					mfdata.write('%-10s' % self.mf.data.input_info[k][1])
 					mfdata.write('%10s' % self.mf.data.relax_data[k][res][2])
 					mfdata.write('%10s' % self.mf.data.relax_data[k][res][3])
-					if exclude_set == k:
-						mfdata.write(' %-3s\n' % 0)
-					else:
-						mfdata.write(' %-3s\n' % flag)
+					mfdata.write(' %-3s\n' % flag)
 					k = k + 1
 				else:
 					if j == 0:

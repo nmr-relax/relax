@@ -1,4 +1,3 @@
-import sys
 from re import match
 from string import split
 
@@ -9,7 +8,7 @@ class star:
 		self.mf = mf
 
 
-	def extract(self, mfout, num_res, chi2_lim=0.90, ftest_lim=0.80, ftest='n', sims='y'):
+	def extract(self, mfout, num_res, chi2_lim=0.90, ftest_lim=0.80, ftest='n'):
 		"Extract the data from the mfout file and Return it as a 2D data structure."
 
 		self.mfout = mfout
@@ -17,7 +16,6 @@ class star:
 		self.chi2_lim = chi2_lim
 		self.ftest_lim = ftest_lim
 		self.ftest = ftest
-		self.sims = sims
 
 		self.data = []
 		for i in range(self.num_res):
@@ -25,17 +23,6 @@ class star:
 		self.line_num = 0
 
 		if match('n', self.ftest):
-			# Jump to first line of data.
-			for line in range(len(self.mfout)):
-				self.row = split(self.mfout[line])
-				try:
-					self.row[0]
-				except IndexError:
-					continue
-
-				if match('data_relaxation', self.row[0]):
-					self.line_num = line
-					break
 			self.get_relax_values()
 			self.get_s2()
 			self.get_s2f()
@@ -43,26 +30,54 @@ class star:
 			self.get_te()
 			self.get_rex()
 			self.get_chi2()
-
-		if match('y', self.ftest):
-			# Jump to first line of data.
-			for line in range(len(self.mfout)):
-				self.row = [[]]
-				self.row[0] = split(self.mfout[line])
-				try:
-					self.row[0][0]
-				except IndexError:
-					continue
-				if match('data_F_dist', self.row[0][0]):
-					self.line_num = line
-					break
+		elif match('y', self.ftest):
 			self.get_ftest()
 
 		return self.data
 
 
+	def get_chi2(self):
+		# Jump to Chi2 data.
+		for line in range(len(self.mfout)):
+			self.row = split(self.mfout[line])
+			try:
+				self.row[0]
+			except IndexError:
+				continue
+
+			if match('data_sse', self.row[0]):
+				self.line_num = line + 3
+				break
+		if match('y', self.mf.data.mfin.sims):
+			self.line_num = self.line_num + 2
+			for i in range(self.num_res):
+				self.row = [[]]
+				self.row[0] = split(self.mfout[self.line_num])
+				percentile = int(self.chi2_lim * 100.0 / 5.0)
+				self.line_num = self.line_num + percentile
+				self.row.append(split(self.mfout[self.line_num]))
+				lines_next_res = 2 + ( 20 - int(percentile) )
+				self.line_num = self.line_num + lines_next_res
+				self.data[i]['chi2'] = float(self.row[0][1])
+				self.data[i]['chi2_lim'] = float(self.row[1][1])
+		else:
+			self.split_rows(self.line_num, self.num_res)
+			for i in range(self.num_res):
+				self.data[i]['chi2'] = float(self.row[i][1])
+
+
 	def get_ftest(self):
-		self.line_num = self.line_num + 5
+		# Jump to first line of data.
+		for line in range(len(self.mfout)):
+			self.row = [[]]
+			self.row[0] = split(self.mfout[line])
+			try:
+				self.row[0][0]
+			except IndexError:
+				continue
+			if match('data_F_dist', self.row[0][0]):
+				self.line_num = line + 5
+				break
 		for i in range(self.num_res):
 			self.row = [[]]
 			self.row[0] = split(self.mfout[self.line_num])
@@ -77,10 +92,18 @@ class star:
 
 
 	def get_relax_values(self):
-		self.line_num = self.line_num + 6
+		# Jump to first line of data.
+		for line in range(len(self.mfout)):
+			self.row = split(self.mfout[line])
+			try:
+				self.row[0]
+			except IndexError:
+				continue
+
+			if match('data_relaxation', self.row[0]):
+				self.line_num = line + 7
+				break
 		for set in range(len(self.mf.data.input_info)):
-			self.row = [[]]
-			self.row[0] = split(self.mfout[self.line_num])
 			self.split_rows(self.line_num, self.num_res)
 
 			label = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
@@ -88,96 +111,110 @@ class star:
 			label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
 
 			for i in range(self.num_res):
-				j = i + 1
-				self.data[i][label] = float(self.row[j][1])
-				self.data[i][label_err] = float(self.row[j][2])
-				self.data[i][label_fit] = float(self.row[j][4])
+				self.data[i][label] = float(self.row[i][1])
+				self.data[i][label_err] = float(self.row[i][2])
+				self.data[i][label_fit] = float(self.row[i][4])
 
 			self.line_num = self.line_num + self.num_res + 3
 
 
 	def get_rex(self):
-		self.line_num = self.line_num + self.num_res + 3
-		self.row = [[]]
-		self.row[0] = split(self.mfout[self.line_num])
+		# Jump to Rex data.
+		for line in range(len(self.mfout)):
+			self.row = split(self.mfout[line])
+			try:
+				self.row[0]
+			except IndexError:
+				continue
+
+			if match('Rex', self.row[0]):
+				self.line_num = line + 1
+				break
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
-			j = i + 1
-			self.data[i]['rex'] = float(self.row[j][1])
-			self.data[i]['rex_err'] = float(self.row[j][5])
+			self.data[i]['rex'] = float(self.row[i][1])
+			self.data[i]['rex_err'] = float(self.row[i][5])
 
 
 	def get_s2(self):
-		self.line_num = self.line_num + 6
-		self.row = [[]]
-		self.row[0] = split(self.mfout[self.line_num])
+		# Jump to S2 data.
+		for line in range(len(self.mfout)):
+			self.row = split(self.mfout[line])
+			try:
+				self.row[0]
+			except IndexError:
+				continue
+
+			if match('S2', self.row[0]):
+				self.line_num = line + 1
+				break
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
-			j = i + 1
-			self.data[i]['res_num'] = self.row[j][0]
-			self.data[i]['s2'] = float(self.row[j][1])
-			self.data[i]['s2_err'] = float(self.row[j][5])
+			self.data[i]['res_num'] = self.row[i][0]
+			self.data[i]['s2'] = float(self.row[i][1])
+			self.data[i]['s2_err'] = float(self.row[i][5])
 
 
 	def get_s2f(self):
-		self.line_num = self.line_num + self.num_res + 3
-		self.row = [[]]
-		self.row[0] = split(self.mfout[self.line_num])
+		# Jump to S2f data.
+		for line in range(len(self.mfout)):
+			self.row = split(self.mfout[line])
+			try:
+				self.row[0]
+			except IndexError:
+				continue
+
+			if match('S2f', self.row[0]):
+				self.line_num = line + 1
+				break
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
-			j = i + 1
-			self.data[i]['s2f'] = float(self.row[j][1])
-			self.data[i]['s2f_err'] = float(self.row[j][5])
+			self.data[i]['s2f'] = float(self.row[i][1])
+			self.data[i]['s2f_err'] = float(self.row[i][5])
 
 
 	def get_s2s(self):
-		self.line_num = self.line_num + self.num_res + 3
-		self.row = [[]]
-		self.row[0] = split(self.mfout[self.line_num])
+		# Jump to S2s data.
+		for line in range(len(self.mfout)):
+			self.row = split(self.mfout[line])
+			try:
+				self.row[0]
+			except IndexError:
+				continue
+
+			if match('S2s', self.row[0]):
+				self.line_num = line + 1
+				break
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
-			j = i + 1
-			self.data[i]['s2s'] = float(self.row[j][1])
-			self.data[i]['s2s_err'] = float(self.row[j][5])
-
-
-	def get_chi2(self):
-		if match('y', self.sims):
-			self.line_num = self.line_num + self.num_res + 8
-			for i in range(self.num_res):
-				self.row = [[]]
-				self.row[0] = split(self.mfout[self.line_num])
-				percentile = int(self.chi2_lim * 100.0 / 5.0)
-				self.line_num = self.line_num + percentile
-				self.row.append(split(self.mfout[self.line_num]))
-				lines_next_res = 2 + ( 20 - int(percentile) )
-				self.line_num = self.line_num + lines_next_res
-				self.data[i]['chi2'] = float(self.row[0][1])
-				self.data[i]['chi2_lim'] = float(self.row[1][1])
-		else:
-			self.line_num = self.line_num + self.num_res + 5
-			self.row = [[]]
-			self.row[0] = split(self.mfout[self.line_num])
-			self.split_rows(self.line_num, self.num_res)
-			for i in range(self.num_res):
-				j = i + 1
-				self.data[i]['chi2'] = float(self.row[j][1])
+			self.data[i]['s2s'] = float(self.row[i][1])
+			self.data[i]['s2s_err'] = float(self.row[i][5])
 
 
 	def get_te(self):
-		self.line_num = self.line_num + self.num_res + 3
-		self.row = [[]]
-		self.row[0] = split(self.mfout[self.line_num])
+		# Jump to te data.
+		for line in range(len(self.mfout)):
+			self.row = split(self.mfout[line])
+			try:
+				self.row[0]
+			except IndexError:
+				continue
+
+			if match('te', self.row[0]):
+				self.line_num = line + 1
+				break
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
-			j = i + 1
-			self.data[i]['te'] = float(self.row[j][1])
-			self.data[i]['te_err'] = float(self.row[j][5])
+			self.data[i]['te'] = float(self.row[i][1])
+			self.data[i]['te_err'] = float(self.row[i][5])
 
 
 	def split_rows(self, line_num, num_lines):
 		"Get the next 'num_res' lines after a match."
 
 		for i in range(num_lines):
-			j = i + 1
-			self.row.append(split(self.mfout[line_num + j]))
+			if i == 0:
+				self.row = [[]]
+				self.row[0] = split(self.mfout[line_num])
+			else:
+				self.row.append(split(self.mfout[line_num + i]))
