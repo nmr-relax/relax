@@ -217,6 +217,10 @@ class Relax:
 
         # Threaded mode.
         elif options.thread:
+            # Make sure a script is supplied.
+            if not self.script_file:
+                parser.error("in threaded mode, a script is required")
+
             # Exclusive modes.
             if options.test:
                 parser.error("the relax modes thread and test are mutually exclusive")

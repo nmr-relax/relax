@@ -136,23 +136,12 @@ class PDB:
         # The file path.
         self.file_path = self.relax.IO.file_path(self.file, self.dir)
 
-        # Test if the file exists.
-        if not access(self.file_path, F_OK):
-            if fail:
-                raise RelaxFileError, ('PDB', self.file_path)
-            else:
-                print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
-                return
-
 
         # Data creation.
         ################
 
         # Add the run to the PDB data structure.
         self.relax.data.pdb.add_item(self.run)
-
-        # Load the structures.
-        self.load_structures()
 
         # File name.
         self.relax.data.pdb[self.run].file_name = self.file_path
@@ -163,6 +152,21 @@ class PDB:
         # Nuclei.
         self.relax.data.pdb[self.run].proton = proton
         self.relax.data.pdb[self.run].heteronuc = heteronuc
+
+
+        # Load the structures.
+        ######################
+
+        # Test if the file exists.
+        if not access(self.file_path, F_OK):
+            if fail:
+                raise RelaxFileError, ('PDB', self.file_path)
+            else:
+                print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
+                return
+
+        # Load the structures.
+        self.load_structures()
 
 
         # Finish.

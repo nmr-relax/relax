@@ -31,6 +31,76 @@ class Rx_data:
         self.relax = relax
 
 
+    def add_residue(self, run=None, res_index=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=0):
+        """Function for adding all relaxation data for a single residue."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+
+        # Global (non-residue specific) data.
+        #####################################
+
+        # Initialise dictionaries.
+        if not hasattr(self.relax.data, 'ri_labels'):
+            self.relax.data.ri_labels = {}
+            self.relax.data.remap_table = {}
+            self.relax.data.frq_labels = {}
+            self.relax.data.frq = {}
+            self.relax.data.num_ri = {}
+            self.relax.data.num_frq = {}
+
+        # Add the data structures.
+        if not self.relax.data.ri_labels.has_key(self.run):
+            self.relax.data.ri_labels[self.run] = ri_labels
+            self.relax.data.remap_table[self.run] = remap_table
+            self.relax.data.frq_labels[self.run] = frq_labels
+            self.relax.data.frq[self.run] = frq
+            self.relax.data.num_ri[self.run] = len(ri_labels)
+            self.relax.data.num_frq[self.run] = len(frq)
+
+
+        # Residue specific data.
+        ########################
+
+        # Remap the data structure 'self.relax.data.res[self.run][res_index]'.
+        data = self.relax.data.res[self.run][res_index]
+
+        # Relaxation data.
+        if not sim:
+            # Initialise the relaxation data structures (if needed).
+            self.initialise_relax_data(data)
+
+            # Relaxation data and errors.
+            data.relax_data = values
+            data.relax_error = errors
+
+            # Associated data structures.
+            data.ri_labels = ri_labels
+            data.remap_table = remap_table
+            data.frq_labels = frq_labels
+            data.frq = frq
+            data.num_ri = len(ri_labels)
+            data.num_frq = len(frq)
+
+        # Simulation data.
+        else:
+            # Create the data structure if necessary.
+            if not hasattr(data, 'relax_sim_data') or type(data.relax_sim_data) != list:
+                data.relax_sim_data = []
+
+            # Append the simulation's relaxation data.
+            data.relax_sim_data.append(values)
+
+
     def back_calc(self, run=None, ri_label=None, frq_label=None, frq=None):
         """Function for back calculating relaxation data."""
 
