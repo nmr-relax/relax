@@ -12,8 +12,7 @@ The following packages need to be installed before using relax:
 
     Numeric:  Version 21 or higher.
 
-    ScientificPython:  The scientific python package is actually required by the Molecular
-      Modelling Toolkit.  Version 2.2 or higher.
+    ScientificPython:  Version 2.2 or higher.
 
 Older versions of these packages may work but no guarantees can be made.
 

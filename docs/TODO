@@ -2,13 +2,11 @@
 ##########
 
 Change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
-Handle multiple chain proteins.
 
 
 # Model-free function.
 ######################
 
-Local tm as a parameter.
 Axially symmetric anisotropic formulae.
 Anisotropic formula.
 
@@ -66,9 +64,3 @@ Expected
 Overall
 Farrow
 Palmer
-
-
-# Ideas.
-########
-
-Rather than passing the run name into all functions, setup functions to create and select the run.

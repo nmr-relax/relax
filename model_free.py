@@ -126,7 +126,6 @@ class Model_free:
         # Set up the relaxation data and errors and the function options.
         relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
         relax_error = array(self.relax.data.res[i].relax_error[run], Float64)
-        self.function_ops = ()
 
         # Initialise the functions used in the minimisation.
         self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff[run].type, diff_params=[self.relax.data.diff[run].tm], scaling_matrix=scaling_matrix)
@@ -948,11 +947,11 @@ class Model_free:
         if constraints:
             A, b = self.linear_constraints(run, self.relax.data.res[i], i, scaling_matrix)
 
+        # Print out.
         if print_flag >= 1:
             if print_flag >= 2:
                 print "\n\n"
-            string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
-            print string
+            print "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
             string2 = ""
             for j in xrange(len(string)):
                 string2 = string2 + "~"
@@ -967,7 +966,6 @@ class Model_free:
         # Set up the relaxation data and errors and the function options.
         relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
         relax_error = array(self.relax.data.res[i].relax_error[run], Float64)
-        self.function_ops = ()
 
         # Make sure that the errors are all positive numbers.
         for j in xrange(len(relax_error)):
@@ -984,10 +982,27 @@ class Model_free:
                 self.relax.data.res[i].warning[run] = message
                 return
 
-        # Initialise the functions used in the minimisation.
+        # Initialise the function to minimise.
+        ######################################
+
+        # Isotropic diffusion.
+        if self.relax.data.diff[run].type == 'iso':
+            pass
+
+
+        # Axially symmetric diffusion.
+        elif self.relax.data.diff[run].type == 'axial':
+            raise RelaxError, "Not coded yet."
+
+        # Anisotropic diffusion.
+        elif self.relax.data.diff[run].type == 'aniso':
+            raise RelaxError, "Not coded yet."
+
         self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff[run].type, diff_params=[self.relax.data.diff[run].tm], scaling_matrix=scaling_matrix)
 
         # Levenberg-Marquardt minimisation.
+        ###################################
+
         if constraints and not match('^[Gg]rid', min_algor):
             algor = min_options[0]
         else:
@@ -997,10 +1012,12 @@ class Model_free:
 
 
         # Minimisation.
+        ###############
+
         if constraints:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
         else:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
         if results == None:
             return
         self.params, self.func, iter, fc, gc, hc, self.warning = results

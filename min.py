@@ -161,9 +161,6 @@ class Minimise:
                 if len(inc) != n:
                     raise RelaxLenError, ('increment', n)
 
-            if lower:
-                print lower
-                print len(lower)
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.

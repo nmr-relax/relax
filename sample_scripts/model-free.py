@@ -32,6 +32,7 @@ model.select_mf(run=name, model=name)
 #fixed(name, [ 6.00000000e-01, 0.00000000e+00, 5.00000000e-01, 1.00000000e-9])
 
 # Grid search.
+state.save('save', force=1)
 grid_search(name, inc=21)
 
 # Minimise.
