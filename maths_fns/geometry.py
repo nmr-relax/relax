@@ -30,7 +30,7 @@ from math import cos, sin
 def calc_axial_geom(data, diff_data):
     """Function for calculating the dot product XH . Dpar.
 
-    delta is the dot product between the unit bond vector and the unit vector along Dpar.  The
+    Delta is the dot product between the unit bond vector and the unit vector along Dpar.  The
     equation is:
 
         delta = XH . Dpar
@@ -47,7 +47,7 @@ def calc_axial_geom(data, diff_data):
     diff_data.dpar_unit_vector[1] = sin(diff_data.params[2]) * sin(diff_data.params[3])
     diff_data.dpar_unit_vector[2] = cos(diff_data.params[2])
 
-    # delta.
+    # Delta.
     data.delta = dot(data.xh_unit_vector, diff_data.dpar_unit_vector)
 
 
@@ -138,21 +138,45 @@ def calc_axial_d2geom(data, diff_data):
 
 
 
-# Anisotropic delta1 and delta2 equations.
-##########################################
+# Anisotropic delta equations.
+##############################
 
 def calc_aniso_geom(data, diff_data):
-    """Function for calculating delta1 and delta2.
+    """Function for calculating delta_alpha, delta_beta, and delta_gamma.
 
-    delta1 is the dot product between the unit bond vector and the unit vector along Dz.  The
+    Deltas
+    ~~~~~~
+
+    delta_alpha is the dot product between the unit bond vector and the unit vector along Dx.  The
     equation is:
 
-        delta1 = XH . Dz
+        delta_alpha = XH . Dx
 
-    delta2 is the dot product between the unit vector along Dx and the double cross product of the
-    unit Dz vector with the unit bond vector with the unit Dz vector again:
+    delta_beta is the dot product between the unit bond vector and the unit vector along Dy.  The
+    equation is:
 
-        delta2 = Dx . Dz x XH x Dz
+        delta_beta = XH . Dy
+
+    delta_gamma is the dot product between the unit bond vector and the unit vector along Dz.  The
+    equation is:
+
+        delta_gamma = XH . Dz
+
+
+    Unit vectors
+    ~~~~~~~~~~~~
+
+    The unit Dx vector is:
+
+               | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        Dx  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+               |                    cos(alpha) * sin(beta)                      |
+
+    The unit Dy vector is:
+
+               | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        Dy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
+               |                   sin(alpha) * sin(beta)                      |
 
     The unit Dz vector is:
 
@@ -160,27 +184,38 @@ def calc_aniso_geom(data, diff_data):
         Dz  =  |  sin(beta) * sin(gamma) |
                |        cos(beta)        |
 
-    The unit Dx vector is:
-
-               | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
-        Dx  =  |          -sin(alpha) * (1 + cos(beta)) * cos(gamma)            |
-               |                    cos(alpha) * sin(beta)                      |
     """
 
-    # The unit Dz vector.
-    diff_data.dz[0] = -sin(diff_data.params[4]) * cos(diff_data.params[5])
-    diff_data.dz[1] = sin(diff_data.params[4]) * sin(diff_data.params[5])
-    diff_data.dz[2] = cos(diff_data.params[4])
+    # Trig.
+    data.sin_a = sin(diff_data.params[3])
+    data.sin_b = sin(diff_data.params[4])
+    data.sin_g = sin(diff_data.params[5])
+
+    data.cos_a = cos(diff_data.params[3])
+    data.cos_b = cos(diff_data.params[4])
+    data.cos_g = cos(diff_data.params[5])
 
     # The unit Dx vector.
-    diff_data.dx[0] = -sin(diff_data.params[3]) * sin(diff_data.params[5])  +  cos(diff_data.params[3]) * cos(diff_data.params[4]) * cos(diff_data.params[5])
-    diff_data.dx[1] = -sin(diff_data.params[3]) * (1.0 + cos(diff_data.params[4])) * cos(diff_data.params[5])
-    diff_data.dx[2] = cos(diff_data.params[3]) * sin(diff_data.params[4])
+    diff_data.dx[0] = -data.sin_a * data.sin_g + data.cos_a * data.cos_b * data.cos_g
+    diff_data.dx[1] = -data.sin_a * data.cos_g - data.cos_a * data.cos_b * data.sin_g
+    diff_data.dx[2] = data.cos_a * data.sin_b
 
-    # delta1 and delta2
-    data.delta1 = dot(data.xh_unit_vector, diff_data.dz)
-    data.delta2 = dot(data.dx, diff_data.dz)
+    # The unit Dy vector.
+    diff_data.dy[0] = data.cos_a * data.sin_g + data.sin_a * data.cos_b * data.cos_g
+    diff_data.dy[1] = data.cos_a * data.cos_g - data.sin_a * data.cos_b * data.sin_g
+    diff_data.dy[2] = data.sin_a * data.sin_b
 
+    # The unit Dz vector.
+    diff_data.dz[0] = -data.sin_b * data.cos_g
+    diff_data.dz[1] = data.sin_b * data.sin_g
+    diff_data.dz[2] = data.cos_b
 
+    # Deltas
+    data.delta_alpha = dot(data.xh_unit_vector, diff_data.dx)
+    data.delta_beta = dot(data.xh_unit_vector, diff_data.dy)
+    data.delta_gamma = dot(data.xh_unit_vector, diff_data.dz)
 
-
+    #debug
+    print data.delta_alpha
+    print data.delta_beta
+    print data.delta_gamma
