@@ -10,7 +10,7 @@ set_model_selection('AIC')
 value_setup.set('bond_length', 1.02 * 1e-10)
 value_setup.set('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-model = 'm2'
+model = 'm5'
 mf_model.select(model)
 grid_search(model, inc=11)
 minimise(model, 'newton', max_iterations=10000, chi2_tol=1e-25)
