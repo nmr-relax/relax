@@ -1,0 +1,4 @@
+# Sample script for testing.
+
+load("aaa")
+ls()
