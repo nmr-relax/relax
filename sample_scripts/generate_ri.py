@@ -58,7 +58,6 @@ diffusion_tensor.set(run, 10e-9)
 
 # Generate the sequence from the PDB file.
 pdb(run, 'test.pdb')
-vectors(run)
 
 # Set the CSA and bond lengths.
 value.set(run, value=-170e-6, data_type='CSA')

@@ -23,7 +23,6 @@ for run in runs:
 
     # Load a PDB file.
     pdb(run, 'example.pdb')
-    vectors(run)
 
     # Load the relaxation data.
     relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')

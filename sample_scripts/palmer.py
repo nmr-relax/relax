@@ -28,7 +28,6 @@ def exec_stage_1(runs):
 
         # PDB.
         #pdb(run, 'Ap4Aase_new_3.pdb')
-        #vectors(run)
 
         # Load the relaxation data.
         relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')

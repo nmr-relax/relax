@@ -83,13 +83,17 @@ class Element:
 
 
     def __repr__(self):
-        text = "Data:\n"
+        # Header.
+        text = "%-25s%-100s\n\n" % ("Data structure", "Value")
+
+        # Data structures.
         for name in dir(self):
             if match("^__", name):
                 continue
-            text = text + "    " + name + ", " + `type(getattr(self, name))` + "\n"
-        return text
+            text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
 
+        # Return the lot.
+        return text
 
 
 # Specific data class.

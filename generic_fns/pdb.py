@@ -102,7 +102,7 @@ class PDB:
                 i = i + 1
 
 
-    def pdb(self, run=None, file=None, dir=None, model=None, heteronuc=None, proton=None, load_seq=1):
+    def load(self, run=None, file=None, dir=None, model=None, heteronuc=None, proton=None, load_seq=1, calc_vectors=1):
         """The pdb loading function."""
 
         # Arguments.
@@ -149,7 +149,7 @@ class PDB:
         self.load_structures()
 
         # File name.
-        self.relax.data.pdb[self.run].file_name = file
+        self.relax.data.pdb[self.run].file_name = self.file_path
 
         # Model.
         self.relax.data.pdb[self.run].model = model
@@ -170,10 +170,11 @@ class PDB:
         self.relax.generic.molmol.open_pdb(self.run)
 
         # Calculate the unit XH vectors.
-        self.vectors()
+        if calc_vectors:
+            self.vectors()
 
 
-    def set(self, run=None, res=None, xh_vect=None):
+    def set_vector(self, run=None, res=None, xh_vect=None):
         """Function for setting the XH unit vectors."""
 
         # Place the XH unit vector in 'self.relax.data.res'.

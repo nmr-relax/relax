@@ -176,7 +176,6 @@ class Main:
 
                 # Load the PDB file.
                 pdb(run, 'schurr.pdb')
-                vectors(run)
 
                 # Add an arbitrary diffusion tensor which will be optimised.
                 if self.diff_model == 'iso':
@@ -364,7 +363,6 @@ class Main:
 
             # Load the PDB file.
             pdb(run, 'schurr.pdb')
-            vectors(run)
 
             # Load the relaxation data.
             relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')

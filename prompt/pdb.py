@@ -126,4 +126,4 @@ class PDB:
             raise RelaxBinError, ('load sequence flag', load_seq)
 
         # Execute the functional code.
-        self.relax.generic.pdb.pdb(run=run, file=file, dir=dir, model=model, heteronuc=heteronuc, proton=proton, load_seq=load_seq)
+        self.relax.generic.pdb.load(run=run, file=file, dir=dir, model=model, heteronuc=heteronuc, proton=proton, load_seq=load_seq)

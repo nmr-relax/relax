@@ -2668,6 +2668,10 @@ class Model_free(Common_functions):
                 col['pdb'] = i
             elif header[i] == 'PDB_model':
                 col['pdb_model'] = i
+            elif header[i] == 'PDB_heteronuc':
+                col['pdb_heteronuc'] = i
+            elif header[i] == 'PDB_proton':
+                col['pdb_proton'] = i
             elif header[i] == 'XH_vector':
                 col['xh_vect'] = i
 
@@ -2695,6 +2699,8 @@ class Model_free(Common_functions):
         self.param_set = None
         pdb = None
         pdb_model = None
+        pdb_heteronuc = None
+        pdb_proton = None
         ri_labels = None
 
         # Loop over the file data.
@@ -2824,10 +2830,25 @@ class Model_free(Common_functions):
             # PDB and XH vector.
             ####################
 
-            # File name.
+            # PDB data.
             if not pdb:
+                # File name.
                 pdb = file_data[i][col['pdb']]
+
+                # PDB model.
                 pdb_model = eval(file_data[i][col['pdb_model']])
+
+                # Heteronucleus.
+                if col.has_key('pdb_heteronuc'):
+                    pdb_heteronuc = file_data[i][col['pdb_heteronuc']]
+                else:
+                    pdb_heteronuc = None
+
+                # Proton.
+                if col.has_key('pdb_proton'):
+                    pdb_proton = file_data[i][col['pdb_proton']]
+                else:
+                    pdb_proton = None
 
             # Test the file name.
             if pdb != file_data[i][col['pdb']]:
@@ -2865,7 +2886,7 @@ class Model_free(Common_functions):
 
                 # Set the vector.
                 if xh_vect:
-                    self.relax.generic.pdb.set(run=self.run, res=index, xh_vect=xh_vect)
+                    self.relax.generic.pdb.set_vector(run=self.run, res=index, xh_vect=xh_vect)
 
 
             # Relaxation data.
@@ -2883,8 +2904,185 @@ class Model_free(Common_functions):
                 raise RelaxError, "The relaxation data is not consistent for all residues."
 
 
-            # Model-free data.
-            ##################
+        # Simulations.
+        ##############
+
+        # Set up the simulations.
+        if len(sims):
+            self.relax.generic.monte_carlo.setup(self.run, len(sims))
+
+
+        # Diffusion tensor.
+        ###################
+
+        # Set the diffusion tensor.
+        axial_type = None
+        if diff_type == 'oblate' or diff_type == 'prolate':
+            axial_type = diff_type
+        elif diff_type == 'iso':
+            diff_params = diff_params[0]
+        if diff_type:
+            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
+
+
+        # Parameter set.
+        ################
+
+        # Local tm and model-free only parameter sets.
+        if self.param_set == 'local_tm' or self.param_set == 'mf':
+            diff_fixed = 1
+            res_fixed = 0
+
+        # Diffusion tensor parameter set.
+        elif self.param_set == 'diff':
+            diff_fixed = 0
+            res_fixed = 1
+
+        # 'all' parameter set.
+        elif self.param_set == 'all':
+            diff_fixed = 0
+            res_fixed = 0
+
+        # No parameter set.
+        else:
+            diff_fixed = None
+            res_fixed = None
+
+        # Set the diffusion tensor fixed flag.
+        if self.param_set != 'local_tm' and diff_fixed != None:
+            self.relax.data.diff[run].fixed = diff_fixed
+
+        # Set the residue specific fixed flag.
+        for i in xrange(len(self.relax.data.res[run])):
+            if res_fixed != None:
+                self.relax.data.res[run][i].fixed = res_fixed
+
+
+        # PDB.
+        ######
+
+        # Load the PDB.
+        if not pdb == 'None':
+            try:
+                self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, calc_vectors=0)
+            except:
+                print "The PDB file " + `pdb` + " cannot be found, no structures will be loaded."
+
+
+        # Relaxation data.
+        ##################
+
+        # Relaxation data exists.
+        if ri_labels and remap_table and frq_labels and frq:
+            # Loop over the relaxation data sets.
+            for j in xrange(len(ri_labels)):
+                # Data and error column.
+                data_col = col['frq'] + j + 1
+                error_col = col['frq'] + len(ri_labels) + j + 1
+
+                # Reconstruct a data array.
+                data_array = []
+                for i in xrange(len(file_data)):
+                    # Skip all lines where the data_set column is not 'value'.
+                    if file_data[i][col['data_set']] != 'value':
+                        continue
+
+                    # Skip when data_col does not exist or is None.
+                    if len(file_data[i]) < data_col or eval(file_data[i][data_col]) == None:
+                        continue
+
+                    # Append an array containing the residue number and name and the data and error values.
+                    data_array.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
+
+                # Read the relaxation data.
+                self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=data_array)
+
+            # Simulation data.
+            if len(sims):
+                for i in xrange(len(file_data)):
+                    # Skip all lines where the data_set column is not 'value'.
+                    if file_data[i][col['data_set']] != 'value':
+                        continue
+
+                    # Residue number and name.
+                    try:
+                        res_num = int(file_data[i][col['num']])
+                    except ValueError:
+                        raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+                    res_name = file_data[i][col['name']]
+
+                    # Find the residue index.
+                    res_index = None
+                    for j in xrange(len(self.relax.data.res[self.run])):
+                        if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                            res_index = j
+                            break
+                    if res_index == None:
+                        raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+
+                    # Initialise the simulation data.
+                    sim_data = []
+
+                    # Loop over the simulations.
+                    for j in xrange(len(sims)):
+                        # Append an empty array to sim_data.
+                        sim_data.append([])
+
+                        # Sim label.
+                        sim_label = 'sim_' + `j`
+
+                        # Find the line of the data file corresponding to the residue number and name and the sim label.
+                        for k in xrange(len(file_data)):
+                            if int(file_data[k][col['num']]) == res_num and file_data[k][col['name']] == res_name and file_data[k][col['data_set']] == sim_label:
+                                # Loop over the relaxation data sets.
+                                for l in xrange(len(ri_labels)):
+                                    # Data column.
+                                    data_col = col['frq'] + l + 1
+
+                                    # Skip when data_col is None.
+                                    if eval(file_data[k][data_col]) == None:
+                                        continue
+
+                                    # Add the data to sim_data.
+                                    try:
+                                        sim_data[j].append(eval(file_data[k][data_col]))
+                                    except ValueError:
+                                        raise RelaxError, "The relaxation data " + `file_data[k][data_col]` + " is not a floating point number."
+
+                    # Pack the simulation data.
+                    self.sim_pack_data(self.run, res_index, sim_data)
+
+
+        # Model-free data.
+        ##################
+
+        # Loop over the file data.
+        for i in xrange(len(file_data)):
+            # The data set.
+            data_set = file_data[i][col['data_set']]
+
+            # Residue number.
+            try:
+                res_num = int(file_data[i][col['num']])
+            except ValueError:
+                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+            res_name = file_data[i][col['name']]
+
+            # Find the residue index.
+            index = None
+            for j in xrange(len(self.relax.data.res[self.run])):
+                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                    index = j
+                    break
+            if index == None:
+                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+
+            # Reassign data structure.
+            data = self.relax.data.res[self.run][index]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
 
             # Set up the model-free models.
             if data_set == 'value':
@@ -3151,153 +3349,6 @@ class Model_free(Common_functions):
                         data.warning_sim.append(None)
                     else:
                         data.warning_sim.append(replace(file_data[i][col['warn']], '_', ' '))
-
-
-        # Simulations.
-        ##############
-
-        # Set up the simulations.
-        if len(sims):
-            self.relax.generic.monte_carlo.setup(self.run, len(sims))
-
-
-        # Diffusion tensor.
-        ###################
-
-        # Set the diffusion tensor.
-        axial_type = None
-        if diff_type == 'oblate' or diff_type == 'prolate':
-            axial_type = diff_type
-        elif diff_type == 'iso':
-            diff_params = diff_params[0]
-        if diff_type:
-            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
-
-
-        # Parameter set.
-        ################
-
-        # Local tm and model-free only parameter sets.
-        if self.param_set == 'local_tm' or self.param_set == 'mf':
-            diff_fixed = 1
-            res_fixed = 0
-
-        # Diffusion tensor parameter set.
-        elif self.param_set == 'diff':
-            diff_fixed = 0
-            res_fixed = 1
-
-        # 'all' parameter set.
-        elif self.param_set == 'all':
-            diff_fixed = 0
-            res_fixed = 0
-
-        # No parameter set.
-        else:
-            diff_fixed = None
-            res_fixed = None
-
-        # Set the diffusion tensor fixed flag.
-        if self.param_set != 'local_tm' and diff_fixed != None:
-            self.relax.data.diff[run].fixed = diff_fixed
-
-        # Set the residue specific fixed flag.
-        for i in xrange(len(self.relax.data.res[run])):
-            if res_fixed != None:
-                self.relax.data.res[run][i].fixed = res_fixed
-
-
-        # PDB.
-        ######
-
-        # Load the PDB.
-        if not pdb == 'None':
-            self.relax.generic.pdb.pdb(run=self.run, file=pdb, model=pdb_model)
-
-
-        # Relaxation data.
-        ##################
-
-        # Relaxation data exists.
-        if ri_labels and remap_table and frq_labels and frq:
-            # Loop over the relaxation data sets.
-            for j in xrange(len(ri_labels)):
-                # Data and error column.
-                data_col = col['frq'] + j + 1
-                error_col = col['frq'] + len(ri_labels) + j + 1
-
-                # Reconstruct a data array.
-                data_array = []
-                for i in xrange(len(file_data)):
-                    # Skip all lines where the data_set column is not 'value'.
-                    if file_data[i][col['data_set']] != 'value':
-                        continue
-
-                    # Skip when data_col does not exist or is None.
-                    if len(file_data[i]) < data_col or eval(file_data[i][data_col]) == None:
-                        continue
-
-                    # Append an array containing the residue number and name and the data and error values.
-                    data_array.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
-
-                # Read the relaxation data.
-                self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=data_array)
-
-            # Simulation data.
-            if len(sims):
-                for i in xrange(len(file_data)):
-                    # Skip all lines where the data_set column is not 'value'.
-                    if file_data[i][col['data_set']] != 'value':
-                        continue
-
-                    # Residue number and name.
-                    try:
-                        res_num = int(file_data[i][col['num']])
-                    except ValueError:
-                        raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-                    res_name = file_data[i][col['name']]
-
-                    # Find the residue index.
-                    res_index = None
-                    for j in xrange(len(self.relax.data.res[self.run])):
-                        if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
-                            res_index = j
-                            break
-                    if res_index == None:
-                        raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
-
-                    # Initialise the simulation data.
-                    sim_data = []
-
-                    # Loop over the simulations.
-                    for j in xrange(len(sims)):
-                        # Append an empty array to sim_data.
-                        sim_data.append([])
-
-                        # Sim label.
-                        sim_label = 'sim_' + `j`
-
-                        # Find the line of the data file corresponding to the residue number and name and the sim label.
-                        for k in xrange(len(file_data)):
-                            if int(file_data[k][col['num']]) == res_num and file_data[k][col['name']] == res_name and file_data[k][col['data_set']] == sim_label:
-                                # Loop over the relaxation data sets.
-                                for l in xrange(len(ri_labels)):
-                                    # Data column.
-                                    data_col = col['frq'] + l + 1
-
-                                    # Skip when data_col is None.
-                                    if eval(file_data[k][data_col]) == None:
-                                        continue
-
-                                    # Add the data to sim_data.
-                                    try:
-                                        sim_data[j].append(eval(file_data[k][data_col]))
-                                    except ValueError:
-                                        raise RelaxError, "The relaxation data " + `file_data[k][data_col]` + " is not a floating point number."
-
-                    # Pack the simulation data.
-                    self.sim_pack_data(self.run, res_index, sim_data)
-
 
 
     def remove_tm(self, run, res_num):
@@ -4174,7 +4225,7 @@ class Model_free(Common_functions):
             self.relax.data.select[self.run] = 0
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -4219,6 +4270,8 @@ class Model_free(Common_functions):
         # PDB.
         file.write("%-40s " % pdb)
         file.write("%-10s " % pdb_model)
+        file.write("%-15s " % pdb_heteronuc)
+        file.write("%-15s " % pdb_proton)
 
         # XH unit vector.
         file.write("%-70s " % xh_vect)
@@ -4287,7 +4340,7 @@ class Model_free(Common_functions):
                 ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', te='te_(ps)', tf='tf_(ps)', ts='ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', te='te_(ps)', tf='tf_(ps)', ts='ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -4320,12 +4373,13 @@ class Model_free(Common_functions):
         # PDB.
         pdb = None
         pdb_model = None
-        if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
-            if type(self.relax.data.pdb[self.run]) == list:
-                pdb = self.relax.data.pdb[self.run][0].filename
-            else:
-                pdb = self.relax.data.pdb[self.run].filename
-                pdb_model = self.relax.data.pdb[self.run].user_model
+        pdb_heteronuc = None
+        pdb_proton = None
+        if self.relax.data.pdb.has_key(self.run):
+            pdb = self.relax.data.pdb[self.run].file_name
+            pdb_model = self.relax.data.pdb[self.run].model
+            pdb_heteronuc = self.relax.data.pdb[self.run].heteronuc
+            pdb_proton = self.relax.data.pdb[self.run].proton
 
         # Relaxation data setup.
         try:
@@ -4474,7 +4528,7 @@ class Model_free(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -4585,7 +4639,7 @@ class Model_free(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=data.model, equation=data.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=data.model, equation=data.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -4738,4 +4792,4 @@ class Model_free(Common_functions):
                         ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, model=data.model, equation=data.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, model=data.model, equation=data.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
