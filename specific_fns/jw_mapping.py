@@ -20,10 +20,13 @@
 #                                                                             #
 ###############################################################################
 
-#from maths_fns.mapping import Mapping
+from re import match
+
+from base_class import Common_functions
+from maths_fns.jw_mapping import Jw_mapping
 
 
-class Jw_mapping:
+class Jw_mapping(Common_functions):
     def __init__(self, relax):
         """Class containing functions specific to reduced spectral density mapping."""
 
@@ -62,7 +65,10 @@ class Jw_mapping:
             if not hasattr(self.relax.data.res[self.run][i], 'r') or self.relax.data.res[self.run][i].r == None:
                 raise RelaxNoValueError, "bond length"
 
-
+        # Frequency index.
+        if self.relax.data.jw_frq[self.run] not in self.relax.data.num_frq[self.run]:
+            raise RelaxError, "No relaxation data corresponding to the frequency " + `self.relax.data.jw_frq[self.run]` + " has been loaded."
+ 
         # Reduced spectral density mapping.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
@@ -71,6 +77,108 @@ class Jw_mapping:
             # Skip unselected residues.
             if not res.select:
                 continue
+
+            # Frequency index.
+            frq_index = None
+            for j in xrange(res.num_frq):
+                if res.frq[j] == self.relax.data.jw_frq[self.run]:
+                    frq_index = j
+            if frq_index == None:
+                continue
+            
+            # Get the R1 value corresponding to the set frequency.
+
+
+    def data_init(self, name):
+        """Function for returning an initial data structure corresponding to 'name'."""
+
+        return None
+
+
+    def data_names(self):
+        """Function for returning a list of names of data structures.
+
+        Description
+        ~~~~~~~~~~~
+
+        r:  Bond length.
+
+        csa:  CSA value.
+
+        j0:  Spectral density value at 0 MHz.
+
+        jwx:  Spectral density value at the frequency of the heteronucleus.
+
+        jwh:  Spectral density value at the frequency of the heteronucleus.
+        """
+
+        # Initialise.
+        names = []
+
+        # Values.
+        names.append('r')
+        names.append('csa')
+
+        # Spectral density values.
+        names.append('j0')
+        names.append('jwx')
+        names.append('jwh')
+
+        return names
+
+
+    def default_value(self, param):
+        """
+        Reduced spectral density mapping default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        _______________________________________________________________________________________
+        |                                       |              |                              |
+        | Data type                             | Object name  | Value                        |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Bond length                           | r            | 1.02 * 1e-10                 |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | CSA                                   | csa          | -170 * 1e-6                  |
+        |_______________________________________|______________|______________________________|
+
+        """
+
+        # Bond length.
+        if param == 'r':
+            return 1.02 * 1e-10
+
+        # CSA.
+        if param == 'CSA':
+            return -170 * 1e-6
+
+
+    def get_data_name(self, name):
+        """
+        Reduced spectral density mapping data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Bond length.
+        if match('^r$', name) or match('[Bb]ond[ -_][Ll]ength', name):
+            return 'r'
+
+        # CSA.
+        if match('^[Cc][Ss][Aa]$', name):
+            return 'csa'
 
 
     def return_value(self, run, i, data_type):
@@ -82,7 +190,7 @@ class Jw_mapping:
         # Get the object.
         object_name = self.get_data_name(data_type)
         if not object_name:
-            raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
+            raise RelaxError, "The reduced spectral density mapping data type " + `data_type` + " does not exist."
         object_error = object_name + "_err"
 
         # Get the value.
@@ -100,6 +208,71 @@ class Jw_mapping:
         # Return the data.
         return value, error
 
+
+    def set(self, run=None, value=None, error=None, data_type=None, index=None):
+        """
+        Reduced spectral density mapping set details
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        In reduced spectral density mapping, only two values can be set, the bond length and CSA
+        value.  These must be set prior to the calculation of spectral density values.
+
+        """
+
+        # Arguments.
+        self.run = run
+
+        # Setting the model parameters prior to calculation.
+        ####################################################
+
+        if data_type == None:
+            # The values are supplied by the user:
+            if value:
+                # Test if the length of the value array is equal to 2.
+                if len(value) != 2:
+                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to two."
+
+            # Default values.
+            else:
+                # Set 'value' to an empty array.
+                value = []
+
+                # CSA and Bond length.
+                value.append(self.default_value('csa'))
+                value.append(self.default_value('r'))
+
+            # Initilise data.
+            if not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'csa'):
+                self.initialise_data(self.relax.data.res[self.run][index], self.run)
+
+            # CSA and Bond length.
+            setattr(self.relax.data.res[self.run][index], 'csa', float(value[0]))
+            setattr(self.relax.data.res[self.run][index], 'r', float(value[1]))
+
+
+        # Individual data type.
+        #######################
+
+        else:
+            # Get the object.
+            object_name = self.get_data_name(data_type)
+            if not object_name:
+                raise RelaxError, "The reduced spectral density mapping data type " + `data_type` + " does not exist."
+
+            # Initialise all data if it doesn't exist.
+            if not hasattr(self.relax.data.res[self.run][index], object_name):
+                self.initialise_data(self.relax.data.res[self.run][index], self.run)
+
+            # Default value.
+            if value == None:
+                value = self.default_value(object_name)
+
+            # Set the value.
+            setattr(self.relax.data.res[self.run][index], object_name, float(value))
+
+            # Set the error.
+            if error != None:
+                setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
 
 
     def set_frq(self, run=None, frq=None):

@@ -28,11 +28,12 @@ from re import match, search
 from string import replace
 import sys
 
+from base_class import Common_functions
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 
 
-class Model_free:
+class Model_free(Common_functions):
     def __init__(self, relax):
         """Class containing functions specific to model-free analysis."""
 
@@ -644,7 +645,7 @@ class Model_free:
 
 
     def data_names(self, set='all'):
-        """Function for returning a list of names of data structures associated with model-free.
+        """Function for returning a list of names of data structures.
 
         Description
         ~~~~~~~~~~~

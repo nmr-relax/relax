@@ -21,7 +21,9 @@
 ###############################################################################
 
 
-__all__ = [ 'main',
+__all__ = [ 'base_class',
+            'jw_mapping',
+            'main',
             'model_free',
             'relax_data',
             'specific_setup' ]

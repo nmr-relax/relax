@@ -24,6 +24,7 @@ import sys
 
 import help
 from specific_fns.model_free import Model_free
+from specific_fns.jw_mapping import Jw_mapping
 
 
 class Value:
@@ -280,17 +281,17 @@ class Value:
         | Value | Type  | Description                                                              |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
-        | None  | None  | This case is used to set the model parameters prior to minimisation.     |
-        |       |       | The model parameters are set to the default values.                      |
+        | None  | None  | This case is used to set the model parameters prior to minimisation or   |
+        |       |       | calculation.  The model parameters are set to the default values.        |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   1   | None  | Invalid combination.                                                     |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
-        |   n   | None  | This case is used to set the model parameters prior to minimisation.     |
-        |       |       | The length of the value array must be equal to the number of model       |
-        |       |       | parameters for an individual residue.  The parameters will be set to the |
-        |       |       | corresponding number.                                                    |
+        |   n   | None  | This case is used to set the model parameters prior to minimisation or   |
+        |       |       | calculation.  The length of the value array must be equal to the number  |
+        |       |       | of model parameters for an individual residue.  The parameters will be   |
+        |       |       | set to the corresponding number.                                         |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         | None  |   1   | The data type matching the string will be set to the default value.      |
@@ -344,10 +345,11 @@ class Value:
         relax> value.set('tm3', data_type='csa')
 
 
-        To set the CSA value of all residues in the model-free run 'm1' to -170 ppm, type:
+        To set the CSA value of all residues in the reduced spectral density mapping run '600MHz' to
+        -170 ppm, type:
 
-        relax> value.set('m1', -170 * 1e-6, 'csa')
-        relax> value.set('m1', value=-170 * 1e-6, data_type='csa')
+        relax> value.set('600MHz', -170 * 1e-6, 'csa')
+        relax> value.set('600MHz', value=-170 * 1e-6, data_type='csa')
 
 
         To set the NH bond length of all residues in the model-free run 'm5' to 1.02 Angstroms,
@@ -357,10 +359,9 @@ class Value:
         relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
 
 
-        To set both the bond length and the CSA value for the model-free run 'tm3' to the default
-        values, type:
+        To set both the bond length and the CSA value for the run 'new' to the default values, type:
 
-        relax> value.set('tm3', data_type=['bond length', 'csa'])
+        relax> value.set('new', data_type=['bond length', 'csa'])
 
 
         To set both tf and ts in the model-free run 'm6' to 100 ps, type:
@@ -529,23 +530,32 @@ class Value:
     # Copy function.
     copy.__doc__ = copy.__doc__ + "\n\n" + __re_doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Model_free.get_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.set.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + Model_free.set.__doc__ + "\n\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.set.__doc__ + "\n"
 
     # Display function.
     display.__doc__ = display.__doc__ + "\n\n" + __re_doc__ + "\n"
-    display.__doc__ = display.__doc__ + Model_free.get_data_name.__doc__ + "\n"
+    display.__doc__ = display.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
+    display.__doc__ = display.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
 
     # Read function.
     read.__doc__ = read.__doc__ + "\n\n" + __re_doc__ + "\n"
     read.__doc__ = read.__doc__ + Model_free.get_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Model_free.set.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + Model_free.set.__doc__ + "\n\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.set.__doc__ + "\n"
 
     # Set function.
     set.__doc__ = set.__doc__ + "\n\n" + __re_doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.get_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.set.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
 
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + __re_doc__ + "\n"
-    write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"

@@ -82,6 +82,10 @@ class Specific_setup:
         if self.function_type == 'return_value':
             return self.relax.specific.jw_mapping.return_value
 
+        # Set function.
+        if self.function_type == 'set':
+            return self.relax.specific.jw_mapping.set
+
 
     def mf_funcs(self):
         """Model-free analysis specific functions."""
