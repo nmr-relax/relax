@@ -1,0 +1,37 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
+
+from Numeric import dot
+from math import cos, sin
+
+
+def calc_geom_axial(data):
+    """Function for calculating the dot product XH . Dpar.
+    
+    Delta is the dot product between the unit bond vector and the unit vector along Dpar.
+    """
+
+    data.dpar_unit_vector[0] = cos(data.diff_params[2]) * sin(data.diff_params[3])
+    data.dpar_unit_vector[1] = sin(data.diff_params[2]) * sin(data.diff_params[3])
+    data.dpar_unit_vector[2] = cos(data.diff_params[3])
+
+    data.delta = dot(data.xh_unit_vector[data.i], data.dpar_unit_vector)
