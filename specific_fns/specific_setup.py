@@ -81,6 +81,10 @@ class Specific_setup:
         if self.function_type == 'calculate':
             return self.relax.specific.model_free.calculate
 
+        # Create Monte Carlo data function.
+        if self.function_type == 'create_mc_data':
+            return self.relax.specific.model_free.create_mc_data
+
         # Data names function.
         if self.function_type == 'data_names':
             return self.relax.specific.model_free.data_names
@@ -96,6 +100,10 @@ class Specific_setup:
         # Grid search function.
         if self.function_type == 'grid_search':
             return self.relax.specific.model_free.grid_search
+
+        # Initial Monte Carlo parameter value search function.
+        if self.function_type == 'init_sim_values':
+            return self.relax.specific.model_free.init_sim_values
 
         # Map labels.
         if self.function_type == 'map_labels':
@@ -117,6 +125,10 @@ class Specific_setup:
         if self.function_type == 'num_instances':
             return self.relax.specific.model_free.num_instances
 
+        # Pack Monte Carlo simulation data function.
+        if self.function_type == 'pack_sim_data':
+            return self.relax.specific.model_free.pack_sim_data
+
         # Parameter names function.
         if self.function_type == 'param_names':
             return self.relax.specific.model_free.get_param_names
@@ -128,6 +140,14 @@ class Specific_setup:
         # Read results file function.
         if self.function_type == 'read':
             return self.relax.specific.model_free.read_results
+
+        # Data returning function.
+        if self.function_type == 'return_data':
+            return self.relax.specific.model_free.return_data
+
+        # Data error returning function.
+        if self.function_type == 'return_error':
+            return self.relax.specific.model_free.return_error
 
         # Value and error returning function.
         if self.function_type == 'return_value':

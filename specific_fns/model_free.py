@@ -343,8 +343,22 @@ class Model_free:
                     i = i + 1
 
 
-    def create_mc_data(self, run):
-        """"""
+    def create_mc_data(self, run, i):
+        """Function for creating the Monte Carlo Ri data."""
+
+        # Initialise the data data structure.
+        data = []
+
+        # Loop over the relaxation data.
+        for j in xrange(len(self.relax.data.res[run][i].relax_data)):
+            # Back calculate the value.
+            value = self.back_calc(run=run, index=i, ri_label=self.relax.data.res[run][i].ri_labels[j], frq_label=self.relax.data.res[run][i].frq_labels[self.relax.data.res[run][i].remap_table[j]], frq=self.relax.data.res[run][i].frq[self.relax.data.res[run][i].remap_table[j]])
+
+            # Append the value.
+            data.append(value)
+
+        # Return the data.
+        return data
 
 
     def back_calc(self, run=None, index=None, ri_label=None, frq_label=None, frq=None):
@@ -1313,6 +1327,10 @@ class Model_free:
         return min_options
 
 
+    def init_sim_values(self, run):
+        """Function for initialising Monte Carlo parameter values."""
+
+
     def initialise_mf_data(self, data, run):
         """Function for the initialisation of model-free data structures.
 
@@ -2261,6 +2279,17 @@ class Model_free:
             return 1
 
 
+    def pack_sim_data(self, run, i, sim_data):
+        """Function for packing Monte Carlo simulation data."""
+
+        # Test if the simulation data already exists.
+        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
+            raise RelaxError, "Monte Carlo simulation data already exists."
+
+        # Create the data structure.
+        self.relax.data.res[run][i].relax_sim_data = sim_data
+
+
     def read_results(self, file_data, run):
         """Function for printing the core of the results file."""
 
@@ -2432,6 +2461,18 @@ class Model_free:
             self.relax.data.res[run][index].g_count = g_count
             self.relax.data.res[run][index].h_count = h_count
             self.relax.data.res[run][index].warning = warning
+
+
+    def return_data(self, run, i):
+        """Function for returning the Ri data structure."""
+
+        return self.relax.data.res[run][i].relax_data
+
+
+    def return_error(self, run, i):
+        """Function for returning the Ri error structure."""
+
+        return self.relax.data.res[run][i].relax_error
 
 
     def return_value(self, run, i, data_type):

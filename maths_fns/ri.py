@@ -94,12 +94,11 @@ def calc_r1(data, i, frq_num, params):
     r1_comps(data.r1_data, i, params)
 
     # Calculate the r1 value.
-    func_ri_prime(data.r1_data)
+    ri = func_ri_prime(data.r1_data)
+    return ri[i]
 
-    return data.r1_data.ri_prime[i]
 
-
-def calc_dr1(data, i, frq_num, params):
+def calc_dr1(data, i, frq_num, params, j):
     """Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
     dR1()
@@ -129,13 +128,12 @@ def calc_dr1(data, i, frq_num, params):
     dr1_comps(data.r1_data, i, params)
 
     # Calculate the dr1 value.
-    for j in xrange(data.num_params):
-        data.r1_data.create_dri_prime[j](data.r1_data, j)
+    dri = data.r1_data.create_dri_prime[j](data.r1_data)
 
-    return data.r1_data.dri_prime[i]
+    return dri[i]
 
 
-def calc_d2r1(data, i, frq_num, params):
+def calc_d2r1(data, i, frq_num, params, j, k):
     """Calculate the R1 value if there is no R1 data corresponding to the NOE data."""
 
     # Place data in the R1 data class.
@@ -148,15 +146,11 @@ def calc_d2r1(data, i, frq_num, params):
     d2r1_comps(data.r1_data, i, params)
 
     # Calculate the dr1 value.
-    for j in xrange(data.num_params):
-        for k in xrange(j + 1):
-            if data.r1_data.create_d2ri_prime[j][k]:
-                data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
-                # Make the Hessian symmetric.
-                if i != j:
-                    data.r1_data.d2ri_prime[i, k, j] = data.r1_data.d2ri_prime[i, j, k]
-
-    return data.r1_data.d2ri_prime[i]
+    if data.r1_data.create_d2ri_prime[j][k]:
+        d2ri = data.r1_data.create_d2ri_prime[j][k](data.r1_data)
+        return d2ri[i]
+    else:
+        return 0.0
 
 
 

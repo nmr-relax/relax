@@ -53,6 +53,7 @@ minimise('newton', run=name)
 # Monte Carlo simulations.
 monte_carlo.setup(name, number=10)
 monte_carlo.create_data(name)
+monte_carlo.initial_values(name)
 #minimise('newton', run=name)
 
 # Finish.

@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+from random import gauss
+
 
 class Monte_carlo:
     def __init__(self, relax):
@@ -38,6 +40,10 @@ class Monte_carlo:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
+        # Test if simulations have been set up.
+        if not hasattr(self.relax.data, 'sim_state'):
+            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
             raise RelaxNoSequenceError, run
@@ -54,11 +60,52 @@ class Monte_carlo:
         create_mc_data = self.relax.specific_setup.setup('create_mc_data', function_type)
         return_data = self.relax.specific_setup.setup('return_data', function_type)
         return_error = self.relax.specific_setup.setup('return_error', function_type)
+        pack_sim_data = self.relax.specific_setup.setup('pack_sim_data', function_type)
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
-            data = self.relax.data.res[run][i]
+            # Create the Monte Carlo data.
+            if method == 'back_calc':
+                data = create_mc_data(run, i)
+
+            # Get the original data.
+            else:
+                data = return_data(run, i)
+
+            # Get the errors.
+            error = return_error(run, i)
+
+            # Loop over the Monte Carlo simulations.
+            random = []
+            for j in xrange(self.relax.data.sim_number[run]):
+                # Randomise the data.
+                random.append([])
+                for k in xrange(len(data)):
+                    random[j].append(gauss(data[k], error[k]))
+
+            # Pack the simulation data.
+            pack_sim_data(run, i, random)
+
+
+    def initial_values(self, run):
+        """Function for setting the initial simulation parameter values."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if simulations have been set up.
+        if not hasattr(self.relax.data, 'sim_state'):
+            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
+        # Specific initial Monte Carlo parameter value function setup.
+        init_sim_values = self.relax.specific_setup.setup('init_sim_values', function_type)
+
+        # Set the initial parameter values.
+        init_sim_values(run)
 
 
     def off(self, run=None):
