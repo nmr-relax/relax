@@ -1,91 +1,229 @@
-from re import match
+from Numeric import Float64, zeros
+
+#from bound_constraint import bound_constraint
+from linear_constraint import linear_constraint
 
 
-class generic_minimise:
-	def __init__(self):
-		"""Base class containing the main minimisation iterative loop algorithm.
+class method_of_multipliers:
+	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+		"""The method of multipliers, also known as the augmented Lagrangian method.
 
-		The algorithm is defined in the minimise function.
-		Also supplied are generic setup, convergence tests, and update functions.
+		Three types of inequality constraint are supported.  These are linear, bound, and
+		general constraints and must be setup as follows.  The vector x is the vector of
+		model parameters.
+
+		Currently equality constraints are not implemented.
+
+
+		Linear constraints
+		~~~~~~~~~~~~~~~~~~
+
+		These are defined as:
+
+			A.x >= b
+
+		where:
+			A is an m*n matrix where the rows are the transposed vectors, ai, of length
+			n.  The elements of ai are the coefficients of the model parameters.
+
+			x is the vector of model parameters of dimension n.
+
+			b is the vector of scalars of dimension m.
+
+			m is the number of constraints.
+
+			n is the number of model parameters.
+
+		eg if 0 <= q <= 1, q >= 1 - 2r, and 0 <= r, then:
+
+			| 1  0 |            |  0 |
+			|      |            |    |
+			|-1  0 |   | q |    | -1 |
+			|      | . |   | >= |    |
+			| 1  2 |   | r |    |  1 |
+			|      |            |    |
+			| 0  1 |            |  2 |
+
+		To use linear constraints both the matrix A and vector b need to be supplied.
+
+
+		Bound constraints
+		~~~~~~~~~~~~~~~~~
+
+		These are defined as:
+
+			l <= x <= u
+
+		where l and u are the vectors of lower and upper bounds respectively.
+
+		eg if 0 <= q <= 1, r >= 0, s <= 3, then:
+
+			|  0  |    | q |    |  1  |
+			|  0  | <= | r | <= | inf |
+			|-inf |    | s |    |  3  |
+
+		To use bound constraints both vectors l and u need to be supplied.
+
+
+		General constraints
+		~~~~~~~~~~~~~~~~~~~
+
+		These are defined as:
+
+			ci(x) >= 0
+
+		where ci(x) are the constraint functions.
+
+		To use general constrains the functions c, dc, and d2c need to be supplied.  The
+		function c is the constraint function which should return the vector of constraint
+		values.  The function dc is the constraint gradient function which should return the
+		matrix of constraint gradient vectors.  The function d2c is the constraint Hessian
+		function which should return the 3D matrix of constraint Hessians.
+
 		"""
 
+		# Linear constraints.
+		if A != None and b != None:
+			self.A = A
+			self.b = b
+			self.linear_constraint = linear_constraint(self.A, self.b)
+			self.c = self.linear_constraint.func
+			self.dc = self.linear_constraint.dfunc
+			self.d2c = None
+			self.m = len(self.b)
 
-	def hessian_type_and_mod(self, min_options, default_type='Newton', default_mod='Chol'):
-		"""Hessian type and modification options.
+		# Bound constraints.
+		elif l != None and u != None:
+			raise NameError, "Bound constraints are not implemented yet."
+			self.l = l
+			self.u = u
+			#self.bound_constraint = bound_constraint(self.l, self.u)
+			#self.c = self.bound_constraint.func
+			#self.dc = self.bound_constraint.dfunc
+			#self.d2c = None
+			self.m = 2.0*len(self.l)
 
-		Function for sorting out the minimisation options when either the hessian type or
-		hessian modification can be selected.
+		# General constraints.
+		elif c != None and dc != None and d2c != None:
+			self.c = c
+			self.dc = dc
+			self.d2c = d2c
+
+		# Incorrectly supplied constraints.
+		else:
+			raise NameError, "The constraints have not been supplied correctly."
+
+		# Arguments.
+		self.func = func
+		self.dfunc = dfunc
+		self.d2func = d2func
+		self.args = args
+		self.xk = x0
+		self.min_options = min_options
+		self.mu = mu0
+		self.tau = tau0
+		self.lambda_k = lambda0
+		self.func_tol = func_tol
+		self.maxiter = maxiter
+		self.full_output = full_output
+		self.print_flag = print_flag
+
+		# Initialise data structures.
+		self.L = 0.0
+		self.dL = zeros(len(self.xk), Float64)
+		self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
+		self.test_structure = zeros(self.m)
+
+		# Minimise.
+		self.minimise()
+
+
+	def func_LA(self):
+		"""The augmented Lagrangian function.
+
+		The equation is:
+
+			L(x, lambda_k; muk) = f(x) + sum(psi(ci(x), lambdai_k; muk))
+
+		where:
+
+                                        /  -s.t + t^2/(2m)	if t - ms <= 0,
+			psi(t, s; m) = <
+			                \  -ms^2/2		otherwise.
 		"""
 
-		# Initialise.
-		self.hessian_type = None
-		self.hessian_mod = None
-		self.init_failure = 0
+		self.L = apply(self.func, (self.xk,)+self.args)
+		self.ck = apply(self.c, (self.xk,))
 
-		# Test if the options are a tuple.
-		if type(min_options) != tuple:
-			print "The minimisation options " + `min_options` + " is not a tuple."
-			self.init_failure = 1; return
-
-		# Test that no more thant 2 options are given.
-		if len(min_options) > 2:
-			print "A maximum of two minimisation options is allowed (the hessian type and hessian modification)."
-			self.init_failure = 1; return
-
-		# Sort out the minimisation options.
-		for opt in min_options:
-			if self.hessian_type == None and (match('[Bb][Ff][Gg][Ss]', opt) or match('[Nn]ewton', opt)):
-				self.hessian_type = opt
-			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
-				self.hessian_mod = opt
+		for i in range(self.m):
+			if self.ck[i] - self.mu*self.lambda_k[i] <= 0:
+				self.L = self.L  -  0.5 * self.mu * self.lambda_k[i]**2
+				self.test_structure[i] = 1
 			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid hessian type or modification."
-				self.init_failure = 1; return
+				self.L = self.L  -  lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
+				self.test_structure[i] = 0
 
-		# Default hessian type.
-		if self.hessian_type == None:
-			self.hessian_type = default_type
+		return self.L
 
-		# Make sure that no hessian modification is used with the BFGS matrix.
-		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
-			print "When using the BFGS matrix, hessian modifications should not be used."
-			self.init_failure = 1; return
 
-		# Default hessian modification when the hessian type is Newton.
-		if match('[Nn]ewton', self.hessian_type) and self.hessian_mod == None:
-			self.hessian_mod = default_mod
+	def func_dLA(self):
+		"""The augmented Lagrangian gradient.
 
-		# Print the hessian type info.
-		if self.print_flag:
-			if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
-				print "Hessian type:  BFGS"
-			else:
-				print "Hessian type:  Newton"
+		"""
+
+		self.dL = apply(self.dfunc, (self.xk,)+self.args)
+		self.dck = apply(self.dc, (self.xk,))
+
+		for i in range(self.m):
+			if self.test_structure[i]:
+				self.dL = self.dL - (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
+
+		return self.dL
+
+
+	def func_d2LA(self):
+		"""The augmented Lagrangian Hessian.
+
+		"""
+
+		raise NameError, "Incomplete code."
+		self.d2L = apply(self.d2func, (self.xk,)+self.args)
+		self.d2ck = apply(self.d2c, (self.xk,))
+
+		return self.d2L
+
+
+	def func_d2LA_simple(self):
+		"""The augmented Lagrangian Hessian.
+
+		This function has been simplified by assuming that the constraint Hessian is zero.
+		"""
+
+		raise NameError, "Incomplete code."
+		self.d2L = apply(self.d2func, (self.xk,)+self.args)
+		return self.d2L
 
 
 	def minimise(self):
-		"""Main minimisation iterative loop algorithm.
+		"""Method of multipliers algorithm.
 
-		This algorithm is designed to be compatible with all iterative minimisers.  The
-		outline is:
+		Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
 
-		k = 0
-		Setup function
+		The algorithm is:
+
+		Given u0 > 0, tolerance t0 > 0, starting points x0s and lambda0
 		while 1:
-			New parameter function
-			Convergence tests
-			Update function
+			Find an approximate minimiser xk of LA(.,lambdak; uk), starting at xks, and
+			   terminating when the augmented Lagrangian gradeint <= tk
+			Final convergence test
+			Update Lagrange multipliers using formula 17.58
+			Chouse new penalty parameter uk+1 within (0, uk)
+			Set starting point for the next iteration to xk+1s = xk
 			k = k + 1
 		"""
 
 		# Start the iteration counter.
 		self.k = 0
-		if self.print_flag:
-			self.k2 = 0
-			print ""   # Print a new line.
-
-		# Setup function.
-		self.setup()
 
 		# Iterate until the local minima is found.
 		while 1:
@@ -94,37 +232,12 @@ class generic_minimise:
 				if self.print_flag == 2:
 					print "\n\n<<<Main iteration k=" + `self.k` + " >>>"
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
-				else:
-					if self.k2 == 100:
-						self.k2 = 0
-					if self.k2 == 0:
-						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 
 			# Get xk+1 (new parameter function).
-			#self.new_param_func()
-			try:
-				self.new_param_func()
-			except "LinearAlgebraError", message:
-				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
-				break
-			except OverflowError, message:
-				if type(message.args[0]) == int:
-					text = message.args[1]
-				else:
-					text = message.args[0]
-				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
-				break
-			except NameError, message:
-				self.warning = message.args[0] + " (fatal minimisation error)."
-				break
+			self.new_param_func()
 
 			# Test for warnings.
 			if self.warning != None:
-				break
-
-			# Maximum number of iteration test.
-			if self.k >= self.maxiter:
-				self.warning = "Maximum number of iterations reached"
 				break
 
 			# Convergence test.
@@ -132,20 +245,13 @@ class generic_minimise:
 				break
 
 			# Update function.
-			try:
-				self.update()
-			except OverflowError, message:
-				if type(message.args[0]) == int:
-					text = message.args[1]
-				else:
-					text = message.args[0]
-				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
-				break
+			self.update_multipliers()
 
 			# Iteration counter update.
+			self.xk = self.xk_new * 1.0
+			self.fk = self.fk_new
 			self.k = self.k + 1
-			if self.print_flag:
-				self.k2 = self.k2 + 1
+
 
 		if self.full_output:
 			try:
@@ -157,15 +263,6 @@ class generic_minimise:
 				return self.xk_new
 			except AttributeError:
 				return self.xk
-
-
-	def setup(self):
-		"""Default base class setup function.
-
-		This function does nothing.
-		"""
-
-		pass
 
 
 	def tests(self):
@@ -188,12 +285,13 @@ class generic_minimise:
 				print "Pass function tol test."
 
 
-	def update(self):
-		"""Default base class update function.
+	def update_multipliers(self):
+		"""Lagrange multiplier update function.
 
-		xk+1 is shifted to xk
-		fk+1 is shifted to fk
+		The update is given by the following formula:
+
+			lambdai_k+1 = max(lambdai_k - ci(xk)/mu, 0)
 		"""
 
-		self.xk = self.xk_new * 1.0
-		self.fk = self.fk_new
+		for i in range(self.m):
+			self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i]/self.mu, 0.0)

@@ -276,7 +276,7 @@ class mf_model(generic_functions):
 
 
 		Diagonal scaling.
-		
+
 		This is the scaling of parameter values with the intent of having the same order of
 		magnitude for all parameters values.  For example, if S2 = 0.5, te = 200 ps, and
 		Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10,

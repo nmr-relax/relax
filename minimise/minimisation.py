@@ -46,7 +46,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 
 	func			- The function to minimise.
 	dfunc			- The function which returns the gradient vector.
-	d2func			- The function which returns the hessian matrix or approximation.
+	d2func			- The function which returns the Hessian matrix or approximation.
 
 	f_args			- The tuple of arguments to supply to the function func.
 	df_args			- The tuple of arguments to supply to the function dfunc.
@@ -55,12 +55,12 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	xk			- The parameter vector which on input is the initial values, x0.
 	fk			- The function value which on input corresponds to x0.
 	dfk			- The gradient vector which on input corresponds to x0.
-	d2fk			- The hessian matrix or approximation which on input corresponds to x0.
+	d2fk			- The Hessian matrix or approximation which on input corresponds to x0.
 
 	xk_new			- The parameter vector for the next iteration which on input can be anything.
 	fk_new			- The function value for the next iteration which on input can be anything.
 	dfk_new			- The gradient vector for the next iteration which on input can be anything.
-	d2fk_new		- The hessian matrix for the next iteration which on input can be anything.
+	d2fk_new		- The Hessian matrix for the next iteration which on input can be anything.
 
 	func_tol		- The cutoff value used to terminate minimisation by comparison to the difference in function values between iterations.
 	maxiter			- The maximum number of iterations.

@@ -51,7 +51,7 @@ def calc_iso_s2_te_jw_comps(data):
 	data.w_te_tm_sqrd = data.w_tm_sqrd * data.params[data.te_index] ** 2
 	data.te_denom = data.te_tm_sqrd + data.w_te_tm_sqrd
 	data.te_num = data.te_tm * data.params[data.te_index]
-	
+
 
 def calc_iso_s2f_s2s_ts_jw_comps(data):
 	"""Calculate the components of the isotropic spectral density value for the extended model-free formula with the parameters S2f, S2s, and ts.
@@ -187,7 +187,7 @@ def calc_iso_s2_te_djw_comps(data):
 	"""
 
 	data.fact_djw_dte = data.two_fifths_tm_sqrd * (data.te_tm_sqrd - data.w_te_tm_sqrd) / (data.te_denom ** 2)
-	
+
 
 
 def calc_iso_s2f_s2s_ts_djw_comps(data):
@@ -211,7 +211,7 @@ def calc_iso_s2f_s2s_ts_djw_comps(data):
 
 	data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_tm_sqrd) / (data.ts_denom ** 2)
 	data.fact_djw_ds2s = data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)
-	
+
 
 def calc_iso_s2f_tf_s2s_ts_djw_comps(data):
 	"""Calculate the components of the isotropic spectral density gradient for the extended model-free formula with the parameters S2f, tf, S2s, and ts.

@@ -28,7 +28,7 @@ class steepest_descent(generic_minimise, line_search_functions):
 		self.mu = mu
 		self.eta = eta
 
-		# Initialise the function, gradient, and hessian evaluation counters.
+		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -75,7 +75,7 @@ class steepest_descent(generic_minimise, line_search_functions):
 
 
 	def update(self):
-		"Function to update the function value, gradient vector, and hessian matrix"
+		"Function to update the function value, gradient vector, and Hessian matrix"
 
 		# Store old data.
 		self.fk_last = self.fk

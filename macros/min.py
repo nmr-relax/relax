@@ -151,7 +151,7 @@ class min:
 						print "Unknown parameter '" + self.relax.data.param_types[self.model][i] + "' for the extended model-free equation."
 						return
 
-			# Unknown eqation type.
+			# Unknown equation type.
 			else:
 				print "The equation " + `self.relax.data.equations[self.model]` + " has not been coded into the fixed parameter macro."
 				return
@@ -318,7 +318,7 @@ class min:
 					print "Unknown parameter '" + self.relax.data.param_types[self.model][i] + "' for the extended model-free equation."
 					return
 
-		# Unknown eqation type.
+		# Unknown equation type.
 		else:
 			print "The equation " + `self.relax.data.equations[self.model]` + " has not been coded into the grid search macro."
 			return
@@ -354,7 +354,7 @@ class min:
 			else:
 				print "Residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1]
 
-			# Initialise the iteration counter and function, gradient, and hessian call counters.
+			# Initialise the iteration counter and function, gradient, and Hessian call counters.
 			self.iter_count = 0
 			self.f_count = 0
 			self.g_count = 0
@@ -411,6 +411,19 @@ class min:
 	def minimise(self, *args, **keywords):
 		"""Minimisation macro.
 
+		The arguments specify the minimiser to use as well as the minimisation options.
+
+		The following keywords can be supplied, any others will be ignored.
+			model - a string specifying which model to minimise (this must be given).
+			func_tol - the function tolerance between iterations, used to terminate
+			   minisation.  The default value is 1e-25.
+			max_iter - the maximum number of iterations.  The default value is 1e7.
+			constraints - a flag specifying whether the parameters should be
+			   constrained.  The default is to turn constraints on (constraints=1).
+			min_debug - the amount of information to print to screen.  Zero corresponds
+			   to minimal output, one is intermediate output, while two is maximal
+			   output.  The default value is 1.
+
 
 		FIN
 		"""
@@ -425,7 +438,7 @@ class min:
 		self.min_options = args[1:]
 
 		# Test for invalid keywords.
-		valid_keywords = ['model', 'min_debug', 'func_tol', 'max_iterations', 'max_iter']
+		valid_keywords = ['model', 'func_tol', 'max_iterations', 'max_iter', 'constraints', 'min_debug']
 		for key in keywords:
 			valid = 0
 			for valid_key in valid_keywords:
@@ -434,7 +447,7 @@ class min:
 			if not valid:
 				print "The keyword " + `key` + " is invalid."
 				return
-			
+
 		# The model keyword.
 		if keywords.has_key('model'):
 			self.model = keywords['model']
@@ -451,12 +464,6 @@ class min:
 			print "The model '" + self.model + "' has not been created yet."
 			return
 
-		# Debugging options.
-		if keywords.has_key('min_debug'):
-			self.relax.min_debug = keywords['min_debug']
-		else:
-			self.relax.min_debug = 1
-
 		# The function tolerance value.
 		if keywords.has_key('func_tol'):
 			self.func_tol = keywords['func_tol']
@@ -469,7 +476,25 @@ class min:
 		elif keywords.has_key('max_iter'):
 			self.max_iterations = keywords['max_iter']
 		else:
-			self.max_iterations = 1000000
+			self.max_iterations = 10000000
+
+		# Constraint flag.
+		if keywords.has_key('constraints'):
+			self.constraints = keywords['constraints']
+		else:
+			self.constraints = 1
+		if self.constraints == 1:
+			self.min_algor = 'Method of Multipliers'
+			self.min_options = args
+		elif self.constraints != 0:
+			print "The constraints flag (constraints=" + `self.constraints` + ") must be either 0 or 1."
+			return
+
+		# Debugging options.
+		if keywords.has_key('min_debug'):
+			self.relax.min_debug = keywords['min_debug']
+		else:
+			self.relax.min_debug = 1
 
 		# Main iterative loop.
 		self.main_loop()

@@ -45,7 +45,7 @@ class newton(generic_minimise, line_search_functions):
 
 		# Test that no more thant 2 options are given.
 		if len(min_options) > 2:
-			print "A maximum of two minimisation options is allowed (the line search algorithm and the hessian modification)."
+			print "A maximum of two minimisation options is allowed (the line search algorithm and the Hessian modification)."
 			self.init_failure = 1; return
 
 		# Sort out the minimisation options.
@@ -55,18 +55,18 @@ class newton(generic_minimise, line_search_functions):
 			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
 				self.hessian_mod = opt
 			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid line search algorithm or hessian modification."
+				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid line search algorithm or Hessian modification."
 				self.init_failure = 1; return
 
 		# Default line search algorithm.
 		if self.line_search_algor == None:
 			self.line_search_algor = 'More Thuente'
 
-		# Default hessian modification.
+		# Default Hessian modification.
 		if self.hessian_mod == None:
 			self.hessian_mod = 'Chol'
 
-		# Initialise the function, gradient, and hessian evaluation counters.
+		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
@@ -82,7 +82,7 @@ class newton(generic_minimise, line_search_functions):
 		self.setup = self.setup_newton
 		self.update = self.update_newton
 
-		# Line search and hessian modification initialisation.
+		# Line search and Hessian modification initialisation.
 		self.init_line_functions()
 		self.init_hessian_mod_funcs()
 
@@ -96,7 +96,7 @@ class newton(generic_minimise, line_search_functions):
 		Returns the modified Newton step.
 		"""
 
-		# Calculate the Frobenius norm of the hessian and the minimum diagonal value.
+		# Calculate the Frobenius norm of the Hessian and the minimum diagonal value.
 		norm = 0.0
 		min_aii = 1e99
 		for i in range(self.n):
@@ -145,7 +145,7 @@ class newton(generic_minimise, line_search_functions):
 
 
 	def eigenvalue(self, return_matrix=0):
-		"""The eigenvalue hessian modification.
+		"""The eigenvalue Hessian modification.
 
 		This modification is based on equation 6.14 from page 144 of 'Numerical
 		Optimization' by Jorge Nocedal and Stephen J. Wright, 1999.
@@ -273,11 +273,11 @@ class newton(generic_minimise, line_search_functions):
 
 
 	def init_hessian_mod_funcs(self):
-		"Initialise the hessian modification functions."
+		"Initialise the Hessian modification functions."
 
 		if self.hessian_mod == None:
 			if self.print_flag:
-				print "Hessian modification:  Unmodified hessian."
+				print "Hessian modification:  Unmodified Hessian."
 			self.get_pk = self.unmodified_hessian
 		elif match("^[Ee]igen", self.hessian_mod):
 			if self.print_flag:
@@ -327,7 +327,7 @@ class newton(generic_minimise, line_search_functions):
 	def setup_newton(self):
 		"""Setup function.
 
-		The initial Newton function value, gradient vector, and hessian matrix are
+		The initial Newton function value, gradient vector, and Hessian matrix are
 		calculated.
 		"""
 
@@ -346,7 +346,7 @@ class newton(generic_minimise, line_search_functions):
 
 
 	def update_newton(self):
-		"Function to update the function value, gradient vector, and hessian matrix"
+		"Function to update the function value, gradient vector, and Hessian matrix"
 
 		self.xk = self.xk_new * 1.0
 		self.fk = self.fk_new
@@ -355,7 +355,7 @@ class newton(generic_minimise, line_search_functions):
 
 
 	def valid_hessian_mod(self, mod):
-		"Test if the string 'mod' is a valid hessian modification."
+		"Test if the string 'mod' is a valid Hessian modification."
 
 		if mod == None or match("^[Ee]igen", mod) or match("^[Cc]hol", mod) or match("^[Gg][Mm][Ww]", mod):
 			return 1

@@ -13,8 +13,8 @@ class generic_minimise:
 	def hessian_type_and_mod(self, min_options, default_type='Newton', default_mod='Chol'):
 		"""Hessian type and modification options.
 
-		Function for sorting out the minimisation options when either the hessian type or
-		hessian modification can be selected.
+		Function for sorting out the minimisation options when either the Hessian type or
+		Hessian modification can be selected.
 		"""
 
 		# Initialise.
@@ -29,7 +29,7 @@ class generic_minimise:
 
 		# Test that no more thant 2 options are given.
 		if len(min_options) > 2:
-			print "A maximum of two minimisation options is allowed (the hessian type and hessian modification)."
+			print "A maximum of two minimisation options is allowed (the Hessian type and Hessian modification)."
 			self.init_failure = 1; return
 
 		# Sort out the minimisation options.
@@ -39,23 +39,23 @@ class generic_minimise:
 			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
 				self.hessian_mod = opt
 			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid hessian type or modification."
+				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid Hessian type or modification."
 				self.init_failure = 1; return
 
-		# Default hessian type.
+		# Default Hessian type.
 		if self.hessian_type == None:
 			self.hessian_type = default_type
 
-		# Make sure that no hessian modification is used with the BFGS matrix.
+		# Make sure that no Hessian modification is used with the BFGS matrix.
 		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
-			print "When using the BFGS matrix, hessian modifications should not be used."
+			print "When using the BFGS matrix, Hessian modifications should not be used."
 			self.init_failure = 1; return
 
-		# Default hessian modification when the hessian type is Newton.
+		# Default Hessian modification when the Hessian type is Newton.
 		if match('[Nn]ewton', self.hessian_type) and self.hessian_mod == None:
 			self.hessian_mod = default_mod
 
-		# Print the hessian type info.
+		# Print the Hessian type info.
 		if self.print_flag:
 			if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
 				print "Hessian type:  BFGS"

@@ -823,7 +823,7 @@ def dr1_comps(data, i):
 
 # d2Ri.
 def d2ri_comps(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, create_csa_jw_hess, create_rex_hess):
-	"""Calculate the d2ri hessian components.
+	"""Calculate the d2ri Hessian components.
 
 	Calculated:
 		Dipolar J(w) components.
@@ -846,7 +846,7 @@ def d2ri_comps(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, creat
 
 # d2Ri (Bond length).
 def d2ri_comps_r(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, create_csa_jw_hess, create_rex_hess):
-	"""Calculate the d2ri hessian components.
+	"""Calculate the d2ri Hessian components.
 
 	Calculated:
 		Dipolar constant components.
@@ -857,7 +857,7 @@ def d2ri_comps_r(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, cre
 		CSA constant components.
 	"""
 
-	# Dipolar constant hessian value.
+	# Dipolar constant Hessian value.
 	comp_dip_const_hess(data, data.params[data.r_index])
 
 	# Loop over the relaxation values.
@@ -877,7 +877,7 @@ def d2ri_comps_r(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, cre
 
 # d2Ri (CSA).
 def d2ri_comps_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, create_csa_jw_hess, create_rex_hess):
-	"""Calculate the d2ri hessian components.
+	"""Calculate the d2ri Hessian components.
 
 	Calculated:
 		Dipolar J(w) components.
@@ -888,7 +888,7 @@ def d2ri_comps_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, c
 		Dipolar constant components.
 	"""
 
-	# CSA constant hessian value.
+	# CSA constant Hessian value.
 	comp_csa_const_hess(data)
 
 	# Loop over the relaxation values.
@@ -907,7 +907,7 @@ def d2ri_comps_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, c
 
 # d2Ri (Bond length, CSA).
 def d2ri_comps_r_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, create_csa_jw_hess, create_rex_hess):
-	"""Calculate the d2ri hessian components.
+	"""Calculate the d2ri Hessian components.
 
 	Calculated:
 		Dipolar constant components.
@@ -918,10 +918,10 @@ def d2ri_comps_r_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess,
 		Rex constant components.
 	"""
 
-	# Dipolar constant hessian value.
+	# Dipolar constant Hessian value.
 	comp_dip_const_hess(data, data.params[data.r_index])
 
-	# CSA constant hessian value.
+	# CSA constant Hessian value.
 	comp_csa_const_hess(data)
 
 	# Loop over the relaxation values.
@@ -945,7 +945,7 @@ def d2ri_comps_r_csa(data, create_dip_hess, create_dip_jw_hess, create_csa_hess,
 
 # d2R1 comps.
 def d2r1_comps(data, i):
-	"Calculate the d2ri hessian components."
+	"Calculate the d2ri Hessian components."
 
 	# Dipolar constant gradient value.
 	if data.r_index:
@@ -1002,7 +1002,7 @@ def calc_fixed_csa(data):
 
 
 
-# Functions to calculate the dipolar constant values, gradients, and hessians.
+# Functions to calculate the dipolar constant values, gradients, and Hessians.
 ##############################################################################
 
 
@@ -1042,7 +1042,7 @@ def comp_dip_const_grad(data, bond_length):
 def comp_dip_const_hess(data, bond_length):
 	"""Calculate the second derivative of the dipolar constant.
 
-	Dipolar constant hessian
+	Dipolar constant Hessian
 	~~~~~~~~~~~~~~~~~~~~~~~~
 
 		                   21   / mu0  \ 2  (gH.gN.h_bar)**2
@@ -1055,7 +1055,7 @@ def comp_dip_const_hess(data, bond_length):
 
 
 
-# Functions to calculate the CSA constant values, gradients, and hessians.
+# Functions to calculate the CSA constant values, gradients, and Hessians.
 ##########################################################################
 
 
@@ -1097,7 +1097,7 @@ def comp_csa_const_grad(data, csa):
 def comp_csa_const_hess(data):
 	"""Calculate the second derivative of the CSA constant.
 
-	CSA constant hessian
+	CSA constant Hessian
 	~~~~~~~~~~~~~~~~~~~~
 
 		                   2.wN**2
