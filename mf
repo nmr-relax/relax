@@ -37,9 +37,6 @@ from functions.mf_functions import mf_functions
 from functions.mf_trans_functions import mf_trans_functions
 
 from minimise.minimise import minimise
-from minimise.grid import grid
-from minimise.levenberg_marquardt import levenberg_marquardt
-from minimise.simplex import simplex
 
 from model_selection.model_selection import modsel
 from model_selection.asymptotic import asymptotic
@@ -94,10 +91,7 @@ class mf:
 			self.modsel.farrow = farrow(self)
 			self.modsel.palmer = palmer(self)
 			self.modsel.overall_disc = overall_disc(self)
-			self.minimise = minimise(self)
-			self.minimise.grid = grid(self)
-			self.minimise.levenberg_marquardt = levenberg_marquardt(self)
-			self.minimise.simplex = simplex(self)
+			self.minimise = minimise()
 			main_model_free(self)
 
 		if match(self.usr_param.program_type, 'palmer'):

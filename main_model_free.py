@@ -1,17 +1,22 @@
 import sys
+from Numeric import array
 from re import match
 from scipy.optimize import fmin, fmin_bfgs, fmin_ncg, fmin_powell
 simplex = fmin
 powell = fmin_powell
 bfgs = fmin_bfgs
-newton = fmin_ncg
+ncg = fmin_ncg
 
 class main_model_free:
 	def __init__(self, mf):
 		"Class used to create and process input and output for the program Modelfree 4."
 
 		self.mf = mf
-		self.lm = self.mf.minimise.levenberg_marquardt.fit
+		self.lm = self.mf.minimise.levenberg_marquardt
+		self.steepest_descent = self.mf.minimise.steepest_descent
+		self.coordinate_descent = self.mf.minimise.coordinate_descent
+		self.newton = self.mf.minimise.newton
+		self.bfgs_temp = self.mf.minimise.bfgs
 
 		self.mf.data.stage, self.mf.data.model = self.ask_stage()
 		self.mf.file_ops.mkdir(self.mf.data.model)
@@ -33,6 +38,10 @@ class main_model_free:
 
 		# Transformation flag.
 		trans_flag = 1
+
+		# Options.
+		tol = 1e-15
+		max = 10000
 
 		# Set the function, gradient, and hessian functions.
 		if trans_flag:
@@ -108,24 +117,26 @@ class main_model_free:
 			function_ops = ( diff_type, diff_params, mf_model, relax_data, errors )
 
 			# Grid search.
-			params, chi2 = self.mf.minimise.grid.search(func, fargs=function_ops, args=grid_ops)
+			params, chi2 = self.mf.minimise.grid(func, grid_ops, args=function_ops, print_flag=self.mf.min_debug)
 			if self.mf.min_debug >= 1:
 				print "\nThe grid parameters are: " + `params`
 				print "The grid chi-squared value is: " + `chi2`
 
 			#params = [0.368]
 			#params = [0.368, 0.0]
-			#params = [0.950, 0.585, 33.0*1e-12]
 			#params = [0.900, 0.0*1e-12, 0.0/(1e-8 * self.mf.data.frq[0])**2]
 			#params = [0.900, 100*1e-12, 2.76038451e-17]
 			#params = [6.31578947e-01, 8.42105263e-01, 5.26315789e-10]
+			#params = array([0.350, 5.000, 0.0])
 			#chi2 = 0.0
+			#print "Params: " + `params`
+			#print "Chi2: " + `chi2`
 
 			# Simplex minimisation.
 			if match('Simplex', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Simplex minimisation >>>"
-				output = simplex(func, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
+				output = simplex(func, params, args=function_ops, xtol=1e-15, ftol=tol, maxiter=max, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 				print "iter:       " + `iter`
 				print "func calls: " + `num_func_calls`
@@ -135,14 +146,24 @@ class main_model_free:
 			elif match('Powell', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Powell minimisation >>>"
-				output = powell(func, params, args=function_ops, xtol=1e-15, ftol=1e-15, maxiter=10000, maxfun=10000, full_output=1, disp=self.mf.min_debug)
+				output = powell(func, params, args=function_ops, xtol=1e-15, ftol=tol, maxiter=max, maxfun=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, iter, num_func_calls, warn_flag = output
 			
 			# Levenberg-Marquardt minimisation.
 			elif match('LM', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-				output = self.lm(func, dfunc, lm_dfunc, params, errors, args=function_ops, tol=1e-5, maxiter=100000000, full_output=1)
+				output = self.lm(func, dfunc, lm_dfunc, params, errors, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
+				params, chi2, iter, warn_flag = output
+				print "iter:       " + `iter`
+				print "warn flag:  " + `warn_flag`
+
+			# Steepest descent minimisation.
+			elif match('Steepest_descent', self.mf.usr_param.minimiser):
+				line_search = self.mf.minimise.backtrack_line
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Steepest descent minimisation >>>"
+				output = self.steepest_descent(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
 				params, chi2, iter, warn_flag = output
 				print "iter:       " + `iter`
 				print "warn flag:  " + `warn_flag`
@@ -151,19 +172,51 @@ class main_model_free:
 			elif match('BFGS', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-				output = bfgs(func, params, fprime=dfunc, args=function_ops, avegtol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+				output = bfgs(func, params, fprime=dfunc, args=function_ops, avegtol=tol, maxiter=max, full_output=1, disp=self.mf.min_debug)
 				params, chi2, num_func_calls, num_grad_calls, warn_flag = output
 
 			# Newton Conjugate Gradient minimisation.
-			elif match('Newton', self.mf.usr_param.minimiser):
+			elif match('NCG', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-				output = newton(func, params, fprime=dfunc, fhess=d2func, args=function_ops, avextol=1e-15, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+				output = ncg(func, params, fprime=dfunc, fhess=d2func, args=function_ops, avextol=tol, maxiter=max, full_output=1, disp=self.mf.min_debug)
 				params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
+
+			# Basic Newton minimisation.
+			elif match('Newton', self.mf.usr_param.minimiser):
+				line_search = self.mf.minimise.line_search_more_thuente
+				type = "More and Thuente"
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Newton minimisation >>>"
+				output = self.newton(func, dfunc, d2func, params, type, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
+				params, chi2, iter, warn_flag = output
+				#params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
+				print "iter:       " + `iter`
+				print "warn flag:  " + `warn_flag`
+
+			# Quasi-Newton BFGS minimisation.
+			elif match('temp', self.mf.usr_param.minimiser):
+				line_search = self.mf.minimise.backtrack_line
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Quasi-Newton BFGS minimisation (temp) >>>"
+				output = self.bfgs_temp(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
+				params, chi2, iter, warn_flag = output
+				print "iter:       " + `iter`
+				print "warn flag:  " + `warn_flag`
+
+			# Back-and-forth coordinate descent minimisation.
+			elif match('CD', self.mf.usr_param.minimiser):
+				line_search = self.mf.minimise.backtrack_line
+				if self.mf.min_debug >= 1:
+					print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
+				output = self.coordinate_descent(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
+				params, chi2, iter, warn_flag = output
+				print "iter:       " + `iter`
+				print "warn flag:  " + `warn_flag`
 
 			# None.
 			else:
-				raise NameError, "Minimiser type set incorrectly\n"
+				raise NameError, "Minimiser type set incorrectly, " + `self.mf.usr_param.minimiser` + " not programmed.\n"
 				sys.exit()
 
 			if self.mf.min_debug >= 1:
