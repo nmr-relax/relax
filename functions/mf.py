@@ -115,13 +115,15 @@ class mf:
 
 		# Test if the function has already been calculated with these parameter values.
 		if sum(self.data.params == self.data.func_test) == len(self.data.params):
-			return self.data.chi2
+			if len(self.data.params):
+				return self.data.chi2
 
 		# Store the parameter values in self.data.func_test for testing on next call if the function has already been calculated.
 		self.data.func_test = self.data.params * 1.0
 
 		# Calculate the spectral density values.
-		self.calc_jw_comps(self.data)
+		if self.calc_jw_comps:
+			self.calc_jw_comps(self.data)
 		create_jw_struct(self.data, self.calc_jw)
 
 		# Calculate the relaxation formula components.
@@ -164,7 +166,8 @@ class mf:
 
 		# Test if the gradient has already been calculated with these parameter values.
 		if sum(self.data.params == self.data.grad_test) == len(self.data.params):
-			return self.data.dchi2
+			if len(self.data.params):
+				return self.data.dchi2
 
 		# Test if the function has already been called
 		if sum(self.data.params == self.data.func_test) != len(self.data.params):
@@ -223,7 +226,8 @@ class mf:
 
 		# Test if the hessian has already been calculated with these parameter values.
 		if sum(self.data.params == self.data.hess_test) == len(self.data.params):
-			return self.data.d2chi2
+			if len(self.data.params):
+				return self.data.d2chi2
 
 		# Test if the gradient has already been called
 		if sum(self.data.params == self.data.grad_test) != len(self.data.params):
@@ -420,7 +424,7 @@ class mf:
 				self.calc_d2jw[self.data.te_index][self.data.te_index] = calc_iso_S2_te_d2jw_dte2
 			elif self.data.s2_index != None:
 				self.calc_jw = calc_iso_s2_jw
-				self.calc_jw_comps = calc_iso_s2_jw_comps
+				self.calc_jw_comps = None
 				self.calc_djw_comps = None
 				self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
 			elif self.data.te_index != None and self.data.s2_index == None:
@@ -428,7 +432,7 @@ class mf:
 				return 0
 			else:
 				self.calc_jw = calc_iso_jw
-				self.calc_jw_comps = calc_iso_jw_comps
+				self.calc_jw_comps = None
 				self.calc_djw_comps = None
 
 		# The extended model-free equations.

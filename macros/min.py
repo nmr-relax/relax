@@ -419,6 +419,11 @@ class min:
 
 		self.model = model
 
+		# Test if the parameter vector has a length.
+		if len(self.relax.data.params[self.model][self.res]) == 0:
+			print "The minimisation of a zero parameter model is not allowed."
+			return
+
 		self.min_algor = min_algor
 		if not self.min_algor:
 			print "The minimisation algorithm has not been specified."

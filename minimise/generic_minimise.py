@@ -91,7 +91,11 @@ class generic_minimise:
 				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
 				break
 			except OverflowError, message:
-				self.warning = "OverflowError: " + message.args[0] + " (fatal minimisation error)."
+				if type(message.args[0]) == int:
+					text = message.args[1]
+				else:
+					text = message.args[0]
+				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
 				break
 
 			# Test if maximum number of iterations have been reached.
