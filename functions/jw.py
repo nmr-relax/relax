@@ -46,9 +46,9 @@ class jw:
 		# Isotropic rotational diffusion.
 		if match(self.options[0], 'iso'):
 			self.tm = float(self.options[1][0])
-			if match('m1', self.options[2]) or match('m3', self.options[2]):
+			if match('m[13]', self.options[2]):
 				self.calc_jw_iso_m13()
-			elif match('m2', self.options[2]) or match('m4', self.options[2]):
+			elif match('m[24]', self.options[2]):
 				self.calc_jw_iso_m24()
 			elif match('m5', self.options[2]):
 				self.calc_jw_iso_m5()
@@ -140,12 +140,12 @@ class jw:
 		# Isotropic rotational diffusion.
 		if match(self.options[0], 'iso'):
 			self.tm = float(self.options[1][0])
-			if match('m1', self.options[2]) or match('m3', self.options[2]):
+			if match('m[13]', self.options[2]):
 				if match('S2', param_type):
 					self.djw = self.calc_djw_dS2_iso_m13()
 				elif match('Rex', param_type):
 					self.djw = 0.0
-			elif match('m2', self.options[2]) or match('m4', self.options[2]):
+			elif match('m[24]', self.options[2]):
 				if match('S2', param_type):
 					self.djw = self.calc_djw_dS2_iso_m24()
 				elif match('te', param_type):
@@ -268,7 +268,7 @@ class jw:
 		tprime = (self.te * self.tm) / (self.te + self.tm)
 		omega_tprime_sqrd = (self.frequency * tprime) ** 2
 
-		djw_te = 0.4 * (1.0 - self.s2) * ((1.0 - omega_tprime_sqrd) / (1.0 + omega_tprime_sqrd)**2) * (self.tm / (self.te + self.tm))**2
+		djw_dte = 0.4 * (1.0 - self.s2) * ((1.0 - omega_tprime_sqrd) / (1.0 + omega_tprime_sqrd)**2) * (self.tm / (self.te + self.tm))**2
 
 		return djw_dte
 
@@ -279,7 +279,7 @@ class jw:
 		tprime = (self.ts * self.tm) / (self.ts + self.tm)
 		omega_tprime_sqrd = (self.frequency * tprime) ** 2
 
-		djw_ts = 0.4 * self.s2f * (1.0 - self.s2s) * ((1.0 - omega_tprime_sqrd) / (1.0 + omega_tprime_sqrd)**2) * (self.tm / (self.ts + self.tm))**2
+		djw_dts = 0.4 * self.s2f * (1.0 - self.s2s) * ((1.0 - omega_tprime_sqrd) / (1.0 + omega_tprime_sqrd)**2) * (self.tm / (self.ts + self.tm))**2
 
 		return djw_dts
 
@@ -292,15 +292,16 @@ class jw:
 		To increase efficiency, remove this section after cleaning program code so that
 		self.mf_values are always of type float!
 		"""
-		if match('m1', self.options[2]) or match('m3', self.options[2]):
+		if match('m[13]', self.options[2]):
 			self.s2  = float(self.mf_values[0])
-		elif match('m2', self.options[2] or match('m4', self.options[2])):
+		elif match('m[24]', self.options[2]):
 			self.s2  = float(self.mf_values[0])
-			self.te  = float(self.mf_values[1]) * 1e-12
+			self.te  = float(self.mf_values[1])
 		elif match('m5', self.options[2]):
 			self.s2f = float(self.mf_values[0])
 			self.s2s = float(self.mf_values[1])
-			self.ts  = float(self.mf_values[2]) * 1e-12
-		else:
+			self.ts  = float(self.mf_values[2])
+		elif not match('m[12345]', self.options[2]):
 			print "Model-free model " + `self.options[2]` + " not implemented yet, quitting program."
+			raise NameError, `self.options[2]`
 			sys.exit()

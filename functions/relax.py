@@ -292,7 +292,10 @@ class relax:
 		r2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.j[0] + self.j[2] + 3.0*self.j[1] + 6.0*self.j[3] + 6.0*self.j[4])
 		r2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * (4.0*self.j[0] + 3.0*self.j[1])
 		# Rex frq dep problem.
-		r2 = r2_dipole + r2_csa + self.rex
+		if match('m[34]', self.options[2]):
+			r2 = r2_dipole + r2_csa + self.rex
+		else:
+			r2 = r2_dipole + r2_csa
 		return r2
 
 
@@ -311,6 +314,7 @@ class relax:
 		"Remap the Rex parameter in self.mf_values, and make sure they are of the type float."
 		if match('m[34]', self.options[2]):
 			self.rex = float(self.mf_values[1]) / float(self.type[1])**2
-		elif not match('m[125]', self.options[2]):
+		elif not match('m[12345]', self.options[2]):
 			print "Model-free model " + `self.options[2]` + " not implemented yet, quitting program."
+			raise NameError, `self.options[2]`
 			sys.exit()
