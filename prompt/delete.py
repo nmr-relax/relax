@@ -70,4 +70,4 @@ class Delete:
             raise RelaxStrError, ('data type', data_type)
 
         # Execute the functional code.
-        self.relax.delete.data(run=run, data_type=data_type)
+        self.relax.generic.delete.data(run=run, data_type=data_type)

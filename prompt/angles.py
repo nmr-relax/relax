@@ -61,4 +61,4 @@ class Angles:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.angles.angles(run=run)
+        self.relax.generic.angles.angles(run=run)

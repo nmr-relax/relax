@@ -81,4 +81,4 @@ class Write:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.relax.rw.write_data(run=run, file=file, dir=dir, force=force)
+        self.relax.generic.rw.write_data(run=run, file=file, dir=dir, force=force)

@@ -255,6 +255,6 @@ class Map:
         if match("^[Ii]so3[Dd]", map_type):
             if n != 3:
                 raise RelaxError, "The 3D isosurface map requires a strictly 3 parameter model."
-            self.relax.map.Iso3D.map_space(run=run, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
+            self.relax.generic.map.Iso3D.map_space(run=run, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
         else:
             raise RelaxError, "The map type '" + map_type + "' is not supported."

@@ -46,4 +46,4 @@ class View:
             print text
 
         # Execute the functional code.
-        self.relax.view.view()
+        self.relax.generic.view.view()

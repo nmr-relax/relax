@@ -2,6 +2,7 @@
 ##########
 
 Combine the prompt functions 'value.set' and 'set'.
+Fix prompt/map.py (split and create a generic function).  Maybe remove dx/map.py?
 Change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
 
 

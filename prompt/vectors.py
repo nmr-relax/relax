@@ -73,4 +73,4 @@ class Vectors:
             raise RelaxStrError, ('proton', proton)
 
         # Execute the functional code.
-        self.relax.vectors.vectors(heteronuc=heteronuc, proton=proton)
+        self.relax.generic.vectors.vectors(heteronuc=heteronuc, proton=proton)

@@ -77,4 +77,4 @@ class OpenDX:
             raise RelaxBinError, ('execute flag', execute)
 
         # Execute the functional code.
-        self.relax.opendx.run(file=file, dir=dir, dx_exec=dx_exec, execute=execute)
+        self.relax.generic.opendx.run(file=file, dir=dir, dx_exec=dx_exec, execute=execute)

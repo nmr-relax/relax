@@ -169,7 +169,7 @@ class Main:
             raise RelaxStrError, ('atom2', atom2)
 
         # Execute the functional code.
-        self.relax.palmer.create(run=run, dir=dir, force=force, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
+        self.relax.generic.palmer.create(run=run, dir=dir, force=force, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
 
 
     def execute(self, run=None, dir=None, force=0):
@@ -218,7 +218,7 @@ class Main:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.relax.palmer.execute(run=run, dir=dir, force=force)
+        self.relax.generic.palmer.execute(run=run, dir=dir, force=force)
 
 
     def extract(self, run=None, dir=None):
@@ -249,4 +249,4 @@ class Main:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.relax.palmer.extract(run=run, dir=dir)
+        self.relax.generic.palmer.extract(run=run, dir=dir)

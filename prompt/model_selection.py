@@ -117,4 +117,4 @@ class Modsel:
                     raise RelaxError, "The elements of the first dimension of the runs argument must be either strings or arrays."
 
         # Execute the functional code.
-        self.relax.model_selection.select(method=method, modsel_run=modsel_run, runs=runs)
+        self.relax.generic.model_selection.select(method=method, modsel_run=modsel_run, runs=runs)

@@ -72,7 +72,7 @@ class Main:
             print text
 
         # Execture the functional code.
-        self.relax.selection.all()
+        self.relax.generic.selection.all()
 
 
     def none(self):
@@ -92,7 +92,7 @@ class Main:
             print text
 
         # Execture the functional code.
-        self.relax.selection.none()
+        self.relax.generic.selection.none()
 
 
     def res(self, num=None, name=None, unselect=1):
@@ -166,7 +166,7 @@ class Main:
             raise RelaxBinError, ('unselect', unselect)
 
         # Execture the functional code.
-        self.relax.selection.res(num=num, name=name, unselect=unselect)
+        self.relax.generic.selection.res(num=num, name=name, unselect=unselect)
 
 
     def reverse(self):
@@ -186,4 +186,4 @@ class Main:
             print text
 
         # Execture the functional code.
-        self.relax.selection.reverse()
+        self.relax.generic.selection.reverse()
