@@ -197,7 +197,7 @@ class Model_free(Common_functions):
                     continue
 
                 # Only add parameters for a single residue if index has a value.
-                if index != None and i != index:
+                if (param_set == 'mf' or param_set == 'local_tm') and index != None and i != index:
                     continue
 
                 # Loop over the model-free parameters.
@@ -2102,11 +2102,14 @@ class Model_free(Common_functions):
 
         # Loop over the minimisation instances.
         for i in xrange(num_instances):
-            # Set the index to None.
-            index = None
+            # Set the residue index.
+            if min_algor == 'back_calc':
+                index = min_options[0]
+            else:
+                index = i
 
             # Individual residue stuff.
-            if self.param_set == 'mf' or self.param_set == 'local_tm':
+            if (self.param_set == 'mf' or self.param_set == 'local_tm') and not min_algor == 'back_calc':
                 # Skip unselected residues.
                 if not self.relax.data.res[self.run][i].select:
                     continue
@@ -2119,14 +2122,8 @@ class Model_free(Common_functions):
                 if min_algor == 'calc' and min_options != None and min_options != self.relax.data.res[self.run][i].num:
                     continue
 
-                # Set the index to i.
-                index = i
-
-            # Index for the back_calc function.
+            # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
-                # Index for the back_calc function.
-                index = min_options[0]
-
                 # Create the initial parameter vector.
                 self.param_vector = self.assemble_param_vector(index=index)
 
@@ -2498,7 +2495,7 @@ class Model_free(Common_functions):
             self.relax.data.res[run][i].params = params
 
 
-    def model_statistics(self, run=None, instance=None):
+    def model_statistics(self, run=None, instance=None, min_instances=None, num_instances=None):
         """Function for returning k, n, and chi2.
 
         k - number of parameters.
@@ -2512,14 +2509,20 @@ class Model_free(Common_functions):
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
+        # Consolidate the instances to the minimum number.
+        consolidate = 0
+        if min_instances == 1 and min_instances != num_instances:
+            consolidate = 1
+
         # Sequence specific data.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
+        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not consolidate:
             # Missing data sets.
             if not hasattr(self.relax.data.res[self.run][instance], 'relax_data'):
                 return None, None, None
 
-            # Create the parameter vector.
+            # Count the number of parameters.
             self.param_vector = self.assemble_param_vector(index=instance)
+            k = len(self.param_vector)
 
             # Count the number of data points.
             n = len(self.relax.data.res[self.run][instance].relax_data)
@@ -2527,26 +2530,47 @@ class Model_free(Common_functions):
             # The chi2 value.
             chi2 = self.relax.data.res[self.run][instance].chi2
 
-        # Other data.
-        elif self.param_set == 'diff' or self.param_set == 'all':
-            # Create the parameter vector.
-            self.param_vector = self.assemble_param_vector()
+        # Consolidated sequence specific data.
+        elif (self.param_set == 'mf' or self.param_set == 'local_tm') and consolidate:
+            # Initialise.
+            k = 0
+            n = 0
+            chi2 = 0
 
             # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Count the number of parameters.
+                self.param_vector = self.assemble_param_vector(index=i)
+                k = k + len(self.param_vector)
+
+                # Count the number of data points.
+                n = n + len(self.relax.data.res[self.run][i].relax_data)
+
+                # The chi2 value.
+                chi2 = chi2 + self.relax.data.res[self.run][i].chi2
+
+        # Other data.
+        elif self.param_set == 'diff' or self.param_set == 'all':
+            # Count the number of parameters.
+            self.param_vector = self.assemble_param_vector()
+            k = len(self.param_vector)
+
+            # Count the number of data points.
             n = 0
             for i in xrange(len(self.relax.data.res[self.run])):
                 # Skip unselected residues.
                 if not self.relax.data.res[self.run][i].select:
                     continue
 
-                # Count the number of data points.
                 n = n + len(self.relax.data.res[self.run][i].relax_data)
 
             # The chi2 value.
             chi2 = self.relax.data.chi2[self.run]
 
-        # Count the number of parameters.
-        k = len(self.param_vector)
 
         # Return the data.
         return k, n, chi2
@@ -2844,14 +2868,10 @@ class Model_free(Common_functions):
                 # Heteronucleus.
                 if col.has_key('pdb_heteronuc'):
                     pdb_heteronuc = file_data[i][col['pdb_heteronuc']]
-                else:
-                    pdb_heteronuc = None
 
                 # Proton.
                 if col.has_key('pdb_proton'):
                     pdb_proton = file_data[i][col['pdb_proton']]
-                else:
-                    pdb_proton = None
 
             # Test the file name.
             if pdb != file_data[i][col['pdb']]:
@@ -2882,13 +2902,13 @@ class Model_free(Common_functions):
                 # The vector.
                 xh_vect = eval(file_data[i][col['xh_vect']])
                 if xh_vect:
+                    # Numeric array format.
                     try:
                         xh_vect = array(xh_vect, Float64)
                     except:
                         raise RelaxError, "The XH unit vector " + file_data[i][col['xh_vect']] + " is invalid."
 
-                # Set the vector.
-                if xh_vect:
+                    # Set the vector.
                     self.relax.generic.pdb.set_vector(run=self.run, res=index, xh_vect=xh_vect)
 
 
@@ -2967,7 +2987,7 @@ class Model_free(Common_functions):
         # Load the PDB.
         if not pdb == 'None':
             try:
-                self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, calc_vectors=0)
+                self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, heteronuc=pdb_heteronuc, proton=pdb_proton, calc_vectors=0)
             except IOError:
                 print "The PDB file " + `pdb` + " cannot be found, no structures will be loaded."
 
@@ -4189,7 +4209,7 @@ class Model_free(Common_functions):
                 inc = inc + 1
 
 
-    def skip_function(self, run=None, instance=None):
+    def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):
         """Function for skiping certain data."""
 
         # Arguments.
@@ -4198,16 +4218,17 @@ class Model_free(Common_functions):
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
-        # Sequence specific data.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
-            if not self.relax.data.res[self.run][instance].select:
-                return 1
-            else:
-                return 0
+        # Consolidate the instances to the minimum number.
+        consolidate = 0
+        if min_instances == 1 and min_instances != num_instances:
+            consolidate = 1
 
-        # Other data types.
-        elif self.param_set == 'diff' or self.param_set == 'all':
-            return 0
+        # Sequence specific data.
+        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not consolidate and not self.relax.data.res[self.run][instance].select:
+            return 1
+
+        # Don't skip.
+        return 0
 
 
     def unselect(self, run, i):
@@ -4546,33 +4567,31 @@ class Model_free(Common_functions):
         # Diffusion parameters.
         diff_params = None
         if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
+            # Isotropic.
+            if self.relax.data.diff[self.run].type == 'iso':
+                diff_params = [None]
+
+            # Axially symmetric.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                diff_params = [None, None, None, None]
+
+            # Anisotropic.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                diff_params = [None, None, None, None, None, None]
+
             # Diffusion parameter errors.
             if self.param_set == 'diff' or self.param_set == 'all':
                 # Isotropic.
-                if self.relax.data.diff[self.run].type == 'iso':
+                if self.relax.data.diff[self.run].type == 'iso' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
                     diff_params = [`self.relax.data.diff[self.run].tm_err`]
 
                 # Axially symmetric.
-                elif self.relax.data.diff[self.run].type == 'axial':
+                elif self.relax.data.diff[self.run].type == 'axial' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
                     diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_err * 360 / (2.0 * pi)`]
 
                 # Anisotropic.
-                elif self.relax.data.diff[self.run].type == 'aniso':
+                elif self.relax.data.diff[self.run].type == 'aniso' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
                     diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].Dr_err`, `self.relax.data.diff[self.run].alpha_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_err * 360 / (2.0 * pi)`]
-
-            # No errors.
-            else:
-                # Isotropic.
-                if self.relax.data.diff[self.run].type == 'iso':
-                    diff_params = [None]
-
-                # Axially symmetric.
-                elif self.relax.data.diff[self.run].type == 'axial':
-                    diff_params = [None, None, None, None]
-
-                # Anisotropic.
-                elif self.relax.data.diff[self.run].type == 'aniso':
-                    diff_params = [None, None, None, None, None, None]
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -4583,6 +4602,19 @@ class Model_free(Common_functions):
             if not data.select:
                 self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='error')
                 continue
+
+            # Model details.
+            model = None
+            if hasattr(data, 'model'):
+                model = data.model
+
+            equation = None
+            if hasattr(data, 'equation'):
+                equation = data.equation
+
+            params = None
+            if hasattr(data, 'params'):
+                params = replace(`data.params`, ' ', '')
 
             # S2.
             s2 = None
@@ -4641,8 +4673,13 @@ class Model_free(Common_functions):
                 ri.append(None)
                 ri_error.append(None)
 
+            # XH vector.
+            xh_vect = None
+            if hasattr(data, 'xh_vect'):
+                xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
+
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=data.model, equation=data.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -4690,6 +4727,19 @@ class Model_free(Common_functions):
                 if not data.select:
                     self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='sim_'+`i`)
                     continue
+
+                # Model details.
+                model = None
+                if hasattr(data, 'model'):
+                    model = data.model
+
+                equation = None
+                if hasattr(data, 'equation'):
+                    equation = data.equation
+
+                params = None
+                if hasattr(data, 'params'):
+                    params = replace(`data.params`, ' ', '')
 
                 # S2.
                 s2 = None
@@ -4794,5 +4844,10 @@ class Model_free(Common_functions):
                         ri.append(None)
                         ri_error.append(None)
 
+                # XH vector.
+                xh_vect = None
+                if hasattr(data, 'xh_vect'):
+                    xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
+
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, model=data.model, equation=data.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

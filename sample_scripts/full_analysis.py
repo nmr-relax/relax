@@ -47,12 +47,8 @@ class Main:
 
         This will optimise the diffusion model where all residues of the protein have a local tm
         value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to
-        optimising any of the other diffusion models.  The following steps are used:
-
-        Each residue is fitted to the multiple model-free models separately, where the parameter tm
-        is included in each model.  No R2 data is used in this case and all model-free models with
-        the parameter Rex are removed.  This is to avoid the minimisation problem of having the
-        parameters tm and Rex together.
+        optimising any of the other diffusion models.  Each residue is fitted to the multiple model-
+        free models separately, where the parameter tm is included in each model.
 
         AIC model selection is used to select the models for each residue.
 
@@ -119,11 +115,10 @@ class Main:
         Once all the diffusion models have converged, the final run can be executed.  This is done
         by setting the variable self.diff_model to 'final'.  This consists of two steps, diffusion
         tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to
-        select between the diffusion tensor models.  As the local tm diffusion model MI does not use
-        the same set of relaxation data during optimisation, MI must be excluded from the model
-        selection.  Monte Carlo simulations are then run soley on this selected diffusion model.
-        Minimisation of the model is bypassed as it is assumed that the model is already fully
-        optimised (if this is not the case the final run is not yet appropriate).
+        select between the diffusion tensor models.  Monte Carlo simulations are then run soley on
+        this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that
+        the model is already fully optimised (if this is not the case the final run is not yet
+        appropriate).
 
         The final black-box model-free results will be placed in the file 'final/results'.
         """
@@ -140,7 +135,7 @@ class Main:
             self.base_dir = 'local_tm/'
 
             # Sequential optimisation of all model-free models (function must be modified to suit).
-            self.multi_model_local_tm()
+            self.multi_model(local_tm=1)
 
             # Model selection run.
             create_run('aic', 'mf')
@@ -154,7 +149,7 @@ class Main:
 
         elif self.diff_model == 'iso' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'aniso':
             # Determine which round of optimisation to do (init, round_1, round_2, etc).
-            self.round = self.determine_rnd()
+            self.round = self.determine_rnd(model=self.diff_model)
 
 
             # Inital round of optimisation for diffusion models MII to MV.
@@ -175,7 +170,7 @@ class Main:
                 model_free.remove_tm(run=run)
 
                 # Load the PDB file.
-                pdb(run, 'schurr.pdb')
+                pdb(run, '1F3Y.pdb')
 
                 # Add an arbitrary diffusion tensor which will be optimised.
                 if self.diff_model == 'iso':
@@ -232,29 +227,35 @@ class Main:
         ############
 
         elif self.diff_model == 'final':
-            # Diffusion model selection (only MII to MV).
-            #############################################
+            # Diffusion model selection.
+            ############################
 
-            # Loop over the models (overwrite the variable self.diff_model in the process).
-            for self.diff_model in ['iso', 'prolate', 'oblate', 'aniso']:
+            # Create the local_tm run.
+            create_run('local_tm', 'mf')
+
+            # Load the local tm diffusion model MI results.
+            read(run='local_tm', file='results', dir='local_tm/aic')
+
+            # Loop over models MII to MV.
+            for model in ['iso', 'prolate', 'oblate', 'aniso']:
                 # Determine which was the last round of optimisation for each of the models.
-                self.round = self.determine_rnd() - 1
+                self.round = self.determine_rnd(model=model) - 1
 
                 # Skip the diffusion model if no directories begining with 'round_' exist.
                 if self.round < 1:
                     continue
 
                 # Create the run.
-                create_run(self.diff_model, 'mf')
+                create_run(model, 'mf')
 
                 # Load the diffusion model results.
-                read(run=self.diff_model, file='results', dir=self.diff_model + '/round_' + `self.round` + '/opt')
+                read(run=model, file='results', dir=model + '/round_' + `self.round` + '/opt')
 
             # Create the run for model selection (which will be a copy of the selected diffusion model or run).
             create_run('final', 'mf')
 
             # Model selection.
-            self.model_selection(run='final', write=0)
+            self.model_selection(run='final', write_flag=0)
 
 
             # Monte Carlo simulations.
@@ -280,12 +281,12 @@ class Main:
             raise RelaxError, "Unknown diffusion model, change the value of 'self.diff_model'"
 
 
-    def determine_rnd(self):
+    def determine_rnd(self, model=None):
         """Function for returning the name of next round of optimisation."""
 
-        # Get a list of all files in the directory self.diff_model.  If no directory exists, set the round to 'init' or 0.
+        # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
         try:
-            dir_list = listdir(getcwd() + '/' + self.diff_model)
+            dir_list = listdir(getcwd() + '/' + model)
         except:
             return 0
 
@@ -331,7 +332,7 @@ class Main:
             read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, run=None, dir=None, write=1):
+    def model_selection(self, run=None, dir=None, write_flag=1):
         """Model selection function."""
 
         # Model elimination.
@@ -341,15 +342,18 @@ class Main:
         model_selection('AIC', run)
 
         # Write the results.
-        if write:
+        if write_flag:
             write(run=run, file='results', dir=dir, force=1)
 
 
-    def multi_model(self):
+    def multi_model(self, local_tm=0):
         """Function for optimisation of all model-free models."""
 
         # Set the run names (also the names of preset model-free models).
-        runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+        if local_tm:
+            runs = ['tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+        else:
+            runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
         # Nuclei type
         nuclei('N')
@@ -362,57 +366,24 @@ class Main:
             sequence.read(run, 'noe.600.out')
 
             # Load the PDB file.
-            pdb(run, 'schurr.pdb')
+            if not local_tm:
+                pdb(run, '1F3Y.pdb')
 
             # Load the relaxation data.
-            relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
-            relax_data.read(run, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
-            relax_data.read(run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
-            relax_data.read(run, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
-            relax_data.read(run, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
-            relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
+            relax_data.read(run, 'R1', '600', 599.719 * 1e6, 'r1.600.out')
+            relax_data.read(run, 'R2', '600', 599.719 * 1e6, 'r2.600.out')
+            relax_data.read(run, 'NOE', '600', 599.719 * 1e6, 'noe.600.out')
+            relax_data.read(run, 'R1', '500', 500.208 * 1e6, 'r1.500.out')
+            relax_data.read(run, 'R2', '500', 500.208 * 1e6, 'r2.500.out')
+            relax_data.read(run, 'NOE', '500', 500.208 * 1e6, 'noe.500.out')
+
+            # Unselect unresolved residues.
+            unselect.read(run, file='unresolved')
 
             # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
-            diffusion_tensor.copy('tensor', run)
-            fix(run, 'diff')
-
-            # Set the bond length and CSA values.
-            value.set(run, 1.02 * 1e-10, 'bond_length')
-            value.set(run, -170 * 1e-6, 'csa')
-
-            # Select the model-free model.
-            model_free.select_model(run=run, model=run)
-
-            # Minimise.
-            grid_search(run, inc=11)
-            minimise('newton', run=run)
-
-            # Write the results.
-            dir = self.base_dir + run
-            write(run=run, file='results', dir=dir, force=1)
-
-
-    def multi_model_local_tm(self):
-        """Function for optimisation of all model-free models (where a local tm parameter is included)."""
-
-        # Set the run names (also the names of preset model-free models).
-        runs = ['tm1', 'tm2', 'tm5', 'tm6']
-
-        # Nuclei type
-        nuclei('N')
-
-        for run in runs:
-            # Create the run.
-            create_run(run, 'mf')
-
-            # Load the sequence.
-            sequence.read(run, 'noe.600.out')
-
-            # Load the relaxation data.
-            relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
-            relax_data.read(run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
-            relax_data.read(run, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
-            relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
+            if not local_tm:
+                diffusion_tensor.copy('tensor', run)
+                fix(run, 'diff')
 
             # Set the bond length and CSA values.
             value.set(run, 1.02 * 1e-10, 'bond_length')

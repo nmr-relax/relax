@@ -51,13 +51,17 @@ class Model_selection:
 
         # Select the model selection technique.
         if method == 'AIC':
+            print "AIC model selection."
             self.formula = self.aic
         elif method == 'AICc':
+            print "AICc model selection."
             self.formula = self.aicc
         elif method == 'BIC':
+            print "BIC model selection."
             self.formula = self.bic
         elif method == 'CV':
-            pass
+            print "CV model selection."
+            raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
         else:
             raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
 
@@ -80,8 +84,33 @@ class Model_selection:
         self.model_statistics = self.relax.specific_setup.setup('model_stats', self.function_type)
         self.skip_function = self.relax.specific_setup.setup('skip_function', self.function_type)
 
-        # The number of instances.
-        self.num_instances = self.count_num_instances(self.first_run)
+        # Number of instances.  If the number is not the same for each run, then the minimum number will give the specific function self.model_statistics the
+        # opportunity to consolidate the instances to the minimum number if possible.
+        self.min_instances = 1e99
+        self.num_instances = []
+        for i in xrange(len(self.runs)):
+            # An array of arrays - for cross validation model selection.
+            if type(self.runs[i]) == list:
+                self.num_instances.append([])
+
+                # Loop over the nested array.
+                for j in xrange(len(self.runs[i])):
+                    # Number of instances.
+                    num = self.count_num_instances(self.runs[i][j])
+                    self.num_instances[i].append(num)
+
+                    # Minimum.
+                    if num < self.min_instances:
+                        self.min_instances = num
+
+            else:
+                # Number of instances.
+                num = self.count_num_instances(self.runs[i])
+                self.num_instances.append(num)
+
+                # Minimum.
+                if num < self.min_instances:
+                    self.min_instances = num
 
         # Tests for all runs.
         for run in self.runs:
@@ -101,8 +130,13 @@ class Model_selection:
                 # Run various tests.
                 self.tests(run)
 
+
         # Loop over the number of instances.
-        for i in xrange(self.num_instances):
+        for i in xrange(self.min_instances):
+            # Print out.
+            print "\nInstance " + `i` + ".\n"
+            print "%-20s %-20s %-20s %-20s %-20s" % ("Run", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
+
             # Initial model.
             best_model = None
             best_crit = float('inf')
@@ -124,7 +158,7 @@ class Model_selection:
                             continue
 
                         # Get the model statistics.
-                        k, n, chi2 = self.model_statistics(run=self.runs[j][k], instance=i)
+                        k, n, chi2 = self.model_statistics(run=self.runs[j][k], instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j][k])
 
                         # Missing data sets.
                         if k == None or n == None or chi2 == None:
@@ -142,11 +176,11 @@ class Model_selection:
                     run = self.runs[j]
 
                     # Skip function.
-                    if self.skip_function(run=run, instance=i):
+                    if self.skip_function(run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j]):
                         continue
 
                     # Get the model statistics.
-                    k, n, chi2 = self.model_statistics(run=run, instance=i)
+                    k, n, chi2 = self.model_statistics(run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j])
 
                     # Missing data sets.
                     if k == None or n == None or chi2 == None:
@@ -155,10 +189,16 @@ class Model_selection:
                     # Calculate the criterion value.
                     crit = self.formula(chi2, float(k), float(n))
 
+                    # Print out.
+                    print "%-20s %-20i %-20i %-20.5f %-20.5f" % (run, k, n, chi2, crit)
+
                 # Select model.
                 if crit < best_crit:
                     best_model = run
                     best_crit = crit
+
+            # Print out of selected model.
+            print "\nThe model from the run " + `best_model` + " has been selected."
 
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
             if best_model != None:
@@ -245,8 +285,3 @@ class Model_selection:
             # Residue name.
             if self.relax.data.res[self.first_run][i].name != self.relax.data.res[run][i].name:
                 raise RelaxDiffSeqError, (self.first_run, run)
-
-        # Test if the number of instances are all the same.
-        local_num_instances = self.count_num_instances(run)
-        if self.num_instances != local_num_instances:
-            raise RelaxError, "The number of instances are not the same between runs " + `self.first_run` + " and " + `run` + "."

@@ -88,9 +88,11 @@ class Monte_carlo:
                 random.append([])
                 for k in xrange(len(data)):
                     # No data or errors.
-                    if not data[k] or not error[k]:
+                    if data[k] == None or error[k] == None:
+                        random[j].append(None)
                         continue
 
+                    # Gaussian randomisation.
                     random[j].append(gauss(data[k], error[k]))
 
             # Pack the simulation data.
