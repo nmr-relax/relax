@@ -50,7 +50,7 @@ class Write:
             pass
 
         # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("print", model)
+        fns = self.relax.specific_setup.setup("print", self.relax.data.equations[model][0])
         if fns == None:
             return
         self.print_header, self.print_results = fns
@@ -63,10 +63,10 @@ class Write:
         results_file = open(file_name, 'w')
 
         # Print the header.
-        self.print_header(results_file, model)
+        self.print_header(results_file)
 
         # Print the results.
-        self.print_results(results_file, model)
+        self.print_results(results_file, model, self.relax.data.param_types[model])
 
         # Close the results file.
         results_file.close()

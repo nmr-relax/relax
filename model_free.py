@@ -164,8 +164,11 @@ class Model_free:
         except AttributeError:
             self.relax.data.min_results = {}
 
-        self.relax.data.equations[model] = equation
-        self.relax.data.param_types[model] = param_types
+        self.relax.data.equations[model] = []
+        self.relax.data.param_types[model] = []
+        for i in range(len(self.relax.data.seq)):
+            self.relax.data.equations[model].append(equation)
+            self.relax.data.param_types[model].append(param_types)
 
         # Create the params data structure.
         self.relax.data.params[model] = zeros((len(self.relax.data.seq), len(param_types)), Float64)
@@ -182,87 +185,82 @@ class Model_free:
             self.relax.data.min_results[model].append([0.0, 0, 0, 0, 0, None])
 
 
-    def fixed_setup(self, min_options=None, model=None):
+    def fixed_setup(self, param_types=None, min_options=None):
         """The fixed parameter value setup function."""
 
-        # Initialise.
-        types = self.relax.data.param_types[model]
-
-        for i in range(len(types)):
+        for i in range(len(param_types)):
             # S2, S2f, and S2s.
-            if match("S2", types[i]):
+            if match("S2", param_types[i]):
                 min_options[i] = 0.5
 
             # te, tf, and ts.
-            elif match("t[efs]", types[i]):
-                if match("te", types[i]):
+            elif match("t[efs]", param_types[i]):
+                if match("te", param_types[i]):
                     min_options[i] = 100.0 * 1e-12
-                elif match("tf", types[i]):
+                elif match("tf", param_types[i]):
                     min_options[i] = 10.0 * 1e-12
                 else:
                     min_options[i] = 1000.0 * 1e-12
 
             # Rex.
-            elif match('Rex', types[i]):
+            elif match('Rex', param_types[i]):
                 min_options[i] = 0.0
 
             # Bond length.
-            elif match('Bond length', types[i]):
+            elif match('Bond length', param_types[i]):
                 min_options[i] = 1.02 * 1e-10
 
             # CSA.
-            elif match('CSA', types[i]):
+            elif match('CSA', param_types[i]):
                 min_options[i] = -170 * 1e-6
 
         return min_options
 
 
-    def grid_setup(self, model=None, inc_vector=None):
+    def grid_setup(self, param_types=None, inc_vector=None):
         """The grid search setup function."""
 
         # Initialise.
         min_options = []
-        types = self.relax.data.param_types[model]
 
-        for i in range(len(types)):
+        for i in range(len(param_types)):
             # S2, S2f, and S2s.
-            if match("S2", types[i]):
+            if match("S2", param_types[i]):
                 min_options.append([inc_vector[i], 0.0, 1.0])
 
             # te, tf, and ts.
-            elif match("t[efs]", types[i]):
+            elif match("t[efs]", param_types[i]):
                 min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
 
             # Rex.
-            elif match('Rex', types[i]):
+            elif match('Rex', param_types[i]):
                 min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
             # Bond length.
-            elif match('Bond length', types[i]):
+            elif match('Bond length', param_types[i]):
                 min_options.append([inc_vector[i], 1.0 * 1e-10, 1.05 * 1e-10])
 
             # CSA.
-            elif match('CSA', types[i]):
+            elif match('CSA', param_types[i]):
                 min_options.append([inc_vector[i], -120 * 1e-6, -200 * 1e-6])
 
         return min_options
 
 
-    def linear_constraints(self, model=None):
+    def linear_constraints(self, model=None, param_types=None):
         """Function for setting up the model-free linear constraint matrices A and b."""
 
         # Initialisation.
         A = []
         b = []
-        types = self.relax.data.param_types[model]
-        n = len(types)
+        n = len(param_types)
         zero_array = zeros(n, Float64)
         j = 0
 
         # The original model-free equations.
         for i in range(n):
             # S2, S2f, and S2s (0 <= S2 <= 1).
-            if match("S2", types[i]):
+            if match("S2", param_types[i]):
                 # S2 >= 0
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -276,14 +274,14 @@ class Model_free:
                 j = j + 1
 
             # te, tf, and ts (te >= 0).
-            elif match("t[efs]", types[i]):
-                if match("ts", types[i]):
+            elif match("t[efs]", param_types[i]):
+                if match("ts", param_types[i]):
                     A.append(zero_array * 0.0)
 
                     # Find the index of tf if the parameter exists.
                     index = None
                     for k in range(n):
-                        if match("tf", types[k]):
+                        if match("tf", param_types[k]):
                             index = k
 
                     # Dual correlation times (tf <= ts) or (ts - tf >= 0).
@@ -300,14 +298,14 @@ class Model_free:
                     j = j + 1
 
             # Rex (Rex >= 0).
-            elif match("Rex", types[i]):
+            elif match("Rex", param_types[i]):
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j = j + 1
 
             # Bond length (0.9e-10 <= r <= 2e-10)
-            elif match("Bond length", types[i]):
+            elif match("Bond length", param_types[i]):
                 # r >= 0.9e-10
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -327,7 +325,7 @@ class Model_free:
                 j = j + 1
 
             # CSA (-300e-6 <= CSA <= 0).
-            elif match("CSA", types[i]):
+            elif match("CSA", param_types[i]):
                 # CSA >= -300e-6
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -564,146 +562,140 @@ class Model_free:
         self.select(model=model, scaling=scaling)
 
 
-    def main_loop(self, model=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
-        """The main iterative minimisation loop."""
+    def minimise(self, model=None, i=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
+        """Model-free minimisation."""
 
         # Linear constraints.
         if constraints:
-            constraint_function = self.relax.specific_setup.setup("linear_constraints", model)
+            constraint_function = self.relax.specific_setup.setup("linear_constraints", self.relax.data.equations[model][i])
             if constraint_function == None:
                 return
-            A, b = constraint_function(model)
+            A, b = constraint_function(model, self.relax.data.param_types[model][i])
 
-        # Loop over the residues.
-        for self.res in range(len(self.relax.data.seq)):
-            if print_flag >= 1:
-                if print_flag >= 2:
-                    print "\n\n"
-                string = "Fitting to residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1]
-                print string
-                string2 = ""
-                for i in range(len(string)):
-                    string2 = string2 + "~"
-                print string2
+        if print_flag >= 1:
+            if print_flag >= 2:
+                print "\n\n"
+            string = "Fitting to residue: " + `self.relax.data.seq[i][0]` + " " + self.relax.data.seq[i][1]
+            print string
+            string2 = ""
+            for j in range(len(string)):
+                string2 = string2 + "~"
+            print string2
 
-            # Initialise the iteration counter and function, gradient, and Hessian call counters.
-            self.iter_count = 0
-            self.f_count = 0
-            self.g_count = 0
-            self.h_count = 0
+        # Initialise the iteration counter and function, gradient, and Hessian call counters.
+        self.iter_count = 0
+        self.f_count = 0
+        self.g_count = 0
+        self.h_count = 0
 
-            # Diagonal scaling.
-            scaling_vector = None
-            if self.relax.data.scaling.has_key(model):
-                scaling_vector = self.relax.data.scaling[model][self.res]
+        # Diagonal scaling.
+        scaling_vector = None
+        if self.relax.data.scaling.has_key(model):
+            scaling_vector = self.relax.data.scaling[model][i]
 
-            # If any data is missing jump to the next residue.
-            data = zeros(self.relax.data.num_ri, Float64)
-            errors = zeros(self.relax.data.num_ri, Float64)
-            for i in range(self.relax.data.num_ri):
-                if self.relax.data.relax_data[i][self.res, 2] == 0.0:
-                    continue
-                data[i] = self.relax.data.relax_data[i][self.res, 0]
-                errors[i] = self.relax.data.relax_data[i][self.res, 1]
-            self.function_ops = ()
+        # If any data is missing jump to the next residue.
+        data = zeros(self.relax.data.num_ri, Float64)
+        errors = zeros(self.relax.data.num_ri, Float64)
+        for j in range(self.relax.data.num_ri):
+            if self.relax.data.relax_data[j][i, 2] == 0.0:
+                continue
+            data[j] = self.relax.data.relax_data[j][i, 0]
+            errors[j] = self.relax.data.relax_data[j][i, 1]
+        self.function_ops = ()
 
-            # Initialise the functions used in the minimisation.
-            self.mf = Mf(self.relax, equation=self.relax.data.equations[model], param_types=self.relax.data.param_types[model], init_params=self.relax.data.params[model][self.res], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
+        # Initialise the functions used in the minimisation.
+        self.mf = Mf(self.relax, equation=self.relax.data.equations[model][i], param_types=self.relax.data.param_types[model][i], init_params=self.relax.data.params[model][i], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[i][0], csa=self.relax.data.csa[i][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
 
-            # Levenberg-Marquardt minimisation.
-            if constraints and not match('^[Gg]rid', min_algor):
-                algor = min_options[0]
-            else:
-                algor = min_algor
-            if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-                min_options = min_options + (self.mf.lm_dri, errors)
+        # Levenberg-Marquardt minimisation.
+        if constraints and not match('^[Gg]rid', min_algor):
+            algor = min_options[0]
+        else:
+            algor = min_algor
+        if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
+            min_options = min_options + (self.mf.lm_dri, errors)
 
 
-            # Minimisation.
-            if constraints:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][self.res], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
-            else:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][self.res], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
-            if results == None:
-                return
-            self.params, self.func, iter, fc, gc, hc, self.warning = results
-            self.iter_count = self.iter_count + iter
-            self.f_count = self.f_count + fc
-            self.g_count = self.g_count + gc
-            self.h_count = self.h_count + hc
+        # Minimisation.
+        if constraints:
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][i], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+        else:
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[model][i], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+        if results == None:
+            return
+        self.params, self.func, iter, fc, gc, hc, self.warning = results
+        self.iter_count = self.iter_count + iter
+        self.f_count = self.f_count + fc
+        self.g_count = self.g_count + gc
+        self.h_count = self.h_count + hc
 
-            # Place the results in various data structures.
-            self.relax.data.params[model][self.res] = self.params
-            self.relax.data.min_results[model][self.res] = [self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning]
+        # Place the results in various data structures.
+        self.relax.data.params[model][i] = self.params
+        self.relax.data.min_results[model][i] = [self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning]
 
 
-    def map_bounds(self, model=None):
+    def map_bounds(self, model, param_type):
         """The function for creating bounds for the mapping function."""
 
-        # Initialise.
-        types = self.relax.data.param_types[model]
-
         # Bounds array.
-        bounds = zeros((len(types), 2), Float64)
+        bounds = zeros((len(param_types), 2), Float64)
 
-        for i in range(len(types)):
+        for i in range(len(param_types)):
             # S2, S2f, and S2s.
-            if match("S2", types[i]):
+            if match("S2", param_types[i]):
                 bounds[i] = [0, 1]
 
             # te, tf, and ts.
-            elif match("t[efs]", types[i]):
+            elif match("t[efs]", param_types[i]):
                 bounds[i] = [0, 1e-8]
 
             # Rex.
-            elif match('Rex', types[i]):
+            elif match('Rex', param_types[i]):
                 bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
 
             # Bond length.
-            elif match('Bond length', types[i]):
+            elif match('Bond length', param_types[i]):
                 bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
 
             # CSA.
-            elif match('CSA', types[i]):
+            elif match('CSA', param_types[i]):
                 bounds[i] = [-100 * 1e-6, -300 * 1e-6]
 
         return bounds
 
 
-    def map_labels(self, model, bounds, swap, inc):
+    def map_labels(self, model, param_types, bounds, swap, inc):
         """Function for creating labels, tick locations, and tick values for an OpenDX map."""
 
         # Initialise.
         labels = "{"
         tick_locations = []
         tick_values = []
-        types = self.relax.data.param_types[model]
-        n = len(types)
+        n = len(param_types)
         axis_incs = 5.0
         loc_inc = inc / axis_incs
 
         # Increment over the model parameters.
         for i in range(n):
             # S2, S2f, and S2s.
-            if match("S2", types[swap[i]]):
+            if match("S2", param_types[swap[i]]):
                 # Labels.
-                labels = labels + "\"" + types[swap[i]] + "\""
+                labels = labels + "\"" + param_types[swap[i]] + "\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1.0
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1.0
 
             # te, tf, and ts.
-            elif match("t[efs]", types[swap[i]]):
+            elif match("t[efs]", param_types[swap[i]]):
                 # Labels.
-                labels = labels + "\"" + types[swap[i]] + " (ps)\""
+                labels = labels + "\"" + param_types[swap[i]] + " (ps)\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1e12
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e12
 
             # Rex.
-            elif match("Rex", types[swap[i]]):
+            elif match("Rex", param_types[swap[i]]):
                 # Labels.
                 labels = labels + "\"Rex (" + self.relax.data.frq_labels[0] + " MHz)\""
 
@@ -712,18 +704,18 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.frq[0])**2
 
             # Bond length.
-            elif match("Bond length", types[swap[i]]):
+            elif match("Bond length", param_types[swap[i]]):
                 # Labels.
-                labels = labels + "\"" + types[swap[i]] + " (A)\""
+                labels = labels + "\"" + param_types[swap[i]] + " (A)\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1e-10
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-10
 
             # CSA.
-            elif match("CSA", types[swap[i]]):
+            elif match("CSA", param_types[swap[i]]):
                 # Labels.
-                labels = labels + "\"" + types[swap[i]] + " (ppm)\""
+                labels = labels + "\"" + param_types[swap[i]] + " (ppm)\""
 
                 # Tick values.
                 vals = bounds[swap[i], 0] * 1e-6
@@ -757,37 +749,27 @@ class Model_free:
         return labels, tick_locations, tick_values
 
 
-    def print_header(self, file, model):
+    def print_header(self, file):
         """Function for printing the header of the results file."""
-
-        # Initialise.
-        types = self.relax.data.param_types[model]
 
         # Residue number and name.
         file.write("%-5s" % "Num")
         file.write("%-6s" % "Name")
 
+        # Model details.
+        file.write("%-6s" % "Model")
+        file.write("%-10s" % "Equation")
+        file.write("%-25s" % "Params")
+
         # Parameters.
-        for i in range(len(types)):
-            # S2, S2f, and S2s.
-            if match("S2", types[i]):
-                file.write("%-26s" % types[i])
-
-            # te, tf, and ts.
-            elif match("t[efs]", types[i]):
-                file.write("%-26s" % (types[i] + " (ps)"))
-
-            # Rex.
-            elif match("Rex", types[i]):
-                file.write("%-26s" % ("Rex (" + self.relax.data.frq_labels[0] + " MHz)"))
-
-            # Bond length.
-            elif match("Bond length", types[i]):
-                file.write("%-26s" % (types[i] + " (A)"))
-
-            # CSA.
-            elif match("CSA", types[i]):
-                file.write("%-26s" % (types[i] + " (ppm)"))
+        file.write("%-26s" % "S2")
+        file.write("%-26s" % "S2f")
+        file.write("%-26s" % "S2s")
+        file.write("%-26s" % "tf (ps)")
+        file.write("%-26s" % "te or ts (ps)")
+        file.write("%-26s" % ("Rex (" + self.relax.data.frq_labels[0] + " MHz)"))
+        file.write("%-26s" % "Bond length (A)")
+        file.write("%-26s" % "CSA (ppm)")
 
         # Minimisation results.
         file.write("%-26s" % "Chi-squared")
@@ -801,15 +783,13 @@ class Model_free:
         file.write("\n")
 
 
-    def print_results(self, file, model):
+    def print_results(self, file, model, param_types):
         """Function for printing the core of the results file."""
-
-        # Initialise.
-        types = self.relax.data.param_types[model]
 
         # Loop over the residues.
         for i in range(len(self.relax.data.seq)):
             # Initialise.
+            types = param_types[i]
             if self.relax.data.scaling.has_key(model):
                 params = self.relax.data.params[model][i] * self.relax.data.scaling[model][i]
             else:
@@ -819,27 +799,103 @@ class Model_free:
             file.write("%-5s" % self.relax.data.seq[i][0])
             file.write("%-6s" % self.relax.data.seq[i][1])
 
-            # Parameters.
+            # Model details.
+            file.write("%-6s" % model)
+            file.write("%-10s" % self.relax.data.equations[model][i])
+            file.write("%-25s" % `types`)
+
+            # S2.
+            flag = 1
             for j in range(len(types)):
-                # S2, S2f, and S2s.
-                if match("S2", types[j]):
+                # S2.
+                if match("^S2$", types[j]):
                     file.write("%-26s" % `params[j]`)
+                    flag = 0
+                    continue
 
-                # te, tf, and ts.
-                elif match("t[efs]", types[j]):
-                    file.write("%-26s" % `(params[j] / 1e-12)`)
+                # S2f and S2s.
+                elif match("^S2f$", types[j]):
+                    for k in range(len(types)):
+                        if match("^S2s$", types[k]):
+                            file.write("%-26s" % `params[j]*params[k]`)
+                            flag = 0
+                            continue
+            if flag:
+                file.write("%-26s" % "N/A")
 
-                # Rex.
-                elif match("Rex", types[j]):
+            # S2f.
+            flag = 1
+            for j in range(len(types)):
+                if match("^S2f$", types[j]):
+                    file.write("%-26s" % `params[j]`)
+                    flag = 0
+                    continue
+            if flag:
+                file.write("%-26s" % "N/A")
+
+            # S2s.
+            flag = 1
+            for j in range(len(types)):
+                if match("^S2s$", types[j]):
+                    file.write("%-26s" % `params[j]`)
+                    flag = 0
+                    continue
+            if flag:
+                file.write("%-26s" % "N/A")
+
+            # tf.
+            flag = 1
+            for j in range(len(types)):
+                if match("^tf$", types[j]):
+                    file.write("%-26s" % `params[j] / 1e-12`)
+                    flag = 0
+                    continue
+            if flag:
+                file.write("%-26s" % "N/A")
+
+            # te or ts.
+            flag = 1
+            for j in range(len(types)):
+                if match("^te$", types[j]):
+                    file.write("%-26s" % `params[j] / 1e-12`)
+                    flag = 0
+                    continue
+                if match("^ts$", types[j]):
+                    file.write("%-26s" % `params[j] / 1e-12`)
+                    flag = 0
+                    continue
+            if flag:
+                file.write("%-26s" % "N/A")
+
+            # Rex.
+            flag = 1
+            for j in range(len(types)):
+                if match("^Rex$", types[j]):
                     file.write("%-26s" % `params[j] * (2.0 * pi * self.relax.data.frq[0])**2`)
+                    flag = 0
+                    continue
+            if flag:
+                file.write("%-26s" % "N/A")
 
-                # Bond length.
-                elif match("Bond length", types[j]):
-                    file.write("%-26s" % `(params[j] / 1e-10)`)
+            # Bond length.
+            flag = 1
+            for j in range(len(types)):
+                if match("^Bond length$", types[j]):
+                    file.write("%-26s" % `params[j] / 1e-10`)
+                    flag = 0
+                    continue
+            if flag:
+                file.write("%-26s" % "N/A")
 
-                # CSA.
-                elif match("CSA", types[j]):
-                    file.write("%-26s" % `(params[j] / 1e-6)`)
+            # CSA.
+            flag = 1
+            for j in range(len(types)):
+                if match("^CSA$", types[j]):
+                    file.write("%-26s" % `params[j] / 1e-6`)
+                    flag = 0
+                    continue
+            if flag:
+                file.write("%-26s" % "N/A")
 
             # Minimisation results.
             file.write("%-26s" % `self.relax.data.min_results[model][i][0]`)

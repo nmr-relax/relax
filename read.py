@@ -31,19 +31,13 @@ class Read:
         self.relax = relax
 
 
-    def read_data(self, model=None, file=None):
+    def read_data(self, model=None, file=None, dir=None):
         """Function for reading the data out of a file."""
 
         # Test if the model exists.
         if not self.relax.data.equations.has_key(model):
             print "The model '" + model + "' has not been created yet."
             return
-
-        # Directory creation.
-        try:
-            mkdir(model)
-        except OSError:
-            pass
 
         # Equation type specific function setup.
         fns = self.relax.specific_setup.setup("print", model)

@@ -28,7 +28,7 @@ class Read:
         self.relax = relax
 
 
-    def read(self, model=None, file=None):
+    def read(self, model=None, file=None, dir=None):
         """Function for reading results from a file.
 
         Keyword Arguments
@@ -37,6 +37,8 @@ class Read:
         model:  The name of the model.
 
         file:  The name of the file to read results from.
+
+        dir:  The directory where the file is located.
         """
 
         # Macro intro text.
@@ -44,6 +46,7 @@ class Read:
             text = self.relax.interpreter.macro_prompt + "write("
             text = text + "model=" + `model`
             text = text + ", file=" + `file` + ")\n"
+            text = text + ", dir=" + `dir` + ")\n"
             print text
 
         # The model argument.
@@ -56,5 +59,10 @@ class Read:
             print "The file name must be a string."
             return
 
+        # Directory.
+        if dir != None or type(dir) != str:
+            print "The directory name must be a string."
+            return
+
         # Execute the functional code.
-        self.relax.read.read_data(model=model, file=file)
+        self.relax.read.read_data(model=model, file=file, dir=dir)

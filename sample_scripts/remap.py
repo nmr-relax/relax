@@ -6,12 +6,16 @@ from Numeric import Float64, array
 def remap(values):
     """Remapping function."""
 
+    # S2f.
+    s2f = values[0]
+
+    # S2s.
     if values[0] == 0.0:
         s2s = 1e99
     else:
         s2s = values[1]/values[0]
 
-    s2f = values[0]
+    # ts.
     ts = values[2]
 
     #print "{S2f = " + `s2f` + ", S2s = " + `s2s` + ", ts = " + `ts` + "}"

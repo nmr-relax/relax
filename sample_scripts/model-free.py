@@ -9,12 +9,11 @@ load.relax_data('NOE', '500', 500.0 * 1e6, 'noe.500.out')
 value.set('bond_length', 1.02 * 1e-10)
 value.set('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-name = 'm2'
+name = 'm5'
 model.select_mf(name)
 
 # Fixed value.
 #from math import pi
-#fixed(name, [ 1.0, 0.00098968548153832454, 0.49064527970472477*1e-12 ])
 #fixed(name, [ 1.0, 0.55407702219286714, 28.490830609207805*1e-12 ])
 #fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
 #write(model=name, file='results_fixed', force=1)

@@ -33,13 +33,15 @@ class Map:
         self.relax = relax
 
 
-    def map(self, model=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
+    def map(self, model=None, res_num=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
         """Function for creating a map of the given space in OpenDX format.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         model:  The name of the model.
+
+        res_num:  Specification of the residue by number.
 
         map_type:  The type of map to create.  For example the default, a 3D isosurface, the type is
         "Iso3D".  See below for more details.
@@ -130,6 +132,7 @@ class Map:
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "map("
             text = text + "model=" + `model`
+            text = text + "res_num=" + `res_num`
             text = text + ", map_type=" + `map_type`
             text = text + ", inc=" + `inc`
             text = text + ", lower=" + `lower`
@@ -144,7 +147,7 @@ class Map:
             print text
 
         # The number of parameters.
-        n = len(self.relax.data.param_types[model])
+        n = len(self.relax.data.param_types[model][res_num])
 
         # The model argument.
         if type(model) != str:
@@ -262,7 +265,7 @@ class Map:
             if n != 3:
                 print "The 3D isosurface map requires a strictly 3 parameter model."
                 return
-            self.relax.map.Iso3D.map_space(model=model, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
+            self.relax.map.Iso3D.map_space(model=model, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
         else:
             print "The map type '" + map_type + "' is not supported."
             return

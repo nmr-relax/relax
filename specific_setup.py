@@ -31,31 +31,28 @@ class Specific_setup:
         self.relax = relax
 
 
-    def setup(self, type, model):
+    def setup(self, type, eqi):
         """Setup function."""
-
-        # Initialisation.
-        eqi = self.relax.data.equations[model]
 
         # Model-free analysis.
         if match("mf", eqi):
             if match("fixed", type):
-                return self.relax.model_free.fixed_setup, self.relax.model_free.main_loop
+                return self.relax.model_free.fixed_setup, self.relax.model_free.minimise
             elif match("grid_search", type):
-                return self.relax.model_free.grid_setup, self.relax.model_free.main_loop
+                return self.relax.model_free.grid_setup, self.relax.model_free.minimise
             elif match("linear_constraints", type):
                 return self.relax.model_free.linear_constraints
             elif match("map_labels", type):
                 return self.relax.model_free.map_labels
             elif match("map_space", type):
-                return self.relax.model_free.map_bounds, self.relax.model_free.main_loop
+                return self.relax.model_free.map_bounds, self.relax.model_free.minimise
             elif match("minimise", type):
-                return self.relax.model_free.main_loop
+                return self.relax.model_free.minimise
             elif match("print", type):
                 return self.relax.model_free.print_header, self.relax.model_free.print_results
 
         # Unknown equation type.
         else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search macro."
+            print "The equation " + `eqi` + " has not been coded."
             return
 

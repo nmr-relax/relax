@@ -31,7 +31,7 @@ class Base_Map:
         """The space mapping base class."""
 
 
-    def map_space(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
+    def map_space(self, model=None, res_num=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
         """Generic function for mapping a space."""
 
         # Equation type specific function setup.
@@ -42,6 +42,7 @@ class Base_Map:
 
         # Function arguments.
         self.model = model
+        self.res_num = res_num
         self.inc = inc
         self.swap = swap
         self.file = file
@@ -51,7 +52,7 @@ class Base_Map:
         self.labels = labels
 
         # Number of parameters.
-        self.n = len(self.relax.data.param_types[self.model])
+        self.n = len(self.relax.data.param_types[self.model][self.res_num])
 
         # Axis swapping.
         if swap == None:
@@ -84,9 +85,9 @@ class Base_Map:
         # Diagonal scaling.
         if self.relax.data.scaling.has_key(self.model):
             for i in range(len(self.bounds[0])):
-                self.bounds[:, i] = self.bounds[:, i] / self.relax.data.scaling[self.model][0]
+                self.bounds[:, i] = self.bounds[:, i] / self.relax.data.scaling[self.model][self.res_num]
             if point != None:
-                self.point = self.point / self.relax.data.scaling[self.model][0]
+                self.point = self.point / self.relax.data.scaling[self.model][self.res_num]
 
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)

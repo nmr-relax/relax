@@ -71,7 +71,7 @@ class Iso3D(Base_Map):
 
                     values[self.swap[2]] = values[self.swap[2]] + self.step_size[self.swap[2]]
                 self.percent = self.percent + self.percent_inc
-                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%, value: ", self.relax.data.min_results[self.model][0][0])
+                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%, value: ", self.relax.data.min_results[self.model][self.res_num][0])
                 values[self.swap[1]] = values[self.swap[1]] + self.step_size[self.swap[1]]
             values[self.swap[0]] = values[self.swap[0]] + self.step_size[self.swap[0]]
 
@@ -178,9 +178,9 @@ class Iso3D(Base_Map):
                 labels = labels + self.labels[self.swap[1]] + "\" \""
                 labels = labels + self.labels[self.swap[2]] + "\"}"
             else:
-                labels = "{\"" + self.relax.data.param_types[self.model][self.swap[0]] + "\" \""
-                labels = labels + self.relax.data.param_types[self.model][self.swap[1]] + "\" \""
-                labels = labels + self.relax.data.param_types[self.model][self.swap[2]] + "\"}"
+                labels = "{\"" + self.relax.data.param_types[self.model][self.res_num][self.swap[0]] + "\" \""
+                labels = labels + self.relax.data.param_types[self.model][self.res_num][self.swap[1]] + "\" \""
+                labels = labels + self.relax.data.param_types[self.model][self.res_num][self.swap[2]] + "\"}"
 
             # Tick locations.
             tick_locations = []
@@ -202,7 +202,7 @@ class Iso3D(Base_Map):
                 string = "{"
                 for j in range(axis_incs + 1):
                     if self.relax.data.scaling.has_key(self.model):
-                        string = string + "\"" + "%.2g" % (vals * self.relax.data.scaling[self.model][0][self.swap[i]]) + "\" "
+                        string = string + "\"" + "%.2g" % (vals * self.relax.data.scaling[self.model][self.res_num][self.swap[i]]) + "\" "
                     else:
                         string = string + "\"" + "%.2g" % vals + "\" "
                     vals = vals + inc[self.swap[i]]

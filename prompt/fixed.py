@@ -85,9 +85,6 @@ class Fixed:
             if type(values) != list:
                 print "The argument 'values' must be an array of numbers."
                 return
-            elif len(values) != len(self.relax.data.param_types[model]):
-                print "The argument 'values' must be an array of length equal to the number of parameters in the model."
-                return
             for i in range(len(values)):
                 if type(values[i]) != float and type(values[i]) != int:
                     print "The argument 'values' must be an array of numbers."

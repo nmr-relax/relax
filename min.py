@@ -36,65 +36,79 @@ class Minimise:
     def fixed(self, model=None, values=None, print_flag=1):
         """Function for fixing the initial parameter values."""
 
-        # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("fixed", model)
-        if fns == None:
-            return
-        self.fixed_setup, self.main_loop = fns
+        # Loop over the residues.
+        for i in range(len(self.relax.data.seq)):
+            # Equation type specific function setup.
+            fns = self.relax.specific_setup.setup("fixed", self.relax.data.equations[model][i])
+            if fns == None:
+                return
+            self.fixed_setup, self.minimise = fns
 
-        # Setup the fixed parameter options.
-        if values:
-            # User supplied values.
-            min_options = array(values)
-        else:
-            # Fixed values.
-            empty = zeros(len(self.relax.data.param_types[model]), Float64)
-            min_options = self.fixed_setup(min_options=empty, model=model)
+            # Setup the fixed parameter options.
+            if values:
+                # User supplied values.
+                min_options = array(values)
+            else:
+                # Fixed values.
+                empty = zeros(len(self.relax.data.param_types[model][i]), Float64)
+                min_options = self.fixed_setup(self.relax.data.param_types[model][i], min_options=empty)
 
-        # Diagonal scaling.
-        if self.relax.data.scaling.has_key(model):
-            min_options = min_options / self.relax.data.scaling[model][0]
+            # Diagonal scaling.
+            if self.relax.data.scaling.has_key(model):
+                min_options = min_options / self.relax.data.scaling[model][0]
 
-        # Main iterative loop.
-        self.main_loop(model=model, min_algor="fixed", min_options=min_options, print_flag=print_flag)
+            # Minimisation.
+            self.minimise(model=model, i=i, min_algor="fixed", min_options=min_options, print_flag=print_flag)
 
 
-    def grid_search(self, model=None, lower=None, upper=None, inc=[], constraints=0, print_flag=1):
+    def grid_search(self, model=None, lower=None, upper=None, inc=None, constraints=0, print_flag=1):
         """The grid search function."""
 
-        # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("grid_search", model)
-        if fns == None:
-            return
-        self.grid_setup, self.main_loop = fns
+        # Loop over the residues.
+        for i in range(len(self.relax.data.seq)):
+            # Equation type specific function setup.
+            fns = self.relax.specific_setup.setup("grid_search", self.relax.data.equations[model][i])
+            if fns == None:
+                return
+            self.grid_setup, self.minimise = fns
 
-        # Setup the grid search options.
-        min_options = self.grid_setup(model=model, inc_vector=inc)
+            # Setup the grid search options.
+            if type(inc) == int:
+                temp = []
+                for j in range(len(self.relax.data.param_types[model][i])):
+                    temp.append(inc)
+                inc = temp
+            min_options = self.grid_setup(param_types=self.relax.data.param_types[model][i], inc_vector=inc)
 
-        # Set the lower and upper bounds if these are supplied.
-        for i in range(len(self.relax.data.param_types[model])):
-            if lower[i] != None:
-                min_options[i][1] = lower[i]
-            if upper[i] != None:
-                min_options[i][2] = upper[i]
+            # Set the lower and upper bounds if these are supplied.
+            if lower != None:
+                for j in range(len(self.relax.data.param_types[model][i])):
+                    if lower[j] != None:
+                        min_options[j][1] = lower[j]
+            if upper != None:
+                for j in range(len(self.relax.data.param_types[model][i])):
+                    if upper[j] != None:
+                        min_options[j][2] = upper[j]
 
-        # Diagonal scaling.
-        if self.relax.data.scaling.has_key(model):
-            for i in range(len(min_options)):
-                min_options[i][1] = min_options[i][1] / self.relax.data.scaling[model][0][i]
-                min_options[i][2] = min_options[i][2] / self.relax.data.scaling[model][0][i]
+            # Diagonal scaling.
+            if self.relax.data.scaling.has_key(model):
+                for j in range(len(min_options)):
+                    min_options[j][1] = min_options[j][1] / self.relax.data.scaling[model][0][j]
+                    min_options[j][2] = min_options[j][2] / self.relax.data.scaling[model][0][j]
 
-        # Main iterative loop.
-        self.main_loop(model=model, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
+            # Minimisation.
+            self.minimise(model=model, i=i, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
 
 
-    def minimise(self, model=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
+    def min(self, model=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
         """Minimisation function."""
 
-        # Equation type specific function setup.
-        self.main_loop = self.relax.specific_setup.setup("minimise", model)
-        if self.main_loop == None:
-            return
+        # Loop over the residues.
+        for i in range(len(self.relax.data.seq)):
+            # Equation type specific function setup.
+            self.minimise = self.relax.specific_setup.setup("minimise", self.relax.data.equations[model][i])
+            if self.minimise == None:
+                return
 
-        # Main iterative loop.
-        self.main_loop(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+            # Minimisation.
+            self.minimise(model=model, i=i, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

@@ -78,53 +78,33 @@ class Grid:
         # The lower bounds.
         if lower != None:
             bad_arg = 0
-            if len(lower) != len(self.relax.data.param_types[model]):
-                bad_arg = 1
             for i in range(len(lower)):
                 if type(lower[i]) != float and type(lower[i]) != int:
                     bad_arg = 1
             if bad_arg:
                 print "The argument 'lower' must be an array of numbers of length equal to the number of parameters in the model."
                 return
-        else:
-            lower = []
-            for i in range(len(self.relax.data.param_types[model])):
-                lower.append(None)
 
         # The upper bounds.
         if upper != None:
             bad_arg = 0
-            if len(upper) != len(self.relax.data.param_types[model]):
-                bad_arg = 1
             for i in range(len(upper)):
                 if type(upper[i]) != float and type(upper[i]) != int:
                     bad_arg = 1
             if bad_arg:
                 print "The argument 'upper' must be an array of numbers of length equal to the number of parameters in the model."
                 return
-        else:
-            upper = []
-            for i in range(len(self.relax.data.param_types[model])):
-                upper.append(None)
 
         # The incrementation value.
         bad_arg = 0
         if type(inc) != int and type(inc) != list:
             bad_arg = 1
         if type(inc) == list:
-            if len(inc) != len(self.relax.data.param_types[model]):
-                bad_arg = 1
             for i in range(len(inc)):
                 if type(inc[i]) != int:
                     bad_arg = 1
         if bad_arg:
             print "The argument 'inc' must be either an integer or an array of integers of length equal to the number of parameters in the model."
-            return
-        elif type(inc) == int:
-            inc_vector = []
-            for i in range(len(self.relax.data.param_types[model])):
-                inc_vector.append(inc)
-            inc = inc_vector
 
         # Constraint flag.
         if type(constraints) != int or (constraints != 0 and constraints != 1):
