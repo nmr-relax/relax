@@ -1,0 +1,114 @@
+#! /usr/bin/python
+
+
+# modelfree.py   v0.1            31 October 2001        Edward d'Auvergne
+#
+# Program to process all modelfree input and output.
+#
+# Input data is specified in the file "input". An example of the format of the file is:
+#
+#	$ cat ./input
+#	NMR_frq_label 600
+#	NMR_frq       599.741
+#	R1            R1.600.out
+#	R2            R2.600.out
+#	NOE           noe.600.out
+#	
+#	NMR_frq_label 500
+#	NMR_frq       500.241
+#	R1            R1.500.out
+#	R2            none
+#	NOE           noe.500.out
+#
+#
+# The script is divided into the three stages of model selection:
+#
+#	Stage 1:   Creation of the files for the modelfree calculations for models 1 to 5,
+#		and f-tests between them.
+#	Stage 2:   Model selection and creation of the final optimization run.  The modelfree
+#		input files for optimization are placed into the directory "optimize".
+#	Stage 3:   Extraction of optimized data.
+
+import sys
+from string import split
+
+from data import data
+from stage1 import stage1
+from stage2 import stage2
+from stage3 import stage3
+from file_ops import file_ops
+
+sys.path.append('.')
+from usr_param import usr_param
+
+
+class mf:
+	def __init__(self):
+		"The top level class."
+
+		self.data = data()
+		self.data.usr_param = usr_param()
+		self.file_ops = file_ops(self)
+
+		self.data.stage = self.ask_stage()
+		self.file_ops.log_file()
+		self.file_ops.input()
+		self.extract_relax_data()
+		self.log_input_info()
+		if self.data.num_data_sets > 3:
+			self.data.ftests = self.data.ftests_full
+		else:
+			self.data.ftests = self.data.ftests_short
+		if self.data.stage == "1":
+			stage1(self)
+		if self.data.stage == "2":
+			stage2(self)
+		if self.data.stage == "3":
+			stage3(self)
+
+	def ask_stage(self):
+		"User input of stage number."
+
+		print """
+		              Modelfree.py v0.1
+
+		Program to process all modelfree input and output.
+		"""
+		print "\n[ Select the stage for Modelfree analysis ]\n"
+		print "The stages are:"
+		print "\tStage 1 (1):   Initial run of all models 1 to 5 and f-tests between them."
+		print "\tStage 2 (2):   Model selection and creation of the final optimization run."
+		print "\tStage 3 (3):   Extraction of optimized data."
+		while 1:
+			stage = raw_input("> ")
+			valid_stages = ["1", "2", "3"]
+			if stage in valid_stages:
+				break
+			else:
+				print "Invalid stage number.  Choose either 1, 2, or 3."
+		print "The stage chosen is " + stage + "\n"
+		return stage
+
+	def extract_relax_data(self):
+		"Extract the relaxation data from the files given in the file 'input'"
+		print "\n[ Relaxation Data Extraction ]\n"
+		i = 0
+		for line in self.data.relax_data:
+			data = self.file_ops.relax_data(self.data.relax_data[i][2])
+			self.data.relax_data[i].append(data)
+			i = i + 1
+
+	def log_input_info(self):
+		self.log.write("The input info data structure is:\n" + `self.data.input_info` + "\n\n")
+		for i in range(self.data.num_frq):
+			self.log.write("NMR frequency label:\t" + self.data.input_info[i][0] + "\n")
+			self.log.write("NMR proton frequency:\t" + `self.data.input_info[i][1]` + "\n")
+			self.log.write("R1 file:\t\t" + self.data.input_info[i][2] + "\n")
+			self.log.write("R2 file:\t\t" + self.data.input_info[i][3] + "\n")
+			self.log.write("NOE file:\t\t" + self.data.input_info[i][4] + "\n\n")
+		self.log.write("Number of frequencies:\t" + `self.data.num_frq` + "\n")
+		self.log.write("Number of data sets:\t" + `self.data.num_data_sets` + "\n\n")
+
+
+if __name__ == "__main__":
+	mf()

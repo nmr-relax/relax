@@ -1,0 +1,21 @@
+<<< Stage 2 of Modelfree analysis >>>
+
+
+The input info data structure is:
+[['600', 599.741, 'R1.600.out', 'R2.600.out', 'noe.600.out'], ['500', 500.241, 'R1.500.out', 'none', 'noe.500.out']]
+
+NMR frequency label:	600
+NMR proton frequency:	599.741
+R1 file:		R1.600.out
+R2 file:		R2.600.out
+NOE file:		noe.600.out
+
+NMR frequency label:	500
+NMR proton frequency:	500.241
+R1 file:		R1.500.out
+R2 file:		none
+NOE file:		noe.500.out
+
+Number of frequencies:	2
+Number of data sets:	5
+
