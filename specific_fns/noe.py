@@ -1,0 +1,614 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
+
+from copy import deepcopy 
+import sys
+
+
+class Rx_data:
+    def __init__(self, relax):
+        """Class containing functions for relaxation data."""
+
+        self.relax = relax
+
+
+    def back_calc(self, run=None, ri_label=None, frq_label=None, frq=None):
+        """Function for back calculating relaxation data."""
+
+        # Arguments.
+        self.run = run
+        self.ri_label = ri_label
+        self.frq_label = frq_label
+        self.frq = frq
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
+        if self.test_labels(run):
+            raise RelaxRiError, (self.ri_label, self.frq_label)
+
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+
+        # Specific back-calculate function setup.
+        back_calculate = self.relax.specific_setup.setup('back_calc', function_type)
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            data = self.relax.data.res[self.run][i]
+
+            # Store a copy of all the data in 'self.relax.data.res[self.run][i]' for backing up if the back_calculation function fails.
+            back_up = deepcopy(data)
+
+            # Initialise all data structures.
+            self.update_data_structures(data)
+
+            # Back-calculate the relaxation value.
+            try:
+                value = back_calculate(run=self.run, index=i, ri_label=self.ri_label, frq_label=frq_label, frq=self.frq)
+            except:
+                # Restore the data.
+                self.relax.data.res[self.run][i] = deepcopy(back_up)
+                del back_up
+                raise
+
+            # Update all data structures.
+            self.update_data_structures(data, value)
+
+
+    def copy(self, run1=None, run2=None, ri_label=None, frq_label=None):
+        """Function for copying relaxation data from run1 to run2."""
+
+        # Arguments.
+        self.ri_label = ri_label
+        self.frq_label = frq_label
+
+        # Test if run1 exists.
+        if not run1 in self.relax.data.run_names:
+            raise RelaxNoRunError, run1
+
+        # Test if run2 exists.
+        if not run2 in self.relax.data.run_names:
+            raise RelaxNoRunError, run2
+
+        # Test if the sequence data for run1 is loaded.
+        if not self.relax.data.res.has_key(run1):
+            raise RelaxNoSequenceError, run1
+
+        # Test if the sequence data for run2 is loaded.
+        if not self.relax.data.res.has_key(run2):
+            raise RelaxNoSequenceError, run2
+
+        # Copy all data.
+        if ri_label == None and frq_label == None:
+            # Get all data structure names.
+            names = self.data_names()
+
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[run1])):
+                # Remap the data structure 'self.relax.data.res[run1][i]'.
+                data1 = self.relax.data.res[run1][i]
+                data2 = self.relax.data.res[run2][i]
+
+                # Loop through the data structure names.
+                for name in names:
+                    # Skip the data structure if it does not exist.
+                    if not hasattr(data1, name):
+                        continue
+
+                    # Copy the data structure.
+                    setattr(data2, name, deepcopy(getattr(data1, name)))
+
+        # Copy a specific data set.
+        else:
+            # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' exists for run1.
+            if not self.test_labels(run1):
+                raise RelaxNoRiError, (self.ri_label, self.frq_label)
+
+            # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' exists for run2.
+            if self.test_labels(run2):
+                raise RelaxRiError, (self.ri_label, self.frq_label)
+
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[run1])):
+                # Remap the data structure 'self.relax.data.res[run1][i]'.
+                data1 = self.relax.data.res[run1][i]
+                data2 = self.relax.data.res[run2][i]
+
+                # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+                index = self.find_index(data1)
+
+                # Get the value and error from run1.
+                value = data1.relax_data[index]
+                error = data1.relax_error[index]
+
+                # Update all data structures for run2.
+                self.update_data_structures(data2, value, error)
+
+
+    def data_init(self, name):
+        """Function for returning an initial data structure corresponding to 'name'."""
+
+        # Empty arrays.
+        list_data = [ 'relax_data',
+                      'relax_error',
+                      'ri_labels',
+                      'remap_table',
+                      'noe_r1_table',
+                      'frq_labels',
+                      'frq' ]
+        if name in list_data:
+            return []
+
+        # Zero.
+        zero_data = [ 'num_ri', 'num_frq' ]
+        if name in zero_data:
+            return 0
+
+
+    def data_names(self):
+        """Function for returning a list of names of data structures associated with relax_data.
+
+        Description
+        ~~~~~~~~~~~
+
+        The names are as follows:
+
+        relax_data:  Relaxation data.
+
+        relax_error:  Relaxation error.
+
+        num_ri:  Number of data points, eg 6.
+
+        num_frq:  Number of field strengths, eg 2.
+
+        ri_labels:  Labels corresponding to the data type, eg ['NOE', 'R1', 'R2', 'NOE', 'R1',
+        'R2'].
+
+        remap_table:  A translation table to map relaxation data points to their frequencies, eg [0,
+        0, 0, 1, 1, 1].
+
+        noe_r1_table:  A translation table to direct the NOE data points to the R1 data points.
+        This is used to speed up calculations by avoiding the recalculation of R1 values.  eg [None,
+        None, 0, None, None, 3]
+
+        frq_labels:  NMR frequency labels, eg ['600', '500']
+
+        frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
+        """
+
+        names = [ 'relax_data',
+                  'relax_error',
+                  'num_ri',
+                  'num_frq',
+                  'ri_labels',
+                  'remap_table',
+                  'noe_r1_table',
+                  'frq_labels',
+                  'frq' ]
+
+        return names
+
+
+    def delete(self, run=None, ri_label=None, frq_label=None):
+        """Function for deleting relaxation data corresponding to ri_label and frq_label."""
+
+        # Arguments.
+        self.run = run
+        self.ri_label = ri_label
+        self.frq_label = frq_label
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
+        if not self.test_labels(run):
+            raise RelaxNoRiError, (self.ri_label, self.frq_label)
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            data = self.relax.data.res[self.run][i]
+
+            # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+            index = self.find_index(data)
+
+            # Relaxation data and errors.
+            data.relax_data.pop(index)
+            data.relax_error.pop(index)
+
+            # Update the number of relaxation data points.
+            data.num_ri = data.num_ri - 1
+
+            # Delete ri_label from the data types.
+            data.ri_labels.pop(index)
+
+            # Update the remap table.
+            data.remap_table.pop(index)
+
+            # Find if there is other data corresponding to 'self.frq_label'
+            frq_index = data.frq_labels.index(self.frq_label)
+            if not frq_index in data.remap_table:
+                # Update the number of frequencies.
+                data.num_frq = data.num_frq - 1
+
+                # Update the frequency labels.
+                data.frq_labels.pop(frq_index)
+
+                # Update the frequency array.
+                data.frq.pop(frq_index)
+
+            # Update the NOE R1 translation table.
+            data.noe_r1_table.pop(index)
+            for j in xrange(data.num_ri):
+                if data.noe_r1_table[j] > index:
+                    data.noe_r1_table[j] = data.noe_r1_table[j] - 1
+
+        # Clean up the runs.
+        self.relax.generic.delete.clean_runs()
+
+
+    def display(self, run=None, ri_label=None, frq_label=None):
+        """Function for displaying relaxation data corresponding to ri_label and frq_label."""
+
+        # Arguments.
+        self.run = run
+        self.ri_label = ri_label
+        self.frq_label = frq_label
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
+        if not self.test_labels(run):
+            raise RelaxNoRiError, (self.ri_label, self.frq_label)
+
+        # Print the data.
+        self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), sys.stdout, return_value=self.return_value)
+
+
+    def find_index(self, data):
+        """Function for finding the index corresponding to self.ri_label and self.frq_label."""
+
+        # Find the index.
+        index = None
+        for j in xrange(data.num_ri):
+            if self.ri_label == data.ri_labels[j] and self.frq_label == data.frq_labels[data.remap_table[j]]:
+                index = j
+
+        # Return the index.
+        return index
+
+
+    def initialise_relax_data(self, data):
+        """Function for initialisation of relaxation data structures.
+
+        Only data structures which do not exist are created.
+        """
+
+        # Get the data names.
+        data_names = self.data_names()
+
+        # Loop over the names.
+        for name in data_names:
+            # If the name is not in 'data', add it.
+            if not hasattr(data, name):
+                setattr(data, name, self.data_init(name))
+
+
+    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
+        """Function for reading R1, R2, or NOE relaxation data."""
+
+        # Arguments.
+        self.run = run
+        self.ri_label = ri_label
+        self.frq_label = frq_label
+        self.frq = frq
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
+        if self.test_labels(run):
+            raise RelaxRiError, (self.ri_label, self.frq_label)
+
+        # File path.
+        self.file_path = file
+        if dir:
+            self.file_path = dir + '/' + self.file_path
+
+        # Extract the data from the file.
+        if self.file_path:
+            file_data = self.relax.file_ops.extract_data(self.file_path)
+
+        # Remove the header.
+        if header_lines != None:
+            file_data = file_data[header_lines:]
+
+        # Strip the data.
+        file_data = self.relax.file_ops.strip(file_data)
+
+        # Test the validity of the relaxation data.
+        for i in xrange(len(file_data)):
+            try:
+                int(file_data[i][num_col])
+                eval(file_data[i][data_col])
+                eval(file_data[i][error_col])
+            except ValueError:
+                raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+
+
+        # Global (non-residue specific) data.
+        #####################################
+
+        # Initialise dictionaries.
+        if not hasattr(self.relax.data, 'ri_labels'):
+            self.relax.data.ri_labels = {}
+            self.relax.data.remap_table = {}
+            self.relax.data.frq_labels = {}
+            self.relax.data.frq = {}
+            self.relax.data.num_ri = {}
+            self.relax.data.num_frq = {}
+
+        # Initialise empty data structures.
+        if not self.relax.data.ri_labels.has_key(self.run):
+            self.relax.data.ri_labels[self.run] = []
+            self.relax.data.remap_table[self.run] = []
+            self.relax.data.frq_labels[self.run] = []
+            self.relax.data.frq[self.run] = []
+            self.relax.data.num_ri[self.run] = 0
+            self.relax.data.num_frq[self.run] = 0
+
+        # The index.
+        i = len(self.relax.data.ri_labels[self.run]) - 1
+
+        # Update the number of relaxation data points.
+        self.relax.data.num_ri[self.run] = self.relax.data.num_ri[self.run] + 1
+
+        # Add ri_label to the data types.
+        self.relax.data.ri_labels[self.run].append(self.ri_label)
+
+        # Find if the frequency self.frq has already been loaded.
+        remap = len(self.relax.data.frq[self.run])
+        flag = 0
+        for j in xrange(len(self.relax.data.frq[self.run])):
+            if self.frq == self.relax.data.frq[self.run][j]:
+                remap = j
+                flag = 1
+
+        # Update the remap table.
+        self.relax.data.remap_table[self.run].append(remap)
+
+        # Update the data structures which have a length equal to the number of field strengths.
+        if not flag:
+            # Update the number of frequencies.
+            self.relax.data.num_frq[self.run] = self.relax.data.num_frq[self.run] + 1
+
+            # Update the frequency labels.
+            self.relax.data.frq_labels[self.run].append(self.frq_label)
+
+            # Update the frequency array.
+            self.relax.data.frq[self.run].append(self.frq)
+
+
+        # Residue specific data.
+        ########################
+
+        # Loop over the relaxation data.
+        for i in xrange(len(file_data)):
+            # Convert the data.
+            res_num = int(file_data[i][num_col])
+            res_name = file_data[i][name_col]
+            value = eval(file_data[i][data_col])
+            error = eval(file_data[i][error_col])
+
+            # Find the index of self.relax.data.res[self.run] which corresponds to the relaxation data set i.
+            index = None
+            for j in xrange(len(self.relax.data.res[self.run])):
+                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                    index = j
+                    break
+            if index == None:
+                raise RelaxNoResError, (res_num, res_name)
+
+            # Remap the data structure 'self.relax.data.res[self.run][index]'.
+            data = self.relax.data.res[self.run][index]
+
+            # Update all data structures.
+            self.update_data_structures(data, value, error)
+
+
+    def return_value(self, run, i, data_type):
+        """Function for returning the value and error corresponding to 'data_type'."""
+
+        # Arguments.
+        self.run = run
+
+        # Unpack the data_type tuple.
+        self.ri_label, self.frq_label = data_type
+
+        # Initialise.
+        value = None
+        error = None
+
+        # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+        index = self.find_index(self.relax.data.res[self.run][i])
+
+        # Get the data.
+        if index != None:
+            value = self.relax.data.res[self.run][i].relax_data[index]
+            error = self.relax.data.res[self.run][i].relax_error[index]
+
+        # Return the data.
+        return value, error
+
+
+    def test_labels(self, run):
+        """Test if data corresponding to 'self.ri_label' and 'self.frq_label' currently exists."""
+
+        # Initialise.
+        exists = 0
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # Remap the data structure 'self.relax.data.res[run][i]'.
+            data = self.relax.data.res[run][i]
+
+            # No ri data.
+            if not hasattr(data, 'num_ri'):
+                continue
+
+            # Loop over the relaxation data.
+            for j in xrange(data.num_ri):
+                # Test if the relaxation data matches 'self.ri_label' and 'self.frq_label'.
+                if self.ri_label == data.ri_labels[j] and self.frq_label == data.frq_labels[data.remap_table[j]]:
+                    exists = 1
+
+        return exists
+
+
+    def update_data_structures(self, data=None, value=None, error=None):
+        """Function for updating all relaxation data structures."""
+
+        # Initialise the relaxation data structures (if needed).
+        self.initialise_relax_data(data)
+
+        # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+        index = self.find_index(data)
+
+        # Append empty data.
+        if index == None:
+            data.relax_data.append(None)
+            data.relax_error.append(None)
+            data.ri_labels.append(None)
+            data.remap_table.append(None)
+            data.noe_r1_table.append(None)
+
+        # Set the index value.
+        if index == None:
+            i = len(data.relax_data) - 1
+        else:
+            i = index
+
+        # Relaxation data and errors.
+        data.relax_data[i] = value
+        data.relax_error[i] = error
+
+        # Update the number of relaxation data points.
+        if index == None:
+            data.num_ri = data.num_ri + 1
+
+        # Add ri_label to the data types.
+        data.ri_labels[i] = self.ri_label
+
+        # Find if the frequency self.frq has already been loaded.
+        remap = len(data.frq)
+        flag = 0
+        for j in xrange(len(data.frq)):
+            if self.frq == data.frq[j]:
+                remap = j
+                flag = 1
+
+        # Update the remap table.
+        data.remap_table[i] = remap
+
+        # Update the data structures which have a length equal to the number of field strengths.
+        if not flag:
+            # Update the number of frequencies.
+            if index == None:
+                data.num_frq = data.num_frq + 1
+
+            # Update the frequency labels.
+            data.frq_labels.append(self.frq_label)
+
+            # Update the frequency array.
+            data.frq.append(self.frq)
+
+        # Update the NOE R1 translation table.
+        # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
+        if self.ri_label == 'NOE':
+            for j in xrange(data.num_ri):
+                if data.ri_labels[j] == 'R1' and self.frq_label == data.frq_labels[data.remap_table[j]]:
+                    data.noe_r1_table[data.num_ri - 1] = j
+
+        # Update the NOE R1 translation table.
+        # If the data corresponds to 'R1', try to find if the corresponding NOE data.
+        if self.ri_label == 'R1':
+            for j in xrange(data.num_ri):
+                if data.ri_labels[j] == 'NOE' and self.frq_label == data.frq_labels[data.remap_table[j]]:
+                    data.noe_r1_table[j] = data.num_ri - 1
+
+
+    def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):
+        """Function for writing relaxation data."""
+
+        # Arguments.
+        self.run = run
+        self.ri_label = ri_label
+        self.frq_label = frq_label
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
+        if not self.test_labels(run):
+            raise RelaxNoRiError, (self.ri_label, self.frq_label)
+
+        # Create the file name if none is given.
+        if file == None:
+            file = self.ri_label + "." + self.frq_label + ".out"
+
+        # Open the file for writing.
+        relax_file = self.relax.file_ops.open_write_file(file, dir, force)
+
+        # Write the data.
+        self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), relax_file, return_value=self.return_value)
+
+        # Close the file.
+        relax_file.close()
