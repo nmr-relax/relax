@@ -26,6 +26,12 @@ from os import F_OK, access
 import readline
 import sys
 
+# Python modules accessable on the command prompt.
+import MMTK
+import Numeric
+import Scientific
+
+# Auxillary modules.
 from tab_completion import Tab_completion
 from command import Ls, Lh, Ll, system
 from print_all_data import Print_all_data
@@ -70,6 +76,11 @@ class Interpreter:
         # The macro intro flag.
         self.intro = 0
 
+        # Python modules.
+        self._MMTK = MMTK
+        self._Numeric = Numeric
+        self._Scientific = Scientific
+
         # Place the functions into the namespace of the interpreter class.
         self._Calc = Calc(relax)
         self._Delete = Delete(relax)
@@ -102,6 +113,11 @@ class Interpreter:
         The namespace of this function is the namespace seen inside the interpreter.  All functions
         should be defined in this namespace.
         """
+
+        # Python modules.
+        MMTK = self._MMTK
+        Numeric = self._Numeric
+        Scientific = self._Scientific
 
         # Import the functions emulating system commands.
         lh = Lh()
