@@ -4,7 +4,7 @@
 read.sequence('noe.500.out')
 
 # Set the run name (also the name of a preset model-free model).
-name = 'm2'
+name = 'm1'
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -22,7 +22,7 @@ value.set(name, 'csa', -160 * 1e-6)
 # Select the model-free model.
 model.select_mf(run=name, model=name)
 
-#select.res(num=1384)
+select.res(num=2640)
 # Fixed value.
 #from math import pi
 #fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
@@ -38,5 +38,5 @@ grid_search(name, inc=11)
 minimise('newton', run=name, print_flag=1)
 
 # Finish.
-write(run=name, file='results_test', force=1)
+write(run=name, file='results_temp', force=1)
 state.save('save', force=1)

@@ -428,7 +428,7 @@ class Model_free:
         for i in range(len(params)):
             # {S2, S2f, S2s}.
             if match('S2', params[i]):
-                min_options.append([inc_vector[i], 0.0, 0.9])
+                min_options.append([inc_vector[i], 0.0, 1.0])
 
             # {te, tf, ts}.
             elif match('t', params[i]):
@@ -965,6 +965,21 @@ class Model_free:
         relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
         relax_error = array(self.relax.data.res[i].relax_error[run], Float64)
         self.function_ops = ()
+
+        # Make sure that the errors are all positive numbers.
+        for j in range(len(relax_error)):
+            if relax_error[j] == 0.0:
+                message = "Zero error, minimisation not possible."
+                if print_flag >= 1:
+                    print message + "  Skipping residue."
+                self.relax.data.res[i].warning[run] = message
+                return
+            elif relax_error[j] < 0.0:
+                message = "Negative error."
+                if print_flag >= 1:
+                    print message + "  Skipping residue."
+                self.relax.data.res[i].warning[run] = message
+                return
 
         # Initialise the functions used in the minimisation.
         self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_matrix=scaling_matrix)
@@ -1750,16 +1765,28 @@ class Model_free:
             file.write("%-26s" % `self.relax.data.res[i].chi2[run]`)
 
             # Iterations
-            file.write("%-9i" % self.relax.data.res[i].iter[run])
+            if self.relax.data.res[i].iter[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.res[i].iter[run])
 
             # Function count.
-            file.write("%-9i" % self.relax.data.res[i].f_count[run])
+            if self.relax.data.res[i].f_count[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.res[i].f_count[run])
 
             # Gradient count.
-            file.write("%-9i" % self.relax.data.res[i].g_count[run])
+            if self.relax.data.res[i].g_count[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.res[i].g_count[run])
 
             # Hessian count.
-            file.write("%-9i" % self.relax.data.res[i].h_count[run])
+            if self.relax.data.res[i].h_count[run] == None:
+                file.write("%-9s" % "None")
+            else:
+                file.write("%-9i" % self.relax.data.res[i].h_count[run])
 
             # Warning
             if self.relax.data.res[i].warning[run] != None:

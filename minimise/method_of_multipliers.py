@@ -29,7 +29,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, mu0=1e-5, epsilon0=1e2, gamma0=1e2, scale_mu=0.5, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, init_lambda=1e2, mu0=1e-5, epsilon0=1e-2, gamma0=1e-2, scale_mu=0.5, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, inner_maxiter=200, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
@@ -137,7 +137,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
         print "\n"
         print "Method of Multipliers"
         print "~~~~~~~~~~~~~~~~~~~~~"
-    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, lambda0, mu0, epsilon0, gamma0, scale_mu, scale_epsilon, scale_gamma, func_tol, grad_tol, maxiter, full_output, print_flag)
+    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, lambda0, init_lambda, mu0, epsilon0, gamma0, scale_mu, scale_epsilon, scale_gamma, func_tol, grad_tol, maxiter, inner_maxiter, full_output, print_flag)
     if min.init_failure:
         print "Initialisation of minimisation has failed."
         return None
@@ -147,7 +147,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 
 
 class Method_of_multipliers(Min):
-    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, lambda0, mu0, epsilon0, gamma0, scale_mu, scale_epsilon, scale_gamma, func_tol, grad_tol, maxiter, full_output, print_flag):
+    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, lambda0, init_lambda, mu0, epsilon0, gamma0, scale_mu, scale_epsilon, scale_gamma, func_tol, grad_tol, maxiter, inner_maxiter, full_output, print_flag):
         """Class for Newton minimisation specific functions.
 
         Unless you know what you are doing, you should call the function 'method_of_multipliers'
@@ -224,6 +224,7 @@ class Method_of_multipliers(Min):
         self.func_tol = func_tol
         self.grad_tol = grad_tol
         self.maxiter = maxiter
+        self.inner_maxiter = inner_maxiter
         self.full_output = full_output
         self.print_flag = print_flag
 
@@ -246,8 +247,9 @@ class Method_of_multipliers(Min):
             self.lambda_k = zeros(self.m, Float64)
             self.ck = apply(self.c, (self.xk,)+args)
             for i in range(self.m):
+                #self.lambda_k[i] = init_lambda
                 if self.ck[i] <= 0.0:
-                    self.lambda_k[i] = 1e2
+                    self.lambda_k[i] = init_lambda
         else:
             self.lambda_k = lambda0
 
@@ -387,7 +389,7 @@ class Method_of_multipliers(Min):
             self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
             # Unconstrained minimisation sub-loop.
-            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=200, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
+            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.inner_maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
             #results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=(self.maxiter - self.j), full_output=1, print_flag=sub_print_flag, print_prefix="\t")
             if results == None:
                 return
