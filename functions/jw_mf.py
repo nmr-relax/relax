@@ -471,10 +471,10 @@ def calc_tm_djw_dDj(data):
                      i=m
     """
 
-    djw = data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
+    djw = data.ci[0] * data.dti[0] * data.fact_ti_djw_dti[0]
 
     for i in xrange(1, data.len):
-        djw = djw + data.ci[i] * data.dti[i] * data.fact_djw_dti[i]
+        djw = djw + data.ci[i] * data.dti[i] * data.fact_ti_djw_dti[i]
 
     return 0.4 * djw
 
@@ -496,10 +496,10 @@ def calc_tm_S2_djw_dDj(data):
                        i=m
     """
 
-    djw = data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
+    djw = data.ci[0] * data.dti[0] * data.fact_ti_djw_dti[0]
 
     for i in xrange(1, data.len):
-        djw = djw + data.ci[i] * data.dti[i] * data.fact_djw_dti[i]
+        djw = djw + data.ci[i] * data.dti[i] * data.fact_ti_djw_dti[i]
 
     return 0.4 * data.params[data.s2_index] * djw
 
@@ -521,10 +521,10 @@ def calc_tm_S2_te_djw_dDj(data):
                      i=m
     """
 
-    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.one_s2 * data.fact2_djw_dti[0])
+    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact_ti_djw_dti[0] + data.one_s2 * data.fact_te_djw_dti[0])
 
     for i in xrange(1, data.len):
-        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact1_djw_dti[i] + data.one_s2 * data.fact2_djw_dti[i])
+        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact_ti_djw_dti[i] + data.one_s2 * data.fact_te_djw_dti[i])
 
     return 0.4 * djw
 
@@ -640,12 +640,10 @@ def calc_tm_S2f_S2_ts_djw_dDj(data):
                      i=m
     """
 
-    # BUG: Check if this should be data.fact2 or data.fact3!!!!
-
-    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.s2f_s2 * data.fact3_djw_dti[0])
+    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact_ti_djw_dti[0] + data.s2f_s2 * data.fact_ts_djw_dti[0])
 
     for i in xrange(1, data.len):
-        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact1_djw_dti[i] + data.s2f_s2 * data.fact3_djw_dti[i])
+        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact_ti_djw_dti[i] + data.s2f_s2 * data.fact_ts_djw_dti[i])
 
     return 0.4 * djw
 
@@ -667,10 +665,10 @@ def calc_tm_S2f_tf_S2_ts_djw_dDj(data):
                      i=m
     """
 
-    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.one_s2f * data.fact2_djw_dti[0] + data.s2f_s2 * data.fact3_djw_dti[0])
+    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact_ti_djw_dti[0] + data.one_s2f * data.fact_tf_djw_dti[0] + data.s2f_s2 * data.fact_ts_djw_dti[0])
 
     for i in xrange(1, data.len):
-        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact1_djw_dti[i] + data.one_s2f * data.fact2_djw_dti[i] + data.s2f_s2 * data.fact3_djw_dti[i])
+        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact_ti_djw_dti[i] + data.one_s2f * data.fact_tf_djw_dti[i] + data.s2f_s2 * data.fact_ts_djw_dti[i])
 
     return 0.4 * djw
 
@@ -1431,16 +1429,24 @@ def calc_tm_S2_te_d2jw_dtDj(data):
                                                                         ((te + ti)^2 + (w.te.ti)^2)^3                                         /
     """
 
-    d2jw = data.ci[0] * data.params[data.s2_index] * (2 * data.ti[0] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[0]) * data.dti[0] * data.dti[0] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[0]) * data.fact_ti[0]**3
-    fact = 2.0 * (data.te_ti[0]**3 + 3.0 * data.frq_sqrd_list * data.params[data.te_index]**3 * data.params[data.ti_index] * data.te_ti[0] - (data.frq_list * data.params[data.te_index])**4 * data.params[data.ti_index]**3) * data.dti[0] * data.dti[0]  +  (data.te_ti[0]**4 - data.w_te_ti_sqrd[0]**2) * data.d2ti[0]
-    fact = data.one_s2 * data.params[data.te_index]**2 * fact * data.inv_te_denom[0]**3
-    d2jw = d2jw + fact
+    # ti.
+    fact_ti = data.params[data.s2_index] * (2 * data.ti[0] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[0]) * data.dti[0] * data.dti[0] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[0]) * data.fact_ti[0]**3
+
+    # te.
+    fact_te = 2.0 * (data.te_ti[0]**3 + 3.0 * data.frq_sqrd_list * data.params[data.te_index]**3 * data.params[data.ti_index] * data.te_ti[0] - (data.frq_list * data.params[data.te_index])**4 * data.params[data.ti_index]**3) * data.dti[0] * data.dti[0]  +  (data.te_ti[0]**4 - data.w_te_ti_sqrd[0]**2) * data.d2ti[0]
+    fact_te = data.one_s2 * data.params[data.te_index]**2 * fact_te * data.inv_te_denom[0]**3
+
+    d2jw = data.ci[0] + (fact_ti + fact_te)
 
     for i in xrange(1, data.len):
-        d2jw = d2jw + data.ci[i] * data.params[data.s2_index] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
-        fact = 2.0 * (data.te_ti[i]**3 + 3.0 * data.frq_sqrd_list * data.params[data.te_index]**3 * data.params[data.ti_index] * data.te_ti[i] - (data.frq_list * data.params[data.te_index])**4 * data.params[data.ti_index]**3) * data.dti[i] * data.dti[i]  +  (data.te_ti[i]**4 - data.w_te_ti_sqrd[i]**2) * data.d2ti[i]
-        fact = data.one_s2 * data.params[data.te_index]**2 * fact * data.inv_te_denom[i]**3
-        d2jw = d2jw + fact
+        # ti.
+        fact_ti = data.params[data.s2_index] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
+
+        # te.
+        fact_te = 2.0 * (data.te_ti[i]**3 + 3.0 * data.frq_sqrd_list * data.params[data.te_index]**3 * data.params[data.ti_index] * data.te_ti[i] - (data.frq_list * data.params[data.te_index])**4 * data.params[data.ti_index]**3) * data.dti[i] * data.dti[i]  +  (data.te_ti[i]**4 - data.w_te_ti_sqrd[i]**2) * data.d2ti[i]
+        fact_te = data.one_s2 * data.params[data.te_index]**2 * fact_te * data.inv_te_denom[i]**3
+
+        d2jw = d2jw + data.ci[i] + (fact_ti + fact_te)
 
     return -0.4 * d2jw
 
@@ -1473,10 +1479,10 @@ def calc_tm_S2_d2jw_dDjdS2(data):
                        i=m
     """
 
-    d2jw = data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
+    d2jw = data.ci[0] * data.dti[0] * data.fact_ti_djw_dti[0]
 
     for i in xrange(1, data.len):
-        d2jw = d2jw + data.ci[i] * data.dti[i] * data.fact_djw_dti[i]
+        d2jw = d2jw + data.ci[i] * data.dti[i] * data.fact_ti_djw_dti[i]
 
     return 0.4 * d2jw
 
@@ -1498,10 +1504,10 @@ def calc_tm_S2_te_d2jw_dDjdS2(data):
                        i=m
     """
 
-    d2jw = data.ci[0] * data.dti[0] * (data.fact1_djw_dti[0] - data.fact2_djw_dti[0])
+    d2jw = data.ci[0] * data.dti[0] * (data.fact_ti_djw_dti[0] - data.fact_te_djw_dti[0])
 
     for i in xrange(1, data.len):
-        d2jw = d2jw + data.ci[i] * data.dti[i] * (data.fact1_djw_dti[i] - data.fact2_djw_dti[i])
+        d2jw = d2jw + data.ci[i] * data.dti[i] * (data.fact_ti_djw_dti[i] - data.fact_te_djw_dti[i])
 
     return 0.4 * d2jw
 
@@ -1575,482 +1581,530 @@ def calc_S2_te_d2jw_dS2dte(data):
 # Original te - te partial derivative.
 ######################################
 
-# {S2, te} and {tm, S2, te}
-
-
+# {S2, te}
 
 def calc_S2_te_d2jw_dte2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the te - te double partial derivative of the
-    original model-free formula with the parameters S2 and te.
+    Calculate the spectral desity values for the te - te double partial derivative of the original
+    model-free formula with the parameters {S2, te}.
 
     The model-free Hessian is:
 
-        d2J(w)       4                 (te + tm)^3 + 3.tm^3.te.w^2.(te + tm) - (w.tm)^4.te^3
-        ------  =  - - tm^2 . (1 - S2) -----------------------------------------------------
-        dte**2       5                             ((te + tm)^2 + (w.te.tm)^2)^3
+                                _n_
+        d2J(w)       4          \             (te + ti)^3 + 3.w^2.ti^3.te.(te + ti) - (w.ti)^4.te^3
+        ------  =  - - (1 - S2)  >  ci . ti^2 -----------------------------------------------------
+        dte**2       5          /__                        ((te + ti)^2 + (w.te.ti)^2)^3
+                                i=m
     """
 
-    num = data.te_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_tm - data.w_tm_sqrd**2 * data.params[data.te_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.one_s2 * num * data.inv_te_denom**3
+    num = data.te_ti[0]**3 + 3.0 * data.diff_params[0]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.te_index]**3
+    d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_te_denom[0]**3
+
+    for i in xrange(1, data.len):
+        num = data.te_ti[i]**3 + 3.0 * data.diff_params[i]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.te_index]**3
+        d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_te_denom[i]**3
+
+    return -0.8 * data.one_s2 * d2jw
 
 
+# {tm, S2, te}
 
 def calc_tm_S2_te_d2jw_dte2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the te - te double partial derivative of the
-    original model-free formula with the parameters tm, S2, and te.
+    Calculate the spectral desity values for the te - te double partial derivative of the original
+    model-free formula with the parameters {tm, S2, te}.
 
     The model-free Hessian is:
 
-        d2J(w)       4                 (te + tm)^3 + 3.tm^3.te.w^2.(te + tm) - (w.tm)^4.te^3
-        ------  =  - - tm^2 . (1 - S2) -----------------------------------------------------
-        dte**2       5                             ((te + tm)^2 + (w.te.tm)^2)^3
+                                _n_
+        d2J(w)       4          \             (te + ti)^3 + 3.w^2.ti^3.te.(te + ti) - (w.ti)^4.te^3
+        ------  =  - - (1 - S2)  >  ci . ti^2 -----------------------------------------------------
+        dte**2       5          /__                        ((te + ti)^2 + (w.te.ti)^2)^3
+                                i=m
     """
 
-    num = data.te_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_tm - data.w_tm_sqrd**2 * data.params[data.te_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.one_s2 * num * data.inv_te_denom**3
+    num = data.te_ti[0]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.te_index]**3
+    d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_te_denom[0]**3
+
+    for i in xrange(1, data.len):
+        num = data.te_ti[i]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.te_index]**3
+        d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_te_denom[i]**3
+
+    return -0.8 * data.one_s2 * d2jw
 
 
 
-# Extended {S2f, S2, ts}.
-#########################
+# Extended Dj - Dk partial derivative.
+######################################
 
-def calc_S2f_S2_ts_d2jw_dS2fdts(data):
+# {tm, S2f, S2, ts}
+
+def calc_tm_S2f_S2_ts_d2jw_dDj2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
-    extended model-free formula with the parameters S2f, S2, and ts.
+    Calculate the spectral desity values for the Dj - Dj double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, S2, ts}.
 
     The model-free Hessian is:
 
-         d2J(w)      2        (ts + tm)^2 - (w.ts.tm)^2
-        --------  =  - tm^2 -----------------------------
-        dS2f.dts     5      ((ts + tm)^2 + (w.ts.tm)^2)^2
+                         _n_     /                            dti   dti                     d2ti
+         d2J(w)       2  \       |    2.ti.w^2.(3 - (w.ti)^2) --- . ---  -  (1 - (w.ti)^4) -------
+        -------  =  - -   >  ci  | S2                         dDj   dDk                    dDj.dDk
+        dDj.dDk       5  /__     |    ------------------------------------------------------------
+                         i=m     \                       (1 + (w.ti)^2)^3
+
+                                                                                             dti   dti                                  d2ti    \ 
+                                     2((ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3) --- . ---  +  ((ts + ti)^4 - (w.ts.ti)^4) -------  |
+                                                                                             dDj   dDk                                 dDj.dDk  |
+                +  (S2f - S2) . ts^2 ---------------------------------------------------------------------------------------------------------  |
+                                                                          ((ts + ti)^2 + (w.ts.ti)^2)^3                                         /
     """
 
-    return data.fact_djw_dts
+    # ti.
+    fact_ti = data.params[data.s2_index] * (2 * data.ti[0] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[0]) * data.dti[0] * data.dti[0] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[0]) * data.fact_ti[0]**3
 
+    # ts.
+    fact_ts = 2.0 * (data.ts_ti[0]**3 + 3.0 * data.frq_sqrd_list * data.params[data.ts_index]**3 * data.params[data.ti_index] * data.ts_ti[0] - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.ti_index]**3) * data.dti[0] * data.dti[0]  +  (data.ts_ti[0]**4 - data.w_ts_ti_sqrd[0]**2) * data.d2ti[0]
+    fact_ts = data.s2f_s2 * data.params[data.ts_index]**2 * fact_ts * data.inv_ts_denom[0]**3
+
+    d2jw = data.ci[0] * (fact_ti + fact_ts)
+
+    for i in xrange(1, data.len):
+        # ti.
+        fact_ti = data.params[data.s2_index] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
+
+        # ts.
+        fact_ts = 2.0 * (data.ts_ti[i]**3 + 3.0 * data.frq_sqrd_list * data.params[data.ts_index]**3 * data.params[data.ti_index] * data.ts_ti[i] - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.ti_index]**3) * data.dti[i] * data.dti[i]  +  (data.ts_ti[i]**4 - data.w_ts_ti_sqrd[i]**2) * data.d2ti[i]
+        fact_ts = data.s2f_s2 * data.params[data.ts_index]**2 * fact_ts * data.inv_ts_denom[i]**3
+
+        d2jw = d2jw + data.ci[i] * (fact_ti + fact_ts)
+
+    return -0.4 * d2jw
+
+
+# {tm, S2f, tf, S2, ts}
+
+def calc_tm_S2f_tf_S2_ts_d2jw_dDj2(data):
+    """Spectral density Hessian.
+
+    Calculate the spectral desity values for the Dj - Dj double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, tf, S2, ts}.
+
+    The model-free Hessian is:
+
+                         _n_     /                            dti   dti                     d2ti
+         d2J(w)       2  \       |    2.ti.w^2.(3 - (w.ti)^2) --- . ---  -  (1 - (w.ti)^4) -------
+        -------  =  - -   >  ci  | S2                         dDj   dDk                    dDj.dDk
+        dDj.dDk       5  /__     |    ------------------------------------------------------------
+                         i=m     \                       (1 + (w.ti)^2)^3
+
+                                                                                            dti   dti                                  d2ti
+                                    2((tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3) --- . ---  +  ((tf + ti)^4 - (w.tf.ti)^4) -------
+                                                                                            dDj   dDk                                 dDj.dDk
+                +  (1 - S2f) . tf^2 ---------------------------------------------------------------------------------------------------------
+                                                                         ((tf + ti)^2 + (w.tf.ti)^2)^3
+
+                                                                                             dti   dti                                  d2ti    \ 
+                                     2((ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3) --- . ---  +  ((ts + ti)^4 - (w.ts.ti)^4) -------  |
+                                                                                             dDj   dDk                                 dDj.dDk  |
+                +  (S2f - S2) . ts^2 ---------------------------------------------------------------------------------------------------------  |
+                                                                          ((ts + ti)^2 + (w.ts.ti)^2)^3                                         /
+    """
+
+    # ti.
+    fact_ti = data.params[data.s2_index] * (2 * data.ti[0] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[0]) * data.dti[0] * data.dti[0] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[0]) * data.fact_ti[0]**3
+
+    # tf.
+    fact_tf = 2.0 * (data.tf_ti[0]**3 + 3.0 * data.frq_sqrd_list * data.params[data.tf_index]**3 * data.params[data.ti_index] * data.tf_ti[0] - (data.frq_list * data.params[data.tf_index])**4 * data.params[data.ti_index]**3) * data.dti[0] * data.dti[0]  +  (data.tf_ti[0]**4 - data.w_tf_ti_sqrd[0]**2) * data.d2ti[0]
+    fact_tf = data.one_s2f * data.params[data.tf_index]**2 * fact_tf * data.inv_tf_denom[0]**3
+
+    # ts.
+    fact_ts = 2.0 * (data.ts_ti[0]**3 + 3.0 * data.frq_sqrd_list * data.params[data.ts_index]**3 * data.params[data.ti_index] * data.ts_ti[0] - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.ti_index]**3) * data.dti[0] * data.dti[0]  +  (data.ts_ti[0]**4 - data.w_ts_ti_sqrd[0]**2) * data.d2ti[0]
+    fact_ts = data.s2f_s2 * data.params[data.ts_index]**2 * fact_ts * data.inv_ts_denom[0]**3
+
+    d2jw = data.ci[0] * (fact_ti + fact_tf + fact_ts)
+
+    for i in xrange(1, data.len):
+        # ti.
+        fact_ti = data.params[data.s2_index] * (2 * data.ti[i] * data.frq_sqrd_list * (3.0 - data.w_ti_sqrd[i]) * data.dti[i] * data.dti[i] - (1.0 - data.frq_sqrd_list**2) * data.d2ti[i]) * data.fact_ti[i]**3
+
+        # tf.
+        fact_tf = 2.0 * (data.tf_ti[i]**3 + 3.0 * data.frq_sqrd_list * data.params[data.tf_index]**3 * data.params[data.ti_index] * data.tf_ti[i] - (data.frq_list * data.params[data.tf_index])**4 * data.params[data.ti_index]**3) * data.dti[i] * data.dti[i]  +  (data.tf_ti[i]**4 - data.w_tf_ti_sqrd[i]**2) * data.d2ti[i]
+        fact_tf = data.one_s2f * data.params[data.tf_index]**2 * fact_tf * data.inv_tf_denom[i]**3
+
+        # ts.
+        fact_ts = 2.0 * (data.ts_ti[i]**3 + 3.0 * data.frq_sqrd_list * data.params[data.ts_index]**3 * data.params[data.ti_index] * data.ts_ti[i] - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.ti_index]**3) * data.dti[i] * data.dti[i]  +  (data.ts_ti[i]**4 - data.w_ts_ti_sqrd[i]**2) * data.d2ti[i]
+        fact_ts = data.s2f_s2 * data.params[data.ts_index]**2 * fact_ts * data.inv_ts_denom[i]**3
+
+        d2jw = d2jw + data.ci[i] * (fact_ti + fact_tf + fact_ts)
+
+    return -0.4 * d2jw
+
+
+
+# Extended Dj - Psij partial derivative.
+########################################
+
+# Please code me!!!
+
+
+
+# Extended Dj - S2 partial derivative.
+######################################
+
+# {tm, S2f, S2, ts} or {tm, S2f, tf, S2, ts}
+
+def calc_tm_S2f_S2_ts_d2jw_dDjdS2(data):
+    """Spectral density Hessian.
+
+    Calculate the spectral desity values for the Dj - S2 double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, S2, ts} or the parameters 
+    {tm, S2f, tf, S2, ts}.
+
+    The model-free Hessian is:
+
+                       _n_
+         d2J(w)     2  \        dti  /   1 - (w.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  ci . ---  | ----------------  -  ts^2 ----------------------------- |
+        dDj.dS2     5  /__      dDj  \ (1 + (w.ti)^2)^2          ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
+    """
+
+    d2jw = data.ci[0] * data.dti[0] * (data.fact_ti_djw_dti[0] - data.fact_ts_djw_dti[0])
+
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.dti[i] * (data.fact_ti_djw_dti[i] - data.fact_ts_djw_dti[i])
+
+    return 0.4 * d2jw
+
+
+
+# Extended Dj - S2f partial derivative.
+#######################################
+
+# {tm, S2f, S2, ts}
+
+def calc_tm_S2f_S2_ts_d2jw_dDjdS2f(data):
+    """Spectral density Hessian.
+
+    Calculate the spectral desity values for the Dj - S2f double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, S2, ts}.
+
+    The model-free Hessian is:
+
+                        _n_
+         d2J(w)      2  \        dti  /        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        --------  =  -   >  ci . ---  | ts^2 ----------------------------- |
+        dDj.dS2f     5  /__      dDj  \      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                        i=m
+    """
+
+    d2jw = data.ci[0] * data.dti[0] * data.fact_ts_djw_dti[0]
+
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.dti[i] * data.fact_ts_djw_dti[i]
+
+    return 0.4 * d2jw
+
+
+# {tm, S2f, tf, S2, ts}
+
+def calc_tm_S2f_tf_S2_ts_d2jw_dDjdS2f(data):
+    """Spectral density Hessian.
+
+    Calculate the spectral desity values for the Dj - S2f double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, tf, S2, ts}.
+
+    The model-free Hessian is:
+
+                          _n_
+         d2J(w)        2  \        dti  /        (tf + ti)^2 - (w.tf.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
+        --------  =  - -   >  ci . ---  | tf^2 -----------------------------  -  ts^2 ----------------------------- |
+        dDj.dS2f       5  /__      dDj  \      ((tf + ti)^2 + (w.tf.ti)^2)^2          ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                          i=m
+    """
+
+    d2jw = data.ci[0] * data.dti[0] * (data.fact_tf_djw_dti[0] - data.fact_ts_djw_dti[0])
+
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.dti[i] * (data.fact_tf_djw_dti[i] - data.fact_ts_djw_dti[i])
+
+    return -0.4 * d2jw
+
+
+
+# Extended Dj - tf partial derivative.
+######################################
+
+# {tm, S2f, tf, S2, ts}
+
+def calc_tm_S2f_tf_S2_ts_d2jw_dDjdtf(data):
+    """Spectral density Hessian.
+
+    Calculate the spectral desity values for the Dj - tf double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, tf, S2, ts}.
+
+    The model-free Hessian is:
+
+                                     _n_
+         d2J(w)     4                \        dti                   (tf + ti)^2 - 3(w.tf.ti)^2
+        -------  =  - (1 - S2f) . tf  >  ci . --- . ti . (tf + ti) -----------------------------
+        dDj.dtf     5                /__      dDj                  ((tf + ti)^2 + (w.tf.ti)^2)^3
+                                     i=m
+    """
+
+    d2jw = data.ci[0] * data.dti[0]* data.params[data.ti_index] * data.tf_ti[0] * (data.tf_ti_sqrd[0] - 3.0 * data.w_tf_ti_sqrd[0]) * data.inv_tf_denom[0]**3
+
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.dti[i]* data.params[data.ti_index] * data.tf_ti[i] * (data.tf_ti_sqrd[i] - 3.0 * data.w_tf_ti_sqrd[i]) * data.inv_tf_denom[i]**3
+
+    return 0.8 * data.one_s2f * data.params[data.tf_index] * d2jw
+
+
+
+# Extended Dj - ts partial derivative.
+######################################
+
+# {tm, S2f, S2, ts} or {tm, S2f, tf, S2, ts}
+
+def calc_tm_S2f_S2_ts_d2jw_dDjdts(data):
+    """Spectral density Hessian.
+
+    Calculate the spectral desity values for the tm - ts double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, S2, ts} or the parameters
+    {tm, S2f, tf, S2, ts}.
+
+    The model-free Hessian is:
+
+                                      _n_
+         d2J(w)     4                 \        dti                   (ts + ti)^2 - 3(w.ts.ti)^2
+        -------  =  - (S2f - S2) . ts  >  ci . --- . ti . (ts + ti) -----------------------------
+        dDj.dts     5                 /__      dDj                  ((ts + ti)^2 + (w.ts.ti)^2)^3
+                                      i=m
+    """
+
+    d2jw = data.ci[0] * data.dti[0]* data.params[data.ti_index] * data.ts_ti[0] * (data.ts_ti_sqrd[0] - 3.0 * data.w_ts_ti_sqrd[0]) * data.inv_ts_denom[0]**3
+
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.dti[i]* data.params[data.ti_index] * data.ts_ti[i] * (data.ts_ti_sqrd[i] - 3.0 * data.w_ts_ti_sqrd[i]) * data.inv_ts_denom[i]**3
+
+    return 0.8 * data.s2f_s2 * data.params[data.ts_index] * d2jw
+
+
+
+# Extended Psij - ? partial derivative.
+#######################################
+
+# Please code me!!!
+
+
+
+# Extended S2 - ts partial derivative.
+######################################
+
+# {S2f, S2, ts}, {S2f, tf, S2, ts}, {tm, S2f, S2, ts}, or {tm, S2f, tf, S2, ts}
 
 def calc_S2f_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
-    extended model-free formula with the parameters S2f, S2, and ts.
+    Calculate the spectral desity values for the S2 - ts double partial derivative of the extended
+    model-free formula with the parameters {S2f, S2, ts}, {S2f, tf, S2, ts}, {tm, S2f, S2, ts}, or
+    {tm, S2f, tf, S2, ts}.
 
     The model-free Hessian is:
 
-         d2J(w)       2        (ts + tm)^2 - (w.ts.tm)^2
-        -------  =  - - tm^2 -----------------------------
-        dS2.dts       5      ((ts + tm)^2 + (w.ts.tm)^2)^2
+                         _n_
+         d2J(w)       2  \               (ts + ti)^2 - (w.ts.ti)^2
+        -------  =  - -   >  ci . ti^2 -----------------------------
+        dS2.dts       5  /__           ((ts + ti)^2 + (w.ts.ti)^2)^2
+                         i=m
     """
 
-    return -data.fact_djw_dts
+    d2jw = data.ci[0] * data.fact_djw_dts[0]
 
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.fact_djw_dts[i]
 
-def calc_S2f_S2_ts_d2jw_dts2(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
-    extended model-free formula with the parameters S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-        d2J(w)       4                   (ts + tm)^3 + 3.tm^3.ts.w^2.(ts + tm) - (w.tm)^4.ts^3
-        ------  =  - - tm^2 . (S2f - S2) -----------------------------------------------------
-        dts**2       5                               ((ts + tm)^2 + (w.ts.tm)^2)^3
-    """
-
-    num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
+    return -0.4 * d2jw
 
 
 
-# Extended {tm, S2f, S2, ts}.
-#############################
+# Extended S2f - tf partial derivative.
+#######################################
 
-def calc_tm_S2f_S2_ts_d2jw_dtm2(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-        d2J(w)       4 /             3 - (w.tm)^2                         (ts + tm)^3 + 3.ts^3.tm.w^2.(ts + tm) - (w.ts)^4.tm^3 \ 
-        ------  =  - - | S2.tm.w^2 ----------------  +  (S2f - S2) . ts^2 ----------------------------------------------------- |
-        dtm**2       5 \           (1 + (w.tm)^2)^3                                   ((ts + tm)^2 + (w.ts.tm)^2)^3             /
-    """
-
-    fact = data.ts_tm**3 + 3.0 * data.params[data.ts_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.ts_tm - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.tm_index]**3
-    fact = data.s2f_s2 * data.params[data.ts_index]**2 * fact * data.inv_ts_denom**3
-    return -0.8 * (data.params[data.s2_index] * data.params[data.tm_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3 + fact)
-
-
-def calc_tm_S2f_S2_ts_d2jw_dtmdS2f(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - S2f double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)      2        (ts + tm)^2 - (w.ts.tm)^2
-        --------  =  - ts^2 -----------------------------
-        dtm.dS2f     5      ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return 0.4 * data.fact2_djw_dtm
-
-
-def calc_tm_S2f_S2_ts_d2jw_dtmdS2(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)     2 /   1 - (w.tm)^2              (ts + tm)^2 - (w.ts.tm)^2   \ 
-        -------  =  - | ----------------  -  ts^2 ----------------------------- |
-        dtm.dS2     5 \ (1 + (w.tm)^2)^2          ((ts + tm)^2 + (w.ts.tm)^2)^2 /
-    """
-
-    return 0.4 * (data.fact1_djw_dtm - data.fact2_djw_dtm)
-
-
-def calc_tm_S2f_S2_ts_d2jw_dtmdts(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)     4                                   (ts + tm)^2 - 3(w.ts.tm)^2
-        -------  =  - (S2f - S2) . tm . ts . (ts + tm) -----------------------------
-        dtm.dts     5                                  ((ts + tm)^2 + (w.ts.tm)^2)^3
-    """
-
-    return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) * data.inv_ts_denom**3
-
-
-def calc_tm_S2f_S2_ts_d2jw_dS2fdts(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)      2        (ts + tm)^2 - (w.ts.tm)^2
-        --------  =  - tm^2 -----------------------------
-        dS2f.dts     5      ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return data.fact_djw_dts
-
-
-def calc_tm_S2f_S2_ts_d2jw_dS2dts(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)       2        (ts + tm)^2 - (w.ts.tm)^2
-        -------  =  - - tm^2 -----------------------------
-        dS2.dts       5      ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return -data.fact_djw_dts
-
-
-def calc_tm_S2f_S2_ts_d2jw_dts2(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The model-free Hessian is:
-
-        d2J(w)       4                   (ts + tm)^3 + 3.tm^3.ts.w^2.(ts + tm) - (w.tm)^4.ts^3
-        ------  =  - - tm^2 . (S2f - S2) -----------------------------------------------------
-        dts**2       5                               ((ts + tm)^2 + (w.ts.tm)^2)^3
-    """
-
-    num = data.ts_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
-
-
-
-# Extended {S2f, tf, S2, ts}.
-#############################
+# {S2f, tf, S2, ts} or {tm, S2f, tf, S2, ts}
 
 def calc_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the S2f - tf double partial derivative of the
-    extended model-free formula with the parameters S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the S2f - tf double partial derivative of the extended
+    model-free formula with the parameters {S2f, tf, S2, ts} or the parameters
+    {tm, S2f, tf, S2, ts}.
 
     The model-free Hessian is:
 
-         d2J(w)        2        (tf + tm)^2 - (w.tf.tm)^2
-        --------  =  - - tm^2 -----------------------------
-        dS2f.dtf       5      ((tf + tm)^2 + (w.tf.tm)^2)^2
+                          _n_
+         d2J(w)        2  \               (tf + ti)^2 - (w.tf.ti)^2
+        --------  =  - -   >  ci . ti^2 -----------------------------
+        dS2f.dtf       5  /__           ((tf + ti)^2 + (w.tf.ti)^2)^2
+                          i=m
     """
 
-    return -data.fact_djw_dtf
+    d2jw = data.ci[0] * data.fact_djw_dtf[0]
+
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.fact_djw_dtf[i]
+
+    return -0.4 * d2jw
 
 
-def calc_S2f_tf_S2_ts_d2jw_dS2fdts(data):
+
+# Extended S2f - ts partial derivative.
+#######################################
+
+# {S2f, S2, ts}, {S2f, tf, S2, ts}, {tm, S2f, S2, ts}, or {tm, S2f, tf, S2, ts}
+
+def calc_S2f_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
-    extended model-free formula with the parameters S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the S2f - ts double partial derivative of the extended
+    model-free formula with the parameters {S2f, S2, ts}, {S2f, tf, S2, ts}, {tm, S2f, S2, ts}, or
+    {tm, S2f, tf, S2, ts}.
 
     The model-free Hessian is:
 
-         d2J(w)      2        (ts + tm)^2 - (w.ts.tm)^2
-        --------  =  - tm^2 -----------------------------
-        dS2f.dts     5      ((ts + tm)^2 + (w.ts.tm)^2)^2
+                        _n_
+         d2J(w)      2  \               (ts + ti)^2 - (w.ts.ti)^2
+        --------  =  -   >  ci . ti^2 -----------------------------
+        dS2f.dts     5  /__           ((ts + ti)^2 + (w.ts.ti)^2)^2
+                        i=m
     """
 
-    return data.fact_djw_dts
+    d2jw = data.ci[0] * data.fact_djw_dts[0]
+
+    for i in xrange(1, data.len):
+        d2jw = d2jw + data.ci[i] * data.fact_djw_dts[i]
+
+    return 0.4 * d2jw
 
 
-def calc_S2f_tf_S2_ts_d2jw_dS2dts(data):
-    """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
-    extended model-free formula with the parameters S2f, tf, S2, and ts.
+# Extended tf - tf partial derivative.
+#######################################
 
-    The model-free Hessian is:
-
-         d2J(w)       2        (ts + tm)^2 - (w.ts.tm)^2
-        -------  =  - - tm^2 -----------------------------
-        dS2.dts       5      ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return -data.fact_djw_dts
-
+# {S2f, tf, S2, ts}
 
 def calc_S2f_tf_S2_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the tf - tf double partial derivative of the
-    extended model-free formula with the parameters S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the tf - tf double partial derivative of the extended
+    model-free formula with the parameters {S2f, tf, S2, ts}.
 
     The model-free Hessian is:
 
-        d2J(w)       4                  (tf + tm)^3 + 3.tm^3.tf.w^2.(tf + tm) - (w.tm)^4.tf^3
-        ------  =  - - tm^2 . (1 - S2f) -----------------------------------------------------
-        dtf**2       5                              ((tf + tm)^2 + (w.tf.tm)^2)^3
+                                 _n_
+        d2J(w)       4           \             (tf + ti)^3 + 3.w^2.ti^3.tf.(tf + ti) - (w.ti)^4.tf^3
+        ------  =  - - (1 - S2f)  >  ci . ti^2 -----------------------------------------------------
+        dtf**2       5           /__                        ((tf + ti)^2 + (w.tf.ti)^2)^3
+                                 i=m
     """
 
-    num = data.tf_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_tm - data.w_tm_sqrd**2 * data.params[data.tf_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
+    num = data.tf_ti[0]**3 + 3.0 * data.diff_params[0]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.tf_index]**3
+    d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_tf_denom[0]**3
+
+    for i in xrange(1, data.len):
+        num = data.tf_ti[i]**3 + 3.0 * data.diff_params[i]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.tf_index]**3
+        d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_tf_denom[i]**3
+
+    return -0.8 * data.one_s2f * d2jw
 
 
-def calc_S2f_tf_S2_ts_d2jw_dts2(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
-    extended model-free formula with the parameters S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-        d2J(w)       4                   (ts + tm)^3 + 3.tm^3.ts.w^2.(ts + tm) - (w.tm)^4.ts^3
-        ------  =  - - tm^2 . (S2f - S2) -----------------------------------------------------
-        dts**2       5                               ((ts + tm)^2 + (w.ts.tm)^2)^3
-    """
-
-    num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
-
-
-
-# Extended {tm, S2f, tf, S2, ts}.
-#################################
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dtm2(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-        d2J(w)       4 /             3 - (w.tm)^2                        (tf + tm)^3 + 3.tf^3.tm.w^2.(tf + tm) - (w.tf)^4.tm^3
-        ------  =  - - | S2.tm.w^2 ----------------  +  (1 - S2f) . tf^2 -----------------------------------------------------
-        dtm**2       5 \           (1 + (w.tm)^2)^3                                  ((tf + tm)^2 + (w.tf.tm)^2)^3
-
-                                                (ts + tm)^3 + 3.ts^3.tm.w^2.(ts + tm) - (w.ts)^4.tm^3 \ 
-                           +  (S2f - S2) . ts^2 ----------------------------------------------------- |
-                                                            ((ts + tm)^2 + (w.ts.tm)^2)^3             /
-    """
-
-    # tm.
-    fact1 = data.params[data.s2_index] * data.params[data.tm_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3
-
-    # tf.
-    fact2 = data.tf_tm**3 + 3.0 * data.params[data.tf_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.tf_tm - (data.frq_list * data.params[data.tf_index])**4 * data.params[data.tm_index]**3
-    fact2 = data.one_s2f * data.params[data.tf_index]**2 * fact2 * data.inv_tf_denom**3
-
-    # ts.
-    fact3 = data.ts_tm**3 + 3.0 * data.params[data.ts_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.ts_tm - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.tm_index]**3
-    fact3 = data.s2f_s2 * data.params[data.ts_index]**2 * fact3 * data.inv_ts_denom**3
-
-    return -0.8 * (fact1 + fact2 + fact3)
-
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2f(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - S2f double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)        2 /        (tf + tm)^2 - (w.tf.tm)^2              (ts + tm)^2 - (w.ts.tm)^2   \ 
-        --------  =  - - | tf^2 -----------------------------  -  ts^2 ----------------------------- |
-        dtm.dS2f       5 \      ((tf + tm)^2 + (w.tf.tm)^2)^2          ((ts + tm)^2 + (w.ts.tm)^2)^2 /
-    """
-
-    return -0.4 * (data.fact2_djw_dtm - data.fact3_djw_dtm)
-
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)     2 /   1 - (w.tm)^2              (ts + tm)^2 - (w.ts.tm)^2   \ 
-        -------  =  - | ----------------  -  ts^2 ----------------------------- |
-        dtm.dS2     5 \ (1 + (w.tm)^2)^2          ((ts + tm)^2 + (w.ts.tm)^2)^2 /
-    """
-
-    return 0.4 * (data.fact1_djw_dtm - data.fact3_djw_dtm)
-
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dtmdtf(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - tf double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)     4                                  (tf + tm)^2 - 3(w.tf.tm)^2
-        -------  =  - (1 - S2f) . tm . tf . (tf + tm) -----------------------------
-        dtm.dtf     5                                 ((tf + tm)^2 + (w.tf.tm)^2)^3
-    """
-
-    return 0.8 * data.one_s2f * data.params[data.tm_index] * data.params[data.tf_index] * data.tf_tm * (data.tf_tm_sqrd - 3.0 * data.w_tf_tm_sqrd) * data.inv_tf_denom**3
-
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the tm - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)     4                                   (ts + tm)^2 - 3(w.ts.tm)^2
-        -------  =  - (S2f - S2) . tm . ts . (ts + tm) -----------------------------
-        dtm.dts     5                                  ((ts + tm)^2 + (w.ts.tm)^2)^3
-    """
-
-    return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) * data.inv_ts_denom**3
-
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the S2f - tf double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)        2        (tf + tm)^2 - (w.tf.tm)^2
-        --------  =  - - tm^2 -----------------------------
-        dS2f.dtf       5      ((tf + tm)^2 + (w.tf.tm)^2)^2
-    """
-
-    return -data.fact_djw_dtf
-
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dS2fdts(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)      2        (ts + tm)^2 - (w.ts.tm)^2
-        --------  =  - tm^2 -----------------------------
-        dS2f.dts     5      ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return data.fact_djw_dts
-
-
-def calc_tm_S2f_tf_S2_ts_d2jw_dS2dts(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The model-free Hessian is:
-
-         d2J(w)       2        (ts + tm)^2 - (w.ts.tm)^2
-        -------  =  - - tm^2 -----------------------------
-        dS2.dts       5      ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return -data.fact_djw_dts
-
+# {tm, S2f, tf, S2, ts}
 
 def calc_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the tf - tf double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the tf - tf double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, tf, S2, ts}.
 
     The model-free Hessian is:
 
-        d2J(w)       4                  (tf + tm)^3 + 3.tm^3.tf.w^2.(tf + tm) - (w.tm)^4.tf^3
-        ------  =  - - tm^2 . (1 - S2f) -----------------------------------------------------
-        dtf**2       5                              ((tf + tm)^2 + (w.tf.tm)^2)^3
+                                 _n_
+        d2J(w)       4           \             (tf + ti)^3 + 3.w^2.ti^3.tf.(tf + ti) - (w.ti)^4.tf^3
+        ------  =  - - (1 - S2f)  >  ci . ti^2 -----------------------------------------------------
+        dtf**2       5           /__                        ((tf + ti)^2 + (w.tf.ti)^2)^3
+                                 i=m
     """
 
-    num = data.tf_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_tm - data.w_tm_sqrd**2 * data.params[data.tf_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
+    num = data.tf_ti[0]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.tf_index]**3
+    d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_tf_denom[0]**3
+
+    for i in xrange(1, data.len):
+        num = data.tf_ti[i]**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.tf_index]**3
+        d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_tf_denom[i]**3
+
+    return -0.8 * data.one_s2f * d2jw
 
 
-def calc_tm_S2f_tf_S2_ts_d2jw_dts2(data):
+
+# Extended ts - ts partial derivative.
+#######################################
+
+# {S2f, S2, ts} or {S2f, tf, S2, ts}
+
+def calc_S2f_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
-    Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
-    extended model-free formula with the parameters tm, S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the ts - ts double partial derivative of the extended
+    model-free formula with the parameters {S2f, S2, ts} or the parameters {S2f, tf, S2, ts}.
 
     The model-free Hessian is:
 
-        d2J(w)       4                   (ts + tm)^3 + 3.tm^3.ts.w^2.(ts + tm) - (w.tm)^4.ts^3
-        ------  =  - - tm^2 . (S2f - S2) -----------------------------------------------------
-        dts**2       5                               ((ts + tm)^2 + (w.ts.tm)^2)^3
+                                  _n_
+        d2J(w)       4            \             (ts + ti)^3 + 3.w^2.ti^3.ts.(ts + ti) - (w.ti)^4.ts^3
+        ------  =  - - (S2f - S2)  >  ci . ti^2 -----------------------------------------------------
+        dts**2       5            /__                        ((ts + ti)^2 + (w.ts.ti)^2)^3
+                                  i=m
     """
 
-    num = data.ts_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
+    num = data.ts_ti[0]**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.ts_index]**3
+    d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_ts_denom[0]**3
+
+    for i in xrange(1, data.len):
+        num = data.ts_ti[i]**3 + 3.0 * data.diff_params[i]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.ts_index]**3
+        d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_ts_denom[i]**3
+
+    return -0.8 * data.s2f_s2 * d2jw
+
+
+# {tm, S2f, S2, ts} or {tm, S2f, tf, S2, ts}
+
+def calc_tm_S2f_S2_ts_d2jw_dts2(data):
+    """Spectral density Hessian.
+
+    Calculate the spectral desity values for the ts - ts double partial derivative of the extended
+    model-free formula with the parameters {tm, S2f, S2, ts} or the parameters
+    {tm, S2f, tf, S2, ts}.
+
+    The model-free Hessian is:
+
+                                  _n_
+        d2J(w)       4            \             (ts + ti)^3 + 3.w^2.ti^3.ts.(ts + ti) - (w.ti)^4.ts^3
+        ------  =  - - (S2f - S2)  >  ci . ti^2 -----------------------------------------------------
+        dts**2       5            /__                        ((ts + ti)^2 + (w.ts.ti)^2)^3
+                                  i=m
+    """
+
+    num = data.ts_ti[0]**3 + 3.0 * data.params[data.ti_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[0] - data.w_ti_sqrd[0]**2 * data.params[data.ts_index]**3
+    d2jw = data.ci[0] * data.diff_params[0]**2 * num * data.inv_ts_denom[0]**3
+
+    for i in xrange(1, data.len):
+        num = data.ts_ti[i]**3 + 3.0 * data.params[data.ti_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_ti[i] - data.w_ti_sqrd[i]**2 * data.params[data.ts_index]**3
+        d2jw = d2jw + data.ci[i] * data.diff_params[i]**2 * num * data.inv_ts_denom[i]**3
+
+    return -0.8 * data.s2f_s2 * d2jw
 
 
 
@@ -2126,22 +2180,6 @@ def calc_S2f_S2s_ts_d2jw_dts2(data):
 # Extended 2 {S2f, tf, S2s, ts}.
 ################################
 
-def calc_S2f_tf_S2s_ts_d2jw_dS2fdS2s(data):
-    """Spectral density Hessian.
-
-    Calculate the isotropic spectral desity values for the S2f/S2s double partial derivative of the
-    extended model-free formula with the parameters S2f, tf, S2s, and ts.
-
-    The model-free Hessian is:
-
-          d2J(w)      2    /      1                 (ts + tm).ts        \ 
-        ---------  =  - tm | ------------  -  ------------------------- |
-        dS2f.dS2s     5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
-    """
-
-    return data.fact_djw_ds2s
-
-
 def calc_S2f_tf_S2s_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
@@ -2157,6 +2195,22 @@ def calc_S2f_tf_S2s_ts_d2jw_dS2fdtf(data):
 
     return -data.fact_djw_dtf
 
+
+
+def calc_S2f_tf_S2s_ts_d2jw_dS2fdS2s(data):
+    """Spectral density Hessian.
+
+    Calculate the isotropic spectral desity values for the S2f/S2s double partial derivative of the
+    extended model-free formula with the parameters S2f, tf, S2s, and ts.
+
+    The model-free Hessian is:
+
+          d2J(w)      2    /      1                 (ts + tm).ts        \ 
+        ---------  =  - tm | ------------  -  ------------------------- |
+        dS2f.dS2s     5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+    """
+
+    return data.fact_djw_ds2s
 
 def calc_S2f_tf_S2s_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
