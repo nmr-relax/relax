@@ -195,10 +195,7 @@ def calc_aniso_ci(data, diff_data):
     d = 3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1.0
 
     # Calculate e.
-    if diff_data.params[1] == 0.0:
-        e = 0.0
-    else:
-        e = data.e1 * data.c_alpha + data.e2 * data.c_beta - data.e3 * data.c_gamma
+    e = data.e1 * data.c_alpha + data.e2 * data.c_beta - data.e3 * data.c_gamma
 
     # Weight c-2.
     data.ci[0] = 3.0 * data.delta_alpha**2 * data.delta_beta**2
