@@ -6,7 +6,7 @@ class Tab_completion:
     def __init__(self, name_space={}, print_flag=0):
         """Function for tab completion.
 
-        Some of this code is stolen from the python rlcompleter code.
+        Some of this code is stolen from the python rlcompleter code and needs to be replaced.
         """
 
         self.name_space = name_space

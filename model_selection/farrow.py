@@ -1,3 +1,26 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2003 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# Relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# Relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
+
+
 # The method given by Farrow et al., 1994:
 #
 #    Stage 1:   Creation of the files for the initial model-free calculations for models 1 to 5,
