@@ -51,9 +51,9 @@ class d2Ri:
 		self.data.d2ri = copy.deepcopy(self.data.d2ri_prime)
 
 		# Loop over the relaxation values and modify the NOE hessians.
-		for i in range(self.mf.data.num_ri):
-			if self.mf.data.data_types[i] == 'NOE':
-				r1_index = self.mf.data.noe_r1_table[i]
+		for i in range(self.relax.data.num_ri):
+			if self.relax.data.data_types[i] == 'NOE':
+				r1_index = self.relax.data.noe_r1_table[i]
 				r1 = self.data.ri_prime[r1_index]
 				if r1 == None:
 					raise NameError, "Incomplete code, need to somehow calculate the r1 value."
@@ -64,6 +64,6 @@ class d2Ri:
 						else:
 							a = self.data.ri_prime[i] * (2.0 * self.data.dri_prime[param1, r1_index] * self.data.dri_prime[param2, r1_index] - r1 * self.data.d2ri_prime[param1, param2, r1_index])
 							b = r1 * (self.data.dri_prime[param1, i] * self.data.dri_prime[param2, r1_index] + self.data.dri_prime[param1, i] * self.data.dri_prime[param2, r1_index] - r1 * self.data.d2ri_prime[param1, param2, i])
-							self.data.d2ri[param1, param2, i] = (self.mf.data.gh/self.mf.data.gx) * (1.0 / r1**3) * (a - b)
+							self.data.d2ri[param1, param2, i] = (self.relax.data.gh/self.relax.data.gx) * (1.0 / r1**3) * (a - b)
 						if param1 != param2:
 							self.data.d2ri[param2, param1, i] = self.data.d2ri[param1, param2, i]

@@ -24,26 +24,26 @@ class Jw:
 		"""
 
 		# Initialise the spectral density values.
-		self.data.jw = zeros((self.mf.data.num_frq, 5), Float64)
+		self.data.jw = zeros((self.relax.data.num_frq, 5), Float64)
 
 		# Isotropic rotational diffusion.
 		if match(self.data.diff_type, 'iso'):
 			if match('m[13]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					self.data.jw[i, 0] = self.calc_jw_iso_m13(i, 0)
 					self.data.jw[i, 1] = self.calc_jw_iso_m13(i, 1)
 					self.data.jw[i, 2] = self.calc_jw_iso_m13(i, 2)
 					self.data.jw[i, 3] = self.calc_jw_iso_m13(i, 3)
 					self.data.jw[i, 4] = self.calc_jw_iso_m13(i, 4)
 			elif match('m[24]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					self.data.jw[i, 0] = self.calc_jw_iso_m24(i, 0)
 					self.data.jw[i, 1] = self.calc_jw_iso_m24(i, 1)
 					self.data.jw[i, 2] = self.calc_jw_iso_m24(i, 2)
 					self.data.jw[i, 3] = self.calc_jw_iso_m24(i, 3)
 					self.data.jw[i, 4] = self.calc_jw_iso_m24(i, 4)
 			elif match('m5', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					self.data.jw[i, 0] = self.calc_jw_iso_m5(i, 0)
 					self.data.jw[i, 1] = self.calc_jw_iso_m5(i, 1)
 					self.data.jw[i, 2] = self.calc_jw_iso_m5(i, 2)

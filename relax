@@ -39,57 +39,99 @@ from usr_param import usr_param
 from model_selection.model_selection import model_selection
 from minimise.minimise import minimise
 
-class mf:
-	def __init__(self):
+class relax:
+	def __init__(self, argv):
 		"The top level class."
 
-		self.version = 0.5
+		self.argv = argv
+
+		# Create a string to pass to the interpreter to print.
 		self.set_intro_string()
 
 		# Debugging option, 0 = off, 1 = on.
 		self.debug = 0
 
 		# Import the user parameters.
-		self.usr_param = usr_param()
-		if not self.version == self.usr_param.version:
-			print "The versions numbers of the program and the file 'usr_param.py' do not match."
-			print "Copy the correct version to the working directory, quitting program."
-			sys.exit()
+		#self.usr_param = usr_param()
+		#if not self.version == self.usr_param.version:
+		#	print "The versions numbers of the program and the file 'usr_param.py' do not match."
+		#	print "Copy the correct version to the working directory, quitting program."
+		#	sys.exit()
 
-		# Initialise the class self.mf.function to place program functions into.
+		# Initialise the class self.self.function to place program functions into.
 		self.data = data(self)
 		self.file_ops = file_ops(self)
 		self.model_selection = model_selection(self)
 		self.minimise = minimise
 
-		interpreter(self)
+		# Test if command line arguments are given, else run the interpreter.
+		try:
+			self.argv[1]
+		except IndexError:
+			interpreter(self)
+		else:
+			self.arguments()
+
 		sys.exit()
 
 		# Select the behaviour of the program.
-		if match('^[Rr]elax[- _][Ff]it$', self.usr_param.program_type):
-			relax_fit(self)
+		#if match('^[Rr]elax[- _][Ff]it$', self.usr_param.program_type):
+		#	relax_fit(self)
 
-		elif match('^[Mm][Ff]$', self.usr_param.program_type):
-			model_free(self)
+		#elif match('^[Mm][Ff]$', self.usr_param.program_type):
+		#	model_free(self)
 
-		elif match('^[Pp]almer$', self.usr_param.program_type):
-			palmer(self)
+		#elif match('^[Pp]almer$', self.usr_param.program_type):
+		#	palmer(self)
+
+		#else:
+		#	print "The program type " + `self.usr_param.program_type` + " does not exist."
+
+
+	def arguments(self):
+		"Function for dealing with command line options"
+
+		# Help.
+		if match('--help', self.argv[1]) or match('-h', self.argv[1]):
+			self.print_help()
+
+		# Script file.
+		elif match('-s', self.argv[1]):
+			try:
+				self.argv[2]
+			except IndexError:
+				print "The name of the script file is not given."
+			else:
+				print "This option is yet to be coded."
+				print "use \"relax < file_name\" instead."
 
 		else:
-			print "The program type " + `self.usr_param.program_type` + " does not exist."
+			print "Try \"relax --help\" for more information."
+
+
+	def print_help(self):
+		"Print the help message."
+
+		print "\nUsage: relax [OPTION]"
+		print "Options:"
+		print "   -s FILE      Specify the script file to use without an interface.\n"
+		print "   --help       Display this help and exit.\n"
 
 
 	def set_intro_string(self):
 		"Create the program introduction."
 
-		self.intro_string = """
-
-		                      mf v0.5
-
-		Program to process all model-free input and output.
-
-		"""
+		self.intro_string = "\n"
+		self.intro_string = self.intro_string + "relax v0.0\n"
+		self.intro_string = self.intro_string + "\n"
+		self.intro_string = self.intro_string + "Program for relaxation data analysis.\n"
+		self.intro_string = self.intro_string + "(relaxation curve fitting, "
+		self.intro_string = self.intro_string + "model-free analysis, "
+		self.intro_string = self.intro_string + "SRLS analysis, "
+		self.intro_string = self.intro_string + "reduced spectral density mapping, "
+		self.intro_string = self.intro_string + "relaxation dispersion analysis)"
+		self.intro_string = self.intro_string + "\n"
 
 
 if __name__ == "__main__":
-	mf()
+	relax(sys.argv)

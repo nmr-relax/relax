@@ -172,44 +172,44 @@ class dRi_prime:
 		self.dJw()
 
 		# Initialise the components of the transformed relaxation equations.
-		self.data.j_dip_comps_prime = zeros((len(self.data.params), self.mf.data.num_ri), Float64)
-		self.data.j_csa_comps_prime = zeros((len(self.data.params), self.mf.data.num_ri), Float64)
+		self.data.j_dip_comps_prime = zeros((len(self.data.params), self.relax.data.num_ri), Float64)
+		self.data.j_csa_comps_prime = zeros((len(self.data.params), self.relax.data.num_ri), Float64)
 		if match('m[34]', self.data.model):
-			self.data.rex_comps_prime = zeros((len(self.data.params), self.mf.data.num_ri), Float64)
+			self.data.rex_comps_prime = zeros((len(self.data.params), self.relax.data.num_ri), Float64)
 		if match('m6', self.data.model):
-			self.data.dip_comps_prime = zeros((len(self.data.params), self.mf.data.num_ri), Float64)
-			self.data.csa_comps_prime = zeros((len(self.data.params), self.mf.data.num_ri), Float64)
+			self.data.dip_comps_prime = zeros((len(self.data.params), self.relax.data.num_ri), Float64)
+			self.data.csa_comps_prime = zeros((len(self.data.params), self.relax.data.num_ri), Float64)
 
 		# Loop over the relaxation values.
-		for i in range(self.mf.data.num_ri):
-			frq_num = self.mf.data.remap_table[i]
+		for i in range(self.relax.data.num_ri):
+			frq_num = self.relax.data.remap_table[i]
 
 			# R1 components.
-			if self.mf.data.data_types[i]  == 'R1':
+			if self.relax.data.data_types[i]  == 'R1':
 				self.data.j_dip_comps_prime[:, i] = self.data.djw[frq_num, 2] + 3.0*self.data.djw[frq_num, 1] + 6.0*self.data.djw[frq_num, 4]
 				self.data.j_csa_comps_prime[:, i] = self.data.djw[frq_num, 1]
 				if match('m6', self.data.model):
-					self.data.dip_comps_prime[:, i] = self.mf.data.dipole_prime
-					self.data.csa_comps_prime[:, i] = self.mf.data.csa_prime[frq_num]
+					self.data.dip_comps_prime[:, i] = self.relax.data.dipole_prime
+					self.data.csa_comps_prime[:, i] = self.relax.data.csa_prime[frq_num]
 
 			# R2 components.
-			elif self.mf.data.data_types[i] == 'R2':
+			elif self.relax.data.data_types[i] == 'R2':
 				self.data.j_dip_comps_prime[:, i] = 4.0*self.data.djw[frq_num, 0] + self.data.djw[frq_num, 2] + 3.0*self.data.djw[frq_num, 1] + 6.0*self.data.djw[frq_num, 3] + 6.0*self.data.djw[frq_num, 4]
 				self.data.j_csa_comps_prime[:, i] = 4.0*self.data.djw[frq_num, 0] + 3.0*self.data.djw[frq_num, 1]
 				if match('m[34]', self.data.model):
-					self.data.rex_comps_prime[:, i] = (1e-8 * self.mf.data.frq[frq_num])**2
+					self.data.rex_comps_prime[:, i] = (1e-8 * self.relax.data.frq[frq_num])**2
 				if match('m6', self.data.model):
-					self.data.dip_comps_prime[:, i] = self.mf.data.dipole_prime / 2.0
-					self.data.csa_comps_prime[:, i] = self.mf.data.csa_prime[frq_num] / 6.0
+					self.data.dip_comps_prime[:, i] = self.relax.data.dipole_prime / 2.0
+					self.data.csa_comps_prime[:, i] = self.relax.data.csa_prime[frq_num] / 6.0
 
 			# sigma_noe components.
-			elif self.mf.data.data_types[i] == 'NOE':
+			elif self.relax.data.data_types[i] == 'NOE':
 				self.data.j_dip_comps_prime[:, i] = 6.0*self.data.djw[frq_num, 4] - self.data.djw[frq_num, 2]
 				if match('m6', self.data.model):
-					self.data.dip_comps_prime[:, i] = self.mf.data.dipole_prime
+					self.data.dip_comps_prime[:, i] = self.relax.data.dipole_prime
 
 		# Initialise the transformed relaxation gradients.
-		self.data.dri_prime = zeros((len(self.data.params), self.mf.data.num_ri), Float64)
+		self.data.dri_prime = zeros((len(self.data.params), self.relax.data.num_ri), Float64)
 
 		# Calculate the transformed relaxation gradients.
 		for param in range(len(self.data.ri_param_types)):

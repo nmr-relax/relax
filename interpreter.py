@@ -13,8 +13,10 @@ class interpreter(macros):
 		del relax
 
 		# Place the macros in the local namespace.
-		exit = self.exit
 		load = self.load
+		load_seq = self.load_seq
+		ls = self.ls
+		print_seq = self.print_seq
 
 		# Setup tab completion.
 		readline.set_completer(tab_completion(name_space=locals()).finish)

@@ -2,10 +2,10 @@ from re import match
 from string import split
 
 class star:
-	def __init__(self, mf):
+	def __init__(self, relax):
 		"Class to extract model-free data from the STAR formatted mfout file."
 
-		self.mf = mf
+		self.relax = relax
 
 
 	def extract(self, mfout, num_res, chi2_lim=0.90, ftest_lim=0.80, ftest='n'):
@@ -48,7 +48,7 @@ class star:
 			if match('data_sse', self.row[0]):
 				self.line_num = line + 3
 				break
-		if match('y', self.mf.data.mfin.sims):
+		if match('y', self.relax.data.mfin.sims):
 			self.line_num = self.line_num + 2
 			for i in range(self.num_res):
 				self.row = [[]]
@@ -103,12 +103,12 @@ class star:
 			if match('data_relaxation', self.row[0]):
 				self.line_num = line + 7
 				break
-		for i in range(self.mf.data.num_ri):
+		for i in range(self.relax.data.num_ri):
 			self.split_rows(self.line_num, self.num_res)
 
-			label = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i]
-			label_err = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_err"
-			label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
+			label = self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i]
+			label_err = self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i] + "_err"
+			label_fit = self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i] + "_fit"
 
 			for i in range(self.num_res):
 				self.data[i][label] = float(self.row[i][1])

@@ -4,17 +4,17 @@ from string import split
 import sys
 
 class file_ops:
-	def __init__(self, mf):
+	def __init__(self, relax):
 		"Class containing the file operations"
 
-		self.mf = mf
+		self.relax = relax
 
 
 	def init_log_file(self, title='Log file'):
 		"Initialise the log file."
 
-		self.mf.log = open('log.stage' + self.mf.data.stage, 'w')
-		self.mf.log.write(title)
+		self.relax.log = open('log.stage' + self.relax.data.stage, 'w')
+		self.relax.log.write(title)
 
 
 	def open_file(self, file_name):
@@ -41,13 +41,12 @@ class file_ops:
 	def mkdir(self, dir):
 		"Create the given directory, or exit if the directory exists."
 
-		if self.mf.debug:
-			self.mf.log.write("Making directory " + dir + "\n")
+		if self.relax.debug:
+			self.relax.log.write("Making directory " + dir + "\n")
 		try:
 			mkdir(dir)
 		except OSError:
-			print "Directory ./" + dir + " already exists, quitting program.\n"
-			sys.exit()
+			print "Directory ./" + dir + " already exists.\n"
 
 
 	def read_file(self, file_name, message=''):
@@ -56,9 +55,8 @@ class file_ops:
 		try:
 			open(file_name, 'r')
 		except IOError:
-			sys.stdout.write(message)
-			sys.stdout.write("The file '" + file_name + "' does not exist, quitting program.\n\n\n")
-			sys.exit()
+			print message
+			print "The file '" + file_name + "' does not exist, quitting program.\n\n\n"
 		file = open(file_name, 'r')
 		return file
 

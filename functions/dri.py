@@ -49,13 +49,13 @@ class dRi:
 		self.data.dri = copy.deepcopy(self.data.dri_prime)
 
 		# Loop over the relaxation values and modify the NOE gradients.
-		for i in range(self.mf.data.num_ri):
-			if self.mf.data.data_types[i] == 'NOE':
-				r1 = self.data.ri_prime[self.mf.data.noe_r1_table[i]]
+		for i in range(self.relax.data.num_ri):
+			if self.relax.data.data_types[i] == 'NOE':
+				r1 = self.data.ri_prime[self.relax.data.noe_r1_table[i]]
 				if r1 == None:
 					raise NameError, "Incomplete code, need to somehow calculate the r1 value."
 				for param in range(len(self.data.ri_param_types)):
 					if r1 == 0.0:
 						self.data.dri[param, i] = 1e99
 					else:
-						self.data.dri[param, i] = (self.mf.data.gh/self.mf.data.gx) * (1.0 / r1**2) * (r1 * self.data.dri_prime[param, i] - self.data.ri_prime[i] * self.data.dri_prime[param, self.mf.data.noe_r1_table[i]])
+						self.data.dri[param, i] = (self.relax.data.gh/self.relax.data.gx) * (1.0 / r1**2) * (r1 * self.data.dri_prime[param, i] - self.data.ri_prime[i] * self.data.dri_prime[param, self.relax.data.noe_r1_table[i]])

@@ -158,13 +158,13 @@ class d2Jw:
 		"""
 
 		# Initialise the spectral density hessians.
-		self.data.d2jw = zeros((self.mf.data.num_frq, 5, len(self.data.params), len(self.data.params)), Float64)
+		self.data.d2jw = zeros((self.relax.data.num_frq, 5, len(self.data.params), len(self.data.params)), Float64)
 
 		# Isotropic rotational diffusion.
 		if match(self.data.diff_type, 'iso'):
 			# Model 1 and 3 hessians are zero.
 			if match('m[24]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					for param1 in range(len(self.data.jw_param_types)):
 						for param2 in range(param1 + 1):
 							if (self.data.jw_param_types[param1] == 'S2' and self.data.jw_param_types[param2] == 'te') \
@@ -189,7 +189,7 @@ class d2Jw:
 								self.data.d2jw[i, 3, param1, param2] = self.calc_d2jw_dte2_iso_m24(i, 3)
 								self.data.d2jw[i, 4, param1, param2] = self.calc_d2jw_dte2_iso_m24(i, 4)
 			elif match('m5', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					for param1 in range(len(self.data.jw_param_types)):
 						for param2 in range(param1 + 1):
 							if (self.data.jw_param_types[param1] == 'S2f' and self.data.jw_param_types[param2] == 'S2s') \
@@ -266,7 +266,7 @@ class d2Jw:
 		"Calculate the model 2 and 4 te/te partial derivative of the spectral density function for isotropic rotational diffusion."
 
 		a = 1.0 / ((1.0 + self.data.omega_te_prime_sqrd[i, frq_index])**3)
-		b = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.te_prime * (3.0 - self.data.omega_te_prime_sqrd[i, frq_index])
+		b = self.relax.data.frq_sqrd_list[i][frq_index] * self.data.te_prime * (3.0 - self.data.omega_te_prime_sqrd[i, frq_index])
 		c = (1.0 - self.data.omega_te_prime_sqrd[i, frq_index]**2) * (self.data.te + self.data.tm) * self.data.tm**-2
 
 		temp = -0.8 * (1.0 - self.data.s2) * self.data.fact_a**4 * a * (b + c)
@@ -298,7 +298,7 @@ class d2Jw:
 		"Calculate the model 5 ts/ts partial derivative of the spectral density function for isotropic rotational diffusion."
 
 		a = 1.0 / ((1.0 + self.data.omega_ts_prime_sqrd[i, frq_index])**3)
-		b = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.ts_prime * (3.0 - self.data.omega_ts_prime_sqrd[i, frq_index])
+		b = self.relax.data.frq_sqrd_list[i][frq_index] * self.data.ts_prime * (3.0 - self.data.omega_ts_prime_sqrd[i, frq_index])
 		c = (1.0 - self.data.omega_ts_prime_sqrd[i, frq_index]**2) * (self.data.ts + self.data.tm) * self.data.tm**-2
 
 		temp = -0.8 * (self.data.s2f - self.data.s2) * self.data.fact_a**4 * a * (b + c)

@@ -71,26 +71,26 @@ class Jw:
 		self.initialise_jw_values()
 
 		# Initialise the spectral density values.
-		self.data.jw = zeros((self.mf.data.num_frq, 5), Float64)
+		self.data.jw = zeros((self.relax.data.num_frq, 5), Float64)
 
 		# Isotropic rotational diffusion.
 		if match(self.data.diff_type, 'iso'):
 			if match('m[13]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					self.data.jw[i, 0] = self.calc_jw_iso_m13(i, 0)
 					self.data.jw[i, 1] = self.calc_jw_iso_m13(i, 1)
 					self.data.jw[i, 2] = self.calc_jw_iso_m13(i, 2)
 					self.data.jw[i, 3] = self.calc_jw_iso_m13(i, 3)
 					self.data.jw[i, 4] = self.calc_jw_iso_m13(i, 4)
 			elif match('m[24]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					self.data.jw[i, 0] = self.calc_jw_iso_m24(i, 0)
 					self.data.jw[i, 1] = self.calc_jw_iso_m24(i, 1)
 					self.data.jw[i, 2] = self.calc_jw_iso_m24(i, 2)
 					self.data.jw[i, 3] = self.calc_jw_iso_m24(i, 3)
 					self.data.jw[i, 4] = self.calc_jw_iso_m24(i, 4)
 			elif match('m5', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					self.data.jw[i, 0] = self.calc_jw_iso_m5(i, 0)
 					self.data.jw[i, 1] = self.calc_jw_iso_m5(i, 1)
 					self.data.jw[i, 2] = self.calc_jw_iso_m5(i, 2)
@@ -141,7 +141,7 @@ class Jw:
 		if match(self.data.diff_type, 'iso'):
 			self.data.tm = self.data.diff_params
 			self.data.tm_sqrd = self.data.tm ** 2
-			self.data.omega_tm_sqrd = zeros((self.mf.data.num_frq, 5), Float64)
+			self.data.omega_tm_sqrd = zeros((self.relax.data.num_frq, 5), Float64)
 
 		# Diffusion independent values.
 		if match('m[13]', self.data.model):
@@ -152,7 +152,7 @@ class Jw:
 			self.data.ae = self.data.params[1]
 			self.data.ae_plus_c_tm = self.data.ae + self.data.c * self.data.tm
 			self.data.ae_plus_c_tm_sqrd = self.data.ae_plus_c_tm ** 2
-			self.data.omega_tm_ae_sqrd = zeros((self.mf.data.num_frq, 5), Float64)
+			self.data.omega_tm_ae_sqrd = zeros((self.relax.data.num_frq, 5), Float64)
 
 		elif match('m5', self.data.model):
 			self.data.s2f = self.data.params[0]
@@ -161,12 +161,12 @@ class Jw:
 			self.data.as = self.data.params[2]
 			self.data.as_plus_c_tm = self.data.as + self.data.c * self.data.tm
 			self.data.as_plus_c_tm_sqrd = self.data.as_plus_c_tm ** 2
-			self.data.omega_tm_as_sqrd = zeros((self.mf.data.num_frq, 5), Float64)
+			self.data.omega_tm_as_sqrd = zeros((self.relax.data.num_frq, 5), Float64)
 
-		for i in range(self.mf.data.num_frq):
+		for i in range(self.relax.data.num_frq):
 			for frq_index in range(5):
-				self.data.omega_tm_sqrd[i, frq_index] = self.mf.data.frq_sqrd_list[i][frq_index] * self.data.tm_sqrd
+				self.data.omega_tm_sqrd[i, frq_index] = self.relax.data.frq_sqrd_list[i][frq_index] * self.data.tm_sqrd
 				if match('m[24]', self.data.model):
-					self.data.omega_tm_ae_sqrd[i, frq_index] = (self.mf.data.frq_list[i][frq_index] * self.data.tm * self.data.ae)**2
+					self.data.omega_tm_ae_sqrd[i, frq_index] = (self.relax.data.frq_list[i][frq_index] * self.data.tm * self.data.ae)**2
 				elif match('m5', self.data.model):
-					self.data.omega_tm_as_sqrd[i, frq_index] = (self.mf.data.frq_list[i][frq_index] * self.data.tm * self.data.as)**2
+					self.data.omega_tm_as_sqrd[i, frq_index] = (self.relax.data.frq_list[i][frq_index] * self.data.tm * self.data.as)**2

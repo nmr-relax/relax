@@ -5,17 +5,17 @@ import sys
 
 
 class common_ops:
-	def __init__(self, mf):
+	def __init__(self, relax):
 		"Operations, functions, etc common to the different model-free analysis methods."
 
-		self.mf = mf
+		self.relax = relax
 
 	def extract_relax_data(self):
 		"Extract the relaxation data from the files given in the file 'input'"
 		print "\n[ Relaxation data extraction ]\n"
-		for i in range(self.mf.data.num_ri):
-			data = self.mf.file_ops.relax_data(self.mf.data.data_files[i])
-			self.mf.data.relax_data.append(data)
+		for i in range(self.relax.data.num_ri):
+			data = self.relax.file_ops.relax_data(self.relax.data.data_files[i])
+			self.relax.data.relax_data.append(data)
 
 
 	def fill_results(self, data, model='0'):
@@ -61,30 +61,30 @@ class common_ops:
 		else:
 			file.write(self.grace_header(type + ' values', subtitle, 'Residue Number', type, 'xydy'))
 
-		for res in range(len(self.mf.data.results)):
-			if match('S2', type) and self.mf.data.results[res]['s2']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['s2']` + " ")
-				file.write(`self.mf.data.results[res]['s2_err']` + "\n")
-			elif match('S2s', type) and self.mf.data.results[res]['s2s']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['s2s']` + " ")
-				file.write(`self.mf.data.results[res]['s2s_err']` + "\n")
-			elif match('S2f', type) and self.mf.data.results[res]['s2f']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['s2f']` + " ")
-				file.write(`self.mf.data.results[res]['s2f_err']` + "\n")
-			elif match('te', type) and self.mf.data.results[res]['te']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['te']` + " ")
-				file.write(`self.mf.data.results[res]['te_err']` + "\n")
-			elif match('Rex', type) and self.mf.data.results[res]['rex']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['rex']` + " ")
-				file.write(`self.mf.data.results[res]['rex_err']` + "\n")
-			elif match('Chi2', type) and self.mf.data.results[res]['chi2']:
-				file.write(self.mf.data.results[res]['res_num'] + " ")
-				file.write(`self.mf.data.results[res]['chi2']` + "\n")
+		for res in range(len(self.relax.data.results)):
+			if match('S2', type) and self.relax.data.results[res]['s2']:
+				file.write(self.relax.data.results[res]['res_num'] + " ")
+				file.write(`self.relax.data.results[res]['s2']` + " ")
+				file.write(`self.relax.data.results[res]['s2_err']` + "\n")
+			elif match('S2s', type) and self.relax.data.results[res]['s2s']:
+				file.write(self.relax.data.results[res]['res_num'] + " ")
+				file.write(`self.relax.data.results[res]['s2s']` + " ")
+				file.write(`self.relax.data.results[res]['s2s_err']` + "\n")
+			elif match('S2f', type) and self.relax.data.results[res]['s2f']:
+				file.write(self.relax.data.results[res]['res_num'] + " ")
+				file.write(`self.relax.data.results[res]['s2f']` + " ")
+				file.write(`self.relax.data.results[res]['s2f_err']` + "\n")
+			elif match('te', type) and self.relax.data.results[res]['te']:
+				file.write(self.relax.data.results[res]['res_num'] + " ")
+				file.write(`self.relax.data.results[res]['te']` + " ")
+				file.write(`self.relax.data.results[res]['te_err']` + "\n")
+			elif match('Rex', type) and self.relax.data.results[res]['rex']:
+				file.write(self.relax.data.results[res]['res_num'] + " ")
+				file.write(`self.relax.data.results[res]['rex']` + " ")
+				file.write(`self.relax.data.results[res]['rex_err']` + "\n")
+			elif match('Chi2', type) and self.relax.data.results[res]['chi2']:
+				file.write(self.relax.data.results[res]['res_num'] + " ")
+				file.write(`self.relax.data.results[res]['chi2']` + "\n")
 		file.write("&\n")
 		file.close()
 
@@ -151,27 +151,27 @@ class common_ops:
 
 
 	def log_input_info(self):
-		for i in range(self.mf.data.num_ri):
-			self.mf.log.write('%-25s%-20s\n' % ("Data label:", self.mf.data.data_types[i]))
-			#self.mf.log.write('%-25s%-20s\n' % ("NMR frequency label:", self.mf.data.frq_label[i]))
-			#self.mf.log.write('%-25s%-20s\n' % ("NMR proton frequency:", `self.mf.data.frq[i]`))
-			self.mf.log.write('%-25s%-20s\n\n' % ("File name:", self.mf.data.files[i]))
-		self.mf.log.write("Number of frequencies:\t" + `self.mf.data.num_frq` + "\n")
-		self.mf.log.write("Number of data sets:\t" + `self.mf.data.num_ri` + "\n\n")
+		for i in range(self.relax.data.num_ri):
+			self.relax.log.write('%-25s%-20s\n' % ("Data label:", self.relax.data.data_types[i]))
+			#self.relax.log.write('%-25s%-20s\n' % ("NMR frequency label:", self.relax.data.frq_label[i]))
+			#self.relax.log.write('%-25s%-20s\n' % ("NMR proton frequency:", `self.relax.data.frq[i]`))
+			self.relax.log.write('%-25s%-20s\n\n' % ("File name:", self.relax.data.files[i]))
+		self.relax.log.write("Number of frequencies:\t" + `self.relax.data.num_frq` + "\n")
+		self.relax.log.write("Number of data sets:\t" + `self.relax.data.num_ri` + "\n\n")
 
 
 	def log_params(self, name, mdx):
 		"Put the parameter data structures into the log file."
 
-		self.mf.log.write("\n" + name + " data structure\n")
+		self.relax.log.write("\n" + name + " data structure\n")
 		for param in ['tloc', 'theta', 'ss2', 'sf2', 'te', 'rex']:
-			self.mf.log.write('%-10s' % ( param + ":" ))
-			self.mf.log.write('%-15s' % ( "start = " + mdx[param]['start'] ))
-			self.mf.log.write('%-11s' % ( "flag = " + mdx[param]['flag'] ))
-			self.mf.log.write('%-13s' % ( "bound = " + mdx[param]['bound'] ))
-			self.mf.log.write('%-20s' % ( "lower = " + mdx[param]['lower'] ))
-			self.mf.log.write('%-20s' % ( "upper = " + mdx[param]['upper'] ))
-			self.mf.log.write('%-10s\n' % ( "steps = " + mdx[param]['steps'] ))
+			self.relax.log.write('%-10s' % ( param + ":" ))
+			self.relax.log.write('%-15s' % ( "start = " + mdx[param]['start'] ))
+			self.relax.log.write('%-11s' % ( "flag = " + mdx[param]['flag'] ))
+			self.relax.log.write('%-13s' % ( "bound = " + mdx[param]['bound'] ))
+			self.relax.log.write('%-20s' % ( "lower = " + mdx[param]['lower'] ))
+			self.relax.log.write('%-20s' % ( "upper = " + mdx[param]['upper'] ))
+			self.relax.log.write('%-10s\n' % ( "steps = " + mdx[param]['steps'] ))
 
 
 	def print_results(self):
@@ -182,29 +182,29 @@ class common_ops:
 		file.write('%-6s%-6s%-13s%-13s%-13s' % ( 'ResNo', 'Model', '    S2', '    S2f', '    S2s' ))
 		file.write('%-19s%-13s%-10s\n' % ( '       te', '    Rex', '    Chi2' ))
 		sys.stdout.write("[")
-		for res in range(len(self.mf.data.results)):
+		for res in range(len(self.relax.data.results)):
 			sys.stdout.write("-")
-			file.write('%-6s' % self.mf.data.results[res]['res_num'])
-			file.write('%-6s' % self.mf.data.results[res]['model'])
+			file.write('%-6s' % self.relax.data.results[res]['res_num'])
+			file.write('%-6s' % self.relax.data.results[res]['model'])
 
-			if self.mf.data.results[res]['model'] in ["1", "2", "3", "4", "5"]:
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] ))
+			if self.relax.data.results[res]['model'] in ["1", "2", "3", "4", "5"]:
+				file.write('%5.3f%1s%-5.3f  ' % ( self.relax.data.results[res]['s2'], '±', self.relax.data.results[res]['s2_err'] ))
 			else:
 				file.write('%13s' % '')
-			if self.mf.data.results[res]['model'] in ["5"]:
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] ))
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] ))
+			if self.relax.data.results[res]['model'] in ["5"]:
+				file.write('%5.3f%1s%-5.3f  ' % ( self.relax.data.results[res]['s2f'], '±', self.relax.data.results[res]['s2f_err'] ))
+				file.write('%5.3f%1s%-5.3f  ' % ( self.relax.data.results[res]['s2s'], '±', self.relax.data.results[res]['s2s_err'] ))
 			else:
 				file.write('%26s' % '')
-			if self.mf.data.results[res]['model'] in ["2", "4", "5"]:
-				file.write('%8.2f%1s%-8.2f  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] ))
+			if self.relax.data.results[res]['model'] in ["2", "4", "5"]:
+				file.write('%8.2f%1s%-8.2f  ' % ( self.relax.data.results[res]['te'], '±', self.relax.data.results[res]['te_err'] ))
 			else:
 				file.write('%19s' % '')
-			if self.mf.data.results[res]['model'] in ["3", "4"]:
-				file.write('%5.3f%1s%-5.3f  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] ))
+			if self.relax.data.results[res]['model'] in ["3", "4"]:
+				file.write('%5.3f%1s%-5.3f  ' % ( self.relax.data.results[res]['rex'], '±', self.relax.data.results[res]['rex_err'] ))
 			else:
 				file.write('%13s' % '')
-			file.write('%10.3f\n' % self.mf.data.results[res]['chi2'])
+			file.write('%10.3f\n' % self.relax.data.results[res]['chi2'])
 		sys.stdout.write("]\n")
 
 		file.close()
@@ -216,7 +216,7 @@ class common_ops:
 		print "\n[ Model-free data extraction ]\n"
 		self.extract_mf_data()
 
- 		print "\n[ " + self.mf.usr_param.method + " model selection ]\n"
+ 		print "\n[ " + self.relax.usr_param.method + " model selection ]\n"
 		self.model_selection.run()
 
 		print "\n[ Printing results ]\n"
@@ -226,7 +226,7 @@ class common_ops:
 		self.print_data()
 
 		print "\n[ Grace file creation ]\n"
-		self.mf.file_ops.mkdir('grace')
+		self.relax.file_ops.mkdir('grace')
 		self.grace('grace/S2.agr', 'S2', subtitle="After model selection, unoptimised")
 		self.grace('grace/S2f.agr', 'S2f', subtitle="After model selection, unoptimised")
 		self.grace('grace/S2s.agr', 'S2s', subtitle="After model selection, unoptimised")
@@ -242,71 +242,71 @@ class common_ops:
 		trans_table = []
 		trans_frq_table = []
 		last_frq = 0.0
-		self.mf.data.num_ri = len(self.mf.usr_param.input_info)
+		self.relax.data.num_ri = len(self.relax.usr_param.input_info)
 
 		# Create the frequency data structures.
-		for i in range(self.mf.data.num_ri):
+		for i in range(self.relax.data.num_ri):
 			flag = 1
-			if len(self.mf.data.frq) > 0:
-				for frq in range(len(self.mf.data.frq)):
-					if self.mf.usr_param.input_info[i][2] == self.mf.data.frq[frq]:
+			if len(self.relax.data.frq) > 0:
+				for frq in range(len(self.relax.data.frq)):
+					if self.relax.usr_param.input_info[i][2] == self.relax.data.frq[frq]:
 						flag = 0
 			# Update entries.
 			if flag:
-				self.mf.data.num_frq = self.mf.data.num_frq + 1
-				self.mf.data.frq_label.append(self.mf.usr_param.input_info[i][1])
-				self.mf.data.frq.append(float(self.mf.usr_param.input_info[i][2]))
-			trans_frq_table.append(self.mf.data.num_frq + 1)
-			last_frq = self.mf.usr_param.input_info[i][2]
+				self.relax.data.num_frq = self.relax.data.num_frq + 1
+				self.relax.data.frq_label.append(self.relax.usr_param.input_info[i][1])
+				self.relax.data.frq.append(float(self.relax.usr_param.input_info[i][2]))
+			trans_frq_table.append(self.relax.data.num_frq + 1)
+			last_frq = self.relax.usr_param.input_info[i][2]
 
 			# Fill the data structures with nothing.
-			self.mf.data.data_types.append(None)
-			self.mf.data.data_files.append(None)
-			self.mf.data.remap_table.append(None)
-			self.mf.data.noe_r1_table.append(None)
+			self.relax.data.data_types.append(None)
+			self.relax.data.data_files.append(None)
+			self.relax.data.remap_table.append(None)
+			self.relax.data.noe_r1_table.append(None)
 			trans_table.append(None)
 
-		# Rearrange the data in self.mf.usr_param.input_info by creating the translation table 'trans_table'
+		# Rearrange the data in self.relax.usr_param.input_info by creating the translation table 'trans_table'
 		counter = 0
-		for frq in range(len(self.mf.data.frq)):
-			for i in range(self.mf.data.num_ri):
-				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
-					if match('R1', self.mf.usr_param.input_info[i][0]):
+		for frq in range(len(self.relax.data.frq)):
+			for i in range(self.relax.data.num_ri):
+				if self.relax.data.frq[frq] == self.relax.usr_param.input_info[i][2]:
+					if match('R1', self.relax.usr_param.input_info[i][0]):
 						trans_table[i] = counter
 						counter = counter + 1
-			for i in range(self.mf.data.num_ri):
-				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
-					if match('R2', self.mf.usr_param.input_info[i][0]):
+			for i in range(self.relax.data.num_ri):
+				if self.relax.data.frq[frq] == self.relax.usr_param.input_info[i][2]:
+					if match('R2', self.relax.usr_param.input_info[i][0]):
 						trans_table[i] = counter
 						counter = counter + 1
-			for i in range(self.mf.data.num_ri):
-				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
-					if match('NOE', self.mf.usr_param.input_info[i][0]):
+			for i in range(self.relax.data.num_ri):
+				if self.relax.data.frq[frq] == self.relax.usr_param.input_info[i][2]:
+					if match('NOE', self.relax.usr_param.input_info[i][0]):
 						trans_table[i] = counter
 						counter = counter + 1
 
 		# Fill the data structures using the trans_table to reorder.
-		for i in range(self.mf.data.num_ri):
-			self.mf.data.data_types[trans_table[i]] = self.mf.usr_param.input_info[i][0]
-			self.mf.data.data_files[trans_table[i]] = self.mf.usr_param.input_info[i][3]
-			for frq in range(len(self.mf.data.frq)):
-				if self.mf.data.frq[frq] == self.mf.usr_param.input_info[i][2]:
-					self.mf.data.remap_table[trans_table[i]] = frq
-			if match('NOE', self.mf.usr_param.input_info[i][0]):
-				for j in range(self.mf.data.num_ri):
-					if match('R1', self.mf.usr_param.input_info[j][0]) and self.mf.usr_param.input_info[i][2] == self.mf.usr_param.input_info[j][2]:
-						self.mf.data.noe_r1_table[trans_table[i]] = trans_table[j]
+		for i in range(self.relax.data.num_ri):
+			self.relax.data.data_types[trans_table[i]] = self.relax.usr_param.input_info[i][0]
+			self.relax.data.data_files[trans_table[i]] = self.relax.usr_param.input_info[i][3]
+			for frq in range(len(self.relax.data.frq)):
+				if self.relax.data.frq[frq] == self.relax.usr_param.input_info[i][2]:
+					self.relax.data.remap_table[trans_table[i]] = frq
+			if match('NOE', self.relax.usr_param.input_info[i][0]):
+				for j in range(self.relax.data.num_ri):
+					if match('R1', self.relax.usr_param.input_info[j][0]) and self.relax.usr_param.input_info[i][2] == self.relax.usr_param.input_info[j][2]:
+						self.relax.data.noe_r1_table[trans_table[i]] = trans_table[j]
 
-		if self.mf.debug:
-			print "%-20s%-20s" % ("Input info:", `self.mf.usr_param.input_info`)
+		if self.relax.debug:
+			print "%-20s%-20s" % ("Input info:", `self.relax.usr_param.input_info`)
 			print "%-20s%-20s" % ("Trans frq table:", `trans_frq_table`)
 			print "%-20s%-20s" % ("Trans table:", `trans_table`)
-			print "%-20s%-20i" % ("Num ri:", self.mf.data.num_ri)
-			print "%-20s%-20i" % ("Num frq:", self.mf.data.num_frq)
-			print "%-20s%-20s" % ("Data types:", `self.mf.data.data_types`)
-			print "%-20s%-20s" % ("Data files:", `self.mf.data.data_files`)
-			print "%-20s%-20s" % ("Remap table:", `self.mf.data.remap_table`)
-			print "%-20s%-20s" % ("NOE to R1 table:", `self.mf.data.noe_r1_table`)
-			print "%-20s%-20s" % ("Frq labels:", `self.mf.data.frq_label`)
-			print "%-20s%-20s" % ("Frqs:", `self.mf.data.frq`)
+			print "%-20s%-20i" % ("Num ri:", self.relax.data.num_ri)
+			print "%-20s%-20i" % ("Num frq:", self.relax.data.num_frq)
+			print "%-20s%-20s" % ("Data types:", `self.relax.data.data_types`)
+			print "%-20s%-20s" % ("Data files:", `self.relax.data.data_files`)
+			print "%-20s%-20s" % ("Remap table:", `self.relax.data.remap_table`)
+			print "%-20s%-20s" % ("NOE to R1 table:", `self.relax.data.noe_r1_table`)
+			print "%-20s%-20s" % ("Frq labels:", `self.relax.data.frq_label`)
+			print "%-20s%-20s" % ("Frqs:", `self.relax.data.frq`)
 			print "\n"

@@ -22,32 +22,32 @@ from common_ops import common_operations
 
 
 class asymptotic(common_operations):
-	def __init__(self, mf):
+	def __init__(self, relax):
 		"Model-free analysis based on asymptotic model selection methods."
 
-		self.mf = mf
+		self.relax = relax
 
 
 	def run(self):
 		"Model selection."
 
-		data = self.mf.data.data
-		n = float(self.mf.data.num_data_sets)
+		data = self.relax.data.data
+		n = float(self.relax.data.num_data_sets)
 
-		if self.mf.debug:
-			self.mf.log.write("\n\n<<< " + self.mf.usr_param.method + " model selection >>>\n\n")
+		if self.relax.debug:
+			self.relax.log.write("\n\n<<< " + self.relax.usr_param.method + " model selection >>>\n\n")
 
-		for res in range(len(self.mf.data.relax_data[0])):
-			self.mf.data.results.append({})
+		for res in range(len(self.relax.data.relax_data[0])):
+			self.relax.data.results.append({})
 
-			if self.mf.debug:
-				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
+			if self.relax.debug:
+				self.relax.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			err = []
-			for set in range(len(self.mf.data.relax_data)):
-				err.append(float(self.mf.data.relax_data[set][res][3]))
+			for set in range(len(self.relax.data.relax_data)):
+				err.append(float(self.relax.data.relax_data[set][res][3]))
 
-			for model in self.mf.data.runs:
+			for model in self.relax.data.runs:
 				chi2 = data[model][res]['chi2']
 				crit = chi2 / (2.0 * n)
 
@@ -58,37 +58,37 @@ class asymptotic(common_operations):
 				elif match('m4', model) or match('m5', model):
 					k = 3.0
 
-				if match('^AIC$', self.mf.usr_param.method):
+				if match('^AIC$', self.relax.usr_param.method):
 					crit = crit + k / n
 
-				elif match('^AICc$', self.mf.usr_param.method):
+				elif match('^AICc$', self.relax.usr_param.method):
 					if n - k == 1:
 						crit = 1e99
 					else:
 						crit = crit + k/n + k*(k + 1.0)/((n - k - 1.0) * n)
 
-				elif match('^BIC$', self.mf.usr_param.method):
+				elif match('^BIC$', self.relax.usr_param.method):
 					crit = crit + k*log(n) / (2.0 * n)
 
 				data[model][res]['crit'] = crit
 
 			# Select model.
 			min = 'm1'
-			for run in self.mf.data.runs:
+			for run in self.relax.data.runs:
 				if data[run][res]['crit'] < data[min][res]['crit']:
 					min = run
 			if data[min][res]['crit'] == float('inf'):
-				self.mf.data.results[res] = self.fill_results(data[min][res], model='0')
+				self.relax.data.results[res] = self.fill_results(data[min][res], model='0')
 			else:
-				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
+				self.relax.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
-			if self.mf.debug:
-				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
-				self.mf.log.write(self.mf.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
-				self.mf.log.write("The selected model is: " + min + "\n\n")
+			if self.relax.debug:
+				self.relax.log.write(self.relax.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
+				self.relax.log.write(self.relax.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
+				self.relax.log.write(self.relax.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")
+				self.relax.log.write(self.relax.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
+				self.relax.log.write(self.relax.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
+				self.relax.log.write("The selected model is: " + min + "\n\n")
 
 
 	def print_data(self):
@@ -98,10 +98,10 @@ class asymptotic(common_operations):
 		file_crit = open('crit', 'w')
 
 		sys.stdout.write("[")
-		for res in range(len(self.mf.data.results)):
+		for res in range(len(self.relax.data.results)):
 			sys.stdout.write("-")
-			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
-			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
+			file.write("\n\n<<< Residue " + self.relax.data.results[res]['res_num'])
+			file.write(", Model " + self.relax.data.results[res]['model'] + " >>>\n")
 			file.write('%-20s' % '')
 			file.write('%-19s' % 'Model 1')
 			file.write('%-19s' % 'Model 2')
@@ -109,55 +109,55 @@ class asymptotic(common_operations):
 			file.write('%-19s' % 'Model 4')
 			file.write('%-19s' % 'Model 5')
 
-			file_crit.write('%-6s' % self.mf.data.results[res]['res_num'])
-			file_crit.write('%-6s' % self.mf.data.results[res]['model'])
+			file_crit.write('%-6s' % self.relax.data.results[res]['res_num'])
+			file_crit.write('%-6s' % self.relax.data.results[res]['model'])
 
 			# S2.
 			file.write('\n%-20s' % 'S2')
-			for run in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[run][res]['s2'])
+			for run in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[run][res]['s2'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[run][res]['s2_err'])
+				file.write('%-9.3f' % self.relax.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
-			for run in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[run][res]['s2f'])
+			for run in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[run][res]['s2f'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[run][res]['s2f_err'])
+				file.write('%-9.3f' % self.relax.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
-			for run in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[run][res]['s2s'])
+			for run in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[run][res]['s2s'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[run][res]['s2s_err'])
+				file.write('%-9.3f' % self.relax.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
-			for run in self.mf.data.runs:
-				file.write('%9.2f' % self.mf.data.data[run][res]['te'])
+			for run in self.relax.data.runs:
+				file.write('%9.2f' % self.relax.data.data[run][res]['te'])
 				file.write('%1s' % '±')
-				file.write('%-9.2f' % self.mf.data.data[run][res]['te_err'])
+				file.write('%-9.2f' % self.relax.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
-			for run in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[run][res]['rex'])
+			for run in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[run][res]['rex'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[run][res]['rex_err'])
+				file.write('%-9.3f' % self.relax.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
-			for run in self.mf.data.runs:
-				file.write('%-19.3f' % self.mf.data.data[run][res]['chi2'])
+			for run in self.relax.data.runs:
+				file.write('%-19.3f' % self.relax.data.data[run][res]['chi2'])
 
 			# Model selection criteria.
-			file.write('\n%-20s' % self.mf.usr_param.method)
-			for run in self.mf.data.runs:
-				file.write('%-19.6f' % self.mf.data.data[run][res]['crit'])
+			file.write('\n%-20s' % self.relax.usr_param.method)
+			for run in self.relax.data.runs:
+				file.write('%-19.6f' % self.relax.data.data[run][res]['crit'])
 
-				file_crit.write('%-25s' % `self.mf.data.data[run][res]['crit']`)
+				file_crit.write('%-25s' % `self.relax.data.data[run][res]['crit']`)
 			file_crit.write('\n')
 
 		file.write('\n')

@@ -24,7 +24,7 @@ class dJw:
 		"""
 
 		# Initialise the spectral density gradients.
-		self.data.djw = zeros((self.mf.data.num_frq, 5, len(self.data.params)), Float64)
+		self.data.djw = zeros((self.relax.data.num_frq, 5, len(self.data.params)), Float64)
 
 		# Isotropic rotational diffusion.
 		if match(self.data.diff_type, 'iso'):

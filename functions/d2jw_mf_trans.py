@@ -182,13 +182,13 @@ class d2Jw:
 		"""
 
 		# Initialise the spectral density hessians.
-		self.data.d2jw = zeros((self.mf.data.num_frq, 5, len(self.data.params), len(self.data.params)), Float64)
+		self.data.d2jw = zeros((self.relax.data.num_frq, 5, len(self.data.params), len(self.data.params)), Float64)
 
 		# Isotropic rotational diffusion.
 		if match(self.data.diff_type, 'iso'):
 			# Model 1 and 3 hessians are zero.
 			if match('m[24]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					for param1 in range(len(self.data.jw_param_types)):
 						for param2 in range(param1 + 1):
 							if (self.data.jw_param_types[param1] == 'S2' and self.data.jw_param_types[param2] == 'te') \
@@ -213,7 +213,7 @@ class d2Jw:
 								self.data.d2jw[i, 3, param1, param2] = self.calc_d2jw_dae2_iso_m24(i, 3)
 								self.data.d2jw[i, 4, param1, param2] = self.calc_d2jw_dae2_iso_m24(i, 4)
 			elif match('m5', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					for param1 in range(len(self.data.jw_param_types)):
 						for param2 in range(param1 + 1):
 							if (self.data.jw_param_types[param1] == 'S2f' and self.data.jw_param_types[param2] == 'S2s') \
@@ -292,8 +292,8 @@ class d2Jw:
 		"Calculate the model 2 and 4 te/te partial derivative of the spectral density function for isotropic rotational diffusion."
 
 		a = self.data.ae_plus_c_tm**3
-		b = 3.0 * self.data.c * self.data.tm**3 * self.data.ae * self.mf.data.frq_sqrd_list[i][frq_index] * self.data.ae_plus_c_tm
-		c = (self.mf.data.frq_list[i][frq_index] * self.data.tm)**4 * self.data.ae**3
+		b = 3.0 * self.data.c * self.data.tm**3 * self.data.ae * self.relax.data.frq_sqrd_list[i][frq_index] * self.data.ae_plus_c_tm
+		c = (self.relax.data.frq_list[i][frq_index] * self.data.tm)**4 * self.data.ae**3
 		d = (self.data.ae_plus_c_tm_sqrd + self.data.omega_tm_ae_sqrd[i, frq_index])**3
 		temp = -0.8 * self.data.c * self.data.tm_sqrd * (1.0 - self.data.s2) * (a + b - c) / d
 		return temp
@@ -330,8 +330,8 @@ class d2Jw:
 		"Calculate the model 5 ts/ts partial derivative of the spectral density function for isotropic rotational diffusion."
 
 		a = self.data.as_plus_c_tm**3
-		b = 3.0 * self.data.c * self.data.tm**3 * self.data.as * self.mf.data.frq_sqrd_list[i][frq_index] * self.data.as_plus_c_tm
-		c = (self.mf.data.frq_list[i][frq_index] * self.data.tm)**4 * self.data.as**3
+		b = 3.0 * self.data.c * self.data.tm**3 * self.data.as * self.relax.data.frq_sqrd_list[i][frq_index] * self.data.as_plus_c_tm
+		c = (self.relax.data.frq_list[i][frq_index] * self.data.tm)**4 * self.data.as**3
 		d = (self.data.as_plus_c_tm_sqrd + self.data.omega_tm_as_sqrd[i, frq_index])**3
 		temp = -0.8 * self.data.c * self.data.tm_sqrd * self.data.s2f * (1.0 - self.data.s2s) * (a + b - c) / d
 		return temp

@@ -43,13 +43,13 @@ class Ri:
 		self.data.ri = copy.deepcopy(self.data.ri_prime)
 
 		# Calculate the NOE values.
-		for i in range(self.mf.data.num_ri):
-			if self.mf.data.data_types[i] == 'NOE':
-				if self.mf.data.noe_r1_table[i] == None:
+		for i in range(self.relax.data.num_ri):
+			if self.relax.data.data_types[i] == 'NOE':
+				if self.relax.data.noe_r1_table[i] == None:
 					raise NameError, "Incomplete code, need to somehow calculate the r1 value."
 
-				if self.data.ri_prime[self.mf.data.noe_r1_table[i]] == 0:
+				if self.data.ri_prime[self.relax.data.noe_r1_table[i]] == 0:
 					self.data.ri[i] = 1e99
 				else:
-					self.data.ri[i] = 1.0 + (self.mf.data.gh/self.mf.data.gx) * (self.data.ri_prime[i] / self.data.ri_prime[self.mf.data.noe_r1_table[i]])
+					self.data.ri[i] = 1.0 + (self.relax.data.gh/self.relax.data.gx) * (self.data.ri_prime[i] / self.data.ri_prime[self.relax.data.noe_r1_table[i]])
 

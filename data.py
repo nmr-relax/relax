@@ -2,14 +2,14 @@ from math import pi
 
 
 class data:
-	def __init__(self, mf):
+	def __init__(self, relax):
 		"Class containing all the program data"
 
-		self.mf = mf
+		self.relax = relax
 
 		self.init_data()
 		self.init_constants()
-		self.mfin = self.mfin_data(self.mf)
+		self.relax = self.mfin_data(self.relax)
 		self.asymptotic = self.init_asymptotic()
 		self.bootstrap = self.init_bootstrap()
 		self.cv = self.init_cv()
@@ -69,22 +69,22 @@ class data:
 
 
 	class mfin_data:
-		def __init__(self, mf):
+		def __init__(self, relax):
 			"Variables for the file mfin"
 
-			self.mf = mf
+			self.relax = relax
 
 
 		def default_data(self):
 
-			self.diff = self.mf.usr_param.diff
+			self.diff = self.relax.usr_param.diff
 			self.diff_search = 'none'
 			self.algorithm = 'fix'
 			self.sims = 'n'
 			self.sim_type = 'pred'
-			self.trim = self.mf.usr_param.trim
+			self.trim = self.relax.usr_param.trim
 			self.selection = 'none'
-			self.num_sim = self.mf.usr_param.num_sim
+			self.num_sim = self.relax.usr_param.num_sim
 
 
 
@@ -126,8 +126,8 @@ class data:
 
 		"""
 
-		self.rnh = float(self.mf.usr_param.const['rxh'])
-		self.csa = float(self.mf.usr_param.const['csa'])
+		self.rnh = float(self.relax.usr_param.const['rxh'])
+		self.csa = float(self.relax.usr_param.const['csa'])
 
 		# Dipolar constant.
 
@@ -148,7 +148,7 @@ class data:
 			self.csa_2prime.append(2.0 * a)
 			csa_temp.append(0.0)
 
-		if self.mf.debug:
+		if self.relax.debug:
 			print "%-20s%-20s" % ("r(NH):", `self.rnh`)
 			print "%-20s%-20s" % ("CSA:", `self.csa`)
 			print "%-20s%-20s" % ("CSA squared:", `self.csa**2`)

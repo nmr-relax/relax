@@ -12,27 +12,28 @@ from common_ops import common_operations
 
 
 class farrow(common_operations):
-	def __init__(self, mf):
+	def __init__(self, relax):
 		"""The model-free analysis of Farrow.
 
 		Farrow's method for model-free analysis. (Farrow et al., 1994)
 		"""
-		self.mf = mf
+
+		self.relax = relax
 
 
 	def farrows_tests(self):
 		"Check the 95% confidence limits and if the parameter is greater than its error."
 
-		data = self.mf.data.data
-		relax_data = self.mf.data.relax_data
+		data = self.relax.data.data
+		relax_data = self.relax.data.relax_data
 
 		for res in range(len(relax_data[0])):
-			for model in self.mf.data.runs:
+			for model in self.relax.data.runs:
 				# 95% confidence limit test.
 				fail = 0
-				for i in range(self.mf.data.num_ri):
-					label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
-					diff = self.mf.data.relax_data[i][res][2] - self.mf.data.data[model][res][label_fit]
+				for i in range(self.relax.data.num_ri):
+					label_fit = self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i] + "_fit"
+					diff = self.relax.data.relax_data[i][res][2] - self.relax.data.data[model][res][label_fit]
 					if diff < 0:
 						diff = -diff
 					limit = 1.96 * float(relax_data[i][res][3])
@@ -65,17 +66,17 @@ class farrow(common_operations):
 	def model_selection(self):
 		"Farrow's model selection."
 
-		data = self.mf.data.data
+		data = self.relax.data.data
 		self.farrows_tests()
 
-		if self.mf.debug:
-			self.mf.log.write("\n\n<<< Farrow's model selection >>>\n\n")
+		if self.relax.debug:
+			self.relax.log.write("\n\n<<< Farrow's model selection >>>\n\n")
 
-		for res in range(len(self.mf.data.relax_data[0])):
-			self.mf.data.results.append({})
+		for res in range(len(self.relax.data.relax_data[0])):
+			self.relax.data.results.append({})
 
-			if self.mf.debug:
-				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
+			if self.relax.debug:
+				self.relax.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			self.model = '0'
 
@@ -108,9 +109,9 @@ class farrow(common_operations):
 
 			# Fill in the results.
 			if not match('0', self.model):
-				self.mf.data.results[res] = self.fill_results(data["m"+self.model][res], model=self.model)
+				self.relax.data.results[res] = self.fill_results(data["m"+self.model][res], model=self.model)
 			else:
-				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='0')
+				self.relax.data.results[res] = self.fill_results(data['m1'][res], model='0')
 
 
 	def print_data(self):
@@ -119,10 +120,10 @@ class farrow(common_operations):
 		file = open('data_all', 'w')
 
 		sys.stdout.write("[")
-		for res in range(len(self.mf.data.results)):
+		for res in range(len(self.relax.data.results)):
 			sys.stdout.write("-")
-			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
-			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
+			file.write("\n\n<<< Residue " + self.relax.data.results[res]['res_num'])
+			file.write(", Model " + self.relax.data.results[res]['model'] + " >>>\n")
 			file.write('%-20s' % '')
 			file.write('%-19s' % 'Model 1')
 			file.write('%-19s' % 'Model 2')
@@ -132,71 +133,71 @@ class farrow(common_operations):
 
 			# S2.
 			file.write('\n%-20s' % 'S2')
-			for model in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[model][res]['s2'])
+			for model in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[model][res]['s2'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[model][res]['s2_err'])
+				file.write('%-9.3f' % self.relax.data.data[model][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
-			for model in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[model][res]['s2f'])
+			for model in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[model][res]['s2f'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[model][res]['s2f_err'])
+				file.write('%-9.3f' % self.relax.data.data[model][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
-			for model in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[model][res]['s2s'])
+			for model in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[model][res]['s2s'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[model][res]['s2s_err'])
+				file.write('%-9.3f' % self.relax.data.data[model][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
-			for model in self.mf.data.runs:
-				file.write('%9.2f' % self.mf.data.data[model][res]['te'])
+			for model in self.relax.data.runs:
+				file.write('%9.2f' % self.relax.data.data[model][res]['te'])
 				file.write('%1s' % '±')
-				file.write('%-9.2f' % self.mf.data.data[model][res]['te_err'])
+				file.write('%-9.2f' % self.relax.data.data[model][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
-			for model in self.mf.data.runs:
-				file.write('%9.3f' % self.mf.data.data[model][res]['rex'])
+			for model in self.relax.data.runs:
+				file.write('%9.3f' % self.relax.data.data[model][res]['rex'])
 				file.write('%1s' % '±')
-				file.write('%-9.3f' % self.mf.data.data[model][res]['rex_err'])
+				file.write('%-9.3f' % self.relax.data.data[model][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
-			for model in self.mf.data.runs:
-				file.write('%-19.3f' % self.mf.data.data[model][res]['chi2'])
+			for model in self.relax.data.runs:
+				file.write('%-19.3f' % self.relax.data.data[model][res]['chi2'])
 
 			# 95% confidence limits.
 			file.write('\n%-20s' % '95% conf limits')
-			for model in self.mf.data.runs:
-				file.write('%-19i' % self.mf.data.data[model][res]['conf_lim'])
+			for model in self.relax.data.runs:
+				file.write('%-19i' % self.relax.data.data[model][res]['conf_lim'])
 
 			# Parameters greater than errors test.
 			file.write('\n%-20s' % 'params > errs')
-			for model in self.mf.data.runs:
-				file.write('%-19i' % self.mf.data.data[model][res]['param_test'])
+			for model in self.relax.data.runs:
+				file.write('%-19i' % self.relax.data.data[model][res]['param_test'])
 
 			# Relaxation values
-			for i in range(self.mf.data.num_ri):
-				file.write('\n%-20s' % (self.mf.data.frq_label[self.mf.data.remap_table[i]] + " " + self.mf.data.data_types[i]))
-				for model in self.mf.data.runs:
-					label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
-					file.write('%9.3f' % self.mf.data.relax_data[i][res][2])
+			for i in range(self.relax.data.num_ri):
+				file.write('\n%-20s' % (self.relax.data.frq_label[self.relax.data.remap_table[i]] + " " + self.relax.data.data_types[i]))
+				for model in self.relax.data.runs:
+					label_fit = self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i] + "_fit"
+					file.write('%9.3f' % self.relax.data.relax_data[i][res][2])
 					file.write('%1s' % "|")
-					file.write('%-9.3f' % self.mf.data.data[model][res][label_fit])
+					file.write('%-9.3f' % self.relax.data.data[model][res][label_fit])
 				file.write('\n   %-20s' % "diff ± 95%")
-				for model in self.mf.data.runs:
-					label_fit = self.mf.data.frq_label[self.mf.data.remap_table[i]] + "_" + self.mf.data.data_types[i] + "_fit"
-					diff = self.mf.data.relax_data[i][res][2] - self.mf.data.data[model][res][label_fit]
+				for model in self.relax.data.runs:
+					label_fit = self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i] + "_fit"
+					diff = self.relax.data.relax_data[i][res][2] - self.relax.data.data[model][res][label_fit]
 					if diff < 0:
 						diff = -diff
 					file.write('%9.3f' % diff)
 					file.write('%1s' % '±')
-					file.write('%-9.3f' % (1.96 * float(self.mf.data.relax_data[i][res][3])))
+					file.write('%-9.3f' % (1.96 * float(self.relax.data.relax_data[i][res][3])))
 
 
 		file.write('\n')

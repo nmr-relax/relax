@@ -113,12 +113,12 @@ class dJw:
 		"""
 
 		# Initialise the spectral density gradients.
-		self.data.djw = zeros((self.mf.data.num_frq, 5, len(self.data.params)), Float64)
+		self.data.djw = zeros((self.relax.data.num_frq, 5, len(self.data.params)), Float64)
 
 		# Isotropic rotational diffusion.
 		if match(self.data.diff_type, 'iso'):
 			if match('m[13]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					for param in range(len(self.data.jw_param_types)):
 						if self.data.jw_param_types[param] == 'S2':
 							self.data.djw[i, 0, param] = self.calc_djw_dS2_iso_m13(i, 0)
@@ -127,7 +127,7 @@ class dJw:
 							self.data.djw[i, 3, param] = self.calc_djw_dS2_iso_m13(i, 3)
 							self.data.djw[i, 4, param] = self.calc_djw_dS2_iso_m13(i, 4)
 			elif match('m[24]', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					for param in range(len(self.data.jw_param_types)):
 						if self.data.jw_param_types[param] == 'S2':
 							self.data.djw[i, 0, param] = self.calc_djw_dS2_iso_m24(i, 0)
@@ -142,7 +142,7 @@ class dJw:
 							self.data.djw[i, 3, param] = self.calc_djw_dae_iso_m24(i, 3)
 							self.data.djw[i, 4, param] = self.calc_djw_dae_iso_m24(i, 4)
 			elif match('m5', self.data.model):
-				for i in range(self.mf.data.num_frq):
+				for i in range(self.relax.data.num_frq):
 					for param in range(len(self.data.jw_param_types)):
 						if self.data.jw_param_types[param] == 'S2f':
 							self.data.djw[i, 0, param] = self.calc_djw_dS2f_iso_m5(i, 0)
