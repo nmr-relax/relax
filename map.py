@@ -10,7 +10,7 @@ class Map:
         self.relax = relax
 
 
-    def map_space(self, model=None, inc=20, file="map", dir="dx"):
+    def map_space(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None):
         """"""
 
         # Equation type specific function setup.
@@ -33,8 +33,15 @@ class Map:
         # Function arguments.
         self.model = model
         self.inc = inc
+        self.swap = swap
         self.file = file
         self.dir = dir
+
+        # Points.
+        if point == None:
+            self.point = 0
+        else:
+            self.point = point
 
         # The OpenDX directory.
         if self.dir:
@@ -45,6 +52,10 @@ class Map:
 
         # Get the map bounds.
         self.bounds = map_bounds(model=self.model)
+        if lower != None:
+            self.bounds[:, 0] = array(lower, Float64)
+        if upper != None:
+            self.bounds[:, 1] = array(upper, Float64)
 
         # Diagonal scaling.
         if self.relax.data.scaling.has_key(model):
@@ -57,7 +68,7 @@ class Map:
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)
         for i in range(self.n):
-            self.step_size[i] = (self.bounds[i][1] - self.bounds[i][0]) / (self.inc - 1.0)
+            self.step_size[i] = (self.bounds[i, 1] - self.bounds[i, 0]) / (self.inc - 1.0)
 
         # Percentage initialisation.
         self.percent = 0.0
@@ -120,19 +131,19 @@ class Map:
         print "%-10s%8.3f%-1s" % ("Progress:", self.percent, "%")
 
         # Create the map.
-        values[0] = self.bounds[0][0]
+        values[self.swap[0]] = self.bounds[self.swap[0], 0]
         for i in range(self.inc):
-            values[1] = self.bounds[1][0]
+            values[self.swap[1]] = self.bounds[self.swap[1], 0]
             for j in range(self.inc):
-                values[2] = self.bounds[2][0]
+                values[self.swap[2]] = self.bounds[self.swap[2], 0]
                 for k in range(self.inc):
                     self.main_loop(model=self.model, min_algor='fixed', min_options=values, print_flag=0)
                     map_file.write("%30f\n" % self.relax.data.min_results[self.model][0][0])
-                    values[2] = values[2] + self.step_size[2]
+                    values[self.swap[2]] = values[self.swap[2]] + self.step_size[self.swap[2]]
                 self.percent = self.percent + self.percent_inc
                 print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%, value: ", self.relax.data.min_results[self.model][0][0])
-                values[1] = values[1] + self.step_size[1]
-            values[0] = values[0] + self.step_size[0]
+                values[self.swap[1]] = values[self.swap[1]] + self.step_size[self.swap[1]]
+            values[self.swap[0]] = values[self.swap[0]] + self.step_size[self.swap[0]]
 
         # Close the file.
         map_file.close()
@@ -147,28 +158,109 @@ class Map:
         else:
             program_file = open(self.file + ".net", "w")
 
+
+        # Replacement strings
+        #####################
+
+        # Axis increments.
+        axis_incs = 5.0
+
+        # Labels.
+        labels = "{\"" + self.relax.data.param_types[self.model][self.swap[0]] + "\" \""
+        labels = labels + self.relax.data.param_types[self.model][self.swap[1]] + "\" \""
+        labels = labels + self.relax.data.param_types[self.model][self.swap[2]] + "\"}"
+
+        # Corners.
+        corners = "{[0 0 0] [" + `self.inc - 1` + " "  + `self.inc - 1` + " " + `self.inc - 1` + "]}"
+
+        # Tick locations.
+        tick_locations = "{"
+        inc = (self.inc - 1) / axis_incs
+        val = 0.0
+        for i in range(axis_incs + 1):
+            tick_locations = tick_locations + " " + `val`
+            val = val + inc 
+        tick_locations = tick_locations + " }"
+
+        # Tick values.
+        tick_values = []
+        inc = (self.bounds[:, 1] - self.bounds[:, 0]) / axis_incs
+        for i in range(3):
+            vals = self.bounds[self.swap[i], 0] * 1.0
+            string = "{"
+            for j in range(axis_incs + 1):
+                string = string + "\"" + "%.2g" % vals + "\" "
+                vals = vals + inc[self.swap[i]]
+            string = string + "}"
+            tick_values.append(string)
+        
+        
         # Generate the text.
         text = """//
-// time: Mon Sep 16 14:34:57 2002
+// time: Mon Jul  7 13:58:38 2003
 //
 // version: 3.1.2 (format), 4.1.3 (DX)
 //
 //
 // MODULE main
-// workspace: width = 620, height = 651
+// workspace: width = 596, height = 582
 // layout: snap = 0, width = 50, height = 50, align = NN
 //
 macro main(
 ) -> (
-) {
+) {"""
+        
+        if self.point == 1:
+            text = text + """
     // 
-    // node Import[1]: x = 167, y = 6, inputs = 6, label = Import
-    // input[1]: defaulting = 0, visible = 1, type = 32, value = \""""
+    // node Import[2]: x = 30, y = 159, inputs = 6, label = Import Fit
+    // input[1]: defaulting = 0, visible = 1, type = 32, value = "fit.general"
+    // input[3]: defaulting = 1, visible = 1, type = 32, value = "general"
+    //
+main_Import_2_out_1 = 
+    Import(
+    main_Import_2_in_1,
+    main_Import_2_in_2,
+    main_Import_2_in_3,
+    main_Import_2_in_4,
+    main_Import_2_in_5,
+    main_Import_2_in_6
+    ) [instance: 2, cache: 1];
+    // 
+    // node Glyph[1]: x = 54, y = 238, inputs = 7, label = Glyph
+    // input[2]: defaulting = 0, visible = 1, type = 32, value = "sphere"
+    // input[3]: defaulting = 1, visible = 1, type = 5, value = 10.0
+    // input[4]: defaulting = 0, visible = 1, type = 5, value = 5.0
+    // input[5]: defaulting = 0, visible = 1, type = 5, value = 0.0
+    //
+main_Glyph_1_out_1 = 
+    Glyph(
+    main_Import_2_out_1,
+    main_Glyph_1_in_2,
+    main_Glyph_1_in_3,
+    main_Glyph_1_in_4,
+    main_Glyph_1_in_5,
+    main_Glyph_1_in_6,
+    main_Glyph_1_in_7
+    ) [instance: 1, cache: 1];
+    // 
+    // node Color[4]: x = 102, y = 314, inputs = 5, label = Color
+    // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 0 0]
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 1.0
+    //
+main_Color_4_out_1 = 
+    Color(
+    main_Glyph_1_out_1,
+    main_Color_4_in_2,
+    main_Color_4_in_3,
+    main_Color_4_in_4,
+    main_Color_4_in_5
+    ) [instance: 4, cache: 1];"""
 
-        program_file.write(text)
-        program_file.write(self.file)
-
-        text = """.general"
+        text = text + """
+    // 
+    // node Import[1]: x = 39, y = 48, inputs = 6, label = Import
+    // input[1]: defaulting = 0, visible = 1, type = 32, value = \"""" + self.file + """.general"
     // input[3]: defaulting = 1, visible = 1, type = 32, value = "general"
     //
 main_Import_1_out_1 = 
@@ -181,8 +273,8 @@ main_Import_1_out_1 =
     main_Import_1_in_6
     ) [instance: 1, cache: 1];
     // 
-    // node Isosurface[1]: x = 10, y = 82, inputs = 6, label = Outer Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 1000.0
+    // node Isosurface[1]: x = 150, y = 42, inputs = 6, label = Outer Isosurface
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 1500.0
     //
 main_Isosurface_1_out_1 = 
     Isosurface(
@@ -194,7 +286,7 @@ main_Isosurface_1_out_1 =
     main_Isosurface_1_in_6
     ) [instance: 1, cache: 1];
     // 
-    // node Color[1]: x = 37, y = 156, inputs = 5, label = Color
+    // node Color[1]: x = 177, y = 121, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [0 0 0.2]
     // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.4
     //
@@ -207,8 +299,22 @@ main_Color_1_out_1 =
     main_Color_1_in_5
     ) [instance: 1, cache: 1];
     // 
-    // node Isosurface[2]: x = 125, y = 81, inputs = 6, label = Middle Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 100.0
+    // node Collect[1]: x = 243, y = 218, inputs = 2, label = Collect
+    //
+main_Collect_1_out_1 = 
+    Collect("""
+
+        if self.point == 1:
+            text = text + "\n    main_Color_4_out_1,"
+        else:
+            text = text + "\n    main_Collect_1_in_1,"
+
+        text = text + """
+    main_Color_1_out_1
+    ) [instance: 1, cache: 1];
+    // 
+    // node Isosurface[2]: x = 265, y = 42, inputs = 6, label = Middle Isosurface
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 500.0
     //
 main_Isosurface_2_out_1 = 
     Isosurface(
@@ -220,7 +326,7 @@ main_Isosurface_2_out_1 =
     main_Isosurface_2_in_6
     ) [instance: 2, cache: 1];
     // 
-    // node Color[2]: x = 152, y = 156, inputs = 5, label = Color
+    // node Color[2]: x = 292, y = 121, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 32, value = "blue"
     // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.45
     //
@@ -233,16 +339,8 @@ main_Color_2_out_1 =
     main_Color_2_in_5
     ) [instance: 2, cache: 1];
     // 
-    // node Collect[1]: x = 101, y = 233, inputs = 2, label = Collect
-    //
-main_Collect_1_out_1 = 
-    Collect(
-    main_Color_1_out_1,
-    main_Color_2_out_1
-    ) [instance: 1, cache: 1];
-    // 
-    // node Isosurface[3]: x = 242, y = 80, inputs = 6, label = Inner Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 50.0
+    // node Isosurface[3]: x = 382, y = 42, inputs = 6, label = Inner Isosurface
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 300.0
     //
 main_Isosurface_3_out_1 = 
     Isosurface(
@@ -254,7 +352,7 @@ main_Isosurface_3_out_1 =
     main_Isosurface_3_in_6
     ) [instance: 3, cache: 1];
     // 
-    // node Color[3]: x = 269, y = 157, inputs = 5, label = Color
+    // node Color[3]: x = 409, y = 122, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [0.5 0.5 1]
     // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.3
     //
@@ -267,8 +365,16 @@ main_Color_3_out_1 =
     main_Color_3_in_5
     ) [instance: 3, cache: 1];
     // 
-    // node Isosurface[4]: x = 357, y = 79, inputs = 6, label = Inner Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 10.0
+    // node Collect[2]: x = 355, y = 217, inputs = 2, label = Collect
+    //
+main_Collect_2_out_1 = 
+    Collect(
+    main_Color_2_out_1,
+    main_Color_3_out_1
+    ) [instance: 2, cache: 1];
+    // 
+    // node Isosurface[4]: x = 497, y = 42, inputs = 6, label = Inner Isosurface
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 20.0
     //
 main_Isosurface_4_out_1 = 
     Isosurface(
@@ -280,7 +386,7 @@ main_Isosurface_4_out_1 =
     main_Isosurface_4_in_6
     ) [instance: 4, cache: 1];
     // 
-    // node Color[5]: x = 384, y = 157, inputs = 5, label = Color
+    // node Color[5]: x = 524, y = 122, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 32, value = "white"
     // input[3]: defaulting = 0, visible = 1, type = 5, value = 1.0
     //
@@ -293,15 +399,15 @@ main_Color_5_out_1 =
     main_Color_5_in_5
     ) [instance: 5, cache: 1];
     // 
-    // node Collect[4]: x = 335, y = 232, inputs = 2, label = Collect
+    // node Collect[4]: x = 424, y = 276, inputs = 2, label = Collect
     //
 main_Collect_4_out_1 = 
     Collect(
-    main_Color_3_out_1,
+    main_Collect_2_out_1,
     main_Color_5_out_1
     ) [instance: 4, cache: 1];
     // 
-    // node Collect[3]: x = 195, y = 301, inputs = 2, label = Collect
+    // node Collect[3]: x = 322, y = 337, inputs = 2, label = Collect
     //
 main_Collect_3_out_1 = 
     Collect(
@@ -309,27 +415,20 @@ main_Collect_3_out_1 =
     main_Collect_4_out_1
     ) [instance: 3, cache: 1];
     // 
-    // node Collect[5]: x = 398, y = 309, inputs = 2, label = Collect
-    //
-main_Collect_5_out_1 = 
-    Collect(
-    main_Collect_3_out_1,
-    main_Collect_5_in_2
-    ) [instance: 5, cache: 1];
-    // 
-    // node Scale[2]: x = 21, y = 378, inputs = 2, label = Scale
+    // node Scale[2]: x = 158, y = 425, inputs = 2, label = Scale
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 1 1]
     //
 main_Scale_2_out_1 = 
     Scale(
-    main_Collect_5_out_1,
+    main_Collect_3_out_1,
     main_Scale_2_in_2
     ) [instance: 2, cache: 1];
     // 
-    // node AutoCamera[1]: x = 82, y = 447, inputs = 9, label = AutoCamera
-    // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 -1 0]
+    // node AutoCamera[1]: x = 323, y = 443, inputs = 9, label = AutoCamera
+    // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 -1 1]
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 500.0
     // input[5]: defaulting = 0, visible = 0, type = 5, value = .75
-    // input[6]: defaulting = 0, visible = 0, type = 8, value = [-1 1 0]
+    // input[6]: defaulting = 0, visible = 0, type = 8, value = [-1 1 0 ]
     // input[7]: defaulting = 0, visible = 0, type = 3, value = 0
     // input[8]: defaulting = 0, visible = 0, type = 5, value = 30.0
     // input[9]: defaulting = 0, visible = 0, type = 32, value = "black"
@@ -347,22 +446,21 @@ main_AutoCamera_1_out_1 =
     main_AutoCamera_1_in_9
     ) [instance: 1, cache: 1];
     // 
-    // node AutoAxes[1]: x = 33, y = 517, inputs = 19, label = AutoAxes
-    // input[3]: defaulting = 0, visible = 1, type = 16777248, value = {"alpha" "beta" "gamma"}
+    // node AutoAxes[1]: x = 170, y = 520, inputs = 19, label = AutoAxes
+    // input[3]: defaulting = 0, visible = 1, type = 16777248, value = """ + labels + """
     // input[4]: defaulting = 0, visible = 0, type = 1, value = 30
-    // input[5]: defaulting = 0, visible = 1, type = 16777224, value = {[0 0 0] [20 20 20]}
+    // input[5]: defaulting = 0, visible = 1, type = 16777224, value = """ + corners + """
     // input[6]: defaulting = 0, visible = 1, type = 3, value = 1
     // input[7]: defaulting = 1, visible = 0, type = 3, value = 1
     // input[9]: defaulting = 0, visible = 1, type = 3, value = 1
-    // input[11]: defaulting = 1, visible = 0, type = 16777248, value = {"all"}
-    // input[12]: defaulting = 0, visible = 0, type = 5, value = 0.8
+    // input[12]: defaulting = 0, visible = 0, type = 5, value = 0.4
     // input[13]: defaulting = 0, visible = 0, type = 32, value = "area"
-    // input[14]: defaulting = 1, visible = 1, type = 16777221, value = { 0.0 }
-    // input[15]: defaulting = 1, visible = 1, type = 16777221, value = { 0.0 }
-    // input[16]: defaulting = 1, visible = 1, type = 16777221, value = { 0.0 }
-    // input[17]: defaulting = 1, visible = 1, type = 16777248, value = {" "}
-    // input[18]: defaulting = 1, visible = 1, type = 16777248, value = {" "}
-    // input[19]: defaulting = 1, visible = 1, type = 16777248, value = {" "}
+    // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations + """
+    // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations + """
+    // input[16]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations + """
+    // input[17]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[0] + """
+    // input[18]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[1] + """
+    // input[19]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[2] + """
     //
 main_AutoAxes_1_out_1 = 
     AutoAxes(
@@ -385,60 +483,22 @@ main_AutoAxes_1_out_1 =
     main_AutoAxes_1_in_17,
     main_AutoAxes_1_in_18,
     main_AutoAxes_1_in_19
-    ) [instance: 1, cache: 1];
+    ) [instance: 1, cache: 1];"""
+
+        if self.point == 1:
+            text = text + """
     // 
-    // node Import[2]: x = 476, y = 5, inputs = 6, label = Import
-    // input[1]: defaulting = 0, visible = 1, type = 32, value = "fit.general"
-    //
-main_Import_2_out_1 = 
-    Import(
-    main_Import_2_in_1,
-    main_Import_2_in_2,
-    main_Import_2_in_3,
-    main_Import_2_in_4,
-    main_Import_2_in_5,
-    main_Import_2_in_6
-    ) [instance: 2, cache: 1];
-    // 
-    // node Glyph[1]: x = 500, y = 80, inputs = 7, label = Glyph
-    // input[2]: defaulting = 0, visible = 1, type = 32, value = "sphere"
-    // input[4]: defaulting = 0, visible = 1, type = 5, value = 1.0
-    // input[5]: defaulting = 0, visible = 1, type = 5, value = 0.0
-    //
-main_Glyph_1_out_1 = 
-    Glyph(
-    main_Import_2_out_1,
-    main_Glyph_1_in_2,
-    main_Glyph_1_in_3,
-    main_Glyph_1_in_4,
-    main_Glyph_1_in_5,
-    main_Glyph_1_in_6,
-    main_Glyph_1_in_7
-    ) [instance: 1, cache: 1];
-    // 
-    // node Color[6]: x = 548, y = 158, inputs = 5, label = Color
-    // input[2]: defaulting = 0, visible = 1, type = 32, value = "red"
-    //
-main_Color_6_out_1 = 
-    Color(
-    main_Glyph_1_out_1,
-    main_Color_6_in_2,
-    main_Color_6_in_3,
-    main_Color_6_in_4,
-    main_Color_6_in_5
-    ) [instance: 6, cache: 1];
-    // 
-    // node Image[2]: x = 141, y = 589, inputs = 49, label = Image
+    // node Image[2]: x = 510, y = 480, inputs = 49, label = Image
     // input[1]: defaulting = 0, visible = 0, type = 67108863, value = "Image_2"
     // input[4]: defaulting = 0, visible = 0, type = 1, value = 1
-    // input[5]: defaulting = 0, visible = 0, type = 8, value = [12.243 10.1395 9.34909]
-    // input[6]: defaulting = 0, visible = 0, type = 8, value = [22.6042 6.9002 119.794]
-    // input[7]: defaulting = 1, visible = 0, type = 5, value = 39.0494
+    // input[5]: defaulting = 0, visible = 0, type = 8, value = [52.5443 54.8297 52.7712]
+    // input[6]: defaulting = 0, visible = 0, type = 8, value = [175.465 -47.5719 189.021]
+    // input[7]: defaulting = 0, visible = 0, type = 5, value = 295.386
     // input[8]: defaulting = 0, visible = 0, type = 1, value = 1258
-    // input[9]: defaulting = 0, visible = 0, type = 5, value = 0.721
-    // input[10]: defaulting = 0, visible = 0, type = 8, value = [-0.995449 0.0164223 0.093868]
-    // input[11]: defaulting = 0, visible = 0, type = 5, value = 19.9564
-    // input[12]: defaulting = 0, visible = 0, type = 1, value = 1
+    // input[9]: defaulting = 0, visible = 0, type = 5, value = 0.757
+    // input[10]: defaulting = 0, visible = 0, type = 8, value = [-0.49861 0.414455 0.761325]
+    // input[11]: defaulting = 1, visible = 0, type = 5, value = 70.201
+    // input[12]: defaulting = 0, visible = 0, type = 1, value = 0
     // input[14]: defaulting = 0, visible = 0, type = 1, value = 1
     // input[15]: defaulting = 1, visible = 0, type = 32, value = "none"
     // input[16]: defaulting = 1, visible = 0, type = 32, value = "none"
@@ -447,16 +507,42 @@ main_Color_6_out_1 =
     // input[19]: defaulting = 0, visible = 0, type = 1, value = 0
     // input[25]: defaulting = 0, visible = 0, type = 32, value = "best"
     // input[26]: defaulting = 0, visible = 0, type = 32, value = "tiff"
+    // input[29]: defaulting = 0, visible = 0, type = 1, value = 0
+    // input[30]: defaulting = 1, visible = 0, type = 16777248, value = {"S2f" "S2s" "ts"}
+    // input[32]: defaulting = 1, visible = 0, type = 16777224, value = {[0 0 0] [20 20 20]}
+    // input[33]: defaulting = 0, visible = 0, type = 3, value = 1
+    // input[34]: defaulting = 0, visible = 0, type = 3, value = 0
+    // input[36]: defaulting = 0, visible = 0, type = 3, value = 1
+    // input[41]: defaulting = 0, visible = 0, type = 32, value = "rotate"
+    // depth: value = 24
+    // window: position = (0.0000,0.0000), size = 0.9938x0.9727
+    // internal caching: 1
+    //"""
+        else:
+            text = text + """
+    // 
+    // node Image[2]: x = 510, y = 480, inputs = 49, label = Image
+    // input[1]: defaulting = 0, visible = 0, type = 67108863, value = "Image_2"
+    // input[4]: defaulting = 0, visible = 0, type = 1, value = 1
+    // input[5]: defaulting = 0, visible = 0, type = 8, value = [12.243 10.1395 9.34909]
+    // input[6]: defaulting = 0, visible = 0, type = 8, value = [11.0816 16.5211 120.136]
+    // input[7]: defaulting = 1, visible = 0, type = 5, value = 39.0492
+    // input[8]: defaulting = 0, visible = 0, type = 1, value = 1258
+    // input[9]: defaulting = 0, visible = 0, type = 5, value = 0.721
+    // input[10]: defaulting = 0, visible = 0, type = 8, value = [-0.426085 0.902919 -0.0564765]
+    // input[11]: defaulting = 0, visible = 0, type = 5, value = 19.9564
+    // input[12]: defaulting = 0, visible = 0, type = 1, value = 1
+    // input[14]: defaulting = 0, visible = 0, type = 1, value = 1
+    // input[15]: defaulting = 1, visible = 0, type = 32, value = "none"
+    // input[16]: defaulting = 1, visible = 0, type = 32, value = "none"
+    // input[17]: defaulting = 1, visible = 0, type = 1, value = 1
+    // input[18]: defaulting = 1, visible = 0, type = 1, value = 1
+    // input[19]: defaulting = 0, visible = 0, type = 3, value = 0
+    // input[25]: defaulting = 0, visible = 0, type = 32, value = "best"
+    // input[26]: defaulting = 0, visible = 0, type = 32, value = "tiff"
     // input[29]: defaulting = 0, visible = 0, type = 3, value = 0
-    // input[30]: defaulting = 0, visible = 0, type = 16777248, value = {\""""
-
-        program_file.write(text)
-        program_file.write(self.relax.data.param_types[self.model][0] + " (" + `self.bounds[0][0]` + " to " + `self.bounds[0][1]` + ")\", \"")
-        program_file.write(self.relax.data.param_types[self.model][1] + " (" + `self.bounds[1][0]` + " to " + `self.bounds[1][1]` + ")\", \"")
-        program_file.write(self.relax.data.param_types[self.model][2] + " (" + `self.bounds[2][0]` + " to " + `self.bounds[2][1]` + ")\"}")
-
-        text = """
-    // input[32]: defaulting = 0, visible = 0, type = 16777224, value = {[0 0 0] [100 100 20]}
+    // input[30]: defaulting = 0, visible = 0, type = 16777248, value = {"S2f (0.0 to 1.0)", "S2s (0.0 to 1.0)", "ts (0.0 to 10.0)"}
+    // input[32]: defaulting = 0, visible = 0, type = 16777224, value = {[0 0 0] [20 20 20]}
     // input[33]: defaulting = 0, visible = 0, type = 3, value = 1
     // input[34]: defaulting = 0, visible = 0, type = 3, value = 0
     // input[36]: defaulting = 0, visible = 0, type = 3, value = 1
@@ -464,7 +550,9 @@ main_Color_6_out_1 =
     // depth: value = 24
     // window: position = (0.0000,0.0000), size = 0.9938x0.9287
     // internal caching: 1
-    //
+    //"""
+
+        text = text + """
 main_Image_2_out_1,
 main_Image_2_out_2,
 main_Image_2_out_3 = 
@@ -521,20 +609,39 @@ main_Image_2_out_3 =
     ) [instance: 2, cache: 1];
 // network: end of macro body
 CacheScene(main_Image_2_in_1, main_Image_2_out_1, main_Image_2_out_2);
-}
-main_Import_1_in_1 = \""""
+}"""
 
-        program_file.write(text)
-        program_file.write(self.file)
+        if self.point == 1:
+            text = text + """
+main_Import_2_in_1 = "fit.general";
+main_Import_2_in_2 = NULL;
+main_Import_2_in_3 = NULL;
+main_Import_2_in_4 = NULL;
+main_Import_2_in_5 = NULL;
+main_Import_2_in_6 = NULL;
+main_Import_2_out_1 = NULL;
+main_Glyph_1_in_2 = "sphere";
+main_Glyph_1_in_3 = NULL;
+main_Glyph_1_in_4 = 5.0;
+main_Glyph_1_in_5 = 0.0;
+main_Glyph_1_in_6 = NULL;
+main_Glyph_1_in_7 = NULL;
+main_Glyph_1_out_1 = NULL;
+main_Color_4_in_2 = [1 0 0];
+main_Color_4_in_3 = 1.0;
+main_Color_4_in_4 = NULL;
+main_Color_4_in_5 = NULL;
+main_Color_4_out_1 = NULL;"""
 
-        text = """.general";
+        text = text + """
+main_Import_1_in_1 = \"""" + self.file + """.general";
 main_Import_1_in_2 = NULL;
 main_Import_1_in_3 = NULL;
 main_Import_1_in_4 = NULL;
 main_Import_1_in_5 = NULL;
 main_Import_1_in_6 = NULL;
 main_Import_1_out_1 = NULL;
-main_Isosurface_1_in_2 = 1000.0;
+main_Isosurface_1_in_2 = 1500.0;
 main_Isosurface_1_in_3 = NULL;
 main_Isosurface_1_in_4 = NULL;
 main_Isosurface_1_in_5 = NULL;
@@ -544,8 +651,16 @@ main_Color_1_in_2 = [0 0 0.2];
 main_Color_1_in_3 = 0.4;
 main_Color_1_in_4 = NULL;
 main_Color_1_in_5 = NULL;
-main_Color_1_out_1 = NULL;
-main_Isosurface_2_in_2 = 100.0;
+main_Color_1_out_1 = NULL;"""
+
+        if self.point == 1:
+            pass
+        else:
+            text = text + "\nmain_Collect_1_in_1 = NULL;"
+
+        text = text + """
+main_Collect_1_out_1 = NULL;
+main_Isosurface_2_in_2 = 500.0;
 main_Isosurface_2_in_3 = NULL;
 main_Isosurface_2_in_4 = NULL;
 main_Isosurface_2_in_5 = NULL;
@@ -556,8 +671,7 @@ main_Color_2_in_3 = 0.45;
 main_Color_2_in_4 = NULL;
 main_Color_2_in_5 = NULL;
 main_Color_2_out_1 = NULL;
-main_Collect_1_out_1 = NULL;
-main_Isosurface_3_in_2 = 50.0;
+main_Isosurface_3_in_2 = 300.0;
 main_Isosurface_3_in_3 = NULL;
 main_Isosurface_3_in_4 = NULL;
 main_Isosurface_3_in_5 = NULL;
@@ -568,7 +682,8 @@ main_Color_3_in_3 = 0.3;
 main_Color_3_in_4 = NULL;
 main_Color_3_in_5 = NULL;
 main_Color_3_out_1 = NULL;
-main_Isosurface_4_in_2 = 10.0;
+main_Collect_2_out_1 = NULL;
+main_Isosurface_4_in_2 = 20.0;
 main_Isosurface_4_in_3 = NULL;
 main_Isosurface_4_in_4 = NULL;
 main_Isosurface_4_in_5 = NULL;
@@ -581,22 +696,20 @@ main_Color_5_in_5 = NULL;
 main_Color_5_out_1 = NULL;
 main_Collect_4_out_1 = NULL;
 main_Collect_3_out_1 = NULL;
-main_Collect_5_in_2 = NULL;
-main_Collect_5_out_1 = NULL;
 main_Scale_2_in_2 = [1 1 1];
 main_Scale_2_out_1 = NULL;
-main_AutoCamera_1_in_2 = [1 -1 0];
-main_AutoCamera_1_in_3 = NULL;
+main_AutoCamera_1_in_2 = [1 -1 1];
+main_AutoCamera_1_in_3 = 500.0;
 main_AutoCamera_1_in_4 = NULL;
 main_AutoCamera_1_in_5 = .75;
-main_AutoCamera_1_in_6 = [-1 1 0];
+main_AutoCamera_1_in_6 = [-1 1 0 ];
 main_AutoCamera_1_in_7 = 0;
 main_AutoCamera_1_in_8 = 30.0;
 main_AutoCamera_1_in_9 = "black";
 main_AutoCamera_1_out_1 = NULL;
-main_AutoAxes_1_in_3 = {"alpha" "beta" "gamma"};
+main_AutoAxes_1_in_3 = """ + labels + """;
 main_AutoAxes_1_in_4 = 30;
-main_AutoAxes_1_in_5 = {[0 0 0] [20 20 20]};
+main_AutoAxes_1_in_5 = """ + corners + """;
 main_AutoAxes_1_in_6 = 1;
 main_AutoAxes_1_in_7 = NULL;
 main_AutoAxes_1_in_8 = NULL;
@@ -605,31 +718,13 @@ main_AutoAxes_1_in_10 = NULL;
 main_AutoAxes_1_in_11 = NULL;
 main_AutoAxes_1_in_12 = 0.8;
 main_AutoAxes_1_in_13 = "area";
-main_AutoAxes_1_in_14 = NULL;
-main_AutoAxes_1_in_15 = NULL;
-main_AutoAxes_1_in_16 = NULL;
-main_AutoAxes_1_in_17 = NULL;
-main_AutoAxes_1_in_18 = NULL;
-main_AutoAxes_1_in_19 = NULL;
+main_AutoAxes_1_in_14 = """ + tick_locations + """;
+main_AutoAxes_1_in_15 = """ + tick_locations + """;
+main_AutoAxes_1_in_16 = """ + tick_locations + """;
+main_AutoAxes_1_in_17 = """ + tick_values[0] + """;
+main_AutoAxes_1_in_18 = """ + tick_values[1] + """;
+main_AutoAxes_1_in_19 = """ + tick_values[2] + """;
 main_AutoAxes_1_out_1 = NULL;
-main_Import_2_in_1 = "fit.general";
-main_Import_2_in_2 = NULL;
-main_Import_2_in_3 = NULL;
-main_Import_2_in_4 = NULL;
-main_Import_2_in_5 = NULL;
-main_Import_2_in_6 = NULL;
-main_Import_2_out_1 = NULL;
-main_Glyph_1_in_2 = "sphere";
-main_Glyph_1_in_3 = NULL;
-main_Glyph_1_in_4 = 1.0;
-main_Glyph_1_in_5 = 0.0;
-main_Glyph_1_in_6 = NULL;
-main_Glyph_1_in_7 = NULL;
-main_Glyph_1_out_1 = NULL;
-main_Color_6_in_2 = "red";
-main_Color_6_in_3 = NULL;
-main_Color_6_in_4 = NULL;
-main_Color_6_in_5 = NULL;
 macro Image(
         id,
         object,
@@ -944,15 +1039,30 @@ macro Image(
 }
 main_Image_2_in_1 = "Image_2";
 main_Image_2_in_3 = "X24,,";
-main_Image_2_in_4 = 1;
+main_Image_2_in_4 = 1;"""
+
+        if self.point == 1:
+            text = text + """
+main_Image_2_in_5 = [52.5443 54.8297 52.7712];
+main_Image_2_in_6 = [175.465 -47.5719 189.021];
+main_Image_2_in_7 = 295.386;
+main_Image_2_in_8 = 1258;
+main_Image_2_in_9 = 0.757;
+main_Image_2_in_10 = [-0.49861 0.414455 0.761325];
+main_Image_2_in_11 = NULL;
+main_Image_2_in_12 = 0;"""
+        else:
+            text = text + """
 main_Image_2_in_5 = [12.243 10.1395 9.34909];
-main_Image_2_in_6 = [22.6042 6.9002 119.794];
+main_Image_2_in_6 = [11.0816 16.5211 120.136];
 main_Image_2_in_7 = NULL;
 main_Image_2_in_8 = 1258;
 main_Image_2_in_9 = 0.721;
-main_Image_2_in_10 = [-0.995449 0.0164223 0.093868];
+main_Image_2_in_10 = [-0.426085 0.902919 -0.0564765];
 main_Image_2_in_11 = 19.9564;
-main_Image_2_in_12 = 1;
+main_Image_2_in_12 = 1;"""
+
+        text = text + """
 main_Image_2_in_13 = NULL;
 main_Image_2_in_14 = 1;
 main_Image_2_in_15 = NULL;
@@ -968,10 +1078,20 @@ main_Image_2_in_25 = "best";
 main_Image_2_in_26 = "tiff";
 main_Image_2_in_27 = NULL;
 main_Image_2_in_28 = NULL;
-main_Image_2_in_29 = 0;
-main_Image_2_in_30 = {"S2 (0 to 1)", "te (0ns to 10000ns)", "Rex (0 to 30)"};
+main_Image_2_in_29 = 0;"""
+
+        if self.point == 1:
+            text = text + """
+main_Image_2_in_30 = NULL;
 main_Image_2_in_31 = NULL;
-main_Image_2_in_32 = {[0 0 0] [100 100 20]};
+main_Image_2_in_32 = NULL;"""
+        else:
+            text = text + """
+main_Image_2_in_30 = {"S2f (0.0 to 1.0)", "S2s (0.0 to 1.0)", "ts (0.0 to 10.0)"};
+main_Image_2_in_31 = NULL;
+main_Image_2_in_32 = {[0 0 0] [20 20 20]};"""
+        
+        text = text + """
 main_Image_2_in_33 = 1;
 main_Image_2_in_34 = 0;
 main_Image_2_in_35 = NULL;
@@ -991,10 +1111,10 @@ main_Image_2_in_48 = NULL;
 main_Image_2_in_49 = NULL;
 Executive("product version 4 1 3");
 $sync
-main();"""
+main();
+"""
 
         program_file.write(text)
-        
+
         # Close the file.
         program_file.close()
-
