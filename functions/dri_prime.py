@@ -1,8 +1,4 @@
-from Numeric import Float64, zeros
-from re import match
-
-
-def calc_dri_prime(data, dri_prime_funcs):
+def dri_prime(data, create_dri_prime_comps, create_dri_prime):
 	"""Function for the calculation of the transformed relaxation gradients.
 
 	The transformed relaxation gradients
@@ -166,28 +162,14 @@ def calc_dri_prime(data, dri_prime_funcs):
 
 	# Loop over the relaxation values.
 	for i in range(data.num_ri):
-		frq_num = relax.data.remap_table[i]
+		create_dri_prime_comps[i](data, i, data.remap_table[i])
 
 	# Calculate the transformed relaxation gradients.
-	for param in range(len(data.ri_param_types)):
-		# Spectral density parameter derivatives.
-		if data.ri_param_types[param] == 'Jj':
-			data.dri_prime[param] = data.dip_comps * data.j_dip_comps_prime[param] + data.csa_comps * data.j_csa_comps_prime[param]
-
-		# Chemical exchange derivatives.
-		elif data.ri_param_types[param] == 'Rex':
-			data.dri_prime[param] = data.rex_comps_prime[param]
-
-		# CSA derivatives.
-		elif data.ri_param_types[param] == 'CSA':
-			data.dri_prime[param] = data.csa_comps_prime[param] * data.j_csa_comps
-
-		# Bond length derivatives.
-		elif data.ri_param_types[param] == 'r':
-			data.dri_prime[param] = data.dip_comps_prime[param] * data.j_dip_comps
+	for i in range(len(data.params)):
+		create_dri_prime[i](data, i)
 
 
-def calc_dr1_dmf_prime(data, i, frq_num):
+def comp_dr1_dmf_prime(data, i, frq_num):
 	"""Calculate the dr1 components.
 
 	dR1()
@@ -208,7 +190,7 @@ def calc_dr1_dmf_prime(data, i, frq_num):
 	data.csa_jw_comps_prime[:, i] = data.djw[frq_num, 1]
 
 
-def calc_dr2_dmf_prime(data, i, frq_num):
+def comp_dr2_dmf_prime(data, i, frq_num):
 	"""Calculate the dr2 components.
 
 	dR2()     d                    c
@@ -230,7 +212,7 @@ def calc_dr2_dmf_prime(data, i, frq_num):
 	data.rex_comps_prime[:, i] = (1e-8 * relax.data.frq[frq_num])**2
 
 
-def calc_dr2_drex_prime(data, i, frq_num):
+def comp_dr2_drex_prime(data, i, frq_num):
 	"""Calculate the dr2 components.
 
 	 dR2()
@@ -242,7 +224,7 @@ def calc_dr2_drex_prime(data, i, frq_num):
 	data.rex_comps_prime[:, i] = (1e-8 * relax.data.frq[frq_num])**2
 
 
-def calc_dsigma_noe_dmf_prime(data, i, frq_num):
+def comp_dsigma_noe_dmf_prime(data, i, frq_num):
 	"""Calculate the dsigma_noe components.
 
 	dsigma_noe()
@@ -256,3 +238,27 @@ def calc_dsigma_noe_dmf_prime(data, i, frq_num):
 	"""
 
 	data.dip_jw_comps_prime[:, i] = 6.0*data.djw[frq_num, 4] - data.djw[frq_num, 2]
+
+
+def func_dcsa_prime(data, i):
+	"CSA derivatives."
+
+	data.dri_prime[i] = data.csa_comps_prime[i] * data.csa_jw_comps
+
+
+def func_dri_dmf_prime(data, i):
+	"Spectral density parameter derivatives."
+
+	data.dri_prime[i] = data.dip_comps * data.dip_jw_comps_prime[i] + data.csa_comps * data.csa_jw_comps_prime[i]
+
+
+def func_dri_dr_prime(data, i):
+	"Bond length derivatives."
+
+	data.dri_prime[i] = data.dip_comps_prime[i] * data.dip_jw_comps
+
+
+def func_dri_drex_prime(data, i):
+	"Chemical exchange derivatives."
+
+	data.dri_prime[i] = data.rex_comps_prime[i]

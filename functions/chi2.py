@@ -1,4 +1,4 @@
-def calc_chi2(data, back_calc_data, errors):
+def chi2(data, back_calc_vals, errors):
 	"""Function to calculate the chi-squared value.
 
 	The chi-sqared equation
@@ -22,7 +22,7 @@ def calc_chi2(data, back_calc_data, errors):
 	chi2 = 0.0
 	for i in range(len(data)):
 		if errors[i] != 0.0:
-			chi2 = chi2 + ((data[i] - back_calc_data[i]) / errors[i])**2
+			chi2 = chi2 + ((data[i] - back_calc_vals[i]) / errors[i])**2
 		else:
 			chi2 = 1e99
 			continue

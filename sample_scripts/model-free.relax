@@ -14,5 +14,5 @@ select_preset_mf_model('m5')
 print_all_data()
 from Numeric import Float64, array
 self.relax.data.params[0][0] = array([0.5, 0.5, 100.0 * 1e-12], Float64)
-min('m5', 'bfgs', max_iterations=1000000)
+min('m5', 'sd', max_iterations=1000000)
 state.save('save', 1)
