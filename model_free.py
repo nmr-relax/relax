@@ -39,13 +39,90 @@ class Model_free:
         self.relax = relax
 
 
-    def calculate(self, run=None, i=None, params=None):
-        """Calculation of the model-free chi-squared value."""
+    def assemble_param_vector(self, run, data):
+        """Function for assembling various pieces of data into a Numeric parameter array."""
 
-        # Diagonal scaling.
-        scaling_vector = None
-        if self.relax.data.res[i].scaling.has_key(run):
-            scaling_vector = self.relax.data.res[i].scaling[run]
+        # Initialise.
+        param_vector = zeros(len(data.params[run]), Float64)
+
+        # Loop over the parameters.
+        for i in range(len(data.params[run])):
+            # S2.
+            if data.params[run][i] == 'S2' and data.s2[run] != None:
+                param_vector[i] = data.s2[run]
+
+            # S2f.
+            if data.params[run][i] == 'S2f' and data.s2f[run] != None:
+                param_vector[i] = data.s2f[run]
+
+            # S2s.
+            if data.params[run][i] == 'S2s' and data.s2s[run] != None:
+                param_vector[i] = data.s2s[run]
+
+            # te.
+            if data.params[run][i] == 'te' and data.te[run] != None:
+                param_vector[i] = data.te[run]
+
+            # tf.
+            if data.params[run][i] == 'tf' and data.tf[run] != None:
+                param_vector[i] = data.tf[run]
+
+            # ts.
+            if data.params[run][i] == 'ts' and data.ts[run] != None:
+                param_vector[i] = data.ts[run]
+
+            # Rex.
+            if data.params[run][i] == 'Rex' and data.rex[run] != None:
+                param_vector[i] = data.rex[run]
+
+            # r.
+            if data.params[run][i] == 'r' and data.r[run] != None:
+                param_vector[i] = data.r[run]
+
+            # CSA.
+            if data.params[run][i] == 'CSA' and data.csa[run] != None:
+                param_vector[i] = data.csa[run]
+
+        return param_vector
+
+
+    def assemble_scaling_vector(self, run, data, index):
+        """Function for creating the scaling vector."""
+
+        # Initialise.
+        scaling_vector = zeros(len(data.params[run]), Float64)
+
+        # Loop over the parameters.
+        for i in range(len(data.params[run])):
+            # tm.
+            if data.params[run][i] == 'tm':
+                scaling_vector[i] = 1e-9
+
+            # te, tf, and ts.
+            elif match('t', data.params[run][i]):
+                scaling_vector[i] = 1e-9
+
+            # Rex.
+            elif data.params[run][i] == 'Rex':
+                scaling_vector[i] = 1.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0]) ** 2
+
+            # Bond length.
+            elif data.params[run][i] == 'r':
+                scaling_vector[i] = 1e-10
+
+            # CSA.
+            elif data.params[run][i] == 'CSA':
+                scaling_vector[i] = 1e-4
+
+            # No scaling.
+            else:
+                scaling_vector[i] = 1.0
+
+        return scaling_vector
+
+
+    def calculate(self, run=None, i=None, params=None, scaling_vector=None):
+        """Calculation of the model-free chi-squared value."""
 
         # Set up the relaxation data and errors and the function options.
         relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
@@ -185,65 +262,18 @@ class Model_free:
         self.model_setup(run, model, equation, params, scaling)
 
 
-    def create_param_vector(self, run, data):
-        """Function for assembling various pieces of data into a Numeric parameter array."""
-
-        # Initialise.
-        param_vector = zeros(len(data.params[run]), Float64)
-
-        # Loop over the parameters.
-        for i in range(len(data.params[run])):
-            # S2.
-            if data.params[run][i] == 'S2' and data.s2[run] != None:
-                param_vector[i] = data.s2[run]
-
-            # S2f.
-            if data.params[run][i] == 'S2f' and data.s2f[run] != None:
-                param_vector[i] = data.s2f[run]
-
-            # S2s.
-            if data.params[run][i] == 'S2s' and data.s2s[run] != None:
-                param_vector[i] = data.s2s[run]
-
-            # te.
-            if data.params[run][i] == 'te' and data.te[run] != None:
-                param_vector[i] = data.te[run]
-
-            # tf.
-            if data.params[run][i] == 'tf' and data.tf[run] != None:
-                param_vector[i] = data.tf[run]
-
-            # ts.
-            if data.params[run][i] == 'ts' and data.ts[run] != None:
-                param_vector[i] = data.ts[run]
-
-            # Rex.
-            if data.params[run][i] == 'Rex' and data.rex[run] != None:
-                param_vector[i] = data.rex[run]
-
-            # r.
-            if data.params[run][i] == 'r' and data.r[run] != None:
-                param_vector[i] = data.r[run]
-
-            # CSA.
-            if data.params[run][i] == 'CSA' and data.csa[run] != None:
-                param_vector[i] = data.csa[run]
-
-        return param_vector
-
-
     def data_init(self, name):
         """Function for returning an initial data structure corresponding to 'name'."""
 
         # Empty arrays.
         list_data = [ 'models',
-                      'params',
-                      'scaling' ]
+                      'params' ]
         if name in list_data:
             return []
 
         # None.
         none_data = [ 'equations',
+                      'scaling',
                       's2',
                       's2f',
                       's2s',
@@ -278,7 +308,7 @@ class Model_free:
 
         params:  An array of the model-free parameter names associated with the model.
 
-        scaling:  The scaling vector.
+        scaling:  The scaling flag.
 
         s2:  S2.
 
@@ -355,8 +385,7 @@ class Model_free:
             self.relax.data.res[i].params[run] = params
 
             # Diagonal scaling.
-            if scaling_flag:
-                self.relax.data.res[i].scaling[run] = self.scaling_vector(run, params, i)
+            self.relax.data.res[i].scaling[run] = scaling_flag
 
 
     def fixed_setup(self, params=None, min_options=None):
@@ -917,7 +946,7 @@ class Model_free:
         self.select(run=run, model=model, scaling=scaling)
 
 
-    def minimise(self, run=None, i=None, init_params=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
+    def minimise(self, run=None, i=None, init_params=None, scaling_vector=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
         """Model-free minimisation."""
 
         # Linear constraints.
@@ -942,11 +971,6 @@ class Model_free:
         self.f_count = 0
         self.g_count = 0
         self.h_count = 0
-
-        # Diagonal scaling.
-        scaling_vector = None
-        if self.relax.data.res[i].scaling.has_key(run):
-            scaling_vector = self.relax.data.res[i].scaling[run]
 
         # Set up the relaxation data and errors and the function options.
         relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
@@ -979,8 +1003,8 @@ class Model_free:
         self.h_count = self.h_count + hc
 
         # Scaling.
-        if self.relax.data.res[i].scaling.has_key(run):
-            self.params = self.params * self.relax.data.res[i].scaling[run]
+        if self.relax.data.res[i].scaling[run]:
+            self.params = self.params * scaling_vector
 
         # Types.
         types = self.relax.data.res[i].params[run]
@@ -1336,38 +1360,6 @@ class Model_free:
             self.relax.data.res[index].g_count[run] = g_count
             self.relax.data.res[index].h_count[run] = h_count
             self.relax.data.res[index].warning[run] = warning
-
-
-    def scaling_vector(self, run, params, index):
-        """Function for creating the scaling vector."""
-
-        scaling_vector = []
-        for i in range(len(params)):
-            # tm.
-            if params[i] == 'tm':
-                scaling_vector.append(1e-9)
-
-            # te, tf, and ts.
-            elif match('t', params[i]):
-                scaling_vector.append(1e-9)
-
-            # Rex.
-            elif params[i] == 'Rex':
-                scaling_vector.append(1.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0]) ** 2)
-
-            # Bond length.
-            elif params[i] == 'r':
-                scaling_vector.append(1e-10)
-
-            # CSA.
-            elif params[i] == 'CSA':
-                scaling_vector.append(1e-4)
-
-            # No scaling.
-            else:
-                scaling_vector.append(1.0)
-
-        return scaling_vector
 
 
     def select(self, run=None, model=None, scaling=1):

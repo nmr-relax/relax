@@ -41,7 +41,7 @@ class Delete:
 
         # Define the different classes of data type.
         global_types = ['seq', 'diff']
-        sequence_types = ['rx_data', 'mf', 'all']
+        sequence_types = ['relax_data', 'mf', 'all']
 
         # Check the validity of the data type argument.
         if not data_type in global_types and not data_type in sequence_types:

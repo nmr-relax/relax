@@ -16,7 +16,7 @@ for i in range(len(ri_labels)):
 read.sequence('noe.500.out')
 
 # Precalculated flag.
-precalc = 1
+precalc = 0
 
 if not precalc:
     print "\n\n\n\n"
@@ -32,7 +32,7 @@ if not precalc:
             for k in range(len(ri_labels)):
                 if k == i:
                     continue
-                read.rx_data(cv_runs[i][j], ri_labels[k], frq_labels[k], frqs[k], file_names[k])
+                read.relax_data(cv_runs[i][j], ri_labels[k], frq_labels[k], frqs[k], file_names[k])
 
             # Set up the global rotational correlation time.
             diffusion_tensor(cv_runs[i][j], 'iso', 1e-8)
@@ -62,10 +62,10 @@ for i in range(len(ri_labels)):
     # Loop over the model-free models.
     for j in range(len(cv_runs[i])):
         # Delete the relaxation data from the calibration set.
-        delete(cv_runs[i][j], data_type='rx_data')
+        delete(cv_runs[i][j], data_type='relax_data')
 
         # Create the validation set by loading the relaxation data excluded from the calibration set.
-        read.rx_data(cv_runs[i][j], ri_labels[j], frq_labels[j], frqs[j], file_names[j])
+        read.relax_data(cv_runs[i][j], ri_labels[j], frq_labels[j], frqs[j], file_names[j])
 
         # Set up the global rotational correlation time.
         diffusion_tensor(cv_runs[i][j], 'iso', 1e-8)
@@ -103,9 +103,9 @@ print "###############################################"
 print "\n"
 
 # Delete the relaxation data copied over to the run 'cv' and then load all the data.
-delete('cv', data_type='rx_data')
+delete('cv', data_type='relax_data')
 for i in range(len(ri_labels)):
-    read.rx_data('cv', ri_labels[i], frq_labels[i], frqs[i], file_names[i])
+    read.relax_data('cv', ri_labels[i], frq_labels[i], frqs[i], file_names[i])
 
 # Set up the global rotational correlation time.
 diffusion_tensor('cv', 'iso', 1e-8)

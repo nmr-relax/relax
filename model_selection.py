@@ -211,7 +211,7 @@ class Model_selection:
 
             # Loop over the validation samples and sum the chi-squared values.
             for j in range(len(self.runs)):
-                sum_crit = self.relax.data.res[i].chi2[self.runs[j][k]]
+                sum_crit = sum_crit + self.relax.data.res[i].chi2[self.runs[j][k]]
 
             # Cross-validation criterion (average chi-squared value).
             crit = sum_crit / float(len(self.runs))

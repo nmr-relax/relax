@@ -53,12 +53,11 @@ from dx.opendx import OpenDX
 from errors import RelaxErrors
 from min import Minimise
 from model_free import Model_free
-from model_selection.model_selection import Model_selection
+from model_selection import Model_selection
 from palmer import Palmer
 from prompt.interpreter import Interpreter
+from relax_data import Rx_data
 from rw import RW
-from rx_data import Rx_data
-from rx_fit import Rx_fit
 from sequence import Sequence
 from specific_setup import Specific_setup
 from state import State
@@ -95,8 +94,8 @@ class Relax:
         self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
         self.opendx = OpenDX(self)
+        self.relax_data = Rx_data(self)
         self.rw = RW(self)
-        self.rx_data = Rx_data(self)
         self.sequence = Sequence(self)
         self.specific_setup = Specific_setup(self)
         self.state = State(self)

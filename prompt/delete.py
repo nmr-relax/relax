@@ -48,7 +48,7 @@ class Delete:
         following strings:
             seq:  sequence data.
             diff:  Diffusion tensor
-            rx_data:  relaxation data data.
+            relax_data:  relaxation data data.
             mf:  model-free data.
             all:  all data associated with the run.
 

@@ -40,7 +40,7 @@ class Skin:
 
         # Place references to the interactive functions within the namespace of this skin class.
         self.read_data = x.read_data
-        self.rx_data = x.rx_data
+        self.relax_data = x.relax_data
         self.sequence = x.sequence
 
         # __repr__.
@@ -52,7 +52,7 @@ class Macro_class:
         """Class containing macros for loading data."""
 
         self.relax = relax
-        self.rx_data = self.relax.rx_data.macro_read
+        self.relax_data = self.relax.relax_data.macro_read
         self.sequence = self.relax.sequence.macro_read
 
 

@@ -27,12 +27,12 @@ read.sequence('noe.500.out')
 name = 'm5'
 
 # Load the relaxation data.
-read.rx_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
-read.rx_data(name, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
-read.rx_data(name, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
-read.rx_data(name, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
-read.rx_data(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
-read.rx_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
+read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
+read.relax_data(name, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
+read.relax_data(name, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
+read.relax_data(name, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
+read.relax_data(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
+read.relax_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
 diffusion_tensor(name, 'iso', 1e-8)
