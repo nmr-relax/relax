@@ -2237,7 +2237,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdS2(data, params, j, k, num_D_params):
                          i=m
     """
 
-    return 0.4 * sum(data.dci[k-num_D_params] * data.ti * (data.fact_ti - data.ts_ti_ts * data.inv_ts_denom), axis=2)
+    return 0.4 * sum(data.dci[j-num_D_params] * data.ti * (data.fact_ti - data.ts_ti_ts * data.inv_ts_denom), axis=2)
 
 
 
@@ -2262,7 +2262,7 @@ def calc_diff_S2f_S2_ts_d2jw_dPsijdS2f(data, params, j, k, num_D_params):
                           i=m
     """
 
-    return 0.4 * sum(data.dci[k-num_D_params] * data.ti * data.ts_ti_ts * data.inv_ts_denom, axis=2)
+    return 0.4 * sum(data.dci[j-num_D_params] * data.ti * data.ts_ti_ts * data.inv_ts_denom, axis=2)
 
 
 # {S2f, tf, S2, ts} with diffusion parameters.
@@ -2283,7 +2283,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdS2f(data, params, j, k, num_D_params):
                             i=m
     """
 
-    return -0.4 * sum(data.dci[k-num_D_params] * data.ti * (data.tf_ti_tf * data.inv_tf_denom - data.ts_ti_ts * data.inv_ts_denom), axis=2)
+    return -0.4 * sum(data.dci[j-num_D_params] * data.ti * (data.tf_ti_tf * data.inv_tf_denom - data.ts_ti_ts * data.inv_ts_denom), axis=2)
 
 
 
@@ -2308,7 +2308,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdtf(data, params, j, k, num_D_params):
                                   i=m
     """
 
-    return 0.4 * data.one_s2f * sum(data.dci[k-num_D_params] * data.fact_djw_dtf, axis=2)
+    return 0.4 * data.one_s2f * sum(data.dci[j-num_D_params] * data.fact_djw_dtf, axis=2)
 
 
 
@@ -2333,7 +2333,7 @@ def calc_diff_S2f_S2_ts_d2jw_dPsijdts(data, params, j, k, num_D_params):
                                    i=m
     """
 
-    return 0.4 * data.s2f_s2 * sum(data.dci[k-num_D_params] * data.fact_djw_dts, axis=2)
+    return 0.4 * data.s2f_s2 * sum(data.dci[j-num_D_params] * data.fact_djw_dts, axis=2)
 
 
 
@@ -2779,7 +2779,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dPsijdS2f(data, params, j, k, num_D_params):
                           i=m
     """
 
-    return 0.4 * sum(data.dci[k-num_D_params] * data.ti * (params[data.s2s_index] * data.fact_ti + data.one_s2s * data.ts_ti_ts * data.inv_ts_denom), axis=2)
+    return 0.4 * sum(data.dci[j-num_D_params] * data.ti * (params[data.s2s_index] * data.fact_ti + data.one_s2s * data.ts_ti_ts * data.inv_ts_denom), axis=2)
 
 
 # {S2f, tf, S2s, ts} with diffusion parameters.
@@ -2800,7 +2800,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdS2f(data, params, j, k, num_D_params):
                           i=m
     """
 
-    return 0.4 * sum(data.dci[k-num_D_params] * data.ti * (params[data.s2s_index] * data.fact_ti - data.tf_ti_tf * data.inv_tf_denom + data.one_s2s * data.ts_ti_ts * data.inv_ts_denom), axis=2)
+    return 0.4 * sum(data.dci[j-num_D_params] * data.ti * (params[data.s2s_index] * data.fact_ti - data.tf_ti_tf * data.inv_tf_denom + data.one_s2s * data.ts_ti_ts * data.inv_ts_denom), axis=2)
 
 
 
@@ -2825,7 +2825,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdS2s(data, params, j, k, num_D_params):
                              i=m
     """
 
-    return 0.4 * params[data.s2f_index] * sum(data.dci[k-num_D_params] * data.ti * (data.fact_ti - data.ts_ti_ts * data.inv_ts_denom), axis=2)
+    return 0.4 * params[data.s2f_index] * sum(data.dci[j-num_D_params] * data.ti * (data.fact_ti - data.ts_ti_ts * data.inv_ts_denom), axis=2)
 
 
 
@@ -2850,7 +2850,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdtf(data, params, j, k, num_D_params):
                                   i=m
     """
 
-    return 0.4 * data.one_s2f * sum(data.dci[k-num_D_params] * data.fact_djw_dtf, axis=2)
+    return 0.4 * data.one_s2f * sum(data.dci[j-num_D_params] * data.fact_djw_dtf, axis=2)
 
 
 
@@ -2875,7 +2875,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dPsijdts(data, params, j, k, num_D_params):
                                      i=m
     """
 
-    return 0.4 * data.s2f_s2 * sum(data.dci[k-num_D_params] * data.fact_djw_dts, axis=2)
+    return 0.4 * data.s2f_s2 * sum(data.dci[j-num_D_params] * data.fact_djw_dts, axis=2)
 
 
 
