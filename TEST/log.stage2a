@@ -1,0 +1,407 @@
+<<< Stage 2a of the asymptotic criteria based modelfree analysis >>>
+
+
+The input info data structure is:
+[['R1', '600', 599.74099999999999, 'R1.600.out'], ['R2', '600', 599.74099999999999, 'R2.600.out'], ['NOE', '600', 599.74099999999999, 'noe.600.out'], ['R1', '500', 500.24099999999999, 'R1.500.out'], ['R2', '500', 500.24099999999999, 'R2.500.out'], ['NOE', '500', 500.24099999999999, 'noe.500.out']]
+
+Data label:              R1                  
+NMR frequency label:     600                 
+NMR proton frequency:    599.74099999999999  
+File name:               R1.600.out          
+
+Data label:              R2                  
+NMR frequency label:     600                 
+NMR proton frequency:    599.74099999999999  
+File name:               R2.600.out          
+
+Data label:              NOE                 
+NMR frequency label:     600                 
+NMR proton frequency:    599.74099999999999  
+File name:               noe.600.out         
+
+Data label:              R1                  
+NMR frequency label:     500                 
+NMR proton frequency:    500.24099999999999  
+File name:               R1.500.out          
+
+Data label:              R2                  
+NMR frequency label:     500                 
+NMR proton frequency:    500.24099999999999  
+File name:               R2.500.out          
+
+Data label:              NOE                 
+NMR frequency label:     500                 
+NMR proton frequency:    500.24099999999999  
+File name:               noe.500.out         
+
+Number of frequencies:	2
+Number of data sets:	6
+
+Making directory final
+Making directory grace
+
+
+<<< AIC model selection >>>
+   Checking res 4     
+	AIC (m1): 328.93760242604429
+
+	AIC (m2): 65.997435759377595
+
+	AIC (m3): 329.1042857593776
+
+	AIC (m4): 66.164110759377593
+
+	AIC (m5): 16.756644092710925
+	The selected model is: m5
+
+
+   Checking res 5     
+	AIC (m1): 267.38440612268488
+
+	AIC (m2): 110.03358945601819
+
+	AIC (m3): 267.55111445601818
+
+	AIC (m4): 88.398806122684846
+
+	AIC (m5): 22.502856122684847
+	The selected model is: m5
+
+
+   Checking res 6     
+	AIC (m1): 140.16606596502623
+
+	AIC (m2): 29.284565965026232
+
+	AIC (m3): 140.33273263169289
+
+	AIC (m4): 29.4512326316929
+
+	AIC (m5): 5.8114326316928997
+	The selected model is: m5
+
+
+   Checking res 7     
+	AIC (m1): 39.233517485430617
+
+	AIC (m2): 21.535892485430619
+
+	AIC (m3): 39.400175818763948
+
+	AIC (m4): 21.702567485430617
+
+	AIC (m5): 4.1664424854306175
+	The selected model is: m5
+
+
+   Checking res 8     
+	AIC (m1): 35.029132257329032
+
+	AIC (m2): 16.300982257329036
+
+	AIC (m3): 35.195798923995703
+
+	AIC (m4): 16.4676489239957
+
+	AIC (m5): 9.4291072573290347
+	The selected model is: m5
+
+
+   Checking res 12    
+	AIC (m1): 0.36787353041472598
+
+	AIC (m2): 0.407998530414726
+
+	AIC (m3): 0.52248186374805927
+
+	AIC (m4): 0.50514853041472596
+
+	AIC (m5): 0.57466519708139263
+	The selected model is: m1
+
+
+   Checking res 13    
+	AIC (m1): 3.8524935857408469
+
+	AIC (m2): 4.0191602524075138
+
+	AIC (m3): 1.6232019190741802
+
+	AIC (m4): 1.4082019190741804
+
+	AIC (m5): 4.1858185857408472
+	The selected model is: m4
+
+
+   Checking res 14    
+	AIC (m1): 0.24849083978327177
+
+	AIC (m2): 0.41127417311660514
+
+	AIC (m3): 0.41515750644993843
+
+	AIC (m4): 0.57794083978327182
+
+	AIC (m5): 0.57794083978327182
+	The selected model is: m1
+
+
+   Checking res 15    
+	AIC (m1): 0.51985927076966187
+
+	AIC (m2): 0.68630927076966186
+
+	AIC (m3): 0.30920093743632854
+
+	AIC (m4): 0.40705093743632853
+
+	AIC (m5): 0.85297593743632849
+	The selected model is: m3
+
+
+   Checking res 16    
+	AIC (m1): 1.9546717386317038
+
+	AIC (m2): 2.1213384052983706
+
+	AIC (m3): 0.53383840529837068
+
+	AIC (m4): 0.70050507196503731
+
+	AIC (m5): 2.2880050719650371
+	The selected model is: m3
+
+
+   Checking res 17    
+	AIC (m1): 1.7698539642303486
+
+	AIC (m2): 1.9365206308970153
+
+	AIC (m3): 0.91347896423034847
+
+	AIC (m4): 1.0801456308970152
+
+	AIC (m5): 2.1031872975636818
+	The selected model is: m3
+
+
+   Checking res 20    
+	AIC (m1): 0.4085961107503866
+
+	AIC (m2): 0.56930444408371994
+
+	AIC (m3): 0.57526277741705323
+
+	AIC (m4): 0.74192944408371986
+
+	AIC (m5): 0.73597944408371996
+	The selected model is: m1
+
+
+   Checking res 21    
+	AIC (m1): 1.2356350218387082
+
+	AIC (m2): 1.4020766885053753
+
+	AIC (m3): 0.66720168850537487
+
+	AIC (m4): 0.74789335517204159
+
+	AIC (m5): 1.5687433551720418
+	The selected model is: m3
+
+
+   Checking res 22    
+	AIC (m1): 0.63857034745254382
+
+	AIC (m2): 0.50939534745254389
+
+	AIC (m3): 0.80523701411921056
+
+	AIC (m4): 0.67606201411921063
+
+	AIC (m5): 0.30502868078587725
+	The selected model is: m5
+
+
+   Checking res 24    
+	AIC (m1): 0.72416399832550538
+
+	AIC (m2): 0.59128066499217213
+
+	AIC (m3): 0.68649733165883875
+
+	AIC (m4): 0.26053066499217203
+
+	AIC (m5): 0.7581139983255053
+	The selected model is: m4
+
+
+   Checking res 25    
+	AIC (m1): 3.4911669101711169
+
+	AIC (m2): 3.5091585768377835
+
+	AIC (m3): 2.3753835768377836
+
+	AIC (m4): 1.7508919101711171
+
+	AIC (m5): 3.6759169101711167
+	The selected model is: m4
+
+
+   Checking res 26    
+	AIC (m1): 6.6722527688173132
+
+	AIC (m2): 5.3929194354839796
+
+	AIC (m3): 6.8389194354839802
+
+	AIC (m4): 5.5595861021506465
+
+	AIC (m5): 0.68732776881731361
+	The selected model is: m5
+
+
+   Checking res 27    
+	AIC (m1): 2.2517222441251725
+
+	AIC (m2): 2.418388910791839
+
+	AIC (m3): 1.8626389107918395
+
+	AIC (m4): 1.9454722441251728
+
+	AIC (m5): 2.5850639107918396
+	The selected model is: m3
+
+
+   Checking res 28    
+	AIC (m1): 0.17294084231922927
+
+	AIC (m2): 0.2888825089858959
+
+	AIC (m3): 0.2911491756525626
+
+	AIC (m4): 0.35204917565256261
+
+	AIC (m5): 0.45574084231922923
+	The selected model is: m1
+
+
+   Checking res 29    
+	AIC (m1): 0.33442932137053377
+
+	AIC (m2): 0.50109598803720046
+
+	AIC (m3): 0.50109598803720046
+
+	AIC (m4): 0.6677626547038672
+
+	AIC (m5): 0.92356265470386711
+	The selected model is: m1
+
+
+   Checking res 30    
+	AIC (m1): 4.0729951696540523
+
+	AIC (m2): 4.2396618363207184
+
+	AIC (m3): 0.073378502987385311
+
+	AIC (m4): 0.24004516965405198
+
+	AIC (m5): 4.4063285029873853
+	The selected model is: m3
+
+
+   Checking res 32    
+	AIC (m1): 3.6299963533370492
+
+	AIC (m2): 3.7966630200037161
+
+	AIC (m3): 0.45162968667038283
+
+	AIC (m4): 0.6015130200037162
+
+	AIC (m5): 3.9633296866703827
+	The selected model is: m3
+
+
+   Checking res 33    
+	AIC (m1): 1.4340004494855698
+
+	AIC (m2): 1.0969671161522367
+
+	AIC (m3): 1.6006671161522366
+
+	AIC (m4): 1.2636337828189033
+
+	AIC (m5): 0.83015044948556993
+	The selected model is: m5
+
+
+   Checking res 34    
+	AIC (m1): 2.3421605267367256
+
+	AIC (m2): 2.823710526736726
+
+	AIC (m3): 0.69251052673672575
+
+	AIC (m4): 0.62743552673672587
+
+	AIC (m5): 2.9903771934033929
+	The selected model is: m4
+
+
+   Checking res 35    
+	AIC (m1): 1.3616510611595445
+
+	AIC (m2): 1.1856427278262112
+
+	AIC (m3): 1.3651510611595448
+
+	AIC (m4): 0.83555939449287786
+
+	AIC (m5): 1.3617927278262112
+	The selected model is: m4
+
+
+   Checking res 36    
+	AIC (m1): 14.522705631815898
+
+	AIC (m2): 14.455363965149232
+
+	AIC (m3): 5.1511389651492294
+
+	AIC (m4): 2.2764556318158964
+
+	AIC (m5): 14.623163965149232
+	The selected model is: m4
+
+
+   Checking res 38    
+	AIC (m1): 6.7281768527826022
+
+	AIC (m2): 3.0814935194492694
+
+	AIC (m3): 6.7308685194492694
+
+	AIC (m4): 1.6918268527826026
+
+	AIC (m5): 5.2094435194492696
+	The selected model is: m4
+
+
+   Checking res 39    
+	AIC (m1): 7.7270734479142185
+
+	AIC (m2): 1.9720984479142185
+
+	AIC (m3): 7.893748447914219
+
+	AIC (m4): 2.138765114580885
+
+	AIC (m5): 1.5354067812475514
+	The selected model is: m5
+
