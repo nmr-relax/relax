@@ -15,7 +15,8 @@ from dri_prime import *
 from ri import *
 from dri import *
 
-from chi2 import calc_chi2
+from chi2 import chi2
+from dchi2 import dchi2
 
 class mf:
 	def __init__(self, relax, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling=None, print_flag=0):
@@ -58,6 +59,10 @@ class mf:
 		self.data.csa = csa
 		self.data.diff_type = diff_type
 		self.data.diff_params = diff_params
+
+		# Test data.
+		self.data.func_test = zeros(len(init_params), Float64)
+		self.data.grad_test = zeros(len(init_params), Float64)
 
 		# Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
 		self.calc_frq_list()
@@ -116,38 +121,58 @@ class mf:
 		create_jw_struct(self.data, self.calc_jw)
 
 		# Calculate the R1, R2, and sigma_noe values.
-		calc_ri_prime(self.data, self.ri_prime_funcs)
+		ri_prime(self.data, self.create_ri_prime_comps, self.create_ri_prime)
 
 		# Calculate the R1, R2, and NOE values.
-		self.data.ri = self.data.ri_prime
-		calc_ri(self.data, self.ri_funcs)
+		self.data.ri = deepcopy(self.data.ri_prime)
+		ri(self.data, self.create_ri, self.get_r1)
 
 		# Calculate the chi-squared value.
-		self.data.chi2 = calc_chi2(self.data.relax_data, self.data.ri, self.data.errors)
+		self.data.chi2 = chi2(self.data.relax_data, self.data.ri, self.data.errors)
 
 		return self.data.chi2
 
 
 	def dfunc(self, params, print_flag=0):
 		"""The function for calculating the model-free chi-squared gradient vector.
+
+		The chi-sqared gradient
+		~~~~~~~~~~~~~~~~~~~~~~~
+		               _n_
+		 dChi2         \   /  Ri - Ri()      dRi()  \ 
+		-------  =  -2  >  | ----------  .  ------- |
+		dthetaj        /__ \ sigma_i**2     dthetaj /
+		               i=1
+
+		where:
+			Ri are the values of the measured relaxation data set.
+			Ri() are the values of the back calculated relaxation data set.
+			sigma_i are the values of the error set.
+
 		"""
 
 		# Arguments
 		self.data.params = params
 		self.print_flag = print_flag
 
+		# Test if function self.func has been called with these parameter values.  If not, call it.
+		if self.data.func_test != params:
+			temp_chi2 = self.func(params, print_flag)
+
 		# Calculate the spectral density values.
 		create_djw_struct(self.data, self.calc_djw)
 
 		# Calculate the R1, R2, and sigma_noe values.
-		calc_dri_prime(self.data, self.dri_prime_funcs)
+		dri_prime(self.data, self.create_dri_prime_comps, self.create_dri_prime)
 
 		# Calculate the R1, R2, and NOE values.
 		self.data.dri = deepcopy(self.data.dri_prime)
-		calc_dri(self.data, self.dri_funcs)
+
+		dri(self.data, self.create_dri, self.get_dr1)
+
 
 		# Calculate the chi-squared value.
-		self.data.dchi2 = calc_dchi2(self.data.relax_data, self.data.dri, self.data.errors)
+		self.data.dchi2 = dchi2(self.data.relax_data, self.data.ri, self.data.dri, self.data.errors)
 
 		return self.data.dchi2
 
@@ -186,6 +211,7 @@ class mf:
 		self.data.csa_jw_comps = zeros((self.relax.data.num_ri), Float64)
 		self.data.rex_comps = zeros((self.relax.data.num_ri), Float64)
 
+		# Initialise the first partial derivative components of the transformed relaxation equations.
 		self.data.dip_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
 		self.data.dip_jw_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
 		self.data.csa_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
@@ -195,6 +221,12 @@ class mf:
 		# Initialise the transformed relaxation values, gradients, and hessians.
 		self.data.ri_prime = zeros((self.relax.data.num_ri), Float64)
 		self.data.dri_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.d2ri_prime = zeros((len(self.params), len(self.params), self.relax.data.num_ri), Float64)
+
+		# Initialise the data structures containing the R1 values at the position of and corresponding to the NOE.
+		self.data.r1 = zeros((self.relax.data.num_ri), Float64)
+		self.data.dr1 = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.d2r1 = zeros((len(self.params), len(self.params), self.relax.data.num_ri), Float64)
 
 
 	def lm_dri(self):
@@ -237,7 +269,7 @@ class mf:
 			elif self.data.s2_index != None:
 				self.calc_jw = calc_iso_s2_jw
 				self.calc_jw_comps = calc_iso_s2_jw_comps
-				self.calc_djw[self.data.s2_index] = calc_iso_S2_te_djw_dS2
+				self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
 			elif self.data.te_index != None:
 				print "Invalid model, you cannot have te as a parameter without S2 existing as well."
 				return 0
@@ -288,32 +320,82 @@ class mf:
 			return 0
 
 
-		# The transformed relaxation equations.
-		self.ri_funcs = []
-		self.ri_prime_funcs = []
+		# Initialise the ri prime function pointer data structures.
+		self.create_ri_prime = None
+		self.create_ri_prime_comps = []
+		self.create_dri_prime = []
+		self.create_dri_prime_comps = []
+		self.create_d2ri_prime = []
+		self.create_d2ri_prime_comps = []
+
+		# Initialise the ri function pointer data structures.
+		self.create_ri = []
+		self.create_dri = []
+
+		# Initialise the data structures containing the R1 values at the position of and corresponding to the NOE.
+		self.get_r1 = []
+		self.get_dr1 = []
+		for i in range(self.relax.data.num_ri):
+			if self.relax.data.ri_labels[i] == 'NOE':
+				if self.relax.data.noe_r1_table[i] == None:
+					self.get_r1.append(calc_r1)
+					self.get_dr1.append(calc_dr1)
+				else:
+					self.get_r1.append(extract_r1)
+					self.get_dr1.append(extract_dr1)
+			else:
+				self.get_r1.append(None)
+				self.get_dr1.append(None)
+
 
 		# Both the bond length and CSA are fixed.
 		if self.data.r_index == None and self.data.csa_index == None:
+			# Calculate the dipolar and CSA constants.
 			calc_dip_const(self.data)
 			calc_csa_const(self.data)
+
+			# Make pointers to the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
 				if self.relax.data.ri_labels[i]  == 'R1':
-					self.ri_funcs.append(None)
-					self.ri_prime_funcs.append(calc_r1_prime)
+					self.create_ri.append(None)
+					self.create_dri.append(None)
+					self.create_ri_prime_comps.append(comp_r1_prime)
+					self.create_dri_prime_comps.append(comp_dr1_dmf_prime)
 
 				# The R2 equations.
 				elif self.relax.data.ri_labels[i] == 'R2':
-					self.ri_funcs.append(None)
+					self.create_ri.append(None)
+					self.create_dri.append(None)
 					if self.data.rex_index == None:
-						self.ri_prime_funcs.append(calc_r2_prime)
+						self.create_ri_prime_comps.append(comp_r2_prime)
 					else:
-						self.ri_prime_funcs.append(calc_r2_rex_prime)
+						self.create_ri_prime_comps.append(comp_r2_prime_rex)
+					self.create_dri_prime_comps.append(comp_dr2_dmf_prime)
 
 				# The NOE equations.
 				elif self.relax.data.ri_labels[i] == 'NOE':
-					self.ri_funcs.append(calc_noe)
-					self.ri_prime_funcs.append(calc_sigma_noe)
+					self.create_ri.append(calc_noe)
+					self.create_dri.append(calc_dnoe)
+					self.create_ri_prime_comps.append(comp_sigma_noe)
+					self.create_dri_prime_comps.append(comp_dsigma_noe_dmf_prime)
+
+			# Make pointers to the function for the calculation of ri_prime values.
+			if self.data.rex_index == None:
+				self.create_ri_prime = func_ri_prime
+			else:
+				self.create_ri_prime = func_ri_prime_rex
+
+			# Make pointers to the function for the calculation of dri_prime values.
+			for i in range(len(self.data.params)):
+				if match('Rex', self.param_types[i]):
+					self.create_dri_prime.append(func_dri_drex_prime)
+				elif match('Bond length', self.param_types[i]):
+					self.create_dri_prime.append(func_dri_dr_prime)
+				elif match('CSA', self.param_types[i]):
+					self.create_dri_prime.append(func_dri_dcsa_prime)
+				else:
+					self.create_dri_prime.append(func_dri_dmf_prime)
 
 		# The bond length is part of the parameter vector.
 		elif self.data.r_index != None and self.data.csa_index == None:
@@ -321,21 +403,21 @@ class mf:
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
 				if self.relax.data.ri_labels[i]  == 'R1':
-					self.ri_funcs.append(None)
-					self.ri_prime_funcs.append(calc_r1_prime_r)
+					self.create_ri.append(None)
+					self.create_ri_prime_comps.append(comp_r1_prime_r)
 
 				# The R2 equations.
 				elif self.relax.data.ri_labels[i] == 'R2':
-					self.ri_funcs.append(None)
+					self.create_ri.append(None)
 					if self.data.rex_index == None:
-						self.ri_prime_funcs.append(calc_r2_prime_r)
+						self.create_ri_prime_comps.append(comp_r2_prime_r)
 					else:
-						self.ri_prime_funcs.append(calc_r2_rex_prime_r)
+						self.create_ri_prime_comps.append(comp_r2_rex_prime_r)
 
 				# The NOE equations.
 				elif self.relax.data.ri_labels[i] == 'NOE':
-					self.ri_funcs.append(calc_noe)
-					self.ri_prime_funcs.append(calc_sigma_noe_r)
+					self.create_ri.append(calc_noe)
+					self.create_ri_prime_comps.append(comp_sigma_noe_r)
 
 		# The CSA is part of the parameter vector.
 		elif self.data.r_index == None and self.data.csa_index != None:
@@ -343,42 +425,42 @@ class mf:
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
 				if self.relax.data.ri_labels[i]  == 'R1':
-					self.ri_funcs.append(None)
-					self.ri_prime_funcs.append(calc_r1_prime_csa)
+					self.create_ri.append(None)
+					self.create_ri_prime_comps.append(comp_r1_prime_csa)
 
 				# The R2 equations.
 				elif self.relax.data.ri_labels[i] == 'R2':
-					self.ri_funcs.append(None)
+					self.create_ri.append(None)
 					if self.data.rex_index == None:
-						self.ri_prime_funcs.append(calc_r2_prime_csa)
+						self.create_ri_prime_comps.append(comp_r2_prime_csa)
 					else:
-						self.ri_prime_funcs.append(calc_r2_rex_prime_csa)
+						self.create_ri_prime_comps.append(comp_r2_rex_prime_csa)
 
 				# The NOE equations.
 				elif self.relax.data.ri_labels[i] == 'NOE':
-					self.ri_funcs.append(calc_noe)
-					self.ri_prime_funcs.append(calc_sigma_noe)
+					self.create_ri.append(calc_noe)
+					self.create_ri_prime_comps.append(comp_sigma_noe)
 
 		# Both the bond length and CSA are part of the parameter vector.
 		elif self.data.r_index != None and self.data.csa_index != None:
 			for i in range(self.relax.data.num_ri):
 				# The R1 equations.
 				if self.relax.data.ri_labels[i]  == 'R1':
-					self.ri_funcs.append(None)
-					self.ri_prime_funcs.append(calc_r1_prime_r_csa)
+					self.create_ri.append(None)
+					self.create_ri_prime_comps.append(comp_r1_prime_r_csa)
 
 				# The R2 equations.
 				elif self.relax.data.ri_labels[i] == 'R2':
-					self.ri_funcs.append(None)
+					self.create_ri.append(None)
 					if self.data.rex_index == None:
-						self.ri_prime_funcs.append(calc_r2_prime_r_csa)
+						self.create_ri_prime_comps.append(comp_r2_prime_r_csa)
 					else:
-						self.ri_prime_funcs.append(calc_r2_rex_prime_r_csa)
+						self.create_ri_prime_comps.append(comp_r2_rex_prime_r_csa)
 
 				# The NOE equations.
 				elif self.relax.data.ri_labels[i] == 'NOE':
-					self.ri_funcs.append(calc_noe)
-					self.ri_prime_funcs.append(calc_sigma_noe_r)
+					self.create_ri.append(calc_noe)
+					self.create_ri_prime_comps.append(comp_sigma_noe_r)
 
 		# Invalid combination of parameters.
 		else:

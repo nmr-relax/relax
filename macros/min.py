@@ -157,7 +157,7 @@ class min:
 			self.g_count = self.g_count + gc
 			self.h_count = self.h_count + hc
 
-			self.relax.data.params[self.res] = self.params
+			self.relax.data.params[self.model_index][self.res] = self.params
 
 			if self.relax.min_debug:
 				print "\n\n<<< Finished minimiser >>>"
@@ -170,7 +170,7 @@ class min:
 	def minimisation_init(self):
 		"Set up the minimisation specific options."
 
-		if match('^[Bb][Ff][Gg][Ss]$', self.min_algor) or match('^[Nn]ewton$', self.min_algor):
+		if match('^[Cc][Dd]$', self.min_algor) or match('^[Cc]oordinate-[Dd]escent$', self.min_algor) or match('^[Ss][Dd]$', self.min_algor) or match('^[Ss]teepest[ _][Dd]escent$', self.min_algor) or match('^[Bb][Ff][Gg][Ss]$', self.min_algor) or match('^[Nn]ewton$', self.min_algor):
 			if self.min_options == None:
 				self.min_options = 'More Thuente'
 

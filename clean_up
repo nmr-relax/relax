@@ -2,3 +2,4 @@ rm -f *.pyc
 rm -f */*.pyc
 rm -f */*/*.pyc
 rm -f */*/*/*.pyc
+rm -f doc
