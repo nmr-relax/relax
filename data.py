@@ -15,7 +15,7 @@ class data:
 		self.cv = self.init_cv()
 		self.farrow = self.init_farrow()
 		self.palmer = self.init_palmer()
-		self.true = self.init_true()
+		self.overall_disc = self.init_overall_disc()
 
 
 
@@ -60,11 +60,11 @@ class data:
 
 
 
-	class init_true:
+	class init_overall_disc:
 		def __init__(self):
 			"Data specific for model-free analysis using the overall discrepency."
 
-			self.name = 'True'
+			self.name = 'Overall'
 			self.op_data = []
 
 

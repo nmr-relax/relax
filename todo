@@ -11,6 +11,5 @@ merge all print_data functions
 # Model selection methods
 #########################
 
-anisotropic diffusion (bootstrap)
+anisotropic diffusion (overall discrepancy)
 cross-validation (split and merge stages into common_ops.py)
-sort out true model selection (True discrepancy and expected discrepancy)

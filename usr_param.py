@@ -44,9 +44,9 @@ class usr_param:
 		self.input_info.append(['R1', '600', 600.0, 'r1.600.out'])
 		self.input_info.append(['R2', '600', 600.0, 'r2.600.out'])
 		self.input_info.append(['NOE', '600', 600.0, 'noe.600.out'])
-		self.input_info.append(['R1', '500', 500.0, 'r1.600.out'])
-		self.input_info.append(['R2', '500', 500.0, 'r2.600.out'])
-		self.input_info.append(['NOE', '500', 500.0, 'noe.600.out'])
+		self.input_info.append(['R1', '500', 500.0, 'r1.500.out'])
+		self.input_info.append(['R2', '500', 500.0, 'r2.500.out'])
+		self.input_info.append(['NOE', '500', 500.0, 'noe.500.out'])
 
 		self.nmr_frq = []
 		self.nmr_frq.append(['600', 600.0, '1', '1', '1'])
@@ -77,8 +77,8 @@ class usr_param:
 
 		Palmer:	The method given by Mandel et al., 1995.
 
-		True:	Calculate the exact overall discrepency (real model-free parameters
-			must be known).
+		Overall:	Calculate the realized overall discrepency (real model-free parameters
+				must be known).
 		"""
 
 		self.method = 'CV'

@@ -28,7 +28,7 @@ from common_ops import common_operations
 from discrepancies import kl
 
 
-class true(common_operations):
+class overall_disc(common_operations):
 	def __init__(self, mf):
 		"Calculation of the theoretical overall discrepency."
 
@@ -37,9 +37,9 @@ class true(common_operations):
 
 		print "Modelfree analysis based on the overall discrepency for model selection."
 		self.initialize()
-		message = "See the file 'modsel/true.py' for details.\n"
+		message = "See the file 'modsel/overall_disc.py' for details.\n"
 		self.mf.file_ops.read_file('op_data', message)
-		self.mf.data.true.op_data = self.mf.file_ops.open_file(file_name='op_data')
+		self.mf.data.overall_disc.op_data = self.mf.file_ops.open_file(file_name='op_data')
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 		self.mf.data.mfin.default_data()
 		self.goto_stage()
@@ -67,7 +67,7 @@ class true(common_operations):
 			err = []
 			types = []
 			for set in range(len(self.mf.data.relax_data)):
-				real.append(float(self.mf.data.true.op_data[res][set+2]))
+				real.append(float(self.mf.data.overall_disc.op_data[res][set+2]))
 				err.append(float(self.mf.data.relax_data[set][res][3]))
 				types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 
@@ -114,11 +114,11 @@ class true(common_operations):
 			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
 			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
 			file.write('%-20s' % '')
-			file.write('%-17s' % 'Model 1')
-			file.write('%-17s' % 'Model 2')
-			file.write('%-17s' % 'Model 3')
-			file.write('%-17s' % 'Model 4')
-			file.write('%-17s' % 'Model 5')
+			file.write('%-19s' % 'Model 1')
+			file.write('%-19s' % 'Model 2')
+			file.write('%-19s' % 'Model 3')
+			file.write('%-19s' % 'Model 4')
+			file.write('%-19s' % 'Model 5')
 
 			file_crit.write('%-6s' % self.mf.data.results[res]['res_num'])
 			file_crit.write('%-6s' % self.mf.data.results[res]['model'])
@@ -126,47 +126,47 @@ class true(common_operations):
 			# S2.
 			file.write('\n%-20s' % 'S2')
 			for run in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
+				file.write('%9.3f' % self.mf.data.data[run][res]['s2'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
+				file.write('%-9.3f' % self.mf.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for run in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
+				file.write('%9.3f' % self.mf.data.data[run][res]['s2f'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
+				file.write('%-9.3f' % self.mf.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for run in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
+				file.write('%9.3f' % self.mf.data.data[run][res]['s2s'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
+				file.write('%-9.3f' % self.mf.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for run in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[run][res]['te'])
+				file.write('%9.2f' % self.mf.data.data[run][res]['te'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
+				file.write('%-9.2f' % self.mf.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for run in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
+				file.write('%9.3f' % self.mf.data.data[run][res]['rex'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
+				file.write('%-9.3f' % self.mf.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for run in self.mf.data.runs:
-				file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
+				file.write('%-19.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Model selection criteria.
 			file.write('\n%-20s' % self.mf.data.usr_param.method)
 			for run in self.mf.data.runs:
-				file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
+				file.write('%-19.6f' % self.mf.data.data[run][res]['crit'])
 
 				file_crit.write('%-25s' % `self.mf.data.data[run][res]['crit']`)
 			file_crit.write('\n')

@@ -250,81 +250,81 @@ class palmer(common_operations):
 			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
 			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
 			file.write('%-20s' % '')
-			file.write('%-17s' % 'Model 1')
-			file.write('%-17s' % 'Model 2')
-			file.write('%-17s' % 'Model 3')
-			file.write('%-17s' % 'Model 4')
-			file.write('%-17s' % 'Model 5')
+			file.write('%-19s' % 'Model 1')
+			file.write('%-19s' % 'Model 2')
+			file.write('%-19s' % 'Model 3')
+			file.write('%-19s' % 'Model 4')
+			file.write('%-19s' % 'Model 5')
 
 			# S2.
 			file.write('\n%-20s' % 'S2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
+					file.write('%9.3f' % self.mf.data.data[run][res]['s2'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
+					file.write('%-9.3f' % self.mf.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
+					file.write('%9.3f' % self.mf.data.data[run][res]['s2f'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
+					file.write('%-9.3f' % self.mf.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
+					file.write('%9.3f' % self.mf.data.data[run][res]['s2s'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
+					file.write('%-9.3f' % self.mf.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
+					file.write('%9.2f' % self.mf.data.data[run][res]['te'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
+					file.write('%-9.2f' % self.mf.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
+					file.write('%9.3f' % self.mf.data.data[run][res]['rex'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
+					file.write('%-9.3f' % self.mf.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
+					file.write('%-19.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Chi2 limit.
 			file.write('\n%-20s' % 'Chi2 limit')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2_lim'])
+					file.write('%-19.3f' % self.mf.data.data[run][res]['chi2_lim'])
 
 			# Chi2 test.
 			file.write('\n%-20s' % 'Chi2 test')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['chi2_test'])
+					file.write('%-19s' % self.mf.data.data[run][res]['chi2_test'])
 
 			# large Chi2.
 			file.write('\n%-20s' % 'large Chi2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['large_chi2'])
+					file.write('%-19s' % self.mf.data.data[run][res]['large_chi2'])
 
 			# zero Chi2.
 			file.write('\n%-20s' % 'zero Chi2')
 			for run in self.mf.data.runs:
 				if match('^m', run):
-					file.write('%-17s' % self.mf.data.data[run][res]['zero_chi2'])
+					file.write('%-19s' % self.mf.data.data[run][res]['zero_chi2'])
 
 		file.write('\n')
 		sys.stdout.write("]\n")

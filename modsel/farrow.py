@@ -128,79 +128,79 @@ class farrow(common_operations):
 			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
 			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
 			file.write('%-20s' % '')
-			file.write('%-17s' % 'Model 1')
-			file.write('%-17s' % 'Model 2')
-			file.write('%-17s' % 'Model 3')
-			file.write('%-17s' % 'Model 4')
-			file.write('%-17s' % 'Model 5')
+			file.write('%-19s' % 'Model 1')
+			file.write('%-19s' % 'Model 2')
+			file.write('%-19s' % 'Model 3')
+			file.write('%-19s' % 'Model 4')
+			file.write('%-19s' % 'Model 5')
 
 			# S2.
 			file.write('\n%-20s' % 'S2')
 			for model in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[model][res]['s2'])
+				file.write('%9.3f' % self.mf.data.data[model][res]['s2'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[model][res]['s2_err'])
+				file.write('%-9.3f' % self.mf.data.data[model][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for model in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[model][res]['s2f'])
+				file.write('%9.3f' % self.mf.data.data[model][res]['s2f'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[model][res]['s2f_err'])
+				file.write('%-9.3f' % self.mf.data.data[model][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for model in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[model][res]['s2s'])
+				file.write('%9.3f' % self.mf.data.data[model][res]['s2s'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[model][res]['s2s_err'])
+				file.write('%-9.3f' % self.mf.data.data[model][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for model in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[model][res]['te'])
+				file.write('%9.2f' % self.mf.data.data[model][res]['te'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[model][res]['te_err'])
+				file.write('%-9.2f' % self.mf.data.data[model][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for model in self.mf.data.runs:
-				file.write('%8.3f' % self.mf.data.data[model][res]['rex'])
+				file.write('%9.3f' % self.mf.data.data[model][res]['rex'])
 				file.write('%1s' % '±')
-				file.write('%-8.3f' % self.mf.data.data[model][res]['rex_err'])
+				file.write('%-9.3f' % self.mf.data.data[model][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for model in self.mf.data.runs:
-				file.write('%-17.3f' % self.mf.data.data[model][res]['chi2'])
+				file.write('%-19.3f' % self.mf.data.data[model][res]['chi2'])
 
 			# 95% confidence limits.
 			file.write('\n%-20s' % '95% conf limits')
 			for model in self.mf.data.runs:
-				file.write('%-17i' % self.mf.data.data[model][res]['conf_lim'])
+				file.write('%-19i' % self.mf.data.data[model][res]['conf_lim'])
 
 			# Parameters greater than errors test.
 			file.write('\n%-20s' % 'params > errs')
 			for model in self.mf.data.runs:
-				file.write('%-17i' % self.mf.data.data[model][res]['param_test'])
+				file.write('%-19i' % self.mf.data.data[model][res]['param_test'])
 
 			# Relaxation values
 			for set in range(len(self.mf.data.relax_data)):
 				file.write('\n%-20s' % (self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0]))
 				for model in self.mf.data.runs:
 					label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
-					file.write('%8.3f' % self.mf.data.relax_data[set][res][2])
+					file.write('%9.3f' % self.mf.data.relax_data[set][res][2])
 					file.write('%1s' % "|")
-					file.write('%-8.3f' % self.mf.data.data[model][res][label_fit])
+					file.write('%-9.3f' % self.mf.data.data[model][res][label_fit])
 				file.write('\n   %-20s' % "diff ± 95%")
 				for model in self.mf.data.runs:
 					label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
 					diff = self.mf.data.relax_data[set][res][2] - self.mf.data.data[model][res][label_fit]
 					if diff < 0:
 						diff = -diff
-					file.write('%8.3f' % diff)
+					file.write('%9.3f' % diff)
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % (1.96 * float(self.mf.data.relax_data[set][res][3])))
+					file.write('%-9.3f' % (1.96 * float(self.mf.data.relax_data[set][res][3])))
 
 
 		file.write('\n')

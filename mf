@@ -24,7 +24,7 @@ from modsel.bootstrap import bootstrap
 from modsel.cross_validation import cv
 from modsel.farrow import farrow
 from modsel.palmer import palmer
-from modsel.true import true
+from modsel.overall_disc import overall_disc
 
 
 class mf:
@@ -64,8 +64,8 @@ class mf:
 			farrow(self)
 		elif match('^Palmer$', self.data.usr_param.method):
 			palmer(self)
-		elif match('^True$', self.data.usr_param.method):
-			true(self)
+		elif match('^Overall$', self.data.usr_param.method):
+			overall_disc(self)
 		else:
 			print "The model-free analysis method is not set correctly.  Check self.method in"
 			print "the file 'usr_param.py' which should be in the working directory."

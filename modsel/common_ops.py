@@ -466,7 +466,6 @@ class common_operations:
 
 
 	def log_input_info(self):
-		self.mf.log.write("The input info data structure is:\n" + `self.mf.data.input_info` + "\n\n")
 		for i in range(len(self.mf.data.input_info)):
 			self.mf.log.write('%-25s%-20s\n' % ("Data label:", self.mf.data.input_info[i][0]))
 			self.mf.log.write('%-25s%-20s\n' % ("NMR frequency label:", self.mf.data.input_info[i][1]))
@@ -513,7 +512,7 @@ class common_operations:
 			else:
 				file.write('%26s' % '')
 			if match('[2,4,5]', self.mf.data.results[res]['model']):
-				file.write('%8.3f%1s%-8.3f  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] ))
+				file.write('%8.2f%1s%-8.2f  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] ))
 			else:
 				file.write('%19s' % '')
 			if match('[3,4]', self.mf.data.results[res]['model']):

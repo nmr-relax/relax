@@ -156,11 +156,11 @@ class cv(common_operations):
 			file.write("\n\n<<< Residue " + self.mf.data.results[res]['res_num'])
 			file.write(", Model " + self.mf.data.results[res]['model'] + " >>>\n")
 			file.write('%-20s' % '')
-			file.write('%-17s' % 'Model 1')
-			file.write('%-17s' % 'Model 2')
-			file.write('%-17s' % 'Model 3')
-			file.write('%-17s' % 'Model 4')
-			file.write('%-17s' % 'Model 5')
+			file.write('%-19s' % 'Model 1')
+			file.write('%-19s' % 'Model 2')
+			file.write('%-19s' % 'Model 3')
+			file.write('%-19s' % 'Model 4')
+			file.write('%-19s' % 'Model 5')
 
 			file_crit.write('%-6s' % self.mf.data.results[res]['res_num'])
 			file_crit.write('%-6s' % self.mf.data.results[res]['model'])
@@ -172,46 +172,46 @@ class cv(common_operations):
 				file.write('\n%-20s' % 'S2')
 				for model in self.mf.data.runs:
 					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-					file.write('%8.3f' % self.mf.data.data[cv_model][res]['s2'])
+					file.write('%9.3f' % self.mf.data.data[cv_model][res]['s2'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['s2_err'])
+					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['s2_err'])
 
 				# S2f.
 				file.write('\n%-20s' % 'S2f')
 				for model in self.mf.data.runs:
 					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-					file.write('%8.3f' % self.mf.data.data[cv_model][res]['s2f'])
+					file.write('%9.3f' % self.mf.data.data[cv_model][res]['s2f'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['s2f_err'])
+					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['s2f_err'])
 
 				# S2s.
 				file.write('\n%-20s' % 'S2s')
 				for model in self.mf.data.runs:
 					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-					file.write('%8.3f' % self.mf.data.data[cv_model][res]['s2s'])
+					file.write('%9.3f' % self.mf.data.data[cv_model][res]['s2s'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['s2s_err'])
+					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['s2s_err'])
 
 				# te.
 				file.write('\n%-20s' % 'te')
 				for model in self.mf.data.runs:
 					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-					file.write('%8.3f' % self.mf.data.data[cv_model][res]['te'])
+					file.write('%9.2f' % self.mf.data.data[cv_model][res]['te'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['te_err'])
+					file.write('%-9.2f' % self.mf.data.data[cv_model][res]['te_err'])
 
 				# Rex.
 				file.write('\n%-20s' % 'Rex')
 				for model in self.mf.data.runs:
 					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
-					file.write('%8.3f' % self.mf.data.data[cv_model][res]['rex'])
+					file.write('%9.3f' % self.mf.data.data[cv_model][res]['rex'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['rex_err'])
+					file.write('%-9.3f' % self.mf.data.data[cv_model][res]['rex_err'])
 
 			# Cross validation criteria.
 			file.write('\n%-20s' % 'CV')
 			for model in self.mf.data.runs:
-				file.write('%-17.3f' % self.mf.data.cv.cv_crit[res][model])
+				file.write('%-19.3f' % self.mf.data.cv.cv_crit[res][model])
 
 				file_crit.write('%-25s' % `self.mf.data.cv.cv_crit[res][model]`)
 			file_crit.write('\n')
