@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-from math import cos, radians, sin
+from math import cos, pi, sin
 from Numeric import Float64, array
 
 
@@ -109,9 +109,9 @@ class Diffusion_tensor:
 
         # Angles in radians.
         if self.angle_units == 'deg':
-            self.relax.data.diff[self.run].alpha = radians(alpha)
-            self.relax.data.diff[self.run].beta = radians(beta)
-            self.relax.data.diff[self.run].gamma = radians(gamma)
+            self.relax.data.diff[self.run].alpha = (alpha / 360.0) * 2.0 * pi
+            self.relax.data.diff[self.run].beta = (beta / 360.0) * 2.0 * pi
+            self.relax.data.diff[self.run].gamma = (gamma / 360.0) * 2.0 * pi
         else:
             self.relax.data.diff[self.run].alpha = alpha
             self.relax.data.diff[self.run].beta = beta
@@ -169,8 +169,8 @@ class Diffusion_tensor:
 
         # Angles in radians.
         if self.angle_units == 'deg':
-            self.relax.data.diff[self.run].theta = radians(theta)
-            self.relax.data.diff[self.run].phi = radians(phi)
+            self.relax.data.diff[self.run].theta = (theta / 360.0) * 2.0 * pi
+            self.relax.data.diff[self.run].phi = (phi / 360.0) * 2.0 * pi
         else:
             self.relax.data.diff[self.run].theta = theta
             self.relax.data.diff[self.run].phi = phi

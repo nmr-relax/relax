@@ -122,6 +122,10 @@ class Rx_data:
     def read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for reading R1, R2, or NOE relaxation data."""
 
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run

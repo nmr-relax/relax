@@ -248,12 +248,6 @@ class Mf:
         # Calculate the chi-squared value.
         self.data.chi2[0] = chi2(self.data.relax_data[0], self.data.ri[0], self.data.errors[0])
 
-        print ""
-        print self.data.params
-        print self.data.jw
-        print self.data.ci
-        print self.data.ti
-
         return self.data.chi2[0]
 
 

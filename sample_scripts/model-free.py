@@ -1,13 +1,13 @@
 # Script for model-free analysis.
 
 # Load the sequence.
-#read.sequence('noe.500.out')
+read.sequence('noe.500.out')
 
 # Nuclei type
 nuclei('N')
 
 # Create the run.
-name = 'm1'
+name = 'm2'
 create_run(name, 'mf')
 
 # Temp, load a PDB file.
@@ -24,7 +24,7 @@ read.relax_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
 #diffusion_tensor(name, 1e-8, fixed=1)
-diffusion_tensor(name, (1e-8, 1.0, 30, 90), param_types=1, axial_type='oblate', fixed=1)
+diffusion_tensor(name, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
 #diffusion_tensor(name, (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568), fixed=0)
 value.set(name, 'bond_length', 1.02 * 1e-10)
 value.set(name, 'csa', -160 * 1e-6)
@@ -46,7 +46,7 @@ grid_search(name, inc=21)
 #minimise('newton', run=name, constraints=1, max_iter=500)
 #minimise('newton', run=name, constraints=1, print_flag=20, max_iter=0)
 #minimise('newton', run=name, print_flag=9, max_iter=20)
-#minimise('simplex', run=name, constraints=0, print_flag=1)
+minimise('simplex', run=name, constraints=0, print_flag=1)
 
 # Finish.
 write(run=name, file='results_temp', force=1)
