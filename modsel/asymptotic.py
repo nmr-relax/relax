@@ -63,15 +63,15 @@ class asymptotic(common_operations):
 					k = 3.0
 
 				if match('^AIC$', self.mf.data.usr_param.method):
-					crit = crit + 2.0*k
+					crit = crit + k / n
 
 				elif match('^AICc$', self.mf.data.usr_param.method):
-					crit = crit + 2.0*k + 2.0*k*(k + 1.0)/(n - k - 1.0)
+					crit = crit + k/n + k*(k + 1.0)/((n - k - 1.0) * n)
 
 				elif match('^BIC$', self.mf.data.usr_param.method):
-					crit = crit + k*log(n)
+					crit = crit + k*log(n) / (2.0 * n)
 
-				data[model][res]['crit'] = crit / (2.0 * n)
+				data[model][res]['crit'] = crit
 
 			# Select model.
 			min = 'm1'

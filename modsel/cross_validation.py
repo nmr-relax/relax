@@ -1,4 +1,6 @@
-# A method based on cross validation model selection.
+# A method based on cross-validation model selection.
+#
+# This implements one-item-out cross-validation.
 #
 # The program is divided into the following stages:
 #	Stage 1:  Creation of the files for the model-free calculations for models 1 to 5.  For each model,
@@ -73,7 +75,6 @@ class cv(common_operations):
 		data = self.mf.data.data
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
-		n = float(self.mf.data.num_data_sets)
 		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
 
 		self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>")
@@ -88,9 +89,11 @@ class cv(common_operations):
 				sum_cv_crit = 0
 				for set in range(len(self.mf.data.relax_data)):
 					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+
 					real = [ float(self.mf.data.relax_data[set][res][2]) ]
 					err = [ float(self.mf.data.relax_data[set][res][3]) ]
 					types = [ [self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])] ]
+
 					if match('m1', model):
 						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2'] ])
 					elif match('m2', model):
@@ -101,8 +104,10 @@ class cv(common_operations):
 						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2'], data[cv_model][res]['te'], data[cv_model][res]['rex'] ])
 					elif match('m5', model):
 						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2f'], data[cv_model][res]['s2s'], data[cv_model][res]['te'] ])
+
 					chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
-					sum_cv_crit = sum_cv_crit + self.kl.calc(n, chi2, err)
+					sum_cv_crit = sum_cv_crit + self.kl.calc(1.0, chi2, err)
+
 				self.mf.data.cv.cv_crit[res][model] = sum_cv_crit / float(len(self.mf.data.relax_data))
 
 			# Select model.

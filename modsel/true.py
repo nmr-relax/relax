@@ -75,12 +75,13 @@ class true(common_operations):
 
 				chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
 
-				self.mf.log.write("\nReal: " + `real`)
-				self.mf.log.write("\nError: " + `err`)
-				self.mf.log.write("\nBack calc: " + `back_calc`)
+				# Debugging code.
+				#
+				#self.mf.log.write("\nReal: " + `real`)
+				#self.mf.log.write("\nError: " + `err`)
+				#self.mf.log.write("\nBack calc: " + `back_calc`)
 
-				crit = self.kl.calc(n, chi2, err)
-				data[model][res]['crit'] = crit / (2.0 * n)
+				data[model][res]['crit'] = self.kl.calc(n, chi2, err)
 
 			# Select model.
 			min = 'm1'

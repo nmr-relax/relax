@@ -1,1 +1,1 @@
-__all__ = [ 'asymptotic', 'bootstrap', 'common_ops', 'discrepancies', 'farrow', 'palmer', 'true' ]
+__all__ = [ 'asymptotic', 'bootstrap', 'common_ops', 'cross_validation', 'discrepancies', 'farrow', 'palmer', 'true' ]
