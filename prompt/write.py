@@ -23,7 +23,7 @@
 
 class Write:
     def __init__(self, relax):
-        """Class containing functions for writing data."""
+        """Class containing functions for writing data to a file."""
 
         self.relax = relax
 

@@ -24,19 +24,15 @@
 from os import F_OK, access, mkdir
 
 
-class Write:
+class Read:
     def __init__(self, relax):
         """Class containing functions for writing data."""
 
         self.relax = relax
 
 
-    def write_data(self, model=None, file="results", force=0):
-        """Create the directories and files for output.
-
-        The directory with the name of the model will be created.  The results will be placed in the
-        file 'results' in the model directory.
-        """
+    def read_data(self, model=None, file=None):
+        """Function for reading the data out of a file."""
 
         # Test if the model exists.
         if not self.relax.data.equations.has_key(model):

@@ -21,33 +21,29 @@
 ###############################################################################
 
 
-class Write:
+class Read:
     def __init__(self, relax):
-        """Class containing functions for writing data."""
+        """Class containing functions for reading data from a file."""
 
         self.relax = relax
 
 
-    def write(self, model=None, file="results", force=0):
-        """Function for writing results to a file.
+    def read(self, model=None, file=None):
+        """Function for reading results from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         model:  The name of the model.
 
-        file:  The name of the file to output results to.  The default is 'results'.
-
-        force:  A flag which if set to 1 will cause the results file to be overwitten if it already
-        exists.
+        file:  The name of the file to read results from.
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "write("
             text = text + "model=" + `model`
-            text = text + ", file=" + `file`
-            text = text + ", force=" + `force` + ")\n"
+            text = text + ", file=" + `file` + ")\n"
             print text
 
         # The model argument.
@@ -60,10 +56,5 @@ class Write:
             print "The file name must be a string."
             return
 
-        # The force flag.
-        if type(force) != int and force != 0 and force != 1:
-            print "The force flag should be the integer values of either 0 or 1."
-            return
-
         # Execute the functional code.
-        self.relax.write.write_data(model=model, file=file, force=force)
+        self.relax.read.read_data(model=model, file=file)

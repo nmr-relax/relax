@@ -39,6 +39,7 @@ from grid import Grid
 from init_data import Init_data
 from map import Map
 from minimise import Minimise
+from read import Read
 from write import Write
 
 # Macro classes.
@@ -77,6 +78,7 @@ class Interpreter:
         self._Minimise = Minimise(relax)
         self._OpenDX = OpenDX(relax)
         self._system = system
+        self._Read = Read(relax)
         self._Write = Write(relax)
 
         # Place the classes into the interpreter class namespace.
@@ -115,6 +117,7 @@ class Interpreter:
         init_data = self._Init_data.init
         map = self._Map.map
         minimise = self._Minimise.minimise
+        read = self._Read.read
         write = self._Write.write
 
         # Place the classes in the local namespace.

@@ -54,7 +54,7 @@ class Value(Generic_functions):
                 self.relax.data.csa = self.create_data(data)
             else:
                 print "The CSA values have already been specified."
-                print "To reset the values, delete the original data (self.self.x.data.csa)."
+                print "To reset the values, delete the original data (self.relax.data.csa)."
 
         # Bad type.
         else:

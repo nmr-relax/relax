@@ -9,7 +9,7 @@ load.relax_data('NOE', '500', 500.0 * 1e6, 'noe.500.out')
 value.set('bond_length', 1.02 * 1e-10)
 value.set('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-name = 'm5'
+name = 'm2'
 model.select_mf(name)
 
 # Fixed value.
@@ -25,7 +25,7 @@ grid_search(name, inc=11)
 
 # Minimise.
 #minimise('newton', model=name, constraints=0)
-minimise('bfgs', model=name)
+minimise('newton', model=name)
 write(model=name, file='results', force=1)
 
 state.save('save', force=1)

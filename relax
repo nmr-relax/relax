@@ -55,6 +55,7 @@ from model_free import Model_free
 from model_selection.model_selection import Model_selection
 from palmer import Palmer
 from prompt.interpreter import Interpreter
+from read import Read
 from relax_fit import Relax_fit
 from specific_setup import Specific_setup
 from state import State
@@ -89,6 +90,7 @@ class Relax:
         #self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
         self.opendx = OpenDX(self)
+        self.read = Read(self)
         self.specific_setup = Specific_setup(self)
         self.state = State(self)
         self.value = Value(self)
