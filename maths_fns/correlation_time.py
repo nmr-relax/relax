@@ -40,7 +40,7 @@ def calc_iso_ti(data, diff_data):
 def calc_axial_ti(data, diff_data):
     """Diffusional correlation times.
 
-    The equations are:
+    The equations for the parameter {Dper, Dpar} are:
 
                  1
         t0  =  -----
@@ -55,7 +55,7 @@ def calc_axial_ti(data, diff_data):
                2Dper + 4Dpar
 
 
-    The diffusion parameter set in data.diff_params is {Dper, Dpar, theta, phi}.
+    The diffusion parameter set in data.diff_params is {tm, Dratio, theta, phi}.
     """
 
     # t0.

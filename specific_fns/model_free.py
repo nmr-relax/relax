@@ -1450,6 +1450,7 @@ class Model_free:
                             A[j][i] = -1.0
                             b.append(-2 * self.relax.data.diff[self.run].tm / self.scaling_matrix[i, i])
                         elif self.relax.data.diff[self.run].type == 'iso':
+                            pass
 
                         j = j + 1
 
