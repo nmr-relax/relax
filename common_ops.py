@@ -103,10 +103,14 @@ class common_operations:
 		self.mfin.write(text)
 
 
-	def create_mfmodel(self, md, type='M1', header=''):
+	def create_mfmodel(self, res, md, type='M1'):
 		"Create the M1 or M2 section of the Modelfree input file mfmodel"
 
-		text = header
+		if match('M1', type):
+			text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
+		else:
+			text = "\n"
+
 		# tloc.
 		text = text + '%-3s' % type
 		text = text + '%-6s' % 'tloc'
@@ -270,8 +274,7 @@ class common_operations:
 			else:
 				self.create_mfdata(res, flag='1')
 			# Mfmodel.
-			text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
-			self.create_mfmodel(self.mf.data.usr_param.md1, type='M1', header=text)
+			self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
 			# Mfpar.
 			self.create_mfpar(res)
 		self.close_files(dir='optimize')

@@ -29,12 +29,27 @@ class aic(common_operations):
 		
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 
-		# Stage 1.
 		if match('1', self.mf.data.aic.stage):
+			print "\n[ Stage 1 ]\n"
 			self.stage1()
-		# Stage 2.
-		if match('2', self.mf.data.aic.stage):
+			print "\n[ End of stage 1 ]\n\n"
+
+		if match('2a', self.mf.data.aic.stage):
+			print "\n[ Stage 2a ]\n"
 			self.stage2()
+			print "\n[ End of stage 2a ]\n\n"
+
+		if match('2b', self.mf.data.aic.stage):
+			print "\n[ Stage 2b ]\n"
+			self.mkdir('optimize')
+			self.stage2()
+			self.final_optimization()
+			print "\n[ End of stage 2b ]\n\n"
+
+		if match('3', self.mf.data.aic.stage):
+			print "\n[ Stage 3 ]\n"
+			self.stage3()
+			print "\n[ End of stage 3 ]\n\n"
 
 
 	def aic_model_selection(self):
@@ -103,19 +118,17 @@ class aic(common_operations):
 
 		print "\n[ Select the stage for Modelfree analysis ]\n"
 		print "The stages are:"
-		print "   Stage 1 (1):   Creation of the files for the modelfree calculations for models 1 to 5."
-		print "Monte Carlo simulations are not used on these initial runs, because the errors are not"
-		print "needed (should speed up analysis considerably)."
-		print "   Stage 2 (2):   Model selection and the creation of the final run.  Monte Carlo"
-		print "simulations are used to find errors, and the diffusion tensor is unoptimized.  Files are"
-		print "placed in the directory 'final'."
+		print "   Stage 1 (1):    Creation of the files for the modelfree calculations for models 1 to 5."
+		print "   Stage 2 (2a):   AIC model selection."
+		print "   Stage 2 (2b):   AIC model selection and creation of a final optimization run."
+		print "   Stage 3 (3):    Extraction of optimized data."
 		while 1:
 			stage = raw_input('> ')
-			valid_stages = ['1', '2']
+			valid_stages = ['1', '2a', '2b', '3']
 			if stage in valid_stages:
 				break
 			else:
-				print "Invalid stage number.  Choose either 1 or 2."
+				print "Invalid stage number.  Choose either 1, 2a, 2b, or 3."
 		print "The stage chosen is " + stage + "\n"
 		return stage
 
@@ -128,7 +141,12 @@ class aic(common_operations):
 
 
 	def stage1(self):
-		print "\n[ Stage 1 ]\n"
+		"""Creation of the files for the modelfree calculations for models 1 to 5.
+
+		Monte Carlo simulations are not used on these initial runs, because the errors are not
+		needed (should speed up analysis considerably).
+		"""
+
 		for run in self.mf.data.runs:
 			print "Creating input files for model " + run
 			self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
@@ -143,15 +161,15 @@ class aic(common_operations):
 				# Mfdata.
 				self.create_mfdata(res)
 				# Mfmodel.
-				text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
-				self.create_mfmodel(self.mf.data.usr_param.md1, type='M1', header=text)
+				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
 				# Mfpar.
 				self.create_mfpar(res)
 			self.close_files(dir=run)
-		print "\n[ End of stage 1 ]\n\n"
+
 
 	def stage2(self):
-		print "\n[ Stage 2 ]\n"
+		"AIC model selection."
+
 		self.mkdir('grace')
 		
 		print "\n[ Modelfree data extraction ]\n"
@@ -180,4 +198,7 @@ class aic(common_operations):
 		self.grace('grace/Rex.agr', 'Rex', subtitle="After model selection, unoptimized")
 		self.grace('grace/SSE.agr', 'SSE', subtitle="After model selection, unoptimized")
 
-		print "\n[ End of stage 2 ]\n\n"
+
+	def stage3(self):
+		print "Stage 3 not implemented yet.\n"
+		sys.exit()
