@@ -1,8 +1,6 @@
 # General
 #########
 
-merge `input` and `usr_param.py`
-usr numpy
 merge all print_data functions
 
 

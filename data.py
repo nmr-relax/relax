@@ -159,8 +159,8 @@ class data:
 
 		The structure of self.input_info is as follows:  The fields of the first dimension correspond
 		to each relaxation data set and is flexible in size, ie len(self.input_info) = number of data sets.
-		The second dimension have the following fixed fields taken from the file 'input':
-			0 - Data type (NOE, R1, or R2)
+		The second dimension have the following fixed fields:
+			0 - Data type (R1, R2, or NOE)
 			1 - NMR frequency label
 			2 - NMR proton frequency in MHz
 			3 - The name of the file containing the relaxation data

@@ -5,21 +5,6 @@
 # mf v0.3            4 January 2002        Edward d'Auvergne
 #
 # Program to process all model-free input and output.
-#
-# Input data is specified in the file "input". An example of the format of the file is:
-#
-#	$ cat ./input
-#	NMR_frq_label 600
-#	NMR_frq       599.741
-#	R1            R1.600.out
-#	R2            R2.600.out
-#	NOE           noe.600.out
-#
-#	NMR_frq_label 500
-#	NMR_frq       500.241
-#	R1            R1.500.out
-#	R2            none
-#	NOE           noe.500.out
 
 import sys
 from re import match

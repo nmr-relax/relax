@@ -233,69 +233,6 @@ class common_operations:
 		self.mf.run.write("\n")
 
 
-	def extract_input(self, input):
-		"Extract all the information from the input file."
-
-		lines = input.readlines()
-		frq = 0
-		num_data = 0
-		for i in range(len(lines)):
-			row = [[]]
-			row[0] = split(lines[i])
-			try:
-				row[0][0]
-			except IndexError:
-				continue
-			if match('NMR_frq_label', row[0][0]):
-				self.mf.data.nmr_frq.append([])
-				row.append(split(lines[i+1]))
-				row.append(split(lines[i+2]))
-				row.append(split(lines[i+3]))
-				row.append(split(lines[i+4]))
-				# NMR data.
-				self.mf.data.nmr_frq[frq].append(row[0][1])
-				self.mf.data.nmr_frq[frq].append(row[1][1])
-				# R1 data.
-				if not match('none', row[2][1]):
-					self.mf.data.nmr_frq[frq].append('1')
-					self.mf.data.input_info.append([])
-					self.mf.data.relax_data.append([])
-					self.mf.data.input_info[num_data].append("R1")
-					self.mf.data.input_info[num_data].append(row[0][1])
-					self.mf.data.input_info[num_data].append(float(row[1][1]))
-					self.mf.data.input_info[num_data].append(row[2][1])
-					num_data = num_data + 1
-				else:
-					self.mf.data.nmr_frq[frq].append('0')
-				# R2 data.
-				if not match('none', row[3][1]):
-					self.mf.data.nmr_frq[frq].append('1')
-					self.mf.data.input_info.append([])
-					self.mf.data.relax_data.append([])
-					self.mf.data.input_info[num_data].append("R2")
-					self.mf.data.input_info[num_data].append(row[0][1])
-					self.mf.data.input_info[num_data].append(float(row[1][1]))
-					self.mf.data.input_info[num_data].append(row[3][1])
-					num_data = num_data + 1
-				else:
-					self.mf.data.nmr_frq[frq].append('0')
-				# NOE data.
-				if not match('none', row[4][1]):
-					self.mf.data.nmr_frq[frq].append('1')
-					self.mf.data.input_info.append([])
-					self.mf.data.relax_data.append([])
-					self.mf.data.input_info[num_data].append("NOE")
-					self.mf.data.input_info[num_data].append(row[0][1])
-					self.mf.data.input_info[num_data].append(float(row[1][1]))
-					self.mf.data.input_info[num_data].append(row[4][1])
-					num_data = num_data + 1
-				else:
-					self.mf.data.nmr_frq[frq].append('0')
-				frq = frq + 1
-		self.mf.data.num_frq = frq
-		self.mf.data.num_data_sets = num_data
-
-
 	def extract_mf_data(self):
 		"Extract the model-free results."
 
@@ -521,8 +458,7 @@ class common_operations:
 		if self.mf.debug == 1:
 			self.mf.file_ops.init_log_file(title)
 
-		input = self.mf.file_ops.open_input()
-		self.extract_input(input)
+		self.update_data(input)
 		self.extract_relax_data()
 
 		if self.mf.debug == 1:
@@ -730,5 +666,18 @@ class common_operations:
 	def stage_final(self):
 		print "Stage 3 not implemented yet.\n"
 		sys.exit()
+
+
+	def update_data(self, input):
+		"Extract all the information from the input info."
+
+		self.mf.data.input_info = self.mf.data.usr_param.input_info
+		self.mf.data.nmr_frq = self.mf.data.usr_param.nmr_frq
+
+		self.mf.data.num_data_sets = len(self.mf.data.input_info)
+		self.mf.data.num_frq = len(self.mf.data.nmr_frq)
+
+		for set in range(len(self.mf.data.input_info)):
+			self.mf.data.relax_data.append([])
 
 

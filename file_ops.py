@@ -49,18 +49,6 @@ class file_ops:
 		return data
 
 
-	def open_input(self):
-		"Open the input file."
-
-		try:
-			open("input", 'r')
-		except IOError:
-			print "Input file \"input\" does not exist, quitting script!\n"
-			sys.exit()
-		input = open("input", 'r')
-		return input
-
-
 	def mkdir(self, dir):
 		"Create the given directory, or exit if the directory exists."
 
