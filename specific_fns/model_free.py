@@ -2034,7 +2034,7 @@ class Model_free(Common_functions):
                     continue
 
                 # Unit vector.
-                if not hasattr(self.relax.data.res[self.run][i], 'xh_unit'):
+                if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
                     raise RelaxNoVectorsError, self.run
 
         # Test if the nucleus type has been set.
@@ -2205,7 +2205,7 @@ class Model_free(Common_functions):
                 noe_r1_table = [[None]]
                 ri_labels = [[min_options[1]]]
                 if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
-                    xh_unit_vectors = [self.relax.data.res[self.run][index].xh_unit]
+                    xh_unit_vectors = [self.relax.data.res[self.run][index].xh_vect]
                 else:
                     xh_unit_vectors = [None]
 
@@ -2265,7 +2265,7 @@ class Model_free(Common_functions):
 
                 # Vectors.
                 if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
-                    xh_unit_vectors.append(data.xh_unit)
+                    xh_unit_vectors.append(data.xh_vect)
                 else:
                     xh_unit_vectors.append(None)
 

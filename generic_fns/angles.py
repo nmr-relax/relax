@@ -76,12 +76,12 @@ class Angles:
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Test if the vector has been calculated.
-            if not hasattr(self.relax.data.res[self.run][i], 'xh_unit'):
+            if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
                 print "No angles could be calculated for residue '" + `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + "'."
                 continue
 
             # Calculate alpha.
-            self.relax.data.res[self.run][i].alpha = acos(dot(self.relax.data.diff[self.run].axis_unit, self.relax.data.res[self.run][i].xh_unit))
+            self.relax.data.res[self.run][i].alpha = acos(dot(self.relax.data.diff[self.run].axis_unit, self.relax.data.res[self.run][i].xh_vect))
 
             # Print out.
             print `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + ":  alpha = " + `360.0 * self.relax.data.res[self.run][i].alpha / (2.0 * pi)` + " deg."
