@@ -85,7 +85,7 @@ class Specific_setup:
         if self.function_type == 'data_names':
             return self.relax.specific.model_free.data_names
 
-        # Duplicate data.
+        # Duplicate data function.
         if self.function_type == 'duplicate_data':
             return self.relax.specific.model_free.duplicate_data
 

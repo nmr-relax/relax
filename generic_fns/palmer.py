@@ -440,7 +440,7 @@ class Palmer:
         # Remove the file 'mfout' and '*.out' if the force flag is set.
         if force:
             for file in listdir(getcwd()):
-                if search('out$', file):
+                if search('out$', file) or search('rotate$', file):
                     remove(file)
 
         # Execute Modelfree4.

@@ -899,15 +899,35 @@ class Model_free:
     def duplicate_data(self, new_run=None, old_run=None, instance=None):
         """Function for duplicating data."""
 
+        # Duplicate all non-residue specific data.
+        for data_name in dir(self.relax.data):
+            # Skip 'res'.
+            if data_name == 'res':
+                continue
+
+            # Get the object.
+            data = getattr(self.relax.data, data_name)
+
+            # Skip the data if it is not a dictionary.
+            if type(data) != dict:
+                continue
+
+            # If the dictionary already contains the key 'new_run', but the data is different, raise an error.
+            if data.has_key(new_run) and data[old_run] != data[new_run]:
+                raise RelaxError, "The data between run " + `new_run` + " and run " + `old_run` + " is not consistent."
+
+            # Skip the data if it contains the key 'new_run'.
+            if data.has_key(new_run):
+                continue
+
+            # Duplicate the data.
+            data[new_run] = deepcopy(data[old_run])
+
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
-            # Duplicate the diffusion tensor data.
-            if self.relax.data.diff.has_key(old_run) and not self.relax.data.diff.has_key(new_run):
-                self.relax.data.diff[new_run] = deepcopy(self.relax.data.diff[old_run])
-
             # Create the sequence data if it does not exist.
             if not self.relax.data.res.has_key(new_run):
                 # Add the new run to 'self.relax.data.res'.
@@ -928,19 +948,8 @@ class Model_free:
 
         # Other data types.
         elif self.param_set == 'diff' or self.param_set == 'all':
-            # Duplicate the diffusion tensor data.
-            self.relax.data.diff[new_run] = deepcopy(self.relax.data.diff[old_run])
-
             # Duplicate the residue specific data.
             self.relax.data.res[new_run] = deepcopy(self.relax.data.res[old_run])
-
-            # Duplicate the minimisation statistics.
-            self.relax.data.chi2[new_run] = deepcopy(self.relax.data.chi2[old_run])
-            self.relax.data.iter[new_run] = deepcopy(self.relax.data.iter[old_run])
-            self.relax.data.f_count[new_run] = deepcopy(self.relax.data.f_count[old_run])
-            self.relax.data.g_count[new_run] = deepcopy(self.relax.data.g_count[old_run])
-            self.relax.data.h_count[new_run] = deepcopy(self.relax.data.h_count[old_run])
-            self.relax.data.warning[new_run] = deepcopy(self.relax.data.warning[old_run])
 
 
     def eliminate(self, name, value, run, i, args):
