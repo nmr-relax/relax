@@ -348,6 +348,13 @@ class RelaxThread(Thread):
         cmd = "nice -n %s %s --thread --log %s %s" % (self.priority, self.prog_path, self.log_file, self.script_file)
         self.start_child(cmd=cmd, close=0)
 
+        # Catch the PID.
+        self.child.relax_pid = self.child.fromchild.readline()
+        self.child.relax_pid = int(self.child.relax_pid[0:-1])
+        print "Thread: " + `self.getName()`
+        print "Job: " + `self.job_number`
+        print "PID: " + `self.child.relax_pid`
+
         # Catch the results.
         self.results = self.child.fromchild.readlines()
 
@@ -512,7 +519,7 @@ class RelaxThread(Thread):
                 self.job_locks[self.job_number].release()
 
         # Kill the child process.
-        self.child.kill()
+        self.child.kill(login_cmd=self.login_cmd)
 
         # From the Thread class.
         self._Thread__block.acquire()

@@ -35,7 +35,7 @@
 
 # Python modules.
 import __builtin__
-from os import F_OK, access, putenv
+from os import F_OK, access, getpid, putenv
 import profile
 import pstats
 from re import match
@@ -82,6 +82,9 @@ class Relax:
     def __init__(self):
         """The top level class for initialising the program."""
 
+        # Get and store the PID of this process.
+        self.pid = getpid()
+
         # Set up the program internal errors.
         RelaxErrors()
 
@@ -115,18 +118,13 @@ class Relax:
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
 
-        # Make the IO redirection when threaded silent.
-        print_flag = 1
-        if mode == 'thread':
-            print_flag = 0
-
         # Logging.
-        if log_file:
-            self.IO.log(log_file, print_flag=print_flag)
+        if log_file and mode != 'thread':
+            self.IO.log(log_file)
 
         # Tee.
-        elif tee_file:
-            self.IO.tee(tee_file, print_flag=print_flag)
+        elif tee_file and mode != 'thread':
+            self.IO.tee(tee_file)
 
         # Run the interpreter for the prompt or script modes.
         if mode == 'prompt' or mode == 'script':
@@ -139,6 +137,18 @@ class Relax:
 
         # Threading mode.
         elif mode == 'thread':
+            # Print the PID prior to IO redirection, and then flush the buffer to send it to the parent.
+            print self.pid
+            sys.stdout.flush()
+
+            # Logging (silent IO redirection).
+            if log_file:
+                self.IO.log(log_file, print_flag=0)
+
+            # Tee (silent IO redirection).
+            elif tee_file:
+                self.IO.tee(tee_file, print_flag=0)
+
             # Execute the script.
             self.threading.execute()
 
