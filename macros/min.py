@@ -144,20 +144,20 @@ class min:
 					# tf.
 					elif match('tf', self.relax.data.param_types[self.model_index][i]):
 						if self.scaling_flag:
-							self.min_options[i] = 100.0 * 1e-12 * self.c
+							self.min_options[i] = 10.0 * 1e-12 * self.c
 						else:
-							self.min_options[i] = 100.0 * 1e-12
+							self.min_options[i] = 10.0 * 1e-12
 
-					# S2f.
+					# S2s.
 					elif match('S2s', self.relax.data.param_types[self.model_index][i]):
 						self.min_options[i] = 0.5
 
-					# tf.
+					# ts.
 					elif match('ts', self.relax.data.param_types[self.model_index][i]):
 						if self.scaling_flag:
-							self.min_options[i] = 100.0 * 1e-12 * self.c
+							self.min_options[i] = 1000.0 * 1e-12 * self.c
 						else:
-							self.min_options[i] = 100.0 * 1e-12
+							self.min_options[i] = 1000.0 * 1e-12
 
 					# Rex.
 					elif match('Rex', self.relax.data.param_types[self.model_index][i]):

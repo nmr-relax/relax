@@ -284,24 +284,24 @@ class mf:
 
 		# Components of the transformed relaxation equations.
 		self.data.dip_comps_func = zeros((self.relax.data.num_ri), Float64)
-		self.data.dip_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
 		self.data.csa_comps_func = zeros((self.relax.data.num_ri), Float64)
-		self.data.csa_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
 		self.data.rex_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.dip_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.csa_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
 
 		# Initialise the first partial derivative components of the transformed relaxation equations.
-		self.data.dip_comps_grad = zeros((self.relax.data.num_ri, len(self.params)), Float64)
+		self.data.dip_comps_grad = zeros((self.relax.data.num_ri), Float64)
+		self.data.csa_comps_grad = zeros((self.relax.data.num_ri), Float64)
+		self.data.rex_comps_grad = zeros((self.relax.data.num_ri), Float64)
 		self.data.dip_jw_comps_grad = zeros((self.relax.data.num_ri, len(self.params)), Float64)
-		self.data.csa_comps_grad = zeros((self.relax.data.num_ri, len(self.params)), Float64)
 		self.data.csa_jw_comps_grad = zeros((self.relax.data.num_ri, len(self.params)), Float64)
-		self.data.rex_comps_grad = zeros((self.relax.data.num_ri, len(self.params)), Float64)
 
 		# Initialise the first partial derivative components of the transformed relaxation equations.
-		self.data.dip_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
+		self.data.dip_comps_hess = zeros((self.relax.data.num_ri), Float64)
+		self.data.csa_comps_hess = zeros((self.relax.data.num_ri), Float64)
+		self.data.rex_comps_hess = zeros((self.relax.data.num_ri), Float64)
 		self.data.dip_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
-		self.data.csa_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
 		self.data.csa_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
-		self.data.rex_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
 
 		# Initialise the transformed relaxation values, gradients, and hessians.
 		self.data.ri_prime = zeros((self.relax.data.num_ri), Float64)
@@ -572,7 +572,7 @@ class mf:
 					elif match('CSA', self.param_types[j]):
 						self.create_d2ri_prime[i].append(None)
 					else:
-						self.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
+						self.create_d2ri_prime[i].append(func_d2ri_drdjw_prime)
 			elif match('CSA', self.param_types[i]):
 				self.create_dri_prime.append(func_dri_dcsa_prime)
 				self.create_d2ri_prime.append([])
@@ -584,7 +584,7 @@ class mf:
 					elif match('CSA', self.param_types[j]):
 						self.create_d2ri_prime[i].append(func_d2ri_dcsa2_prime)
 					else:
-						self.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
+						self.create_d2ri_prime[i].append(func_d2ri_dcsadjw_prime)
 			else:
 				self.create_dri_prime.append(func_dri_djw_prime)
 				self.create_d2ri_prime.append([])
