@@ -375,9 +375,8 @@ class Rx_data:
         # Global (non-residue specific) data.
         #####################################
 
-        # Initialise.
+        # Initialise dictionaries.
         if not hasattr(self.relax.data, 'ri_labels'):
-            # Dictionary init.
             self.relax.data.ri_labels = {}
             self.relax.data.remap_table = {}
             self.relax.data.frq_labels = {}
@@ -385,6 +384,8 @@ class Rx_data:
             self.relax.data.num_ri = {}
             self.relax.data.num_frq = {}
 
+        # Initialise empty data structures.
+        if not self.relax.data.ri_labels.has_key(self.run):
             self.relax.data.ri_labels[self.run] = []
             self.relax.data.remap_table[self.run] = []
             self.relax.data.frq_labels[self.run] = []
