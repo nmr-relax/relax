@@ -1369,7 +1369,7 @@ class Model_free:
         j = 0
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if self.param_set != 'mf':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
                 # tm >= 0.
@@ -1415,6 +1415,9 @@ class Model_free:
                     i = i + 1
                     j = j + 1
 
+                # Add two to i for the theta and phi parameters.
+                i = i + 2
+
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
                 # Dx >= 0.
@@ -1438,6 +1441,9 @@ class Model_free:
                 i = i + 1
                 j = j + 1
 
+                # Add three to i for the alpha, beta, and gamma parameters.
+                i = i + 3
+
         # Model-free parameters.
         if self.param_set != 'diff':
             # Loop over all residues.
@@ -1455,19 +1461,8 @@ class Model_free:
 
                 # Loop over the model-free parameters.
                 for l in xrange(len(self.relax.data.res[self.run][k].params)):
-                    # Local tm.
-                    if self.relax.data.res[self.run][k].params[l] == 'tm':
-                        # 0 <= tm <= 100 ns.
-                        A.append(zero_array * 0.0)
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        A[j+1][i] = -1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
-                        b.append(-100e-9 / self.scaling_matrix[i, i])
-                        j = j + 2
-
                     # Order parameters {S2, S2f, S2s}.
-                    elif match('S2', self.relax.data.res[self.run][k].params[l]):
+                    if match('S2', self.relax.data.res[self.run][k].params[l]):
                         # 0 <= S2 <= 1.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
