@@ -47,7 +47,7 @@ class Model:
 
         equation:  The model-free equation.
 
-        params:  The parameters of the model.
+        params:  The array of parameter names of the model.
 
         scaling:  The diagonal scaling flag.
 

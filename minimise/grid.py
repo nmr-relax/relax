@@ -106,26 +106,29 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
     # Search the grid.
     for i in xrange(total_steps):
-        # Check that the grid point does not violate a constraint, and if it does, move to the next point.
+        # Check that the grid point does not violate a constraint, and if it does, skip the function call.
+        skip = 0
         if constraint_flag:
             ci = c(params)
             if min(ci) < 0.0:
-                continue
+                skip = 1
 
-        # Back calculate the current function value.
-        f = apply(func, (params,)+args)
+        # Function call, test, and increment grid_size.
+        if not skip:
+            # Back calculate the current function value.
+            f = apply(func, (params,)+args)
 
-        # Test if the current function value is less than the least function value.
-        if f < f_min:
-            f_min = f
-            min_params = 1.0 * params
+            # Test if the current function value is less than the least function value.
+            if f < f_min:
+                f_min = f
+                min_params = 1.0 * params
 
-            # Print out code.
-            if print_flag:
-                print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `min_params`, "fk:", `f_min`)
+                # Print out code.
+                if print_flag:
+                    print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `min_params`, "fk:", `f_min`)
 
-        # Grid count.
-        grid_size = grid_size + 1
+            # Grid count.
+            grid_size = grid_size + 1
 
         # Print out code.
         if print_flag >= 2:

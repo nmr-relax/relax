@@ -167,13 +167,14 @@ class Diffusion_tensor:
         self.relax.data.diff[self.run].t2 = 1.0 / (5.0 * self.relax.data.diff[self.run].Dper + self.relax.data.diff[self.run].Dpar)
         self.relax.data.diff[self.run].t3 = 1.0 / (2.0 * self.relax.data.diff[self.run].Dper + 4.0 * self.relax.data.diff[self.run].Dpar)
 
-        # Angles in radians.
+        # Convert the angles to radians.
         if self.angle_units == 'deg':
-            self.relax.data.diff[self.run].theta = (theta / 360.0) * 2.0 * pi
-            self.relax.data.diff[self.run].phi = (phi / 360.0) * 2.0 * pi
-        else:
-            self.relax.data.diff[self.run].theta = theta
-            self.relax.data.diff[self.run].phi = phi
+            theta = (theta / 360.0) * 2.0 * pi
+            phi = (phi / 360.0) * 2.0 * pi
+
+        # Make sure the angles are between 0 and 2pi.
+        self.relax.data.diff[self.run].theta = self.wrap_angles(theta)
+        self.relax.data.diff[self.run].phi = self.wrap_angles(phi)
 
         # Unit symmetry axis vector.
         x = cos(self.relax.data.diff[self.run].theta) * sin(self.relax.data.diff[self.run].phi)
@@ -210,3 +211,17 @@ class Diffusion_tensor:
         # Unknown parameter combination.
         else:
             raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+
+
+    def wrap_angles(self, angle):
+        """Convert the given angle to be between 0 and 2pi."""
+
+        while 1:
+            if angle > 2.0 * pi:
+                angle = angle - 2.0 * pi
+            elif angle < 0.0:
+                angle = angle + 2.0 * pi
+            else:
+                break
+
+        return angle

@@ -59,7 +59,7 @@ class Main:
         Incomplete and broken code (and should probably be placed under the 'load' function class).
         """
 
-        raise NameError, "Broken code."
+        raise RelaxError, "Broken code."
 
         # Arguments
         if not type:

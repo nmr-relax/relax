@@ -38,7 +38,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, param_set=None, num_data_sets=None, equations=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_matrix=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=0, vectors=None):
+    def __init__(self, param_set=None, num_data_sets=None, equations=None, param_types=None, total_num_params=0, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_matrix=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=0, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -86,11 +86,8 @@ class Mf:
         self.data.num_data_sets = num_data_sets
         self.data.equations = equations
         self.data.param_types = param_types
-        self.data.params = zeros(len(init_params), Float64)
-        self.data.total_num_params = len(init_params)
-        self.data.func_test = pi * ones(len(init_params), Float64)    # Some random array.
-        self.data.grad_test = pi * ones(len(init_params), Float64)    # Some random array.
-        self.data.hess_test = pi * ones(len(init_params), Float64)    # Some random array.
+        self.data.params = zeros(total_num_params, Float64)
+        self.data.total_num_params = total_num_params
         self.data.relax_data = relax_data
         self.data.errors = errors
         self.data.bond_length = bond_length
@@ -112,6 +109,11 @@ class Mf:
         self.data.num_params = num_params
         self.data.xh_unit_vector = vectors
 
+        # Tests.
+        self.data.func_test = pi * ones(total_num_params, Float64)    # Some random array.
+        self.data.grad_test = pi * ones(total_num_params, Float64)    # Some random array.
+        self.data.hess_test = pi * ones(total_num_params, Float64)    # Some random array.
+
         # Number of indecies in the generic equations.
         if diff_type == 'iso':
             self.data.num_indecies = 1
@@ -125,7 +127,7 @@ class Mf:
 
         # Setup the residue specific equations.
         if not self.setup_equations():
-            raise NameError, "The model-free equations could not be setup."
+            raise RelaxError, "The model-free equations could not be setup."
 
         # Calculate the correlation times.
         self.calc_ti(self.data)
@@ -209,7 +211,6 @@ class Mf:
 
         # Test if the function has already been calculated with these parameter values.
         if sum(self.data.params == self.data.func_test) == self.data.total_num_params:
-            #if len(self.data.params):
             return self.data.chi2[0]
 
         # Store the parameter values in self.data.func_test for testing on next call if the function has already been calculated.
@@ -233,7 +234,7 @@ class Mf:
             self.calc_jw_comps[0](self.data)
 
         # Calculate the spectral density values.
-        self.data.jw = self.calc_jw[0](self.data)
+        self.data.jw[0] = self.calc_jw[0](self.data)
 
         # Calculate the relaxation formula components.
         self.create_ri_comps[0](self.data, self.create_dip_func[0], self.create_dip_jw_func[0], self.create_csa_func[0], self.create_csa_jw_func[0], self.create_rex_func[0])
@@ -290,7 +291,7 @@ class Mf:
         # Calculate the spectral density gradients.
         for i in xrange(self.data.total_num_params):
             if self.calc_djw[0]:
-                self.data.djw[:, :, j] = self.calc_djw[0][j](self.data)
+                self.data.djw[0][:, :, i] = self.calc_djw[0][i](self.data)
 
         # Calculate the relaxation gradient components.
         self.create_dri_comps[0](self.data, self.create_dip_grad[0], self.create_dip_jw_grad[0], self.create_csa_grad[0], self.create_csa_jw_grad[0], self.create_rex_grad[0])
@@ -396,7 +397,11 @@ class Mf:
         self.data.w_ti_sqrd = []
         self.data.fact_ti = []
         self.data.w_te_ti_sqrd = []
+        self.data.w_tf_ti_sqrd = []
+        self.data.w_ts_ti_sqrd = []
         self.data.inv_te_denom = []
+        self.data.inv_tf_denom = []
+        self.data.inv_ts_denom = []
 
         # Initialise spectral density values, gradients, and Hessians.
         self.data.jw = []
@@ -466,7 +471,11 @@ class Mf:
             self.data.w_ti_sqrd.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
             self.data.fact_ti.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
             self.data.w_te_ti_sqrd.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
+            self.data.w_tf_ti_sqrd.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
+            self.data.w_ts_ti_sqrd.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
             self.data.inv_te_denom.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
+            self.data.inv_tf_denom.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
+            self.data.inv_ts_denom.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
 
             # Empty spectral density values, gradients, and Hessians.
             self.data.jw.append(zeros((self.data.num_frq[self.data.i], 5), Float64))

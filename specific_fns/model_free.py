@@ -1444,7 +1444,7 @@ class Model_free:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(param_set=self.param_set, num_data_sets=num_data_sets, equations=equations, param_types=param_types, init_params=self.param_vector, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, diff_type=self.relax.data.diff[self.run].type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(param_set=self.param_set, num_data_sets=num_data_sets, equations=equations, param_types=param_types, total_num_params=len(self.param_vector), relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, diff_type=self.relax.data.diff[self.run].type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
