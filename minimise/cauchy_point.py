@@ -1,5 +1,4 @@
 from Numeric import dot, sqrt
-#from trust_region import trust_region
 
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
@@ -46,6 +45,9 @@ class cauchy_point(generic_trust_region, generic_minimise):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Initialisation complete.
+		self.init_failure = 0
 
 
 	def new_param_func(self):

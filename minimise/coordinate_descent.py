@@ -5,7 +5,7 @@ from line_search_functions import line_search_functions
 
 
 class coordinate_descent(generic_minimise, line_search_functions):
-	def __init__(self, func, dfunc=None, args=(), x0=None, line_search_algor=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.1):
+	def __init__(self, func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.1):
 		"Class for back-and-forth coordinate descent minimisation specific functions."
 
 		self.func = func
@@ -17,10 +17,9 @@ class coordinate_descent(generic_minimise, line_search_functions):
 		self.full_output = full_output
 		self.print_flag = print_flag
 
-		if not line_search_algor:
-			raise NameError, "No line search algorithm has been supplied."
-		else:
-			self.line_search_algor = line_search_algor
+		# Minimisation options.
+		self.line_search_option(min_options)
+		if self.init_failure: return
 
 		# Set a0.
 		self.a0 = a0

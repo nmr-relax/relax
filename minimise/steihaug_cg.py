@@ -59,6 +59,9 @@ class steihaug(generic_trust_region, generic_minimise, newton):
 		# Initialise the warning string.
 		self.warning = None
 
+		# Initialisation complete.
+		self.init_failure = 0
+
 
 	def get_pk(self):
 		"The CG-Steihaug algorithm."

@@ -56,34 +56,53 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.delta = delta0
 		self.eta = eta
 
-		# Hessian type and modification.
+		# Minimisation options.
+		#######################
+
+		# Initialise.
 		self.hessian_type = None
 		self.hessian_mod = None
+		self.init_failure = 0
+
+		# Test if the options are a tuple.
 		if type(min_options) != tuple:
 			print "The minimisation options " + `min_options` + " is not a tuple."
 			self.init_failure = 1; return
+
+		# Test that no more thant 2 options are given.
 		if len(min_options) > 2:
-			print "A maximum of two minimisation options is allowed."
+			print "A maximum of two minimisation options is allowed (the hessian type and hessian modification)."
 			self.init_failure = 1; return
+
+		# Sort out the minimisation options.
 		for opt in min_options:
 			if self.hessian_type == None and (match('[Bb][Ff][Gg][Ss]', opt) or match('[Nn]ewton', opt)):
 				self.hessian_type = opt
-			elif self.hessian_mod == None and (opt == None or match("^[Ee]igen", opt) or match("^[Cc]hol", opt) or match("^[Gg][Mm][Ww]", opt)):
+			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
 				self.hessian_mod = opt
 			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is invalid."
+				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid hessian type or modification."
 				self.init_failure = 1; return
+
+		# Default hessian type.
 		if self.hessian_type == None:
 			self.hessian_type = 'Newton'
+
+		# Make sure that no hessian modification is used with the BFGS matrix.
 		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
 			print "When using the BFGS matrix, hessian modifications should not be used."
 			self.init_failure = 1; return
+
+		# Default hessian modification when the hessian type is Newton.
+		if match('[Nn]ewton', self.hessian_type) and self.hessian_mod == None:
+			self.hessian_mod = 'GMW'
+
+		# Print the hessian type info.
 		if self.print_flag:
 			if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
 				print "Hessian type:  BFGS"
 			else:
 				print "Hessian type:  Newton"
-			
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
@@ -93,6 +112,10 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		# Initialise the warning string.
 		self.warning = None
 
+		# Constants.
+		self.n = len(self.xk)
+		self.I = identity(len(self.xk))
+
 		# Hessian modification function initialisation.
 		self.init_hessian_mod_funcs()
 
@@ -100,61 +123,26 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 	def dogleg(self):
 		"The dogleg algorithm."
 
-		if self.print_flag == 2:
-			print "Init."
-			print "   delta: " + `self.delta`
-			print "   xk: " + `self.xk`
-			print "   fk: " + `self.fk`
-			print "   dfk: " + `self.dfk`
-			print "   d2fk: " + `self.d2fk`
-
-		# Safeguarding.  Forcing the hessian to be positive definitive.
-		try:
-			self.Hk
-		except AttributeError:
-			eigen = eigenvectors(self.d2fk)
-			eigenvals = sort(eigen[0])
-			if eigenvals[0] <= 0.0:
-				self.d2fk = self.d2fk - eigenvals[0] * identity(len(self.dfk), Float64)
-
 		# Calculate the full step and its norm.
 		try:
 			pB = -matrixmultiply(self.Hk, self.dfk)
 		except AttributeError:
-			pB = -matrixmultiply(inverse(self.d2fk), self.dfk)
+			pB = self.get_pk()
 		norm_pB = sqrt(dot(pB, pB))
-		if self.print_flag == 2:
-			print "Full step."
-			print "   pB: " + `pB`
-			print "   ||pB||: " + `norm_pB`
-			print "   Func value at pB is: "+ `apply(self.func, (self.xk + pB,)+self.args)`
 
 		# Test if the full step is within the trust region.
 		if norm_pB <= self.delta:
-			if self.print_flag == 2:
-				print "   Taking the full step, ||pB|| <= delta, " + `norm_pB` + " <= " + `self.delta`
 			return pB
-		if self.print_flag == 2:
-			print "   Not taking the full step, ||pB|| > delta, " + `norm_pB` + " > " + `self.delta`
 
 		# Calculate pU.
 		curv = dot(self.dfk, dot(self.d2fk, self.dfk))
 		pU = - dot(self.dfk, self.dfk) / curv * self.dfk
 		dot_pU = dot(pU, pU)
 		norm_pU = sqrt(dot_pU)
-		if self.print_flag == 2:
-			print "pU step."
-			print "   pU: " + `pU`
-			print "   ||pU||: " + `norm_pU`
-			print "   Func value at pU is: "+ `apply(self.func, (self.xk + pU,)+self.args)`
 
 		# Test if the step pU exits the trust region.
 		if norm_pU >= self.delta:
-			if self.print_flag == 2:
-				print "   ||pU|| >= delta, " + `norm_pU` + " >= " + `self.delta`
 			return self.delta * pU / norm_pU
-		if self.print_flag == 2:
-			print "   ||pU|| < delta, " + `norm_pU` + " < " + `self.delta`
 			
 		# Find the solution to the scalar quadratic equation.
 		pB_pU = pB - pU
@@ -162,9 +150,6 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		dot_pU_pB_pU = dot(pU, pB_pU)
 		fact = dot_pU_pB_pU**2 - dot_pB_pU * (dot_pU - self.delta**2)
 		tau = (-dot_pU_pB_pU + sqrt(fact)) / dot_pB_pU
-		if self.print_flag == 2:
-			print "Quadratic solution."
-			print "   tau: " + `tau`
 
 		# Decide on which part of the trajectory to take.
 		return pU + tau * pB_pU

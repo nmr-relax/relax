@@ -25,6 +25,9 @@ class simplex(generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
+		# Initialisation complete.
+		self.init_failure = 0
+
 
 	def new_param_func(self):
 		"""The new parameter function.

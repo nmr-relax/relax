@@ -1,4 +1,3 @@
-import sys
 from re import match
 
 #try:
@@ -115,7 +114,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 			print "\n\n<<< Simplex minimisation (scipy) >>>"
 		if noscipy_flag:
 			print "Simplex minimisation has been choosen yet the scipy python module has not been installed."
-			sys.exit()
+			return
 		results = simplex_scipy(func, x0, args=args, xtol=1e-30, ftol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		xk, fk, k, f_count, warning = results
 		warning = `warning`
@@ -126,7 +125,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 			print "\n\n<<< Quasi-Newton BFGS minimisation (scipy) >>>"
 		if noscipy_flag:
 			print "Quasi-Newton BFGS minimisation from the scipy python module has been choosen yet the module has not been installed."
-			sys.exit()
+			return
 		xk, fk, f_count, g_count, warning = bfgs_scipy(func, x0, fprime=dfunc, args=args, avegtol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		k = f_count
 		warning = `warning`
@@ -138,7 +137,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 			print "\n\n<<< Newton Conjugate Gradient minimisation (scipy) >>>"
 		if noscipy_flag:
 			print "Newton Conjugate Gradient minimisation has been choosen yet the scipy python module has not been installed."
-			sys.exit()
+			return
 		xk, fk, f_count, g_count, h_count, warning = ncg_scipy(func, x0, fprime=dfunc, fhess=d2func, args=args, avextol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		k = f_count
 		warning = `warning`
@@ -151,9 +150,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Cc][Dd]$', min_algor) or match('^[Cc]oordinate[ _-][Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -163,9 +161,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Ss][Dd]$', min_algor) or match('^[Ss]teepest[ _-][Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Steepest descent minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -175,9 +172,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Bb][Ff][Gg][Ss]$', min_algor):
 		if print_flag:
 			print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = bfgs(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = bfgs(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -187,27 +183,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Nn]ewton$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton minimisation >>>"
-		if len(min_options) == 2:
-			line_search_algor = min_options[0]
-			hessian_mod = min_options[1]
-		elif len(min_options) == 1:
-			line_search_algor = min_options[0]
-			hessian_mod = None
-		else:
-			line_search_algor = None
-			hessian_mod = None
-		if line_search_algor == None:
-			line_search_algor = 'More Thuente'
-		if hessian_mod == None:
-			hessian_mod = 'GMW'
-
-		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=line_search_algor, hessian_mod=hessian_mod, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
-		try:
-			min.init_failure
-			print "Initialisation of minimisation has failed."
-			return
-		except AttributeError:
-			pass
+		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -217,9 +194,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Nn]ewton[ _-][Cc][Gg]$', min_algor) or match('^[Nn][Cc][Gg]$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = newton_cg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = newton_cg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -234,6 +210,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< Cauchy point minimisation >>>"
 		min = cauchy_point(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -244,12 +221,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< Dogleg minimisation >>>"
 		min = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
-		try:
-			min.init_failure
-			print "Initialisation of minimisation has failed."
-			return
-		except AttributeError:
-			pass
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -260,6 +232,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< CG-Steihaug minimisation >>>"
 		min = steihaug(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -270,6 +243,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< Exact trust region minimisation >>>"
 		min = exact_trust_region(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -283,9 +257,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Ff][Rr]$', min_algor) or match('^[Ff]letcher[-_ ][Rr]eeves$', min_algor):
 		if print_flag:
 			print "\n\n<<< Fletcher-Reeves conjugate gradient minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = fletcher_reeves(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = fletcher_reeves(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -295,9 +268,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Pp][Rr]$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere$', min_algor):
 		if print_flag:
 			print "\n\n<<< Polak-Ribière conjugate gradient minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = polak_ribiere(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = polak_ribiere(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -307,9 +279,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Pp][Rr]\+$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere\+$', min_algor):
 		if print_flag:
 			print "\n\n<<< Polak-Ribière + conjugate gradient minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = polak_ribiere_plus(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = polak_ribiere_plus(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -319,9 +290,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Hh][Ss]$', min_algor) or match('^[Hh]estenes[-_ ][Ss]tiefel$', min_algor):
 		if print_flag:
 			print "\n\n<<< Hestenes-Stiefel conjugate gradient minimisation >>>"
-		if min_options == ():
-			min_options = 'More Thuente'
-		min = hestenes_stiefel(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = hestenes_stiefel(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -336,6 +306,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< Simplex minimisation >>>"
 		min = simplex(func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -346,6 +317,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
 		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -357,7 +329,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 
 	else:
 		print "Minimiser type set incorrectly.  The minimiser " + min_algor + " is not programmed.\n"
-		sys.exit()
+		return
 
 
 	# Finish.

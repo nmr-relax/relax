@@ -1,6 +1,5 @@
 from math import pi
 from Numeric import Float64, array, zeros
-from os import listdir, mkdir, remove
 from re import match
 
 from functions.mf import mf
@@ -384,7 +383,10 @@ class min:
 				self.dfunc = self.mf.dfunc
 				self.d2func = self.mf.d2func
 				if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
-					self.min_options = [self.mf.lm_dri, errors]
+					if len(self.min_options) > 0:
+						print "No minimisation options should be given for the Levenberg-Marquardt algorithm."
+						return
+					self.min_options = (self.mf.lm_dri, errors)
 
 			# Minimisation.
 			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
@@ -471,10 +473,3 @@ class min:
 
 		# Main iterative loop.
 		self.main_loop()
-
-
-	def setup_data(self):
-		"""Extract the data from self.relax.data.relax_data
-
-		"""
-

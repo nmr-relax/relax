@@ -6,10 +6,15 @@ quadratic = quadratic_fafbga
 def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1e5, mu=0.001, eta=0.9, tol=1e-10, print_flag=0):
 	"""A line search algorithm implemented using the strong Wolfe conditions.
 
-	Algorithm 3.2, page 59, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Algorithm 3.2, page 59, from 'Numerical Optimization' by Jorge Nocedal and Stephen J.
+	Wright, 1999
+
 	Requires the gradient function.
 
-	These functions require serious debugging and recoding to work properly (especially the safeguarding).
+	#######################################################################################
+	These functions require serious debugging and recoding to work properly (especially the
+	safeguarding).
+	#######################################################################################
 
 	Function options
 	~~~~~~~~~~~~~~~~
@@ -23,7 +28,8 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 	p		- The descent direction.
 	a_init		- Initial step length.
 	a_max		- The maximum value for the step length.
-	mu		- Constant determining the slope for the sufficient decrease condition (0 < mu < eta < 1).
+	mu		- Constant determining the slope for the sufficient decrease condition (0 <
+			  mu < eta < 1).
 	eta		- Constant used for the Wolfe curvature condition (0 < mu < eta < 1).
 
 	"""

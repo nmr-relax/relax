@@ -37,7 +37,11 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 		self.h_count = 0
 
 		# Initialise the warning string.
-		self.warning = None
+		self.warning = "Incomplete code, minimisation bypassed."
+		print "Incomplete code, minimisation bypassed."
+
+		# Initialisation complete.
+		self.init_failure = 1
 
 
 	def new_param_func(self):
@@ -203,14 +207,6 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 
 		self.setup_newton()
 		self.specific_update = self.update_newton
-
-
-	def tests(self):
-		"Function to warn of incomplete code."
-		text = "Incomplete code, minimisation bypassed."
-		print text
-		self.warning = text
-		return 1
 
 
 	def update(self):

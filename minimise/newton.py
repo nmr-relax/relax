@@ -7,7 +7,7 @@ from line_search_functions import line_search_functions
 
 
 class newton(generic_minimise, line_search_functions):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, line_search_algor=None, hessian_mod=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
+	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
 		"""Class for Newton minimisation specific functions.
 
 		"""
@@ -23,17 +23,48 @@ class newton(generic_minimise, line_search_functions):
 		self.print_flag = print_flag
 		self.mach_acc = mach_acc
 
-		if not line_search_algor:
-			raise NameError, "No line search algorithm has been supplied."
-		else:
-			self.line_search_algor = line_search_algor
-
 		# Set a0.
 		self.a0 = a0
 
 		# Line search constants for the Wolfe conditions.
 		self.mu = mu
 		self.eta = eta
+
+		# Minimisation options.
+		#######################
+
+		# Initialise.
+		self.line_search_algor = None
+		self.hessian_mod = None
+		self.init_failure = 0
+
+		# Test if the options are a tuple.
+		if type(min_options) != tuple:
+			print "The minimisation options " + `min_options` + " is not a tuple."
+			self.init_failure = 1; return
+
+		# Test that no more thant 2 options are given.
+		if len(min_options) > 2:
+			print "A maximum of two minimisation options is allowed (the line search algorithm and the hessian modification)."
+			self.init_failure = 1; return
+
+		# Sort out the minimisation options.
+		for opt in min_options:
+			if self.line_search_algor == None and self.valid_line_search(opt):
+				self.line_search_algor = opt
+			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
+				self.hessian_mod = opt
+			else:
+				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid line search algorithm or hessian modification."
+				self.init_failure = 1; return
+
+		# Default line search algorithm.
+		if self.line_search_algor == None:
+			self.line_search_algor = 'More Thuente'
+
+		# Default hessian modification.
+		if self.hessian_mod == None:
+			self.hessian_mod = 'GMW'
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
@@ -53,7 +84,6 @@ class newton(generic_minimise, line_search_functions):
 
 		# Line search and hessian modification initialisation.
 		self.init_line_functions()
-		self.hessian_mod = hessian_mod
 		self.init_hessian_mod_funcs()
 
 
@@ -280,3 +310,12 @@ class newton(generic_minimise, line_search_functions):
 		self.fk = self.fk_new
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
+
+
+	def valid_hessian_mod(self, mod):
+		"Test if the string 'mod' is a valid hessian modification."
+
+		if mod == None or match("^[Ee]igen", mod) or match("^[Cc]hol", mod) or match("^[Gg][Mm][Ww]", mod):
+			return 1
+		else:
+			return 0

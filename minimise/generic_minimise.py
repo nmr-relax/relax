@@ -26,6 +26,7 @@ class generic_minimise:
 		self.k = 0
 		if self.print_flag:
 			self.k2 = 0
+			print ""   # Print a new line.
 
 		# Setup function.
 		self.setup()
