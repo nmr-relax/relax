@@ -548,17 +548,17 @@ def calc_aniso_d2geom(data, diff_data):
     ############
 
     # The beta-beta second partial derivative of the unit Dz vector.
-    diff_data.ddz_dbeta2[0] =  data.sin_b * data.cos_g
-    diff_data.ddz_dbeta2[1] = -data.sin_b * data.sin_g
-    diff_data.ddz_dbeta2[2] = -data.cos_b
+    diff_data.d2dz_dbeta2[0] =  data.sin_b * data.cos_g
+    diff_data.d2dz_dbeta2[1] = -data.sin_b * data.sin_g
+    diff_data.d2dz_dbeta2[2] = -data.cos_b
 
     # The beta-gamma second partial derivative of the unit Dz vector.
-    diff_data.ddz_dbeta_dgamma[0] = data.cos_b * data.sin_g
-    diff_data.ddz_dbeta_dgamma[1] = data.cos_b * data.cos_g
+    diff_data.d2dz_dbeta_dgamma[0] = data.cos_b * data.sin_g
+    diff_data.d2dz_dbeta_dgamma[1] = data.cos_b * data.cos_g
 
     # The gamma partial derivative of the unit Dz vector.
-    diff_data.ddz_dgamma2[0] =  data.sin_b * data.cos_g
-    diff_data.ddz_dgamma2[1] = -data.sin_b * data.sin_g
+    diff_data.d2dz_dgamma2[0] =  data.sin_b * data.cos_g
+    diff_data.d2dz_dgamma2[1] = -data.sin_b * data.sin_g
 
 
     # Delta Hessians

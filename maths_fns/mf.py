@@ -1233,7 +1233,7 @@ class Mf:
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_aniso_ti
             diff_data.calc_dti = calc_aniso_dti
-            #diff_data.calc_d2ti = calc_aniso_d2ti
+            diff_data.calc_d2ti = calc_aniso_d2ti
 
             # Unit vectors.
             diff_data.dx = zeros(3, Float64)

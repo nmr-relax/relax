@@ -786,13 +786,13 @@ def calc_aniso_d2ci(data, diff_data):
     op_gamma_beta  = outerproduct(data.ddelta_gamma_dpsi, data.ddelta_beta_dpsi)
 
     # Components.
-    alpha_comp = op_alpha + data.delta_alpha * data.d2delta_alpha_dpsi_dpsij
-    beta_comp  = op_beta  + data.delta_beta * data.d2delta_beta_dpsi_dpsij
-    gamma_comp = op_gamma + data.delta_gamma * data.d2delta_gamma_dpsi_dpsij
+    alpha_comp = op_alpha + data.delta_alpha * data.d2delta_alpha_dpsi2
+    beta_comp  = op_beta  + data.delta_beta * data.d2delta_beta_dpsi2
+    gamma_comp = op_gamma + data.delta_gamma * data.d2delta_gamma_dpsi2
 
-    alpha3_comp = data.delta_alpha**2 * (3.0 * op_alpha + data.delta_alpha * data.d2delta_alpha_dpsi_dpsij)
-    beta3_comp  = data.delta_beta**2  * (3.0 * op_beta  + data.delta_beta  * data.d2delta_beta_dpsi_dpsij)
-    gamma3_comp = data.delta_gamma**2 * (3.0 * op_gamma + data.delta_gamma * data.d2delta_gamma_dpsi_dpsij)
+    alpha3_comp = data.delta_alpha**2 * (3.0 * op_alpha + data.delta_alpha * data.d2delta_alpha_dpsi2)
+    beta3_comp  = data.delta_beta**2  * (3.0 * op_beta  + data.delta_beta  * data.d2delta_beta_dpsi2)
+    gamma3_comp = data.delta_gamma**2 * (3.0 * op_gamma + data.delta_gamma * data.d2delta_gamma_dpsi2)
 
     alpha_beta_comp  = data.delta_beta**2  * alpha_comp + 2.0 * data.delta_alpha * data.delta_beta  * (op_alpha_beta  + op_beta_alpha)  + data.delta_alpha**2 * beta_comp
     alpha_gamma_comp = data.delta_gamma**2 * alpha_comp + 2.0 * data.delta_alpha * data.delta_gamma * (op_alpha_gamma + op_gamma_alpha) + data.delta_alpha**2 * gamma_comp
@@ -824,7 +824,7 @@ def calc_aniso_d2ci(data, diff_data):
     #############################
 
     # Calculate d2e_dpsii_dDa.
-    d2e_dpsii_dDa = 1.0 / 3.0 (data.de1_dDa * data.dc_dpsii_alpha - data.de2_dDa * data.dc_dpsii_beta - data.de2_dDa * data.dc_dpsii_gamma)
+    d2e_dpsii_dDa = 1.0 / 3.0 * (data.de1_dDa * data.dc_dpsii_alpha - data.de2_dDa * data.dc_dpsii_beta - data.de2_dDa * data.dc_dpsii_gamma)
 
     # Weight c0.
     data.d2ci[3:, 1, 2] = data.d2ci[1, 3:, 2] = -d2e_dpsii_dDa
@@ -837,7 +837,7 @@ def calc_aniso_d2ci(data, diff_data):
     #############################
 
     # Calculate d2e_dpsii_dDr.
-    d2e_dpsii_dDr = -1.0 / 3.0 (data.de1_dDr * data.dc_dpsii_alpha - data.de2_dDr * data.dc_dpsii_beta - data.de2_dDr * data.dc_dpsii_gamma)
+    d2e_dpsii_dDr = -1.0 / 3.0 * (data.de1_dDr * data.dc_dpsii_alpha - data.de2_dDr * data.dc_dpsii_beta - data.de2_dDr * data.dc_dpsii_gamma)
 
     # Weight c0.
     data.d2ci[3:, 2, 2] = data.d2ci[2, 3:, 2] = -d2e_dpsii_dDr
@@ -862,7 +862,7 @@ def calc_aniso_d2ci(data, diff_data):
         d2e3_dDa2 = 6.0 * diff_data.params[1] * diff_data.params[2]**2 / mu_five
 
     # Calculate d2e_dDa2.
-    d2e_dDa2 = -1.0 / 3.0 (d2e1_dDa2 * data.c_alpha - d2e2_dDa2 * data.c_beta - d2e2_dDa2 * data.c_gamma)
+    d2e_dDa2 = -1.0 / 3.0 * (d2e1_dDa2 * data.c_alpha - d2e2_dDa2 * data.c_beta - d2e2_dDa2 * data.c_gamma)
 
     # Weight c0.
     data.d2ci[1, 1, 2] = -0.25 * d2e_dDa2
@@ -885,7 +885,7 @@ def calc_aniso_d2ci(data, diff_data):
         d2e3_dDa_dDr = 2.0 * (diff_data.params[1]**2 - diff_data.params[2]**2) * diff_data.params[2] / mu_five
 
     # Calculate d2e_dDa2.
-    d2e_dDa_dDr = 1.0 / 9.0 (d2e1_dDa_dDr * data.c_alpha - d2e2_dDa_dDr * data.c_beta - d2e2_dDa_dDr * data.c_gamma)
+    d2e_dDa_dDr = 1.0 / 9.0 * (d2e1_dDa_dDr * data.c_alpha - d2e2_dDa_dDr * data.c_beta - d2e2_dDa_dDr * data.c_gamma)
 
     # Weight c0.
     data.d2ci[1, 2, 2] = data.d2ci[2, 1, 2] = -0.25 * d2e_dDa_dDr
@@ -908,7 +908,7 @@ def calc_aniso_d2ci(data, diff_data):
         d2e3_dDr2 = 2.0 * (3.0 * diff_data.params[1]**2 - 2.0 * diff_data.params[2]**2) * diff_data.params[1] / mu_five
 
     # Calculate d2e_dDr2.
-    d2e_dDr2 = -1.0 / 9.0 (d2e1_dDr2 * data.c_alpha - d2e2_dDr2 * data.c_beta - d2e2_dDr2 * data.c_gamma)
+    d2e_dDr2 = -1.0 / 9.0 * (d2e1_dDr2 * data.c_alpha - d2e2_dDr2 * data.c_beta - d2e2_dDr2 * data.c_gamma)
 
     # Weight c0.
     data.d2ci[2, 2, 2] = -0.25 * d2e_dDr2
