@@ -248,7 +248,22 @@ class Diffusion_tensor:
         self.relax.data.diff[self.run].axial_type = self.axial_type
 
         # (Dpar, Dper, theta, phi).
+        print self.param_types
         if self.param_types == 0:
+            # Unpack the tuple.
+            tm, Dratio, theta, phi = self.params
+
+            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
+            self.relax.data.diff[self.run].Diso = 1.0 / (6.0 * tm * self.time_scale)
+            self.relax.data.diff[self.run].Dratio = Dratio * self.d_scale
+            self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * self.relax.data.diff[self.run].Dratio / (2.0 + self.relax.data.diff[self.run].Dratio)
+            self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (2.0 + self.relax.data.diff[self.run].Dratio)
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = tm * self.time_scale
+
+        # (tm, Dratio, theta, phi).
+        elif self.param_types == 1:
             # Unpack the tuple.
             Dpar, Dper, theta, phi = self.params
 
@@ -261,19 +276,6 @@ class Diffusion_tensor:
             # Correlation times:  tm, t1, t2, t3.
             self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
 
-        # (tm, Dratio, theta, phi).
-        elif self.param_types == 1:
-            # Unpack the tuple.
-            tm, Dratio, theta, phi = self.params
-
-            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = 1.0 / (6.0 * tm * self.time_scale)
-            self.relax.data.diff[self.run].Dratio = Dratio * self.d_scale
-            self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * self.relax.data.diff[self.run].Dratio / (2.0 + self.relax.data.diff[self.run].Dratio)
-            self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (2.0 + self.relax.data.diff[self.run].Dratio)
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = tm * self.time_scale
 
         # Unknown parameter combination.
         else:

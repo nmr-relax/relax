@@ -181,8 +181,8 @@ class Diffusion_tensor:
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
         round brackets, the elements of which are separated by commas.  Alternative sets of
         parameters, 'param_types', are:
-            0 - (Dpar, Dper, theta, phi)   (Default)
-            1 - (tm, Dratio, theta, phi)
+            0 - (tm, Dratio, theta, phi)   (Default)
+            1 - (Dpar, Dper, theta, phi)
         Dratio is defined as Dpar/Dper.
 
         The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
