@@ -184,17 +184,17 @@ class Diffusion_tensor:
         round brackets, the elements of which are separated by commas.  Alternative sets of
         parameters, 'param_types', are:
 
-            0 - (tm, Dratio, theta, phi)   (Default)
-            1 - (Dpar, Dper, theta, phi)
-            2 - (Diso, Dratio, theta, phi)
-            3 - (tm, Da, theta, phi)
-            4 - (Diso, Da, theta, phi)
+            0 - (tm, Da, theta, phi)   (Default)
+            1 - (tm, Dratio, theta, phi)
+            2 - (Dpar, Dper, theta, phi)
+            3 - (Diso, Da, theta, phi)
+            4 - (Diso, Dratio, theta, phi)
 
         where:
             tm = 1 / 6Diso
-            Dratio = Dpar / Dper
             Diso = 1/3 (Dpar + 2Dper)
             Da = 1/3 (Dpar - Dper)
+            Dratio = Dpar / Dper
 
         The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
         vector with respect to the diffusion frame while the spherical angles {theta, phi} describe
@@ -211,7 +211,7 @@ class Diffusion_tensor:
         used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
         prevent minimisation of diffusion tensor parameters in a space with two minima, it is
         recommended to specify which tensor to be minimised, thereby partitioning the two minima
-        into the two subspaces.
+        into the two subspaces (the partition is where Da equals 0).
 
 
         Anisotropic diffusion.
@@ -272,7 +272,7 @@ class Diffusion_tensor:
         To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, theta value
         of 20 degrees, and phi value of 20 degrees, and assign it to the run 'm8', type:
 
-        relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0))
+        relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
 
 
         To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of

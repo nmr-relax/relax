@@ -104,7 +104,7 @@ class Model_free(Common_functions):
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
                 self.param_names.append('tm')
-                self.param_names.append('Dratio')
+                self.param_names.append('Da')
                 self.param_names.append('theta')
                 self.param_names.append('phi')
 
@@ -150,7 +150,7 @@ class Model_free(Common_functions):
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
                 param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].Dratio_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].Da_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].theta_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].phi_sim[sim_index])
 
@@ -172,7 +172,7 @@ class Model_free(Common_functions):
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
                 param_vector.append(self.relax.data.diff[self.run].tm)
-                param_vector.append(self.relax.data.diff[self.run].Dratio)
+                param_vector.append(self.relax.data.diff[self.run].Da)
                 param_vector.append(self.relax.data.diff[self.run].theta)
                 param_vector.append(self.relax.data.diff[self.run].phi)
 
@@ -319,9 +319,9 @@ class Model_free(Common_functions):
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                # tm, Dratio, theta, phi
+                # tm, Da, theta, phi
                 self.scaling_matrix[i, i] = 1e-9
-                self.scaling_matrix[i+1, i+1] = 1.0
+                self.scaling_matrix[i+1, i+1] = 1e9
                 self.scaling_matrix[i+2, i+2] = 1.0
                 self.scaling_matrix[i+3, i+3] = 1.0
 
@@ -918,7 +918,7 @@ class Model_free(Common_functions):
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
                 self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
-                self.relax.data.diff[self.run].Dratio_sim[sim_index] = self.param_vector[1]
+                self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
                 self.relax.data.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
                 self.relax.data.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
                 param_index = param_index + 4
@@ -943,9 +943,9 @@ class Model_free(Common_functions):
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
-                self.relax.data.diff[self.run].Dratio = self.param_vector[1]
-                self.relax.data.diff[self.run].theta = self.param_vector[2]
-                self.relax.data.diff[self.run].phi = self.param_vector[3]
+                self.relax.data.diff[self.run].Da = self.param_vector[1]
+                self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(self.param_vector[2], 0.0, pi)
+                self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(self.param_vector[3], 0.0, 2.0*pi)
                 param_index = param_index + 4
 
             # Anisotropic diffusion.
@@ -953,9 +953,9 @@ class Model_free(Common_functions):
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
                 self.relax.data.diff[self.run].Da = self.param_vector[1]
                 self.relax.data.diff[self.run].Dr = self.param_vector[2]
-                self.relax.data.diff[self.run].alpha = self.param_vector[3]
-                self.relax.data.diff[self.run].beta = self.param_vector[4]
-                self.relax.data.diff[self.run].gamma = self.param_vector[5]
+                self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(self.param_vector[3], 0.0, 2.0*pi)
+                self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(self.param_vector[4], 0.0, pi)
+                self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(self.param_vector[5], 0.0, 2.0*pi)
                 param_index = param_index + 6
 
         # Model-free parameters.
@@ -1433,15 +1433,15 @@ class Model_free(Common_functions):
                 min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
                 m = m + 1
 
-            # Axially symmetric diffusion {tm, Dratio, theta, phi}.
+            # Axially symmetric diffusion {tm, Da, theta, phi}.
             if self.relax.data.diff[self.run].type == 'axial':
                 min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
                 if self.relax.data.diff[self.run].axial_type == 'prolate':
-                    min_options.append([inc[1], 1.0, 3.0])
+                    min_options.append([inc[1], 0.0, 10.0 * 1e9])
                 elif self.relax.data.diff[self.run].axial_type == 'oblate':
-                    min_options.append([inc[1], 0.0, 1.0])
+                    min_options.append([inc[1], -10.0 * 1e9, 0.0])
                 else:
-                    min_options.append([inc[1], 0.0, 3.0])
+                    min_options.append([inc[1], -10.0 * 1e9, 10.0 * 1e9])
                 min_options.append([inc[2], 0.0, pi])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 m = m + 4
@@ -1449,8 +1449,8 @@ class Model_free(Common_functions):
             # Anisotropic diffusion {tm, Da, Dr, alpha, beta, gamma}.
             elif self.relax.data.diff[self.run].type == 'aniso':
                 min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
-                min_options.append([inc[1], 0.0, 10.0 * 1e9])
-                min_options.append([inc[2], 0.0, 10.0 * 1e9])
+                min_options.append([inc[1], -10.0 * 1e9, 10.0 * 1e9])
+                min_options.append([inc[2], -10.0 * 1e9, 10.0 * 1e9])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 min_options.append([inc[4], 0.0, pi])
                 min_options.append([inc[5], 0.0, 2 * pi])
@@ -1653,33 +1653,19 @@ class Model_free(Common_functions):
                 i = i + 1
                 j = j + 1
 
-                # Prolate diffusion, 1 <= Dratio <= 100.
+                # Prolate diffusion, Da >= 0.
                 if self.relax.data.diff[self.run].axial_type == 'prolate':
                     A.append(zero_array * 0.0)
-                    A.append(zero_array * 0.0)
                     A[j][i] = 1.0
-                    A[j+1][i] = -1.0
-                    b.append(1.0 / self.scaling_matrix[i, i])
-                    b.append(-100.0 / self.scaling_matrix[i, i])
+                    b.append(0.0 / self.scaling_matrix[i, i])
                     i = i + 1
-                    j = j + 2
+                    j = j + 1
 
-                # Oblate diffusion, 1e-3 <= Dratio <= 1.
+                # Oblate diffusion, Da <= 0.
                 elif self.relax.data.diff[self.run].axial_type == 'oblate':
                     A.append(zero_array * 0.0)
-                    A.append(zero_array * 0.0)
-                    A[j][i] = 1.0
-                    A[j+1][i] = -1.0
-                    b.append(1e-3 / self.scaling_matrix[i, i])
-                    b.append(-1.0 / self.scaling_matrix[i, i])
-                    i = i + 1
-                    j = j + 2
-
-                # Dratio >= 1e-3.
-                else:
-                    A.append(zero_array * 0.0)
-                    A[j][i] = 1.0
-                    b.append(1e-3 / self.scaling_matrix[i, i])
+                    A[j][i] = -1.0
+                    b.append(0.0 / self.scaling_matrix[i, i])
                     i = i + 1
                     j = j + 1
 
@@ -2239,7 +2225,7 @@ class Model_free(Common_functions):
 
                 # Axially symmetric diffusion.
                 elif diff_type == 'axial':
-                    diff_params = [data.tm, data.Dratio, data.theta, data.phi]
+                    diff_params = [data.tm, data.Da, data.theta, data.phi]
 
                 # Anisotropic diffusion.
                 elif diff_type == 'aniso':
@@ -2576,8 +2562,8 @@ class Model_free(Common_functions):
                 col['diff_type'] = i
             elif header[i] == 'tm_(s)':
                 col['tm'] = i
-            elif header[i] == 'Dratio':
-                col['dratio'] = i
+            elif header[i] == 'Da':
+                col['da'] = i
             elif header[i] == 'theta_(deg)':
                 col['theta'] = i
             elif header[i] == 'phi_(deg)':
@@ -2717,7 +2703,7 @@ class Model_free(Common_functions):
             if diff_type == 'axial' or diff_type == 'oblate' or diff_type == 'prolate':
                 try:
                     temp_diff_params.append(float(file_data[i][col['tm']]))
-                    temp_diff_params.append(float(file_data[i][col['dratio']]))
+                    temp_diff_params.append(float(file_data[i][col['da']]))
                     temp_diff_params.append(float(file_data[i][col['theta']]))
                     temp_diff_params.append(float(file_data[i][col['phi']]))
                 except ValueError:
@@ -3633,7 +3619,7 @@ class Model_free(Common_functions):
                 if index == 0:
                     self.relax.data.diff[self.run].tm_err = error
                 elif index == 1:
-                    self.relax.data.diff[self.run].Dratio_err = error
+                    self.relax.data.diff[self.run].Da_err = error
                 elif index == 2:
                     self.relax.data.diff[self.run].theta_err = error
                 elif index == 3:
@@ -3723,7 +3709,7 @@ class Model_free(Common_functions):
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                diff_params = ['tm', 'Dratio', 'theta', 'phi']
+                diff_params = ['tm', 'Da', 'theta', 'phi']
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
@@ -3904,7 +3890,7 @@ class Model_free(Common_functions):
                 if index == 0:
                     return self.relax.data.diff[self.run].tm_sim
                 elif index == 1:
-                    return self.relax.data.diff[self.run].Dratio_sim
+                    return self.relax.data.diff[self.run].Da_sim
                 elif index == 2:
                     return self.relax.data.diff[self.run].theta_sim
                 elif index == 3:
@@ -4103,18 +4089,15 @@ class Model_free(Common_functions):
         if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
             # Isotropic.
             if self.relax.data.diff[self.run].type == 'iso':
-                diff_params = [`self.relax.data.diff[self.run].tm`]
                 diff_params = ['tm_(s)']
 
             # Axially symmetric.
             elif self.relax.data.diff[self.run].type == 'axial':
-                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Dratio`, `self.relax.data.diff[self.run].theta`, `self.relax.data.diff[self.run].phi`]
-                diff_params = ['tm_(s)', 'Dratio', 'theta_(deg)', 'phi_(deg)']
+                diff_params = ['tm_(s)', 'Da_(1/s)', 'theta_(deg)', 'phi_(deg)']
 
             # Anisotropic.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha`, `self.relax.data.diff[self.run].beta`, `self.relax.data.diff[self.run].gamma`]
-                diff_params = ['tm_(s)', 'Da', 'Dr', 'alpha_(deg)', 'beta_(deg)', 'gamma_(deg)']
+                diff_params = ['tm_(s)', 'Da_(1/s)', 'Dr_(1/s)', 'alpha_(deg)', 'beta_(deg)', 'gamma_(deg)']
 
         # Relaxation data and errors.
         ri = []
@@ -4148,7 +4131,7 @@ class Model_free(Common_functions):
                 diff_type = self.relax.data.diff[self.run].axial_type
                 if diff_type == None:
                     diff_type = 'axial'
-                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Dratio`, `self.relax.data.diff[self.run].theta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi * 360 / (2.0 * pi)`]
+                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].theta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi * 360 / (2.0 * pi)`]
 
             # Anisotropic.
             elif self.relax.data.diff[self.run].type == 'aniso':
@@ -4271,7 +4254,7 @@ class Model_free(Common_functions):
                         warn = res.warning
 
             # No minimisation details.
-            except AttributeError:
+            except:
                 chi2 = None
                 iter = None
                 f = None
@@ -4327,7 +4310,7 @@ class Model_free(Common_functions):
 
                 # Axially symmetric.
                 elif self.relax.data.diff[self.run].type == 'axial':
-                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Dratio_err`, `self.relax.data.diff[self.run].theta_err`, `self.relax.data.diff[self.run].phi_err`]
+                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err`, `self.relax.data.diff[self.run].phi_err`]
 
                 # Anisotropic.
                 elif self.relax.data.diff[self.run].type == 'aniso':
@@ -4431,7 +4414,7 @@ class Model_free(Common_functions):
 
                     # Axially symmetric.
                     elif self.relax.data.diff[self.run].type == 'axial':
-                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Dratio_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i]`, `self.relax.data.diff[self.run].phi_sim[i]`]
+                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i]`, `self.relax.data.diff[self.run].phi_sim[i]`]
 
                     # Anisotropic.
                     elif self.relax.data.diff[self.run].type == 'aniso':

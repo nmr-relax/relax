@@ -85,3 +85,17 @@ class Angles:
 
             # Print out.
             print `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + ":  alpha = " + `360.0 * self.relax.data.res[self.run][i].alpha / (2.0 * pi)` + " deg."
+
+
+    def wrap_angles(self, angle, lower, upper):
+        """Convert the given angle to be between the lower and upper values."""
+
+        while 1:
+            if angle > upper:
+                angle = angle - upper
+            elif angle < lower:
+                angle = angle + upper
+            else:
+                break
+
+        return angle

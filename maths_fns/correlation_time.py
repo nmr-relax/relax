@@ -74,39 +74,48 @@ def calc_axial_ti(data, diff_data):
                2Dper + 4Dpar
 
 
-    The equations for the parameters {tm, Dratio} are:
+    The equations for the parameters {Diso, Da} are:
 
-               1    /       1    \ 
-        t0  =  - tm | 2 + ------ |
-               3    \     Dratio /
+        t0   =  1/6 (Diso - Da)**-1
 
+        t1   =  1/6 (Diso - Da/2)**-1
 
-               2    /          3      \ 
-        t1  =  - tm | 2 + ----------- |
-               5    \     1 + 5Dratio /
+        t2   =  1/6 (Diso + Da)**-1
 
-
-                  /         3      \ 
-        t2  =  tm | 2 - ---------- |
-                  \     2 + Dratio /
-
-    The diffusion parameter set in data.diff_params is {tm, Dratio, theta, phi}.
+    The diffusion parameter set in data.diff_params is {tm, Da, theta, phi}.
     """
 
-    # t0.
-    if diff_data.params[1] == 0:
-        if diff_data.params[0] == 0:
-            data.ti[0] = 0.0
-        else:
-            data.ti[0] = 1e99
+    # Calculate Diso.
+    if diff_data.params[0] == 0.0:
+        data.Diso = 1e99
     else:
-        data.ti[0] = diff_data.params[0]/3.0 * (2.0 + 1.0/diff_data.params[1])
+        data.Diso = 1.0 / (6.0 * diff_data.params[0])
+
+    # Components.
+    data.t_0_comp  = data.Diso - diff_data.params[1]
+    data.t_1_comp  = data.Diso - 0.5 * diff_data.params[1]
+    data.t_2_comp  = data.Diso + diff_data.params[1]
+
+    # t0.
+    data.ti[0] = 6.0 * data.t_0_comp
+    if data.ti[0] == 0.0:
+        data.ti[0] = 1e99
+    else:
+        data.ti[0] = 1.0 / data.ti[0]
 
     # t1.
-    data.ti[1] = 0.4 * diff_data.params[0] * (2.0 + 3.0/(1.0 + 5.0*diff_data.params[1]))
+    data.ti[1] = 6.0 * data.t_1_comp
+    if data.ti[1] == 0.0:
+        data.ti[1] = 1e99
+    else:
+        data.ti[1] = 1.0 / data.ti[1]
 
     # t2.
-    data.ti[2] = diff_data.params[0] * (2.0 - 3.0/(2.0 + diff_data.params[1]))
+    data.ti[2] = 6.0 * data.t_2_comp
+    if data.ti[2] == 0.0:
+        data.ti[2] = 1e99
+    else:
+        data.ti[2] = 1.0 / data.ti[2]
 
 
 
@@ -115,138 +124,257 @@ def calc_axial_ti(data, diff_data):
 #####################################################
 
 def calc_axial_dti(data, diff_data):
-    """Partial derivatives of the diffusional correlation times.
+    """Diffusional correlation time gradients.
 
-    The tm partial derivatives are:
+    tm partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
 
-        dt0     1 /       1    \ 
-        ---  =  - | 2 + ------ |
-        dtm     3 \     Dratio /
+        dt0        1 dDiso
+        ---   =  - - ----- (Diso - Da)**-2
+        dtm        6  dtm
 
+        dt1        1 dDiso
+        ---   =  - - ----- (Diso - Da/2)**-2
+        dtm        6  dtm
 
-        dt1     2 /          3      \ 
-        ---  =  - | 2 + ----------- |
-        dtm     5 \     1 + 5Dratio /
-
-
-        dt2             3
-        ---  =  2 - ----------
-        dtm         2 + Dratio
-
-
-    The Dratio partial derivatives are:
-
-          dt0             tm
-        -------  =  - ----------
-        dDratio       3Dratio**2
-
-          dt1               6tm
-        -------  =  - ----------------
-        dDratio       (1 + 5Dratio)**2
-
-          dt2             3tm
-        -------  =  ---------------
-        dDratio     (2 + Dratio)**2
+        dt2        1 dDiso
+        ---   =  - - ----- (Diso + Da)**-2
+        dtm        6  dtm
 
 
-    The diffusion parameter set in data.diff_params is {tm, Dratio, theta, phi}.
+        dDiso
+        -----  =  -1/6 * tm**-2
+         dtm
+
+
+    Da partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+        dt0
+        ---   =  1/6 (Diso - Da)**-2
+        dDa
+
+        dt1
+        ---   =  1/12 (Diso - Da/2)**-2
+        dDa
+
+        dt2
+        ---   =  -1/6 (Diso + Da)**-2
+        dDa
+
+
+    The diffusion parameter set in data.diff_params is {tm, Da, theta, phi}.
     """
 
-    # tm partial derivatives.
-    if diff_data.params[1] == 0:
+    # Components.
+    data.t_0_comp_sqrd  = data.t_0_comp**2
+    data.t_1_comp_sqrd  = data.t_1_comp**2
+    data.t_2_comp_sqrd  = data.t_2_comp**2
+
+
+    # tm partial derivative.
+    ########################
+
+    # Components.
+    data.inv_dDiso_dtm = -6.0 * diff_data.params[0]**2
+
+    # t0.
+    data.dti[0, 0] = -6.0 * data.inv_dDiso_dtm * data.t_0_comp_sqrd
+    if data.dti[0, 0] == 0.0:
         data.dti[0, 0] = 1e99
     else:
-        data.dti[0, 0] = (2.0 + 1.0/diff_data.params[1]) / 3.0
-    data.dti[0, 1] = 0.4 * (2.0 + 3.0/(1.0 + 5.0*diff_data.params[1]))
-    data.dti[0, 2] = 2.0 - 3.0/(2.0 + diff_data.params[1])
+        data.dti[0, 0] = 1.0 / data.dti[0, 0]
 
-    # Dratio partial derivatives.
-    if diff_data.params[1] == 0:
-        if diff_data.params[0] == 0:
-            data.dti[1, 0] = 0.0
-        else:
-            data.dti[1, 0] = -1e99
+    # t1.
+    data.dti[0, 1] = -6.0 * data.inv_dDiso_dtm * data.t_1_comp_sqrd
+    if data.dti[0, 1] == 0.0:
+        data.dti[0, 1] = 1e99
     else:
-        data.dti[1, 0] = - diff_data.params[0] / (3.0 * diff_data.params[1]**2)
-    data.dti[1, 1] = - 6.0 * diff_data.params[0] / (1.0 + 5.0*diff_data.params[1])**2
-    data.dti[1, 2] = 3.0 * diff_data.params[0] / (2.0 + diff_data.params[1])**2
+        data.dti[0, 1] = 1.0 / data.dti[0, 1]
 
+    # t2.
+    data.dti[0, 2] = -6.0 * data.inv_dDiso_dtm * data.t_2_comp_sqrd
+    if data.dti[0, 2] == 0.0:
+        data.dti[0, 2] = 1e99
+    else:
+        data.dti[0, 2] = 1.0 / data.dti[0, 2]
+
+
+    # Da partial derivative.
+    ########################
+
+    # t0.
+    data.dti[1, 0] = 6.0 * data.t_0_comp_sqrd
+    if data.dti[1, 0] == 0.0:
+        if data.mu != 0.0:
+            data.dti[1, 0] = 1e99
+    else:
+        data.dti[1, 0] = 1.0 / data.dti[1, 0]
+
+    # t1.
+    data.dti[1, 1] = 12.0 * data.t_1_comp_sqrd
+    if data.dti[1, 1] == 0.0:
+        data.dti[1, 1] = 1e99
+    else:
+        data.dti[1, 1] = 1.0 / data.dti[1, 1]
+
+    # t2.
+    data.dti[1, 2] = -6.0 * data.t_2_comp_sqrd
+    if data.dti[1, 2] == 0.0:
+        if data.mu != 0.0:
+            data.dti[1, 2] = 1e99
+    else:
+        data.dti[1, 2] = 1.0 / data.dti[1, 2]
 
 
 # Axially symmetric global correlation time Hessian.
 ####################################################
 
 def calc_axial_d2ti(data, diff_data):
-    """Second partial derivatives of the diffusional correlation times.
+    """Diffusional correlation time Hessians.
 
-    The tm-tm second partial derivatives are:
+    tm-tm partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        d2t0      1 / dDiso \ 2                     1 d2Diso
+        ----   =  - | ----- |   (Diso - Da)**-3  -  - ------ (Diso - Da)**-2
+        dtm2      3 \  dtm  /                       6  dtm2
+
+        d2t1      1 / dDiso \ 2                       1 d2Diso
+        ----   =  - | ----- |   (Diso - Da/2)**-3  -  - ------ (Diso - Da/2)**-2
+        dtm2      3 \  dtm  /                         6  dtm2
+
+        d2t2      1 / dDiso \ 2                     1 d2Diso
+        ----   =  - | ----- |   (Diso + Da)**-3  -  - ------ (Diso + Da)**-2
+        dtm2      3 \  dtm  /                       6  dtm2
+
+
+        d2Diso
+        ------  =  1/3 * tm**-3
+         dtm2
+
+
+    tm-Da partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+         d2t0         1 dDiso
+        -------  =  - - ----- (Diso - Da)**-3
+        dtm.dDa       3  dtm
+
+         d2t1         1 dDiso
+        -------  =  - - ----- (Diso - Da/2)**-3
+        dtm.dDa       6  dtm
+
+         d2t2       1 dDiso
+        -------  =  - ----- (Diso + Da)**-3
+        dtm.dDa     3  dtm
+
+
+    Da-Da partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
         d2t0
-        ----  =  0
-        dtm2
+        ----  =  1/3 (Diso - Da)**-3
+        dDa2
 
         d2t1
-        ----  =  0
-        dtm2
+        ----  =  1/12 (Diso - Da/2)**-3
+        dDa2
 
-        d2t1
-        ----  =  0
-        dtm2
-
-
-    The tm-Dratio second partial derivatives are:
-
-           d2t0               1
-        -----------  =  - ----------
-        dtm.dDratio       3Dratio**2
-
-           d2t1                  6
-        -----------  =  - ----------------
-        dtm.dDratio       (1 + 5Dratio)**2
-
-           d2t1                3
-        -----------  =  ---------------
-        dtm.dDratio     (2 + Dratio)**2
+        d2t2
+        ----  =  1/3 (Diso + Da)**-3 
+        dDa2
 
 
-    The Dratio-Dratio second partial derivatives are:
-
-          d2t0          2tm
-        --------  =  ----------
-        dDratio2     3Dratio**3
-
-          d2t1             60tm
-        --------  =  ----------------
-        dDratio2     (1 + 5Dratio)**3
-
-          d2t1               6tm
-        --------  =  - ---------------
-        dDratio2       (2 + Dratio)**3
-
-
-    The diffusion parameter set in data.diff_params is {tm, Dratio, theta, phi}.
+    The diffusion parameter set in data.diff_params is {tm, Da, theta, phi}.
     """
 
-    # tm-tm second partial derivatives (don't do anything).
+    # Components.
+    data.t_0_comp_cubed  = data.t_0_comp**3
+    data.t_1_comp_cubed  = data.t_1_comp**3
+    data.t_2_comp_cubed  = data.t_2_comp**3
 
-    # tm-Dratio second partial derivatives.
-    if diff_data.params[1] == 0:
-        data.d2ti[0, 1, 0] = data.d2ti[1, 0, 0] = -1e99
-    else:
-        data.d2ti[0, 1, 0] = data.d2ti[1, 0, 0] = - 1.0/(3.0 * diff_data.params[1]**2)
-    data.d2ti[0, 1, 1] = data.d2ti[1, 0, 1] = - 6.0 / (1.0 + 5.0*diff_data.params[1])**2
-    data.d2ti[0, 1, 2] = data.d2ti[1, 0, 2] = 3.0 / (2.0 + diff_data.params[1])**2
 
-    # Dratio-Dratio second partial derivatives.
-    if diff_data.params[1] == 0:
-        if diff_data.params[0] == 0:
-            data.d2ti[1, 1, 0] = 0.0
-        else:
-            data.d2ti[1, 1, 0] = 1e99
+    # tm-tm partial derivative.
+    ###########################
+
+    # Components.
+    data.inv_d2Diso_dtm2 = 3.0 * diff_data.params[0]**3
+
+    # t0.
+    a = 3.0 * data.inv_dDiso_dtm**2 * data.t_0_comp_cubed
+    b = -6.0 * data.inv_d2Diso_dtm2 * data.t_0_comp_sqrd
+    if a == 0.0 or b == 0.0:
+        data.d2ti[0, 0, 0] = 1e99
     else:
-        data.d2ti[1, 1, 0] = 2.0 * diff_data.params[0] / (3.0 * diff_data.params[1]**3)
-    data.d2ti[1, 1, 1] = 60.0 * diff_data.params[0] / (1.0 + 5.0*diff_data.params[1])**3
-    data.d2ti[1, 1, 2] = -6.0 * diff_data.params[0] / (2.0 + diff_data.params[1])**3
+        data.d2ti[0, 0, 0] = 1.0 / a + 1.0 / b
+
+    # t1.
+    a = 3.0 * data.inv_dDiso_dtm**2 * data.t_1_comp_cubed
+    b = -6.0 * data.inv_d2Diso_dtm2 * data.t_1_comp_sqrd
+    if a == 0.0 or b == 0.0:
+        data.d2ti[0, 0, 1] = 1e99
+    else:
+        data.d2ti[0, 0, 1] = 1.0 / a + 1.0 / b
+
+    # t2.
+    a = 3.0 * data.inv_dDiso_dtm**2 * data.t_2_comp_cubed
+    b = -6.0 * data.inv_d2Diso_dtm2 * data.t_2_comp_sqrd
+    if a == 0.0 or b == 0.0:
+        data.d2ti[0, 0, 2] = 1e99
+    else:
+        data.d2ti[0, 0, 2] = 1.0 / a + 1.0 / b
+
+
+    # tm-Da partial derivative.
+    ###########################
+
+    # t0.
+    a = -3.0 * data.inv_dDiso_dtm * data.t_0_comp_cubed
+    if a == 0.0:
+        data.d2ti[0, 1, 0] = data.d2ti[1, 0, 0] = 1e99
+    else:
+        data.d2ti[0, 1, 0] = data.d2ti[1, 0, 0] = 1.0 / a
+
+    # t1.
+    a = -6.0 * data.inv_dDiso_dtm * data.t_1_comp_cubed
+    if a == 0.0:
+        data.d2ti[0, 1, 1] = data.d2ti[1, 0, 1] = 1e99
+    else:
+        data.d2ti[0, 1, 1] = data.d2ti[1, 0, 1] = 1.0 / a
+
+    # t2.
+    a = 3.0 * data.inv_dDiso_dtm * data.t_2_comp_cubed
+    if a == 0.0:
+        data.d2ti[0, 1, 2] = data.d2ti[1, 0, 2] = 1e99
+    else:
+        data.d2ti[0, 1, 2] = data.d2ti[1, 0, 2] = 1.0 / a
+
+
+    # Da-Da partial derivative.
+    ###########################
+
+    # t0.
+    a = 3.0 * data.t_0_comp_cubed
+    if a == 0.0:
+        data.d2ti[1, 1, 0] = 1e99
+    else:
+        data.d2ti[1, 1, 0] = 1.0 / a
+
+    # t1.
+    a = 12.0 * data.t_1_comp_cubed
+    if a == 0.0:
+        data.d2ti[1, 1, 1] = 1e99
+    else:
+        data.d2ti[1, 1, 1] = 1.0 / a
+
+    # t2.
+    a = 3.0 * data.t_2_comp_cubed
+    if a == 0.0:
+        data.d2ti[1, 1, 2] = 1e99
+    else:
+        data.d2ti[1, 1, 2] = 1.0 / a
+
 
 
 
@@ -286,9 +414,9 @@ def calc_aniso_ti(data, diff_data):
 
     # Components.
     data.t_m2_comp = data.Diso + diff_data.params[1]
-    data.t_m1_comp = data.Diso - 0.5 * (diff_data.params[1] + diff_data.params[1])
+    data.t_m1_comp = data.Diso - 0.5 * (diff_data.params[1] + diff_data.params[2])
     data.t_0_comp  = data.Diso - data.mu
-    data.t_1_comp  = data.Diso - 0.5 * (diff_data.params[1] - diff_data.params[1])
+    data.t_1_comp  = data.Diso - 0.5 * (diff_data.params[1] - diff_data.params[2])
     data.t_2_comp  = data.Diso + data.mu
 
     # t-2.
@@ -399,7 +527,7 @@ def calc_aniso_dti(data, diff_data):
         dDr
 
         dt0
-        ---   =  1/18 Da/mu (Diso - mu)**-2
+        ---   =  1/18 Dr/mu (Diso - mu)**-2
         dDr
 
         dt1
@@ -407,9 +535,10 @@ def calc_aniso_dti(data, diff_data):
         dDr
 
         dt2
-        ---   =  -1/18 Da/mu (Diso + mu)**-2
+        ---   =  -1/18 Dr/mu (Diso + mu)**-2
         dDr
 
+    The diffusion parameter set in data.diff_params is {tm, Da, Dr, alpha, beta, gamma}.
     """
 
     # Components.
@@ -692,6 +821,8 @@ def calc_aniso_d2ti(data, diff_data):
         ----   =  -- ----- (Diso + mu)**-3  +  ---- | ------ - 1 | (Diso + mu)**-2
         dDr2      27 mu**2                     18mu \ 3mu**2     /
 
+
+    The diffusion parameter set in data.diff_params is {tm, Da, Dr, alpha, beta, gamma}.
     """
 
     # Components.
