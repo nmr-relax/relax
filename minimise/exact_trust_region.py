@@ -80,6 +80,9 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 			print "\tlS: " + `self.lS`
 
 		# Iterative loop.
+		self.xk_new = self.xk
+		self.fk_new = self.fk
+		return
 		while 1:
 			# Safeguard lambda.
 			if self.print_flag == 2:
@@ -117,7 +120,6 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 					print "\tLinearAlgebraError, matrix is not positive definite."
 				pos_def = 0
 			if self.print_flag == 2:
-				print "\tResults: " + `func.results`
 				print "\tPos def: " + `pos_def`
 
 			if pos_def:
@@ -131,8 +133,6 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 				dot_p = dot(p, p)
 				len_p = sqrt(dot_p)
 				if len_p < self.delta:
-					import sys
-					sys.exit()
 
 					# Calculate z.
 
@@ -157,16 +157,16 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 				if len_p < self.delta:
 					self.lU = min(self.lU, self.l)
 				else:
-					self.lL = min(self.lL, self.l)
+					self.lL = max(self.lL, self.l)
 
 				# lambda update.
-				self.l = self.l + dot_p / dot(q, q) * ((len_p - self.delta) / self.delta)
+				self.l_corr = dot_p / dot(q, q) * ((len_p - self.delta) / self.delta)
 
 			else:
 				# Update lambda via lambda = lS.
-				self.l = self.lS
-				if self.print_flag == 2:
-					print "Setting l to lS"
+				self.lS = max(self.lS, self.l)
+
+				self.l_corr = -self.l
 
 			# Update lL
 			self.lL = max(self.lL, self.lS)
@@ -174,6 +174,9 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 				print "Update lL: " + `self.lL`
 
 			# Check the convergence criteria.
+
+			# lambda update.
+			self.l = self.l + self.l_corr
 
 			iter = iter + 1
 				
@@ -202,6 +205,14 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 
 		self.setup_newton()
 		self.specific_update = self.update_newton
+
+
+	def tests(self):
+		"Function to warn of incomplete code."
+		text = "Incomplete code, minimisation bypassed."
+		print text
+		self.warning = text
+		return 1
 
 
 	def update(self):

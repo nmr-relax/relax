@@ -1,15 +1,15 @@
 import sys
 from re import match
 
-#try:
-#	from scipy.optimize import fmin, fmin_bfgs, fmin_ncg
-#	simplex_scipy = fmin
-#	bfgs_scipy = fmin_bfgs
-#	ncg_scipy = fmin_ncg
-#	noscipy_flag = 0
-#except ImportError:
-#	print "Scipy is not installed, cannot use simplex, BFGS, or Newton conjugate gradient minimisation from the scipy package."
-noscipy_flag = 1
+try:
+	from scipy.optimize import fmin, fmin_bfgs, fmin_ncg
+	simplex_scipy = fmin
+	bfgs_scipy = fmin_bfgs
+	ncg_scipy = fmin_ncg
+	noscipy_flag = 0
+except ImportError:
+	print "Scipy is not installed, cannot use simplex, BFGS, or Newton conjugate gradient minimisation from the scipy package."
+	noscipy_flag = 1
 
 # Grid search.
 from minimise.grid import grid
@@ -19,6 +19,7 @@ from minimise.coordinate_descent import coordinate_descent
 from minimise.steepest_descent import steepest_descent
 from minimise.bfgs import bfgs
 from minimise.newton import newton
+from minimise.newton_cg import newton_cg
 
 # Trust region algorithms.
 from minimise.cauchy_point import cauchy_point
@@ -85,7 +86,6 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	g_count = 0
 	h_count = 0
 	warning = None
-
 
 	# Parameter initialisation methods.
 	###################################
@@ -187,9 +187,50 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Nn]ewton$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton minimisation >>>"
+		if type(min_options) == tuple:
+			line_search_algor = min_options[0]
+			hessian_mod = min_options[1]
+		else:
+			line_search_algor = min_options
+			hessian_mod = 'Eigen'
+		if line_search_algor == None:
+			line_search_algor = 'More Thuente'
+		if hessian_mod == None:
+			hessian_mod = 'Eigen'
+
+		print "Line search:"
+		if match('^[Bb]ack', line_search_algor):
+			print "\tBacktracking line search."
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
+			print "\tNocedal and Wright interpolation based line search."
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
+			print "\tNocedal and Wright line search for the Wolfe conditions."
+		elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
+			print "\tMoré and Thuente line search."
+		elif match('^[Nn]one$', line_search_algor):
+			print "\tNo line search."
+
+		print "Hessian modification:"
+		if match("^[Ee]igen", hessian_mod):
+			print "\tEigenvalue modification."
+		elif match("^[Cc]hol", hessian_mod):
+			print "\tCholesky with added multiple of the identity."
+
+		print ""
+
+		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=line_search_algor, hessian_mod=hessian_mod, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# Newton-CG minimisation.
+	elif match('^[Nn]ewton[ _-][Cc][Gg]$', min_algor) or match('^[Nn][Cc][Gg]$', min_algor):
+		if print_flag:
+			print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
 		if min_options == None:
 			min_options = 'More Thuente'
-		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = newton_cg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:

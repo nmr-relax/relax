@@ -45,21 +45,21 @@ class generic_minimise:
 
 			# Get xk+1 (new parameter function).
 			self.new_param_func()
-			try:
-				self.new_param_func()
-			except "LinearAlgebraError", message:
-				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
-				break
-			except OverflowError, message:
-				if type(message.args[0]) == int:
-					text = message.args[1]
-				else:
-					text = message.args[0]
-				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
-				break
-			except NameError, message:
-				self.warning = message.args[0] + " (fatal minimisation error)."
-				break
+			#try:
+			#	self.new_param_func()
+			#except "LinearAlgebraError", message:
+			#	self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
+			#	break
+			#except OverflowError, message:
+			#	if type(message.args[0]) == int:
+			#		text = message.args[1]
+			#	else:
+			#		text = message.args[0]
+			#	self.warning = "OverflowError: " + text + " (fatal minimisation error)."
+			#	break
+			#except NameError, message:
+			#	self.warning = message.args[0] + " (fatal minimisation error)."
+			#	break
 
 			# Test for warnings.
 			if self.warning != None:
