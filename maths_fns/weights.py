@@ -124,24 +124,40 @@ def calc_axial_d2ci(data, diff_data):
 ##############################
 
 def calc_aniso_ci(data, diff_data):
-    """Weight equations for axially symmetric diffusion.
+    """Weight equations for anisotropic diffusion.
+
+    In the following equations, the following short-hand notation will be used:
+
+        da = delta_alpha
+
+        db = delta_beta
+
+        dg = delta_gamma
+
 
     The equations are:
 
-        c-2 = 3 . delta_alpha**2 . delta_beta**2
+        c-2 = 3da**2.db**2
 
-        c-1 = 3 . delta_alpha**2 . delta_gamma**2
 
-        c0  = 1/4 (3(delta_alpha**4 + delta_beta**4 + delta_gamma**4) - 1 - e)
+        c-1 = 3da**2.dg**2
 
-        c1  = 3 . delta_beta**2 . delta_gamma**2
 
-        c2  = 1/4 (3(delta_alpha**4 + delta_beta**4 + delta_gamma**4) - 1 + e)
+        c0  = 1/4 (3(da**4 + db**4 + dg**4) - 1 - e)
+
+
+        c1  = 3db**2.dg**2
+
+
+        c2  = 1/4 (3(da**4 + db**4 + dg**4) - 1 + e)
+
+
+              Da - Dr                          Da + Dr                          2Da
+        e  =  ------- (da**4 + 2db**2.dg**2) + ------- (db**4 + 2da**2.dg**2) - --- (dg**4 + 2da**2.db**2)
+                mu                               mu                             mu
+
 
     where:
-              Da - Dr                                                    Da + Dr                                                    2Da
-        e  =  ------- (delta_alpha**4 + 2delta_beta**2.delta_gamma**2) + ------- (delta_beta**4 + 2delta_alpha**2.delta_gamma**2) - --- (delta_gamma**4 + 2delta_alpha**2.delta_beta**2)
-                mu                                                         mu                                                       mu
               __________________
         mu = V Da**2 + Dr**2 / 3
 
@@ -161,6 +177,9 @@ def calc_aniso_ci(data, diff_data):
     # Calculate mu.
     data.mu = sqrt(diff_data.params[1]**2 + diff_data.params[2]**2 / 3.0)
 
+    # Calculate d.
+    d = 3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1
+
     # Calculate e.
     if diff_data.params[1] == 0.0:
         e = 0.0
@@ -169,9 +188,142 @@ def calc_aniso_ci(data, diff_data):
         e = e + (diff_data.params[1] + diff_data.params[2]) / data.mu * (data.delta_beta**4 + 2.0 * data.delta_alpha**2 * data.delta_gamma**2)
         e = e - 2.0 * diff_data.params[1] / data.mu * (data.delta_gamma**4 + 2.0 * data.delta_alpha**2 * data.delta_beta**2)
 
-    # Weights.
+    # Weight c-2.
     data.ci[0] = 3.0 * data.delta_alpha**2 * data.delta_beta**2
+
+    # Weight c-1.
     data.ci[1] = 3.0 * data.delta_alpha**2 * data.delta_gamma**2
-    data.ci[2] = 0.25 * (3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 - e)
+
+    # Weight c0.
+    data.ci[2] = 0.25 * (d - e)
+
+    # Weight c1.
     data.ci[3] = 3.0 * data.delta_beta**2 * data.delta_gamma**2
-    data.ci[4] = 0.25 * (3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 + e)
+
+    # Weight c2.
+    data.ci[4] = 0.25 * (d + e)
+
+
+# Anisotropic weight gradient.
+##############################
+
+def calc_aniso_dci(data, diff_data):
+    """Weight gradient for anisotropic diffusion.
+
+    psii partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+        dc-2             /     dda          ddb  \ 
+        -----  =  6da.db | db -----  +  da ----- |
+        dpsii            \    dpsii        dpsii /
+
+
+        dc-1             /     dda          ddg  \ 
+        -----  =  6da.dg | dg -----  +  da ----- |
+        dpsii            \    dpsii        dpsii /
+
+
+         dc0        /        dda             ddb             ddg  \      de
+        -----  =  3 | da**3 -----  +  db**3 -----  +  dg**3 ----- |  -  -----
+        dpsii       \       dpsii           dpsii           dpsii /     dpsii
+
+
+         dc1             /     ddb          ddg  \ 
+        -----  =  6db.dg | dg -----  +  db ----- |
+        dpsii            \    dpsii        dpsii /
+
+
+         dc2        /        dda             ddb             ddg  \      de
+        -----  =  3 | da**3 -----  +  db**3 -----  +  dg**3 ----- |  +  -----
+        dpsii       \       dpsii           dpsii           dpsii /     dpsii
+
+
+
+         de       Da - Dr /        dda            /     ddb          ddg  \ \     Da + Dr /        ddb            /     dda          ddg  \ \ 
+        -----  =  ------- | da**3 -----  +  db.dg | dg -----  +  db ----- | |  +  ------- | db**3 -----  +  da.dg | dg -----  +  da ----- | |
+        dpsii       mu    \       dpsii           \    dpsii        dpsii / /       mu    \       dpsii           \    dpsii        dpsii / /
+
+                      2Da /        ddg            /     dda          ddb  \ \ 
+                   -  --- | dg**3 -----  +  da.db | db -----  +  da ----- | |
+                      mu  \       dpsii           \    dpsii        dpsii / /
+
+
+    where psi = {alpha, beta, gamma}.
+
+
+    Da partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+        dc-2
+        ----  =  0
+        dDa
+
+        dc-1
+        ----  =  0
+        dDa
+
+        dc0       1 de
+        ---  =  - - ---
+        dDa       4 dDa
+
+        dc1
+        ---  =  0
+        dDa
+
+        dc0     1 de
+        ---  =  - ---
+        dDa     4 dDa
+
+
+        de      1 / (3Da + Dr)Dr                          (3Da - Dr)Dr                          2Dr**2                        \ 
+        ---  =  - | ------------ (da**4 + 2db**2.dg**2) - ------------ (db**4 + 2da**2.dg**2) - ------ (dg**4 + 2da**2.db**2) |
+        dDa     3 \    mu**3                                 mu**3                              mu**3                         /
+
+
+
+    Dr partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+        dc-2
+        ----  =  0
+        dDr
+
+        dc-1
+        ----  =  0
+        dDr
+
+        dc0       1 de
+        ---  =  - - ---
+        dDr       4 dDr
+
+        dc1
+        ---  =  0
+        dDr
+
+        dc0     1 de
+        ---  =  - ---
+        dDr     4 dDr
+
+
+        de        1 / (3Da + Dr)Da                          (3Da - Dr)Da                          2Da.Dr                        \ 
+        ---  =  - - | ------------ (da**4 + 2db**2.dg**2) - ------------ (db**4 + 2da**2.dg**2) - ------ (dg**4 + 2da**2.db**2) |
+        dDr       3 \    mu**3                                 mu**3                              mu**3                         /
+
+
+
+    """
+
+    # psii partial derivative.
+    ##########################
+
+    # Calculate dd_dpsii.
+    dd_dpsii = 3.0 * (data.delta_alpha**3 * data.ddelta_alpha_dpsi  +  data.delta_beta**3 * data.ddelta_beta_dpsi  +  data.delta_gamma**3 * data.ddelta_gamma_dpsi)
+
+
+
+    data.dci[:, 0] = 3.0 * data.delta * (3.0 * data.delta**2 - 1.0) * data.ddelta_dpsi
+    data.dci[:, 1] = 6.0 * data.delta * (1.0 - 2.0 * data.delta**2) * data.ddelta_dpsi
+    data.dci[:, 2] = 3.0 * data.delta * (data.delta**2 - 1.0) * data.ddelta_dpsi
+
+
+
