@@ -27,7 +27,7 @@ from re import match
 from string import replace
 import sys
 
-from functions.mf import Mf
+from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 
 
