@@ -1174,7 +1174,7 @@ class Model_free(Common_functions):
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             # Create the sequence data if it does not exist.
-            if not self.relax.data.res.has_key(new_run):
+            if not self.relax.data.res.has_key(new_run) and not len(self.relax.data.res[new_run]):
                 # Add the new run to 'self.relax.data.res'.
                 self.relax.data.res.add_list(new_run)
 
