@@ -20,13 +20,14 @@
 #                                                                             #
 ###############################################################################
 
+from math import sqrt
 from Numeric import outerproduct
 
 
 # Isotropic weight equation.
 ############################
 
-def calc_iso_ci(data):
+def calc_iso_ci(data, diff_data):
     """Weight equations for isotropic diffusion.
 
     c0 = 1
@@ -39,7 +40,7 @@ def calc_iso_ci(data):
 # Axially symmetric weight equation.
 ####################################
 
-def calc_axial_ci(data):
+def calc_axial_ci(data, diff_data):
     """Weight equations for axially symmetric diffusion.
 
     The equations are:
@@ -60,7 +61,7 @@ def calc_axial_ci(data):
 # Axially symmetric weight gradient.
 ####################################
 
-def calc_axial_dci(data):
+def calc_axial_dci(data, diff_data):
     """Weight gradient for axially symmetric diffusion.
 
     The equations are:
@@ -89,7 +90,7 @@ def calc_axial_dci(data):
 # Axially symmetric weight Hessian.
 ###################################
 
-def calc_axial_d2ci(data):
+def calc_axial_d2ci(data, diff_data):
     """Weight Hessian for axially symmetric diffusion.
 
     The equations are:
@@ -128,9 +129,13 @@ def calc_aniso_ci(data, diff_data):
     The equations are:
 
         c-2 = 3 . delta_alpha**2 . delta_beta**2
+
         c-1 = 3 . delta_alpha**2 . delta_gamma**2
+
         c0  = 1/4 (3(delta_alpha**4 + delta_beta**4 + delta_gamma**4) - 1 - e)
+
         c1  = 3 . delta_beta**2 . delta_gamma**2
+
         c2  = 1/4 (3(delta_alpha**4 + delta_beta**4 + delta_gamma**4) - 1 + e)
 
     where:
@@ -153,14 +158,20 @@ def calc_aniso_ci(data, diff_data):
         gamma (in delta_gamma) is the directional cosine along Dz.
     """
 
+    # Calculate mu.
+    data.mu = sqrt(diff_data.params[1]**2 + diff_data.params[2]**2 / 3.0)
+
     # Calculate e.
-    e = (diff_data.params[1] - diff_data.params[2]) / data.mu * (data.delta_alpha**4 + 2.0 * data.delta_beta**2 * data.delta_gamma**2)
-    e = e + (diff_data.params[1] + diff_data.params[2]) / data.mu * (data.delta_beta**4 + 2.0 * data.delta_alpha**2 * data.delta_gamma**2)
-    e = e - 2.0 * diff_data.params[1] / data.mu * (data.delta_gamma**4 + 2.0 * data.delta_alpha**2 * data.delta_beta**2)
+    if diff_data.params[1] == 0.0:
+        e = 0.0
+    else:
+        e = (diff_data.params[1] - diff_data.params[2]) / data.mu * (data.delta_alpha**4 + 2.0 * data.delta_beta**2 * data.delta_gamma**2)
+        e = e + (diff_data.params[1] + diff_data.params[2]) / data.mu * (data.delta_beta**4 + 2.0 * data.delta_alpha**2 * data.delta_gamma**2)
+        e = e - 2.0 * diff_data.params[1] / data.mu * (data.delta_gamma**4 + 2.0 * data.delta_alpha**2 * data.delta_beta**2)
 
     # Weights.
     data.ci[0] = 3.0 * data.delta_alpha**2 * data.delta_beta**2
     data.ci[1] = 3.0 * data.delta_alpha**2 * data.delta_gamma**2
-    data.ci[2] = 0.25 * (3.0(data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 - e)
+    data.ci[2] = 0.25 * (3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 - e)
     data.ci[3] = 3.0 * data.delta_beta**2 * data.delta_gamma**2
-    data.ci[4] = 0.25 * (3.0(data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 + e)
+    data.ci[4] = 0.25 * (3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 + e)

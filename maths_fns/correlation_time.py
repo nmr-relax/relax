@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+from math import sqrt
+
 
 # Isotropic global correlation time equation.
 #############################################
@@ -34,13 +36,30 @@ def calc_iso_ti(data, diff_data):
 
 
 
+# Isotropic global correlation time gradient.
+#############################################
+
+def calc_iso_dti(data, diff_data):
+    """Partial derivatives of the diffusional correlation times.
+
+    The tm partial derivatives are:
+
+        dt0
+        ---  =  1
+        dtm
+    """
+
+    data.dti[0] = 1.0
+
+
+
 # Axially symmetric global correlation time equation.
 #####################################################
 
 def calc_axial_ti(data, diff_data):
     """Diffusional correlation times.
 
-    The equations for the parameter {Dper, Dpar} are:
+    The equations for the parameters {Dper, Dpar} are:
 
                  1
         t0  =  -----
@@ -55,7 +74,7 @@ def calc_axial_ti(data, diff_data):
                2Dper + 4Dpar
 
 
-    The equations for the parameter {tm, Dratio} are:
+    The equations for the parameters {tm, Dratio} are:
 
                1    /       1    \ 
         t0  =  - tm | 2 + ------ |
@@ -89,23 +108,6 @@ def calc_axial_ti(data, diff_data):
     # t2.
     data.ti[2] = diff_data.params[0] * (2.0 - 3.0/(2.0 + diff_data.params[1]))
 
-
-
-
-# Isotropic global correlation time equation.
-#############################################
-
-def calc_iso_dti(data, diff_data):
-    """Diffusional correlation times for isotropic diffusion.
-
-    The tm partial derivatives are:
-
-        dt0
-        ---  =  1
-        dtm
-    """
-
-    data.dti[0] = 1.0
 
 
 
@@ -245,3 +247,74 @@ def calc_axial_d2ti(data, diff_data):
         data.d2ti[1, 1, 0] = 2.0 * diff_data.params[0] / (3.0 * diff_data.params[1]**3)
     data.d2ti[1, 1, 1] = 60.0 * diff_data.params[0] / (1.0 + 5.0*diff_data.params[1])**3
     data.d2ti[1, 1, 2] = -6.0 * diff_data.params[0] / (2.0 + diff_data.params[1])**3
+
+
+
+# Anisotropic global correlation time equation.
+###############################################
+
+def calc_aniso_ti(data, diff_data):
+    """Diffusional correlation times.
+
+    The equations for the parameters {Diso, Da, Dr} are:
+
+        t-2  =  1/6 (Diso + Da)**-1
+
+        t-1  =  1/6 (Diso - (Da + Dr)/2)**-1
+
+        t0   =  1/6 (Diso - mu)**-1
+
+        t1   =  1/6 (Diso - (Da - Dr)/2)**-1
+
+        t2   =  1/6 (Diso + mu)**-1
+
+    where:
+               __________________
+        mu = \/ Da**2 + Dr**2 / 3
+
+    The diffusion parameter set in data.diff_params is {tm, Da, Dr, alpha, beta, gamma}.
+    """
+
+    # Calculate Diso.
+    if diff_data.params[0] == 0:
+        data.Diso = 1e99
+    else:
+        data.Diso = 1.0 / (6.0 * diff_data.params[0])
+
+    # Calculate mu.
+    data.mu = sqrt(diff_data.params[1]**2 + diff_data.params[2]**2 / 3.0)
+
+    # t-2.
+    data.ti[0] = 6.0 * (data.Diso + diff_data.params[1])
+    if data.ti[0] == 0.0:
+        data.ti[0] = 1e99
+    else:
+        data.ti[0] = 1.0 / data.ti[0]
+
+    # t-1.
+    data.ti[1] = 6.0 * (data.Diso - 0.5 * (diff_data.params[1] + diff_data.params[1]))
+    if data.ti[1] == 0.0:
+        data.ti[1] = 1e99
+    else:
+        data.ti[1] = 1.0 / data.ti[1]
+
+    # t0.
+    data.ti[2] = 6.0 * (data.Diso - data.mu)
+    if data.ti[2] == 0.0:
+        data.ti[2] = 1e99
+    else:
+        data.ti[2] = 1.0 / data.ti[2]
+
+    # t1.
+    data.ti[3] = 6.0 * (data.Diso - 0.5 * (diff_data.params[1] - diff_data.params[1]))
+    if data.ti[3] == 0.0:
+        data.ti[3] = 1e99
+    else:
+        data.ti[3] = 1.0 / data.ti[3]
+
+    # t2.
+    data.ti[4] = 6.0 * (data.Diso + data.mu)
+    if data.ti[4] == 0.0:
+        data.ti[4] = 1e99
+    else:
+        data.ti[4] = 1.0 / data.ti[4]

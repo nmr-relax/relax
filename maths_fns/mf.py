@@ -377,7 +377,7 @@ class Mf:
             self.diff_data.calc_geom(data, self.diff_data)
 
         # Diffusion tensor weight calculations.
-        self.diff_data.calc_ci(data)
+        self.diff_data.calc_ci(data, self.diff_data)
 
         # Diffusion tensor correlation times.
         self.diff_data.calc_ti(data, self.diff_data)
@@ -427,7 +427,7 @@ class Mf:
         self.diff_data.params = params[0:1]
 
         # Diffusion tensor weight calculations.
-        self.diff_data.calc_ci(data)
+        self.diff_data.calc_ci(data, self.diff_data)
 
         # Diffusion tensor correlation times.
         self.diff_data.calc_ti(data, self.diff_data)
@@ -491,7 +491,7 @@ class Mf:
                 self.diff_data.calc_geom(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
-            self.diff_data.calc_ci(data)
+            self.diff_data.calc_ci(data, self.diff_data)
 
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
@@ -558,7 +558,7 @@ class Mf:
                 self.diff_data.calc_geom(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
-            self.diff_data.calc_ci(data)
+            self.diff_data.calc_ci(data, self.diff_data)
 
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
@@ -746,7 +746,7 @@ class Mf:
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_dci:
-                self.diff_data.calc_dci(data)
+                self.diff_data.calc_dci(data, self.diff_data)
 
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
@@ -830,7 +830,7 @@ class Mf:
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_dci:
-                self.diff_data.calc_dci(data)
+                self.diff_data.calc_dci(data, self.diff_data)
 
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
@@ -1014,7 +1014,7 @@ class Mf:
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_d2ci:
-                self.diff_data.calc_d2ci(data)
+                self.diff_data.calc_d2ci(data, self.diff_data)
 
             # Diffusion tensor correlation times.
             if self.diff_data.calc_d2ti:
@@ -1088,7 +1088,7 @@ class Mf:
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_d2ci:
-                self.diff_data.calc_d2ci(data)
+                self.diff_data.calc_d2ci(data, self.diff_data)
 
             # Diffusion tensor correlation times.
             if self.diff_data.calc_d2ti:
@@ -1238,6 +1238,10 @@ class Mf:
             #diff_data.calc_dti = calc_aniso_dti
             #diff_data.calc_d2ti = calc_aniso_d2ti
 
+            # Unit vectors.
+            diff_data.dx = zeros(3, Float64)
+            diff_data.dy = zeros(3, Float64)
+            diff_data.dz = zeros(3, Float64)
 
     def init_res_data(self, data, diff_data):
         """Function for the initialisation of the residue specific data."""

@@ -109,9 +109,9 @@ class Model_free:
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                self.param_names.append('Dx')
-                self.param_names.append('Dy')
-                self.param_names.append('Dz')
+                self.param_names.append('tm')
+                self.param_names.append('Da')
+                self.param_names.append('Dr')
                 self.param_names.append('alpha')
                 self.param_names.append('beta')
                 self.param_names.append('gamma')
@@ -155,9 +155,9 @@ class Model_free:
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                param_vector.append(self.relax.data.diff[self.run].Dx_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].Dy_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].Dz_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].Da_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].Dr_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].alpha_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].beta_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].gamma_sim[sim_index])
@@ -177,9 +177,9 @@ class Model_free:
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                param_vector.append(self.relax.data.diff[self.run].Dx)
-                param_vector.append(self.relax.data.diff[self.run].Dy)
-                param_vector.append(self.relax.data.diff[self.run].Dz)
+                param_vector.append(self.relax.data.diff[self.run].tm)
+                param_vector.append(self.relax.data.diff[self.run].Da)
+                param_vector.append(self.relax.data.diff[self.run].Dr)
                 param_vector.append(self.relax.data.diff[self.run].alpha)
                 param_vector.append(self.relax.data.diff[self.run].beta)
                 param_vector.append(self.relax.data.diff[self.run].gamma)
@@ -331,8 +331,8 @@ class Model_free:
             elif self.relax.data.diff[self.run].type == 'aniso':
                 # Test if the diffusion parameters should be scaled.
                 if self.relax.data.diff[self.run].scaling:
-                    # Dx, Dy, Dz, alpha, beta, gamma.
-                    self.scaling_matrix[i, i] = 1e9
+                    # tm, Da, Dr, alpha, beta, gamma.
+                    self.scaling_matrix[i, i] = 1e-9
                     self.scaling_matrix[i+1, i+1] = 1e9
                     self.scaling_matrix[i+2, i+2] = 1e9
                     self.scaling_matrix[i+3, i+3] = 1.0
@@ -903,9 +903,9 @@ class Model_free:
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                self.relax.data.diff[self.run].Dx_sim[sim_index] = self.param_vector[0]
-                self.relax.data.diff[self.run].Dy_sim[sim_index] = self.param_vector[1]
-                self.relax.data.diff[self.run].Dz_sim[sim_index] = self.param_vector[2]
+                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
+                self.relax.data.diff[self.run].Dr_sim[sim_index] = self.param_vector[2]
                 self.relax.data.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
                 self.relax.data.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
                 self.relax.data.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
@@ -928,9 +928,9 @@ class Model_free:
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                self.relax.data.diff[self.run].Dx = self.param_vector[0]
-                self.relax.data.diff[self.run].Dy = self.param_vector[1]
-                self.relax.data.diff[self.run].Dz = self.param_vector[2]
+                self.relax.data.diff[self.run].tm = self.param_vector[0]
+                self.relax.data.diff[self.run].Da = self.param_vector[1]
+                self.relax.data.diff[self.run].Dr = self.param_vector[2]
                 self.relax.data.diff[self.run].alpha = self.param_vector[3]
                 self.relax.data.diff[self.run].beta = self.param_vector[4]
                 self.relax.data.diff[self.run].gamma = self.param_vector[5]
@@ -1420,17 +1420,17 @@ class Model_free:
                     min_options.append([inc[1], 0.0, 1.0])
                 else:
                     min_options.append([inc[1], 0.0, 3.0])
-                min_options.append([inc[2], 0.0, 2 * pi])
+                min_options.append([inc[2], 0.0, pi])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 m = m + 4
 
-            # Anisotropic diffusion {Dx, Dy, Dz, alpha, beta, gamma}.
+            # Anisotropic diffusion {tm, Da, Dr, alpha, beta, gamma}.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                min_options.append([inc[0], 0.0, 10.0 * 1e9])
+                min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
                 min_options.append([inc[1], 0.0, 10.0 * 1e9])
                 min_options.append([inc[2], 0.0, 10.0 * 1e9])
                 min_options.append([inc[3], 0.0, 2 * pi])
-                min_options.append([inc[4], 0.0, 2 * pi])
+                min_options.append([inc[4], 0.0, pi])
                 min_options.append([inc[5], 0.0, 2 * pi])
                 m = m + 6
 
@@ -1682,29 +1682,15 @@ class Model_free:
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                # Dx >= 0.
+                # tm >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0 / self.scaling_matrix[i, i])
                 i = i + 1
                 j = j + 1
 
-                # Dy >= 0.
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 1
-
-                # Dz >= 0.
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 1
-
-                # Add three to i for the alpha, beta, and gamma parameters.
-                i = i + 3
+                # Add five to i for the Da, Dr, alpha, beta, and gamma parameters.
+                i = i + 5
 
         # Model-free parameters.
         if self.param_set != 'diff':
@@ -2251,7 +2237,7 @@ class Model_free:
 
                 # Anisotropic diffusion.
                 elif diff_type == 'aniso':
-                    diff_params = [data.Dx, data.Dy, data.Dz, data.alpha, data.beta, data.gamma]
+                    diff_params = [data.tm, data.Da, data.Dr, data.alpha, data.beta, data.gamma]
 
 
             # Initialise the function to minimise.
