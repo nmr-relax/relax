@@ -22,7 +22,7 @@ value.set(name, 'csa', -160 * 1e-6)
 # Select the model-free model.
 model.select_mf(run=name, model=name)
 
-select.res(name='XXX', num=153)
+#select.res(num=1230)
 # Fixed value.
 #from math import pi
 #fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
@@ -32,9 +32,10 @@ select.res(name='XXX', num=153)
 grid_search(name, inc=11)
 
 # Minimise.
-#minimise('newton', 'gmw', run=name, constraints=0, max_iter=500)
-#minimise('newton', 'gmw', run=name, constraints=0, print_flag=20, max_iter=0)
-minimise('newton', run=name, print_flag=1)
+#minimise('newton', run=name, constraints=1, max_iter=500)
+#minimise('newton', run=name, constraints=1, print_flag=20, max_iter=0)
+#minimise('newton', run=name, print_flag=9, max_iter=20)
+minimise('newton', 'eigen', run=name, print_flag=1)
 
 # Finish.
 write(run=name, file='results', force=1)

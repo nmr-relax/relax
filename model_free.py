@@ -1066,7 +1066,7 @@ class Model_free:
         self.relax.data.res[i].warning[run] = self.warning
 
 
-    def map_bounds(self, index, params):
+    def map_bounds(self, index, params, run):
         """The function for creating bounds for the mapping function."""
 
         # Bounds array.
@@ -1096,7 +1096,7 @@ class Model_free:
         return bounds
 
 
-    def map_labels(self, run, index, params, bounds, swap, inc):
+    def map_labels(self, run, index, params, bounds, swap, inc, scaling_matrix):
         """Function for creating labels, tick locations, and tick values for an OpenDX map."""
 
         # Initialise.
@@ -1172,7 +1172,7 @@ class Model_free:
             string = "{"
             for j in range(axis_incs + 1):
                 if self.relax.data.res[index].scaling.has_key(run):
-                    string = string + "\"" + "%.2f" % (vals * self.relax.data.res[index].scaling[run][swap[i]]) + "\" "
+                    string = string + "\"" + "%.2f" % (vals * scaling_matrix[swap[i], swap[i]]) + "\" "
                 else:
                     string = string + "\"" + "%.2f" % vals + "\" "
                 vals = vals + val_inc

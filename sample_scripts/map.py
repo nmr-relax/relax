@@ -4,7 +4,7 @@
 read.sequence('noe.500.out')
 
 # Set the run name (also the name of a preset model-free model).
-name = 'm5'
+name = 'm4'
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -24,13 +24,13 @@ model.select_mf(run=name, model=name)
 #model.create_mf(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Map data.
-inc = 10
+inc = 20
 from math import pi
 if name == 'm4':
     lower = [0.0, 0, 0]
-    upper = [1, 200e-9, 0.2 / (2.0 * pi * 600000000.0)**2]
+    upper = [1, 10000e-12, 4.0 / (2.0 * pi * 600000000.0)**2]
     swap = None
-    point = [0.931, 8192e-12, 0.0 / (2.0 * pi * 600000000.0)**2]
+    point = [0.970, 2048e-12, 0. / (2.0 * pi * 600000000.0)**2]
 elif name == 'm5':
     lower = [0.5, 0.5, 0]
     upper = [1.0, 1.0, 300e-12]
@@ -41,5 +41,5 @@ else:
     upper = None
     swap = None
     point = None
-map(name, res_num=1, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
+map(name, res_num=153, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
 dx()

@@ -39,6 +39,7 @@ def eigenvalue(dfk, d2fk, I, print_prefix, print_flag, return_matrix=0):
     eigenvals = sort(eigen[0])
 
     # Modify the Hessian if the smallest eigenvalue is negative.
+    tau = None
     if eigenvals[0] < 0.0:
         tau = max(0.0, 1e-2 - eigenvals[0])
         matrix = d2fk + tau * I
@@ -54,6 +55,7 @@ def eigenvalue(dfk, d2fk, I, print_prefix, print_flag, return_matrix=0):
         print print_prefix + "tau: " + `tau`
         print print_prefix + "matrix:\n" + `matrix`
         print print_prefix + "eigenvals(matrix): " + `eigenvals_new`
+        print print_prefix + "Newton dir: " + `-matrixmultiply(inverse(matrix), dfk)`
 
     # Calculate the Newton direction.
     if return_matrix:

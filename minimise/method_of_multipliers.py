@@ -29,7 +29,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, mu0=1e-2, epsilon0=1e-5, gamma0=1e-5, scale_mu=0.1, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, mu0=1e-2, epsilon0=1e2, gamma0=1e2, scale_mu=0.1, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
@@ -253,7 +253,6 @@ class Method_of_multipliers(Min):
 
         # Initialise data structures.
         self.test_str = zeros(self.m)
-        self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
         self.L = apply(self.func_LA, (self.xk,)+self.args)
 
         # Set the convergence test function.
@@ -286,6 +285,20 @@ class Method_of_multipliers(Min):
             else:
                 L = L  -  0.5 * self.mu * self.lambda_k[i]**2
                 self.test_str[i] = 0
+
+        if self.print_flag >= 4:
+            print ""
+            print "\taug Lagr value:       " + `L`
+            print "\tfunction value:       " + `self.fk`
+            print "\tck:                   " + `self.ck`
+            print "\tMu:                   " + `self.mu`
+            print "\tck - mu.lambda_k:     " + `self.ck - self.mu * self.lambda_k`
+            print "\tlambda_k - ck/mu:     " + `self.lambda_k - self.ck / self.mu`
+            print "\tepsilon:              " + `self.epsilon`
+            print "\tgamma:                " + `self.gamma`
+            print "\tLagrange multipliers: " + `self.lambda_k`
+            print "\tTest structure:       " + `self.test_str`
+
         return L
 
 
@@ -293,14 +306,22 @@ class Method_of_multipliers(Min):
         """The augmented Lagrangian gradient."""
 
         # Calculate the function and constraint gradients.
-        dfk = self.dL = apply(self.dfunc, (args[0],)+args[1:])
+        dfk = dL = apply(self.dfunc, (args[0],)+args[1:])
         self.dck = apply(self.dc, (args[0],))
 
         # Calculate the quadratic augmented Lagrangian gradient.
         for i in range(self.m):
             if self.test_str[i]:
-                self.dL = self.dL  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
-        return self.dL
+                dL = dL  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
+
+        if self.print_flag >= 4:
+            print ""
+            print "\taug Lagr grad:       " + `dL`
+            print "\tfunction grad:       " + `dfk`
+            print "\tdck:                   " + `self.dck`
+            print "\tTest structure:       " + `self.test_str`
+
+        return dL
 
 
     def func_d2LA(self, *args):
@@ -314,6 +335,7 @@ class Method_of_multipliers(Min):
         for i in range(self.m):
             if self.test_str[i]:
                 d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.d2ck[i]
+
         return d2L
 
 
@@ -324,12 +346,19 @@ class Method_of_multipliers(Min):
         """
 
         # Calculate the function Hessians.
-        d2L = apply(self.d2func, (args[0],)+args[1:])
+        d2L = d2fk = apply(self.d2func, (args[0],)+args[1:])
 
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in range(self.m):
             if self.test_str[i]:
                 d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu
+
+        if self.print_flag >= 4:
+            print ""
+            print "\taug Lagr Hess:       " + `d2L`
+            print "\tfunction Hess:       " + `d2fk`
+            print "\tTest structure:       " + `self.test_str`
+
         return d2L
 
 
@@ -428,6 +457,7 @@ class Method_of_multipliers(Min):
         print "function value:       " + `self.fk`
         print "ck:                   " + `self.ck`
         print "Mu:                   " + `self.mu`
+        print "ck - mu.lambda_k:     " + `self.ck - self.mu * self.lambda_k`
         print "epsilon:              " + `self.epsilon`
         print "gamma:                " + `self.gamma`
         print "Lagrange multipliers: " + `self.lambda_k`

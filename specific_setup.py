@@ -62,7 +62,7 @@ class Specific_setup:
             if match('map_labels', function_type):
                 return self.relax.model_free.map_labels
             if match('map_space', function_type):
-                return self.relax.model_free.map_bounds, self.relax.model_free.minimise
+                return self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.map_bounds, self.relax.model_free.minimise
             if match('minimise', function_type):
                 return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.minimise
             if match('read', function_type):

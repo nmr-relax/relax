@@ -57,7 +57,7 @@ class Iso3D(Base_Map):
                 values[self.swap[2]] = self.bounds[self.swap[2], 0]
                 for k in range((self.inc + 1)):
                     # Calculate the function values.
-                    self.minimise(run=self.run, i=self.index, init_params=self.remap(values), min_algor='fixed', min_options=self.remap(values), print_flag=0)
+                    self.minimise(run=self.run, i=self.index, init_params=self.remap(values), scaling_matrix=self.scaling_matrix, min_algor='fixed', min_options=self.remap(values), print_flag=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if self.relax.data.res[self.index].chi2[self.run] > 1e20:
@@ -198,7 +198,7 @@ class Iso3D(Base_Map):
                 string = "{"
                 for j in range(axis_incs + 1):
                     if self.relax.data.res[self.index].scaling.has_key(self.run):
-                        string = string + "\"" + "%.2g" % (vals * self.relax.data.res[self.index].scaling[self.run][self.swap[i]]) + "\" "
+                        string = string + "\"" + "%.2g" % (vals * self.scaling_matrix[self.swap[i], self.swap[i]]) + "\" "
                     else:
                         string = string + "\"" + "%.2g" % vals + "\" "
                     vals = vals + inc[self.swap[i]]
@@ -207,7 +207,7 @@ class Iso3D(Base_Map):
 
         # Specific labels.
         else:
-            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.index].params[self.run], self.bounds, self.swap, self.inc)
+            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.index].params[self.run], self.bounds, self.swap, self.inc, self.scaling_matrix)
 
 
         # Corners.

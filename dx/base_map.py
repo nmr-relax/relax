@@ -21,7 +21,8 @@
 ###############################################################################
 
 
-from Numeric import Float64, array, zeros
+from LinearAlgebra import inverse
+from Numeric import Float64, array, matrixmultiply, zeros
 from os import mkdir
 from re import match
 
@@ -47,7 +48,7 @@ class Base_Map:
         fns = self.relax.specific_setup.setup("map_space", self.relax.data.res[index].equations[run])
         if fns == None:
             raise RelaxFuncSetupError, ('space mapping', self.relax.data.res[index].equations[run])
-        self.map_bounds, self.minimise = fns
+        self.assemble_scaling_matrix, self.map_bounds, self.minimise = fns
 
         # Function arguments.
         self.index = index
@@ -63,6 +64,15 @@ class Base_Map:
 
         # Number of parameters.
         self.n = len(self.relax.data.res[index].params[run])
+
+        # Find the index of res_num.
+        self.res_index = None
+        for i in range(len(self.relax.data.res)):
+            if self.relax.data.res[i].num == self.res_num:
+                self.res_index = i
+                break
+        if self.res_index == None:
+            raise RelaxError, "The residue number " + `self.res_num` + " cannot be found in the sequence."
 
         # Axis swapping.
         if swap == None:
@@ -85,8 +95,11 @@ class Base_Map:
             except OSError:
                 pass
 
+        # Create the scaling matrix.
+        self.scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[self.res_index], self.res_index)
+
         # Get the map bounds.
-        self.bounds = self.map_bounds(self.index, self.relax.data.res[index].params[self.run])
+        self.bounds = self.map_bounds(self.index, self.relax.data.res[index].params[self.run], self.run)
         if lower != None:
             self.bounds[:, 0] = array(lower, Float64)
         if upper != None:
@@ -95,9 +108,9 @@ class Base_Map:
         # Diagonal scaling.
         if self.relax.data.res[index].scaling.has_key(self.run):
             for i in range(len(self.bounds[0])):
-                self.bounds[:, i] = self.bounds[:, i] / self.relax.data.res[index].scaling[self.run]
+                self.bounds[:, i] = matrixmultiply(inverse(self.scaling_matrix), self.bounds[:, i])
             if point != None:
-                self.point = self.point / array(self.relax.data.res[index].scaling[self.run], Float64)
+                self.point = matrixmultiply(inverse(self.scaling_matrix), self.point)
 
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)
