@@ -38,6 +38,8 @@ from functions.jw import jw
 from functions.relax import relax
 
 
+from minimise.grid import grid
+from minimise.levenberg_marquardt import levenberg_marquardt
 from minimise.test import test
 
 from modsel.asymptotic import asymptotic
@@ -78,7 +80,6 @@ class mf:
 		self.functions.chi2 = chi2()
 		self.functions.jw = jw()
 		test(self)
-		print "\n\n<<< Finished minimiser >>>\n\n"
 		sys.exit()
 
 		# Select the behaviour of the program.
