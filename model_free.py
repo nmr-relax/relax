@@ -20,7 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-
 from copy import deepcopy
 from math import pi
 from Numeric import Float64, array, ones, zeros
