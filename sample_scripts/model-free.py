@@ -1,7 +1,7 @@
 # Script for model-free analysis.
 
 # Create the run.
-name = 'm5'
+name = 'm6'
 create_run(name, 'mf')
 
 # Nuclei type
@@ -45,7 +45,7 @@ grid_search(name, inc=5)
 
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)
-minimise('newton', run=name, max_iter=5)
+minimise('newton', run=name)
 
 # Finish.
 eliminate()
