@@ -13,7 +13,7 @@ class min:
 		self.relax = relax
 
 
-	def fixed(self, model, values=None, scaling_flag=0, min_debug=1):
+	def fixed(self, model, values=None, min_debug=1):
 		"""Macro to fix the initial parameter values.
 
 		Arguments
@@ -21,7 +21,6 @@ class min:
 
 		model:		The name of the model.
 		values:		An array of numbers of length equal to the number of parameters in the model.
-		scaling_flag:	(This is temporary)
 		min_debug:	(so is this)
 
 
@@ -69,12 +68,6 @@ class min:
 				print "The argument 'values' must be an array of numbers."
 				return
 
-		# The scaling_flag.
-		self.scaling_flag = scaling_flag
-		if type(self.scaling_flag) != int:
-			print "The scaling flag argument must be an integer."
-			return
-
 		# The debugging flag.
 		if type(min_debug) != int:
 			print "The min_debug argument must be an integer."
@@ -99,10 +92,7 @@ class min:
 
 					# te.
 					elif match('te', self.relax.data.param_types[self.model][i]):
-						if self.scaling_flag:
-							self.min_options[i] = 100.0 * 1e-12 * self.c
-						else:
-							self.min_options[i] = 100.0 * 1e-12
+						self.min_options[i] = 100.0 * 1e-12
 
 					# Rex.
 					elif match('Rex', self.relax.data.param_types[self.model][i]):
@@ -130,10 +120,7 @@ class min:
 
 					# tf.
 					elif match('tf', self.relax.data.param_types[self.model][i]):
-						if self.scaling_flag:
-							self.min_options[i] = 10.0 * 1e-12 * self.c
-						else:
-							self.min_options[i] = 10.0 * 1e-12
+						self.min_options[i] = 10.0 * 1e-12
 
 					# S2s.
 					elif match('S2s', self.relax.data.param_types[self.model][i]):
@@ -141,10 +128,7 @@ class min:
 
 					# ts.
 					elif match('ts', self.relax.data.param_types[self.model][i]):
-						if self.scaling_flag:
-							self.min_options[i] = 1000.0 * 1e-12 * self.c
-						else:
-							self.min_options[i] = 1000.0 * 1e-12
+						self.min_options[i] = 1000.0 * 1e-12
 
 					# Rex.
 					elif match('Rex', self.relax.data.param_types[self.model][i]):
@@ -168,6 +152,10 @@ class min:
 				print "The equation " + `self.relax.data.equations[self.model]` + " has not been coded into the fixed parameter macro."
 				return
 
+		# Diagonal scaling.
+		if self.relax.data.scaling.has_key(self.model):
+			self.min_options = self.min_options / self.relax.data.scaling[self.model][0]
+
 		# Setup values used in the main iterative loop.
 		self.min_algor = 'fixed'
 		self.chi2_tol = 0.0
@@ -177,7 +165,7 @@ class min:
 		self.main_loop()
 
 
-	def grid_search(self, model, lower=None, upper=None, inc=21, scaling_flag=0, min_debug=1):
+	def grid_search(self, model, lower=None, upper=None, inc=21, min_debug=1):
 		"""
 
 		Generate the data structure of model-free grid options for the grid search.
@@ -249,12 +237,6 @@ class min:
 			self.inc = inc
 
 
-		# The scaling_flag.
-		self.scaling_flag = scaling_flag
-		if type(self.scaling_flag) != int:
-			print "The scaling flag argument must be an integer."
-			return
-
 		# The debugging flag.
 		if type(min_debug) != int:
 			print "The min_debug argument must be an integer."
@@ -274,10 +256,7 @@ class min:
 
 				# te.
 				elif match('te', self.relax.data.param_types[self.model][i]):
-					if self.scaling_flag:
-						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
-					else:
-						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
+					self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
 
 				# Rex.
 				elif match('Rex', self.relax.data.param_types[self.model][i]):
@@ -305,10 +284,7 @@ class min:
 
 				# tf.
 				elif match('tf', self.relax.data.param_types[self.model][i]):
-					if self.scaling_flag:
-						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
-					else:
-						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
+					self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
 
 				# S2f.
 				elif match('S2s', self.relax.data.param_types[self.model][i]):
@@ -316,10 +292,7 @@ class min:
 
 				# tf.
 				elif match('ts', self.relax.data.param_types[self.model][i]):
-					if self.scaling_flag:
-						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
-					else:
-						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
+					self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
 
 				# Rex.
 				elif match('Rex', self.relax.data.param_types[self.model][i]):
@@ -342,6 +315,12 @@ class min:
 		else:
 			print "The equation " + `self.relax.data.equations[self.model]` + " has not been coded into the grid search macro."
 			return
+
+		# Diagonal scaling.
+		if self.relax.data.scaling.has_key(self.model):
+			for i in range(len(self.min_options)):
+				self.min_options[i][1] = self.min_options[i][1] / self.relax.data.scaling[self.model][0][i]
+				self.min_options[i][2] = self.min_options[i][2] / self.relax.data.scaling[self.model][0][i]
 
 		# Set the lower and upper bounds if these are supplied.
 		for i in range(len(self.relax.data.param_types[self.model])):
@@ -374,12 +353,33 @@ class min:
 			self.g_count = 0
 			self.h_count = 0
 
-			# Setup the function specific stuff.  If None or 0 is returned by self.setup_data, skip to the next residue.
-			if not self.setup_data():
-				continue
+			# Diagonal scaling.
+			scaling_vector = None
+			if self.relax.data.scaling.has_key(self.model):
+				scaling_vector = self.relax.data.scaling[self.model][self.res]
+
+			# Setup the function specific stuff.
+			if match('mf', self.relax.data.equations[self.model]):
+				# If any data is missing jump to the next residue.
+				data = zeros(self.relax.data.num_ri, Float64)
+				errors = zeros(self.relax.data.num_ri, Float64)
+				for i in range(self.relax.data.num_ri):
+					if self.relax.data.relax_data[i][self.res, 2] == 0.0:
+						continue
+					data[i] = self.relax.data.relax_data[i][self.res, 0]
+					errors[i] = self.relax.data.relax_data[i][self.res, 1]
+				self.function_ops = ()
+
+				# Initialise the functions used in the minimisation.
+				self.mf = mf(self.relax, equation=self.relax.data.equations[self.model], param_types=self.relax.data.param_types[self.model], init_params=self.relax.data.params[self.model][self.res], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
+				self.func = self.mf.func
+				self.dfunc = self.mf.dfunc
+				self.d2func = self.mf.d2func
+				if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
+					self.min_options.append(self.mf.lm_dri)
 
 			# Minimisation.
-			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.params, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.chi2_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
+			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.chi2_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
 			self.params, self.chi2, iter, fc, gc, hc, self.warning = results
 			self.iter_count = self.iter_count + iter
 			self.f_count = self.f_count + fc
@@ -396,7 +396,7 @@ class min:
 		print "\n[ Done ]\n\n"
 
 
-	def minimise(self, model, min_algor=None, min_options=None, chi2_tol=1e-25, max_iterations=10000, scaling_flag=0, min_debug=1):
+	def minimise(self, model, min_algor=None, min_options=None, chi2_tol=1e-25, max_iterations=10000, min_debug=1):
 		"Minimisation macro."
 
 		# The model argument.
@@ -413,7 +413,6 @@ class min:
 			return
 		self.min_options = min_options
 		self.relax.min_debug = min_debug
-		self.scaling_flag = scaling_flag
 		self.chi2_tol = chi2_tol
 		self.max_iterations = max_iterations
 
@@ -435,30 +434,5 @@ class min:
 	def setup_data(self):
 		"""Extract the data from self.relax.data.relax_data
 
-		If any data is missing, None will be returned which signals to the main iteration loop to jump to the next residue.
 		"""
-
-		if match('mf', self.relax.data.equations[self.model]):
-			self.data = zeros(self.relax.data.num_ri, Float64)
-			self.errors = zeros(self.relax.data.num_ri, Float64)
-
-			for i in range(self.relax.data.num_ri):
-				if self.relax.data.relax_data[i][self.res, 2] == 0.0:
-					return None
-				self.data[i] = self.relax.data.relax_data[i][self.res, 0]
-				self.errors[i] = self.relax.data.relax_data[i][self.res, 1]
-
-			self.function_ops = ()
-			self.params = self.relax.data.params[self.model][self.res]
-
-			# Initialise the functions used in the minimisation.
-			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model], param_types=self.relax.data.param_types[self.model], init_params=self.params, relax_data=self.data, errors=self.errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params)
-			self.func = self.mf.func
-			self.dfunc = self.mf.dfunc
-			self.d2func = self.mf.d2func
-			if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
-				self.min_options.append(self.mf.lm_dri)
-
-		return 1
-
 

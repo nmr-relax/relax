@@ -58,3 +58,6 @@ class data:
 
 		# The model parameter errors.
 		self.param_errors = {}
+
+		# The diagonal scaling vectors.
+		self.scaling = {}

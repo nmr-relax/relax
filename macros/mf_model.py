@@ -1,4 +1,5 @@
-from Numeric import Float64, zeros
+from Numeric import Float64, ones, zeros
+from re import match
 
 from generic_functions import generic_functions
 
@@ -10,7 +11,7 @@ class mf_model(generic_functions):
 		self.relax = relax
 
 
-	def create(self, model=None, equation=None, param_types=None):
+	def create(self, model=None, equation=None, param_types=None, scaling=1):
 		"""Macro to create a model-free model.
 
 		Arguments
@@ -75,6 +76,13 @@ class mf_model(generic_functions):
 		self.model = model
 		self.equation = equation
 		self.types = param_types
+
+		# Test the scaling flag.
+		if scaling == 0 or scaling == 1:
+			self.scaling = scaling
+		else:
+			print "The scaling flag is set incorrectly."
+			return
 
 		# Test the parameter names.
 		s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -149,6 +157,9 @@ class mf_model(generic_functions):
 				print "The parameter array " + `self.types` + " contains an invalid parameter or combination of parameters."
 				return
 
+		# Create the scaling vector.
+		self.scaling_vector()
+
 		# Update the data structures.
 		self.data_update()
 
@@ -164,9 +175,41 @@ class mf_model(generic_functions):
 		self.relax.data.params[self.model] = zeros((len(self.relax.data.seq), len(self.types)), Float64)
 		self.relax.data.param_errors[self.model] = zeros((len(self.relax.data.seq), len(self.types)), Float64)
 
+		# Diagonal scaling.
+		if self.scaling:
+			self.relax.data.scaling[self.model] = zeros((len(self.relax.data.seq), len(self.types)), Float64)
+			self.relax.data.scaling[self.model][:] = self.scale_vect
 
-	def select(self, model):
+
+	def scaling_vector(self):
+		"Function for creating the scaling vector."
+
+		self.scale_vect = ones(len(self.types), Float64)
+		for i in range(len(self.types)):
+			# te, tf, and ts.
+			if match('t', self.types[i]):
+				self.scale_vect[i] = 1e-10
+			elif self.types[i] == 'Rex':
+				self.scale_vect[i] = 1e-30
+			elif self.types[i] == 'Bond length':
+				self.scale_vect[i] = 1e-10
+			elif self.types[i] == 'CSA':
+				self.scale_vect[i] = 1e-4
+
+
+
+	def select(self, model, scaling=1):
 		"""Macro for the selection of a preset model-free model.
+
+		Arguments
+		~~~~~~~~~
+
+		model:		The preset model name.
+		scaling:	Diagonal scaling flag.
+
+
+		Description
+		~~~~~~~~~~~
 
 		The preset models are:
 			'm0'	=> []
@@ -214,6 +257,22 @@ class mf_model(generic_functions):
 			'm39'	=> [Bond length, CSA, Rex]
 
 
+		Diagonal scaling is the scaling of parameter values so that all parameters are on a similar scale.  For example, if
+		S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10, 7.036e-29]
+		(Rex is divided by (2*pi*600,000,000)**2 to make it field strength independent).  The scaling vector for this model
+		is [1.0, 1e-10, 1e-30].  By dividing the unscaled parameter vector by the scaling vector the scaled parameter vector
+		is [0.5, 2.0, 0.7].  To revert to the original unscaled parameter vector, the scaled parameter vector and scaling
+		vector are multiplied.  The reason for diagonal scaling is that certain minimisation techniques fail when the model
+		is not properly scaled.
+
+
+		Examples
+		~~~~~~~~
+
+		To pick model 'm1', run:
+
+		>>> mf_model_select('m1')
+
 		"""
 
 		# Arguments.
@@ -227,6 +286,13 @@ class mf_model(generic_functions):
 		# Test if the model already exists.
 		if self.relax.data.equations.has_key(self.model):
 			print "The model " + self.model + " already exists."
+			return
+
+		# Test the scaling flag.
+		if scaling == 0 or scaling == 1:
+			self.scaling = scaling
+		else:
+			print "The scaling flag is set incorrectly."
 			return
 
 		# Block 1.
@@ -361,6 +427,9 @@ class mf_model(generic_functions):
 		else:
 			print "The model '" + model + "' is invalid."
 			return
+
+		# Create the scaling vector.
+		self.scaling_vector()
 
 		# Update the data structures.
 		self.data_update()
