@@ -1,5 +1,5 @@
-#! /data03/dauvergne/bin/python
-# /usr/bin/python
+#! /usr/bin/python
+# /data03/dauvergne/bin/python
 
 
 # modelfree.py   v0.1            31 October 2001        Edward d'Auvergne
@@ -31,16 +31,16 @@
 #	Stage 3:   Extraction of optimized data.
 
 import sys
-from string import split
+from re import match
 
 from data import data
-from stage1 import stage1
-from stage2 import stage2
-from stage3 import stage3
 from file_ops import file_ops
-
 sys.path.append('.')
 from usr_param import usr_param
+
+from aic import aic
+from bic import bic
+from palmer import palmer
 
 
 class mf:
@@ -51,63 +51,26 @@ class mf:
 		self.data.usr_param = usr_param()
 		self.file_ops = file_ops(self)
 
-		self.data.stage = self.ask_stage()
-		self.file_ops.log_file()
-		self.file_ops.input()
-		self.extract_relax_data()
-		self.log_input_info()
-		if self.data.num_data_sets > 3:
-			self.data.ftests = self.data.ftests_full
-		else:
-			self.data.ftests = self.data.ftests_short
-		if self.data.stage == "1":
-			stage1(self)
-		if self.data.stage == "2":
-			stage2(self)
-		if self.data.stage == "3":
-			stage3(self)
+		self.print_header()
 
-	def ask_stage(self):
-		"User input of stage number."
+		if match('AIC', self.data.usr_param.method):
+			aic(self)
+		if match('BIC', self.data.usr_param.method):
+			bic(self)
+		if match('Palmer', self.data.usr_param.method):
+			palmer(self)
+
+
+	def print_header(self):
+		"Print the header to screen."
 
 		print """
+
 		              Modelfree.py v0.1
 
 		Program to process all modelfree input and output.
+		
 		"""
-		print "\n[ Select the stage for Modelfree analysis ]\n"
-		print "The stages are:"
-		print "\tStage 1 (1):   Initial run of all models 1 to 5 and f-tests between them."
-		print "\tStage 2 (2):   Model selection and creation of the final optimization run."
-		print "\tStage 3 (3):   Extraction of optimized data."
-		while 1:
-			stage = raw_input("> ")
-			valid_stages = ["1", "2", "3"]
-			if stage in valid_stages:
-				break
-			else:
-				print "Invalid stage number.  Choose either 1, 2, or 3."
-		print "The stage chosen is " + stage + "\n"
-		return stage
-
-	def extract_relax_data(self):
-		"Extract the relaxation data from the files given in the file 'input'"
-		print "\n[ Relaxation Data Extraction ]\n"
-		for i in range(len(self.data.input_info)):
-			data = self.file_ops.relax_data(self.data.input_info[i][3])
-			self.data.relax_data[i] = data
-
-	def log_input_info(self):
-		self.log.write("The input info data structure is:\n" + `self.data.input_info` + "\n\n")
-		for i in range(len(self.data.input_info)):
-			text = ""
-			text = text + '%-25s%-20s\n' % ("Data label:", self.data.input_info[i][0])
-			text = text + '%-25s%-20s\n' % ("NMR frequency label:", self.data.input_info[i][1])
-			text = text + '%-25s%-20s\n' % ("NMR proton frequency:", `self.data.input_info[i][2]`)
-			text = text + '%-25s%-20s\n\n' % ("File name:", self.data.input_info[i][3])
-			self.log.write(text)
-		self.log.write("Number of frequencies:\t" + `self.data.num_frq` + "\n")
-		self.log.write("Number of data sets:\t" + `self.data.num_data_sets` + "\n\n")
 
 
 if __name__ == "__main__":

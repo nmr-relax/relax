@@ -3,6 +3,32 @@ class data:
 		"Class containing all the data"
 
 		self.init_data()
+		self.aic = self.init_aic()
+		self.bic = self.init_bic()
+		self.palmer = self.init_palmer()
+
+
+	class init_aic:
+		def __init__(self):
+			"Data specific for the modelfree analysis using AIC model selection."
+
+			self.name = 'AIC'
+
+
+	class init_bic:
+		def __init__(self):
+			"Data specific for the modelfree analysis using BIC model selection."
+
+			self.name = 'BIC'
+
+
+	class init_palmer:
+		def __init__(self):
+			"Data specific for Palmer's modelfree analysis."
+
+			self.name = 'Palmer'
+			self.stage = '0'
+
 
 	def init_data(self):
 		"""Initilize the data
@@ -29,12 +55,8 @@ class data:
 			[res][3] - Relaxation error
 		"""
 
-		self.stage = 0
 		self.nmr_frq = []
 		self.input_info = []
 		self.relax_data = []
 		self.num_data_sets = 0
-		self.models = ["m1", "m2", "m3", "m4", "m5"]
-		self.ftests_short = ["f-m1m2", "f-m1m3"]
-		self.ftests_full = ["f-m1m2", "f-m1m3", "f-m2m4", "f-m2m5", "f-m3m4"]
-	
+		self.runs = []

@@ -1,29 +1,84 @@
+# The method given by (Mandel et al., 1995) is divided into the three stages:
+#
+#	Stage 1:   Creation of the files for the modelfree calculations for models 1 to 5,
+#		and f-tests between them.
+#	Stage 2:   Model selection and creation of the final optimization run.  The modelfree
+#		input files for optimization are placed into the directory "optimize".
+#	Stage 3:   Extraction of optimized data.
+#
+# These stages are repeated until the data converges.
+
+
+
 import sys
-from os import mkdir, chmod
+from os import chmod
 from re import match
 from shutil import copy
 
-from stage_all import stage_all
+from common_ops import common_operations
 
-class stage1(stage_all):
+class palmer(common_operations):
 	def __init__(self, mf):
-		"""The stage 1 class.
-
-		Creation of the files for the modelfree calculations for models 1 to 5,
-		and f-tests between them.
-		"""
+		"The modelfree analysis of Palmer."
 
 		self.mf = mf
+
+		self.print_subheader()
+		self.mf.data.palmer.stage = self.ask_stage()
+		self.init_log_file()
+
+		self.mf.file_ops.input()
+		self.extract_relax_data()
+		self.log_input_info()
+
+		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
+		if self.mf.data.num_data_sets > 3:
+			self.mf.data.runs.append('f-m2m4')
+			self.mf.data.runs.append('f-m2m5')
+			self.mf.data.runs.append('f-m3m4')
+
+		if match('1', self.mf.data.palmer.stage):
+			self.stage1()
+		if match('2', self.mf.data.palmer.stage):
+			self.stage2()
+		if match('3', self.mf.data.palmer.stage):
+			self.stage3()
+	
+
+	class init_stage2_files:
+		def __init__(self):
+			"Class containing the stage 2 specific files."
+			
+			self.data = open('data', 'w')
+			self.results = open('results.stage2', 'w')
+			self.s2agr = open('grace/S2.stage2.agr', 'w')
+			self.s2fagr = open('grace/S2f.stage2.agr', 'w')
+			self.teagr = open('grace/te.stage2.agr', 'w')
+			self.rexagr = open('grace/Rex.stage2.agr', 'w')
+			self.sseagr = open('grace/SSE.stage2.agr', 'w')
+
+
+	def stage1(self):
+		"Section for running the stage 1 functions for Palmer's method."
+			
 		print "\n[ Stage 1 ]\n"
-		for model in self.mf.data.models:
-			print "Creating input files for model " + model
-			self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
-			self.mkdir(model)
-			self.open_files(model)
-			self.set_model_flags(model)
-			self.log_params()
-			self.create_mfin(model)
-			self.create_run(model)
+		for run in self.mf.data.runs:
+			if match('^m', run):
+				print "Creating input files for model " + run
+				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
+			elif match('^f', run):
+				print "Creating input files for the F-test " + run
+				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
+			else:
+				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
+				sys.exit()
+			self.mkdir(run)
+			self.open_files(run)
+			self.set_run_flags(run)
+			self.log_params('M1', self.mf.data.usr_param.md1)
+			self.log_params('M2', self.mf.data.usr_param.md2)
+			self.create_mfin(run)
+			self.create_run(run)
 			for res in range(len(self.mf.data.relax_data[0])):
 				# Mfdata.
 				self.create_mfdata(res)
@@ -31,31 +86,47 @@ class stage1(stage_all):
 				text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
 				self.mfmodel.write(text)
 				self.create_mfmodel('M1', self.mf.data.usr_param.md1)
+				if match('^f', run):
+					self.mfmodel.write('\n')
+					self.create_mfmodel('M2', self.mf.data.usr_param.md2)
 				# Mfpar.
 				self.create_mfpar(res)
-			self.close_files(model)
-
-		for ftest in self.mf.data.ftests:
-			print "Creating input files for the F-test " + ftest
-			self.mf.log.write("\n\n<<< F-test " + ftest + " >>>\n\n")
-			self.mkdir(ftest)
-			self.open_files(ftest)
-			self.set_ftest_flags(ftest)
-			self.log_params()
-			self.create_mfin(ftest)
-			self.create_run(ftest)
-			for res in range(len(self.mf.data.relax_data[0])):
-				# Mfdata.
-				self.create_mfdata(res)
-				# Mfmodel.
-				text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
-				self.mfmodel.write(text)
-				self.create_mfmodel('M1', self.mf.data.usr_param.md1)
-				self.mfmodel.write('\n')
-				self.create_mfmodel('M2', self.mf.data.usr_param.md2)
-			self.close_files(ftest)
+			self.close_files(run)
 		print "\n[ End of Stage 1 ]\n\n"
 
+
+	def stage2(self):
+		"Section for running the stage 2 functions for Palmer's method."
+			
+		self.mkdir('optimize')
+		self.mkdir('grace')
+		self.files2 = self.init_stage2_files()
+		print "\n[ Modelfree Data Extraction ]\n"
+		for model in self.mf.data.models:
+			file_name = model + '/mfout'
+			self.mfout = self.read_file(file_name)
+
+	def stage3(self):
+		"Section for running the stage 3 functions for Palmer's method."
+			
+
+	def ask_stage(self):
+		"User input of stage number."
+
+		print "\n[ Select the stage for Modelfree analysis ]\n"
+		print "The stages are:"
+		print "\tStage 1 (1):   Initial run of all models 1 to 5 and f-tests between them."
+		print "\tStage 2 (2):   Model selection and creation of the final optimization run."
+		print "\tStage 3 (3):   Extraction of optimized data."
+		while 1:
+			stage = raw_input("> ")
+			valid_stages = ["1", "2", "3"]
+			if stage in valid_stages:
+				break
+			else:
+				print "Invalid stage number.  Choose either 1, 2, or 3."
+		print "The stage chosen is " + stage + "\n"
+		return stage
 
 	def close_files(self, dir):
 		"Close the mfin, mfdata, mfmodel, mfpar, and run files, and make the run file executable."
@@ -73,7 +144,7 @@ class stage1(stage_all):
 		"Create the Modelfree input file mfdata"
 
 		text = "\nspin     " + self.mf.data.relax_data[0][res][1] + "_" + self.mf.data.relax_data[0][res][0] + "\n"
-		if match('2', self.mf.data.stage):
+		if match('2', self.mf.data.palmer.stage):
 			if match('none', self.opt_model):
 				flag = 0
 			else:
@@ -87,20 +158,18 @@ class stage1(stage_all):
 			text = text + '%10s' % self.mf.data.relax_data[i][res][3]
 			text = text + ' %-3s\n' % flag
 		self.mfdata.write(text)
-			
-			
 
 
 	def create_mfin(self, model):
 		"Create the Modelfree input file mfin"
 
 		sel = 'none'
-		if self.mf.data.stage == '1':
+		if self.mf.data.palmer.stage == '1':
 			algorithm = 'fix'
 			diffusion_search = 'none'
 			if match('^f', model):
 				sel = 'ftest'
-		elif self.mf.data.stage == '2':
+		elif self.mf.data.palmer.stage == '2':
 			if self.mf.data.usr_param.diff == 'isotropic':
 				algorithm = 'brent'
 				diffusion_search = 'grid'
@@ -114,10 +183,10 @@ class stage1(stage_all):
 		text = text + "search          grid\n\n"
 		text = text + "diffusion       " + self.mf.data.usr_param.diff + " " + diffusion_search + "\n\n"
 		text = text + "algorithm       " + algorithm + "\n\n"
-		if self.mf.data.stage == 1:
+		if match('1', self.mf.data.palmer.stage):
 			text = text + "simulations     pred    " + self.mf.data.usr_param.no_sim
 			text = text + "       " + self.mf.data.usr_param.trim + "\n\n"
-		elif self.mf.data.stage == 2:
+		elif match('2', self.mf.data.palmer.stage):
 			text = text + "simulations     none\n\n"
 		text = text + "selection       " + sel + "\n\n"
 		text = text + "sim_algorithm   " + algorithm + "\n\n"
@@ -248,141 +317,133 @@ class stage1(stage_all):
 		text = "#! /bin/sh\n"
 		text = text + "modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out"
 		if self.mf.data.usr_param.diff == 'axial':
-			# Copy the pdb file to the model directory so there are no problems with the *.rotate file
-			# already existing.
+			# Copy the pdb file to the model directory so there are no problems with the *.rotate
+			# file already existing.
 			copy(self.mf.data.usr_param.pdb_full, dir)
 			text = text + " -s " + self.mf.data.usr_param.pdb_file
 		text = text + "\n"
 		self.run.write(text)
 
 
-	def log_params(self):
+	def init_log_file(self):
+		"Initialize the log file."
+		
+		self.mf.log = open('log.stage' + self.mf.data.palmer.stage, 'w')
+		text = "<<< Stage " + self.mf.data.palmer.stage + " of Palmer's method for Modelfree "
+		text = text + "analysis >>>\n\n\n"
+		self.mf.log.write(text)
+
+
+	def log_params(self, name, mdx):
 		"Put the parameter data structures into the log file."
 
-		self.mf.log.write("\nmd1 data structure\n")
+		text = "\n" + name + " data structure\n"
 		for param in ['tloc', 'theta', 'ss2', 'sf2', 'te', 'rex']:
-			self.mf.log.write('%-10s' % ( param + ":" ))
-			self.mf.log.write('%-15s' % ( "start = " + `self.mf.data.usr_param.md1[param]['start']`))
-			self.mf.log.write('%-10s' % ( "flag = " + `self.mf.data.usr_param.md1[param]['flag']`))
-			self.mf.log.write('%-12s' % ( "bound = " + `self.mf.data.usr_param.md1[param]['bound']`))
-			self.mf.log.write('%-20s' % ( "lower = " + `self.mf.data.usr_param.md1[param]['lower']`))
-			self.mf.log.write('%-20s' % ( "upper = " + `self.mf.data.usr_param.md1[param]['upper']`))
-			self.mf.log.write('%-10s' % ( "steps = " + `self.mf.data.usr_param.md1[param]['steps']`))
-			self.mf.log.write("\n")
-
-		self.mf.log.write("\nmd2 data structure\n")
-		for param in ['tloc', 'theta', 'ss2', 'sf2', 'te', 'rex']:
-			self.mf.log.write('%-10s' % ( param + ":" ))
-			self.mf.log.write('%-15s' % ( "start = " + `self.mf.data.usr_param.md2[param]['start']`))
-			self.mf.log.write('%-10s' % ( "flag = " + `self.mf.data.usr_param.md2[param]['flag']`))
-			self.mf.log.write('%-12s' % ( "bound = " + `self.mf.data.usr_param.md2[param]['bound']`))
-			self.mf.log.write('%-20s' % ( "lower = " + `self.mf.data.usr_param.md2[param]['lower']`))
-			self.mf.log.write('%-20s' % ( "upper = " + `self.mf.data.usr_param.md2[param]['upper']`))
-			self.mf.log.write('%-10s' % ( "steps = " + `self.mf.data.usr_param.md2[param]['steps']`))
-			self.mf.log.write("\n")
-
-
-	def mkdir(self, dir):
-		"Create the given directory, or exit if the directory exists."
-
-		self.mf.log.write("Making directory " + dir + "\n")
-		try:
-			mkdir(dir)
-		except OSError:
-			print "Directory ./" + dir + " already exists, quitting script.\n"
-			sys.exit()
+			text = text + '%-10s' % ( param + ":" )
+			text = text + '%-15s' % ( "start = " + mdx[param]['start'] )
+			text = text + '%-11s' % ( "flag = " + mdx[param]['flag'] )
+			text = text + '%-13s' % ( "bound = " + mdx[param]['bound'] )
+			text = text + '%-20s' % ( "lower = " + mdx[param]['lower'] )
+			text = text + '%-20s' % ( "upper = " + mdx[param]['upper'] )
+			text = text + '%-10s\n' % ( "steps = " + mdx[param]['steps'] )
+		self.mf.log.write(text)
 
 
 	def open_files(self, dir):
 		"Open the mfin, mfdata, mfmodel, mfpar, and run files for writing."
 
-		mfin = dir + "/mfin"
-		mfdata = dir + "/mfdata"
-		mfmodel = dir + "/mfmodel"
-		mfpar = dir + "/mfpar"
-		run = dir + "/run"
+		self.mfin = open(dir + '/mfin', 'w')
+		self.mfdata = open(dir + '/mfdata', 'w')
+		self.mfmodel = open(dir + '/mfmodel', 'w')
+		self.mfpar = open(dir + '/mfpar', 'w')
+		self.run = open(dir + '/run', 'w')
+	
+	
+	def print_subheader(self):
+		"Print the sub-header for Palmer's method to screen."
 
-		self.mfin = open(mfin, 'w')
-		self.mfdata = open(mfdata, 'w')
-		self.mfmodel = open(mfmodel, 'w')
-		self.mfpar = open(mfpar, 'w')
-		self.run = open(run, 'w')
-	
-	
-	def set_ftest_flags(self, ftest):
+		print "Palmer's method for modelfree analysis. (Mandel et al., 1995)"
+
+
+	def read_file(self, file_name):
+		"Attempt to read the file, or quit the script if it does not exist."
+
+		try:
+			open(file_name, 'r')
+		except IOError:
+			print "The file '" + file_name + "' does not exist, quitting script.\n\n"
+			sys.exit()
+		file = open(file_name, 'r')
+		return file
+
+
+	def set_run_flags(self, run):
 		"Reset, and then set the flags in self.mf.data.usr_param.md1 and md2."
 		
-		self.mf.data.usr_param.md1['sf2']['flag'] = 0
-		self.mf.data.usr_param.md1['ss2']['flag'] = 0
-		self.mf.data.usr_param.md1['te']['flag']  = 0
-		self.mf.data.usr_param.md1['rex']['flag'] = 0
+		self.mf.data.usr_param.md1['sf2']['flag'] = '0'
+		self.mf.data.usr_param.md1['ss2']['flag'] = '0'
+		self.mf.data.usr_param.md1['te']['flag']  = '0'
+		self.mf.data.usr_param.md1['rex']['flag'] = '0'
 
-		self.mf.data.usr_param.md2['sf2']['flag'] = 0
-		self.mf.data.usr_param.md2['ss2']['flag'] = 0
-		self.mf.data.usr_param.md2['te']['flag']  = 0
-		self.mf.data.usr_param.md2['rex']['flag'] = 0
+		self.mf.data.usr_param.md2['sf2']['flag'] = '0'
+		self.mf.data.usr_param.md2['ss2']['flag'] = '0'
+		self.mf.data.usr_param.md2['te']['flag']  = '0'
+		self.mf.data.usr_param.md2['rex']['flag'] = '0'
 
-		if ftest == "f-m1m2":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['te']['flag']  = 1
-		if ftest == "f-m1m3":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['rex']['flag'] = 1
-		if ftest == "f-m1m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['te']['flag']  = 1
-			self.mf.data.usr_param.md2['rex']['flag'] = 1
-		if ftest == "f-m1m5":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['sf2']['flag'] = 1
-			self.mf.data.usr_param.md2['te']['flag']  = 1
-		if ftest == "f-m2m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md1['te']['flag']  = 1
-			self.mf.data.usr_param.md2['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['te']['flag']  = 1
-			self.mf.data.usr_param.md2['rex']['flag'] = 1
-		if ftest == "f-m2m5":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md1['te']['flag']  = 1
-			self.mf.data.usr_param.md2['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['sf2']['flag'] = 1
-			self.mf.data.usr_param.md2['te']['flag']  = 1
-		if ftest == "f-m3m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md1['rex']['flag'] = 1
-			self.mf.data.usr_param.md2['ss2']['flag'] = 1
-			self.mf.data.usr_param.md2['te']['flag']  = 1
-			self.mf.data.usr_param.md2['rex']['flag'] = 1
+		# Normal runs.
+		if run == "m1":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+		if run == "m2":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['te']['flag']  = '1'
+		if run == "m3":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['rex']['flag'] = '1'
+		if run == "m4":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['te']['flag']  = '1'
+			self.mf.data.usr_param.md1['rex']['flag'] = '1'
+		if run == "m5":
+			self.mf.data.usr_param.md1['sf2']['flag'] = '1'
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['te']['flag']  = '1'
+
+		# F-tests.
+		if run == "f-m1m2":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['te']['flag']  = '1'
+		if run == "f-m1m3":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+		if run == "f-m1m4":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['te']['flag']  = '1'
+			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+		if run == "f-m1m5":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['sf2']['flag'] = '1'
+			self.mf.data.usr_param.md2['te']['flag']  = '1'
+		if run == "f-m2m4":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['te']['flag']  = '1'
+			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['te']['flag']  = '1'
+			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+		if run == "f-m2m5":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['te']['flag']  = '1'
+			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['sf2']['flag'] = '1'
+			self.mf.data.usr_param.md2['te']['flag']  = '1'
+		if run == "f-m3m4":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['rex']['flag'] = '1'
+			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md2['te']['flag']  = '1'
+			self.mf.data.usr_param.md2['rex']['flag'] = '1'
 	
 	
-	def set_model_flags(self, model):
-		"Reset, and then set the flags in self.mf.data.usr_param.md1"
-		
-		self.mf.data.usr_param.md1['sf2']['flag'] = 0
-		self.mf.data.usr_param.md1['ss2']['flag'] = 0
-		self.mf.data.usr_param.md1['te']['flag']  = 0
-		self.mf.data.usr_param.md1['rex']['flag'] = 0
-
-		if model == "m1":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-		if model == "m2":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md1['te']['flag']  = 1
-		if model == "m3":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md1['rex']['flag'] = 1
-		if model == "m4":
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md1['te']['flag']  = 1
-			self.mf.data.usr_param.md1['rex']['flag'] = 1
-		if model == "m5":
-			self.mf.data.usr_param.md1['sf2']['flag'] = 1
-			self.mf.data.usr_param.md1['ss2']['flag'] = 1
-			self.mf.data.usr_param.md1['te']['flag']  = 1
-
-

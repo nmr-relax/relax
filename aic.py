@@ -3,9 +3,8 @@ from os import mkdir, chmod
 from re import match
 from shutil import copy
 
-from stage_all import stage_all
 
-class stage1(stage_all):
+class aic:
 	def __init__(self, mf):
 		"""The stage 1 class.
 

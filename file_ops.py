@@ -65,14 +65,7 @@ class file_ops:
 				frq = frq + 1
 		self.mf.data.num_frq = frq
 		self.mf.data.num_data_sets = num_data
-			
 
-	def log_file(self):
-		"Open the log file"
-
-		file_name = "log.stage" + self.mf.data.stage
-		self.mf.log = open(file_name, 'w')
-		self.mf.log.write("<<< Stage " + self.mf.data.stage + " of Modelfree analysis >>>\n\n\n")
 
 	def relax_data(self, file):
 		"Open the relaxation data in the file 'file' and return a 2D array with the data."
