@@ -6,13 +6,30 @@ from constraint_linear import constraint_linear
 from generic import Min, generic_minimise
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, epsilon0=1e-10, gamma0=1e-10, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-1, lambda0=None, epsilon0=1e-10, gamma0=1e-10, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
 	"""The method of multipliers, also known as the augmented Lagrangian method.
+
+	Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999,
+	2nd ed.
+
+	The algorithm is:
+
+	Given u0 > 0, tolerance t0 > 0, starting points x0s and lambda0
+	while 1:
+		Find an approximate minimiser xk of LA(.,lambdak; uk), starting at xks, and
+		   terminating when the augmented Lagrangian gradient <= tk
+		Final convergence test
+		Update Lagrange multipliers using formula 17.58
+		Choose new penalty parameter uk+1 within (0, uk)
+		Set starting point for the next iteration to xk+1s = xk
+		k = k + 1
+
 
 	Three types of inequality constraint are supported.  These are linear, bound, and general
 	constraints and must be setup as follows.  The vector x is the vector of model parameters.
+	Don't use bound constriants yet as this code is incomplete!
 
-	Currently equality constraints are not implemented.
+	Equality constraints are currently unimplemented.
 
 
 	Linear constraints
@@ -50,7 +67,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 	Bound constraints
 	~~~~~~~~~~~~~~~~~
 
-	These are defined as:
+	Bound constraints are defined as:
 
 		l <= x <= u
 
@@ -77,8 +94,8 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 	To use general constrains the functions c, dc, and d2c need to be supplied.  The function c
 	is the constraint function which should return the vector of constraint values.  The
 	function dc is the constraint gradient function which should return the matrix of constraint
-	gradient vectors.  The function d2c is the constraint Hessian function which should return
-	the 3D matrix of constraint Hessians.
+	gradients.  The function d2c is the constraint Hessian function which should return the 3D
+	matrix of constraint Hessians.
 
 	"""
 
@@ -86,7 +103,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 		print "\n"
 		print "Method of Multipliers"
 		print "~~~~~~~~~~~~~~~~~~~~~"
-	min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
+	min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
 	if min.init_failure:
 		print "Initialisation of minimisation has failed."
 		return None
@@ -96,7 +113,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 
 
 class Method_of_multipliers(Min):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
 		"""Class for Newton minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function
@@ -104,6 +121,7 @@ class Method_of_multipliers(Min):
 		"""
 
 		# Linear constraints.
+		#if A != None and b != None:
 		if A == None and b == None:
 			self.A = A
 			self.b = b
@@ -164,7 +182,7 @@ class Method_of_multipliers(Min):
 
 		# Incorrectly supplied constraints.
 		else:
-			print "The constraints have been incorreclty supplied."
+			print "The constraints have been incorrectly supplied."
 			self.init_failure = 1
 			return
 
@@ -189,7 +207,6 @@ class Method_of_multipliers(Min):
 		self.d2func = d2func
 		self.xk = x0
 		self.mu = mu0
-		self.tau = tau0
 		self.epsilon = epsilon0
 		self.gamma = gamma0
 		self.func_tol = func_tol
@@ -301,30 +318,16 @@ class Method_of_multipliers(Min):
 	def minimise(self):
 		"""Method of multipliers algorithm.
 
-		Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999,
-		2nd ed.
-
-		The algorithm is:
-
-		Given u0 > 0, tolerance t0 > 0, starting points x0s and lambda0
-		while 1:
-			Find an approximate minimiser xk of LA(.,lambdak; uk), starting at xks, and
-			   terminating when the augmented Lagrangian gradeint <= tk
-			Final convergence test
-			Update Lagrange multipliers using formula 17.58
-			Chouse new penalty parameter uk+1 within (0, uk)
-			Set starting point for the next iteration to xk+1s = xk
-			k = k + 1
 		"""
 
 		# Start the iteration counters.
 		self.k = 0
 		self.j = 0
 
-		# Subalgorithm print out.
-		print_flag = self.print_flag
-		if print_flag >= 2:
-			print_flag = print_flag - 1
+		# Sub-algorithm print out.
+		sub_print_flag = self.print_flag
+		if sub_print_flag >= 2:
+			sub_print_flag = sub_print_flag - 1
 
 		# Iterate until the local minima is found.
 		while 1:
@@ -332,22 +335,15 @@ class Method_of_multipliers(Min):
 			if self.print_flag:
 				print "\n%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", self.k, "xk:", `self.xk`, "fk:", `self.fk`)
 				if self.print_flag >= 2:
-					print "aug Lagr value:       " + `self.L`
-					print "function value:       " + `self.fk`
-					print "ck:                   " + `self.ck`
-					print "Mu:                   " + `self.mu`
-					print "epsilon:              " + `self.epsilon`
-					print "gamma:                " + `self.gamma`
-					print "Lagrange multipliers: " + `self.lambda_k`
-					print "Test structure:       " + `self.test_str`
-				print "Entering subalgorithm."
+					self.printout()
+				print "Entering sub-algorithm."
 
 			# Calculate the augmented Lagrangian gradient tolerance.
 			self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
 			# Unconstrained minimisation sub-loop.
 			try:
-				results = generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=print_flag, print_prefix="\t")
+				results = generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
 			except "LinearAlgebraError", message:
 				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
 				break
@@ -399,12 +395,7 @@ class Method_of_multipliers(Min):
 			self.k = self.k + 1
 
 		if self.print_flag >= 2:
-			print "aug Lagr value: " + `self.L`
-			print "function value: " + `self.fk`
-			print "ck: " + `self.ck`
-			print "Mu: " + `self.mu`
-			print "Lagrange multipliers: " + `self.lambda_k`
-			print "Test structure: " + `self.test_str`
+			self.printout()
 
 		# Sum iterations.
 		self.k  = self.k + self.j
@@ -419,3 +410,18 @@ class Method_of_multipliers(Min):
 				return self.xk_new
 			except AttributeError:
 				return self.xk
+
+
+	def printout(self):
+		"""Function to print out various data structures.
+
+		"""
+
+		print "aug Lagr value:       " + `self.L`
+		print "function value:       " + `self.fk`
+		print "ck:                   " + `self.ck`
+		print "Mu:                   " + `self.mu`
+		print "epsilon:              " + `self.epsilon`
+		print "gamma:                " + `self.gamma`
+		print "Lagrange multipliers: " + `self.lambda_k`
+		print "Test structure:       " + `self.test_str`

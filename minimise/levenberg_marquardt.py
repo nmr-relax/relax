@@ -132,6 +132,7 @@ class Levenberg_marquardt(Min):
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.chi2_func, (self.xk_new,)+self.args), self.f_count + 1
 		self.dfk_new, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk_new,)+self.args), self.g_count + 1
+
 		if self.fk_new <= self.fk:
 			if self.l >= 1e-99:
 				self.l = self.l * 0.1
@@ -139,9 +140,17 @@ class Levenberg_marquardt(Min):
 		else:
 			if self.l <= 1e99:
 				self.l = self.l * 10.0
-			self.xk_new = self.xk
-			self.fk_new = self.fk
 			self.move_flag = 0
+
+		# Print out.
+		if self.print_flag >= 2:
+			print self.print_prefix + "xk_new:    " + `self.xk_new`
+			print self.print_prefix + "lm_matrix: " + `self.lm_matrix`
+			print self.print_prefix + "df:   " + `self.df`
+			print self.print_prefix + "l:    " + `self.l`
+			print self.print_prefix + "fk+1: " + `self.fk_new`
+			print self.print_prefix + "fk:   " + `self.fk`
+			print self.print_prefix + "move_flag: " + `self.move_flag`
 
 
 	def setup(self):
@@ -175,7 +184,8 @@ class Levenberg_marquardt(Min):
 	def update(self):
 		"Function to update the chi-squared value, chi-squared gradient vector, and derivative function matrix."
 
-		self.xk = self.xk_new * 1.0
-		self.fk = self.fk_new
-		self.dfk = self.dfk_new * 1.0
-		self.df = self.dfunc()
+		if self.move_flag:
+			self.xk = self.xk_new * 1.0
+			self.fk = self.fk_new
+			self.dfk = self.dfk_new * 1.0
+			self.df = self.dfunc()

@@ -361,7 +361,7 @@ class Min:
 				print self.print_prefix + "|fk+1 - fk|: " + `abs(fk_new - fk)`
 				print self.print_prefix + "tol:         " + `self.func_tol`
 			return 1
-		
+
 		# Test the gradient tolerance.
 		elif sqrt(dot(gk, gk)) <= self.grad_tol:
 			if self.print_flag >= 2:

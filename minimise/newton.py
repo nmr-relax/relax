@@ -56,7 +56,7 @@ class Newton(Line_search, Min):
 		# Initialisation failure flag.
 		self.init_failure = 0
 
-		# Setup the line search and hessian modification algorithms.
+		# Setup the line search and Hessian modification algorithms.
 		self.line_search_algor = None
 		self.hessian_mod = None
 
