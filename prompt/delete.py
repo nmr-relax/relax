@@ -23,66 +23,49 @@
 import sys
 
 
-class Write:
+class Delete:
     def __init__(self, relax):
         """Class containing functions for writing data to a file."""
 
         self.relax = relax
 
 
-    def write(self, run=None, file="results", dir=None, force=0):
-        """Function for writing results to a file.
+    def delete(self, run=None, data_type=None):
+        """Function for data removal.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The name of the run.
 
-        file:  The name of the file to output results to.  The default is 'results'.
-
-        dir:  The directory to place the results file in.
-
-        force:  A flag which if set to 1 will cause the results file to be overwitten if it already
-        exists.
+        data_type:  The type of data to delete.
 
 
         Description
         ~~~~~~~~~~~
 
-        If no directory name is given, the results file will be placed in a directory named after
-        the run name.
+        The data_type argument specifies what type of data is to be deleted and must be one of the
+        following:
+            'seq' - sequence data.
+            'rx_data' - relaxation data data.
+            'mf' - model-free data.
+
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "write("
+            text = sys.macro_prompt + "delete("
             text = text + "run=" + `run`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + ", data_type=" + `data_type` + ")"
             print text
 
         # The run argument.
         if type(run) != str:
-            print "The run argument " + `run` + " must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
-        # File.
+        # Data_type.
         if type(file) != str:
-            print "The file name must be a string."
-            return
-
-        # Directory.
-        if dir == None:
-            pass
-        elif type(dir) != str:
-            print "The directory name must be a string."
-            return
-
-        # The force flag.
-        if type(force) != int and force != 0 and force != 1:
-            print "The force flag should be the integer values of either 0 or 1."
-            return
+            raise UserArgStrError, ('file name', file)
 
         # Execute the functional code.
         self.relax.rw.write_data(run=run, file=file, dir=dir, force=force)

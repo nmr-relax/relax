@@ -37,7 +37,7 @@ grid_search(name, inc=11)
 
 # Minimise.
 #minimise('newton', run=name, constraints=0, max_iter=0, print_flag=10)
-minimise('newton', run=name)
+minimise('newton', 'chol', run=name)
 
 # Finish.
 write(run=name, file='results', force=1)

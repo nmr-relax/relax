@@ -64,16 +64,14 @@ class Model_free:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            print "Sequence data has to be loaded first."
-            return
+            raise UserSequenceError
 
         # Check the validity of the parameter array.
         s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
         for i in range(len(params)):
             # Check if the parameter is a string.
             if type(params[i]) != str:
-                print "The parameter " + `params[i]` + " is not a string."
-                return
+                raise UserArgStrError, ('params[i]', `params[i]`)
 
             # Invalid parameter flag.
             invalid_param = 0
@@ -172,13 +170,11 @@ class Model_free:
 
             # Unknown parameter.
             else:
-                print "The parameter " + params[i] + " is not supported."
-                return
+                raise UserError, "The parameter " + params[i] + " is not supported."
 
             # The invalid parameter flag is set.
             if invalid_param:
-                print "The parameter array " + `params` + " contains an invalid parameter or combination of parameters."
-                return
+                raise UserError, "The parameter array " + `params` + " contains an invalid parameter or combination of parameters."
 
         # Update the data structures.
         self.data_update(run, model, equation, params, scaling)
@@ -703,34 +699,27 @@ class Model_free:
 
         # Run argument.
         if type(run) != str:
-            print "The run argument must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # Model argument.
         if type(model) != str:
-            print "The model argument must be a string."
-            return
+            raise UserArgStrError, ('model', model)
 
         # Equation.
         elif equation == None:
-            print "The model-free equation type is not selected."
-            return
+            raise UserArgNoneError, 'model-free equation'
         elif type(equation) != str:
-            print "The model-free equation argument must be a string."
-            return
+            raise UserArgStrError, ('model-free equation', equation)
 
         # Parameter types.
         elif params == None:
-            print "No parameter types have been supplied."
-            return
+            raise UserArgNoneError, 'parameter types'
         elif type(params) != list:
-            print "The parameter types argument must be an array."
-            return
+            raise UserArgListError, ('parameter types', params)
 
         # Scaling.
         elif type(scaling) != int or (scaling != 0 and scaling != 1):
-            print "The scaling argument must be either the integers 0 or 1."
-            return
+            raise UserArgBinError, ('scaling', scaling)
 
         # Execute the functional code.
         self.create(run=run, model=model, equation=equation, params=params, scaling=scaling)
@@ -883,18 +872,15 @@ class Model_free:
 
         # Run argument.
         if type(run) != str:
-            print "The run argument must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # Model argument.
         elif type(model) != str:
-            print "The model argument must be a string."
-            return
+            raise UserArgStrError, ('model', model)
 
         # Scaling.
         if type(scaling) != int or (scaling != 0 and scaling != 1):
-            print "The scaling argument must be either the integers 0 or 1."
-            return
+            raise UserArgBinError, ('scaling', scaling)
 
         # Execute the functional code.
         self.select(run=run, model=model, scaling=scaling)
@@ -1358,8 +1344,7 @@ class Model_free:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            print "Sequence data has to be loaded first."
-            return
+            raise UserSequenceError
 
 
         # Preset models.
@@ -1627,8 +1612,7 @@ class Model_free:
 
         # Invalid models.
         else:
-            print "The model '" + model + "' is invalid."
-            return
+            raise UserError, "The model '" + model + "' is invalid."
 
         # Update the data structures.
         self.data_update(run, model, equation, params, scaling)

@@ -73,23 +73,19 @@ class Fixed:
 
         # The run argument.
         if type(run) != str:
-            print "The run argument " + `run` + " must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # User defined values.
         if values != None:
             if type(values) != list:
-                print "The argument 'values' must be an array of numbers."
-                return
+                raise UserArgListError, ('values', values)
             for i in range(len(values)):
                 if type(values[i]) != float and type(values[i]) != int:
-                    print "The argument 'values' must be an array of numbers."
-                    return
+                    raise UserArgListIntError, ('values', values)
 
         # The print flag.
         if type(print_flag) != int:
-            print "The print_flag argument must be an integer."
-            return
+            raise UserArgIntError, ('print_flag', print_flag)
 
         # Execute the functional code.
         self.relax.min.fixed(run=run, values=values, print_flag=print_flag)

@@ -94,33 +94,27 @@ class Modsel:
 
         # Method.
         if type(method) != str:
-            print "The method argument must be a string."
-            return
+            raise UserArgStrError, ('model selection method', method)
 
         # New run modsel_run.
         if modsel_run == None:
-            print "The argument 'modsel_run' is required."
-            return
+            raise UserArgNoneError, 'modsel_run'
         elif type(modsel_run) != str:
-            print "The modsel_run argument must be a string."
-            return
+            raise UserArgStrError, ('modsel_run' modsel_run)
 
         # Runs.
         if runs == None:
             pass
         elif type(runs) != list:
-            print "The runs argument must be a list."
-            return
+            raise UserArgNoneListError, ('runs', runs)
         else:
             for name in runs:
                 if type(name) == list:
                     for name2 in name:
                         if type(name2) != str:
-                            print "The elements of the second dimension of the runs argument must be strings."
-                            return
+                            raise UserError, "The elements of the second dimension of the runs argument must be strings."
                 elif type(name) != str:
-                    print "The elements of the first dimension of the runs argument must be either strings or arrays."
-                    return
+                    raise UserError, "The elements of the first dimension of the runs argument must be either strings or arrays."
 
         # Execute the functional code.
         self.relax.model_selection.select(method=method, modsel_run=modsel_run, runs=runs)

@@ -33,6 +33,7 @@
 ###############################################################################
 
 
+import __builtin__
 import profile
 import pstats
 from re import match
@@ -48,6 +49,7 @@ from file_ops import File_ops
 from diffusion_tensor import Diffusion_tensor
 from dx.map import Map
 from dx.opendx import OpenDX
+from errors import RelaxErrors
 from min import Minimise
 from model_free import Model_free
 from model_selection.model_selection import Model_selection
@@ -79,6 +81,9 @@ class Relax:
 
         # The program data storage class.
         self.data = Data()
+
+        # Set up the user errors.
+        RelaxErrors()
 
         # Various functions.
         self.diffusion_tensor = Diffusion_tensor(self)
@@ -153,7 +158,6 @@ This is free software which you are welcome to modify and redistribute under the
 GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
 and comes with absolutely no warranty.  For details type GPL.
 """
-
 
 
 if __name__ == "__main__":

@@ -41,8 +41,7 @@ class Base_Map:
                 index = i
                 break
         if index == None:
-            print "The residue " + `res_num` + " cannot be found in the sequence."
-            return
+            raise UserError, "The residue " + `res_num` + " cannot be found in the sequence."
 
         # Equation type specific function setup.
         fns = self.relax.specific_setup.setup("map_space", self.relax.data.res[index].equations[run])

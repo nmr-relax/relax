@@ -29,6 +29,10 @@ class Rx_data:
         self.relax = relax
 
 
+    def delete_rx_data(self, run):
+        """Funciton for removal of relaxation data structures."""
+
+
     def initialise_rx_data(self, data, run):
         """Function for initialisation of relaxation data structures.
 
@@ -167,46 +171,37 @@ class Rx_data:
 
         # The run name.
         if type(run) != str:
-            print "The run name must be supplied as a string."
-            return
+            raise UserError, "The run name must be supplied as a string."
 
         # Relaxation data type.
         if not ri_label or type(ri_label) != str:
-            print "The relaxation label 'ri_label' must be supplied as a string."
-            return
+            raise UserError, "The relaxation label 'ri_label' must be supplied as a string."
 
         # Frequency label.
         elif type(frq_label) != str:
-            print "The frequency label 'frq_label' must be supplied as a string."
-            return
+            raise UserError, "The frequency label 'frq_label' must be supplied as a string."
 
         # Frequency.
         elif type(frq) != float:
-            print "The frequency argument 'frq' should be a floating point number."
-            return
+            raise UserError, "The frequency argument 'frq' should be a floating point number."
 
         # The file name.
         elif not file_name:
-            print "No file has been specified."
-            return
+            raise UserError, "No file has been specified."
         elif type(file_name) != str:
-            print "The file name should be a string."
-            return
+            raise UserError, "The file name should be a string."
 
         # The columns.
         elif type(num_col) != int or type(name_col) != int or type(data_col) != int or type(error_col) != int:
-            print "The column arguments 'num_col', 'name_col', 'data_col', and 'error_col' should be integers."
-            return
+            raise UserError, "The column arguments 'num_col', 'name_col', 'data_col', and 'error_col' should be integers."
 
         # Column separator.
         elif sep != None and type(sep) != str:
-            print "The column separator argument 'sep' should be either a string or None."
-            return
+            raise UserError, "The column separator argument 'sep' should be either a string or None."
 
         # Header lines.
         elif type(header_lines) != int:
-            print "The number of header lines argument 'header_lines' should be an integer."
-            return
+            raise UserError, "The number of header lines argument 'header_lines' should be an integer."
 
         # Execute the functional code.
         self.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
@@ -217,16 +212,14 @@ class Rx_data:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            print "Sequence data has to be loaded first."
-            return
+            raise UserError, "Sequence data has to be loaded first."
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
 
         # Do nothing if the file does not exist.
         if not file_data:
-            print "No relaxation data read."
-            return
+            raise UserError, "No relaxation data read."
 
         # Remove the header.
         file_data = file_data[header_lines:]
@@ -241,8 +234,7 @@ class Rx_data:
                 float(file_data[i][data_col])
                 float(file_data[i][error_col])
             except ValueError:
-                print "The relaxation data is invalid."
-                return
+                raise UserError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
 
         # Add the run to the runs list.
         if not run in self.relax.data.runs:
@@ -263,8 +255,7 @@ class Rx_data:
                     index = j
                     break
             if index == None:
-                print "Warning: Residue " + `res_num` + " " + res_name + " cannot be found in the sequence, skipping data."
-                continue
+                raise UserError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
 
             # Initialise the relaxation data structures (if needed).
             self.initialise_rx_data(self.relax.data.res[index], run)
@@ -272,8 +263,7 @@ class Rx_data:
             # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
             for j in range(self.relax.data.res[index].num_ri[run]):
                if ri_label == self.relax.data.res[index].ri_labels[run][j] and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][j]]:
-                    print "Warning: The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
-                    continue
+                    raise UserError, "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
 
             # Relaxation data and errors.
             self.relax.data.res[index].relax_data[run].append(value)

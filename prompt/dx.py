@@ -58,23 +58,23 @@ class OpenDX:
             text = text + ", execute=" + `execute` + ")"
             print text
 
-        # File and directory name.
+        # File name.
         if type(file) != str:
-            print "The file name must be a string."
-            return
-        elif type(dir) != str and dir != None:
-            print "The directory name must be a string or 'None'."
-            return
+            raise UserArgStrError, ('file name', file)
+
+        # Directory name.
+        if dir == None:
+            pass
+        elif type(dir) != str:
+            raise UserArgNoneStrError, ('file name', file)
 
         # The OpenDX executable file.
         if type(dx_exec) != str:
-            print "The OpenDX executable file name must be a string."
-            return
+            raise UserArgStrError, ('OpenDX executable file name', dx_exec)
 
         # Execute flag.
         if type(execute) != int or (execute != 0 and execute != 1):
-            print "The execute flag should be the integer values of either 0 or 1."
-            return
+            raise UserArgBinError, ('execute flag', execute)
 
         # Execute the functional code.
         self.relax.opendx.run(file=file, dir=dir, dx_exec=dx_exec, execute=execute)

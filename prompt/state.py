@@ -72,10 +72,9 @@ class Macro_class:
             text = text + "file_name=" + `file_name` + ")"
             print text
 
-        # Test arguments
+        # File name.
         if type(file_name) != str:
-            print "The file name argument " + `file_name` + " is not a string."
-            return
+            raise UserArgStrError, ('file name', file_name)
 
         # Execute the functional code.
         self.relax.state.load(file_name=file_name)
@@ -117,13 +116,11 @@ class Macro_class:
 
         # File name.
         if type(file_name) != str:
-            print "The file name argument " + `file_name` + " is not a string."
-            return
+            raise UserArgStrError, ('file name', file_name)
 
         # The force flag.
         if type(force) != int or (force != 0 and force != 1):
-            print "The force flag should be the integer values of either 0 or 1."
-            return
+            raise UserArgBinError, ('force flag', force)
 
         # Execute the functional code.
         self.relax.state.save(file_name=file_name, force=force)

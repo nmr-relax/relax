@@ -36,8 +36,7 @@ class Value:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            print "Sequence data has to be loaded first."
-            return
+            raise UserError, "Sequence data has to be loaded first."
 
         # Add the run to the runs list.
         if not run in self.relax.data.runs:

@@ -73,7 +73,7 @@ class Macro_class:
 
         The data_type argument specifies what type of data is to be read and must be one of the
         following:
-            'mf' - model-free data
+            'mf' - model-free data.
 
         If no directory name is given, the results file will be seached for in a directory named
         after the run name.
@@ -90,24 +90,20 @@ class Macro_class:
 
         # The run argument.
         if type(run) != str:
-            print "The run argument " + `run` + " must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # The data_type argument.
         if type(data_type) != str:
-            print "The data_type argument " + `data_type` + " must be a string."
-            return
+            raise UserArgStrError, ('data_type', data_type)
 
         # File.
         if type(file) != str:
-            print "The file name must be a string."
-            return
+            raise UserArgStrError, ('file name', file)
 
         # Directory.
         if dir != None:
             if type(dir) != str:
-                print "The directory name must be a string or None."
-                return
+                raise UserArgNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
         self.relax.rw.read_data(run=run, data_type=data_type, file=file, dir=dir)

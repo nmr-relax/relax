@@ -88,26 +88,21 @@ class Sequence:
 
         # The file name.
         if not file_name:
-            print "No file is specified."
-            return
+            raise UserError, "No file is specified."
         elif type(file_name) != str:
-            print "The file name should be a string."
-            return
+            raise UserError, "The file name should be a string."
 
         # The columns.
         elif type(num_col) != int or type(name_col) != int:
-            print "The residue number and name column arguments 'num_col' and 'name_col' should be integers."
-            return
+            raise UserError, "The residue number and name column arguments 'num_col' and 'name_col' should be integers."
 
         # Column separator.
         elif sep != None and type(sep) != str:
-            print "The column separator argument 'sep' should be either a string or None."
-            return
+            raise UserError, "The column separator argument 'sep' should be either a string or None."
 
         # Header lines.
         elif type(header_lines) != int:
-            print "The number of header lines argument 'header_lines' should be an integer."
-            return
+            raise UserError, "The number of header lines argument 'header_lines' should be an integer."
 
         # Execute the functional code.
         self.read(file_name=file_name, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)
@@ -118,22 +113,24 @@ class Sequence:
 
         # Test if the sequence data has already been read.
         if len(self.relax.data.res):
-            print "The sequence data has already been read."
-            return
+            raise UserError, "The sequence data has already been read."
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
 
         # Do nothing if the file does not exist.
         if not file_data:
-            print "No sequence data read."
-            return
+            raise UserError, "No sequence data read."
 
         # Remove the header.
         file_data = file_data[header_lines:]
 
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
+
+        # Invalid data.
+        if len(file_data) == 0:
+            raise UserError, "There is no sequence data in the file " + `file_name`
 
         # Fill the array self.relax.data.res with data containers and place sequence data into the array.
         for i in range(len(file_data)):
@@ -146,8 +143,7 @@ class Sequence:
                 name = file_data[i][name_col]
                 label = file_data[i][num_col] + '_' + file_data[i][name_col]
             except ValueError:
-                print "Sequence data is invalid."
-                return
+                raise UserError, "Sequence data is invalid."
 
             # Insert the data.
             self.relax.data.res[i].num = num

@@ -118,11 +118,9 @@ class Minimise:
 
         # Minimization algorithm.
         if len(args) == 0:
-            print "The minimisation algorithm has not been specified."
-            return
+            raise UserError, "The minimisation algorithm has not been specified."
         elif type(args[0]) != str:
-            print "The minimisation algorithm should be a string."
-            return
+            raise UserArgStrError, ('minimisation algorithm', args[0])
         min_algor = args[0]
 
         # Minimization options.
@@ -136,44 +134,36 @@ class Minimise:
                 if key == valid_key:
                     valid = 1
             if not valid:
-                print "The keyword " + `key` + " is invalid."
-                return
+                raise UserError, "The keyword " + `key` + " is invalid."
 
         # The run keyword.
         if run == None:
-            print "No run has been given."
-            return
+            raise UserArgNoneError, 'run'
         elif type(run) != str:
-            print "The run argument " + `run` + " must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # The function tolerance value.
         if func_tol != None and type(func_tol) != int and type(func_tol) != float:
-            print "The function tolerance should be either a number or 'None'."
-            return
+            raise UserArgNoneNumError, ('function tolerance', func_tol)
 
         # The gradient tolerance value.
         if grad_tol != None and type(grad_tol) != int and type(grad_tol) != float:
-            print "The gradient tolerance should be either a number or 'None'."
-            return
+            raise UserArgNoneNumError, ('gradient tolerance', grad_tol)
 
         # The maximum number of iterations.
         if type(max_iterations) != int and type(max_iterations) != float:
-            print "The maximum number of iterations argument should be a number."
-            return
+            raise UserArgNumError, ('maximum number of iterations', max_iterations)
 
         # Constraint flag.
         if type(constraints) != int and constraints != 0 and constraints != 1:
-            print "The constraint flag should be the integer values of either 0 or 1."
-            return
+            raise UserArgBinError, ('constraint flag', constraints)
         elif constraints == 1:
             min_algor = 'Method of Multipliers'
             min_options = args
 
         # Print flag.
         if type(print_flag) != int and print_flag != 0 and print_flag != 1:
-            print "The print flag should be the integer values of either 0 or 1."
-            return
+            raise UserArgBinError, ('print flag', print_flag)
 
         # Execute the functional code.
         self.relax.min.min(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

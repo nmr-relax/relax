@@ -22,6 +22,7 @@
 
 import __builtin__
 from re import match, split
+from rlcompleter import get_class_members
 
 
 class Tab_completion:
@@ -30,14 +31,6 @@ class Tab_completion:
 
         self.name_space = name_space
         self.print_flag = print_flag
-
-
-    def class_attributes(self, temp_class):
-        list = dir(temp_class)
-        if hasattr(temp_class, '__bases__'):
-            for base in temp_class.__bases__:
-                list = list + self.class_attributes(base)
-        return list
 
 
     def create_list(self):
@@ -71,7 +64,7 @@ class Tab_completion:
         # If the object is a class, get all the class attributes as well.
         if hasattr(object, '__class__'):
             self.list.append('__class__')
-            self.list = self.list + self.class_attributes(object.__class__)
+            self.list = self.list + get_class_members(object.__class__)
 
         # Possible completions.
         self.options = []

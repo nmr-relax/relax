@@ -49,8 +49,7 @@ class Calc:
 
         # The run argument.
         if type(run) != str:
-            print "The run argument " + `run` + " must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # Execute the functional code.
         self.relax.min.calc(run=run)

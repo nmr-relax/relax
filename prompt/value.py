@@ -62,13 +62,11 @@ class Macro_class(Select_res):
 
         # Arguments
         if not type:
-            print "The data type string has not been supplied."
-            return
+            raise UserArgNoneError, 'data type'
         else:
             self.type = type
         if not file_name:
-            print "No file is specified."
-            return
+            raise UserArgNoneError, 'file name'
         else:
             self.file_name = file_name
         self.num_col = num_col
@@ -79,10 +77,9 @@ class Macro_class(Select_res):
 
         # Test if sequence data is loaded.
         try:
-            self.relax.data.seq
+            self.relax.data.res
         except AttributeError:
-            print "Sequence data has to be loaded first."
-            return
+            raise UserSequenceError
 
         # Initialise the type specific data.
         if not self.init_data():
@@ -93,8 +90,7 @@ class Macro_class(Select_res):
 
         # Do nothing if the file does not exist.
         if not file_data:
-            print "No sequence data loaded."
-            return
+            raise UserError, "No sequence data loaded."
 
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
@@ -144,30 +140,25 @@ class Macro_class(Select_res):
 
         # The run name.
         if type(run) != str:
-            print "The run argument must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # Data type.
         elif data_type == None:
-            print "The data type argument has not been supplied."
-            return
+            raise UserArgNoneError, ('data type', data_type)
         elif type(data_type) != str:
-            print "The data type argument must be a string."
-            return
+            raise UserArgStrError, ('data type', data_type)
 
         # Value.
         elif val == None:
-            print "No value has been given."
-            return
+            raise UserArgNoneError, ('value', data_type)
+            raise UserError, "No value has been given."
         elif type(val) != float:
-            print "The value argument must be a floating point number."
-            return
+            raise UserError, "The value argument must be a floating point number."
 
         # Error.
         elif err != None:
             if type(err) != float:
-                print "The error argument must either be None or be a floating point number."
-                return
+                raise UserError, "The error argument must either be None or be a floating point number."
 
         # Execute the functional code.
         self.relax.value.set(run=run, data_type=data_type, val=val, err=err)

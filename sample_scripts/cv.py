@@ -19,8 +19,10 @@ read.sequence('noe.500.out')
 precalc = 1
 
 
-# Calibration set.
-##################
+print "\n\n\n\n"
+print "# Calibration set."
+print "##################"
+print "\n"
 
 if not precalc:
     # Loop over the relaxation data for single-item-out cross-validation.
@@ -45,14 +47,16 @@ if not precalc:
 
             # Minimisation of the calibration set.
             grid_search(cv_runs[i][j], inc=11)
-            minimise('newton', run=cv_runs[i][j])
+            minimise('newton', 'chol', run=cv_runs[i][j])
 
             # Write the results.
             write(run=cv_runs[i][j], force=1)
 
 
-# Validation set.
-#################
+print "\n\n\n\n"
+print "# Validation set."
+print "#################"
+print "\n"
 
 # Load all the relaxation data.
 for i in range(len(ri_labels)):
@@ -71,14 +75,18 @@ for i in range(len(ri_labels)):
         calc(cv_runs[i][j])
 
 
-# Model selection.
-##################
+print "\n\n\n\n"
+print "# Model selection."
+print "##################"
+print "\n"
 
 model_selection('CV', 'cv', cv_runs)
 
 
-# Final minimisation using all relaxation data.
-###############################################
+print "\n\n\n\n"
+print "# Final minimisation using all relaxation data."
+print "###############################################"
+print "\n"
 
 # Load all the relaxation data.
 for i in range(len(ri_labels)):

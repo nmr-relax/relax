@@ -69,28 +69,27 @@ class Grid:
 
         # The run argument.
         if type(run) != str:
-            print "The run argument " + `run` + " must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # The lower bounds.
-        if lower != None:
-            bad_arg = 0
+        if lower == None:
+            pass
+        elif type(lower) != list:
+            raise UserArgListError, ('lower bounds', lower)
+        else:
             for i in range(len(lower)):
                 if type(lower[i]) != float and type(lower[i]) != int:
-                    bad_arg = 1
-            if bad_arg:
-                print "The argument 'lower' must be an array of numbers."
-                return
+                    raise UserArgListNumError, ('lower bounds', lower)
 
         # The upper bounds.
-        if upper != None:
-            bad_arg = 0
+        if upper == None:
+            pass
+        elif type(upper) != list:
+            raise UserArgListError, ('upper bounds', upper)
+        else:
             for i in range(len(upper)):
                 if type(upper[i]) != float and type(upper[i]) != int:
-                    bad_arg = 1
-            if bad_arg:
-                print "The argument 'upper' must be an array of numbers."
-                return
+                    raise UserArgListNumError, ('upper bounds', upper)
 
         # The incrementation value.
         bad_arg = 0
@@ -101,17 +100,15 @@ class Grid:
                 if type(inc[i]) != int:
                     bad_arg = 1
         if bad_arg:
-            print "The argument 'inc' must be either an integer or an array of integers."
+            raise UserArgIntListIntError, ('incrementation value', inc)
 
         # Constraint flag.
         if type(constraints) != int or (constraints != 0 and constraints != 1):
-            print "The constraint flag should be the integer values of either 0 or 1."
-            return
+            raise UserArgBinError, ('constraint flag', constraints)
 
         # The print flag.
         if type(print_flag) != int:
-            print "The print_flag argument must be an integer."
-            return
+            raise UserArgIntError, ('print flag', print_flag)
 
         # Execute the functional code.
         self.relax.min.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)

@@ -37,11 +37,6 @@ class Diffusion_tensor:
         if not hasattr(self.relax.data, 'diff_params'):
             self.relax.data.diff_params = {}
 
-        # Test if the run already exists.
-        if self.relax.data.diff_type.has_key(run):
-            print "The run " + `run` + " has already been set."
-            return
-
         # Setup the diffusion type.
         self.relax.data.diff_type[run] = diff
 

@@ -149,13 +149,11 @@ class Map:
 
         # The run argument.
         if type(run) != str:
-            print "The run argument " + `run` + " must be a string."
-            return
+            raise UserArgStrError, ('run', run)
 
         # The residue number.
         if type(res_num) != int:
-            print "The res_num argument must be an integer."
-            return
+            raise UserArgIntError, ('residue number', res_num)
 
         # Residue index.
         index = None
@@ -164,121 +162,99 @@ class Map:
                 index = i
                 break
         if index == None:
-            print "The residue " + `res_num` + " cannot be found in the sequence."
-            return
+            raise UserNoResError, res_num
 
         # The number of parameters.
         n = len(self.relax.data.res[index].params[run])
 
         # Increment.
         if type(inc) != int:
-            print "The increment argument should be an integer."
-            return
+            raise UserArgIntError, ('increment', inc)
         elif inc <= 1:
-            print "The increment value needs to be greater than 1."
-            return
+            raise UserError, "The increment value needs to be greater than 1."
 
         # Lower bounds.
         if lower != None:
             if type(lower) != list:
-                print "The lower bounds argument must be an array."
-                return
+                raise UserArgListError, ('lower bounds', lower)
             if len(lower) != n:
-                print "The lower array must be of length " + `n` + "."
-                return
+                raise UserError, "The lower bounds argument must be of length " + `n` + "."
             for i in range(n):
                 if type(lower[i]) != int and type(lower[i]) != float:
-                    print "The elements of the lower bounds array must be numbers."
-                    return
+                    raise UserArgListNumError, ('lower bounds', lower)
 
         # Upper bounds.
         if upper != None:
             if type(upper) != list:
-                print "The upper bounds argument must be an array."
-                return
+                raise UserArgListError, ('upper bounds', upper)
             if len(upper) != n:
-                print "The upper array must be of length " + `n` + "."
-                return
+                raise UserError, "The upper argument must be of length " + `n` + "."
             for i in range(n):
                 if type(upper[i]) != int and type(upper[i]) != float:
-                    print "The elements of the upper bounds array must be numbers."
-                    return
+                    raise UserArgListNumError, ('upper bounds', upper)
 
         # Axes swapping.
         if swap != None:
             if type(swap) != list:
-                print "The swap argument must be an array."
-                return
+                raise UserArgListError, ('axes swapping', swap)
             if len(swap) != n:
-                print "The swap array must be of length " + `n` + "."
-                return
+                raise UserError, "The swap argument must be of length " + `n` + "."
             test = zeros(n)
             for i in range(n):
                 if type(swap[i]) != int:
-                    print "The elements of the swap array must be integers."
-                    return
+                    raise UserArgListIntError, ('axes swapping', swap)
                 if swap[i] >= n:
-                    print "The integer " + `swap[i]` + " is greater than the final array element."
-                    return
+                    raise UserError, "The integer " + `swap[i]` + " is greater than the final array element."
                 elif swap[i] < 0:
-                    print "All integers of the swap array must be positive."
-                    return
+                    raise UserError, "All integers of the swap argument must be positive."
                 test[swap[i]] = 1
             for i in range(n):
                 if test[i] != 1:
-                    print "The swap array is invalid (possibly duplicated integer values)."
-                    return
+                    raise UserError, "The swap argument is invalid (possibly duplicated integer values)."
 
-        # File and directory name.
+        # File name.
         if type(file) != str:
-            print "The file name must be a string."
-            return
-        elif type(dir) != str and dir != None:
-            print "The directory name must be a string or 'None'."
-            return
+            raise UserArgStrError, ('file name', file)
+
+        # Directory name.
+        if dir == None:
+            pass
+        elif type(dir) != str:
+            raise UserArgNoneStrError, ('directory name', dir)
 
         # Point.
         if point != None:
             if type(point) != list:
-                print "The point argument must be an array."
-                return
+                raise UserArgListError, ('point', point)
             elif len(point) != n:
-                print "The point array must be of length " + `n` + "."
-                return
+                raise UserError, "The point argument must be of length " + `n` + "."
             elif type(point_file) != str:
-                print "The point file name must be a string."
-                return
+                raise UserArgStrError, ('point file name', point_file)
             for i in range(n):
                 if type(point[i]) != int and type(point[i]) != float:
-                    print "The elements of the point array must be numbers."
-                    return
+                    raise UserArgListNumError, ('point', point)
 
         # Remap function.
         if remap != None:
             if type(remap) is not FunctionType:
-                print "The remap argument must be a function."
-                return
+                raise UserArgFunctionError, ('remap function', remap)
 
         # Axis labels.
         if labels != None:
             if type(labels) != list:
-                print "The labels argument must be an array."
-                return
+                raise UserArgListError, ('axis labels', labels)
             elif len(labels) != n:
-                print "The labels array must be of length " + `n` + "."
+                raise UserError, "The axis labels argument must be of length " + `n` + "."
             for i in range(n):
                 if type(labels[i]) != str:
-                    print "The elements of the labels array must be strings."
+                    raise UserArgListStrError, ('axis labels', labels)
 
         # Space type.
         if type(map_type) != str:
-            print "The map_type argument must be a string."
-            return
+            raise UserArgStrError, ('map type', map_type)
         if match("^[Ii]so3[Dd]", map_type):
             if n != 3:
-                print "The 3D isosurface map requires a strictly 3 parameter model."
-                return
+                raise UserError, "The 3D isosurface map requires a strictly 3 parameter model."
             self.relax.map.Iso3D.map_space(run=run, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
         else:
-            print "The map type '" + map_type + "' is not supported."
-            return
+            raise UserError, "The map type '" + map_type + "' is not supported."

@@ -21,7 +21,7 @@
 ###############################################################################
 
 import __builtin__
-from code import InteractiveConsole
+from code import InteractiveConsole, softspace
 from os import F_OK, access
 import readline
 import sys
@@ -32,6 +32,7 @@ from print_all_data import Print_all_data
 
 # Macro functions.
 from calc import Calc
+from delete import Delete
 from diffusion_tensor import Diffusion_tensor
 from dx import OpenDX
 from fixed import Fixed
@@ -70,6 +71,7 @@ class Interpreter:
 
         # Place the functions into the namespace of the interpreter class.
         self._Calc = Calc(relax)
+        self._Delete = Delete(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._Fixed = Fixed(relax)
         self._GPL = GPL
@@ -111,6 +113,7 @@ class Interpreter:
 
         # Place the functions in the local namespace.
         calc = self._Calc.calc
+        delete = self._Delete.delete
         diffusion_tensor = self._Diffusion_tensor.diffusion_tensor
         dx = self._OpenDX.dx
         fixed = self._Fixed.fixed
@@ -172,8 +175,7 @@ class Interpreter:
 
         # File argument.
         if file == None:
-            print "No script file has been specified."
-            return
+            raise UserError, "No script file has been specified."
 
         # Turn on the macro intro flag.
         self.intro = 1
@@ -272,12 +274,30 @@ def prompt(intro=None, local=None, script_file=None):
     This function replaces 'code.interact'.
     """
 
-    # Replace the 'InteractiveConsole.interact' function.
+    # Replace the 'InteractiveConsole.interact' and 'InteractiveConsole.runcode' functions.
     InteractiveConsole.interact = interact
+    InteractiveConsole.runcode = runcode
 
     # The console.
     console = InteractiveConsole(local)
     console.interact(intro, local, script_file)
+
+
+def runcode(self, code):
+    """Replacement code for code.InteractiveInterpreter.runcode"""
+
+    try:
+        exec code in self.locals
+    except SystemExit:
+        raise
+    except AllUserErrors, instance:
+        self.write(instance.__str__())
+        self.write("\n")
+    except:
+        self.showtraceback()
+    else:
+        if softspace(sys.stdout, 0):
+            print
 
 
 def script(script_file, local):
@@ -301,4 +321,6 @@ def script(script_file, local):
         execfile(script_file, local)
     except KeyboardInterrupt:
         sys.stdout.write("\nScript execution cancelled.\n")
+    except AllUserErrors, instance:
+        sys.stdout.write(instance.__str__())
     sys.stdout.write("\n")

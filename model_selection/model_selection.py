@@ -42,16 +42,13 @@ class Model_selection:
                 if type(run) == list:
                     for run2 in run:
                         if not run2 in self.relax.data.runs:
-                            print "The run " + `run2` + " cannot be found."
-                            return
+                            raise UserError, "The run " + `run2` + " cannot be found."
                 elif not run in self.relax.data.runs:
-                    print "The run " + `run` + " cannot be found."
-                    return
+                    raise UserError, "The run " + `run` + " cannot be found."
 
         # Test if the run 'modsel_run' does not already exist.
         if modsel_run in self.relax.data.runs:
-            print "The run " + `modsel_run` + " already exists."
-            return
+            raise UserError, "The run " + `modsel_run` + " already exists."
 
         # Initialise.
         self.modsel_run = modsel_run
@@ -70,8 +67,7 @@ class Model_selection:
         elif method == 'CV':
             self.modsel = self.cv
         else:
-            print "The model selection technique " + `method` + " is not currently supported."
-            return
+            raise UserError, "The model selection technique " + `method` + " is not currently supported."
 
         # Add the new run name 'modsel_run' to self.relax.data.runs
         self.relax.data.runs.append(self.modsel_run)
