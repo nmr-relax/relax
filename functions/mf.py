@@ -3,7 +3,7 @@ from math import pi
 from re import match
 
 from data import data
-from ri_dipole_csa_comps import *
+from ri_comps import *
 
 from jw_mf import *
 from djw_mf import *
@@ -53,6 +53,12 @@ class mf:
 		self.scaling = scaling
 		self.print_flag = print_flag
 
+		# Initialise the data class used to store data.
+		self.data = data()
+
+		# Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
+		self.calc_frq_list()
+
 		# Initialise the data.
 		self.init_data()
 		self.data.params = init_params
@@ -66,13 +72,6 @@ class mf:
 		# Test data.
 		self.data.func_test = zeros(len(init_params), Float64)
 		self.data.grad_test = zeros(len(init_params), Float64)
-
-		# Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
-		self.calc_frq_list()
-
-		# Calculate the fixed components of the dipolar and CSA constants.
-		calc_fixed_csa(self.data)
-		calc_fixed_dip(self.data)
 
 		# Setup the equations.
 		if not self.setup_equations():
@@ -223,9 +222,6 @@ class mf:
 	def init_data(self):
 		"Function for initialisation of the data."
 
-		# Initialise the data class used to store data.
-		self.data = data()
-
 		# Place some data structures from self.relax.data into the data class
 		self.data.gh = self.relax.data.gh
 		self.data.gx = self.relax.data.gx
@@ -239,12 +235,24 @@ class mf:
 		self.data.noe_r1_table = self.relax.data.noe_r1_table
 		self.data.ri_labels = self.relax.data.ri_labels
 
-		# Initialise the spectral density values, gradients, and hessians.
+		# Spectral density values, gradients, and hessians.
 		self.data.jw = zeros((self.relax.data.num_frq, 5), Float64)
 		self.data.djw = zeros((self.relax.data.num_frq, 5, len(self.params)), Float64)
 		self.data.d2jw = zeros((self.relax.data.num_frq, 5, len(self.params), len(self.params)), Float64)
 
-		# Initialise the components of the transformed relaxation equations.
+		# Calculate the fixed components of the dipolar and CSA constants.
+		calc_fixed_csa(self.data)
+		calc_fixed_dip(self.data)
+
+		# Dipolar and CSA constants.
+		self.data.dip_const = 0.0
+		self.data.dip_grad = 0.0
+		self.data.dip_hess = 0.0
+		self.data.csa_const = zeros((self.relax.data.num_frq), Float64)
+		self.data.csa_grad = zeros((self.relax.data.num_frq), Float64)
+		self.data.csa_hess = zeros((self.relax.data.num_frq), Float64)
+
+		# Components of the transformed relaxation equations.
 		self.data.dip_comps = zeros((self.relax.data.num_ri), Float64)
 		self.data.dip_jw_comps = zeros((self.relax.data.num_ri), Float64)
 		self.data.csa_comps = zeros((self.relax.data.num_ri), Float64)
@@ -324,12 +332,12 @@ class mf:
 				self.calc_jw = calc_iso_s2_jw
 				self.calc_jw_comps = calc_iso_s2_jw_comps
 				self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
-			elif self.data.te_index != None:
+			elif self.data.te_index != None and self.data.s2_index == None:
 				print "Invalid model, you cannot have te as a parameter without S2 existing as well."
 				return 0
 			else:
-				print "Invalid combination of parameters for the original model-free equation."
-				return 0
+				self.calc_jw = calc_iso_jw
+				self.calc_jw_comps = calc_iso_jw_comps
 
 		# The extended model-free equations.
 		elif match('mf_ext', self.equation):

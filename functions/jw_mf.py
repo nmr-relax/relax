@@ -44,12 +44,37 @@ def create_jw_struct(data, calc_jw):
 		data.jw[i, 4] = calc_jw(i, 4, data)
 
 
+def calc_iso_jw(i, frq_index, data):
+	"""Calculate the isotropic spectral density value for the original model-free formula with no parameters.
+
+	The formula is:
+
+		         2 /      tm       \ 
+		J(w)  =  - | ------------- |
+		         5 \ 1 + (w.tm)**2 /
+
+	"""
+
+	return 0.4 * (data.diff_params[0] / (1.0 + data.omega_tm_sqrd[i, frq_index]))
+
+
+def calc_iso_jw_comps(data):
+	"Calculate some data used in the calculation of values, gradients, and hessians."
+
+	data.tm_sqrd = data.diff_params[0] ** 2
+
+	data.omega_tm_sqrd = zeros((data.num_frq, 5), Float64)
+	for i in range(data.num_frq):
+		for frq_index in range(5):
+			data.omega_tm_sqrd[i, frq_index] = data.frq_sqrd_list[i][frq_index] * data.tm_sqrd
+
+
 def calc_iso_s2_jw(i, frq_index, data):
 	"""Calculate the isotropic spectral density value for the original model-free formula with the single parameter S2.
 
 	The formula is:
 
-		         2 /    S2 . tm    \ 
+		         2 /    S2 . tm    \ 7.77052445e-01
 		J(w)  =  - | ------------- |
 		         5 \ 1 + (w.tm)**2 /
 

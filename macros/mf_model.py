@@ -80,6 +80,7 @@ class mf_model(generic_functions):
 			'm6'	=> [S2f, tf, S2s, ts]
 			'm7'	=> [S2f, S2s, ts, Rex]
 			'm8'	=> [S2f, tf, S2s, ts, Rex]
+			'm9'	=> [Rex]
 
 			'm10'	=> [CSA]
 			'm11'	=> [CSA, S2]
@@ -90,6 +91,7 @@ class mf_model(generic_functions):
 			'm16'	=> [CSA, S2f, tf, S2s, ts]
 			'm17'	=> [CSA, S2f, S2s, ts, Rex]
 			'm18'	=> [CSA, S2f, tf, S2s, ts, Rex]
+			'm19'	=> [CSA, Rex]
 
 			'm20'	=> [Bond length]
 			'm21'	=> [Bond length, S2]
@@ -100,6 +102,7 @@ class mf_model(generic_functions):
 			'm26'	=> [Bond length, S2f, tf, S2s, ts]
 			'm27'	=> [Bond length, S2f, S2s, ts, Rex]
 			'm28'	=> [Bond length, S2f, tf, S2s, ts, Rex]
+			'm29'	=> [Bond length, CSA, Rex]
 
 			'm30'	=> [Bond length, CSA]
 			'm31'	=> [Bond length, CSA, S2]
@@ -110,6 +113,7 @@ class mf_model(generic_functions):
 			'm36'	=> [Bond length, CSA, S2f, tf, S2s, ts]
 			'm37'	=> [Bond length, CSA, S2f, S2s, ts, Rex]
 			'm38'	=> [Bond length, CSA, S2f, tf, S2s, ts, Rex]
+			'm39'	=> [Bond length, CSA, Rex]
 
 
 		"""
@@ -145,6 +149,9 @@ class mf_model(generic_functions):
 		elif model == 'm8':
 			self.equation = 'mf_ext'
 			self.types = ['S2f', 'tf', 'S2s', 'ts', 'Rex']
+		elif model == 'm9':
+			self.equation = 'mf_orig'
+			self.types = ['Rex']
 
 		# Block 2.
 		elif model == 'm10':
@@ -174,6 +181,9 @@ class mf_model(generic_functions):
 		elif model == 'm18':
 			self.equation = 'mf_ext'
 			self.types = ['CSA', 'S2f', 'tf', 'S2s', 'ts', 'Rex']
+		elif model == 'm19':
+			self.equation = 'mf_orig'
+			self.types = ['CSA', 'Rex']
 
 		# Block 3.
 		elif model == 'm20':
@@ -203,6 +213,9 @@ class mf_model(generic_functions):
 		elif model == 'm28':
 			self.equation = 'mf_ext'
 			self.types = ['Bond length', 'S2f', 'tf', 'S2s', 'ts', 'Rex']
+		elif model == 'm29':
+			self.equation = 'mf_orig'
+			self.types = ['Bond length', 'Rex']
 
 		# Block 4.
 		elif model == 'm30':
@@ -232,6 +245,9 @@ class mf_model(generic_functions):
 		elif model == 'm38':
 			self.equation = 'mf_ext'
 			self.types = ['Bond length', 'CSA', 'S2f', 'tf', 'S2s', 'ts', 'Rex']
+		elif model == 'm39':
+			self.equation = 'mf_orig'
+			self.types = ['Bond length', 'CSA', 'Rex']
 
 		# Invalid models.
 		else:

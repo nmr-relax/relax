@@ -1,40 +1,66 @@
-#	Component formulae
-#	~~~~~~~~~~~~~~~~~~
 #
-#		Dipolar constant
-#		~~~~~~~~~~~~~~~~
-#			                   1   / mu0  \ 2  (gH.gN.h_bar)**2
-#			dip_const_func  =  - . | ---- |  . ----------------
-#			                   4   \ 4.pi /         <r**6>
+# Constant formulae
+# ~~~~~~~~~~~~~~~~~
 #
-#
-#			                     3   / mu0  \ 2  (gH.gN.h_bar)**2
-#			dip_const_grad  =  - - . | ---- |  . ----------------
-#			                     2   \ 4.pi /         <r**7>
+#	Dipolar constants
+#	~~~~~~~~~~~~~~~~~
+#		                   1   / mu0  \ 2  (gH.gN.h_bar)**2
+#		dip_const_func  =  - . | ---- |  . ----------------
+#		                   4   \ 4.pi /         <r**6>
 #
 #
-#			                   21   / mu0  \ 2  (gH.gN.h_bar)**2
-#			dip_const_hess  =  -- . | ---- |  . ----------------
-#			                   2    \ 4.pi /         <r**8>
+#		                     3   / mu0  \ 2  (gH.gN.h_bar)**2
+#		dip_const_grad  =  - - . | ---- |  . ----------------
+#		                     2   \ 4.pi /         <r**7>
 #
 #
-#		CSA constant
-#		~~~~~~~~~~~~
-#			                   (wN.csa)**2
-#			csa_const_func  =  -----------
-#			                        3
-#
-#			                   2.wN**2.csa
-#			csa_const_grad  =  -----------
-#			                        3
-#
-#			                   2.wN**2
-#			csa_const_hess  =  -------
-#			                      3
+#		                   21   / mu0  \ 2  (gH.gN.h_bar)**2
+#		dip_const_hess  =  -- . | ---- |  . ----------------
+#		                   2    \ 4.pi /         <r**8>
 #
 #
-#		R1()
-#		~~~~
+#	CSA constants
+#	~~~~~~~~~~~~~
+#		                   (wN.csa)**2
+#		csa_const_func  =  -----------
+#		                        3
+#
+#		                   2.wN**2.csa
+#		csa_const_grad  =  -----------
+#		                        3
+#
+#		                   2.wN**2
+#		csa_const_hess  =  -------
+#		                      3
+#
+#	Rex constants
+#	~~~~~~~~~~~~~
+#		rex_const_func  =  rhoex * wH**2
+#
+#		rex_const_grad  =  wH**2
+#
+#		rex_const_hess  =  0
+#
+#
+# Component formulae
+# ~~~~~~~~~~~~~~~~~~
+#
+#	R1 components
+#	~~~~~~~~~~~~~
+#
+#		Dipolar components
+#		~~~~~~~~~~~~~~~~~~
+#
+#			dip_R1_func     =  dip_const_func
+#
+#			dip_R1_grad     =  dip_const_grad
+#
+#			dip_R1_hess     =  dip_const_hess
+#
+#
+#		Dipolar spectral density components
+#		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 #			dip_Jw_R1_func  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
 #
 #			                   dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
@@ -46,19 +72,56 @@
 #			                   dJwi.dJwj          dJwi.dJwj         dJwi.dJwj
 #
 #
+#		CSA components
+#		~~~~~~~~~~~~~~
+#
+#			csa_R1_func     =  csa_const_func
+#
+#			csa_R1_grad     =  csa_const_grad
+#
+#			csa_R1_hess     =  csa_const_hess
+#
+#
+#		CSA spectral density components
+#		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 #			csa_Jw_R1_func  =  J(wN)
 #
 #			                   dJ(wN)
 #			csa_Jw_R1_grad  =  ------
 #			                    dJw
 #
-#			                   d2J(wN)
-#			csa_Jw_R1_hess  =  -------
+#			                    d2J(wN)
+#			csa_Jw_R1_hess  =  ---------
 #			                   dJwi.dJwj
 #
 #
-#		R2()
-#		~~~~
+#		Rex components
+#		~~~~~~~~~~~~~~
+#
+#			rex_R1_func     =  0
+#
+#			rex_R1_grad     =  0
+#
+#			rex_R1_hess     =  0
+#
+#
+#	R2 components
+#	~~~~~~~~~~~~~
+#
+#		Dipolar components
+#		~~~~~~~~~~~~~~~~~~
+#
+#			dip_R2_func     =  dip_const_func / 2
+#
+#			dip_R2_grad     =  dip_const_grad / 2
+#
+#			dip_R2_hess     =  dip_const_hess / 2
+#
+#
+#		Dipolar spectral density components
+#		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 #			dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
 #
 #			                       dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
@@ -69,6 +132,19 @@
 #			dip_Jw_R2_hess  =  4 . ---------  +  ----------  +  3 . ---------  +  6 . ---------  +  6 . ----------
 #			                       dJwi.dJwj     dJwi.dJwj          dJwi.dJwj         dJwi.dJwj         dJwi.dJwj
 #
+#
+#		CSA components
+#		~~~~~~~~~~~~~~
+#
+#			csa_R2_func     =  csa_const_func / 6
+#
+#			csa_R2_grad     =  csa_const_grad / 6
+#
+#			csa_R2_hess     =  csa_const_hess / 6
+#
+#
+#		CSA spectral density components
+#		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 #			csa_Jw_R2_func  =  4J(0) + 3J(wN)
 #
@@ -81,8 +157,32 @@
 #			                       dJwi.dJwj         dJwi.dJwj
 #
 #
-#		sigma_noe()
-#		~~~~~~~~~~~
+#		Rex components
+#		~~~~~~~~~~~~~~
+#
+#			rex_R2_func     =  rex_const_func
+#
+#			rex_R2_grad     =  rex_const_grad
+#
+#			rex_R2_hess     =  0
+#
+#
+#	sigma_noe components
+#	~~~~~~~~~~~~~~~~~~~~
+#
+#		Dipolar components
+#		~~~~~~~~~~~~~~~~~~
+#
+#			dip_sigma_noe_func      =  dip_const_func
+#
+#			dip_sigma_noe_grad      =  dip_const_grad
+#
+#			dip_sigma_noe_hess      =  dip_const_hess
+#
+#
+#		Dipolar spectral density components
+#		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 #			dip_Jw_sigma_noe_func  =  6J(wH+wN) - J(wH-wN)
 #
 #			                              dJ(wH+wN)     dJ(wH-wN)
@@ -93,6 +193,38 @@
 #			dip_Jw_sigma_noe_hess  =  6 . ----------  -  ----------
 #			                              dJwi.dJwj      dJwi.dJwj
 #
+#
+#		CSA components
+#		~~~~~~~~~~~~~~
+#
+#			csa_sigma_noe_func      =  0
+#
+#			csa_sigma_noe_grad      =  0
+#
+#			csa_sigma_noe_hess      =  0
+#
+#
+#		CSA spectral density components
+#		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#			csa_Jw_sigma_noe_func   =  0
+#
+#			csa_Jw_sigma_noe_grad   =  0
+#
+#			csa_Jw_sigma_noe_hess   =  0
+#
+#
+#		Rex components
+#		~~~~~~~~~~~~~~
+#
+#			rex_sigma_noe_func      =  0
+#
+#			rex_sigma_noe_grad      =  0
+#
+#			rex_sigma_noe_hess      =  0
+#
+#
+###########################################################################################################################
 #
 #	Spectral density parameter - Spectral density parameter
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -224,15 +356,28 @@
 #		    dr**2
 #
 
+from math import pi
+from Numeric import Float64, zeros
 
 
-# The main functions, ri_comps, dri_comps, and d2ri_comps.
-##########################################################
+# The main functions for the calculation of the Ri components.
+##############################################################
+
+# These functions are duplicated many times for all combinations of Rex, bond length, and CSA as model parameters
+# to make the code more efficient.
 
 # Ri.
+def ri_comps(data=None, create_dip_jw_func=None, create_csa_jw_func=None, *other_funcs):
+	"""Calculate the ri function components.
 
-def ri_comps(data, create_dip_func, create_dip_jw_func, create_csa_func, create_csa_jw_func):
-	"Function for the calculation of the dipolar and CSA J(w) components."
+	Calculated:
+		Dipolar J(w) components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		Dipolar constant components.
+		CSA constant components.
+	"""
 
 	# Loop over the relaxation values.
 	for i in range(data.num_ri):
@@ -244,8 +389,44 @@ def ri_comps(data, create_dip_func, create_dip_jw_func, create_csa_func, create_
 			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
 
 
-def ri_comps_r(data, create_dip_func, create_dip_jw_func, create_csa_func, create_csa_jw_func):
-	"Function for the calculation of the dipolar constant components and the dipolar and CSA J(w) components."
+# Ri (Rex).
+def ri_comps_rex(data=None, create_dip_jw_func=None, create_csa_jw_func=None, create_rex_func=None, *other_funcs):
+	"""Calculate the ri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		Dipolar constant components.
+		CSA constant components.
+	"""
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_func[i]:
+			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_func[i](data.params, data.frq[data.remap_table[i]])
+
+
+# Ri (Bond length).
+def ri_comps_r(data=None, create_dip_func=None, create_dip_jw_func=None, create_csa_jw_func=None, *other_funcs):
+	"""Calculate the ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		CSA constant components.
+	"""
 
 	# Dipolar constant function value.
 	data.dip_const_func = comp_dip_const_func(data)
@@ -265,11 +446,22 @@ def ri_comps_r(data, create_dip_func, create_dip_jw_func, create_csa_func, creat
 			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
 
 
-def ri_comps_csa(data, create_dip_func, create_dip_jw_func, create_csa_func, create_csa_jw_func):
-	"Function for the calculation of the CSA constant components and the dipolar and CSA J(w) components."
+# Ri (CSA).
+def ri_comps_csa(data=None, create_dip_jw_func=None, create_csa_func=None, create_csa_jw_func=None, *other_funcs):
+	"""Calculate the ri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		Dipolar constant components.
+	"""
 
 	# CSA constant function value.
-	data.dip_const_func = comp_dip_const_func(data)
+	for i in range(data.num_frq):
+		data.csa_const_func[i] = comp_csa_const_func(data)
 
 	# Loop over the relaxation values.
 	for i in range(data.num_ri):
@@ -278,21 +470,32 @@ def ri_comps_csa(data, create_dip_func, create_dip_jw_func, create_csa_func, cre
 
 		# CSA constant components.
 		if create_csa_func[i]:
-			data.csa_comp_func[i] = create_csa_func[i](data.csa_const_func, data.remap_table[i])
+			data.csa_comp_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]], data.remap_table[i])
 
 		# CSA J(w) components.
 		if create_csa_jw_func[i]:
 			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
 
 
-def ri_comps_r_csa(data, create_dip_func, create_dip_jw_func, create_csa_func, create_csa_jw_func):
-	"Function for the calculation of the dipolar and CSA constant components and the dipolar and CSA J(w) components."
+# Ri (Bond length, CSA).
+def ri_comps_r_csa(data=None, create_dip_func=None, create_dip_jw_func=None, create_csa_func=None, create_csa_jw_func=None, *other_funcs):
+	"""Calculate the ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+	"""
 
 	# Dipolar constant function value.
 	data.dip_const_func = comp_dip_const_func(data)
 
 	# CSA constant function value.
-	data.dip_const_func = comp_dip_const_func(data)
+	for i in range(data.num_frq):
+		data.csa_const_func[i] = comp_csa_const_func(data)
 
 	# Loop over the relaxation values.
 	for i in range(data.num_ri):
@@ -306,62 +509,808 @@ def ri_comps_r_csa(data, create_dip_func, create_dip_jw_func, create_csa_func, c
 
 		# CSA constant components.
 		if create_csa_func[i]:
-			data.csa_comp_func[i] = create_csa_func[i](data.csa_const_func, data.remap_table[i])
+			data.csa_comp_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]], data.remap_table[i])
 
 		# CSA J(w) components.
 		if create_csa_jw_func[i]:
 			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+
+
+# Ri (Bond length, Rex).
+def ri_comps_r_rex(data=None, create_dip_func=None, create_dip_jw_func=None, create_csa_jw_func=None, create_rex_func=None, *other_funcs):
+	"""Calculate the ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		CSA constant components.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_func = comp_dip_const_func(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_func[i] = data.dip_const_func
+		if create_dip_func[i]:
+			data.dip_comp_func[i] = create_dip_func[i](data.dip_const_func)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_func[i]:
+			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_func[i](data.params, data.frq[data.remap_table[i]])
+
+
+# Ri (CSA, Rex).
+def ri_comps_csa_rex(data=None, create_dip_jw_func=None, create_csa_func=None, create_csa_jw_func=None, create_rex_func=None, *other_funcs):
+	"""Calculate the ri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		Dipolar constant components.
+	"""
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_func[i] = comp_csa_const_func(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_func[i]:
+			data.csa_comp_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_func[i]:
+			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_func[i](data.params, data.frq[data.remap_table[i]])
+
+
+# Ri (Bond length, CSA, Rex).
+def ri_comps_r_csa_rex(data=None, create_dip_func=None, create_dip_jw_func=None, create_csa_jw_func=None, create_rex_func=None):
+	"""Calculate the ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		None.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_func = comp_dip_const_func(data)
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_func[i] = comp_csa_const_func(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_func[i] = data.dip_const_func
+		if create_dip_func[i]:
+			data.dip_comp_func[i] = create_dip_func[i](data.dip_const_func)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_func[i] = create_dip_jw_func[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_func[i]:
+			data.csa_comp_func[i] = create_csa_func[i](data.csa_const_func[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_func[i]:
+			data.csa_jw_comps_func[i] = create_csa_jw_func[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_func[i](data.params, data.frq[data.remap_table[i]])
+
+
+
+
+# The main functions for the calculation of the dRi components.
+###############################################################
+
+# These functions are duplicated many times for all combinations of Rex, bond length, and CSA as model parameters
+# to make the code more efficient.
 
 
 # dRi.
+def dri_comps(data=None, create_dip_jw_grad=None, create_csa_jw_grad=None, *other_grads):
+	"""Calculate the dri function components.
 
-def dri_comps(data, create_dip_grad, create_dip_jw_grad, create_csa_grad, create_csa_jw_grad):
-	"Function for the calculation of the dipolar and CSA constant gradients and the dipolar and CSA J(w) component gradients."
-
-	# Dipolar constant gradients.
-	if dip_grad_flag:
-		data.dip_const_grad = comp_dip_const_grad(data)
-
-	# CSA constant gradients.
-	if csa_grad_flag:
-		data.dip_const_grad = comp_dip_const_grad(data)
+	Calculated:
+		Dipolar J(w) components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		Dipolar constant components.
+		CSA constant components.
+	"""
 
 	# Loop over the relaxation values.
 	for i in range(data.num_ri):
-		data.dip_comp_grad[i] = create_dip_grad[i](data)
-		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data, data.remap_table[i])
-		if create_csa_grad[i]:
-			data.csa_comp_grad[i] = create_csa_grad[i](data, data.remap_table[i])
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
 		if create_csa_jw_grad[i]:
-			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data, data.remap_table[i])
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+
+# dRi (Rex).
+def dri_comps_rex(data=None, create_dip_jw_grad=None, create_csa_jw_grad=None, create_rex_grad=None, *other_grads):
+	"""Calculate the dri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		Dipolar constant components.
+		CSA constant components.
+	"""
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_grad[i]:
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_grad[i](data.params, data.frq[data.remap_table[i]])
+
+
+# dRi (Bond length).
+def dri_comps_r(data=None, create_dip_grad=None, create_dip_jw_grad=None, create_csa_jw_grad=None, *other_grads):
+	"""Calculate the dri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		CSA constant components.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_grad = comp_dip_const_grad(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_grad[i] = data.dip_const_grad
+		if create_dip_grad[i]:
+			data.dip_comp_grad[i] = create_dip_grad[i](data.dip_const_grad)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_grad[i]:
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+
+# dRi (CSA).
+def dri_comps_csa(data=None, create_dip_jw_grad=None, create_csa_grad=None, create_csa_jw_grad=None, *other_grads):
+	"""Calculate the dri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		Dipolar constant components.
+	"""
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_grad[i] = comp_csa_const_grad(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_grad[i]:
+			data.csa_comp_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_grad[i]:
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+
+# dRi (Bond length, CSA).
+def dri_comps_r_csa(data=None, create_dip_grad=None, create_dip_jw_grad=None, create_csa_grad=None, create_csa_jw_grad=None, *other_grads):
+	"""Calculate the dri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_grad = comp_dip_const_grad(data)
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_grad[i] = comp_csa_const_grad(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_grad[i] = data.dip_const_grad
+		if create_dip_grad[i]:
+			data.dip_comp_grad[i] = create_dip_grad[i](data.dip_const_grad)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_grad[i]:
+			data.csa_comp_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_grad[i]:
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+
+# dRi (Bond length, Rex).
+def dri_comps_r_rex(data=None, create_dip_grad=None, create_dip_jw_grad=None, create_csa_jw_grad=None, create_rex_grad=None, *other_grads):
+	"""Calculate the dri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		CSA constant components.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_grad = comp_dip_const_grad(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_grad[i] = data.dip_const_grad
+		if create_dip_grad[i]:
+			data.dip_comp_grad[i] = create_dip_grad[i](data.dip_const_grad)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_grad[i]:
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_grad[i](data.params, data.frq[data.remap_table[i]])
+
+
+# dRi (CSA, Rex).
+def dri_comps_csa_rex(data=None, create_dip_jw_grad=None, create_csa_grad=None, create_csa_jw_grad=None, create_rex_grad=None, *other_grads):
+	"""Calculate the dri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		Dipolar constant components.
+	"""
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_grad[i] = comp_csa_const_grad(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_grad[i]:
+			data.csa_comp_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_grad[i]:
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_grad[i](data.params, data.frq[data.remap_table[i]])
+
+
+# dRi (Bond length, CSA, Rex).
+def dri_comps_r_csa_rex(data=None, create_dip_grad=None, create_dip_jw_grad=None, create_csa_jw_grad=None, create_rex_grad=None):
+	"""Calculate the dri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		None.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_grad = comp_dip_const_grad(data)
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_grad[i] = comp_csa_const_grad(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_grad[i] = data.dip_const_grad
+		if create_dip_grad[i]:
+			data.dip_comp_grad[i] = create_dip_grad[i](data.dip_const_grad)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_grad[i] = create_dip_jw_grad[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_grad[i]:
+			data.csa_comp_grad[i] = create_csa_grad[i](data.csa_const_grad[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_grad[i]:
+			data.csa_jw_comps_grad[i] = create_csa_jw_grad[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_grad[i](data.params, data.frq[data.remap_table[i]])
+
+
+
+
+# The main functions for the calculation of the d2Ri components.
+################################################################
+
+# These functions are duplicated many times for all combinations of Rex, bond length, and CSA as model parameters
+# to make the code more efficient.
 
 
 # d2Ri.
+def d2ri_comps(data=None, create_dip_jw_hess=None, create_csa_jw_hess=None, *other_hesss):
+	"""Calculate the d2ri function components.
 
-def d2ri_comps(data, create_dip_hess, create_dip_jw_hess, create_csa_hess, create_csa_jw_hess):
-	"Function for the calculation of the dipolar and CSA constant hessians and the dipolar and CSA J(w) component hessians."
-
-	# Dipolar constant hessian.
-	if dip_hess_flag:
-		data.dip_const_hess = comp_dip_const_hess(data)
-
-	# CSA constant hessian.
-	if csa_hess_flag:
-		data.dip_const_hess = comp_dip_const_hess(data)
+	Calculated:
+		Dipolar J(w) components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		Dipolar constant components.
+		CSA constant components.
+	"""
 
 	# Loop over the relaxation values.
 	for i in range(data.num_ri):
-		data.dip_comp_hess[i] = create_dip_hess[i](data)
-		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data, data.remap_table[i])
-		if create_csa_hess[i]:
-			data.csa_comp_hess[i] = create_csa_hess[i](data, data.remap_table[i])
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
 		if create_csa_jw_hess[i]:
-			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data, data.remap_table[i])
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+
+# d2Ri (Rex).
+def d2ri_comps_rex(data=None, create_dip_jw_hess=None, create_csa_jw_hess=None, create_rex_hess=None, *other_hesss):
+	"""Calculate the d2ri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		Dipolar constant components.
+		CSA constant components.
+	"""
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_hess[i]:
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_hess[i](data.params, data.frq[data.remap_table[i]])
+
+
+# d2Ri (Bond length).
+def d2ri_comps_r(data=None, create_dip_hess=None, create_dip_jw_hess=None, create_csa_jw_hess=None, *other_hesss):
+	"""Calculate the d2ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		CSA constant components.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_hess = comp_dip_const_hess(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_hess[i] = data.dip_const_hess
+		if create_dip_hess[i]:
+			data.dip_comp_hess[i] = create_dip_hess[i](data.dip_const_hess)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_hess[i]:
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+
+# d2Ri (CSA).
+def d2ri_comps_csa(data=None, create_dip_jw_hess=None, create_csa_hess=None, create_csa_jw_hess=None, *other_hesss):
+	"""Calculate the d2ri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+		Dipolar constant components.
+	"""
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_hess[i] = comp_csa_const_hess(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_hess[i]:
+			data.csa_comp_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_hess[i]:
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+
+# d2Ri (Bond length, CSA).
+def d2ri_comps_r_csa(data=None, create_dip_hess=None, create_dip_jw_hess=None, create_csa_hess=None, create_csa_jw_hess=None, *other_hesss):
+	"""Calculate the d2ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+	Pre-calculated:
+		Rex constant components.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_hess = comp_dip_const_hess(data)
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_hess[i] = comp_csa_const_hess(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_hess[i] = data.dip_const_hess
+		if create_dip_hess[i]:
+			data.dip_comp_hess[i] = create_dip_hess[i](data.dip_const_hess)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_hess[i]:
+			data.csa_comp_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_hess[i]:
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+
+# d2Ri (Bond length, Rex).
+def d2ri_comps_r_rex(data=None, create_dip_hess=None, create_dip_jw_hess=None, create_csa_jw_hess=None, create_rex_hess=None, *other_hesss):
+	"""Calculate the d2ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		CSA constant components.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_hess = comp_dip_const_hess(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_hess[i] = data.dip_const_hess
+		if create_dip_hess[i]:
+			data.dip_comp_hess[i] = create_dip_hess[i](data.dip_const_hess)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_hess[i]:
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_hess[i](data.params, data.frq[data.remap_table[i]])
+
+
+# d2Ri (CSA, Rex).
+def d2ri_comps_csa_rex(data=None, create_dip_jw_hess=None, create_csa_hess=None, create_csa_jw_hess=None, create_rex_hess=None, *other_hesss):
+	"""Calculate the d2ri function components.
+
+	Calculated:
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		Dipolar constant components.
+	"""
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_hess[i] = comp_csa_const_hess(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_hess[i]:
+			data.csa_comp_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_hess[i]:
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_hess[i](data.params, data.frq[data.remap_table[i]])
+
+
+# d2Ri (Bond length, CSA, Rex).
+def d2ri_comps_r_csa_rex(data=None, create_dip_hess=None, create_dip_jw_hess=None, create_csa_jw_hess=None, create_rex_hess=None):
+	"""Calculate the d2ri function components.
+
+	Calculated:
+		Dipolar constant components.
+		Dipolar J(w) components.
+		CSA constant components.
+		CSA J(w) components.
+		Rex constant components.
+	Pre-calculated:
+		None.
+	"""
+
+	# Dipolar constant function value.
+	data.dip_const_hess = comp_dip_const_hess(data)
+
+	# CSA constant function value.
+	for i in range(data.num_frq):
+		data.csa_const_hess[i] = comp_csa_const_hess(data)
+
+	# Loop over the relaxation values.
+	for i in range(data.num_ri):
+		# Dipolar constant components.
+		data.dip_comp_hess[i] = data.dip_const_hess
+		if create_dip_hess[i]:
+			data.dip_comp_hess[i] = create_dip_hess[i](data.dip_const_hess)
+
+		# Dipolar J(w) components
+		data.dip_jw_comps_hess[i] = create_dip_jw_hess[i](data.jw, data.remap_table[i])
+
+		# CSA constant components.
+		if create_csa_hess[i]:
+			data.csa_comp_hess[i] = create_csa_hess[i](data.csa_const_hess[data.remap_table[i]], data.remap_table[i])
+
+		# CSA J(w) components.
+		if create_csa_jw_hess[i]:
+			data.csa_jw_comps_hess[i] = create_csa_jw_hess[i](data.jw, data.remap_table[i])
+
+		# Rex components
+		data.rex_comps[i] = create_rex_hess[i](data.params, data.frq[data.remap_table[i]])
 
 
 
-#  CSA constant components.
-###########################
+# Functions to calculate the invariant part of the dipolar and CSA constants.
+#############################################################################
+
+
+# Dipolar.
+def calc_fixed_dip(data):
+	"""Calculate the fixed component of the dipolar constant.
+
+	            1   / mu0  \ 2
+	d_fixed  =  - . | ---- |  . (gH.gN.h_bar)**2
+	            4   \ 4.pi /
+
+	"""
+
+	data.dip_fixed = ((data.mu0 / (4.0*pi)) * data.h_bar * data.gh * data.gx) ** 2
+
+
+# CSA.
+def calc_fixed_csa(data):
+	"""Calculate the fixed component of the CSA constants.
+
+	            wN**2
+	c_fixed  =  -----
+	              3
+
+	"""
+
+	data.csa_fixed = zeros(data.num_frq, Float64)
+	for i in range(data.num_frq):
+		data.csa_fixed[i] = data.frq_sqrd_list[i, 1] / 3.0
+
+
+
+# Functions to calculate the dipolar constant values, gradients, and hessians.
+##############################################################################
+
+
+# Function.
+def comp_dip_const_func(data):
+	"""Calculate the dipolar constant.
+
+	Dipolar constant
+	~~~~~~~~~~~~~~~~
+
+		      1   / mu0  \ 2  (gH.gN.h_bar)**2
+		d  =  - . | ---- |  . ----------------
+		      4   \ 4.pi /         <r**6>
+
+	"""
+
+	data.dipole_const = 0.25 * data.dip_fixed * data.bond_length**-6
+
+
+# Gradient.
+def comp_dip_const_grad(data):
+	"""Calculate the derivative of the dipolar constant.
+
+	Dipolar constant prime
+	~~~~~~~~~~~~~~~~~~~~~~
+
+		         3   / mu0  \ 2  (gH.gN.h_bar)**2
+		d'  =  - - . | ---- |  . ----------------
+		         2   \ 4.pi /         <r**7>
+
+	"""
+
+	return -1.5 * data.dip_fixed * data.bond_length**-7
+
+
+# Hessian.
+def comp_dip_const_hess(data):
+	"""Calculate the second derivative of the dipolar constant.
+
+	Dipolar constant hessian
+	~~~~~~~~~~~~~~~~~~~~~~~~
+
+		       21   / mu0  \ 2  (gH.gN.h_bar)**2
+		d"  =  -- . | ---- |  . ----------------
+		       2    \ 4.pi /         <r**8>
+
+	"""
+
+	return 10.5 * data.dip_fixed * data.bond_length**-8
+
+
+# Functions to calculate the CSA constant values, gradients, and hessians.
+##############################################################################
+
+
+# Function.
+def comp_csa_const_func(data):
+	"""Calculate the CSA constant.
+
+	CSA constant
+	~~~~~~~~~~~~
+
+		      (wN.csa)**2
+		c  =  -----------
+		           3
+
+	"""
+
+	for i in range(data.num_frq):
+		data.csa_const[i] = data.csa_fixed[i] * data.csa**2
+
+
+# Gradient.
+def comp_csa_const_grad(data):
+	"""Calculate the derivative of the CSA constant.
+
+	CSA constant prime
+	~~~~~~~~~~~~~~~~~~
+
+		       2.wN**2.csa
+		c'  =  -----------
+		            3
+
+	"""
+
+	for i in range(data.num_frq):
+		data.csa_grad[i] = 2.0 * data.csa_fixed[i] * data.csa
+
+
+# Hessian.
+def comp_csa_const_hess(data):
+	"""Calculate the second derivative of the CSA constant.
+
+	CSA constant double prime
+	~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		       2.wN**2
+		c"  =  -------
+		          3
+
+	"""
+
+	for i in range(data.num_frq):
+		data.csa_hess[i] = 2.0 * data.csa_fixed[i]
+
+
+
+# CSA constant components.
+##########################
 
 # Sigma NOE has no CSA components!
 

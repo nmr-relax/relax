@@ -63,6 +63,13 @@ class bfgs(generic_line_search, generic_minimise):
 
 		self.pk = -matrixmultiply(self.d2fk, self.dfk)
 
+		# Take a steepest descent step if self.pk is not a descent dir.
+		if dot(self.dfk, self.pk) >= 0.0:
+			print "Step: " + `self.k` + ".  Switching to a steepest descent step to avoid an ascent direction."
+			#print "dfk: " + `self.dfk`
+			#print "d2fk: " + `self.d2fk`
+			self.pk = -self.dfk
+
 
 	def update_data(self):
 		"Function to update the function value, gradient vector, and the BFGS matrix"
