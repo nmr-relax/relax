@@ -4,7 +4,7 @@ from Numeric import Float64, zeros
 from generic import Min
 
 
-def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix=""):
+def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0, print_prefix=""):
 	"""Levenberg-Marquardt minimimisation.
 
 	Function options
@@ -35,19 +35,20 @@ def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None
 		print print_prefix
 		print print_prefix + "Levenberg-Marquardt minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	min = Levenberg_marquardt(chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix)
+	min = Levenberg_marquardt(chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, grad_tol, maxiter, full_output, print_flag, print_prefix)
 	results = min.minimise()
 	return results
 
 
 class Levenberg_marquardt(Min):
-	def __init__(self, chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix):
+	def __init__(self, chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, grad_tol, maxiter, full_output, print_flag, print_prefix):
 		"""Class for Levenberg-Marquardt minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function
 		'levenberg_marquardt' rather than using this class.
 		"""
 
+		# Function arguments.
 		self.chi2_func = chi2_func
 		self.dchi2_func = dchi2_func
 		self.dfunc = dfunc
@@ -55,6 +56,7 @@ class Levenberg_marquardt(Min):
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
@@ -67,6 +69,11 @@ class Levenberg_marquardt(Min):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Set the convergence test function.
+		self.setup_conv_tests()
+		self.orig_conv_test = self.conv_test
+		self.conv_test = self.test_mod
 
 
 	def create_lm_matrix(self):
@@ -124,6 +131,7 @@ class Levenberg_marquardt(Min):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.chi2_func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk_new,)+self.args), self.g_count + 1
 		if self.fk_new <= self.fk:
 			if self.l >= 1e-99:
 				self.l = self.l * 0.1
@@ -152,13 +160,16 @@ class Levenberg_marquardt(Min):
 		self.n = len(self.xk)
 
 
-	def tests(self):
-		"Levenberg-Marquardt convergence test."
+	def test_mod(self, fk_new, fk, dfk_new):
+		"""Modified convergence test.
 
-		# Finish minimising when the chi-squared difference is insignificant.
-		if abs(self.fk - self.fk_new) < self.func_tol and self.move_flag:
-			return 1
-		return 0
+		This is needed to prevent the Levenberg-Marquardt minimiser from terminating if
+		there is no movement during an iteration due to an uphill step being encountered.
+		"""
+
+		if self.move_flag:
+			if self.orig_conv_test(fk_new, fk, dfk_new):
+				return 1
 
 
 	def update(self):
@@ -166,5 +177,5 @@ class Levenberg_marquardt(Min):
 
 		self.xk = self.xk_new * 1.0
 		self.fk = self.fk_new
-		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
+		self.dfk = self.dfk_new * 1.0
 		self.df = self.dfunc()

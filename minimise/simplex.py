@@ -3,7 +3,7 @@ from Numeric import Float64, add, argsort, average, take, zeros
 from generic import Min
 
 
-def simplex(func, args=(), x0=None, func_tol=1e-5, maxiter=None, full_output=0, print_flag=0, print_prefix=""):
+def simplex(func=None, args=(), x0=None, func_tol=1e-25, maxiter=1e6, full_output=0, print_flag=0, print_prefix=""):
 	"""Downhill simplex minimisation.
 
 	"""
@@ -27,6 +27,7 @@ class Simplex(Min):
 		than using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.args = args
 		self.xk = x0
@@ -74,6 +75,7 @@ class Simplex(Min):
 
 		self.xk_new = self.simplex[0]
 		self.fk_new = self.simplex_vals[0]
+		self.dfk_new = None
 
 
 	def contract(self):
@@ -136,7 +138,7 @@ class Simplex(Min):
 		self.simplex = zeros((self.m, self.n), Float64)
 		self.simplex_vals = zeros(self.m, Float64)
 
-		self.simplex[0] = self.xk
+		self.simplex[0] = self.xk * 1.0
 		self.simplex_vals[0], self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 
 		for i in range(self.n):
@@ -152,7 +154,7 @@ class Simplex(Min):
 		self.order_simplex()
 
 		# Set xk and fk as the vertex of the simplex with the lowest function value.
-		self.xk = self.simplex[0]
+		self.xk = self.simplex[0] * 1.0
 		self.fk = self.simplex_vals[0]
 
 
@@ -165,7 +167,7 @@ class Simplex(Min):
 			self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
 
 
-	def tests(self):
+	def conv_test(self, *args):
 		"""Convergence test.
 
 		Finish minimising when the function difference between the highest and lowest
@@ -174,5 +176,13 @@ class Simplex(Min):
 
 		if self.print_flag >= 2:
 			print self.print_prefix + "diff = " + `self.simplex_vals[-1] - self.simplex_vals[0]`
-		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
+		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) <= self.func_tol:
+			if self.print_flag >= 2:
+				print "\n" + self.print_prefix + "Function tolerance reached."
+				print self.print_prefix + "simplex_vals[-1]: " + `self.simplex_vals[-1]`
+				print self.print_prefix + "simplex_vals[0]:  " + `self.simplex_vals[0]`
+				print self.print_prefix + "|diff|:           " + `abs(self.simplex_vals[-1] - self.simplex_vals[0])`
+				print self.print_prefix + "tol:              " + `self.func_tol`
+			self.xk_new = self.simplex[0]
+			self.fk_new = self.simplex_vals[0]
 			return 1

@@ -5,10 +5,10 @@ from newton import Newton
 from generic import Min, Trust_region
 
 
-def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
+def steihaug(func=None, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2, full_output=0, print_flag=0, print_prefix=""):
 	"""Steihaug conjugate-gradient trust region algorithm.
 
-	Page 75 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Page 75 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
 
 	The CG-Steihaug algorithm is:
 
@@ -40,30 +40,31 @@ def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, max
 		print print_prefix
 		print print_prefix + "CG-Steihaug minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~"
-	min = Steihaug(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, epsilon, delta_max, delta0, eta)
+	min = Steihaug(func, dfunc, d2func, args, x0, func_tol, grad_tol, maxiter, epsilon, delta_max, delta0, eta, full_output, print_flag, print_prefix)
 	results = min.minimise()
 	return results
 
 
 class Steihaug(Min, Trust_region, Newton):
-	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, epsilon, delta_max, delta0, eta):
+	def __init__(self, func, dfunc, d2func, args, x0, func_tol, grad_tol, maxiter, epsilon, delta_max, delta0, eta, full_output, print_flag, print_prefix):
 		"""Class for Steihaug conjugate-gradient trust region minimisation specific functions."
 
 		Unless you know what you are doing, you should call the function 'steihaug' rather
 		than using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
 		self.print_prefix = print_prefix
-
 		self.epsilon = epsilon
 		self.delta_max = delta_max
 		self.delta = delta0
@@ -76,6 +77,9 @@ class Steihaug(Min, Trust_region, Newton):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Set the convergence test function.
+		self.setup_conv_tests()
 
 
 	def get_pk(self):
@@ -175,6 +179,7 @@ class Steihaug(Min, Trust_region, Newton):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 
 	def setup(self):

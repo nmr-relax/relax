@@ -7,10 +7,10 @@ from newton import Newton
 from generic import Trust_region, Min
 
 
-def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16):
+def dogleg(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-25, grad_tol=None, maxiter=1e6, delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16, full_output=0, print_flag=0, print_prefix=""):
 	"""Dogleg trust region algorithm.
 
-	Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
 	The dogleg method is defined by the trajectory p(tau):
 
 		          / tau . pU			0 <= tau <= 1,
@@ -45,7 +45,7 @@ def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func
 		print print_prefix
 		print print_prefix + "Dogleg minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~"
-	min = Dogleg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta, mach_acc)
+	min = Dogleg(func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, delta_max, delta0, eta, mach_acc, full_output, print_flag, print_prefix)
 	if min.init_failure:
 		print print_prefix + "Initialisation of minimisation has failed."
 		return None
@@ -54,39 +54,36 @@ def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func
 
 
 class Dogleg(Trust_region, Min, Bfgs, Newton):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta, mach_acc):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, delta_max, delta0, eta, mach_acc, full_output, print_flag, print_prefix):
 		"""Class for Dogleg trust region minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'dogleg' rather
 		than using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
 		self.print_prefix = print_prefix
 		self.mach_acc = mach_acc
-
 		self.delta_max = delta_max
 		self.delta = delta0
 		self.eta = eta
 
-		# Minimisation options.
-		#######################
-
-		# Initialise.
+		# Initialisation failure flag.
 		self.init_failure = 0
 
-		# Hessian options.
-		if not self.hessian_type_and_mod(min_options):
-			self.init_failure = 1
-			return
+		# Setup the Hessian modification options and algorithm.
+		self.hessian_type_and_mod(min_options)
+		self.setup_hessian_mod()
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -100,8 +97,8 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 		self.n = len(self.xk)
 		self.I = identity(len(self.xk))
 
-		# Hessian modification function initialisation.
-		self.init_hessian_mod_funcs()
+		# Set the convergence test function.
+		self.setup_conv_tests()
 
 
 	def dogleg(self):
@@ -150,7 +147,6 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 		"BFGS Hessian update."
 
 		# BFGS matrix update.
-		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 		sk = self.xk_new - self.xk
 		yk = self.dfk_new - self.dfk
 		if dot(yk, sk) == 0:
@@ -184,6 +180,7 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 		self.pk = self.dogleg()
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 		if self.print_flag >= 2:
 			print self.print_prefix + "Fin."

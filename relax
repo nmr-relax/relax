@@ -51,7 +51,6 @@ sys.path[0] = '.'
 from usr_param import usr_param
 
 from model_selection.model_selection import model_selection
-from minimise.generic import minimise
 
 # Tests for installed packages.
 try:
@@ -76,7 +75,6 @@ class relax:
 		self.data = data()
 		self.file_ops = file_ops(self)
 		self.model_selection = model_selection(self)
-		self.minimise = minimise
 		self.model_free = model_free(self)
 
 		# Command line arguments.

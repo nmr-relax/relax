@@ -3,10 +3,10 @@ from Numeric import dot, sqrt
 from generic import Trust_region, Min
 
 
-def cauchy_point(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", delta_max=1e5, delta0=1.0, eta=0.2):
+def cauchy_point(func=None, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, delta_max=1e5, delta0=1.0, eta=0.2, full_output=0, print_flag=0, print_prefix=""):
 	"""Cauchy Point trust region algorithm.
 
-	Page 69 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Page 69 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
 	The Cauchy point is defined by:
 
 		                 delta
@@ -28,30 +28,31 @@ def cauchy_point(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5,
 		print print_prefix
 		print print_prefix + "Cauchy point minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~"
-	min = Cauchy_point(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta)
+	min = Cauchy_point(func, dfunc, d2func, args, x0, func_tol, grad_tol, maxiter, delta_max, delta0, eta, full_output, print_flag, print_prefix)
 	results = min.minimise()
 	return results
 
 
 class Cauchy_point(Trust_region, Min):
-	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta):
+	def __init__(self, func, dfunc, d2func, args, x0, func_tol, grad_tol, maxiter, delta_max, delta0, eta, full_output, print_flag, print_prefix):
 		"""Class for Cauchy Point trust region minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'cauchy_point'
 		rather than using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
 		self.print_prefix = print_prefix
-
 		self.delta_max = delta_max
 		self.delta = delta0
 		self.eta = eta
@@ -63,6 +64,9 @@ class Cauchy_point(Trust_region, Min):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Set the convergence test function.
+		self.setup_conv_tests()
 
 
 	def new_param_func(self):
@@ -88,6 +92,7 @@ class Cauchy_point(Trust_region, Min):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 
 	def setup(self):
@@ -109,5 +114,5 @@ class Cauchy_point(Trust_region, Min):
 
 		self.xk = self.xk_new * 1.0
 		self.fk = self.fk_new
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.dfk = self.dfk_new * 1.0
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1

@@ -3,6 +3,7 @@ from Numeric import Float64, array, zeros
 from re import match
 
 from functions.mf import mf
+from minimise.generic import generic_minimise
 
 
 class min:
@@ -162,8 +163,9 @@ class min:
 
 		# Setup values used in the main iterative loop.
 		self.min_algor = 'fixed'
-		self.func_tol = 0.0
-		self.max_iterations = 0
+		self.func_tol = None
+		self.grad_tol = None
+		self.max_iterations = None
 
 		# Main iterative loop.
 		self.main_loop()
@@ -338,8 +340,9 @@ class min:
 
 		# Setup values used in the main iterative loop.
 		self.min_algor = 'grid'
-		self.func_tol = 0.0
-		self.max_iterations = 0
+		self.func_tol = None
+		self.grad_tol = None
+		self.max_iterations = None
 
 		# Main iterative loop.
 		self.main_loop()
@@ -400,7 +403,7 @@ class min:
 					self.min_options = self.min_options + (self.mf.lm_dri, errors)
 
 			# Minimisation.
-			results = self.relax.minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.print_flag)
+			results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.print_flag)
 			if results == None:
 				return
 			self.params, self.func, iter, fc, gc, hc, self.warning = results
@@ -447,7 +450,7 @@ class min:
 		self.min_options = args[1:]
 
 		# Test for invalid keywords.
-		valid_keywords = ['model', 'func_tol', 'max_iterations', 'max_iter', 'constraints', 'print_flag']
+		valid_keywords = ['model', 'func_tol', 'grad_tol', 'max_iterations', 'max_iter', 'constraints', 'print_flag']
 		for key in keywords:
 			valid = 0
 			for valid_key in valid_keywords:
@@ -480,6 +483,13 @@ class min:
 		else:
 			self.func_tol = 1e-25
 
+		# The gradient tolerance value.
+		if keywords.has_key('grad_tol'):
+			self.grad_tol = keywords['grad_tol']
+		else:
+			self.grad_tol = None
+
+		# The gradient tolerance value.
 		# The maximum number of iterations.
 		if keywords.has_key('max_iterations'):
 			self.max_iterations = keywords['max_iterations']

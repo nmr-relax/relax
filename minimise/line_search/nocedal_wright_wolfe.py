@@ -7,7 +7,7 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 	"""A line search algorithm implemented using the strong Wolfe conditions.
 
 	Algorithm 3.2, page 59, from 'Numerical Optimization' by Jorge Nocedal and Stephen J.
-	Wright, 1999
+	Wright, 1999, 2nd ed.
 
 	Requires the gradient function.
 
@@ -134,7 +134,8 @@ def print_data(text, k, a):
 def zoom(func, func_prime, args, f_count, g_count, x, f, g, p, mu, eta, i, a0, a_lo, a_hi, tol, print_flag=0):
 	"""Find the minimum function value in the open interval (a_lo, a_hi)
 
-	Algorithm 3.3, page 60, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Algorithm 3.3, page 60, from 'Numerical Optimization' by Jorge Nocedal and Stephen J.
+	Wright, 1999, 2nd ed.
 	"""
 
 	# Initialize aj.

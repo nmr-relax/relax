@@ -3,7 +3,7 @@ from Numeric import dot
 from generic import Line_search, Min
 
 
-def steepest_descent(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", a0=1.0, mu=0.0001, eta=0.1):
+def steepest_descent(func=None, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.1, full_output=0, print_flag=0, print_prefix=""):
 	"""Steepest descent minimisation.
 
 	"""
@@ -14,7 +14,7 @@ def steepest_descent(func, dfunc=None, args=(), x0=None, min_options=None, func_
 		print print_prefix
 		print print_prefix + "Steepest descent minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	min = Steepest_descent(func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta)
+	min = Steepest_descent(func, dfunc, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, full_output, print_flag, print_prefix)
 	if min.init_failure:
 		print print_prefix + "Initialisation of minimisation has failed."
 		return None
@@ -23,33 +23,24 @@ def steepest_descent(func, dfunc=None, args=(), x0=None, min_options=None, func_
 
 
 class Steepest_descent(Line_search, Min):
-	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta):
+	def __init__(self, func, dfunc, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, full_output, print_flag, print_prefix):
 		"""Class for steepest descent minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'steepest_descent'
 		rather than using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
 		self.print_prefix = print_prefix
-
-		# Minimisation options.
-		#######################
-
-		# Initialise.
-		self.init_failure = 0
-
-		# Line search options.
-		if not self.line_search_option(min_options):
-			self.init_failure = 1
-			return
 
 		# Set a0.
 		self.a0 = a0
@@ -57,6 +48,13 @@ class Steepest_descent(Line_search, Min):
 		# Line search constants for the Wolfe conditions.
 		self.mu = mu
 		self.eta = eta
+
+		# Initialisation failure flag.
+		self.init_failure = 0
+
+		# Setup the line search options and algorithm.
+		self.line_search_options(min_options)
+		self.setup_line_search()
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -66,8 +64,8 @@ class Steepest_descent(Line_search, Min):
 		# Initialise the warning string.
 		self.warning = None
 
-		# Line search function initialisation.
-		self.init_line_functions()
+		# Set the convergence test function.
+		self.setup_conv_tests()
 
 
 	def new_param_func(self):
@@ -92,6 +90,7 @@ class Steepest_descent(Line_search, Min):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.alpha * self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 
 	def setup(self):
@@ -114,4 +113,4 @@ class Steepest_descent(Line_search, Min):
 		# Shift k+1 data to k.
 		self.xk = self.xk_new * 1.0
 		self.fk = self.fk_new
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.dfk = self.dfk_new * 1.0

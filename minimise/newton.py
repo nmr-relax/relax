@@ -5,7 +5,7 @@ from re import match
 from generic import Line_search, Min
 
 
-def newton(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
+def newton(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16, full_output=0, print_flag=0, print_prefix=""):
 	"""Newton minimisation.
 
 	"""
@@ -16,7 +16,7 @@ def newton(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func
 		print print_prefix
 		print print_prefix + "Newton minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~"
-	min = Newton(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta, mach_acc)
+	min = Newton(func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, mach_acc, full_output, print_flag, print_prefix)
 	if min.init_failure:
 		print print_prefix + "Initialisation of minimisation has failed."
 		return None
@@ -25,24 +25,26 @@ def newton(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func
 
 
 class Newton(Line_search, Min):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta, mach_acc):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, mach_acc, full_output, print_flag, print_prefix):
 		"""Class for Newton minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'newton' rather
 		than using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
+		self.mach_acc = mach_acc
 		self.full_output = full_output
 		self.print_flag = print_flag
 		self.print_prefix = print_prefix
-		self.mach_acc = mach_acc
 
 		# Set a0.
 		self.a0 = a0
@@ -51,13 +53,12 @@ class Newton(Line_search, Min):
 		self.mu = mu
 		self.eta = eta
 
-		# Minimisation options.
-		#######################
+		# Initialisation failure flag.
+		self.init_failure = 0
 
-		# Initialise.
+		# Setup the line search and hessian modification algorithms.
 		self.line_search_algor = None
 		self.hessian_mod = None
-		self.init_failure = 0
 
 		# Test if the options are a tuple.
 		if type(min_options) != tuple:
@@ -87,6 +88,10 @@ class Newton(Line_search, Min):
 		if self.hessian_mod == None:
 			self.hessian_mod = 'Chol'
 
+		# Line search and Hessian modification initialisation.
+		self.setup_line_search()
+		self.setup_hessian_mod()
+
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
@@ -99,20 +104,19 @@ class Newton(Line_search, Min):
 		self.n = len(self.xk)
 		self.I = identity(len(self.xk))
 
+		# Set the convergence test function.
+		self.setup_conv_tests()
+
 		# Set the setup and update functions.
 		self.setup = self.setup_newton
 		self.update = self.update_newton
-
-		# Line search and Hessian modification initialisation.
-		self.init_line_functions()
-		self.init_hessian_mod_funcs()
 
 
 	def cholesky(self, return_matrix=0):
 		"""Cholesky with added multiple of the identity.
 
 		Algorithm 6.3 from page 145 of 'Numerical Optimization' by Jorge Nocedal and Stephen
-		J. Wright, 1999.
+		J. Wright, 1999, 2nd ed.
 
 		Returns the modified Newton step.
 		"""
@@ -171,7 +175,7 @@ class Newton(Line_search, Min):
 		"""The eigenvalue Hessian modification.
 
 		This modification is based on equation 6.14 from page 144 of 'Numerical
-		Optimization' by Jorge Nocedal and Stephen J. Wright, 1999.
+		Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
 
 		Returns the modified Newton step.
 		"""
@@ -200,8 +204,8 @@ class Newton(Line_search, Min):
 	def gmw(self, return_matrix=0):
 		"""The Gill, Murray, and Wright modified Cholesky algorithm.
 
-		Algorithm 6.5 from page 148 of 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright,
-		1999.
+		Algorithm 6.5 from page 148 of 'Numerical Optimization' by Jorge Nocedal and
+		Stephen J. Wright, 1999, 2nd ed.
 
 		Returns the modified Newton step.
 		"""
@@ -295,7 +299,39 @@ class Newton(Line_search, Min):
 			return -solve_linear_equations(transpose(self.L), y)
 
 
-	def init_hessian_mod_funcs(self):
+	def new_param_func(self):
+		"""The new parameter function.
+
+		Find the search direction, do a line search, and get xk+1 and fk+1.
+		"""
+
+		# Calculate the Newton direction.
+		self.pk = self.get_pk()
+
+		# Line search.
+		self.line_search()
+
+		# Find the new parameter vector and function value at that point.
+		self.xk_new = self.xk + self.alpha * self.pk
+		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
+
+		# Debugging.
+		if self.print_flag >= 2:
+			print self.print_prefix + "pk:    " + `self.pk`
+			print self.print_prefix + "alpha: " + `self.alpha`
+			print self.print_prefix + "xk:    " + `self.xk`
+			print self.print_prefix + "xk+1:  " + `self.xk_new`
+			print self.print_prefix + "fk:    " + `self.fk`
+			print self.print_prefix + "fk+1:  " + `self.fk_new`
+			eigen = eigenvectors(self.d2fk)
+			print self.print_prefix + "B:"
+			for i in range(self.n):
+				print self.print_prefix + `self.d2fk[i]`
+			print self.print_prefix + "Eigenvalues: " + `eigen[0]`
+
+
+	def setup_hessian_mod(self):
 		"Initialise the Hessian modification functions."
 
 		if self.hessian_mod == None:
@@ -315,37 +351,6 @@ class Newton(Line_search, Min):
 			if self.print_flag:
 				print self.print_prefix + "Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm."
 			self.get_pk = self.gmw
-
-
-	def new_param_func(self):
-		"""The new parameter function.
-
-		Find the search direction, do a line search, and get xk+1 and fk+1.
-		"""
-
-		# Calculate the Newton direction.
-		self.pk = self.get_pk()
-
-		# Line search.
-		self.line_search()
-
-		# Find the new parameter vector and function value at that point.
-		self.xk_new = self.xk + self.alpha * self.pk
-		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
-
-		# Debugging.
-		if self.print_flag >= 2:
-			print self.print_prefix + "pk:    " + `self.pk`
-			print self.print_prefix + "alpha: " + `self.alpha`
-			print self.print_prefix + "xk:    " + `self.xk`
-			print self.print_prefix + "xk+1:  " + `self.xk_new`
-			print self.print_prefix + "fk:    " + `self.fk`
-			print self.print_prefix + "fk+1:  " + `self.fk_new`
-			eigen = eigenvectors(self.d2fk)
-			print self.print_prefix + "B:"
-			for i in range(self.n):
-				print self.print_prefix + `self.d2fk[i]`
-			print self.print_prefix + "Eigenvalues: " + `eigen[0]`
 
 
 	def setup_newton(self):
@@ -374,7 +379,7 @@ class Newton(Line_search, Min):
 
 		self.xk = self.xk_new * 1.0
 		self.fk = self.fk_new
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.dfk = self.dfk_new * 1.0
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
 
 

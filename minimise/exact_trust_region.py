@@ -7,7 +7,7 @@ from newton import Newton
 from generic import Min, Trust_region
 
 
-def exact_trust_region(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16):
+def exact_trust_region(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-25, grad_tol=None, maxiter=1e6, lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16, full_output=0, print_flag=0, print_prefix=""):
 	"""Exact trust region algorithm.
 
 	"""
@@ -18,7 +18,7 @@ def exact_trust_region(func, dfunc=None, d2func=None, args=(), x0=None, min_opti
 		print print_prefix
 		print print_prefix + "Exact trust region minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	min = Exact_trust_region(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, lambda0, delta_max, delta0, eta, mach_acc)
+	min = Exact_trust_region(func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, lambda0, delta_max, delta0, eta, mach_acc, full_output, print_flag, print_prefix)
 	if min.init_failure:
 		print print_prefix + "Initialisation of minimisation has failed."
 		return None
@@ -27,40 +27,37 @@ def exact_trust_region(func, dfunc=None, d2func=None, args=(), x0=None, min_opti
 
 
 class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, lambda0, delta_max, delta0, eta, mach_acc):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, lambda0, delta_max, delta0, eta, mach_acc, full_output, print_flag, print_prefix):
 		"""Class for Exact trust region minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function
 		'exact_trust_region' rather than using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
 		self.print_prefix = print_prefix
 		self.mach_acc = mach_acc
-
 		self.lambda0 = lambda0
 		self.delta_max = delta_max
 		self.delta = delta0
 		self.eta = eta
 
-		# Minimisation options.
-		#######################
-
-		# Initialise.
+		# Initialisation failure flag.
 		self.init_failure = 0
 
-		# Hessian options.
-		if not self.hessian_type_and_mod(min_options):
-			self.init_failure = 1
-			return
+		# Setup the Hessian modification options and algorithm.
+		self.hessian_type_and_mod(min_options)
+		self.setup_hessian_mod()
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -74,15 +71,15 @@ class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
 		self.n = len(self.xk)
 		self.I = identity(len(self.xk))
 
-		# Hessian modification function initialisation.
-		self.init_hessian_mod_funcs()
+		# Set the convergence test function.
+		self.setup_conv_tests()
 
 
 	def new_param_func(self):
 		"""Find the exact trust region solution.
 
 		Algorithm 4.4 from page 81 of 'Numerical Optimization' by Jorge Nocedal and
-		Stephen J. Wright, 1999.
+		Stephen J. Wright, 1999, 2nd ed.
 
 		This is only implemented for positive definite matrices.
 		"""
@@ -131,6 +128,7 @@ class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 
 	def old_param_func(self):
@@ -281,6 +279,7 @@ class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 
 	def safeguard(self, eigenvals):

@@ -3,7 +3,9 @@ from Numeric import dot
 def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4):
 	"""Backtracking line search.
 
-	Procedure 3.1, page 41, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Procedure 3.1, page 41, from 'Numerical Optimization' by Jorge Nocedal and Stephen J.
+	Wright, 1999, 2nd ed.
+
 	Requires the gradient vector at point xk.
 
 

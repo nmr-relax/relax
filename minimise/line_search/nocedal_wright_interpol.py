@@ -6,7 +6,9 @@ quadratic = quadratic_fafbga
 def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_flag=0):
 	"""A line search algorithm based on interpolation.
 
-	Pages 56-57, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Pages 56-57, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd
+	ed.
+
 	Requires the gradient function.
 
 

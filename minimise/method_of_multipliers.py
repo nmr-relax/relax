@@ -1,12 +1,12 @@
-from Numeric import Float64, outerproduct, zeros
+from Numeric import Float64, dot, outerproduct, sqrt, zeros
 from re import match
 
 #from bound_constraint import bound_constraint
 from constraint_linear import constraint_linear
-from generic import minimise
+from generic import Min, generic_minimise
 
 
-def method_of_multipliers(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, epsilon0=1e-10, gamma0=1e-10, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
 	"""The method of multipliers, also known as the augmented Lagrangian method.
 
 	Three types of inequality constraint are supported.  These are linear, bound, and general
@@ -86,7 +86,7 @@ def method_of_multipliers(func, dfunc=None, d2func=None, args=(), x0=None, min_o
 		print "\n"
 		print "Method of Multipliers"
 		print "~~~~~~~~~~~~~~~~~~~~~"
-	min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, func_tol, maxiter, full_output, print_flag)
+	min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
 	if min.init_failure:
 		print "Initialisation of minimisation has failed."
 		return None
@@ -95,8 +95,8 @@ def method_of_multipliers(func, dfunc=None, d2func=None, args=(), x0=None, min_o
 
 
 
-class Method_of_multipliers:
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, func_tol, maxiter, full_output, print_flag):
+class Method_of_multipliers(Min):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
 		"""Class for Newton minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function
@@ -109,7 +109,7 @@ class Method_of_multipliers:
 			self.b = b
 
 			# Remove this test code!!!!
-			mod = 5
+			mod = 4
 			# Model 4.
 			if mod == 4:
 				self.A = zeros((4, 3), Float64)
@@ -178,11 +178,11 @@ class Method_of_multipliers:
 
 		# Initial Lagrange multipliers.
 		if lambda0 == None:
-			self.lambda_k = self.lambda_k = zeros(self.m, Float64)
+			self.lambda_k = zeros(self.m, Float64)
 		else:
-			self.lambda_k = self.lambda_k = lambda0
+			self.lambda_k = lambda0
 
-		# Arguments.
+		# Function arguments.
 		self.args = args
 		self.func = func
 		self.dfunc = dfunc
@@ -190,15 +190,18 @@ class Method_of_multipliers:
 		self.xk = x0
 		self.mu = mu0
 		self.tau = tau0
+		self.epsilon = epsilon0
+		self.gamma = gamma0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
 
-		# Minimisation options.
-		#######################
+		# Set the print prefix to nothing.
+		self.print_prefix = ""
 
-		# Initialise.
+		# Initialisation failure flag.
 		self.init_failure = 0
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
@@ -213,6 +216,9 @@ class Method_of_multipliers:
 		self.test_str = zeros(self.m)
 		self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
 		self.L = apply(self.func_LA, (self.xk,)+self.args)
+
+		# Set the convergence test function.
+		self.setup_conv_tests()
 
 
 	def func_LA(self, *args):
@@ -250,20 +256,14 @@ class Method_of_multipliers:
 		"""
 
 		# Calculate the function and constraint gradients.
-		dfk = dL = apply(self.dfunc, (args[0],)+args[1:])
+		dfk = self.dL = apply(self.dfunc, (args[0],)+args[1:])
 		self.dck = apply(self.dc, (args[0],))
 
 		# Calculate the quadratic augmented Lagrangian gradient.
 		for i in range(self.m):
 			if self.test_str[i]:
-				dL = dL  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
-		if self.print_flag >= 3:
-			print "test_str: " + `self.test_str`
-			print "xk: " + `args[0]`
-			print "dfk: " + `dfk`
-			print "dL: " + `dL`
-			print "dfk == dL: " + `dfk == dL`
-		return dL
+				self.dL = self.dL  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
+		return self.dL
 
 
 	def func_d2LA(self, *args):
@@ -301,7 +301,8 @@ class Method_of_multipliers:
 	def minimise(self):
 		"""Method of multipliers algorithm.
 
-		Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+		Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999,
+		2nd ed.
 
 		The algorithm is:
 
@@ -331,17 +332,22 @@ class Method_of_multipliers:
 			if self.print_flag:
 				print "\n%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", self.k, "xk:", `self.xk`, "fk:", `self.fk`)
 				if self.print_flag >= 2:
-					print "aug Lagr value: " + `self.L`
-					print "function value: " + `self.fk`
-					print "ck: " + `self.ck`
-					print "Mu: " + `self.mu`
+					print "aug Lagr value:       " + `self.L`
+					print "function value:       " + `self.fk`
+					print "ck:                   " + `self.ck`
+					print "Mu:                   " + `self.mu`
+					print "epsilon:              " + `self.epsilon`
+					print "gamma:                " + `self.gamma`
 					print "Lagrange multipliers: " + `self.lambda_k`
-					print "Test structure: " + `self.test_str`
+					print "Test structure:       " + `self.test_str`
 				print "Entering subalgorithm."
+
+			# Calculate the augmented Lagrangian gradient tolerance.
+			self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
 			# Unconstrained minimisation sub-loop.
 			try:
-				results = minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.maxiter, full_output=1, print_flag=print_flag, print_prefix="\t")
+				results = generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.maxiter, full_output=1, print_flag=print_flag, print_prefix="\t")
 			except "LinearAlgebraError", message:
 				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
 				break
@@ -356,27 +362,21 @@ class Method_of_multipliers:
 				self.warning = message.args[0] + " (fatal minimisation error)."
 				break
 
+			# Unpack the results.
 			if results == None:
 				return
 			self.xk_new, self.L_new, j, f, g, h, temp = results
 			self.j = self.j + j
-			self.f_count = self.f_count + f
-			self.g_count = self.g_count + g
-			self.h_count = self.h_count + h
+			self.f_count, self.g_count, self.h_count = self.f_count + f, self.g_count + g, self.h_count + h
 			if self.warning != None:
 				break
 
 			# Convergence test.
-
-			# Test the function tolerance.
-			if abs(self.L_new - self.L) <= self.func_tol:
-				if self.print_flag:
-					print "\nConverged."
-					if self.print_flag >= 2:
-						print "L:          " + `self.L`
-						print "L+1:        " + `self.L_new`
-						print "|L+1 - L|:  " + `abs(self.L_new - self.L)`
-						print "tol:        " + `self.func_tol`
+			try:
+				self.dL
+			except AttributeError:
+				self.dL = apply(self.func_dLA, (self.xk_new,)+self.args)
+			if self.conv_test(self.L_new, self.L, self.dL):
 				break
 
 			# Lagrange multiplier update function.
@@ -385,8 +385,10 @@ class Method_of_multipliers:
 			for i in range(self.m):
 				self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i]/self.mu, 0.0)
 
-			# Update mu.
+			# Update mu, epsilon, and gamma.
 			self.mu = 0.1 * self.mu
+			self.epsilon = 1e-2 * self.epsilon
+			self.gamma = 1e-2 * self.gamma
 			if self.mu < 1e-99:
 				self.warning = "Mu too small."
 				break
@@ -417,10 +419,3 @@ class Method_of_multipliers:
 				return self.xk_new
 			except AttributeError:
 				return self.xk
-
-
-	def tests(self):
-		"""Default base class convergence test function.
-
-		Test if the minimum function tolerance between fk and fk+1 has been reached.
-		"""

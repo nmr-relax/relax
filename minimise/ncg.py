@@ -4,10 +4,10 @@ from Numeric import Float64, dot, matrixmultiply, sqrt, zeros
 from generic import Line_search, Min
 
 
-def ncg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", a0=1.0, mu=0.0001, eta=0.9):
+def ncg(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.9, full_output=0, print_flag=0, print_prefix=""):
 	"""Line search Newton conjugate gradient algorithm.
 
-	Page 140 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Page 140 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
 
 	The algorithm is:
 
@@ -27,7 +27,7 @@ def ncg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_
 		print print_prefix
 		print print_prefix + "Newton Conjugate Gradient minimisation"
 		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	min = Ncg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta)
+	min = Ncg(func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, full_output, print_flag, print_prefix)
 	if min.init_failure:
 		print print_prefix + "Initialisation of minimisation has failed."
 		return None
@@ -36,34 +36,25 @@ def ncg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_
 
 
 class Ncg(Line_search, Min):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, full_output, print_flag, print_prefix):
 		"""Class for newton conjugate gradient  minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'ncg' rather than
 		using this class.
 		"""
 
+		# Function arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
 		self.args = args
 		self.xk = x0
 		self.func_tol = func_tol
+		self.grad_tol = grad_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
 		self.print_prefix = print_prefix
-
-		# Minimisation options.
-		#######################
-
-		# Initialise.
-		self.init_failure = 0
-
-		# Minimisation options.
-		if not self.line_search_option(min_options):
-			self.init_failure = 1
-			return
 
 		# Set a0.
 		self.a0 = a0
@@ -71,6 +62,13 @@ class Ncg(Line_search, Min):
 		# Line search constants for the Wolfe conditions.
 		self.mu = mu
 		self.eta = eta
+
+		# Initialisation failure flag.
+		self.init_failure = 0
+
+		# Setup the line search options and algorithm.
+		self.line_search_options(min_options)
+		self.setup_line_search()
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -80,8 +78,8 @@ class Ncg(Line_search, Min):
 		# Initialise the warning string.
 		self.warning = None
 
-		# Line search function initialisation.
-		self.init_line_functions()
+		# Set the convergence test function.
+		self.setup_conv_tests()
 
 
 	def get_pk(self):
@@ -163,6 +161,7 @@ class Ncg(Line_search, Min):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.alpha * self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 
 	def setup(self):
@@ -181,5 +180,5 @@ class Ncg(Line_search, Min):
 
 		self.xk = self.xk_new * 1.0
 		self.fk = self.fk_new
-		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.dfk = self.dfk_new * 1.0
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
