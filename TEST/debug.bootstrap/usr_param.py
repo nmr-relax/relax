@@ -40,7 +40,7 @@ class usr_param:
 			must be known).
 		"""
 
-		self.method = 'Bootstrap'
+		self.method = 'BIC'
 
 		# The following three values are only used in Palmer's method and won't affect the others.
 		self.chi2_lim = 0.90      # Set the chi squared cutoff (1 - alpha critical value).
@@ -108,7 +108,7 @@ class usr_param:
 		self.const['nucleus'] = 'N15'
 		self.const['gamma']   = -2.710
 		self.const['rxh']     = 1.020
-		self.const['csa']     = -170.00
+		self.const['csa']     = -160.00
 
 		self.vector = {}
 		self.vector['atom1'] = 'N'

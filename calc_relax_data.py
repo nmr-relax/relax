@@ -8,7 +8,7 @@ class calc_relax_data:
 		self.mf = mf
 
 
-	def calc(self, model, types, mf_params):
+	def calc(self, tm, model, types, mf_params):
 		"""Main function for the calculation of all relaxation values.
 
 		The arguments are:
@@ -28,7 +28,7 @@ class calc_relax_data:
 		self.model = model
 		self.types = types
 		self.mf_params = mf_params
-		self.tm = float(self.mf.data.usr_param.tm['val'])*1e-9
+		self.tm = tm
 		self.rex = []
 
 		if match('m1', self.model):
@@ -140,7 +140,7 @@ class calc_relax_data:
 		r1 = self.calc_r1(frq)
 		if r1 == 0:
 			noe = 1e99
-		else
+		else:
 			noe = 1.0 + ( self.mf.data.dipole_const / r1 ) * ( self.mf.data.gh/self.mf.data.gn ) * ( 6.0*self.j[self.frq_num][4] - self.j[self.frq_num][2] )
 		return noe
 

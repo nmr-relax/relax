@@ -35,7 +35,7 @@ class asymptotic(common_operations):
 
 
 	def calc_crit(self, res, n, k, chisq):
-		"Calculate the criteria"
+		"Calculate the criteria."
 
 		sum_ln_err = 0.0
 		for i in range(len(self.mf.data.relax_data)):

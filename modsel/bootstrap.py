@@ -11,6 +11,7 @@
 #	Stage 3:  Extraction of the data.
 
 import sys
+from math import log, pi
 from re import match
 
 from common_ops import common_operations
@@ -30,8 +31,20 @@ class bootstrap(common_operations):
 
 
 	def calc_crit(self, res, model, file):
+		"Calculate the criteria."
+
+		sum_ln_err = 0.0
+		for i in range(len(self.mf.data.relax_data)):
+			if self.mf.data.relax_data[i][res][3] == 0:
+				ln_err = -99.0
+			else:
+				ln_err = log(float(self.mf.data.relax_data[i][res][3]))
+			sum_ln_err = sum_ln_err + ln_err
+
+
 		sum_chi2 = 0.0
 		num_sims = float(len(file))
+		n = len(self.mf.data.input_info)
 
 		#self.mf.log.write("\nCalculating bootstrap estimate for res " + `res` + ", model " + model + "\n\n")
 		#for set in range(len(self.mf.data.input_info)):
@@ -53,11 +66,11 @@ class bootstrap(common_operations):
 			types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 		for sim in range(len(file)):
 			if match('m1', model):
-				back_calc = self.mf.calc_relax_data.calc(model, types, [ file[sim][2] ])
+				back_calc = self.mf.calc_relax_data.calc(self.tm, model, types, [ file[sim][2] ])
 			elif match('m2', model) or match('m3', model):
-				back_calc = self.mf.calc_relax_data.calc(model, types, [ file[sim][2], file[sim][3] ])
+				back_calc = self.mf.calc_relax_data.calc(self.tm, model, types, [ file[sim][2], file[sim][3] ])
 			elif match('m4', model) or match('m5', model):
-				back_calc = self.mf.calc_relax_data.calc(model, types, [ file[sim][2], file[sim][3], file[sim][4] ])
+				back_calc = self.mf.calc_relax_data.calc(self.tm, model, types, [ file[sim][2], file[sim][3], file[sim][4] ])
 			chi2 = self.mf.calc_chi2.relax_data(real, real_err, back_calc)
 			sum_chi2 = sum_chi2 + chi2
 
@@ -75,7 +88,9 @@ class bootstrap(common_operations):
 		ave_chi2 = sum_chi2 / num_sims
 		#self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
 
-		return ave_chi2
+		bootstrap = n*log(2.0*pi) + sum_ln_err + ave_chi2
+		bootstrap = bootstrap / (2.0*n)
+		return bootstrap
 
 
 	def model_selection(self):
@@ -87,6 +102,7 @@ class bootstrap(common_operations):
 
 		print "Calculating the bootstrap criteria"
 		self.mf.log.write("\n\n<<< Bootstrap model selection >>>")
+		self.tm = float(self.mf.data.usr_param.tm['val'])*1e-9
 		for res in range(len(self.mf.data.relax_data[0])):
 			print "Residue: " + self.mf.data.relax_data[0][res][1] + " " + self.mf.data.relax_data[0][res][0]
 			self.mf.data.results.append({})
