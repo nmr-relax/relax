@@ -389,7 +389,7 @@ class min:
 					self.min_options = (self.mf.lm_dri, errors)
 
 			# Minimisation.
-			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
+			results = self.relax.minimise(func=self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
 			if results == None:
 				return
 			self.params, self.func, iter, fc, gc, hc, self.warning = results

@@ -99,9 +99,36 @@ class Method_of_multipliers:
 		"""
 
 		# Linear constraints.
-		if A != None and b != None:
+		if A == None and b == None:
 			self.A = A
 			self.b = b
+
+			# Remove this test code!!!!
+			mod = 4
+			# Model 4.
+			if mod == 4:
+				self.A = zeros((4, 3), Float64)
+				self.b = zeros(4, Float64)
+				self.A[0, 0] = 1.0
+				self.A[1, 0] = -1.0
+				self.A[2, 1] = 1.0
+				self.A[3, 2] = 1.0
+				self.b[1] = -1.0
+			# Model 5.
+			else:
+				self.A = zeros((5, 3), Float64)
+				self.b = zeros(5, Float64)
+				self.A[0, 0] = 1.0
+				self.A[1, 0] = -1.0
+				self.A[2, 1] = 1.0
+				self.A[3, 1] = -1.0
+				self.A[4, 2] = 1.0
+				self.b[1] = -1.0
+				self.b[3] = -1.0
+			print "A: " + `self.A`
+			print "b: " + `self.b`
+			# Remove to here.
+
 			self.linear_constraint = linear_constraint(self.A, self.b)
 			self.c = self.linear_constraint.func
 			self.dc = self.linear_constraint.dfunc
@@ -133,16 +160,28 @@ class Method_of_multipliers:
 			self.init_failure = 1
 			return
 
+		# min_options.
+		if len(min_options) == 0:
+			print "The unconstrained minimisation algorithm has not been specified."
+			self.init_failure = 1
+			return
+		self.min_algor = min_options[0]
+		self.min_options = min_options[1:]
+
+		# Initial Lagrange multipliers.
+		if lambda0 == None:
+			self.lambda_k = zeros(self.m, Float64)
+		else:
+			self.lambda_k = lambda0
+
 		# Arguments.
 		self.func = func
 		self.dfunc = dfunc
 		self.d2func = d2func
 		self.args = args
 		self.xk = x0
-		self.min_options = min_options
 		self.mu = mu0
 		self.tau = tau0
-		self.lambda_k = lambda0
 		self.func_tol = func_tol
 		self.maxiter = maxiter
 		self.full_output = full_output
@@ -150,6 +189,9 @@ class Method_of_multipliers:
 
 		# Minimisation options.
 		#######################
+
+		# Initialise.
+		self.init_failure = 0
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -165,8 +207,11 @@ class Method_of_multipliers:
 		self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
 		self.test_structure = zeros(self.m)
 
+		# Initial function value.
+		self.fk = apply(self.func_LA, (self.xk,)+self.args)
 
-	def func_LA(self):
+
+	def func_LA(self, *args):
 		"""The augmented Lagrangian function.
 
 		The equation is:
@@ -180,27 +225,27 @@ class Method_of_multipliers:
 			                \  -ms^2/2		otherwise.
 		"""
 
-		self.L = apply(self.func, (self.xk,)+self.args)
-		self.ck = apply(self.c, (self.xk,))
+		self.aaa = self.L = apply(self.func, (args[0],)+args[1:])
+		self.ck = apply(self.c, (args[0],))
 
 		for i in range(self.m):
 			if self.ck[i] - self.mu*self.lambda_k[i] <= 0:
 				self.L = self.L  -  0.5 * self.mu * self.lambda_k[i]**2
 				self.test_structure[i] = 1
 			else:
-				self.L = self.L  -  lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
+				self.L = self.L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
 				self.test_structure[i] = 0
 
 		return self.L
 
 
-	def func_dLA(self):
+	def func_dLA(self, *args):
 		"""The augmented Lagrangian gradient.
 
 		"""
 
-		self.dL = apply(self.dfunc, (self.xk,)+self.args)
-		self.dck = apply(self.dc, (self.xk,))
+		self.dL = apply(self.dfunc, (args[0],)+args[1:])
+		self.dck = apply(self.dc, (args[0],))
 
 		for i in range(self.m):
 			if self.test_structure[i]:
@@ -209,26 +254,26 @@ class Method_of_multipliers:
 		return self.dL
 
 
-	def func_d2LA(self):
+	def func_d2LA(self, *args):
 		"""The augmented Lagrangian Hessian.
 
 		"""
 
 		raise NameError, "Incomplete code."
-		self.d2L = apply(self.d2func, (self.xk,)+self.args)
-		self.d2ck = apply(self.d2c, (self.xk,))
+		self.d2L = apply(self.d2func, (args[0],)+args[1:])
+		self.d2ck = apply(self.d2c, (args[0],))
 
 		return self.d2L
 
 
-	def func_d2LA_simple(self):
+	def func_d2LA_simple(self, *args):
 		"""The augmented Lagrangian Hessian.
 
 		This function has been simplified by assuming that the constraint Hessian is zero.
 		"""
 
 		raise NameError, "Incomplete code."
-		self.d2L = apply(self.d2func, (self.xk,)+self.args)
+		self.d2L = apply(self.d2func, (args[0],)+self.args)
 		return self.d2L
 
 
@@ -260,10 +305,17 @@ class Method_of_multipliers:
 			if self.print_flag:
 				if self.print_flag == 2:
 					print "\n\n<<<Main iteration k=" + `self.k` + " >>>"
-					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
+				print "\n<Method of multipliers main loop.>"
+				print "Step: " + `self.k`
+				print "Parameter values: " + `self.xk`
+				print "Current function value: " + `self.fk`
+				print "Current function value: " + `self.aaa`
+				print "Mu: " + `self.mu`
+				print "Lagrange multipliers: " + `self.lambda_k`
+				print "Entering subalgorithm.\n"
 
 			# Unconstrained minimisation sub-loop.
-			results = minimise(func_LA, dfunc=func_dLA, d2func=func_d2LA, args=args, x0=self.xk, min_algor=min_algor, min_options=min_options, maxiter=maxiter, full_output=1, print_flag=print_flag)
+			results = minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.maxiter, full_output=1, print_flag=self.print_flag)
 			self.xk_new, self.fk_new, j, f, g, h, self.warning = results
 			self.j = self.j + j
 			self.f_count = self.f_count + f
@@ -279,17 +331,30 @@ class Method_of_multipliers:
 			# Update function.
 			self.update_multipliers()
 
+			# Update mu.
+			self.mu = 0.1 * self.mu
+			if self.mu < 1e-99:
+				self.warning = "Mu too small."
+				break
+
 			# Iteration counter update.
 			self.xk = self.xk_new * 1.0
 			self.fk = self.fk_new
 			self.k = self.k + 1
 
+		print "\n<Method of multipliers end.>"
+		print "Step: " + `self.k`
+		print "Parameter values: " + `self.xk`
+		print "Current function value: " + `self.fk`
+		print "Current function value: " + `self.aaa`
+		print "Mu: " + `self.mu`
+		print "Lagrange multipliers: " + `self.lambda_k`
 
 		if self.full_output:
 			try:
-				return self.xk_new, self.fk_new, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
+				return self.xk_new, self.aaa, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
 			except AttributeError:
-				return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
+				return self.xk, self.aaa, self.k, self.f_count, self.g_count, self.h_count, self.warning
 		else:
 			try:
 				return self.xk_new

@@ -29,7 +29,7 @@ from minimise.line_search.more_thuente import more_thuente
 # The generic minimisation function.
 ####################################
 
-def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
 	"""Generic minimisation function.
 
 	This is a generic function which can be used to access all minimisers using the same set of
@@ -819,7 +819,7 @@ class Conjugate_gradient:
 		for i in range(len(self.dfk)):
 			inf_norm = max(inf_norm, abs(self.dfk[i]))
 		if inf_norm < 1e-10 * (1.0 + abs(self.fk)):
-			self.warning = "Gradient tol reached."
+			self.warning = None
 			return 1
 		elif abs(self.fk_new - self.fk) == 0.0:
 			self.warning = "Function tol of zero reached."
