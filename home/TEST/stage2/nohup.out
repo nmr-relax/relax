@@ -1,0 +1,33 @@
+
+Queuing modelfree runs
+
+Running model 1
+
+Running model 2
+
+Running model 3
+
+Running model 4
+
+Running model 5
+
+Running the F-tests between models 1 and 2
+
+Running the F-tests between models 1 and 3
+
+Running the F-tests between models 2 and 4
+
+Running the F-tests between models 2 and 5
+
+Running the F-tests between models 3 and 4
+f-m1m2/mfout
+f-m1m3/mfout
+f-m2m4/mfout
+f-m2m5/mfout
+f-m3m4/mfout
+m1/mfout
+m2/mfout
+m3/mfout
+m4/mfout
+m5/mfout
+Finished all runs!

@@ -1,0 +1,21 @@
+optimization    tval
+
+seed            0
+
+search          grid
+
+diffusion       isotropic none
+
+algorithm       fix
+
+simulations     pred    100       0
+
+selection       ftest
+
+sim_algorithm   fix
+
+fields          2  600  500
+tm              11.09 1  2  9.0  13.0 100
+Dratio          1.123 1  0  0.6   1.5   5
+Theta          87.493 1  0  -90    90  10
+Phi           -52.470 1  0  -90    90  10
