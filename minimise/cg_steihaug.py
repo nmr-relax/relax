@@ -7,7 +7,7 @@ from generic_minimise import generic_minimise
 
 
 class cg_steihaug(generic_trust_region, generic_minimise, newton):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=5.0, delta_max=1e5, delta0=1.0, eta=0.2):
+	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
 		"""Steihaug conjugate-gradient trust region algorithm.
 
 		Page 75 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -121,7 +121,7 @@ class cg_steihaug(generic_trust_region, generic_minimise, newton):
 				return self.pj_new
 
 			bj_new = dot(self.rj_new, self.rj_new) / dot(self.rj, self.rj)
-			self.dj_new = self.rj_new + bj_new * self.dj
+			self.dj_new = -self.rj_new + bj_new * self.dj
 			if self.print_flag == 2:
 				print "len rj+1: " + `sqrt(dot(self.rj_new, self.rj_new))`
 				print "epsilon.||r0||: " + `length_test`
@@ -132,8 +132,10 @@ class cg_steihaug(generic_trust_region, generic_minimise, newton):
 			self.pj = self.pj_new * 1.0
 			self.rj = self.rj_new * 1.0
 			self.dj = self.dj_new * 1.0
-			self.B, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
-			j = j+1
+			#if j > 2:
+			#	import sys
+			#	sys.exit()
+			j = j + 1
 
 
 	def get_tau(self):
