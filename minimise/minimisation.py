@@ -201,29 +201,13 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if hessian_mod == None:
 			hessian_mod = 'GMW'
 
-		print "Line search:"
-		if match('^[Bb]ack', line_search_algor):
-			print "\tBacktracking line search."
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
-			print "\tNocedal and Wright interpolation based line search."
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
-			print "\tNocedal and Wright line search for the Wolfe conditions."
-		elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
-			print "\tMoré and Thuente line search."
-		elif match('^[Nn]one$', line_search_algor):
-			print "\tNo line search."
-
-		print "Hessian modification:"
-		if match("^[Ee]igen", hessian_mod):
-			print "\tEigenvalue modification."
-		elif match("^[Cc]hol", hessian_mod):
-			print "\tCholesky with added multiple of the identity."
-		elif match("^[Gg][Mm][Ww]", hessian_mod):
-			print "\tThe Gill, Murray, and Wright modified Cholesky algorithm."
-
-		print ""
-
 		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=line_search_algor, hessian_mod=hessian_mod, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		try:
+			min.init_failure
+			print "Initialisation of minimisation has failed."
+			return
+		except AttributeError:
+			pass
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -259,21 +243,13 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Dd]ogleg', min_algor):
 		if print_flag:
 			print "\n\n<<< Dogleg minimisation >>>"
-		if len(min_options) == 1:
-			hessian_type = min_options[0]
-		elif min_options == ():
-			hessian_type = 'Newton'
-		else:
-			print "Invalid minimisation options: " + `min_options`
+		min = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		try:
+			min.init_failure
+			print "Initialisation of minimisation has failed."
 			return
-		if print_flag:
-			print "Hessian type:"
-			if match('[Bb][Ff][Gg][Ss]', hessian_type):
-				print "\tBFGS"
-			else:
-				print "\tNewton"
-		
-		min = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, hessian_type=hessian_type, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		except AttributeError:
+			pass
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:

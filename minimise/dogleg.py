@@ -9,7 +9,7 @@ from generic_minimise import generic_minimise
 
 
 class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, hessian_type=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e10, delta0=1e5, eta=0.0001):
+	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16):
 		"""Dogleg trust region algorithm.
 
 		Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -50,13 +50,40 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.mach_acc = mach_acc
 
 		self.delta_max = delta_max
 		self.delta = delta0
 		self.eta = eta
 
-		# Matrix type.
-		self.hessian_type = hessian_type
+		# Hessian type and modification.
+		self.hessian_type = None
+		self.hessian_mod = None
+		if type(min_options) != tuple:
+			print "The minimisation options " + `min_options` + " is not a tuple."
+			self.init_failure = 1; return
+		if len(min_options) > 2:
+			print "A maximum of two minimisation options is allowed."
+			self.init_failure = 1; return
+		for opt in min_options:
+			if self.hessian_type == None and (match('[Bb][Ff][Gg][Ss]', opt) or match('[Nn]ewton', opt)):
+				self.hessian_type = opt
+			elif self.hessian_mod == None and (opt == None or match("^[Ee]igen", opt) or match("^[Cc]hol", opt) or match("^[Gg][Mm][Ww]", opt)):
+				self.hessian_mod = opt
+			else:
+				print "The minimisation option " + `opt` + " from " + `min_options` + " is invalid."
+				self.init_failure = 1; return
+		if self.hessian_type == None:
+			self.hessian_type = 'Newton'
+		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
+			print "When using the BFGS matrix, hessian modifications should not be used."
+			self.init_failure = 1; return
+		if self.print_flag:
+			if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
+				print "Hessian type:  BFGS"
+			else:
+				print "Hessian type:  Newton"
+			
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
@@ -65,6 +92,9 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Hessian modification function initialisation.
+		self.init_hessian_mod_funcs()
 
 
 	def dogleg(self):

@@ -388,6 +388,8 @@ class min:
 
 			# Minimisation.
 			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
+			if results == None:
+				return
 			self.params, self.func, iter, fc, gc, hc, self.warning = results
 			self.iter_count = self.iter_count + iter
 			self.f_count = self.f_count + fc

@@ -1,10 +1,10 @@
 from Numeric import Float64, dot, identity
 
-from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
+from line_search_functions import line_search_functions
 
 
-class coordinate_descent(generic_line_search, generic_minimise):
+class coordinate_descent(generic_minimise, line_search_functions):
 	def __init__(self, func, dfunc=None, args=(), x0=None, line_search_algor=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.1):
 		"Class for back-and-forth coordinate descent minimisation specific functions."
 
@@ -36,6 +36,9 @@ class coordinate_descent(generic_line_search, generic_minimise):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Line search function initialisation.
+		self.init_line_functions()
 
 
 	def new_param_func(self):

@@ -2,11 +2,11 @@ from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_l
 from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, transpose
 from re import match
 
-from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
+from line_search_functions import line_search_functions
 
 
-class newton(generic_line_search, generic_minimise):
+class newton(generic_minimise, line_search_functions):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, line_search_algor=None, hessian_mod=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
 		"""Class for Newton minimisation specific functions.
 
@@ -25,8 +25,6 @@ class newton(generic_line_search, generic_minimise):
 
 		if not line_search_algor:
 			raise NameError, "No line search algorithm has been supplied."
-		elif not hessian_mod:
-			raise NameError, "The hessian modification has not been specified."
 		else:
 			self.line_search_algor = line_search_algor
 
@@ -45,22 +43,18 @@ class newton(generic_line_search, generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
+		# Constants.
+		self.n = len(self.xk)
+		self.I = identity(len(self.xk))
+
 		# Set the setup and update functions.
 		self.setup = self.setup_newton
 		self.update = self.update_newton
 
-		# The hessian modification functions.
-		if match("^[Ee]igen", hessian_mod):
-			self.get_pk = self.eigenvalue
-			self.delta = sqrt(self.mach_acc)
-		elif match("^[Cc]hol", hessian_mod):
-			self.get_pk = self.cholesky
-		elif match("^[Gg][Mm][Ww]", hessian_mod):
-			self.get_pk = self.gmw
-
-		# Constants.
-		self.n = len(self.xk)
-		self.I = identity(len(self.xk))
+		# Line search and hessian modification initialisation.
+		self.init_line_functions()
+		self.hessian_mod = hessian_mod
+		self.init_hessian_mod_funcs()
 
 
 	def cholesky(self):
@@ -210,6 +204,28 @@ class newton(generic_line_search, generic_minimise):
 		return -solve_linear_equations(transpose(self.L), y)
 
 
+	def init_hessian_mod_funcs(self):
+		"Initialise the hessian modification functions."
+
+		if self.hessian_mod == None:
+			if self.print_flag:
+				print "Hessian modification:  Unmodified hessian."
+			self.get_pk = self.unmodified_hessian
+		elif match("^[Ee]igen", self.hessian_mod):
+			if self.print_flag:
+				print "Hessian modification:  Eigenvalue modification."
+			self.get_pk = self.eigenvalue
+			self.delta = sqrt(self.mach_acc)
+		elif match("^[Cc]hol", self.hessian_mod):
+			if self.print_flag:
+				print "Hessian modification:  Cholesky with added multiple of the identity."
+			self.get_pk = self.cholesky
+		elif match("^[Gg][Mm][Ww]", self.hessian_mod):
+			if self.print_flag:
+				print "Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm."
+			self.get_pk = self.gmw
+
+
 	def new_param_func(self):
 		"""The new parameter function.
 
@@ -249,6 +265,12 @@ class newton(generic_line_search, generic_minimise):
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
+
+
+	def unmodified_hessian(self):
+		"Calculate the pure Newton direction."
+
+		return -matrixmultiply(inverse(self.d2fk), self.dfk)
 
 
 	def update_newton(self):

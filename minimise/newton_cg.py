@@ -1,11 +1,11 @@
 from LinearAlgebra import inverse
 from Numeric import Float64, dot, matrixmultiply, sqrt, zeros
 
-from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
+from line_search_functions import line_search_functions
 
 
-class newton_cg(generic_line_search, generic_minimise):
+class newton_cg(generic_minimise, line_search_functions):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, line_search_algor=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
 		"""Line search Newton conjugate gradient algorithm.
 
@@ -52,6 +52,9 @@ class newton_cg(generic_line_search, generic_minimise):
 
 		# Initialise the warning string.
 		self.warning = None
+
+		# Line search function initialisation.
+		self.init_line_functions()
 
 
 	def get_pk(self):
