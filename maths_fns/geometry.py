@@ -24,13 +24,16 @@ from Numeric import dot
 from math import cos, sin
 
 
-# Dot product equation.
-#######################
+# Axially symmetric delta equation.
+###################################
 
 def calc_axial_geom(data, diff_data):
     """Function for calculating the dot product XH . Dpar.
 
-    Delta is the dot product between the unit bond vector and the unit vector along Dpar.
+    delta is the dot product between the unit bond vector and the unit vector along Dpar.  The
+    equation is:
+
+        delta = XH . Dpar
 
     The unit Dpar vector is:
 
@@ -44,13 +47,13 @@ def calc_axial_geom(data, diff_data):
     diff_data.dpar_unit_vector[1] = sin(diff_data.params[2]) * sin(diff_data.params[3])
     diff_data.dpar_unit_vector[2] = cos(diff_data.params[2])
 
-    # The dot product.
+    # delta.
     data.delta = dot(data.xh_unit_vector, diff_data.dpar_unit_vector)
 
 
 
-# Dot product gradient.
-#######################
+# Axially symmetric delta gradient.
+###################################
 
 def calc_axial_dgeom(data, diff_data):
     """Function for calculating the partial derivatives of the dot product XH . Dpar.
@@ -80,14 +83,14 @@ def calc_axial_dgeom(data, diff_data):
     diff_data.dpar_unit_vector_dphi[1] = sin(diff_data.params[2]) * cos(diff_data.params[3])
     diff_data.dpar_unit_vector_dphi[2] = 0.0
 
-    # The dot product.
+    # delta gradient.
     data.ddelta_dpsi[0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta)
     data.ddelta_dpsi[1] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi)
 
 
 
-# Dot product Hessian.
-######################
+# Axially symmetric delta Hessian.
+##################################
 
 def calc_axial_d2geom(data, diff_data):
     """Function for calculating the second partial derivatives of the dot product XH . Dpar.
@@ -128,7 +131,56 @@ def calc_axial_d2geom(data, diff_data):
     diff_data.dpar_unit_vector_dphi2[1] = -sin(diff_data.params[2]) * sin(diff_data.params[3])
     diff_data.dpar_unit_vector_dphi2[2] = 0.0
 
-    # The dot product.
+    # delta Hessian.
     data.d2delta_dpsi2[0, 0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta2)
     data.d2delta_dpsi2[0, 1] = data.d2delta_dpsi2[1, 0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dthetadphi)
     data.d2delta_dpsi2[1, 1] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi2)
+
+
+
+# Anisotropic delta1 and delta2 equations.
+##########################################
+
+def calc_aniso_geom(data, diff_data):
+    """Function for calculating delta1 and delta2.
+
+    delta1 is the dot product between the unit bond vector and the unit vector along Dz.  The
+    equation is:
+
+        delta1 = XH . Dz
+
+    delta2 is the dot product between the unit vector along Dx and the double cross product of the
+    unit Dz vector with the unit bond vector with the unit Dz vector again:
+
+        delta2 = Dx . Dz x XH x Dz
+
+    The unit Dz vector is:
+
+               | -sin(beta) * cos(gamma) |
+        Dz  =  |  sin(beta) * sin(gamma) |
+               |        cos(beta)        |
+
+    The unit Dx vector is:
+
+               | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        Dx  =  |          -sin(alpha) * (1 + cos(beta)) * cos(gamma)            |
+               |                    cos(alpha) * sin(beta)                      |
+    """
+
+    # The unit Dz vector.
+    diff_data.dz[0] = -sin(diff_data.params[4]) * cos(diff_data.params[5])
+    diff_data.dz[1] = sin(diff_data.params[4]) * sin(diff_data.params[5])
+    diff_data.dz[2] = cos(diff_data.params[4])
+
+    # The unit Dx vector.
+    diff_data.dx[0] = -sin(diff_data.params[3]) * sin(diff_data.params[5])  +  cos(diff_data.params[3]) * cos(diff_data.params[4]) * cos(diff_data.params[5])
+    diff_data.dx[1] = -sin(diff_data.params[3]) * (1.0 + cos(diff_data.params[4])) * cos(diff_data.params[5])
+    diff_data.dx[2] = cos(diff_data.params[3]) * sin(diff_data.params[4])
+
+    # delta1 and delta2
+    data.delta1 = dot(data.xh_unit_vector, diff_data.dz)
+    data.delta2 = dot(data.dx, diff_data.dz)
+
+
+
+

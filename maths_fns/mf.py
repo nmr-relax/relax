@@ -1215,7 +1215,7 @@ class Mf:
             diff_data.dpar_unit_vector_dphi2 = zeros(3, Float64)
 
         # Anisotropic diffusion.
-        elif diff_type == 'aniso':
+        elif diff_data.type == 'aniso':
             # Number of diffusion parameters.
             diff_data.num_params = 6
             diff_data.num_D_params = 3
@@ -1225,18 +1225,18 @@ class Mf:
 
             # Geometry function, gradient, and Hessian.
             diff_data.calc_geom = calc_aniso_geom
-            diff_data.calc_dgeom = calc_aniso_dgeom
-            diff_data.calc_d2geom = calc_aniso_d2geom
+            #diff_data.calc_dgeom = calc_aniso_dgeom
+            #diff_data.calc_d2geom = calc_aniso_d2geom
 
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_aniso_ci
-            diff_data.calc_dci = calc_aniso_dci
-            diff_data.calc_d2ci = calc_aniso_d2ci
+            #diff_data.calc_dci = calc_aniso_dci
+            #diff_data.calc_d2ci = calc_aniso_d2ci
 
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_aniso_ti
-            diff_data.calc_dti = calc_aniso_dti
-            diff_data.calc_d2ti = calc_aniso_d2ti
+            #diff_data.calc_dti = calc_aniso_dti
+            #diff_data.calc_d2ti = calc_aniso_d2ti
 
 
     def init_res_data(self, data, diff_data):
