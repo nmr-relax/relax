@@ -39,7 +39,7 @@ for run in runs:
     grid_search(run, inc=5)
     minimise('newton', run=run)
 
-    # Print results.
+    # Write the results.
     write(run=run, file='results', force=1)
 
 # Save the program state.

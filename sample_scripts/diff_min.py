@@ -1,11 +1,18 @@
 # Script for model-free analysis.
 
 # Set the run names (also the names of preset model-free models).
-#runs = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
-runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+runs = ['m1']
+#runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Nuclei type
 nuclei('N')
+
+# Minimise the model-free parameters.
+print "\n\n\n\n\n"
+print "#####################################"
+print "# Minimising model-free parameters. #"
+print "#####################################"
+print "\n\n\n"
 
 for run in runs:
     # Create the run.
@@ -27,8 +34,7 @@ for run in runs:
     relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
     # Setup other values.
-    #diffusion_tensor.set(run, 1e-8, fixed=0)
-    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=1, axial_type='oblate', fixed=0)
+    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=1, axial_type='oblate', fixed=1)
     value.set(run, 1.02 * 1e-10, 'bond_length')
     value.set(run, -160 * 1e-6, 'csa')
 
@@ -39,7 +45,25 @@ for run in runs:
     grid_search(run, inc=5)
     minimise('newton', run=run)
 
-    # Print results.
+# Minimise the diffusion tensor parameters.
+print "\n\n\n\n\n"
+print "###########################################"
+print "# Minimising diffusion tensor parameters. #"
+print "###########################################"
+print "\n\n\n"
+
+for run in runs:
+    # Unfix the diffusion tensor.
+    fix(run, 'diff', fixed=0)
+
+    # Fix all model-free paremeter values.
+    fix(run, 'all_res')
+
+    # Minimise.
+    grid_search(run, inc=5)
+    minimise('newton', run=run, max_iter=5000)
+
+    # Write the results.
     write(run=run, file='results', force=1)
 
 # Save the program state.

@@ -39,6 +39,55 @@ class Model_free:
         self.relax = relax
 
 
+    def are_mf_params_set(self, index=None):
+        """Function for testing if the model-free parameter values are set."""
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][index]
+
+        # Loop over the model-free parameters.
+        for j in xrange(len(data.params)):
+            # tm.
+            if data.params[j] == 'tm' and data.tm == None:
+                return data.params[j]
+
+            # S2.
+            elif data.params[j] == 'S2' and data.s2 == None:
+                return data.params[j]
+
+            # S2f.
+            elif data.params[j] == 'S2f' and data.s2f == None:
+                return data.params[j]
+
+            # S2s.
+            elif data.params[j] == 'S2s' and data.s2s == None:
+                return data.params[j]
+
+            # te.
+            elif data.params[j] == 'te' and data.te == None:
+                return data.params[j]
+
+            # tf.
+            elif data.params[j] == 'tf' and data.tf == None:
+                return data.params[j]
+
+            # ts.
+            elif data.params[j] == 'ts' and data.ts == None:
+                return data.params[j]
+
+            # Rex.
+            elif data.params[j] == 'Rex' and data.rex == None:
+                return data.params[j]
+
+            # r.
+            elif data.params[j] == 'r' and data.r == None:
+                return data.params[j]
+
+            # CSA.
+            elif data.params[j] == 'CSA' and data.csa == None:
+                return data.params[j]
+
+
     def assemble_param_names(self, index=None):
         """Function for assembling various pieces of data into a Numeric parameter array."""
 
@@ -83,36 +132,38 @@ class Model_free:
                     self.param_names.append(self.relax.data.res[self.run][i].params[j])
 
 
-    def assemble_param_vector(self, index=None):
+    def assemble_param_vector(self, index=None, param_set=None):
         """Function for assembling various pieces of data into a Numeric parameter array."""
 
         # Initialise.
-        self.param_vector = []
+        param_vector = []
+        if param_set == None:
+            param_set = self.param_set
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if param_set == 'diff' or param_set == 'all':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
-                self.param_vector.append(self.relax.data.diff[self.run].tm)
+                param_vector.append(self.relax.data.diff[self.run].tm)
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                self.param_vector.append(self.relax.data.diff[self.run].tm)
-                self.param_vector.append(self.relax.data.diff[self.run].Dratio)
-                self.param_vector.append(self.relax.data.diff[self.run].theta)
-                self.param_vector.append(self.relax.data.diff[self.run].phi)
+                param_vector.append(self.relax.data.diff[self.run].tm)
+                param_vector.append(self.relax.data.diff[self.run].Dratio)
+                param_vector.append(self.relax.data.diff[self.run].theta)
+                param_vector.append(self.relax.data.diff[self.run].phi)
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                self.param_vector.append(self.relax.data.diff[self.run].Dx)
-                self.param_vector.append(self.relax.data.diff[self.run].Dy)
-                self.param_vector.append(self.relax.data.diff[self.run].Dz)
-                self.param_vector.append(self.relax.data.diff[self.run].alpha)
-                self.param_vector.append(self.relax.data.diff[self.run].beta)
-                self.param_vector.append(self.relax.data.diff[self.run].gamma)
+                param_vector.append(self.relax.data.diff[self.run].Dx)
+                param_vector.append(self.relax.data.diff[self.run].Dy)
+                param_vector.append(self.relax.data.diff[self.run].Dz)
+                param_vector.append(self.relax.data.diff[self.run].alpha)
+                param_vector.append(self.relax.data.diff[self.run].beta)
+                param_vector.append(self.relax.data.diff[self.run].gamma)
 
         # Model-free parameters (residue specific parameters).
-        if self.param_set != 'diff':
+        if param_set != 'diff':
             for i in xrange(len(self.relax.data.res[self.run])):
                 # Skip unselected residues.
                 if not self.relax.data.res[self.run][i].select:
@@ -127,79 +178,79 @@ class Model_free:
                     # tm.
                     if self.relax.data.res[self.run][i].params[j] == 'tm':
                         if self.relax.data.res[self.run][i].tm == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].tm)
+                            param_vector.append(self.relax.data.res[self.run][i].tm)
 
                     # S2.
                     elif self.relax.data.res[self.run][i].params[j] == 'S2':
                         if self.relax.data.res[self.run][i].s2 == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].s2)
+                            param_vector.append(self.relax.data.res[self.run][i].s2)
 
                     # S2f.
                     elif self.relax.data.res[self.run][i].params[j] == 'S2f':
                         if self.relax.data.res[self.run][i].s2f == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].s2f)
+                            param_vector.append(self.relax.data.res[self.run][i].s2f)
 
                     # S2s.
                     elif self.relax.data.res[self.run][i].params[j] == 'S2s':
                         if self.relax.data.res[self.run][i].s2s == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].s2s)
+                            param_vector.append(self.relax.data.res[self.run][i].s2s)
 
                     # te.
                     elif self.relax.data.res[self.run][i].params[j] == 'te':
                         if self.relax.data.res[self.run][i].te == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].te)
+                            param_vector.append(self.relax.data.res[self.run][i].te)
 
                     # tf.
                     elif self.relax.data.res[self.run][i].params[j] == 'tf':
                         if self.relax.data.res[self.run][i].tf == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].tf)
+                            param_vector.append(self.relax.data.res[self.run][i].tf)
 
                     # ts.
                     elif self.relax.data.res[self.run][i].params[j] == 'ts':
                         if self.relax.data.res[self.run][i].ts == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].ts)
+                            param_vector.append(self.relax.data.res[self.run][i].ts)
 
                     # Rex.
                     elif self.relax.data.res[self.run][i].params[j] == 'Rex':
                         if self.relax.data.res[self.run][i].rex == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].rex)
+                            param_vector.append(self.relax.data.res[self.run][i].rex)
 
                     # r.
                     elif self.relax.data.res[self.run][i].params[j] == 'r':
                         if self.relax.data.res[self.run][i].r == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].r)
+                            param_vector.append(self.relax.data.res[self.run][i].r)
 
                     # CSA.
                     elif self.relax.data.res[self.run][i].params[j] == 'CSA':
                         if self.relax.data.res[self.run][i].csa == None:
-                            self.param_vector.append(0.0)
+                            param_vector.append(0.0)
                         else:
-                            self.param_vector.append(self.relax.data.res[self.run][i].csa)
+                            param_vector.append(self.relax.data.res[self.run][i].csa)
 
                     # Unknown parameter.
                     else:
                         raise RelaxError, "Unknown parameter."
 
-        # Convert to a Numeric array.
-        self.param_vector = array(self.param_vector, Float64)
+        # Return a Numeric array.
+        return array(param_vector, Float64)
 
 
     def assemble_scaling_matrix(self, index=None):
@@ -1097,7 +1148,7 @@ class Model_free:
             index = None
 
         # Assemble the parameter values.
-        self.assemble_param_vector(index=index)
+        self.param_vector = self.assemble_param_vector(index=index)
 
         # Return the parameter names.
         return self.param_vector
@@ -1740,6 +1791,14 @@ class Model_free:
         if not hasattr(self.relax.data, 'gx'):
             raise RelaxNucleusError
 
+        # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
+        if self.param_set == 'diff':
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                unset_param = self.are_mf_params_set(i)
+                if unset_param != None:
+                    raise RelaxNoValueError, unset_param
+
         # Print out.
         if self.print_flag >= 1:
             if self.param_set == 'mf':
@@ -1812,14 +1871,14 @@ class Model_free:
                 index = min_options[0]
 
                 # Create the initial parameter vector.
-                self.assemble_param_vector(index=index)
+                self.param_vector = self.assemble_param_vector(index=index)
 
                 # Diagonal scaling.
                 self.scaling_matrix = None
 
             else:
                 # Create the initial parameter vector.
-                self.assemble_param_vector(index=index)
+                self.param_vector = self.assemble_param_vector(index=index)
 
                 # Diagonal scaling.
                 self.assemble_scaling_matrix(index=index)
@@ -1858,6 +1917,7 @@ class Model_free:
             relax_error = []
             equations = []
             param_types = []
+            param_values = None
             r = []
             csa = []
             num_frq = []
@@ -1870,6 +1930,8 @@ class Model_free:
             xh_unit_vectors = []
             if self.param_set == 'local_tm':
                 mf_params = []
+            elif self.param_set == 'diff':
+                param_values = []
 
             # Set up the data for the back_calc function.
             if min_algor == 'back_calc':
@@ -1937,12 +1999,13 @@ class Model_free:
                 # Count the number of model-free parameters for the residue index.
                 num_params.append(len(self.relax.data.res[self.run][seq_index].params))
 
+                # Repackage the parameter values for minimising just the diffusion tensor parameters.
+                if self.param_set == 'diff':
+                    param_values.append(self.assemble_param_vector(param_set='mf'))
+
             # Convert to Numeric arrays.
             relax_data = array(relax_data, Float64)
             relax_error = array(relax_error, Float64)
-            #r = array(r, Float64)
-            #csa = array(csa, Float64)
-            #frq = array(frq, Float64)
 
             # Diffusion tensor type.
             if self.param_set == 'local_tm':
@@ -1975,7 +2038,7 @@ class Model_free:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -2120,7 +2183,7 @@ class Model_free:
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             # Create the parameter vector.
-            self.assemble_param_vector(index=instance)
+            self.param_vector = self.assemble_param_vector(index=instance)
 
             # Count the number of data points.
             n = len(self.relax.data.res[self.run][instance].relax_data)
@@ -2131,7 +2194,7 @@ class Model_free:
         # Other data.
         elif self.param_set == 'diff' or self.param_set == 'all':
             # Create the parameter vector.
-            self.assemble_param_vector()
+            self.param_vector = self.assemble_param_vector()
 
             # Loop over the sequence.
             n = 0

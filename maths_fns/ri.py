@@ -192,6 +192,7 @@ def calc_d2noe(data, i, frq_num, get_d2r1, params):
     if data.r1[i] == 0.0:
         data.d2ri[i] = 1e99
     else:
+        print "Num params: " + `data.num_params`
         for j in xrange(data.num_params):
             a = data.ri_prime[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
             b = data.r1[i] * (data.dri_prime[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri_prime[i] - data.r1[i] * data.d2ri_prime[i, j])
