@@ -268,6 +268,10 @@ class Specific_setup:
         if self.eqi == 'read_columnar_results':
             return self.relax.specific.noe.read_columnar_results
 
+        # Value and error returning function.
+        if self.eqi == 'return_value':
+            return self.relax.specific.noe.return_value
+
         # Write results function (Columnar format).
         if self.eqi == 'write_columnar_results':
             return self.relax.specific.noe.write_columnar_results

@@ -25,6 +25,7 @@ import sys
 import help
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
+from specific_fns.noe import Noe
 
 
 class Value:
@@ -453,7 +454,8 @@ class Value:
         ~~~~~~~~~~~
 
         If no directory name is given, the file will be placed in the current working directory.
-        The data type argument can only be a single string.
+
+        The data type argument should be a string.
 
 
         Examples
@@ -463,6 +465,14 @@ class Value:
 
         relax> value.write('m1', 'CSA', 'csa.txt')
         relax> value.write(run='m1', data_type='CSA', file='csa.txt')
+
+
+        To write the NOE values from the run 'noe' to the file 'noe', type:
+
+        relax> value.write('noe', 'noe', 'noe.out')
+        relax> value.write('noe', data_type='noe', file='noe.out')
+        relax> value.write(run='noe', data_type='noe', file='noe.out')
+        relax> value.write(run='noe', data_type='noe', file='noe.out', force=1)
         """
 
         # Function intro text.
@@ -558,4 +568,5 @@ class Value:
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + __re_doc__ + "\n"
     write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + Noe.get_data_name.__doc__ + "\n"

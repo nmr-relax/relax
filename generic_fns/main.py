@@ -23,11 +23,11 @@
 from angles import Angles
 from runs import Runs
 from delete import Delete
-from dx.map import Map
 from dx.opendx import OpenDX
 from diffusion_tensor import Diffusion_tensor
 from eliminate import Eliminate
 from fix import Fix
+from grace import Grace
 from minimise import Minimise
 from model_selection import Model_selection
 from molmol import Molmol
@@ -58,7 +58,7 @@ class Generic:
         self.diffusion_tensor = Diffusion_tensor(self.relax)
         self.eliminate = Eliminate(self.relax)
         self.fix = Fix(self.relax)
-        self.map = Map(self.relax)
+        self.grace = Grace(self.relax)
         self.minimise = Minimise(self.relax)
         self.model_selection = Model_selection(self.relax)
         self.molmol = Molmol(self.relax)

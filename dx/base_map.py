@@ -21,8 +21,7 @@
 ###############################################################################
 
 
-from LinearAlgebra import inverse
-from Numeric import Float64, array, matrixmultiply, zeros
+from Numeric import Float64, array, zeros
 from os import mkdir
 
 

@@ -28,7 +28,7 @@ model_free.select_model(run=name, model=name)
 #model_free.create_model(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Map data.
-inc = 20
+inc = 5
 from math import pi
 if name == 'x4':
     lower = [0, 0, 0]
@@ -45,5 +45,5 @@ else:
     upper = None
     swap = None
     point = None
-map(name, res_num=1, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
-dx()
+dx.map(name, res_num=1, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
+dx.execute()

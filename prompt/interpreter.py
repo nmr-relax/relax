@@ -47,7 +47,6 @@ from eliminate import Eliminate
 from fix import Fix
 from gpl import GPL
 from init_data import Init_data
-from map import Map
 from minimisation import Minimisation
 from model_selection import Modsel
 from nuclei import Nuclei
@@ -59,6 +58,7 @@ from rw import RW
 from diffusion_tensor import Diffusion_tensor
 from echo_data import Echo_data
 from format import Format
+from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
 from molmol import Molmol
@@ -103,7 +103,6 @@ class Interpreter:
         self._Fix = Fix(relax)
         self._GPL = GPL
         self._Init_data = Init_data(relax)
-        self._Map = Map(relax)
         self._Minimisation = Minimisation(relax)
         self._Modsel = Modsel(relax)
         self._Nuclei = Nuclei(relax)
@@ -115,8 +114,10 @@ class Interpreter:
 
         # Place the user classes into the interpreter class namespace.
         self._Diffusion_tensor = Diffusion_tensor(relax)
+        self._OpenDX = OpenDX(relax)
         self._Echo_data = Echo_data(relax)
         self._Format = Format(relax)
+        self._Grace = Grace(relax)
         self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
         self._Molmol = Molmol(relax)
@@ -160,12 +161,10 @@ class Interpreter:
         calc = self._Minimisation.calc
         create_run = self._Create_run.create
         delete = self._Delete.delete
-        dx = self._OpenDX.dx
         eliminate = self._Eliminate.eliminate
         fix = self._Fix.fix
         grid_search = self._Minimisation.grid_search
         init_data = self._Init_data.init
-        map = self._Map.map
         minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei
@@ -176,8 +175,10 @@ class Interpreter:
 
         # Place the user classes in the local namespace.
         diffusion_tensor = self._Diffusion_tensor
+        dx = self._OpenDX
         echo_data = self._Echo_data
         format = self._Format
+        grace = self._Grace
         jw_mapping = self._Jw_mapping
         model_free = self._Model_free
         molmol = self._Molmol

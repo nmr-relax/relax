@@ -21,7 +21,7 @@
 ###############################################################################
 
 from math import sqrt
-from re import split
+from re import match, split
 
 
 class Noe:
@@ -62,14 +62,14 @@ class Noe:
                 continue
 
             # Skip residues which have no intensity values or errors.
-            if not (hasattr(data, 'ref') and hasattr(data, 'sat') and hasattr(data, 'ref_error') and hasattr(data, 'sat_error')):
+            if not (hasattr(data, 'ref') and hasattr(data, 'sat') and hasattr(data, 'ref_err') and hasattr(data, 'sat_err')):
                 continue
 
             # Calculate the NOE.
             data.noe = data.sat / data.ref
 
             # Calculate the error.
-            data.noe_error = sqrt((data.sat_error * data.ref)**2 + (data.ref_error * data.sat)**2) / data.ref**2
+            data.noe_err = sqrt((data.sat_err * data.ref)**2 + (data.ref_err * data.sat)**2) / data.ref**2
 
 
     def extract_int_data(self, line):
@@ -123,6 +123,40 @@ class Noe:
             raise RelaxError, "The peak height value " + `intensity` + " from the line " + `line` + " is invalid."
 
         return res_num, x_name, h_name, intensity
+
+
+    def get_data_name(self, name):
+        """
+        NOE calculation data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Reference intensity    | ref          | '^[Rr]ef$' or '[Rr]ef[ -_][Ii]nt'                |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Saturated intensity    | sat          | '^[Ss]at$' or '[Ss]at[ -_][Ii]nt'                |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | NOE                    | noe          | '^[Nn][Oo][Ee]$'                                 |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Reference intensity.
+        if match('^[Rr]ef$', name) or match('[Rr]ef[ -_][Ii]nt', name):
+            return 'ref'
+
+        # Saturated intensity.
+        if match('^[Ss]at$', name) or match('[Ss]at[ -_][Ii]nt', name):
+            return 'sat'
+
+        # NOE.
+        if match('^[Nn][Oo][Ee]$', name):
+            return 'noe'
 
 
     def read(self, run=None, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
@@ -242,15 +276,15 @@ class Noe:
             elif header[i] == 'Ref_intensity':
                 col['ref_int'] = i
             elif header[i] == 'Ref_error':
-                col['ref_error'] = i
+                col['ref_err'] = i
             elif header[i] == 'Sat_intensity':
                 col['sat_int'] = i
             elif header[i] == 'Sat_error':
-                col['sat_error'] = i
+                col['sat_err'] = i
             elif header[i] == 'NOE':
                 col['noe'] = i
             elif header[i] == 'NOE_error':
-                col['noe_error'] = i
+                col['noe_err'] = i
 
         # Test the file.
         if len(col) < 2:
@@ -309,9 +343,9 @@ class Noe:
 
             # Reference error.
             try:
-                data.ref_error = float(file_data[i][col['ref_error']])
+                data.ref_err = float(file_data[i][col['ref_err']])
             except ValueError:
-                data.ref_error = None
+                data.ref_err = None
 
             # Saturated intensity.
             try:
@@ -321,9 +355,9 @@ class Noe:
 
             # Saturated error.
             try:
-                data.sat_error = float(file_data[i][col['sat_error']])
+                data.sat_err = float(file_data[i][col['sat_err']])
             except ValueError:
-                data.sat_error = None
+                data.sat_err = None
 
             # NOE.
             try:
@@ -333,29 +367,38 @@ class Noe:
 
             # NOE error.
             try:
-                data.noe_error = float(file_data[i][col['noe_error']])
+                data.noe_err = float(file_data[i][col['noe_err']])
             except ValueError:
-                data.noe_error = None
+                data.noe_err = None
 
 
-    def return_value(self, run, i, data_type=None):
+    def return_value(self, run, i, data_type='noe'):
         """Function for returning the NOE value and error."""
+
+        # Arguments.
+        self.run = run
 
         # Remap the data structure 'self.relax.data.res[run][i]'.
         data = self.relax.data.res[run][i]
 
-        # NOE.
-        noe = None
-        if hasattr(data, 'noe'):
-            noe = data.noe
+        # Get the object.
+        object_name = self.get_data_name(data_type)
+        if not object_name:
+            raise RelaxError, "The NOE calculation data type " + `data_type` + " does not exist."
+        object_error = object_name + "_err"
 
-        # NOE error.
-        noe_error = None
-        if hasattr(data, 'noe_error'):
-            noe_error = data.noe_error
+        # Get the value.
+        value = None
+        if hasattr(data, object_name):
+            value = getattr(data, object_name)
+
+        # Get the error.
+        error = None
+        if hasattr(data, object_error):
+            error = getattr(data, object_error)
 
         # Return the data.
-        return noe, noe_error
+        return value, error
 
 
     def set_error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
@@ -410,9 +453,9 @@ class Noe:
 
             # Set the error.
             if self.spectrum_type == 'ref':
-                data.ref_error = float(error)
+                data.ref_err = float(error)
             elif self.spectrum_type == 'sat':
-                data.sat_error = float(error)
+                data.sat_err = float(error)
 
 
     def write(self, run=None, file=None, dir=None, force=0):
@@ -439,7 +482,7 @@ class Noe:
         noe_file.close()
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, ref_int=None, ref_error=None, sat_int=None, sat_error=None, noe=None, noe_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, ref_int=None, ref_err=None, sat_int=None, sat_err=None, noe=None, noe_err=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -452,11 +495,11 @@ class Noe:
             return
 
         # Reference and saturated data.
-        file.write("%-25s %-25s " % (ref_int, ref_error))
-        file.write("%-25s %-25s " % (sat_int, sat_error))
+        file.write("%-25s %-25s " % (ref_int, ref_err))
+        file.write("%-25s %-25s " % (sat_int, sat_err))
 
         # NOE and error.
-        file.write("%-25s %-25s " % (noe, noe_error))
+        file.write("%-25s %-25s " % (noe, noe_err))
 
         # End of the line.
         file.write("\n")
@@ -482,7 +525,7 @@ class Noe:
 
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', ref_int='Ref_intensity', ref_error='Ref_error', sat_int='Sat_intensity', sat_error='Sat_error', noe='NOE', noe_error='NOE_error')
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', ref_int='Ref_intensity', ref_err='Ref_error', sat_int='Sat_intensity', sat_err='Sat_error', noe='NOE', noe_err='NOE_error')
 
 
         # Values.
@@ -504,9 +547,9 @@ class Noe:
                 ref_int = data.ref
 
             # Reference error.
-            ref_error = None
-            if hasattr(data, 'ref_error'):
-                ref_error = data.ref_error
+            ref_err = None
+            if hasattr(data, 'ref_err'):
+                ref_err = data.ref_err
 
             # Saturated intensity.
             sat_int = None
@@ -514,9 +557,9 @@ class Noe:
                 sat_int = data.sat
 
             # Saturated error.
-            sat_error = None
-            if hasattr(data, 'sat_error'):
-                sat_error = data.sat_error
+            sat_err = None
+            if hasattr(data, 'sat_err'):
+                sat_err = data.sat_err
 
             # NOE
             noe = None
@@ -524,9 +567,9 @@ class Noe:
                 noe = data.noe
 
             # NOE error.
-            noe_error = None
-            if hasattr(data, 'noe_error'):
-                noe_error = data.noe_error
+            noe_err = None
+            if hasattr(data, 'noe_err'):
+                noe_err = data.noe_err
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, ref_int=ref_int, ref_error=ref_error, sat_int=sat_int, sat_error=sat_error, noe=noe, noe_error=noe_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, ref_int=ref_int, ref_err=ref_err, sat_int=sat_int, sat_err=sat_err, noe=noe, noe_err=noe_err)

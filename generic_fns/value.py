@@ -360,13 +360,13 @@ class Value:
             raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
-        relax_file = self.relax.file_ops.open_write_file(file, dir, force)
+        file = self.relax.file_ops.open_write_file(file, dir, force)
 
         # Write the data.
-        self.write_data(run, data_type, relax_file)
+        self.write_data(run, data_type, file)
 
         # Close the file.
-        relax_file.close()
+        file.close()
 
 
     def write_data(self, run, data_type, file, return_value=None):
@@ -379,10 +379,6 @@ class Value:
 
             # Specific value and error returning function.
             return_value = self.relax.specific_setup.setup('return_value', function_type)
-
-        # Test if the data exists.
-        for i in xrange(len(self.relax.data.res[run])):
-            value, error = return_value(run, i, data_type)
 
         # Write a header line.
         file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))

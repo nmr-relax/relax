@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,14 @@ import sys
 import help
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
+from specific_fns.noe import Noe
 
 
-class Value:
+class Grace:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for setting data values."""
+        """Class for interfacing with Grace."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -40,63 +41,8 @@ class Value:
         self.__relax__ = relax
 
 
-    def copy(self, run1=None, run2=None, data_type=None):
-        """Function for copying residue specific data values from run1 to run2.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run1:  The name of the run to copy from.
-
-        run2:  The name of the run to copy to.
-
-        data_type:  The data type.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Only one data type may be selected, therefore the data type argument should be a string.
-
-        If this function is used to change values of previously minimised runs, then the
-        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset to None.
-
-
-        Examples
-        ~~~~~~~~
-
-        To copy the CSA values from the run 'm1' to 'm2', type:
-
-        relax> value.copy('m1', 'm2', 'CSA')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2`
-            text = text + ", data_type=" + `data_type` + ")"
-            print text
-
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
-
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
-
-        # Relaxation data type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
-
-        # Execute the functional code.
-        self.__relax__.generic.value.copy(run1=run1, run2=run2, data_type=data_type)
-
-
-    def display(self, run=None, data_type=None):
-        """Function for displaying residue specific data values.
+    def view(self, run=None, data_type=None, file=None, dir='grace', grace_exe='xmgrace', force=0):
+        """Function for running Grace.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -105,335 +51,86 @@ class Value:
 
         data_type:  The data type.
 
+        file:  The name of the file.
 
-        Description
-        ~~~~~~~~~~~
+        dir:  The directory name.
 
-        Only one data type may be selected, therefore the data type argument should be a string.
+        grace_exe:  The Grace executable file.
 
-
-        Examples
-        ~~~~~~~~
-
-        To show all CSA values for the run 'm1', type:
-
-        relax> value.display('m1', 'CSA')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.display("
-            text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type` + ")"
-            print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Data type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
-
-        # Execute the functional code.
-        self.__relax__.generic.value.display(run=run, data_type=data_type)
-
-
-    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
-        """Function for reading residue specific data values from a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        data_type:  The data type.
-
-        frq:  The spectrometer frequency in Hz.
-
-        file:  The name of the file containing the relaxation data.
-
-        num_col:  The residue number column (the default is 0, ie the first column).
-
-        name_col:  The residue name column (the default is 1).
-
-        data_col:  The relaxation data column (the default is 2).
-
-        error_col:  The experimental error column (the default is 3).
-
-        sep:  The column separator (the default is white space).
-
-        header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
+        force:  A flag which, if set to 1, will cause the file to be overwritten.
 
 
         Description
         ~~~~~~~~~~~
 
-        Only one data type may be selected, therefore the data type argument should be a string.  If
-        the file only contains values and no errors, set the error column argument to None.
+        This function can be used either to execute grace, opening the specified file, or to create
+        the grace '.agr' file and the execute grace.  If the run and data_type arguments are
+        supplied, the second of these two options is pursued.  To simply execute grace, leave the
+        run and data_type arguments as None.
 
-        If this function is used to change values of previously minimised runs, then the
-        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset to None.
+        If the directory name is set to None, the file will be placed in the current working
+        directory.
+
+        The force flag will only have an effect if the run argument is not None.
 
 
         Examples
         ~~~~~~~~
 
-        To load CSA values for the run 'm1' from the file 'csa_values' in the directory 'data', type
-        any of the following:
+        To view the file 's2.agr' in the directory 'grace', type:
 
-        relax> value.read('m1', 'CSA', 'data/csa_value')
-        relax> value.read('m1', 'CSA', 'data/csa_value', 0, 1, 2, 3, None, 1)
-        relax> value.read(run='m1', data_type='CSA', file='data/csa_value', num_col=0, name_col=1,
-                          data_col=2, error_col=3, sep=None, header_lines=1)
+        relax> grace.view(file='s2.agr')
+        relax> grace.view(file='s2.agr', dir='grace')
+
+
+        To write the NOE values from the run 'noe' to the grace file 'noe.agr' and then view the
+        file, type:
+
+        relax> grace.view('noe', 'noe', 'noe.agr')
+        relax> grace.view('noe', data_type='noe', file='noe.agr')
+        relax> grace.view(run='noe', data_type='noe', file='noe.agr', dir='grace')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.read("
+            text = sys.ps3 + "grace.view("
             text = text + "run=" + `run`
             text = text + ", data_type=" + `data_type`
             text = text + ", file=" + `file`
-            text = text + ", num_col=" + `num_col`
-            text = text + ", name_col=" + `name_col`
-            text = text + ", data_col=" + `data_col`
-            text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep`
-            text = text + ", header_lines=" + `header_lines` + ")"
+            text = text + ", dir=" + `dir`
+            text = text + ", grace_exe=" + `grace_exe` + ")"
             print text
 
         # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        if run != None and type(run) != str:
+            raise RelaxNoneStrError, ('run', run)
 
         # Data type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+        if data_type != None and type(data_type) != str:
+            raise RelaxNoneStrError, ('data type', data_type)
 
-        # The file name.
+        # File.
         if type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxStrError, ('file name', file)
 
-        # The number column.
-        if type(num_col) != int:
-            raise RelaxIntError, ('residue number column', num_col)
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
 
-        # The name column.
-        if type(name_col) != int:
-            raise RelaxIntError, ('residue name column', name_col)
+        # Grace executable file.
+        if type(grace_exe) != str:
+            raise RelaxStrError, ('Grace executable file', grace_exe)
 
-        # The data column.
-        if type(data_col) != int:
-            raise RelaxIntError, ('data column', data_col)
-
-        # The error column.
-        if error_col != None and type(error_col) != int:
-            raise RelaxNoneIntError, ('error column', error_col)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
-
-        # Header lines.
-        if type(header_lines) != int:
-            raise RelaxIntError, ('number of header lines', header_lines)
+        # The force flag.
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(run=run, data_type=data_type, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
+        self.__relax__.generic.grace.view(run=run, data_type=data_type, file=file, dir=dir, grace_exe=grace_exe, force=force)
 
 
-    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
-        """Function for setting residue specific data values.
-
-        Keyword arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the values to.
-
-        value:  The value(s).
-
-        data_type:  The data type(s).
-
-        res_num:  The residue number.
-
-        res_name:  The residue name.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        If this function is used to change values of previously minimised runs, then the
-        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset to None.
-
-
-        The value argument can be None, a single value, or an array of values while the data type
-        argument can be None, a string, or array of strings.  The choice of which combination
-        determines the behaviour of this function.  The following table describes what occurs in
-        each instance.  The Value column refers to the 'value' argument while the Type column refers
-        to the 'data_type' argument.  In these columns, 'None' corresponds to None, '1' corresponds
-        to either a single value or single string, and 'n' corresponds to either an array of values
-        or an array of strings.
-
-        ____________________________________________________________________________________________
-        |       |       |                                                                          |
-        | Value | Type  | Description                                                              |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        | None  | None  | This case is used to set the model parameters prior to minimisation or   |
-        |       |       | calculation.  The model parameters are set to the default values.        |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        |   1   | None  | Invalid combination.                                                     |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        |   n   | None  | This case is used to set the model parameters prior to minimisation or   |
-        |       |       | calculation.  The length of the value array must be equal to the number  |
-        |       |       | of model parameters for an individual residue.  The parameters will be   |
-        |       |       | set to the corresponding number.                                         |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        | None  |   1   | The data type matching the string will be set to the default value.      |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        |   1   |   1   | The data type matching the string will be set to the supplied number.    |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        |   n   |   1   | Invalid combination.                                                     |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        | None  |   n   | Each data type matching the strings will be set to the default values.   |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        |   1   |   n   | Each data type matching the strings will be set to the supplied number.  |
-        |_______|_______|__________________________________________________________________________|
-        |       |       |                                                                          |
-        |   n   |   n   | Each data type matching the strings will be set to the corresponding     |
-        |       |       | number.  Both arrays must be of equal length.                            |
-        |_______|_______|__________________________________________________________________________|
-
-
-        Residue number and name argument.
-
-        If the 'res_num' and 'res_name' arguments are left as the defaults of None, then the
-        function will be applied to all residues.  Otherwise the residue number can be set to either
-        an integer for selecting a single residue or a python regular expression string for
-        selecting multiple residues.  The residue name argument must be a string and can use regular
-        expression as well.
-
-
-        Examples
-        ~~~~~~~~
-
-        To set the parameter values for the run 'test' to the default values, for all residues,
-        type:
-
-        relax> value.set('test')
-
-
-        To set the parameter values of residue 10, which is the model-free run 'm4' and has the
-        parameters {S2, te, Rex}, the following can be used.  Rex term is the value for the first
-        given field strength.
-
-        relax> value.set('m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
-        relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
-
-
-        To set the CSA value for the model-free run 'tm3' to the default value, type:
-
-        relax> value.set('tm3', data_type='csa')
-
-
-        To set the CSA value of all residues in the reduced spectral density mapping run '600MHz' to
-        -170 ppm, type:
-
-        relax> value.set('600MHz', -170 * 1e-6, 'csa')
-        relax> value.set('600MHz', value=-170 * 1e-6, data_type='csa')
-
-
-        To set the NH bond length of all residues in the model-free run 'm5' to 1.02 Angstroms,
-        type:
-
-        relax> value.set('m5', 1.02 * 1e-10, 'bond_length')
-        relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
-
-
-        To set both the bond length and the CSA value for the run 'new' to the default values, type:
-
-        relax> value.set('new', data_type=['bond length', 'csa'])
-
-
-        To set both tf and ts in the model-free run 'm6' to 100 ps, type:
-
-        relax> value.set('m6', 100e-12, ['tf', 'ts'])
-        relax> value.set('m6', value=100e-12, data_type=['tf', 'ts'])
-
-
-        To set the S2 and te parameter values for model-free run 'm4' which has the parameters
-        {S2, te, Rex} to 0.56 and 13 ps, type:
-
-        relax> value.set('m4', [0.56, 13e-12], ['S2', 'te'], 10)
-        relax> value.set('m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
-        relax> value.set(run='m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.set("
-            text = text + "run=" + `run`
-            text = text + ", value=" + `value`
-            text = text + ", data_type=" + `data_type`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
-            print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Value.
-        if value != None and type(value) != float and type(value) != int and type(value) != list:
-            raise RelaxNoneFloatListError, ('value', value)
-        if type(value) == list:
-            for i in xrange(len(value)):
-                if type(value[i]) != float and type(value[i]) != int:
-                    raise RelaxListFloatError, ('value', value)
-
-        # Data type.
-        if data_type != None and type(data_type) != str and type(data_type) != list:
-            raise RelaxNoneStrListError, ('data type', data_type)
-        if type(data_type) == list:
-            for i in xrange(len(data_type)):
-                if type(data_type[i]) != str:
-                    raise RelaxListStrError, ('data type', data_type)
-
-        # The invalid combination of a single value and no data_type argument.
-        if (type(value) == float or type(value) == int) and data_type == None:
-            raise RelaxError, "Invalid value and data type argument combination, for details by type 'help(value.set)'"
-
-        # The invalid combination of an array of values and a single data_type string.
-        if type(value) == list and type(data_type) == str:
-            raise RelaxError, "Invalid value and data type argument combination, for details by type 'help(value.set)'"
-
-        # Value array and data type array of equal length.
-        if type(value) == list and type(data_type) == list and len(value) != len(data_type):
-            raise RelaxError, "Both the value array and data type array must be of equal length."
-
-        # Residue number.
-        if res_num != None and type(res_num) != int and type(res_num) != str:
-            raise RelaxNoneIntStrError, ('residue number', res_num)
-
-        # Residue name.
-        if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
-
-        # Execute the functional code.
-        self.__relax__.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num, res_name=res_name)
-
-
-    def write(self, run=None, data_type=None, file=None, dir=None, force=0):
-        """Function for writing residue specific data values to a file.
+    def write(self, run=None, data_type=None, file=None, dir='grace', force=0):
+        """Function for creating a grace '.agr' file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -453,21 +150,23 @@ class Value:
         ~~~~~~~~~~~
 
         If no directory name is given, the file will be placed in the current working directory.
-        The data type argument can only be a single string.
+
+        The data type argument should be a string.
 
 
         Examples
         ~~~~~~~~
 
-        To write the CSA values for the run 'm1' to the file 'csa.txt', type:
+        To write the NOE values from the run 'noe' to the grace file 'noe.agr', type:
 
-        relax> value.write('m1', 'CSA', 'csa.txt')
-        relax> value.write(run='m1', data_type='CSA', file='csa.txt')
+        relax> grace.write('noe', 'noe', 'noe.agr')
+        relax> grace.write('noe', data_type='noe', file='noe.agr')
+        relax> grace.write(run='noe', data_type='noe', file='noe.agr', dir='grace')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.write("
+            text = sys.ps3 + "grace.write("
             text = text + "run=" + `run`
             text = text + ", data_type=" + `data_type`
             text = text + ", file=" + `file`
@@ -496,7 +195,7 @@ class Value:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.value.write(run=run, data_type=data_type, file=file, dir=dir, force=force)
+        self.__relax__.generic.grace.write(run=run, data_type=data_type, file=file, dir=dir, force=force)
 
 
     # Docstring modification.
@@ -527,35 +226,14 @@ class Value:
 
     """
 
-    # Copy function.
-    copy.__doc__ = copy.__doc__ + "\n\n" + __re_doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.get_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.set.__doc__ + "\n\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.set.__doc__ + "\n"
-
-    # Display function.
-    display.__doc__ = display.__doc__ + "\n\n" + __re_doc__ + "\n"
-    display.__doc__ = display.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
-    display.__doc__ = display.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
-
-    # Read function.
-    read.__doc__ = read.__doc__ + "\n\n" + __re_doc__ + "\n"
-    read.__doc__ = read.__doc__ + Model_free.get_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Model_free.set.__doc__ + "\n\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.set.__doc__ + "\n"
-
-    # Set function.
-    set.__doc__ = set.__doc__ + "\n\n" + __re_doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.get_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.set.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.set.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
+    # View function.
+    view.__doc__ = view.__doc__ + "\n\n" + __re_doc__ + "\n"
+    view.__doc__ = view.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
+    view.__doc__ = view.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n\n"
+    view.__doc__ = view.__doc__ + Noe.get_data_name.__doc__ + "\n"
 
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + __re_doc__ + "\n"
     write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + Noe.get_data_name.__doc__ + "\n"

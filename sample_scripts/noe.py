@@ -3,6 +3,7 @@
 # Create the run
 run = 'noe'
 create_run(run, 'noe')
+create_run('a', 'noe')
 
 # Load the sequence from a PDB file.
 pdb(run, 'Ap4Aase_new_3.pdb', load_seq=1)
@@ -28,7 +29,17 @@ unselect.read(run, file='unresolved')
 calc(run)
 
 # Save the NOEs.
-noe.write(run, file='noe.out', force=1)
+value.write(run, data_type='noe', file='noe.out', force=1)
+
+# Create grace files.
+grace.write(run, data_type='ref', file='ref.agr', force=1)
+grace.write(run, data_type='sat', file='sat.agr', force=1)
+grace.write(run, data_type='noe', file='noe.agr', force=1)
+
+# View the grace files.
+grace.view(file='ref.agr')
+grace.view(file='sat.agr')
+grace.view(file='noe.agr')
 
 # Write the results.
 write(run, file='results', dir=None, force=1)

@@ -2128,7 +2128,7 @@ class Model_free(Common_functions):
                     print "\n\n" + string
                     print len(string) * '~'
                 if match('^[Gg]rid', min_algor):
-                    print "The unconstrained grid search size is " + `self.grid_size` + " (constraints may decrease this size).\n"
+                    print "Unconstrained grid search size: " + `self.grid_size` + " (constraints may decrease this size).\n"
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             self.iter_count = 0

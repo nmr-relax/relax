@@ -253,6 +253,9 @@ class Jw_mapping(Common_functions):
         # Arguments.
         self.run = run
 
+        # Remap the data structure 'self.relax.data.res[run][i]'.
+        data = self.relax.data.res[run][i]
+
         # Get the object.
         object_name = self.get_data_name(data_type)
         if not object_name:
@@ -260,16 +263,14 @@ class Jw_mapping(Common_functions):
         object_error = object_name + "_err"
 
         # Get the value.
-        if hasattr(self.relax.data.res[self.run][i], object_name):
-            value = getattr(self.relax.data.res[self.run][i], object_name)
-        else:
-            value = None
+        value = None
+        if hasattr(data, object_name):
+            value = getattr(data, object_name)
 
         # Get the error.
-        if hasattr(self.relax.data.res[self.run][i], object_error):
-            error = getattr(self.relax.data.res[self.run][i], object_error)
-        else:
-            error = None
+        error = None
+        if hasattr(data, object_error):
+            error = getattr(data, object_error)
 
         # Return the data.
         return value, error
