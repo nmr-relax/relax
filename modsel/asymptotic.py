@@ -19,6 +19,7 @@ from math import log, pi
 from re import match
 
 from common_ops import common_operations
+from discrepancies import kl
 
 
 class asymptotic(common_operations):
@@ -26,6 +27,7 @@ class asymptotic(common_operations):
 		"Model-free analysis based on asymptotic model selection methods."
 
 		self.mf = mf
+		self.kl = kl()
 
 		print "Model-free analysis based on " + self.mf.data.usr_param.method + " model selection."
 		self.initialize()
@@ -34,51 +36,42 @@ class asymptotic(common_operations):
 		self.goto_stage()
 
 
-	def calc_crit(self, res, n, k, chisq):
-		"Calculate the criteria."
-
-		sum_ln_err = 0.0
-		for i in range(len(self.mf.data.relax_data)):
-			var = float(self.mf.data.relax_data[i][res][3]) ** 2
-			if var == 0.0:
-				ln_err = -100.0
-			else:
-				ln_err = log(var)
-			sum_ln_err = sum_ln_err + ln_err
-
-		if match('^AIC$', self.mf.data.usr_param.method):
-			aic = n*log(2.0*pi) + sum_ln_err + chisq + 2.0*k
-			aic = aic / (2.0*n)
-			return aic
-
-		elif match('^AICc$', self.mf.data.usr_param.method):
-			aicc = n*log(2.0*pi) + sum_ln_err + chisq + 2.0*k + 2.0*k*(k+1.0)/(n-k-1.0)
-			aicc = aicc / (2.0*n)
-			return aicc
-
-		elif match('^BIC$', self.mf.data.usr_param.method):
-			bic = n*log(2.0*pi) + sum_ln_err + chisq + k*log(n)
-			bic = bic / ( 2.0 * n )
-			return bic
-
-
 	def model_selection(self):
 		"Model selection."
 
 		data = self.mf.data.data
+		n = float(self.mf.data.num_data_sets)
 
 		self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>")
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
 			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
 
-			n = float(self.mf.data.num_data_sets)
+			err = []
+			for set in range(len(self.mf.data.relax_data)):
+				err.append(float(self.mf.data.relax_data[set][res][3]))
 
-			data['m1'][res]['crit'] = self.calc_crit(res, n, k=1.0, chisq=data['m1'][res]['chi2'])
-			data['m2'][res]['crit'] = self.calc_crit(res, n, k=2.0, chisq=data['m2'][res]['chi2'])
-			data['m3'][res]['crit'] = self.calc_crit(res, n, k=2.0, chisq=data['m3'][res]['chi2'])
-			data['m4'][res]['crit'] = self.calc_crit(res, n, k=3.0, chisq=data['m4'][res]['chi2'])
-			data['m5'][res]['crit'] = self.calc_crit(res, n, k=3.0, chisq=data['m5'][res]['chi2'])
+			for model in self.mf.data.runs:
+				chi2 = data[model][res]['chi2']
+				crit = self.kl.calc(n, chi2, err)
+
+				if match('m1', model):
+					k = 1.0
+				elif match('m2', model) or match('m3', model):
+					k = 2.0
+				elif match('m4', model) or match('m5', model):
+					k = 3.0
+
+				if match('^AIC$', self.mf.data.usr_param.method):
+					crit = crit + 2.0*k
+
+				elif match('^AICc$', self.mf.data.usr_param.method):
+					crit = crit + 2.0*k + 2.0*k*(k + 1.0)/(n - k - 1.0)
+
+				elif match('^BIC$', self.mf.data.usr_param.method):
+					crit = crit + k*log(n)
+
+				data[model][res]['crit'] = crit / (2.0 * n)
 
 			# Select model.
 			min = 'm1'
