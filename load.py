@@ -59,7 +59,7 @@ class Load(Generic_functions):
             return
 
         # Remove the header.
-        file_data = file_data[header_lines:-1]
+        file_data = file_data[header_lines:]
 
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
@@ -106,7 +106,7 @@ class Load(Generic_functions):
             return
 
         # Remove the header.
-        file_data = file_data[header_lines:-1]
+        file_data = file_data[header_lines:]
 
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)

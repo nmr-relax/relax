@@ -132,7 +132,7 @@ class Map:
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "map("
             text = text + "model=" + `model`
-            text = text + "res_num=" + `res_num`
+            text = text + ", res_num=" + `res_num`
             text = text + ", map_type=" + `map_type`
             text = text + ", inc=" + `inc`
             text = text + ", lower=" + `lower`

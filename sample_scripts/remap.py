@@ -13,12 +13,11 @@ def remap(values):
     if values[0] == 0.0:
         s2s = 1e99
     else:
-        s2s = values[1]/values[0]
+        s2s = values[1]*values[0]
 
     # ts.
     ts = values[2]
 
-    #print "{S2f = " + `s2f` + ", S2s = " + `s2s` + ", ts = " + `ts` + "}"
     return array([s2f, s2s, ts], Float64)
 
 
@@ -38,11 +37,11 @@ model.select_mf(name)
 
 # Map data.
 inc = 20
-lower = [0.0, 0.0, 0]
-upper = [1.0, 1.0, 2000e-12]
+lower = [0.5, 0.5, 0]
+upper = [1.0, 1.0, 1000e-12]
 swap = [0, 2, 1]
 point = [0.952, 0.582, 32.0e-12]
 point = [point[0], point[0]*point[1], point[2]]
 
-map(name, inc=inc, lower=lower, upper=upper, swap=swap, file='remap', point=point, remap=remap, labels=['S2f', 'S2', 'ts'])
+map(name, res_num=0, inc=inc, lower=lower, upper=upper, swap=swap, file='remap', point=point, remap=remap, labels=['S2f', 'S2s', 'ts'])
 dx(file='remap')

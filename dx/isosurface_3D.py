@@ -304,7 +304,7 @@ main_Import_1_out_1 =
     ) [instance: 1, cache: 1];
     // 
     // node Isosurface[1]: x = 150, y = 42, inputs = 6, label = Outer Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 50.0
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 500.0
     //
 main_Isosurface_1_out_1 = 
     Isosurface(
@@ -344,7 +344,7 @@ main_Collect_1_out_1 =
     ) [instance: 1, cache: 1];
     // 
     // node Isosurface[2]: x = 265, y = 42, inputs = 6, label = Middle Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 10.0
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 100.0
     //
 main_Isosurface_2_out_1 = 
     Isosurface(
@@ -370,7 +370,7 @@ main_Color_2_out_1 =
     ) [instance: 2, cache: 1];
     // 
     // node Isosurface[3]: x = 382, y = 42, inputs = 6, label = Inner Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 5.0
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 50.0
     //
 main_Isosurface_3_out_1 = 
     Isosurface(
@@ -404,7 +404,7 @@ main_Collect_2_out_1 =
     ) [instance: 2, cache: 1];
     // 
     // node Isosurface[4]: x = 497, y = 42, inputs = 6, label = Inner Isosurface
-    // input[2]: defaulting = 0, visible = 1, type = 5, value = 2.0
+    // input[2]: defaulting = 0, visible = 1, type = 5, value = 20.0
     //
 main_Isosurface_4_out_1 = 
     Isosurface(
