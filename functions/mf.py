@@ -1,26 +1,15 @@
-from Numeric import copy, outerproduct
+from Numeric import Float64, ones, outerproduct, sum, zeros
 from math import pi
 from re import match
 
 from data import data
 
-old_flag = 0
-if old_flag:
-	from jw_mf_old import *
-	from djw_mf_old import *
-	from d2jw_mf_old import *
-	calc_iso_s2f_s2s_ts_djw_comps = None
-	calc_iso_s2f_tf_s2s_ts_djw_comps = None
-else:
-	from jw_mf_comps import *
-	from jw_mf import *
-
+from jw_mf_comps import *
+from jw_mf import *
 from ri_comps import *
 from ri_prime import *
 from ri import *
 from chi2 import *
-#from chi2 import dchi2, d2chi2
-#from c_chi2 import chi2
 
 
 class mf:
@@ -62,7 +51,10 @@ class mf:
 		self.calc_frq_list()
 
 		# Initialise the data.
-		self.data.params = init_params
+		self.data.params = zeros(len(init_params), Float64)
+		self.data.func_test = pi * ones(len(init_params), Float64)
+		self.data.grad_test = pi * ones(len(init_params), Float64)
+		self.data.hess_test = pi * ones(len(init_params), Float64)
 		self.data.relax_data = relax_data
 		self.data.errors = errors
 		self.data.bond_length = bond_length
@@ -121,6 +113,13 @@ class mf:
 		self.set_params(params)
 		self.print_flag = print_flag
 
+		# Test if the function has already been calculated with these parameter values.
+		if sum(self.data.params == self.data.func_test) == len(self.data.params):
+			return self.data.chi2
+
+		# Store the parameter values in self.data.func_test for testing on next call if the function has already been calculated.
+		self.data.func_test = self.data.params * 1.0
+
 		# Calculate the spectral density values.
 		self.calc_jw_comps(self.data)
 		create_jw_struct(self.data, self.calc_jw)
@@ -132,7 +131,7 @@ class mf:
 		self.create_ri_prime(self.data)
 
 		# Calculate the R1, R2, and NOE values.
-		self.data.ri = copy.deepcopy(self.data.ri_prime)
+		self.data.ri = self.data.ri_prime * 1.0
 		ri(self.data, self.create_ri, self.get_r1)
 
 		# Calculate the chi-squared value.
@@ -163,11 +162,16 @@ class mf:
 		self.set_params(params)
 		self.print_flag = print_flag
 
-		# IMPORTANT.
-		# It is assumed that the function self.func has been called before with these parameter values.
-		# This may not always be the case depending on the minimisation technique.  Therefore, for debugging
-		# a broken minimiser uncomment this line.
-		#temp_chi2 = self.func(params, print_flag)
+		# Test if the gradient has already been calculated with these parameter values.
+		if sum(self.data.params == self.data.grad_test) == len(self.data.params):
+			return self.data.dchi2
+
+		# Test if the function has already been called
+		if sum(self.data.params == self.data.func_test) != len(self.data.params):
+			temp_chi2 = self.func(params, print_flag)
+
+		# Store the parameter values in self.data.grad_test for testing on next call if the gradient has already been calculated.
+		self.data.grad_test = self.data.params * 1.0
 
 		# Calculate the spectral density gradients.
 		if self.calc_djw_comps:
@@ -182,7 +186,7 @@ class mf:
 			self.create_dri_prime[i](self.data, i)
 
 		# Calculate the R1, R2, and NOE gradients.
-		self.data.dri = copy.deepcopy(self.data.dri_prime)
+		self.data.dri = self.data.dri_prime * 1.0
 		dri(self.data, self.create_dri, self.get_dr1)
 
 		# Calculate the chi-squared gradient.
@@ -217,12 +221,16 @@ class mf:
 		self.set_params(params)
 		self.print_flag = print_flag
 
-		# IMPORTANT.
-		# It is assumed that the function self.func has been called before with these parameter values.
-		# This may not always be the case depending on the minimisation technique.  Therefore, for debugging
-		# a broken minimiser uncomment the following lines.
-		#temp_chi2 = self.func(params, print_flag)
-		#temp_dchi2 = self.dfunc(params, print_flag)
+		# Test if the hessian has already been calculated with these parameter values.
+		if sum(self.data.params == self.data.hess_test) == len(self.data.params):
+			return self.data.d2chi2
+
+		# Test if the gradient has already been called
+		if sum(self.data.params == self.data.grad_test) != len(self.data.params):
+			temp_dchi2 = self.dfunc(params, print_flag)
+
+		# Store the parameter values in self.data.hess_test for testing on next call if the hessian has already been calculated.
+		self.data.hess_test = self.data.params * 1.0
 
 		# Calculate the spectral density hessians.
 		create_d2jw_struct(self.data, self.calc_d2jw)
@@ -241,7 +249,7 @@ class mf:
 						self.data.d2ri_prime[:, j, i] = self.data.d2ri_prime[:, i, j]
 
 		# Calculate the R1, R2, and NOE hessians.
-		self.data.d2ri = copy.deepcopy(self.data.d2ri_prime)
+		self.data.d2ri = self.data.d2ri_prime * 1.0
 		d2ri(self.data, self.create_d2ri, self.get_d2r1)
 
 		# Calculate the chi-squared hessian.
@@ -359,14 +367,13 @@ class mf:
 	def set_params_scaled(self, params):
 		"Function for setting self.data.params to the parameter vector multiplied with the scaling vector"
 
-		self.data.params_unscaled = params
 		self.data.params = params * self.data.scaling_vector
 
 
 	def set_params_unscaled(self, params):
 		"Function for setting self.data.params to the parameter vector"
 
-		self.data.params = params
+		self.data.params = params * 1.0
 
 
 	def setup_equations(self):

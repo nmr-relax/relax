@@ -48,6 +48,10 @@ class newton(generic_line_search, generic_minimise):
 		self.minimise = self.generic_minimise
 
 
+	def new_param_func(self):
+		self.dir()
+		self.xk_new = self.xk + self.pk
+
 	def backup_current_data(self):
 		"Function to backup the current data into fk_last."
 

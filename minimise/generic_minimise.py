@@ -94,7 +94,6 @@ class generic_minimise:
 				self.warning = "OverflowError: " + message.args[0] + " (fatal minimisation error)."
 				break
 
-
 			# Test if maximum number of iterations have been reached.
 			if self.k >= self.maxiter:
 				self.warning = "Maximum number of iterations reached"

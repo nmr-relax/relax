@@ -1,6 +1,3 @@
-from Numeric import Float64, zeros
-
-
 ############################
 # Spectral density values. #
 ############################
