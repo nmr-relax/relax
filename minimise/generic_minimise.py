@@ -44,6 +44,7 @@ class generic_minimise:
 						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 
 			# Get xk+1 (new parameter function).
+			self.new_param_func()
 			try:
 				self.new_param_func()
 			except "LinearAlgebraError", message:

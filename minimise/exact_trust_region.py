@@ -11,7 +11,8 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, lambda0=10.0, delta_max=1e5, delta0=1.0, eta=0.2):
 		"""Exact trust region algorithm.
 
-		Page 77-87 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+		Moré, J. J., and Sorensen D. C. 1983, Computing a trust region step.
+		SIAM J. Sci. Stat. Comput. 4, 553-572.
 
 		"""
 
@@ -40,68 +41,142 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 
 
 	def new_param_func(self):
-		"Find the exact trust region solution."
+		"""Find the exact trust region solution.
 
-		# Calculate the newton step and its norm.
-		pB = -matrixmultiply(inverse(self.d2fk), self.dfk)
-		norm_pB = sqrt(dot(pB, pB))
+		Algorithm 3.14
+		"""
 
-		# Debugging code.
-		self.xk_new = self.xk * 1.0
-		self.fk_new = self.fk
+		# Initialisation.
+		iter = 0
+		self.l = self.lambda0
+		self.I = identity(len(self.dfk))
 
-		# Test if the newton step is inside the trust region and, if so, accept the step.
-		if norm_pB <= self.delta:
-			if self.print_flag == 2:
-				print "Taking the full step: " + `pB`
-			self.pk = pB
-		else:
-			if self.print_flag == 2:
-				print "Not taking the full step: " + `pB`
+		# Initialise lL, lU, lS.
+		self.lS = -1e99
+		b = 0.0
+		for j in range(len(self.d2fk)):
+			self.lS = max(self.lS, -self.d2fk[j, j])
+			sum = 0.0
+			for i in range(len(self.d2fk[j])):
+				sum = sum + abs(self.d2fk[i, j])
+			b = max(b, sum)
+		a = sqrt(dot(self.dfk, self.dfk)) / self.delta
+		self.lL = max(0.0, self.lS, a - b)
+		self.lU = a + b
 
-			# The exact trust region algorithm.
-			l = 0
-			self.lambda_l = self.lambda0
-			self.I = identity(len(self.dfk))
+		# Debugging.
+		if self.print_flag == 2:
+			print "Initialisation."
 			eigen = eigenvectors(self.d2fk)
 			eigenvals = sort(eigen[0])
+			for i in range(len(self.d2fk)):
+				print "\tB[" + `i` + ", " + `i` + "] = " + `self.d2fk[i, i]`
+			print "\tEigenvalues: " + `eigenvals`
+			print "\t||g||/delta: " + `a`
+			print "\t||B||1: " + `b`
+			print "\tl:  " + `self.l`
+			print "\tlL: " + `self.lL`
+			print "\tlU: " + `self.lU`
+			print "\tlS: " + `self.lS`
+
+		# Iterative loop.
+		while 1:
+			# Safeguard lambda.
 			if self.print_flag == 2:
-				print "Eigenvalues: " + `eigenvals`
-
-			while l < 3:
-				# Safeguard.
+				print "\n< Iteration " + `iter` + " >"
+				print "Safeguarding lambda."
+				print "\tInit l: " + `self.l`
+				print "\tlL: " + `self.lL`
+				print "\tlU: " + `self.lU`
+				print "\tlS: " + `self.lS`
+			self.l = max(self.l, self.lL)
+			self.l = min(self.l, self.lU)
+			if self.l <= self.lS:
 				if self.print_flag == 2:
-					print "l: " + `l` + ", lambda(l) orig: " + `self.lambda_l`
-				self.safeguard(eigenvals)
-
-				# Calculate the matrix B + lambda(l).I
-				matrix = self.d2fk + self.lambda_l * self.I
-
-				# Factor B + lambda(l).I = RT.R
-				R = cholesky_decomposition(matrix)
-
-				# Solve pl = -inverse(RT.R).g
-				pl = -matrixmultiply(inverse(matrix), self.dfk)
-
-				# Solve ql = inverse(RT).pl
-				ql = matrixmultiply(inverse(transpose(R)), pl)
-
-				# Lengths
-				dot_pl = dot(pl, pl)
-
-				# lambda(l+1) update.
-				self.lambda_l = self.lambda_l + dot_pl / dot(ql, ql) * ((sqrt(dot_pl) - self.delta) / self.delta)
-
-				if self.print_flag == 2:
-					print "\tl: " + `l` + ", lambda(l) fin: " + `self.lambda_l`
-
-				l = l + 1
-
-			self.pk = -matrixmultiply(inverse(self.d2fk + self.lambda_l * self.I), self.dfk) 
-
+					print "\tself.l <= self.lS"
+				self.l = max(0.001*self.lU, sqrt(self.lL*self.lU))
 			if self.print_flag == 2:
-				print "Step: " + `self.pk`
+				print "\tFinal l: " + `self.l`
 
+			# Calculate the matrix 'B + lambda.I' and factor 'B + lambda(l).I = RT.R'
+			matrix = self.d2fk + self.l * self.I
+			pos_def = 1
+			if self.print_flag == 2:
+				print "Cholesky decomp."
+				print "\tB + lambda.I: " + `matrix`
+				eigen = eigenvectors(matrix)
+				eigenvals = sort(eigen[0])
+				print "\tEigenvalues: " + `eigenvals`
+			try:
+				func = cholesky_decomposition
+				R = func(matrix)
+				if self.print_flag == 2:
+					print "\tCholesky matrix R: " + `R`
+			except "LinearAlgebraError":
+				if self.print_flag == 2:
+					print "\tLinearAlgebraError, matrix is not positive definite."
+				pos_def = 0
+			if self.print_flag == 2:
+				print "\tResults: " + `func.results`
+				print "\tPos def: " + `pos_def`
+
+			if pos_def:
+				# Solve p = -inverse(RT.R).g
+				p = -matrixmultiply(inverse(matrix), self.dfk)
+				if self.print_flag == 2:
+					print "Solve p = -inverse(RT.R).g"
+					print "\tp: " + `p`
+
+				# Compute tau and z if ||p|| < delta.
+				dot_p = dot(p, p)
+				len_p = sqrt(dot_p)
+				if len_p < self.delta:
+					import sys
+					sys.exit()
+
+					# Calculate z.
+
+					# Calculate tau.
+					delta2_len_p2 = self.delta**2 - dot_p
+					dot_p_z = dot(p, z)
+					tau = delta2_len_p2 / (dot_p_z + sign(dot_p_z) * sqrt(dot_p_z**2 + delta2_len_p2**2))
+
+					if self.print_flag == 2:
+						print "||p|| < delta"
+						print "\tz: " + `z`
+						print "\ttau: " + `tau`
+				else:
+					if self.print_flag == 2:
+						print "||p|| >= delta"
+						print "\tNo doing anything???"
+
+				# Solve q = inverse(RT).p
+				q = matrixmultiply(inverse(transpose(R)), p)
+
+				# Update lL, lU.
+				if len_p < self.delta:
+					self.lU = min(self.lU, self.l)
+				else:
+					self.lL = min(self.lL, self.l)
+
+				# lambda update.
+				self.l = self.l + dot_p / dot(q, q) * ((len_p - self.delta) / self.delta)
+
+			else:
+				# Update lambda via lambda = lS.
+				self.l = self.lS
+				if self.print_flag == 2:
+					print "Setting l to lS"
+
+			# Update lL
+			self.lL = max(self.lL, self.lS)
+			if self.print_flag == 2:
+				print "Update lL: " + `self.lL`
+
+			# Check the convergence criteria.
+
+			iter = iter + 1
+				
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
