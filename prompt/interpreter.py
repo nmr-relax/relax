@@ -118,8 +118,8 @@ class Interpreter:
     def run(self):
         """Run the python interpreter.
 
-        The namespace of this function is the namespace seen inside the interpreter.  All functions
-        should be defined in this namespace.
+        The namespace of this function is the namespace seen inside the interpreter.  All user
+        accessable functions, macros, etc, should be placed in this namespace.
         """
 
         # Python modules.
