@@ -1,6 +1,7 @@
-from Numeric import array
+from Numeric import Float64, zeros
 
 from data import data
+from ri_comps import r1_comps, dr1_comps, d2r1_comps
 from ri_prime import func_ri_prime
 data_class = data
 
@@ -185,43 +186,99 @@ def calc_d2noe(data, i, frq_num, get_d2r1):
 def calc_r1(data, i, frq_num):
 	"""Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
-	R1()  =  d . J_R1_d  +  c . J_R1_c
-
-	J_R1_d  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
-
-	J_R1_c  =  J(wN)
+	R1()  =  dip_const_func . dip_Jw_R1_func  +  csa_const_func . csa_Jw_R1_func
 
 	"""
 
-	temp_data = data_class()
-	temp_data.dipole_const = data.dipole_const
-	temp_data.csa_const = data.csa_const
-	temp_data.jw = data.jw
-	temp_data.dip_comps = array([0.0])
-	temp_data.dip_jw_comps = array([0.0])
-	temp_data.csa_comps = array([0.0])
-	temp_data.csa_jw_comps = array([0.0])
+	# Create and fill a temporary data class.
+	data.r1_data = data_class()
+	data.r1_data.params = data.params
+	data.r1_data.jw = data.jw
+	data.r1_data.dip_comps_func = data.dip_const_func
+	data.r1_data.dip_jw_comps_func = zeros(1, Float64)
+	data.r1_data.csa_comps_func = data.csa_const_func[data.remap_table[i]]
+	data.r1_data.csa_jw_comps_func = zeros(1, Float64)
+	data.r1_data.remap_table = data.remap_table
+	data.r1_data.csa_index = data.csa_index
+	data.r1_data.r_index = data.r_index
+	data.r1_data.rex_index = data.rex_index
 
-	comp_r1_prime(temp_data, 0, frq_num)
-	func_ri_prime(temp_data)
+	# Calculate the r1 components.
+	r1_comps(data.r1_data, i)
 
-	return temp_data.ri_prime[0]
+	# Calculate the r1 value.
+	func_ri_prime(data.r1_data)
+
+	return data.r1_data.ri_prime[0]
 
 
 def calc_dr1(data, i, frq_num):
 	"""Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
+	dR1()
+	-----  =  dip_const_func . dip_Jw_R1_grad  +  csa_const_func . csa_Jw_R1_grad
+	 dJw
+
+	dR1()
+	-----  =  0
+	dRex
+
+	dR1()
+	-----  =  dip_const_grad . dip_Jw_R1_func
+	 dr
+
+	dR1()
+	-----  =  csa_const_grad . csa_Jw_R1_func
+	dcsa
+
 	"""
 
-	raise NameError, "Incomplete code, need to calculate the dr1 value!"
+	# Place data in the temporary data class.
+	data.r1_data.djw = data.djw
+	data.r1_data.dip_comps_grad = data.dip_const_grad
+	data.r1_data.dip_jw_comps_grad = zeros((1, len(data.params)), Float64)
+	data.r1_data.csa_comps_grad = data.csa_const_grad[data.remap_table[i]]
+	data.r1_data.csa_jw_comps_grad = zeros((1, len(data.params)), Float64)
+	data.r1_data.rex_comps_grad = zeros(1, Float64)
+	data.r1_data.dri_prime = zeros((1, len(data.params)), Float64)
+
+	# Calculate the dr1 components.
+	dr1_comps(data.r1_data, i)
+
+	# Calculate the dr1 value.
+	for j in range(len(data.params)):
+		data.create_dri_prime[j](data.r1_data, j)
+
+	return data.r1_data.dri_prime[0]
 
 
-def calc_d2r1(data, k, frq_num):
+def calc_d2r1(data, i, frq_num):
 	"""Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
 	"""
 
-	raise NameError, "Incomplete code, need to calculate the d2r1 value!"
+	# Place data in the temporary data class.
+	data.r1_data.d2jw = data.d2jw
+	data.r1_data.dip_comps_hess = data.dip_const_hess
+	data.r1_data.dip_jw_comps_hess = zeros((1, len(data.params), len(data.params)), Float64)
+	data.r1_data.csa_comps_hess = data.csa_const_hess[data.remap_table[i]]
+	data.r1_data.csa_jw_comps_hess = zeros((1, len(data.params), len(data.params)), Float64)
+	data.r1_data.rex_comps_hess = zeros(1, Float64)
+	data.r1_data.d2ri_prime = zeros((1, len(data.params), len(data.params)), Float64)
+
+	# Calculate the dr1 components.
+	d2r1_comps(data.r1_data, i)
+
+	# Calculate the dr1 value.
+	for j in range(len(data.params)):
+		for k in range(j + 1):
+			if data.create_d2ri_prime[j][k]:
+				data.create_d2ri_prime[j][k](data.r1_data, j, k)
+				# Make the hessian symmetric.
+				if i != j:
+					data.d2ri_prime[:, k, j] = data.d2ri_prime[:, j, k]
+
+	return data.r1_data.d2ri_prime[0]
 
 
 

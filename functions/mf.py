@@ -75,6 +75,10 @@ class mf:
 		if not self.setup_equations():
 			print "The model-free equations could not be setup."
 
+		# Place a few function pointer arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
+		self.data.create_dri_prime = self.create_dri_prime
+		self.data.create_d2ri_prime = self.create_d2ri_prime
+
 
 	def calc_frq_list(self):
 		"Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation."

@@ -1,5 +1,5 @@
 from LinearAlgebra import inverse
-from Numeric import copy, dot, matrixmultiply
+from Numeric import dot, matrixmultiply
 
 from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
@@ -68,7 +68,7 @@ class newton(generic_line_search, generic_minimise):
 	def update_data(self):
 		"Function to update the function value, gradient vector, and hessian matrix"
 
-		self.xk = copy.deepcopy(self.xk_new)
+		self.xk = self.xk_new * 1.0
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1

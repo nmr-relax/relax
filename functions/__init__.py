@@ -1,1 +1,1 @@
-__all__ = [ 'data', 'chi2', 'ri', 'ri_prime', 'ri_comps', 'jw_mf', 'jw_mf_comps', 'mf' ]
+__all__ = [ 'chi2', 'data', 'jw_mf_comps', 'jw_mf', 'mf', 'ri_comps', 'ri_prime', 'ri' ]
