@@ -30,76 +30,132 @@ class Diffusion_tensor:
         self.relax = relax
 
 
-    def diffusion_tensor(self, run=None, diff=None, params=None):
+    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0):
         """Macro for setting up the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        run:  The name of the run to assign the data to.
 
-        diff:  The type of diffusion tensor.
+        params:  The parameters argument containing the diffusion tensor data.
 
-        params:  The diffusion tensor data.
+        time_scale:  Value to scale the correlation time parameters values by.
+
+        d_scale:  Value to scale the diffusion tensor eigenvalue parameters values by.
+
+        angle_units:  The units for the angle parameters.
+
+        param_types:  A flag.
 
 
         Description
         ~~~~~~~~~~~
 
-        The argument 'diff' specifies the type of diffusion tensor and can be one of the following:
-            iso - Isotropic diffusion.
-            axial - Axially symmetric anisotropy.
-            aniso - Anisotropic diffusion.
+        To select isotropic diffusion, the parameters argument should be a single floating point
+        number.  The number is the value of the isotropic global correlation time in seconds.  To
+        specify the time in nanoseconds, set the 'time_scale' argmuent to 1e-9.  Alternative
+        parameters can be used by changing the 'param_types' flag to the following integers:
+            0 - tm   (Default)
+            1 - Diso
 
-        The 'params' argument is dependent on the 'diff' argument.  If isotropic diffusion is
-        selected then the params argument should be a single floating point number corresponding to
-        the global correlation time.  If axially symmetric diffusion is selected then it should be a
-        vector of numbers with a length of four.  If anisotropic diffusion is selected then it
-        should be a vector of numbers with a length of six.
+        To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
+        of floating point numbers of length four.  A tuple is a type of data structure enclosed in
+        round brakets, the elements of which are separated by commas.  Alternative sets of
+        parameters are (0 is the default):
+            0 - (Dpar, Dper, theta, phi)   (Default)
+            1 - (tm, Dratio, theta, phi)
+            2 - (tpar, tper, theta, phi)
+
+        To select fully anisotropic diffusion, the parameters argument should be a tuple of length
+        six.  Alternative sets of parameters are:
+            0 - (Dx, Dy, Dz, alpha, beta, gamma)   (Default)
+            1 - (tx, ty, tz, alpha, beta, gamma)
+
+        Parameters affected by the 'time_scale' argument are tm.
+
+        Parameters affected by the 'd_scale' argument are Diso, Dratio, Dpar, Dper, Dx, Dy, Dz.
+
+        Parameters affected by the 'angle_units' argument are theta, phi, alpha, beta, gamma.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set an isotropic diffusion tensor with a correlation time of 10ns, assigning it to the
+        run 'm1', type:
+
+        relax> diffusion_tensor('m1', 10e-9)
+        relax> diffusion_tensor(run='m1', params=10e-9)
+        relax> diffusion_tensor('m1', 10.0, 1e-9)
+        relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9)
+
+        To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
+        1.417e7, Theta value of 67.174°, and Phi value of -83.718°, and assign it to the run 'axial',
+        type one of:
+
+        relax> diffusion_tensor('axial', (1.698e7, 1.417e7, 67.174, -83.718))
+        relax> diffusion_tensor(run='axial', params=(1.698e7, 1.417e7, 67.174, -83.718))
+        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 67.174, -83.718), d_scale=1e8)
+        relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
+                                d_scale=1e8)
+        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), d_scale=1e8,
+                                angle_units='rad')
+        relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
+                                d_scale=1e8, angle_units='rad')
+
+        To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, Theta value
+        of 20°, and Phi value of 20°, and assign it to the run '26', type:
+
+        relax> diffusion_tensor('axial', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
+
+        To select fully anisotropic diffusion, type:
+
+        relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568))
         """
+
+    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0):
 
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = sys.macro_prompt + "diffusion_tensor.set("
             text = text + "run=" + `run`
-            text = text + ", diff=" + `diff`
-            text = text + ", params=" + `params` + ")"
+            text = text + ", params=" + `params`
+            text = text + ", time_scale=" + `time_scale`
+            text = text + ", d_scale=" + `d_scale`
+            text = text + ", angle_units=" + `angle_units`
+            text = text + ", param_types=" + `param_types` + ")"
             print text
 
         # The name of the run.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # Isotropic diffusion tensor parameters.
-        if diff == 'iso':
-            if type(params) != float:
-                raise RelaxFloatError, ('isotropic diffusion parameter', params)
-
-        # Axially symmetric diffusion tensor parameters.
-        elif diff == 'axial':
-            if type(params) != list:
-                raise RelaxListError, ('axially symmetric diffusion parameter', params)
-            elif len(params) != 4:
-                raise RelaxLenError, ('axially symmetric diffusion parameter', 4)
+        # Parameter argument.
+        if type(params) != float and type(params) != tuple:
+            raise RelaxTupleFloatError, ('diffusion parameters', params)
+        if type(params) == tuple:
+            if len(params) != 4 and len(params) != 6:
+                raise RelaxError, "The diffusion parameters argument should either be a floating point number or a tuple of length 4 or 6."
             for i in xrange(len(params)):
                 if type(params[i]) != float:
-                    raise RelaxListFloatError, ('axially symmetric diffusion parameter', params)
+                    raise RelaxTupleFloatError, ('diffusion parameters', params)
 
-        # Anisotropic diffusion tensor parameters.
-        elif diff == 'aniso':
-            if type(params) != list:
-                raise RelaxListError, ('anisotropic diffusion parameter', params)
-            elif len(params) != 6:
-                raise RelaxLenError, ('anisotropic diffusion parameter', 6)
-            for i in xrange(len(params)):
-                if type(params[i]) != float:
-                    raise RelaxListFloatError, ('anisotropic diffusion parameter', params)
+        # Time scale argument.
+        if type(time_scale) != float:
+            raise RelaxFloatError, ('time scale', time_scale)
 
-        # Diffusion tensor argument.
-        elif diff == None:
-            raise RelaxNoneError, 'diffusion tensor'
-        else:
-            raise RelaxError, "The diffusion tensor argument " + `diff` + " must be one of 'iso', 'axial', or 'aniso'."
+        # D scale argument.
+        if type(d_scale) != float:
+            raise RelaxFloatError, ('D scale', d_scale)
+
+        # Angle scale units argument.
+        if type(angle_units) != str:
+            raise RelaxStrError, ('angle units', angle_units)
+
+        # Parameter types argument.
+        if type(param_types) != int:
+            raise RelaxIntError, ('parameter types', param_types)
 
         # Execute the functional code.
-        self.relax.diffusion_tensor.set(run=run, diff=diff, params=params)
+        self.relax.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types)

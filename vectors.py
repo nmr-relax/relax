@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+from math import sqrt
+from Numeric import dot
+
 
 class Vectors:
     def __init__(self, relax):
@@ -54,17 +57,17 @@ class Vectors:
                     pdb_res = pdb_residues[j]
                     break
             if pdb_res == None:
-                raise RelaxNoResError, (self.relax.data.res[i].name, self.relax.data.res[i].num)
+                raise RelaxNoResError, (self.relax.data.res[i].num, self.relax.data.res[i].name)
 
             # Test if the proton atom exists for residue i.
             if not pdb_res.atoms.has_key(proton):
                 print "The proton atom " + `proton` + " could be found for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
-                self.relax.data.res[i].vector = None
+                self.relax.data.res[i].xh_vect = None
 
             # Test if the heteronucleus atom exists for residue i.
             elif not pdb_res.atoms.has_key(heteronuc):
                 print "The heteronucleus atom " + `heteronuc` + " could be found for residue '" + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "'."
-                self.relax.data.res[i].vector = None
+                self.relax.data.res[i].xh_vect = None
 
             # Calculate the vector.
             else:
@@ -74,5 +77,8 @@ class Vectors:
                 # Get the heteronucleus position.
                 posX = pdb_res.atoms[heteronuc].position.array
 
-                # Calculate the vector and place it in 'self.relax.data.res[i].vector'.
-                self.relax.data.res[i].vector = posH - posX
+                # Calculate the vector and place it in 'self.relax.data.res[i].xh_vect'.
+                self.relax.data.res[i].xh_vect = posH - posX
+
+                # Calculate the normalised vector.
+                self.relax.data.res[i].xh_norm = self.relax.data.res[i].xh_vect / sqrt(dot(self.relax.data.res[i].xh_vect, self.relax.data.res[i].xh_vect))

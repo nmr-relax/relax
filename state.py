@@ -25,8 +25,6 @@ from Numeric import array
 from os import F_OK, access
 from cPickle import dump, load
 
-from data import Data
-
 
 class State:
     def __init__(self, relax):
@@ -43,9 +41,6 @@ class State:
             file = open(file_name, 'r')
         except IOError:
             raise RelaxFileError, ('save', file_name)
-
-        # Reinitialise self.relax.data
-        self.relax.data = Data()
 
         # Unpickle the data class.
         self.relax.data = load(file)

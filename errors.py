@@ -85,11 +85,6 @@ class RelaxErrors:
         def __init__(self, name):
             self.text = "The PDB file " + `name` + " could not be loaded properly, no proteins could be extracted."
 
-    # PDBVIEWER environmental variable not set.
-    class RelaxPdbviewerError(BaseError):
-        def __init__(self, name):
-            self.text = "The environmental variable 'PDBVIEWER' has not been set, see the file 'docs/INSTALL' for details."
-
 
     # Argument errors.
     ##################
@@ -158,6 +153,16 @@ class RelaxErrors:
     class RelaxListStrError(BaseError):
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must be an array of strings."
+
+    # Tuple.
+    class RelaxTupleError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be a tuple."
+
+    # Tuple of floating point numbers.
+    class RelaxTupleFloatError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be a tuple of floating point numbers."
 
     # None.
     class RelaxNoneError(BaseError):

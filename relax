@@ -39,7 +39,7 @@ import pstats
 from re import match
 import sys
 
-from data import Data
+from data.main import Data
 from file_ops import File_ops
 from delete import Delete
 from diffusion_tensor import Diffusion_tensor
@@ -49,6 +49,7 @@ from errors import RelaxErrors
 from min import Minimise
 from model_free import Model_free
 from model_selection import Model_selection
+from nuclei import Nuclei
 from palmer import Palmer
 from pdb import PDB
 from prompt.interpreter import Interpreter
@@ -93,8 +94,9 @@ class Relax:
         self.file_ops = File_ops(self)
         self.map = Map(self)
         self.min = Minimise(self)
-        self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
+        self.model_selection = Model_selection(self)
+        self.nuclei = Nuclei(self)
         self.opendx = OpenDX(self)
         self.pdb = PDB(self)
         self.relax_data = Rx_data(self)

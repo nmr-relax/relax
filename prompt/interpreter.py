@@ -48,6 +48,7 @@ from init_data import Init_data
 from map import Map
 from minimise import Minimise
 from model_selection import Modsel
+from nuclei import Nuclei
 from pdb import PDB
 from vectors import Vectors
 from view import View
@@ -94,6 +95,7 @@ class Interpreter:
         self._Map = Map(relax)
         self._Minimise = Minimise(relax)
         self._Modsel = Modsel(relax)
+        self._Nuclei = Nuclei(relax)
         self._OpenDX = OpenDX(relax)
         self._PDB = PDB(relax)
         self._system = system
@@ -144,6 +146,7 @@ class Interpreter:
         map = self._Map.map
         minimise = self._Minimise.minimise
         model_selection = self._Modsel.model_selection
+        nuclei = self._Nuclei.nuclei
         pdb = self._PDB.pdb
         vectors = self._Vectors.vectors
         view = self._View.view
@@ -174,7 +177,8 @@ class Interpreter:
 
         # Setup tab completion.
         readline.set_completer(Tab_completion(name_space=self.local).finish)
-        readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
+        readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
+        #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
         readline.parse_and_bind("tab: complete")
 
         # Go to the prompt.

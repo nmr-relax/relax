@@ -37,20 +37,20 @@ class Diffusion_tensor:
         return names
 
 
-    def set(self, run=None, diff=None, params=None):
+    def set(self, run, params, time_scale, d_scale, angle_units, param_types):
         """Function for setting up the diffusion tensor."""
 
         # Initialise the data structures.
-        if not hasattr(self.relax.data, 'diff_type'):
-            self.relax.data.diff_type = {}
-        if not hasattr(self.relax.data, 'diff_params'):
-            self.relax.data.diff_params = {}
+        #if not hasattr(self.relax.data, 'diff_type'):
+        #    self.relax.data.diff_type = {}
+        #if not hasattr(self.relax.data, 'diff_params'):
+        #    self.relax.data.diff_params = {}
 
         # Setup the diffusion type.
-        self.relax.data.diff_type[run] = diff
+        #self.relax.data.diff_type[run] = diff
 
         # Setup the parameter values.
-        if diff == 'iso':
-            self.relax.data.diff_params[run] = [params]
-        else:
-            self.relax.data.diff_params[run] = params
+        #if diff == 'iso':
+        #    self.relax.data.diff_params[run] = [params]
+        #else:
+        #    self.relax.data.diff_params[run] = params

@@ -22,16 +22,19 @@
 
 
 from math import pi
+from re import match
+
+from diffusion import Diffusion
 
 
 class Data:
     def __init__(self):
         """Class containing all the program data."""
 
-        self.gh = 26.7522e7
-        #self.gh = 26.7522212e7
-        self.gx = -2.7126e7
-        self.g_ratio = self.gh / self.gx
+        # Data classes.
+        self.diff = Diffusion()
+
+        # Fundamental constants.
         self.h = 6.6260755e-34
         #self.h = 6.62606876e-34
         self.h_bar = self.h / ( 2.0*pi )
@@ -45,3 +48,13 @@ class Data:
 
         # The type of the runs.
         self.types = {}
+
+
+    def __repr__(self):
+        text = "The data class containing all permanent program data.\n"
+        text = text + "The class contains the following objects:\n"
+        for name in dir(self):
+            if match("^__", name):
+                continue
+            text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
+        return text
