@@ -27,7 +27,7 @@ from re import match
 
 from bfgs import Bfgs
 from newton import Newton
-from base_classes import Min, Trust_region
+from base_classes import Hessian_mods, Min, Trust_region
 
 
 def exact_trust_region(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-25, grad_tol=None, maxiter=1e6, lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16, full_output=0, print_flag=0, print_prefix=""):
@@ -47,7 +47,7 @@ def exact_trust_region(func=None, dfunc=None, d2func=None, args=(), x0=None, min
     return results
 
 
-class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
+class Exact_trust_region(Hessian_mods, Trust_region, Min, Bfgs, Newton):
     def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, grad_tol, maxiter, lambda0, delta_max, delta0, eta, mach_acc, full_output, print_flag, print_prefix):
         """Class for Exact trust region minimisation specific functions.
 

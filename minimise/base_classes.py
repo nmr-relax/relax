@@ -32,19 +32,28 @@
 # Inbuilt python modules.
 #########################
 
-from Numeric import dot, sqrt
+from LinearAlgebra import inverse
+from Numeric import dot, matrixmultiply, sqrt
 from re import match
 
 
 # Line search functions.
 ########################
 
-from minimise.line_search.backtrack import backtrack
-from minimise.line_search.nocedal_wright_interpol import nocedal_wright_interpol
-from minimise.line_search.nocedal_wright_wolfe import nocedal_wright_wolfe
-from minimise.line_search.more_thuente import more_thuente
+from line_search.backtrack import backtrack
+from line_search.nocedal_wright_interpol import nocedal_wright_interpol
+from line_search.nocedal_wright_wolfe import nocedal_wright_wolfe
+from line_search.more_thuente import more_thuente
 
 
+# Hessian modifications.
+########################
+
+from hessian_mods.eigenvalue import eigenvalue
+from hessian_mods.cholesky import cholesky
+from hessian_mods.gmw81 import gmw
+from hessian_mods.gmw81_old import gmw_old
+from hessian_mods.se99 import se99
 
 
 # The generic minimisation base class (containing the main iterative loop).
@@ -598,3 +607,104 @@ class Conjugate_gradient:
         self.dfk = self.dfk_new * 1.0
         self.pk = self.pk_new * 1.0
         self.dot_dfk = self.dot_dfk_new
+
+
+
+
+# The base class containing the Hessian modifications.
+######################################################
+
+class Hessian_mods:
+    def __init__(self):
+        """Base class containing the generic line search functions."""
+
+
+    def cholesky(self, return_matrix=0):
+        """Function for running the Cholesky Hessian modification."""
+
+        return cholesky(self.dfk, self.d2fk, self.I, self.n, self.print_prefix, self.print_flag, return_matrix)
+
+
+    def eigenvalue(self, return_matrix=0):
+        """Function for running the eigenvalue Hessian modification."""
+
+        return eigenvalue(self.dfk, self.d2fk, self.I, self.print_prefix, self.print_flag, return_matrix)
+
+
+    def gmw(self, return_matrix=0):
+        """Function for running the Gill, Murray, and Wright modified Cholesky algorithm."""
+
+        return gmw(self.dfk, self.d2fk, self.I, self.n, self.mach_acc, self.print_prefix, self.print_flag, return_matrix)
+
+
+    def gmw_old(self, return_matrix=0):
+        """Function for running the Gill, Murray, and Wright modified Cholesky algorithm."""
+
+        return gmw_old(self.dfk, self.d2fk, self.I, self.n, self.mach_acc, self.print_prefix, self.print_flag, return_matrix)
+
+
+    def se99(self, return_matrix=0):
+        """Function for running the Gill, Murray, and Wright modified Cholesky algorithm."""
+
+        return se99(self.dfk, self.d2fk, self.I, self.n, self.tau, self.tau_bar, self.mu, self.print_prefix, self.print_flag, return_matrix)
+
+
+    def setup_hessian_mod(self):
+        """Initialise the Hessian modification functions."""
+
+        # Unmodified Hessian.
+        if self.hessian_mod == None or match('[Nn]one', self.hessian_mod):
+            if self.print_flag:
+                print self.print_prefix + "Hessian modification:  Unmodified Hessian."
+            self.get_pk = self.unmodified_hessian
+
+        # Eigenvalue modification.
+        elif match('^[Ee]igen', self.hessian_mod):
+            if self.print_flag:
+                print self.print_prefix + "Hessian modification:  Eigenvalue modification."
+            self.get_pk = self.eigenvalue
+
+        # Cholesky with added multiple of the identity.
+        elif match('^[Cc]hol', self.hessian_mod):
+            if self.print_flag:
+                print self.print_prefix + "Hessian modification:  Cholesky with added multiple of the identity."
+            self.get_pk = self.cholesky
+
+        # The Gill, Murray, and Wright modified Cholesky algorithm.
+        elif match('^[Gg][Mm][Ww]$', self.hessian_mod):
+            if self.print_flag:
+                print self.print_prefix + "Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm."
+            self.get_pk = self.gmw
+
+        # The Gill, Murray, and Wright modified Cholesky algorithm.
+        elif match('^[Gg][Mm][Ww][ -_]old', self.hessian_mod):
+            if self.print_flag:
+                print self.print_prefix + "Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm."
+            self.get_pk = self.gmw_old
+
+        # The revised modified cholesky factorisation algorithm of Schnabel and Eskow, 99.
+        elif match('^[Ss][Ee]99', self.hessian_mod):
+            if self.print_flag:
+                print self.print_prefix + "Hessian modification:  The Schnabel and Eskow 1999 algorithm."
+            self.tau = self.mach_acc ** (1.0/3.0)
+            self.tau_bar = self.mach_acc ** (2.0/3.0)
+            self.mu = 0.1
+            self.get_pk = self.se99
+
+
+    def unmodified_hessian(self, return_matrix=0):
+        """Calculate the pure Newton direction."""
+
+        if return_matrix:
+            return -matrixmultiply(inverse(self.d2fk), self.dfk), self.d2fk
+        else:
+            return -matrixmultiply(inverse(self.d2fk), self.dfk)
+
+
+    def valid_hessian_mod(self, mod):
+        """Test if the string 'mod' is a valid Hessian modification."""
+
+        if mod == None or match('^[Ee]igen', mod) or match('^[Cc]hol', mod) or match('^[Gg][Mm][Ww]$', mod) or match('^[Gg][Mm][Ww][ -_]old', mod) or match('^[Ss][Ee]99', mod) or match('^[Nn]one', mod):
+            return 1
+        else:
+            return 0
