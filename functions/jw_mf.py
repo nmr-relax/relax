@@ -108,7 +108,7 @@ def calc_jw(data):
                     i=m
     """
 
-    jw = 1.0 * data.ci[0] * data.ti[0] * data.fact_ti[0]
+    jw = data.ci[0] * data.ti[0] * data.fact_ti[0]
 
     for i in xrange(1, data.len):
         jw = jw + data.ci[i] * data.ti[i] * data.fact_ti[i]
@@ -135,7 +135,7 @@ def calc_S2_jw(data):
                       i=m
     """
 
-    jw = 1.0 * data.ci[0] * data.ti[0] * data.fact_ti[0]
+    jw = data.ci[0] * data.ti[0] * data.fact_ti[0]
 
     for i in xrange(1, data.len):
         jw = jw + data.ci[i] * data.ti[i] * data.fact_ti[i]
@@ -162,7 +162,7 @@ def calc_S2_te_jw(data):
                     i=m
     """
 
-    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2 * data.te_ti_te[0] * data.inv_te_denom[0])
+    jw = data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2 * data.te_ti_te[0] * data.inv_te_denom[0])
 
     for i in xrange(1, data.len):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.one_s2 * data.te_ti_te[i] * data.inv_te_denom[i])
@@ -189,7 +189,7 @@ def calc_S2f_S2_ts_jw(data):
                     i=m
     """
 
-    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+    jw = data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
     for i in xrange(1, data.len):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
@@ -216,7 +216,7 @@ def calc_S2f_tf_S2_ts_jw(data):
                     i=m
     """
 
-    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+    jw = data.ci[0] * data.ti[0] * (data.params[data.s2_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
     for i in xrange(1, data.len):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2_index] * data.fact_ti[i] + data.one_s2f * data.tf_ti_tf[i] * data.inv_tf_denom[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
@@ -243,7 +243,7 @@ def calc_S2f_S2s_ts_jw(data):
                        i=m
     """
 
-    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2s * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+    jw = data.ci[0] * data.ti[0] * (data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2s * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
     for i in xrange(1, data.len):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2s_index] * data.fact_ti[i] + data.one_s2s * data.ts_ti_ts[i] * data.inv_ts_denom[i])
@@ -270,7 +270,7 @@ def calc_S2f_tf_S2s_ts_jw(data):
                     i=m
     """
 
-    jw = 1.0 * data.ci[0] * data.ti[0] * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
+    jw = data.ci[0] * data.ti[0] * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_ti[0] + data.one_s2f * data.tf_ti_tf[0] * data.inv_tf_denom[0] + data.s2f_s2 * data.ts_ti_ts[0] * data.inv_ts_denom[0])
 
     for i in xrange(1, data.len):
         jw = jw + data.ci[i] * data.ti[i] * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_ti[i] + data.one_s2f * data.tf_ti_tf[i] * data.inv_tf_denom[i] + data.s2f_s2 * data.ts_ti_ts[i] * data.inv_ts_denom[i])
@@ -471,7 +471,7 @@ def calc_tm_djw_dDj(data):
                      i=m
     """
 
-    djw = 1.0 * data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
+    djw = data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
 
     for i in xrange(1, data.len):
         djw = djw + data.ci[i] * data.dti[i] * data.fact_djw_dti[i]
@@ -496,7 +496,7 @@ def calc_tm_S2_djw_dDj(data):
                        i=m
     """
 
-    djw = 1.0 * data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
+    djw = data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
 
     for i in xrange(1, data.len):
         djw = djw + data.ci[i] * data.dti[i] * data.fact_djw_dti[i]
@@ -521,7 +521,7 @@ def calc_tm_S2_te_djw_dDj(data):
                      i=m
     """
 
-    djw = 1.0 * data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.one_s2 * data.fact2_djw_dti[0])
+    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.one_s2 * data.fact2_djw_dti[0])
 
     for i in xrange(1, data.len):
         djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact1_djw_dti[i] + data.one_s2 * data.fact2_djw_dti[i])
@@ -557,7 +557,7 @@ def calc_S2_djw_dS2(data):
                      i=m
     """
 
-    djw = 1.0 * data.ci[0] * data.ti[0] * data.fact_ti[0]
+    djw = data.ci[0] * data.ti[0] * data.fact_ti[0]
 
     for i in xrange(1, data.len):
         djw = djw + data.ci[i] * data.ti[i] * data.fact_ti[i]
@@ -582,7 +582,7 @@ def calc_S2_te_djw_dS2(data):
                      i=m
     """
 
-    djw = 1.0 * data.ci[0] * data.ti[0] * (data.fact_ti[0] - data.te_ti_te[0] * data.inv_te_denom[0])
+    djw = data.ci[0] * data.ti[0] * (data.fact_ti[0] - data.te_ti_te[0] * data.inv_te_denom[0])
 
     for i in xrange(1, data.len):
         djw = djw + data.ci[i] * data.ti[i] * (data.fact_ti[i] - data.te_ti_te[i] * data.inv_te_denom[i])
@@ -611,7 +611,7 @@ def calc_S2_te_djw_dte(data):
                              i=m
     """
 
-    djw = 1.0 * data.ci[0] * data.fact_djw_dte[0]
+    djw = data.ci[0] * data.fact_djw_dte[0]
 
     for i in xrange(1, data.len):
         djw = djw + data.ci[i] * data.fact_djw_dte[i]
@@ -625,7 +625,7 @@ def calc_S2_te_djw_dte(data):
 
 # {tm, S2f, S2, ts}
 
-def calc_tm_S2f_S2_ts_djw_dtm(data):
+def calc_tm_S2f_S2_ts_djw_dDj(data):
     """Spectral density gradient.
 
     Calculate the spectral desity values for the tm partial derivative of the extended model-free
@@ -633,265 +633,195 @@ def calc_tm_S2f_S2_ts_djw_dtm(data):
 
     The formula is:
 
-        dJ(w)     2 /        1 - (w.tm)^2                           (ts + tm)^2 - (w.ts.tm)^2   \ 
-        -----  =  - | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |
-         dtm      5 \      (1 + (w.tm)^2)^2                       ((ts + tm)^2 + (w.ts.tm)^2)^2 /
+                     _n_
+        dJ(w)     2  \        dti  /        1 - (w.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |
+         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                     i=m
     """
 
-    return 0.4 * (data.params[data.s2_index] * data.fact1_djw_dtm + data.s2f_s2 * data.fact2_djw_dtm)
+    # BUG: Check if this should be data.fact2 or data.fact3!!!!
+
+    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.s2f_s2 * data.fact3_djw_dti[0])
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact1_djw_dti[i] + data.s2f_s2 * data.fact3_djw_dti[i])
+
+    return 0.4 * djw
 
 
+# {tm, S2f, tf, S2, ts}
 
-# Extended {S2f, S2, ts}.
-#########################
-
-def calc_S2f_S2_ts_djw_dS2f(data):
+def calc_tm_S2f_tf_S2_ts_djw_dDj(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
-    model-free formula with the parameters S2f, S2, and ts.
+    Calculate the spectral desity values for the S2f partial derivative of the extended model-free
+    formula with the parameters {tm, S2f, tf, S2, ts}.
 
     The formula is:
 
-        dJ(w)     2    /       (ts + tm).ts        \ 
-        -----  =  - tm | ------------------------- |
-        dS2f      5    \ (ts + tm)^2 + (w.ts.tm)^2 /
+                     _n_
+        dJ(w)     2  \        dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
+         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                     i=m
     """
 
-    return data.two_fifths_tm * data.ts_tm_ts * data.inv_ts_denom
+    djw = data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.one_s2f * data.fact2_djw_dti[0] + data.s2f_s2 * data.fact3_djw_dti[0])
 
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact1_djw_dti[i] + data.one_s2f * data.fact2_djw_dti[i] + data.s2f_s2 * data.fact3_djw_dti[i])
+
+    return 0.4 * djw
+
+
+
+# Extended Psij partial derivative.
+###################################
+
+# Please code me!!!
+
+
+# Extended S2 partial derivative.
+#################################
+
+# {S2f, S2, ts}, {tm, S2f, S2, ts}, {S2f, tf, S2, ts}, or {tm, S2f, tf, S2, ts}
 
 def calc_S2f_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
-    model-free formula with the parameters S2f, S2, and ts.
+    Calculate the spectral desity values for the S2 partial derivative of the extended model-free
+    formula with the parameters {S2f, S2, ts} or the parameters {tm, S2f, S2, ts} or
+    {S2f, tf, S2, ts} or {tm, S2f, tf, S2, ts}.
 
     The formula is:
 
-        dJ(w)     2    /      1                 (ts + tm).ts        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                     _n_
+        dJ(w)     2  \           /      1                 (ts + ti).ts        \ 
+        -----  =  -   >  ci . ti | ------------  -  ------------------------- |
+         dS2      5  /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                     i=m
     """
 
-    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
+    djw = data.ci[0] * data.ti[0] * (data.fact_ti[0] - data.ts_ti_ts[0] * data.inv_ts_denom[0])
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.ti[i] * (data.fact_ti[i] - data.ts_ti_ts[i] * data.inv_ts_denom[i])
+
+    return 0.4 * djw
 
 
-def calc_S2f_S2_ts_djw_dts(data):
+
+# Extended S2f partial derivative.
+##################################
+
+# {S2f, S2, ts} or {tm, S2f, S2, ts}
+
+def calc_S2f_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
-    model-free formula with the parameters S2f, S2, and ts.
+    Calculate the spectral desity values for the S2f partial derivative of the extended model-free
+    formula with the parameters {S2f, S2, ts} or the parameters {tm, S2f, S2, ts}.
 
     The formula is:
 
-        dJ(w)     2                     (ts + tm)^2 - (w.ts.tm)^2
-        -----  =  - tm^2 . (S2f - S2) -----------------------------
-         dts      5                   ((ts + tm)^2 + (w.ts.tm)^2)^2
+                     _n_
+        dJ(w)     2  \           /       (ts + ti).ts        \ 
+        -----  =  -   >  ci . ti | ------------------------- |
+        dS2f      5  /__         \ (ts + ti)^2 + (w.ts.ti)^2 /
+                     i=m
     """
 
-    return data.fact_djw_dts * data.s2f_s2
+    djw = data.ci[0] * data.ti[0] * data.ts_ti_ts[0] * data.inv_ts_denom[0]
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.ti[i] * data.ts_ti_ts[i] * data.inv_ts_denom[i]
+
+    return 0.4 * djw
 
 
-
-def calc_tm_S2f_S2_ts_djw_dS2f(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
-    model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2    /       (ts + tm).ts        \ 
-        -----  =  - tm | ------------------------- |
-        dS2f      5    \ (ts + tm)^2 + (w.ts.tm)^2 /
-    """
-
-    return data.two_fifths_tm * data.ts_tm_ts * data.inv_ts_denom
-
-
-def calc_tm_S2f_S2_ts_djw_dS2(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
-    model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2    /      1                 (ts + tm).ts        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
-    """
-
-    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
-
-
-def calc_tm_S2f_S2_ts_djw_dts(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
-    model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2                     (ts + tm)^2 - (w.ts.tm)^2
-        -----  =  - tm^2 . (S2f - S2) -----------------------------
-         dts      5                   ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return data.fact_djw_dts * data.s2f_s2
-
-
-
-# Extended {S2f, tf, S2, ts}.
-#############################
+# {S2f, tf, S2, ts} or {tm, S2f, tf, S2, ts}
 
 def calc_S2f_tf_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
-    model-free formula with the parameters S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the S2f partial derivative of the extended model-free
+    formula with the parameters {S2f, tf, S2, ts} or the parameters {tm, S2f, tf, S2, ts}.
 
     The formula is:
 
-        dJ(w)       2    /       (tf + tm).tf                  (ts + tm).ts        \ 
-        -----  =  - - tm | -------------------------  -  ------------------------- |
-        dS2f        5    \ (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                       _n_
+        dJ(w)       2  \           /       (tf + ti).tf                  (ts + ti).ts        \ 
+        -----  =  - -   >  ci . ti | -------------------------  -  ------------------------- |
+        dS2f        5  /__         \ (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
     """
 
-    return - data.two_fifths_tm * (data.tf_tm_tf * data.inv_tf_denom - data.ts_tm_ts * data.inv_ts_denom)
+    djw = data.ci[0] * data.ti[0] * (data.tf_ti_tf[0] * data.inv_tf_denom[0] - data.ts_ti_ts[0] * data.inv_ts_denom[0])
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.ti[i] * (data.tf_ti_tf[i] * data.inv_tf_denom[i] - data.ts_ti_ts[i] * data.inv_ts_denom[i])
+
+    return -0.4 * djw
 
 
-def calc_S2f_tf_S2_ts_djw_dS2(data):
-    """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
-    model-free formula with the parameters S2f, tf, S2, and ts.
+# Extended tf partial derivative.
+#################################
 
-    The formula is:
-
-        dJ(w)     2    /      1                 (ts + tm).ts        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
-    """
-
-    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
-
+# {S2f, tf, S2, ts} or {tm, S2f, tf, S2, ts}
 
 def calc_S2f_tf_S2_ts_djw_dtf(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the tf partial derivative of the extended
-    model-free formula with the parameters S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the tf partial derivative of the extended model-free
+    formula with the parameters {S2f, tf, S2, ts} or the parameters {tm, S2f, tf, S2, ts}.
 
     The formula is:
 
-        dJ(w)     2                    (tf + tm)^2 - (w.tf.tm)^2
-        -----  =  - tm^2 . (1 - S2f) -----------------------------
-         dtf      5                  ((tf + tm)^2 + (w.tf.tm)^2)^2
+                              _n_
+        dJ(w)     2           \               (tf + ti)^2 - (w.tf.ti)^2
+        -----  =  - (1 - S2f)  >  ci . ti^2 -----------------------------
+         dtf      5           /__           ((tf + ti)^2 + (w.tf.ti)^2)^2
+                              i=m
     """
 
-    return data.fact_djw_dtf * data.one_s2f
+    djw = data.ci[0] * data.fact_djw_dtf[0]
 
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.fact_djw_dtf[i]
 
-def calc_S2f_tf_S2_ts_djw_dts(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
-    model-free formula with the parameters S2f, tf, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2                     (ts + tm)^2 - (w.ts.tm)^2
-        -----  =  - tm^2 . (S2f - S2) -----------------------------
-         dts      5                   ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return data.fact_djw_dts * data.s2f_s2
+    return 0.4 * data.one_s2f * djw
 
 
 
-# Extended {tm, S2f, tf, S2, ts}.
+# Extended ts partial derivative.
 #################################
 
-def calc_tm_S2f_tf_S2_ts_djw_dtm(data):
+# {S2f, S2, ts}, {tm, S2f, S2, ts}, {S2f, tf, S2, ts}, or {tm, S2f, tf, S2, ts}
+
+def calc_S2f_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
-    model-free formula with the parameters tm, S2f, tf, S2, and ts.
+    Calculate the spectral desity values for the ts partial derivative of the extended model-free
+    formula with the parameters {S2f, S2, ts} or the parameters {tm, S2f, S2, ts} or
+    {S2f, tf, S2, ts} or {tm, S2f, tf, S2, ts}.
 
     The formula is:
 
-        dJ(w)     2 /        1 - (w.tm)^2                          (tf + tm)^2 - (w.tf.tm)^2                           (ts + tm)^2 - (w.ts.tm)^2   \ 
-        -----  =  - | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
-         dtm      5 \      (1 + (w.tm)^2)^2                      ((tf + tm)^2 + (w.tf.tm)^2)^2                       ((ts + tm)^2 + (w.ts.tm)^2)^2 /
+                               _n_
+        dJ(w)     2            \               (ts + ti)^2 - (w.ts.ti)^2
+        -----  =  - (S2f - S2)  >  ci . ti^2 -----------------------------
+         dts      5            /__           ((ts + ti)^2 + (w.ts.ti)^2)^2
+                               i=m
     """
 
-    return 0.4 * (data.params[data.s2_index] * data.fact1_djw_dtm + data.one_s2f * data.fact2_djw_dtm + data.s2f_s2 * data.fact3_djw_dtm)
+    djw = data.ci[0] * data.fact_djw_dts[0]
 
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.fact_djw_dts[i]
 
-def calc_tm_S2f_tf_S2_ts_djw_dS2f(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
-    model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The formula is:
-
-        dJ(w)       2    /       (tf + tm).tf                  (ts + tm).ts        \ 
-        -----  =  - - tm | -------------------------  -  ------------------------- |
-        dS2f        5    \ (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
-    """
-
-    return -data.two_fifths_tm * (data.tf_tm_tf * data.inv_tf_denom - data.ts_tm_ts * data.inv_ts_denom)
-
-
-def calc_tm_S2f_tf_S2_ts_djw_dS2(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
-    model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2    /      1                 (ts + tm).ts        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
-    """
-
-    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
-
-
-def calc_tm_S2f_tf_S2_ts_djw_dtf(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the tf partial derivative of the extended
-    model-free formula with the parameters tm, S2f, tf, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2                    (tf + tm)^2 - (w.tf.tm)^2
-        -----  =  - tm^2 . (1 - S2f) -----------------------------
-         dtf      5                  ((tf + tm)^2 + (w.tf.tm)^2)^2
-    """
-
-    return data.fact_djw_dtf * data.one_s2f
-
-
-def calc_tm_S2f_tf_S2_ts_djw_dts(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the ts partial derivative of the extended
-    model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2                     (ts + tm)^2 - (w.ts.tm)^2
-        -----  =  - tm^2 . (S2f - S2) -----------------------------
-         dts      5                   ((ts + tm)^2 + (w.ts.tm)^2)^2
-    """
-
-    return data.fact_djw_dts * data.s2f_s2
+    return 0.4 * data.s2f_s2 * djw
 
 
 
@@ -911,6 +841,7 @@ def calc_S2f_S2s_ts_djw_dS2f(data):
         dS2f      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
+    raise RelaxError, "Not coded yet."
     return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm + data.one_s2s * data.ts_tm_ts * data.inv_ts_denom)
 
 
@@ -927,6 +858,7 @@ def calc_S2f_S2s_ts_djw_dS2s(data):
         dS2s      5        \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
+    raise RelaxError, "Not coded yet."
     return data.fact_djw_ds2s * data.params[data.s2f_index]
 
 
@@ -943,6 +875,7 @@ def calc_S2f_S2s_ts_djw_dts(data):
          dts      5                     ((ts + tm)^2 + (w.ts.tm)^2)^2
     """
 
+    raise RelaxError, "Not coded yet."
     return data.fact_djw_dts * data.s2f_s2
 
 
@@ -963,6 +896,7 @@ def calc_S2f_tf_S2s_ts_djw_dS2f(data):
         dS2f      5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
+    raise RelaxError, "Not coded yet."
     return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm - data.tf_tm_tf * data.inv_tf_denom + data.one_s2s * data.ts_tm_ts * data.inv_ts_denom)
 
 
@@ -979,6 +913,7 @@ def calc_S2f_tf_S2s_ts_djw_dS2s(data):
         dS2s      5        \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
+    raise RelaxError, "Not coded yet."
     return data.fact_djw_ds2s * data.params[data.s2f_index]
 
 
@@ -995,6 +930,7 @@ def calc_S2f_tf_S2s_ts_djw_dtf(data):
          dtf      5                  ((tf + tm)^2 + (w.tf.tm)^2)^2
     """
 
+    raise RelaxError, "Not coded yet."
     return data.fact_djw_dtf * data.one_s2f
 
 
@@ -1011,6 +947,7 @@ def calc_S2f_tf_S2s_ts_djw_dts(data):
          dts      5                     ((ts + tm)^2 + (w.ts.tm)^2)^2
     """
 
+    raise RelaxError, "Not coded yet."
     return data.fact_djw_dts * data.s2f_s2
 
 
@@ -1039,20 +976,59 @@ def create_d2jw_struct(data, calc_d2jw):
 
     Original:  Model-free parameter - Model-free parameter
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         _n_     /                            dti   dti                     d2ti
+         d2J(w)       2  \       |    2.ti.w^2.(3 - (w.ti)^2) --- . ---  -  (1 - (w.ti)^4) -------
+        -------  =  - -   >  ci  | S2                         dDj   dDk                    dDj.dDk
+        dDj.dDk       5  /__     |    -----------------------------------------------------------
+                         i=m     \                       (1 + (w.ti)^2)^3
 
-        d2J(w)       4 /             3 - (w.tm)^2                       (te + tm)^3 + 3.te^3.tm.w^2.(te + tm) - (w.te)^4.tm^3 \ 
-        ------  =  - - | S2.tm.w^2 ----------------  +  (1 - S2) . te^2 ----------------------------------------------------- |
-        dtm**2       5 \           (1 + (w.tm)^2)^3                                 ((te + tm)^2 + (w.te.tm)^2)^3             /
+                                                                                           dti   dti                                  d2ti    \ 
+                                   2((te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3) --- . ---  +  ((te + ti)^4 - (w.te.ti)^4) -------  |
+                                                                                           dDj   dDk                                 dDj.dDk  |
+                +  (1 - S2) . te^2 ---------------------------------------------------------------------------------------------------------  |
+                                                                        ((te + ti)^2 + (w.te.ti)^2)^3                                         /
 
 
-         d2J(w)     2 /   1 - (w.tm)^2              (te + tm)^2 - (w.te.tm)^2   \ 
-        -------  =  - | ----------------  -  te^2 ----------------------------- |
-        dtm.dS2     5 \ (1 + (w.tm)^2)^2          ((te + tm)^2 + (w.te.tm)^2)^2 /
+                         _n_
+          d2J(w)      2  \    dci    dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
+        ---------  =  -   >  ----- . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
+        dDj.dPsij     5  /__ dPsij   dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+                         i=m
 
 
-         d2J(w)     4                                 (te + tm)^2 - 3(w.te.tm)^2
-        -------  =  - (1 - S2) . tm . te . (te + tm) -----------------------------
-        dtm.dte     5                                ((te + tm)^2 + (w.te.tm)^2)^3
+                       _n_
+         d2J(w)     2  \        dti  /   1 - (w.ti)^2              (te + ti)^2 - (w.te.ti)^2   \ 
+        -------  =  -   >  ci . ---  | ----------------  -  te^2 ----------------------------- |
+        dDj.dS2     5  /__      dDj  \ (1 + (w.ti)^2)^2          ((te + ti)^2 + (w.te.ti)^2)^2 /
+                       i=m
+
+
+                                    _n_
+         d2J(w)     4               \        dti                   (te + ti)^2 - 3(w.te.ti)^2
+        -------  =  - (1 - S2) . te  >  ci . --- . ti . (te + ti) -----------------------------
+        dDj.dte     5               /__      dDj                  ((te + ti)^2 + (w.te.ti)^2)^3
+                                    i=m
+
+
+                           _n_
+           d2J(w)       2  \       d2ci         /      S2             (1 - S2)(te + ti)te    \ 
+        -----------  =  -   >  ----------- . ti | ------------  +  ------------------------- |
+        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                           i=m
+
+
+                         _n_
+          d2J(w)      2  \    dci       /      1                 (te + ti)te         \ 
+        ---------  =  -   >  ----- . ti | ------------  -  ------------------------- |
+        dPsij.dS2     5  /__ dPsij      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                         i=m
+
+
+                                 _n_
+          d2J(w)      2          \    dci             (te + ti)^2 - (w.te.ti)^2
+        ---------  =  - (1 - S2)  >  ----- . ti^2 . -----------------------------
+        dPsij.dte     5          /__ dPsij          ((te + ti)^2 + (w.te.ti)^2)^2
+                                 i=m
 
 
         d2J(w)
@@ -1060,14 +1036,18 @@ def create_d2jw_struct(data, calc_d2jw):
         dS2**2
 
 
-         d2J(w)       2        (te + tm)^2 - (w.te.tm)^2
-        -------  =  - - tm^2 -----------------------------
-        dS2.dte       5      ((te + tm)^2 + (w.te.tm)^2)^2
+                        _n_
+         d2J(w)       2 \               (te + ti)^2 - (w.te.ti)^2
+        -------  =  - -  >  ci . ti^2 -----------------------------
+        dS2.dte       5 /__           ((te + ti)^2 + (w.te.ti)^2)^2
+                        i=m
 
 
-        d2J(w)       4                 (te + tm)^3 + 3.tm^3.te.w^2.(te + tm) - (w.tm)^4.te^3
-        ------  =  - - tm^2 . (1 - S2) -----------------------------------------------------
-        dte**2       5                             ((te + tm)^2 + (w.te.tm)^2)^3
+                                _n_
+        d2J(w)       4          \             (te + ti)^3 + 3.w^2.ti^3.te.(te + ti) - (w.ti)^4.te^3
+        ------  =  - - (1 - S2)  >  ci . ti^2 -----------------------------------------------------
+        dte**2       5          /__                        ((te + ti)^2 + (w.te.ti)^2)^3
+                                i=m
 
 
     Original:  Other parameters
