@@ -274,7 +274,6 @@ class Main:
             write(run='final', file='results', dir='final', force=1)
 
 
-
         # Unknown script behaviour.
         ###########################
 

@@ -38,7 +38,7 @@ class Vectors:
 
         run:  The run to assign the vectors to.
 
-        heteronuc:  The heteronucleus name as specified in the PDB file.
+        heteronuc:  The name of the heteronucleus as specified in the PDB file.
 
         proton:  The name of the proton as specified in the PDB file.
 

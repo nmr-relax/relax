@@ -112,6 +112,14 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " is invalid."
 
+    # Argument not in the list.
+    class RelaxArgNotInListError(BaseError):
+        def __init__(self, name, value, list):
+            self.text = "The " + name + " argument " + `value` + " is neither "
+            for i in xrange(len(list)-1):
+                self.text = self.text + `list[i]` + ', '
+            self.text = self.text + 'nor ' + `list[-1]` + "."
+
     # Binary - integers 0 and 1.
     class RelaxBinError(BaseError):
         def __init__(self, name, value):

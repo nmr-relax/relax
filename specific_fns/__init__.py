@@ -25,5 +25,6 @@ __all__ = [ 'base_class',
             'jw_mapping',
             'main',
             'model_free',
+            'noe',
             'relax_data',
             'specific_setup' ]
