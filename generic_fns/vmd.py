@@ -35,7 +35,7 @@ class Vmd:
 
         # Test if the PDB file has been loaded.
         if not self.relax.data.pdb.has_key(run):
-            raise RelaxPdbError, run
+            raise RelaxNoPdbError, run
 
         # Create an empty scene.
         self.relax.data.vmd_scene = VMD.Scene()

@@ -49,7 +49,7 @@ class Sequence:
         index = len(self.relax.data.res[run])
 
         # Append a data container.
-        self.relax.data.res[run].add_element()
+        self.relax.data.res[run].add_item()
 
         # Insert the data.
         self.relax.data.res[run][index].num = res_num
@@ -82,7 +82,7 @@ class Sequence:
         # Copy the data.
         for i in xrange(len(self.relax.data.res[run1])):
             # Append a data container to run2.
-            self.relax.data.res[run2].add_element()
+            self.relax.data.res[run2].add_item()
 
             # Insert the data.
             self.relax.data.res[run2][i].num = self.relax.data.res[run1][i].num
@@ -139,13 +139,11 @@ class Sequence:
         This needs to be modified to handle multiple peptide chains.
         """
 
-        print "Loading the sequence from the PDB file.\n"
+        # Print out.
+        print "\nLoading the sequence from the PDB file.\n"
 
         # Reassign the sequence of the first structure.
-        if type(self.relax.data.pdb[run]) == list:
-            res = self.relax.data.pdb[run][0].peptide_chains[0].residues
-        else:
-            res = self.relax.data.pdb[run].peptide_chains[0].residues
+        res = self.relax.data.pdb[run].structures[0].peptide_chains[0].residues
 
         # Add the run to 'self.relax.data.res'.
         self.relax.data.res.add_list(run)
@@ -153,7 +151,7 @@ class Sequence:
         # Loop over the sequence.
         for i in xrange(len(res)):
             # Append a data container.
-            self.relax.data.res[run].add_element()
+            self.relax.data.res[run].add_item()
 
             # Insert the data.
             self.relax.data.res[run][i].num = res[i].number
@@ -208,7 +206,7 @@ class Sequence:
         # Fill the array 'self.relax.data.res[run]' with data containers and place sequence data into the array.
         for i in xrange(len(file_data)):
             # Append a data container.
-            self.relax.data.res[run].add_element()
+            self.relax.data.res[run].add_item()
 
             # Insert the data.
             self.relax.data.res[run][i].num = int(file_data[i][num_col])

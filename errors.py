@@ -79,8 +79,13 @@ class RelaxErrors:
     # PDB errors.
     #############
 
-    # No PDB loaded.
+    # PDB data corresponding to the run already exists.
     class RelaxPdbError(BaseError):
+        def __init__(self, run):
+            self.text = "PDB data corresponding to the run " + `run` + " already exists."
+
+    # No PDB loaded.
+    class RelaxNoPdbError(BaseError):
         def __init__(self, run):
             self.text = "No PDB file has been loaded for the run " + `run` + "."
 

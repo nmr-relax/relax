@@ -55,7 +55,7 @@ class Palmer:
         # Test if the PDB file is loaded (axially symmetric and anisotropic diffusion).
         if self.relax.data.diff[run].type != 'iso':
             if not self.relax.data.pdb.has_key(run):
-                raise RelaxPdbError, run
+                raise RelaxNoPdbError, run
 
         # Test if the nucleus type has been set.
         if not hasattr(self.relax.data, 'gx'):

@@ -41,7 +41,6 @@ from selection import Selection
 from sequence import Sequence
 from state import State
 from value import Value
-from vectors import Vectors
 from vmd import Vmd
 
 
@@ -74,5 +73,4 @@ class Generic:
         self.sequence = Sequence(self.relax)
         self.state = State(self.relax)
         self.value = Value(self.relax)
-        self.vectors = Vectors(self.relax)
         self.vmd = Vmd(self.relax)

@@ -2025,7 +2025,7 @@ class Model_free(Common_functions):
         if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
             # Test if the PDB file has been loaded.
             if not self.relax.data.pdb.has_key(self.run):
-                raise RelaxPdbError, self.run
+                raise RelaxNoPdbError, self.run
 
             # Test if unit vectors exist.
             for i in xrange(len(self.relax.data.res[self.run])):
@@ -2865,7 +2865,7 @@ class Model_free(Common_functions):
 
                 # Set the vector.
                 if xh_vect:
-                    self.relax.generic.vectors.set(run=self.run, res=index, xh_vect=xh_vect)
+                    self.relax.generic.pdb.set(run=self.run, res=index, xh_vect=xh_vect)
 
 
             # Relaxation data.

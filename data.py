@@ -26,6 +26,9 @@ from re import match
 from types import DictType, ListType
 
 
+# Global data.
+##############
+
 class Data:
     def __init__(self):
         """Class containing all the program data."""
@@ -36,8 +39,11 @@ class Data:
         self.h_bar = self.h / ( 2.0*pi )
         self.mu0 = 4.0 * pi * 1e-7
 
+        # PDB data.
+        self.pdb = SpecificData()
+
         # Diffusion data.
-        self.diff = Diffusion()
+        self.diff = SpecificData()
 
         # The residue specific data.
         self.res = Residue()
@@ -56,9 +62,6 @@ class Data:
         self.h_count = {}
         self.warning = {}
 
-        # PDB structures.
-        self.pdb = {}
-
 
     def __repr__(self):
         text = "The data class containing all permanent program data.\n"
@@ -70,13 +73,35 @@ class Data:
         return text
 
 
-class Diffusion(DictType):
+
+# Empty data container.
+#######################
+
+class Element:
     def __init__(self):
-        """Class containing all the diffusion tensor data."""
+        """Empty data container."""
 
 
     def __repr__(self):
-        text = "Diffusion tensor data:\n"
+        text = "Data:\n"
+        for name in dir(self):
+            if match("^__", name):
+                continue
+            text = text + "    " + name + ", " + `type(getattr(self, name))` + "\n"
+        return text
+
+
+
+# Specific data class.
+######################
+
+class SpecificData(DictType):
+    def __init__(self):
+        """Dictionary type class for specific data."""
+
+
+    def __repr__(self):
+        text = "Data:\n"
         if len(self) == 0:
             text = text + "  {}\n"
         else:
@@ -86,7 +111,7 @@ class Diffusion(DictType):
                     text = text + "  { "
                 else:
                     text = text + "  , "
-                text = text + "Diffusion tensor key " + `key` + ":\n"
+                text = text + "Key " + `key` + ":\n"
                 for name in dir(self[key]):
                     if match("^__", name):
                         continue
@@ -100,22 +125,12 @@ class Diffusion(DictType):
     def add_item(self, key):
         """Function for adding an empty container to the dictionary."""
 
-        self[key] = DiffusionElement()
+        self[key] = Element()
 
 
-class DiffusionElement:
-    def __init__(self):
-        """Empty data container for diffusion tensor data."""
 
-
-    def __repr__(self):
-        text = "Diffusion tensor data:\n"
-        for name in dir(self):
-            if match("^__", name):
-                continue
-            text = text + "    " + name + ", " + `type(getattr(self, name))` + "\n"
-        return text
-
+# Residue specific data.
+########################
 
 class Residue(DictType):
     def __init__(self):
@@ -159,21 +174,7 @@ class ResidueList(ListType):
         return text
 
 
-    def add_element(self):
+    def add_item(self):
         """Function for appending an empty container to the list."""
 
-        self.append(ResidueElement())
-
-
-class ResidueElement:
-    def __init__(self):
-        """Empty data container."""
-
-
-    def __repr__(self):
-        text = "Residue specific data.\n\n"
-        for name in dir(self):
-            if match("^__", name):
-                continue
-            text = text + name + ":\n" + `getattr(self, name)` + "\n\n"
-        return text
+        self.append(Element())

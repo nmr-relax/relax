@@ -30,7 +30,7 @@ class PDB:
         self.relax = relax
 
 
-    def pdb(self, run=None, file=None, dir=None, model=None, first_model=1, load_seq=1):
+    def pdb(self, run=None, file=None, dir=None, model=None, heteronuc='N', proton='H', load_seq=1):
         """The pdb loading function.
 
         Keyword Arguments
@@ -44,6 +44,10 @@ class PDB:
 
         model:  The PDB model number.
 
+        heteronuc:  The name of the heteronucleus as specified in the PDB file.
+
+        proton:  The name of the proton as specified in the PDB file.
+
         load_seq:  A flag specifying whether the sequence should be loaded from the PDB file.
 
 
@@ -52,24 +56,32 @@ class PDB:
 
         To load a specific model from the PDB file, set the model flag to an integer i.  The
         structure beginning with the line 'MODEL i' in the PDB file will be loaded.  Otherwise all
-        structures will be loaded starting from the model number set by the argument first_model.
+        structures will be loaded starting from the model number 1.
 
         To load the sequence from the PDB file, set the 'load_seq' flag to 1.  If the sequence has
         previously been loaded, then this flag will be ignored.
+
+        Once the PDB structures are loaded, unit XH bond vectors will be calculated.  The vectors
+        are calculated using the atomic coordinates of the atoms specified by the arguments
+        heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for
+        each model will be calculated and the final unit XH vector will be taken as the average.
 
 
         Example
         ~~~~~~~
 
-        To load the first structure from the PDB file 'test.pdb' in the directory 'pdb', type:
+        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb' for use in the
+        model-free analysis run 'm8' where the heteronucleus in the PDB file is 'N' and the proton
+        is 'H', type:
 
-        relax> pdb('test.pdb', 'pdb', 1)
-        relax> pdb(file='test.pdb', dir='pdb', model=1)
+        relax> pdb('m8', 'test.pdb', '~/pdb', 1, 'N', 'H')
+        relax> pdb(run='m8', file='test.pdb', dir='pdb', model=1, heteronuc='N', proton='H')
+
 
         To load the 10th model from the file 'test.pdb', use:
 
-        relax> pdb('test.pdb', model=10)
-        relax> pdb(file='test.pdb', model=10)
+        relax> pdb('m1', 'test.pdb', model=10)
+        relax> pdb(run='m1', file='test.pdb', model=10)
 
         """
 
@@ -80,7 +92,8 @@ class PDB:
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", model=" + `model`
-            text = text + ", first_model=" + `first_model`
+            text = text + ", heteronuc=" + `heteronuc`
+            text = text + ", proton=" + `proton`
             text = text + ", load_seq=" + `load_seq` + ")"
             print text
 
@@ -100,13 +113,17 @@ class PDB:
         if model != None and type(model) != int:
             raise RelaxIntError, ('model', model)
 
-        # The first model argument.
-        if first_model != None and type(first_model) != int:
-            raise RelaxIntError, ('first model', first_model)
+        # The heteronucleus argument.
+        if type(heteronuc) != str:
+            raise RelaxStrError, ('heteronucleus', heteronuc)
+
+        # The proton argument.
+        if type(proton) != str:
+            raise RelaxStrError, ('proton', proton)
 
         # The load sequence argument.
         if type(load_seq) != int or (load_seq != 0 and load_seq != 1):
             raise RelaxBinError, ('load sequence flag', load_seq)
 
         # Execute the functional code.
-        self.relax.generic.pdb.pdb(run=run, file=file, dir=dir, model=model, first_model=first_model, load_seq=load_seq)
+        self.relax.generic.pdb.pdb(run=run, file=file, dir=dir, model=model, heteronuc=heteronuc, proton=proton, load_seq=load_seq)

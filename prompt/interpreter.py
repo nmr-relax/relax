@@ -50,7 +50,6 @@ from minimisation import Minimisation
 from model_selection import Modsel
 from nuclei import Nuclei
 from pdb import PDB
-from vectors import Vectors
 from rw import RW
 
 # User classes.
@@ -106,7 +105,6 @@ class Interpreter:
         self._OpenDX = OpenDX(relax)
         self._PDB = PDB(relax)
         self._system = system
-        self._Vectors = Vectors(relax)
         self._RW = RW(relax)
 
         # Place the user classes into the interpreter class namespace.
@@ -164,7 +162,6 @@ class Interpreter:
         nuclei = self._Nuclei.nuclei
         pdb = self._PDB.pdb
         read = self._RW.read
-        vectors = self._Vectors.vectors
         write = self._RW.write
 
         # Place the user classes in the local namespace.

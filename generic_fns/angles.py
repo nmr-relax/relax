@@ -40,7 +40,7 @@ class Angles:
 
         # Test if the PDB file has been loaded.
         if not self.relax.data.pdb.has_key(run):
-            raise RelaxPdbError, run
+            raise RelaxNoPdbError, run
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
