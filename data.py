@@ -148,7 +148,7 @@ class data:
 			self.csa_2prime.append(2.0 * a)
 			csa_temp.append(0.0)
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			print "%-20s%-20s" % ("r(NH):", `self.rnh`)
 			print "%-20s%-20s" % ("CSA:", `self.csa`)
 			print "%-20s%-20s" % ("CSA squared:", `self.csa**2`)

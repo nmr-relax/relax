@@ -40,7 +40,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 	a['phi'] = apply(func, (x + a['a']*p,)+args)
 	f_count = f_count + 1
 
-	if print_flag == 1:
+	if print_flag:
 		print "\n<Line search initial values>"
 		print_data("Pre (a0)", i-1, a0)
 
@@ -66,7 +66,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 		return a['a'], f_count
 
 	while 1:
-		if print_flag == 1:
+		if print_flag:
 			print "<Line search iteration i = " + `i` + " >"
 			print_data("Initial (a)", i, a)
 			print_data("Initial (a_last)", i, a_last)

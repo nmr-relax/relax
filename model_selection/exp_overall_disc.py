@@ -33,7 +33,7 @@ class exp_overall_disc(common_operations):
 		n = float(self.mf.data.num_data_sets)
 		tm = float(self.mf.usr_param.tm['val']) * 1e-9
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.mf.log.write("\n\n<<< Expected overall discrepancy >>>\n\n")
 
 		print "Calculating the expected overall discrepancy"
@@ -42,7 +42,7 @@ class exp_overall_disc(common_operations):
 			self.mf.data.results.append({})
 			file_name = self.mf.data.relax_data[0][res][1] + '_' + self.mf.data.relax_data[0][res][0] + '.out'
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write('%-22s\n' % ( "< Checking res " + data['m1'][res]['res_num'] + " >\n"))
 
 			real = []
@@ -54,7 +54,7 @@ class exp_overall_disc(common_operations):
 				types.append([self.mf.data.data_types[i], float(self.mf.data.frq[self.mf.data.remap_table[i]])])
 
 			for model in self.mf.data.runs:
-				if self.mf.debug == 1:
+				if self.mf.debug:
 					self.mf.log.write("\nCalculating expected overall discrepancy for res " + `res` + ", model " + model + "\n\n")
 					for i in range(self.mf.data.num_ri):
 						self.mf.log.write("-------------------")
@@ -77,7 +77,7 @@ class exp_overall_disc(common_operations):
 				sum_chi2 = 0.0
 				num_sims = float(len(file))
 				for sim in range(len(file)):
-					if self.mf.debug == 1:
+					if self.mf.debug:
 						self.mf.log.write("%5s%-10i%2s" % ("Sim: ", sim, " |"))
 
 					if match('m1', model):
@@ -89,13 +89,13 @@ class exp_overall_disc(common_operations):
 					chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
 					sum_chi2 = sum_chi2 + chi2
 
-					if self.mf.debug == 1:
+					if self.mf.debug:
 						self.mf.log.write("%7s%-10.4f%2s" % (" Chi2: ", chi2, " |"))
 						self.mf.log.write("%11s%-13.4f%2s\n" % (" Sum Chi2: ", sum_chi2, " |"))
 
 				ave_chi2 = sum_chi2 / num_sims
 
-				if self.mf.debug == 1:
+				if self.mf.debug:
 					self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
 
 				data[model][res]['expect'] = ave_chi2 / (2.0 * n)
@@ -110,7 +110,7 @@ class exp_overall_disc(common_operations):
 			else:
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `data['m1'][res]['expect']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `data['m2'][res]['expect']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `data['m3'][res]['expect']` + "\n")

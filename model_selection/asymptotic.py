@@ -34,13 +34,13 @@ class asymptotic(common_operations):
 		data = self.mf.data.data
 		n = float(self.mf.data.num_data_sets)
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.mf.log.write("\n\n<<< " + self.mf.usr_param.method + " model selection >>>\n\n")
 
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			err = []
@@ -82,7 +82,7 @@ class asymptotic(common_operations):
 			else:
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")

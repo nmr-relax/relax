@@ -43,13 +43,13 @@ class overall_disc(common_operations):
 		n = float(self.mf.data.num_data_sets)
 		tm = float(self.mf.usr_param.tm['val']) * 1e-9
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.mf.log.write("\n\n<<< " + self.mf.usr_param.method + " model selection >>>\n\n")
 
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			real = []
@@ -68,7 +68,7 @@ class overall_disc(common_operations):
 
 				chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
 
-				if self.mf.debug == 1:
+				if self.mf.debug:
 					self.mf.log.write("\nReal: " + `real`)
 					self.mf.log.write("\nError: " + `err`)
 					self.mf.log.write("\nBack calc: " + `back_calc`)
@@ -85,7 +85,7 @@ class overall_disc(common_operations):
 			else:
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")

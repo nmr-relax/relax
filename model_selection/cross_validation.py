@@ -69,7 +69,7 @@ class cv(common_operations):
 		self.mf.data.calc_constants()
 		tm = float(self.mf.usr_param.tm['val']) * 1e-9
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.mf.log.write("\n\n<<< " + self.mf.usr_param.method + " model selection >>>\n\n")
 
 		for res in range(len(self.mf.data.relax_data[0])):
@@ -78,13 +78,13 @@ class cv(common_operations):
 			self.mf.data.cv.cv_crit.append({})
 			self.mf.data.results.append({})
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write('%-22s\n' % ( "Checking res " + data["m1-"+self.mf.data.frq_label[self.mf.data.remap_table[0]]+"_"+self.mf.data.data_types[0]][res]['res_num'] ))
 
 			for model in self.mf.data.runs:
 				sum_cv_crit = 0
 
-				if self.mf.debug == 1:
+				if self.mf.debug:
 					self.mf.log.write(model + "\n")
 
 				for i in range(self.mf.data.num_ri):
@@ -109,13 +109,13 @@ class cv(common_operations):
 					cv_crit = chi2 / (2.0 * 1.0)
 					sum_cv_crit = sum_cv_crit + cv_crit
 
-					if self.mf.debug == 1:
+					if self.mf.debug:
 						self.mf.log.write("%7s%-10.4f%2s" % (" Chi2: ", chi2, " |"))
 						self.mf.log.write("%10s%-14.4f%2s\n\n" % (" CV crit: ", cv_crit, " |"))
 
 				self.mf.data.cv.cv_crit[res][model] = sum_cv_crit / float(len(self.mf.data.relax_data))
 
-				if self.mf.debug == 1:
+				if self.mf.debug:
 					self.mf.log.write("%13s%-10.4f\n\n" % ("Ave CV crit: ", sum_cv_crit/float(len(self.mf.data.relax_data))))
 
 			# Select model.
@@ -128,7 +128,7 @@ class cv(common_operations):
 			else:
 				self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.frq_label[self.mf.data.remap_table[0]]+"_"+self.mf.data.data_types[0]][res], model=min[1])
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write(self.mf.usr_param.method + " (m1): " + `self.mf.data.cv.cv_crit[res]['m1']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m2): " + `self.mf.data.cv.cv_crit[res]['m2']` + "\n")
 				self.mf.log.write(self.mf.usr_param.method + " (m3): " + `self.mf.data.cv.cv_crit[res]['m3']` + "\n")

@@ -15,13 +15,13 @@ class palmer(common_ops):
 		title = "<<< Stage " + self.mf.data.stage + " - "
 		title = title + self.mf.usr_param.method + " model selection >>>\n\n\n"
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.mf.file_ops.init_log_file(title)
 
 		self.update_data()
 		self.extract_relax_data()
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.log_input_info()
 
 		if match('^AIC$', self.mf.usr_param.method) or match('^AICc$', self.mf.usr_param.method):
@@ -446,11 +446,11 @@ class palmer(common_ops):
 		for model in self.mf.data.runs:
 			if match('^m', model):
 				print "Creating input files for model " + model
-				if self.mf.debug == 1:
+				if self.mf.debug:
 					self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
 			elif match('^f', model):
 				print "Creating input files for the F-test " + model
-				if self.mf.debug == 1:
+				if self.mf.debug:
 					self.mf.log.write("\n\n<<< F-test " + model + " >>>\n\n")
 			else:
 				raise NameError, "The run '" + model + "'does not start with an m or f, quitting program!\n\n"
@@ -458,7 +458,7 @@ class palmer(common_ops):
 			self.open_mf_files(dir=model)
 			self.set_run_flags(model)
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.log_params('M1', self.mf.usr_param.md1)
 				self.log_params('M2', self.mf.usr_param.md2)
 
@@ -487,13 +487,13 @@ class palmer(common_ops):
 		for model in self.mf.data.runs:
 			print "Creating input files for model " + model
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
 
 			self.mf.file_ops.mkdir(dir=model)
 			self.set_run_flags(model)
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.log_params('M1', self.mf.usr_param.md1)
 				self.log_params('M2', self.mf.usr_param.md2)
 

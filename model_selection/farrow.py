@@ -68,42 +68,42 @@ class farrow(common_operations):
 		data = self.mf.data.data
 		self.farrows_tests()
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.mf.log.write("\n\n<<< Farrow's model selection >>>\n\n")
 
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
 
-			if self.mf.debug == 1:
+			if self.mf.debug:
 				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			self.model = '0'
 
 			# Model 1 to 5 tests.
 			model_tests = [ 0, 0, 0, 0, 0 ]
-			if data['m1'][res]['conf_lim'] == 1 and data['m1'][res]['param_test'] == 1:
+			if data['m1'][res]['conf_lim'] and data['m1'][res]['param_test']:
 				model_tests[0] = 1
-			if data['m2'][res]['conf_lim'] == 1 and data['m2'][res]['param_test'] == 1:
+			if data['m2'][res]['conf_lim'] and data['m2'][res]['param_test']:
 				model_tests[1] = 1
-			if data['m3'][res]['conf_lim'] == 1 and data['m3'][res]['param_test'] == 1:
+			if data['m3'][res]['conf_lim'] and data['m3'][res]['param_test']:
 				model_tests[2] = 1
-			if data['m4'][res]['conf_lim'] == 1 and data['m4'][res]['param_test'] == 1:
+			if data['m4'][res]['conf_lim'] and data['m4'][res]['param_test']:
 				model_tests[3] = 1
-			if data['m5'][res]['conf_lim'] == 1 and data['m5'][res]['param_test'] == 1:
+			if data['m5'][res]['conf_lim'] and data['m5'][res]['param_test']:
 				model_tests[4] = 1
 
 			# Check if multiple models pass (m1 to m4).
 			# Pick the model with the lowest chi squared value.
 			for i in range(4):
-				if match('0', self.model) and model_tests[i] == 1:
+				if match('0', self.model) and model_tests[i]:
 					self.model = `i + 1`
-				elif not match('0', self.model) and model_tests[i] == 1:
+				elif not match('0', self.model) and model_tests[i]:
 					# Test if the chi2 of this new model is lower than the chi2 of the old.
 					if data["m"+`i+1`][res]['chi2'] < data["m"+self.model][res]['chi2']:
 						self.model = `i + 1`
 
 			# Model 5 test (only if no other models fit).
-			if match('0', self.model) and model_tests[4] == 1:
+			if match('0', self.model) and model_tests[4]:
 				self.model = '5'
 
 			# Fill in the results.

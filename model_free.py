@@ -13,20 +13,15 @@ class model_free(common_ops):
 
 		self.mf = mf
 
-		if self.mf.debug == 1:
-			self.mf.file_ops.init_log_file()
-
 		self.update_data()
 		self.ask_stage()
 		if match('1', self.mf.data.stage):
-			self.minimisation_stage()
+			self.minimisation()
 		elif match('^2', self.mf.data.stage):
-			self.model_selection_stage()
-		else:
-			raise NameError, "No stage chosen."
+			self.model_selection()
 
 
-	def minimisation_stage(self):
+	def minimisation(self):
 		self.extract_relax_data()
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
@@ -131,7 +126,7 @@ class model_free(common_ops):
 		self.mf.results.close()
 
 
-	def model_selection_stage(self):
+	def model_selection(self):
 		"Model selection stage."
 
 	def ask_stage(self):

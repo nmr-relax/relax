@@ -41,7 +41,7 @@ class file_ops:
 	def mkdir(self, dir):
 		"Create the given directory, or exit if the directory exists."
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			self.mf.log.write("Making directory " + dir + "\n")
 		try:
 			mkdir(dir)

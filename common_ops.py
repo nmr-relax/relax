@@ -22,8 +22,8 @@ class common_ops:
 		"Initialise the next row of the results data structure."
 
 		results = {}
-		results['res_num']   = data['res_num']
-		results['model']   = model
+		results['res_num'] = data['res_num']
+		results['model'] = model
 		if match('0', model) or match('2\+3', model) or match('4\+5', model):
 			results['s2']      = ''
 			results['s2_err']  = ''
@@ -35,7 +35,7 @@ class common_ops:
 			results['te_err']  = ''
 			results['rex']     = ''
 			results['rex_err'] = ''
-			results['chi2']     = data['chi2']
+			results['chi2']    = data['chi2']
 		else:
 			results['s2']      = data['s2']
 			results['s2_err']  = data['s2_err']
@@ -47,7 +47,7 @@ class common_ops:
 			results['te_err']  = data['te_err']
 			results['rex']     = data['rex']
 			results['rex_err'] = data['rex_err']
-			results['chi2']     = data['chi2']
+			results['chi2']    = data['chi2']
 		return results
 
 
@@ -252,7 +252,7 @@ class common_ops:
 					if self.mf.usr_param.input_info[i][2] == self.mf.data.frq[frq]:
 						flag = 0
 			# Update entries.
-			if flag == 1:
+			if flag:
 				self.mf.data.num_frq = self.mf.data.num_frq + 1
 				self.mf.data.frq_label.append(self.mf.usr_param.input_info[i][1])
 				self.mf.data.frq.append(float(self.mf.usr_param.input_info[i][2]))
@@ -297,7 +297,7 @@ class common_ops:
 					if match('R1', self.mf.usr_param.input_info[j][0]) and self.mf.usr_param.input_info[i][2] == self.mf.usr_param.input_info[j][2]:
 						self.mf.data.noe_r1_table[trans_table[i]] = trans_table[j]
 
-		if self.mf.debug == 1:
+		if self.mf.debug:
 			print "%-20s%-20s" % ("Input info:", `self.mf.usr_param.input_info`)
 			print "%-20s%-20s" % ("Trans frq table:", `trans_frq_table`)
 			print "%-20s%-20s" % ("Trans table:", `trans_table`)
