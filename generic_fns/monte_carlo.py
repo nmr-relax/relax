@@ -81,16 +81,16 @@ class Monte_carlo:
             # Get the errors.
             error = return_error(run, i)
 
-            # No data or errors.
-            if not data or not error:
-                continue
-
             # Loop over the Monte Carlo simulations.
             random = []
             for j in xrange(self.relax.data.sim_number[run]):
                 # Randomise the data.
                 random.append([])
                 for k in xrange(len(data)):
+                    # No data or errors.
+                    if not data[k] or not error[k]:
+                        continue
+
                     random[j].append(gauss(data[k], error[k]))
 
             # Pack the simulation data.
