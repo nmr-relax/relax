@@ -63,7 +63,6 @@ def calc_S2_te_jw_comps(data, params):
 
         te_ti_sqrd = (te + ti)^2
         w_te_ti_sqrd = (w.te.ti)^2
-        inv_te_denom = 1 / ((te + ti)^2 + (w.te.ti)^2)
     """
 
     data.one_s2 = 1.0 - params[data.s2_index]

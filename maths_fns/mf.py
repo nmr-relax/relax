@@ -83,8 +83,11 @@ class Mf:
         self.init_diff_data(self.diff_data)
 
         # Set the function for packaging diffusion tensor parameters.
-        if self.diff_data.params:
+        if self.param_set == 'mf':
             self.pack_diff_params = None
+            self.param_index = 0
+        elif self.param_set == 'local_tm':
+            self.pack_diff_params = self.pack_diff_params_iso
             self.param_index = 0
         elif self.diff_data.type == 'iso':
             self.pack_diff_params = self.pack_diff_params_iso
@@ -147,7 +150,7 @@ class Mf:
             self.data[i].end_index = self.data[i].start_index + self.data[i].num_params
 
             # Total number of parameters.
-            if self.param_set == 'mf':
+            if self.param_set == 'mf' or self.param_set == 'local_tm':
                 self.data[i].total_num_params = self.data[i].num_params
             else:
                 self.data[i].total_num_params = self.data[i].num_params + self.diff_data.num_params
@@ -203,26 +206,167 @@ class Mf:
         self.total_dchi2 = zeros((self.total_num_params), Float64)
         self.total_d2chi2 = zeros((self.total_num_params, self.total_num_params), Float64)
 
-        # Set the functions self.func, self.dfunc, and self.d2func for minimising model-free parameter for a single residue.
+        # Set the functions self.func, self.dfunc, and self.d2func.
+        ###########################################################
+
+        # Functions for minimising model-free parameters for a single residue or model-free parameters for a single residue with a local tm.
         if param_set == 'mf':
             self.func = self.func_mf
             self.dfunc = self.dfunc_mf
             self.d2func = self.d2func_mf
 
-        # Set the functions self.func, self.dfunc, and self.d2func for minimising diffusion tensor parameters.
-        elif param_set == 'diff':
-            self.func = self.func_diff
-            self.dfunc = self.dfunc_diff
-            self.d2func = self.d2func_diff
+        # Functions for minimising model-free parameters for a single residue with a local tm.
+        elif param_set == 'local_tm':
+            self.func = self.func_local_tm
+            self.dfunc = self.dfunc_local_tm
+            self.d2func = self.d2func_local_tm
 
-        # Set the functions self.func, self.dfunc, and self.d2func for minimising diffusion tensor together with all model-free parameters.
-        elif param_set == 'all':
-            self.func = self.func_all
-            self.dfunc = self.dfunc_all
-            self.d2func = self.d2func_all
+        # Functions for minimising diffusion tensor parameters or minimising diffusion tensor together with all model-free parameters.
+        elif param_set == 'diff' or param_set == 'all':
+            self.func = self.func_multi
+            self.dfunc = self.dfunc_multi
+            self.d2func = self.d2func_multi
 
 
-    def func_all(self, params):
+    def func_mf(self, params):
+        """The function for calculating the model-free chi-squared value.
+
+        The chi-sqared equation
+        ~~~~~~~~~~~~~~~~~~~~~~~
+                _n_
+                \    (Ri - Ri()) ** 2
+        Chi2  =  >   ----------------
+                /__    sigma_i ** 2
+                i=1
+
+        where:
+            Ri are the values of the measured relaxation data set.
+            Ri() are the values of the back calculated relaxation data set.
+            sigma_i are the values of the error set.
+        """
+
+        # Set self.data[0] to data.
+        data = self.data[0]
+
+        # Arguments
+        self.set_params(params)
+
+        # Diffusion tensor parameters.
+        if self.pack_diff_params:
+            self.pack_diff_params()
+
+        # Test if the function has already been calculated with these parameter values.
+        if sum(self.params == self.func_test) == self.total_num_params:
+            return data.chi2
+
+        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
+        self.func_test = self.params * 1.0
+
+        # Diffusion tensor geometry calculations.
+        if self.diff_data.calc_geom:
+            self.diff_data.calc_geom(data, self.diff_data)
+
+        # Diffusion tensor weight calculations.
+        self.diff_data.calc_ci(data)
+
+        # Diffusion tensor correlation time components.
+        if self.diff_data.calc_ti_comps:
+            self.diff_data.calc_ti_comps(self.diff_data)
+
+        # Diffusion tensor correlation times.
+        self.diff_data.calc_ti(data, self.diff_data)
+
+        # Calculate the components of the spectral densities.
+        if data.calc_jw_comps:
+            data.calc_jw_comps(data, self.params)
+
+        # Calculate the spectral density values.
+        data.jw = data.calc_jw(data, self.params)
+
+        # Calculate the relaxation formula components.
+        data.create_ri_comps(data, self.params)
+
+        # Calculate the R1, R2, and sigma_noe values.
+        data.create_ri_prime(data)
+
+        # Calculate the R1, R2, and NOE values.
+        data.ri = data.ri_prime * 1.0
+        ri(data, self.params)
+
+        # Calculate the chi-squared value.
+        data.chi2 = chi2(data.relax_data, data.ri, data.errors)
+
+        return data.chi2
+
+
+    def func_local_tm(self, params):
+        """The function for calculating the model-free chi-squared value.
+
+        The chi-sqared equation
+        ~~~~~~~~~~~~~~~~~~~~~~~
+                _n_
+                \    (Ri - Ri()) ** 2
+        Chi2  =  >   ----------------
+                /__    sigma_i ** 2
+                i=1
+
+        where:
+            Ri are the values of the measured relaxation data set.
+            Ri() are the values of the back calculated relaxation data set.
+            sigma_i are the values of the error set.
+        """
+
+        # Set self.data[0] to data.
+        data = self.data[0]
+
+        # Arguments
+        self.set_params(params)
+
+        # Diffusion tensor parameters.
+        if self.pack_diff_params:
+            self.pack_diff_params()
+
+        # Test if the function has already been calculated with these parameter values.
+        if sum(self.params == self.func_test) == self.total_num_params:
+            return data.chi2
+
+        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
+        self.func_test = self.params * 1.0
+
+        # Diffusion tensor weight calculations.
+        self.diff_data.calc_ci(data)
+
+        # Diffusion tensor correlation times.
+        self.diff_data.calc_ti(data, self.diff_data)
+
+        # ti spectral density components.
+        data.w_ti_sqrd = data.frq_sqrd_list_ext * data.ti ** 2
+        data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
+
+        # Calculate the components of the spectral densities.
+        if data.calc_jw_comps:
+            data.calc_jw_comps(data, self.params)
+
+        # Calculate the spectral density values.
+        data.jw = data.calc_jw(data, self.params)
+
+        # Calculate the relaxation formula components.
+        data.create_ri_comps(data, self.params)
+
+        # Calculate the R1, R2, and sigma_noe values.
+        data.create_ri_prime(data)
+
+        # Calculate the R1, R2, and NOE values.
+        data.ri = data.ri_prime * 1.0
+        ri(data, self.params)
+
+        # Calculate the chi-squared value.
+        data.chi2 = chi2(data.relax_data, data.ri, data.errors)
+
+        return data.chi2
+
+
+    def func_multi(self, params):
         """The function for calculating the model-free chi-squared value.
 
         The chi-sqared equation
@@ -305,16 +449,16 @@ class Mf:
         return self.total_chi2
 
 
-    def func_mf(self, params):
-        """The function for calculating the model-free chi-squared value.
+    def dfunc_mf(self, params):
+        """The function for calculating the model-free chi-squared gradient vector.
 
-        The chi-sqared equation
+        The chi-sqared gradient
         ~~~~~~~~~~~~~~~~~~~~~~~
-                _n_
-                \    (Ri - Ri()) ** 2
-        Chi2  =  >   ----------------
-                /__    sigma_i ** 2
-                i=1
+                       _n_
+         dChi2         \   /  Ri - Ri()      dRi()  \ 
+        -------  =  -2  >  | ----------  .  ------- |
+        dthetaj        /__ \ sigma_i**2     dthetaj /
+                       i=1
 
         where:
             Ri are the values of the measured relaxation data set.
@@ -328,55 +472,115 @@ class Mf:
         # Arguments
         self.set_params(params)
 
-        # Diffusion tensor parameters.
-        if self.pack_diff_params:
-            self.pack_diff_params()
+        # Test if the gradient has already been calculated with these parameter values.
+        if sum(self.params == self.grad_test) == self.total_num_params:
+            return data.dchi2
 
-        # Test if the function has already been calculated with these parameter values.
-        if sum(self.params == self.func_test) == self.total_num_params:
-            return data.chi2
+        # Test if the function has already been called, otherwise run self.func.
+        if sum(self.params == self.func_test) != self.total_num_params:
+            self.func(params)
 
-        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
-        self.func_test = self.params * 1.0
+        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
+        self.grad_test = self.params * 1.0
 
-        # Diffusion tensor geometry calculations.
-        if self.diff_data.calc_geom:
-            self.diff_data.calc_geom(data, self.diff_data)
+        # Calculate the spectral density gradient components.
+        if data.calc_djw_comps:
+            data.calc_djw_comps(data, self.params)
 
-        # Diffusion tensor weight calculations.
-        self.diff_data.calc_ci(data)
+        # Calculate the spectral density gradients.
+        for i in xrange(data.num_params):
+            if data.calc_djw[i]:
+                data.djw[:, :, i] = data.calc_djw[i](data, self.params)
 
-        # Diffusion tensor correlation time components.
-        if self.diff_data.calc_ti_comps:
-            self.diff_data.calc_ti_comps(self.diff_data)
+        # Calculate the relaxation gradient components.
+        data.create_dri_comps(data, self.params)
+
+        # Calculate the R1, R2, and sigma_noe gradients.
+        for i in xrange(data.num_params):
+            data.create_dri_prime[i](data, i)
+
+        # Calculate the R1, R2, and NOE gradients.
+        data.dri = data.dri_prime * 1.0
+        dri(data, self.params)
+
+        # Calculate the chi-squared gradient.
+        data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            data.dchi2 = self.scale_gradient(data.dchi2)
+
+        return data.dchi2
+
+
+    def dfunc_local_tm(self, params):
+        """The function for calculating the model-free chi-squared gradient vector.
+
+        The chi-sqared gradient
+        ~~~~~~~~~~~~~~~~~~~~~~~
+                       _n_
+         dChi2         \   /  Ri - Ri()      dRi()  \ 
+        -------  =  -2  >  | ----------  .  ------- |
+        dthetaj        /__ \ sigma_i**2     dthetaj /
+                       i=1
+
+        where:
+            Ri are the values of the measured relaxation data set.
+            Ri() are the values of the back calculated relaxation data set.
+            sigma_i are the values of the error set.
+        """
+
+        # Set self.data[0] to data.
+        data = self.data[0]
+
+        # Arguments
+        self.set_params(params)
+
+        # Test if the gradient has already been calculated with these parameter values.
+        if sum(self.params == self.grad_test) == self.total_num_params:
+            return data.dchi2
+
+        # Test if the function has already been called, otherwise run self.func.
+        if sum(self.params == self.func_test) != self.total_num_params:
+            self.func(params)
+
+        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
+        self.grad_test = self.params * 1.0
 
         # Diffusion tensor correlation times.
-        self.diff_data.calc_ti(data, self.diff_data)
+        self.diff_data.calc_dti(data, self.diff_data)
 
-        # Calculate the components of the spectral densities.
-        if data.calc_jw_comps:
-            data.calc_jw_comps(data, self.params)
+        # Calculate the spectral density gradient components.
+        if data.calc_djw_comps:
+            data.calc_djw_comps(data, self.params)
 
-        # Calculate the spectral density values.
-        data.jw = data.calc_jw(data, self.params)
+        # Calculate the spectral density gradients.
+        for i in xrange(data.num_params):
+            if data.calc_djw[i]:
+                data.djw[:, :, i] = data.calc_djw[i](data, self.params)
 
-        # Calculate the relaxation formula components.
-        data.create_ri_comps(data, self.params)
+        # Calculate the relaxation gradient components.
+        data.create_dri_comps(data, self.params)
 
-        # Calculate the R1, R2, and sigma_noe values.
-        data.create_ri_prime(data)
+        # Calculate the R1, R2, and sigma_noe gradients.
+        for i in xrange(data.num_params):
+            data.create_dri_prime[i](data, i)
 
-        # Calculate the R1, R2, and NOE values.
-        data.ri = data.ri_prime * 1.0
-        ri(data, self.params)
+        # Calculate the R1, R2, and NOE gradients.
+        data.dri = data.dri_prime * 1.0
+        dri(data, self.params)
 
-        # Calculate the chi-squared value.
-        data.chi2 = chi2(data.relax_data, data.ri, data.errors)
+        # Calculate the chi-squared gradient.
+        data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
 
-        return data.chi2
+        # Diagonal scaling.
+        if self.scaling_flag:
+            data.dchi2 = self.scale_gradient(data.dchi2)
+
+        return data.dchi2
 
 
-    def dfunc_all(self, params):
+    def dfunc_multi(self, params):
         """The function for calculating the model-free chi-squared gradient vector.
 
         The chi-sqared gradient
@@ -404,9 +608,9 @@ class Mf:
         if sum(self.params == self.grad_test) == self.total_num_params:
             return self.total_dchi2
 
-        # Test if the function has already been called, otherwise run self.func_mf.
+        # Test if the function has already been called, otherwise run self.func.
         if sum(self.params == self.func_test) != self.total_num_params:
-            self.func_all(params)
+            self.func(params)
 
         # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
         self.grad_test = self.params * 1.0
@@ -474,16 +678,16 @@ class Mf:
         return self.total_dchi2
 
 
-    def dfunc_mf(self, params):
-        """The function for calculating the model-free chi-squared gradient vector.
+    def d2func_mf(self, params):
+        """The function for calculating the model-free chi-squared Hessian matrix.
 
-        The chi-sqared gradient
-        ~~~~~~~~~~~~~~~~~~~~~~~
-                       _n_
-         dChi2         \   /  Ri - Ri()      dRi()  \ 
-        -------  =  -2  >  | ----------  .  ------- |
-        dthetaj        /__ \ sigma_i**2     dthetaj /
-                       i=1
+        The chi-sqared Hessian
+        ~~~~~~~~~~~~~~~~~~~~~~
+                             _n_
+             d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
+        ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
+        dthetaj.dthetak      /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
+                             i=1
 
         where:
             Ri are the values of the measured relaxation data set.
@@ -497,63 +701,110 @@ class Mf:
         # Arguments
         self.set_params(params)
 
-        # Test if the gradient has already been calculated with these parameter values.
-        if sum(self.params == self.grad_test) == self.total_num_params:
-            return data.dchi2
+        # Test if the Hessian has already been calculated with these parameter values.
+        if sum(self.params == self.hess_test) == self.total_num_params:
+            return data.d2chi2
 
-        # Test if the function has already been called, otherwise run self.func_mf.
-        if sum(self.params == self.func_test) != self.total_num_params:
-            self.func_mf(params)
+        # Test if the gradient has already been called, otherwise run self.dfunc.
+        if sum(self.params == self.grad_test) != self.total_num_params:
+            self.dfunc(params)
 
-        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
-        self.grad_test = self.params * 1.0
+        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
+        self.hess_test = self.params * 1.0
 
-        # Diffusion tensor geometry calculations.
-        #self.diff_data.calc_dgeom(data, self.diff_data)
-
-        # Diffusion tensor weight calculations.
-        #self.diff_data.calc_dci(data)
-
-        # Diffusion tensor correlation times.
-        #self.diff_data.calc_dti(data, self.diff_data)
-
-        # Calculate the spectral density gradient components.
-        if data.calc_djw_comps:
-            data.calc_djw_comps(data, self.params)
-
-        # Calculate the spectral density gradients.
+        # Calculate the spectral density Hessians.
         for i in xrange(data.num_params):
-            if data.calc_djw[i]:
-                data.djw[:, :, i] = data.calc_djw[i](data, self.params)
+            for j in xrange(i + 1):
+                if data.calc_d2jw[i][j]:
+                    data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, self.params)
 
-        # Calculate the relaxation gradient components.
-        data.create_dri_comps(data, self.params)
+        # Calculate the relaxation Hessian components.
+        data.create_d2ri_comps(data, self.params)
 
-        # Calculate the R1, R2, and sigma_noe gradients.
+        # Calculate the R1, R2, and sigma_noe Hessians.
         for i in xrange(data.num_params):
-            data.create_dri_prime[i](data, i)
+            for j in xrange(i + 1):
+                if data.create_d2ri_prime[i][j]:
+                    data.create_d2ri_prime[i][j](data, i, j)
 
-        # Calculate the R1, R2, and NOE gradients.
-        data.dri = data.dri_prime * 1.0
-        dri(data, self.params)
+        # Calculate the R1, R2, and NOE Hessians.
+        data.d2ri = data.d2ri_prime * 1.0
+        d2ri(data, self.params)
 
-        # Calculate the chi-squared gradient.
-        data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
-
-        #print "djw:\n" + `data.djw`
-        #print "dri_prime:\n" + `data.dri_prime`
-        #print "dri:\n" + `data.dri`
-        #print "dchi2:\n" + `data.dchi2`
+        # Calculate the chi-squared Hessian.
+        data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
-            data.dchi2 = self.scale_gradient(data.dchi2)
+            data.d2chi2 = self.scale_hessian(data.d2chi2)
 
-        #import sys; sys.exit()
-        return data.dchi2
+        return data.d2chi2
 
 
-    def d2func_all(self, params):
+    def d2func_local_tm(self, params):
+        """The function for calculating the model-free chi-squared Hessian matrix.
+
+        The chi-sqared Hessian
+        ~~~~~~~~~~~~~~~~~~~~~~
+                             _n_
+             d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
+        ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
+        dthetaj.dthetak      /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
+                             i=1
+
+        where:
+            Ri are the values of the measured relaxation data set.
+            Ri() are the values of the back calculated relaxation data set.
+            sigma_i are the values of the error set.
+        """
+
+        # Set self.data[0] to data.
+        data = self.data[0]
+
+        # Arguments
+        self.set_params(params)
+
+        # Test if the Hessian has already been calculated with these parameter values.
+        if sum(self.params == self.hess_test) == self.total_num_params:
+            return data.d2chi2
+
+        # Test if the gradient has already been called, otherwise run self.dfunc.
+        if sum(self.params == self.grad_test) != self.total_num_params:
+            self.dfunc(params)
+
+        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
+        self.hess_test = self.params * 1.0
+
+        # Calculate the spectral density Hessians.
+        for i in xrange(data.num_params):
+            for j in xrange(i + 1):
+                if data.calc_d2jw[i][j]:
+                    data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, self.params)
+
+        # Calculate the relaxation Hessian components.
+        data.create_d2ri_comps(data, self.params)
+
+        # Calculate the R1, R2, and sigma_noe Hessians.
+        for i in xrange(data.num_params):
+            for j in xrange(i + 1):
+                if data.create_d2ri_prime[i][j]:
+                    data.create_d2ri_prime[i][j](data, i, j)
+
+        # Calculate the R1, R2, and NOE Hessians.
+        data.d2ri = data.d2ri_prime * 1.0
+        d2ri(data, self.params)
+
+        # Calculate the chi-squared Hessian.
+        data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            data.d2chi2 = self.scale_hessian(data.d2chi2)
+
+        return data.d2chi2
+
+
+    def d2func_multi(self, params):
         """The function for calculating the model-free chi-squared Hessian matrix.
 
         The chi-sqared Hessian
@@ -581,9 +832,9 @@ class Mf:
         if sum(self.params == self.hess_test) == self.total_num_params:
             return self.total_d2chi2
 
-        # Test if the gradient has already been called, otherwise run self.dfunc_mf.
+        # Test if the gradient has already been called, otherwise run self.dfunc.
         if sum(self.params == self.grad_test) != self.total_num_params:
-            self.dfunc_mf(params)
+            self.dfunc(params)
 
         # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
         self.hess_test = self.params * 1.0
@@ -649,80 +900,6 @@ class Mf:
             self.total_d2chi2 = self.scale_hessian(self.total_d2chi2)
 
         return self.total_d2chi2
-
-
-    def d2func_mf(self, params):
-        """The function for calculating the model-free chi-squared Hessian matrix.
-
-        The chi-sqared Hessian
-        ~~~~~~~~~~~~~~~~~~~~~~
-                             _n_
-             d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
-        ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
-        dthetaj.dthetak      /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
-                             i=1
-
-        where:
-            Ri are the values of the measured relaxation data set.
-            Ri() are the values of the back calculated relaxation data set.
-            sigma_i are the values of the error set.
-        """
-
-        # Set self.data[0] to data.
-        data = self.data[0]
-
-        # Arguments
-        self.set_params(params)
-
-        # Test if the Hessian has already been calculated with these parameter values.
-        if sum(self.params == self.hess_test) == self.total_num_params:
-            return data.d2chi2
-
-        # Test if the gradient has already been called, otherwise run self.dfunc_mf.
-        if sum(self.params == self.grad_test) != self.total_num_params:
-            self.dfunc_mf(params)
-
-        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
-        self.hess_test = self.params * 1.0
-
-        # Diffusion tensor geometry calculations.
-        #if self.diff_data.calc_d2geom:
-        #   self.diff_data.calc_d2geom(data, self.diff_data)
-
-        # Diffusion tensor weight calculations.
-        #self.diff_data.calc_d2ci(data)
-
-        # Diffusion tensor correlation times.
-        #if self.diff_data.calc_d2ti:
-        #   self.diff_data.calc_d2ti(data, self.diff_data)
-
-        # Calculate the spectral density Hessians.
-        for i in xrange(data.num_params):
-            for j in xrange(i + 1):
-                if data.calc_d2jw[i][j]:
-                    data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, self.params)
-
-        # Calculate the relaxation Hessian components.
-        data.create_d2ri_comps(data, self.params)
-
-        # Calculate the R1, R2, and sigma_noe Hessians.
-        for i in xrange(data.num_params):
-            for j in xrange(i + 1):
-                if data.create_d2ri_prime[i][j]:
-                    data.create_d2ri_prime[i][j](data, i, j)
-
-        # Calculate the R1, R2, and NOE Hessians.
-        data.d2ri = data.d2ri_prime * 1.0
-        d2ri(data, self.params)
-
-        # Calculate the chi-squared Hessian.
-        data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
-
-        # Diagonal scaling.
-        if self.scaling_flag:
-            data.d2chi2 = self.scale_hessian(data.d2chi2)
-
-        return data.d2chi2
 
 
     def init_diff_data(self, diff_data):
@@ -1045,7 +1222,7 @@ class Mf:
         #################
 
         # The number of diffusion parameters.
-        if self.param_set == 'mf':
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
             num_diff_params = 0
         elif self.diff_data.type == 'iso':
             num_diff_params = 1
@@ -1100,6 +1277,8 @@ class Mf:
                 elif data.param_types[i] == 'CSA':
                     data.csa_local_index = num_diff_params + i
                     data.csa_index = self.param_index + i
+                elif data.param_types[i] == 'tm':
+                    pass
                 else:
                     print "Unknown parameter."
                     return 0
@@ -1161,13 +1340,12 @@ class Mf:
                     data.calc_djw[0] = calc_tm_djw_dDj
 
                     # Hessian.
-                    data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
-                    #if self.diff_data.type == 'iso':
-                    #    data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
-                    #elif self.diff_data.type == 'axial':
-                    #    data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
-                    #    data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_tm_d2jw_dDjdDk
-                    #    data.calc_d2jw[1][1] = calc_tm_d2jw_dDjdDk
+                    if self.diff_data.type == 'iso':
+                        data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
+                    elif self.diff_data.type == 'axial':
+                        data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] = calc_tm_d2jw_dDjdDk
+                        data.calc_d2jw[1][1] = calc_tm_d2jw_dDjdDk
 
                 # Diffusion parameters and model-free parameters {S2}.
                 elif data.s2_index != None and data.te_index == None:
@@ -1237,6 +1415,8 @@ class Mf:
                 elif data.param_types[i] == 'CSA':
                     data.csa_local_index = num_diff_params + i
                     data.csa_index = self.param_index + i
+                elif data.param_types[i] == 'tm':
+                    pass
                 else:
                     print "Unknown parameter."
                     return 0
@@ -1362,6 +1542,8 @@ class Mf:
                 elif data.param_types[i] == 'CSA':
                     data.csa_local_index = num_diff_params + i
                     data.csa_index = self.param_index + i
+                elif data.param_types[i] == 'tm':
+                    pass
                 else:
                     print "Unknown parameter."
                     return 0

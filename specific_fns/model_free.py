@@ -205,7 +205,7 @@ class Model_free:
                 i = i + 6
 
         # Model-free parameters.
-        if self.param_set == 'mf' or self.param_set == 'all':
+        if self.param_set != 'diff':
             # Loop over all residues.
             for j in xrange(len(self.relax.data.res)):
                 # Skip unselected residues.
@@ -570,6 +570,22 @@ class Model_free:
     def determine_param_set_type(self):
         """Determine the type of parameter set."""
 
+        # If there is a local tm, fail if not all residues have a local tm parameter.
+        local_tm = 0
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            if local_tm == 0 and 'tm' in self.relax.data.res[i].params[self.run]:
+                local_tm = 1
+            elif local_tm == 1 and not 'tm' in self.relax.data.res[i].params[self.run]:
+                raise RelaxError, "All residues must either have a local tm parameter or not."
+
+        # Local tm.
+        if local_tm == 1:
+            return 'local_tm'
+
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = 1
         for i in xrange(len(self.relax.data.res)):
@@ -628,7 +644,7 @@ class Model_free:
                 param_index = param_index + 6
 
         # Model-free parameters.
-        if self.param_set == 'mf' or self.param_set == 'all':
+        if self.param_set != 'diff':
             # Loop over all residues.
             for i in xrange(len(self.relax.data.res)):
                 # Skip unselected residues.
@@ -827,7 +843,11 @@ class Model_free:
         m = 0
 
         # Minimisation options for diffusion tensor parameters.
-        if self.param_set != 'mf':
+        if self.param_set == 'local_tm':
+            # Local tm {tm}.
+            min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
+            m = m + 1
+        elif self.param_set == 'diff' or self.param_set == 'all':
             # Isotropic diffusion {tm}.
             if self.relax.data.diff[self.run].type == 'iso':
                 min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
@@ -863,6 +883,10 @@ class Model_free:
 
             # Loop over the model-free parameters.
             for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                # Local tm.
+                if self.param_set == 'local_tm' and j == 1:
+                    continue
+
                 # {S2, S2f, S2s}.
                 if match('S2', self.relax.data.res[i].params[self.run][j]):
                     min_options.append([inc[m], 0.0, 1.0])
@@ -1111,7 +1135,7 @@ class Model_free:
         j = 0
 
         # Diffusion tensor parameters.
-        if self.param_set != 'mf':
+        if self.param_set == 'diff' or self.param_set == 'all':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
                 # tm >= 0.
@@ -1177,7 +1201,7 @@ class Model_free:
                 j = j + 1
 
         # Model-free parameters.
-        if self.param_set == 'mf' or self.param_set == 'all':
+        if self.param_set != 'diff':
             # Loop over all residues.
             for k in xrange(len(self.relax.data.res)):
                 # Skip unselected residues.
@@ -1404,8 +1428,11 @@ class Model_free:
         self.run = run
         self.print_flag = print_flag
 
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
         # Tests for the PDB file and unit vectors.
-        if not self.relax.data.diff[self.run].type == 'iso':
+        if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
             # Test if the PDB file has been loaded.
             if not hasattr(self.relax.data, 'pdb'):
                 raise RelaxPdbError
@@ -1419,9 +1446,6 @@ class Model_free:
                 # Unit vector.
                 if not hasattr(self.relax.data.res[i], 'xh_unit'):
                     raise RelaxNoVectorsError
-
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
 
         # Print out.
         if self.print_flag >= 1:
@@ -1451,14 +1475,11 @@ class Model_free:
             num_res = num_res + 1
 
         # The number of residues, minimisation instances, and data sets for each parameter set type.
-        if self.param_set == 'mf':
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
             num_instances = len(self.relax.data.res)
             num_data_sets = 1
             num_res = 1
-        elif self.param_set == 'diff':
-            num_instances = 1
-            num_data_sets = len(self.relax.data.res)
-        elif self.param_set == 'all':
+        elif self.param_set == 'diff' or self.param_set == 'all':
             num_instances = 1
             num_data_sets = len(self.relax.data.res)
 
@@ -1565,7 +1586,7 @@ class Model_free:
                 ri_labels.append(self.relax.data.res[seq_index].ri_labels[self.run])
 
                 # Vectors.
-                if not self.relax.data.diff[self.run].type == 'iso':
+                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
                     xh_unit_vectors.append(self.relax.data.res[seq_index].xh_unit)
                 else:
                     xh_unit_vectors.append(None)
@@ -1580,6 +1601,12 @@ class Model_free:
             csa = array(csa, Float64)
             frq = array(frq, Float64)
 
+            # Diffusion tensor type.
+            if self.param_set == 'local_tm':
+                diff_type = 'iso'
+            else:
+                diff_type = self.relax.data.diff[self.run].type
+
             # Package the diffusion tensor parameters.
             diff_params = None
             if self.param_set == 'mf':
@@ -1587,18 +1614,18 @@ class Model_free:
                 diff_params = []
 
                 # Isotropic diffusion.
-                if self.relax.data.diff[self.run].type == 'iso':
+                if diff_type == 'iso':
                     diff_params.append(self.relax.data.diff[self.run].tm)
 
                 # Axially symmetric diffusion.
-                elif self.relax.data.diff[self.run].type == 'axial':
+                elif diff_type == 'axial':
                     diff_params.append(self.relax.data.diff[self.run].Dper)
                     diff_params.append(self.relax.data.diff[self.run].Dpar)
                     diff_params.append(self.relax.data.diff[self.run].theta)
                     diff_params.append(self.relax.data.diff[self.run].phi)
 
                 # Anisotropic diffusion.
-                elif self.relax.data.diff[self.run].type == 'aniso':
+                elif diff_type == 'aniso':
                     diff_params.append(self.relax.data.diff[self.run].Dx)
                     diff_params.append(self.relax.data.diff[self.run].Dy)
                     diff_params.append(self.relax.data.diff[self.run].Dz)
@@ -1613,7 +1640,7 @@ class Model_free:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(total_num_params=len(self.param_vector), param_set=self.param_set, diff_type=self.relax.data.diff[self.run].type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(total_num_params=len(self.param_vector), param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
