@@ -126,12 +126,7 @@ def calc_iso_S2_te_jw(data):
                  5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
     """
 
-    if data.te_tm == 0.0:
-        fact = 0.0 * data.te_denom
-    else:
-        fact = data.one_s2 * data.te_tm_te / data.te_denom
-
-    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + fact)
+    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + data.one_s2 * data.te_tm_te * data.inv_te_denom)
 
 
 
@@ -151,12 +146,7 @@ def calc_iso_S2f_S2_ts_jw(data):
                  5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    if data.ts_tm == 0.0:
-        fact = 0.0 * data.ts_denom
-    else:
-        fact = data.s2f_s2 * data.ts_tm_ts / data.ts_denom
-
-    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + fact)
+    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
 
 
 
@@ -176,17 +166,7 @@ def calc_iso_S2f_tf_S2_ts_jw(data):
                  5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    if data.tf_tm == 0.0:
-        fact2 = 0.0 * data.tf_denom
-    else:
-        fact2 = data.one_s2f * data.tf_tm_tf / data.tf_denom
-
-    if data.ts_tm == 0.0:
-        fact3 = 0.0 * data.ts_denom
-    else:
-        fact3 = data.s2f_s2 * data.ts_tm_ts / data.ts_denom
-
-    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + fact2 + fact3)
+    return data.two_fifths_tm * (data.params[data.s2_index] * data.fact_tm + data.one_s2f * data.tf_tm_tf * data.inv_tf_denom + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
 
 
 
@@ -206,7 +186,7 @@ def calc_iso_S2f_S2s_ts_jw(data):
                  5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_tm + data.s2f_s2 * data.ts_tm_ts / data.ts_denom)
+    return data.two_fifths_tm * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_tm + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
 
 
 
@@ -226,7 +206,7 @@ def calc_iso_S2f_tf_S2s_ts_jw(data):
                  5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_tm + data.one_s2f * data.tf_tm_tf / data.tf_denom + data.s2f_s2 * data.ts_tm_ts / data.ts_denom)
+    return data.two_fifths_tm * (data.params[data.s2f_index] * data.params[data.s2s_index] * data.fact_tm + data.one_s2f * data.tf_tm_tf * data.inv_tf_denom + data.s2f_s2 * data.ts_tm_ts * data.inv_ts_denom)
 
 
 
@@ -464,7 +444,7 @@ def calc_iso_S2_te_djw_dS2(data):
          dS2      5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.fact_tm - data.te_tm_te / data.te_denom)
+    return data.two_fifths_tm * (data.fact_tm - data.te_tm_te * data.inv_te_denom)
 
 
 def calc_iso_S2_te_djw_dte(data):
@@ -516,12 +496,7 @@ def calc_iso_tm_S2_te_djw_dS2(data):
          dS2      5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
     """
 
-    if data.te_tm == 0.0:
-        fact = 0.0 * data.te_denom
-    else:
-        fact = data.te_tm_te / data.te_denom
-
-    return data.two_fifths_tm * (data.fact_tm - fact)
+    return data.two_fifths_tm * (data.fact_tm - data.te_tm_te * data.inv_te_denom)
 
 
 def calc_iso_tm_S2_te_djw_dte(data):
@@ -557,7 +532,7 @@ def calc_iso_S2f_S2_ts_djw_dS2f(data):
         dS2f      5    \ (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * data.ts_tm_ts / data.ts_denom
+    return data.two_fifths_tm * data.ts_tm_ts * data.inv_ts_denom
 
 
 def calc_iso_S2f_S2_ts_djw_dS2(data):
@@ -573,7 +548,7 @@ def calc_iso_S2f_S2_ts_djw_dS2(data):
          dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)
+    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_S2f_S2_ts_djw_dts(data):
@@ -625,7 +600,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dS2f(data):
         dS2f      5    \ (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * data.ts_tm_ts / data.ts_denom
+    return data.two_fifths_tm * data.ts_tm_ts * data.inv_ts_denom
 
 
 def calc_iso_tm_S2f_S2_ts_djw_dS2(data):
@@ -641,7 +616,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dS2(data):
          dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)
+    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_tm_S2f_S2_ts_djw_dts(data):
@@ -677,7 +652,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dS2f(data):
         dS2f        5    \ (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return - data.two_fifths_tm * (data.tf_tm_tf / data.tf_denom - data.ts_tm_ts / data.ts_denom)
+    return - data.two_fifths_tm * (data.tf_tm_tf * data.inv_tf_denom - data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_S2f_tf_S2_ts_djw_dS2(data):
@@ -693,7 +668,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dS2(data):
          dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts / data.ts_denom)
+    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_S2f_tf_S2_ts_djw_dtf(data):
@@ -761,17 +736,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dS2f(data):
         dS2f        5    \ (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    if data.tf_tm == 0.0:
-        fact1 = 0.0 * data.tf_denom
-    else:
-        fact1 = data.tf_tm_tf / data.tf_denom
-
-    if data.ts_tm == 0.0:
-        fact2 = 0.0 * data.ts_denom
-    else:
-        fact2 = data.ts_tm_ts / data.ts_denom
-
-    return -data.two_fifths_tm * (fact1 - fact2)
+    return -data.two_fifths_tm * (data.tf_tm_tf * data.inv_tf_denom - data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_tm_S2f_tf_S2_ts_djw_dS2(data):
@@ -787,12 +752,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dS2(data):
          dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    if data.ts_tm == 0.0:
-        fact = 0.0 * data.ts_denom
-    else:
-        fact = data.ts_tm_ts / data.ts_denom
-
-    return data.two_fifths_tm * (data.fact_tm - fact)
+    return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_tm_S2f_tf_S2_ts_djw_dtf(data):
@@ -844,7 +804,7 @@ def calc_iso_S2f_S2s_ts_djw_dS2f(data):
         dS2f      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm + data.one_s2s * data.ts_tm_ts / data.ts_denom)
+    return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm + data.one_s2s * data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_S2f_S2s_ts_djw_dS2s(data):
@@ -896,7 +856,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2f(data):
         dS2f      5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm - data.tf_tm_tf / data.tf_denom + data.one_s2s * data.ts_tm_ts / data.ts_denom)
+    return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm - data.tf_tm_tf * data.inv_tf_denom + data.one_s2s * data.ts_tm_ts * data.inv_ts_denom)
 
 
 def calc_iso_S2f_tf_S2s_ts_djw_dS2s(data):
@@ -1331,7 +1291,7 @@ def calc_iso_S2_te_d2jw_dte2(data):
     """
 
     num = data.te_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_tm - data.w_tm_sqrd**2 * data.params[data.te_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.one_s2 * num / data.te_denom**3
+    return -2.0*data.two_fifths_tm_sqrd * data.one_s2 * num * data.inv_te_denom**3
 
 
 
@@ -1351,12 +1311,8 @@ def calc_iso_tm_S2_te_d2jw_dtm2(data):
         dtm**2       5 \           (1 + (w.tm)^2)^3                                 ((te + tm)^2 + (w.te.tm)^2)^3             /
     """
 
-    if data.te_tm == 0.0:
-        fact = 0.0 * data.te_denom
-    else:
-        fact = data.te_tm**3 + 3.0 * data.params[data.te_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.te_tm - (data.frq_list * data.params[data.te_index])**4 * data.params[data.tm_index]**3
-        fact = data.one_s2 * data.params[data.te_index]**2 * fact / data.te_denom**3
-        
+    fact = data.te_tm**3 + 3.0 * data.params[data.te_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.te_tm - (data.frq_list * data.params[data.te_index])**4 * data.params[data.tm_index]**3
+    fact = data.one_s2 * data.params[data.te_index]**2 * fact * data.inv_te_denom**3
     return -0.8 * (data.params[data.s2_index] * data.params[data.tm_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3 + fact)
 
 
@@ -1389,10 +1345,7 @@ def calc_iso_tm_S2_te_d2jw_dtmdte(data):
         dtm.dte     5                                ((te + tm)^2 + (w.te.tm)^2)^3
     """
 
-    if data.te_tm == 0.0:
-        return 0.0 * data.te_denom
-    else:
-        return 0.8 * data.one_s2 * data.params[data.tm_index] * data.params[data.te_index] * data.te_tm * (data.te_tm_sqrd - 3.0 * data.w_te_tm_sqrd) / (data.te_denom ** 3)
+    return 0.8 * data.one_s2 * data.params[data.tm_index] * data.params[data.te_index] * data.te_tm * (data.te_tm_sqrd - 3.0 * data.w_te_tm_sqrd) * data.inv_te_denom**3
 
 
 def calc_iso_tm_S2_te_d2jw_dS2dte(data):
@@ -1424,11 +1377,8 @@ def calc_iso_tm_S2_te_d2jw_dte2(data):
         dte**2       5                             ((te + tm)^2 + (w.te.tm)^2)^3
     """
 
-    if data.te_tm == 0.0:
-        return 0.0 * data.te_denom
-    else:
-        num = data.te_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_tm - data.w_tm_sqrd**2 * data.params[data.te_index]**3
-        return -2.0*data.two_fifths_tm_sqrd * data.one_s2 * num / data.te_denom**3
+    num = data.te_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.te_index] * data.frq_sqrd_list * data.te_tm - data.w_tm_sqrd**2 * data.params[data.te_index]**3
+    return -2.0*data.two_fifths_tm_sqrd * data.one_s2 * num * data.inv_te_denom**3
 
 
 
@@ -1481,7 +1431,7 @@ def calc_iso_S2f_S2_ts_d2jw_dts2(data):
     """
 
     num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num / data.ts_denom**3
+    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
 
 
 
@@ -1501,12 +1451,8 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtm2(data):
         dtm**2       5 \           (1 + (w.tm)^2)^3                                   ((ts + tm)^2 + (w.ts.tm)^2)^3             /
     """
 
-    if data.ts_tm == 0.0:
-        fact = 0.0 * data.ts_denom
-    else:
-        fact = data.ts_tm**3 + 3.0 * data.params[data.ts_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.ts_tm - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.tm_index]**3
-        fact = data.s2f_s2 * data.params[data.ts_index]**2 * fact / data.ts_denom**3
-
+    fact = data.ts_tm**3 + 3.0 * data.params[data.ts_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.ts_tm - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.tm_index]**3
+    fact = data.s2f_s2 * data.params[data.ts_index]**2 * fact * data.inv_ts_denom**3
     return -0.8 * (data.params[data.s2_index] * data.params[data.tm_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3 + fact)
 
 
@@ -1555,10 +1501,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtmdts(data):
         dtm.dts     5                                  ((ts + tm)^2 + (w.ts.tm)^2)^3
     """
 
-    if data.ts_tm == 0.0:
-        return 0.0 * data.ts_denom
-    else:
-        return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) / (data.ts_denom ** 3)
+    return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) * data.inv_ts_denom**3
 
 
 def calc_iso_tm_S2f_S2_ts_d2jw_dS2fdts(data):
@@ -1606,8 +1549,8 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dts2(data):
         dts**2       5                               ((ts + tm)^2 + (w.ts.tm)^2)^3
     """
 
-    num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num / data.ts_denom**3
+    num = data.ts_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
+    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
 
 
 
@@ -1676,7 +1619,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dtf2(data):
     """
 
     num = data.tf_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_tm - data.w_tm_sqrd**2 * data.params[data.tf_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num / data.tf_denom**3
+    return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
 
 
 def calc_iso_S2f_tf_S2_ts_d2jw_dts2(data):
@@ -1693,7 +1636,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dts2(data):
     """
 
     num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num / data.ts_denom**3
+    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
 
 
 
@@ -1717,19 +1660,16 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtm2(data):
                                                             ((ts + tm)^2 + (w.ts.tm)^2)^3             /
     """
 
+    # tm.
     fact1 = data.params[data.s2_index] * data.params[data.tm_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3
 
-    if data.tf_tm == 0.0:
-        fact2 = 0.0 * data.tf_denom
-    else:
-        fact2 = data.tf_tm**3 + 3.0 * data.params[data.tf_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.tf_tm - (data.frq_list * data.params[data.tf_index])**4 * data.params[data.tm_index]**3
-        fact2 = data.one_s2f * data.params[data.tf_index]**2 * fact2 / data.tf_denom**3
+    # tf.
+    fact2 = data.tf_tm**3 + 3.0 * data.params[data.tf_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.tf_tm - (data.frq_list * data.params[data.tf_index])**4 * data.params[data.tm_index]**3
+    fact2 = data.one_s2f * data.params[data.tf_index]**2 * fact2 * data.inv_tf_denom**3
 
-    if data.ts_tm == 0.0:
-        fact3 = 0.0 * data.ts_denom
-    else:
-        fact3 = data.ts_tm**3 + 3.0 * data.params[data.ts_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.ts_tm - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.tm_index]**3
-        fact3 = data.s2f_s2 * data.params[data.ts_index]**2 * fact3 / data.ts_denom**3
+    # ts.
+    fact3 = data.ts_tm**3 + 3.0 * data.params[data.ts_index]**3 * data.params[data.tm_index] * data.frq_sqrd_list * data.ts_tm - (data.frq_list * data.params[data.ts_index])**4 * data.params[data.tm_index]**3
+    fact3 = data.s2f_s2 * data.params[data.ts_index]**2 * fact3 * data.inv_ts_denom**3
 
     return -0.8 * (fact1 + fact2 + fact3)
 
@@ -1779,10 +1719,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdtf(data):
         dtm.dtf     5                                 ((tf + tm)^2 + (w.tf.tm)^2)^3
     """
 
-    if data.tf_tm == 0.0:
-        return 0.0 * data.tf_denom
-    else:
-        return 0.8 * data.one_s2f * data.params[data.tm_index] * data.params[data.tf_index] * data.tf_tm * (data.tf_tm_sqrd - 3.0 * data.w_tf_tm_sqrd) / (data.tf_denom ** 3)
+    return 0.8 * data.one_s2f * data.params[data.tm_index] * data.params[data.tf_index] * data.tf_tm * (data.tf_tm_sqrd - 3.0 * data.w_tf_tm_sqrd) * data.inv_tf_denom**3
 
 
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
@@ -1798,10 +1735,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
         dtm.dts     5                                  ((ts + tm)^2 + (w.ts.tm)^2)^3
     """
 
-    if data.ts_tm == 0.0:
-        return 0.0 * data.ts_denom
-    else:
-        return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) / (data.ts_denom ** 3)
+    return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) * data.inv_ts_denom**3
 
 
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
@@ -1865,11 +1799,8 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
         dtf**2       5                              ((tf + tm)^2 + (w.tf.tm)^2)^3
     """
 
-    if data.tf_tm == 0.0:
-        return 0.0 * data.tf_denom
-    else:
-        num = data.tf_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_tm - data.w_tm_sqrd**2 * data.params[data.tf_index]**3
-        return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num / data.tf_denom**3
+    num = data.tf_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_tm - data.w_tm_sqrd**2 * data.params[data.tf_index]**3
+    return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
 
 
 def calc_iso_tm_S2f_tf_S2_ts_d2jw_dts2(data):
@@ -1885,11 +1816,8 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dts2(data):
         dts**2       5                               ((ts + tm)^2 + (w.ts.tm)^2)^3
     """
 
-    if data.ts_tm == 0.0:
-        return 0.0 * data.ts_denom
-    else:
-        num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-        return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num / data.ts_denom**3
+    num = data.ts_tm**3 + 3.0 * data.params[data.tm_index]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
+    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
 
 
 
@@ -1958,7 +1886,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dts2(data):
     """
 
     num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num / data.ts_denom**3
+    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3
 
 
 
@@ -2043,7 +1971,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dtf2(data):
     """
 
     num = data.tf_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.tf_index] * data.frq_sqrd_list * data.tf_tm - data.w_tm_sqrd**2 * data.params[data.tf_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num / data.tf_denom**3
+    return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
 
 
 def calc_iso_S2f_tf_S2s_ts_d2jw_dts2(data):
@@ -2060,4 +1988,4 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dts2(data):
     """
 
     num = data.ts_tm**3 + 3.0 * data.diff_params[0]**3 * data.params[data.ts_index] * data.frq_sqrd_list * data.ts_tm - data.w_tm_sqrd**2 * data.params[data.ts_index]**3
-    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num / data.ts_denom**3
+    return -2.0*data.two_fifths_tm_sqrd * data.s2f_s2 * num * data.inv_ts_denom**3

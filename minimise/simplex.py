@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, add, argsort, average, take, zeros
+from Numeric import Float64, add, argsort, average, sum, take, zeros
 
 from base_classes import Min
 
@@ -93,6 +93,9 @@ class Simplex(Min):
         self.xk = self.simplex[0] * 1.0
         self.fk = self.simplex_vals[0]
 
+        # Find the center of the simplex.
+        self.center = average(self.simplex)
+
 
     def new_param_func(self):
         """The new parameter function.
@@ -121,9 +124,14 @@ class Simplex(Min):
 
         self.order_simplex()
 
+        # Update values.
         self.xk_new = self.simplex[0]
         self.fk_new = self.simplex_vals[0]
         self.dfk_new = None
+
+        # Find the center of the simplex and calculate the distance moved.
+        self.center_new = average(self.simplex)
+        self.dist = sum(abs(self.center_new - self.center))
 
 
     def contract(self):
@@ -185,16 +193,23 @@ class Simplex(Min):
         """Convergence test.
 
         Finish minimising when the function difference between the highest and lowest simplex
-        vertecies is insignificant.
+        vertecies is insignificant or if the simplex doesn't move.
         """
 
         if self.print_flag >= 2:
             print self.print_prefix + "diff = " + `self.simplex_vals[-1] - self.simplex_vals[0]`
             print self.print_prefix + "|diff| = " + `abs(self.simplex_vals[-1] - self.simplex_vals[0])`
             print self.print_prefix + "f_tol = " + `self.func_tol`
+            print self.print_prefix + "center = " + `self.pivot_point`
+            try:
+                print self.print_prefix + "old center = " + `self.old_pivot`
+                print self.print_prefix + "center diff = " + `self.pivot_point - self.old_pivot`
+            except AttributeError:
+                pass
+            self.old_pivot = 1.0 * self.pivot_point
         if abs(self.simplex_vals[-1] - self.simplex_vals[0]) <= self.func_tol:
             if self.print_flag >= 2:
-                print "\n" + self.print_prefix + "Function tolerance reached."
+                print "\n" + self.print_prefix + "???Function tolerance reached."
                 print self.print_prefix + "simplex_vals[-1]: " + `self.simplex_vals[-1]`
                 print self.print_prefix + "simplex_vals[0]:  " + `self.simplex_vals[0]`
                 print self.print_prefix + "|diff|:           " + `abs(self.simplex_vals[-1] - self.simplex_vals[0])`
@@ -202,3 +217,18 @@ class Simplex(Min):
             self.xk_new = self.simplex[0]
             self.fk_new = self.simplex_vals[0]
             return 1
+
+        # Test if simplex has not moved.
+        if self.dist == 0.0:
+            self.warning = "Simplex has not moved."
+            self.xk_new = self.simplex[0]
+            self.fk_new = self.simplex_vals[0]
+            return 1
+
+
+    def update(self):
+        """Update function."""
+
+        self.xk = self.xk_new * 1.0
+        self.fk = self.fk_new
+        self.center = self.center_new * 1.0

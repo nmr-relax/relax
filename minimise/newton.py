@@ -92,14 +92,32 @@ class Newton(Line_search, Min):
             self.init_failure = 1; return
 
         # Sort out the minimisation options.
+        none_option = None
         for opt in min_options:
+            if match('[Nn]one', opt):
+                none_option = opt
+                continue
             if self.line_search_algor == None and self.valid_line_search(opt):
                 self.line_search_algor = opt
             elif self.hessian_mod == None and self.valid_hessian_mod(opt):
                 self.hessian_mod = opt
             else:
-                print self.print_prefix + "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid line search algorithm or Hessian modification."
+                if self.line_search_algor:
+                    print self.print_prefix + "The minimisation option " + `opt` + " from " + `min_options` + " is not a valid Hessian modification."
+                elif self.hessian_mod:
+                    print self.print_prefix + "The minimisation option " + `opt` + " from " + `min_options` + " is not a valid line search algorithm."
+                else:
+                    print self.print_prefix + "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid line search algorithm or Hessian modification."
                 self.init_failure = 1; return
+        if none_option and not self.hessian_mod:
+            if self.valid_hessian_mod(none_option):
+                self.hessian_mod = none_option
+        elif none_option and not self.line_search_algor:
+            if self.valid_line_search(none_option):
+                self.line_search_algor = none_option
+        elif none_option:
+            print self.print_prefix + "Invalid combination of options " + `min_options` + "."
+            self.init_failure = 1; return
 
         # Default line search algorithm.
         if self.line_search_algor == None:
@@ -258,6 +276,7 @@ class Newton(Line_search, Min):
 
         if self.print_flag >= 3:
             old_eigen = eigenvectors(self.d2fk)
+            print self.print_prefix + "dfk: " + `self.dfk`
             print self.print_prefix + "d2fk:"
             for i in range(len(self.d2fk)):
                 print self.print_prefix + "\t" + `self.d2fk[i]`
@@ -295,7 +314,7 @@ class Newton(Line_search, Min):
             for i in range(j+1, self.n):
                 r[j, i] = a[j, i] / r[j, j]
                 for k in range(j+1, i+1):
-                    a[k, i] = a[k, i] - r[j, i]*r[j, k]
+                    a[k, i] = a[k, i] - dot(r[j, i], r[j, k])
 
         # The Cholesky factor.
         self.L = dot(P, transpose(r))
@@ -363,20 +382,20 @@ class Newton(Line_search, Min):
     def setup_hessian_mod(self):
         """Initialise the Hessian modification functions."""
 
-        if self.hessian_mod == None:
+        if self.hessian_mod == None or match('[Nn]one', self.hessian_mod):
             if self.print_flag:
                 print self.print_prefix + "Hessian modification:  Unmodified Hessian."
             self.get_pk = self.unmodified_hessian
-        elif match("^[Ee]igen", self.hessian_mod):
+        elif match('^[Ee]igen', self.hessian_mod):
             if self.print_flag:
                 print self.print_prefix + "Hessian modification:  Eigenvalue modification."
             self.get_pk = self.eigenvalue
             self.delta = sqrt(self.mach_acc)
-        elif match("^[Cc]hol", self.hessian_mod):
+        elif match('^[Cc]hol', self.hessian_mod):
             if self.print_flag:
                 print self.print_prefix + "Hessian modification:  Cholesky with added multiple of the identity."
             self.get_pk = self.cholesky
-        elif match("^[Gg][Mm][Ww]", self.hessian_mod):
+        elif match('^[Gg][Mm][Ww]', self.hessian_mod):
             if self.print_flag:
                 print self.print_prefix + "Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm."
             self.get_pk = self.gmw
@@ -414,7 +433,7 @@ class Newton(Line_search, Min):
     def valid_hessian_mod(self, mod):
         """Test if the string 'mod' is a valid Hessian modification."""
 
-        if mod == None or match("^[Ee]igen", mod) or match("^[Cc]hol", mod) or match("^[Gg][Mm][Ww]", mod):
+        if mod == None or match('^[Ee]igen', mod) or match('^[Cc]hol', mod) or match('^[Gg][Mm][Ww]', mod) or match('^[Nn]one', mod):
             return 1
         else:
             return 0

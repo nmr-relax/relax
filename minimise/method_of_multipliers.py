@@ -343,7 +343,7 @@ class Method_of_multipliers(Min):
                 return
 
             # Unpack and sort the results.
-            self.xk_new, self.L_new, j, f, g, h, self.warning = results
+            self.xk_new, self.L_new, j, f, g, h, self.temp_warning = results
             self.j, self.f_count, self.g_count, self.h_count = self.j + j, self.f_count + f, self.g_count + g, self.h_count + h
             #if self.warning != None:
             #    break
