@@ -2639,22 +2639,6 @@ class Model_free(Common_functions):
                 break
 
 
-        # Parameter set.
-        ################
-
-        # Initialise.
-        self.param_set = None
-
-        # The parameter set.
-        for i in xrange(len(file_data)):
-            if self.param_set == None:
-                self.param_set = file_data[i][col['param_set']]
-
-            # Test if diff_type is the same for all residues.
-            if self.param_set != file_data[i][col['param_set']]:
-                raise RelaxError, "The parameter set is not the same for all residues."
-
-
         # Simulations.
         ##############
 
@@ -2744,6 +2728,45 @@ class Model_free(Common_functions):
             diff_params = diff_params[0]
         if diff_type:
             self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
+
+
+        # Parameter set.
+        ################
+
+        # Initialise.
+        self.param_set = None
+
+        # The parameter set.
+        for i in xrange(len(file_data)):
+            if self.param_set == None:
+                self.param_set = file_data[i][col['param_set']]
+
+            # Test if diff_type is the same for all residues.
+            if self.param_set != file_data[i][col['param_set']]:
+                raise RelaxError, "The parameter set is not the same for all residues."
+
+        # Local tm and model-free only parameter sets.
+        if self.param_set == 'local_tm' or self.param_set == 'mf':
+            diff_fixed = 1
+            res_fixed = 0
+
+        # Diffusion tensor parameter set.
+        elif self.param_set == 'diff':
+            diff_fixed = 0
+            res_fixed = 1
+
+        # 'all' parameter set.
+        elif self.param_set == 'all':
+            diff_fixed = 0
+            res_fixed = 0
+
+        # Set the diffusion tensor fixed flag.
+        if self.param_set != 'local_tm':
+            self.relax.data.diff[run].fixed = diff_fixed
+
+        # Set the residue specific fixed flag.
+        for i in xrange(len(self.relax.data.res[run])):
+            self.relax.data.res[run][i].fixed = res_fixed
 
 
         # PDB and XH vector.

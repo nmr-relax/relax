@@ -36,29 +36,8 @@ class Fix:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-        # Residue number.
-        if type(element) == int:
-            # Test if sequence data is loaded.
-            if not self.relax.data.res.has_key(run):
-                raise RelaxNoSequenceError, run
-
-            # Loop over the sequence to find the residue.
-            index = None
-            for i in xrange(len(self.relax.data.res[run])):
-                if self.relax.data.res[run][i].num == element:
-                    index = i
-                    break
-
-            # The residue cannot be found.
-            if index == None:
-                raise RelaxNoResError, element
-
-            # Set the fixed flag.
-            self.relax.data.res[run][index].fixed = fixed
-
-
         # Diffusion tensor.
-        elif element == 'diff':
+        if element == 'diff':
             # Test if the diffusion tensor data is loaded.
             if not self.relax.data.diff.has_key(run):
                 raise RelaxNoTensorError, run
