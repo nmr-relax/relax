@@ -278,7 +278,6 @@ class RelaxMinimiseThread(RelaxThread):
         # Command.
         cmd = "%s --thread --log %s %s" % (self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
         cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
-        print cmd
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')

@@ -106,7 +106,7 @@ class PDB:
                 i = i + 1
 
 
-    def load(self, run=None, file=None, dir=None, model=None, heteronuc=None, proton=None, load_seq=1, calc_vectors=1):
+    def load(self, run=None, file=None, dir=None, model=None, heteronuc=None, proton=None, load_seq=1, calc_vectors=1, fail=1):
         """The pdb loading function."""
 
         # Arguments.
@@ -138,7 +138,11 @@ class PDB:
 
         # Test if the file exists.
         if not access(self.file_path, F_OK):
-            raise RelaxFileError, ('PDB', self.file_path)
+            if fail:
+                raise RelaxFileError, ('PDB', self.file_path)
+            else:
+                print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
+                return
 
 
         # Data creation.
