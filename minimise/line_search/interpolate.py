@@ -1,6 +1,6 @@
 from Numeric import sqrt
 
-def cubic(a, b, fa, fb, ga, gb):
+def cubic(a, b, fa, fb, ga, gb, full_output=0):
 	"""Cubic interpolation using f(a), f(b), g(a), and g(b).
 
 	Equations
@@ -46,7 +46,10 @@ def cubic(a, b, fa, fb, ga, gb):
 		beta2 = -sqrt(beta1**2 - ga*gb)
 
 	alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
-	return alpha
+	if full_output:
+		return alpha, beta1, beta2
+	else:
+		return alpha
 
 
 def quadratic_fafbga(a, b, fa, fb, ga):
@@ -54,17 +57,16 @@ def quadratic_fafbga(a, b, fa, fb, ga):
 
 	The extremum of the quadratic is given by:
 
-		       2af(a) + b**2g(a) - a(2f(b) + ag(a))
-		aq  =  ------------------------------------
-		           2(f(a) - f(b) + (b - a)g(a))
+		             1             g(a)
+		aq  =  a  +  - . -------------------------
+		             2   f(a) - f(b) - (a - b)g(a)
 	"""
 
-	top = 2.0*a*fa + b**2*ga - a*(2.0*fb + a*ga)
-	bottom = 2.0*(fa - fb + (b - a)*ga)
-	if bottom == 0.0:
-		return 1e99
+	denom = fa - fb - (a - b)*ga
+	if denom == 0.0:
+		return inf
 	else:
-		return top / bottom
+		return a + 0.5 * ga / denom
 
 
 def quadratic_gagb(a, b, ga, gb):
@@ -77,8 +79,8 @@ def quadratic_gagb(a, b, ga, gb):
 		        g(a) - g(b)
 	"""
 
-	temp = ga - gb
-	if temp == 0.0:
-		return 1e99
+	denom = ga - gb
+	if denom == 0.0:
+		return inf
 	else:
-		return (b*ga - a*gb)/(ga - gb)
+		return (b*ga - a*gb) / denom
