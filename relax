@@ -82,6 +82,7 @@ class Relax:
         """The top level class for initialising the program."""
 
         # Set up the program internal errors.
+        sys.exit()
         RelaxErrors()
 
         # Debugging flag (default is off).
