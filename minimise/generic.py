@@ -53,11 +53,11 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     Keyword Arguments
     ~~~~~~~~~~~~~~~~~
 
-    func:  The function which returns the function value.
+    func:  The function which returns the value.
 
-    dfunc:  The function which returns the gradient vector.
+    dfunc:  The function which returns the gradient.
 
-    d2func:  The function which returns the Hessian matrix or approximation.
+    d2func:  The function which returns the Hessian.
 
     args:  The tuple of arguments to supply to the functions func, dfunc, and d2func.
 
@@ -109,20 +109,26 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     Minimisation algorithms
     ~~~~~~~~~~~~~~~~~~~~~~~
 
-    A minimisation function is selected if the string min_algor matches a certain pattern.  Because
-    the python regular expression 'match' statement is used, various values of min_algor can be used
-    to select the same minimisation algorithm.  Below is a list of the minimisation algorithms
-    available together with the corresponding patterns.  Here is a quick description of pattern
-    syntax.  The square brakets [] are used to specify a sequence of characters to match to a single
-    character within 'min_algor'.  For example Newton minimisation is carried out if a match to the
-    pattern '[Nn]ewton' occurs.  Therefore setting min_algor to either 'Newton' or 'newton' will
-    select the Newton algorithm.  The symbol '^' placed at the start of the pattern means match to
-    the start of 'min_algor' while the symbol '$' placed at the end of the pattern means match to
-    the end of 'min_algor'.  For example, one of the Levenberg-Marquardt patterns is '^[Ll][Mm]$'.
-    The algorithm is selected by setting min_algor to 'LM' or 'lm'.  Placing any characters before
-    or after these strings will result in the algorithm not being selected.
+    A minimisation function is selected if the minimisation algorithm argument, which should be a
+    string, matches a certain pattern.  Because the python regular expression 'match' statement is
+    used, various strings can be supplied to select the same minimisation algorithm.  Below is a
+    list of the minimisation algorithms available together with the corresponding patterns.
 
-    To select an algorithm set min_algor to a string which matches the given pattern.
+    This is a short description of python regular expression, for more information, see the
+    regular expression syntax section of the Python Library Reference.  Some of the regular
+    expression syntax used in this function is:
+
+        [] - A sequence or set of characters to match to a single character.  For example,
+        '[Nn]ewton' will match both 'Newton' and 'newton'.
+
+        ^ - Match the start of the string.
+
+        $ - Match the end of the string.  For example, '^[Ll][Mm]$' will match 'lm' and 'LM' but
+        will not match if characters are placed either before or after these strings.
+
+    To select a minimisation algorithm, set the argument to a string which matches the given
+    pattern.
+
 
     Parameter initialisation methods:
     ___________________________________________________________________________________________
@@ -199,7 +205,77 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     Minimisation options
     ~~~~~~~~~~~~~~~~~~~~
 
-    This section needs to be completed.
+    The minimisation options can be given in any order.
+
+
+    Line search algorithms.  These are used in the line search methods and the conjugate gradient
+    methods.  The default is the More and Thuente line search.
+    ___________________________________________________________________________________________
+    |                                   |                                                     |
+    | Line search algorithm             | Patterns                                            |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | Backtracking line search          | '^[Bb]ack'                                          |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | Nocedal and Wright interpolation  | '^[Nn][Ww][Ii]' or                                  |
+    | based line search                 | '^[Nn]ocedal[ _][Ww]right[ _][Ii]nt'                |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | Nocedal and Wright line search    | '^[Nn][Ww][Ww]' or                                  |
+    | for the Wolfe conditions          | '^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe'              |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | More and Thuente line search      | '^[Mm][Tt]' or '^[Mm]ore[ _][Tt]huente$'            |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | No line search                    | '^[Nn]one$'                                         |
+    |___________________________________|_____________________________________________________|
+
+
+
+    Hessian modifications.  These are used in the Newton, Dogleg, and Exact trust region algorithms.
+    ___________________________________________________________________________________________
+    |                                   |                                                     |
+    | Hessian modification              | Patterns                                            |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | Unmodified Hessian                | '[Nn]one'                                           |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | Eigenvalue modification           | '^[Ee]igen'                                         |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | Cholesky with added multiple of   | '^[Cc]hol'                                          |
+    | the identity                      |                                                     |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | The Gill, Murray, and Wright      | '^[Gg][Mm][Ww]$'                                    |
+    | modified Cholesky algorithm       |                                                     |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | The Schnabel and Eskow 1999       | '^[Ss][Ee]99'                                       |
+    | algorithm                         |                                                     |
+    |___________________________________|_____________________________________________________|
+
+
+
+    Hessian type, these are used in a few of the trust region methods including the Dogleg and Exact
+    trust region algorithms.  In these cases, when the Hessian type is set to Newton, a Hessian
+    modification can also be supplied as above.  The default Hessian type is Newton, and the default
+    Hessian modification when Newton is selected is the GMW algorithm.
+    ___________________________________________________________________________________________
+    |                                   |                                                     |
+    | Hessian type                      | Patterns                                            |
+    |___________________________________|_____________________________________________________|
+    |                                   |                                                     |
+    | Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
+    | Newton                            | '^[Nn]ewton$'                                       |
+    |___________________________________|_____________________________________________________|
+
+
+    For Newton minimisation, the default line search algorithm is the More and Thuente line search,
+    while the default Hessian modification is the GMW algorithm.
     """
 
     # Parameter initialisation methods.

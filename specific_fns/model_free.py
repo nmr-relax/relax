@@ -172,7 +172,7 @@ class Model_free:
                 # Test if the diffusion parameters should be scaled.
                 if self.relax.data.diff[self.run].scaling:
                     # tm.
-                    self.scaling_matrix[i, i] = 1e-15
+                    self.scaling_matrix[i, i] = 1e-9
 
                 # Increment i.
                 i = i + 1
@@ -226,11 +226,11 @@ class Model_free:
                 for k in xrange(len(self.relax.data.res[j].params[self.run])):
                     # tm.
                     if self.relax.data.res[j].params[self.run][k] == 'tm':
-                        self.scaling_matrix[i, i] = 1e-15
+                        self.scaling_matrix[i, i] = 1e-9
 
                     # te, tf, and ts.
                     elif match('t', self.relax.data.res[j].params[self.run][k]):
-                        self.scaling_matrix[i, i] = 1e-15
+                        self.scaling_matrix[i, i] = 1e-12
 
                     # Rex.
                     elif self.relax.data.res[j].params[self.run][k] == 'Rex':
