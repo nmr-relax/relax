@@ -1,16 +1,64 @@
 #! /usr/bin/python
 
-from math import cos, sin, pi
-from Numeric import array
+from math import cos, pi, sin, sqrt
+from Numeric import array, dot
 
 from more_thuente import more_thuente
 
 def run():
-	print "Testing line minimiser using test function 1."
+	print "\n\n\n\n\n\n\n\n\n\n\n\n\t\t<<< Test Functions >>>\n\n\n"
+	print "\nSelect the function to test:"
+	while 1:
+		input = raw_input('> ')
+		valid_functions = ['1', '2', '3', '4', '5', '6']
+		if input in valid_functions:
+			func = int(input)
+			break
+		else:
+			print "Choose a function number between 1 and 6."
+
+	print "\nSelect a0:"
+	while 1:
+		input = raw_input('> ')
+		valid_vals = ['1e-3', '1e-1', '1e1', '1e3']
+		if input in valid_vals:
+			a0 = float(input)
+			break
+		else:
+			print "Choose a0 as one of ['1e-3', '1e-1', '1e1', '1e3']."
+
+	print "Testing line minimiser using test function " + `func`
+	if func == 1:
+		f, df = func1, dfunc1
+		mu, eta = 0.001, 0.1
+	elif func == 2:
+		f, df = func2, dfunc2
+		mu, eta = 0.1, 0.1
+	elif func == 3:
+		f, df = func3, dfunc3
+		mu, eta = 0.1, 0.1
+	elif func == 4:
+		f, df = func456, dfunc456
+		beta1, beta2 = 0.001, 0.001
+		mu, eta = 0.001, 0.001
+	elif func == 5:
+		f, df = func456, dfunc456
+		beta1, beta2 = 0.01, 0.001
+		mu, eta = 0.001, 0.001
+	elif func == 6:
+		f, df = func456, dfunc456
+		beta1, beta2 = 0.001, 0.01
+		mu, eta = 0.001, 0.001
+		
 	xk = array([0.0])
 	pk = array([1.0])
-	args = ()
-	a = more_thuente(func1, dfunc1, args, xk, pk, a_init=1e-3)
+	if func >= 4:
+		args = (beta1, beta2)
+	else:
+		args = ()
+	f0 = apply(f, (xk,)+args)
+	g0 = apply(df, (xk,)+args)
+	a = more_thuente(f, df, args, xk, pk, f0, g0, a_init=a0, mu=mu, eta=eta, print_flag=1)
 	print "The minimum is at " + `a`
 
 
@@ -47,9 +95,7 @@ def dfunc1(alpha, beta=2.0):
 		return temp
 	else:
 		a = 2.0*(alpha[0]**2)/((alpha[0]**2 + beta)**2)
-		print "a:        " + `a`
 		b = 1.0/(alpha[0]**2 + beta)
-		print "b:        " + `b`
 		temp[0] = a - b
 		return temp
 
@@ -79,7 +125,9 @@ def dfunc2(alpha, beta=0.004):
 		phi'(alpha)  =  5(alpha + beta)**4 - 8(alpha + beta)**3
 	"""
 
-	return 5.0*((alpha[0] + beta)**4) - 8.0*((alpha[0] + beta)**3)
+	temp = array([0.0])
+	temp[0] = 5.0*((alpha[0] + beta)**4) - 8.0*((alpha[0] + beta)**3)
+	return temp
 
 
 def func3(alpha, beta=0.01, l=39.0):
@@ -147,7 +195,55 @@ def dfunc3(alpha, beta=0.01, l=39.0):
 	else:
 		phi0_prime = (alpha[0] - 1.0)/beta
 
-	return phi0_prime + (1.0 - beta) * cos(0.5 * l * pi * alpha[0])
+	temp = array([0.0])
+	temp[0] = phi0_prime + (1.0 - beta) * cos(0.5 * l * pi * alpha[0])
+	return temp
+
+
+def func456(alpha, beta1, beta2):
+	"""Test functions 4, 5, and 6.
+
+	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	ACM Trans. Math. Softw. 20, 286-307.
+
+	The function is:
+
+		phi(alpha)  =  gamma(beta1) * sqrt((1 - alpha)**2 + beta2**2) + gamma(beta2) * sqrt(alpha**2 + beta1**2)
+
+		where:
+			gamma(beta) = sqrt(1 + beta**2) - beta
+	"""
+
+	g1 = sqrt(1.0 + beta1**2) - beta1
+	g2 = sqrt(1.0 + beta2**2) - beta2
+	return g1 * sqrt((1.0 - alpha[0])**2 + beta2**2) + g2 * sqrt(alpha[0]**2 + beta1**2)
+
+
+def dfunc456(alpha, beta1, beta2):
+	"""Test functions 4, 5, and 6.
+
+	From More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
+	ACM Trans. Math. Softw. 20, 286-307.
+
+	The function is:
+
+		                                          (1 - alpha)                                         a
+		phi'(alpha)  =  - gamma(beta1) * -------------------------------  +  gamma(beta2) * -------------------------
+		                                 sqrt((1 - alpha)**2 + beta2**2)                    sqrt(alpha**2 + beta1**2)
+
+		where:
+			gamma(beta) = sqrt(1 + beta**2) - beta
+	"""
+
+	temp = array([0.0])
+	g1 = sqrt(1.0 + beta1**2) - beta1
+	g2 = sqrt(1.0 + beta2**2) - beta2
+	print "g1: " + `g1`
+	print "g2: " + `g2`
+	a = -g1 * (1.0 - alpha[0]) / sqrt((1.0 - alpha[0])**2 + beta2**2)
+	b = g2 * alpha[0] / sqrt(alpha[0]**2 + beta1**2)
+	temp[0] = a + b
+	return temp
 
 
 run()

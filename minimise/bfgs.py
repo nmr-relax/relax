@@ -1,6 +1,6 @@
 from Numeric import Float64, copy, dot, identity, matrixmultiply, outerproduct
 
-def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=2):
 	"""Quasi-Newton BFGS minimisation.
 
 	Function options
@@ -87,7 +87,8 @@ def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_out
 		pk = -matrixmultiply(Hk, dfk)
 
 		# Find the parameter vector, function value, and gradient vector for iteration k+1.
-		xk_new = line_search(func, dfunc, args, xk, fk, dfk, pk)
+		alpha = line_search(func, dfunc, args, xk, pk, fk, dfk, a_min=0.0, a_max=1e5)
+		xk_new = xk + alpha * pk
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
 

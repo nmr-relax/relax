@@ -116,6 +116,10 @@ class main_model_free:
 				errors.append(self.mf.data.relax_data[data][res][3])
 			function_ops = ( diff_type, diff_params, mf_model, relax_data, errors )
 
+			line_search = self.mf.minimise.line_search_more_thuente
+			#line_search = self.mf.minimise.backtrack_line
+			type = "More and Thuente"
+
 			# Grid search.
 			params, chi2 = self.mf.minimise.grid(func, grid_ops, args=function_ops, print_flag=self.mf.min_debug)
 			if self.mf.min_debug >= 1:
@@ -160,7 +164,6 @@ class main_model_free:
 
 			# Steepest descent minimisation.
 			elif match('Steepest_descent', self.mf.usr_param.minimiser):
-				line_search = self.mf.minimise.backtrack_line
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Steepest descent minimisation >>>"
 				output = self.steepest_descent(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
@@ -184,8 +187,6 @@ class main_model_free:
 
 			# Basic Newton minimisation.
 			elif match('Newton', self.mf.usr_param.minimiser):
-				line_search = self.mf.minimise.line_search_more_thuente
-				type = "More and Thuente"
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Newton minimisation >>>"
 				output = self.newton(func, dfunc, d2func, params, type, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
@@ -196,7 +197,6 @@ class main_model_free:
 
 			# Quasi-Newton BFGS minimisation.
 			elif match('temp', self.mf.usr_param.minimiser):
-				line_search = self.mf.minimise.backtrack_line
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Quasi-Newton BFGS minimisation (temp) >>>"
 				output = self.bfgs_temp(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
@@ -206,7 +206,6 @@ class main_model_free:
 
 			# Back-and-forth coordinate descent minimisation.
 			elif match('CD', self.mf.usr_param.minimiser):
-				line_search = self.mf.minimise.backtrack_line
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
 				output = self.coordinate_descent(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)

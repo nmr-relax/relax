@@ -1,7 +1,7 @@
 from Numeric import copy, matrixmultiply
 from LinearAlgebra import inverse
 
-def newton(func, dfunc, d2func, x0, line_search_type, line_search_func, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def newton(func, dfunc, d2func, x0, line_search_type, line_search_func, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
 	"""Pure Newton minimisation.
 
 	Function options
@@ -67,7 +67,8 @@ def newton(func, dfunc, d2func, x0, line_search_type, line_search_func, args=(),
 
 	# Iterate until the local minima is found.
 	while 1:
-		print "\n\n<<<Newton iteration k=" + `k` + " >>>"
+		if print_flag == 2:
+			print "\n\n<<<Newton iteration k=" + `k` + " >>>"
 		# Check if the maximum number of iterations has been reached.
 		if k >= maxiter:
 			if full_output:
@@ -88,17 +89,22 @@ def newton(func, dfunc, d2func, x0, line_search_type, line_search_func, args=(),
 		pk = -matrixmultiply(inverse(d2fk), dfk)
 
 		# Find the parameter vector, function value, gradient vector, and hessian matrix for iteration k+1.
+		if print_flag == 2:
+			print "xk:  " + `xk`
+			print "pk:  " + `pk`
+			print "fk:  " + `fk`
+			print "dfk: " + `dfk`
 		if line_search_type == "Backtracking line search":
-			xk_new = line_search_func(func, args, xk, fk, dfk, pk)
+			alpha = line_search_func(func, args, xk, fk, dfk, pk)
 		elif line_search_type == "Line search Wolfe":
-			xk_new = line_search_func(func, dfunc, args, xk, fk, dfk, pk)
+			alpha = line_search_func(func, dfunc, args, xk, fk, dfk, pk)
 		elif line_search_type == "temp":
-			xk_new = line_search_func(func, xk, pk, dfk, args)
+			alpha = line_search_func(func, xk, pk, dfk, args)
 		elif line_search_type == "More and Thuente":
-			xk_new = line_search_func(func, dfunc, args, xk, pk, fk, dfk)
+			alpha = line_search_func(func, dfunc, args, xk, pk, fk, dfk)
 		else:
 			raise NameError, "Line search type " + `line_search_type` + " is currently unsupported."
-		xk_new = xk + pk
+		xk_new = xk + alpha * pk
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
 		d2fk_new = apply(d2func, (xk_new,)+args)

@@ -90,13 +90,13 @@ def quadratic_gagb(a, b, ga, gb):
 
 	The extremum of the quadratic is given by:
 
-		           bg(a) - ag(b)
-		aq  =  4.0 -------------
-		            g(a) - g(b)
+		       bg(a) - ag(b)
+		aq  =  -------------
+		        g(a) - g(b)
 	"""
 
 	temp = ga - gb
 	if temp == 0.0:
 		return 1e99
 	else:
-		return 4.0 * (b*ga - a*gb)/(ga - gb)
+		return (b*ga - a*gb)/(ga - gb)

@@ -1,4 +1,6 @@
 import sys
+from copy import deepcopy
+from math import sqrt
 from Numeric import copy, dot
 
 from interpolate import cubic, quadratic_fafbga, quadratic_gagb
@@ -7,7 +9,7 @@ quadratic = quadratic_fafbga
 secant = quadratic_gagb
 
 
-def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, phi_min=0.0, mu=0.001, eta=0.1):
+def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-15, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=0):
 	"""A line search algorithm from More and Thuente.
 
 	More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
@@ -21,144 +23,228 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 		'a'		- 0
 		'phi'		- phi(0)
 		'phi_prime'	- phi'(0)
-		'psi'		- psi(0)
-		'psi_prime'	- psi'(0)
 
 	a, the sequence data structure containing the following keys:
 		'a'		- alpha
 		'phi'		- phi(alpha)
 		'phi_prime'	- phi'(alpha)
-		'psi'		- psi(alpha)
-		'psi_prime'	- psi'(alpha)
 
 	Ik, the interval data structure containing the following keys:
 		'a'		- The current interval Ik = [al, au]
 		'phi'		- The interval [phi(al), phi(au)]
 		'phi_prime'	- The interval [phi'(al), phi'(au)]
-		'psi'		- The interval [psi(al), psi(au)]
-		#'psi_prime'	- The interval [psi'(al), psi'(au)]
 
-	Ik_lim, the limiting interval [a_min, a_max].
+	Instead of using the modified function:
+		psi(a) = phi(a) - phi(0) - a.phi'(0),
+	the function:
+		psi(a) = phi(a) - a.phi'(0),
+	was used as the phi(0) component has no effect on the results.
 	"""
 
-	print "\n<Line search initial values>"
+	if print_flag:
+		print "\n<Line search initial values>"
 
 	# Initialise values.
 	k = 0
-	dmax=1.1
-	dmin=7.0/12.0
 	mod_flag = 1
-	a0 = 0.0
+	bracketed = 0
 	a0 = {}
 	a0['a'] = 0.0
-	a0['phi'] = apply(func, (x,)+args)
-	a0['phi_prime'] = dot(apply(func_prime, (x,)+args), p)
-	a0['psi'] = 0.0
-	a0['psi_prime'] = (1.0 - mu) * a0['phi_prime']
-
-	if a0['phi_prime'] >= 0:
-		raise NameError, "The gradient at point 0 is positive, ie p is not a descent direction."
-
-	print_seq_data('init', a0)
+	a0['phi'] = phi0
+	a0['phi_prime'] = dot(phi0_prime, p)
+	if not a_min:
+		a_min = 0.0
+	if not a_max:
+		a_max = 1.0 / mu * ((a0['phi'] - phi_min) / -a0['phi_prime'])
+	Ik_lim = [0.0, 5.0*a_init]
+	width = a_max - a_min
+	width2 = 2.0*width
 
 	# Initialise sequence data.
 	a = {}
 	a['a'] = a_init
 	a['phi'] = apply(func, (x + a['a']*p,)+args)
 	a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
-	a['psi'] = - mu * a0['phi_prime'] * a['a']
-	a['psi_prime'] = a0['phi_prime'] - mu * a0['phi_prime']
-
-	print_seq_data(k, a)
 
 	# Initialise interval data.
 	Ik = {}
-	Ik['a'] = [0.0, 1e50]
-	Ik['phi'] = [apply(func, (x + Ik['a'][0]*p,)+args), apply(func, (x + Ik['a'][1]*p,)+args)]
-	Ik['phi_prime'] = [dot(apply(func_prime, (x + Ik['a'][0]*p,)+args), p), dot(apply(func_prime, (x + Ik['a'][1]*p,)+args), p)]
-	Ik['psi'] = [- mu * a0['phi_prime'] * Ik['a'][0], - mu * a0['phi_prime'] * Ik['a'][1]]
-	Ik['psi_prime'] = [(1.0 - mu) * a0['phi_prime'], (1.0 - mu) * a0['phi_prime']]
+	Ik['a'] = [0.0, 0.0]
+	Ik['phi'] = [phi0, phi0]
+	Ik['phi_prime'] = [a0['phi_prime'], a0['phi_prime']]
 
-	if not a_min:
-		a_min = 0.0
-	if not a_max:
-		a_max = 1.0 / mu * ((a0['phi'] - phi_min) / -a0['phi_prime'])
+	if print_flag:
+		print_data("Pre", k, a0, Ik, Ik_lim, x, p, print_flag)
 
-	print_int_data(k, Ik)
+	# Test for errors.
+	if a0['phi_prime'] >= 0.0:
+		raise NameError, "The gradient at point 0 of this line search is positive, ie p is not a descent direction and the line search will not work."
+	if a['a'] < a_min:
+		raise NameError, "Alpha is less than alpha_min, " + `a['a']` + " > " + `a_min`
+	if a['a'] > a_max:
+		raise NameError, "Alpha is greater than alpha_max, " + `a['a']` + " > " + `a_max`
 
 	while 1:
-		print "\n<Line search iteration k = " + `k` + " >"
+		if print_flag:
+			print "\n<Line search iteration k = " + `k` + " >"
+			print "Bracketed: " + `bracketed`
+			print_data("Initial", k, a, Ik, Ik_lim, x, p, print_flag)
+
+		# Test values.
+		curv = mu * a0['phi_prime']
+		suff_dec = a0['phi'] + a['a'] * curv
 
 		# Modification flag, 0 - phi, 1 - psi.
-		if a['psi'] <= 0.0 and a['phi_prime'] >= 0.0:
-			mod_flag = 0
+		if mod_flag:
+			if a['phi'] <= suff_dec and a['phi_prime'] >= 0.0:
+				mod_flag = 0
 
-		# Choose a safeguarded ak in set Ik which is a subset of [a_min, a_max].
-		print "Choosing a safeguarded ak in set Ik which is a subset of [a_min, a_max]."
+		# Test for convergence using the strong Wolfe conditions.
+		if print_flag:
+			print "Testing for convergence using the strong Wolfe conditions."
+		if a['phi'] <= suff_dec and abs(a['phi_prime']) <= eta * abs(a0['phi_prime']):
+			if print_flag:
+				print "\tYes."
+				print "<Line search has converged>\n"
+			return a['a']
+		if print_flag:
+			print "\tNo."
+
+		# Test if limits have been reached.
+		if print_flag:
+			print "Testing if limits have been reached."
+		if a['a'] == a_min:
+			if a['phi'] > suff_dec or a['phi_prime'] >= curv:
+				if print_flag:
+					print "\tYes."
+					print "<Min alpha has been reached>\n"
+				return a['a']
+		if a['a'] == a_max:
+			if a['phi'] <= suff_dec and a['phi_prime'] <= curv:
+				if print_flag:
+					print "\tYes."
+					print "<Max alpha has been reached>\n"
+				return a['a']
+		if print_flag:
+			print "\tNo."
+
+		# Test for roundoff error.
+		if bracketed:
+			if print_flag:
+				print "Testing for roundoff error."
+			if a['a'] <= Ik_lim[0] or a['a'] >= Ik_lim[1]:
+				if print_flag:
+					print "\tYes."
+					print "<Stopping due to roundoff error>\n"
+				return a['a']
+			if print_flag:
+				print "\tNo."
+
+		# Test (works without bracketed test, but could be due to the selection of the wrong case)
+		if bracketed:
+			if print_flag:
+				print "Testing tol."
+			if Ik_lim[1] - Ik_lim[0] <= a_tol * Ik_lim[1]:
+				if print_flag:
+					print "\tYes."
+					print "<Stopping tol>\n"
+				return a['a']
+			if print_flag:
+				print "\tNo."
+
+		# Choose a safeguarded ak in set Ik which is a subset of [a_min, a_max], and update the interval Ik.
 		a_new = {}
-		if mod_flag == 0:
-			a_new['a'] = choose_a(Ik['a'][0], Ik['a'][1], a['a'], Ik['phi'][0], Ik['phi'][1], a['phi'], Ik['phi_prime'][0], Ik['phi_prime'][1], a['phi_prime'])
+		if mod_flag and a['phi'] <= Ik['phi'][0] and a['phi'] > suff_dec:
+			if print_flag:
+				print "Choosing ak and updating the interval Ik using the modified function psi."
+
+			# Calculate the modified function values and gradients at at, al, and au.
+			psi = a['phi'] - curv * a['a']
+			psi_l = Ik['phi'][0] - curv * Ik['a'][0]
+			psi_u = Ik['phi'][1] - curv * Ik['a'][1]
+			psi_prime = a['phi_prime'] - curv
+			psi_l_prime = Ik['phi_prime'][0] - curv
+			psi_u_prime = Ik['phi_prime'][1] - curv
+
+			a_new['a'], Ik_new, bracketed = update(a, Ik, a['a'], Ik['a'][0], Ik['a'][1], psi, psi_l, psi_u, psi_prime, psi_l_prime, psi_u_prime, bracketed, Ik_lim)
 		else:
-			a_new['a'] = choose_a(Ik['a'][0], Ik['a'][1], a['a'], Ik['psi'][0], Ik['psi'][1], a['psi'], Ik['psi_prime'][0], Ik['psi_prime'][1], a['psi_prime'])
+			if print_flag:
+				print "Choosing ak and updating the interval Ik using the function phi."
+			a_new['a'], Ik_new, bracketed = update(a, Ik, a['a'], Ik['a'][0], Ik['a'][1], a['phi'], Ik['phi'][0], Ik['phi'][1], a['phi_prime'], Ik['phi_prime'][0], Ik['phi_prime'][1], bracketed, Ik_lim)
+
+		# Bisection step.
+		if bracketed:
+			if abs(Ik_new['a'][0] - Ik_new['a'][1]) >= 0.66 * width2:
+				if print_flag:
+					print "Bisection step."
+				a_new['a'] = 0.5 * (Ik_new['a'][0] + Ik_new['a'][1])
+				width2 = width
+				width = abs(Ik_new['a'][0] - Ik_new['a'][1])
+
+		# Limit.
+		if print_flag:
+			print "Limiting"
+		if bracketed:
+			Ik_lim[0] = min(Ik_new['a'][0], Ik_new['a'][1])
+			Ik_lim[1] = max(Ik_new['a'][0], Ik_new['a'][1])
+		else:
+			Ik_lim[0] = a_new['a'] + 1.1 * (a_new['a'] - Ik['a'][0])
+			Ik_lim[1] = a_new['a'] + 4.0 * (a_new['a'] - Ik['a'][0])
+
+		# The step must be between a_min and a_max.
+		if a_new['a'] < a_min:
+			if print_flag:
+				print "The step is below a_min, therefore setting the step length to a_min."
+			a_new['a'] = a_min
+		if a_new['a'] > a_max:
+			if print_flag:
+				print "The step is above a_max, therefore setting the step length to a_max."
+			a_new['a'] = a_max
+
+		if bracketed:
+			if a_new['a'] <= Ik_lim[0] or a_new['a'] >= Ik_lim[1] or Ik_lim[1] - Ik_lim[0] <= a_tol * Ik_lim[1]:
+				if print_flag:
+					print "aaa"
+				a_new['a'] = Ik['a'][0]
 
 		# Calculate new values.
+		if print_flag:
+			print "Calculating new values."
 		a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
 		a_new['phi_prime'] = dot(apply(func_prime, (x + a_new['a']*p,)+args), p)
-		a_new['psi'] = - mu * a0['phi_prime'] * a_new['a']
-		a_new['psi_prime'] = a0['phi_prime'] - mu * a0['phi_prime']
 
-		print_seq_data(k, a_new)
-
-		# Test for convergence.
-		print "Testing for convergence using the strong Wolfe conditions."
-		if converged(mu, eta, a_new, a0):
-			print "<Line search has converged>\n"
-			return a_new['a']
-
-		# Update the interval Ik.
-		print "Updating the interval Ik."
-		Ik_new = update_Ik(a_new, Ik)
-
-		print_int_data(k, Ik_new)
-
-		# Safeguarding.
-		print "Safeguarding."
-		safeguard()
+		if print_flag:
+			print "Bracketed: " + `bracketed`
+			print_data("Final", k, a_new, Ik_new, Ik_lim, x, p, print_flag)
 
 		# Shift data from k+1 to k.
+		if print_flag:
+			print "Shifting data from k+1 to k."
 		k = k + 1
-		a = a_new
-		Ik = Ik_new
-
-		if k > 100:
-			return a['a']
+		a = deepcopy(a_new)
+		Ik = deepcopy(Ik_new)
 
 
-def print_seq_data(k, a):
+
+def print_data(text, k, a, Ik, Ik_lim, x, p, print_flag=0):
 	"Temp func for debugging."
 
-	print "Sequence data printout:"
+	print text + " data printout:"
 	print "   Iteration:   " + `k`
 	print "   a:           " + `a['a']`
 	print "   phi:         " + `a['phi']`
 	print "   phi_prime:   " + `a['phi_prime']`
-	print "   psi:         " + `a['psi']`
-	print "   psi_prime:   " + `a['psi_prime']`
-
-
-def print_int_data(k, Ik):
-	"Temp func for debugging."
-
-	print "Interval data printout:"
-	print "   Iteration:   " + `k`
 	print "   Ik:          " + `Ik['a']`
 	print "   phi_I:       " + `Ik['phi']`
 	print "   phi_I_prime: " + `Ik['phi_prime']`
-	print "   psi_I:       " + `Ik['psi']`
+	print "   Ik_lim:      " + `Ik_lim`
+	print "   xi:          " + `x + a['a']*p`
 
 
-def choose_a(al, au, at, fl, fu, ft, gl, gu, gt, d=0.66):
-	"""Trial value selection.
+def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66, print_flag=0):
+	"""Trial value selection and interval updating.
+
+	Trial value selection
+	~~~~~~~~~~~~~~~~~~~~~
 
 	fl, fu, ft, gl, gu, and gt are the function and gradient values at the interval end points al and au, and at the trial point at.
 	ac is the minimiser of the cubic that interpolates fl, ft, gl, and gt.
@@ -204,174 +290,246 @@ def choose_a(al, au, at, fl, fu, ft, gl, gu, gt, d=0.66):
 
 	Case 4: ft <= fl and gt.gl >= 0, and |gt| > |gl|.  In this case choose at+ as the minimiser of the cubic that interpolates fu, ft, gu, and gt.
 
+
+	Interval updating
+	~~~~~~~~~~~~~~~~~
+
+	Given a trial value at in I, the endpoints al+ and au+ of the updated interval I+ are determined as follows:
+		Case U1: If f(at) > f(al), then al+ = al and au+ = at.
+		Case U2: If f(at) <= f(al) and f'(at)(al - at) > 0, then al+ = at and au+ = au.
+		Case U3: If f(at) <= f(al) and f'(at)(al - at) < 0, then al+ = at and au+ = al.
 	"""
+
+	# Trial value selection.
 
 	# Case 1.
 	if ft > fl:
+		if print_flag:
+			print "\tat selection, case 1."
+		# The minimum is bracketed.
+		bracketed = 1
+
 		# Compute ac and aq.
+		#temp1 = gl + gt + 3.0*(fl - ft) / (at - al)
+		#if at < al:
+		#	temp2 = -sqrt(temp1**2 - gl*gt)
+		#else:
+		#	temp2 = sqrt(temp1**2 - gl*gt)
+		#temp3 = (temp1 + temp2 - gl) / (2.0*temp2 + gt - gl)
+		#ac = al + temp3*(at - al)
+		#aq = al + 0.5*gl/((fl - ft)/(at - al) + gl)*(at - al)
+
+		#print "\t\tac: " + `ac`
+		#print "\t\taq: " + `aq`
+
 		ac = cubic(al, at, fl, ft, gl, gt)
 		aq = quadratic(al, at, fl, ft, gl)
 
-		# Test if neither ac nor aq lie in I+.
-		if ac < al or ac > au:
-			raise NameError, "ac not in the interval I+"
-		if aq < al or aq > au:
-			raise NameError, "aq not in the interval I+"
+		if print_flag:
+			print "\t\tac: " + `ac`
+			print "\t\taq: " + `aq`
 
 		# Return at+.
 		if abs(ac - al) < abs(aq - al):
-			print "\tCase 1. at_new = ac"
-			return ac
+			if print_flag:
+				print "\t\tabs(ac - al) < abs(aq - al), " + `abs(ac - al)` + " < " + `abs(aq - al)`
+				print "\t\tat_new = ac = " + `ac`
+			at_new = ac
 		else:
-			print "\tCase 1. at_new = 1/2(aq + ac)"
-			return 0.5*(aq + ac)
+			if print_flag:
+				print "\t\tabs(ac - al) >= abs(aq - al), " + `abs(ac - al)` + " >= " + `abs(aq - al)`
+				print "\t\tat_new = 1/2(aq + ac) = " + `0.5*(aq + ac)`
+			at_new = 0.5*(aq + ac)
 
 
 	# Case 2.
 	elif gt * gl < 0.0:
+		if print_flag:
+			print "\tat selection, case 2."
+		# The minimum is bracketed.
+		bracketed = 1
+		
 		# Compute ac and as.
+		#temp1 = gl + gt + 3.0*(fl - ft) / (at - al)
+		#if at > al:
+		#	temp2 = -sqrt(temp1**2 - gl*gt)
+		#else:
+		#	temp2 = sqrt(temp1**2 - gl*gt)
+		#temp3 = (temp1 + temp2 - gt) / (2.0*temp2 + gl - gt)
+		#ac = at + temp3*(al - at)
+		#print "\t\tac: " + `ac`
+
 		ac = cubic(al, at, fl, ft, gl, gt)
 		as = secant(al, at, gl, gt)
 
-		# Test if neither ac nor aq lie in I+.
-		if ac < al or ac > au:
-			raise NameError, "ac not in the interval I+"
-		if as < al or as > au:
-			raise NameError, "as not in the interval I+"
-
-		# Debugging code (remove).
-		print "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\tI+: " + `Ik['a']`
-		print "\tac: " + `ac`
-		print "\tas: " + `as`
-		sys.exit()
+		if print_flag:
+			print "\t\tac: " + `ac`
+			print "\t\tas: " + `as`
 
 		# Return at+.
 		if abs(ac - at) >= abs(as - at):
-			print "\tCase 2. at_new = ac"
-			return ac
+			if print_flag:
+				print "\t\tabs(ac - at) >= abs(as - at), " + `abs(ac - at)` + " >= " + `abs(as - at)`
+				print "\t\tat_new = ac = " + `ac`
+			at_new = ac
 		else:
-			print "\tCase 2. at_new = as"
-			return as
+			if print_flag:
+				print "\t\tabs(ac - at) < abs(as - at), " + `abs(ac - at)` + " < " + `abs(as - at)`
+				print "\t\tat_new = as = " + `as`
+			at_new = as
 
 
 	# Case 3.
 	elif abs(gt) <= abs(gl):
+		if print_flag:
+			print "\tat selection, case 3."
 		# Compute ac and as.
-		ac = cubic(al, at, fl, ft, gl, gt)
+		temp1 = gl + gt + 3.0*(fl - ft) / (at - al)
+		if at > al:
+			temp2 = sqrt(max(temp1**2 - gl*gt, 0.0))
+		else:
+			temp2 = -sqrt(max(temp1**2 - gl*gt, 0.0))
+		temp3 = (temp2 + temp1 - gt) / (2.0 * temp2 + gl - gt)
+		if print_flag:
+			print "\t\tTemp1: " + `temp1`
+			print "\t\tTemp2: " + `temp2`
+			print "\t\tTemp3: " + `temp3`
+		if temp3 < 0.0 and temp2 != 0.0:
+			if print_flag:
+				print "\t\tTemp3 < 0.0 and temp2 != 0.0"
+			ac = at - temp3*(at - al)
+		elif at > al:
+			if print_flag:
+				print "\t\tat > al, " + `at` + " > " + `al`
+			ac = Ik_lim[1]
+		else:
+			ac = Ik_lim[0]
 		as = secant(al, at, gl, gt)
 
-		# Debugging code (remove).
-		print "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\tI+: " + `Ik['a']`
-		print "\tac: " + `ac`
-		print "\tas: " + `as`
-		sys.exit()
+		if print_flag:
+			print "\t\tac: " + `ac`
+			print "\t\tas: " + `as`
 
-		# Test if the minimum of the cubic is beyond at.
-		if ac > at:
+		# Test if bracketed.
+		if bracketed:
+			if print_flag:
+				print "\t\tBracketed"
 			if abs(ac - at) < abs(as - at):
+				if print_flag:
+					print "\t\t\tabs(ac - at) < abs(as - at), " + `abs(ac - at)` + " < " + `abs(as - at)`
+					print "\t\t\tat_new = ac = " + `ac`
 				at_new = ac
 			else:
+				if print_flag:
+					print "\t\t\tabs(ac - at) >= abs(as - at), " + `abs(ac - at)` + " >= " + `abs(as - at)`
+					print "\t\t\tat_new = as = " + `as`
 				at_new = as
-		else:
-			at_new = as
 
-		# Redefine at+.
-		if at > al:
-			return min(at + d*(au - at), at_new)
+			# Redefine at+.
+			if print_flag:
+				print "\t\tRedefining at+"
+			if at > al:
+				at_new = min(at + d*(au - at), at_new)
+				if print_flag:
+					print "\t\t\tat > al, " + `at` + " > " + `al`
+					print "\t\t\tat_new = " + `at_new`
+			else:
+				at_new = max(at + d*(au - at), at_new)
+				if print_flag:
+					print "\t\t\tat <= al, " + `at` + " <= " + `al`
+					print "\t\t\tat_new = " + `at_new`
 		else:
-			return max(at + d*(au - at), at_new)
+			if print_flag:
+				print "\t\tNot bracketed"
+			if abs(ac - at) > abs(as - at):
+				if print_flag:
+					print "\t\t\tabs(ac - at) > abs(as - at), " + `abs(ac - at)` + " > " + `abs(as - at)`
+					print "\t\t\tat_new = ac = " + `ac`
+				at_new = ac
+			else:
+				if print_flag:
+					print "\t\t\tabs(ac - at) <= abs(as - at), " + `abs(ac - at)` + " <= " + `abs(as - at)`
+					print "\t\t\tat_new = as = " + `as`
+				at_new = as
+
+			# Check limits.
+			if print_flag:
+				print "\t\tChecking limits."
+			if at_new < Ik_lim[0]:
+				if print_flag:
+					print "\t\t\tat_new < Ik_lim[0], " + `at_new` + " < " + `Ik_lim[0]`
+					print "\t\t\tat_new = " + `Ik_lim[0]`
+				at_new = Ik_lim[0]
+			if at_new > Ik_lim[1]:
+				if print_flag:
+					print "\t\t\tat_new > Ik_lim[1], " + `at_new` + " > " + `Ik_lim[1]`
+					print "\t\t\tat_new = " + `Ik_lim[1]`
+				at_new = Ik_lim[1]
 
 
 	# Case 4.
 	else:
-		print "\tCase 4."
-		sys.exit()
-		return cubic(au, at, fu, ft, gu, gt)
+		if print_flag:
+			print "\tat selection, case 4."
+		if bracketed:
+			if print_flag:
+				print "\t\tbracketed."
+			#temp1 = gu + gt + 3.0*(fu - ft) / (at - au)
+			#if at > au:
+			#	temp2 = -sqrt(temp1**2 - gu*gt)
+			#else:
+			#	temp2 = sqrt(temp1**2 - gu*gt)
+			#temp3 = (temp1 + temp2 - gt) / (2.0*temp2 + gu - gt)
+			#at_new = at + temp3*(au - at)
+			#print "\t\tat_new = " + `at_new`
+			at_new = cubic(au, at, fu, ft, gu, gt)
+			if print_flag:
+				print "\t\tat_new = " + `at_new`
+		elif at > al:
+			if print_flag:
+				print "\t\tnot bracketed but at > al, " + `at` + " > " + `al`
+				print "\t\tat_new = " + `Ik_lim[1]`
+			at_new = Ik_lim[1]
+		else:
+			if print_flag:
+				print "\t\tnot bracketed but at <= al, " + `at` + " <= " + `al`
+				print "\t\tat_new = " + `Ik_lim[0]`
+			at_new = Ik_lim[0]
 
 
-def converged(mu, eta, a, a0):
-	"""Test for convergence using the strong Wolfe conditions.
+	# Interval updating algorithm.
+	Ik_new = deepcopy(Ik)
 
-	The sufficient decrease condition is:
-		phi(alpha) <= phi(0) + mu.phi'(0).a
-
-	The curvature  condition is:
-		|phi'(a)| <= eta.|phi'(0)|
-	"""
-
-	if a['phi'] <= a0['phi'] + mu * a['a'] * a0['phi_prime'] and abs(a['phi_prime']) <= eta * abs(a0['phi_prime']):
-		return 1
-	else:
-		return 0
-
-
-def func_psi(mu, a, a0):
-	"""Calculate the function value psi(alpha).
-
-	Formula:
-		psi(alpha) = phi(alpha) - phi(0) - mu * phi'(0) * alpha
-
-	"""
-	print "\tEvaluating the function psi(alpha)."
-	return a['phi'] - a0['phi'] - mu * a0['phi_prime'] * a['a']
-
-
-def func_psi_prime(mu, a, a0):
-	"""Calculate the gradient value psi'(alpha).
-
-	Formula:
-		psi'(alpha) = phi'(alpha) - mu * phi'(0)
-
-	"""
-
-	print "\tEvaluating the gradient psi'(alpha)."
-	return a['phi_prime'] - mu * a0['phi_prime']
-
-
-def safeguard():
-	pass
-
-
-def update_Ik(a, Ik):
-	"""Updating algorithm.
-
-	Given a trial value at in I, the endpoints al+ and au+ of the updated interval I+ are determined as follows:
-		Case U1: If psi(at) > psi(al), then al+ = al and au+ = at.
-		Case U2: If psi(at) <= psi(al) and psi'(at)(al - at) > 0, then al+ = at and au+ = au.
-		Case U3: If psi(at) <= psi(al) and psi'(at)(al - at) < 0, then al+ = at and au+ = al.
-	"""
-
-	Ik_new = Ik
-
-	# Case U1.
-	if a['psi'] > Ik['psi'][0]:
-		print "\tCase U1"
-		Ik_new['a'][1]         = a['a']
-		Ik_new['phi'][1]       = a['phi']
+	if ft > fl:
+		if print_flag:
+			print "\tIk update, case a, ft > fl."
+		Ik_new['a'][1] = at
+		Ik_new['phi'][1] = a['phi']
 		Ik_new['phi_prime'][1] = a['phi_prime']
-		Ik_new['psi'][1]       = a['psi']
-
-	# Case U2.
-	elif a['psi'] <= Ik['psi'][0] and a['psi_prime'] * (Ik['a'][0] - a['a']) > 0.0:
-		print "\tCase U2"
-		Ik_new['a'][0]         = a['a']
-		Ik_new['phi'][0]       = a['phi']
+	elif gt*(al - at) > 0.0:
+		if print_flag:
+			print "\tIk update, case b, gt*(al - at) > 0.0."
+		Ik_new['a'][0] = at
+		Ik_new['phi'][0] = a['phi']
 		Ik_new['phi_prime'][0] = a['phi_prime']
-		Ik_new['psi'][0]       = a['psi']
-
-	# Case U3.
-	elif a['psi'] <= Ik['psi'][0] and a['psi_prime'] * (Ik['a'][0] - a['a']) < 0.0:
-		print "\tCase U3"
-		Ik_new['a'][0]         = a['a']
-		Ik_new['phi'][0]       = a['phi']
-		Ik_new['phi_prime'][0] = a['phi_prime']
-		Ik_new['psi'][0]       = a['psi']
-
-		Ik_new['a'][1]         = Ik['a'][0]
-		Ik_new['phi'][1]       = Ik['phi'][0]
-		Ik_new['phi_prime'][1] = Ik['phi_prime'][0]
-		Ik_new['psi'][1]       = Ik['psi'][0]
 	else:
-		raise NameError, "It is physically impossible to be here!"
+		Ik_new['a'][0] = at
+		Ik_new['phi'][0] = a['phi']
+		Ik_new['phi_prime'][0] = a['phi_prime']
+		Ik_new['a'][1] = al
+		Ik_new['phi'][1] = Ik['phi'][0]
+		Ik_new['phi_prime'][1] = Ik['phi_prime'][0]
 
-	return Ik_new
+		if print_flag:
+			print "\tIk update, case c."
+			print "\t\tat:                  " + `at`
+			print "\t\ta['phi']:            " + `a['phi']`
+			print "\t\ta['phi_prime']:      " + `a['phi_prime']`
+			print "\t\tIk['a']:             " + `Ik['a']`
+			print "\t\tIk['phi']:           " + `Ik['phi']`
+			print "\t\tIk['phi_prime']:     " + `Ik['phi_prime']`
+			print "\t\tIk_new['a']:         " + `Ik_new['a']`
+			print "\t\tIk_new['phi']:       " + `Ik_new['phi']`
+			print "\t\tIk_new['phi_prime']: " + `Ik_new['phi_prime']`
+
+	return at_new, Ik_new, bracketed
