@@ -58,10 +58,23 @@ def calc_axial_ti(data, diff_data):
     The diffusion parameter set in data.diff_params is {Dper, Dpar, theta, phi}.
     """
 
-    # Times.
-    data.ti[0] = 1.0 / (6.0 * diff_data.params[0])
-    data.ti[1] = 1.0 / diff_data.five_Dper_plus_Dpar
-    data.ti[2] = 1.0 / (2.0 * diff_data.Dper_plus_two_Dpar)
+    # t0.
+    if diff_data.params[0] == 0:
+        data.ti[0] = 1e99
+    else:
+        data.ti[0] = 1.0 / (6.0 * diff_data.params[0])
+
+    # t1.
+    if diff_data.five_Dper_plus_Dpar == 0:
+        data.ti[1] = 1e99
+    else:
+        data.ti[1] = 1.0 / diff_data.five_Dper_plus_Dpar
+
+    # t2.
+    if diff_data.Dper_plus_two_Dpar == 0:
+        data.ti[2] = 1e99
+    else:
+        data.ti[2] = 1.0 / (2.0 * diff_data.Dper_plus_two_Dpar)
 
 
 

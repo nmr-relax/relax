@@ -81,8 +81,8 @@ def calc_axial_dgeom(data, diff_data):
     diff_data.dpar_unit_vector_dphi[2] = 0.0
 
     # The dot product.
-    data.ddelta_dpsi[2] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta)
-    data.ddelta_dpsi[3] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi)
+    data.ddelta_dpsi[0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta)
+    data.ddelta_dpsi[1] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi)
 
 
 

@@ -788,6 +788,9 @@ class Mf:
             # Unit vectors.
             diff_data.dpar_unit_vector = zeros(3, Float64)
 
+            # Unit vector gradient.
+            diff_data.dpar_unit_vector_dtheta = zeros(3, Float64)
+            diff_data.dpar_unit_vector_dphi = zeros(3, Float64)
 
         # Anisotropic diffusion.
         elif diff_type == 'aniso':
@@ -821,21 +824,42 @@ class Mf:
     def init_res_data(self, data, diff_data):
         """Function for the initialisation of the residue specific data."""
 
-        # Weights and global correlation time values, gradients, and Hessians for the model-free equations.
+        # Weights and global correlation time values.
         data.ci = zeros(diff_data.num_indecies, Float64)
         data.ti = zeros(diff_data.num_indecies, Float64)
+
+        # Isotropic diffusion.
         if self.diff_data.type == 'iso':
+            # Global correlation time gradient and Hessian.
             data.dti = zeros((1, diff_data.num_indecies), Float64)
             data.d2ti = zeros((1, 1, diff_data.num_indecies), Float64)
+
+        # Axially symmetric diffusion.
         elif self.diff_data.type == 'axial':
+            # Weight gradient and Hessian.
             data.dci = zeros((2, diff_data.num_indecies), Float64)
-            data.dti = zeros((2, diff_data.num_indecies), Float64)
             data.d2ci = zeros((2, 2, diff_data.num_indecies), Float64)
+
+            # Global correlation time gradient and Hessian.
+            data.dti = zeros((2, diff_data.num_indecies), Float64)
             data.d2ti = zeros((2, 2, diff_data.num_indecies), Float64)
+
+            # Dot product.
+            data.delta = 0
+
+            # Dot product gradient.
+            data.ddelta_dtheta = zeros(3, Float64)
+            data.ddelta_dphi = zeros(3, Float64)
+            data.ddelta_dpsi = zeros(2, Float64)
+
+        # Anisotropic diffusion.
         elif self.diff_data.type == 'aniso':
+            # Weight gradient and Hessian.
             data.dci = zeros((6, diff_data.num_indecies), Float64)
-            data.dti = zeros((3, diff_data.num_indecies), Float64)
             data.d2ci = zeros((6, 6, diff_data.num_indecies), Float64)
+
+            # Global correlation time gradient and Hessian.
+            data.dti = zeros((3, diff_data.num_indecies), Float64)
             data.d2ti = zeros((3, 3, diff_data.num_indecies), Float64)
 
         # Empty spectral density components.

@@ -96,7 +96,7 @@ class RelaxErrors:
     # No unit vectors.
     class RelaxNoVectorsError(BaseError):
         def __init__(self):
-            self.text = "The unit XH bond vectors have not been calculated yet."
+            self.text = "The unit XH bond vectors have not been calculated."
 
 
     # Argument errors.
