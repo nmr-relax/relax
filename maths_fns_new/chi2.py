@@ -79,7 +79,7 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
 # Chi-squared Hessian.
 ######################
 
-def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
+def d2chi2(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_hess, errors):
     """Function to create the chi-squared Hessian.
 
     The chi-squared Hessian
@@ -96,21 +96,5 @@ def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
         sigma_i are the values of the error set.
     """
 
-    # Count the number of parameters in the model.
-    num_params = len(back_calc_grad[0])
-
-    # Initialise the chi-squared Hessian.
-    d2chi2 = zeros((num_params, num_params), Float64)
-
-    # Parameter independent terms.
-    a = 2.0 / (errors**2)
-    yi_diff = data - back_calc_vals
-
     # Calculate the chi-squared Hessian.
-    for i in xrange(len(data)):
-        # Loop over the parameters.
-        for j in xrange(num_params):
-            #raise RelaxError, "Possible bug in the line below 'back_calc_grad[i, j]'."
-            d2chi2[j] = d2chi2[j] + a[i] * (back_calc_grad[i, j] * back_calc_grad[i] - yi_diff[i] * back_calc_hess[i, j])
-
-    return d2chi2
+    return 2.0 * sum((back_calc_grad_j * back_calc_grad_k - (data - back_calc_vals) * back_calc_hess) / errors**2)

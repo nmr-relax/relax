@@ -291,7 +291,7 @@ class Minimisation:
                 if key == valid_key:
                     valid = 1
             if not valid:
-                raise RelaxError, "The keyword " + `key` + " is invalid."
+                raise RelaxError, "Unknown keyword argument " + `key` + "."
 
         # The run keyword.
         if run == None:

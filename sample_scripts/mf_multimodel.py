@@ -28,7 +28,7 @@ for run in runs:
 
     # Setup other values.
     #diffusion_tensor.set(run, 1e-8, fixed=0)
-    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=1, axial_type='oblate', fixed=0)
+    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=1, axial_type='oblate', fixed=1)
     value.set(run, 1.02 * 1e-10, 'bond_length')
     value.set(run, -160 * 1e-6, 'csa')
 

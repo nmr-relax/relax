@@ -63,7 +63,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         total_steps = total_steps * grid_ops[k][0]
         param_values.append([])
         for i in xrange(grid_ops[k][0]):
-            param_values[k].append(i * (grid_ops[k][2] - grid_ops[k][1]) / (grid_ops[k][0] - 1))
+            param_values[k].append(grid_ops[k][1] + i * (grid_ops[k][2] - grid_ops[k][1]) / (grid_ops[k][0] - 1))
 
     # Print out.
     if print_flag:
@@ -116,6 +116,11 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         if constraint_flag:
             ci = c(params)
             if min(ci) < 0.0:
+                if print_flag >= 3:
+                    print print_prefix + "%-3s%-8i%-4s%-65s %-4s%-20s" % ("k:", k, "xk:", `params`, "fk:", `f`)
+                    print print_prefix + "Constraint violated, skipping grid point."
+                    print print_prefix + "ci: " + `ci`
+                    print ""
                 skip = 1
 
         # Function call, test, and increment grid_size.

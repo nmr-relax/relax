@@ -25,27 +25,6 @@ from ri_comps import r1_comps, dr1_comps, d2r1_comps
 from ri_prime import func_ri_prime
 
 
-def dri(data, params):
-    """Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
-   """
-
-    # Loop over the relaxation values and modify the NOE gradients.
-    for i in xrange(data.num_ri):
-        if data.create_dri[i]:
-            data.create_dri[i](data, i, data.remap_table[i], data.get_dr1, params)
-
-
-def d2ri(data, params):
-    """Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
-   """
-
-    # Loop over the relaxation values and modify the NOE Hessians.
-    for i in xrange(data.num_ri):
-        if data.create_d2ri[i]:
-            data.create_d2ri[i](data, i, data.remap_table[i], data.get_d2r1, params)
-
-
-
 # Calculate the NOE value.
 ##########################
 
@@ -65,36 +44,34 @@ def calc_noe(data, i, frq_num, get_r1, params):
         data.ri[i] = 1.0 + data.g_ratio*(data.ri_prime[i] / data.r1[i])
 
 
-def calc_dnoe(data, i, frq_num, get_dr1, params):
+def calc_dnoe(data, i, frq_num, get_dr1, params, j):
     """Calculate the derivative of the NOE value.
 
     Half this code needs to be shifted into the function initialisation code.
     """
 
     # Calculate the NOE derivative.
-    data.dr1[i] = get_dr1[i](data, i, frq_num, params)
+    data.dr1[j, i] = get_dr1[i](data, i, frq_num, params, j)
     if data.r1[i] == 0.0:
-        data.dri[i] = 1e99
+        data.dri[j, i] = 1e99
     else:
-        data.dri[i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[i] - data.ri_prime[i] * data.dr1[i])
+        data.dri[j, i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[j, i] - data.ri_prime[i] * data.dr1[j, i])
 
 
-def calc_d2noe(data, i, frq_num, get_d2r1, params):
+def calc_d2noe(data, i, frq_num, get_d2r1, params, j, k):
     """Calculate the second partial derivative of the NOE value.
 
     Half this code needs to be shifted into the function initialisation code.
     """
 
     # Calculate the NOE second derivative.
-    data.d2r1[i] = get_d2r1[i](data, i, frq_num, params)
+    data.d2r1[j, k, i] = get_d2r1[i](data, i, frq_num, params, j, k)
     if data.r1[i] == 0.0:
-        data.d2ri[i] = 1e99
+        data.d2ri[j, k, i] = 1e99
     else:
-        print "Num params: " + `data.num_params`
-        for j in xrange(data.num_params):
-            a = data.ri_prime[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
-            b = data.r1[i] * (data.dri_prime[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri_prime[i] - data.r1[i] * data.d2ri_prime[i, j])
-            data.d2ri[i, j] = data.g_ratio * (1.0 / data.r1[i]**3) * (a - b)
+        a = data.ri_prime[i] * (2.0 * data.dr1[j, i] * data.dr1[k, i] - data.r1[i] * data.d2r1[j, k, i])
+        b = data.r1[i] * (data.dri_prime[j, i] * data.dr1[k, i] + data.dr1[j, i] * data.dri_prime[k, i] - data.r1[i] * data.d2ri_prime[j, k, i])
+        data.d2ri[j, k, i] = data.g_ratio * (1.0 / data.r1[i]**3) * (a - b)
 
 
 
@@ -192,13 +169,13 @@ def extract_r1(data, i, frq_num, params):
     return data.ri_prime[data.noe_r1_table[i]]
 
 
-def extract_dr1(data, i, frq_num, params):
+def extract_dr1(data, i, frq_num, params, j):
     """Get the dR1 value from data.dri_prime"""
 
-    return data.dri_prime[data.noe_r1_table[i]]
+    return data.dri_prime[j, data.noe_r1_table[i]]
 
 
-def extract_d2r1(data, i, frq_num, params):
+def extract_d2r1(data, i, frq_num, params, j, k):
     """Get the d2R1 value from data.d2ri_prime"""
 
-    return data.d2ri_prime[data.noe_r1_table[i]]
+    return data.d2ri_prime[j, k, data.noe_r1_table[i]]

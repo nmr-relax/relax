@@ -626,31 +626,34 @@ class Mf:
         if data.calc_djw_comps:
             data.calc_djw_comps(data, params)
 
-        # Loop over the parameters.
+        # Loop over the gradient.
         for j in xrange(data.total_num_params):
             # Calculate the spectral density gradients.
             if data.calc_djw[j]:
                 data.djw = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+            else:
+                data.djw = data.djw * 0.0
 
             # Calculate the relaxation gradient components.
             data.create_dri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe gradients.
-            data.dri_prime = data.create_dri_prime[j](data)
+            data.dri_prime[j] = data.create_dri_prime[j](data)
 
             # Loop over the relaxation values and modify the NOE gradients.
-            data.dri = data.dri_prime * 1.0
+            data.dri[j] = data.dri_prime[j]
             for m in xrange(data.num_ri):
                 if data.create_dri[m]:
-                    data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params)
+                    data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
             # Calculate the chi-squared gradient.
-            data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri, data.errors)
+            data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
             data.dchi2 = matrixmultiply(data.dchi2, self.scaling_matrix)
 
+        # Return a copy of the gradient.
         return data.dchi2 * 1.0
 
 
@@ -677,37 +680,42 @@ class Mf:
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
 
-        # Diffusion tensor correlation times.
-        self.diff_data.calc_dti(data, self.diff_data)
-
         # Calculate the spectral density gradient components.
         if data.calc_djw_comps:
             data.calc_djw_comps(data, params)
 
-        # Calculate the spectral density gradients.
-        for j in xrange(data.num_params):
+        # Diffusion tensor correlation times.
+        self.diff_data.calc_dti(data, self.diff_data)
+
+        # Loop over the gradient.
+        for j in xrange(data.total_num_params):
+            # Calculate the spectral density gradients.
             if data.calc_djw[j]:
-                data.djw[:, :, j] = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+                data.djw = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+            else:
+                data.djw = data.djw * 0.0
 
-        # Calculate the relaxation gradient components.
-        data.create_dri_comps(data, params)
+            # Calculate the relaxation gradient components.
+            data.create_dri_comps(data, params)
 
-        # Calculate the R1, R2, and sigma_noe gradients.
-        for j in xrange(data.num_params):
-            data.create_dri_prime[j](data, j)
+            # Calculate the R1, R2, and sigma_noe gradients.
+            data.dri_prime[j] = data.create_dri_prime[j](data)
 
-        # Calculate the R1, R2, and NOE gradients.
-        data.dri = data.dri_prime * 1.0
-        dri(data, params)
+            # Loop over the relaxation values and modify the NOE gradients.
+            data.dri[j] = data.dri_prime[j]
+            for m in xrange(data.num_ri):
+                if data.create_dri[m]:
+                    data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
-        # Calculate the chi-squared gradient.
-        data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
+            # Calculate the chi-squared gradient.
+            data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
             data.dchi2 = matrixmultiply(data.dchi2, self.scaling_matrix)
 
-        return data.dchi2
+        # Return a copy of the gradient.
+        return data.dchi2 * 1.0
 
 
     def dfunc_diff(self, params):
@@ -754,25 +762,28 @@ class Mf:
             if data.calc_djw_comps:
                 data.calc_djw_comps(data, data.param_values)
 
-            # Calculate the spectral density gradients.
+            # Loop over the gradient.
             for j in xrange(data.total_num_params):
+                # Calculate the spectral density gradients.
                 if data.calc_djw[j]:
-                    data.djw[:, :, j] = data.calc_djw[j](data, data.param_values, j, self.diff_data.num_D_params)
+                    data.djw = data.calc_djw[j](data, data.param_values, j, self.diff_data.num_D_params)
+                else:
+                    data.djw = data.djw * 0.0
 
-            # Calculate the relaxation gradient components.
-            data.create_dri_comps(data, data.param_values)
+                # Calculate the relaxation gradient components.
+                data.create_dri_comps(data, data.param_values)
 
-            # Calculate the R1, R2, and sigma_noe gradients.
-            for j in xrange(data.total_num_params):
-                data.create_dri_prime[j](data, j)
+                # Calculate the R1, R2, and sigma_noe gradients.
+                data.dri_prime[j] = data.create_dri_prime[j](data)
 
-            # Calculate the R1, R2, and NOE gradients.
-            data.dri = data.dri_prime * 1.0
-            dri(data, data.param_values)
+                # Loop over the relaxation values and modify the NOE gradients.
+                data.dri[j] = data.dri_prime[j]
+                for m in xrange(data.num_ri):
+                    if data.create_dri[m]:
+                        data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
-            # Calculate the chi-squared gradient.
-            data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
-
+                # Calculate the chi-squared gradient.
+                data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
 
             # Index for the construction of the global generic model-free gradient.
             index = self.diff_data.num_params
@@ -787,7 +798,8 @@ class Mf:
         if self.scaling_flag:
             self.total_dchi2 = matrixmultiply(self.total_dchi2, self.scaling_matrix)
 
-        return self.total_dchi2
+        # Return a copy of the gradient.
+        return self.total_dchi2 * 1.0
 
 
     def dfunc_all(self, params):
@@ -834,25 +846,28 @@ class Mf:
             if data.calc_djw_comps:
                 data.calc_djw_comps(data, params)
 
-            # Calculate the spectral density gradients.
+            # Loop over the gradient.
             for j in xrange(data.total_num_params):
+                # Calculate the spectral density gradients.
                 if data.calc_djw[j]:
-                    data.djw[:, :, j] = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+                    data.djw = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+                else:
+                    data.djw = data.djw * 0.0
 
-            # Calculate the relaxation gradient components.
-            data.create_dri_comps(data, params)
+                # Calculate the relaxation gradient components.
+                data.create_dri_comps(data, params)
 
-            # Calculate the R1, R2, and sigma_noe gradients.
-            for j in xrange(data.total_num_params):
-                data.create_dri_prime[j](data, j)
+                # Calculate the R1, R2, and sigma_noe gradients.
+                data.dri_prime[j] = data.create_dri_prime[j](data)
 
-            # Calculate the R1, R2, and NOE gradients.
-            data.dri = data.dri_prime * 1.0
-            dri(data, params)
+                # Loop over the relaxation values and modify the NOE gradients.
+                data.dri[j] = data.dri_prime[j]
+                for m in xrange(data.num_ri):
+                    if data.create_dri[m]:
+                        data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
-            # Calculate the chi-squared gradient.
-            data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
-
+                # Calculate the chi-squared gradient.
+                data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
 
             # Index for the construction of the global generic model-free gradient.
             index = self.diff_data.num_params
@@ -867,7 +882,8 @@ class Mf:
         if self.scaling_flag:
             self.total_dchi2 = matrixmultiply(self.total_dchi2, self.scaling_matrix)
 
-        return self.total_dchi2
+        # Return a copy of the gradient.
+        return self.total_dchi2 * 1.0
 
 
     def d2func_mf(self, params):
@@ -887,33 +903,38 @@ class Mf:
         if self.scaling_flag:
             params = matrixmultiply(params, self.scaling_matrix)
 
-        # Calculate the spectral density Hessians.
-        for k in xrange(data.num_params):
-            for j in xrange(k + 1):
+        # Loop over the lower triangle of the Hessian.
+        for j in xrange(data.total_num_params):
+            for k in xrange(j + 1):
+                # Calculate the spectral density Hessians.
                 if data.calc_d2jw[j][k]:
-                    data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                else:
+                    data.d2jw = data.d2jw * 0.0
 
-        # Calculate the relaxation Hessian components.
-        data.create_d2ri_comps(data, params)
+                # Calculate the relaxation Hessian components.
+                data.create_d2ri_comps(data, params)
 
-        # Calculate the R1, R2, and sigma_noe Hessians.
-        for k in xrange(data.num_params):
-            for j in xrange(k + 1):
+                # Calculate the R1, R2, and sigma_noe Hessians.
                 if data.create_d2ri_prime[j][k]:
-                    data.create_d2ri_prime[j][k](data, j, k)
+                    data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
 
-        # Calculate the R1, R2, and NOE Hessians.
-        data.d2ri = data.d2ri_prime * 1.0
-        d2ri(data, params)
+                # Loop over the relaxation values and modify the NOE Hessians.
+                data.d2ri[j, k] = data.d2ri_prime[j, k]
+                for m in xrange(data.num_ri):
+                    if data.create_d2ri[m]:
+                        data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
-        # Calculate the chi-squared Hessian.
-        data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
+                # Calculate the chi-squared Hessian.
+                data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
             data.d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(data.d2chi2, self.scaling_matrix))
 
-        return data.d2chi2
+        # Return a copy of the Hessian.
+        print "\nd2chi2:\n: " + `data.d2chi2`
+        return data.d2chi2 * 1.0
 
 
     def d2func_local_tm(self, params):
@@ -936,33 +957,37 @@ class Mf:
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
 
-        # Calculate the spectral density Hessians.
-        for k in xrange(data.num_params):
-            for j in xrange(k + 1):
+        # Loop over the lower triangle of the Hessian.
+        for j in xrange(data.total_num_params):
+            for k in xrange(j + 1):
+                # Calculate the spectral density Hessians.
                 if data.calc_d2jw[j][k]:
-                    data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                else:
+                    data.d2jw = data.d2jw * 0.0
 
-        # Calculate the relaxation Hessian components.
-        data.create_d2ri_comps(data, params)
+                # Calculate the relaxation Hessian components.
+                data.create_d2ri_comps(data, params)
 
-        # Calculate the R1, R2, and sigma_noe Hessians.
-        for k in xrange(data.num_params):
-            for j in xrange(k + 1):
+                # Calculate the R1, R2, and sigma_noe Hessians.
                 if data.create_d2ri_prime[j][k]:
-                    data.create_d2ri_prime[j][k](data, j, k)
+                    data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
 
-        # Calculate the R1, R2, and NOE Hessians.
-        data.d2ri = data.d2ri_prime * 1.0
-        d2ri(data, params)
+                # Loop over the relaxation values and modify the NOE Hessians.
+                data.d2ri[j, k] = data.d2ri_prime[j, k]
+                for m in xrange(data.num_ri):
+                    if data.create_d2ri[m]:
+                        data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
-        # Calculate the chi-squared Hessian.
-        data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
+                # Calculate the chi-squared Hessian.
+                data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
             data.d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(data.d2chi2, self.scaling_matrix))
 
-        return data.d2chi2
+        # Return a copy of the Hessian.
+        return data.d2chi2 * 1.0
 
 
     def d2func_diff(self, params):
@@ -1003,27 +1028,30 @@ class Mf:
             if self.diff_data.calc_d2ti:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
-            # Calculate the spectral density Hessians.
-            for k in xrange(data.total_num_params):
-                for j in xrange(k + 1):
+            # Loop over the lower triangle of the Hessian.
+            for j in xrange(data.total_num_params):
+                for k in xrange(j + 1):
+                    # Calculate the spectral density Hessians.
                     if data.calc_d2jw[j][k]:
-                        data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, data.param_values, j, k, self.diff_data.num_D_params)
+                        data.d2jw = data.calc_d2jw[j][k](data, data.param_values, j, k, self.diff_data.num_D_params)
+                    else:
+                        data.d2jw = data.d2jw * 0.0
 
-            # Calculate the relaxation Hessian components.
-            data.create_d2ri_comps(data, data.param_values)
+                    # Calculate the relaxation Hessian components.
+                    data.create_d2ri_comps(data, data.param_values)
 
-            # Calculate the R1, R2, and sigma_noe Hessians.
-            for k in xrange(data.total_num_params):
-                for j in xrange(k + 1):
+                    # Calculate the R1, R2, and sigma_noe Hessians.
                     if data.create_d2ri_prime[j][k]:
-                        data.create_d2ri_prime[j][k](data, j, k)
+                        data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
 
-            # Calculate the R1, R2, and NOE Hessians.
-            data.d2ri = data.d2ri_prime * 1.0
-            d2ri(data, data.param_values)
+                    # Loop over the relaxation values and modify the NOE Hessians.
+                    data.d2ri[j, k] = data.d2ri_prime[j, k]
+                    for m in xrange(data.num_ri):
+                        if data.create_d2ri[m]:
+                            data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
-            # Calculate the chi-squared Hessian.
-            data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
+                    # Calculate the chi-squared Hessian.
+                    data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
 
             # Index for the construction of the global generic model-free Hessian.
@@ -1032,18 +1060,12 @@ class Mf:
             # Pure diffusion parameter part of the global generic model-free Hessian.
             self.total_d2chi2[0:index, 0:index] = self.total_d2chi2[0:index, 0:index] + data.d2chi2[0:index, 0:index]
 
-            # Pure model-free parameter part of the global generic model-free Hessian.
-            self.total_d2chi2[data.start_index:data.end_index, data.start_index:data.end_index] = self.total_d2chi2[data.start_index:data.end_index, data.start_index:data.end_index] + data.d2chi2[index:, index:]
-
-            # Off diagonal diffusion and model-free parameter parts of the global generic model-free Hessian.
-            self.total_d2chi2[0:index, data.start_index:data.end_index] = self.total_d2chi2[0:index, data.start_index:data.end_index] + data.d2chi2[0:index, index:]
-            self.total_d2chi2[data.start_index:data.end_index, 0:index] = self.total_d2chi2[data.start_index:data.end_index, 0:index] + data.d2chi2[index:, 0:index]
-
         # Diagonal scaling.
         if self.scaling_flag:
             self.total_d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(self.total_d2chi2, self.scaling_matrix))
 
-        return self.total_d2chi2
+        # Return a copy of the Hessian.
+        return self.total_d2chi2 * 1.0
 
 
     def d2func_all(self, params):
@@ -1084,28 +1106,30 @@ class Mf:
             if self.diff_data.calc_d2ti:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
-            # Calculate the spectral density Hessians.
-            for k in xrange(data.total_num_params):
-                for j in xrange(k + 1):
+            # Loop over the lower triangle of the Hessian.
+            for j in xrange(data.total_num_params):
+                for k in xrange(j + 1):
+                    # Calculate the spectral density Hessians.
                     if data.calc_d2jw[j][k]:
-                        data.d2jw[:, :, j, k] = data.d2jw[:, :, k, j] = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                        data.d2jw = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                    else:
+                        data.d2jw = data.d2jw * 0.0
 
-            # Calculate the relaxation Hessian components.
-            data.create_d2ri_comps(data, params)
+                    # Calculate the relaxation Hessian components.
+                    data.create_d2ri_comps(data, params)
 
-            # Calculate the R1, R2, and sigma_noe Hessians.
-            for k in xrange(data.total_num_params):
-                for j in xrange(k + 1):
+                    # Calculate the R1, R2, and sigma_noe Hessians.
                     if data.create_d2ri_prime[j][k]:
-                        data.create_d2ri_prime[j][k](data, j, k)
+                        data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
 
-            # Calculate the R1, R2, and NOE Hessians.
-            data.d2ri = data.d2ri_prime * 1.0
-            d2ri(data, params)
+                    # Loop over the relaxation values and modify the NOE Hessians.
+                    data.d2ri[j, k] = data.d2ri_prime[j, k]
+                    for m in xrange(data.num_ri):
+                        if data.create_d2ri[m]:
+                            data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
-            # Calculate the chi-squared Hessian.
-            data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
-
+                    # Calculate the chi-squared Hessian.
+                    data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
             # Index for the construction of the global generic model-free Hessian.
             index = self.diff_data.num_params
@@ -1124,7 +1148,8 @@ class Mf:
         if self.scaling_flag:
             self.total_d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(self.total_d2chi2, self.scaling_matrix))
 
-        return self.total_d2chi2
+        # Return a copy of the Hessian.
+        return self.total_d2chi2 * 1.0
 
 
     def calc_ri(self):
@@ -1320,15 +1345,20 @@ class Mf:
         data.dip_jw_comps_hess = zeros(data.num_ri, Float64)
         data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
 
+        # Transformed relaxation values, gradients, and Hessians.
+        data.ri_prime = zeros((data.num_ri), Float64)
+        data.dri_prime = zeros((data.total_num_params, data.num_ri), Float64)
+        data.d2ri_prime = zeros((data.total_num_params, data.total_num_params, data.num_ri), Float64)
+
         # Data structures containing the Ri values.
         data.ri = zeros(data.num_ri, Float64)
-        data.dri = zeros(data.num_ri, Float64)
-        data.d2ri = zeros(data.num_ri, Float64)
+        data.dri = zeros((data.total_num_params, data.num_ri), Float64)
+        data.d2ri = zeros((data.total_num_params, data.total_num_params, data.num_ri), Float64)
 
         # Data structures containing the R1 values at the position of and corresponding to the NOE.
         data.r1 = zeros(data.num_ri, Float64)
-        data.dr1 = zeros(data.num_ri, Float64)
-        data.d2r1 = zeros(data.num_ri, Float64)
+        data.dr1 = zeros((data.total_num_params, data.num_ri), Float64)
+        data.d2r1 = zeros((data.total_num_params, data.total_num_params, data.num_ri), Float64)
 
         # Data structures containing the chi-squared values.
         data.chi2 = 0.0
@@ -1372,9 +1402,9 @@ class Mf:
         r1_data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
-        r1_data.ri = zeros(data.num_ri, Float64)
-        r1_data.dri = zeros(data.num_ri, Float64)
-        r1_data.d2ri = zeros(data.num_ri, Float64)
+        r1_data.ri_prime = zeros(data.num_ri, Float64)
+        r1_data.dri_prime = zeros((data.num_ri, data.total_num_params), Float64)
+        r1_data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
         # Place a few function arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
         r1_data.create_dri_prime = data.create_dri_prime
@@ -1590,7 +1620,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_djw_comps
 
-                    if self.param_set == 'all':
+                    if self.param_set != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
 
@@ -1601,7 +1631,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dDjdDk
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_d2jw_dDjdS2
 
                     # Axially symmetric diffusion.
@@ -1624,7 +1654,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2_d2jw_dPsijdPsik
                         data.calc_d2jw[3][3] = calc_diff_S2_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_d2jw_dDjdS2
                             data.calc_d2jw[1][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][1] = calc_diff_S2_d2jw_dDjdS2
                             data.calc_d2jw[2][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][2] = calc_diff_S2_d2jw_dPsijdS2
@@ -1661,7 +1691,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_S2_d2jw_dPsijdPsik
                         data.calc_d2jw[5][5] = calc_diff_S2_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_d2jw_dDjdS2
                             data.calc_d2jw[1][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][1] = calc_diff_S2_d2jw_dDjdS2
                             data.calc_d2jw[2][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][2] = calc_diff_S2_d2jw_dDjdS2
@@ -1679,7 +1709,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2_te_djw_comps
 
-                    if self.param_set == 'all':
+                    if self.param_set != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2_local_index] = calc_S2_te_djw_dS2
                         data.calc_djw[data.te_local_index] = calc_S2_te_djw_dte
@@ -1695,7 +1725,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2_te_d2jw_dDjdDk
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_te_d2jw_dDjdS2
                             data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_diff_S2_te_d2jw_dDjdte
 
@@ -1719,7 +1749,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2_te_d2jw_dPsijdPsik
                         data.calc_d2jw[3][3] = calc_diff_S2_te_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_te_d2jw_dDjdS2
                             data.calc_d2jw[1][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][1] = calc_diff_S2_te_d2jw_dDjdS2
                             data.calc_d2jw[2][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][2] = calc_diff_S2_te_d2jw_dPsijdS2
@@ -1761,7 +1791,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_S2_te_d2jw_dPsijdPsik
                         data.calc_d2jw[5][5] = calc_diff_S2_te_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2_te_d2jw_dDjdS2
                             data.calc_d2jw[1][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][1] = calc_diff_S2_te_d2jw_dDjdS2
                             data.calc_d2jw[2][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][2] = calc_diff_S2_te_d2jw_dDjdS2
@@ -1874,7 +1904,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_S2_ts_djw_comps
 
-                    if self.param_set == 'all':
+                    if self.param_set != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_local_index] = calc_S2f_S2_ts_djw_dS2f
                         data.calc_djw[data.s2_local_index] = calc_S2f_S2_ts_djw_dS2
@@ -1892,7 +1922,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_S2_ts_d2jw_dDjdDk
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2
                             data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdts
@@ -1917,7 +1947,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2f_S2_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[3][3] = calc_diff_S2f_S2_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_S2_ts_d2jw_dPsijdS2f
@@ -1964,7 +1994,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_S2f_S2_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[5][5] = calc_diff_S2f_S2_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
@@ -1996,7 +2026,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_tf_S2_ts_djw_comps
 
-                    if self.param_set == 'all':
+                    if self.param_set != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_local_index] = calc_S2f_tf_S2_ts_djw_dS2f
                         data.calc_djw[data.tf_local_index] = calc_S2f_tf_S2_ts_djw_dtf
@@ -2017,7 +2047,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdtf
                             data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2
@@ -2043,7 +2073,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2f_tf_S2_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[3][3] = calc_diff_S2f_tf_S2_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_tf_S2_ts_d2jw_dPsijdS2f
@@ -2095,7 +2125,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_S2f_tf_S2_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[5][5] = calc_diff_S2f_tf_S2_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
@@ -2223,7 +2253,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_S2s_ts_djw_comps
 
-                    if self.param_set == 'all':
+                    if self.param_set != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_local_index] = calc_diff_S2f_S2s_ts_djw_dS2f
                         data.calc_djw[data.s2s_local_index] = calc_diff_S2f_S2s_ts_djw_dS2s
@@ -2242,7 +2272,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdDk
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2s
                             data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdts
@@ -2267,7 +2297,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2f_S2s_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[3][3] = calc_diff_S2f_S2s_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_S2s_ts_d2jw_dPsijdS2f
@@ -2314,7 +2344,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_S2f_S2s_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[5][5] = calc_diff_S2f_S2s_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
@@ -2345,7 +2375,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_tf_S2s_ts_djw_comps
 
-                    if self.param_set == 'all':
+                    if self.param_set != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_local_index] = calc_diff_S2f_tf_S2s_ts_djw_dS2f
                         data.calc_djw[data.tf_local_index] = calc_diff_S2f_tf_S2s_ts_djw_dtf
@@ -2367,7 +2397,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdtf
                             data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2s
@@ -2393,7 +2423,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] = calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[3][3] = calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdS2f
@@ -2445,7 +2475,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] = calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdPsik
                         data.calc_d2jw[5][5] = calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdPsik
 
-                        if self.param_set == 'all':
+                        if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[1][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][1] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
                             data.calc_d2jw[2][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][2] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f

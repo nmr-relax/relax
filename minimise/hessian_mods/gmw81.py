@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -146,9 +146,6 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         print print_prefix + "New eigenvalues: " + `eigen`
         print print_prefix + "Newton dir: " + `-solve_linear_equations(transpose(L), solve_linear_equations(L, dfk))`
         print print_prefix + "Newton dir using inverse: " + `-matrixmultiply(inverse(d2fk+E), dfk)`
-
-    #import sys
-    #sys.exit()
 
     # Calculate the Newton direction.
     y = solve_linear_equations(L, dfk)
