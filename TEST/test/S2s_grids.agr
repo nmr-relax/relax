@@ -1,0 +1,12 @@
+@target G2.S0
+@type xy
+1	0.901
+&
+@target G1.S0
+@type xy
+1	0
+&
+@target G0.S0
+@type xy
+1	0.901
+&

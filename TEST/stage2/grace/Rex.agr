@@ -1,0 +1,44 @@
+@version 50100
+@with g0
+@    world xmax 165
+@    view xmax 1.22
+@    title "Rex values"
+@    subtitle "After model selection, unoptimized"
+@    xaxis  label "Residue Number"
+@    xaxis  tick major 10
+@    xaxis  tick major size 0.480000
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.240000
+@    xaxis  ticklabel char size 0.790000
+@    yaxis  label "Rex"
+@    yaxis  tick major size 0.480000
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.240000
+@    yaxis  ticklabel char size 0.790000
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.49
+@    s0 symbol fill pattern 1
+@    s0 symbol linewidth 0.5
+@    s0 line linestyle 0
+@target G0.S0
+@type xydy
+12 0.34499999999999997 0.27200000000000002
+13 1.548 0.255
+15 1.157 0.52800000000000002
+16 2.7130000000000001 0.64600000000000002
+17 1.353 0.39000000000000001
+21 1.615 0.5
+24 0.54800000000000004 0.222
+25 0.70499999999999996 0.16400000000000001
+27 0.52500000000000002 0.19800000000000001
+28 0.36599999999999999 0.28899999999999998
+30 2.0369999999999999 0.27900000000000003
+32 1.754 0.27100000000000002
+34 2.1099999999999999 0.41699999999999998
+35 0.97099999999999997 0.441
+36 2.7930000000000001 0.216
+38 0.91600000000000004 0.22800000000000001
+&
