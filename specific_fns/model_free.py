@@ -2861,7 +2861,7 @@ class Model_free(Common_functions):
                     try:
                         xh_vect = array(xh_vect, Float64)
                     except:
-                        raise RelaxError, "The XH vector " + file_data[i][col['xh_vect']] + " is invalid."
+                        raise RelaxError, "The XH unit vector " + file_data[i][col['xh_vect']] + " is invalid."
 
                 # Set the vector.
                 if xh_vect:
@@ -3207,8 +3207,8 @@ class Model_free(Common_functions):
                 self.relax.data.res[run][i].fixed = res_fixed
 
 
-        # PDB and XH vector.
-        ####################
+        # PDB.
+        ######
 
         # Load the PDB.
         if not pdb == 'None':
@@ -4220,7 +4220,7 @@ class Model_free(Common_functions):
         file.write("%-40s " % pdb)
         file.write("%-10s " % pdb_model)
 
-        # XH vector.
+        # XH unit vector.
         file.write("%-70s " % xh_vect)
 
         # Relaxation data setup.

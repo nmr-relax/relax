@@ -32,17 +32,14 @@ class Vectors:
 
 
     def set(self, run=None, res=None, xh_vect=None):
-        """Function for setting the XH and XH unit vectors."""
+        """Function for setting the XH unit vectors."""
 
-        # Place the XH vector in 'self.relax.data.res'.
+        # Place the XH unit vector in 'self.relax.data.res'.
         self.relax.data.res[run][res].xh_vect = xh_vect
-
-        # Calculate the normalised vector.
-        self.relax.data.res[run][res].xh_unit = xh_vect / sqrt(dot(xh_vect, xh_vect))
 
 
     def vectors(self, run, heteronuc, proton):
-        """Function for calculating the XH vector from the loaded structure."""
+        """Function for calculating the XH unit vector from the loaded structure."""
 
         # Test if the PDB file has been loaded.
         if not self.relax.data.pdb.has_key(run):
@@ -102,8 +99,15 @@ class Vectors:
                     # Get the heteronucleus position.
                     posX = pdb_res.atoms[heteronuc].position.array
 
-                    # Calculate the vector.
-                    self.relax.data.res[run][j].xh_vect.append(posH - posX)
+                    # Calculate the normalised vector.
+                    vector = posH - posX
+                    self.relax.data.res[run][j].xh_vect.append(vector / sqrt(dot(vector, vector)))
+
+        # Print out.
+        if num_str > 1:
+            print "\nCalculating and averaging the unit XH vectors from all structures."
+        else:
+            print "\nCalculating the unit XH vectors from the structure."
 
         # Average the vectors and convert xh_vect from an array of vectors to a vector.
         for i in xrange(len(self.relax.data.res[run])):
@@ -112,7 +116,7 @@ class Vectors:
                 del self.relax.data.res[run][i].xh_vect
                 continue
 
-            # Average vector.
+            # Average vectors.
             ave_vector = zeros(3, Float64)
 
             # Sum the vectors.
@@ -123,8 +127,5 @@ class Vectors:
             # Average the vector.
             ave_vector = ave_vector / num_str
 
-            # Replace the temporary vector list with the average vector.
-            self.relax.data.res[run][i].xh_vect = ave_vector
-
-            # Calculate the normalised vector.
-            self.relax.data.res[run][i].xh_unit = ave_vector / sqrt(dot(ave_vector, ave_vector))
+            # Replace the temporary vector list with the normalised average vector.
+            self.relax.data.res[run][i].xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
