@@ -106,7 +106,7 @@ class Minimise:
         # Monte Carlo simulation minimisation.
         elif hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
             # Threaded minimisation of simulations.
-            if self.relax.data.thread.status:
+            if self.relax.thread_data.status:
                 # Print out.
                 print "Threaded minimisation of Monte Carlo simulations.\n"
 
@@ -177,42 +177,26 @@ class RelaxMinimiseThread(RelaxThread):
         self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag = self.min_args
 
 
-    def exec_thread_code(self, data):
+    def pre_locked_code(self):
         """Function containing the thread specific code.
         
         This code is for the minimisation of a single Monte Carlo simulation.
         """
 
-        # Initialise the job termination flag.
-        self.completion_flag = 0
-
-        # Place the job queue data, which in this case is the simulation number, in 'self'.
-        self.sim = data
-
-        # Job termination if the job has been finished by a faster thread.
-        if self.finished_jobs[self.sim] == 1:
-            return
-
-        # Place the job back into the job queue.  This is to make the threads fail safe and so that idle faster threads will pick up the jobs of the slower threads.
-        self.job_queue.put(self.sim)
+        # Start up relax as a thread.
+        self.exec_relax()
 
         # Thread run name.
-        self.thread_run = '%s_sim_%s' % (self.tag, self.sim)
+        self.thread_run = '%s_sim_%s' % (self.tag, self.job_number)
 
-        # Script and log files.
-        self.script_file = "%s/%s/script_sim_%s.py" % (self.swd, self.tag, self.sim)
-        self.log_file = "%s/%s/sim_%s.log" % (self.swd, self.tag, self.sim)
+        # Log file.
+        self.log_file = "%s/%s/sim_%s.log" % (self.swd, self.tag, self.job_number)
 
         # Generate the script file for the minimisation of sim number 'sim'.
         self.generate_script()
 
-        # Execute relax and run the script.
-        self.exec_relax()
 
-        # Job termination if the job has been finished by a faster thread.
-        if self.finished_jobs[self.sim] == 1:
-            return
-
+    def post_locked_code(self):
         # Create a run in the parent to temporarily store the data prior to copying into the main run.
         self.relax.generic.runs.create(run=self.thread_run, run_type=self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)])
 
@@ -220,13 +204,13 @@ class RelaxMinimiseThread(RelaxThread):
         self.relax.generic.results.read(run=self.thread_run, file_data=self.results, print_flag=0)
 
         # Copy the results from the thread run to the parent run.
-        self.relax.generic.results.copy(run1=self.thread_run, run2=self.parent_run, sim=self.sim)
+        self.relax.generic.results.copy(run1=self.thread_run, run2=self.parent_run, sim=self.job_number)
 
         # Delete the thread run
         self.relax.generic.runs.delete(self.thread_run)
 
         # Set the results to the completed simulation number.
-        self.results = self.sim
+        self.results = self.job_number
 
         # Job completed successfully.
         self.completion_flag = 1
@@ -242,7 +226,7 @@ class RelaxMinimiseThread(RelaxThread):
         fn.append("self.relax.generic.state.load(file='%s')" % self.results_file)
 
         # Function: Minimise.
-        fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.parent_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.sim))
+        fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.parent_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.job_number))
 
         # Function: Turn logging off.  This is so that the results can come back through the pipe's stdout.
         fn.append("self.relax.IO.logging_off()")

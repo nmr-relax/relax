@@ -71,7 +71,7 @@ from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
-from thread_classes import ThreadSetup
+from thread_classes import ThreadData, ThreadSetup
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -93,6 +93,9 @@ class Relax:
 
         # The program data storage object.
         self.data = Data()
+
+        # The thread data storage object.
+        self.thread_data = ThreadData()
 
         # File operation functions.
         self.IO = IO(self)

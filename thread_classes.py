@@ -30,6 +30,8 @@ from string import ascii_letters
 import sys
 from threading import Lock, Thread
 
+from data import Element
+
 
 # Class for setting up threading.
 #################################
@@ -128,8 +130,27 @@ class ThreadSetup:
         RelaxHostParentThread(self.relax, self.host_data)
 
         # Final print out.
-        print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_name)`
+        print "\nTotal number of active threads: " + `len(self.relax.thread_data.host_name)`
 
+
+
+# Class containing the thread data.
+###################################
+
+class ThreadData(Element):
+    def __init__(self):
+        """Class containing all the thread data."""
+
+        # Host data for threading.
+        self.status = 0
+        self.host_name = []
+        self.user = []
+        self.login = []
+        self.login_cmd = []
+        self.cp_cmd = []
+        self.prog_path = []
+        self.swd = []
+        self.priority = []
 
 
 
@@ -141,7 +162,7 @@ class RelaxParentThread:
         """Parent class containing the main threading loop."""
 
         # The number of threads.
-        self.num_threads = len(self.relax.data.thread.host_name)
+        self.num_threads = len(self.relax.thread_data.host_name)
 
 
     def run(self, tag=1, save_state=1):
@@ -176,7 +197,7 @@ class RelaxParentThread:
 
         # Initialise an array of locks for the jobs.
         self.job_locks = []
-        for i in xrange(self.num_threads):
+        for i in xrange(self.num_jobs):
             self.job_locks.append(Lock())
 
         # Start all threads.
@@ -187,10 +208,10 @@ class RelaxParentThread:
             self.threads[i].start()
 
         # The main loop.
-        terminated = 0
-        while not terminated:
+        while 1:
             # Get the next results off the results_queue.
             job_number = self.results_queue.get()
+            print "job: " + `job_number`
 
             # The thread has caused a RelaxError.
             if job_number == RelaxError:
@@ -210,21 +231,40 @@ class RelaxParentThread:
             # Update the finished jobs.
             self.finished_jobs[job_number] = 1
 
+            # Release the lock (finished jobs must be updated first).
+            self.job_locks[job_number].release()
+
             # All jobs have finished.
             if sum(self.finished_jobs) == self.num_jobs:
                 # Add None to the job_queue to signal the threads to finish.
                 self.job_queue.put(None)
 
-                # Set the terminate flag to 1 to stop this main loop.
-                terminated = 1
+                # Break the main loop.
+                break
+
+        # Hang until all threads have terminated.
+        print "Waiting for all threads to terminate."
+        while 1:
+            # Thread clean up function.
+            self.thread_clean_up()
+
+            # Count the number of terminated threads.
+            num_alive = 0
+            for i in xrange(self.num_threads):
+                num_alive = num_alive + self.threads[i].isAlive()
+
+            # Break once all have terminated.
+            if num_alive == 0:
+                break
+        print "All threads terminated."
 
 
     def thread_clean_up(self):
         """Function for cleaning up the threads."""
 
         # Kill all threads.
-        for thread in self.threads:
-            thread.stop(killed=1)
+        for i in xrange(self.num_threads):
+            self.threads[i].stop()
 
         # Delete the saved state file.
         if hasattr(self, 'save_state_file'):
@@ -249,16 +289,13 @@ class RelaxThread(Thread):
         self.job_locks = job_locks
 
         # Specific thread details.
-        self.host_name = self.relax.data.thread.host_name[i]
-        self.user      = self.relax.data.thread.user[i]
-        self.login     = self.relax.data.thread.login[i]
-        self.login_cmd = self.relax.data.thread.login_cmd[i]
-        self.prog_path = self.relax.data.thread.prog_path[i]
-        self.swd       = self.relax.data.thread.swd[i]
-        self.priority  = self.relax.data.thread.priority[i]
-
-        # Initial killed flag.
-        self.killed = 0
+        self.host_name = self.relax.thread_data.host_name[i]
+        self.user      = self.relax.thread_data.user[i]
+        self.login     = self.relax.thread_data.login[i]
+        self.login_cmd = self.relax.thread_data.login_cmd[i]
+        self.prog_path = self.relax.thread_data.prog_path[i]
+        self.swd       = self.relax.thread_data.swd[i]
+        self.priority  = self.relax.thread_data.priority[i]
 
         # Set the Thread method _Thread__stop to self.stop.
         self._Thread__stop = self.stop
@@ -320,17 +357,6 @@ class RelaxThread(Thread):
 
         # Close the error pipe.
         self.stderr.close()
-
-
-    def job_completed(self):
-        """Function for determining if a job has completed successfully."""
-
-        # The job has been finished by a faster thread.
-        if self.finished_jobs[self.sim] == 1:
-            return 0
-
-        # Success.
-        return self.completion_flag
 
 
     def mkdir(self):
@@ -397,7 +423,6 @@ class RelaxThread(Thread):
             while 1:
                 # Get the job number for the next queued job.
                 self.job_number = self.job_queue.get()
-
                 # Quit if the job number is None, this is the signal for when all jobs have been completed.
                 if self.job_number == None:
                     # Place None back into the job queue so that all the other waiting threads will terminate.
@@ -406,13 +431,40 @@ class RelaxThread(Thread):
                     # Thread termination (breaking of the while loop).
                     break
 
-                # Run the thread specific code.
-                self.exec_thread_code(self.job_number)
+                # Job termination if finished by a faster thread.
+                if self.finished_jobs[self.job_number] == 1:
+                    continue
 
-                # If the job has completed successfully, place the results in the results queue.
-                if self.job_completed():
-                    # Place the job number into the results queue.
-                    self.results_queue.put(self.job_number)
+                # Place the job back into the job queue.  This is to make the threads fail safe and so that idle faster threads will pick up the jobs of the slower threads.
+                self.job_queue.put(self.job_number)
+
+                # Run the specific code prior to locking the job.
+                self.pre_locked_code()
+
+                # Lock the job.
+                #print "\nThread: " + self.getName()
+                #print "Job: " + `self.job_number`
+                #print "Acquiring lock"
+                #print "Host name: " + self.host_name
+                self.job_locks[self.job_number].acquire()
+                #print "\nThread: " + self.getName()
+                #print "Job: " + `self.job_number`
+                #print "UnLocked"
+                #print "Host name: " + self.host_name
+
+                # Job termination if finished by a faster thread.
+                if self.finished_jobs[self.job_number] == 1:
+                    # Release the lock.
+                    self.job_locks[self.job_number].release()
+
+                    # Job termination without running the post locked code or placing the job number in the results queue.
+                    continue
+
+                # Run the specific code after locking the job.
+                self.post_locked_code()
+
+                # Place the job number into the results queue.
+                self.results_queue.put(self.job_number)
 
         # RelaxError.
         except RelaxError, message:
@@ -426,16 +478,20 @@ class RelaxThread(Thread):
         # All other errors.
         except:
             self.results_queue.put(Exception)
-            if not self.killed:
-                raise
+            raise
 
 
-    def stop(self, killed=0):
+    def stop(self):
         """Modified stop function."""
 
-        # Set a class specific flag.
-        if killed:
-            self.killed = 1
+        # Finish active jobs.
+        if self.job_number != None:
+            # Set the job to finished.
+            self.finished_jobs[self.job_number] = 1
+
+            # Release the job lock.
+            if self.job_locks[self.job_number].locked():
+                self.job_locks[self.job_number].release()
 
         # From the Thread class.
         self._Thread__block.acquire()
@@ -501,7 +557,7 @@ class RelaxHostParentThread(RelaxParentThread):
         """Function for returning an initialised thread object."""
 
         # Return the thread object.
-        return RelaxHostThread(self.relax, self.job_queue, self.results_queue, self.finished_jobs, self.job_locks, self.host_data[i])
+        return RelaxHostThread(self.relax, self.job_queue, self.results_queue, self.finished_jobs, self.job_locks, self.host_data)
 
 
 
@@ -523,21 +579,18 @@ class RelaxHostThread(RelaxThread):
         self.job_locks = job_locks
         self.host_data = host_data
 
-        # Initial killed flag.
-        self.killed = 0
-
         # Set the Thread method _Thread__stop to self.stop.
         self._Thread__stop = self.stop
 
 
-    def exec_thread_code(self, data):
+    def pre_locked_code(self):
         """Function for testing the hosts used in threading."""
 
         # Expand the data structures.
-        self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = self.host_data
+        self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = self.host_data[self.job_number]
 
         # Host failure flag.
-        fail = 0
+        self.fail = 0
 
         # Text.
         self.text = []
@@ -548,46 +601,42 @@ class RelaxHostThread(RelaxThread):
         self.text.append("%-20s%-10i" % ("Priority:", self.priority))
 
         # Test the SSH connection.
-        if self.host_name != 'localhost' and not fail and not self.test_ssh():
-            fail = 1
+        if self.host_name != 'localhost' and not self.fail and not self.test_ssh():
+            self.fail = 1
 
         # Test the working directory.
-        if not fail and not self.test_wd():
-            fail = 1
+        if not self.fail and not self.test_wd():
+            self.fail = 1
 
         # Test if relax works.
-        if not fail and not self.test_relax():
-            fail = 1
+        if not self.fail and not self.test_relax():
+            self.fail = 1
 
         # Host is accessible.
-        if not fail:
+        if not self.fail:
             self.text.append("%-20s%-10s" % ("Host status:", "[ OK ]"))
 
+
+    def post_locked_code(self):
         # Print the results.
         print "\n\nThread " + `self.job_number` + "\n"
         for line in self.text:
             print line
 
-        # Add all good hosts to self.relax.data.thread
-        if not fail:
+        # Add all good hosts to self.relax.thread_data
+        if not self.fail:
             # Status.
-            if not self.relax.data.thread.status:
-                self.relax.data.thread.status = 1
+            if not self.relax.thread_data.status:
+                self.relax.thread_data.status = 1
 
             # Store the details.
-            self.relax.data.thread.host_name.append(self.host_name)
-            self.relax.data.thread.user.append(self.user)
-            self.relax.data.thread.login.append(self.login)
-            self.relax.data.thread.login_cmd.append(self.login_cmd)
-            self.relax.data.thread.prog_path.append(self.prog_path)
-            self.relax.data.thread.swd.append(self.swd)
-            self.relax.data.thread.priority.append(self.priority)
-
-
-    def job_completed(self):
-        """Dummy job completion testing function, always return 1."""
-
-        return 1
+            self.relax.thread_data.host_name.append(self.host_name)
+            self.relax.thread_data.user.append(self.user)
+            self.relax.thread_data.login.append(self.login)
+            self.relax.thread_data.login_cmd.append(self.login_cmd)
+            self.relax.thread_data.prog_path.append(self.prog_path)
+            self.relax.thread_data.swd.append(self.swd)
+            self.relax.thread_data.priority.append(self.priority)
 
 
     def test_relax(self):
