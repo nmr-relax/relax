@@ -1,1 +1,0 @@
-modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out
