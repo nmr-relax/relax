@@ -115,6 +115,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 			sys.exit()
 		results = simplex_scipy(func, x0, args=args, xtol=1e-30, ftol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		xk, fk, k, f_count, warning = results
+		warning = `warning`
 
 	# Quasi-Newton BFGS minimisation (scipy).
 	elif match('^[Bb][Ff][Gg][Ss][ _][Ss]cipy$', minimiser[0]):
@@ -125,6 +126,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 			sys.exit()
 		xk, fk, f_count, g_count, warning = bfgs_scipy(func, x0, fprime=dfunc, args=args, avegtol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		k = f_count
+		warning = `warning`
 
 
 	# Newton Conjugate Gradient minimisation (scipy).
@@ -136,6 +138,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 			sys.exit()
 		xk, fk, f_count, g_count, h_count, warning = ncg_scipy(func, x0, fprime=dfunc, fhess=d2func, args=args, avextol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		k = f_count
+		warning = `warning`
 
 
 	# Line search algorithms.
@@ -145,8 +148,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Cc][Dd]$', minimiser[0]) or match('^[Cc]oordinate-[Dd]escent$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
-		self = coordinate_descent()
-		results = coordinate_descent.minimise(self, func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = coordinate_descent()
+		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
 		else:
@@ -156,8 +159,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Ss][Dd]$', minimiser[0]) or match('^[Ss]teepest[ _][Dd]escent$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Steepest descent minimisation >>>"
-		self = steepest_descent()
-		results = steepest_descent.minimise(self, func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = steepest_descent()
+		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
 		else:
@@ -167,8 +170,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Bb][Ff][Gg][Ss]$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-		self = bfgs()
-		results = bfgs.minimise(self, func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = bfgs()
+		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
 		else:
@@ -178,8 +181,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Nn]ewton$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Newton minimisation >>>"
-		self = newton()
-		results = newton.minimise(self, func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = newton()
+		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
 		else:
@@ -193,8 +196,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Ll][Mm]$', minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		self = levenberg_marquardt()
-		results = levenberg_marquardt.minimise(self, func, dfunc, minimiser[1], minimiser[2], x0, args=args, func_tol=func_tol, maxiter=maxiter, full_output=1, print_flag=print_flag)
+		min = levenberg_marquardt()
+		results = min.minimise(func, dfunc, minimiser[1], minimiser[2], x0, args=args, func_tol=func_tol, maxiter=maxiter, full_output=1, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
 		else:
@@ -208,8 +211,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Ss]implex$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Simplex minimisation >>>"
-		self = simplex()
-		results = simplex.minimise(self, func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = simplex()
+		results = min.minimise(func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
 		#results = simplex_scipy(func, x0, args=args, xtol=1e-30, ftol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results

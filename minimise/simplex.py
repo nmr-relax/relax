@@ -23,7 +23,7 @@ class simplex(generic_minimise):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
-		self.print_flag = 2
+		#self.print_flag = 2
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
@@ -75,29 +75,39 @@ class simplex(generic_minimise):
 			self.new_fk = copy.deepcopy(self.fk)
 
 			# Simplex movement.
+			self.new_vertex = None
+			self.new_vertex_val = 0.0
+
 			if self.print_flag == 2:
 				print "\nReflecting."
 			self.reflect()
 			if self.print_flag == 2:
 				print "Simplex:\n" + `self.new_simplex`
-			if self.reflection_fk <= self.fk[self.index_low]:
+			if self.new_vertex_val <= self.fk[self.index_low]:
 				if self.print_flag == 2:
 					print "\nExtending."
 				self.extend()
 				if self.print_flag == 2:
 					print "Simplex:\n" + `self.new_simplex`
-			elif self.reflection_fk >= self.fk[self.index_2nd_high]:
+			elif self.new_vertex_val >= self.fk[self.index_2nd_high]:
 				if self.print_flag == 2:
 					print "\nContracting."
 				self.contract()
 				if self.print_flag == 2:
 					print "Simplex:\n" + `self.new_simplex`
-				if self.contract_fk >= self.fk[self.index_high]:
+				if self.new_vertex_val >= self.fk[self.index_high]:
 					if self.print_flag == 2:
 						print "\n\tShrinking."
 					self.shrink()
 					if self.print_flag == 2:
 						print "Simplex:\n" + `self.new_simplex`
+
+			# Update simplex with the new vector.
+			if self.new_vertex:
+				if self.new_vertex_val <= self.fk[self.index_high]:
+					self.new_simplex[self.index_high] = copy.deepcopy(self.new_vertex)
+					self.new_fk[self.index_high] = self.new_vertex_val
+
 			if self.print_flag == 2:
 				print "Final simplex:\n" + `self.new_simplex` + "\n"
 
@@ -145,16 +155,16 @@ class simplex(generic_minimise):
 	def contract(self):
 		"Contraction step."
 
-		vect = self.move(self.simplex[self.index_high], -0.5)
-		self.contract_fk, self.f_count = apply(self.func, (vect,)+self.args), self.f_count + 1
+		self.new_vertex = self.move(self.simplex[self.index_high], -0.5)
+		self.new_vertex_val, self.f_count = apply(self.func, (self.new_vertex,)+self.args), self.f_count + 1
 		if self.print_flag == 2:
-			print "\t%-29s%-40s" % ("Contraction vector:", `vect`)
-			print "\t%-29s%-40s" % ("Contraction function value:", `self.contract_fk`)
+			print "\t%-29s%-40s" % ("Contraction vector:", `self.new_vertex`)
+			print "\t%-29s%-40s" % ("Contraction function value:", `self.new_vertex_val`)
 
 		# Update simplex with the contraction vector.
-		if self.contract_fk <= self.fk[self.index_high]:
-			self.new_simplex[self.index_high] = copy.deepcopy(vect)
-			self.new_fk[self.index_high] = self.contract_fk
+		#if self.new_vertex_val <= self.fk[self.index_high]:
+		#	self.new_simplex[self.index_high] = copy.deepcopy(self.new_vertex)
+		#	self.new_fk[self.index_high] = self.new_vertex_val
 
 
 	def create_simplex(self):
@@ -174,16 +184,16 @@ class simplex(generic_minimise):
 	def extend(self):
 		"Extension step."
 
-		vect = self.move(self.simplex[self.index_high], 2.0)
-		self.extension_fk, self.f_count = apply(self.func, (vect,)+self.args), self.f_count + 1
+		self.new_vertex = self.move(self.simplex[self.index_high], 2.0)
+		self.new_vertex_val, self.f_count = apply(self.func, (self.new_vertex,)+self.args), self.f_count + 1
 		if self.print_flag == 2:
-			print "\t%-29s%-40s" % ("Extension vector:", `vect`)
-			print "\t%-29s%-40s" % ("Extension function value:", `self.extension_fk`)
+			print "\t%-29s%-40s" % ("Extension vector:", `self.new_vertex`)
+			print "\t%-29s%-40s" % ("Extension function value:", `self.new_vertex_val`)
 
 		# Update simplex with the extension vector.
-		if self.extension_fk <= self.fk[self.index_high]:
-			self.new_simplex[self.index_high] = copy.deepcopy(vect)
-			self.new_fk[self.index_high] = self.extension_fk
+		#if self.new_vertex_val <= self.fk[self.index_high]:
+		#	self.new_simplex[self.index_high] = copy.deepcopy(self.new_vertex)
+		#	self.new_fk[self.index_high] = self.new_vertex_val
 
 
 	def move(self, vertex, factor):
@@ -196,16 +206,16 @@ class simplex(generic_minimise):
 	def reflect(self):
 		"Reflection step."
 
-		vect = self.move(self.simplex[self.index_high], 1.0)
-		self.reflection_fk, self.f_count = apply(self.func, (vect,)+self.args), self.f_count + 1
+		self.new_vertex = self.move(self.simplex[self.index_high], 1.0)
+		self.new_vertex_val, self.f_count = apply(self.func, (self.new_vertex,)+self.args), self.f_count + 1
 		if self.print_flag == 2:
-			print "\t%-29s%-40s" % ("Reflection vector:", `vect`)
-			print "\t%-29s%-40s" % ("Reflection function value:", `self.reflection_fk`)
+			print "\t%-29s%-40s" % ("Reflection vector:", `self.new_vertex`)
+			print "\t%-29s%-40s" % ("Reflection function value:", `self.new_vertex_val`)
 
 		# Update simplex with the reflection vector.
-		if self.reflection_fk < self.fk[self.index_high]:
-			self.new_simplex[self.index_high] = copy.deepcopy(vect)
-			self.new_fk[self.index_high] = self.reflection_fk
+		#if self.new_vertex_val < self.fk[self.index_high]:
+		#	self.new_simplex[self.index_high] = copy.deepcopy(self.new_vertex)
+		#	self.new_fk[self.index_high] = self.new_vertex_val
 
 
 	def shrink(self):
