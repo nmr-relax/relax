@@ -46,6 +46,10 @@ class Model_free(Common_functions):
         # Alias the data structure.
         data = self.relax.data.res[self.run][index]
 
+        # Unselected residue.
+        if data.select == 0:
+            return
+
         # Loop over the model-free parameters.
         for j in xrange(len(data.params)):
             # tm.
