@@ -47,7 +47,7 @@ class File_ops:
         try:
             file = open(file_name, 'r')
         except IOError:
-            raise UserError, "The file \"" + file_name + "\" does not exist."
+            raise RelaxFileError, (None, file_name)
 
         # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
         lines = file.readlines()

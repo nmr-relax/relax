@@ -171,37 +171,49 @@ class Rx_data:
 
         # The run name.
         if type(run) != str:
-            raise UserError, "The run name must be supplied as a string."
+            raise RelaxStrError, ('run', run)
 
         # Relaxation data type.
         if not ri_label or type(ri_label) != str:
-            raise UserError, "The relaxation label 'ri_label' must be supplied as a string."
+            raise RelaxStrError, ('relaxation label', ri_label)
 
         # Frequency label.
         elif type(frq_label) != str:
-            raise UserError, "The frequency label 'frq_label' must be supplied as a string."
+            raise RelaxStrError, ('frequency label', frq_label)
 
         # Frequency.
         elif type(frq) != float:
-            raise UserError, "The frequency argument 'frq' should be a floating point number."
+            raise RelaxFloatError, ('frequency', frq)
 
         # The file name.
         elif not file_name:
-            raise UserError, "No file has been specified."
+            raise RelaxNoneError, 'file name'
         elif type(file_name) != str:
-            raise UserError, "The file name should be a string."
+            raise RelaxStrError, ('file name', file_name)
 
-        # The columns.
-        elif type(num_col) != int or type(name_col) != int or type(data_col) != int or type(error_col) != int:
-            raise UserError, "The column arguments 'num_col', 'name_col', 'data_col', and 'error_col' should be integers."
+        # The number column.
+        elif type(num_col) != int:
+            raise RelaxIntError, ('residue number column', num_col)
+
+        # The name column.
+        elif type(name_col) != int:
+            raise RelaxIntError, ('residue name column', name_col)
+
+        # The data column.
+        elif type(data_col) != int:
+            raise RelaxIntError, ('data column', data_col)
+
+        # The error column.
+        elif type(error_col) != int:
+            raise RelaxIntError, ('error column', error_col)
 
         # Column separator.
         elif sep != None and type(sep) != str:
-            raise UserError, "The column separator argument 'sep' should be either a string or None."
+            raise RelaxNoneStrError, ('column separator', sep)
 
         # Header lines.
         elif type(header_lines) != int:
-            raise UserError, "The number of header lines argument 'header_lines' should be an integer."
+            raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
         self.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
@@ -212,14 +224,14 @@ class Rx_data:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            raise UserError, "Sequence data has to be loaded first."
+            raise RelaxSequenceError
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
 
         # Do nothing if the file does not exist.
         if not file_data:
-            raise UserError, "No relaxation data read."
+            raise RelaxFileEmptyError
 
         # Remove the header.
         file_data = file_data[header_lines:]
@@ -234,7 +246,7 @@ class Rx_data:
                 float(file_data[i][data_col])
                 float(file_data[i][error_col])
             except ValueError:
-                raise UserError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
 
         # Add the run to the runs list.
         if not run in self.relax.data.runs:
@@ -255,7 +267,7 @@ class Rx_data:
                     index = j
                     break
             if index == None:
-                raise UserError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+                raise RelaxNoResError, (res_num, res_name)
 
             # Initialise the relaxation data structures (if needed).
             self.initialise_rx_data(self.relax.data.res[index], run)
@@ -263,7 +275,7 @@ class Rx_data:
             # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
             for j in range(self.relax.data.res[index].num_ri[run]):
                if ri_label == self.relax.data.res[index].ri_labels[run][j] and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][j]]:
-                    raise UserError, "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
+                    raise RelaxError, "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
 
             # Relaxation data and errors.
             self.relax.data.res[index].relax_data[run].append(value)

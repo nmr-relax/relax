@@ -90,20 +90,20 @@ class Macro_class:
 
         # The run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # The data_type argument.
         if type(data_type) != str:
-            raise UserArgStrError, ('data_type', data_type)
+            raise RelaxStrError, ('data_type', data_type)
 
         # File.
         if type(file) != str:
-            raise UserArgStrError, ('file name', file)
+            raise RelaxStrError, ('file name', file)
 
         # Directory.
         if dir != None:
             if type(dir) != str:
-                raise UserArgNoneStrError, ('directory name', dir)
+                raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
         self.relax.rw.read_data(run=run, data_type=data_type, file=file, dir=dir)

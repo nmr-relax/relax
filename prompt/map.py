@@ -149,11 +149,11 @@ class Map:
 
         # The run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # The residue number.
         if type(res_num) != int:
-            raise UserArgIntError, ('residue number', res_num)
+            raise RelaxIntError, ('residue number', res_num)
 
         # Residue index.
         index = None
@@ -162,99 +162,99 @@ class Map:
                 index = i
                 break
         if index == None:
-            raise UserNoResError, res_num
+            raise RelaxNoResError, res_num
 
         # The number of parameters.
         n = len(self.relax.data.res[index].params[run])
 
         # Increment.
         if type(inc) != int:
-            raise UserArgIntError, ('increment', inc)
+            raise RelaxIntError, ('increment', inc)
         elif inc <= 1:
-            raise UserError, "The increment value needs to be greater than 1."
+            raise RelaxError, "The increment value needs to be greater than 1."
 
         # Lower bounds.
         if lower != None:
             if type(lower) != list:
-                raise UserArgListError, ('lower bounds', lower)
+                raise RelaxListError, ('lower bounds', lower)
             if len(lower) != n:
-                raise UserError, "The lower bounds argument must be of length " + `n` + "."
+                raise RelaxLenError, ('lower bounds', n)
             for i in range(n):
                 if type(lower[i]) != int and type(lower[i]) != float:
-                    raise UserArgListNumError, ('lower bounds', lower)
+                    raise RelaxListNumError, ('lower bounds', lower)
 
         # Upper bounds.
         if upper != None:
             if type(upper) != list:
-                raise UserArgListError, ('upper bounds', upper)
+                raise RelaxListError, ('upper bounds', upper)
             if len(upper) != n:
-                raise UserError, "The upper argument must be of length " + `n` + "."
+                raise RelaxLenError, ('upper bounds', n)
             for i in range(n):
                 if type(upper[i]) != int and type(upper[i]) != float:
-                    raise UserArgListNumError, ('upper bounds', upper)
+                    raise RelaxListNumError, ('upper bounds', upper)
 
         # Axes swapping.
         if swap != None:
             if type(swap) != list:
-                raise UserArgListError, ('axes swapping', swap)
+                raise RelaxListError, ('axes swapping', swap)
             if len(swap) != n:
-                raise UserError, "The swap argument must be of length " + `n` + "."
+                raise RelaxLenError, ('axes swapping', n)
             test = zeros(n)
             for i in range(n):
                 if type(swap[i]) != int:
-                    raise UserArgListIntError, ('axes swapping', swap)
+                    raise RelaxListIntError, ('axes swapping', swap)
                 if swap[i] >= n:
-                    raise UserError, "The integer " + `swap[i]` + " is greater than the final array element."
+                    raise RelaxError, "The integer " + `swap[i]` + " is greater than the final array element."
                 elif swap[i] < 0:
-                    raise UserError, "All integers of the swap argument must be positive."
+                    raise RelaxError, "All integers of the swap argument must be positive."
                 test[swap[i]] = 1
             for i in range(n):
                 if test[i] != 1:
-                    raise UserError, "The swap argument is invalid (possibly duplicated integer values)."
+                    raise RelaxError, "The swap argument is invalid (possibly duplicated integer values)."
 
         # File name.
         if type(file) != str:
-            raise UserArgStrError, ('file name', file)
+            raise RelaxStrError, ('file name', file)
 
         # Directory name.
         if dir == None:
             pass
         elif type(dir) != str:
-            raise UserArgNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError, ('directory name', dir)
 
         # Point.
         if point != None:
             if type(point) != list:
-                raise UserArgListError, ('point', point)
+                raise RelaxListError, ('point', point)
             elif len(point) != n:
-                raise UserError, "The point argument must be of length " + `n` + "."
+                raise RelaxLenError, ('point', n)
             elif type(point_file) != str:
-                raise UserArgStrError, ('point file name', point_file)
+                raise RelaxStrError, ('point file name', point_file)
             for i in range(n):
                 if type(point[i]) != int and type(point[i]) != float:
-                    raise UserArgListNumError, ('point', point)
+                    raise RelaxListNumError, ('point', point)
 
         # Remap function.
         if remap != None:
             if type(remap) is not FunctionType:
-                raise UserArgFunctionError, ('remap function', remap)
+                raise RelaxFunctionError, ('remap function', remap)
 
         # Axis labels.
         if labels != None:
             if type(labels) != list:
-                raise UserArgListError, ('axis labels', labels)
+                raise RelaxListError, ('axis labels', labels)
             elif len(labels) != n:
-                raise UserError, "The axis labels argument must be of length " + `n` + "."
+                raise RelaxLenError, ('axis labels', n)
             for i in range(n):
                 if type(labels[i]) != str:
-                    raise UserArgListStrError, ('axis labels', labels)
+                    raise RelaxListStrError, ('axis labels', labels)
 
         # Space type.
         if type(map_type) != str:
-            raise UserArgStrError, ('map type', map_type)
+            raise RelaxStrError, ('map type', map_type)
         if match("^[Ii]so3[Dd]", map_type):
             if n != 3:
-                raise UserError, "The 3D isosurface map requires a strictly 3 parameter model."
+                raise RelaxError, "The 3D isosurface map requires a strictly 3 parameter model."
             self.relax.map.Iso3D.map_space(run=run, res_num=res_num, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
         else:
-            raise UserError, "The map type '" + map_type + "' is not supported."
+            raise RelaxError, "The map type '" + map_type + "' is not supported."

@@ -61,11 +61,11 @@ class Delete:
 
         # The run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # Data_type.
         if type(file) != str:
-            raise UserArgStrError, ('file name', file)
+            raise RelaxStrError, ('file name', file)
 
         # Execute the functional code.
         self.relax.rw.write_data(run=run, file=file, dir=dir, force=force)

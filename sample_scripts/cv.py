@@ -16,7 +16,7 @@ for i in range(len(ri_labels)):
 read.sequence('noe.500.out')
 
 # Precalculated flag.
-precalc = 1
+precalc = 0
 
 
 print "\n\n\n\n"

@@ -68,38 +68,38 @@ class Diffusion_tensor:
 
         # The name of the run.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # Isotropic diffusion tensor parameters.
         if diff == 'iso':
             if type(params) != float:
-                raise UserError, "For isotropic diffusion the params argument " + `params` + " must be a floating point number."
+                raise RelaxFloatError, ('isotropic diffusion parameter', params)
 
         # Axially symmetric diffusion tensor parameters.
         elif diff == 'axial':
             if type(params) != list:
-                raise UserError, "For axially symmetric diffusion the params argument " + `params` + " must be an array."
+                raise RelaxListError, ('axially symmetric diffusion parameter', params)
             elif len(params) != 4:
-                raise UserError, "For axially symmetric diffusion the 'params' argument " + `params` + " must be an array of three elements."
+                raise RelaxLenError, ('axially symmetric diffusion parameter', 4)
             for i in range(len(params)):
                 if type(params[i]) != float:
-                    raise UserError, "The elements of the 'params' array must be floating point numbers."
+                    raise RelaxListFloatError, ('axially symmetric diffusion parameter', params)
 
         # Anisotropic diffusion tensor parameters.
         elif diff == 'aniso':
             if type(params) != list:
-                raise UserError, "For anisotropic diffusion the 'params' argument " + `params` + " must be an array."
+                raise RelaxListError, ('anisotropic diffusion parameter', params)
             elif len(params) != 6:
-                raise UserError, "For anisotropic diffusion the 'params' argument " + `params` + " must be an array of six elements."
+                raise RelaxLenError, ('anisotropic diffusion parameter', 6)
             for i in range(len(params)):
                 if type(params[i]) != float:
-                    raise UserError, "The elements of the 'params' array must be floating point numbers."
+                    raise RelaxListFloatError, ('anisotropic diffusion parameter', params)
 
         # Diffusion tensor argument.
         elif diff == None:
-            raise UserError, "No diffusion tensor given."
+            raise RelaxNoneError, 'diffusion tensor'
         else:
-            raise UserError, "The argument 'diff' must be one of 'iso', 'axial', or 'aniso'."
+            raise RelaxError, "The diffusion tensor argument " + `diff` + " must be one of 'iso', 'axial', or 'aniso'."
 
         # Execute the functional code.
         self.relax.diffusion_tensor.set(run=run, diff=diff, params=params)

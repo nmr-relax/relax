@@ -36,10 +36,10 @@ class Minimise:
         Arguments
         ~~~~~~~~~
 
-        The arguments are all strings which specify which minimiser to use as well as the
-        minimisation options.  At least one argument is required.  As this function calls the
-        generic minimisation function 'generic_minimise', to see the full list of allowed arguments
-        import the function and view its docstring by typing:
+        The arguments are all strings which specify the minimiser to use as well as its options.  A
+        minimum of one argument is required.  As this macro calls the function 'generic_minimise',
+        to see the full list of allowed arguments import 'generic_minimise' and view its docstring
+        by typing:
 
         relax> from minimise.generic import generic_minimise
         relax> help(generic_minimise)
@@ -118,9 +118,9 @@ class Minimise:
 
         # Minimization algorithm.
         if len(args) == 0:
-            raise UserError, "The minimisation algorithm has not been specified."
+            raise RelaxNoneError, 'minimisation algorithm'
         elif type(args[0]) != str:
-            raise UserArgStrError, ('minimisation algorithm', args[0])
+            raise RelaxStrError, ('minimisation algorithm', args[0])
         min_algor = args[0]
 
         # Minimization options.
@@ -134,36 +134,36 @@ class Minimise:
                 if key == valid_key:
                     valid = 1
             if not valid:
-                raise UserError, "The keyword " + `key` + " is invalid."
+                raise RelaxError, "The keyword " + `key` + " is invalid."
 
         # The run keyword.
         if run == None:
-            raise UserArgNoneError, 'run'
+            raise RelaxNoneError, 'run'
         elif type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # The function tolerance value.
         if func_tol != None and type(func_tol) != int and type(func_tol) != float:
-            raise UserArgNoneNumError, ('function tolerance', func_tol)
+            raise RelaxNoneNumError, ('function tolerance', func_tol)
 
         # The gradient tolerance value.
         if grad_tol != None and type(grad_tol) != int and type(grad_tol) != float:
-            raise UserArgNoneNumError, ('gradient tolerance', grad_tol)
+            raise RelaxNoneNumError, ('gradient tolerance', grad_tol)
 
         # The maximum number of iterations.
         if type(max_iterations) != int and type(max_iterations) != float:
-            raise UserArgNumError, ('maximum number of iterations', max_iterations)
+            raise RelaxNumError, ('maximum number of iterations', max_iterations)
 
         # Constraint flag.
-        if type(constraints) != int and constraints != 0 and constraints != 1:
-            raise UserArgBinError, ('constraint flag', constraints)
+        if type(constraints) != int or (constraints != 0 and constraints != 1):
+            raise RelaxBinError, ('constraint flag', constraints)
         elif constraints == 1:
             min_algor = 'Method of Multipliers'
             min_options = args
 
         # Print flag.
-        if type(print_flag) != int and print_flag != 0 and print_flag != 1:
-            raise UserArgBinError, ('print flag', print_flag)
+        if type(print_flag) != int or (print_flag != 0 and print_flag != 1):
+            raise RelaxBinError, ('print flag', print_flag)
 
         # Execute the functional code.
         self.relax.min.min(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

@@ -36,6 +36,10 @@ class Minimise:
     def calc(self, run=None):
         """Function for calculating the function value."""
 
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
             # Skip unselected residues.
@@ -61,6 +65,28 @@ class Minimise:
 
     def fixed(self, run=None, values=None, print_flag=1):
         """Function for fixing the initial parameter values."""
+
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
+        # Test the validity of the arguments.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # The number of parameters.
+            n = len(self.relax.data.res[i].params[run])
+
+            # Make sure that the length of the parameter array is > 0.
+            if n == 0:
+                raise RelaxError, "Cannot fix parameter values for a model with zero parameters."
+
+            # Values.
+            if values != None:
+                if len(values) != n:
+                    raise RelaxLenError, ('values', n)
 
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
@@ -98,6 +124,43 @@ class Minimise:
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=0, print_flag=1):
         """The grid search function."""
 
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
+        # Test the validity of the arguments.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # The number of parameters.
+            n = len(self.relax.data.res[i].params[run])
+
+            # Make sure that the length of the parameter array is > 0.
+            if n == 0:
+                raise RelaxError, "Cannot run a grid search on a model with zero parameters."
+
+            # Lower bounds.
+            if lower != None:
+                if len(lower) != n:
+                    raise RelaxLenError, ('lower bounds', n)
+
+            # Upper bounds.
+            if upper != None:
+                if len(upper) != n:
+                    raise RelaxLenError, ('upper bounds', n)
+
+            # Increment.
+            if type(inc) == list:
+                if len(inc) != n:
+                    raise RelaxLenError, ('increment', n)
+
+            print "hello"
+            print n
+            if lower:
+                print lower
+                print len(lower)
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
             # Skip unselected residues.
@@ -146,11 +209,19 @@ class Minimise:
     def min(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
         """Minimisation function."""
 
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
+
+            # Make sure that the length of the parameter array is > 0.
+            if len(self.relax.data.res[i].params[run]) == 0:
+                raise RelaxError, "Cannot minimise a model with zero parameters."
 
             # Equation type specific function setup.
             fns = self.relax.specific_setup.setup("minimise", self.relax.data.res[i].equations[run])

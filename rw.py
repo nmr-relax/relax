@@ -36,7 +36,7 @@ class RW:
 
         # Test if the sequence data has been read.
         if not len(self.relax.data.res):
-            raise UserError, "The sequence data has not been read."
+            raise RelaxSequenceError
 
         # Add the run to 'self.relax.data.runs'.
         if not run in self.relax.data.runs:
@@ -45,14 +45,14 @@ class RW:
         # Equation type specific function setup.
         self.read_results = self.relax.specific_setup.setup("read", data_type)
         if self.read_results == None:
-            raise UserError, "Read error, no function corresponding to the data type exists."
+            raise NameError, "Read error, no function corresponding to the data type exists."
 
         # The results file.
         if dir == None:
             dir = run
         file_name = dir + "/" + file
         if not access(file_name, F_OK):
-            raise UserError, "The file '" + file_name + "' does not exist."
+            raise RelaxFileError, ('relaxation data', file_name)
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
@@ -73,7 +73,7 @@ class RW:
 
         # Test if the run exists.
         if not run in self.relax.data.runs:
-            raise UserError, "The run '" + run + "' has not been created yet."
+            raise RelaxRunError, run
 
         # Directory creation.
         if dir == None:
@@ -92,7 +92,7 @@ class RW:
         # The results file.
         file_name = dir + "/" + file
         if access(file_name, F_OK) and not force:
-            raise UserError, "The file '" + file_name + "' already exists.  Set the force flag to 1 to overwrite."
+            raise RelaxFileOverwriteError, (file_name, 'force flag')
         results_file = open(file_name, 'w')
 
         # Write the header.

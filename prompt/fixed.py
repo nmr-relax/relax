@@ -73,19 +73,19 @@ class Fixed:
 
         # The run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
-        # User defined values.
+        # Relax defined values.
         if values != None:
             if type(values) != list:
-                raise UserArgListError, ('values', values)
+                raise RelaxListError, ('values', values)
             for i in range(len(values)):
                 if type(values[i]) != float and type(values[i]) != int:
-                    raise UserArgListIntError, ('values', values)
+                    raise RelaxListIntError, ('values', values)
 
         # The print flag.
         if type(print_flag) != int:
-            raise UserArgIntError, ('print_flag', print_flag)
+            raise RelaxIntError, ('print_flag', print_flag)
 
         # Execute the functional code.
         self.relax.min.fixed(run=run, values=values, print_flag=print_flag)

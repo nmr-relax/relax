@@ -36,7 +36,7 @@ class Value:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            raise UserError, "Sequence data has to be loaded first."
+            raise RelaxSequenceError
 
         # Add the run to the runs list.
         if not run in self.relax.data.runs:
@@ -51,7 +51,7 @@ class Value:
             # Bond length.
             if match('[Bb]ond[ -_][Ll]ength', data_type):
                 if hasattr(self.relax.data.res[i], 'r'):
-                    if self.relax.data.res[i].r.has_key('run'):
+                    if self.relax.data.res[i].r.has_key(run):
                         print "Warning: The bond length of residue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + " has already been specified."
                         continue
                 else:
@@ -66,7 +66,7 @@ class Value:
             # CSA.
             elif match('[Cc][Ss][Aa]', data_type):
                 if hasattr(self.relax.data.res[i], 'csa'):
-                    if self.relax.data.res[i].csa.has_key('run'):
+                    if self.relax.data.res[i].csa.has_key(run):
                         print "Warning: The CSA of residue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + " has already been specified."
                         continue
                 else:
@@ -80,4 +80,4 @@ class Value:
 
             # Bad type.
             else:
-                print "Warning: The type '" + type + "' is not supported."
+                raise RelaxError, "The data type " + `data_type` + " is not supported."

@@ -34,21 +34,58 @@ class Model_selection:
     def select(self, method=None, modsel_run=None, runs=None):
         """Model selection function."""
 
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res):
+            raise RelaxSequenceError
+
         # The runs argument.
         if runs == None:
             runs = self.relax.data.runs
         else:
+            if len(runs) == 0:
+                raise RelaxError, "The runs argument " + `runs` + " must be an array of length greater than zero."
             for run in runs:
                 if type(run) == list:
+                    if len(run) == 0:
+                        raise RelaxError, "The runs argument element " + `run` + " must be an array of length greater than zero."
                     for run2 in run:
                         if not run2 in self.relax.data.runs:
-                            raise UserError, "The run " + `run2` + " cannot be found."
+                            raise RelaxError, "The run " + `run2` + " cannot be found."
                 elif not run in self.relax.data.runs:
-                    raise UserError, "The run " + `run` + " cannot be found."
+                    raise RelaxError, "The run " + `run` + " cannot be found."
 
         # Test if the run 'modsel_run' does not already exist.
         if modsel_run in self.relax.data.runs:
-            raise UserError, "The run " + `modsel_run` + " already exists."
+            raise RelaxError, "The run " + `modsel_run` + " already exists."
+
+        # Test if each run has a valid parameter and chi-squared data structure.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Loop over the runs.
+            for run in runs:
+                if type(run) == list:
+                    for run2 in run:
+                        if not hasattr(self.relax.data.res[i], 'params'):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
+                        elif not self.relax.data.res[i].params.has_key(run2):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid parameter data structure."
+                        elif not hasattr(self.relax.data.res[i], 'chi2'):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
+                        elif not self.relax.data.res[i].chi2.has_key(run2):
+                            raise RelaxError, "The run " + `run2` + " does not have a valid chi-squared data structure."
+                else:
+                    if not hasattr(self.relax.data.res[i], 'params'):
+                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
+                    elif not self.relax.data.res[i].params.has_key(run):
+                        raise RelaxError, "The run " + `run` + " does not have a valid parameter data structure."
+                    elif not hasattr(self.relax.data.res[i], 'chi2'):
+                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
+                    elif not self.relax.data.res[i].chi2.has_key(run):
+                        raise RelaxError, "The run " + `run` + " does not have a valid chi-squared data structure."
+
 
         # Initialise.
         self.modsel_run = modsel_run
@@ -67,7 +104,7 @@ class Model_selection:
         elif method == 'CV':
             self.modsel = self.cv
         else:
-            raise UserError, "The model selection technique " + `method` + " is not currently supported."
+            raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
 
         # Add the new run name 'modsel_run' to self.relax.data.runs
         self.relax.data.runs.append(self.modsel_run)
@@ -196,7 +233,7 @@ class Model_selection:
 
         # Test if 'best_model' exists.
         if not best_model in self.relax.data.runs:
-            raise NameError, "The run " + `best_model` + " cannot be found."
+            raise RelaxError, "The run " + `best_model` + " cannot be found."
 
         # Loop over all the data in self.relax.data.res[i]
         for data in dir(self.relax.data.res[i]):

@@ -8,6 +8,8 @@ runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 
 # Loop over the run names.
 for run in runs:
+    print "\n\n# " + run + " #"
+
     # Load the relaxation data.
     read.rx_data(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
     read.rx_data(run, 'R2', '600', 600.0 * 1e6, 'r2.600.out')

@@ -74,7 +74,7 @@ class Macro_class:
 
         # File name.
         if type(file_name) != str:
-            raise UserArgStrError, ('file name', file_name)
+            raise RelaxStrError, ('file name', file_name)
 
         # Execute the functional code.
         self.relax.state.load(file_name=file_name)
@@ -116,11 +116,11 @@ class Macro_class:
 
         # File name.
         if type(file_name) != str:
-            raise UserArgStrError, ('file name', file_name)
+            raise RelaxStrError, ('file name', file_name)
 
         # The force flag.
         if type(force) != int or (force != 0 and force != 1):
-            raise UserArgBinError, ('force flag', force)
+            raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
         self.relax.state.save(file_name=file_name, force=force)

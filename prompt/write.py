@@ -64,21 +64,21 @@ class Write:
 
         # The run argument.
         if type(run) != str:
-            raise UserError, "The run argument " + `run` + " must be a string."
+            raise RelaxStrError, ('run', run)
 
         # File.
         if type(file) != str:
-            raise UserError, "The file name must be a string."
+            raise RelaxStrError, ('file name', file)
 
         # Directory.
         if dir == None:
             pass
         elif type(dir) != str:
-            raise UserError, "The directory name must be a string."
+            raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int and force != 0 and force != 1:
-            raise UserError, "The force flag should be the integer values of either 0 or 1."
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
         self.relax.rw.write_data(run=run, file=file, dir=dir, force=force)

@@ -49,7 +49,7 @@ class Calc:
 
         # The run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
         self.relax.min.calc(run=run)

@@ -52,5 +52,5 @@ def system(command):
     """Function which executes the user supplied shell command."""
 
     if not type(command) == str:
-        raise UserError, ('command', command)
+        raise RelaxStrError, ('command', command)
     stat = os.system(command)

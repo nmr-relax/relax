@@ -175,7 +175,9 @@ class Interpreter:
 
         # File argument.
         if file == None:
-            raise UserError, "No script file has been specified."
+            raise RelaxNoneError, 'file'
+        elif type(file) != str:
+            raise RelaxStrError, ('file', file)
 
         # Turn on the macro intro flag.
         self.intro = 1
@@ -290,7 +292,7 @@ def runcode(self, code):
         exec code in self.locals
     except SystemExit:
         raise
-    except AllUserErrors, instance:
+    except AllRelaxErrors, instance:
         self.write(instance.__str__())
         self.write("\n")
     except:
@@ -321,6 +323,6 @@ def script(script_file, local):
         execfile(script_file, local)
     except KeyboardInterrupt:
         sys.stdout.write("\nScript execution cancelled.\n")
-    except AllUserErrors, instance:
+    except AllRelaxErrors, instance:
         sys.stdout.write(instance.__str__())
     sys.stdout.write("\n")

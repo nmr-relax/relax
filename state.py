@@ -42,7 +42,7 @@ class State:
         try:
             file = open(file_name, 'r')
         except IOError:
-            raise UserError, "The save file " + `file_name` + " does not exist."
+            raise RelaxFileError, ('save', file_name)
 
         # Reinitialise self.relax.data
         self.relax.data = Data()
@@ -59,7 +59,7 @@ class State:
 
         # Open file for writing.
         if access(file_name, F_OK) and not force:
-            raise UserError, "The file " + `file_name` + " already exists.  Set the force flag to 1 to overwrite."
+            raise RelaxFileOverwriteError, (file_name, 'force flag')
         else:
             file = open(file_name, 'w')
 

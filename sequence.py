@@ -88,21 +88,25 @@ class Sequence:
 
         # The file name.
         if not file_name:
-            raise UserError, "No file is specified."
+            raise RelaxNoneError, 'file name'
         elif type(file_name) != str:
-            raise UserError, "The file name should be a string."
+            raise RelaxStrError, ('file name', file_name)
 
-        # The columns.
-        elif type(num_col) != int or type(name_col) != int:
-            raise UserError, "The residue number and name column arguments 'num_col' and 'name_col' should be integers."
+        # Number column.
+        elif type(num_col) != int:
+            raise RelaxIntError, ('residue number column', num_col)
+
+        # Name column.
+        elif type(name_col) != int:
+            raise RelaxIntError, ('residue name column', name_col)
 
         # Column separator.
         elif sep != None and type(sep) != str:
-            raise UserError, "The column separator argument 'sep' should be either a string or None."
+            raise RelaxNoneStrError, ('column separator', sep)
 
         # Header lines.
         elif type(header_lines) != int:
-            raise UserError, "The number of header lines argument 'header_lines' should be an integer."
+            raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
         self.read(file_name=file_name, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)
@@ -113,14 +117,10 @@ class Sequence:
 
         # Test if the sequence data has already been read.
         if len(self.relax.data.res):
-            raise UserError, "The sequence data has already been read."
+            raise RelaxError, "The sequence data has already been loaded."
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise UserError, "No sequence data read."
 
         # Remove the header.
         file_data = file_data[header_lines:]
@@ -128,27 +128,26 @@ class Sequence:
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
 
-        # Invalid data.
-        if len(file_data) == 0:
-            raise UserError, "There is no sequence data in the file " + `file_name`
+        # Do nothing if the file does not exist.
+        if not file_data:
+            raise RelaxFileEmptyError
+
+        # Test if the sequence data is valid.
+        for i in range(len(file_data)):
+            try:
+                int(file_data[i][num_col])
+            except ValueError:
+                raise RelaxError, "Sequence data is invalid."
 
         # Fill the array self.relax.data.res with data containers and place sequence data into the array.
         for i in range(len(file_data)):
             # Append a data container.
             self.relax.data.res.append(Residue())
 
-            # Get the data.
-            try:
-                num = int(file_data[i][num_col])
-                name = file_data[i][name_col]
-                label = file_data[i][num_col] + '_' + file_data[i][name_col]
-            except ValueError:
-                raise UserError, "Sequence data is invalid."
-
             # Insert the data.
-            self.relax.data.res[i].num = num
-            self.relax.data.res[i].name = name
-            self.relax.data.res[i].label = label
+            self.relax.data.res[i].num = int(file_data[i][num_col])
+            self.relax.data.res[i].name = file_data[i][name_col]
+            self.relax.data.res[i].label = file_data[i][num_col] + '_' + file_data[i][name_col]
             self.relax.data.res[i].select = 1
 
 

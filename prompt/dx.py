@@ -60,21 +60,21 @@ class OpenDX:
 
         # File name.
         if type(file) != str:
-            raise UserArgStrError, ('file name', file)
+            raise RelaxStrError, ('file name', file)
 
         # Directory name.
         if dir == None:
             pass
         elif type(dir) != str:
-            raise UserArgNoneStrError, ('file name', file)
+            raise RelaxNoneStrError, ('file name', file)
 
         # The OpenDX executable file.
         if type(dx_exec) != str:
-            raise UserArgStrError, ('OpenDX executable file name', dx_exec)
+            raise RelaxStrError, ('OpenDX executable file name', dx_exec)
 
         # Execute flag.
         if type(execute) != int or (execute != 0 and execute != 1):
-            raise UserArgBinError, ('execute flag', execute)
+            raise RelaxBinError, ('execute flag', execute)
 
         # Execute the functional code.
         self.relax.opendx.run(file=file, dir=dir, dx_exec=dx_exec, execute=execute)

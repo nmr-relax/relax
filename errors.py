@@ -1,114 +1,179 @@
 import __builtin__
+from re import match
+from types import ClassType
 
 
 class RelaxErrors:
     def __init__(self):
-        """Class for placing all the user errors below into __builtin__"""
+        """Class for placing all the errors below into __builtin__"""
 
-        # Place the exceptions into __builtin__
-        __builtin__.UserError = UserError
-        __builtin__.UserArgListError = UserArgListError
-        __builtin__.UserArgNoneError = UserArgNoneError
-        __builtin__.UserArgStrError = UserArgStrError
+        # Loop over all objects in 'self'.
+        for name in dir(self):
+            # Get the object.
+            object = getattr(self, name)
 
-        # Tuple of all the errors.
-        __builtin__.AllUserErrors = (UserError, UserArgListError, UserArgNoneError, UserArgStrError)
+            # Skip over all non error class objects.
+            if type(object) != ClassType or not match('Relax', name):
+                continue
 
+            # Place the exceptions into __builtin__
+            __builtin__.__setattr__(name, object)
 
-# Base class for the user errors.
-######################
-
-class BaseError(Exception):
-    def __str__(self):
-        return ("UserError: " + self.text + "\n")
-
-
-# Standard user error.
-######################
-
-class UserError(BaseError):
-    def __init__(self, text):
-        self.text = text
+            # Tuple of all the errors.
+            if hasattr(__builtin__, 'AllRelaxErrors'):
+                __builtin__.AllRelaxErrors = __builtin__.AllRelaxErrors, object
+            else:
+                __builtin__.AllRelaxErrors = object,
 
 
-# Argument errors.
-##################
+    # Base class for all errors.
+    ############################
 
-# Function.
-class UserArgFunctionError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be a function."
-
-# Integers 0 and 1.
-class UserArgBinError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be either the integers 0 or 1."
-
-# Integer.
-class UserArgIntError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be an integer."
-
-# Integer or list of integers.
-class UserArgIntListIntError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be either an integer or an array of integers."
-
-# List.
-class UserArgListError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be an array."
-
-# List of integers.
-class UserArgListIntError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be an array of integers."
-
-# List of numbers.
-class UserArgListNumError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be an array of numbers."
-
-# List of strings.
-class UserArgListStrError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be an array of strings."
-
-# None.
-class UserArgNoneError(BaseError):
-    def __init__(self, arg):
-        self.text = "The " + arg + " argument has not been supplied."
-
-# None or list.
-class UserArgNoneListError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be either an array or None."
-
-# None or number.
-class UserArgNoneNumError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be either a number or None."
-
-# None or string.
-class UserArgNoneStrError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be either a string or None."
-
-# String.
-class UserArgStrError(BaseError):
-    def __init__(self, arg, value):
-        self.text = "The " + arg + " argument " + `value` + " must be a string."
+    class BaseError(Exception):
+        def __str__(self):
+            return ("RelaxError: " + self.text + "\n")
 
 
-# Sequence errors.
-##################
+    # Standard errors.
+    ##################
 
-# No sequence loaded.
-class UserSequenceError(BaseError):
-    def __init__(self):
-        self.text = "Sequence data has not been loaded."
+    class RelaxError(BaseError):
+        def __init__(self, text):
+            self.text = text
 
-# Cannot find the residue in the sequence.
-class UserNoResError(BaseError):
-    def __init__(self, number):
-        self.text = "The residue " + `number` + " cannot be found in the sequence."
+
+    # Type errors.
+    ##############
+
+    # Binary - integers 0 and 1.
+    class RelaxBinError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be the integer 0 or 1."
+
+    # Float.
+    class RelaxFloatError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be a floating point number."
+
+    # Function.
+    class RelaxFunctionError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be a function."
+
+    # Integer.
+    class RelaxIntError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be an integer."
+
+    # Integer or list of integers.
+    class RelaxIntListIntError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be an integer or an array of integers."
+
+    # Length of the list.
+    class RelaxLenError(BaseError):
+        def __init__(self, name, len):
+            self.text = "The " + name + " argument must be of length " + `len` + "."
+
+    # List.
+    class RelaxListError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be an array."
+
+    # List of floating point numbers.
+    class RelaxListFloatError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be an array of floating point numbers."
+
+    # List of integers.
+    class RelaxListIntError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be an array of integers."
+
+    # List of numbers.
+    class RelaxListNumError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be an array of numbers."
+
+    # List of strings.
+    class RelaxListStrError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be an array of strings."
+
+    # None.
+    class RelaxNoneError(BaseError):
+        def __init__(self, name):
+            self.text = "The " + name + " argument has not been supplied."
+
+    # None or Float.
+    class RelaxNoneFloatError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be a floating point number or None."
+
+    # None or list.
+    class RelaxNoneListError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be an array or None."
+
+    # None or number.
+    class RelaxNoneNumError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be a number or None."
+
+    # None or string.
+    class RelaxNoneStrError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be a string or None."
+
+    # String.
+    class RelaxStrError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be a string."
+
+
+    # Sequence errors.
+    ##################
+
+    # No sequence loaded.
+    class RelaxSequenceError(BaseError):
+        def __init__(self):
+            self.text = "Sequence data has not been loaded."
+
+    # Cannot find the residue in the sequence.
+    class RelaxNoResError(BaseError):
+        def __init__(self, number, name=None):
+            if name == None:
+                self.text = "The residue " + `number` + " cannot be found in the sequence."
+            else:
+                self.text = "The residue " + `number` + " " + name + " cannot be found in the sequence."
+
+
+    # File errors.
+    ##############
+
+    # No file.
+    class RelaxFileError(BaseError):
+        def __init__(self, name, file_name):
+            if name == None:
+                self.text = "The file " + `file_name` + " does not exist."
+            else:
+                self.text = "The " + name + " file " + `file_name` + " does not exist."
+
+    # No data in file.
+    class RelaxFileEmptyError(BaseError):
+        def __init__(self):
+            self.text = "The file contains no data."
+
+    # Overwrite file.
+    class RelaxFileOverwriteError(BaseError):
+        def __init__(self, file_name, flag):
+            self.text = "The file " + `file_name` + " already exists.  Set the " + flag + " to 1 to overwrite."
+
+
+    # Run errors.
+    #############
+
+    # No run.
+    class RelaxRunError(BaseError):
+        def __init__(self, run):
+            self.text = "The run " + `run` + " does not exist."

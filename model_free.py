@@ -64,15 +64,16 @@ class Model_free:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            raise UserSequenceError
+            raise RelaxSequenceError
+
+        # Check the validity of the model-free equation type.
+        valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
+        if not equation in valid_types:
+            raise RelaxError, "The model-free equation type argument " + `equation` + " is invalid and should be one of " + `valid_types` + "."
 
         # Check the validity of the parameter array.
         s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
         for i in range(len(params)):
-            # Check if the parameter is a string.
-            if type(params[i]) != str:
-                raise UserArgStrError, ('params[i]', `params[i]`)
-
             # Invalid parameter flag.
             invalid_param = 0
 
@@ -170,11 +171,11 @@ class Model_free:
 
             # Unknown parameter.
             else:
-                raise UserError, "The parameter " + params[i] + " is not supported."
+                raise RelaxError, "The parameter " + params[i] + " is not supported."
 
             # The invalid parameter flag is set.
             if invalid_param:
-                raise UserError, "The parameter array " + `params` + " contains an invalid parameter or combination of parameters."
+                raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
 
         # Update the data structures.
         self.data_update(run, model, equation, params, scaling)
@@ -699,27 +700,30 @@ class Model_free:
 
         # Run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # Model argument.
         if type(model) != str:
-            raise UserArgStrError, ('model', model)
+            raise RelaxStrError, ('model', model)
 
         # Equation.
-        elif equation == None:
-            raise UserArgNoneError, 'model-free equation'
+        if equation == None:
+            raise RelaxNoneError, 'model-free equation'
         elif type(equation) != str:
-            raise UserArgStrError, ('model-free equation', equation)
+            raise RelaxStrError, ('model-free equation', equation)
 
         # Parameter types.
-        elif params == None:
-            raise UserArgNoneError, 'parameter types'
+        if params == None:
+            raise RelaxNoneError, 'parameter types'
         elif type(params) != list:
-            raise UserArgListError, ('parameter types', params)
+            raise RelaxListError, ('parameter types', params)
+        for i in range(len(params)):
+            if type(params[i]) != str:
+                raise RelaxListStrError, ('parameter types', params)
 
         # Scaling.
-        elif type(scaling) != int or (scaling != 0 and scaling != 1):
-            raise UserArgBinError, ('scaling', scaling)
+        if type(scaling) != int or (scaling != 0 and scaling != 1):
+            raise RelaxBinError, ('scaling', scaling)
 
         # Execute the functional code.
         self.create(run=run, model=model, equation=equation, params=params, scaling=scaling)
@@ -872,15 +876,15 @@ class Model_free:
 
         # Run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # Model argument.
         elif type(model) != str:
-            raise UserArgStrError, ('model', model)
+            raise RelaxStrError, ('model', model)
 
         # Scaling.
         if type(scaling) != int or (scaling != 0 and scaling != 1):
-            raise UserArgBinError, ('scaling', scaling)
+            raise RelaxBinError, ('scaling', scaling)
 
         # Execute the functional code.
         self.select(run=run, model=model, scaling=scaling)
@@ -1344,7 +1348,7 @@ class Model_free:
 
         # Test if sequence data is loaded.
         if not len(self.relax.data.res):
-            raise UserSequenceError
+            raise RelaxSequenceError
 
 
         # Preset models.
@@ -1612,7 +1616,7 @@ class Model_free:
 
         # Invalid models.
         else:
-            raise UserError, "The model '" + model + "' is invalid."
+            raise RelaxError, "The model '" + model + "' is invalid."
 
         # Update the data structures.
         self.data_update(run, model, equation, params, scaling)

@@ -62,11 +62,11 @@ class Macro_class(Select_res):
 
         # Arguments
         if not type:
-            raise UserArgNoneError, 'data type'
+            raise RelaxNoneError, 'data type'
         else:
             self.type = type
         if not file_name:
-            raise UserArgNoneError, 'file name'
+            raise RelaxNoneError, 'file name'
         else:
             self.file_name = file_name
         self.num_col = num_col
@@ -79,7 +79,7 @@ class Macro_class(Select_res):
         try:
             self.relax.data.res
         except AttributeError:
-            raise UserSequenceError
+            raise RelaxSequenceError
 
         # Initialise the type specific data.
         if not self.init_data():
@@ -90,7 +90,7 @@ class Macro_class(Select_res):
 
         # Do nothing if the file does not exist.
         if not file_data:
-            raise UserError, "No sequence data loaded."
+            raise RelaxError, "No sequence data loaded."
 
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
@@ -140,25 +140,24 @@ class Macro_class(Select_res):
 
         # The run name.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # Data type.
         elif data_type == None:
-            raise UserArgNoneError, ('data type', data_type)
+            raise RelaxNoneError, 'data type'
         elif type(data_type) != str:
-            raise UserArgStrError, ('data type', data_type)
+            raise RelaxStrError, ('data type', data_type)
 
         # Value.
         elif val == None:
-            raise UserArgNoneError, ('value', data_type)
-            raise UserError, "No value has been given."
+            raise RelaxNoneError, 'value'
         elif type(val) != float:
-            raise UserError, "The value argument must be a floating point number."
+            raise RelaxFloatError, ('value', val)
 
         # Error.
         elif err != None:
             if type(err) != float:
-                raise UserError, "The error argument must either be None or be a floating point number."
+                raise RelaxNoneFloatError, ('error', err)
 
         # Execute the functional code.
         self.relax.value.set(run=run, data_type=data_type, val=val, err=err)

@@ -94,27 +94,27 @@ class Modsel:
 
         # Method.
         if type(method) != str:
-            raise UserArgStrError, ('model selection method', method)
+            raise RelaxStrError, ('model selection method', method)
 
         # New run modsel_run.
         if modsel_run == None:
-            raise UserArgNoneError, 'modsel_run'
+            raise RelaxNoneError, 'modsel_run'
         elif type(modsel_run) != str:
-            raise UserArgStrError, ('modsel_run' modsel_run)
+            raise RelaxStrError, ('modsel_run', modsel_run)
 
         # Runs.
         if runs == None:
             pass
         elif type(runs) != list:
-            raise UserArgNoneListError, ('runs', runs)
+            raise RelaxNoneListError, ('runs', runs)
         else:
             for name in runs:
                 if type(name) == list:
                     for name2 in name:
                         if type(name2) != str:
-                            raise UserError, "The elements of the second dimension of the runs argument must be strings."
+                            raise RelaxError, "The elements of the second dimension of the runs argument must be strings."
                 elif type(name) != str:
-                    raise UserError, "The elements of the first dimension of the runs argument must be either strings or arrays."
+                    raise RelaxError, "The elements of the first dimension of the runs argument must be either strings or arrays."
 
         # Execute the functional code.
         self.relax.model_selection.select(method=method, modsel_run=modsel_run, runs=runs)

@@ -69,46 +69,45 @@ class Grid:
 
         # The run argument.
         if type(run) != str:
-            raise UserArgStrError, ('run', run)
+            raise RelaxStrError, ('run', run)
 
         # The lower bounds.
         if lower == None:
             pass
         elif type(lower) != list:
-            raise UserArgListError, ('lower bounds', lower)
+            raise RelaxListError, ('lower bounds', lower)
         else:
             for i in range(len(lower)):
                 if type(lower[i]) != float and type(lower[i]) != int:
-                    raise UserArgListNumError, ('lower bounds', lower)
+                    raise RelaxListNumError, ('lower bounds', lower)
 
         # The upper bounds.
         if upper == None:
             pass
         elif type(upper) != list:
-            raise UserArgListError, ('upper bounds', upper)
+            raise RelaxListError, ('upper bounds', upper)
         else:
             for i in range(len(upper)):
                 if type(upper[i]) != float and type(upper[i]) != int:
-                    raise UserArgListNumError, ('upper bounds', upper)
+                    raise RelaxListNumError, ('upper bounds', upper)
 
         # The incrementation value.
-        bad_arg = 0
-        if type(inc) != int and type(inc) != list:
-            bad_arg = 1
-        if type(inc) == list:
+        if type(inc) == int:
+            pass
+        elif type(inc) == list:
             for i in range(len(inc)):
                 if type(inc[i]) != int:
-                    bad_arg = 1
-        if bad_arg:
-            raise UserArgIntListIntError, ('incrementation value', inc)
+                    raise RelaxIntListIntError, ('incrementation value', inc)
+        else:
+            raise RelaxIntListIntError, ('incrementation value', inc)
 
         # Constraint flag.
         if type(constraints) != int or (constraints != 0 and constraints != 1):
-            raise UserArgBinError, ('constraint flag', constraints)
+            raise RelaxBinError, ('constraint flag', constraints)
 
         # The print flag.
         if type(print_flag) != int:
-            raise UserArgIntError, ('print flag', print_flag)
+            raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
         self.relax.min.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
