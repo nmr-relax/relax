@@ -1,4 +1,4 @@
-from Numeric import Float64, copy, zeros
+from Numeric import copy
 
 class Ri:
 	def __init__(self):
@@ -40,23 +40,17 @@ class Ri:
 		# Calculate the transformed relaxation values.
 		self.Ri_prime()
 
-		# Initialise the relaxation array.
+		# Initialise the relaxation values.
 		self.data.ri = copy.deepcopy(self.data.ri_prime)
 
-		# Loop over the relaxation values.
+		# Calculate the NOE values.
 		for i in range(self.mf.data.num_ri):
 			if self.mf.data.data_types[i] == 'NOE':
-				self.data.ri[i] = self.calc_noe(i)
+				if self.mf.data.noe_r1_table[i] == None:
+					raise NameError, "Incomplete code, need to somehow calculate the r1 value."
 
+				if self.data.ri_prime[self.mf.data.noe_r1_table[i]] == 0:
+					self.data.ri[i] = 1e99
+				else:
+					self.data.ri[i] = 1.0 + (self.mf.data.gh/self.mf.data.gx) * (self.data.ri_prime[i] / self.data.ri_prime[self.mf.data.noe_r1_table[i]])
 
-	def calc_noe(self, i):
-		"Calculate the NOE value."
-
-		if self.mf.data.noe_r1_table[i] == None:
-			raise NameError, "Incomplete code, need to somehow calculate the r1 value."
-
-		if self.data.ri_prime[self.mf.data.noe_r1_table[i]] == 0:
-			noe = 1e99
-		else:
-			noe = 1.0 + (self.mf.data.gh/self.mf.data.gx) * (self.data.ri_prime[i] / self.data.ri_prime[self.mf.data.noe_r1_table[i]])
-		return noe

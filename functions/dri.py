@@ -1,4 +1,4 @@
-from Numeric import Float64, copy, zeros
+from Numeric import copy
 
 class dRi:
 	def __init__(self):
@@ -43,27 +43,22 @@ class dRi:
 
 		"""
 
-		# Calculate the transformed relaxation gradients.
+		# Calculate the transformed relaxation gradients (the transformed relaxation values have been previously calculated by the dChi2 function).
 		self.dRi_prime()
 
-		# Initialise the relaxation gradients.
+		# Copy the relaxation gradients from self.data.dri_prime
 		self.data.dri = copy.deepcopy(self.data.dri_prime)
 
-		# Loop over the relaxation values.
+		# Loop over the relaxation values and modify the NOE .
 		for i in range(self.mf.data.num_ri):
-			for param in range(len(self.data.ri_param_types)):
-				if self.mf.data.data_types[i] == 'NOE':
-					self.data.dri[i] = self.calc_dnoe_dmf(i, param)
+			if self.mf.data.data_types[i] == 'NOE':
+				for param in range(len(self.data.ri_param_types)):
+					if self.mf.data.noe_r1_table[i] == None:
+						raise NameError, "Incomplete code, need to somehow calculate the r1 value."
 
+					r1 = self.data.ri_prime[self.mf.data.noe_r1_table[i]]
 
-	def calc_dnoe_dmf(self, i):
-		"Calculate the derivative of the NOE value."
-
-		if self.mf.data.noe_r1_table[i] == None:
-			raise NameError, "Incomplete code, need to somehow calculate the r1 value."
-
-		if self.data.ri_prime[self.mf.data.noe_r1_table[i]] == 0.0:
-			dnoe = 1e99
-		else:
-			dnoe = (self.mf.data.gh/self.mf.data.gx) * (1.0 / self.data.ri_prime[self.mf.data.noe_r1_table[i]]**2) * (self.data.ri_prime[self.mf.data.noe_r1_table[i]] * self.data.dri_prime[i] - self.data.ri_prime[i] * self.data.dri[self.mf.data.noe_r1_table[i], param])
-		return dnoe
+					if r1 == 0.0:
+						self.data.dri[i, param] = 1e99
+					else:
+						self.data.dri[i, param] = (self.mf.data.gh/self.mf.data.gx) * (1.0 / r1**2) * (r1 * self.data.dri_prime[i, param] - self.data.ri_prime[i] * self.data.dri_prime[self.mf.data.noe_r1_table[i], param])

@@ -1,22 +1,22 @@
-from chi2_mf import chi2
-from dchi2_mf import dchi2
-from d2chi2_mf import d2chi2
+from chi2 import chi2
+from dchi2 import dchi2
+from d2chi2 import d2chi2
+
+from ri import Ri
+from dri import dRi
+from d2ri import d2Ri
+
+from ri_prime import Ri_prime
+from dri_prime import dRi_prime
+from d2ri_prime import d2Ri_prime
 
 from jw_mf import Jw
 from djw_mf import dJw
 from d2jw_mf import d2Jw
 
-from ri_mf import Ri
-from dri_mf import dRi
-from d2ri_mf import d2Ri
-
-from ri_prime_mf import Ri_prime
-from dri_prime_mf import dRi_prime
-from d2ri_prime_mf import d2Ri_prime
-
 from temp_mf_data import data
 
-class mf_functions(chi2, dchi2, d2chi2, Jw, dJw, d2Jw, Ri, dRi, d2Ri, Ri_prime, dRi_prime, d2Ri_prime):
+class mf_functions(chi2, dchi2, d2chi2, Ri, dRi, d2Ri, Ri_prime, dRi_prime, d2Ri_prime, Jw, dJw, d2Jw):
 	def __init__(self, mf):
 		"""Class used to store all the model-free function classes.
 

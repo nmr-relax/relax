@@ -6,42 +6,110 @@ from re import match
 
 class dRi_prime:
 	def __init__(self):
-		"Function for the calculation of the relaxation gradient matrix."
+		"Function for the calculation of the transformed relaxation gradient."
 
 
 	def dRi_prime(self):
-		"""Function for the calculation of the relaxation gradient matrix.
+		"""Function for the calculation of the transformed relaxation gradient.
 
-		The relaxation gradient
-		~~~~~~~~~~~~~~~~~~~~~~~
+		The transformed relaxation gradient
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Data structure:  self.data.dri
-		Dimension:  2D, (relaxation data, model-free parameters)
+		Data structure:  self.data.dri_prime
+		Dimension:  2D, (transformed relaxation data, model-free parameters)
 		Type:  Numeric matrix, Float64
-		Dependencies:  self.data.ri, self.data.jw, self.data.djw
-		Required by:  self.data.dchi2, self.data.d2chi2, self.data.d2ri
+		Dependencies:  self.data.jw, self.data.djw
+		Required by:  self.data.dri, self.data.d2ri
 		Stored:  Yes
 
 
 		Formulae
 		~~~~~~~~
 
+		Components
+		~~~~~~~~~~
+
+			Dipolar
+			~~~~~~~
+				      1   / mu0  \ 2  (gH.gN.h_bar)**2
+				d  =  - . | ---- |  . ----------------
+				      4   \ 4.pi /         <r**6>
+
+
+				         3   / mu0  \ 2  (gH.gN.h_bar)**2
+				d'  =  - - . | ---- |  . ----------------
+				         2   \ 4.pi /         <r**7>
+
+
+			CSA
+			~~~
+				      (wN.csa)**2
+				c  =  -----------
+				           3
+
+				       2.wN**2.csa
+				c'  =  -----------
+				            3
+
+
+			R1()
+			~~~~
+				J_R1_d  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
+
+				                 dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
+				J_R1_d_prime  =  ---------  +  3 . ------  +  6 . ---------
+				                    dmf             dmf              dmf
+
+
+				J_R1_c  =  J(wN)
+
+				                 dJ(wN)
+				J_R1_c_prime  =  ------
+				                  dmf
+
+
+
+			R2()
+			~~~~
+				J_R2_d  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
+
+				                     dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
+				J_R2_d_prime  =  4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . ---------
+				                      dmf         dmf             dmf            dmf             dmf
+
+
+				J_R2_c  =  4J(0) + 3J(wN)
+
+				                     dJ(0)         dJ(wN)
+				J_R2_c_prime  =  4 . -----  +  3 . ------
+				                      dmf           dmf
+
+
+			sigma_noe()
+			~~~~~~~~~~~
+				J_sigma_noe  =  6J(wH+wN) - J(wH-wN)
+
+				                          dJ(wH+wN)     dJ(wH-wN)
+				J_sigma_noe_prime  =  6 . ---------  -  ---------
+				                             dmf           dmf
+
+
 		Model-free parameter
 		~~~~~~~~~~~~~~~~~~~~
 
-			dR1()         / dJ(wH-wN)         dJ(wN)         dJ(wH+wN) \        / dJ(wN) \ 
-			-----  =  d . | ---------  +  3 . ------  +  6 . --------- |  + c . | ------ |
-			 dmf          \    dmf             dmf              dmf    /        \  dmf   /
+			dR1()
+			-----  =  d . J_R1_d_prime  +  c . J_R1_c_prime
+			 dmf
 
 
-			dR2()     d   /     dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN) \     c   /     dJ(0)         dJ(wN) \ 
-			-----  =  - . | 4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . --------- |  +  - . | 4 . -----  +  3 . ------ |
-			 dmf      2   \      dmf         dmf             dmf            dmf             dmf     /     6   \      dmf           dmf   /
+			dR2()     d                    c
+			-----  =  - . J_R2_d_prime  +  - . J_R2_c_prime
+			 dmf      2                    6
 
 
-			dNOE()         d      gH   /                          dR1()     /     dJ(wH+wN)     dJ(wH-wN) \        \ 
-			------  = - ------- . -- . | [6J(wH+wN) - J(wH-wN)] . -----  -  | 6 . ---------  -  --------- | . R1() |
-			 dmf        R1()**2   gN   \                           dmf      \        dmf           dmf    /        /
+			dsigma_noe()
+			------------  = d . J_sigma_noe_prime
+			    dmf
 
 
 		Chemical exchange
@@ -62,70 +130,46 @@ class dRi_prime:
 			drhoex
 
 
-			dNOE()
-			------  =  0
-			 dRex
+			dsigma_noe()
+			------------  =  0
+			   dRex
+
 
 		CSA
 		~~~
 
 			dR1()
-			-----  =  c' . J(wN)
+			-----  =  c' . J_R1_c
 			dcsa
 
 
 			dR2()     c'
-			-----  =  - . [4J(0) + 3J(wN)]
+			-----  =  - . J_R2_c
 			dcsa      6
 
 
-			dNOE()          d      gH                            dR1()
-			------  =  - ------- . -- . [6J(wH+wN) - J(wH-wN)] . -----
-			 dcsa         R1()**2   gN                            dcsa
+			dsigma_noe()
+			------------  =  0
+			    dcsa
 
 
 		Bond length
 		~~~~~~~~~~~
 
 			dR1()
-			-----  =  d' . [J(wH-wN) + 3J(wN) + 6J(wH+wN)]
+			-----  =  d' . J_R1_d
 			 dr
 
 
 			dR2()     d'
-			-----  =  - . [4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)]
+			-----  =  - . J_R2_d
 			 dr       2
 
 
-			dNOE()     gH      1      /                   dR1() \ 
-			------  =  -- . ------- . | d' . R1()  -  d . ----- | . [6J(wH+wN) - J(wH-wN)]
-			  dr       gN   R1()**2   \                    dr   /
+			dsigma_noe()
+			------------  =  d' . J_sigma_noe
+			     dr
 
-
-		Constants
-		~~~~~~~~~
-			      1   / mu0    gH.gN.h_bar \ 2
-			d  =  - . | ---- . ----------- |
-			      4   \ 4.pi     <r**3>    /
-
-
-			         3   / mu0  \ 2  (gH.gN.h_bar)**2
-			d'  =  - - . | ---- |  . ----------------
-			         2   \ 4.pi /         <r**7>
-
-
-			      (wN.csa)**2
-			c  =  -----------
-			           3
-
-
-			       2.wN**2.csa
-			c'  =  -----------
-			            3
-
-
-		It is assumed that this function is being called by the dchi2 function, and that the relaxation array and spectral density matrix
-		have been previously calculated!
 		"""
 
 		# Debugging code.
