@@ -2,16 +2,15 @@ from LinearAlgebra import inverse
 from Numeric import matrixmultiply
 
 
-def setup(func, dfunc, d2func, f_args, df_args, d2f_args, xk, fk, dfk, d2fk, args, print_flag):
+def init_data(func, dfunc, d2func, args, x0):
 	"Setup values for Newton minimisation."
 
-	if print_flag:
-		print "\n\n<<< Newton minimisation >>>"
-
 	# The initial Newton function value, gradient vector, and hessian matrix.
-	fk = apply(func, (xk,)+f_args)
-	dfk = apply(dfunc, (xk,)+df_args)
-	d2fk = apply(d2func, (xk,)+d2f_args)
+	f0 = apply(func, (x0,)+args)
+	df0 = apply(dfunc, (x0,)+args)
+	d2f0 = apply(d2func, (x0,)+args)
+
+	return f0, df0, d2f0
 
 
 def dir(dfk, d2fk):

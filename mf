@@ -84,6 +84,7 @@ class mf:
 			self.common_ops = common_ops(self)
 			self.common_ops.update_data()
 			self.file_ops = file_ops(self)
+			self.minimise = minimise
 			self.modsel.asymptotic = asymptotic(self)
 			self.modsel.bootstrap = bootstrap(self)
 			self.modsel.cv = cv(self)
@@ -91,7 +92,6 @@ class mf:
 			self.modsel.farrow = farrow(self)
 			self.modsel.palmer = palmer(self)
 			self.modsel.overall_disc = overall_disc(self)
-			self.minimise = minimise()
 			main_model_free(self)
 
 		if match(self.usr_param.program_type, 'palmer'):

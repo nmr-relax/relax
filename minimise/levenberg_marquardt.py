@@ -117,9 +117,9 @@ def levenberg_marquardt(chi2_func, dchi2_func, dfunc, params, errors, args=(), t
 		minimise_num = minimise_num + 1
 
 	if full_output:
-		return (params, chi2, minimise_num, warning_flag)
+		return params, chi2, minimise_num, warning_flag
 	else:
-		return (params, chi2)
+		return params, chi2
 
 
 def create_lm_matrix(n, errors, df, l):

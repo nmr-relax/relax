@@ -29,7 +29,7 @@ def grid(func, grid_ops, args=(), print_flag=0):
 
 	# Initialise data structures.
 	num_params = len(grid_ops)
-	total_steps = 1.0
+	total_steps = 1
 	step_num = ones((num_params))
 	step_size = zeros((num_params), Float64)
 	params = zeros((num_params), Float64)
@@ -90,4 +90,4 @@ def grid(func, grid_ops, args=(), print_flag=0):
 			print "%-20s%-20s" % ("Min params:", `min_params`)
 			print "%-20s%-20g\n" % ("Min f:", f_min)
 
-	return min_params, f_min
+	return min_params, f_min, total_steps

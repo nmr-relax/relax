@@ -1,19 +1,15 @@
 from Numeric import Float64, dot, identity, matrixmultiply, outerproduct
 
 
-def setup(func, dfunc, d2func, f_args, df_args, d2f_args, xk, fk, dfk, d2fk, xk_new, fk_new, dfk_new, d2fk_new, args, print_flag):
+def init_data(func, dfunc, d2func, args, x0):
 	"Setup values for BFGS minimisation."
 
-	if print_flag:
-		print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-
 	# The initial BFGS function value, gradient vector, and BFGS approximation to the inverse hessian matrix.
-	fk = apply(func, (xk,)+f_args)
-	dfk = apply(dfunc, (xk,)+df_args)
-	d2fk = identity(len(xk), Float64)
+	f0 = apply(func, (x0,)+args)
+	df0 = apply(dfunc, (x0,)+args)
+	d2f0 = identity(len(x0), Float64)
 
-	d2func = matrix_update
-	d2f_args = (dfk, d2fk, xk_new, dfk_new)
+	return f0, df0, d2f0
 
 
 def dir(dfk, Hk):
@@ -22,22 +18,23 @@ def dir(dfk, Hk):
 	return -matrixmultiply(Hk, dfk)
 
 
-def matrix_update(xk, dfk, Hk, xk_new, dfk_new):
+def matrix_update(xk_new, xk, dfk_new, dfk, Hk):
 	"BFGS matrix update."
 
 	sk = xk_new - xk
 	yk = dfk_new - dfk
 	if dot(yk, sk) == 0:
 		raise NameError, "The BFGS matrix is indefinite.  This should not occur."
-		#if full_output:
-		#	return xk_new, fk_new, k+1, 2
-		#else:
-		#	return xk_new
 
 	rk = 1.0 / dot(yk, sk)
 
+	I = identity(len(xk), Float64)
 	a = I - rk*outerproduct(sk, yk)
 	b = I - rk*outerproduct(yk, sk)
 	c = rk*outerproduct(sk, sk)
 	Hk_new = matrixmultiply(matrixmultiply(a, Hk), b) + c
 	return Hk_new
+
+
+def refresh_d2f_args(xk_last, xk, fk_last, fk, dfk_last, dfk, d2fk_last):
+	return xk_last, dfk, dfk_last, d2fk_last
