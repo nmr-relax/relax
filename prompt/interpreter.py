@@ -41,7 +41,6 @@ from tab_completion import Tab_completion
 from angles import Angles
 from create_run import Create_run
 from delete import Delete
-from diffusion_tensor import Diffusion_tensor
 from dx import OpenDX
 from fix import Fix
 from gpl import GPL
@@ -55,6 +54,7 @@ from vectors import Vectors
 from write import Write
 
 # User classes.
+from diffusion_tensor import Diffusion_tensor
 from echo_data import Echo_data
 from format import Format
 from model_free import Model_free
@@ -95,7 +95,6 @@ class Interpreter:
         self._Angles = Angles(relax)
         self._Create_run = Create_run(relax)
         self._Delete = Delete(relax)
-        self._Diffusion_tensor = Diffusion_tensor(relax)
         self._Fix = Fix(relax)
         self._GPL = GPL
         self._Init_data = Init_data(relax)
@@ -110,6 +109,7 @@ class Interpreter:
         self._Write = Write(relax)
 
         # Place the user classes into the interpreter class namespace.
+        self._Diffusion_tensor = Diffusion_tensor(relax)
         self._Echo_data = Echo_data(relax)
         self._Format = Format(relax)
         self._Model_free = Model_free(relax)
@@ -153,7 +153,6 @@ class Interpreter:
         calc = self._Minimisation.calc
         create_run = self._Create_run.create
         delete = self._Delete.delete
-        diffusion_tensor = self._Diffusion_tensor.diffusion_tensor
         dx = self._OpenDX.dx
         fix = self._Fix.fix
         grid_search = self._Minimisation.grid_search
@@ -167,6 +166,7 @@ class Interpreter:
         write = self._Write.write
 
         # Place the user classes in the local namespace.
+        diffusion_tensor = self._Diffusion_tensor
         echo_data = self._Echo_data
         format = self._Format
         palmer = self._Palmer

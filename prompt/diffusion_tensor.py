@@ -22,15 +22,23 @@
 
 import sys
 
+import help
+
 
 class Diffusion_tensor:
     def __init__(self, relax):
-        """Class containing the function for setting up the diffusion tensor."""
+        # Help.
+        self.__relax_help__ = \
+        """Class for manipulating the diffusion tensor."""
 
-        self.relax = relax
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
+
+        # Place relax in the class namespace.
+        self.__relax__ = relax
 
 
-    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1, scaling=1):
+    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1, scaling=1):
         """Function for setting up the diffusion tensor.
 
         Keyword Arguments

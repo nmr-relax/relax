@@ -27,8 +27,8 @@ for run in runs:
     relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
     # Setup other values.
-    #diffusion_tensor(run, 1e-8, fixed=0)
-    #diffusion_tensor(run, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
+    #diffusion_tensor.set(run, 1e-8, fixed=0)
+    #diffusion_tensor.set(run, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
     value.set(run, 1.02 * 1e-10, 'bond_length')
     value.set(run, -160 * 1e-6, 'csa')
 

@@ -39,7 +39,7 @@ def exec_stage_1(runs):
         relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
         # Setup other values.
-        diffusion_tensor(run, 1e-8)
+        diffusion_tensor.set(run, 1e-8)
         value.set(run, 1.02 * 1e-10, 'bond_length')
         value.set(run, -170 * 1e-6, 'csa')
 
