@@ -1,5 +1,6 @@
 import sys
 from math import pi
+from Numeric import Float64, zeros
 from re import match
 
 
@@ -81,9 +82,9 @@ class jw:
 		self.initialise_mf_values()
 
 		last_frq = 0.0
-		self.jw = []
+		self.jw = zeros((self.mf.data.num_frq,5), Float64)
 		if self.derivative_flag == 1:
-			self.djw = []
+			self.djw = zeros((self.mf.data.num_frq, len(self.mf_values), 5), Float64)
 			# Initialise an array with the model-free parameter labels.
 			if match('m1', self.options[2]):
 				self.param_types = ['S2']
@@ -99,18 +100,85 @@ class jw:
 				raise NameError, "Should not be here."
 
 		# Loop over the relaxation values.
-		for i in range(self.mf.data.num_ri):
-			if self.mf.data.frq[self.mf.data.remap_table[i]] != last_frq:
-				jw = []
-				for frq_index in range(5):
+		for i in range(self.mf.data.num_frq):
+			# Isotropic rotational diffusion.
+			if match(self.options[0], 'iso'):
+				if match('m[13]', self.options[2]):
+					self.jw[i, 0] = self.calc_jw_iso_m13(i, 0)
+					self.jw[i, 1] = self.calc_jw_iso_m13(i, 1)
+					self.jw[i, 2] = self.calc_jw_iso_m13(i, 2)
+					self.jw[i, 3] = self.calc_jw_iso_m13(i, 3)
+					self.jw[i, 4] = self.calc_jw_iso_m13(i, 4)
+				elif match('m[24]', self.options[2]):
+					self.jw[i, 0] = self.calc_jw_iso_m24(i, 0)
+					self.jw[i, 1] = self.calc_jw_iso_m24(i, 1)
+					self.jw[i, 2] = self.calc_jw_iso_m24(i, 2)
+					self.jw[i, 3] = self.calc_jw_iso_m24(i, 3)
+					self.jw[i, 4] = self.calc_jw_iso_m24(i, 4)
+				elif match('m5', self.options[2]):
+					self.jw[i, 0] = self.calc_jw_iso_m5(i, 0)
+					self.jw[i, 1] = self.calc_jw_iso_m5(i, 1)
+					self.jw[i, 2] = self.calc_jw_iso_m5(i, 2)
+					self.jw[i, 3] = self.calc_jw_iso_m5(i, 3)
+					self.jw[i, 4] = self.calc_jw_iso_m5(i, 4)
+
+			# Axially symmetric rotational diffusion.
+			elif match(self.options[0], 'axail'):
+				print "Axially symetric diffusion not implemented yet, quitting program."
+				sys.exit()
+
+			# Anisotropic rotational diffusion.
+			elif match(self.options[0], 'aniso'):
+				print "Anisotropic diffusion not implemented yet, quitting program."
+				sys.exit()
+
+			else:
+				raise NameError, "Diffusion type set incorrectly, quitting program."
+
+			# Derivatives.
+			if self.derivative_flag == 1:
+				for param in range(len(self.param_types)):
 					# Isotropic rotational diffusion.
 					if match(self.options[0], 'iso'):
 						if match('m[13]', self.options[2]):
-							jw.append(self.calc_jw_iso_m13(i, frq_index))
+							if match('S2', self.param_types[param]):
+								self.djw[i, param, 0] = self.calc_djw_dS2_iso_m13(i, 0)
+								self.djw[i, param, 1] = self.calc_djw_dS2_iso_m13(i, 1)
+								self.djw[i, param, 2] = self.calc_djw_dS2_iso_m13(i, 2)
+								self.djw[i, param, 3] = self.calc_djw_dS2_iso_m13(i, 3)
+								self.djw[i, param, 4] = self.calc_djw_dS2_iso_m13(i, 4)
 						elif match('m[24]', self.options[2]):
-							jw.append(self.calc_jw_iso_m24(i, frq_index))
+							if match('S2', self.param_types[param]):
+								self.djw[i, param, 0] = self.calc_djw_dS2_iso_m24(i, 0)
+								self.djw[i, param, 1] = self.calc_djw_dS2_iso_m24(i, 1)
+								self.djw[i, param, 2] = self.calc_djw_dS2_iso_m24(i, 2)
+								self.djw[i, param, 3] = self.calc_djw_dS2_iso_m24(i, 3)
+								self.djw[i, param, 4] = self.calc_djw_dS2_iso_m24(i, 4)
+							elif match('te', self.param_types[param]):
+								self.djw[i, param, 0] = self.calc_djw_dte_iso_m24(i, 0)
+								self.djw[i, param, 1] = self.calc_djw_dte_iso_m24(i, 1)
+								self.djw[i, param, 2] = self.calc_djw_dte_iso_m24(i, 2)
+								self.djw[i, param, 3] = self.calc_djw_dte_iso_m24(i, 3)
+								self.djw[i, param, 4] = self.calc_djw_dte_iso_m24(i, 4)
 						elif match('m5', self.options[2]):
-							jw.append(self.calc_jw_iso_m5(i, frq_index))
+							if match('S2f', self.param_types[param]):
+								self.djw[i, param, 0] = self.calc_djw_dS2f_iso_m5(i, 0)
+								self.djw[i, param, 1] = self.calc_djw_dS2f_iso_m5(i, 1)
+								self.djw[i, param, 2] = self.calc_djw_dS2f_iso_m5(i, 2)
+								self.djw[i, param, 3] = self.calc_djw_dS2f_iso_m5(i, 3)
+								self.djw[i, param, 4] = self.calc_djw_dS2f_iso_m5(i, 4)
+							if match('S2s', self.param_types[param]):
+								self.djw[i, param, 0] = self.calc_djw_dS2s_iso_m5(i, 0)
+								self.djw[i, param, 1] = self.calc_djw_dS2s_iso_m5(i, 1)
+								self.djw[i, param, 2] = self.calc_djw_dS2s_iso_m5(i, 2)
+								self.djw[i, param, 3] = self.calc_djw_dS2s_iso_m5(i, 3)
+								self.djw[i, param, 4] = self.calc_djw_dS2s_iso_m5(i, 4)
+							if match('ts', self.param_types[param]):
+								self.djw[i, param, 0] = self.calc_djw_dts_iso_m5(i, 0)
+								self.djw[i, param, 1] = self.calc_djw_dts_iso_m5(i, 1)
+								self.djw[i, param, 2] = self.calc_djw_dts_iso_m5(i, 2)
+								self.djw[i, param, 3] = self.calc_djw_dts_iso_m5(i, 3)
+								self.djw[i, param, 4] = self.calc_djw_dts_iso_m5(i, 4)
 
 					# Axially symmetric rotational diffusion.
 					elif match(self.options[0], 'axail'):
@@ -123,56 +191,7 @@ class jw:
 						sys.exit()
 
 					else:
-						raise NameError, "Diffusion type set incorrectly, quitting program."
-
-
-				# Derivatives.
-				if self.derivative_flag == 1:
-					djw = []
-					for param in range(len(self.param_types)):
-						djw.append([])
-						for frq_index in range(5):
-							# Isotropic rotational diffusion.
-							if match(self.options[0], 'iso'):
-								if match('m[13]', self.options[2]):
-									if match('S2', self.param_types[param]):
-										djw[param].append(self.calc_djw_dS2_iso_m13(i, frq_index))
-									elif match('Rex', self.param_types[param]):
-										djw[param].append(0.0)
-								elif match('m[24]', self.options[2]):
-									if match('S2', self.param_types[param]):
-										djw[param].append(self.calc_djw_dS2_iso_m24(i, frq_index))
-									elif match('te', self.param_types[param]):
-										djw[param].append(self.calc_djw_dte_iso_m24(i, frq_index))
-									elif match('Rex', self.param_types[param]):
-										djw[param].append(0.0)
-								elif match('m5', self.options[2]):
-									if match('S2f', self.param_types[param]):
-										djw[param].append(self.calc_djw_dS2f_iso_m5(i, frq_index))
-									if match('S2s', self.param_types[param]):
-										djw[param].append(self.calc_djw_dS2s_iso_m5(i, frq_index))
-									if match('ts', self.param_types[param]):
-										djw[param].append(self.calc_djw_dts_iso_m5(i, frq_index))
-
-							# Axially symmetric rotational diffusion.
-							elif match(self.options[0], 'axail'):
-								print "Axially symetric diffusion not implemented yet, quitting program."
-								sys.exit()
-
-							# Anisotropic rotational diffusion.
-							elif match(self.options[0], 'aniso'):
-								print "Anisotropic diffusion not implemented yet, quitting program."
-								sys.exit()
-
-							else:
-								raise NameError, "Function option not set correctly, quitting program."
-
-			self.jw.append(jw)
-			if self.derivative_flag == 1:
-				self.djw.append(djw)
-
-			# Set the last frequency value.
-			last_frq = self.mf.data.frq[self.mf.data.remap_table[i]]
+						raise NameError, "Function option not set correctly, quitting program."
 
 		if self.derivative_flag == 0:
 			return self.jw
@@ -183,7 +202,7 @@ class jw:
 	def calc_jw_iso_m13(self, i, frq_index):
 		"Calculate the model 1 and 3 spectral density values for isotropic rotational diffusion."
 
-		omega_tm_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.tm_sqrd
+		omega_tm_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.tm_sqrd
 		jw = 0.4 * (self.s2_tm / (1.0 + omega_tm_sqrd))
 		return jw
 
@@ -191,8 +210,8 @@ class jw:
 	def calc_jw_iso_m24(self, i, frq_index):
 		"Calculate the model 2 and 4 spectral density values for isotropic rotational diffusion."
 
-		omega_te_prime_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.te_prime_sqrd
-		omega_tm_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.tm_sqrd
+		omega_te_prime_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.te_prime_sqrd
+		omega_tm_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.tm_sqrd
 		jw = 0.4 * (self.s2_tm / (1.0 + omega_tm_sqrd) + (1.0 - self.s2) * self.te_prime / (1.0 + omega_te_prime_sqrd))
 		return jw
 
@@ -200,8 +219,8 @@ class jw:
 	def calc_jw_iso_m5(self, i, frq_index):
 		"Calculate the model 5 spectral density values for isotropic rotational diffusion."
 
-		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.ts_prime_sqrd
-		omega_tm_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.tm_sqrd
+		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.ts_prime_sqrd
+		omega_tm_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.tm_sqrd
 		jw = 0.4 * self.s2f * (self.s2s_tm / (1.0 + omega_tm_sqrd) + (1.0 - self.s2s) * self.ts_prime / (1.0 + omega_ts_prime_sqrd))
 		return jw
 
@@ -209,7 +228,7 @@ class jw:
 	def calc_djw_dS2_iso_m13(self, i, frq_index):
 		"Calculate the model 1 and 3 S2 derivative of the spectral density function for isotropic rotational diffusion."
 
-		omega_tm_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.tm_sqrd
+		omega_tm_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.tm_sqrd
 		djw_dS2 = self.const_djw_dS2_norm / (1.0 + omega_tm_sqrd)
 		return djw_dS2
 
@@ -217,8 +236,8 @@ class jw:
 	def calc_djw_dS2_iso_m24(self, i, frq_index):
 		"Calculate the model 2 and 4 S2 derivative of the spectral density function for isotropic rotational diffusion."
 
-		omega_te_prime_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.te_prime_sqrd
-		omega_tm_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.tm_sqrd
+		omega_te_prime_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.te_prime_sqrd
+		omega_tm_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.tm_sqrd
 		djw_dS2 = 0.4 * (self.tm / (1.0 + omega_tm_sqrd) - self.te_prime / (1.0 + omega_te_prime_sqrd))
 		return djw_dS2
 
@@ -226,8 +245,8 @@ class jw:
 	def calc_djw_dS2f_iso_m5(self, i, frq_index):
 		"Calculate the model 5 S2f derivative of the spectral density function for isotropic rotational diffusion."
 
-		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.ts_prime_sqrd
-		omega_tm_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.tm_sqrd
+		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.ts_prime_sqrd
+		omega_tm_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.tm_sqrd
 		djw_dS2f = 0.4 * (self.s2s * self.tm / (1.0 + omega_tm_sqrd) + (1.0 - self.s2s) * self.ts_prime / (1.0 + omega_ts_prime_sqrd))
 		return djw_dS2f
 
@@ -235,8 +254,8 @@ class jw:
 	def calc_djw_dS2s_iso_m5(self, i, frq_index):
 		"Calculate the model 5 S2f derivative of the spectral density function for isotropic rotational diffusion."
 
-		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.ts_prime_sqrd
-		omega_tm_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.tm_sqrd
+		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.ts_prime_sqrd
+		omega_tm_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.tm_sqrd
 		djw_dS2s = 0.4 * self.s2f * (self.tm / (1.0 + omega_tm_sqrd) - self.ts_prime / (1.0 + omega_ts_prime_sqrd))
 		return djw_dS2s
 
@@ -244,7 +263,7 @@ class jw:
 	def calc_djw_dte_iso_m24(self, i, frq_index):
 		"Calculate the model 2 and 4 te derivative of the spectral density function for isotropic rotational diffusion."
 
-		omega_te_prime_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.te_prime_sqrd
+		omega_te_prime_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.te_prime_sqrd
 		djw_dte = self.const_djw_dte_norm * ((1.0 - omega_te_prime_sqrd) / (1.0 + omega_te_prime_sqrd)**2) * (self.tm / (self.te + self.tm))**2
 		return djw_dte
 
@@ -252,7 +271,7 @@ class jw:
 	def calc_djw_dts_iso_m5(self, i, frq_index):
 		"Calculate the model 5 ts derivative of the spectral density function for isotropic rotational diffusion."
 
-		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[self.mf.data.remap_table[i]][frq_index] * self.ts_prime_sqrd
+		omega_ts_prime_sqrd = self.mf.data.frq_sqrd_list[i][frq_index] * self.ts_prime_sqrd
 		djw_dts = self.const_djw_dts_ext * ((1.0 - omega_ts_prime_sqrd) / (1.0 + omega_ts_prime_sqrd)**2)
 		return djw_dts
 

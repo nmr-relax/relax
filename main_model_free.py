@@ -97,7 +97,7 @@ class main_model_free:
 
 			#params = [0.368]
 			#params = [0.368, 0.0]
-			#params = [0.368, 0.0, 0.0]
+			#params = [0.950, 0.585, 33.0*1e-12]
 
 			# Simplex minimisation.
 			if match('Simplex', self.mf.usr_param.minimiser):

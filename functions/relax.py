@@ -1,5 +1,6 @@
 import sys
 from math import pi
+from Numeric import Float64, zeros
 from re import match
 
 
@@ -42,9 +43,9 @@ class relax:
 		self.mf_values = mf_values
 
 		last_frq = 0.0
-		self.ri = []
+		self.ri = zeros((self.mf.data.num_ri), Float64)
 		if self.derivative_flag == 1:
-			self.dri = []
+			self.dri = zeros((self.mf.data.num_ri, len(self.mf_values)), Float64)
 			# Initialise an array with the model-free parameter labels.
 			if match('m1', self.options[2]):
 				self.param_types = ['S2']
@@ -67,20 +68,20 @@ class relax:
 
 		# Loop over the relaxation values.
 		for i in range(self.mf.data.num_ri):
-			if match('m3', self.options[2]):
-				self.rex = self.mf_values[1] * self.mf.data.frq[self.mf.data.remap_table[i]]**2
-			elif match('m4', self.options[2]):
-				self.rex = self.mf_values[2] * self.mf.data.frq[self.mf.data.remap_table[i]]**2
 			self.frq_num = self.mf.data.remap_table[i]
+			if match('m3', self.options[2]):
+				self.rex = self.mf_values[1] * self.mf.data.frq[self.frq_num]**2
+			elif match('m4', self.options[2]):
+				self.rex = self.mf_values[2] * self.mf.data.frq[self.frq_num]**2
 
 			# Back calculate the relaxation value.
 			if match(self.options[0], 'iso'):
 				if match('R1', self.mf.data.data_types[i]):
-					self.ri.append(self.calc_r1_iso(i))
+					self.ri[i] = self.calc_r1_iso()
 				elif match('R2', self.mf.data.data_types[i]):
-					self.ri.append(self.calc_r2_iso(i))
+					self.ri[i] = self.calc_r2_iso()
 				elif match('NOE', self.mf.data.data_types[i]):
-					self.ri.append(self.calc_noe_iso(i))
+					self.ri[i] = self.calc_noe_iso(i)
 				else:
 					raise NameError, "Relaxation data type " + `self.mf.data.data_types[i]` + " unknown, quitting program."
 			elif match(self.options[0], 'axail'):
@@ -94,28 +95,19 @@ class relax:
 
 			# Derivatives.
 			if self.derivative_flag == 1:
-				self.dri.append([])
 				for param in range(len(self.param_types)):
 					# Isotropic rotational diffusion.
 					if match(self.options[0], 'iso'):
 						if match('Rex', self.param_types[param]):
-							if match('R1', self.mf.data.data_types[i]):
-								self.dri[i].append(0.0)
-							elif match('R2', self.mf.data.data_types[i]):
-								self.dri[i].append(1.0 * self.mf.data.frq[self.mf.data.remap_table[i]]**2)
-							elif match('NOE', self.mf.data.data_types[i]):
-								self.dri[i].append(0.0)
-							else:
-								raise NameError, "Relaxation data type " + `self.mf.data.data_types[i]` + " unknown, quitting program."
+							if match('R2', self.mf.data.data_types[i]):
+								self.dri[i, param] = 1.0 * self.mf.data.frq[self.mf.data.remap_table[i]]**2
 						else:
 							if match('R1', self.mf.data.data_types[i]):
-								self.dri[i].append(self.calc_dr1_iso(i, param))
+								self.dri[i, param] = self.calc_dr1_iso(param)
 							elif match('R2', self.mf.data.data_types[i]):
-								self.dri[i].append(self.calc_dr2_iso(i, param))
+								self.dri[i, param] = self.calc_dr2_iso(param)
 							elif match('NOE', self.mf.data.data_types[i]):
-								self.dri[i].append(self.calc_dnoe_iso(i, param))
-							else:
-								raise NameError, "Relaxation data type " + `self.mf.data.data_types[i]` + " unknown, quitting program."
+								self.dri[i, param] = self.calc_dnoe_iso(i, param)
 
 					# Axially symmetric rotational diffusion.
 					elif match(self.options[0], 'axail'):
@@ -153,20 +145,20 @@ class relax:
 			return self.ri, self.dri
 
 
-	def calc_dr1_iso(self, i, param):
+	def calc_dr1_iso(self, param):
 		"Calculate the derivative of the Isotropic R1 value."
 
-		dr1_dipole = self.mf.data.dipole_const * (self.dj[i][param][2] + 3.0*self.dj[i][param][1] + 6.0*self.dj[i][param][4])
-		dr1_csa = self.mf.data.csa_const[self.frq_num] * self.dj[i][param][1]
+		dr1_dipole = self.mf.data.dipole_const * (self.dj[self.frq_num, param, 2] + 3.0*self.dj[self.frq_num, param, 1] + 6.0*self.dj[self.frq_num, param, 4])
+		dr1_csa = self.mf.data.csa_const[self.frq_num] * self.dj[self.frq_num, param, 1]
 		dr1 = dr1_dipole + dr1_csa
 		return dr1
 
 
-	def calc_dr2_iso(self, i, param):
+	def calc_dr2_iso(self, param):
 		"Calculate the derivative of the Isotropic R2 value."
 
-		dr2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.dj[i][param][0] + 3.0*self.dj[i][param][1] + self.dj[i][param][2] + 6.0*self.dj[i][param][3] + 6.0*self.dj[i][param][4])
-		dr2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * (4.0*self.dj[i][param][0] + 3.0*self.dj[i][param][1])
+		dr2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.dj[self.frq_num, param, 0] + 3.0*self.dj[self.frq_num, param, 1] + self.dj[self.frq_num, param, 2] + 6.0*self.dj[self.frq_num, param, 3] + 6.0*self.dj[self.frq_num, param, 4])
+		dr2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * (4.0*self.dj[self.frq_num, param, 0] + 3.0*self.dj[self.frq_num, param, 1])
 		dr2 = dr2_dipole + dr2_csa
 		return dr2
 
@@ -175,32 +167,32 @@ class relax:
 		"Calculate the derivative of the Isotropic NOE value."
 
 		r1 = self.ri[self.mf.data.noe_r1_table[i]]
-		dr1 = self.dri[self.mf.data.noe_r1_table[i]][param]
+		dr1 = self.dri[self.mf.data.noe_r1_table[i], param]
 		if r1 == 0:
 			print "R1 is zero, this should not occur."
 			dnoe = 1e99
 		elif dr1 == 0:
-			dnoe = (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.dj[i][param][4] - self.dj[i][param][2])
+			dnoe = (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.dj[self.frq_num, param, 4] - self.dj[self.frq_num, param, 2])
 		else:
-			dnoe = (r1 * (6.0*self.dj[i][param][4] - self.dj[i][param][2]) - (6.0*self.j[i][4] - self.j[i][2]) * dr1) / r1**2
+			dnoe = (r1 * (6.0*self.dj[self.frq_num, param, 4] - self.dj[self.frq_num, param, 2]) - (6.0*self.j[self.frq_num, 4] - self.j[self.frq_num, 2]) * dr1) / r1**2
 			dnoe = self.mf.data.dipole_const * (self.mf.data.gh/self.mf.data.gx) * dnoe
 		return dnoe
 
 
-	def calc_r1_iso(self, i):
+	def calc_r1_iso(self):
 		"Calculate the Isotropic R1 value."
 
-		r1_dipole = self.mf.data.dipole_const * (self.j[i][2] + 3.0*self.j[i][1] + 6.0*self.j[i][4])
-		r1_csa = self.mf.data.csa_const[self.frq_num] * self.j[i][1]
+		r1_dipole = self.mf.data.dipole_const * (self.j[self.frq_num, 2] + 3.0*self.j[self.frq_num, 1] + 6.0*self.j[self.frq_num, 4])
+		r1_csa = self.mf.data.csa_const[self.frq_num] * self.j[self.frq_num, 1]
 		r1 = r1_dipole + r1_csa
 		return r1
 
 
-	def calc_r2_iso(self, i):
+	def calc_r2_iso(self):
 		"Calculate the Isotropic R2 value."
 
-		r2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.j[i][0] + self.j[i][2] + 3.0*self.j[i][1] + 6.0*self.j[i][3] + 6.0*self.j[i][4])
-		r2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * (4.0*self.j[i][0] + 3.0*self.j[i][1])
+		r2_dipole = (self.mf.data.dipole_const/2.0) * (4.0*self.j[self.frq_num, 0] + self.j[self.frq_num, 2] + 3.0*self.j[self.frq_num, 1] + 6.0*self.j[self.frq_num, 3] + 6.0*self.j[self.frq_num, 4])
+		r2_csa = (self.mf.data.csa_const[self.frq_num]/6.0) * (4.0*self.j[self.frq_num, 0] + 3.0*self.j[self.frq_num, 1])
 		if match('m[34]', self.options[2]):
 			r2 = r2_dipole + r2_csa + self.rex
 		else:
@@ -213,12 +205,12 @@ class relax:
 
 		# May need debugging.
 		if self.mf.data.noe_r1_table[i] == None:
-			r1 = self.calc_r1_iso(i)
+			r1 = self.calc_r1_iso()
 		else:
 			r1 = self.ri[self.mf.data.noe_r1_table[i]]
 
 		if r1 == 0:
 			noe = 1e99
 		else:
-			noe = 1.0 + (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.j[i][4] - self.j[i][2])
+			noe = 1.0 + (self.mf.data.dipole_const / r1) * (self.mf.data.gh/self.mf.data.gx) * (6.0*self.j[self.frq_num, 4] - self.j[self.frq_num, 2])
 		return noe

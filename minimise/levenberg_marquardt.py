@@ -1,4 +1,6 @@
 import sys
+from LinearAlgebra import solve_linear_equations
+from Numeric import Float64, concatenate, zeros
 from re import match
 
 class levenberg_marquardt:
@@ -54,15 +56,16 @@ class levenberg_marquardt:
 		# Iterate until the minimiser is finished.
 		while 1:
 			# Print debugging info
-			if self.mf.min_debug == 2:
-				print "\n\n"
-				print "%-29s%-40s" % ("Minimisation run number:", `minimise_num`)
+			#if self.mf.min_debug == 2:
+			#	print "\n\n"
+			#	print "%-29s%-40s" % ("Minimisation run number:", `minimise_num`)
 
 			# Calculate the Levenberg-Marquardt matrix 'self.LM_matrix' and chi-squared gradient vector 'self.chi2_grad'.
-			self.LM_matrix, self.chi2_grad = self.create_structures()
+			self.create_structures()
 
 			# Solve the Levenberg-Marquardt equation to get the vector of function parameter changes.
-			param_change = self.gauss_jordan_elimination(self.LM_matrix, self.chi2_grad)
+			param_change = solve_linear_equations(self.LM_matrix, self.chi2_grad)
+			#param_change = self.gauss_jordan_elimination(self.LM_matrix, self.chi2_grad)
 
 			# Add the current parameter vector to the parameter change vector to find the new parameter vector.
 			self.new_params = []
@@ -83,19 +86,19 @@ class levenberg_marquardt:
 			self.chi2_new = self.chi2_func(self.values, self.back_calc, self.errors)
 
 			# Print debugging info
-			if self.mf.min_debug == 2:
-				for i in range(len(self.values)):
-					print "%-29s%-40s" % ("Derivative array " + `i` + " is: ", `self.df[i]`)
+			#if self.mf.min_debug == 2:
+			#	for i in range(len(self.values)):
+			#		print "%-29s%-40s" % ("Derivative array " + `i` + " is: ", `self.df[i]`)
 
-				print "%-29s%-40s" % ("Levenberg-Marquardt matrix:", `self.LM_matrix`)
-				print "%-29s%-40s" % ("Chi2 grad vector:", `self.chi2_grad`)
-				print "%-29s%-40s" % ("Old parameter vector:", `self.params`)
-				print "%-29s%-40s" % ("Parameter change vector:", `param_change`)
-				print "%-29s%-40s" % ("New parameter vector:", `self.new_params`)
-				print "%-29s%-40e" % ("Chi-squared:", self.chi2)
-				print "%-29s%-40e" % ("Chi-squared new:", self.chi2_new)
-				print "%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
-				print "%-29s%-40e" % ("l:", self.l)
+			#	print "%-29s%-40s" % ("Levenberg-Marquardt matrix:", `self.LM_matrix`)
+			#	print "%-29s%-40s" % ("Chi2 grad vector:", `self.chi2_grad`)
+			#	print "%-29s%-40s" % ("Old parameter vector:", `self.params`)
+			#	print "%-29s%-40s" % ("Parameter change vector:", `param_change`)
+			#	print "%-29s%-40s" % ("New parameter vector:", `self.new_params`)
+			#	print "%-29s%-40e" % ("Chi-squared:", self.chi2)
+			#	print "%-29s%-40e" % ("Chi-squared new:", self.chi2_new)
+			#	print "%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
+			#	print "%-29s%-40e" % ("l:", self.l)
 
 
 			# Test improvement.
@@ -105,10 +108,10 @@ class levenberg_marquardt:
 			else:
 				# Finish minimising when the chi-squared difference is insignificant.
 				if self.chi2 - self.chi2_new < 1e-20:
-					if self.mf.min_debug == 2:
-						print "\n%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
-						print "%-29s%-40e" % ("Chi-squared diff limit:", 1e-10)
-						print "Insignificant chi2 difference, stopped minimising."
+					#if self.mf.min_debug == 2:
+					#	print "\n%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
+					#	print "%-29s%-40e" % ("Chi-squared diff limit:", 1e-10)
+					#	print "Insignificant chi2 difference, stopped minimising."
 					break
 				if self.l >= 1e-99:
 					self.l = self.l / 10.0
@@ -121,15 +124,17 @@ class levenberg_marquardt:
 			# text = "%-4s%-6i%-8s%-46s%-6s%-25s%-8s%-6s" % ("run", minimise_num, "Params:", `self.new_params`, "Chi2:", `self.chi2_new`, "r:", `self.l`)
 			#
 			# Print the status of the minimiser for model-free data (temporary).
-			if self.mf.min_debug == 3:
-				if print_num == 100:
-					self.print_relax_crap(minimise_num)
-					print_num = 0
-					print_num = print_num + 1
-			if self.mf.min_debug >= 1:
+			#if self.mf.min_debug == 3:
+			#	if print_num == 100:
+			#		self.print_relax_crap(minimise_num)
+			#		print_num = 0
+			#		print_num = print_num + 1
+			if self.mf.min_debug >= 1 and print_num == 1000:
+				print_num = 0
 				self.print_relax_crap(minimise_num)
 
 			minimise_num = minimise_num + 1
+			print_num = print_num + 1
 
 		return self.params, self.chi2
 
@@ -190,13 +195,8 @@ class levenberg_marquardt:
 		"""
 
 		# Create the Levenberg-Marquardt matrix and chi-squared gradient vector with elements equal to zero.
-		LM_matrix = []
-		chi2_grad = []
-		for j in range(len(self.params)):
-			LM_matrix.append([])
-			chi2_grad.append(0.0)
-			for k in range(len(self.params)):
-				LM_matrix[j].append(0.0)
+		self.LM_matrix = zeros((len(self.params), len(self.params)), Float64)
+		self.chi2_grad = zeros((len(self.params)), Float64)
 
 		# Loop over the data points from i=1 to n.
 		for i in range(len(self.values)):
@@ -206,120 +206,14 @@ class levenberg_marquardt:
 			# Loop over all function parameters.
 			for param_j in range(len(self.params)):
 				# Calculate and sum the chi-squared gradient vector element 'param_j'.
-				chi2_grad[param_j] = chi2_grad[param_j] + i_variance * (self.values[i] - self.back_calc[i]) * self.df[i][param_j]
+				self.chi2_grad[param_j] = self.chi2_grad[param_j] + i_variance * (self.values[i] - self.back_calc[i]) * self.df[i, param_j]
 
 				# Loop over the function parameters from the first to 'param_j' to create the Levenberg-Marquardt matrix.
 				for param_k in range(param_j + 1):
 					if param_j == param_k:
-						LM_matrix_jk = i_variance * self.df[i][param_j] * self.df[i][param_k] * (1.0 + self.l)
+						LM_matrix_jk = i_variance * self.df[i, param_j] * self.df[i, param_k] * (1.0 + self.l)
 					else:
-						LM_matrix_jk = i_variance * self.df[i][param_j] * self.df[i][param_k]
+						LM_matrix_jk = i_variance * self.df[i, param_j] * self.df[i, param_k]
 
-					LM_matrix[param_j][param_k] = LM_matrix[param_j][param_k] + LM_matrix_jk
-					LM_matrix[param_k][param_j] = LM_matrix[param_k][param_j] + LM_matrix_jk
-
-		return LM_matrix, chi2_grad
-
-
-	def elementary_row_operations(self, A, i):
-		"""Row reduce by Gauss-Jordan elimination.
-
-		'A' is the augmented matrix to row reduce.
-		'i' is the index of the row to work with.
-
-		The function does the following 3 elementary row operations:
-			1. Interchange two rows.
-			2. Set A[i][i] to 1 by dividing row[i] by A[i][i].
-			3. Eliminate the terms A[row][i] where row != i.
-		"""
-
-		num_rows = len(A)
-		num_cols = len(A[0])
-
-		# Step 1.
-		#########
-		# Test if rows need to be switched, ie if 'A[i][i]' is 0 and there is a row below in which the column 'i' has a non-zero element.
-		if A[i][i] == 0:
-			# Loop over the rows below row i.
-			for j in range(i,num_rows):
-				# Check if A[j][i] has a non-zero element.
-				if A[j][i] != 0:
-					switch_row = A[i]
-					A[i] = A[j]
-					A[j] = switch_row
-					break
-			if self.mf.min_debug == 2:
-				print "\tIndex " + `i` + " Step 1:"
-				for row in range(num_rows):
-					print "\t\t" + `A[row]`
-
-
-		# If unsuccessful, don't do the steps below and just return the unmodified matrix.
-		if A[i][i] == 0:
-			return A
-
-		# Step 2.
-		#########
-		# Make 'A[i][i]' equal to 1 by looping over the columns of the row 'i' and dividing by 'A[i][i]'.
-		coeff = A[i][i]
-		for col in range(num_cols):
-			A[i][col] = A[i][col] / coeff
-
-		if self.mf.min_debug == 2:
-			print "\tIndex " + `i` + " Step 2:"
-			for row in range(num_rows):
-				print "\t\t" + `A[row]`
-
-		# Step 3.
-		#########
-		# Eliminate the 'A[row][i]' terms in the other rows.
-		for row in range(num_rows):
-			# If the row is i, skip the elimination step.
-			if row == i:
-				continue
-			# Subtract the row 'i' multiplied by the term 'A[row][i]' from the row 'row'
-			coeff = A[row][i]
-			for col in range(num_cols):
-				A[row][col] = A[row][col] - coeff * A[i][col]
-
-		if self.mf.min_debug == 2:
-			print "\tIndex " + `i` + " Step 3:"
-			for row in range(num_rows):
-				print "\t\t" + `A[row]`
-
-		return A
-
-
-	def gauss_jordan_elimination(self, A, b):
-		"""Solves the system of linear equations Ax = b by Gauss-Jordan elimination.
-
-		'A' is the coefficient matrix.
-		'b' is a vector.
-		'x' is the returned solution vector.
-		"""
-
-		len_A = len(A)
-
-		# Construct the augmented matrix [A|b].
-		Ab = []
-		for row in range(len_A):
-			Ab.append([])
-			for col in range(len(A[row])):
-				Ab[row].append(A[row][col])
-			Ab[row].append(b[row])
-		if self.mf.min_debug == 2:
-			print "Gauss Jordan Elimination:"
-			print "\tAugmented matrix:"
-			for row in range(len_A):
-				print "\t\t" + `Ab[row]`
-
-		# Row reduce the matrix.
-		for i in range(len_A):
-			Ab = self.elementary_row_operations(Ab, i)
-
-		# Extract the result vector 'x'.
-		x = []
-		for row in range(len(Ab)):
-			x.append(Ab[row][-1])
-
-		return x
+					self.LM_matrix[param_j, param_k] = self.LM_matrix[param_j, param_k] + LM_matrix_jk
+					self.LM_matrix[param_k, param_j] = self.LM_matrix[param_k, param_j] + LM_matrix_jk
