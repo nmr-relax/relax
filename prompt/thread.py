@@ -93,6 +93,25 @@ class Threading:
 
         If the keyword argument 'dir' is set to None, the hosts file will be assumed to be in the
         current working directory.
+
+
+        SSH Public Key Authentication
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        To enable SSH Public Key Authentication to be able to use ssh, sftp, and scp from the parent
+        machine to the hosts without having to type your password, use the following steps.
+
+        If the files 'id_rsa' and 'id_rsa.pub' do not exist in the directory '~/.ssh', type:
+
+        $ ssh-keygen -t rsa (Type [Enter] 3 times)
+
+        Once the two files exist, type:
+
+        (Make sure you replace 'zucchini' with the name of the machine you want to forward to).
+
+        $ ssh zucchini "echo $(cat ~/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys"
+
+        Finished. You can now type 'ssh zucchini' and login without typing your password.
         """
 
         # Function intro text.

@@ -70,6 +70,8 @@ class Threading:
             # Host login
             if host_name != 'localhost' and user:
                 login = user + '@' + host_name
+            elif host_name != 'localhost':
+                login = host_name
             else:
                 login = None
 
@@ -363,7 +365,10 @@ class RelaxHostThread(RelaxThread):
         """Function for testing if the working directory on the host machine exist."""
 
         # Test command.
-        test_cmd = "%s if test -d %s; then echo 'OK'; fi" % (self.login_cmd, self.swd)
+        if self.login_cmd:
+            test_cmd = "%s 'if test -d %s; then echo 'OK'; fi'" % (self.login_cmd, self.swd)
+        else:
+            test_cmd = "if test -d %s; then echo 'OK'; fi" % self.swd
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
