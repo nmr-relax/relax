@@ -422,14 +422,17 @@ class Diffusion_tensor:
 
         # Isotropic diffusion.
         if type(params) == float:
+            num_params = 1
             self.isotropic()
 
         # Axially symmetric anisotropic diffusion.
         elif len(params) == 4:
+            num_params = 4
             self.axial()
 
         # Fully anisotropic diffusion.
         elif len(params) == 6:
+            num_params = 6
             self.anisotropic()
 
         # Unknown.
@@ -437,7 +440,7 @@ class Diffusion_tensor:
             raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
 
         # Test the validity of the parameters.
-        self.test_params(len(params))
+        self.test_params(num_params)
 
 
     def test_params(self, num_params):

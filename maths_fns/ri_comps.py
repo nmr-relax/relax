@@ -999,9 +999,9 @@ def d2r1_comps(data, i, params):
 def calc_fixed_dip(data):
     """Calculate the fixed component of the dipolar constant.
 
-                        1   / mu0  \ 2
-    dip_const_fixed  =  - . | ---- |  . (gH.gN.h_bar)**2
-                        4   \ 4.pi /
+                        / mu0  \ 2
+    dip_const_fixed  =  | ---- |  . (gH.gN.h_bar)**2
+                        \ 4.pi /
     """
 
     data.dip_const_fixed = ((data.mu0 / (4.0*pi)) * data.h_bar * data.gh * data.gx) ** 2
