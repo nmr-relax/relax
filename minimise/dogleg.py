@@ -56,10 +56,7 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.eta = eta
 
 		# Matrix type.
-		if hessian_type == None:
-			self.hessian_type = 'bfgs'
-		else:
-			self.hessian_type = hessian_type
+		self.hessian_type = hessian_type
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0

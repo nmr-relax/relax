@@ -156,7 +156,10 @@ class newton(generic_line_search, generic_minimise):
 
 		# Calculate delta and beta.
 		delta = self.mach_acc * max(gamma + xi, 1)
-		beta = sqrt(max(gamma, xi / sqrt(self.n**2 - 1.0), self.mach_acc))
+		if self.n == 1:
+			beta = 1e99
+		else:
+			beta = sqrt(max(gamma, xi / sqrt(self.n**2 - 1.0), self.mach_acc))
 
 		# Initialise data structures.
 		a = self.d2fk

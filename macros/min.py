@@ -163,7 +163,7 @@ class min:
 
 		# Setup values used in the main iterative loop.
 		self.min_algor = 'fixed'
-		self.chi2_tol = 0.0
+		self.func_tol = 0.0
 		self.max_iterations = 0
 
 		# Main iterative loop.
@@ -339,7 +339,7 @@ class min:
 
 		# Setup values used in the main iterative loop.
 		self.min_algor = 'grid'
-		self.chi2_tol = 0.0
+		self.func_tol = 0.0
 		self.max_iterations = 0
 
 		# Main iterative loop.
@@ -387,8 +387,8 @@ class min:
 					self.min_options = [self.mf.lm_dri, errors]
 
 			# Minimisation.
-			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.chi2_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
-			self.params, self.chi2, iter, fc, gc, hc, self.warning = results
+			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
+			self.params, self.func, iter, fc, gc, hc, self.warning = results
 			self.iter_count = self.iter_count + iter
 			self.f_count = self.f_count + fc
 			self.g_count = self.g_count + gc
@@ -404,39 +404,68 @@ class min:
 		print "\n[ Done ]\n\n"
 
 
-	def minimise(self, model, min_algor=None, min_options=None, chi2_tol=1e-25, max_iterations=10000, min_debug=1):
+	def minimise(self, *args, **keywords):
 		"""Minimisation macro.
 
 
 		FIN
 		"""
 
-		# The model argument.
-		self.model = model
-		if type(self.model) != str:
-			print "The model argument " + `self.model` + " must be a string."
-			return
-
-		self.model = model
-
-		# Test if the parameter vector has a length.
-		if len(self.relax.data.params[self.model][self.res]) == 0:
-			print "The minimisation of a zero parameter model is not allowed."
-			return
-
-		self.min_algor = min_algor
+		# Minimization algorithm.
+		self.min_algor = args[0]
 		if not self.min_algor:
 			print "The minimisation algorithm has not been specified."
 			return
-		self.min_options = min_options
-		self.relax.min_debug = min_debug
-		self.chi2_tol = chi2_tol
-		self.max_iterations = max_iterations
 
-		# Find the index of the model.
-		if not self.relax.data.equations.has_key(self.model):
+		# Minimization options.
+		self.min_options = args[1:]
+
+		# Test for invalid keywords.
+		valid_keywords = ['model', 'min_debug', 'func_tol', 'max_iterations', 'max_iter']
+		for key in keywords:
+			valid = 0
+			for valid_key in valid_keywords:
+				if key == valid_key:
+					valid = 1
+			if not valid:
+				print "The keyword " + `key` + " is invalid."
+				return
+			
+		# The model keyword.
+		if keywords.has_key('model'):
+			self.model = keywords['model']
+			if type(self.model) != str:
+				print "The model argument " + `self.model` + " must be a string."
+				return
+		else:
+			print "No model has been given."
+			return
+		if len(self.relax.data.params[self.model][self.res]) == 0:
+			print "The minimisation of a zero parameter model is not allowed."
+			return
+		if not self.relax.data.equations.has_key(self.model):   # Find the index of the model.
 			print "The model '" + self.model + "' has not been created yet."
 			return
+
+		# Debugging options.
+		if keywords.has_key('min_debug'):
+			self.relax.min_debug = keywords['min_debug']
+		else:
+			self.relax.min_debug = 1
+
+		# The function tolerance value.
+		if keywords.has_key('func_tol'):
+			self.func_tol = keywords['func_tol']
+		else:
+			self.func_tol = 1e-25
+
+		# The maximum number of iterations.
+		if keywords.has_key('max_iterations'):
+			self.max_iterations = keywords['max_iterations']
+		elif keywords.has_key('max_iter'):
+			self.max_iterations = keywords['max_iter']
+		else:
+			self.max_iterations = 1000000
 
 		# Main iterative loop.
 		self.main_loop()

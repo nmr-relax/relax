@@ -151,7 +151,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Cc][Dd]$', min_algor) or match('^[Cc]oordinate[ _-][Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
@@ -163,7 +163,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Ss][Dd]$', min_algor) or match('^[Ss]teepest[ _-][Dd]escent$', min_algor):
 		if print_flag:
 			print "\n\n<<< Steepest descent minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
@@ -175,7 +175,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Bb][Ff][Gg][Ss]$', min_algor):
 		if print_flag:
 			print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = bfgs(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
@@ -187,16 +187,19 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Nn]ewton$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton minimisation >>>"
-		if type(min_options) == tuple:
+		if len(min_options) == 2:
 			line_search_algor = min_options[0]
 			hessian_mod = min_options[1]
+		elif len(min_options) == 1:
+			line_search_algor = min_options[0]
+			hessian_mod = None
 		else:
-			line_search_algor = min_options
-			hessian_mod = 'Eigen'
+			line_search_algor = None
+			hessian_mod = None
 		if line_search_algor == None:
 			line_search_algor = 'More Thuente'
 		if hessian_mod == None:
-			hessian_mod = 'Eigen'
+			hessian_mod = 'GMW'
 
 		print "Line search:"
 		if match('^[Bb]ack', line_search_algor):
@@ -230,7 +233,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Nn]ewton[ _-][Cc][Gg]$', min_algor) or match('^[Nn][Cc][Gg]$', min_algor):
 		if print_flag:
 			print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = newton_cg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
@@ -256,7 +259,21 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Dd]ogleg', min_algor):
 		if print_flag:
 			print "\n\n<<< Dogleg minimisation >>>"
-		min = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, hessian_type=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if len(min_options) == 1:
+			hessian_type = min_options[0]
+		elif min_options == ():
+			hessian_type = 'Newton'
+		else:
+			print "Invalid minimisation options: " + `min_options`
+			return
+		if print_flag:
+			print "Hessian type:"
+			if match('[Bb][Ff][Gg][Ss]', hessian_type):
+				print "\tBFGS"
+			else:
+				print "\tNewton"
+		
+		min = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, hessian_type=hessian_type, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
@@ -290,7 +307,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Ff][Rr]$', min_algor) or match('^[Ff]letcher[-_ ][Rr]eeves$', min_algor):
 		if print_flag:
 			print "\n\n<<< Fletcher-Reeves conjugate gradient minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = fletcher_reeves(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
@@ -302,7 +319,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Pp][Rr]$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere$', min_algor):
 		if print_flag:
 			print "\n\n<<< Polak-Ribière conjugate gradient minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = polak_ribiere(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
@@ -314,7 +331,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Pp][Rr]\+$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere\+$', min_algor):
 		if print_flag:
 			print "\n\n<<< Polak-Ribière + conjugate gradient minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = polak_ribiere_plus(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
@@ -326,7 +343,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Hh][Ss]$', min_algor) or match('^[Hh]estenes[-_ ][Ss]tiefel$', min_algor):
 		if print_flag:
 			print "\n\n<<< Hestenes-Stiefel conjugate gradient minimisation >>>"
-		if min_options == None:
+		if min_options == ():
 			min_options = 'More Thuente'
 		min = hestenes_stiefel(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
