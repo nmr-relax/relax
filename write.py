@@ -8,7 +8,7 @@ class Write:
         self.relax = relax
 
 
-    def write_data(self, model=None, force=0):
+    def write_data(self, model=None, file="results", force=0):
         """Create the directories and files for output.
 
         The directory with the name of the model will be created.  The results will be placed in the
@@ -28,7 +28,7 @@ class Write:
         self.print_header, self.print_results = fns
 
         # The results file.
-        file_name = model + "/results"
+        file_name = model + "/" + file
         if access(file_name, F_OK) and not force:
             print "The file '" + file_name + "' already exists.  Set the force flag to 1 to overwrite."
             return

@@ -1,5 +1,5 @@
 import __builtin__
-import code
+from code import InteractiveConsole
 import readline
 import sys
 sys.ps1 = 'relax> '
@@ -11,10 +11,12 @@ from print_all_data import Print_all_data
 
 # Macro functions.
 from diffusion_tensor import Diffusion_tensor
+from fixed import Fixed
 from gpl import GPL
+from grid import Grid
 from init_data import Init_data
 from map import Map
-from min import Min
+from minimise import Minimise
 from write import Write
 
 # Macro classes.
@@ -22,7 +24,6 @@ import echo_data
 import format
 import load
 import model
-import min
 import model_selection
 import pdb
 import state
@@ -36,24 +37,29 @@ class Interpreter:
         # Place the program class structure under self.relax
         self.relax = relax
 
+        self.echo = 1
+
         # Place the functions into the namespace of the interpreter class.
-        self._diffusion_tensor = Diffusion_tensor(relax)
-        self._gpl = GPL
-        self._init_data = Init_data(relax)
-        self._map = Map(relax)
-        self._min = Min(relax)
+        self._Diffusion_tensor = Diffusion_tensor(relax)
+        self._Fixed = Fixed(relax)
+        self._GPL = GPL
+        self._Grid = Grid(relax)
+        self._Init_data = Init_data(relax)
+        self._Map = Map(relax)
+        self._Minimise = Minimise(relax)
         self._system = system
-        self._write = Write(relax)
+        self._Write = Write(relax)
 
         # Place the classes into the interpreter class namespace.
-        self._echo_data = echo_data.Skin(relax)
-        self._format = format.Skin(relax)
-        self._load = load.Skin(relax)
-        self._pdb = pdb.Skin(relax)
-        self._model = model.Model(relax)
-        self._model_selection = model_selection.Skin(relax)
-        self._state = state.Skin(relax)
-        self._value = value.Skin(relax)
+        self._Echo_data = echo_data.Skin(relax)
+        self._Format = format.Skin(relax)
+        self._Load = load.Skin(relax, self.echo)
+        self._Pdb = pdb.Skin(relax)
+        self._Model = model.Model(relax)
+        self._Model_selection = model_selection.Skin(relax)
+        self._State = state.Skin(relax)
+        self._Value = value.Skin(relax)
+
 
     def run(self):
         """Run the python interpreter.
@@ -70,44 +76,49 @@ class Interpreter:
         print_all_data = Print_all_data(self.relax)
 
         # Place functions in the local namespace.
-        gpl = GPL = self._gpl()
+        gpl = GPL = self._GPL()
 
         # Place the functions in the local namespace.
-        diffusion_tensor = self._diffusion_tensor.set
-        fixed = self._min.fixed
-        grid_search = self._min.grid_search
-        init_data = self._init_data.init
-        map = self._map.map
-        minimise = self._min.minimise
-        write = self._write.write
+        diffusion_tensor = self._Diffusion_tensor.set
+        fixed = self._Fixed.fixed
+        grid_search = self._Grid.grid_search
+        init_data = self._Init_data.init
+        map = self._Map.map
+        minimise = self._Minimise.minimise
+        write = self._Write.write
 
         # Place the classes in the local namespace.
-        echo_data = self._echo_data
-        format = self._format
-        load = self._load
-        pdb = self._pdb
-        model = self._model
-        model_selection = self._model_selection
-        state = self._state
-        value = self._value
+        echo_data = self._Echo_data
+        format = self._Format
+        load = self._Load
+        pdb = self._Pdb
+        model = self._Model
+        model_selection = self._Model_selection
+        state = self._State
+        value = self._Value
 
         # Builtin interpreter functions.
         echo = _Echo()
-        exit = bye = quit = q = _Exit()
-
-        # Setup tab completion.
-        readline.set_completer(Tab_completion(name_space=locals()).finish)
-        readline.parse_and_bind("tab: complete")
+        execfile = __builtin__.execfile
+        exit = bye = quit = q = _Exit
 
         # Modify the help system.
         help_python = _Helper_python()
         help = _Helper()
 
+        # Setup tab completion.
+        readline.set_completer(Tab_completion(name_space=locals()).finish)
+        readline.parse_and_bind("tab: complete")
+
         # Go to the prompt.
-        code.interact(banner=self.relax.intro_string, local=locals())
+        prompt(intro=self.relax.intro_string, local=locals(), script=self.relax.script_file)
 
 
 class _Echo:
+    def __init__(self):
+        """Class containing functions for turning echoing on and off."""
+
+
     def off(self):
         """Macro for turning off the echoing of commands.
 
@@ -121,12 +132,9 @@ class _Echo:
         To run the function, type the following.
 
         >>> echo_off()
-
-
-        FIN
         """
 
-        code.InteractiveConsole.raw_input = self._raw_input
+        InteractiveConsole.raw_input = self._raw_input
         print "Echoing has been turned off."
 
 
@@ -144,12 +152,10 @@ class _Echo:
         To run the function, type the following.
 
         >>> echo_on()
-
-
-        FIN
         """
 
-        code.InteractiveConsole.raw_input = self._raw_input_echo
+
+        InteractiveConsole.raw_input = self._raw_input_echo
         print "Echoing has been turned on."
 
 
@@ -210,3 +216,54 @@ to the help function built into the normal python interpreter.\
         return pydoc.help(*args, **kwds)
 
 
+def interact(self, intro=None, local=None, script=None):
+    """Replacement function for 'code.InteractiveConsole.interact'.
+
+    This will initially execute a command line specified script file before entering into the
+    prompt.
+    """
+
+    # Print the program introduction.
+    self.write("%s\n" % intro)
+
+    # Execute the script file (if given on the command line).
+    if script != None:
+        try:
+            execfile(script, globals(), local)
+        except KeyboardInterrupt:
+            self.write("\nScript execution cancelled.\n")
+        sys.exit()
+
+    # Interactive prompt.
+    more = 0
+    while 1:
+        try:
+            if more:
+                prompt = sys.ps2
+            else:
+                prompt = sys.ps1
+            try:
+                line = self.raw_input(prompt)
+            except EOFError:
+                self.write("\n")
+                break
+            else:
+                more = self.push(line)
+        except KeyboardInterrupt:
+            self.write("\nKeyboardInterrupt\n")
+            self.resetbuffer()
+            more = 0
+
+
+def prompt(intro=None, local=None, script=None):
+    """Python interpreter emulation.
+
+    This function replaces 'code.interact'.
+    """
+
+    # Replace the 'InteractiveConsole.interact' function.
+    InteractiveConsole.interact = interact
+
+    # The console.
+    console = InteractiveConsole(local)
+    console.interact(intro, local, script)

@@ -5,7 +5,7 @@ class Write:
         self.relax = relax
 
 
-    def write(self, model=None, force=0):
+    def write(self, model=None, file="results", force=0):
         """Function for writing results to a file.
 
 
@@ -13,6 +13,8 @@ class Write:
         ~~~~~~~~~~~~~~~~~
 
         model:  The name of the model.
+
+        file:  The name of the file to output results to.  The default is 'results'.
 
         force:  A flag which if set to 1 will cause the results file to be overwitten if it already
         exists.
@@ -26,9 +28,14 @@ class Write:
             print "The model '" + model + "' has not been created yet."
             return
 
+        # File.
+        if type(file) != str:
+            print "The file name must be a string."
+            return
+
         # The force flag.
         if type(force) != int and force != 0 and force != 1:
             print "The force flag should be the integer values of either 0 or 1."
             return
 
-        self.relax.write.write_data(model=model, force=force)
+        self.relax.write.write_data(model=model, file=file, force=force)

@@ -2,7 +2,7 @@ from generic_functions import Generic_functions
 
 
 class Skin:
-    def __init__(self, relax):
+    def __init__(self, relax, echo=0):
         """The class accessible to the interpreter.
 
         The purpose of this class is to hide the variables and functions found within the namespace
@@ -12,7 +12,7 @@ class Skin:
         """
 
         # Load the macro class into the namespace of this __init__ function.
-        x = Macro_class(relax)
+        x = Macro_class(relax, echo)
 
         # Place references to the interactive functions within the namespace of this skin class.
         self.relax_data = x.relax_data
@@ -20,10 +20,11 @@ class Skin:
 
 
 class Macro_class(Generic_functions):
-    def __init__(self, relax):
+    def __init__(self, relax, echo=0):
         """Class containing macros for loading data."""
 
         self.relax = relax
+        self.echo = echo
 
 
     def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
@@ -183,6 +184,8 @@ class Macro_class(Generic_functions):
         relax> load_sequence('noe.600.out', 1, 5, ',')
         relax> load_sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',')
         """
+
+        print "Echo: " + `self.echo`
 
         # Arguments
         self.file_name = file_name

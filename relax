@@ -32,6 +32,7 @@
 ###############################################################################
 
 
+from os import F_OK, access
 import profile
 import pstats
 from re import match
@@ -88,14 +89,24 @@ class Relax:
     def arguments(self):
         """Function for dealing with command line arguments"""
 
+        # Initialise.
+        self.script_file = None
+
         # No arguments are given.
         if len(self.argv) == 1:
             return
 
         # Help.
-        if match('--help', self.argv[1]) or match('-h', self.argv[1]):
+        elif match('--help', self.argv[1]) or match('-h', self.argv[1]):
             self.print_help()
             sys.exit()
+
+        # Script file.
+        elif type(self.argv[1]) == str and len(self.argv) == 2:
+            self.script_file = self.argv[1]
+            if not access(self.script_file, F_OK):
+                print "The script file '" + self.script_file + "' does not exist."
+                sys.exit()
 
         # Unknown argument.
         else:
@@ -106,7 +117,7 @@ class Relax:
     def print_help(self):
         """Print the help message."""
 
-        print "\nUsage: relax [-h] [--help] [< script_file]"
+        print "\nUsage: relax [-h] [--help] [script_file]"
         print "Options:"
         print "   --help       Display this help and exit.\n"
 

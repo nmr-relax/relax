@@ -226,69 +226,34 @@ class Model_free:
     def fixed_setup(self, min_options=None, model=None):
         """The fixed parameter value setup function."""
 
-        # The original model-free equations.
-        if match('mf_orig', self.relax.data.equations[model]):
-            for i in range(len(self.relax.data.param_types[model])):
-                # S2.
-                if match('S2', self.relax.data.param_types[model][i]):
-                    min_options[i] = 0.5
+        # Initialise.
+        types = self.relax.data.param_types[model]
 
-                # te.
-                elif match('te', self.relax.data.param_types[model][i]):
+        for i in range(len(types)):
+            # S2, S2f, and S2s.
+            if match("S2", types[i]):
+                min_options[i] = 0.5
+
+            # te, tf, and ts.
+            elif match("t[efs]", types[i]):
+                if match("te", types[i]):
                     min_options[i] = 100.0 * 1e-12
-
-                # Rex.
-                elif match('Rex', self.relax.data.param_types[model][i]):
-                    min_options[i] = 0.0
-
-                # Bond length.
-                elif match('Bond length', self.relax.data.param_types[model][i]):
-                    min_options[i] = 1.02 * 1e-10
-
-                # CSA.
-                elif match('CSA', self.relax.data.param_types[model][i]):
-                    min_options[i] = -170 * 1e-6
-
-                # Unknown parameter.
-                else:
-                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the original model-free equation."
-                    return min_options
-
-        # The extended model-free equations.
-        elif match('mf_ext', self.relax.data.equations[model]):
-            for i in range(len(self.relax.data.param_types[model])):
-                # S2f.
-                if match('S2f', self.relax.data.param_types[model][i]):
-                    min_options[i] = 0.5
-
-                # tf.
-                elif match('tf', self.relax.data.param_types[model][i]):
+                elif match("tf", types[i]):
                     min_options[i] = 10.0 * 1e-12
-
-                # S2s.
-                elif match('S2s', self.relax.data.param_types[model][i]):
-                    min_options[i] = 0.5
-
-                # ts.
-                elif match('ts', self.relax.data.param_types[model][i]):
+                else:
                     min_options[i] = 1000.0 * 1e-12
 
-                # Rex.
-                elif match('Rex', self.relax.data.param_types[model][i]):
-                    min_options[i] = 0.0
+            # Rex.
+            elif match('Rex', types[i]):
+                min_options[i] = 0.0
 
-                # Bond length.
-                elif match('Bond length', self.relax.data.param_types[model][i]):
-                    min_options[i] = 1.02 * 1e-10
+            # Bond length.
+            elif match('Bond length', types[i]):
+                min_options[i] = 1.02 * 1e-10
 
-                # CSA.
-                elif match('CSA', self.relax.data.param_types[model][i]):
-                    min_options[i] = -170 * 1e-6
-
-                # Unknown parameter.
-                else:
-                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the extended model-free equation."
-                    return min_options
+            # CSA.
+            elif match('CSA', types[i]):
+                min_options[i] = -170 * 1e-6
 
         return min_options
 
@@ -296,72 +261,30 @@ class Model_free:
     def grid_setup(self, model=None, inc_vector=None):
         """The grid search setup function."""
 
-        # Setup the grid options.
+        # Initialise.
         min_options = []
+        types = self.relax.data.param_types[model]
 
-        # The original model-free equations.
-        if match('mf_orig', self.relax.data.equations[model]):
-            for i in range(len(self.relax.data.param_types[model])):
-                # S2.
-                if match('S2', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 1.0])
+        for i in range(len(types)):
+            # S2, S2f, and S2s.
+            if match("S2", types[i]):
+                min_options.append([inc_vector[i], 0.0, 1.0])
 
-                # te.
-                elif match('te', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
+            # te, tf, and ts.
+            elif match("t[efs]", types[i]):
+                min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
 
-                # Rex.
-                elif match('Rex', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
+            # Rex.
+            elif match('Rex', types[i]):
+                min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
-                # Bond length.
-                elif match('Bond length', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 1.0 * 1e-10, 1.05 * 1e-10])
+            # Bond length.
+            elif match('Bond length', types[i]):
+                min_options.append([inc_vector[i], 1.0 * 1e-10, 1.05 * 1e-10])
 
-                # CSA.
-                elif match('CSA', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], -120 * 1e-6, -200 * 1e-6])
-
-                # Unknown parameter.
-                else:
-                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the original model-free equation."
-                    return min_options
-
-        # The extended model-free equations.
-        elif match('mf_ext', self.relax.data.equations[model]):
-            for i in range(len(self.relax.data.param_types[model])):
-                # S2f.
-                if match('S2f', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 1.0])
-
-                # tf.
-                elif match('tf', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
-
-                # S2f.
-                elif match('S2s', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 1.0])
-
-                # tf.
-                elif match('ts', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
-
-                # Rex.
-                elif match('Rex', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.frq[0])**2])
-
-                # Bond length.
-                elif match('Bond length', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], 1.0 * 1e-10, 1.1 * 1e-10])
-
-                # CSA.
-                elif match('CSA', self.relax.data.param_types[model][i]):
-                    min_options.append([inc_vector[i], -120 * 1e-6, -200 * 1e-6])
-
-                # Unknown parameter.
-                else:
-                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the extended model-free equation."
-                    return min_options
+            # CSA.
+            elif match('CSA', types[i]):
+                min_options.append([inc_vector[i], -120 * 1e-6, -200 * 1e-6])
 
         return min_options
 
@@ -542,72 +465,32 @@ class Model_free:
     def map_bounds(self, model=None):
         """The function for creating bounds for the mapping function."""
 
+        # Initialise.
+        types = self.relax.data.param_types[model]
+
         # Bounds array.
-        bounds = zeros((len(self.relax.data.param_types[model]), 2), Float64)
+        bounds = zeros((len(types), 2), Float64)
 
-        # The original model-free equations.
-        if match('mf_orig', self.relax.data.equations[model]):
-            for i in range(len(self.relax.data.param_types[model])):
-                # S2.
-                if match('S2', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 1]
+        for i in range(len(types)):
+            # S2, S2f, and S2s.
+            if match("S2", types[i]):
+                bounds[i] = [0, 1]
 
-                # te.
-                elif match('te', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 1e-8]
+            # te, tf, and ts.
+            elif match("t[efs]", types[i]):
+                bounds[i] = [0, 1e-8]
 
-                # Rex.
-                elif match('Rex', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
+            # Rex.
+            elif match('Rex', types[i]):
+                bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
 
-                # Bond length.
-                elif match('Bond length', self.relax.data.param_types[model][i]):
-                    bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
+            # Bond length.
+            elif match('Bond length', types[i]):
+                bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
 
-                # CSA.
-                elif match('CSA', self.relax.data.param_types[model][i]):
-                    bounds[i] = [-100 * 1e-6, -300 * 1e-6]
-
-                # Unknown parameter.
-                else:
-                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the original model-free equation."
-                    return bounds
-
-        # The extended model-free equations.
-        elif match('mf_ext', self.relax.data.equations[model]):
-            for i in range(len(self.relax.data.param_types[model])):
-                # S2f.
-                if match('S2f', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 1]
-
-                # tf.
-                elif match('tf', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 1e-8]
-
-                # S2s.
-                elif match('S2s', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 1]
-
-                # ts.
-                elif match('ts', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 1e-8]
-
-                # Rex.
-                elif match('Rex', self.relax.data.param_types[model][i]):
-                    bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
-
-                # Bond length.
-                elif match('Bond length', self.relax.data.param_types[model][i]):
-                    bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
-
-                # CSA.
-                elif match('CSA', self.relax.data.param_types[model][i]):
-                    bounds[i] = [-100 * 1e-6, -300 * 1e-6]
-
-                # Unknown parameter.
-                else:
-                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the extended model-free equation."
-                    return bounds
+            # CSA.
+            elif match('CSA', types[i]):
+                bounds[i] = [-100 * 1e-6, -300 * 1e-6]
 
         return bounds
 
