@@ -91,8 +91,13 @@ class RelaxErrors:
             self.text = "The environmental variable 'PDBVIEWER' has not been set, see the file 'docs/INSTALL' for details."
 
 
-    # Type errors.
-    ##############
+    # Argument errors.
+    ##################
+
+    # Invalid argument.
+    class RelaxInvalidError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " is invalid."
 
     # Binary - integers 0 and 1.
     class RelaxBinError(BaseError):

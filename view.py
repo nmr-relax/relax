@@ -42,8 +42,11 @@ class View:
         self.relax.data.scene = VMD.Scene()
 
         # Add the molecules to the scene.
-        for i in range(len(self.relax.data.pdb)):
-            self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb[i]))
+        if type(self.relax.data.pdb) == list:
+            for i in range(len(self.relax.data.pdb)):
+                self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb[i]))
+        else:
+            self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb))
 
         # View the scene.
         self.relax.data.scene.view()

@@ -36,6 +36,32 @@ class Sequence:
         return [ 'res' ]
 
 
+    def load_PDB_sequence(self):
+        """Function for loading the sequence out of a PDB file.
+        
+        This needs to be modified to handle multiple peptide chains.
+        """
+
+        print "Loading sequence from the PDB file."
+
+        # Reassign the sequence of the first structure.
+        if type(self.relax.data.pdb) == list:
+            res = self.relax.data.pdb[0].peptide_chains[0].residues
+        else:
+            res = self.relax.data.pdb.peptide_chains[0].residues
+
+        # Loop over the sequence.
+        for i in xrange(len(res)):
+            # Append a data container.
+            self.relax.data.res.append(Residue())
+
+            # Insert the data.
+            self.relax.data.res[i].num = res[i].number
+            self.relax.data.res[i].name = res[i].name
+            self.relax.data.res[i].label = `res[i].number` + '_' + res[i].name
+            self.relax.data.res[i].select = 1
+
+
     def macro_read(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):
         """Macro for reading sequence data.
 
