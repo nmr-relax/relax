@@ -1178,7 +1178,7 @@ class Model_free(Common_functions):
                 # Fill the array 'self.relax.data.res[new_run]' with empty data containers and place sequence data into the array.
                 for i in xrange(len(self.relax.data.res[old_run])):
                     # Append a data container.
-                    self.relax.data.res[new_run].add_element()
+                    self.relax.data.res[new_run].add_item()
 
                     # Insert the data.
                     self.relax.data.res[new_run][i].num = self.relax.data.res[old_run][i].num

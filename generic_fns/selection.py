@@ -90,7 +90,7 @@ class Selection:
 
         # Test if the file exists.
         if not access(self.file_path, F_OK):
-            raise RelaxFileError, (None, self.file_path)
+            raise RelaxFileError, self.file_path
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(self.file_path)
@@ -236,7 +236,7 @@ class Selection:
 
         # Test if the file exists.
         if not access(self.file_path, F_OK):
-            raise RelaxFileError, (None, self.file_path)
+            raise RelaxFileError, self.file_path
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(self.file_path)
