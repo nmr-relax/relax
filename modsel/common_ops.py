@@ -43,8 +43,13 @@ class common_operations:
 		return stage
 
 
-	def create_mfdata(self, res, flag='1'):
-		"Create the Modelfree input file mfdata"
+	def create_mfdata(self, res, exclude_set=-1, flag='1'):
+		"""Create the Modelfree input file mfdata.
+
+		This function is run once for each residue.  If the flag variable is set to 0, all data
+		for this residue will be excluded.  If the exclude_set variable is given, the data flag
+		corresponding to that set will be set to 0 (Used by the cross validation method).
+		"""
 
 		mfdata = self.mf.mfdata
 
@@ -57,7 +62,10 @@ class common_operations:
 					mfdata.write('%-10s' % self.mf.data.input_info[k][1])
 					mfdata.write('%10s' % self.mf.data.relax_data[k][res][2])
 					mfdata.write('%10s' % self.mf.data.relax_data[k][res][3])
-					mfdata.write(' %-3s\n' % flag)
+					if exclude_set == k:
+						mfdata.write(' %-3s\n' % 0)
+					else:
+						mfdata.write(' %-3s\n' % flag)
 					k = k + 1
 				else:
 					if j == 0:
@@ -286,6 +294,21 @@ class common_operations:
 				frq = frq + 1
 		self.mf.data.num_frq = frq
 		self.mf.data.num_data_sets = num_data
+
+
+	def extract_mf_data(self):
+		"Extract the modelfree results."
+
+		for model in self.mf.data.runs:
+			mfout = self.mf.file_ops.read_file(model + '/mfout')
+			mfout_lines = mfout.readlines()
+			mfout.close()
+			print "Extracting model-free data from " + model + "/mfout."
+			num_res = len(self.mf.data.relax_data[0])
+			if match('^m', model):
+				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n')
+			if match('^f', model):
+				self.mf.data.data[model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='y')
 
 
 	def extract_relax_data(self):
@@ -562,7 +585,7 @@ class common_operations:
 		file.close()
 
 
-	def set_run_flags(self, run):
+	def set_run_flags(self, model):
 		"Reset, and then set the flags in self.mf.data.usr_param.md1 and md2."
 
 		self.mf.data.usr_param.md1['sf2']['flag'] = '0'
@@ -576,55 +599,55 @@ class common_operations:
 		self.mf.data.usr_param.md2['rex']['flag'] = '0'
 
 		# Normal runs.
-		if run == "m1":
+		if model == "m1":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-		if run == "m2":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['te']['flag']  = '1'
-		if run == "m3":
-			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
-			self.mf.data.usr_param.md1['rex']['flag'] = '1'
-		if run == "m4":
+		if model == "m2":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md1['te']['flag']  = '1'
+		if model == "m3":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md1['rex']['flag'] = '1'
-		if run == "m5":
+		if model == "m4":
+			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
+			self.mf.data.usr_param.md1['te']['flag']  = '1'
+			self.mf.data.usr_param.md1['rex']['flag'] = '1'
+		if model == "m5":
 			self.mf.data.usr_param.md1['sf2']['flag'] = '1'
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md1['te']['flag']  = '1'
 
 		# F-tests.
-		if run == "f-m1m2":
+		if model == "f-m1m2":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['te']['flag']  = '1'
-		if run == "f-m1m3":
+		if model == "f-m1m3":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['rex']['flag'] = '1'
-		if run == "f-m1m4":
+		if model == "f-m1m4":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['te']['flag']  = '1'
 			self.mf.data.usr_param.md2['rex']['flag'] = '1'
-		if run == "f-m1m5":
+		if model == "f-m1m5":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['sf2']['flag'] = '1'
 			self.mf.data.usr_param.md2['te']['flag']  = '1'
-		if run == "f-m2m4":
+		if model == "f-m2m4":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md1['te']['flag']  = '1'
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['te']['flag']  = '1'
 			self.mf.data.usr_param.md2['rex']['flag'] = '1'
-		if run == "f-m2m5":
+		if model == "f-m2m5":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md1['te']['flag']  = '1'
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['sf2']['flag'] = '1'
 			self.mf.data.usr_param.md2['te']['flag']  = '1'
-		if run == "f-m3m4":
+		if model == "f-m3m4":
 			self.mf.data.usr_param.md1['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md1['rex']['flag'] = '1'
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
@@ -635,54 +658,47 @@ class common_operations:
 	def stage_initial(self):
 		"Creation of the files for the Modelfree calculations for the models in self.mf.data.runs."
 
-		for run in self.mf.data.runs:
-			if match('^m', run):
-				print "Creating input files for model " + run
-				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
-			elif match('^f', run):
-				print "Creating input files for the F-test " + run
-				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
+		for model in self.mf.data.runs:
+			if match('^m', model):
+				print "Creating input files for model " + model
+				self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
+			elif match('^f', model):
+				print "Creating input files for the F-test " + model
+				self.mf.log.write("\n\n<<< F-test " + model + " >>>\n\n")
 			else:
-				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
+				print "The run '" + model + "'does not start with an m or f, quitting script!\n\n"
 				sys.exit()
-			self.mf.file_ops.mkdir(dir=run)
-			self.mf.file_ops.open_mf_files(dir=run)
-			self.set_run_flags(run)
+			self.mf.file_ops.mkdir(dir=model)
+			self.mf.file_ops.open_mf_files(dir=model)
+			self.set_run_flags(model)
 			self.log_params('M1', self.mf.data.usr_param.md1)
 			self.log_params('M2', self.mf.data.usr_param.md2)
-			if match('^m', run):
+			if match('^m', model):
 				self.mf.data.mfin.selection = 'none'
 				self.create_mfin()
-			elif match('^f', run):
+			elif match('^f', model):
 				self.mf.data.mfin.selection = 'ftest'
 				self.create_mfin()
-			self.create_run(dir=run)
+			self.create_run(dir=model)
 			for res in range(len(self.mf.data.relax_data[0])):
 				# Mfdata.
 				self.create_mfdata(res)
 				# Mfmodel.
 				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-				if match('^f', run):
+				if match('^f', model):
 					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
 				# Mfpar.
 				self.create_mfpar(res)
-			self.mf.file_ops.close_mf_files(dir=run)
+			self.mf.file_ops.close_mf_files(dir=model)
 
 
 	def stage_selection(self):
+		"The stage for model selection common to all techniques."
+
 		self.mf.file_ops.mkdir('grace')
 
 		print "\n[ Model-free data extraction ]\n"
-		for run in self.mf.data.runs:
-			mfout = self.mf.file_ops.read_file(run + '/mfout')
-			mfout_lines = mfout.readlines()
-			mfout.close()
-			print "Extracting model-free data from " + run + "/mfout."
-			num_res = len(self.mf.data.relax_data[0])
-			if match('^m', run):
-				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n')
-			if match('^f', run):
-				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='y')
+		self.extract_mf_data()
 
  		print "\n[ " + self.mf.data.usr_param.method + " model selection ]\n"
 		self.model_selection()

@@ -23,7 +23,6 @@
 
 import sys
 from math import log, pi
-from re import match
 
 from common_ops import common_operations
 from discrepancies import kl
@@ -60,26 +59,19 @@ class true(common_operations):
 			self.mf.data.results.append({})
 			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
 
-			err = []
 			real = []
+			err = []
 			types = []
 			for set in range(len(self.mf.data.relax_data)):
+				real.append(float(self.mf.data.true.op_data[res][set+2]))
 				err.append(float(self.mf.data.relax_data[set][res][3]))
-				real.append(float(self.mf.data.relax_data[set][res][2]))
 				types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 
 			for model in self.mf.data.runs:
-				if match('m1', model):
-					mf_data = [ data[model][res]['s2'] ]
-				elif match('m2', model):
-					mf_data = [ data[model][res]['s2'], data[model][res]['te'] ]
-				elif match('m3', model):
-					mf_data = [ data[model][res]['s2'], data[model][res]['rex'] ]
-				elif match('m4', model):
-					mf_data = [ data[model][res]['s2'], data[model][res]['te'], data[model][res]['rex'] ]
-				elif match('m5', model):
-					mf_data = [ data[model][res]['s2f'], data[model][res]['s2s'], data[model][res]['te'] ]
-				back_calc = self.mf.calc_relax_data.calc(tm, model, types, mf_data)
+				back_calc = []
+				for set in range(len(self.mf.data.relax_data)):
+					label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
+					back_calc.append(float(self.mf.data.data[model][res][label_fit]))
 
 				chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
 
@@ -125,54 +117,47 @@ class true(common_operations):
 			# S2.
 			file.write('\n%-20s' % 'S2')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['te'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
+				file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Model selection criteria.
 			file.write('\n%-20s' % self.mf.data.usr_param.method)
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
+				file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
 
 		file.write('\n')
 		sys.stdout.write("]\n")

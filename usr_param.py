@@ -1,4 +1,4 @@
-# usr_param.py v0.2                  15 December 2001        Edward d'Auvergne
+# usr_param.py v0.3                  4 January 2002        Edward d'Auvergne
 #
 # Class containing all the user specified parameters.  Used by the program mf.
 # Make sure the version numbers between the program and this class are identical.
@@ -8,6 +8,7 @@ class usr_param:
 	def __init__(self):
 		"Class containing parameters specified by the user"
 
+		self.version = 0.3
 		self.init_method_param()
 		self.init_run_param()
 		self.init_mfin_param()
@@ -32,6 +33,9 @@ class usr_param:
 		Bootstrap:	Modelfree analysis based on model selection using bootstrap methods to
 				estimate the overall discrepency.
 
+		CV:	Modelfree analysis based on model selection using cross validation methods to
+				estimate the overall discrepency.
+
 		Farrow:	The method given by Farrow et al., 1994.
 
 		Palmer:	The method given by Mandel et al., 1995.
@@ -40,7 +44,7 @@ class usr_param:
 			must be known).
 		"""
 
-		self.method = 'BIC'
+		self.method = 'CV'
 
 		# The following three values are only used in Palmer's method and won't affect the others.
 		self.chi2_lim = 0.90      # Set the chi squared cutoff (1 - alpha critical value).

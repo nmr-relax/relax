@@ -3,16 +3,15 @@
 
 merge `input` and `usr_param.py`
 usr numpy
-merge print_data functions
+merge all print_data functions
 
 
 # Bugs
 ######
 
 
-# Methods
-#########
+# Model selection methods
+#########################
 
-anisotropic bootstrap
-farrow
-true
+anisotropic diffusion (bootstrap)
+cross validation (split and merge stages into common_ops.py)

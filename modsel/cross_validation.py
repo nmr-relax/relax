@@ -1,12 +1,8 @@
-# A method based on asymptotic model selection criteria.
-#
-# The following asymptotic methods are supported:
-#	AIC - Akaike Information Criteria
-#	AICc - Akaike Information Criteria corrected for small sample sizes 
-#	BIC - Schwartz Criteria
+# A method based on cross validation model selection.
 #
 # The program is divided into the following stages:
-#	Stage 1:  Creation of the files for the model-free calculations for models 1 to 5.  Monte Carlo
+#	Stage 1:  Creation of the files for the model-free calculations for models 1 to 5.  For each model,
+#		a directory for each relaxation data set is created without including the data.  Monte Carlo
 #		simulations are not used on these initial runs, because the errors are not needed (should
 #		speed up analysis considerably).
 #	Stage 2:  Model selection and the creation of the final run.  Monte Carlo simulations are used to
@@ -15,77 +11,115 @@
 #	Stage 3:  Extraction of the data.
 
 import sys
-from math import log, pi
 from re import match
 
 from common_ops import common_operations
 from discrepancies import kl
 
 
-class asymptotic(common_operations):
+class cv(common_operations):
 	def __init__(self, mf):
-		"Model-free analysis based on asymptotic model selection methods."
+		"Model-free analysis based on cross validation model selection methods."
 
 		self.mf = mf
 		self.kl = kl()
 
-		print "Model-free analysis based on " + self.mf.data.usr_param.method + " model selection."
+		print "Model-free analysis based on cross validation model selection."
 		self.initialize()
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 		self.mf.data.mfin.default_data()
 		self.goto_stage()
 
 
+	def extract_mf_data(self):
+		"Extract the modelfree results."
+
+		for model in self.mf.data.runs:
+			print "Extracting model-free data of model " + model
+			for set in range(len(self.mf.data.relax_data)):
+				cv_dir = model + "/" + model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+				cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+				print "\t" + cv_dir + "/mfout."
+				mfout = self.mf.file_ops.read_file(cv_dir + '/mfout')
+				mfout_lines = mfout.readlines()
+				mfout.close()
+				num_res = len(self.mf.data.relax_data[0])
+				self.mf.data.data[cv_model] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.chi2_lim, self.mf.data.usr_param.ftest_lim, ftest='n')
+
+
+	def fill_results(self, data, model='0'):
+		"Initialize the next row of the results data structure."
+
+		results = {}
+		results['res_num']   = data['res_num']
+		results['model']   = model
+		results['s2']      = ''
+		results['s2_err']  = ''
+		results['s2f']     = ''
+		results['s2f_err'] = ''
+		results['s2s']     = ''
+		results['s2s_err'] = ''
+		results['te']      = ''
+		results['te_err']  = ''
+		results['rex']     = ''
+		results['rex_err'] = ''
+		results['chi2']     = ''
+		return results
+
+
 	def model_selection(self):
 		"Model selection."
 
 		data = self.mf.data.data
+		self.mf.data.calc_frq()
+		self.mf.data.calc_constants()
 		n = float(self.mf.data.num_data_sets)
+		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
 
 		self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>")
 		for res in range(len(self.mf.data.relax_data[0])):
+			sys.stdout.write("%9s" % "Residue: ")
+			sys.stdout.write("%-9s" % (self.mf.data.relax_data[0][res][1] + " " + self.mf.data.relax_data[0][res][0]))
+			self.mf.data.cv.cv_crit.append({})
 			self.mf.data.results.append({})
-			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
-
-			err = []
-			for set in range(len(self.mf.data.relax_data)):
-				err.append(float(self.mf.data.relax_data[set][res][3]))
+			self.mf.log.write('\n%-22s' % ( "   Checking res " + data["m1-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res]['res_num'] ))
 
 			for model in self.mf.data.runs:
-				chi2 = data[model][res]['chi2']
-				crit = self.kl.calc(n, chi2, err)
-
-				if match('m1', model):
-					k = 1.0
-				elif match('m2', model) or match('m3', model):
-					k = 2.0
-				elif match('m4', model) or match('m5', model):
-					k = 3.0
-
-				if match('^AIC$', self.mf.data.usr_param.method):
-					crit = crit + 2.0*k
-
-				elif match('^AICc$', self.mf.data.usr_param.method):
-					crit = crit + 2.0*k + 2.0*k*(k + 1.0)/(n - k - 1.0)
-
-				elif match('^BIC$', self.mf.data.usr_param.method):
-					crit = crit + k*log(n)
-
-				data[model][res]['crit'] = crit / (2.0 * n)
+				sum_cv_crit = 0
+				for set in range(len(self.mf.data.relax_data)):
+					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					real = [ float(self.mf.data.relax_data[set][res][2]) ]
+					err = [ float(self.mf.data.relax_data[set][res][3]) ]
+					types = [ [self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])] ]
+					if match('m1', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2'] ])
+					elif match('m2', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2'], data[cv_model][res]['te'] ])
+					elif match('m3', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2'], data[cv_model][res]['rex'] ])
+					elif match('m4', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2'], data[cv_model][res]['te'], data[cv_model][res]['rex'] ])
+					elif match('m5', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2f'], data[cv_model][res]['s2s'], data[cv_model][res]['te'] ])
+					chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
+					sum_cv_crit = sum_cv_crit + self.kl.calc(n, chi2, err)
+				self.mf.data.cv.cv_crit[res][model] = sum_cv_crit / float(len(self.mf.data.relax_data))
 
 			# Select model.
 			min = 'm1'
-			for run in self.mf.data.runs:
-				if data[run][res]['crit'] < data[min][res]['crit']:
-					min = run
-			self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
+			for model in self.mf.data.runs:
+				if self.mf.data.cv.cv_crit[res][model] < self.mf.data.cv.cv_crit[res][min]:
+					min = model
+			self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res], model=min[1])
 
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['crit']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['crit']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['crit']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['crit']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['crit']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m1): " + `self.mf.data.cv.cv_crit[res]['m1']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m2): " + `self.mf.data.cv.cv_crit[res]['m2']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m3): " + `self.mf.data.cv.cv_crit[res]['m3']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m4): " + `self.mf.data.cv.cv_crit[res]['m4']` + "\n")
+			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m5): " + `self.mf.data.cv.cv_crit[res]['m5']` + "\n")
 			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
+
+			sys.stdout.write("%10s\n" % ("Model " + self.mf.data.results[res]['model']))
 
 
 	def print_data(self):
@@ -105,59 +139,69 @@ class asymptotic(common_operations):
 			file.write('%-17s' % 'Model 4')
 			file.write('%-17s' % 'Model 5')
 
-			# S2.
-			file.write('\n%-20s' % 'S2')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
+			for set in range(len(self.mf.data.relax_data)):
+				file.write("\n-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0])
+
+				# S2.
+				file.write('\n%-20s' % 'S2')
+				for model in self.mf.data.runs:
+					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					file.write('%8.3f' % self.mf.data.data[cv_model][res]['s2'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
+					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['s2_err'])
 
-			# S2f.
-			file.write('\n%-20s' % 'S2f')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
+				# S2f.
+				file.write('\n%-20s' % 'S2f')
+				for model in self.mf.data.runs:
+					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					file.write('%8.3f' % self.mf.data.data[cv_model][res]['s2f'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
+					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['s2f_err'])
 
-			# S2s.
-			file.write('\n%-20s' % 'S2s')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
+				# S2s.
+				file.write('\n%-20s' % 'S2s')
+				for model in self.mf.data.runs:
+					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					file.write('%8.3f' % self.mf.data.data[cv_model][res]['s2s'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
+					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['s2s_err'])
 
-			# te.
-			file.write('\n%-20s' % 'te')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
+				# te.
+				file.write('\n%-20s' % 'te')
+				for model in self.mf.data.runs:
+					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					file.write('%8.3f' % self.mf.data.data[cv_model][res]['te'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
+					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['te_err'])
 
-			# Rex.
-			file.write('\n%-20s' % 'Rex')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
+				# Rex.
+				file.write('\n%-20s' % 'Rex')
+				for model in self.mf.data.runs:
+					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+					file.write('%8.3f' % self.mf.data.data[cv_model][res]['rex'])
 					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
+					file.write('%-8.3f' % self.mf.data.data[cv_model][res]['rex_err'])
 
-			# Chi2.
-			file.write('\n%-20s' % 'Chi2')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
-
-			# Model selection criteria.
-			file.write('\n%-20s' % self.mf.data.usr_param.method)
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
+			# Cross validation criteria.
+			file.write('\n%-20s' % 'CV')
+			for model in self.mf.data.runs:
+				file.write('%-17.3f' % self.mf.data.cv.cv_crit[res][model])
 
 		file.write('\n')
+		sys.stdout.write("]\n")
+		file.close()
+
+
+	def print_results(self):
+		"Print the results into the results file."
+
+		file = open('results', 'w')
+		file.write('%-6s%-6s\n' % ( 'ResNo', 'Model' ))
+		sys.stdout.write("[")
+		for res in range(len(self.mf.data.results)):
+			sys.stdout.write("-")
+			file.write('%-6s' % self.mf.data.results[res]['res_num'])
+			file.write('%-6s\n' % self.mf.data.results[res]['model'])
 		sys.stdout.write("]\n")
 		file.close()
 
@@ -172,3 +216,31 @@ class asymptotic(common_operations):
 		"Set the options for the final run."
 
 		self.mf.data.mfin.sims = 'y'
+		self.mf.data.mfin.sim_type = 'pred'
+
+
+	def stage_initial(self):
+		"Creation of the files for the Modelfree calculations for the models in self.mf.data.runs."
+
+		for model in self.mf.data.runs:
+			print "Creating input files for model " + model
+			self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
+			self.mf.file_ops.mkdir(dir=model)
+			self.set_run_flags(model)
+			self.log_params('M1', self.mf.data.usr_param.md1)
+			self.log_params('M2', self.mf.data.usr_param.md2)
+			for set in range(len(self.mf.data.relax_data)):
+				cv_dir = model + "/" + model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+				self.mf.file_ops.mkdir(dir=cv_dir)
+				self.mf.file_ops.open_mf_files(dir=cv_dir)
+				self.mf.data.mfin.selection = 'none'
+				self.create_mfin()
+				self.create_run(dir=model)
+				for res in range(len(self.mf.data.relax_data[0])):
+					# Mfdata.
+					self.create_mfdata(res, set)
+					# Mfmodel.
+					self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+					# Mfpar.
+					self.create_mfpar(res)
+				self.mf.file_ops.close_mf_files(dir=cv_dir)

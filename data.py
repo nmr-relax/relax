@@ -12,6 +12,7 @@ class data:
 		self.mfin = self.mfin_data(self.mf)
 		self.asymptotic = self.init_asymptotic()
 		self.bootstrap = self.init_bootstrap()
+		self.cv = self.init_cv()
 		self.farrow = self.init_farrow()
 		self.palmer = self.init_palmer()
 		self.true = self.init_true()
@@ -31,6 +32,15 @@ class data:
 			"Data specific for the model-free analysis using bootstrap model selection."
 
 			self.name = 'Bootstrap'
+
+
+
+	class init_cv:
+		def __init__(self):
+			"Data specific for the model-free analysis using bootstrap model selection."
+
+			self.name = 'Cross validation'
+			self.cv_crit = []
 
 
 

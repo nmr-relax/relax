@@ -3,8 +3,10 @@ from re import match
 from string import split
 
 class star:
-	def __init__(self):
+	def __init__(self, mf):
 		"Class to extract model-free data from the STAR formatted mfout file."
+
+		self.mf = mf
 
 
 	def extract(self, mfout, num_res, chi2_lim=0.90, ftest_lim=0.80, ftest='n'):
@@ -24,15 +26,16 @@ class star:
 		if match('n', self.ftest):
 			# Jump to first line of data.
 			for line in range(len(self.mfout)):
-				self.row = [[]]
-				self.row[0] = split(self.mfout[line])
+				self.row = split(self.mfout[line])
 				try:
-					self.row[0][1]
+					self.row[0]
 				except IndexError:
 					continue
-				if match('S2$', self.row[0][0]) and match('\(\)', self.row[0][1]):
+
+				if match('data_relaxation', self.row[0]):
 					self.line_num = line
 					break
+			self.get_relax_values()
 			self.get_s2()
 			self.get_s2f()
 			self.get_s2s()
@@ -72,6 +75,26 @@ class star:
 			self.data[i]['fstat_lim'] = float(self.row[1][1])
 
 
+	def get_relax_values(self):
+		self.line_num = self.line_num + 6
+		for set in range(len(self.mf.data.input_info)):
+			self.row = [[]]
+			self.row[0] = split(self.mfout[self.line_num])
+			self.split_rows(self.line_num, self.num_res)
+
+			label = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
+			label_err = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_err"
+			label_fit = self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0] + "_fit"
+
+			for i in range(self.num_res):
+				j = i + 1
+				self.data[i][label] = float(self.row[j][1])
+				self.data[i][label_err] = float(self.row[j][2])
+				self.data[i][label_fit] = float(self.row[j][4])
+
+			self.line_num = self.line_num + self.num_res + 3
+
+
 	def get_rex(self):
 		self.line_num = self.line_num + self.num_res + 3
 		self.row = [[]]
@@ -84,6 +107,9 @@ class star:
 
 
 	def get_s2(self):
+		self.line_num = self.line_num + 6
+		self.row = [[]]
+		self.row[0] = split(self.mfout[self.line_num])
 		self.split_rows(self.line_num, self.num_res)
 		for i in range(self.num_res):
 			j = i + 1

@@ -49,12 +49,12 @@ class bootstrap(common_operations):
 			self.mf.log.write('\n%-22s' % ( "< Checking res " + data['m1'][res]['res_num'] + " >\n"))
 			file_name = self.mf.data.relax_data[0][res][1] + '_' + self.mf.data.relax_data[0][res][0] + '.out'
 
-			err = []
 			real = []
+			err = []
 			types = []
 			for set in range(len(self.mf.data.relax_data)):
-				err.append(float(self.mf.data.relax_data[set][res][3]))
 				real.append(float(self.mf.data.relax_data[set][res][2]))
+				err.append(float(self.mf.data.relax_data[set][res][3]))
 				types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 
 			for model in self.mf.data.runs:
@@ -107,9 +107,9 @@ class bootstrap(common_operations):
 
 			# Select model.
 			min = 'm1'
-			for run in self.mf.data.runs:
-				if data[run][res]['bootstrap'] < data[min][res]['bootstrap']:
-					min = run
+			for model in self.mf.data.runs:
+				if data[model][res]['bootstrap'] < data[min][res]['bootstrap']:
+					min = model
 			self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
 			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['bootstrap']` + "\n")
@@ -141,55 +141,48 @@ class bootstrap(common_operations):
 
 			# S2.
 			file.write('\n%-20s' % 'S2')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
+			for model in self.mf.data.runs:
+				file.write('%8.3f' % self.mf.data.data[model][res]['s2'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[model][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
+			for model in self.mf.data.runs:
+				file.write('%8.3f' % self.mf.data.data[model][res]['s2f'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[model][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
+			for model in self.mf.data.runs:
+				file.write('%8.3f' % self.mf.data.data[model][res]['s2s'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[model][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
+			for model in self.mf.data.runs:
+				file.write('%8.3f' % self.mf.data.data[model][res]['te'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[model][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
+			for model in self.mf.data.runs:
+				file.write('%8.3f' % self.mf.data.data[model][res]['rex'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[model][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
+			for model in self.mf.data.runs:
+				file.write('%-17.3f' % self.mf.data.data[model][res]['chi2'])
 
 			# Bootstrap criteria.
 			file.write('\n%-20s' % 'Bootstrap')
-			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.3f' % self.mf.data.data[run][res]['bootstrap'])
+			for model in self.mf.data.runs:
+				file.write('%-17.3f' % self.mf.data.data[model][res]['bootstrap'])
 
 		file.write('\n')
 		sys.stdout.write("]\n")

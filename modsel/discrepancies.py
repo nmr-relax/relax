@@ -20,6 +20,6 @@ class kl:
 
 		# Discrepancy.
 		self.kl = n * log(2.0 * pi) + sum_ln_var + chi2
-		print "self.kl: " + `n * log(2.0 * pi)` + " + " + `sum_ln_var` + " + " + `chi2` + "\t= " + `self.kl`
+		#print "self.kl: " + `n * log(2.0 * pi)` + " + " + `sum_ln_var` + " + " + `chi2` + "\t= " + `self.kl`
 		return self.kl
 

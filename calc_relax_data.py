@@ -72,6 +72,8 @@ class calc_relax_data:
 			for i in range(len(self.mf.data.nmr_frq)):
 				self.rex.append(0.0)
 
+		# Debugging code, do not remove!
+		#
 		#self.mf.log.write("\nS2: ")
 		#self.mf.log.write("%-7.4f" % self.s2)
 		#self.mf.log.write(" | S2f: ")

@@ -108,54 +108,47 @@ class asymptotic(common_operations):
 			# S2.
 			file.write('\n%-20s' % 'S2')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['s2'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['s2_err'])
 
 			# S2f.
 			file.write('\n%-20s' % 'S2f')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['s2f'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['s2f_err'])
 
 			# S2s.
 			file.write('\n%-20s' % 'S2s')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['s2s'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['s2s_err'])
 
 			# te.
 			file.write('\n%-20s' % 'te')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['te'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['te'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['te_err'])
 
 			# Rex.
 			file.write('\n%-20s' % 'Rex')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
-					file.write('%1s' % '±')
-					file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
+				file.write('%8.3f' % self.mf.data.data[run][res]['rex'])
+				file.write('%1s' % '±')
+				file.write('%-8.3f' % self.mf.data.data[run][res]['rex_err'])
 
 			# Chi2.
 			file.write('\n%-20s' % 'Chi2')
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
+				file.write('%-17.3f' % self.mf.data.data[run][res]['chi2'])
 
 			# Model selection criteria.
 			file.write('\n%-20s' % self.mf.data.usr_param.method)
 			for run in self.mf.data.runs:
-				if match('^m', run):
-					file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
+				file.write('%-17.6f' % self.mf.data.data[run][res]['crit'])
 
 		file.write('\n')
 		sys.stdout.write("]\n")

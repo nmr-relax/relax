@@ -2,7 +2,7 @@
 # /data03/dauvergne/bin/python
 
 
-# mf v0.2            15 December 2001        Edward d'Auvergne
+# mf v0.3            4 January 2002        Edward d'Auvergne
 #
 # Program to process all model-free input and output.
 #
@@ -36,6 +36,7 @@ from usr_param import usr_param
 
 from modsel.asymptotic import asymptotic
 from modsel.bootstrap import bootstrap
+from modsel.cross_validation import cv
 from modsel.farrow import farrow
 from modsel.palmer import palmer
 from modsel.true import true
@@ -45,14 +46,21 @@ class mf:
 	def __init__(self):
 		"The top level class."
 
+		self.version = 0.3
 		self.calc_relax_data = calc_relax_data(self)
 		self.calc_chi2 = calc_chi2()
 		self.data = data(self)
 		self.data.usr_param = usr_param()
 		self.file_ops = file_ops(self)
-		self.star = star()
+		self.star = star(self)
 
 		self.print_header()
+
+		if not self.version == self.data.usr_param.version:
+			print "The versions numbers of the program and the file usr_param.py do not match."
+			print "Copy the correct version to the working directory."
+			print "Quitting script!"
+			sys.exit()
 
 		if match('^AIC$', self.data.usr_param.method):
 			asymptotic(self)
@@ -62,6 +70,8 @@ class mf:
 			asymptotic(self)
 		elif match('^Bootstrap$', self.data.usr_param.method):
 			bootstrap(self)
+		elif match('^CV$', self.data.usr_param.method):
+			cv(self)
 		elif match('^Farrow$', self.data.usr_param.method):
 			farrow(self)
 		elif match('^Palmer$', self.data.usr_param.method):
@@ -81,7 +91,7 @@ class mf:
 
 		print """
 
-		                      mf v0.2
+		                      mf v0.3
 
 		Program to process all model-free input and output.
 

@@ -70,7 +70,8 @@ class palmer(common_operations):
 							self.mf.data.data[run][res]['ftest'] = 0
 
 	def model_selection(self):
-		print "\n[ Palmer's model selection ]\n"
+		"Palmer's model selection."
+
 		self.anova_tests()
 		if self.mf.data.num_data_sets > 3:
 			# ie degrees of freedom > 0 in all models.
