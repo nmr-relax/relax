@@ -95,11 +95,11 @@ class Model_free:
         for i in range(len(data.params[run])):
             # tm.
             if data.params[run][i] == 'tm':
-                scaling_matrix[i, i] = 1e-12
+                scaling_matrix[i, i] = 1e-15
 
             # te, tf, and ts.
             elif match('t', data.params[run][i]):
-                scaling_matrix[i, i] = 1e-12
+                scaling_matrix[i, i] = 1e-15
 
             # Rex.
             elif data.params[run][i] == 'Rex':
