@@ -361,7 +361,7 @@ class RelaxMinimiseThread(RelaxThread):
             text = text + fn[i] + "\n"
 
         # Function: Write the to stdout.
-        text = text + "self.relax.generic.results.display(run='%s')\n" % (self.thread_run)
+        text = text + "self.relax.generic.results.display(run='%s')\n" % (self.parent_run)
 
         # Cat the text into the script file.
         cmd = "cat > %s" % self.script_file
