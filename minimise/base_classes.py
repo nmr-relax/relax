@@ -395,7 +395,10 @@ class Line_search:
     def setup_line_search(self):
         """The line search function."""
 
-        if match('^[Bb]ack', self.line_search_algor):
+        if self.line_search_algor == None:
+            self.init_failure = 1
+            return
+        elif match('^[Bb]ack', self.line_search_algor):
             if self.print_flag:
                 print self.print_prefix + "Line search:  Backtracking line search."
             self.line_search = self.backline

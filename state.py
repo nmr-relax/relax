@@ -21,6 +21,7 @@
 ###############################################################################
 
 
+from Numeric import array
 from os import F_OK, access
 
 from data import Data

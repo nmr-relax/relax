@@ -694,7 +694,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1.0
 
             # te, tf, and ts.
-            elif match("t[efs]", types[i]):
+            elif match("t[efs]", types[swap[i]]):
                 # Labels.
                 labels = labels + "\"" + types[swap[i]] + " (ps)\""
 
@@ -703,7 +703,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e12
 
             # Rex.
-            elif match("Rex", types[i]):
+            elif match("Rex", types[swap[i]]):
                 # Labels.
                 labels = labels + "\"Rex (" + self.relax.data.frq_labels[0] + " MHz)\""
 
@@ -712,7 +712,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.frq[0])**2
 
             # Bond length.
-            elif match("Bond length", types[i]):
+            elif match("Bond length", types[swap[i]]):
                 # Labels.
                 labels = labels + "\"" + types[swap[i]] + " (A)\""
 
@@ -721,7 +721,7 @@ class Model_free:
                 val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-10
 
             # CSA.
-            elif match("CSA", types[i]):
+            elif match("CSA", types[swap[i]]):
                 # Labels.
                 labels = labels + "\"" + types[swap[i]] + " (ppm)\""
 

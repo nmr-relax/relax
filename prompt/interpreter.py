@@ -219,9 +219,9 @@ def interact(self, intro=None, local=None, script=None):
 
         # Print the script.
         file = open(script, 'r')
-        sys.stdout.write("Script file print out:\n")
-        sys.stdout.write("----------------------------------------------------------------------------------------------------\n\n")
-        sys.stdout.write(file.read() + "\n")
+        sys.stdout.write("script = " + `script` + "\n")
+        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+        sys.stdout.write(file.read())
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n\n\n")
         file.close()
 
