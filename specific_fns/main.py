@@ -25,6 +25,7 @@ from jw_mapping import Jw_mapping
 from model_free import Model_free
 from noe import Noe
 from relax_data import Rx_data
+from relax_fit import Relax_fit
 
 
 class Specific:
@@ -39,3 +40,4 @@ class Specific:
         self.model_free = Model_free(self.relax)
         self.noe = Noe(self.relax)
         self.relax_data = Rx_data(self.relax)
+        self.relax_fit = Relax_fit(self.relax)

@@ -20,238 +20,59 @@
 #                                                                             #
 ###############################################################################
 
-from math import sqrt
-from re import match, split
+from re import match
 
 
-class Noe:
+class Relax_fit:
     def __init__(self, relax):
         """Class containing functions for relaxation data."""
 
         self.relax = relax
 
 
-    def calculate(self, run=None, print_flag=1):
-        """Function for calculating the NOE and its error.
-
-        The error for each peak is calculated using the formula:
-                          ___________________________________________
-                       \/ {sd(sat)*I(unsat)}^2 + {sd(unsat)*I(sat)}^2
-            sd(NOE) = -----------------------------------------------
-                                          I(unsat)^2
-        """
-
-        # Arguments.
-        self.run = run
-
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
-            data = self.relax.data.res[self.run][i]
-
-            # Skip unselected residues.
-            if not data.select:
-                continue
-
-            # Skip residues which have no intensity values or errors.
-            if not (hasattr(data, 'ref') and hasattr(data, 'sat') and hasattr(data, 'ref_err') and hasattr(data, 'sat_err')):
-                continue
-
-            # Calculate the NOE.
-            data.noe = data.sat / data.ref
-
-            # Calculate the error.
-            data.noe_err = sqrt((data.sat_err * data.ref)**2 + (data.ref_err * data.sat)**2) / data.ref**2
-
-
-    def extract_int_data(self, line):
-        """Function for returning relevant data from the peak intensity line.
-
-        The residue number, heteronucleus and proton names, and peak intensity will be returned.
-        """
-
-        # Sparky formatted line.
-        if self.format == 'sparky':
-            # The Sparky assignment.
-            assignment = split('([A-Z]+)', line[0])
-            assignment = assignment[1:-1]
-
-            # The residue number.
-            try:
-                res_num = int(assignment[1])
-            except:
-                raise RelaxError, "Improperly formatted Sparky file."
-
-            # Nuclei names.
-            x_name = assignment[2]
-            h_name = assignment[4]
-
-            # Intensity.
-            intensity = line[self.int_col]
-
-        # XEasy formatted line.
-        elif self.format == 'xeasy':
-            # Test for invalid assignment lines which have the column numbers changed and return empty data.
-            if line[4] == 'inv.':
-                return None, None, None, 0.0
-
-            # The residue number.
-            try:
-                res_num = int(line[5])
-            except:
-                raise RelaxError, "Improperly formatted XEasy file."
-
-            # Nuclei names.
-            x_name = line[7]
-            h_name = line[4]
-
-            # Intensity.
-            intensity = line[self.int_col]
-
-        # Test the validity of the peak intensity data.
-        try:
-            intensity = float(intensity)
-        except ValueError:
-            raise RelaxError, "The peak height value " + `intensity` + " from the line " + `line` + " is invalid."
-
-        return res_num, x_name, h_name, intensity
-
-
     def get_data_name(self, name):
         """
-        NOE calculation data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Relaxation curve fitting data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
         |                        |              |                                                  |
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Reference intensity    | ref          | '^[Rr]ef$' or '[Rr]ef[ -_][Ii]nt'                |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Saturated intensity    | sat          | '^[Ss]at$' or '[Ss]at[ -_][Ii]nt'                |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | NOE                    | noe          | '^[Nn][Oo][Ee]$'                                 |
+        | rate                   | rate         | '^[Rr]ate$'                                      |
         |________________________|______________|__________________________________________________|
 
         """
 
-        # Reference intensity.
-        if match('^[Rr]ef$', name) or match('[Rr]ef[ -_][Ii]nt', name):
-            return 'ref'
-
-        # Saturated intensity.
-        if match('^[Ss]at$', name) or match('[Ss]at[ -_][Ii]nt', name):
-            return 'sat'
-
-        # NOE.
-        if match('^[Nn][Oo][Ee]$', name):
-            return 'noe'
+        # Rate.
+        if match('^[Rr]ate$', name):
+            return 'rate'
 
 
-    def read(self, run=None, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
+    def read(self, run=None, file=None, dir=None, relax_time=0.0, fit_type=None, format=None, heteronuc=None, proton=None, int_col=None):
         """Function for reading peak intensity data."""
 
         # Arguments.
         self.run = run
-        self.spectrum_type = spectrum_type
+        self.relax_time = relax_time
+        self.fit_type = fit_type
         self.format = format
         self.heteronuc = heteronuc
         self.proton = proton
         self.int_col = int_col
 
-        # Spectrum type argument.
-        spect_type_list = ['ref', 'sat']
-        if self.spectrum_type not in spect_type_list:
-            raise RelaxArgNotInListError, ('spectrum type', self.spectrum_type, spect_type_list)
-        if self.spectrum_type == 'ref':
-            print "Reference spectrum."
-        if self.spectrum_type == 'sat':
-            print "Saturated spectrum."
+        # Fit type argument.
+        fit_type_list = ['exp', 'inv']
+        if self.fit_type not in fit_type_list:
+            raise RelaxArgNotInListError, ('fit type', self.fit_type, fit_type_list)
+        if self.fit_type == 'exp':
+            print "Two parameter exponential fit."
+        if self.fit_type == 'inv':
+            print "Three parameter inversion recovery fit."
 
-        # Format argument.
-        format_list = ['sparky', 'xeasy']
-        if self.format not in format_list:
-            raise RelaxArgNotInListError, ('format', self.format, format_list)
-        if self.format == 'sparky':
-            print "Sparky formatted data file.\n"
-        elif self.format == 'xeasy':
-            print "XEasy formatted data file.\n"
-
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # File path.
-        self.file_path = file
-        if dir:
-            self.file_path = dir + '/' + self.file_path
-
-        # Extract the data from the file.
-        if self.file_path:
-            file_data = self.relax.file_ops.extract_data(self.file_path)
-
-        # Remove the header.
-        file_data = file_data[2:]
-
-        # Strip the data.
-        file_data = self.relax.file_ops.strip(file_data)
-
-        # The peak intensity column.
-        if self.format == 'sparky':
-            if int_col:
-                self.int_col = int_col
-            else:
-                self.int_col = 3
-        elif self.format == 'xeasy':
-            self.int_col = 10
-
-        # Loop over the peak intensity data.
-        for i in xrange(len(file_data)):
-            # Extract the data.
-            res_num, X_name, H_name, intensity = self.extract_int_data(file_data[i])
-
-            # Skip data.
-            if X_name != self.heteronuc or H_name != self.proton:
-                print "Skipping the data: " + `file_data[i]`
-                continue
-
-            # Find the index of self.relax.data.res[self.run] which corresponds to res_num.
-            index = None
-            for j in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][j].num == res_num:
-                    index = j
-                    break
-            if index == None:
-                print "Skipping the data: " + `file_data[i]`
-                continue
-
-            # Remap the data structure 'self.relax.data.res[self.run][index]'.
-            data = self.relax.data.res[self.run][index]
-
-            # Skip unselected residues.
-            if not data.select:
-                continue
-
-            # Add the data.
-            if self.spectrum_type == 'ref':
-                data.ref = intensity
-            elif self.spectrum_type == 'sat':
-                data.sat = intensity
+        # Generic intensity function.
+        self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
 
 
     def read_columnar_results(self, run, file_name, file_data):

@@ -35,7 +35,6 @@ import Scientific
 # Auxiliary modules.
 from help import _Helper, _Helper_python
 from command import Ls, Lh, Ll, system
-from print_all_data import Print_all_data
 from tab_completion import Tab_completion
 
 # User functions.
@@ -56,8 +55,6 @@ from rw import RW
 
 # User classes.
 from diffusion_tensor import Diffusion_tensor
-from echo_data import Echo_data
-from format import Format
 from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
@@ -115,8 +112,6 @@ class Interpreter:
         # Place the user classes into the interpreter class namespace.
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
-        self._Echo_data = Echo_data(relax)
-        self._Format = Format(relax)
         self._Grace = Grace(relax)
         self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
@@ -151,7 +146,6 @@ class Interpreter:
         ll = Ll()
         ls = Ls()
         system = self._system
-        print_all_data = Print_all_data(self.relax)
 
         # Place functions in the local namespace.
         gpl = GPL = self._GPL()
@@ -176,8 +170,6 @@ class Interpreter:
         # Place the user classes in the local namespace.
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
-        echo_data = self._Echo_data
-        format = self._Format
         grace = self._Grace
         jw_mapping = self._Jw_mapping
         model_free = self._Model_free
@@ -197,7 +189,6 @@ class Interpreter:
         # Builtin interpreter functions.
         intro_off = self._off
         intro_on = self._on
-        execfile = __builtin__.execfile
         exit = bye = quit = q = _Exit()
         script = self.script
 

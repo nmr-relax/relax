@@ -28,6 +28,7 @@ from diffusion_tensor import Diffusion_tensor
 from eliminate import Eliminate
 from fix import Fix
 from grace import Grace
+from intensity import Intensity
 from minimise import Minimise
 from model_selection import Model_selection
 from molmol import Molmol
@@ -59,6 +60,7 @@ class Generic:
         self.eliminate = Eliminate(self.relax)
         self.fix = Fix(self.relax)
         self.grace = Grace(self.relax)
+        self.intensity = Intensity(self.relax)
         self.minimise = Minimise(self.relax)
         self.model_selection = Model_selection(self.relax)
         self.molmol = Molmol(self.relax)

@@ -39,7 +39,7 @@ class Noe:
 
 
     def error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
-        """Function for setting the errors in the reference or saturated spectra.
+        """Function for setting the errors in the reference or saturated NOE spectra.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -104,7 +104,7 @@ class Noe:
 
 
     def read(self, run=None, file=None, dir=None, spectrum_type=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
-        """Function for reading peak intensities from a file.
+        """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -150,9 +150,10 @@ class Noe:
         starts from 0 rather than 1).
 
         If the format argument is set to 'xeasy', the file should be the saved XEasy text window
-        output of the list peak entries command 'le'.  As the columns are fixed, the peak intensity
-        column is hardwired to number 10 (the 11th column) which contains either the peak height or
-        peak volume data.  Because the columns are fixed, the int_col argument will be ignored.
+        output of the list peak entries command, 'tw' followed by 'le'.  As the columns are fixed,
+        the peak intensity column is hardwired to number 10 (the 11th column) which contains either
+        the peak height or peak volume data.  Because the columns are fixed, the int_col argument
+        will be ignored.
 
 
         The heteronuc and proton arguments should be set respectively to the name of the
