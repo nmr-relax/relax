@@ -577,10 +577,7 @@ class Palmer:
         for k in xrange(j+1, len(mfout)):
             row = split(mfout[k])
             if `res` == row[0]:
-                try:
-                    return float(row[1]), float(row[4])
-                except ValueError:
-                    return None, None
+                return float(row[1]), float(row[4])
 
             # Catch the end.
             if row[0] == 'stop_':

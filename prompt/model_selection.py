@@ -66,6 +66,9 @@ class Modsel:
 
         Overall:  The realised overall discrepancy (the true values of the parameters are required).
 
+        For the methods 'Bootstrap', 'Expect', and 'Overall', the function 'monte_carlo' should have
+        previously been run with the type argument set to the appropriate value to modify its
+        behaviour.
 
         If the runs argument is not supplied then all runs currently set or loaded will be used for
         model selection, although this could cause problems.

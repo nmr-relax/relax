@@ -62,7 +62,7 @@ class Read:
         following:
             'mf' - model-free data.
 
-        If no directory name is given, the results file will be seached for in a directory named
+        If no directory name is given, the results file will be searched for in a directory named
         after the run name.
         """
 

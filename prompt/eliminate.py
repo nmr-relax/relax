@@ -43,7 +43,7 @@ class Eliminate:
 
         function:  A user supplied function for model elimination.
 
-        args:  A tuple of argments for model elimination.
+        args:  A tuple of arguments for model elimination.
 
 
         Description
@@ -54,7 +54,7 @@ class Eliminate:
         accepted or rejected.
 
         Empirical rules are used for model rejection and are listed below.  However these can be
-        overriden by supplying a function.  The function should accept five arguments, a string
+        overridden by supplying a function.  The function should accept five arguments, a string
         defining a certain parameter, the value of the parameter, the run name, the minimisation
         instance (ie the residue index if the model is residue specific), and the function
         arguments.  If the model is rejected, the function should return 1, otherwise it should

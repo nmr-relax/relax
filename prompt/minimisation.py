@@ -170,7 +170,7 @@ class Minimisation:
 
         run:  The name of the run.
 
-        func_tol:  The function tolerance.  This is used to terminate minisation once the function
+        func_tol:  The function tolerance.  This is used to terminate minimisation once the function
         value between iterations is less than the tolerance.  The default value is 1e-25.
 
         grad_tol:  The gradient tolerance.  Minimisation is terminated if the current gradient value
@@ -273,14 +273,14 @@ class Minimisation:
             text = text + ", print_flag=" + `print_flag` + ")"
             print text
 
-        # Minimization algorithm.
+        # Minimisation algorithm.
         if len(args) == 0:
             raise RelaxNoneError, 'minimisation algorithm'
         elif type(args[0]) != str:
             raise RelaxStrError, ('minimisation algorithm', args[0])
         min_algor = args[0]
 
-        # Minimization options.
+        # Minimisation options.
         min_options = args[1:]
 
         # Test for invalid keywords.
@@ -327,8 +327,8 @@ class Minimisation:
 
 
 
-    # Modify the docstring of the minimise method to include the docstring of the generic_minimise function in minimise.generic.
-    ############################################################################################################################
+    # Modify the docstring of the minimise method to include the docstring of the generic_minimise function in 'minimise.generic'.
+    ##############################################################################################################################
 
     minimise.__doc__ = minimise.__doc__ + "\n    "
 

@@ -48,7 +48,7 @@ class Palmer:
 
         dir:  The directory to place the files.  The default is the value of 'run'.
 
-        force:  A flag which if set to 1 will cause the results file to be overwitten if it already
+        force:  A flag which if set to 1 will cause the results file to be overwritten if it already
         exists.
 
         diff_search:  See the Modelfree4 manual for 'diffusion_search'.
@@ -166,7 +166,7 @@ class Palmer:
 
         dir:  The directory to place the files.  The default is the value of 'run'.
 
-        force:  A flag which if set to 1 will cause the results file to be overwitten if it already
+        force:  A flag which if set to 1 will cause the results file to be overwritten if it already
         exists.
 
 

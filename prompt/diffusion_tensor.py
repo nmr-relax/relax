@@ -169,7 +169,7 @@ class Diffusion_tensor:
 
         To select isotropic diffusion, the parameters argument should be a single floating point
         number.  The number is the value of the isotropic global correlation time in seconds.  To
-        specify the time in nanoseconds, set the 'time_scale' argmuent to 1e-9.  Alternative
+        specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
         parameters can be used by changing the 'param_types' flag to the following integers:
             0 - tm   (Default)
             1 - Diso
@@ -179,7 +179,7 @@ class Diffusion_tensor:
 
         To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
-        round brakets, the elements of which are separated by commas.  Alternative sets of
+        round brackets, the elements of which are separated by commas.  Alternative sets of
         parameters, 'param_types', are:
             0 - (Dpar, Dper, theta, phi)   (Default)
             1 - (tm, Dratio, theta, phi)

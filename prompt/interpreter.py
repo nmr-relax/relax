@@ -27,12 +27,12 @@ import readline
 import signal
 import sys
 
-# Python modules accessable on the command prompt.
+# Python modules accessible on the command prompt.
 from math import pi
 import Numeric
 import Scientific
 
-# Auxillary modules.
+# Auxiliary modules.
 from help import _Helper, _Helper_python
 from command import Ls, Lh, Ll, system
 from print_all_data import Print_all_data
@@ -61,6 +61,7 @@ from echo_data import Echo_data
 from format import Format
 from model_free import Model_free
 from molmol import Molmol
+from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
 from read import Read
@@ -118,6 +119,7 @@ class Interpreter:
         self._Format = Format(relax)
         self._Model_free = Model_free(relax)
         self._Molmol = Molmol(relax)
+        self._Monte_carlo = Monte_carlo(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
         self._Read = Read(relax)
@@ -135,7 +137,7 @@ class Interpreter:
         """Run the python interpreter.
 
         The namespace of this function is the namespace seen inside the interpreter.  All user
-        accessable functions, classes, etc, should be placed in this namespace.
+        accessible functions, classes, etc, should be placed in this namespace.
         """
 
         # Python modules.
@@ -175,13 +177,14 @@ class Interpreter:
         diffusion_tensor = self._Diffusion_tensor
         echo_data = self._Echo_data
         format = self._Format
+        model_free = self._Model_free
+        molmol = self._Molmol
+        monte_carlo = self._Monte_carlo
+        noe = self._Noe
         palmer = self._Palmer
         read = self._Read
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
-        model_free = self._Model_free
-        molmol = self._Molmol
-        noe = self._Noe
         select = self._Select
         sequence = self._Sequence
         state = self._State
@@ -223,14 +226,14 @@ class Interpreter:
 
 
     def _off(self):
-        """Function for turning the function intro's off."""
+        """Function for turning the function introductions off."""
 
         self.intro = 0
         print "Function intros have been disabled."
 
 
     def _on(self):
-        """Function for turning the function intro's on."""
+        """Function for turning the function introductions on."""
 
         self.intro = 1
         print "Function intros have been enabled."

@@ -130,6 +130,11 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must be a floating point number."
 
+    # Number.
+    class RelaxNumError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must be a number."
+
     # Function.
     class RelaxFunctionError(BaseError):
         def __init__(self, name, value):
