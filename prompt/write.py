@@ -20,12 +20,17 @@ class Write:
         exists.
         """
 
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "write("
+            text = text + "model=" + `model`
+            text = text + ", file=" + `file`
+            text = text + ", force=" + `force` + ")\n"
+            print text
+
         # The model argument.
         if type(model) != str:
             print "The model argument " + `model` + " must be a string."
-            return
-        if not self.relax.data.equations.has_key(model):
-            print "The model '" + model + "' has not been created yet."
             return
 
         # File.

@@ -24,13 +24,16 @@ class Skin:
 
 class Macro_class(Generic_functions, Select_res):
     def __init__(self, relax):
-        """Base class containing functions for the setting up of data structures."""
+        """Class containing macros for the setting up of data structures."""
 
         self.relax = relax
 
 
     def load(self, type=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-        """Macro for loading data structure values from file."""
+        """Macro for loading data structure values from file.
+
+        Incomplete and broken code (and should probably be placed under the 'load' macro class.
+        """
 
         # Arguments
         if not type:
@@ -75,74 +78,62 @@ class Macro_class(Generic_functions, Select_res):
         self.data = self.create_data(file_data)
 
 
-    def init_data(self, data):
-        """Function for initialisation of the data type."""
+    def set(self, data_type=None, val=None, err=0.0):
+        """Macro for setting data structure values.
 
-        # Bond length.
-        if match('[Bb]ond[ -_][Ll]ength', self.type):
-            try:
-                self.relax.data.bond_length
-            except AttributeError:
-                self.relax.data.bond_length = self.create_data(data)
-            else:
-                print "The bond lengths have already been specified."
-                print "To reset the values, delete the original data (self.relax.data.bond_length)."
+        Keyword arguments
+        ~~~~~~~~~~~~~~~~~
 
-        # CSA.
-        elif match('[Cc][Ss][Aa]', self.type):
-            try:
-                self.relax.data.csa
-            except AttributeError:
-                self.relax.data.csa = self.create_data(data)
-            else:
-                print "The CSA values have already been specified."
-                print "To reset the values, delete the original data (self.self.x.data.csa)."
+        data_type:  The data type.  This argument should be a string.
 
-        # Bad type.
-        else:
-            print "The type '" + self.type + "' is not supported."
+        val:  The value.
+
+        err:  The error.
 
 
-    def set(self, type=None, val=None, err=0.0, sel=[]):
-        """Macro for setting data structure values."""
+        Data type
+        ~~~~~~~~~
 
-        # Arguments.
-        if not type:
-            print "The data type string has not been supplied."
+        The following types are currently supported:
+        _________________________________________________________________
+        |                         |                                     |
+        | Type                    | Pattern                             |
+        |-------------------------|-------------------------------------|
+        |                         |                                     |
+        | Bond length             | '[Bb]ond[ -_][Ll]ength'             |
+        |                         |                                     |
+        | CSA                     | '[Cc][Ss][Aa]'                      |
+        |-------------------------|-------------------------------------|
+        """
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "value.set("
+            text = text + "data_type=" + `data_type`
+            text = text + ", val=" + `val`
+            text = text + ", err=" + `err` + ")\n"
+            print text
+
+        # Data type.
+        if data_type == None:
+            print "The data type argument has not been supplied."
             return
-        else:
-            self.type = type
-        if not val:
+        elif type(data_type) != str:
+            print "The data type argument must be a string."
+            return
+
+        # Value.
+        elif val == None:
             print "No value has been given."
             return
-        else:
-            self.val = val
-        self.err = err
-        self.sel = sel
-
-        # Test if sequence data is loaded.
-        try:
-            self.relax.data.seq
-        except AttributeError:
-            print "Sequence data has to be loaded first."
+        elif type(val) != float:
+            print "The value argument must be a floating point number."
             return
 
-        # Set fixed values to specific residues.
-        if len(self.sel) > 0:
-            self.indecies = self.select_residues()
-            if not self.indecies:
-                return
-            for index in self.indecies:
-                self.data[index][0] = self.val
-                self.data[index][1] = self.err
+        # Error.
+        elif type(err) != float:
+            print "The error argument must be a floating point number."
+            return
 
-
-        # Set one value to all residues.
-        else:
-            # Create a temporary data structure.
-            temp = []
-            for i in range(len(self.relax.data.seq)):
-                temp.append([self.relax.data.seq[i][0], self.relax.data.seq[i][1], self.val, self.err])
-
-            # Initialise the type specific data.
-            self.init_data(temp)
+        # Execute the functional code.
+        self.relax.value.set(data_type=data_type, val=val, err=err)

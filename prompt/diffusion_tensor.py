@@ -1,32 +1,58 @@
-
 class Diffusion_tensor:
     def __init__(self, relax):
-        """Class containing the macro for selecting which model selection method should be used."""
+        """Class containing the macro for setting up the diffusion tensor."""
 
         self.relax = relax
 
 
-    def set(self, diff=None, *params):
-        """Macro for selecting which model selection method should be used."""
+    def set(self, diff=None, params=None):
+        """Macro for setting up the diffusion tensor."""
 
-        # Test if the diffusion tensor is given.
-        if not diff:
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "diffusion_tensor.set("
+            text = text + "diff=" + `diff`
+            text = text + ", params=" + `params` + ")\n"
+            print text
+
+        # Diffusion tensor argument.
+        if diff == None:
             print "No diffusion tensor given."
             return
-
-        # Test diffusion tensor parameters.
-        if diff == 'iso' and ( len(params) != 1 or type(params[0]) != float ):
-            print "Isotropic diffusion parameters are invalid."
-            return
-        elif diff == 'axial' and ( len(params) != 3 or type(params[0]) != float or type(params[1]) != float or type(params[2]) != float ):
-            print "Axially symmetric diffusion parameters are invalid."
-            return
-        elif diff == 'aniso' and ( len(params) != 6 or type(params[0]) != float or type(params[1]) != float or type(params[2]) != float or type(params[3]) != float or type(params[4]) != float or type(params[5]) != float ):
-            print "Anisotropic diffusion parameters are invalid."
+        elif type(diff) != str:
+            print "The argument 'diff' must be a string."
             return
 
-        self.relax.data.diff_type = diff
+        # Isotropic diffusion tensor parameters.
+        elif diff == 'iso' and type(params) != float:
+            print "For isotropic diffusion the 'params' argument must be a floating point number."
+            return
 
-        self.relax.data.diff_params = []
-        for i in range(len(params)):
-            self.relax.data.diff_params.append(params[i])
+        # Axially symmetric diffusion tensor parameters.
+        elif diff == 'axial':
+            if type(params) != list:
+                print "For axially symmetric diffusion the 'params' argument must be an array."
+                return
+            elif len(params) != 3:
+                print "For axially symmetric diffusion the 'params' argument must be an array of three elements."
+                return
+            for i in range(len(params)):
+                if type(params[i]) != float:
+                    print "The elements of the 'params' array must be floating point numbers."
+                    return
+
+        # Anisotropic diffusion tensor parameters.
+        elif diff == 'aniso':
+            if type(params) != list:
+                print "For anisotropic diffusion the 'params' argument must be an array."
+                return
+            elif len(params) != 6:
+                print "For anisotropic diffusion the 'params' argument must be an array of six elements."
+                return
+            for i in range(len(params)):
+                if type(params[i]) != float:
+                    print "The elements of the 'params' array must be floating point numbers."
+                    return
+
+        # Execute the functional code.
+        self.relax.diffusion_tensor.set(diff=diff, params=params)

@@ -4,5 +4,5 @@ class Model:
 
         self.relax = relax
 
-        self.create_mf = self.relax.model_free.create
-        self.select_mf = self.relax.model_free.select
+        self.create_mf = self.relax.model_free.macro_create
+        self.select_mf = self.relax.model_free.macro_select

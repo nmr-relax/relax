@@ -3,13 +3,13 @@ from Numeric import Float64, array, zeros
 
 class Fixed:
     def __init__(self, relax):
-        """Class containing the fixed, grid_search, and minimise functions."""
+        """Class containing the fixed macro."""
 
         self.relax = relax
 
 
     def fixed(self, model=None, values=None, print_flag=1):
-        """Function for fixing the initial parameter values.
+        """Macro for fixing the initial parameter values.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -39,6 +39,14 @@ class Fixed:
         relax> fixed('m2', values=[1.0, 10 * 10e-12])
         """
 
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "fixed("
+            text = text + "model=" + `model`
+            text = text + ", values=" + `values`
+            text = text + ", print_flag=" + `print_flag` + ")\n"
+            print text
+
         # The model argument.
         if type(model) != str:
             print "The model argument " + `model` + " must be a string."
@@ -51,43 +59,21 @@ class Fixed:
 
         # User defined values.
         if values != None:
-            if type(values) == list:
-                if len(values) != len(self.relax.data.param_types[model]):
-                    print "The argument 'values' must be an array of length equal to the number of parameters in the model."
-                    print "Number of parameters = " + `len(self.relax.data.param_types[model])`
-                    print "Length of 'values' = " + `len(values)`
-                    return
-                for i in range(len(values)):
-                    if type(values[i]) != float and type(values[i]) != int:
-                        print "The argument 'values' must be an array of numbers."
-                        return
-            else:
+            if type(values) != list:
                 print "The argument 'values' must be an array of numbers."
                 return
+            elif len(values) != len(self.relax.data.param_types[model]):
+                print "The argument 'values' must be an array of length equal to the number of parameters in the model."
+                return
+            for i in range(len(values)):
+                if type(values[i]) != float and type(values[i]) != int:
+                    print "The argument 'values' must be an array of numbers."
+                    return
 
-        # The debugging flag.
+        # The print flag.
         if type(print_flag) != int:
             print "The print_flag argument must be an integer."
             return
 
-        # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("fixed", model)
-        if fns == None:
-            return
-        self.fixed_setup, self.main_loop = fns
-
-        # Setup the fixed parameter options.
-        if values:
-            # User supplied values.
-            min_options = array(values)
-        else:
-            # Fixed values.
-            empty = zeros(len(self.relax.data.param_types[model]), Float64)
-            min_options = self.fixed_setup(min_options=empty, model=model)
-
-        # Diagonal scaling.
-        if self.relax.data.scaling.has_key(model):
-            min_options = min_options / self.relax.data.scaling[model][0]
-
-        # Main iterative loop.
-        self.main_loop(model=model, min_algor="fixed", min_options=min_options, print_flag=print_flag)
+        # Execute the functional code.
+        self.relax.min.fixed(model=model, values=values, print_flag=print_flag)

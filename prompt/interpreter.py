@@ -2,8 +2,6 @@ import __builtin__
 from code import InteractiveConsole
 import readline
 import sys
-sys.ps1 = 'relax> '
-sys.ps2 = 'relax| '
 
 from tab_completion import Tab_completion
 from command import Ls, Lh, Ll, system
@@ -37,7 +35,13 @@ class Interpreter:
         # Place the program class structure under self.relax
         self.relax = relax
 
-        self.echo = 1
+        # The prompts.
+        sys.ps1 = 'relax> '
+        sys.ps2 = 'relax| '
+        self.macro_prompt = '<macro> '
+
+        # The macro intro flag.
+        self.intro = 0
 
         # Place the functions into the namespace of the interpreter class.
         self._Diffusion_tensor = Diffusion_tensor(relax)
@@ -53,7 +57,7 @@ class Interpreter:
         # Place the classes into the interpreter class namespace.
         self._Echo_data = echo_data.Skin(relax)
         self._Format = format.Skin(relax)
-        self._Load = load.Skin(relax, self.echo)
+        self._Load = load.Skin(relax)
         self._Pdb = pdb.Skin(relax)
         self._Model = model.Model(relax)
         self._Model_selection = model_selection.Skin(relax)
@@ -98,7 +102,8 @@ class Interpreter:
         value = self._Value
 
         # Builtin interpreter functions.
-        echo = _Echo()
+        intro_off = self._off
+        intro_on = self._on
         execfile = __builtin__.execfile
         exit = bye = quit = q = _Exit
 
@@ -114,64 +119,19 @@ class Interpreter:
         prompt(intro=self.relax.intro_string, local=locals(), script=self.relax.script_file)
 
 
-class _Echo:
-    def __init__(self):
-        """Class containing functions for turning echoing on and off."""
+    def _off(self):
+        """Function for turning the macro intro's off."""
+
+        self.intro = 0
+        print "Macro intro's have been disabled."
 
 
-    def off(self):
-        """Macro for turning off the echoing of commands.
+    def _on(self):
+        """Function for turning the macro intro's on."""
 
-        The default program state is no echoing but if the function echo_on() has been run and you
-        no longer want the echoing, this function will turn it off.
+        self.intro = 1
+        print "Macro intro's have been enabled."
 
-
-        Example
-        ~~~~~~~
-
-        To run the function, type the following.
-
-        >>> echo_off()
-        """
-
-        InteractiveConsole.raw_input = self._raw_input
-        print "Echoing has been turned off."
-
-
-    def on(self):
-        """Macro for turning on the echoing of commands.
-
-        The default program state is no echoing but if this function is run all commands will be
-        echoed exactly as typed.  This is useful for scipting as commands run from a script are not
-        printed to screen.  To turn echoing off, run the function echo_off()
-
-
-        Example
-        ~~~~~~~
-
-        To run the function, type the following.
-
-        >>> echo_on()
-        """
-
-
-        InteractiveConsole.raw_input = self._raw_input_echo
-        print "Echoing has been turned on."
-
-
-    def _raw_input(self, prompt=""):
-        """Function to restore the function code.InteractiveConsole.raw_input."""
-
-        input = raw_input(prompt)
-        return input
-
-
-    def _raw_input_echo(self, prompt=""):
-        """Function to modify code.InteractiveConsole.raw_input to echo the input."""
-
-        input = raw_input(prompt)
-        print input
-        return input
 
 
 class _Exit:
@@ -226,12 +186,25 @@ def interact(self, intro=None, local=None, script=None):
     # Print the program introduction.
     self.write("%s\n" % intro)
 
-    # Execute the script file (if given on the command line).
+    # Execute the script file, if given on the command line, and then exit.
     if script != None:
+        # Turn the intro flag on so macros will print there intro strings.
+        local['self'].intro = 1
+
+        # Print the script.
+        file = open(script, 'r')
+        sys.stdout.write("Script file print out:\n")
+        sys.stdout.write("----------------------------------------------------------------------------------------------------\n\n")
+        sys.stdout.write(file.read() + "\n")
+        sys.stdout.write("----------------------------------------------------------------------------------------------------\n\n\n")
+        file.close()
+
+        # Execute the script.
         try:
             execfile(script, globals(), local)
         except KeyboardInterrupt:
-            self.write("\nScript execution cancelled.\n")
+            sys.stdout.write("\nScript execution cancelled.\n")
+        sys.stdout.write("\n")
         sys.exit()
 
     # Interactive prompt.

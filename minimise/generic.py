@@ -321,5 +321,6 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
                 print print_prefix + "Warning:          None"
         else:
             print print_prefix + "Parameter values: " + `results`
+        print ""
 
     return results

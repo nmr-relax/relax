@@ -45,13 +45,18 @@ except ImportError:
 
 from data import Data
 from file_ops import File_ops
+from diffusion_tensor import Diffusion_tensor
 from dx.map import Map
+from load import Load
+from min import Minimise
 from model_free import Model_free
 from model_selection.model_selection import Model_selection
 from palmer import Palmer
 from prompt.interpreter import Interpreter
 from relax_fit import Relax_fit
 from specific_setup import Specific_setup
+from state import State
+from value import Value
 from write import Write
 
 sys.path.append(sys.path[0])
@@ -70,15 +75,23 @@ class Relax:
         # Debugging option, 0 = off, 1 = on.
         self.debug = 0
 
+        # The program data storage class.
         self.data = Data()
+
+        # Various functions.
+        self.diffusion_tensor = Diffusion_tensor(self)
         self.file_ops = File_ops(self)
+        self.load = Load(self)
         self.map = Map(self)
+        self.min = Minimise(self)
         #self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
         self.specific_setup = Specific_setup(self)
+        self.state = State(self)
+        self.value = Value(self)
         self.write = Write(self)
 
-        # Command line arguments.
+        # Process the command line arguments.
         self.arguments()
 
         # Run the interpreter.
@@ -87,7 +100,7 @@ class Relax:
 
 
     def arguments(self):
-        """Function for dealing with command line arguments"""
+        """Function for processing the command line arguments."""
 
         # Initialise.
         self.script_file = None
@@ -105,7 +118,7 @@ class Relax:
         elif type(self.argv[1]) == str and len(self.argv) == 2:
             self.script_file = self.argv[1]
             if not access(self.script_file, F_OK):
-                print "The script file '" + self.script_file + "' does not exist."
+                sys.stderr.write("The script file '" + self.script_file + "' does not exist.\n")
                 sys.exit()
 
         # Unknown argument.
@@ -117,9 +130,9 @@ class Relax:
     def print_help(self):
         """Print the help message."""
 
-        print "\nUsage: relax [-h] [--help] [script_file]"
-        print "Options:"
-        print "   --help       Display this help and exit.\n"
+        sys.stderr.write("\nUsage: relax [-h] [--help] [script]\n")
+        sys.stderr.write("Options:\n")
+        sys.stderr.write("   --help       Display this help and exit.\n\n")
 
 
     def set_intro_string(self):

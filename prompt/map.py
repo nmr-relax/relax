@@ -60,7 +60,7 @@ class Map:
         currently supported map types:
         _____________________________________________________________________________
         |                                           |                               |
-        | Surface type                              | Patterns                      |
+        | Surface type                              | Pattern                       |
         |-------------------------------------------|-------------------------------|
         |                                           |                               |
         | 3D isosurface                             | '^[Ii]so3[Dd]'                |

@@ -1,12 +1,12 @@
 class Minimise:
     def __init__(self, relax):
-        """Class containing the fixed, grid_search, and minimise functions."""
+        """Class containing the minimisation macro."""
 
         self.relax = relax
 
 
     def minimise(self, *args, **keywords):
-        """Minimisation function.
+        """Minimisation macro.
 
         Arguments
         ~~~~~~~~~
@@ -28,7 +28,10 @@ class Minimise:
         func_tol:  The function tolerance.  This is used to terminate minisation once the function
         value between iterations is less than the tolerance.  The default value is 1e-25.
 
-        max_iter:  The maximum number of iterations.  The default value is 1e7.
+        grad_tol:  The gradient tolerance.  Minimisation is terminated if the current gradient value
+        is less than the tolerance.  The default value is None.
+
+        max_iterations:  The maximum number of iterations.  The default value is 1e7.
 
         constraints:  A flag specifying whether the parameters should be constrained.  The default
         is to turn constraints on (constraints=1).
@@ -36,6 +39,8 @@ class Minimise:
         print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
         """
+
+        # Macro intro text is found at the end.
 
         # Minimization algorithm.
         if len(args) == 0:
@@ -47,7 +52,7 @@ class Minimise:
         min_options = args[1:]
 
         # Test for invalid keywords.
-        valid_keywords = ['model', 'func_tol', 'grad_tol', 'max_iterations', 'max_iter', 'constraints', 'print_flag']
+        valid_keywords = ['model', 'func_tol', 'grad_tol', 'max_iterations', 'constraints', 'print_flag']
         for key in keywords:
             valid = 0
             for valid_key in valid_keywords:
@@ -112,10 +117,15 @@ class Minimise:
         else:
             print_flag = 1
 
-        # Equation type specific function setup.
-        self.main_loop = self.relax.specific_setup.setup("minimise", model)
-        if self.main_loop == None:
-            return
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "minimise("
+            text = text + "model=" + `model`
+            text = text + ", func_tol=" + `func_tol`
+            text = text + ", max_iterations=" + `max_iterations`
+            text = text + ", constraints=" + `constraints`
+            text = text + ", print_flag=" + `print_flag` + ")\n"
+            print text
 
-        # Main iterative loop.
-        self.main_loop(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        # Execute the functional code.
+        self.relax.min.minimise(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

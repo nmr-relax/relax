@@ -1,9 +1,3 @@
-from os import F_OK, access
-
-from data import Data
-from generic_functions import Generic_functions
-
-
 class Skin:
     def __init__(self, relax):
         """The class accessible to the interpreter.
@@ -22,7 +16,7 @@ class Skin:
         self.save = x.save
 
 
-class Macro_class(Generic_functions):
+class Macro_class:
     def __init__(self, relax):
         """Class containing the macros for manipulating the program state."""
 
@@ -43,27 +37,23 @@ class Macro_class(Generic_functions):
 
         The following commands will load the state saved in the file 'save'.
 
-        relax> state_load('save')
-        relax> state_load(file_name='save')
+        relax> state.load('save')
+        relax> state.load(file_name='save')
         """
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "state.load("
+            text = text + "file_name=" + `file_name` + ")\n"
+            print text
 
         # Test arguments
         if type(file_name) != str:
             print "The file name argument " + `file_name` + " is not a string."
             return
 
-        # Open file for reading.
-        try:
-            file = open(file_name, 'r')
-        except IOError:
-            print "The save file " + `file_name` + " does not exist."
-            return
-
-        # Reinitialise self.relax.data
-        self.relax.data = Data()
-
-        # Execute the file to reload all data.
-        exec(file)
+        # Execute the functional code.
+        self.relax.state.load(file_name=file_name)
 
 
     def save(self, file_name=None, force=0):
@@ -82,16 +72,23 @@ class Macro_class(Generic_functions):
 
         The following commands will save the current program state into the file 'save'.
 
-        relax> state_save('save')
-        relax> state_save(file_name='save')
+        relax> state.save('save')
+        relax> state.save(file_name='save')
 
 
         If the file 'save' already exists, the following commands will save the current program
         state by overwriting the file.
 
-        relax> state_save('save', 1)
-        relax> state_save(file_name='save', force=1)
+        relax> state.save('save', 1)
+        relax> state.save(file_name='save', force=1)
         """
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "state.save("
+            text = text + "file_name=" + `file_name`
+            text = text + ", force=" + `force` + ")\n"
+            print text
 
         # File name.
         if type(file_name) != str:
@@ -99,19 +96,9 @@ class Macro_class(Generic_functions):
             return
 
         # The force flag.
-        if type(force) != int and force != 0 and force != 1:
+        if type(force) != int or (force != 0 and force != 1):
             print "The force flag should be the integer values of either 0 or 1."
             return
 
-        # Open file for writing.
-        if access(file_name, F_OK) and not force:
-            print "The file " + `file_name` + " already exists.  Set the force flag to 1 to overwrite."
-            return
-        else:
-            file = open(file_name, 'w')
-
-        # Loop over the data structures in self.relax.data
-        for name in dir(self.relax.data):
-            if not self.filter_data_structure(name):
-                file.write("self.relax.data." + name + " = " + `getattr(self.relax.data, name)`)
-                file.write("\n")
+        # Execute the functional code.
+        self.relax.state.save(file_name=file_name, force=force)

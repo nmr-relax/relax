@@ -1,12 +1,12 @@
 class Grid:
     def __init__(self, relax):
-        """Class containing the fixed, grid_search, and minimise functions."""
+        """Class containing the grid_search macro."""
 
         self.relax = relax
 
 
     def grid_search(self, model=None, lower=None, upper=None, inc=21, print_flag=1):
-        """The grid search function.
+        """The grid search macro.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -28,6 +28,16 @@ class Grid:
         output while higher values increase the amount of output.  The default value is 1.
         """
 
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "grid_seacrh("
+            text = text + "model=" + `model`
+            text = text + ", lower=" + `lower`
+            text = text + ", upper=" + `upper`
+            text = text + ", inc=" + `inc`
+            text = text + ", print_flag=" + `print_flag` + ")\n"
+            print text
+
         # The model argument.
         if type(model) != str:
             print "The model argument " + `model` + " must be a string."
@@ -39,7 +49,7 @@ class Grid:
             return
 
         # The lower bounds.
-        if lower:
+        if lower != None:
             bad_arg = 0
             if len(lower) != len(self.relax.data.param_types[model]):
                 bad_arg = 1
@@ -55,7 +65,7 @@ class Grid:
                 lower.append(None)
 
         # The upper bounds.
-        if upper:
+        if upper != None:
             bad_arg = 0
             if len(upper) != len(self.relax.data.param_types[model]):
                 bad_arg = 1
@@ -87,33 +97,12 @@ class Grid:
             inc_vector = []
             for i in range(len(self.relax.data.param_types[model])):
                 inc_vector.append(inc)
+            inc = inc_vector
 
-        # The debugging flag.
+        # The print flag.
         if type(print_flag) != int:
             print "The print_flag argument must be an integer."
             return
 
-        # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("grid_search", model)
-        if fns == None:
-            return
-        self.grid_setup, self.main_loop = fns
-
-        # Setup the grid search options.
-        min_options = self.grid_setup(model=model, inc_vector=inc_vector)
-
-        # Set the lower and upper bounds if these are supplied.
-        for i in range(len(self.relax.data.param_types[model])):
-            if lower[i] != None:
-                min_options[i][1] = lower[i]
-            if upper[i] != None:
-                min_options[i][2] = upper[i]
-
-        # Diagonal scaling.
-        if self.relax.data.scaling.has_key(model):
-            for i in range(len(min_options)):
-                min_options[i][1] = min_options[i][1] / self.relax.data.scaling[model][0][i]
-                min_options[i][2] = min_options[i][2] / self.relax.data.scaling[model][0][i]
-
-        # Main iterative loop.
-        self.main_loop(model=model, min_algor='grid', min_options=min_options, print_flag=print_flag)
+        # Execute the functional code.
+        self.relax.min.grid_search(model=model, lower=lower, upper=upper, inc=inc, print_flag=print_flag)

@@ -38,6 +38,9 @@ class File_ops:
             data.append(row)
         return data
 
+        # Close the file.
+        file.close()
+
 
     def mkdir(self, dir):
         """Create the given directory, or exit if the directory exists."""

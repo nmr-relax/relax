@@ -15,6 +15,11 @@ class Write:
         file 'results' in the model directory.
         """
 
+        # Test if the model exists.
+        if not self.relax.data.equations.has_key(model):
+            print "The model '" + model + "' has not been created yet."
+            return
+
         # Directory creation.
         try:
             mkdir(model)

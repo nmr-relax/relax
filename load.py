@@ -1,85 +1,15 @@
 from generic_functions import Generic_functions
 
 
-class Skin:
-    def __init__(self, relax, echo=0):
-        """The class accessible to the interpreter.
-
-        The purpose of this class is to hide the variables and functions found within the namespace
-        of the macro class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the macro class data
-        structures are accessible.  For more flexibility use the macro class directly.
-        """
-
-        # Load the macro class into the namespace of this __init__ function.
-        x = Macro_class(relax, echo)
-
-        # Place references to the interactive functions within the namespace of this skin class.
-        self.relax_data = x.relax_data
-        self.sequence = x.sequence
-
-
-class Macro_class(Generic_functions):
-    def __init__(self, relax, echo=0):
-        """Class containing macros for loading data."""
+class Load(Generic_functions):
+    def __init__(self, relax):
+        """Class containing functions for loading data."""
 
         self.relax = relax
-        self.echo = echo
 
 
     def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-        """Macro for loading R1, R2, or NOE relaxation data.
-
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength in MHz, ie '600'.  This string can be anything as long as 
-        data collected at the same field strength have the same label.
-
-        frq:  The spectrometer frequency in Hz.
-
-        file_name:  The name of the file containing the relaxation data.
-
-        num_col:  The residue number column (the default is 0, ie the first column).
-
-        name_col:  The residue name column (the default is 1).
-
-        data_col:  The relaxation data column (the default is 2).
-
-        error_col:  The experimental error column (the default is 3).
-
-        sep:  The column separator (the default is white space).
-
-
-        Examples
-        ~~~~~~~~
-
-        The following commands will load the NOE relaxation data collected at 600 MHz out of a file
-        called 'noe.600.out' where the residue numbers, residue names, data, errors are in the
-        first, second, third, and forth columns respectively.
-
-        relax> load_relax_data('NOE', '600', 599.7 * 1e6, 'noe.600.out')
-        relax> load_relax_data(ri_label='NOE', frq_label='600', frq=600.0 * 1e6,
-                               file_name='noe.600.out')
-
-
-        The following commands will load the R2 data out of the file 'r2.out' where the residue
-        numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
-        respectively.  The columns are separated by commas.
-
-        relax> load_relax_data('R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
-        relax> load_relax_data(ri_label='R2', frq_label='800 MHz', frq=8.0*1e8, file_name='r2.out',
-                               num_col=1, name_col=2, data_col=4, error_col=5, sep=',')
-
-
-        The following commands will load the R1 data out of the file 'r1.out' where the columns are
-        separated by the symbol '%'
-
-        relax> load_relax_data('R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
-        """
+        """Function for loading R1, R2, or NOE relaxation data."""
 
         # Arguments
         self.ri_label = ri_label
@@ -95,20 +25,6 @@ class Macro_class(Generic_functions):
         # Test if sequence data is loaded.
         if not len(self.relax.data.seq):
             print "Sequence data has to be loaded first."
-            return
-
-        # Test if all arguments are supplied correctly.
-        if not self.ri_label or type(self.ri_label) != str:
-            print "The relaxation label 'ri_label' has not been supplied correctly."
-            return
-        elif not self.frq_label or type(self.frq_label) != str:
-            print "The frequency label 'frq_label' has not been supplied correctly."
-            return
-        elif not self.frq or type(self.frq) != float:
-            print "The frequency 'frq' has not been supplied correctly."
-            return
-        elif not self.file_name:
-            print "No file given."
             return
 
         # Extract the data from the file.
@@ -143,60 +59,7 @@ class Macro_class(Generic_functions):
 
 
     def sequence(self, file_name=None, num_col=0, name_col=1, sep=None):
-        """Macro for loading sequence data.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file_name:  The name of the file containing the sequence data.
-
-        num_col:  The residue number column (the default is 0, ie the first column).
-
-        name_col:  The residue name column (the default is 1).
-
-        sep:  The column separator (the default is white space).
-
-
-        Examples
-        ~~~~~~~~
-
-        The following commands will load the sequence data out of a file called 'seq' where the
-        residue numbers and names are in the first and second columns respectively.
-
-        relax> load_sequence('seq')
-        relax> load_sequence('seq', 0, 1)
-        relax> load_sequence('seq', 0, 1, None)
-        relax> load_sequence('seq', num_col=0, name_col=1)
-        relax> load_sequence(file_name='seq', num_col=0, name_col=1, seq=None)
-
-
-        The following commands will load the sequence out of the file 'noe.out' which also contains
-        the NOE values.
-
-        relax> load_sequence('noe.out')
-        relax> load_sequence('noe.out', 0, 1)
-
-
-        The following commands will load the sequence out of the file 'noe.600.out' where the
-        residue numbers are in the second column, the names are in the sixth column and the columns
-        are separated by commas.
-
-        relax> load_sequence('noe.600.out', 1, 5, ',')
-        relax> load_sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',')
-        """
-
-        print "Echo: " + `self.echo`
-
-        # Arguments
-        self.file_name = file_name
-        self.num_col = num_col
-        self.name_col = name_col
-        self.sep = sep
-
-        # Test if the file name is given.
-        if not file_name:
-            print "No file is specified."
-            return
+        """Function for loading sequence data."""
 
         # Test if the sequence data has already been loaded.
         try:
@@ -209,7 +72,7 @@ class Macro_class(Generic_functions):
             return
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(self.file_name)
+        file_data = self.relax.file_ops.extract_data(file_name)
 
         # Do nothing if the file does not exist.
         if not file_data:
@@ -222,9 +85,9 @@ class Macro_class(Generic_functions):
         # Place the data in self.relax.data.seq
         seq = []
         for i in range(len(file_data)):
-            label = file_data[i][self.num_col] + '_' + file_data[i][self.name_col]
+            label = file_data[i][num_col] + '_' + file_data[i][name_col]
             try:
-                seq.append([int(file_data[i][self.num_col]), file_data[i][self.name_col], label])
+                seq.append([int(file_data[i][num_col]), file_data[i][name_col], label])
             except ValueError:
                 print "Sequence data is invalid."
                 return
