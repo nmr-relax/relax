@@ -1,7 +1,7 @@
 # General.
 ##########
 
-Fix scaling -> move from model.create_mf and model.select_mf to min, grid, etc.
+Fix scaling -> move from model.create_mf, model.select_mf, diffusion_tensor.set, etc to min, grid, etc.
 
 
 # Model-free function.
@@ -21,16 +21,16 @@ Grace.
 
 Relaxation curves.
 NOE.
-SRLS.
 Reduced spectral density mapping.
-Diffusion tensor optimisation.
+SRLS.
 Relaxation dispersion.
 
 
 # Speed.
 ########
 
-Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C and use swig to integrate the C functions.
+Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C
+Use swig to integrate the C functions.  Maybe?
 
 
 # Model selection methods.
