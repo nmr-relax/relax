@@ -299,10 +299,12 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
 
     # Simplex minimisation.
     elif match('^[Ss]implex$', min_algor):
-        if func_tol:
+        if func_tol != None:
             results = simplex(func=func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
-        elif grad_tol:
+        elif grad_tol != None:
             results = simplex(func=func, args=args, x0=x0, func_tol=grad_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
+        else:
+            raise NameError, "Simplex minimisation cannot be setup."
 
     # Levenberg-Marquardt minimisation.
     elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -139,7 +139,6 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
         print "~~~~~~~~~~~~~~~~~~~~~"
     min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, lambda0, init_lambda, mu0, epsilon0, gamma0, scale_mu, scale_epsilon, scale_gamma, func_tol, grad_tol, maxiter, inner_maxiter, full_output, print_flag)
     if min.init_failure:
-        print "Initialisation of minimisation has failed."
         return None
     results = min.minimise()
     return results

@@ -102,12 +102,13 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_
 
     # Test for errors.
     if a0['phi_prime'] > 0.0:
-        print "xk = " + `x`
-        print "fk = " + `f`
-        print "dfk = " + `g`
-        print "pk = " + `p`
-        print "dot(dfk, pk) = " + `dot(g, p)`
-        print "a0['phi_prime'] = " + `a0['phi_prime']`
+        if print_flag:
+            print "xk = " + `x`
+            print "fk = " + `f`
+            print "dfk = " + `g`
+            print "pk = " + `p`
+            print "dot(dfk, pk) = " + `dot(g, p)`
+            print "a0['phi_prime'] = " + `a0['phi_prime']`
         raise NameError, "The gradient at point 0 of this line search is positive, ie p is not a descent direction and the line search will not work."
     if a['a'] < a_min:
         raise NameError, "Alpha is less than alpha_min, " + `a['a']` + " > " + `a_min`

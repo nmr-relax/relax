@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, sum, zeros
+from Numeric import Float64, sum, transpose, zeros
 
 
 # Chi-squared value.
@@ -72,23 +72,8 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
     The chi-squared gradient vector is returned.
     """
 
-    # Test.
-    #return -2.0 * sum((data - back_calc_vals) / (errors**2) * back_calc_grad)
-
-    # Count the number of parameters in the model.
-    num_params = len(back_calc_grad[0])
-
-    # Initialise the chi-squared gradient.
-    dchi2 = zeros((num_params), Float64)
-
-    # Parameter independent terms.
-    a = -2.0 * (data - back_calc_vals) / (errors**2)
-
     # Calculate the chi-squared gradient.
-    for i in xrange(len(data)):
-        dchi2 = dchi2 + a[i] * back_calc_grad[i]
-
-    return dchi2
+    return -2.0 * sum((data - back_calc_vals) / (errors**2) * transpose(back_calc_grad), axis=1)
 
 
 # Chi-squared Hessian.
