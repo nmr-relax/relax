@@ -238,9 +238,9 @@ def calc_axial_d2ti(data, diff_data):
     # Dratio-Dratio second partial derivatives.
     if diff_data.params[1] == 0:
         if diff_data.params[0] == 0:
-            data.dti[1, 0] = 0.0
+            data.d2ti[1, 1, 0] = 0.0
         else:
-            data.dti[1, 0] = 1e99
+            data.d2ti[1, 1, 0] = 1e99
     else:
         data.d2ti[1, 1, 0] = 2.0 * diff_data.params[0] / (3.0 * diff_data.params[1]**3)
     data.d2ti[1, 1, 1] = 60.0 * diff_data.params[0] / (1.0 + 5.0*diff_data.params[1])**3

@@ -1077,12 +1077,8 @@ class Mf:
                     # Calculate the chi-squared Hessian.
                     data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
-
-            # Index for the construction of the global generic model-free Hessian.
-            index = self.diff_data.num_params
-
             # Pure diffusion parameter part of the global generic model-free Hessian.
-            self.total_d2chi2[0:index, 0:index] = self.total_d2chi2[0:index, 0:index] + data.d2chi2[0:index, 0:index]
+            self.total_d2chi2 = self.total_d2chi2 + data.d2chi2
 
         # Diagonal scaling.
         if self.scaling_flag:

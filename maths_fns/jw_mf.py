@@ -1604,7 +1604,7 @@ def calc_diff_S2_te_d2jw_dDjdDk(data, params, j, k, num_D_params):
     fact_te = 2.0 * (data.te_ti**3 + 3.0 * data.frq_sqrd_list_ext * params[data.te_index]**3 * data.ti * data.te_ti - (data.frq_list_ext * params[data.te_index])**4 * data.ti**3) * data.dti[j] * data.dti[k]  +  (data.te_ti**4 - data.w_te_ti_sqrd**2) * data.d2ti[j, k]
     fact_te = data.one_s2 * params[data.te_index]**2 * fact_te * data.inv_te_denom**3
 
-    return -0.4 * sum(data.ci + (fact_ti + fact_te), axis=2)
+    return -0.4 * sum(data.ci * (fact_ti + fact_te), axis=2)
 
 
 
