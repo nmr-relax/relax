@@ -4,23 +4,37 @@ class data:
 
 		self.init_data()
 		self.asymptotic = self.init_asymptotic()
+		self.bootstrap = self.init_bootstrap()
+		self.farrow = self.init_farrow()
 		self.palmer = self.init_palmer()
 
 
 	class init_asymptotic:
 		def __init__(self):
-			"Data specific for the modelfree analysis using asymptotic model selection."
+			"Data specific for the model-free analysis using asymptotic model selection."
 
 			self.name = 'Asymptotic'
-			self.stage = '0'
+
+
+	class init_bootstrap:
+		def __init__(self):
+			"Data specific for the model-free analysis using bootstrap model selection."
+
+			self.name = 'Bootstrap'
+
+
+	class init_farrow:
+		def __init__(self):
+			"Data specific for Farrow's model-free analysis."
+
+			self.name = 'Farrow'
 
 
 	class init_palmer:
 		def __init__(self):
-			"Data specific for Palmer's modelfree analysis."
+			"Data specific for Palmer's model-free analysis."
 
 			self.name = 'Palmer'
-			self.stage = '0'
 
 
 	def init_data(self):
@@ -56,6 +70,8 @@ class data:
 		self.relax_data = []
 		self.num_data_sets = 0
 		self.runs = []
+
+		self.stage = '0'
 
 		self.data = {}
 		self.results = []

@@ -4,7 +4,7 @@
 
 # modelfree.py   v0.1            31 October 2001        Edward d'Auvergne
 #
-# Program to process all modelfree input and output.
+# Program to process all model-free input and output.
 #
 # Input data is specified in the file "input". An example of the format of the file is:
 #
@@ -20,15 +20,6 @@
 #	R1            R1.500.out
 #	R2            none
 #	NOE           noe.500.out
-#
-#
-# The script is divided into the three stages of model selection:
-#
-#	Stage 1:   Creation of the files for the modelfree calculations for models 1 to 5,
-#		and f-tests between them.
-#	Stage 2:   Model selection and creation of the final optimization run.  The modelfree
-#		input files for optimization are placed into the directory "optimize".
-#	Stage 3:   Extraction of optimized data.
 
 import sys
 from re import match
@@ -41,6 +32,8 @@ sys.path.append('.')
 from usr_param import usr_param
 
 from asymptotic import asymptotic
+from bootstrap import bootstrap
+from farrow import farrow
 from palmer import palmer
 
 
@@ -55,14 +48,18 @@ class mf:
 
 		self.print_header()
 
-		if match('AIC', self.data.usr_param.method):
+		if match('^AIC$', self.data.usr_param.method):
 			asymptotic(self)
-		elif match('BIC', self.data.usr_param.method):
+		elif match('^BIC$', self.data.usr_param.method):
 			asymptotic(self)
-		elif match('Palmer', self.data.usr_param.method):
+		elif match('^Bootstrap$', self.data.usr_param.method):
+			bootstrap(self)
+		elif match('^Farrow$', self.data.usr_param.method):
+			farrow(self)
+		elif match('^Palmer$', self.data.usr_param.method):
 			palmer(self)
 		else:
-			print "The modelfree analysis method is not set correctly.  Check self.method in"
+			print "The model-free analysis method is not set correctly.  Check self.method in"
 			print "the file 'usr_param.py' which should be in the working directory."
 			print "Quitting script!"
 			sys.exit()
@@ -76,7 +73,7 @@ class mf:
 
 		              Modelfree.py v0.1
 
-		Program to process all modelfree input and output.
+		Program to process all model-free input and output.
 		
 		"""
 

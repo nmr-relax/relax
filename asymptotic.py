@@ -5,15 +5,13 @@
 #	BIC - Schwartz Criteria
 #
 # The program is divided into the following stages:
-#	Stage 1:   Creation of the files for the modelfree calculations for models 1 to 5.  Monte Carlo
+#	Stage 1:  Creation of the files for the model-free calculations for models 1 to 5.  Monte Carlo
 #		simulations are not used on these initial runs, because the errors are not needed (should
 #		speed up analysis considerably).
-#	Stage 2a:   Model selection and the creation of the final run.  Monte Carlo simulations are used to
-#		find errors, and the diffusion tensor is unoptimized.  Files are placed in the directory
-#		'final'.
-#	Stage 2b:   Model selection and the creation of the final optimization run. The modelfree
-#		input files for optimization are placed into the directory 'optimize'.
-#	Stage 3:   Extraction of optimized data.
+#	Stage 2:  Model selection and the creation of the final run.  Monte Carlo simulations are used to
+#		find errors.  This stage has the option of optimizing the diffusion tensor along with the
+#		model-free parameters.
+#	Stage 3:  Extraction of the data.
 
 import sys
 from math import log, pi
@@ -24,37 +22,33 @@ from common_ops import common_operations
 
 class asymptotic(common_operations):
 	def __init__(self, mf):
-		"Modelfree analysis based on asymptotic model selection methods."
+		"Model-free analysis based on asymptotic model selection methods."
 
 		self.mf = mf
 
-		print "Modelfree analysis based on " + self.mf.data.usr_param.method + " model selection."
-		self.mf.data.asymptotic.stage = self.ask_stage()
-		title = "<<< Stage " + self.mf.data.asymptotic.stage + " of the asymptotic criteria based modelfree analysis >>>\n\n\n"
-		self.start_up(self.mf.data.asymptotic.stage, title)
+		print "Model-free analysis based on " + self.mf.data.usr_param.method + " model selection."
+		self.mf.data.stage = self.ask_stage()
+		title = "<<< Stage " + self.mf.data.stage + " of the asymptotic criteria based model-free analysis >>>\n\n\n"
+		self.start_up(self.mf.data.stage, title)
 		
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 
-		if match('1', self.mf.data.asymptotic.stage):
+		if match('1', self.mf.data.stage):
 			print "\n[ Stage 1 ]\n"
-			self.initial_runs(sims='n')
+			self.initial_runs()
 			print "\n[ End of stage 1 ]\n\n"
 
-		if match('2a', self.mf.data.asymptotic.stage):
-			print "\n[ Stage 2a ]\n"
+		if match('^2', self.mf.data.stage):
+			print "\n[ Stage 2 ]\n"
 			self.mf.file_ops.mkdir('final')
 			self.stage2()
-			self.final_run()
-			print "\n[ End of stage 2a ]\n\n"
+			if match('a$', self.mf.data.stage):
+				self.final_run()
+			if match('b$', self.mf.data.stage):
+				self.final_run_optimized()
+			print "\n[ End of stage 2 ]\n\n"
 
-		if match('2b', self.mf.data.asymptotic.stage):
-			print "\n[ Stage 2b ]\n"
-			self.mf.file_ops.mkdir('optimize')
-			self.stage2()
-			self.final_run_optimized()
-			print "\n[ End of stage 2b ]\n\n"
-
-		if match('3', self.mf.data.asymptotic.stage):
+		if match('3', self.mf.data.stage):
 			print "\n[ Stage 3 ]\n"
 			self.stage3()
 			print "\n[ End of stage 3 ]\n\n"
@@ -118,28 +112,6 @@ class asymptotic(common_operations):
 			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
 
 
-	def ask_stage(self):
-		"User input of stage number."
-
-		print "\n[ Select the stage for Modelfree analysis ]\n"
-		print "The stages are:"
-		print "   Stage 1 (1):    Creation of the files for the modelfree calculations for models 1 to 5."
-		print "   Stage 2 (2a):   Model selection and creation of a final run with simulations."
-		print "   Stage 2 (2b):   Model selection and creation of a final optimization run."
-		print "   Stage 3 (3):    Extraction of optimized data."
-		print "For more information, see the file 'asymptotic.py'"
-
-		while 1:
-			stage = raw_input('> ')
-			valid_stages = ['1', '2a', '2b', '3']
-			if stage in valid_stages:
-				break
-			else:
-				print "Invalid stage number.  Choose either 1, 2a, 2b, or 3."
-		print "The stage chosen is " + stage + "\n"
-		return stage
-
-
 	def bic_model_selection(self):
 		"BIC model selection."
 		
@@ -198,15 +170,38 @@ class asymptotic(common_operations):
 			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
 
 
+	def initial_runs(self):
+		"Creation of the files for the Modelfree calculations for models 1 to 5."
+		
+		for run in self.mf.data.runs:
+			print "Creating input files for model " + run
+			self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
+			self.mf.file_ops.mkdir(dir=run)
+			self.mf.file_ops.open_mf_files(dir=run)
+			self.set_run_flags(run)
+			self.log_params('M1', self.mf.data.usr_param.md1)
+			self.log_params('M2', self.mf.data.usr_param.md2)
+			self.create_mfin(sims='n', sim_type='pred')
+			self.create_run(dir=run)
+			for res in range(len(self.mf.data.relax_data[0])):
+				# Mfdata.
+				self.create_mfdata(res)
+				# Mfmodel.
+				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+				# Mfpar.
+				self.create_mfpar(res)
+			self.mf.file_ops.close_mf_files(dir=run)
+
+
 	def stage2(self):
 		self.mf.file_ops.mkdir('grace')
 		
-		print "\n[ Modelfree data extraction ]\n"
+		print "\n[ Model-free data extraction ]\n"
 		for run in self.mf.data.runs:
 			mfout = self.mf.file_ops.read_file(run + '/mfout')
 			mfout_lines = mfout.readlines()
 			mfout.close()
-			print "Extracting modelfree data from " + run + "/mfout."
+			print "Extracting model-free data from " + run + "/mfout."
 			num_res = len(self.mf.data.relax_data[0])
 			self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res)
 

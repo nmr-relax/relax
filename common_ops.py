@@ -5,7 +5,41 @@ import sys
 
 class common_operations:
 	def __init__(self):
-		"Operations, functions, etc common to the different modelfree analysis methods."
+		"Operations, functions, etc common to the different model-free analysis methods."
+
+
+	def ask_stage(self):
+		"User input of stage number."
+
+		print "\n[ Select the stage for model-free analysis ]\n"
+		print "The stages are:"
+		print "   Stage 1 (1):  Creation of the files for the model-free calculations for models 1 to 5."
+		print "   Stage 2 (2):  Model selection and creation of a final run."
+		print "   Stage 3 (3):  Extraction of the data."
+
+		while 1:
+			input = raw_input('> ')
+			valid_stages = ['1', '2', '3']
+			if input in valid_stages:
+				stage = input
+				break
+			else:
+				print "Invalid stage number.  Choose either 1, 2, or 3."
+		if match('2', stage):
+			while 1:
+				print "Stage 2 has the following two options for the final run:"
+				print "   (a):   No optimization of the diffusion tensor."
+				print "   (b):   Optimization of the diffusion tensor."
+				input = raw_input('> ')
+				valid_stages = ['a', 'b']
+				if input in valid_stages:
+					stage = stage + input
+					break
+				else:
+					print "Invalid option, choose either a or b."
+
+		print "The stage chosen is " + stage + "\n"
+		return stage
 
 
 	def create_mfdata(self, res, flag='1'):
@@ -36,7 +70,7 @@ class common_operations:
 		self.mf.mfdata.write(text)
 
 
-	def create_mfin(self, sel='none', algorithm='fix', diffusion_search='none', sims='y'):
+	def create_mfin(self, sel='none', algorithm='fix', diffusion_search='none', sims='n', sim_type='pred'):
 		"Create the Modelfree input file mfin"
 
 		text = ""
@@ -46,7 +80,7 @@ class common_operations:
 		text = text + "diffusion       " + self.mf.data.usr_param.diff + " " + diffusion_search + "\n\n"
 		text = text + "algorithm       " + algorithm + "\n\n"
 		if match('y', sims):
-			text = text + "simulations     pred    " + self.mf.data.usr_param.no_sim
+			text = text + "simulations     " + sim_type + "    " + self.mf.data.usr_param.no_sim
 			text = text + "       " + self.mf.data.usr_param.trim + "\n\n"
 		elif match('n', sims):
 			text = text + "simulations     none\n\n"
@@ -178,7 +212,7 @@ class common_operations:
 
 
 	def create_run(self, dir):
-		"Create the file 'run' to execute the modelfree run"
+		"Create the file 'run' to execute the model-free run"
 
 		text = "modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out"
 		if self.mf.data.usr_param.diff == 'axial':
@@ -336,13 +370,13 @@ class common_operations:
 		the model free parameters for the selected models.
 		"""
 
-		self.mf.file_ops.open_mf_files(dir='optimize')
+		self.mf.file_ops.open_mf_files(dir='final')
 		if match('isotropic', self.mf.data.usr_param.diff):
 			self.create_mfin(algorithm='brent', diffusion_search='grid')
 		elif match('axial', self.mf.data.usr_param.diff):
 			self.create_mfin(algorithm='powell')
 
-		self.create_run(dir='optimize')
+		self.create_run(dir='final')
 		for res in range(len(self.mf.data.relax_data[0])):
 			if match('0', self.mf.data.results[res]['model']):
 				model = 'none'
@@ -364,7 +398,7 @@ class common_operations:
 			self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
 			# Mfpar.
 			self.create_mfpar(res)
-		self.mf.file_ops.close_mf_files(dir='optimize')
+		self.mf.file_ops.close_mf_files(dir='final')
 
 
 	def grace(self, file_name, type, subtitle):
@@ -461,41 +495,6 @@ class common_operations:
 		text = text + "@    s0 line linestyle 0\n"
 		text = text + "@target G0.S0\n@type " + type + "\n"
 		return text
-
-
-	def initial_runs(self, sims='n'):
-		"Creation of the files for the modelfree calculations for models 1 to 5 and the F-tests."
-		
-		for run in self.mf.data.runs:
-			if match('^m', run):
-				print "Creating input files for model " + run
-				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
-			elif match('^f', run):
-				print "Creating input files for the F-test " + run
-				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
-			else:
-				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
-				sys.exit()
-			self.mf.file_ops.mkdir(dir=run)
-			self.mf.file_ops.open_mf_files(dir=run)
-			self.set_run_flags(run)
-			self.log_params('M1', self.mf.data.usr_param.md1)
-			self.log_params('M2', self.mf.data.usr_param.md2)
-			if match('^m', run):
-				self.create_mfin()
-			elif match('^f', run):
-				self.create_mfin(sel='ftest')
-			self.create_run(dir=run)
-			for res in range(len(self.mf.data.relax_data[0])):
-				# Mfdata.
-				self.create_mfdata(res)
-				# Mfmodel.
-				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-				if match('^f', run):
-					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
-				# Mfpar.
-				self.create_mfpar(res)
-			self.mf.file_ops.close_mf_files(dir=run)
 
 
 	def log_input_info(self):

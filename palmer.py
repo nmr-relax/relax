@@ -1,11 +1,11 @@
 # The method given by (Mandel et al., 1995) is divided into the three stages:
 #
-#	Stage 1:   Creation of the files for the initial modelfree calculations for models 1 to 5,
+#	Stage 1:  Creation of the files for the initial model-free calculations for models 1 to 5,
 #		and f-tests between them.
-#	Stage 2a:   Model selection.
-#	Stage 2b:   Model selection and creation of the final optimization run.  The modelfree
-#		input files for optimization are placed into the directory "optimize".
-#	Stage 3:   Extraction of optimized data.
+#	Stage 2:  Model selection and the creation of the final run.  Monte Carlo simulations are used to
+#		find errors.  This stage has the option of optimizing the diffusion tensor along with the
+#		model-free parameters.
+#	Stage 3:  Extraction of the data.
 #
 # These stages are repeated until the data converges.
 
@@ -17,14 +17,14 @@ from common_ops import common_operations
 
 class palmer(common_operations):
 	def __init__(self, mf):
-		"The modelfree analysis of Palmer."
+		"The model-free analysis of Palmer."
 
 		self.mf = mf
 
-		print "Palmer's method for modelfree analysis. (Mandel et al., 1995)"
-		self.mf.data.palmer.stage = self.ask_stage()
-		title = "<<< Stage " + self.mf.data.palmer.stage + " of Palmer's method for Modelfree analysis >>>\n\n\n"
-		self.start_up(self.mf.data.palmer.stage, title)
+		print "Palmer's method for model-free analysis. (Mandel et al., 1995)"
+		self.mf.data.stage = self.ask_stage()
+		title = "<<< Stage " + self.mf.data.stage + " of Palmer's method for model-free analysis >>>\n\n\n"
+		self.start_up(self.mf.data.stage, title)
 
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
 		if self.mf.data.num_data_sets > 3:
@@ -32,47 +32,60 @@ class palmer(common_operations):
 			self.mf.data.runs.append('f-m2m5')
 			self.mf.data.runs.append('f-m3m4')
 
-		if match('1', self.mf.data.palmer.stage):
+		if match('1', self.mf.data.stage):
 			print "\n[ Stage 1 ]\n"
-			self.initial_runs(sims='y')
+			self.initial_runs()
 			print "\n[ End of stage 1 ]\n\n"
 
-		if match('2a', self.mf.data.palmer.stage):
-			print "\n[ Stage 2a ]\n"
+		if match('^2', self.mf.data.stage):
+			print "\n[ Stage 2 ]\n"
+			self.mf.file_ops.mkdir('final')
 			self.stage2()
-			print "\n[ End of stage 2a ]\n\n"
+			if match('a$', self.mf.data.stage):
+				self.final_run()
+			if match('b$', self.mf.data.stage):
+				self.final_run_optimized()
+			print "\n[ End of stage 2 ]\n\n"
 
-		if match('2b', self.mf.data.palmer.stage):
-			print "\n[ Stage 2b ]\n"
-			self.mf.file_ops.mkdir('optimize')
-			self.stage2()
-			self.final_run_optimized()
-			print "\n[ End of stage 2b ]\n\n"
-
-		if match('3', self.mf.data.palmer.stage):
+		if match('3', self.mf.data.stage):
 			print "\n[ Stage 3 ]\n"
 			self.stage3()
 			print "\n[ End of stage 3 ]\n\n"
 
 
-	def ask_stage(self):
-		"User input of stage number."
-
-		print "\n[ Select the stage for Modelfree analysis ]\n"
-		print "The stages are:"
-		print "   Stage 1 (1):    Creation of the files for the modelfree calculations for models 1 to 5."
-		print "   Stage 2 (2a):   Palmer's model selection."
-		print "   Stage 2 (2b):   Palmer's model selection and creation of a final optimization run."
-		print "   Stage 3 (3):    Extraction of optimized data."
-		while 1:
-			stage = raw_input('> ')
-			valid_stages = ['1', '2a', '2b', '3']
-			if stage in valid_stages:
-				break
+	def initial_runs(self):
+		"Creation of the files for the Modelfree calculations for models 1 to 5 and the F-tests."
+		
+		for run in self.mf.data.runs:
+			if match('^m', run):
+				print "Creating input files for model " + run
+				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
+			elif match('^f', run):
+				print "Creating input files for the F-test " + run
+				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
 			else:
-				print "Invalid stage number.  Choose either 1, 2a, 2b, or 3."
-		print "The stage chosen is " + stage + "\n"
-		return stage
+				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
+				sys.exit()
+			self.mf.file_ops.mkdir(dir=run)
+			self.mf.file_ops.open_mf_files(dir=run)
+			self.set_run_flags(run)
+			self.log_params('M1', self.mf.data.usr_param.md1)
+			self.log_params('M2', self.mf.data.usr_param.md2)
+			if match('^m', run):
+				self.create_mfin(sims='y', sim_type='pred')
+			elif match('^f', run):
+				self.create_mfin(sel='ftest', sims='y', sim_type='pred')
+			self.create_run(dir=run)
+			for res in range(len(self.mf.data.relax_data[0])):
+				# Mfdata.
+				self.create_mfdata(res)
+				# Mfmodel.
+				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+				if match('^f', run):
+					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
+				# Mfpar.
+				self.create_mfpar(res)
+			self.mf.file_ops.close_mf_files(dir=run)
 
 
 	def model_selection(self):
@@ -198,12 +211,12 @@ class palmer(common_operations):
 	def stage2(self):
 		self.mf.file_ops.mkdir('grace')
 
-		print "\n[ Modelfree data extraction ]\n"
+		print "\n[ Model-free data extraction ]\n"
 		for run in self.mf.data.runs:
 			mfout = self.mf.file_ops.read_file(run + '/mfout')
 			mfout_lines = mfout.readlines()
 			mfout.close()
-			print "Extracting modelfree data from " + run + "/mfout."
+			print "Extracting model-free data from " + run + "/mfout."
 			num_res = len(self.mf.data.relax_data[0])
 			if match('^m', run):
 				self.mf.data.data[run] = self.mf.star.extract(mfout_lines, num_res, self.mf.data.usr_param.sse_lim, self.mf.data.usr_param.ftest_lim, float(self.mf.data.usr_param.large_sse), ftest='n')

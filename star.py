@@ -4,7 +4,7 @@ from string import split
 
 class star:
 	def __init__(self):
-		"Class to extract modelfree data from the STAR formatted mfout file."
+		"Class to extract model-free data from the STAR formatted mfout file."
 
 
 	def extract(self, mfout, num_res, sse_lim='0.90', ftest_lim='0.80', large_sse=20, ftest='n'):
