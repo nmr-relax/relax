@@ -1660,6 +1660,9 @@ class Model_free(Common_functions):
                     i = i + 1
                     j = j + 1
 
+                    # Add two to i for the theta and phi parameters.
+                    i = i + 2
+
                 # Oblate diffusion, Da <= 0.
                 elif self.relax.data.diff[self.run].axial_type == 'oblate':
                     A.append(zero_array * 0.0)
@@ -1668,8 +1671,12 @@ class Model_free(Common_functions):
                     i = i + 1
                     j = j + 1
 
-                # Add two to i for the theta and phi parameters.
-                i = i + 2
+                    # Add two to i for the theta and phi parameters.
+                    i = i + 2
+
+                else:
+                    # Add three to i for the Da, theta and phi parameters.
+                    i = i + 3
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
