@@ -81,7 +81,7 @@ class Threading:
         '~/.relax' where the tilde '~' symbol represents the user's home directory on the remote
         machine.
 
-        Column 5:  The priority value for running the program.  The default is 15.  The remote
+        Column 5:  The priority value for running the program.  The default is 5.  The remote
         instances of relax will be niced to this value.
 
         Column 6:  The number of CPU or CPU cores on the machine.  The default is 1.  A thread is
@@ -99,7 +99,7 @@ class Threading:
         In this case, two threads will be run on the parent computer which would be either a dual
         CPU system or a dual core 'Hyper threaded' Pentium processor.  These threads will have the
         highest level user priority of 0.  The other two machines will have single threads running
-        with a low priority of 15.
+        with a low priority of 5.
 
         Once threading is enabled, to allow calculations to run on the parent machine a 'localhost'
         entry should be included.

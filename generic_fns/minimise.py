@@ -142,7 +142,7 @@ class Minimise:
 
         # Generate a temporary results file.
         self.temp_file = 'save_%s.gz' % tag
-        print "Saving the program state."
+        print "Saving the program state to send to the threads."
         self.relax.generic.state.save(file=self.temp_file, force=1, compress_type=2)
 
         # Initialise the job and results queues.
@@ -278,7 +278,7 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for running an instance of relax in threading mode on the host machine."""
 
         # Command.
-        cmd = "%s --thread --log %s %s" % (self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
+        cmd = "nice -n %s %s --thread --log %s %s" % (self.relax.data.thread.priority[self.i], self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
         cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
 
         # Open a pipe.
