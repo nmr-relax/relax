@@ -39,7 +39,7 @@ class Fix:
         # Residue number.
         if type(element) == int:
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run]):
+            if not self.relax.data.res.has_key(run):
                 raise RelaxSequenceError
 
             # Loop over the sequence to find the residue.
@@ -70,7 +70,7 @@ class Fix:
         # All residues.
         elif element == 'all_res':
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run]):
+            if not self.relax.data.res.has_key(run):
                 raise RelaxSequenceError
 
             # Loop over the sequence and set the fixed flag.
@@ -81,7 +81,7 @@ class Fix:
         # All parameters.
         elif element == 'all':
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[run]):
+            if not self.relax.data.res.has_key(run):
                 raise RelaxSequenceError
 
             # Test if the diffusion tensor data is loaded.

@@ -62,6 +62,7 @@ from molmol import Molmol
 from palmer import Palmer
 from read import Read
 from select import Select
+from sequence import Sequence
 from state import State
 from unselect import Unselect
 from value import Value
@@ -113,6 +114,7 @@ class Interpreter:
         self._Palmer = Palmer(relax)
         self._Read = Read(relax)
         self._Select = Select(relax)
+        self._Sequence = Sequence(relax)
         self._State = State(relax)
         self._Unselect = Unselect(relax)
         self._Value = Value(relax)
@@ -166,6 +168,7 @@ class Interpreter:
         model = self._Model
         molmol = self._Molmol
         select = self._Select
+        sequence = self._Sequence
         state = self._State
         unselect = self._Unselect
         vmd = self._Vmd

@@ -25,7 +25,7 @@ import sys
 
 class Write:
     def __init__(self, relax):
-        """Class containing functions for writing data to a file."""
+        """Class for writing data to a file."""
 
         self.relax = relax
 
@@ -40,10 +40,9 @@ class Write:
 
         file:  The name of the file to output results to.  The default is 'results'.
 
-        dir:  The directory to place the results file in.
+        dir:  The directory name.
 
-        force:  A flag which if set to 1 will cause the results file to be overwitten if it already
-        exists.
+        force:  A flag which, if set to 1, will cause the results file to be overwritten.
 
 
         Description

@@ -1,7 +1,7 @@
 # Script for model-free model selection of the models m1, m2, m3, m4, and m5.
 
 # Load the sequence.
-read.sequence('noe.500.out')
+sequence.read('noe.500.out')
 
 # Nuclei type
 nuclei('N')

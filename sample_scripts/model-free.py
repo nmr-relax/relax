@@ -8,7 +8,7 @@ create_run(name, 'mf')
 nuclei('N')
 
 # Load the sequence.
-read.sequence(name, 'noe.500.out')
+sequence.read(name, 'noe.500.out')
 
 # Load a PDB file.
 #pdb(name, 'example.pdb')

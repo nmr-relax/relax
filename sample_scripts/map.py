@@ -8,7 +8,7 @@ create_run(name, 'mf')
 nuclei('N')
 
 # Load the sequence.
-read.sequence(name, 'noe.500.out')
+sequence.read(name, 'noe.500.out')
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')

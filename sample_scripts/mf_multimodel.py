@@ -12,7 +12,7 @@ for run in runs:
     create_run(run, 'mf')
 
     # Load the sequence.
-    read.sequence(run, 'noe.500.out')
+    sequence.read(run, 'noe.500.out')
 
     # Load a PDB file.
     #pdb('example.pdb')

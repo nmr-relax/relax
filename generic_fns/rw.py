@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from os import F_OK, access, makedirs, mkdir
+from os import F_OK, access, makedirs
 from string import split
 
 
@@ -36,7 +36,7 @@ class RW:
         """Function for reading the data out of a file."""
 
         # Test if the sequence data has been read.
-        if not len(self.relax.data.res[run]):
+        if not self.relax.data.res.has_key(run):
             raise RelaxSequenceError
 
         # Test if the run exists.

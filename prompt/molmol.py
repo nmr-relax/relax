@@ -29,7 +29,7 @@ class Molmol:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class containing functions for interfacing with Molmol."""
+        """Class for interfacing with Molmol."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help

@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-import sys
+from os import F_OK, access, makedirs
 
 
 class Sequence:
@@ -64,7 +64,7 @@ class Sequence:
             self.relax.data.res[run][i].select = 1
 
 
-    def read(self, run=None, file_name=None, num_col=0, name_col=1, sep=None, header_lines=None):
+    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None, header_lines=None):
         """Function for reading sequence data."""
 
         # Test if the run exists.
@@ -76,7 +76,7 @@ class Sequence:
             raise RelaxError, "The sequence data has already been loaded."
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file_name)
+        file_data = self.relax.file_ops.extract_data(file)
 
         # Remove the header.
         file_data = file_data[header_lines:]
@@ -107,3 +107,46 @@ class Sequence:
             self.relax.data.res[run][i].num = int(file_data[i][num_col])
             self.relax.data.res[run][i].name = file_data[i][name_col]
             self.relax.data.res[run][i].select = 1
+
+
+    def write(self, run=None, file=None, dir=None, force=0):
+        """Function for writing sequence data."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxSequenceError
+
+        # Create the directories.
+        if dir:
+            try:
+                makedirs(dir)
+            except OSError:
+                pass
+
+        # The file.
+        if dir:
+            file_name = dir + '/' + file
+        else:
+            file_name = file
+
+        if access(file_name, F_OK) and not force:
+            raise RelaxFileOverwriteError, (file_name, 'force flag')
+        seq_file = open(file_name, 'w')
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # Residue number.
+            seq_file.write("%-5i" % self.relax.data.res[run][i].num)
+
+            # Residue name.
+            seq_file.write("%-6s" % self.relax.data.res[run][i].name)
+
+            # New line.
+            seq_file.write("\n")
+
+        # Close the results file.
+        seq_file.close()

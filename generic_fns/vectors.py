@@ -39,7 +39,7 @@ class Vectors:
             raise RelaxPdbError
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[run]):
+        if not self.relax.data.res.has_key(run):
             raise RelaxSequenceError
 
         # Reassign the first peptide chain of the first structure.

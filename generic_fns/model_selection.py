@@ -220,7 +220,7 @@ class Model_selection:
             raise RelaxError, "The runs supplied are not all of the same function type."
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[run]):
+        if not self.relax.data.res.has_key(run):
             raise RelaxSequenceError
 
         # Sequence lengths.

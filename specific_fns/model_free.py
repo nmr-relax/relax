@@ -251,6 +251,9 @@ class Model_free:
     def calculate(self, run=None, res_num=None, print_flag=1):
         """Calculation of the model-free chi-squared value."""
 
+        # Run argument.
+        self.run = run
+
         # Go to the minimise function.
         self.minimise(run=run, min_algor='calc', res_num=res_num)
 
@@ -258,8 +261,11 @@ class Model_free:
     def create(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
         """Function to create a model-free model."""
 
+        # Run argument.
+        self.run = run
+
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[self.run]):
+        if not self.relax.data.res.has_key(self.run):
             raise RelaxSequenceError
 
         # Test if the run exists.
@@ -2010,8 +2016,11 @@ class Model_free:
     def select(self, run=None, model=None, scaling=1, res_num=None):
         """Function for the selection of a preset model-free model."""
 
+        # Run argument.
+        self.run = run
+
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[run]):
+        if not self.relax.data.res.has_key(run):
             raise RelaxSequenceError
 
         # Test if the run exists.

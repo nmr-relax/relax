@@ -29,7 +29,7 @@ class Select:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class containing functions for selecting residues."""
+        """Class for selecting residues."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help

@@ -25,7 +25,7 @@ import sys
 
 class Delete:
     def __init__(self, relax):
-        """Class containing functions for deleting data."""
+        """Class for deleting data."""
 
         self.relax = relax
 

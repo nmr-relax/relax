@@ -50,7 +50,7 @@ class Palmer:
             raise RelaxNoRunError, run
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[run]):
+        if not self.relax.data.res.has_key(run):
             raise RelaxSequenceError
 
         # Test if the PDB file is loaded (axially symmetric and anisotropic diffusion).
@@ -446,7 +446,7 @@ class Palmer:
         self.run = run
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[self.run]):
+        if not self.relax.data.res.has_key(self.run):
             raise RelaxSequenceError
 
         # The directory.

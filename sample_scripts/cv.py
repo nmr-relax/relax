@@ -30,7 +30,7 @@ for i in xrange(len(runs)):
         create_run(cv_runs[i][j], 'mf')
 
         # Load the sequence.
-        read.sequence(cv_runs[i][j], 'noe.500.out')
+        sequence.read(cv_runs[i][j], 'noe.500.out')
 
         # Create the calibration set by loading all relaxation data except the index 'i'.
         for k in xrange(len(ri_labels)):
