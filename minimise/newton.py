@@ -7,7 +7,7 @@ from generic_minimise import generic_minimise
 
 
 class newton(generic_line_search, generic_minimise):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, line_search_algor=None, hessian_mod=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9, delta=1e-8):
+	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, line_search_algor=None, hessian_mod=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
 		"Class for Newton minimisation specific functions."
 
 		self.func = func
@@ -19,7 +19,7 @@ class newton(generic_line_search, generic_minimise):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
-		self.delta = delta
+		self.mach_acc = mach_acc
 
 		if not line_search_algor:
 			raise NameError, "No line search algorithm has been supplied."
@@ -50,8 +50,11 @@ class newton(generic_line_search, generic_minimise):
 		# The hessian modification functions.
 		if match("^[Ee]igen", hessian_mod):
 			self.hessian_modification = self.eigenvalue_mod
+			self.delta = sqrt(self.mach_acc)
 		elif match("^[Cc]hol", hessian_mod):
 			self.hessian_modification = self.cholesky_mod
+		elif match("^[Mm]odified[ -_][Cc]holesky$", hessian_mod) or match("^[Mm]od$", hessian_mod):
+			self.hessian_modification = self.modified_cholesky
 
 		# Constants.
 		self.n = len(self.xk)
@@ -93,8 +96,7 @@ class newton(generic_line_search, generic_minimise):
 			matrix = self.d2fk + tk * self.I
 
 			try:
-				func = cholesky_decomposition
-				R = func(matrix)
+				R = cholesky_decomposition(matrix)
 				if self.print_flag == 2:
 					print "\tCholesky matrix R: " + `R`
 				self.d2fk = matrix
@@ -113,17 +115,26 @@ class newton(generic_line_search, generic_minimise):
 		This modification is based on equation 6.14 from page 144.
 		"""
 
+		if self.print_flag == 2:
+			print "d2fk: " + `self.d2fk`
+
 		eigen = eigenvectors(self.d2fk)
 		eigenvals = sort(eigen[0])
 		tau = max(0.0, self.delta - eigenvals[0])
-		self.d2fk = self.d2fk + tau * identity(len(self.dfk))
+		self.d2fk = self.d2fk + tau * self.I
 
 		# Debugging.
 		if self.print_flag == 2:
-			print "d2fk: " + `self.d2fk`
 			print "Eigenvalues: " + `eigenvals`
 			print "tau: " + `tau`
 			print "d2fk: " + `self.d2fk`
+
+
+	def modified_cholesky(self):
+		"""Modified Cholesky hessian modification.
+
+		Algorithm 6.5 from page 148.
+		"""
 
 
 	def new_param_func(self):
@@ -132,6 +143,8 @@ class newton(generic_line_search, generic_minimise):
 		Find the search direction, do a line search, and get xk+1 and fk+1.
 		"""
 
+		if self.print_flag == 2:
+			print "Unmodified pk: " + `-matrixmultiply(inverse(self.d2fk), self.dfk)`
 		# Hessian modifications.
 		self.hessian_modification()
 

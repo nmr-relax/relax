@@ -79,11 +79,11 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_
 
 	# Test for errors.
 	if a0['phi_prime'] > 0.0:
-		print "self.xk = " + `x`
-		print "self.fk = " + `f`
-		print "self.dfk = " + `g`
-		print "self.pk = " + `p`
-		print "dot(self.dfk, self.pk) = " + `dot(g, p)`
+		print "xk = " + `x`
+		print "fk = " + `f`
+		print "dfk = " + `g`
+		print "pk = " + `p`
+		print "dot(dfk, pk) = " + `dot(g, p)`
 		print "a0['phi_prime'] = " + `a0['phi_prime']`
 		raise NameError, "The gradient at point 0 of this line search is positive, ie p is not a descent direction and the line search will not work."
 	if a['a'] < a_min:
@@ -207,6 +207,12 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_
 		if print_flag:
 			print "   Ik_lim: " + `Ik_lim`
 
+		if bracketed:
+			if a_new['a'] <= Ik_lim[0] or a_new['a'] >= Ik_lim[1] or Ik_lim[1] - Ik_lim[0] <= a_tol * Ik_lim[1]:
+				if print_flag:
+					print "aaa"
+				a_new['a'] = Ik['a'][0]
+
 		# The step must be between a_min and a_max.
 		if a_new['a'] < a_min:
 			if print_flag:
@@ -216,12 +222,6 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_
 			if print_flag:
 				print "The step is above a_max, therefore setting the step length to a_max."
 			a_new['a'] = a_max
-
-		if bracketed:
-			if a_new['a'] <= Ik_lim[0] or a_new['a'] >= Ik_lim[1] or Ik_lim[1] - Ik_lim[0] <= a_tol * Ik_lim[1]:
-				if print_flag:
-					print "aaa"
-				a_new['a'] = Ik['a'][0]
 
 		# Calculate new values.
 		if print_flag:
