@@ -335,7 +335,7 @@ class Mf:
         self.total_d2chi2 = zeros((self.total_num_params, self.total_num_params), Float64)
 
         # Initialise the total ri gradient data structure (for Levenberg-Marquardt minimisation).
-        self.total_dri = zeros((self.total_num_params, self.total_num_ri), Float64)
+        self.total_dri = zeros((self.total_num_ri, self.total_num_params), Float64)
 
         # Set the functions self.func, self.dfunc, and self.d2func.
         ###########################################################
@@ -1485,6 +1485,12 @@ class Mf:
                 index = self.diff_data.num_params
 
                 # Diffusion parameter part of the global generic model-free gradient.
+                from Numeric import shape
+                print "Total dri: " + `shape(self.total_dri)`
+                print "dri: " + `shape(data.dri)`
+                print "total_dri[0:index]: " + `shape(self.total_dri[0:index])`
+                print "shape(data.dri[0:index]: " + `shape(data.dri[0:index])`
+                print "total_dri[data.start_index:data.end_index]: " + `shape(self.total_dri[data.start_index:data.end_index])`
                 self.total_dri[0:index] = self.total_dri[0:index] + data.dri[0:index]
 
                 # Model-free parameter part of the global generic model-free gradient.

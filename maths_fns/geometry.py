@@ -349,7 +349,6 @@ def calc_aniso_dgeom(data, diff_data):
     data.ddelta_beta_dpsi[1] = dot(data.xh_unit_vector, diff_data.ddy_dbeta)
     data.ddelta_beta_dpsi[2] = dot(data.xh_unit_vector, diff_data.ddy_dgamma)
 
-    data.ddelta_gamma_dpsi[0] = dot(data.xh_unit_vector, diff_data.ddz_dalpha)
     data.ddelta_gamma_dpsi[1] = dot(data.xh_unit_vector, diff_data.ddz_dbeta)
     data.ddelta_gamma_dpsi[2] = dot(data.xh_unit_vector, diff_data.ddz_dgamma)
 

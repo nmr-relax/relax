@@ -2259,7 +2259,7 @@ class Model_free(Common_functions):
                 lm_error = zeros(number_ri, Float64)
                 index = 0
                 for k in xrange(len(relax_error)):
-                    lm_error[index:len(relax_error[k])] = relax_error[k]
+                    lm_error[index:index+len(relax_error[k])] = relax_error[k]
                     index = index + len(relax_error[k])
 
                 min_options = min_options + (self.mf.lm_dri, lm_error)
