@@ -296,49 +296,47 @@ class Model_free(Common_functions):
         return array(param_vector, Float64)
 
 
-    def assemble_scaling_matrix(self, index=None):
+    def assemble_scaling_matrix(self, index=None, scaling=1):
         """Function for creating the scaling matrix."""
 
         # Initialise.
         self.scaling_matrix = identity(len(self.param_vector), Float64)
         i = 0
 
+        # No diagonal scaling.
+        if not scaling:
+            return
+
         # Diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
-                # Test if the diffusion parameters should be scaled.
-                if self.relax.data.diff[self.run].scaling:
-                    # tm.
-                    self.scaling_matrix[i, i] = 1e-9
+                # tm.
+                self.scaling_matrix[i, i] = 1e-9
 
                 # Increment i.
                 i = i + 1
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                # Test if the diffusion parameters should be scaled.
-                if self.relax.data.diff[self.run].scaling:
-                    # tm, Dratio, theta, phi
-                    self.scaling_matrix[i, i] = 1e-9
-                    self.scaling_matrix[i+1, i+1] = 1.0
-                    self.scaling_matrix[i+2, i+2] = 1.0
-                    self.scaling_matrix[i+3, i+3] = 1.0
+                # tm, Dratio, theta, phi
+                self.scaling_matrix[i, i] = 1e-9
+                self.scaling_matrix[i+1, i+1] = 1.0
+                self.scaling_matrix[i+2, i+2] = 1.0
+                self.scaling_matrix[i+3, i+3] = 1.0
 
                 # Increment i.
                 i = i + 4
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                # Test if the diffusion parameters should be scaled.
-                if self.relax.data.diff[self.run].scaling:
-                    # tm, Da, Dr, alpha, beta, gamma.
-                    self.scaling_matrix[i, i] = 1e-9
-                    self.scaling_matrix[i+1, i+1] = 1e9
-                    self.scaling_matrix[i+2, i+2] = 1e9
-                    self.scaling_matrix[i+3, i+3] = 1.0
-                    self.scaling_matrix[i+4, i+4] = 1.0
-                    self.scaling_matrix[i+5, i+5] = 1.0
+                # tm, Da, Dr, alpha, beta, gamma.
+                self.scaling_matrix[i, i] = 1e-9
+                self.scaling_matrix[i+1, i+1] = 1e9
+                self.scaling_matrix[i+2, i+2] = 1e9
+                self.scaling_matrix[i+3, i+3] = 1.0
+                self.scaling_matrix[i+4, i+4] = 1.0
+                self.scaling_matrix[i+5, i+5] = 1.0
 
                 # Increment i.
                 i = i + 6
@@ -353,11 +351,6 @@ class Model_free(Common_functions):
 
                 # Only add parameters for a single residue if index has a value.
                 if index != None and j != index:
-                    continue
-
-                # Skip residues which should not be scaled.
-                if not self.relax.data.res[self.run][j].scaling:
-                    i = i + len(self.relax.data.res[self.run][j].params)
                     continue
 
                 # Loop over the model-free parameters.
@@ -488,7 +481,7 @@ class Model_free(Common_functions):
         return data
 
 
-    def create_model(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
+    def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
         """Function to create a model-free model."""
 
         # Run argument.
@@ -619,7 +612,7 @@ class Model_free(Common_functions):
                 raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
 
         # Set up the model.
-        self.model_setup(run, model, equation, params, scaling, res_num)
+        self.model_setup(run, model, equation, params, res_num)
 
 
     def data_init(self, name):
@@ -633,7 +626,6 @@ class Model_free(Common_functions):
         # None.
         none_data = [ 'equation',
                       'model',
-                      'scaling',
                       's2',
                       's2f',
                       's2s',
@@ -667,8 +659,6 @@ class Model_free(Common_functions):
         equation:  The model-free equation type.
 
         params:  An array of the model-free parameter names associated with the model.
-
-        scaling:  The scaling flag.
 
         s2:  S2.
 
@@ -711,7 +701,6 @@ class Model_free(Common_functions):
             names.append('model')
             names.append('equation')
             names.append('params')
-            names.append('scaling')
 
         # Parameters.
         if set == 'all' or set == 'params':
@@ -1954,7 +1943,7 @@ class Model_free(Common_functions):
         return labels, tick_locations, tick_values
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0, sim_index=None):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
         """Model-free minimisation.
 
         Three types of parameter sets exist for which minimisation is different.  These are:
@@ -2095,7 +2084,7 @@ class Model_free(Common_functions):
                 self.param_vector = self.assemble_param_vector(index=index, sim_index=sim_index)
 
                 # Diagonal scaling.
-                self.assemble_scaling_matrix(index=index)
+                self.assemble_scaling_matrix(index=index, scaling=scaling)
                 self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
 
             # Get the grid search minimisation options.
@@ -2316,7 +2305,7 @@ class Model_free(Common_functions):
             self.h_count = self.h_count + hc
 
             # Scaling.
-            if self.relax.data.res[self.run][i].scaling:
+            if scaling:
                 self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
@@ -2407,7 +2396,7 @@ class Model_free(Common_functions):
                     self.relax.data.warning[self.run] = self.warning
 
 
-    def model_setup(self, run=None, model=None, equation=None, params=None, scaling_flag=1, res_num=None):
+    def model_setup(self, run=None, model=None, equation=None, params=None, res_num=None):
         """Function for updating various data structures depending on the model selected."""
 
         # Test that no diffusion tensor exists for the run if tm is a parameter in the model.
@@ -2432,9 +2421,6 @@ class Model_free(Common_functions):
             self.relax.data.res[run][i].model = model
             self.relax.data.res[run][i].equation = equation
             self.relax.data.res[run][i].params = params
-
-            # Diagonal scaling.
-            self.relax.data.res[run][i].scaling = scaling_flag
 
 
     def model_statistics(self, run=None, instance=None):
@@ -3241,7 +3227,7 @@ class Model_free(Common_functions):
         return value, error
 
 
-    def select_model(self, run=None, model=None, scaling=1, res_num=None):
+    def select_model(self, run=None, model=None, res_num=None):
         """Function for the selection of a preset model-free model."""
 
         # Run argument.
@@ -3529,7 +3515,7 @@ class Model_free(Common_functions):
             raise RelaxError, "The model '" + model + "' is invalid."
 
         # Set up the model.
-        self.model_setup(self.run, model, equation, params, scaling, res_num)
+        self.model_setup(self.run, model, equation, params, res_num)
 
 
     def set(self, run=None, value=None, error=None, data_type=None, index=None):

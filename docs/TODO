@@ -1,8 +1,6 @@
 # General.
 ##########
 
-Fix scaling -> move from model.create_mf, model.select_mf, diffusion_tensor.set, etc to min, grid, etc.
-
 
 # Model-free function.
 ######################
@@ -16,8 +14,8 @@ Anisotropic formula.
 Grace.
 
 
-# Functions.
-############
+# Maths functions.
+##################
 
 Relaxation curves.
 NOE.

@@ -106,16 +106,17 @@ class Monte_carlo:
         ~~~~~~~~~~~
 
         Parameter errors are calculated as the standard deviation of the distribution of parameter
-        values.  This function will not work if the simulation data was generated using the method
-        'direct' as only true Monte Carlo simulations can give true errors.
+        values.  This function should never be used if parameter values are obtained by minimisation
+        and the simulation data are generated using the method 'direct'.  The reason is because only
+        true Monte Carlo simulations can give the true parameter errors.
 
-        The prune argument is equivalent to Art Palmer's 'trim' parameter in Modelfree.  The
-        argument value is the proportion of simulations removed prior to error calculation.  If
-        prune is set to 0, all simulations are used for calculating errors, whereas a value of 1
-        excludes all data.  In almost all cases prune must be set to zero, any value greater than
-        zero will result in an underestimation of the error values.  If a value is supplied, then
-        the lower and upper tails (of the distribution of chi-squared values) will be excluded from
-        the error calculation.
+        If the values or parameters of a run are calculated rather than minimised, the prune
+        argument must be set to zero.  The value of this argument is proportional to the number of
+        simulations removed prior to error calculation.  If prune is set to 0, all simulations are
+        used for calculating errors, whereas a value of 1 excludes all data.  In almost all cases
+        prune must be set to zero, any value greater than zero will result in an underestimation of
+        the error values.  If a value is supplied, the lower and upper tails of the distribution of
+        chi-squared values will be excluded from the error calculation.
         """
 
         # Function intro text.
@@ -150,10 +151,10 @@ class Monte_carlo:
         ~~~~~~~~~~~
 
         This function only effects runs where minimisation occurs and can therefore be skipped if
-        the values or parameters are calculated rather than minimised.  However, if accidently run
-        in this case, the results will be unaffected.  It should only be called after the model or
-        run is fully minimised.  Once called, the functions 'grid_search' and 'minimise' will only
-        effect the simulations and not the model parameters.
+        the values or parameters of a run are calculated rather than minimised.  However, if
+        accidently run in this case, the results will be unaffected.  It should only be called after
+        the model or run is fully minimised.  Once called, the functions 'grid_search' and
+        'minimise' will only effect the simulations and not the model parameters.
 
         The initial values of the parameters for each simulation is set to the minimised parameters
         of the model.  A grid search can be undertaken for each simulation instead, although this

@@ -181,8 +181,31 @@ class Minimisation:
         constraints:  A flag specifying whether the parameters should be constrained.  The default
         is to turn constraints on (constraints=1).
 
+        scaling:  The diagonal scaling flag.  The default that scaling is on (scaling=1).
+
+
         print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Diagonal scaling.
+
+        Diagonal scaling is the transformation of parameter values such that each value has a
+        similar order of magnitude.  Certain minimisation techniques, for example the trust region
+        methods, perform extemely poorly with badly scaled problems.  In addition, methods which are
+        insensitive to scaling such as Newton minimisation may still benefit due to the minimisation
+        of round off errors.
+        
+        In Model-free analysis for example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz,
+        the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  Rex is divided by
+        (2*pi*600,000,000)**2 to make it field strength independent.  The scaling vector for this
+        model may be something like [1.0, 1e-9, 1/(2*pi*6*1e8)**2].  By dividing the unscaled
+        parameter vector by the scaling vector the scaled parameter vector is [0.5, 0.2, 15.0].  To
+        revert to the original unscaled parameter vector, the scaled parameter vector and scaling
+        vector are multiplied.
 
 
         Examples
@@ -256,6 +279,12 @@ class Minimisation:
         else:
             constraints = 1
 
+        # Keyword: scaling.
+        if keywords.has_key('scaling'):
+            scaling = keywords['scaling']
+        else:
+            scaling = 1
+
         # Keyword: print_flag.
         if keywords.has_key('print_flag'):
             print_flag = keywords['print_flag']
@@ -270,6 +299,7 @@ class Minimisation:
             text = text + ", func_tol=" + `func_tol`
             text = text + ", max_iterations=" + `max_iterations`
             text = text + ", constraints=" + `constraints`
+            text = text + ", scaling=" + `scaling`
             text = text + ", print_flag=" + `print_flag` + ")"
             print text
 
@@ -284,7 +314,7 @@ class Minimisation:
         min_options = args[1:]
 
         # Test for invalid keywords.
-        valid_keywords = ['run', 'func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'print_flag']
+        valid_keywords = ['run', 'func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'scaling', 'print_flag']
         for key in keywords:
             valid = 0
             for valid_key in valid_keywords:
@@ -318,12 +348,16 @@ class Minimisation:
             min_algor = 'Method of Multipliers'
             min_options = args
 
+        # Scaling.
+        if type(scaling) != int or (scaling != 0 and scaling != 1):
+            raise RelaxBinError, ('scaling', scaling)
+
         # Print flag.
         if type(print_flag) != int:
             raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
-        self.relax.generic.minimise.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        self.relax.generic.minimise.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
 
 
 

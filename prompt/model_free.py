@@ -84,7 +84,7 @@ class Model_free:
         self.__relax__.specific.model_free.copy(run1=run1, run2=run2)
 
 
-    def create_model(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
+    def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
         """Function to create a model-free model.
 
         Keyword Arguments
@@ -97,8 +97,6 @@ class Model_free:
         equation:  The model-free equation.
 
         params:  The array of parameter names of the model.
-
-        scaling:  The diagonal scaling flag.
 
         res_num:  The residue number.
 
@@ -134,19 +132,6 @@ class Model_free:
             CSA:    The chemical shift anisotropy.
 
 
-        Diagonal scaling.
-
-        This is the scaling of parameter values with the intent of having the same order of
-        magnitude for all parameters values.  For example, if S2 = 0.5, te = 200 ps, and
-        Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18]
-        (Rex is divided by (2*pi*600,000,000)**2 to make it field strength independent).  The
-        scaling vector for this model is [1.0, 1e-10, 1/(2*pi*6*1e8)**2].  By dividing the unscaled
-        parameter vector by the scaling vector the scaled parameter vector is [0.5, 2.0, 15.0].  To
-        revert to the original unscaled parameter vector, the scaled parameter vector and scaling
-        vector are multiplied.  The reason for diagonal scaling is that certain minimisation
-        techniques fail when the model is not properly scaled.
-
-
         Residue number.
 
         If 'res_num' is supplied as an integer then the model will only be created for that residue,
@@ -180,7 +165,6 @@ class Model_free:
             text = text + ", model=" + `model`
             text = text + ", equation=" + `equation`
             text = text + ", params=" + `params`
-            text = text + ", scaling=" + `scaling`
             text = text + ", res_num=" + `res_num` + ")"
             print text
 
@@ -203,16 +187,12 @@ class Model_free:
             if type(params[i]) != str:
                 raise RelaxListStrError, ('parameter types', params)
 
-        # Scaling.
-        if type(scaling) != int or (scaling != 0 and scaling != 1):
-            raise RelaxBinError, ('scaling', scaling)
-
         # Residue number.
         if res_num != None and type(res_num) != int:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.create_model(run=run, model=model, equation=equation, params=params, scaling=scaling, res_num=res_num)
+        self.__relax__.specific.model_free.create_model(run=run, model=model, equation=equation, params=params, res_num=res_num)
 
 
     def delete(self, run=None):
@@ -246,7 +226,7 @@ class Model_free:
         self.__relax__.specific.model_free.delete(run=run)
 
 
-    def select_model(self, run=None, model=None, scaling=1, res_num=None):
+    def select_model(self, run=None, model=None, res_num=None):
         """Function for the selection of a preset model-free model.
 
         Keyword Arguments
@@ -255,8 +235,6 @@ class Model_free:
         run:  The run to assign the values to.
 
         model:  The name of the preset model.
-
-        scaling:  The diagonal scaling flag.
 
 
         Description
@@ -361,19 +339,6 @@ class Model_free:
 
 
 
-        Diagonal scaling.
-
-        This is the scaling of parameter values with the intent of having the same order of
-        magnitude for all parameters values.  For example, if S2 = 0.5, te = 200 ps, and
-        Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18]
-        (Rex is divided by (2*pi*600,000,000)**2 to make it field strength independent).  The
-        scaling vector for this model is [1.0, 1e-10, 1/(2*pi*6*1e8)**2].  By dividing the unscaled
-        parameter vector by the scaling vector the scaled parameter vector is [0.5, 2.0, 15.0].  To
-        revert to the original unscaled parameter vector, the scaled parameter vector and scaling
-        vector are multiplied.  The reason for diagonal scaling is that certain minimisation
-        techniques fail when the model is not properly scaled.
-
-
         Residue number.
 
         If 'res_num' is supplied as an integer then the model will only be selected for that
@@ -387,15 +352,14 @@ class Model_free:
         To pick model 'm1' for all selected residues and assign it to the run 'mixed', type:
 
         relax> model_free.select_model('mixed', 'm1')
-        relax> model_free.select_model(run='mixed', model='m1', scaling=1)
+        relax> model_free.select_model(run='mixed', model='m1')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.select_model("
             text = text + "run=" + `run`
-            text = text + ", model=" + `model`
-            text = text + ", scaling=" + `scaling` + ")"
+            text = text + ", model=" + `model` + ")"
             print text
 
         # Run argument.
@@ -406,13 +370,9 @@ class Model_free:
         elif type(model) != str:
             raise RelaxStrError, ('model', model)
 
-        # Scaling.
-        if type(scaling) != int or (scaling != 0 and scaling != 1):
-            raise RelaxBinError, ('scaling', scaling)
-
         # Residue number.
         if res_num != None and type(res_num) != int:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.select_model(run=run, model=model, scaling=scaling, res_num=res_num)
+        self.__relax__.specific.model_free.select_model(run=run, model=model, res_num=res_num)

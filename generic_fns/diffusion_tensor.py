@@ -149,7 +149,7 @@ class Diffusion_tensor:
             print "\nFixed:  " + `self.relax.data.diff[run].fixed`
 
 
-    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1, scaling=1):
+    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1):
         """Function for setting up the diffusion tensor."""
 
         # Arguments.
@@ -179,9 +179,6 @@ class Diffusion_tensor:
 
         # Set the fixed flag.
         self.relax.data.diff[self.run].fixed = fixed
-
-        # Set the scaling flag.
-        self.relax.data.diff[self.run].scaling = scaling
 
         # Isotropic diffusion.
         if type(params) == float:

@@ -136,7 +136,7 @@ class Diffusion_tensor:
         self.__relax__.generic.diffusion_tensor.display(run=run)
 
 
-    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1, scaling=1):
+    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1):
         """Function for setting up the diffusion tensor.
 
         Keyword Arguments
@@ -158,8 +158,6 @@ class Diffusion_tensor:
         the tensor to either being 'oblate' or 'prolate'.
 
         fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
-
-        scaling:  The diagonal scaling flag.
 
 
         Description
@@ -258,11 +256,6 @@ class Diffusion_tensor:
         are:  theta; phi; alpha; beta; gamma.
 
 
-        Diagonal scaling.
-
-        For a description of diagonal scaling, view the docstring of the model-free model selection
-        function by typing 'help(model.select_mf)'.
-
 
         Examples
         ~~~~~~~~
@@ -308,7 +301,7 @@ class Diffusion_tensor:
         To select and minimise an isotropic diffusion tensor, type (followed by a minimisation
         command):
 
-        relax> diffusion_tensor('diff', 10e-9, fixed=0, scaling=1)
+        relax> diffusion_tensor('diff', 10e-9, fixed=0)
         """
 
         # Function intro text.
@@ -321,8 +314,7 @@ class Diffusion_tensor:
             text = text + ", angle_units=" + `angle_units`
             text = text + ", param_types=" + `param_types`
             text = text + ", axial_type=" + `axial_type`
-            text = text + ", fixed=" + `fixed`
-            text = text + ", scaling=" + `scaling` + ")"
+            text = text + ", fixed=" + `fixed` + ")"
             print text
 
         # The name of the run.
@@ -363,9 +355,5 @@ class Diffusion_tensor:
         if type(fixed) != int or (fixed != 0 and fixed != 1):
             raise RelaxBinError, ('fixed flag', fixed)
 
-        # Scaling.
-        if type(scaling) != int or (scaling != 0 and scaling != 1):
-            raise RelaxBinError, ('scaling', scaling)
-
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, axial_type=axial_type, fixed=fixed, scaling=scaling)
+        self.__relax__.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, axial_type=axial_type, fixed=fixed)
