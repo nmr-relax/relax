@@ -1,0 +1,5 @@
+# Bugs.
+#######
+
+
+The numbers in the save file when using state_save() are truncated!
