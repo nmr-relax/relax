@@ -11,3 +11,5 @@ rm -rf f-m2m4
 rm -rf f-m2m5
 rm -rf f-m3m4
 rm -f log*
+rm -rf final
+rm -rf grace

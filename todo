@@ -1,0 +1,7 @@
+sync uni + home ***
+
+final run fixup
+
+initial_runs to common_ops
+stage2 to common_ops
+separate AIC, BIC, etc files.
