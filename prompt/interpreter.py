@@ -43,6 +43,7 @@ from angles import Angles
 from create_run import Create_run
 from delete import Delete
 from dx import OpenDX
+from eliminate import Eliminate
 from fix import Fix
 from gpl import GPL
 from init_data import Init_data
@@ -97,6 +98,7 @@ class Interpreter:
         self._Angles = Angles(relax)
         self._Create_run = Create_run(relax)
         self._Delete = Delete(relax)
+        self._Eliminate = Eliminate(relax)
         self._Fix = Fix(relax)
         self._GPL = GPL
         self._Init_data = Init_data(relax)
@@ -157,6 +159,7 @@ class Interpreter:
         create_run = self._Create_run.create
         delete = self._Delete.delete
         dx = self._OpenDX.dx
+        eliminate = self._Eliminate.eliminate
         fix = self._Fix.fix
         grid_search = self._Minimisation.grid_search
         init_data = self._Init_data.init

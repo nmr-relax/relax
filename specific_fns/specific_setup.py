@@ -89,6 +89,10 @@ class Specific_setup:
         if self.function_type == 'duplicate_data':
             return self.relax.specific.model_free.duplicate_data
 
+        # Eliminate models.
+        if self.function_type == 'eliminate':
+            return self.relax.specific.model_free.eliminate
+
         # Grid search function.
         if self.function_type == 'grid_search':
             return self.relax.specific.model_free.grid_search
@@ -113,6 +117,14 @@ class Specific_setup:
         if self.function_type == 'num_instances':
             return self.relax.specific.model_free.num_instances
 
+        # Parameter names function.
+        if self.function_type == 'param_names':
+            return self.relax.specific.model_free.get_param_names
+
+        # Parameter values function.
+        if self.function_type == 'param_values':
+            return self.relax.specific.model_free.get_param_values
+
         # Read results file function.
         if self.function_type == 'read':
             return self.relax.specific.model_free.read_results
@@ -128,6 +140,10 @@ class Specific_setup:
         # Skip function.
         if self.function_type == 'skip_function':
             return self.relax.specific.model_free.skip_function
+
+        # Unselect function.
+        if self.function_type == 'unselect':
+            return self.relax.specific.model_free.unselect
 
         # Write header function.
         if self.function_type == 'write_header':

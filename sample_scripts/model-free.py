@@ -49,5 +49,6 @@ grid_search(name, inc=7, constraints=1, print_flag=1)
 minimise('newton', run=name)
 
 # Finish.
+eliminate()
 write(run=name, file='results', force=1)
 state.save('save', force=1)

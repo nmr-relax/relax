@@ -334,5 +334,5 @@ class Minimisation:
 
     # Add four spaces to the start of the generic minimise docstring lines to align with the minimise method docstring.
     doc = split(generic_minimise.__doc__, sep='\n')
-    for i in range(len(doc)):
+    for i in xrange(len(doc)):
         minimise.__doc__ = minimise.__doc__ + "    " + doc[i] + "\n"

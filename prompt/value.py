@@ -395,7 +395,7 @@ class Value:
         if value != None and type(value) != float and type(value) != int and type(value) != list:
             raise RelaxNoneFloatListError, ('value', value)
         if type(value) == list:
-            for i in range(len(value)):
+            for i in xrange(len(value)):
                 if type(value[i]) != float and type(value[i]) != int:
                     raise RelaxListFloatError, ('value', value)
 
@@ -403,7 +403,7 @@ class Value:
         if data_type != None and type(data_type) != str and type(data_type) != list:
             raise RelaxNoneStrListError, ('data type', data_type)
         if type(data_type) == list:
-            for i in range(len(data_type)):
+            for i in xrange(len(data_type)):
                 if type(data_type[i]) != str:
                     raise RelaxListStrError, ('data type', data_type)
 

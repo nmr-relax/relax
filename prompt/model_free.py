@@ -212,7 +212,7 @@ class Model_free:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.create(run=run, model=model, equation=equation, params=params, scaling=scaling, res_num=res_num)
+        self.__relax__.specific.model_free.create_model(run=run, model=model, equation=equation, params=params, scaling=scaling, res_num=res_num)
 
 
     def delete(self, run=None):
@@ -415,4 +415,4 @@ class Model_free:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.select(run=run, model=model, scaling=scaling, res_num=res_num)
+        self.__relax__.specific.model_free.select_model(run=run, model=model, scaling=scaling, res_num=res_num)

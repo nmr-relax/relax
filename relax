@@ -106,7 +106,7 @@ class Relax:
             return
 
         # Loop over the arguments.
-        for i in range(len(self.argv)):
+        for i in xrange(len(self.argv)):
             # Skip the first argument.
             if i == 0:
                 continue

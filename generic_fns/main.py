@@ -26,6 +26,7 @@ from delete import Delete
 from dx.map import Map
 from dx.opendx import OpenDX
 from diffusion_tensor import Diffusion_tensor
+from eliminate import Eliminate
 from fix import Fix
 from minimise import Minimise
 from model_selection import Model_selection
@@ -54,6 +55,7 @@ class Generic:
         self.create_run = Create_run(self.relax)
         self.delete = Delete(self.relax)
         self.diffusion_tensor = Diffusion_tensor(self.relax)
+        self.eliminate = Eliminate(self.relax)
         self.fix = Fix(self.relax)
         self.map = Map(self.relax)
         self.minimise = Minimise(self.relax)

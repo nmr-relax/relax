@@ -44,7 +44,37 @@ class Eliminate:
         ~~~~~~~~~~~
 
         This function is used for model validation to eliminate or reject models prior to model
-        selection.  Model validation is a part of mathematical modelling whereby
+        selection.  Model validation is a part of mathematical modelling whereby models are either
+        accepted or rejected.
 
-        select flag crap.
+        Empirical rules are used for model rejection and are listed below.  However these can be
+        overriden by supplying a function.  The function should accept two arguments, a string
+        defining a certain parameter and the value of the parameter.  If the model is rejected, the
+        function should return 1, otherwise it should return 0.  The function will be executed
+        multiple times, once for each parameter of the model.
+        
+        Once a model is rejected, the select flag corresponding to that model will be set to 0 so
+        that model selection, or any other function, will then skip that model.
         """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "eliminate("
+            text = text + "run=" + `run`
+            text = text + ", function=" + `function` + ")"
+            print text
+
+        # The run argument.
+        if run != None and type(run) != str and type(run) != list:
+            raise RelaxNoneStrListError, ('run', run)
+        if type(run) == list:
+            for i in xrange(len(run)):
+                if type(run[i]) != str:
+                    raise RelaxListStrError, ('run', run)
+
+        # User supplied function.
+        if function != None and type(function) != FunctionType:
+            raise RelaxFunctionError, ('function', function)
+
+        # Execute the functional code.
+        self.relax.generic.eliminate.eliminate(run=run, function=function)

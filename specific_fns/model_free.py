@@ -39,6 +39,50 @@ class Model_free:
         self.relax = relax
 
 
+    def assemble_param_names(self, index=None):
+        """Function for assembling various pieces of data into a Numeric parameter array."""
+
+        # Initialise.
+        self.param_names = []
+
+        # Diffusion tensor parameters.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                self.param_names.append('tm')
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                self.param_names.append('Dper')
+                self.param_names.append('Dpar')
+                self.param_names.append('theta')
+                self.param_names.append('phi')
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                self.param_names.append('Dx')
+                self.param_names.append('Dy')
+                self.param_names.append('Dz')
+                self.param_names.append('alpha')
+                self.param_names.append('beta')
+                self.param_names.append('gamma')
+
+        # Model-free parameters (residue specific parameters).
+        if self.param_set != 'diff':
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Only add parameters for a single residue if index has a value.
+                if index != None and i != index:
+                    continue
+
+                # Loop over the model-free parameters and add the names.
+                for j in xrange(len(self.relax.data.res[self.run][i].params)):
+                    self.param_names.append(self.relax.data.res[self.run][i].params[j])
+
+
     def assemble_param_vector(self, index=None):
         """Function for assembling various pieces of data into a Numeric parameter array."""
 
@@ -320,7 +364,7 @@ class Model_free:
                 setattr(data2, name, deepcopy(getattr(data1, name)))
 
 
-    def create(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
+    def create_model(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
         """Function to create a model-free model."""
 
         # Run argument.
@@ -848,6 +892,13 @@ class Model_free:
             self.relax.data.warning[new_run] = deepcopy(self.relax.data.warning[old_run])
 
 
+    def eliminate(self, name, value):
+        """
+        Model-free model elimination rules
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        """
+
     def get_data_name(self, name):
         """
         Model-free data type string matching patterns
@@ -929,6 +980,70 @@ class Model_free:
         # Local tm.
         if match('^tm$', name):
             return 'tm'
+
+
+    def get_param_names(self, run, i):
+        """Function for returning a vector of parameter names."""
+
+        # Arguments
+        self.run = run
+
+        # Test if the model-free model has been setup.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][i].select:
+                continue
+
+            # Not setup.
+            if not self.relax.data.res[self.run][i].model:
+                raise RelaxError, "The model-free models have not been setup."
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Residue index.
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
+            index = i
+        else:
+            index = None
+
+        # Assemble the parameter names.
+        self.assemble_param_names(index=index)
+
+        # Return the parameter names.
+        return self.param_names
+
+
+    def get_param_values(self, run, i):
+        """Function for returning a vector of parameter values."""
+
+        # Arguments
+        self.run = run
+
+        # Test if the model-free model has been setup.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][i].select:
+                continue
+
+            # Not setup.
+            if not self.relax.data.res[self.run][i].model:
+                raise RelaxError, "The model-free models have not been setup."
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Residue index.
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
+            index = i
+        else:
+            index = None
+
+        # Assemble the parameter values.
+        self.assemble_param_vector(index=index)
+
+        # Return the parameter names.
+        return self.param_vector
 
 
     def grid_search(self, run, lower, upper, inc, constraints, print_flag):
@@ -2187,7 +2302,7 @@ class Model_free:
         return value, error
 
 
-    def select(self, run=None, model=None, scaling=1, res_num=None):
+    def select_model(self, run=None, model=None, scaling=1, res_num=None):
         """Function for the selection of a preset model-free model."""
 
         # Run argument.
@@ -2569,6 +2684,24 @@ class Model_free:
         # Other data types.
         elif self.param_set == 'diff' or self.param_set == 'all':
             return 0
+
+
+    def unselect(self, run, i):
+        """Function for unselecting models."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Single residue.
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
+            self.relax.data.res[self.run][i].select = 0
+
+        # All residues.
+        else:
+            self.relax.data.select[self.run] = 0
 
 
     def write_header(self, file, run):

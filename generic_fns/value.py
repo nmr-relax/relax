@@ -287,7 +287,7 @@ class Value:
 
             # Multiple data type.
             if type(data_type) == list:
-                for j in range(len(data_type)):
+                for j in xrange(len(data_type)):
                     # Get the value of the data type 'j'.
                     if type(value) == None:
                         val = None
