@@ -38,11 +38,6 @@ import profile
 import pstats
 from re import match
 import sys
-try:
-    import Numeric
-except ImportError:
-    print "The python package Numeric cannot be found."
-    sys.exit()
 
 from data import Data
 from file_ops import File_ops
@@ -74,6 +69,12 @@ class Relax:
 
         self.argv = argv
 
+        # Set up the user errors.
+        RelaxErrors()
+
+        # Test if all the dependencies are installed.
+        self.test_deps()
+
         # Create a string to pass to the interpreter to print.
         self.set_intro_string()
 
@@ -82,9 +83,6 @@ class Relax:
 
         # The program data storage class.
         self.data = Data()
-
-        # Set up the user errors.
-        RelaxErrors()
 
         # Various functions.
         self.delete = Delete(self)
@@ -161,6 +159,41 @@ This is free software which you are welcome to modify and redistribute under the
 GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
 and comes with absolutely no warranty.  For details type GPL.
 """
+
+    def test_deps(self):
+        """Function for testing if all depenencies are installed."""
+
+        # Initialisation.
+        deps_ok = 1
+
+        # Numeric.
+        try:
+            import Numeric
+        except ImportError:
+            error = RelaxDepError('Numeric')
+            sys.stderr.write(error.__str__())
+            deps_ok = 0
+
+        # ScientificPython.
+        try:
+            import Scientific
+        except ImportError:
+            error = RelaxDepError('Scientific')
+            sys.stderr.write(error.__str__())
+            deps_ok = 0
+
+        # MMTK.
+        try:
+            import MMTK
+        except ImportError:
+            error = RelaxDepError('MMTK')
+            sys.stderr.write(error.__str__())
+            deps_ok = 0
+
+        # Quit if the deps are not installed.
+        if not deps_ok:
+            sys.stderr.write('\n')
+            sys.exit()
 
 
 if __name__ == "__main__":

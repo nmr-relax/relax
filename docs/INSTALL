@@ -1,22 +1,48 @@
-# Linux installation.
-#####################
+Dependencies
+============
 
-To install the program relax, first put the compressed archive in /usr/local/ and untar using the command:
+The following packages need to be installed before using relax:
 
-[/usr/local]$ tar zxvf relax.tar.gz
+    Python:  Version 2.2 or higher.
 
-Then either make a link in usr/local/bin to the file relax/relax using the command:
+    Numeric:  Version 21 or higher.
 
-[/usr/local/bin]$ ln -s /usr/local/relax/relax
+    ScientificPython:  The scientific python package is actually required by the Molecular
+      Modelling Toolkit.  Version 2.2 or higher.
 
-Or make an alias to the file by adding the following lines for the bash or csh/tcsh shells.
+    MMTK:  The Molecular Modelling Toolkit.  Version 2.2 or higher.
 
-Bash:
-    Global file:  /etc/bashrc
-    Local file:  ~/.bashrc
-    Alias line:  alias relax="/usr/local/relax/relax"
+Older versions of these packages may work but no guarantees can be made.
 
-Csh / Tcsh:
-    Global file:  /etc/csh.cshrc
-    Local file:  ~/.csh or ~/.tcsh
-    Alias line:  alias relax "/usr/local/relax/relax"
+
+Installation
+============
+
+Linux:
+------
+
+
+To install the program relax, first put the compressed archive in /usr/local/ and untar using the
+command:
+
+    $ tar jxvf relax.tar.bz2
+
+Then either make a link in usr/local/bin to the file relax/relax using the command,
+
+    $ ln -s /usr/local/relax/relax /usr/local/bin/relax
+
+or make an alias to the file by adding the following lines for the bash or csh/tcsh shells.
+
+Bash (global /etc/bashrc, local ~/.bashrc):
+alias relax="/usr/local/relax/relax"
+
+Csh / Tcsh (global /etc/csh.cshrc, local ~/.csh or ~/.tcsh):
+alias relax "/usr/local/relax/relax"
+
+
+
+Post install
+============
+
+For faster loading of the program, run the program once as root so that all the '.pyc' files are
+created.  Simply typing 'relax' in a shell and then exiting is sufficient.
