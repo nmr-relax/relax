@@ -4,7 +4,7 @@ from Numeric import Float64, zeros
 from generic import Min
 
 
-def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix=""):
 	"""Levenberg-Marquardt minimimisation.
 
 	Function options
@@ -29,13 +29,19 @@ def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None
 
 	"""
 
-	min = Levenberg_marquardt(chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Levenberg-Marquardt minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	min = Levenberg_marquardt(chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix)
 	results = min.minimise()
 	return results
 
 
 class Levenberg_marquardt(Min):
-	def __init__(self, chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag):
+	def __init__(self, chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix):
 		"""Class for Levenberg-Marquardt minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function
@@ -52,6 +58,7 @@ class Levenberg_marquardt(Min):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0

@@ -3,21 +3,27 @@ from Numeric import Float64, dot, identity, matrixmultiply, outerproduct
 from generic import Line_search, Min
 
 
-def bfgs(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
+def bfgs(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", a0=1.0, mu=0.0001, eta=0.9):
 	"""Quasi-Newton BFGS minimisation.
 
 	"""
 
-	min = Bfgs(func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Quasi-Newton BFGS minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	min = Bfgs(func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta)
 	if min.init_failure:
-		print "Initialisation of minimisation has failed."
+		print print_prefix + "Initialisation of minimisation has failed."
 		return None
 	results = min.minimise()
 	return results
 
 
 class Bfgs(Line_search, Min):
-	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
+	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta):
 		"""Class for Quasi-Newton BFGS minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'bfgs' rather than
@@ -32,6 +38,7 @@ class Bfgs(Line_search, Min):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 
 		# Minimisation options.
 		#######################

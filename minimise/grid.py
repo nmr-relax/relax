@@ -2,7 +2,7 @@ import sys
 from Numeric import Float64, ones, zeros
 from re import match
 
-def grid(func, grid_ops, args=(), print_flag=0):
+def grid(func, grid_ops, args=(), print_flag=0, print_prefix=""):
 	"""Grid search function.
 
 
@@ -44,17 +44,17 @@ def grid(func, grid_ops, args=(), print_flag=0):
 	f = apply(func, (params,)+args)
 	f_min = f
 
-	# Debugging code.
+	# Print out.
 	if print_flag:
-		print "\n%-23s%-20i\n" % ("Total number of steps:", total_steps)
-		if print_flag == 2:
-			print "%-20s%-20s\n" % ("Step size:", `step_size`)
-		print "%-6s%-8i%-12s%-20s" % ("Step:", 1, "Min params:", `params`)
-		if print_flag == 2:
-			print "%-20s%-20i" % ("Step number:", 1)
-			print "%-20s%-20s" % ("Increment:", `step_num`)
-			print "%-20s%-20s" % ("Init params:", `params`)
-			print "%-20s%-20g\n" % ("Init f:", f)
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Grid search"
+		print print_prefix + "~~~~~~~~~~~"
+		print print_prefix + "\n%-23s%-20i\n" % ("Total number of steps:", total_steps)
+		print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", 1, "xk:", `params`, "fk:", `f`)
+		if print_flag >= 3:
+			print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
 
 	# Grid search.
 	for step in range(2, total_steps + 1):
@@ -79,15 +79,15 @@ def grid(func, grid_ops, args=(), print_flag=0):
 
 			# Debugging code.
 			if print_flag:
-				print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", step, "Min params:", `min_params`, "Function value:", `f_min`)
+				print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", step, "xk:", `min_params`, "fk:", `f_min`)
 
-		# Debugging code.
-		if print_flag == 2:
-			print "%-20s%-20i" % ("Step number:", step)
-			print "%-20s%-20s" % ("Increment:", `step_num`)
-			print "%-20s%-20s" % ("Params:", `params`)
-			print "%-20s%-20g" % ("Function value:", f)
-			print "%-20s%-20s" % ("Min params:", `min_params`)
-			print "%-20s%-20g\n" % ("Min f:", f_min)
+		# Print out code.
+		if print_flag >= 2:
+			if f != f_min:
+				print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", step, "xk:", `params`, "fk:", `f`)
+			if print_flag >= 3:
+				print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
+				print print_prefix + "%-20s%-20s" % ("Min params:", `min_params`)
+				print print_prefix + "%-20s%-20g\n" % ("Min f:", f_min)
 
 	return min_params, f_min, total_steps

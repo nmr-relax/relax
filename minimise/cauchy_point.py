@@ -3,7 +3,7 @@ from Numeric import dot, sqrt
 from generic import Trust_region, Min
 
 
-def cauchy_point(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e5, delta0=1.0, eta=0.2):
+def cauchy_point(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", delta_max=1e5, delta0=1.0, eta=0.2):
 	"""Cauchy Point trust region algorithm.
 
 	Page 69 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -22,13 +22,19 @@ def cauchy_point(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5,
 		         \ min(||dfk||**2/(delta . dfk . Bk . dfk), 1)	otherwise.
 	"""
 
-	min = Cauchy_point(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Cauchy point minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~"
+	min = Cauchy_point(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta)
 	results = min.minimise()
 	return results
 
 
 class Cauchy_point(Trust_region, Min):
-	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta):
+	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta):
 		"""Class for Cauchy Point trust region minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'cauchy_point'
@@ -44,6 +50,7 @@ class Cauchy_point(Trust_region, Min):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 
 		self.delta_max = delta_max
 		self.delta = delta0
@@ -71,9 +78,9 @@ class Cauchy_point(Trust_region, Min):
 		else:
 			self.tau_k = min(norm_dfk ** 3 / (self.delta * curv), 1.0)
 
-		if self.print_flag == 2:
-			print "dfk . Bk . dfk: " + `curv`
-			print "tau_k:          " + `self.tau_k`
+		if self.print_flag >= 2:
+			print self.print_prefix + "dfk . Bk . dfk: " + `curv`
+			print self.print_prefix + "tau_k:          " + `self.tau_k`
 
 		# Cauchy point.
 		self.pk = - self.tau_k * self.delta * self.dfk / norm_dfk

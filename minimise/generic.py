@@ -29,7 +29,7 @@ from minimise.line_search.more_thuente import more_thuente
 # The generic minimisation function.
 ####################################
 
-def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix=""):
 	"""Generic minimisation function.
 
 	This is a generic function which can be used to access all minimisers using the same set of
@@ -177,8 +177,6 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	# Grid search.
 	if match('^[Gg]rid', min_algor):
 		from minimise.grid import grid
-		if print_flag:
-			print "\n\n<<< Grid search >>>"
 		xk, fk, k = grid(func, args=args, grid_ops=min_options, print_flag=print_flag)
 		if full_output:
 			results = (xk, fk, k, k, 0, 0, None)
@@ -188,7 +186,11 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	# Fixed parameter values.
 	elif match('^[Ff]ixed', min_algor):
 		if print_flag:
-			print "\n\n<<< Fixed initial parameter values >>>"
+			if print_flag >= 2:
+				print print_prefix
+			print print_prefix
+			print print_prefix + "Fixed initial parameter values"
+			print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		xk = min_options
 		fk = apply(func, (xk,)+args)
 		if full_output:
@@ -203,37 +205,27 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	# Back-and-forth coordinate descent minimisation.
 	elif match('^[Cc][Dd]$', min_algor) or match('^[Cc]oordinate[ _-][Dd]escent$', min_algor):
 		from minimise.coordinate_descent import coordinate_descent
-		if print_flag:
-			print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
-		results = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Steepest descent minimisation.
 	elif match('^[Ss][Dd]$', min_algor) or match('^[Ss]teepest[ _-][Dd]escent$', min_algor):
 		from minimise.steepest_descent import steepest_descent
-		if print_flag:
-			print "\n\n<<< Steepest descent minimisation >>>"
-		results = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Quasi-Newton BFGS minimisation.
 	elif match('^[Bb][Ff][Gg][Ss]$', min_algor):
 		from minimise.bfgs import bfgs
-		if print_flag:
-			print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-		results = bfgs(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = bfgs(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Newton minimisation.
 	elif match('^[Nn]ewton$', min_algor):
 		from minimise.newton import newton
-		if print_flag:
-			print "\n\n<<< Newton minimisation >>>"
-		results = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Newton-CG minimisation.
 	elif match('^[Nn]ewton[ _-][Cc][Gg]$', min_algor) or match('^[Nn][Cc][Gg]$', min_algor):
 		from minimise.ncg import ncg
-		if print_flag:
-			print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-		results = ncg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = ncg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 
 	# Unconstrained trust-region algorithms.
@@ -242,30 +234,22 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	# Cauchy point minimisation.
 	elif match('^[Cc]auchy', min_algor):
 		from minimise.cauchy_point import cauchy_point
-		if print_flag:
-			print "\n\n<<< Cauchy point minimisation >>>"
-		results = cauchy_point(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = cauchy_point(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Dogleg minimisation.
 	elif match('^[Dd]ogleg', min_algor):
 		from minimise.dogleg import dogleg
-		if print_flag:
-			print "\n\n<<< Dogleg minimisation >>>"
-		results = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# CG-Steihaug minimisation.
 	elif match('^[Cc][Gg][-_ ][Ss]teihaug', min_algor) or match('^[Ss]teihaug', min_algor):
 		from minimise.steihaug_cg import steihaug
-		if print_flag:
-			print "\n\n<<< CG-Steihaug minimisation >>>"
-		results = steihaug(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = steihaug(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Exact trust region minimisation.
 	elif match('^[Ee]xact', min_algor):
 		from minimise.exact_trust_region import exact_trust_region
-		if print_flag:
-			print "\n\n<<< Exact trust region minimisation >>>"
-		results = exact_trust_region(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = exact_trust_region(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 
 	# Unconstrained conjugate gradient algorithms.
@@ -274,30 +258,22 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	# Fletcher-Reeves conjugate gradient minimisation.
 	elif match('^[Ff][Rr]$', min_algor) or match('^[Ff]letcher[-_ ][Rr]eeves$', min_algor):
 		from minimise.fletcher_reeves_cg import fletcher_reeves
-		if print_flag:
-			print "\n\n<<< Fletcher-Reeves conjugate gradient minimisation >>>"
-		results = fletcher_reeves(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = fletcher_reeves(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Polak-Ribière conjugate gradient minimisation.
 	elif match('^[Pp][Rr]$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere$', min_algor):
 		from minimise.polak_ribiere_cg import polak_ribiere
-		if print_flag:
-			print "\n\n<<< Polak-Ribière conjugate gradient minimisation >>>"
-		results = polak_ribiere(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = polak_ribiere(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Polak-Ribière + conjugate gradient minimisation.
 	elif match('^[Pp][Rr]\+$', min_algor) or match('^[Pp]olak[-_ ][Rr]ibiere\+$', min_algor):
 		from minimise.polak_ribiere_plus_cg import polak_ribiere_plus
-		if print_flag:
-			print "\n\n<<< Polak-Ribière + conjugate gradient minimisation >>>"
-		results = polak_ribiere_plus(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = polak_ribiere_plus(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Hestenes-Stiefel conjugate gradient minimisation.
 	elif match('^[Hh][Ss]$', min_algor) or match('^[Hh]estenes[-_ ][Ss]tiefel$', min_algor):
 		from minimise.hestenes_stiefel_cg import hestenes_stiefel
-		if print_flag:
-			print "\n\n<<< Hestenes-Stiefel conjugate gradient minimisation >>>"
-		results = hestenes_stiefel(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = hestenes_stiefel(func, dfunc=dfunc, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 
 	# Miscellaneous unconstrained algorithms.
@@ -306,16 +282,12 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	# Simplex minimisation.
 	elif match('^[Ss]implex$', min_algor):
 		from minimise.simplex import simplex
-		if print_flag:
-			print "\n\n<<< Simplex minimisation >>>"
-		results = simplex(func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = simplex(func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 	# Levenberg-Marquardt minimisation.
 	elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):
 		from minimise.levenberg_marquardt import levenberg_marquardt
-		if print_flag:
-			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		results = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		results = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag, print_prefix=print_prefix)
 
 
 	# Constrainted algorithms.
@@ -324,8 +296,6 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	# Method of Multipliers.
 	elif match('^[Mm][Oo][Mm]$', min_algor) or match('[Mm]ethod of [Mm]ultipliers$', min_algor):
 		from minimise.method_of_multipliers import method_of_multipliers
-		if print_flag:
-			print "\n\n<<< Method of Multipliers >>>"
 		results = method_of_multipliers(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 
 
@@ -333,7 +303,7 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	###############################
 
 	else:
-		print "Minimiser type set incorrectly.  The minimiser " + min_algor + " is not programmed.\n"
+		print print_prefix + "Minimiser type set incorrectly.  The minimiser " + min_algor + " is not programmed.\n"
 		return
 
 
@@ -341,20 +311,21 @@ def minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=Non
 	#########
 
 	if print_flag and results != None:
+		print ""
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
-			print "\nParameter values: " + `xk`
-			print "Function value:   " + `fk`
-			print "Iterations:       " + `k`
-			print "Function calls:   " + `f_count`
-			print "Gradient calls:   " + `g_count`
-			print "Hessian calls:    " + `h_count`
+			print print_prefix + "Parameter values: " + `xk`
+			print print_prefix + "Function value:   " + `fk`
+			print print_prefix + "Iterations:       " + `k`
+			print print_prefix + "Function calls:   " + `f_count`
+			print print_prefix + "Gradient calls:   " + `g_count`
+			print print_prefix + "Hessian calls:    " + `h_count`
 			if warning:
-				print "Warning:          " + warning
+				print print_prefix + "Warning:          " + warning
 			else:
-				print "Warning:          None"
+				print print_prefix + "Warning:          None"
 		else:
-			print "\nParameter values: " + `results`
+			print print_prefix + "Parameter values: " + `results`
 
 	return results
 
@@ -387,12 +358,12 @@ class Min:
 
 		# Test if the options are a tuple.
 		if type(min_options) != tuple:
-			print "The minimisation options " + `min_options` + " is not a tuple."
+			print self.print_prefix + "The minimisation options " + `min_options` + " is not a tuple."
 			return
 
 		# Test that no more thant 2 options are given.
 		if len(min_options) > 2:
-			print "A maximum of two minimisation options is allowed (the Hessian type and Hessian modification)."
+			print self.print_prefix + "A maximum of two minimisation options is allowed (the Hessian type and Hessian modification)."
 			return
 
 		# Sort out the minimisation options.
@@ -402,7 +373,7 @@ class Min:
 			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
 				self.hessian_mod = opt
 			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid Hessian type or modification."
+				print self.print_prefix + "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid Hessian type or modification."
 				return
 
 		# Default Hessian type.
@@ -411,7 +382,7 @@ class Min:
 
 		# Make sure that no Hessian modification is used with the BFGS matrix.
 		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
-			print "When using the BFGS matrix, Hessian modifications should not be used."
+			print self.print_prefix + "When using the BFGS matrix, Hessian modifications should not be used."
 			return
 
 		# Default Hessian modification when the Hessian type is Newton.
@@ -421,9 +392,9 @@ class Min:
 		# Print the Hessian type info.
 		if self.print_flag:
 			if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
-				print "Hessian type:  BFGS"
+				print self.print_prefix + "Hessian type:  BFGS"
 			else:
-				print "Hessian type:  Newton"
+				print self.print_prefix + "Hessian type:  Newton"
 
 		return 1
 
@@ -456,14 +427,17 @@ class Min:
 		while 1:
 			# Print out.
 			if self.print_flag:
-				if self.print_flag == 2:
-					print "\n\n<<<Main iteration k=" + `self.k` + " >>>"
-					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
+				out = 0
+				if self.print_flag >= 2:
+					print "\n" + self.print_prefix + "Main iteration k=" + `self.k`
+					out = 1
 				else:
 					if self.k2 == 100:
 						self.k2 = 0
 					if self.k2 == 0:
-						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
+						out = 1
+				if out == 1:
+					print self.print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", self.k, "xk:", `self.xk`, "fk:", `self.fk`)
 
 			# Get xk+1 (new parameter function).
 			#self.new_param_func()
@@ -541,11 +515,11 @@ class Min:
 
 		# Test the function tolerance.
 		if abs(self.fk_new - self.fk) <= self.func_tol:
-			if self.print_flag == 2:
-				print "fk:          " + `self.fk`
-				print "fk+1:        " + `self.fk_new`
-				print "|fk+1 - fk|: " + `abs(self.fk_new - self.fk)`
-				print "tol:         " + `self.func_tol`
+			if self.print_flag >= 2:
+				print self.print_prefix + "fk:          " + `self.fk`
+				print self.print_prefix + "fk+1:        " + `self.fk_new`
+				print self.print_prefix + "|fk+1 - fk|: " + `abs(self.fk_new - self.fk)`
+				print self.print_prefix + "tol:         " + `self.func_tol`
 			self.warning = None
 			return 1
 
@@ -584,23 +558,23 @@ class Line_search:
 
 		if match('^[Bb]ack', self.line_search_algor):
 			if self.print_flag:
-				print "Line search:  Backtracking line search."
+				print self.print_prefix + "Line search:  Backtracking line search."
 			self.line_search = self.backline
 		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', self.line_search_algor) or match('^[Nn][Ww][Ii]', self.line_search_algor):
 			if self.print_flag:
-				print "Line search:  Nocedal and Wright interpolation based line search."
+				print self.print_prefix + "Line search:  Nocedal and Wright interpolation based line search."
 			self.line_search = self.nwi
 		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', self.line_search_algor) or match('^[Nn][Ww][Ww]', self.line_search_algor):
 			if self.print_flag:
-				print "Line search:  Nocedal and Wright line search for the Wolfe conditions."
+				print self.print_prefix + "Line search:  Nocedal and Wright line search for the Wolfe conditions."
 			self.line_search = self.nww
 		elif match('^[Mm]ore[ _][Tt]huente$', self.line_search_algor) or match('^[Mm][Tt]', self.line_search_algor):
 			if self.print_flag:
-				print "Line search:  Moré and Thuente line search."
+				print self.print_prefix + "Line search:  Moré and Thuente line search."
 			self.line_search = self.mt
 		elif match('^[Nn]one$', self.line_search_algor):
 			if self.print_flag:
-				print "Line search:  No line search."
+				print self.print_prefix + "Line search:  No line search."
 			self.line_search = self.no_search
 
 
@@ -616,12 +590,12 @@ class Line_search:
 
 		# Test if the options are a tuple.
 		if type(min_options) != tuple:
-			print "The minimisation options " + `min_options` + " is not a tuple."
+			print self.print_prefix + "The minimisation options " + `min_options` + " is not a tuple."
 			return
 
 		# No more than one option is allowed.
 		if len(min_options) > 1:
-			print "A maximum of one minimisation options is allowed (the line search algorithm)."
+			print self.print_prefix + "A maximum of one minimisation options is allowed (the line search algorithm)."
 			return
 
 		# Sort out the minimisation options.
@@ -629,7 +603,7 @@ class Line_search:
 			if self.valid_line_search(opt):
 				self.line_search_algor = opt
 			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is not a valid line search algorithm."
+				print self.print_prefix + "The minimisation option " + `opt` + " from " + `min_options` + " is not a valid line search algorithm."
 				return
 
 		# Default line search algorithm.
@@ -720,43 +694,43 @@ class Trust_region:
 		# Calculate the Euclidean norm of pk.
 		self.norm_pk = sqrt(dot(self.pk, self.pk))
 
-		if self.print_flag == 2:
-			print "Actual reduction: " + `act_red`
-			print "Predicted reduction: " + `pred_red`
-			print "rho: " + `self.rho`
-			print "||pk||: " + `self.norm_pk`
+		if self.print_flag >= 2:
+			print self.print_prefix + "Actual reduction: " + `act_red`
+			print self.print_prefix + "Predicted reduction: " + `pred_red`
+			print self.print_prefix + "rho: " + `self.rho`
+			print self.print_prefix + "||pk||: " + `self.norm_pk`
 
 		# Rho is close to zero or negative, therefore the trust region is shrunk.
 		if self.rho < 0.25 or pred_red < 0.0:
 			self.delta = 0.25 * self.delta
-			if self.print_flag == 2:
-				print "Shrinking the trust region."
+			if self.print_flag >= 2:
+				print self.print_prefix + "Shrinking the trust region."
 
 		# Rho is close to one and pk has reached the boundary of the trust region, therefore the trust region is expanded.
 		elif self.rho > 0.75 and abs(self.norm_pk - self.delta) < 1e-5:
 			self.delta = min(2.0*self.delta, self.delta_max)
-			if self.print_flag == 2:
-				print "Expanding the trust region."
+			if self.print_flag >= 2:
+				print self.print_prefix + "Expanding the trust region."
 
 		# Rho is positive but not close to one, therefore the trust region is unaltered.
 		else:
-			if self.print_flag == 2:
-				print "Trust region is unaltered."
+			if self.print_flag >= 2:
+				print self.print_prefix + "Trust region is unaltered."
 
-		if self.print_flag == 2:
-			print "New trust region: " + `self.delta`
+		if self.print_flag >= 2:
+			print self.print_prefix + "New trust region: " + `self.delta`
 
 		# Choose the position for the next iteration.
 		if self.rho > self.eta and pred_red > 0.0:
 			self.shift_flag = 1
-			if self.print_flag == 2:
-				print "rho > eta, " + `self.rho` + " > " + `self.eta`
-				print "Moving to, self.xk_new: " + `self.xk_new`
+			if self.print_flag >= 2:
+				print self.print_prefix + "rho > eta, " + `self.rho` + " > " + `self.eta`
+				print self.print_prefix + "Moving to, self.xk_new: " + `self.xk_new`
 		else:
 			self.shift_flag = 0
-			if self.print_flag == 2:
-				print "rho < eta, " + `self.rho` + " < " + `self.eta`
-				print "Not moving, self.xk: " + `self.xk`
+			if self.print_flag >= 2:
+				print self.print_prefix + "rho < eta, " + `self.rho` + " < " + `self.eta`
+				print self.print_prefix + "Not moving, self.xk: " + `self.xk`
 
 
 
@@ -784,17 +758,17 @@ class Conjugate_gradient:
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
-		if self.print_flag == 2:
-			print "New param func:"
-			print "\tLine search algor: " + self.line_search_algor
-			print "\ta:    " + `self.alpha`
-			print "\tpk:   " + `self.pk`
-			print "\txk:   " + `self.xk`
-			print "\txk+1: " + `self.xk_new`
-			print "\tfk:   " + `self.fk`
-			print "\tfk+1: " + `self.fk_new`
-			print "\tgk:   " + `self.dfk`
-			print "\tgk+1: " + `self.dfk_new`
+		if self.print_flag >= 2:
+			print self.print_prefix + "New param func:"
+			print self.print_prefix + "\tLine search algor: " + self.line_search_algor
+			print self.print_prefix + "\ta:    " + `self.alpha`
+			print self.print_prefix + "\tpk:   " + `self.pk`
+			print self.print_prefix + "\txk:   " + `self.xk`
+			print self.print_prefix + "\txk+1: " + `self.xk_new`
+			print self.print_prefix + "\tfk:   " + `self.fk`
+			print self.print_prefix + "\tfk+1: " + `self.fk_new`
+			print self.print_prefix + "\tgk:   " + `self.dfk`
+			print self.print_prefix + "\tgk+1: " + `self.dfk_new`
 
 
 	def setup(self):
@@ -836,17 +810,17 @@ class Conjugate_gradient:
 
 		# Restarts.
 		if abs(dot(self.dfk_new, self.dfk)) / self.dot_dfk_new >= 0.1:
-			if self.print_flag == 2:
-				print "Restarting."
+			if self.print_flag >= 2:
+				print self.print_prefix + "Restarting."
 			bk_new = 0
 
 		# Calculate pk+1.
 		self.pk_new = -self.dfk_new + bk_new * self.pk
 
-		if self.print_flag == 2:
-			print "Update func:"
-			print "\tpk:     " + `self.pk`
-			print "\tpk+1:   " + `self.pk_new`
+		if self.print_flag >= 2:
+			print self.print_prefix + "Update func:"
+			print self.print_prefix + "\tpk:     " + `self.pk`
+			print self.print_prefix + "\tpk+1:   " + `self.pk_new`
 
 		# Update.
 		self.xk = self.xk_new * 1.0

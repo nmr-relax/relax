@@ -355,7 +355,14 @@ class min:
 
 		for self.res in range(len(self.relax.data.seq)):
 			if self.print_flag >= 1:
-				print "\n\n<<< Fitting to residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1] + " >>>"
+				if self.print_flag >= 2:
+					print "\n\n"
+				string = "Fitting to residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1]
+				print string
+				string2 = ""
+				for i in range(len(string)):
+					string2 = string2 + "~"
+				print string2
 			else:
 				print "Residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1]
 
@@ -404,10 +411,8 @@ class min:
 
 			self.relax.data.params[self.model][self.res] = self.params
 
-			if self.print_flag:
-				print "\n\n<<< Finished minimiser >>>"
-
 			# Write the results to file.
+			# To do.
 
 		print "\n[ Done ]\n\n"
 
@@ -495,7 +500,7 @@ class min:
 			print "The constraints flag (constraints=" + `self.constraints` + ") must be either 0 or 1."
 			return
 
-		# Debugging options.
+		# Print options.
 		if keywords.has_key('print_flag'):
 			self.print_flag = keywords['print_flag']
 		else:

@@ -7,7 +7,7 @@ from newton import Newton
 from generic import Trust_region, Min
 
 
-def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16):
+def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16):
 	"""Dogleg trust region algorithm.
 
 	Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -39,16 +39,22 @@ def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func
 
 	"""
 
-	min = Dogleg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta, mach_acc)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Dogleg minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~"
+	min = Dogleg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta, mach_acc)
 	if min.init_failure:
-		print "Initialisation of minimisation has failed."
+		print print_prefix + "Initialisation of minimisation has failed."
 		return None
 	results = min.minimise()
 	return results
 
 
 class Dogleg(Trust_region, Min, Bfgs, Newton):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta, mach_acc):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, delta_max, delta0, eta, mach_acc):
 		"""Class for Dogleg trust region minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'dogleg' rather
@@ -64,6 +70,7 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 		self.mach_acc = mach_acc
 
 		self.delta_max = delta_max
@@ -178,13 +185,13 @@ class Dogleg(Trust_region, Min, Bfgs, Newton):
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 
-		if self.print_flag == 2:
-			print "Fin."
-			print "   pk:     " + `self.pk`
-			print "   xk:     " + `self.xk`
-			print "   xk_new: " + `self.xk_new`
-			print "   fk:     " + `self.fk`
-			print "   fk_new: " + `self.fk_new`
+		if self.print_flag >= 2:
+			print self.print_prefix + "Fin."
+			print self.print_prefix + "   pk:     " + `self.pk`
+			print self.print_prefix + "   xk:     " + `self.xk`
+			print self.print_prefix + "   xk_new: " + `self.xk_new`
+			print self.print_prefix + "   fk:     " + `self.fk`
+			print self.print_prefix + "   fk_new: " + `self.fk_new`
 
 
 	def setup(self):

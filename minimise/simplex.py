@@ -3,18 +3,24 @@ from Numeric import Float64, add, argsort, average, take, zeros
 from generic import Min
 
 
-def simplex(func, args=(), x0=None, func_tol=1e-5, maxiter=None, full_output=0, print_flag=0):
+def simplex(func, args=(), x0=None, func_tol=1e-5, maxiter=None, full_output=0, print_flag=0, print_prefix=""):
 	"""Downhill simplex minimisation.
 
 	"""
 
-	min = Simplex(func, args, x0, func_tol, maxiter, full_output, print_flag)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Simplex minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~~"
+	min = Simplex(func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix)
 	results = min.minimise()
 	return results
 
 
 class Simplex(Min):
-	def __init__(self, func, args, x0, func_tol, maxiter, full_output, print_flag):
+	def __init__(self, func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix):
 		"""Class for downhill simplex minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'simplex' rather
@@ -28,6 +34,7 @@ class Simplex(Min):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -165,7 +172,7 @@ class Simplex(Min):
 		simplex vertecies is insignificant.
 		"""
 
-		if self.print_flag == 2:
-			print "diff = " + `self.simplex_vals[-1] - self.simplex_vals[0]`
+		if self.print_flag >= 2:
+			print self.print_prefix + "diff = " + `self.simplex_vals[-1] - self.simplex_vals[0]`
 		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
 			return 1

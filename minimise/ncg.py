@@ -4,7 +4,7 @@ from Numeric import Float64, dot, matrixmultiply, sqrt, zeros
 from generic import Line_search, Min
 
 
-def ncg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
+def ncg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", a0=1.0, mu=0.0001, eta=0.9):
 	"""Line search Newton conjugate gradient algorithm.
 
 	Page 140 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -21,16 +21,22 @@ def ncg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_
 
 	"""
 
-	min = Ncg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Newton Conjugate Gradient minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	min = Ncg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta)
 	if min.init_failure:
-		print "Initialisation of minimisation has failed."
+		print print_prefix + "Initialisation of minimisation has failed."
 		return None
 	results = min.minimise()
 	return results
 
 
 class Ncg(Line_search, Min):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta):
 		"""Class for newton conjugate gradient  minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'ncg' rather than
@@ -46,6 +52,7 @@ class Ncg(Line_search, Min):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 
 		# Minimisation options.
 		#######################
@@ -90,11 +97,11 @@ class Ncg(Line_search, Min):
 		#residual_test = min(0.5, sqrt(len_g)) * len_g
 
 		# Debugging.
-		if self.print_flag == 2:
-			print "Initial data:"
-			print "\tx0: " + `xi`
-			print "\tr0: " + `ri`
-			print "\tp0: " + `pi`
+		if self.print_flag >= 2:
+			print self.print_prefix + "Initial data:"
+			print self.print_prefix + "\tx0: " + `xi`
+			print self.print_prefix + "\tr0: " + `ri`
+			print self.print_prefix + "\tp0: " + `pi`
 
 		i = 0
 		while 1:
@@ -121,15 +128,16 @@ class Ncg(Line_search, Min):
 			pi_new = -ri_new + bi_new*pi
 
 			# Debugging.
-			if self.print_flag == 2:
-				print "\nIteration i = " + `i`
-				print "Api: " + `Api`
-				print "Curv: " + `curv`
-				print "ai: " + `ai`
-				print "xi+1: " + `xi_new`
-				print "ri+1: " + `ri_new`
-				print "bi+1: " + `bi_new`
-				print "pi+1: " + `pi_new`
+			if self.print_flag >= 2:
+				print ""
+				print self.print_prefix + "Iteration i = " + `i`
+				print self.print_prefix + "Api: " + `Api`
+				print self.print_prefix + "Curv: " + `curv`
+				print self.print_prefix + "ai: " + `ai`
+				print self.print_prefix + "xi+1: " + `xi_new`
+				print self.print_prefix + "ri+1: " + `ri_new`
+				print self.print_prefix + "bi+1: " + `bi_new`
+				print self.print_prefix + "pi+1: " + `pi_new`
 
 			# Update i+1 to i.
 			xi = xi_new * 1.0

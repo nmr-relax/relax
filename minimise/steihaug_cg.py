@@ -5,7 +5,7 @@ from newton import Newton
 from generic import Min, Trust_region
 
 
-def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
+def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
 	"""Steihaug conjugate-gradient trust region algorithm.
 
 	Page 75 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -34,13 +34,19 @@ def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, max
 
 	"""
 
-	min = Steihaug(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, epsilon, delta_max, delta0, eta)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "CG-Steihaug minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~"
+	min = Steihaug(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, epsilon, delta_max, delta0, eta)
 	results = min.minimise()
 	return results
 
 
 class Steihaug(Min, Trust_region, Newton):
-	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, epsilon, delta_max, delta0, eta):
+	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, print_prefix, epsilon, delta_max, delta0, eta):
 		"""Class for Steihaug conjugate-gradient trust region minimisation specific functions."
 
 		Unless you know what you are doing, you should call the function 'steihaug' rather
@@ -56,6 +62,7 @@ class Steihaug(Min, Trust_region, Newton):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 
 		self.epsilon = epsilon
 		self.delta_max = delta_max
@@ -82,14 +89,14 @@ class Steihaug(Min, Trust_region, Newton):
 		len_r0 = sqrt(dot(self.rj, self.rj))
 		length_test = self.epsilon * len_r0
 
-		if self.print_flag == 2:
-			print "p0: " + `self.pj`
-			print "r0: " + `self.rj`
-			print "d0: " + `self.dj`
+		if self.print_flag >= 2:
+			print self.print_prefix + "p0: " + `self.pj`
+			print self.print_prefix + "r0: " + `self.rj`
+			print self.print_prefix + "d0: " + `self.dj`
 
 		if len_r0 < self.epsilon:
-			if self.print_flag == 2:
-				print "len rj < epsilon."
+			if self.print_flag >= 2:
+				print self.print_prefix + "len rj < epsilon."
 			return self.pj
 
 		# Iterate over j.
@@ -97,47 +104,47 @@ class Steihaug(Min, Trust_region, Newton):
 		while 1:
 			# The curvature.
 			curv = dot(self.dj, dot(self.B, self.dj))
-			if self.print_flag == 2:
-				print "\nIteration j = " + `j`
-				print "Curv: " + `curv`
+			if self.print_flag >= 2:
+				print self.print_prefix + "\nIteration j = " + `j`
+				print self.print_prefix + "Curv: " + `curv`
 
 			# First test.
 			if curv <= 0.0:
 				tau = self.get_tau()
-				if self.print_flag == 2:
-					print "curv <= 0.0, therefore tau = " + `tau`
+				if self.print_flag >= 2:
+					print self.print_prefix + "curv <= 0.0, therefore tau = " + `tau`
 				return self.pj + tau * self.dj
 
 			aj = dot(self.rj, self.rj) / curv
 			self.pj_new = self.pj + aj * self.dj
-			if self.print_flag == 2:
-				print "aj: " + `aj`
-				print "pj+1: " + `self.pj_new`
+			if self.print_flag >= 2:
+				print self.print_prefix + "aj: " + `aj`
+				print self.print_prefix + "pj+1: " + `self.pj_new`
 
 			# Second test.
 			if sqrt(dot(self.pj_new, self.pj_new)) >= self.delta:
 				tau = self.get_tau()
-				if self.print_flag == 2:
-					print "sqrt(dot(self.pj_new, self.pj_new)) >= self.delta, therefore tau = " + `tau`
+				if self.print_flag >= 2:
+					print self.print_prefix + "sqrt(dot(self.pj_new, self.pj_new)) >= self.delta, therefore tau = " + `tau`
 				return self.pj + tau * self.dj
 
 			self.rj_new = self.rj + aj * dot(self.B, self.dj)
-			if self.print_flag == 2:
-				print "rj+1: " + `self.rj_new`
+			if self.print_flag >= 2:
+				print self.print_prefix + "rj+1: " + `self.rj_new`
 
 			# Third test.
 			if sqrt(dot(self.rj_new, self.rj_new)) < length_test:
-				if self.print_flag == 2:
-					print "sqrt(dot(self.rj_new, self.rj_new)) < length_test"
+				if self.print_flag >= 2:
+					print self.print_prefix + "sqrt(dot(self.rj_new, self.rj_new)) < length_test"
 				return self.pj_new
 
 			bj_new = dot(self.rj_new, self.rj_new) / dot(self.rj, self.rj)
 			self.dj_new = -self.rj_new + bj_new * self.dj
-			if self.print_flag == 2:
-				print "len rj+1: " + `sqrt(dot(self.rj_new, self.rj_new))`
-				print "epsilon.||r0||: " + `length_test`
-				print "bj+1: " + `bj_new`
-				print "dj+1: " + `self.dj_new`
+			if self.print_flag >= 2:
+				print self.print_prefix + "len rj+1: " + `sqrt(dot(self.rj_new, self.rj_new))`
+				print self.print_prefix + "epsilon.||r0||: " + `length_test`
+				print self.print_prefix + "bj+1: " + `bj_new`
+				print self.print_prefix + "dj+1: " + `self.dj_new`
 
 			# Update j+1 to j.
 			self.pj = self.pj_new * 1.0

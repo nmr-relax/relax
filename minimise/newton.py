@@ -5,21 +5,27 @@ from re import match
 from generic import Line_search, Min
 
 
-def newton(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
+def newton(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, print_prefix="", a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
 	"""Newton minimisation.
 
 	"""
 
-	min = Newton(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta, mach_acc)
+	if print_flag:
+		if print_flag >= 2:
+			print print_prefix
+		print print_prefix
+		print print_prefix + "Newton minimisation"
+		print print_prefix + "~~~~~~~~~~~~~~~~~~~"
+	min = Newton(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta, mach_acc)
 	if min.init_failure:
-		print "Initialisation of minimisation has failed."
+		print print_prefix + "Initialisation of minimisation has failed."
 		return None
 	results = min.minimise()
 	return results
 
 
 class Newton(Line_search, Min):
-	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta, mach_acc):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, print_prefix, a0, mu, eta, mach_acc):
 		"""Class for Newton minimisation specific functions.
 
 		Unless you know what you are doing, you should call the function 'newton' rather
@@ -35,6 +41,7 @@ class Newton(Line_search, Min):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.print_prefix = print_prefix
 		self.mach_acc = mach_acc
 
 		# Set a0.
@@ -54,12 +61,12 @@ class Newton(Line_search, Min):
 
 		# Test if the options are a tuple.
 		if type(min_options) != tuple:
-			print "The minimisation options " + `min_options` + " is not a tuple."
+			print self.print_prefix + "The minimisation options " + `min_options` + " is not a tuple."
 			self.init_failure = 1; return
 
 		# Test that no more thant 2 options are given.
 		if len(min_options) > 2:
-			print "A maximum of two minimisation options is allowed (the line search algorithm and the Hessian modification)."
+			print self.print_prefix + "A maximum of two minimisation options is allowed (the line search algorithm and the Hessian modification)."
 			self.init_failure = 1; return
 
 		# Sort out the minimisation options.
@@ -69,7 +76,7 @@ class Newton(Line_search, Min):
 			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
 				self.hessian_mod = opt
 			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid line search algorithm or Hessian modification."
+				print self.print_prefix + "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid line search algorithm or Hessian modification."
 				self.init_failure = 1; return
 
 		# Default line search algorithm.
@@ -125,27 +132,29 @@ class Newton(Line_search, Min):
 		else:
 			tk = half_norm
 
-		if self.print_flag == 2:
-			print "Frobenius norm: " + `norm`
-			print "min aii: " + `min_aii`
-			print "tk: " + `tk`
+		if self.print_flag >= 3:
+			print self.print_prefix + "Frobenius norm: " + `norm`
+			print self.print_prefix + "min aii: " + `min_aii`
+			print self.print_prefix + "tk: " + `tk`
 
 		k = 0
 		while 1:
-			if self.print_flag == 2:
-				print "Iteration " + `k`
+			if self.print_flag >= 3:
+				print self.print_prefix + "Iteration " + `k`
 
 			# Calculate the matrix A + tk.I
 			matrix = self.d2fk + tk * self.I
 
 			try:
 				self.L = cholesky_decomposition(matrix)
-				if self.print_flag == 2:
-					print "\tCholesky matrix L: " + `self.L`
+				if self.print_flag >= 3:
+					print self.print_prefix + "\tCholesky matrix L:"
+					for i in range(self.n):
+						print self.print_prefix + "\t\t" + `self.L[i]`
 				break
 			except "LinearAlgebraError":
-				if self.print_flag == 2:
-					print "\tLinearAlgebraError, matrix is not positive definite."
+				if self.print_flag >= 3:
+					print self.print_prefix + "\tLinearAlgebraError, matrix is not positive definite."
 				tk = max(2.0*tk, half_norm)
 
 			k = k + 1
@@ -167,8 +176,8 @@ class Newton(Line_search, Min):
 		Returns the modified Newton step.
 		"""
 
-		if self.print_flag == 2:
-			print "d2fk: " + `self.d2fk`
+		if self.print_flag >= 3:
+			print self.print_prefix + "d2fk: " + `self.d2fk`
 
 		eigen = eigenvectors(self.d2fk)
 		eigenvals = sort(eigen[0])
@@ -176,10 +185,10 @@ class Newton(Line_search, Min):
 		matrix = self.d2fk + tau * self.I
 
 		# Debugging.
-		if self.print_flag == 2:
-			print "Eigenvalues: " + `eigenvals`
-			print "tau: " + `tau`
-			print "d2fk: " + `matrix`
+		if self.print_flag >= 3:
+			print self.print_prefix + "Eigenvalues: " + `eigenvals`
+			print self.print_prefix + "tau: " + `tau`
+			print self.print_prefix + "d2fk: " + `matrix`
 
 		# Calculate the Newton direction.
 		if return_matrix:
@@ -220,9 +229,9 @@ class Newton(Line_search, Min):
 		e = 0.0 * self.xk
 		P = 1.0 * self.I
 
-		if self.print_flag == 2:
+		if self.print_flag >= 3:
 			old_eigen = eigenvectors(self.d2fk)
-			print "d2fk: " + `self.d2fk`
+			print self.print_prefix + "d2fk: " + `self.d2fk`
 
 		# Main loop.
 		for j in range(self.n):
@@ -262,19 +271,19 @@ class Newton(Line_search, Min):
 		# The Cholesky factor.
 		self.L = dot(P, transpose(r))
 
-		if self.print_flag == 2:
-			print "e: " + `dot(P, dot(e, transpose(P)))`
+		if self.print_flag >= 3:
+			print self.print_prefix + "e: " + `dot(P, dot(e, transpose(P)))`
 			temp = dot(self.L,transpose(self.L))
-			print "d2fk:\n" + `self.d2fk`
-			print "d2fk reconstruted:\n" + `temp`
+			print self.print_prefix + "d2fk:\n" + `self.d2fk`
+			print self.print_prefix + "d2fk reconstruted:\n" + `temp`
 			eigen = eigenvectors(temp)
-			print "Old eigenvalues: " + `old_eigen[0]`
-			print "New eigenvalues: " + `eigen[0]`
+			print self.print_prefix + "Old eigenvalues: " + `old_eigen[0]`
+			print self.print_prefix + "New eigenvalues: " + `eigen[0]`
 			sorted = sort(old_eigen[0])
 			if sorted[0] > 0.0:
 				for i in range(len(e)):
 					if e[i] != 0.0:
-						print "\n### Fail ###\n"
+						print self.print_prefix + "\n### Fail ###\n"
 						import sys
 						sys.exit()
 
@@ -291,20 +300,20 @@ class Newton(Line_search, Min):
 
 		if self.hessian_mod == None:
 			if self.print_flag:
-				print "Hessian modification:  Unmodified Hessian."
+				print self.print_prefix + "Hessian modification:  Unmodified Hessian."
 			self.get_pk = self.unmodified_hessian
 		elif match("^[Ee]igen", self.hessian_mod):
 			if self.print_flag:
-				print "Hessian modification:  Eigenvalue modification."
+				print self.print_prefix + "Hessian modification:  Eigenvalue modification."
 			self.get_pk = self.eigenvalue
 			self.delta = sqrt(self.mach_acc)
 		elif match("^[Cc]hol", self.hessian_mod):
 			if self.print_flag:
-				print "Hessian modification:  Cholesky with added multiple of the identity."
+				print self.print_prefix + "Hessian modification:  Cholesky with added multiple of the identity."
 			self.get_pk = self.cholesky
 		elif match("^[Gg][Mm][Ww]", self.hessian_mod):
 			if self.print_flag:
-				print "Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm."
+				print self.print_prefix + "Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm."
 			self.get_pk = self.gmw
 
 
@@ -325,17 +334,18 @@ class Newton(Line_search, Min):
 		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
 
 		# Debugging.
-		if self.print_flag == 2:
-			print "pk: " + `self.pk`
-			print "alpha: " + `self.alpha`
-			print "xk: " + `self.xk`
-			print "xk+1: " + `self.xk_new`
-			print "fk: " + `self.fk`
-			print "fk+1: " + `self.fk_new`
+		if self.print_flag >= 2:
+			print self.print_prefix + "pk:    " + `self.pk`
+			print self.print_prefix + "alpha: " + `self.alpha`
+			print self.print_prefix + "xk:    " + `self.xk`
+			print self.print_prefix + "xk+1:  " + `self.xk_new`
+			print self.print_prefix + "fk:    " + `self.fk`
+			print self.print_prefix + "fk+1:  " + `self.fk_new`
 			eigen = eigenvectors(self.d2fk)
-			for i in range(len(self.d2fk)):
-				print "B[" + `i` + ", " + `i` + "] = " + `self.d2fk[i, i]`
-			print "Eigenvalues: " + `eigen[0]`
+			print self.print_prefix + "B:"
+			for i in range(self.n):
+				print self.print_prefix + `self.d2fk[i]`
+			print self.print_prefix + "Eigenvalues: " + `eigen[0]`
 
 
 	def setup_newton(self):
