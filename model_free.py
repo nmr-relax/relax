@@ -861,11 +861,17 @@ class Model_free:
         for i in range(len(param_types)):
             # te, tf, and ts.
             if match('t', param_types[i]):
-                self.scale_vect[i] = 1e-9
+                self.scale_vect[i] = 1e-15
+
+            # Rex.
             elif param_types[i] == 'Rex':
                 self.scale_vect[i] = 1.0 / (2.0 * pi * self.relax.data.frq[0]) ** 2
+
+            # Bond length.
             elif param_types[i] == 'Bond length':
                 self.scale_vect[i] = 1e-10
+
+            # CSA.
             elif param_types[i] == 'CSA':
                 self.scale_vect[i] = 1e-4
 

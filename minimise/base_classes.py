@@ -153,7 +153,7 @@ class Min:
 
         # Sort out the minimisation options.
         for opt in min_options:
-            if self.hessian_type == None and (match('[Bb][Ff][Gg][Ss]', opt) or match('[Nn]ewton', opt)):
+            if self.hessian_type == None and opt != None and (match('[Bb][Ff][Gg][Ss]', opt) or match('[Nn]ewton', opt)):
                 self.hessian_type = opt
             elif self.hessian_mod == None and self.valid_hessian_mod(opt):
                 self.hessian_mod = opt
@@ -174,7 +174,8 @@ class Min:
 
         # Default Hessian modification when the Hessian type is Newton.
         if match('[Nn]ewton', self.hessian_type) and self.hessian_mod == None:
-            self.hessian_mod = default_mod
+            self.hessian_mod = None
+            #self.hessian_mod = default_mod
 
         # Print the Hessian type info.
         if self.print_flag:
@@ -423,7 +424,9 @@ class Line_search:
     def valid_line_search(self, type):
         """Test if the string 'type' is a valid line search algorithm."""
 
-        if match('^[Bb]ack', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', type) or match('^[Nn][Ww][Ii]', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', type) or match('^[Nn][Ww][Ww]', type) or match('^[Mm]ore[ _][Tt]huente$', type) or match('^[Mm][Tt]', type) or match('^[Nn]one$', type):
+        if type == None:
+            return 0
+        elif match('^[Bb]ack', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', type) or match('^[Nn][Ww][Ii]', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', type) or match('^[Nn][Ww][Ww]', type) or match('^[Mm]ore[ _][Tt]huente$', type) or match('^[Mm][Tt]', type) or match('^[Nn]one$', type):
             return 1
         else:
             return 0

@@ -258,7 +258,9 @@ class Newton(Line_search, Min):
 
         if self.print_flag >= 3:
             old_eigen = eigenvectors(self.d2fk)
-            print self.print_prefix + "d2fk: " + `self.d2fk`
+            print self.print_prefix + "d2fk:"
+            for i in range(len(self.d2fk)):
+                print self.print_prefix + "\t" + `self.d2fk[i]`
 
         # Main loop.
         for j in range(self.n):
@@ -300,9 +302,13 @@ class Newton(Line_search, Min):
 
         if self.print_flag >= 3:
             print self.print_prefix + "e: " + `dot(P, dot(e, transpose(P)))`
+            print self.print_prefix + "P:"
+            for i in range(len(P)):
+                print self.print_prefix + "\t" + `P[i]`
             temp = dot(self.L,transpose(self.L))
-            print self.print_prefix + "d2fk:\n" + `self.d2fk`
-            print self.print_prefix + "d2fk reconstruted:\n" + `temp`
+            print self.print_prefix + "d2fk reconstruted:"
+            for i in range(len(temp)):
+                print self.print_prefix + "\t" + `temp[i]`
             eigen = eigenvectors(temp)
             print self.print_prefix + "Old eigenvalues: " + `old_eigen[0]`
             print self.print_prefix + "New eigenvalues: " + `eigen[0]`

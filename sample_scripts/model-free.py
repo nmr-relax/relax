@@ -13,13 +13,13 @@ name = 'm5'
 model.select_mf(name)
 
 # Fixed value.
-from math import pi
-fixed(name, [ 1.0,  0.82966451113572059,  3.5050768988491403*1e-12 ])
+#from math import pi
+#fixed(name, [ 1.0,  0.82966451113572059,  3.5050768988491403*1e-12 ])
 #fixed(name, [ 0.95,  10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
-write(model=name, file='results_fixed', force=1)
+#write(model=name, file='results_fixed', force=1)
 
 # Grid search.
-#grid_search(name, inc=11)
+grid_search(name, inc=11)
 #write(model=name, file='results_grid', force=1)
 
 # Minimise.
