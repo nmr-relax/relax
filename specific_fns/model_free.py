@@ -2530,6 +2530,7 @@ class Model_free:
         file_data = file_data[1:]
 
         # Sort the column numbers.
+        col_diff_type = None
         for i in xrange(len(header)):
             if header[i] == 'Num':
                 col_num = i
@@ -2580,6 +2581,38 @@ class Model_free:
             elif header[i] == 'Warning':
                 col_warn = i
 
+            # Diffusion tensor.
+            elif header[i] == 'Diff_type':
+                col_diff_type = i
+            elif header[i] == 'tm_(s)':
+                col_tm = i
+            elif header[i] == 'Dratio':
+                col_dratio = i
+            elif header[i] == 'theta_(deg)':
+                col_theta = i
+            elif header[i] == 'phi_(deg)':
+                col_phi = i
+            elif header[i] == 'Da':
+                col_da = i
+            elif header[i] == 'Dr':
+                col_dr = i
+            elif header[i] == 'alpha_(deg)':
+                col_alpha = i
+            elif header[i] == 'beta_(deg)':
+                col_beta = i
+            elif header[i] == 'gamma_(deg)':
+                col_gamma = i
+
+            # Relaxation data.
+            elif header[i] == 'Ri_labels':
+                col_ri_labels = i
+            elif header[i] == 'Remap_table':
+                col_remap_table = i
+            elif header[i] == 'Frq_labels':
+                col_frq_labels = i
+            elif header[i] == 'Frquencies':
+                col_frq = i
+
         # Generate the sequence.
         for i in xrange(len(file_data)):
             # Skip all lines where the data_set column is not 'value'.
@@ -2615,6 +2648,70 @@ class Model_free:
         # Set up the simulations.
         if len(sims):
             self.relax.generic.monte_carlo.setup(self.run, len(sims))
+
+        # Get the diffusion tensor.
+        diff_type = None
+        diff_params = []
+        for i in xrange(len(file_data)):
+            # Skip all lines where the data_set column is not 'value'.
+            if file_data[i][col_data_set] != 'value':
+                continue
+
+            # The diffusion tensor type.
+            if not diff_type:
+                diff_type = file_data[i][col_diff_type]
+
+            # Test if diff_type is the same for all residues.
+            if diff_type != file_data[i][col_diff_type]:
+                raise RelaxError, "The diffusion tensor is not of the same type for all residues."
+
+            # Temporary diffusion tensor parameters.
+            temp_diff_params = []
+
+            # Isotropic.
+            if diff_type == 'iso':
+                try:
+                    temp_diff_params.append(float(file_data[i][col_tm]))
+                except ValueError:
+                    raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+            # Axial symmetery.
+            if diff_type == 'axial' or diff_type == 'oblate' or diff_type == 'prolate':
+                try:
+                    temp_diff_params.append(float(file_data[i][col_tm]))
+                    temp_diff_params.append(float(file_data[i][col_dratio]))
+                    temp_diff_params.append(float(file_data[i][col_theta]))
+                    temp_diff_params.append(float(file_data[i][col_phi]))
+                except ValueError:
+                    raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+            # Anisotropic.
+            if diff_type == 'aniso':
+                try:
+                    temp_diff_params.append(float(file_data[i][col_tm]))
+                    temp_diff_params.append(float(file_data[i][col_da]))
+                    temp_diff_params.append(float(file_data[i][col_dr]))
+                    temp_diff_params.append(float(file_data[i][col_alpha]))
+                    temp_diff_params.append(float(file_data[i][col_beta]))
+                    temp_diff_params.append(float(file_data[i][col_gamma]))
+                except ValueError:
+                    raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+            # Diffusion tensor.
+            if len(diff_params) == 0:
+                diff_params = deepcopy(temp_diff_params)
+
+            # Test if the diffusion tensor parameter are the same for all residues.
+            if diff_params != temp_diff_params:
+                raise RelaxError, "The diffusion tensor is not the same for all residues."
+
+        # Set the diffusion tensor.
+        axial_type = None
+        if diff_type == 'oblate':
+            axial_type = 'oblate'
+        elif diff_type == 'prolate':
+            axial_type = 'prolate'
+        self.relax.generic.diffusion_tensor.set(params=diff_params, axial_type=axial_type)
 
         # Loop over the file data.
         for i in xrange(len(file_data)):
@@ -3757,53 +3854,69 @@ class Model_free:
             self.relax.data.select[self.run] = 0
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_params=None, frq=None, ri=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
-        file.write("%-5s%-6s" % (num, name))
+        file.write("%-4s %-5s " % (num, name))
 
         # Selected flag and data set.
-        file.write("%-10s%-10s" % (select, data_set))
+        file.write("%-9s %-9s " % (select, data_set))
         if not select:
             file.write("\n")
             return
 
         # Nucleus.
-        file.write("%-8s" % nucleus)
+        file.write("%-7s " % nucleus)
 
         # Model details.
-        file.write("%-6s%-10s%-36s" % (model, equation, params))
+        file.write("%-5s %-9s %-35s " % (model, equation, params))
 
         # Parameter set.
-        file.write("%-11s" % param_set)
+        file.write("%-10s " % param_set)
 
         # Parameters.
-        file.write("%-26s" % s2)
-        file.write("%-26s" % s2f)
-        file.write("%-26s" % s2s)
-        file.write("%-26s" % local_tm)
-        file.write("%-26s" % tf)
-        file.write("%-26s" % te)
-        file.write("%-26s" % rex)
-        file.write("%-26s" % r)
-        file.write("%-26s" % csa)
+        file.write("%-25s " % s2)
+        file.write("%-25s " % s2f)
+        file.write("%-25s " % s2s)
+        file.write("%-25s " % local_tm)
+        file.write("%-25s " % tf)
+        file.write("%-25s " % te)
+        file.write("%-25s " % rex)
+        file.write("%-25s " % r)
+        file.write("%-25s " % csa)
 
         # Minimisation results.
-        file.write("%-26s%-9s%-9s%-9s%-9s%-45s " % (chi2, i, f, g, h, warn))
+        file.write("%-25s %-8s %-8s %-8s %-8s %-45s " % (chi2, i, f, g, h, warn))
 
         # Diffusion parameters.
+        file.write("%-10s " % diff_type)
         if diff_params:
             for i in xrange(len(diff_params)):
-                file.write("%-26s" % diff_params[i])
+                file.write("%-25s " % diff_params[i])
+
+        # Relaxation data setup.
+        if ri_labels:
+            file.write("%-40s " % ri_labels)
+            file.write("%-25s " % remap_table)
+            file.write("%-25s " % frq_labels)
+            file.write("%-30s " % frq)
 
         # Relaxation data.
-        if frq:
-            for i in xrange(len(frq)):
-                file.write("%-26s" % frq[i])
         if ri:
             for i in xrange(len(ri)):
-                file.write("%-26s" % ri[i])
+                if ri[i] == None:
+                    file.write("%-25s " % 'None')
+                else:
+                    file.write("%-25s " % ri[i])
+
+        # Relaxation errors.
+        if ri_error:
+            for i in xrange(len(ri_error)):
+                if ri_error[i] == None:
+                    file.write("%-25s " % 'None')
+                else:
+                    file.write("%-25s " % ri_error[i])
 
         # End of the line.
         file.write("\n")
@@ -3828,21 +3941,27 @@ class Model_free:
             # Isotropic.
             if self.relax.data.diff[self.run].type == 'iso':
                 diff_params = [`self.relax.data.diff[self.run].tm`]
-                diff_params = ['tm']
+                diff_params = ['tm_(s)']
 
             # Axially symmetric.
             elif self.relax.data.diff[self.run].type == 'axial':
                 diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Dratio`, `self.relax.data.diff[self.run].theta`, `self.relax.data.diff[self.run].phi`]
-                diff_params = ['tm', 'Dratio', 'theta', 'phi']
+                diff_params = ['tm_(s)', 'Dratio', 'theta_(deg)', 'phi_(deg)']
 
             # Anisotropic.
             elif self.relax.data.diff[self.run].type == 'aniso':
                 diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha`, `self.relax.data.diff[self.run].beta`, `self.relax.data.diff[self.run].gamma`]
-                diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+                diff_params = ['tm_(s)', 'Da', 'Dr', 'alpha_(deg)', 'beta_(deg)', 'gamma_(deg)']
 
+        # Relaxation data and errors.
+        ri = []
+        ri_error = []
+        for i in xrange(self.relax.data.num_ri[self.run]):
+            ri.append('Ri_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
+            ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_params=diff_params)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -3856,15 +3975,26 @@ class Model_free:
         if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
             # Isotropic.
             if self.relax.data.diff[self.run].type == 'iso':
+                diff_type = 'iso'
                 diff_params = [`self.relax.data.diff[self.run].tm`]
 
             # Axially symmetric.
             elif self.relax.data.diff[self.run].type == 'axial':
-                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Dratio`, `self.relax.data.diff[self.run].theta`, `self.relax.data.diff[self.run].phi`]
+                diff_type = self.relax.data.diff[self.run].axial_type
+                if diff_type == None:
+                    diff_type = 'axial'
+                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Dratio`, `self.relax.data.diff[self.run].theta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi * 360 / (2.0 * pi)`]
 
             # Anisotropic.
             elif self.relax.data.diff[self.run].type == 'aniso':
-                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha`, `self.relax.data.diff[self.run].beta`, `self.relax.data.diff[self.run].gamma`]
+                diff_type = 'aniso'
+                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma * 360 / (2.0 * pi)`]
+
+        # Relaxation data setup.
+        ri_labels = replace(`self.relax.data.ri_labels[self.run]`, ' ', '')
+        remap_table = replace(`self.relax.data.remap_table[self.run]`, ' ', '')
+        frq_labels = replace(`self.relax.data.frq_labels[self.run]`, ' ', '')
+        frq = replace(`self.relax.data.frq[self.run]`, ' ', '')
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -3941,8 +4071,15 @@ class Model_free:
                 else:
                     warn = res.warning
 
+            # Relaxation data and errors.
+            ri = []
+            ri_error = []
+            for i in xrange(self.relax.data.num_ri[self.run]):
+                ri.append(res.relax_data[i])
+                ri_error.append(res.relax_error[i])
+
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2`, s2f=`res.s2f`, s2s=`res.s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_params=diff_params)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2`, s2f=`res.s2f`, s2s=`res.s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -4036,8 +4173,15 @@ class Model_free:
             else:
                 csa = res.csa_err / 1e-6
 
+            # Relaxation data and errors.
+            ri = []
+            ri_error = []
+            for i in xrange(self.relax.data.num_ri[self.run]):
+                ri.append(None)
+                ri_error.append(None)
+
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_err`, s2f=`res.s2f_err`, s2s=`res.s2s_err`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_params=diff_params)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_err`, s2f=`res.s2f_err`, s2s=`res.s2s_err`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -4151,5 +4295,12 @@ class Model_free:
                     else:
                         warn = res.warning_sim[i]
 
+                # Relaxation data and errors.
+                ri = []
+                ri_error = []
+                for k in xrange(self.relax.data.num_ri[self.run]):
+                    ri.append(res.relax_sim_data[i][k])
+                    ri_error.append(res.relax_error[k])
+
                 # Write the line.
-                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_sim[i]`, s2f=`res.s2f_sim[i]`, s2s=`res.s2s_sim[i]`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_params=diff_params)
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_sim[i]`, s2f=`res.s2f_sim[i]`, s2s=`res.s2s_sim[i]`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
