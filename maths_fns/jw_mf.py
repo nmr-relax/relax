@@ -447,6 +447,30 @@ def calc_tm_S2_djw_dDj(data, params):
                        i=m
     """
 
+    from Numeric import shape, transpose
+    print "\nci:\n" + `data.ci`
+    print "\ndti:\n" + `data.dti`
+    print "\nfact_ti_djw_dti:\n" + `data.fact_ti_djw_dti`
+    print "\nshape(ci):\n" + `shape(data.ci)`
+    print "\nshape(ti):\n" + `shape(data.ti)`
+    print "\nshape(dti):\n" + `shape(data.dti)`
+    print "\nshape(dti[:, i]):\n" + `shape(data.dti[:, 0])`
+    print "\nshape(fact_ti_djw_dti):\n" + `shape(data.fact_ti_djw_dti)`
+    print "\nshape(fact_ti_djw_dti[:, :, i]):\n" + `shape(data.fact_ti_djw_dti[:, :, 0])`
+    print "\nci * dti:\n" + `data.ci * data.dti`
+    print "\nci * fact_ti_djw_dti:\n" + `data.ci * data.fact_ti_djw_dti`
+    print "\nshape(ci * fact_ti_djw_dti):\n" + `shape(data.ci * data.fact_ti_djw_dti)`
+    print "\ndata.dti[:, 0] * transpose(data.fact_ti_djw_dti[:, :, 0]):\n" + `data.dti[:, 0] * transpose(data.fact_ti_djw_dti[:, :, 0])`
+    print "\nshape(data.dti[:, 0] * transpose(data.fact_ti_djw_dti[:, :, 0])):\n" + `shape(data.dti[:, 0] * transpose(data.fact_ti_djw_dti[:, :, 0]))`
+
+
+    djw = data.ci[0] * data.dti[0] * data.fact_ti_djw_dti[0]
+
+    for i in range(1, data.num_indecies):
+        djw = data.ci[i] * data.dti[:, i] * data.fact_ti_djw_dti[:, :, i]
+
+    print 0.4 * params[data.s2_index] * djw
+    return 0.4 * params[data.s2_index] * djw
     return 0.4 * params[data.s2_index] * sum(data.ci * data.dti * data.fact_ti_djw_dti, axis=2)
 
 
@@ -474,7 +498,64 @@ def calc_tm_S2_te_djw_dDj(data, params):
 # Original Psij partial derivative.
 ###################################
 
-# Please code me!!!
+# {tm}
+
+def calc_tm_S2_djw_dPsij(data, params):
+    """Spectral density gradient.
+
+    Calculate the spectral desity values for the Psi partial derivative of the original model-free
+    formula with the parameters {tm}.
+
+    The model-free gradient is:
+
+                    _n_
+        dJ(w)     2 \    dci       /      1       \ 
+        -----  =  -  >  ----- . ti | ------------ |
+        dPsij     5 /__ dPsij      \ 1 + (w.ti)^2 /
+                    i=m
+    """
+
+    return 0.4 * sum(data.dci_dPsij * data.ti * data.fact_ti, axis=2)
+
+
+# {tm, S2}
+
+def calc_tm_S2_djw_dPsij(data, params):
+    """Spectral density gradient.
+
+    Calculate the spectral desity values for the Psi partial derivative of the original model-free
+    formula with the parameters {tm, S2}.
+
+    The model-free gradient is:
+
+                       _n_
+        dJ(w)     2    \    dci       /      1       \ 
+        -----  =  - S2  >  ----- . ti | ------------ |
+        dPsij     5    /__ dPsij      \ 1 + (w.ti)^2 /
+                       i=m
+    """
+
+    return 0.4 * params[data.s2_index] * sum(data.dci_dPsij * data.ti * data.fact_ti, axis=2)
+
+
+# {tm, S2, te}
+
+def calc_tm_S2_te_djw_dPsij(data, params):
+    """Spectral density gradient.
+
+    Calculate the spectral desity values for the Psi partial derivative of the original model-free
+    formula with the parameters {tm, S2, te}.
+
+    The model-free gradient is:
+
+                     _n_
+        dJ(w)     2  \    dci       /      S2             (1 - S2)(te + ti)te    \ 
+        -----  =  -   >  ----- . ti | ------------  +  ------------------------- |
+        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                     i=m
+    """
+
+    return 0.4 * sum(data.dci_dPsij * data.ti * (params[data.s2_index] * data.fact_ti + data.one_s2 * data.te_ti_te * data.inv_te_denom), axis=2)
 
 
 

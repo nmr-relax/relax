@@ -143,6 +143,9 @@ class Mf:
             # Append the class instance Data to the data array.
             self.data.append(Data())
 
+            # Number of indecies.
+            self.data[i].num_indecies = self.diff_data.num_indecies
+
             # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
             self.data[i].frq_list = zeros((num_frq[i], 5), Float64)
             self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), Float64)
