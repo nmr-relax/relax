@@ -21,12 +21,12 @@ from discrepancies import kl
 
 class cv(common_operations):
 	def __init__(self, mf):
-		"Model-free analysis based on cross validation model selection methods."
+		"Model-free analysis based on cross-validation model selection methods."
 
 		self.mf = mf
 		self.kl = kl()
 
-		print "Model-free analysis based on cross validation model selection."
+		print "Model-free analysis based on cross-validation model selection."
 		self.initialize()
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 		self.mf.data.mfin.default_data()
@@ -34,7 +34,7 @@ class cv(common_operations):
 
 
 	def extract_mf_data(self):
-		"Extract the modelfree results."
+		"Extract the model-free results."
 
 		for model in self.mf.data.runs:
 			print "Extracting model-free data of model " + model
@@ -77,16 +77,24 @@ class cv(common_operations):
 		self.mf.data.calc_constants()
 		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
 
-		self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>")
+		if self.mf.debug == 1:
+			self.mf.log.write("\n\n<<< " + self.mf.data.usr_param.method + " model selection >>>\n\n")
+
 		for res in range(len(self.mf.data.relax_data[0])):
 			sys.stdout.write("%9s" % "Residue: ")
 			sys.stdout.write("%-9s" % (self.mf.data.relax_data[0][res][1] + " " + self.mf.data.relax_data[0][res][0]))
 			self.mf.data.cv.cv_crit.append({})
 			self.mf.data.results.append({})
-			self.mf.log.write('\n%-22s' % ( "   Checking res " + data["m1-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res]['res_num'] ))
+
+			if self.mf.debug == 1:
+				self.mf.log.write('%-22s\n' % ( "Checking res " + data["m1-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res]['res_num'] ))
 
 			for model in self.mf.data.runs:
 				sum_cv_crit = 0
+
+				if self.mf.debug == 1:
+					self.mf.log.write(model + "\n")
+
 				for set in range(len(self.mf.data.relax_data)):
 					cv_model = model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
 
@@ -106,9 +114,17 @@ class cv(common_operations):
 						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2f'], data[cv_model][res]['s2s'], data[cv_model][res]['te'] ])
 
 					chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
-					sum_cv_crit = sum_cv_crit + self.kl.calc(1.0, chi2, err)
+					cv_crit = self.kl.calc(1.0, chi2, err)
+					sum_cv_crit = sum_cv_crit + cv_crit
+
+					if self.mf.debug == 1:
+						self.mf.log.write("%7s%-10.4f%2s" % (" Chi2: ", chi2, " |"))
+						self.mf.log.write("%10s%-14.4f%2s\n\n" % (" CV crit: ", cv_crit, " |"))
 
 				self.mf.data.cv.cv_crit[res][model] = sum_cv_crit / float(len(self.mf.data.relax_data))
+
+				if self.mf.debug == 1:
+					self.mf.log.write("%13s%-10.4f\n\n" % ("Ave CV crit: ", sum_cv_crit/float(len(self.mf.data.relax_data))))
 
 			# Select model.
 			min = 'm1'
@@ -117,12 +133,13 @@ class cv(common_operations):
 					min = model
 			self.mf.data.results[res] = self.fill_results(data[min+"-"+self.mf.data.input_info[0][1]+"_"+self.mf.data.input_info[0][0]][res], model=min[1])
 
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m1): " + `self.mf.data.cv.cv_crit[res]['m1']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m2): " + `self.mf.data.cv.cv_crit[res]['m2']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m3): " + `self.mf.data.cv.cv_crit[res]['m3']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m4): " + `self.mf.data.cv.cv_crit[res]['m4']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m5): " + `self.mf.data.cv.cv_crit[res]['m5']` + "\n")
-			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
+			if self.mf.debug == 1:
+				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `self.mf.data.cv.cv_crit[res]['m1']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `self.mf.data.cv.cv_crit[res]['m2']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `self.mf.data.cv.cv_crit[res]['m3']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `self.mf.data.cv.cv_crit[res]['m4']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `self.mf.data.cv.cv_crit[res]['m5']` + "\n")
+				self.mf.log.write("The selected model is: " + min + "\n\n")
 
 			sys.stdout.write("%10s\n" % ("Model " + self.mf.data.results[res]['model']))
 
@@ -131,7 +148,7 @@ class cv(common_operations):
 		"Print all the data into the 'data_all' file."
 
 		file = open('data_all', 'w')
-		file_temp = open('crit', 'w')
+		file_crit = open('crit', 'w')
 
 		sys.stdout.write("[")
 		for res in range(len(self.mf.data.results)):
@@ -145,8 +162,8 @@ class cv(common_operations):
 			file.write('%-17s' % 'Model 4')
 			file.write('%-17s' % 'Model 5')
 
-			file_temp.write('%-6s' % self.mf.data.results[res]['res_num'])
-			file_temp.write('%-6s' % self.mf.data.results[res]['model'])
+			file_crit.write('%-6s' % self.mf.data.results[res]['res_num'])
+			file_crit.write('%-6s' % self.mf.data.results[res]['model'])
 
 			for set in range(len(self.mf.data.relax_data)):
 				file.write("\n-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0])
@@ -196,8 +213,8 @@ class cv(common_operations):
 			for model in self.mf.data.runs:
 				file.write('%-17.3f' % self.mf.data.cv.cv_crit[res][model])
 
-				file_temp.write('%-25s' % `self.mf.data.cv.cv_crit[res][model]`)
-			file_temp.write('\n')
+				file_crit.write('%-25s' % `self.mf.data.cv.cv_crit[res][model]`)
+			file_crit.write('\n')
 
 		file.write('\n')
 		sys.stdout.write("]\n")
@@ -236,11 +253,17 @@ class cv(common_operations):
 
 		for model in self.mf.data.runs:
 			print "Creating input files for model " + model
-			self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
+
+			if self.mf.debug == 1:
+				self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
+
 			self.mf.file_ops.mkdir(dir=model)
 			self.set_run_flags(model)
-			self.log_params('M1', self.mf.data.usr_param.md1)
-			self.log_params('M2', self.mf.data.usr_param.md2)
+
+			if self.mf.debug == 1:
+				self.log_params('M1', self.mf.data.usr_param.md1)
+				self.log_params('M2', self.mf.data.usr_param.md2)
+
 			for set in range(len(self.mf.data.relax_data)):
 				cv_dir = model + "/" + model + "-" + self.mf.data.input_info[set][1] + "_" + self.mf.data.input_info[set][0]
 				self.mf.file_ops.mkdir(dir=cv_dir)

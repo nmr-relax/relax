@@ -75,15 +75,21 @@ class palmer(common_operations):
 		self.anova_tests()
 		if self.mf.data.num_data_sets > 3:
 			# ie degrees of freedom > 0 in all models.
-			self.mf.log.write("Extended model selection.\n\n")
 			print "The number of data sets is greater than 3."
 			print "\tRunning Palmer's model selection, with additional chi-squared and F-tests"
 			print "\tfor models 4 and 5 (the degrees of freedom for these models are greater than 0).\n"
+
+			if self.mf.debug == 1:
+				self.mf.log.write("Extended model selection.\n\n")
+
 			self.model_selection_extended()
 		else:
-			self.mf.log.write("Normal model selection.\n\n")
 			print "The number of data sets is equal to 3."
 			print "\tRunning Palmer's model selection.\n"
+
+			if self.mf.debug == 1:
+				self.mf.log.write("Normal model selection.\n\n")
+
 			self.model_selection_normal()
 
 
@@ -92,56 +98,69 @@ class palmer(common_operations):
 
 		data = self.mf.data.data
 
-		self.mf.log.write("\n\n<<< Palmer's model selection >>>")
+		if self.mf.debug == 1:
+			self.mf.log.write("\n\n<<< Palmer's model selection >>>\n\n")
+
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
-			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
+
+			if self.mf.debug == 1:
+				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			# Model 1 test.
 			if data['m1'][res]['chi2_test'] == 1:
-				self.mf.log.write('%-12s' % '[Model 1]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='1')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 1]')
 
 			# Test if both model 2 and 3 fit!!! (Should not occur)
 			elif data['m2'][res]['chi2_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1 \
 				and data['m3'][res]['chi2_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 2 and 3]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='2+3')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 2 and 3]')
 
 			# Model 2 test.
 			elif data['m2'][res]['chi2_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 2]')
 				self.mf.data.results[res] = self.fill_results(data['m2'][res], model='2')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 2]')
 
 			# Model 3 test.
 			elif data['m3'][res]['chi2_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 3]')
 				self.mf.data.results[res] = self.fill_results(data['m3'][res], model='3')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 3]')
 
 			# Large chi squared test for model 1.
 			elif data['m1'][res]['large_chi2'] == 0:
-				self.mf.log.write('%-12s' % '[Model 1*]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='1')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 1*]')
 
 			# Test if both model 4 and 5 fit!!! (Should not occur)
 			elif data['m4'][res]['zero_chi2'] == 1 and data['m5'][res]['zero_chi2'] == 1:
-				self.mf.log.write('%-12s' % '[Model 4 and 5]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='4+5')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 4 and 5]')
 
 			# Model 4 test.
 			elif data['m4'][res]['zero_chi2'] == 1:
-				self.mf.log.write('%-12s' % '[Model 4]')
 				self.mf.data.results[res] = self.fill_results(data['m4'][res], model='4')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 4]')
 
 			# Model 5 test.
 			elif data['m5'][res]['zero_chi2'] == 1:
-				self.mf.log.write('%-12s' % '[Model 5]')
 				self.mf.data.results[res] = self.fill_results(data['m5'][res], model='5')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 5]')
 
 			# No model fits!
 			else:
-				self.mf.log.write('%-12s' % '[Model 0]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='0')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 0]')
 
 
 	def model_selection_extended(self):
@@ -154,57 +173,70 @@ class palmer(common_operations):
 
 		data = self.mf.data.data
 
-		self.mf.log.write("\n\n<<< Palmer's model selection (extended) >>>")
+		if self.mf.debug == 1:
+			self.mf.log.write("\n\n<<< Palmer's model selection (extended) >>>\n\n")
+
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
-			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
+
+			if self.mf.debug == 1:
+				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			# Model 1 test.
 			if data['m1'][res]['chi2_test'] == 1:
-				self.mf.log.write('%-12s' % '[Model 1]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='1')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 1]')
 
 			# Test if both model 2 and 3 fit!!! (Should not occur)
 			elif data['m2'][res]['chi2_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1 \
 				and data['m3'][res]['chi2_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 2 and 3]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='2+3')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 2 and 3]')
 
 			# Model 2 test.
 			elif data['m2'][res]['chi2_test'] == 1 and data['f-m1m2'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 2]')
 				self.mf.data.results[res] = self.fill_results(data['m2'][res], model='2')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 2]')
 
 			# Model 3 test.
 			elif data['m3'][res]['chi2_test'] == 1 and data['f-m1m3'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 3]')
 				self.mf.data.results[res] = self.fill_results(data['m3'][res], model='3')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 3]')
 
 			# Large chi squared test for model 1.
 			elif data['m1'][res]['large_chi2'] == 0:
-				self.mf.log.write('%-12s' % '[Model 1*]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='1')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 1*]')
 
 			# Test if both model 4 and 5 fit!!! (Should not occur)
 			elif data['m4'][res]['chi2_test'] == 1 and ( data['f-m2m4'][res]['ftest'] == 1 or data['f-m3m4'][res]['ftest'] == 1 ) \
 				and data['m5'][res]['chi2_test'] == 1 and data['f-m2m5'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 4 and 5]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='4+5')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 4 and 5]')
 
 			# Model 4 test.
 			elif data['m4'][res]['chi2_test'] == 1 and ( data['f-m2m4'][res]['ftest'] == 1 or data['f-m3m4'][res]['ftest'] == 1 ):
-				self.mf.log.write('%-12s' % '[Model 4]')
 				self.mf.data.results[res] = self.fill_results(data['m4'][res], model='4')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 4]')
 
 			# Model 5 test.
 			elif data['m5'][res]['chi2_test'] == 1 and data['f-m2m5'][res]['ftest'] == 1:
-				self.mf.log.write('%-12s' % '[Model 5]')
 				self.mf.data.results[res] = self.fill_results(data['m5'][res], model='5')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 5]')
 
 			# No model fits!
 			else:
-				self.mf.log.write('%-12s' % '[Model 0]')
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='0')
+				if self.mf.debug == 1:
+					self.mf.log.write('%-12s' % '[Model 0]')
 
 
 	def print_data(self):

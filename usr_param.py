@@ -21,19 +21,19 @@ class usr_param:
 
 		self.method can be set to the following:
 
-		AIC:	Method of modelfree analysis based on model selection using the Akaike Information
+		AIC:	Method of model-free analysis based on model selection using the Akaike Information
 			Criteria.
 
-		AICc:	Method of modelfree analysis based on model selection using the Akaike Information
+		AICc:	Method of model-free analysis based on model selection using the Akaike Information
 			Criteria corrected for finit sample size.
 
-		BIC:	Method of modelfree analysis based on model selection using the Schwartz
+		BIC:	Method of model-free analysis based on model selection using the Schwartz
 			Information Criteria.
 
 		Bootstrap:	Modelfree analysis based on model selection using bootstrap methods to
 				estimate the overall discrepency.
 
-		CV:	Modelfree analysis based on model selection using cross validation methods to
+		CV:	Modelfree analysis based on model selection using cross-validation methods to
 				estimate the overall discrepency.
 
 		Farrow:	The method given by Farrow et al., 1994.

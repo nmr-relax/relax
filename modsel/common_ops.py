@@ -48,7 +48,7 @@ class common_operations:
 
 		This function is run once for each residue.  If the flag variable is set to 0, all data
 		for this residue will be excluded.  If the exclude_set variable is given, the data flag
-		corresponding to that set will be set to 0 (Used by the cross validation method).
+		corresponding to that set will be set to 0 (Used by the cross-validation method).
 		"""
 
 		mfdata = self.mf.mfdata
@@ -297,7 +297,7 @@ class common_operations:
 
 
 	def extract_mf_data(self):
-		"Extract the modelfree results."
+		"Extract the model-free results."
 
 		for model in self.mf.data.runs:
 			mfout = self.mf.file_ops.read_file(model + '/mfout')
@@ -355,6 +355,7 @@ class common_operations:
 	def final_run(self):
 		"Creation of the final run.  Files are placed in the directory 'final'."
 
+		self.mf.file_ops.mkdir('final')
 		self.mf.file_ops.open_mf_files(dir='final')
 		self.create_mfin()
 
@@ -393,7 +394,6 @@ class common_operations:
 		if match('^2', self.mf.data.stage):
 			print "\n[ Stage 2 ]\n"
 			self.set_vars_stage_selection()
-			self.mf.file_ops.mkdir('final')
 			self.stage_selection()
 			if match('2a', self.mf.data.stage):
 				self.final_run()
@@ -517,11 +517,16 @@ class common_operations:
 		self.mf.data.stage = self.ask_stage()
 		title = "<<< Stage " + self.mf.data.stage + " - " 
 		title = title + self.mf.data.usr_param.method + " model selection >>>\n\n\n"
-		self.mf.file_ops.init_log_file(title)
+
+		if self.mf.debug == 1:
+			self.mf.file_ops.init_log_file(title)
+
 		input = self.mf.file_ops.open_input()
 		self.extract_input(input)
 		self.extract_relax_data()
-		self.log_input_info()
+
+		if self.mf.debug == 1:
+			self.log_input_info()
 
 
 	def log_input_info(self):
@@ -661,18 +666,23 @@ class common_operations:
 		for model in self.mf.data.runs:
 			if match('^m', model):
 				print "Creating input files for model " + model
-				self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
+				if self.mf.debug == 1:
+					self.mf.log.write("\n\n<<< Model " + model + " >>>\n\n")
 			elif match('^f', model):
 				print "Creating input files for the F-test " + model
-				self.mf.log.write("\n\n<<< F-test " + model + " >>>\n\n")
+				if self.mf.debug == 1:
+					self.mf.log.write("\n\n<<< F-test " + model + " >>>\n\n")
 			else:
 				print "The run '" + model + "'does not start with an m or f, quitting script!\n\n"
 				sys.exit()
 			self.mf.file_ops.mkdir(dir=model)
 			self.mf.file_ops.open_mf_files(dir=model)
 			self.set_run_flags(model)
-			self.log_params('M1', self.mf.data.usr_param.md1)
-			self.log_params('M2', self.mf.data.usr_param.md2)
+
+			if self.mf.debug == 1:
+				self.log_params('M1', self.mf.data.usr_param.md1)
+				self.log_params('M2', self.mf.data.usr_param.md2)
+
 			if match('^m', model):
 				self.mf.data.mfin.selection = 'none'
 				self.create_mfin()
@@ -695,8 +705,6 @@ class common_operations:
 	def stage_selection(self):
 		"The stage for model selection common to all techniques."
 
-		self.mf.file_ops.mkdir('grace')
-
 		print "\n[ Model-free data extraction ]\n"
 		self.extract_mf_data()
 
@@ -710,6 +718,7 @@ class common_operations:
 		self.print_data()
 
 		print "\n[ Grace file creation ]\n"
+		self.mf.file_ops.mkdir('grace')
 		self.grace('grace/S2.agr', 'S2', subtitle="After model selection, unoptimized")
 		self.grace('grace/S2f.agr', 'S2f', subtitle="After model selection, unoptimized")
 		self.grace('grace/S2s.agr', 'S2s', subtitle="After model selection, unoptimized")

@@ -41,13 +41,17 @@ class bootstrap(common_operations):
 		n = float(self.mf.data.num_data_sets)
 		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
 
-		self.mf.log.write("\n\n<<< Bootstrap model selection >>>")
+		if self.mf.debug == 1:
+			self.mf.log.write("\n\n<<< Bootstrap model selection >>>\n\n")
+
 		print "Calculating the bootstrap criteria"
 		for res in range(len(self.mf.data.relax_data[0])):
 			print "Residue: " + self.mf.data.relax_data[0][res][1] + " " + self.mf.data.relax_data[0][res][0]
 			self.mf.data.results.append({})
-			self.mf.log.write('\n%-22s' % ( "< Checking res " + data['m1'][res]['res_num'] + " >\n"))
 			file_name = self.mf.data.relax_data[0][res][1] + '_' + self.mf.data.relax_data[0][res][0] + '.out'
+
+			if self.mf.debug == 1:
+				self.mf.log.write('%-22s\n' % ( "< Checking res " + data['m1'][res]['res_num'] + " >\n"))
 
 			real = []
 			err = []
@@ -58,50 +62,50 @@ class bootstrap(common_operations):
 				types.append([self.mf.data.input_info[set][0], float(self.mf.data.input_info[set][2])])
 
 			for model in self.mf.data.runs:
-				# Debugging code, do not remove!
-				#
-				#self.mf.log.write("\nCalculating bootstrap estimate for res " + `res` + ", model " + model + "\n\n")
-				#for set in range(len(self.mf.data.input_info)):
-				#	name = "Orig " + self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0]
-				#	self.mf.log.write("%-17s" % name)
-				#self.mf.log.write("\n")
-				#for set in range(len(self.mf.data.input_info)):
-				#	self.mf.log.write("%8.4f" % self.mf.data.relax_data[set][res][2])
-				#	self.mf.log.write("%1s" % "±")
-				#	self.mf.log.write("%-8.4f" % self.mf.data.relax_data[set][res][3])
-				#self.mf.log.write("\n\n")
+				if self.mf.debug == 1:
+					self.mf.log.write("\nCalculating bootstrap estimate for res " + `res` + ", model " + model + "\n\n")
+					for set in range(len(self.mf.data.input_info)):
+						self.mf.log.write("-------------------")
+					self.mf.log.write("\n")
+					for set in range(len(self.mf.data.input_info)):
+						name = " Orig " + self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0]
+						self.mf.log.write("%-17s%2s" % (name, " |"))
+					self.mf.log.write("\n")
+					for set in range(len(self.mf.data.input_info)):
+						self.mf.log.write("%8.4f" % self.mf.data.relax_data[set][res][2])
+						self.mf.log.write("%1s" % "±")
+						self.mf.log.write("%-8.4f" % self.mf.data.relax_data[set][res][3])
+						self.mf.log.write("%2s" % " |")
+					self.mf.log.write("\n")
+					for set in range(len(self.mf.data.input_info)):
+						self.mf.log.write("-------------------")
+					self.mf.log.write("\n\n")
 
 				file = self.mf.file_ops.open_file(model + "/" + file_name)
 				sum_chi2 = 0.0
 				num_sims = float(len(file))
 				for sim in range(len(file)):
-					if match('m1', model):
-						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2] ])
-					elif match('m2', model) or match('m3', model):
-						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3] ])
-					elif match('m4', model) or match('m5', model):
-						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3], file[sim][4] ])
-					chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
+					if self.mf.debug == 1:
+						self.mf.log.write("%5s%-10i%2s" % ("Sim: ", sim, " |"))
+
+					#if match('m1', model):
+					#	back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2] ])
+					#elif match('m2', model) or match('m3', model):
+					#	back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3] ])
+					#elif match('m4', model) or match('m5', model):
+					#	back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3], file[sim][4] ])
+					#chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
+					chi2 = float(file[sim][1])
 					sum_chi2 = sum_chi2 + chi2
 
-					# Debugging code, do not remove!
-					#
-					#self.mf.log.write("\n\nSim: " + `sim`)
-					#self.mf.log.write("\n")
-					#for set in range(len(self.mf.data.input_info)):
-					#	self.mf.log.write(self.mf.data.input_info[set][1] + " " + self.mf.data.input_info[set][0] + ": ")
-					#	self.mf.log.write("%-7.4f" % back_calc[set])
-					#	self.mf.log.write(" | ")
-					#self.mf.log.write("\nChi2: ")
-					#self.mf.log.write("%-7.4f" % chi2)
-					#self.mf.log.write(" | Sum Chi2: ")
-					#self.mf.log.write("%-7.4f" % sum_chi2)
+					if self.mf.debug == 1:
+						self.mf.log.write("%7s%-10.4f%2s" % (" Chi2: ", chi2, " |"))
+						self.mf.log.write("%11s%-13.4f%2s\n" % (" Sum Chi2: ", sum_chi2, " |"))
 
 				ave_chi2 = sum_chi2 / num_sims
 
-				# Debugging code, do not remove!
-				#
-				#self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
+				if self.mf.debug == 1:
+					self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
 
 				data[model][res]['bootstrap'] = self.kl.calc(n, ave_chi2, err)
 
@@ -112,12 +116,13 @@ class bootstrap(common_operations):
 					min = model
 			self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['bootstrap']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['bootstrap']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['bootstrap']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['bootstrap']` + "\n")
-			self.mf.log.write("\n\t" + self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['bootstrap']` + "\n")
-			self.mf.log.write("\tThe selected model is: " + min + "\n\n")
+			if self.mf.debug == 1:
+				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['bootstrap']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['bootstrap']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['bootstrap']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['bootstrap']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['bootstrap']` + "\n")
+				self.mf.log.write("The selected model is: " + min + "\n\n")
 
 			print "   Model " + self.mf.data.results[res]['model']
 
@@ -126,7 +131,7 @@ class bootstrap(common_operations):
 		"Print all the data into the 'data_all' file."
 
 		file = open('data_all', 'w')
-		file_temp = open('crit', 'w')
+		file_crit = open('crit', 'w')
 
 		sys.stdout.write("[")
 		for res in range(len(self.mf.data.results)):
@@ -140,8 +145,8 @@ class bootstrap(common_operations):
 			file.write('%-17s' % 'Model 4')
 			file.write('%-17s' % 'Model 5')
 
-			file_temp.write('%-6s' % self.mf.data.results[res]['res_num'])
-			file_temp.write('%-6s' % self.mf.data.results[res]['model'])
+			file_crit.write('%-6s' % self.mf.data.results[res]['res_num'])
+			file_crit.write('%-6s' % self.mf.data.results[res]['model'])
 
 			# S2.
 			file.write('\n%-20s' % 'S2')
@@ -188,8 +193,8 @@ class bootstrap(common_operations):
 			for model in self.mf.data.runs:
 				file.write('%-17.3f' % self.mf.data.data[model][res]['bootstrap'])
 
-				file_temp.write('%-25s' % `self.mf.data.data[model][res]['bootstrap']`)
-			file_temp.write('\n')
+				file_crit.write('%-25s' % `self.mf.data.data[model][res]['bootstrap']`)
+			file_crit.write('\n')
 
 		file.write('\n')
 		sys.stdout.write("]\n")

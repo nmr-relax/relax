@@ -62,7 +62,7 @@ class data:
 
 	class init_true:
 		def __init__(self):
-			"Data specific for modelfree analysis using the overall discrepency."
+			"Data specific for model-free analysis using the overall discrepency."
 
 			self.name = 'True'
 			self.op_data = []

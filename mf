@@ -54,6 +54,9 @@ class mf:
 		self.file_ops = file_ops(self)
 		self.star = star(self)
 
+		# Debugging option.
+		self.debug = 1
+
 		self.print_header()
 
 		if not self.version == self.data.usr_param.version:

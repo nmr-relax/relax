@@ -72,22 +72,6 @@ class calc_relax_data:
 			for i in range(len(self.mf.data.nmr_frq)):
 				self.rex.append(0.0)
 
-		# Debugging code, do not remove!
-		#
-		#self.mf.log.write("\nS2: ")
-		#self.mf.log.write("%-7.4f" % self.s2)
-		#self.mf.log.write(" | S2f: ")
-		#self.mf.log.write("%-7.4f" % self.s2f)
-		#self.mf.log.write(" | S2s: ")
-		#self.mf.log.write("%-7.4f" % self.s2s)
-		#self.mf.log.write(" | tf: ")
-		#self.mf.log.write("%-7s" % `self.tf`)
-		#self.mf.log.write(" | ts: ")
-		#self.mf.log.write("%-7s" % `self.ts`)
-		#for i in range(len(self.mf.data.nmr_frq)):
-		#	self.mf.log.write(" | " + self.mf.data.nmr_frq[i][0] + " rex: ")
-		#	self.mf.log.write("%-7.4f" % self.rex[i])
-
 		self.tf_prime = ( self.tf * self.tm ) / ( self.tf + self.tm )
 		self.ts_prime = ( self.ts * self.tm ) / ( self.ts + self.tm )
 
@@ -111,6 +95,21 @@ class calc_relax_data:
 				self.back_calc.append(self.calc_r1(self.types[i][1]))
 			elif match('R2', self.types[i][0]):
 				self.back_calc.append(self.calc_r2(self.types[i][1]))
+
+		if self.mf.debug == 1:
+			self.mf.log.write("%5s%-12.4f%2s" % (" S2: ", self.s2, " |"))
+			self.mf.log.write("%6s%-11.4f%2s" % (" S2f: ", self.s2f, " |"))
+			self.mf.log.write("%6s%-11.4f%2s" % (" S2s: ", self.s2s, " |"))
+			self.mf.log.write("%5s%-12.4g%2s" % (" tf: ", self.tf, " |"))
+			self.mf.log.write("%5s%-12.4g%2s" % (" ts: ", self.ts, " |"))
+			for i in range(len(self.mf.data.nmr_frq)):
+				self.mf.log.write("%10s%-7.4f%2s" % (self.mf.data.nmr_frq[i][0] + " rex: ", self.rex[i], " |"))
+			self.mf.log.write("\n")
+
+			for i in range(len(self.types)):
+				self.mf.log.write("%-10s" % (" " + `int(self.types[i][1])` + " " + self.types[i][0] + ": "))
+				self.mf.log.write("%-7.4f%2s" % (self.back_calc[i], " |"))
+			self.mf.log.write("\n")
 
 		return self.back_calc
 
@@ -141,7 +140,7 @@ class calc_relax_data:
 
 		r1 = self.calc_r1(frq)
 		if r1 == 0:
-			noe = 1e99
+			noe = 1.0
 		else:
 			noe = 1.0 + ( self.mf.data.dipole_const / r1 ) * ( self.mf.data.gh/self.mf.data.gn ) * ( 6.0*self.j[self.frq_num][4] - self.j[self.frq_num][2] )
 		return noe

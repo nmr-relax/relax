@@ -72,10 +72,14 @@ class farrow(common_operations):
 		data = self.mf.data.data
 		self.farrows_tests()
 
-		self.mf.log.write("\n\n<<< Farrow's model selection >>>")
+		if self.mf.debug == 1:
+			self.mf.log.write("\n\n<<< Farrow's model selection >>>\n\n")
+
 		for res in range(len(self.mf.data.relax_data[0])):
 			self.mf.data.results.append({})
-			self.mf.log.write('\n%-22s' % ( "   Checking res " + data['m1'][res]['res_num'] ))
+
+			if self.mf.debug == 1:
+				self.mf.log.write('%-22s\n' % ( "Checking res " + data['m1'][res]['res_num'] ))
 
 			self.model = '0'
 

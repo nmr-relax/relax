@@ -4,8 +4,6 @@
 merge `input` and `usr_param.py`
 usr numpy
 merge all print_data functions
-move final and grace dir creation to end
-change "cross validation" to "cross-validation"
 
 
 # Bugs
@@ -16,5 +14,5 @@ change "cross validation" to "cross-validation"
 #########################
 
 anisotropic diffusion (bootstrap)
-cross validation (split and merge stages into common_ops.py)
+cross-validation (split and merge stages into common_ops.py)
 sort out true model selection (True discrepancy and expected discrepancy)
