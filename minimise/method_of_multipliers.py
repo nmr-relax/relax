@@ -29,7 +29,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, mu0=1e-2, epsilon0=1e2, gamma0=1e2, scale_mu=0.1, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, mu0=1e-5, epsilon0=1e2, gamma0=1e2, scale_mu=0.5, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
@@ -275,12 +275,12 @@ class Method_of_multipliers(Min):
 
         # Calculate the function and constraint values.
         self.fk = L = apply(self.func, (args[0],)+args[1:])
-        self.cj = apply(self.c, (args[0],))
+        self.ck = apply(self.c, (args[0],))
 
         # Calculate the quadratic augmented Lagrangian value.
         for i in range(self.m):
-            if self.cj[i] <= self.mu * self.lambda_k[i]:
-                L = L  -  self.lambda_k[i] * self.cj[i]  +  0.5 * self.cj[i]**2 / self.mu
+            if self.ck[i] <= self.mu * self.lambda_k[i]:
+                L = L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
                 self.test_str[i] = 1
             else:
                 L = L  -  0.5 * self.mu * self.lambda_k[i]**2
@@ -290,10 +290,10 @@ class Method_of_multipliers(Min):
             print ""
             print "\taug Lagr value:       " + `L`
             print "\tfunction value:       " + `self.fk`
-            print "\tcj:                   " + `self.cj`
+            print "\tck:                   " + `self.ck`
             print "\tMu:                   " + `self.mu`
-            print "\tcj - mu.lambda_k:     " + `self.cj - self.mu * self.lambda_k`
-            print "\tlambda_k - cj/mu:     " + `self.lambda_k - self.cj / self.mu`
+            print "\tck - mu.lambda_k:     " + `self.ck - self.mu * self.lambda_k`
+            print "\tlambda_k - ck/mu:     " + `self.lambda_k - self.ck / self.mu`
             print "\tepsilon:              " + `self.epsilon`
             print "\tgamma:                " + `self.gamma`
             print "\tLagrange multipliers: " + `self.lambda_k`
@@ -307,18 +307,18 @@ class Method_of_multipliers(Min):
 
         # Calculate the function and constraint gradients.
         dfk = dL = apply(self.dfunc, (args[0],)+args[1:])
-        self.dcj = apply(self.dc, (args[0],))
+        self.dck = apply(self.dc, (args[0],))
 
         # Calculate the quadratic augmented Lagrangian gradient.
         for i in range(self.m):
             if self.test_str[i]:
-                dL = dL  -  (self.lambda_k[i] - self.cj[i] / self.mu) * self.dcj[i]
+                dL = dL  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
 
         if self.print_flag >= 4:
             print ""
             print "\taug Lagr grad:       " + `dL`
             print "\tfunction grad:       " + `dfk`
-            print "\tdcj:                   " + `self.dcj`
+            print "\tdck:                   " + `self.dck`
             print "\tTest structure:       " + `self.test_str`
 
         return dL
@@ -329,12 +329,12 @@ class Method_of_multipliers(Min):
 
         # Calculate the function and constraint Hessians.
         d2L = apply(self.d2func, (args[0],)+args[1:])
-        self.d2cj = apply(self.d2c, (args[0],))
+        self.d2ck = apply(self.d2c, (args[0],))
 
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in range(self.m):
             if self.test_str[i]:
-                d2L = d2L  +  outerproduct(self.dcj[i], self.dcj[i]) / self.mu  -  (self.lambda_k[i] - self.cj[i] / self.mu) * self.d2cj[i]
+                d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.d2ck[i]
 
         return d2L
 
@@ -351,7 +351,7 @@ class Method_of_multipliers(Min):
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in range(self.m):
             if self.test_str[i]:
-                d2L = d2L  +  outerproduct(self.dcj[i], self.dcj[i]) / self.mu
+                d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu
 
         if self.print_flag >= 4:
             print ""
@@ -383,14 +383,12 @@ class Method_of_multipliers(Min):
                     self.printout()
                 print "Entering sub-algorithm."
 
-            # Calculate the constraint values at xk.
-            self.ck = apply(self.c, (self.xk,)+self.args)
-
             # Calculate the augmented Lagrangian gradient tolerance.
             self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
             # Unconstrained minimisation sub-loop.
-            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=(self.maxiter - self.j), full_output=1, print_flag=sub_print_flag, print_prefix="\t")
+            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=200, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
+            #results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=(self.maxiter - self.j), full_output=1, print_flag=sub_print_flag, print_prefix="\t")
             if results == None:
                 return
 
@@ -414,6 +412,7 @@ class Method_of_multipliers(Min):
             # Lagrange multiplier update function.
             # The update is given by the following formula:
             #    lambdai_k+1 = max(lambdai_k - ci(xk)/mu, 0)
+            self.ck = apply(self.c, (self.xk_new,)+self.args)
             for i in range(self.m):
                 self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i] / self.mu, 0.0)
 

@@ -428,7 +428,7 @@ class Model_free:
         for i in range(len(params)):
             # {S2, S2f, S2s}.
             if match('S2', params[i]):
-                min_options.append([inc_vector[i], 0.0, 1.0])
+                min_options.append([inc_vector[i], 0.0, 0.9])
 
             # {te, tf, ts}.
             elif match('t', params[i]):
