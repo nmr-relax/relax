@@ -2485,10 +2485,6 @@ class Model_free(Common_functions):
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
-        # Test if the diffusion tensor data is loaded.
-        if not self.relax.data.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
-
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 

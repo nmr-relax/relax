@@ -1,8 +1,5 @@
 # Script for model-free model selection of the models m1, m2, m3, m4, and m5.
 
-# Load the sequence.
-sequence.read('noe.500.out')
-
 # Nuclei type
 nuclei('N')
 
@@ -17,7 +14,7 @@ for run in runs:
     create_run(run, 'mf')
 
     # Reload precalculated results from the file 'm1/results', etc.
-    read.results(run=run, data_type='mf', file='results', dir=run)
+    read(run=run, file='results', dir=run)
 
 # Model selection.
 eliminate()
