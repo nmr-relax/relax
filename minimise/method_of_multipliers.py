@@ -132,6 +132,7 @@ class Method_of_multipliers:
 			self.c = self.constraint_linear.func
 			self.dc = self.constraint_linear.dfunc
 			self.d2c = None
+			self.func_d2LA = self.func_d2LA_simple
 			self.m = len(self.b)
 			if print_flag == 2:
 				print "Linear constraint matrices."
@@ -206,10 +207,8 @@ class Method_of_multipliers:
 
 		# Initialise data structures.
 		self.test_str = zeros(self.m)
-		self.dL = zeros(len(self.xk), Float64)
 		self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
 		self.L = apply(self.func_LA, (self.xk,)+self.args)
-		self.dL = apply(self.func_dLA, (self.xk,)+self.args)
 
 
 	def func_LA(self, *args):
@@ -235,21 +234,21 @@ class Method_of_multipliers:
 			#	raise NameError, "this should not occur ever!"
 
 			if self.ck[i] - self.mu*self.lambda_k[i] <= 0.0:
-				if self.print_flag == 2:
+				if self.print_flag == 3:
 					print "i: " + `i`
 					print "self.ck[i] - self.mu*self.lambda_k[i] <= 0"
-					print "comp: " + `-  0.5 * self.mu * self.lambda_k[i]**2`
-				L = L  -  0.5 * self.mu * self.lambda_k[i]**2
-				self.test_str[i] = 1
-			else:
-				if self.print_flag == 2:
-					print "i: " + `i`
-					print "self.ck[i] - self.mu*self.lambda_k[i] > 0"
 					print "comp: " + `-  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu`
 				L = L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
+				self.test_str[i] = 1
+			else:
+				if self.print_flag == 3:
+					print "i: " + `i`
+					print "self.ck[i] - self.mu*self.lambda_k[i] > 0"
+					print "comp: " + `-  0.5 * self.mu * self.lambda_k[i]**2`
+				L = L  -  0.5 * self.mu * self.lambda_k[i]**2
 				self.test_str[i] = 0
 
-		if self.print_flag == 2:
+		if self.print_flag == 3:
 			print "mu: " + `self.mu`
 			print "xk: " + `self.xk`
 			print "fk: " + `self.fk`
@@ -266,14 +265,14 @@ class Method_of_multipliers:
 
 		"""
 
-		self.dfk = self.dL = apply(self.dfunc, (args[0],)+args[1:])
+		dL = apply(self.dfunc, (args[0],)+args[1:])
 		self.dck = apply(self.dc, (args[0],))
 
 		for i in range(self.m):
 			if self.test_str[i]:
-				self.dL = self.dL - dot((self.lambda_k[i] - self.ck[i] / self.mu), self.dck[i])
+				dL = dL - dot((self.lambda_k[i] - self.ck[i] / self.mu), self.dck[i])
 
-		return self.dL
+		return dL
 
 
 	def func_d2LA(self, *args):
@@ -281,9 +280,12 @@ class Method_of_multipliers:
 
 		"""
 
-		raise NameError, "Incomplete code."
 		d2L = apply(self.d2func, (args[0],)+args[1:])
 		self.d2ck = apply(self.d2c, (args[0],))
+
+		for i in range(self.m):
+			if self.test_str[i]:
+				d2L = d2L - dot(self.dck, self.dck) / self.mu
 
 		return d2L
 
@@ -294,8 +296,12 @@ class Method_of_multipliers:
 		This function has been simplified by assuming that the constraint Hessian is zero.
 		"""
 
-		raise NameError, "Incomplete code."
-		d2L = apply(self.d2func, (args[0],)+self.args)
+		d2L = apply(self.d2func, (args[0],)+args[1:])
+
+		for i in range(self.m):
+			if self.test_str[i]:
+				d2L = d2L - dot(self.dck[i], self.dck[i]) / self.mu
+
 		return d2L
 
 
@@ -332,8 +338,6 @@ class Method_of_multipliers:
 				print "Parameter values: " + `self.xk`
 				print "aug Lagr value: " + `self.L`
 				print "function value: " + `self.fk`
-				print "aug grad value: " + `self.dL`
-				print "gradient value: " + `self.dfk`
 				print "ck: " + `self.ck`
 				print "Mu: " + `self.mu`
 				print "Lagrange multipliers: " + `self.lambda_k`
@@ -341,14 +345,29 @@ class Method_of_multipliers:
 				print "Entering subalgorithm.\n"
 
 			# Unconstrained minimisation sub-loop.
-			results = minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.maxiter, full_output=1, print_flag=1)
-			self.xk_new, self.L_new, j, f, g, h, self.warning = results
+			try:
+				results = minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.maxiter, full_output=1, print_flag=1)
+			except "LinearAlgebraError", message:
+				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
+				break
+			except OverflowError, message:
+				if type(message.args[0]) == int:
+					text = message.args[1]
+				else:
+					text = message.args[0]
+				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
+				break
+			except NameError, message:
+				self.warning = message.args[0] + " (fatal minimisation error)."
+				break
+
+			self.xk_new, self.L_new, j, f, g, h, temp = results
 			self.j = self.j + j
 			self.f_count = self.f_count + f
 			self.g_count = self.g_count + g
 			self.h_count = self.h_count + h
-			#if self.warning != None and not match('Max', self.warning):
-			#	break
+			if self.warning != None:
+				break
 
 			# Convergence test.
 
@@ -391,21 +410,19 @@ class Method_of_multipliers:
 			self.L = self.L_new
 			self.k = self.k + 1
 
-		# Sum iterations.
-		self.k  = self.k + self.j
-
 		if self.print_flag:
 			print "\n<Method of multipliers end.>"
 			print "Step: " + `self.k`
 			print "Parameter values: " + `self.xk_new`
 			print "aug Lagr value: " + `self.L`
 			print "function value: " + `self.fk`
-			print "aug grad value: " + `self.dL`
-			print "gradient value: " + `self.dfk`
 			print "ck: " + `self.ck`
 			print "Mu: " + `self.mu`
 			print "Lagrange multipliers: " + `self.lambda_k`
 			print "Test structure: " + `self.test_str`
+
+		# Sum iterations.
+		self.k  = self.k + self.j
 
 		if self.full_output:
 			try:

@@ -117,7 +117,7 @@ class Levenberg_marquardt(Min):
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
 		self.fk_new, self.f_count = apply(self.chi2_func, (self.xk_new,)+self.args), self.f_count + 1
-		if self.fk_new < self.fk:
+		if self.fk_new <= self.fk:
 			if self.l >= 1e-99:
 				self.l = self.l * 0.1
 			self.move_flag = 1

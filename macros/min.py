@@ -348,6 +348,11 @@ class min:
 	def main_loop(self):
 		"The main iterative loop which loops over the residues."
 
+		try:
+			self.constraints
+		except AttributeError:
+			self.constraints = 0
+
 		for self.res in range(len(self.relax.data.seq)):
 			if self.print_flag >= 1:
 				print "\n\n<<< Fitting to residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1] + " >>>"
@@ -379,11 +384,13 @@ class min:
 
 				# Initialise the functions used in the minimisation.
 				self.mf = mf(self.relax, equation=self.relax.data.equations[self.model], param_types=self.relax.data.param_types[self.model], init_params=self.relax.data.params[self.model][self.res], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
+
+				# Levenberg-Marquardt minimisation.
 				if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
-					if len(self.min_options) > 0:
-						print "No minimisation options should be given for the Levenberg-Marquardt algorithm."
-						return
-					self.min_options = (self.mf.lm_dri, errors)
+					self.min_options = self.min_options + (self.mf.lm_dri, errors)
+				# Levenberg-Marquardt minimisation with constraints.
+				elif self.constraints == 1 and (match('[Ll][Mm]$', self.min_options[0]) or match('[Ll]evenburg-[Mm]arquardt$', self.min_options[0])):
+					self.min_options = self.min_options + (self.mf.lm_dri, errors)
 
 			# Minimisation.
 			results = self.relax.minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.print_flag)
@@ -454,9 +461,10 @@ class min:
 		else:
 			print "No model has been given."
 			return
-		if len(self.relax.data.params[self.model][self.res]) == 0:
-			print "The minimisation of a zero parameter model is not allowed."
-			return
+		# self.res causing problems here!
+		#if len(self.relax.data.params[self.model][self.res]) == 0:
+		#	print "The minimisation of a zero parameter model is not allowed."
+		#	return
 		if not self.relax.data.equations.has_key(self.model):   # Find the index of the model.
 			print "The model '" + self.model + "' has not been created yet."
 			return
