@@ -1238,8 +1238,8 @@ class Model_free:
                                     b.append(0.0)
                                     j = j + 1
 
-                    # Correlation times {tm, te, tf, ts}.
-                    elif match('t', self.relax.data.res[k].params[self.run][l]):
+                    # Correlation times {te, tf, ts}.
+                    elif match('t[efs]', self.relax.data.res[k].params[self.run][l]):
                         # 0 <= te <= 10000 ps.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
@@ -1287,6 +1287,23 @@ class Model_free:
                         b.append(-300e-6 / self.scaling_matrix[i, i])
                         b.append(0.0 / self.scaling_matrix[i, i])
                         j = j + 2
+
+                    # Local tm.
+                    elif match('tm', self.relax.data.res[k].params[self.run][l]):
+                        # tm >= 0.
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        b.append(0.0 / self.scaling_matrix[i, i])
+                        j = j + 1
+
+                        # t[efs] <= tm.
+                        for m in xrange(len(self.relax.data.res[k].params[self.run])):
+                            if match('t[efs]', self.relax.data.res[k].params[self.run][m]):
+                                A.append(zero_array * 0.0)
+                                A[j][i] = 1.0
+                                A[j][old_i+m] = -1.0
+                                b.append(0.0)
+                                j = j + 1
 
                     # Increment i.
                     i = i + 1
@@ -1551,6 +1568,8 @@ class Model_free:
             ri_labels = []
             num_params = []
             xh_unit_vectors = []
+            if self.param_set == 'local_tm':
+                mf_params = []
 
             # Loop over the number of data sets.
             for j in xrange(num_data_sets):
@@ -1584,6 +1603,9 @@ class Model_free:
                 remap_table.append(self.relax.data.res[seq_index].remap_table[self.run])
                 noe_r1_table.append(self.relax.data.res[seq_index].noe_r1_table[self.run])
                 ri_labels.append(self.relax.data.res[seq_index].ri_labels[self.run])
+
+                # Model-free parameter values.
+                if self.param_set == 'local_tm':
 
                 # Vectors.
                 if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
