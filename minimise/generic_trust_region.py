@@ -72,7 +72,7 @@ class generic_trust_region:
 		if self.rho > self.eta:
 			self.shift_flag = 1
 			if self.print_flag == 2:
-				print "Moving to: " + `self.xk`
+				print "Moving to: " + `self.xk_new`
 		else:
 			self.shift_flag = 0
 			if self.print_flag == 2:

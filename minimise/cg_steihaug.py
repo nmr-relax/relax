@@ -1,43 +1,38 @@
 from LinearAlgebra import inverse
-from Numeric import dot, matrixmultiply, outerproduct, sqrt
-from re import match
+from Numeric import Float64, dot, matrixmultiply, outerproduct, sqrt, zeros
 
-from bfgs import bfgs
 from newton import newton
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, hessian_type=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e5, delta0=1.0, eta=0.2):
-		"""Dogleg trust-region algorithm.
+class cg_steihaug(generic_trust_region, generic_minimise, newton):
+	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=5.0, delta_max=1e5, delta0=1.0, eta=0.2):
+		"""Steihaug conjugate-gradient trust region algorithm.
 
-		Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
-		The dogleg method is defined by the trajectory p(tau):
+		Page 75 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
 
-			          / tau . pU			0 <= tau <= 1,
-			p(tau) = <
-			          \ pU + (tau - 1)(pB - pU),	1 <= tau <= 2.
+		The CG-Steihaug algorithm is:
 
-		where:
-			tau is in [0, 2]
-			pU is the unconstrained minimiser along the steepest descent direction.
-			pB is the full step.
-
-		pU is defined by the formula:
-
-			        gT.g
-			pU = - ------ g
-			       gT.B.g
-
-		and pB by the formula:
-
-			pB = - B^(-1).g
-
-		If the full step is within the trust region it is taken.  Otherwise the point at which the dogleg
-		trajectory intersects the trust region is taken.  This point can be found by solving the scalar
-		quadratic equation:
-			||pU + (tau - 1)(pB - pU)||^2 = delta^2
+		epsilon > 0
+		p0 = 0, r0 = g, d0 = -r0
+		if ||r0|| < epsilon:
+			return p = p0
+		while 1:
+			if djT.B.dj <= 0:
+				Find tau such that p = pj + tau.dj minimises m(p) in (4.9) and
+				satisfies ||p|| = delta
+				return p
+			aj = rjT.rj / djT.B.dj
+			pj+1 = pj + aj.dj
+			if ||pj+1|| >= delta:
+				Find tau such that p = pj + tau.dj satisfies ||p|| = delta
+				return p
+			rj+1 = rj + aj.B.dj
+			if ||rj+1|| < epsilon.||r0||:
+				return p = pj+1
+			bj+1 = rj+1T.rj+1 / rjT.rj
+			dj+1 = rj+1 + bj+1.dj
 
 		"""
 
@@ -51,15 +46,10 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.full_output = full_output
 		self.print_flag = print_flag
 
+		self.epsilon = epsilon
 		self.delta_max = delta_max
 		self.delta = delta0
 		self.eta = eta
-
-		# Matrix type.
-		if hessian_type == None:
-			self.hessian_type = 'bfgs'
-		else:
-			self.hessian_type = hessian_type
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
@@ -70,110 +60,97 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.warning = None
 
 
-	def get_pB_bfgs(self):
-		"Get the newton full step."
+	def get_pk(self):
+		"The CG-Steihaug algorithm."
 
-		return -matrixmultiply(self.Hk, self.dfk)
+		# Initial values at j = 0.
+		self.pj = zeros(len(self.xk), Float64)
+		self.rj = self.dfk * 1.0
+		self.dj = -self.dfk * 1.0
+		self.B = self.d2fk * 1.0
+		len_r0 = sqrt(dot(self.rj, self.rj))
+		length_test = self.epsilon * len_r0
+
+		if self.print_flag == 2:
+			print "p0: " + `self.pj`
+			print "r0: " + `self.rj`
+			print "d0: " + `self.dj`
+
+		if len_r0 < self.epsilon:
+			if self.print_flag == 2:
+				print "len rj < epsilon."
+			return self.pj
+
+		# Iterate over j.
+		j = 0
+		while 1:
+			# The curvature.
+			curv = dot(self.dj, dot(self.B, self.dj))
+			if self.print_flag == 2:
+				print "\nIteration j = " + `j`
+				print "Curv: " + `curv`
+
+			# First test.
+			if curv <= 0.0:
+				tau = self.get_tau()
+				if self.print_flag == 2:
+					print "curv <= 0.0, therefore tau = " + `tau`
+				return self.pj + tau * self.dj
+
+			aj = dot(self.rj, self.rj) / curv
+			self.pj_new = self.pj + aj * self.dj
+			if self.print_flag == 2:
+				print "aj: " + `aj`
+				print "pj+1: " + `self.pj_new`
+
+			# Second test.
+			if sqrt(dot(self.pj_new, self.pj_new)) >= self.delta:
+				tau = self.get_tau()
+				if self.print_flag == 2:
+					print "sqrt(dot(self.pj_new, self.pj_new)) >= self.delta, therefore tau = " + `tau`
+				return self.pj + tau * self.dj
+
+			self.rj_new = self.rj + aj * dot(self.B, self.dj)
+			if self.print_flag == 2:
+				print "rj+1: " + `self.rj_new`
+
+			# Third test.
+			if sqrt(dot(self.rj_new, self.rj_new)) < length_test:
+				if self.print_flag == 2:
+					print "sqrt(dot(self.rj_new, self.rj_new)) < length_test"
+				return self.pj_new
+
+			bj_new = dot(self.rj_new, self.rj_new) / dot(self.rj, self.rj)
+			self.dj_new = self.rj_new + bj_new * self.dj
+			if self.print_flag == 2:
+				print "len rj+1: " + `sqrt(dot(self.rj_new, self.rj_new))`
+				print "epsilon.||r0||: " + `length_test`
+				print "bj+1: " + `bj_new`
+				print "dj+1: " + `self.dj_new`
+
+			# Update j+1 to j.
+			self.pj = self.pj_new * 1.0
+			self.rj = self.rj_new * 1.0
+			self.dj = self.dj_new * 1.0
+			self.B, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
+			j = j+1
 
 
-	def get_pB_newton(self):
-		"Get the newton full step."
+	def get_tau(self):
+		"Function to find tau such that p = pj + tau.dj, and ||p|| = delta."
 
-		return -matrixmultiply(inverse(self.d2fk), self.dfk)
+		dot_pj_dj = dot(self.pj, self.dj)
+		len_dj_sqrd = dot(self.dj, self.dj)
 
-
-	def hessian_update(self):
-		"BFGS hessian update."
-
-		try:
-			self.Hk
-		except AttributeError:
-			return
-
-		# BFGS matrix update.
-		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
-		sk = self.xk_new - self.xk
-		yk = self.dfk_new - self.dfk
-		if dot(yk, sk) == 0:
-			raise NameError, "The BFGS matrix is indefinite.  This should not occur."
-			rk = 1e99
-		else:
-			rk = 1.0 / dot(yk, sk)
-
-		if self.k == 0:
-			self.Hk = dot(yk, sk) / dot(yk, yk) * self.I
-
-		a = self.I - rk*outerproduct(sk, yk)
-		b = self.I - rk*outerproduct(yk, sk)
-		c = rk*outerproduct(sk, sk)
-		matrix = matrixmultiply(matrixmultiply(a, self.Hk), b) + c
-		self.Hk = matrix
+		tau = -dot_pj_dj + sqrt(dot_pj_dj**2 - len_dj_sqrd * (dot(self.pj, self.pj) - self.delta**2)) / len_dj_sqrd
+		return tau
 
 
 	def new_param_func(self):
-		"Find the dogleg minimiser."
+		"Find the CG-Steihaug minimiser."
 
-		# Calculate the full step and its norm.
-		pB = self.get_pB()
-		norm_pB = sqrt(dot(pB, pB))
-
-		# Debugging.
-		try:
-			temp = dot(pB, dot(self.Hk, pB))
-		except AttributeError:
-			temp = dot(pB, dot(inverse(self.d2fk), pB))
-		if temp <= 0.0:
-			self.warning = "The model is not convex, dogleg minimisation has failed."
-			self.xk_new = self.xk * 1.0
-			self.fk_new = self.fk
-			return
-		if self.print_flag == 2:
-			print "xk: " + `self.xk`
-			print "fk: " + `self.fk`
-			print "dfk: " + `self.dfk`
-			print "d2fk: " + `self.d2fk`
-			print "The full step (pB) is: " + `pB`
-
-		# Test if the full step is within the trust region.
-		if norm_pB <= self.delta:
-			if self.print_flag == 2:
-				print "Taking the full step"
-			self.pk = pB
-		else:
-			if self.print_flag == 2:
-				print "Not taking the full step"
-
-			# Calculate pU.
-			curv = dot(self.dfk, dot(self.d2fk, self.dfk))
-			norm_g = sqrt(dot(self.dfk, self.dfk))
-			pU = - norm_g / curv * self.dfk
-			if self.print_flag == 2:
-				print "pU: " + `pU`
-				print "\tFunc value at xk is: "+ `apply(self.func, (self.xk,)+self.args)`
-				print "\tFunc value at pB is: "+ `apply(self.func, (self.xk + pB,)+self.args)`
-				print "\tFunc value at pU is: "+ `apply(self.func, (self.xk + pU,)+self.args)`
-
-			# Find the solution to the scalar quadratic equation.
-			pB_pU = pB - pU
-			norm_pB_pU_sqrd = dot(pB_pU, pB_pU)
-			pUT_pB_pU = dot(pU, pB_pU)
-			fact = pUT_pB_pU**2 - norm_pB_pU_sqrd * (dot(pU, pU) - self.delta**2)
-			if fact < 0.0:
-				self.warning = "No solution to the quadratic equation (minimisation failure)."
-				return
-			else:
-				tau = - pUT_pB_pU + sqrt(fact)
-			tau = tau / norm_pB_pU_sqrd + 1.0
-			if self.print_flag == 2:
-				print "tau: " + `tau`
-
-			# Decide on which part of the trajectory to take.
-			if tau >= 0 and tau <= 1:
-				self.pk = tau * pU
-			elif tau >= 1 and tau <= 2:
-				self.pk = pU + (tau - 1.0)* pB_pU
-			else:
-				raise NameError, "Invalid value of tau: " + `tau`
+		# Get the pk vector.
+		self.pk = self.get_pk()
 
 		# Find the new parameter vector and function value at that point.
 		self.xk_new = self.xk + self.pk
@@ -185,35 +162,17 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 
 		"""
 
-		# Type specific functions.
-		if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
-			self.setup_bfgs()
-			self.specific_update = self.update_bfgs
-			self.get_pB = self.get_pB_bfgs
-			self.d2fk = inverse(self.Hk)
-		elif match('[Nn]ewton', self.hessian_type):
-			self.setup_newton()
-			self.specific_update = self.update_newton
-			self.get_pB = self.get_pB_newton
-		else:
-			raise NameError, "Matrix type " + `self.hessian_type` + " invalid for dogleg minimisation."
+		self.setup_newton()
+		self.specific_update = self.update_newton
 
 
 	def update(self):
 		"""Update function.
 
 		Run the trust region update.  If this update decides to shift xk+1 to xk, then run
-		the BFGS or Newton updates.
+		the Newton update.
 		"""
 
 		self.trust_region_update()
-		if self.k == 0 and self.shift_flag == 0:
-			self.hessian_update()
-
 		if self.shift_flag:
 			self.specific_update()
-
-		try:
-			self.d2fk = inverse(self.Hk)
-		except AttributeError:
-			pass

@@ -23,6 +23,7 @@ from minimise.newton import newton
 # Trust region algorithms.
 from minimise.cauchy_point import cauchy_point
 from minimise.dogleg import dogleg
+from minimise.cg_steihaug import cg_steihaug
 from minimise.levenberg_marquardt import levenberg_marquardt
 
 # Other algorithms.
@@ -198,6 +199,16 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 		if print_flag:
 			print "\n\n<<< Dogleg minimisation >>>"
 		min = dogleg(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, hessian_type=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
+
+	# CG-Steihaug minimisation.
+	elif match('^[Cc][Gg][-_ ][Ss]teihaug', min_algor) or match('^[Ss]teihaug', min_algor):
+		if print_flag:
+			print "\n\n<<< CG-Steihaug minimisation >>>"
+		min = cg_steihaug(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:

@@ -10,7 +10,7 @@ from generic_minimise import generic_minimise
 
 class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, hessian_type=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e5, delta0=1.0, eta=0.2):
-		"""Dogleg trust-region algorithm.
+		"""Dogleg trust region algorithm.
 
 		Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
 		The dogleg method is defined by the trajectory p(tau):
