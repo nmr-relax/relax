@@ -23,13 +23,27 @@
 from Numeric import Float64, array
 
 
-# Weights for the generic model-free formulae.
-##############################################
-
 def calc_ci_iso(data):
     """Weight equations for isotropic diffusion.
 
     c0 = 1
     """
 
-    return array(1, Float64)
+    data.ci[data.i][0] = 1.0
+
+
+def calc_ci_axial(data):
+    """Weight equations for axially symmetric diffusion.
+
+    The equations are:
+
+        c0 = 1/4 (3delta**2 - 1)
+        c1 = 3delta**2 (1 - delta**2)
+        c2 = 3/4 (1 - delta**2)**2
+
+    where delta is the dot product of the unit bond vector and the unit vector along Dpar.
+    """
+
+    data.ci[data.i][0] = 0.25 * (3.0 * data.delta**2 - 1.0)
+    data.ci[data.i][1] = 3.0 * data.delta**2 * (1.0 - data.delta**2)
+    data.ci[data.i][2] = 0.75 * (1.0 - data.delta**2)**2

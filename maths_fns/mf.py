@@ -26,6 +26,7 @@ from math import pi
 
 from data import Data
 
+from geometry import *
 from weights import *
 from correlation_time import *
 from jw_mf_comps import *
@@ -37,7 +38,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, param_set, num_data_sets, equations, param_types, init_params, relax_data, errors, bond_length, csa, diff_type, diff_params, scaling_matrix, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, g_ratio, h_bar, mu0, num_params):
+    def __init__(self, param_set=None, num_data_sets=None, equations=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_matrix=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=0, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -73,7 +74,7 @@ class Mf:
             self.data.frq_list.append(zeros((num_frq[i], 5), Float64))
             for j in xrange(num_frq[i]):
                 frqH = 2.0 * pi * frq[i][j]
-                frqX = frqH * g_ratio
+                frqX = frqH / g_ratio
                 self.data.frq_list[i][j, 1] = frqX
                 self.data.frq_list[i][j, 2] = frqH - frqX
                 self.data.frq_list[i][j, 3] = frqH
@@ -109,6 +110,7 @@ class Mf:
         self.data.ri_labels = ri_labels
         self.data.scaling_matrix = scaling_matrix
         self.data.num_params = num_params
+        self.data.xh_unit_vector = vectors
 
         # Number of indecies in the generic equations.
         if diff_type == 'iso':
@@ -126,7 +128,7 @@ class Mf:
             raise NameError, "The model-free equations could not be setup."
 
         # Calculate the correlation times.
-        self.data.ti = self.calc_ti(self.data)
+        self.calc_ti(self.data)
 
         # Loop over the data sets.
         for self.data.i in xrange(self.data.num_data_sets):
@@ -134,8 +136,8 @@ class Mf:
             if self.data.param_set == 'mf' and 'tm' not in self.data.param_types[self.data.i]:
                 # Loop over the indecies of the generic model-free equations.
                 for i in xrange(self.data.num_indecies):
-                    self.data.w_ti_sqrd[self.data.i][i] = self.data.frq_sqrd_list[self.data.i] * self.data.ti[i] ** 2
-                    self.data.fact_ti[self.data.i][i] = 1.0 / (1.0 + self.data.w_ti_sqrd[self.data.i][i])
+                    self.data.w_ti_sqrd[self.data.i][:, :, i] = self.data.frq_sqrd_list[self.data.i] * self.data.ti[self.data.i][i] ** 2
+                    self.data.fact_ti[self.data.i][:, :, i] = 1.0 / (1.0 + self.data.w_ti_sqrd[self.data.i][:, :, i])
 
         # Scaling initialisation.
         if self.data.scaling_matrix:
@@ -216,11 +218,15 @@ class Mf:
         # Loop over the indecies of the generic model-free equations.
         #for self.data.i in xrange(self.data.num_indecies):
 
+        # Geometry calculations.
+        if self.calc_geom:
+            self.calc_geom(self.data)
+
         # Calculate the weights.
-        self.data.ci = self.calc_ci(self.data)
+        self.calc_ci(self.data)
 
         # Calculate the correlation times.
-        self.data.ti = self.calc_ti(self.data)
+        self.calc_ti(self.data)
 
         # Calculate the components of the spectral densities.
         if self.calc_jw_comps[0]:
@@ -241,6 +247,12 @@ class Mf:
 
         # Calculate the chi-squared value.
         self.data.chi2[0] = chi2(self.data.relax_data[0], self.data.ri[0], self.data.errors[0])
+
+        print ""
+        print self.data.params
+        print self.data.jw
+        print self.data.ci
+        print self.data.ti
 
         return self.data.chi2[0]
 
@@ -379,6 +391,13 @@ class Mf:
     def init_data(self):
         """Function for initialisation of the data."""
 
+        # Unit vectors.
+        self.data.dpar_unit_vector = zeros(3, Float64)
+
+        # Initialise the weights and global correlation times for the model-free equations.
+        self.data.ci = []
+        self.data.ti = []
+
         # Initialise spectral density components.
         self.data.w_ti_sqrd = []
         self.data.fact_ti = []
@@ -445,11 +464,15 @@ class Mf:
 
         # Loop over the data sets.
         for self.data.i in xrange(self.data.num_data_sets):
+            # Weights and global correlation times for the model-free equations.
+            self.data.ci.append(zeros(self.data.num_indecies, Float64))
+            self.data.ti.append(zeros(self.data.num_indecies, Float64))
+
             # Empty spectral density components.
-            self.data.w_ti_sqrd.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
-            self.data.fact_ti.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
-            self.data.w_te_ti_sqrd.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
-            self.data.inv_te_denom.append(zeros((self.data.num_indecies, self.data.num_frq[self.data.i], 5), Float64))
+            self.data.w_ti_sqrd.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
+            self.data.fact_ti.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
+            self.data.w_te_ti_sqrd.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
+            self.data.inv_te_denom.append(zeros((self.data.num_frq[self.data.i], 5, self.data.num_indecies), Float64))
 
             # Empty spectral density values, gradients, and Hessians.
             self.data.jw.append(zeros((self.data.num_frq[self.data.i], 5), Float64))
@@ -733,12 +756,15 @@ class Mf:
 
         # Set up the weight functions.
         if self.data.diff_type == 'iso':
+            self.calc_geom = None
             self.calc_ci = calc_ci_iso
             self.calc_ti = calc_ti_iso
         elif self.data.diff_type == 'axial':
+            self.calc_geom = calc_geom_axial
             self.calc_ci = calc_ci_axial
             self.calc_ti = calc_ti_axial
         elif self.data.diff_type == 'aniso':
+            self.calc_geom = calc_geom_aniso
             self.calc_ci = calc_ci_aniso
             self.calc_ti = calc_ti_aniso
 

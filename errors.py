@@ -93,6 +93,11 @@ class RelaxErrors:
         def __init__(self, name):
             self.text = "The PDB file " + `name` + " could not be loaded properly, no proteins could be extracted."
 
+    # No unit vectors.
+    class RelaxNoVectorsError(BaseError):
+        def __init__(self):
+            self.text = "The unit XH bond vectors have not been calculated yet."
+
 
     # Argument errors.
     ##################

@@ -53,7 +53,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     n = len(grid_ops)
     grid_size = 0
     total_steps = 1
-    step_num = zeros((n))
+    step_num = ones((n))
     params = zeros((n), Float64)
     min_params = zeros((n), Float64)
     param_values = []   # This data structure eliminates the round-off error of summing a step size value to the parameter value.
@@ -106,16 +106,6 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
     # Search the grid.
     for i in xrange(total_steps):
-        # Loop over the parameters.
-        for k in xrange(n):
-            if step_num[k] < grid_ops[k][0]:
-                step_num[k] = step_num[k] + 1
-                params[k] = param_values[k][step_num[k]-1]
-                break    # Exit so that the other step numbers are not incremented.
-            else:
-                step_num[k] = 0
-                params[k] = grid_ops[k][1]
-
         # Check that the grid point does not violate a constraint, and if it does, move to the next point.
         if constraint_flag:
             ci = c(params)
@@ -145,6 +135,16 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
                 print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
                 print print_prefix + "%-20s%-20s" % ("Min params:", `min_params`)
                 print print_prefix + "%-20s%-20g\n" % ("Min f:", f_min)
+
+        # Loop over the parameters.
+        for k in xrange(n):
+            if step_num[k] < grid_ops[k][0]:
+                step_num[k] = step_num[k] + 1
+                params[k] = param_values[k][step_num[k]-1]
+                break    # Exit so that the other step numbers are not incremented.
+            else:
+                step_num[k] = 1
+                params[k] = grid_ops[k][1]
 
 
     # Return the results.

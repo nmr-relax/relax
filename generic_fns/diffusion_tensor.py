@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-from math import cos, pi, sin
+from math import cos, radians, sin
 from Numeric import Float64, array
 
 
@@ -109,9 +109,9 @@ class Diffusion_tensor:
 
         # Angles in radians.
         if self.angle_units == 'deg':
-            self.relax.data.diff[self.run].alpha = (alpha / 360.0) * 2.0 * pi
-            self.relax.data.diff[self.run].beta = (beta / 360.0) * 2.0 * pi
-            self.relax.data.diff[self.run].gamma = (gamma / 360.0) * 2.0 * pi
+            self.relax.data.diff[self.run].alpha = radians(alpha)
+            self.relax.data.diff[self.run].beta = radians(beta)
+            self.relax.data.diff[self.run].gamma = radians(gamma)
         else:
             self.relax.data.diff[self.run].alpha = alpha
             self.relax.data.diff[self.run].beta = beta
@@ -150,10 +150,10 @@ class Diffusion_tensor:
             tm, Dratio, theta, phi = self.params
 
             # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = 6.0 / (tm * self.time_scale)
+            self.relax.data.diff[self.run].Diso = 1.0 / (6.0 * tm * self.time_scale)
             self.relax.data.diff[self.run].Dratio = Dratio * self.d_scale
-            self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * self.relax.data.diff[self.run].Dratio / (2.0 - self.relax.data.diff[self.run].Dratio)
-            self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (2.0 - self.relax.data.diff[self.run].Dratio)
+            self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * self.relax.data.diff[self.run].Dratio / (2.0 + self.relax.data.diff[self.run].Dratio)
+            self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (2.0 + self.relax.data.diff[self.run].Dratio)
 
             # Global correlation time:  tm.
             self.relax.data.diff[self.run].tm = tm * self.time_scale
@@ -169,8 +169,8 @@ class Diffusion_tensor:
 
         # Angles in radians.
         if self.angle_units == 'deg':
-            self.relax.data.diff[self.run].theta = (theta / 360.0) * 2.0 * pi
-            self.relax.data.diff[self.run].phi = (phi / 360.0) * 2.0 * pi
+            self.relax.data.diff[self.run].theta = radians(theta)
+            self.relax.data.diff[self.run].phi = radians(phi)
         else:
             self.relax.data.diff[self.run].theta = theta
             self.relax.data.diff[self.run].phi = phi

@@ -53,7 +53,7 @@ def calc_tm_jw_comps(data):
         fact_ti = 1 / (1 + (w.ti)^2)
     """
 
-    data.w_ti_sqrd[data.i] = data.frq_sqrd_list[data.i] * data.ti ** 2
+    data.w_ti_sqrd[data.i] = data.frq_sqrd_list[data.i] * data.ti[data.i] ** 2
     data.fact_ti[data.i] = 1.0 / (1.0 + data.w_ti_sqrd[data.i])
 
 
@@ -92,20 +92,16 @@ def calc_S2_te_jw_comps(data):
         te_ti_sqrd = (te + ti)^2
         w_te_ti_sqrd = (w.te.ti)^2
         inv_te_denom = 1 / ((te + ti)^2 + (w.te.ti)^2)
-        te_num = (te + ti)te
+        te_ti_te = (te + ti)te
     """
 
     data.one_s2 = 1.0 - data.params[data.s2_index[data.i]]
 
-    data.te_ti = data.params[data.te_index[data.i]] + data.ti
+    data.te_ti = data.params[data.te_index[data.i]] + data.ti[data.i]
     data.te_ti_te = data.te_ti * data.params[data.te_index[data.i]]
     data.te_ti_sqrd = data.te_ti ** 2
     data.w_te_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.te_index[data.i]] ** 2
-    if data.te_ti == 0.0:
-        data.inv_te_denom[data.i] = 0.0 * data.w_te_ti_sqrd[data.i]
-    else:
-        data.inv_te_denom[data.i] = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd[data.i])
-    data.te_num = data.te_ti * data.params[data.te_index[data.i]]
+    data.inv_te_denom[data.i] = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd[data.i])
 
 
 
@@ -153,14 +149,14 @@ def calc_tm_S2_te_jw_comps(data):
         te_num = (te + tm)te
     """
 
-    data.w_tm_sqrd = data.frq_sqrd_list * data.ti ** 2
-    data.two_fifths_tm = 0.4 * data.ti
-    data.two_fifths_tm_sqrd = 0.4 * data.ti ** 2
+    data.w_tm_sqrd = data.frq_sqrd_list * data.ti[data.i] ** 2
+    data.two_fifths_tm = 0.4 * data.ti[data.i]
+    data.two_fifths_tm_sqrd = 0.4 * data.ti[data.i] ** 2
     data.fact_tm = 1.0 / (1.0 + data.w_tm_sqrd)
 
     data.one_s2 = 1.0 - data.params[data.s2_index[data.i]]
 
-    data.te_tm = data.params[data.te_index[data.i]] + data.ti
+    data.te_tm = data.params[data.te_index[data.i]] + data.ti[data.i]
     data.te_tm_te = data.te_tm * data.params[data.te_index[data.i]]
     data.te_tm_sqrd = data.te_tm ** 2
     data.w_te_tm_sqrd = data.w_tm_sqrd * data.params[data.te_index[data.i]] ** 2
@@ -218,7 +214,7 @@ def calc_S2f_S2_ts_jw_comps(data):
 
     data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
 
-    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti
+    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti[data.i]
     data.ts_tm_ts = data.ts_tm * data.params[data.ts_index[data.i]]
     data.ts_tm_sqrd = data.ts_tm ** 2
     data.w_ts_tm_sqrd = data.w_tm_sqrd[data.i] * data.params[data.ts_index[data.i]] ** 2
@@ -274,14 +270,14 @@ def calc_tm_S2f_S2_ts_jw_comps(data):
         ts_num = (ts + tm)ts
     """
 
-    data.w_tm_sqrd = data.frq_sqrd_list * data.ti ** 2
-    data.two_fifths_tm = 0.4 * data.ti
-    data.two_fifths_tm_sqrd = 0.4 * data.ti ** 2
+    data.w_tm_sqrd = data.frq_sqrd_list * data.ti[data.i] ** 2
+    data.two_fifths_tm = 0.4 * data.ti[data.i]
+    data.two_fifths_tm_sqrd = 0.4 * data.ti[data.i] ** 2
     data.fact_tm = 1.0 / (1.0 + data.w_tm_sqrd)
 
     data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
 
-    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti
+    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti[data.i]
     data.ts_tm_ts = data.ts_tm * data.params[data.ts_index[data.i]]
     data.ts_tm_sqrd = data.ts_tm ** 2
     data.w_ts_tm_sqrd = data.w_tm_sqrd * data.params[data.ts_index[data.i]] ** 2
@@ -341,7 +337,7 @@ def calc_S2f_S2s_ts_jw_comps(data):
     data.one_s2s = 1.0 - data.params[data.s2s_index[data.i]]
     data.s2f_s2 = data.params[data.s2f_index[data.i]] * data.one_s2s
 
-    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti
+    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti[data.i]
     data.ts_tm_ts = data.ts_tm * data.params[data.ts_index[data.i]]
     data.ts_tm_sqrd = data.ts_tm ** 2
     data.w_ts_tm_sqrd = data.w_tm_sqrd * data.params[data.ts_index[data.i]] ** 2
@@ -407,8 +403,8 @@ def calc_S2f_tf_S2_ts_jw_comps(data):
     data.one_s2f = 1.0 - data.params[data.s2f_index[data.i]]
     data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
 
-    data.tf_tm = data.params[data.tf_index[data.i]] + data.ti
-    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti
+    data.tf_tm = data.params[data.tf_index[data.i]] + data.ti[data.i]
+    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti[data.i]
     data.tf_tm_tf = data.tf_tm * data.params[data.tf_index[data.i]]
     data.ts_tm_ts = data.ts_tm * data.params[data.ts_index[data.i]]
     data.tf_tm_sqrd = data.tf_tm ** 2
@@ -479,16 +475,16 @@ def calc_tm_S2f_tf_S2_ts_jw_comps(data):
         ts_num = (ts + tm)ts
     """
 
-    data.w_tm_sqrd = data.frq_sqrd_list * data.ti ** 2
-    data.two_fifths_tm = 0.4 * data.ti
-    data.two_fifths_tm_sqrd = 0.4 * data.ti ** 2
+    data.w_tm_sqrd = data.frq_sqrd_list * data.ti[data.i] ** 2
+    data.two_fifths_tm = 0.4 * data.ti[data.i]
+    data.two_fifths_tm_sqrd = 0.4 * data.ti[data.i] ** 2
     data.fact_tm = 1.0 / (1.0 + data.w_tm_sqrd)
 
     data.one_s2f = 1.0 - data.params[data.s2f_index[data.i]]
     data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
 
-    data.tf_tm = data.params[data.tf_index[data.i]] + data.ti
-    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti
+    data.tf_tm = data.params[data.tf_index[data.i]] + data.ti[data.i]
+    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti[data.i]
     data.tf_tm_tf = data.tf_tm * data.params[data.tf_index[data.i]]
     data.ts_tm_ts = data.ts_tm * data.params[data.ts_index[data.i]]
     data.tf_tm_sqrd = data.tf_tm ** 2
@@ -564,8 +560,8 @@ def calc_S2f_tf_S2s_ts_jw_comps(data):
     data.one_s2f = 1.0 - data.params[data.s2f_index[data.i]]
     data.s2f_s2 = data.params[data.s2f_index[data.i]] * data.one_s2s
 
-    data.tf_tm = data.params[data.tf_index[data.i]] + data.ti
-    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti
+    data.tf_tm = data.params[data.tf_index[data.i]] + data.ti[data.i]
+    data.ts_tm = data.params[data.ts_index[data.i]] + data.ti[data.i]
     data.tf_tm_tf = data.tf_tm * data.params[data.tf_index[data.i]]
     data.ts_tm_ts = data.ts_tm * data.params[data.ts_index[data.i]]
     data.tf_tm_sqrd = data.tf_tm ** 2

@@ -32,4 +32,29 @@ def calc_ti_iso(data):
     t0 = tm
     """
 
-    return data.diff_params
+    data.ti[data.i][0] = data.diff_params[0]
+
+
+def calc_ti_axial(data):
+    """Diffusional correlation times for axially symmetric diffusion.
+
+    The equations are:
+
+               1
+        t0 = -----
+             6Dper
+
+                  1
+        t1 = ------------
+             Dpar + 5Dper
+
+                   1
+        t2 = -------------
+             2Dper + 4Dpar
+
+    The diffusion parameter set in data.diff_params is {Dper, Dpar, theta, phi}.
+    """
+
+    data.ti[data.i][0] = 1.0 / (6.0 * data.diff_params[0])
+    data.ti[data.i][1] = 1.0 / (data.diff_params[1] + 5.0 * data.diff_params[0])
+    data.ti[data.i][2] = 1.0 / (2.0 * data.diff_params[0] + 4.0 * data.diff_params[1])

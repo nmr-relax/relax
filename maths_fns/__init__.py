@@ -24,6 +24,7 @@
 __all__ = [ 'chi2',
             'correlation_time',
             'data',
+            'geometry',
             'jw_mf_comps',
             'jw_mf',
             'mf',

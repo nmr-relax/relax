@@ -112,4 +112,4 @@ class PDB:
 
         # Sequence loading.
         if load_seq and not len(self.relax.data.res):
-            self.relax.sequence.load_PDB_sequence()
+            self.relax.generic.sequence.load_PDB_sequence()

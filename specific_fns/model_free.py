@@ -1252,6 +1252,22 @@ class Model_free:
         self.run = run
         self.print_flag = print_flag
 
+        # Tests for the PDB file and unit vectors.
+        if not self.relax.data.diff[self.run].type == 'iso':
+            # Test if the PDB file has been loaded.
+            if not hasattr(self.relax.data, 'pdb'):
+                raise RelaxPdbError
+
+            # Test if unit vectors exist.
+            for i in xrange(len(self.relax.data.res)):
+                # Skip unselected residues.
+                if not self.relax.data.res[i].select:
+                    continue
+
+                # Unit vector.
+                if not hasattr(self.relax.data.res[i], 'xh_unit'):
+                    raise RelaxNoVectorsError
+
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
@@ -1345,6 +1361,7 @@ class Model_free:
             noe_r1_table = []
             ri_labels = []
             num_params = []
+            xh_unit_vectors = []
 
             # Loop over the number of data sets.
             for j in xrange(num_data_sets):
@@ -1374,6 +1391,10 @@ class Model_free:
                 remap_table.append(self.relax.data.res[index].remap_table[self.run])
                 noe_r1_table.append(self.relax.data.res[index].noe_r1_table[self.run])
                 ri_labels.append(self.relax.data.res[index].ri_labels[self.run])
+
+                # Vectors.
+                if not self.relax.data.diff[self.run].type == 'iso':
+                    xh_unit_vectors.append(self.relax.data.res[index].xh_unit)
 
                 # Count the number of model-free parameters for the residue index.
                 num_params.append(len(self.relax.data.res[index].params[self.run]))
@@ -1423,7 +1444,7 @@ class Model_free:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(self.param_set, num_data_sets, equations, param_types, self.param_vector, relax_data, relax_error, r, csa, self.relax.data.diff[self.run].type, diff_params, self.scaling_matrix, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, self.relax.data.gx, self.relax.data.gh, self.relax.data.g_ratio, self.relax.data.h_bar, self.relax.data.mu0, num_params)
+            self.mf = Mf(param_set=self.param_set, num_data_sets=num_data_sets, equations=equations, param_types=param_types, init_params=self.param_vector, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, diff_type=self.relax.data.diff[self.run].type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
