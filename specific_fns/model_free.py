@@ -2541,10 +2541,12 @@ class Model_free(Common_functions):
                 col['s2s'] = i
             elif header[i] == 'Local_tm_(ns)':
                 col['local_tm'] = i
+            elif header[i] == 'te_(ps)':
+                col['te'] = i
             elif header[i] == 'tf_(ps)':
                 col['tf'] = i
-            elif header[i] == 'te_or_ts_(ps)':
-                col['te'] = i
+            elif header[i] == 'ts_(ps)':
+                col['ts'] = i
             elif header[i] == 'Rex_(1st_field)':
                 col['rex'] = i
             elif header[i] == 'Bond_length_(A)':
@@ -2991,26 +2993,23 @@ class Model_free(Common_functions):
                 except ValueError:
                     res.tm = None
 
+                # te.
+                try:
+                    res.te = float(file_data[i][col['te']]) * 1e-12
+                except ValueError:
+                    res.te = None
+
                 # tf.
                 try:
                     res.tf = float(file_data[i][col['tf']]) * 1e-12
                 except ValueError:
                     res.tf = None
 
-                # te and ts.
+                # ts.
                 try:
-                    te = float(file_data[i][col['te']]) * 1e-12
+                    res.ts = float(file_data[i][col['ts']]) * 1e-12
                 except ValueError:
-                    te = None
-                if not hasattr(res, 'params'):
-                    res.te = None
                     res.ts = None
-                elif "te" in res.params:
-                    res.te = te
-                    res.ts = None
-                else:
-                    res.te = None
-                    res.ts = te
 
                 # Rex.
                 try:
@@ -3074,23 +3073,23 @@ class Model_free(Common_functions):
                 except ValueError:
                     res.tm_err = None
 
+                # te.
+                try:
+                    res.te_err = float(file_data[i][col['te']]) * 1e-12
+                except ValueError:
+                    res.te_err = None
+
                 # tf.
                 try:
                     res.tf_err = float(file_data[i][col['tf']]) * 1e-12
                 except ValueError:
                     res.tf_err = None
 
-                # te and ts.
+                # ts.
                 try:
-                    te_err = float(file_data[i][col['te']]) * 1e-12
+                    res.ts_err = float(file_data[i][col['ts']]) * 1e-12
                 except ValueError:
-                    te_err = None
-                if "te" in res.params:
-                    res.te_err = te_err
                     res.ts_err = None
-                else:
-                    res.te_err = None
-                    res.ts_err = te_err
 
                 # Rex.
                 try:
@@ -3160,23 +3159,23 @@ class Model_free(Common_functions):
                 except ValueError:
                     res.tm_sim.append(None)
 
+                # te.
+                try:
+                    res.te_sim.append(float(file_data[i][col['te']]) * 1e-12)
+                except ValueError:
+                    res.te_sim.append(None)
+
                 # tf.
                 try:
                     res.tf_sim.append(float(file_data[i][col['tf']]) * 1e-12)
                 except ValueError:
                     res.tf_sim.append(None)
 
-                # te and ts.
+                # ts.
                 try:
-                    te = float(file_data[i][col['te']]) * 1e-12
+                    res.ts_sim.append(float(file_data[i][col['ts']]) * 1e-12)
                 except ValueError:
-                    te = None
-                if "te" in res.params:
-                    res.te_sim.append(te)
                     res.ts_sim.append(None)
-                else:
-                    res.te_sim.append(None)
-                    res.ts_sim.append(te)
 
                 # Rex.
                 try:
@@ -4089,7 +4088,7 @@ class Model_free(Common_functions):
             self.relax.data.select[self.run] = 0
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -4115,8 +4114,9 @@ class Model_free(Common_functions):
         file.write("%-25s " % s2f)
         file.write("%-25s " % s2s)
         file.write("%-25s " % local_tm)
-        file.write("%-25s " % tf)
         file.write("%-25s " % te)
+        file.write("%-25s " % tf)
+        file.write("%-25s " % ts)
         file.write("%-25s " % rex)
         file.write("%-25s " % r)
         file.write("%-25s " % csa)
@@ -4201,7 +4201,7 @@ class Model_free(Common_functions):
                 ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', te='te_(ps)', tf='tf_(ps)', ts='ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -4293,17 +4293,20 @@ class Model_free(Common_functions):
             if hasattr(res, 'tm') and res.tm != None:
                 local_tm = res.tm / 1e-9
 
+            # te.
+            te = None
+            if hasattr(res, 'te') and res.te != None:
+                te = res.te / 1e-12
+
             # tf.
             tf = None
             if hasattr(res, 'tf') and res.tf != None:
                 tf = res.tf / 1e-12
 
-            # te or ts.
-            te = None
-            if hasattr(res, 'te') and res.te != None:
-                te = res.te / 1e-12
-            elif hasattr(res, 'ts') and res.ts != None:
-                te = res.ts / 1e-12
+            # ts.
+            ts = None
+            if hasattr(res, 'ts') and res.ts != None:
+                ts = res.ts / 1e-12
 
             # Rex.
             rex = None
@@ -4380,7 +4383,7 @@ class Model_free(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -4453,17 +4456,20 @@ class Model_free(Common_functions):
             if hasattr(res, 'tm_err') and res.tm_err != None:
                 local_tm = res.tm_err / 1e-9
 
+            # te.
+            te = None
+            if hasattr(res, 'te_err') and res.te_err != None:
+                te = res.te_err / 1e-12
+
             # tf.
             tf = None
             if hasattr(res, 'tf_err') and res.tf_err != None:
                 tf = res.tf_err / 1e-12
 
-            # te or ts.
-            te = None
-            if hasattr(res, 'te_err') and res.te_err != None:
-                te = res.te_err / 1e-12
-            elif hasattr(res, 'ts_err') and res.ts_err != None:
-                te = res.ts_err / 1e-12
+            # ts.
+            ts = None
+            if hasattr(res, 'ts_err') and res.ts_err != None:
+                ts = res.ts_err / 1e-12
 
             # Rex.
             rex = None
@@ -4488,7 +4494,7 @@ class Model_free(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -4557,17 +4563,20 @@ class Model_free(Common_functions):
                 if hasattr(res, 'tm_sim') and res.tm_sim[i] != None:
                     local_tm = res.tm_sim[i] / 1e-9
 
+                # te.
+                te = None
+                if hasattr(res, 'te_sim') and res.te_sim[i] != None:
+                    te = res.te_sim[i] / 1e-12
+
                 # tf.
                 tf = None
                 if hasattr(res, 'tf_sim') and res.tf_sim[i] != None:
                     tf = res.tf_sim[i] / 1e-12
 
-                # te or ts.
-                te = None
-                if hasattr(res, 'te_sim') and res.te_sim[i] != None:
-                    te = res.te_sim[i] / 1e-12
-                elif hasattr(res, 'ts_sim') and res.ts_sim[i] != None:
-                    te = res.ts_sim[i] / 1e-12
+                # ts.
+                ts = None
+                if hasattr(res, 'ts_sim') and res.ts_sim[i] != None:
+                    ts = res.ts_sim[i] / 1e-12
 
                 # Rex.
                 rex = None
@@ -4638,4 +4647,4 @@ class Model_free(Common_functions):
                         ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

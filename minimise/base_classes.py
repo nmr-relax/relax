@@ -258,7 +258,7 @@ class Min:
                 break
 
             # Maximum number of iteration test.
-            if self.k >= self.maxiter:
+            if self.k >= self.maxiter - 1:
                 self.warning = "Maximum number of iterations reached"
                 break
 

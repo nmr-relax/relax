@@ -389,7 +389,6 @@ class Method_of_multipliers(Min):
 
             # Unconstrained minimisation sub-loop.
             results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.inner_maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
-            #results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=(self.maxiter - self.j), full_output=1, print_flag=sub_print_flag, print_prefix="\t")
             if results == None:
                 return
 
@@ -400,7 +399,7 @@ class Method_of_multipliers(Min):
             #    break
 
             # Maximum number of iteration test.
-            if self.j >= self.maxiter:
+            if self.j >= self.maxiter - 1:
                 self.warning = "Maximum number of iterations reached"
                 break
 
