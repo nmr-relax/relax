@@ -42,7 +42,7 @@ class Sequence:
         This needs to be modified to handle multiple peptide chains.
         """
 
-        print "Loading sequence from the PDB file."
+        print "Loading the sequence from the PDB file.\n"
 
         # Reassign the sequence of the first structure.
         if type(self.relax.data.pdb) == list:
@@ -58,7 +58,6 @@ class Sequence:
             # Insert the data.
             self.relax.data.res[i].num = res[i].number
             self.relax.data.res[i].name = res[i].name
-            self.relax.data.res[i].label = `res[i].number` + '_' + res[i].name
             self.relax.data.res[i].select = 1
 
 
@@ -179,7 +178,6 @@ class Sequence:
             # Insert the data.
             self.relax.data.res[i].num = int(file_data[i][num_col])
             self.relax.data.res[i].name = file_data[i][name_col]
-            self.relax.data.res[i].label = file_data[i][num_col] + '_' + file_data[i][name_col]
             self.relax.data.res[i].select = 1
 
 

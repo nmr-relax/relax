@@ -58,6 +58,7 @@ from selection import Selection
 from sequence import Sequence
 from specific_setup import Specific_setup
 from state import State
+from vectors import Vectors
 from view import View
 from value import Value
 
@@ -103,6 +104,7 @@ class Relax:
         self.specific_setup = Specific_setup(self)
         self.state = State(self)
         self.value = Value(self)
+        self.vectors = Vectors(self)
         self.view = View(self)
 
         # Process the command line arguments.

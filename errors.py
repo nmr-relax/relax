@@ -207,9 +207,9 @@ class RelaxErrors:
     class RelaxNoResError(BaseError):
         def __init__(self, number, name=None):
             if name == None:
-                self.text = "The residue " + `number` + " cannot be found in the sequence."
+                self.text = "The residue '" + `number` + "' cannot be found in the sequence."
             else:
-                self.text = "The residue " + `number` + " " + name + " cannot be found in the sequence."
+                self.text = "The residue '" + `number` + " " + name + "' cannot be found in the sequence."
 
 
     # File errors.
