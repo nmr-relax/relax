@@ -276,7 +276,10 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for running an instance of relax in threading mode on the host machine."""
 
         # Command.
-        cmd = "%s %s --thread --log %s %s" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
+        if self.relax.data.thread.host_name[self.i] == 'localhost':
+            cmd = "%s '%s --thread --log %s %s'" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
+        else:
+            cmd = "%s --thread --log %s %s" % (self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
@@ -364,7 +367,10 @@ class RelaxMinimiseThread(RelaxThread):
         text = text + "self.relax.generic.results.display(run='%s')\n" % (self.thread_run)
 
         # Cat the text into the script file.
-        cmd = "%s cat > %s" % (self.relax.data.thread.login_cmd[self.i], self.script_file)
+        if self.relax.data.thread.login_cmd[self.i]:
+            cmd = "%s 'cat > %s'" % (self.relax.data.thread.login_cmd[self.i], self.script_file)
+        else:
+            cmd = "cat > %s" % self.script_file
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
@@ -389,7 +395,10 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for creating the directory 'tag' in the working directory."""
 
         # Command for creating the directory.
-        cmd = "%s mkdir %s/%s" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.swd[self.i], self.tag)
+        if self.relax.data.thread.login_cmd[self.i]:
+            cmd = "%s 'mkdir %s/%s'" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.swd[self.i], self.tag)
+        else:
+            cmd = "mkdir %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
@@ -411,7 +420,10 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for testing if the directory corresponding to tag exists."""
 
         # Command for testing if directory exists.
-        test_cmd = "%s ls %s/%s" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.swd[self.i], self.tag)
+        if self.relax.data.thread.login_cmd[self.i]:
+            test_cmd = "%s 'ls %s/%s'" % (self.relax.data.thread.login_cmd[self.i], self.relax.data.thread.swd[self.i], self.tag)
+        else:
+            test_cmd = "ls %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
@@ -437,7 +449,10 @@ class RelaxMinimiseThread(RelaxThread):
         """Function for testing if results file is already copied."""
 
         # Command for testing if results file is already copied.
-        test_cmd = "%s ls %s" % (self.relax.data.thread.login_cmd[self.i], self.results_file)
+        if self.relax.data.thread.login_cmd[self.i]:
+            test_cmd = "%s 'ls %s'" % (self.relax.data.thread.login_cmd[self.i], self.results_file)
+        else:
+            test_cmd = "ls %s" % self.results_file
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
