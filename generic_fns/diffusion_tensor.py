@@ -426,12 +426,12 @@ class Diffusion_tensor:
             self.isotropic()
 
         # Axially symmetric anisotropic diffusion.
-        elif len(params) == 4:
+        elif type(params) == tuple and len(params) == 4:
             num_params = 4
             self.axial()
 
         # Fully anisotropic diffusion.
-        elif len(params) == 6:
+        elif type(params) == tuple and len(params) == 6:
             num_params = 6
             self.anisotropic()
 
