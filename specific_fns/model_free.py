@@ -4062,6 +4062,28 @@ class Model_free(Common_functions):
         # Set the Monte Carlo parameter values.
         #######################################
 
+        # Loop over the global minimisation stats objects.
+        for object_name in min_names:
+            # Name for the simulation object.
+            sim_object_name = object_name + '_sim'
+
+            # Create the simulation object.
+            setattr(self.relax.data, sim_object_name, {})
+
+            # Get the simulation object.
+            sim_object = getattr(self.relax.data, sim_object_name)
+
+            # Add the run.
+            sim_object[self.run] = []
+
+            # Loop over the simulations.
+            for j in xrange(self.relax.data.sim_number[self.run]):
+                # Get the object.
+                object = getattr(self.relax.data, object_name)
+
+                # Copy and append the data.
+                sim_object[self.run].append(deepcopy(object[self.run]))
+
         # Diffusion tensor parameters and non residue specific minimisation statistics.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Loop over the parameters.
@@ -4079,28 +4101,6 @@ class Model_free(Common_functions):
                 for j in xrange(self.relax.data.sim_number[self.run]):
                     # Copy and append the data.
                     sim_object.append(deepcopy(getattr(self.relax.data.diff[self.run], object_name)))
-
-            # Loop over the minimisation stats objects.
-            for object_name in min_names:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Create the simulation object.
-                setattr(self.relax.data, sim_object_name, {})
-
-                # Get the simulation object.
-                sim_object = getattr(self.relax.data, sim_object_name)
-
-                # Add the run.
-                sim_object[self.run] = []
-
-                # Loop over the simulations.
-                for j in xrange(self.relax.data.sim_number[self.run]):
-                    # Get the object.
-                    object = getattr(self.relax.data, object_name)
-
-                    # Copy and append the data.
-                    sim_object[self.run].append(deepcopy(object[self.run]))
 
         # Residue specific parameters.
         if self.param_set != 'diff':
@@ -4126,21 +4126,20 @@ class Model_free(Common_functions):
                         sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
 
                 # Loop over all the minimisation object names.
-                if self.param_set != 'all':
-                    for object_name in min_names:
-                        # Name for the simulation object.
-                        sim_object_name = object_name + '_sim'
+                for object_name in min_names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
 
-                        # Create the simulation object.
-                        setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+                    # Create the simulation object.
+                    setattr(self.relax.data.res[self.run][i], sim_object_name, [])
 
-                        # Get the simulation object.
-                        sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+                    # Get the simulation object.
+                    sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
 
-                        # Loop over the simulations.
-                        for j in xrange(self.relax.data.sim_number[self.run]):
-                            # Copy and append the data.
-                            sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+                    # Loop over the simulations.
+                    for j in xrange(self.relax.data.sim_number[self.run]):
+                        # Copy and append the data.
+                        sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
 
 
     def sim_return_chi2(self, run, instance):

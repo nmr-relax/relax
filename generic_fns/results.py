@@ -129,7 +129,7 @@ class Results:
             raise RelaxFileEmptyError
 
         # Read the results.
-        self.read_function(run, file_data)
+        self.read_function(run, file_data, print_flag)
 
 
     def write(self, run=None, file="results", directory=None, force=0, format='columnar', compress_type=1, print_flag=1):

@@ -387,8 +387,14 @@ class Method_of_multipliers(Min):
             # Calculate the augmented Lagrangian gradient tolerance.
             self.tk = min(self.epsilon, self.gamma*sqrt(dot(self.ck, self.ck)))
 
+            # Maximum number of iterations for the sub-loop.
+            if self.maxiter - self.j < self.inner_maxiter:
+                maxiter = self.maxiter - self.j
+            else:
+                maxiter = self.inner_maxiter
+
             # Unconstrained minimisation sub-loop.
-            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=self.inner_maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
+            results = self.generic_minimise(func=self.func_LA, dfunc=self.func_dLA, d2func=self.func_d2LA, args=self.args, x0=self.xk, min_algor=self.min_algor, min_options=self.min_options, func_tol=None, grad_tol=self.tk, maxiter=maxiter, full_output=1, print_flag=sub_print_flag, print_prefix="\t")
             if results == None:
                 return
 
@@ -432,17 +438,14 @@ class Method_of_multipliers(Min):
         if self.print_flag >= 2:
             self.printout()
 
-        # Sum iterations.
-        self.k  = self.k + self.j
-
         # Return.
         if self.full_output:
             try:
                 self.fk = apply(self.func, (self.xk_new,)+self.args)
-                return self.xk_new, self.fk, self.k+1, self.f_count, self.g_count, self.h_count, self.warning
+                return self.xk_new, self.fk, self.j, self.f_count, self.g_count, self.h_count, self.warning
             except AttributeError:
                 self.fk = apply(self.func, (self.xk,)+self.args)
-                return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
+                return self.xk, self.fk, self.j, self.f_count, self.g_count, self.h_count, self.warning
         else:
             try:
                 return self.xk_new

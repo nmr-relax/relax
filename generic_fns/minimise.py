@@ -104,7 +104,7 @@ class Minimise:
         # Specific minimisation function.
         minimise = self.relax.specific_setup.setup('minimise', function_type)
 
-        # Minimisation of a single Monte Carlo simulation.
+        # Single Monte Carlo simulation.
         if sim_index != None:
             minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag, sim_index=sim_index)
 
@@ -314,7 +314,7 @@ class RelaxMinimiseThread(RelaxThread):
         """
 
         # Initialise the job termination flag.
-        self.terminated_flag = 0
+        self.completion_flag = 0
 
         # Place the job queue data, which in this case is the simulation number, in 'self'.
         self.sim = data
@@ -358,8 +358,8 @@ class RelaxMinimiseThread(RelaxThread):
         # Set the results to the completed simulation number.
         self.results = self.sim
 
-        # Job terminated successfully.
-        self.terminated_flag = 1
+        # Job completed successfully.
+        self.completion_flag = 1
 
 
     def generate_script(self):
@@ -432,6 +432,17 @@ class RelaxMinimiseThread(RelaxThread):
             raise RelaxError, "The directory `%s/%s` could not be created on %s." % (self.relax.data.thread.swd[self.i], self.tag, self.relax.data.thread.host_name[self.i])
 
 
+    def job_completed(self):
+        """Function for determining if a job has completed successfully."""
+
+        # The job has been finished by a faster thread.
+        if self.finished_jobs[self.sim] == 1:
+            return 0
+
+        # Success.
+        return self.completion_flag
+
+
     def test_dir(self):
         """Function for testing if the directory corresponding to tag exists."""
 
@@ -484,11 +495,3 @@ class RelaxMinimiseThread(RelaxThread):
         # File exists.
         else:
             return 1
-
-
-    def terminated(self):
-        """Function for determining if a job has terminated successfully."""
-
-        # The job has been finished by a faster thread.
-        if self.finished_jobs[self.sim] == 1:
-            return 0

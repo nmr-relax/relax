@@ -219,14 +219,14 @@ class RelaxThread(Thread):
                     # Place None back into the job queue so that all the other waiting threads will terminate.
                     self.job_queue.put(None)
 
-                    # Job termination.
+                    # Thread termination (breaking of the while loop).
                     break
 
                 # Run the thread specific code.
                 self.exec_thread_code(data)
 
-                # If the job terminated successfully, place the results in the results queue.
-                if self.terminated():
+                # If the job has completed successfully, place the results in the results queue.
+                if self.job_completed():
                     # Place the results in the results queue.
                     self.results_queue.put(self.results)
 
@@ -255,10 +255,15 @@ class RelaxThread(Thread):
 
         # From the Thread class.
         self._Thread__block.acquire()
-        self._Thread__stopped = True
+        self._Thread__stopped = 1
         self._Thread__block.notifyAll()
         self._Thread__block.release()
 
+
+    def job_completed(self):
+        """Dummy job completion testing function, always return 1."""
+
+        return 1
 
 
 class RelaxHostThread(RelaxThread):
