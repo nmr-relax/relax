@@ -34,7 +34,7 @@ class Palmer:
         self.relax = relax
 
 
-    def create(self, run, dir, force, sims, sim_type, trim, steps, constraints, nucleus, atom1, atom2):
+    def create(self, run, dir, force, diff_search, sims, sim_type, trim, steps, constraints, nucleus, atom1, atom2):
         """Function for creating the Modelfree4 input files.
 
         The following files are created:
@@ -53,6 +53,11 @@ class Palmer:
         if not len(self.relax.data.res):
             raise RelaxSequenceError
 
+        # Test if the PDB file is loaded (axially symmetric and anisotropic diffusion).
+        if not match('iso', self.relax.data.diff[run].type):
+            if not hasattr(self.relax.data, 'pdb'):
+                raise RelaxPdbError
+
         # Directory creation.
         if dir == None:
             dir = run
@@ -65,6 +70,7 @@ class Palmer:
         self.run = run
         self.dir = dir
         self.force = force
+        self.diff_search = diff_search
         self.sims = sims
         self.sim_type = sim_type
         self.trim = trim
@@ -180,9 +186,9 @@ class Palmer:
             diff = 'axial'
             algorithm = 'powell'
             tm = self.relax.data.diff[self.run].tm / 1e-9
-            dratio = self.relax.data.diff[self.run].dratio
-            theta = self.relax.data.diff[self.run].theta
-            phi = self.relax.data.diff[self.run].phi
+            dratio = self.relax.data.diff[self.run].Dratio
+            theta = self.relax.data.diff[self.run].theta * 360.0 / (2.0 * pi)
+            phi = self.relax.data.diff[self.run].phi * 360.0 / (2.0 * pi)
         elif match('aniso', self.relax.data.diff[self.run].type):
             diff = 'anisotropic'
             algorithm = 'powell'
@@ -198,12 +204,9 @@ class Palmer:
 
         # Diffusion type.
         if self.relax.data.diff[self.run].fixed:
-            diff_search = 'none'
             algorithm = 'fix'
-        else:
-            diff_search = 'grid'
 
-        file.write("diffusion       " + diff + " " + diff_search + "\n\n")
+        file.write("diffusion       " + diff + " " + self.diff_search + "\n\n")
         file.write("algorithm       " + algorithm + "\n\n")
 
         # Monte Carlo simulations.
@@ -228,7 +231,7 @@ class Palmer:
         file.write('%3i' % 0)
         file.write('%5i' % 5)
         file.write('%6i' % 15)
-        file.write('%4i\n' % self.steps)
+        file.write('%4i\n' % 20)
 
         # dratio.
         file.write('%-7s' % 'Dratio')
@@ -237,7 +240,7 @@ class Palmer:
         file.write('%3i' % 0)
         file.write('%5i' % 0)
         file.write('%6i' % 2)
-        file.write('%4i\n' % self.steps)
+        file.write('%4i\n' % 5)
 
         # theta.
         file.write('%-7s' % 'Theta')
@@ -246,7 +249,7 @@ class Palmer:
         file.write('%3i' % 0)
         file.write('%5i' % 0)
         file.write('%6i' % 180)
-        file.write('%4i\n' % self.steps)
+        file.write('%4i\n' % 10)
 
         # phi.
         file.write('%-7s' % 'Phi')
@@ -255,7 +258,7 @@ class Palmer:
         file.write('%3i' % 0)
         file.write('%5i' % 0)
         file.write('%6i' % 360)
-        file.write('%4i\n' % self.steps)
+        file.write('%4i\n' % 10)
 
 
     def create_mfmodel(self, i, file):
@@ -445,7 +448,7 @@ class Palmer:
 
         # Test if the file exists.
         if not access(dir + "/mfout", F_OK):
-            raise RelaxFileError, ('Modelfree4', file)
+            raise RelaxFileError, ('Modelfree4', dir + "/mfout")
 
         # Open the file.
         mfout_file = open(dir + "/mfout", 'r')

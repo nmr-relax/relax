@@ -20,11 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-from os import stat
+from os import F_OK, access, stat
 from re import match
 import Scientific
 import Scientific.IO.PDB
-from stat import S_ISREG, ST_MODE
 from sys import exc_info
 
 
@@ -43,7 +42,7 @@ class PDB:
             raise RelaxSequenceError
 
         # Test if the file exists.
-        if not S_ISREG(stat(file)[ST_MODE]):
+        if not access(file, F_OK):
             raise RelaxFileError, ('PDB', file)
 
         # Load the first structure in the PDB file.

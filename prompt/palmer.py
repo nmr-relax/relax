@@ -54,7 +54,7 @@ class Macro_class:
         self.relax = relax
 
 
-    def create(self, run=None, dir=None, force=0, sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
+    def create(self, run=None, dir=None, force=0, diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
         """Macro for creating the Modelfree4 input files.
 
         Keyword Arguments
@@ -66,6 +66,8 @@ class Macro_class:
 
         force:  A flag which if set to 1 will cause the results file to be overwitten if it already
         exists.
+
+        diff_search:  See the Modelfree4 manual for 'diffusion_search'.
 
         sims:  The number of Monte Carlo simulations.
 
@@ -106,6 +108,7 @@ class Macro_class:
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force`
+            text = text + ", diff_search=" + `diff_search`
             text = text + ", sims=" + `sims`
             text = text + ", sim_type=" + `sim_type`
             text = text + ", trim=" + `trim`
@@ -128,6 +131,10 @@ class Macro_class:
         # The force flag.
         if type(force) != int or (force != 0 and force != 1):
             raise RelaxBinError, ('force flag', force)
+
+        # The diff_search argument.
+        if type(diff_search) != str:
+            raise RelaxStrError, ('diff_search', diff_search)
 
         # The number of Monte Carlo simulations.
         if type(sims) != int:
@@ -162,7 +169,7 @@ class Macro_class:
             raise RelaxStrError, ('atom2', atom2)
 
         # Execute the functional code.
-        self.relax.palmer.create(run=run, dir=dir, force=force, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
+        self.relax.palmer.create(run=run, dir=dir, force=force, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
 
 
     def execute(self, run=None, dir=None, force=0):

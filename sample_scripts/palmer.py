@@ -3,8 +3,11 @@
 # Load the sequence.
 read.sequence('noe.500.out')
 
-# Nuclei type
+# Nuclei type.
 nuclei('N')
+
+# PDB.
+pdb('Ap4Aase_new_3.pdb')
 
 
 # Initial model-free minimisation stage.
@@ -28,7 +31,7 @@ for run in runs:
     # Setup other values.
     diffusion_tensor(run, 1e-8)
     value.set(run, 'bond_length', 1.02 * 1e-10)
-    value.set(run, 'csa', -160 * 1e-6)
+    value.set(run, 'csa', -170 * 1e-6)
 
     # Select the model-free model.
     model.select_mf(run=run, model=run)
@@ -63,7 +66,7 @@ write(run=run, file='results', force=1)
 fix(run, 'diff', 0)
 
 # Create the Modelfree4 files (change sims as needed, see below).
-palmer.create(run=run, dir='final', force=1, sims=500)
+palmer.create(run=run, dir='final', force=1, sims=0)
 
 # Run Modelfree4.
 palmer.execute(run=run, dir='final', force=1)

@@ -108,7 +108,7 @@ class Diffusion_tensor:
             self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
 
         # (tm, Dratio, theta, phi).
-        elif param_types == 1:
+        elif self.param_types == 1:
             # Unpack the tuple.
             tm, Dratio, theta, phi = self.params
 
