@@ -126,6 +126,10 @@ class Model_selection:
                         # Get the model statistics.
                         k, n, chi2 = self.model_statistics(run=self.runs[j][k], instance=i)
 
+                        # Missing data sets.
+                        if k == None or n == None or chi2 == None:
+                            continue
+
                         # Chi2 sum.
                         sum_crit = sum_crit + chi2
 
@@ -143,6 +147,10 @@ class Model_selection:
 
                     # Get the model statistics.
                     k, n, chi2 = self.model_statistics(run=run, instance=i)
+
+                    # Missing data sets.
+                    if k == None or n == None or chi2 == None:
+                        continue
 
                     # Calculate the criterion value.
                     crit = self.formula(chi2, float(k), float(n))

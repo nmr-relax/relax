@@ -96,15 +96,16 @@ class Palmer:
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
-            # The 'mfdata' file.
-            if not self.create_mfdata(i, mfdata):
-                continue
+            if hasattr(self.relax.data.res[self.run][i], 'num_frq'):
+                # The 'mfdata' file.
+                if not self.create_mfdata(i, mfdata):
+                    continue
 
-            # The 'mfmodel' file.
-            self.create_mfmodel(i, mfmodel)
+                # The 'mfmodel' file.
+                self.create_mfmodel(i, mfmodel)
 
-            # The 'mfpar' file.
-            self.create_mfpar(i, mfpar)
+                # The 'mfpar' file.
+                self.create_mfpar(i, mfpar)
 
         # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
         mfdata.close()
@@ -223,10 +224,13 @@ class Palmer:
         file.write("selection       " + selection + "\n\n")
         file.write("sim_algorithm   " + algorithm + "\n\n")
 
-        file.write("fields          " + `self.relax.data.res[self.run][0].num_frq`)
-        for frq in xrange(self.relax.data.res[self.run][0].num_frq):
-            file.write("  " + `self.relax.data.res[self.run][0].frq[frq]*1e-6`)
-        file.write("\n")
+        for i in xrange(len(self.relax.data.res[self.run])):
+            if hasattr(self.relax.data.res[self.run][i], 'num_frq'):
+                file.write("fields          " + `self.relax.data.res[self.run][i].num_frq`)
+                for frq in xrange(self.relax.data.res[self.run][i].num_frq):
+                    file.write("  " + `self.relax.data.res[self.run][i].frq[frq]*1e-6`)
+                file.write("\n")
+                break
 
         # tm.
         file.write('%-7s' % 'tm')
@@ -472,6 +476,10 @@ class Palmer:
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
+            # Missing data sets.
+            if not hasattr(self.relax.data.res[self.run][i], 'model'):
+                continue
+
             # Get the S2 data.
             data = self.get_mf_data('S2', mfout, self.relax.data.res[self.run][i].num)
             if data != None:

@@ -2190,6 +2190,10 @@ class Model_free:
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
+        # Missing data sets.
+        if not hasattr(self.relax.data.res[self.run][instance], 'relax_data'):
+            return None, None, None
+
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             # Create the parameter vector.
@@ -2909,6 +2913,11 @@ class Model_free:
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
+            file.write("\n")
+            return
+
+        # No model.
+        if not hasattr(res, 'model'):
             file.write("\n")
             return
 
