@@ -2225,8 +2225,9 @@ class Model_free:
                     param_values.append(self.assemble_param_vector(param_set='mf'))
 
             # Convert to Numeric arrays.
-            relax_data = array(relax_data, Float64)
-            relax_error = array(relax_error, Float64)
+            for k in xrange(len(relax_data)):
+                relax_data[k] = array(relax_data[k], Float64)
+                relax_error[k] = array(relax_error[k], Float64)
 
             # Diffusion tensor type.
             if self.param_set == 'local_tm':

@@ -199,6 +199,10 @@ class Diffusion_tensor:
         else:
             raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
 
+        # Test tm.
+        if self.relax.data.diff[self.run].tm <= 0.0 or self.relax.data.diff[self.run].tm > 1e-6:
+            raise RelaxError, "The tm value of " + `self.relax.data.diff[self.run].tm` + " should be between zero and 1 microsecond."
+
 
     def anisotropic(self):
         """Function for setting up fully anisotropic diffusion."""
