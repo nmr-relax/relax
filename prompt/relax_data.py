@@ -25,11 +25,11 @@ import sys
 import help
 
 
-class Read:
+class Relax_data:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for loading data."""
+        """Class for manipulating R1, R2, and NOE relaxation data."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -38,7 +38,144 @@ class Read:
         self.__relax__ = relax
 
 
-    def relax_data(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
+    def back_calc(self, run=None, ri_label=None, frq_label=None, frq=None):
+        """Function for back calculating relaxation data.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength label.
+
+        frq:  The spectrometer frequency in Hz.
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_data.back_calc("
+            text = text + "run=" + `run`
+            text = text + ", ri_label=" + `ri_label`
+            text = text + ", frq_label=" + `frq_label`
+            text = text + ", frq=" + `frq` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Relaxation data type.
+        if type(ri_label) != str:
+            raise RelaxStrError, ('relaxation label', ri_label)
+
+        # Frequency label.
+        if type(frq_label) != str:
+            raise RelaxStrError, ('frequency label', frq_label)
+
+        # Frequency.
+        if type(frq) != float:
+            raise RelaxFloatError, ('frequency', frq)
+
+        # Execute the functional code.
+        self.__relax__.specific.relax_data.back_calc(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq)
+
+
+    def delete(self, run=None, ri_label=None, frq_label=None):
+        """Function for deleting the relaxation data corresponding to ri_label and frq_label.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength label.
+
+
+        Examples
+        ~~~~~~~~
+
+        To delete the relaxation data corresponding to ri_label='NOE', frq_label='600', and the run
+        'm4', type:
+
+        relax> relax_data.delete('m4', 'NOE', '600')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_data.delete("
+            text = text + "run=" + `run`
+            text = text + ", ri_label=" + `ri_label`
+            text = text + ", frq_label=" + `frq_label` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Relaxation data type.
+        if type(ri_label) != str:
+            raise RelaxStrError, ('relaxation label', ri_label)
+
+        # Frequency label.
+        if type(frq_label) != str:
+            raise RelaxStrError, ('frequency label', frq_label)
+
+        # Execute the functional code.
+        self.__relax__.specific.relax_data.delete(run=run, ri_label=ri_label, frq_label=frq_label)
+
+
+    def display(self, run=None, ri_label=None, frq_label=None):
+        """Function for displaying the relaxation data corresponding to ri_label and frq_label.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength label.
+
+
+        Examples
+        ~~~~~~~~
+
+        To show the relaxation data corresponding to ri_label='NOE', frq_label='600', and the run
+        'm4', type:
+
+        relax> relax_data.display('m4', 'NOE', '600')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_data.display("
+            text = text + "run=" + `run`
+            text = text + ", ri_label=" + `ri_label`
+            text = text + ", frq_label=" + `frq_label` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Relaxation data type.
+        if type(ri_label) != str:
+            raise RelaxStrError, ('relaxation label', ri_label)
+
+        # Frequency label.
+        if type(frq_label) != str:
+            raise RelaxStrError, ('frequency label', frq_label)
+
+        # Execute the functional code.
+        self.__relax__.specific.relax_data.display(run=run, ri_label=ri_label, frq_label=frq_label)
+
+
+    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
         """Function for reading R1, R2, or NOE relaxation data.
 
         Keyword Arguments
@@ -48,8 +185,7 @@ class Read:
 
         ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
-        frq_label:  The field strength in MHz, ie '600'.  This string can be anything as long as
-        data collected at the same field strength have the same label.
+        frq_label:  The field strength label.
 
         frq:  The spectrometer frequency in Hz.
 
@@ -68,6 +204,13 @@ class Read:
         header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
 
 
+        Description
+        ~~~~~~~~~~~
+
+        The frequency label argument can be anything as long as data collected at the same field
+        strength have the same label.
+
+
         Examples
         ~~~~~~~~
 
@@ -75,8 +218,8 @@ class Read:
         called 'noe.600.out' where the residue numbers, residue names, data, errors are in the
         first, second, third, and forth columns respectively.
 
-        relax> read.relax_data('m1', 'NOE', '600', 599.7 * 1e6, 'noe.600.out')
-        relax> read.relax_data('m1', ri_label='NOE', frq_label='600', frq=600.0 * 1e6,
+        relax> relax_data.read('m1', 'NOE', '600', 599.7 * 1e6, 'noe.600.out')
+        relax> relax_data.read('m1', ri_label='NOE', frq_label='600', frq=600.0 * 1e6,
                                file_name='noe.600.out')
 
 
@@ -84,8 +227,8 @@ class Read:
         numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
         respectively.  The columns are separated by commas.
 
-        relax> read.relax_data('m1', 'R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
-        relax> read.relax_data('m1', ri_label='R2', frq_label='800 MHz', frq=8.0*1e8,
+        relax> relax_data.read('m1', 'R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
+        relax> relax_data.read('m1', ri_label='R2', frq_label='800 MHz', frq=8.0*1e8,
                                file_name='r2.out', num_col=1, name_col=2, data_col=4, error_col=5,
                                sep=',', header_lines=1)
 
@@ -93,12 +236,12 @@ class Read:
         The following commands will read the R1 data out of the file 'r1.out' where the columns are
         separated by the symbol '%'
 
-        relax> read.relax_data('m1', 'R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
+        relax> relax_data.read('m1', 'R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "read.relax_data("
+            text = sys.ps3 + "relax_data.read("
             text = text + "run=" + `run`
             text = text + ", ri_label=" + `ri_label`
             text = text + ", frq_label=" + `frq_label`
@@ -117,103 +260,110 @@ class Read:
             raise RelaxStrError, ('run', run)
 
         # Relaxation data type.
-        if not ri_label or type(ri_label) != str:
+        if type(ri_label) != str:
             raise RelaxStrError, ('relaxation label', ri_label)
 
         # Frequency label.
-        elif type(frq_label) != str:
+        if type(frq_label) != str:
             raise RelaxStrError, ('frequency label', frq_label)
 
         # Frequency.
-        elif type(frq) != float:
+        if type(frq) != float:
             raise RelaxFloatError, ('frequency', frq)
 
         # The file name.
-        elif not file_name:
-            raise RelaxNoneError, 'file name'
-        elif type(file_name) != str:
+        if type(file_name) != str:
             raise RelaxStrError, ('file name', file_name)
 
         # The number column.
-        elif type(num_col) != int:
+        if type(num_col) != int:
             raise RelaxIntError, ('residue number column', num_col)
 
         # The name column.
-        elif type(name_col) != int:
+        if type(name_col) != int:
             raise RelaxIntError, ('residue name column', name_col)
 
         # The data column.
-        elif type(data_col) != int:
+        if type(data_col) != int:
             raise RelaxIntError, ('data column', data_col)
 
         # The error column.
-        elif type(error_col) != int:
+        if type(error_col) != int:
             raise RelaxIntError, ('error column', error_col)
 
         # Column separator.
-        elif sep != None and type(sep) != str:
+        if sep != None and type(sep) != str:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Header lines.
-        elif type(header_lines) != int:
+        if type(header_lines) != int:
             raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
         self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
 
 
-    def results(self, run=None, data_type=None, file='results', dir=None):
-        """Function for reading results from a file.
+    def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):
+        """Function for writing R1, R2, or NOE relaxation data to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The name of the run.
 
-        data_type:  The type of data.
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
-        file:  The name of the file to read results from.
+        frq_label:  The field strength label.
 
-        dir:  The directory where the file is located.
+        file:  The name of the file.
+
+        dir:  The directory name.
+
+        force:  A flag which, if set to 1, will cause the file to be overwritten.
 
 
         Description
         ~~~~~~~~~~~
 
-        The name of the run can be any string.
-
-        The data_type argument specifies what type of data is to be read and must be one of the
-        following:
-            'mf' - model-free data.
-
-        If no directory name is given, the results file will be seached for in a directory named
-        after the run name.
+        If no directory name is given, the file will be placed in the current working directory.
+        The 'ri_label' and 'frq_label' arguments are required for selecting which relaxation data
+        to write to file.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "read.results("
+            text = sys.ps3 + "relax_data.write("
             text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
+            text = text + ", ri_label=" + `ri_label`
+            text = text + ", frq_label=" + `frq_label`
             text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # The run argument.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # The data_type argument.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data_type', data_type)
+        # Relaxation data type.
+        if type(ri_label) != str:
+            raise RelaxStrError, ('relaxation label', ri_label)
+
+        # Frequency label.
+        if type(frq_label) != str:
+            raise RelaxStrError, ('frequency label', frq_label)
 
         # File.
-        if type(file) != str:
+        if file != None and type(file) != str:
             raise RelaxStrError, ('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
+        # The force flag.
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
+
         # Execute the functional code.
-        self.__relax__.generic.rw.read_results(run=run, data_type=data_type, file=file, dir=dir)
+        self.__relax__.specific.relax_data.write(run=run, ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)

@@ -21,8 +21,7 @@
 ###############################################################################
 
 
-from os import F_OK, access, makedirs
-from string import split
+from os import F_OK, access
 
 
 class RW:
@@ -78,13 +77,11 @@ class RW:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-        # Create the directories.
+        # Open the file for writing.
         if dir == None:
-            dir = run
-        try:
-            makedirs(dir)
-        except OSError:
-            pass
+            results_file = self.relax.file_ops.open_write_file(file, run, force)
+        else:
+            results_file = self.relax.file_ops.open_write_file(file, dir, force)
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
@@ -92,12 +89,6 @@ class RW:
         # Specific header writing and results writing functions.
         self.write_header = self.relax.specific_setup.setup('write_header', function_type)
         self.write_function = self.relax.specific_setup.setup('write_results', function_type)
-
-        # The results file.
-        file_name = dir + '/' + file
-        if access(file_name, F_OK) and not force:
-            raise RelaxFileOverwriteError, (file_name, 'force flag')
-        results_file = open(file_name, 'w')
 
         # Write the header.
         self.write_header(results_file, run)

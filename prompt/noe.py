@@ -25,11 +25,11 @@ import sys
 import help
 
 
-class Relax_fit:
+class Noe:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for relaxation curve fitting."""
+        """Class for calculating NOE data."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -38,7 +38,7 @@ class Relax_fit:
         self.__relax__ = relax
 
 
-    def read(self, run=None, file=None, dir=None):
+    def read(self, run=None, file=None, dir=None, spectrum_type=None):
         """Function for reading peak intensities from a file.
 
         Keyword Arguments
@@ -50,18 +50,24 @@ class Relax_fit:
 
         dir:  The directory where the file is located.
 
+        spectrum_type:  The type of spectrum.
+
 
         Description
         ~~~~~~~~~~~
 
+        The spectrum_type argument can have the following values:
+            'sat' - The NOE spectrum with proton saturation turned on.
+            'ref' - The NOE reference spectrum.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.read("
+            text = sys.ps3 + "noe.read("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
+            text = text + ", dir=" + `dir`
+            text = text + ", spectrum_type=" + `spectrum_type` + ")"
             print text
 
         # The run argument.
@@ -75,5 +81,9 @@ class Relax_fit:
         # Directory.
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
+
+        # The spectrum type.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
 
         raise RelaxError, "Incomplete code."

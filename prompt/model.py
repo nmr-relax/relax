@@ -147,15 +147,11 @@ class Model:
             raise RelaxStrError, ('model', model)
 
         # Equation.
-        if equation == None:
-            raise RelaxNoneError, 'model-free equation'
-        elif type(equation) != str:
+        if type(equation) != str:
             raise RelaxStrError, ('model-free equation', equation)
 
         # Parameter types.
-        if params == None:
-            raise RelaxNoneError, 'parameter types'
-        elif type(params) != list:
+        if type(params) != list:
             raise RelaxListError, ('parameter types', params)
         for i in xrange(len(params)):
             if type(params[i]) != str:

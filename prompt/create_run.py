@@ -46,7 +46,10 @@ class Create_run:
 
         The run name can be any string however the run type can only be one of the following:
 
+            'noe' - Calculating NOEs.
+            'relax_fit' - Relaxation curve fitting.
             'mf' - Model-free analysis.
+            'srls' - SRLS analysis.
 
 
         Examples

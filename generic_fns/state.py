@@ -20,9 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-
-from Numeric import array
-from os import F_OK, access, makedirs
 from cPickle import dump, load
 
 
@@ -58,24 +55,8 @@ class State:
     def save(self, file=None, dir=None, force=0):
         """Function for saving the program state."""
 
-        # Create the directories.
-        if dir:
-            try:
-                makedirs(dir)
-            except OSError:
-                pass
-
-        # File path.
-        if dir:
-            file_path = dir + '/' + file
-        else:
-            file_path = file
-
-        # Open file for writing.
-        if access(file_path, F_OK) and not force:
-            raise RelaxFileOverwriteError, (file_path, 'force flag')
-        else:
-            file = open(file_path, 'w')
+        # Open the file for writing.
+        file = self.relax.file_ops.open_write_file(file, dir, force)
 
         # Pickle the data class and write it to file
         dump(self.relax.data, file, 1)

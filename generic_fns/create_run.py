@@ -36,7 +36,7 @@ class Create_run:
             raise RelaxRunError, run
 
         # List of valid run types.
-        valid = ['mf']
+        valid = ['noe', 'relax_fit', 'mf', 'srls']
 
         # Test if run_type is valid.
         if not run_type in valid:

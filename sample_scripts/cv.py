@@ -36,7 +36,7 @@ for i in xrange(len(runs)):
         for k in xrange(len(ri_labels)):
             if k == i:
                 continue
-            read.relax_data(cv_runs[i][j], ri_labels[k], frq_labels[k], frqs[k], file_names[k])
+            relax_data.read(cv_runs[i][j], ri_labels[k], frq_labels[k], frqs[k], file_names[k])
 
         # Set up the global rotational correlation time.
         diffusion_tensor(cv_runs[i][j], 1e-8)
@@ -69,7 +69,7 @@ for i in xrange(len(runs)):
         delete(cv_runs[i][j], data_type='relax_data')
 
         # Create the validation set by loading the relaxation data excluded from the calibration set.
-        read.relax_data(cv_runs[i][j], ri_labels[j], frq_labels[j], frqs[j], file_names[j])
+        relax_data.read(cv_runs[i][j], ri_labels[j], frq_labels[j], frqs[j], file_names[j])
 
         # Reload the model-free results.
         read.results(run=cv_runs[i][j], data_type='mf')
@@ -94,7 +94,7 @@ print "\n"
 # Delete the relaxation data copied over to the run 'cv' and then load all the data.
 delete('cv', data_type='relax_data')
 for i in xrange(len(ri_labels)):
-    read.relax_data('cv', ri_labels[i], frq_labels[i], frqs[i], file_names[i])
+    relax_data.read('cv', ri_labels[i], frq_labels[i], frqs[i], file_names[i])
 
 # Minimise the selected model using all relaxation data.
 minimise('newton', run='cv')

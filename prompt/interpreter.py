@@ -59,8 +59,11 @@ from echo_data import Echo_data
 from format import Format
 from model import Model
 from molmol import Molmol
+from noe import Noe
 from palmer import Palmer
 from read import Read
+from relax_data import Relax_data
+from relax_fit import Relax_fit
 from select import Select
 from sequence import Sequence
 from state import State
@@ -111,8 +114,11 @@ class Interpreter:
         self._Format = Format(relax)
         self._Model = Model(relax)
         self._Molmol = Molmol(relax)
+        self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
         self._Read = Read(relax)
+        self._Relax_data = Relax_data(relax)
+        self._Relax_fit = Relax_fit(relax)
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
         self._State = State(relax)
@@ -165,8 +171,11 @@ class Interpreter:
         format = self._Format
         palmer = self._Palmer
         read = self._Read
+        relax_data = self._Relax_data
+        relax_fit = self._Relax_fit
         model = self._Model
         molmol = self._Molmol
+        noe = self._Noe
         select = self._Select
         sequence = self._Sequence
         state = self._State

@@ -264,6 +264,20 @@ class RelaxErrors:
                 self.text = "The residue '" + `number` + " " + name + "' cannot be found in the sequence."
 
 
+    # Relaxation data errors.
+    #########################
+
+    # No relaxation data.
+    class RelaxNoRiError(BaseError):
+        def __init__(self, ri_label, frq_label):
+            self.text = "Relaxation data corresponding to ri_label = " + `ri_label` + " and frq_label = " + `frq_label` + " does not exist."
+
+    # Relaxation data already exists.
+    class RelaxRiError(BaseError):
+        def __init__(self, ri_label, frq_label):
+            self.text = "Relaxation data corresponding to ri_label = " + `ri_label` + " and frq_label = " + `frq_label` + " already exists."
+
+
     # Tensor errors.
     ################
 

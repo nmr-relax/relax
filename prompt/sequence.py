@@ -274,9 +274,7 @@ class Sequence:
             raise RelaxStrError, ('run', run)
 
         # The file name.
-        if not file:
-            raise RelaxNoneError, 'file name'
-        elif type(file) != str:
+        if type(file) != str:
             raise RelaxStrError, ('file name', file)
 
         # Directory.
@@ -284,19 +282,19 @@ class Sequence:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # Number column.
-        elif type(num_col) != int:
+        if type(num_col) != int:
             raise RelaxIntError, ('residue number column', num_col)
 
         # Name column.
-        elif type(name_col) != int:
+        if type(name_col) != int:
             raise RelaxIntError, ('residue name column', name_col)
 
         # Column separator.
-        elif sep != None and type(sep) != str:
+        if sep != None and type(sep) != str:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Header lines.
-        elif type(header_lines) != int:
+        if type(header_lines) != int:
             raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.

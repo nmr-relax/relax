@@ -97,9 +97,7 @@ class Modsel:
             raise RelaxStrError, ('model selection method', method)
 
         # New run modsel_run.
-        if modsel_run == None:
-            raise RelaxNoneError, 'modsel_run'
-        elif type(modsel_run) != str:
+        if type(modsel_run) != str:
             raise RelaxStrError, ('modsel_run', modsel_run)
 
         # Runs.

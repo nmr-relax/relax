@@ -22,11 +22,28 @@
 
 import sys
 
+
 class Rx_data:
     def __init__(self, relax):
         """Class containing functions for relaxation data."""
 
         self.relax = relax
+
+
+    def back_calc(self, run=None, ri_label=None, frq_label=None, frq=None):
+        """Function for back calculating relaxation data."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError
+
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+        if self.test_labels(run, ri_label, frq_label):
+            raise RelaxRiError, (ri_label, frq_label)
 
 
     def data_init(self, name):
@@ -93,6 +110,83 @@ class Rx_data:
         return names
 
 
+    def delete(self, run=None, ri_label=None, frq_label=None):
+        """Function for deleting relaxation data corresponding to ri_label and frq_label."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError
+
+        # Test if data corresponding to 'ri_label' and 'frq_label' exists.
+        if not self.test_labels(run, ri_label, frq_label):
+            raise RelaxNoRiError, (ri_label, frq_label)
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # Find the index corresponding to 'ri_label' and 'frq_label'.
+            index = self.find_index(run, i, ri_label, frq_label)
+
+            # Relaxation data and errors.
+            self.relax.data.res[run][i].relax_data.pop(index)
+            self.relax.data.res[run][i].relax_error.pop(index)
+
+            # Update the number of relaxation data points.
+            self.relax.data.res[run][i].num_ri = self.relax.data.res[run][i].num_ri - 1
+
+            # Delete ri_label from the data types.
+            self.relax.data.res[run][i].ri_labels.pop(index)
+
+            # Update the remap table.
+            self.relax.data.res[run][i].remap_table.pop(index)
+
+            # Find if there is other data corresponding to 'frq_label'
+            frq_index = self.relax.data.res[run][i].frq_labels.index(frq_label)
+            if not frq_index in self.relax.data.res[run][i].remap_table:
+                self.relax.data.res[run][i].num_frq = self.relax.data.res[run][i].num_frq - 1
+                self.relax.data.res[run][i].frq_labels.pop(frq_index)
+                self.relax.data.res[run][i].frq.pop(frq_index)
+
+            # Update the NOE R1 translation table.
+            self.relax.data.res[run][i].noe_r1_table.pop(index)
+            for j in xrange(self.relax.data.res[run][i].num_ri):
+                if self.relax.data.res[run][i].noe_r1_table[j] > index:
+                    self.relax.data.res[run][i].noe_r1_table[j] = self.relax.data.res[run][i].noe_r1_table[j] - 1
+
+
+    def display(self, run=None, ri_label=None, frq_label=None):
+        """Function for displaying relaxation data corresponding to ri_label and frq_label."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError
+
+        # Test if data corresponding to 'ri_label' and 'frq_label' exists.
+        if not self.test_labels(run, ri_label, frq_label):
+            raise RelaxNoRiError, (ri_label, frq_label)
+
+        # Print the data.
+        self.write_data(run, ri_label, frq_label, sys.stdout)
+
+
+    def find_index(self, run, i, ri_label, frq_label):
+        """Function for finding the index corresponding to ri_label and frq_label."""
+
+        index = None
+        for j in xrange(self.relax.data.res[run][i].num_ri):
+            if ri_label == self.relax.data.res[run][i].ri_labels[j] and frq_label == self.relax.data.res[run][i].frq_labels[self.relax.data.res[run][i].remap_table[j]]:
+                index = j
+
+        return index
+
+
     def initialise_relax_data(self, data, run):
         """Function for initialisation of relaxation data structures.
 
@@ -112,13 +206,17 @@ class Rx_data:
     def read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for reading R1, R2, or NOE relaxation data."""
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):
             raise RelaxNoSequenceError
 
-        # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+        if self.test_labels(run, ri_label, frq_label):
+            raise RelaxRiError, (ri_label, frq_label)
 
         # Extract the data from the file.
         file_data = self.relax.file_ops.extract_data(file_name)
@@ -158,11 +256,6 @@ class Rx_data:
             # Initialise the relaxation data structures (if needed).
             self.initialise_relax_data(self.relax.data.res[run][index], run)
 
-            # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
-            for j in xrange(self.relax.data.res[run][index].num_ri):
-               if ri_label == self.relax.data.res[run][index].ri_labels[j] and frq_label == self.relax.data.res[run][index].frq_labels[self.relax.data.res[run][index].remap_table[j]]:
-                    raise RelaxError, "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
-
             # Relaxation data and errors.
             self.relax.data.res[run][index].relax_data.append(value)
             self.relax.data.res[run][index].relax_error.append(error)
@@ -181,14 +274,14 @@ class Rx_data:
                     remap = i
                     flag = 1
 
+            # Update the remap table.
+            self.relax.data.res[run][index].remap_table.append(remap)
+
             # Update the data structures which have a length equal to the number of field strengths.
             if not flag:
                 self.relax.data.res[run][index].num_frq = self.relax.data.res[run][index].num_frq + 1
                 self.relax.data.res[run][index].frq_labels.append(frq_label)
                 self.relax.data.res[run][index].frq.append(frq)
-
-            # Update the remap table.
-            self.relax.data.res[run][index].remap_table.append(remap)
 
             # Update the NOE R1 translation table.
             self.relax.data.res[run][index].noe_r1_table.append(None)
@@ -204,60 +297,83 @@ class Rx_data:
                         self.relax.data.res[run][index].noe_r1_table[i] = self.relax.data.res[run][index].num_ri - 1
 
 
-    def curvefit_input(self):
-        # Loop through each time point.
-        for spectra in xrange(len(self.usr_param.input_info)):
-            print '\nProcessing data for time point ' + self.xmf.r1_data.input[i][0] + ' sec'
-            for j in xrange(len(self.xmf.r1_data.input[i])):     # Go through the three columns of the input file.
-                if j == 0:           # The time column.
-                    self.xmf.r1_data.times.append(self.xmf.r1_data.input[i][0])     # Add the time to the 'times' array.
-                    self.xmf.r1_data.input_data[i][0] = self.xmf.r1_data.input[i][0]
-                    continue     # Go to the next column.
-                file = self.xmf.r1_data.input[i][j]
-                self.xmf.r1_data.input_data[i][j] = self.xmf.file_ops.extract_data(file)
-                equal_size(len(self.xmf.r1_data.input_data[0][1]),len(self.xmf.r1_data.input_data[i][j]))     # Test if both are the same length.
-                if j == 2:           # The duplicate spectra column.
-                    diff_list = []     # List of peak intensity differences for backbone peaks.
-                bb_no = 0            # Number of backbone peaks.
-                indole_no = 0        # Number of tryptophane indole peaks.
-                for k in xrange(len(self.xmf.r1_data.input_data[i][j])):     # Go through the lines of each spectra.
-                    if non_residue(self.xmf.r1_data.input_data[i][j][k]):
-                        continue     # Skip all non-residue lines.
-                    test_res_no(self.xmf.r1_data.input_data[0][1][k][0],self.xmf.r1_data.input_data[i][j][k][0])     # Test if residue numbers match.
-                    if backbone(self.xmf.r1_data.input_data[i][j][k][4]):     # Backbone peak.
-                        if unresolved_peak(self.xmf.r1_data.input_data[i][j][k][5],'test/R1/unresolved'):
-                            continue     # Skip unresolved peaks.
-                        self.xmf.r1_data.bb_intense = create_2Dint(i, j, k, self.xmf.r1_data.input_data, self.xmf.r1_data.bb_intense, bb_no)
-                        if j == 2:     # Duplicate spectra data set.
-                            diff_val = float(self.xmf.r1_data.input_data[i][1][k][10]) - float(self.xmf.r1_data.input_data[i][2][k][10])
-                            diff_list.append(diff_val)
-                        bb_no = bb_no + 1
-                    elif indole(self.xmf.r1_data.input_data[i][j][k][4]):     # Tryptophane indole peak.
-                        if unresolved_peak(self.xmf.r1_data.input_data[i][j][k][5],'R1/indole_unresolved'):
-                            continue     # Skip unresolved peaks.
-                        self.xmf.r1_data.indole_intense = create_2Dint(i, j, k, self.xmf.r1_data.input_data, self.xmf.r1_data.indole_intense, indole_no)
-                        indole_no = indole_no + 1
-                if j == 2:
-                    self.xmf.r1_data.diff.append(diff_list)
-        self.xmf.r1_data.bb_intense.sort()
-        self.xmf.r1_data.indole_intense.sort()
-        sumSd = 0     # The sum of all the standard deviations.
-        for set in xrange(len(self.xmf.r1_data.diff)):
-            sd = stand_dev(self.xmf.r1_data.diff[set])
-            print '\nThe standard deviation is: ' + `sd`
-            sumSd = sumSd + sd
-        aveSd = sumSd / len(self.xmf.r1_data.diff)
-        print '\nThe average standard deviation is: ' + `aveSd`
+    def test_labels(self, run, ri_label, frq_label):
+        """Function for testing if data corresponding to 'ri_label' and 'frq_label' currently exist."""
 
-        print '\nCreating grace files\n'
-        self.xmf.grace.intensity('R1_backbone', self.xmf.r1_data.bb_intense, self.xmf.r1_data.times, aveSd)
-        self.xmf.grace.intensity('R1_trp_indole', self.xmf.r1_data.indole_intense, self.xmf.r1_data.times, aveSd)
-        rx_log('r1.log', self.xmf.r1_data.times, self.xmf.r1_data.bb_intense, self.xmf.r1_data.indole_intense, self.xmf.r1_data.diff, aveSd)
+        # Initialise.
+        exists = 0
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # No ri data.
+            if not hasattr(self.relax.data.res[run][i], 'num_ri'):
+                continue
+
+            # Loop over the relaxation data.
+            for j in xrange(self.relax.data.res[run][i].num_ri):
+                # Test if the relaxation data matches 'ri_label' and 'frq_label'.
+                if ri_label == self.relax.data.res[run][i].ri_labels[j] and frq_label == self.relax.data.res[run][i].frq_labels[self.relax.data.res[run][i].remap_table[j]]:
+                    exists = 1
+
+        return exists
 
 
-    def test_res_no(self, first_no, second_no):
-        if first_no != second_no:
-            text = 'Residues don\'t line up\n'
-            print str(first_no) + ' != ' + str(second_no)
-            while 1:
-                pass
+    def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):
+        """Function for writing relaxation data."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError
+
+        # Test if data corresponding to 'ri_label' and 'frq_label' exists.
+        if not self.test_labels(run, ri_label, frq_label):
+            raise RelaxNoRiError, (ri_label, frq_label)
+
+        # Create the file name if none is given.
+        if file == None:
+            file = ri_label + "." + frq_label + ".out"
+
+        # Open the file for writing.
+        relax_file = self.relax.file_ops.open_write_file(file, dir, force)
+
+        # Write the data.
+        self.write_data(run, ri_label, frq_label, relax_file)
+
+        # Close the file.
+        relax_file.close()
+
+
+    def write_data(self, run, ri_label, frq_label, file):
+        """Function for writing the relaxation data."""
+
+        # Write a header line.
+        file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # Write the residue number.
+            file.write("%-5i" % self.relax.data.res[run][i].num)
+
+            # Write the residue name.
+            file.write("%-6s" % self.relax.data.res[run][i].name)
+
+            # Find the index corresponding to 'ri_label' and 'frq_label'.
+            index = self.find_index(run, i, ri_label, frq_label)
+
+            # Skip the residue if data does not exist.
+            if index == None:
+                file.write("\n")
+                continue
+
+            # Write the relaxation value.
+            file.write("%-30s" % `self.relax.data.res[run][i].relax_data[index]`)
+
+            # Write the relaxation error.
+            file.write("%-30s" % `self.relax.data.res[run][i].relax_error[index]`)
+
+            # End of the line.
+            file.write("\n")

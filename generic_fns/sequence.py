@@ -20,8 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-from os import F_OK, access, makedirs
-
 
 class Sequence:
     def __init__(self, relax):
@@ -245,22 +243,8 @@ class Sequence:
         if not self.relax.data.res.has_key(run):
             raise RelaxNoSequenceError
 
-        # Create the directories.
-        if dir:
-            try:
-                makedirs(dir)
-            except OSError:
-                pass
-
-        # The file.
-        if dir:
-            file_name = dir + '/' + file
-        else:
-            file_name = file
-
-        if access(file_name, F_OK) and not force:
-            raise RelaxFileOverwriteError, (file_name, 'force flag')
-        seq_file = open(file_name, 'w')
+        # Open the file for writing.
+        seq_file = self.relax.file_ops.open_write_file(file, dir, force)
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[run])):
