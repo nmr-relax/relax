@@ -40,7 +40,7 @@ class Diffusion_tensor:
         return names
 
 
-    def set(self, run, params, time_scale, d_scale, angle_units, param_types, fixed, scaling):
+    def set(self, run, params, time_scale, d_scale, angle_units, param_types, axial_type, fixed, scaling):
         """Function for setting up the diffusion tensor."""
 
         # Arguments.
@@ -50,6 +50,7 @@ class Diffusion_tensor:
         self.d_scale = d_scale
         self.angle_units = angle_units
         self.param_types = param_types
+        self.axial_type = axial_type
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -58,6 +59,11 @@ class Diffusion_tensor:
         # Test if diffusion tensor data corresponding to the run already exists.
         if self.relax.data.diff.has_key(run):
             raise RelaxTensorError, run
+
+        # Check the validity of the angle_units argument.
+        valid_types = ['deg', 'rad']
+        if not angle_units in valid_types:
+            raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
         # Add the run to the diffusion tensor data structure.
         self.relax.data.diff.add_item(run)
@@ -117,6 +123,12 @@ class Diffusion_tensor:
 
         # The diffusion type.
         self.relax.data.diff[self.run].type = 'axial'
+
+        # Axial diffusion type.
+        allowed_types = [None, 'oblate', 'prolate']
+        if self.axial_type not in allowed_types:
+            raise RelaxError, "The 'axial_type' argument " + `self.axial_type` + " should be 'oblate', 'prolate', or None."
+        self.relax.data.diff[self.run].axial_type = self.axial_type
 
         # (Dpar, Dper, theta, phi).
         if self.param_types == 0:

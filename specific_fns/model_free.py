@@ -53,8 +53,8 @@ class Model_free:
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                self.param_vector.append(self.relax.data.diff[self.run].tm)
-                self.param_vector.append(self.relax.data.diff[self.run].Diso)
+                self.param_vector.append(self.relax.data.diff[self.run].Dper)
+                self.param_vector.append(self.relax.data.diff[self.run].Dpar)
                 self.param_vector.append(self.relax.data.diff[self.run].theta)
                 self.param_vector.append(self.relax.data.diff[self.run].phi)
 
@@ -182,9 +182,9 @@ class Model_free:
             elif self.relax.data.diff[self.run].type == 'axial':
                 # Test if the diffusion parameters should be scaled.
                 if self.relax.data.diff[self.run].scaling:
-                    # tm, Diso, theta, phi
-                    self.scaling_matrix[i, i] = 1e-15
-                    self.scaling_matrix[i+1, i+1] = 1.0
+                    # Dper, Dpar, theta, phi
+                    self.scaling_matrix[i, i] = 1e9
+                    self.scaling_matrix[i+1, i+1] = 1e9
                     self.scaling_matrix[i+2, i+2] = 1.0
                     self.scaling_matrix[i+3, i+3] = 1.0
 
@@ -830,19 +830,37 @@ class Model_free:
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
-                # tm >= 0.
+                # Dper >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0 / self.scaling_matrix[i, i])
                 i = i + 1
                 j = j + 1
 
-                # Diso >= 0.
+                # Dpar >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0 / self.scaling_matrix[i, i])
                 i = i + 1
                 j = j + 1
+
+                # Oblate diffusion, Dper >= Dpar.
+                if self.relax.data.diff[self.run].axial_type == 'oblate':
+                    A.append(zero_array * 0.0)
+                    A[j][i-2] = 1.0
+                    A[j][i-1] = -1.0
+                    # Possible future bug, self.scaling_matrix[i, i].
+                    b.append(0.0 / self.scaling_matrix[i, i])
+                    j = j + 1
+
+                # Prolate diffusion, Dper <= Dpar.
+                if self.relax.data.diff[self.run].axial_type == 'prolate':
+                    A.append(zero_array * 0.0)
+                    A[j][i-2] = -1.0
+                    A[j][i-1] = 1.0
+                    # Possible future bug, self.scaling_matrix[i, i].
+                    b.append(0.0 / self.scaling_matrix[i, i])
+                    j = j + 1
 
                 # 0 <= theta <= 2*pi.
                 A.append(zero_array * 0.0)
@@ -952,6 +970,7 @@ class Model_free:
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
                                     A[j][old_i+m] = 1.0
+                                    # Possible future bug, self.scaling_matrix[i, i].
                                     b.append(0.0 / self.scaling_matrix[i, i])
                                     j = j + 1
 
@@ -1186,6 +1205,46 @@ class Model_free:
         if self.constraints:
             A, b = self.linear_constraints()
 
+        # Initialise the iteration counter and function, gradient, and Hessian call counters.
+        self.iter_count = 0
+        self.f_count = 0
+        self.g_count = 0
+        self.h_count = 0
+
+        # Set up the relaxation data and errors.
+        relax_data = []
+        relax_error = []
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Make sure that the errors are strictly positive numbers.
+            for j in xrange(len(self.relax.data.res[i].relax_error[self.run])):
+                if self.relax.data.res[i].relax_error[self.run][j] == 0.0:
+                    raise RelaxError, "Zero error for residue '" + `self.relax.data.res[i].num[self.run]` + " " + self.relax.data.res[i].name[self.run] + "', minimisation not possible."
+                elif self.relax.data.res[i].relax_error[self.run][j] < 0.0:
+                    raise RelaxError, "Negative error for residue '" + `self.relax.data.res[i].num[self.run]` + " " + self.relax.data.res[i].name[self.run] + "', minimisation not possible."
+
+            # Add the data.
+            relax_data.append(self.relax.data.res[i].relax_data[self.run])
+            relax_error.append(self.relax.data.res[i].relax_error[self.run])
+
+        relax_data = array(relax_data, Float64)
+        relax_error = array(relax_error, Float64)
+
+        # Debug.
+        if Debug:
+            print "Relax data: " + `relax_data`
+            print "Relax error: " + `relax_error`
+
+
+        # Initialise the function to minimise.
+        ######################################
+
+        self.mf = Mf(self.relax, run=self.run, i=i, equation=self.relax.data.res[i].equations[self.run], param_types=self.relax.data.res[i].params[self.run], init_params=self.param_vector, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[self.run], csa=self.relax.data.res[i].csa[self.run], diff_type=self.relax.data.diff[self.run].type, diff_params=[self.relax.data.diff[self.run].tm], scaling_matrix=self.scaling_matrix)
+
+
         raise RelaxError, "Not coded yet."
 
 
@@ -1203,7 +1262,48 @@ class Model_free:
         if self.constraints:
             A, b = self.linear_constraints()
 
+        # Initialise the iteration counter and function, gradient, and Hessian call counters.
+        self.iter_count = 0
+        self.f_count = 0
+        self.g_count = 0
+        self.h_count = 0
+
+        # Set up the relaxation data and errors.
+        relax_data = []
+        relax_error = []
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Make sure that the errors are strictly positive numbers.
+            for j in xrange(len(self.relax.data.res[i].relax_error[self.run])):
+                if self.relax.data.res[i].relax_error[self.run][j] == 0.0:
+                    raise RelaxError, "Zero error for residue '" + `self.relax.data.res[i].num[self.run]` + " " + self.relax.data.res[i].name[self.run] + "', minimisation not possible."
+                elif self.relax.data.res[i].relax_error[self.run][j] < 0.0:
+                    raise RelaxError, "Negative error for residue '" + `self.relax.data.res[i].num[self.run]` + " " + self.relax.data.res[i].name[self.run] + "', minimisation not possible."
+
+            # Add the data.
+            relax_data.append(self.relax.data.res[i].relax_data[self.run])
+            relax_error.append(self.relax.data.res[i].relax_error[self.run])
+
+        relax_data = array(relax_data, Float64)
+        relax_error = array(relax_error, Float64)
+
+        # Debug.
+        if Debug:
+            print "Relax data: " + `relax_data`
+            print "Relax error: " + `relax_error`
+
+
+        # Initialise the function to minimise.
+        ######################################
+
+        self.mf = Mf(self.relax, run=self.run, i=i, equation=self.relax.data.res[i].equations[self.run], param_types=self.relax.data.res[i].params[self.run], init_params=self.param_vector, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[self.run], csa=self.relax.data.res[i].csa[self.run], diff_type=self.relax.data.diff[self.run].type, diff_params=[self.relax.data.diff[self.run].tm], scaling_matrix=self.scaling_matrix)
+
+
         raise RelaxError, "Not coded yet."
+
 
     def minimise_mf_params(self):
         """Function for minimising model-free parameters for single residues."""
@@ -1246,40 +1346,33 @@ class Model_free:
             self.g_count = 0
             self.h_count = 0
 
-            # Set up the relaxation data and errors and the function options.
+            # Make sure that the errors are strictly positive numbers.
+            for j in xrange(len(self.relax.data.res[i].relax_error[self.run])):
+                if self.relax.data.res[i].relax_error[self.run][j] == 0.0:
+                    raise RelaxError, "Zero error for residue '" + `self.relax.data.res[i].num[self.run]` + " " + self.relax.data.res[i].name[self.run] + "', minimisation not possible."
+                elif self.relax.data.res[i].relax_error[self.run][j] < 0.0:
+                    raise RelaxError, "Negative error for residue '" + `self.relax.data.res[i].num[self.run]` + " " + self.relax.data.res[i].name[self.run] + "', minimisation not possible."
+
+            # Set up the relaxation data and errors.
             relax_data = array(self.relax.data.res[i].relax_data[self.run], Float64)
             relax_error = array(self.relax.data.res[i].relax_error[self.run], Float64)
 
-            # Make sure that the errors are all positive numbers.
-            for j in xrange(len(relax_error)):
-                if relax_error[j] == 0.0:
-                    message = "Zero error, minimisation not possible."
-                    if self.print_flag >= 1:
-                        print message + "  Skipping residue."
-                    self.relax.data.res[i].warning[run] = message
-                    return
-                elif relax_error[j] < 0.0:
-                    message = "Negative error."
-                    if self.print_flag >= 1:
-                        print message + "  Skipping residue."
-                    self.relax.data.res[i].warning[run] = message
-                    return
 
             # Initialise the function to minimise.
             ######################################
 
             # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
-                vectors = None
+            #if self.relax.data.diff[self.run].type == 'iso':
+            #    vectors = None
 
             # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
-                vectors = None
+            #elif self.relax.data.diff[self.run].type == 'axial':
+            #    vectors = None
 
             # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
-                vectors = None
-                raise RelaxError, "Not coded yet."
+            #elif self.relax.data.diff[self.run].type == 'aniso':
+            #    vectors = None
+            #    raise RelaxError, "Not coded yet."
 
             self.mf = Mf(self.relax, run=self.run, i=i, equation=self.relax.data.res[i].equations[self.run], param_types=self.relax.data.res[i].params[self.run], init_params=self.param_vector, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[self.run], csa=self.relax.data.res[i].csa[self.run], diff_type=self.relax.data.diff[self.run].type, diff_params=[self.relax.data.diff[self.run].tm], scaling_matrix=self.scaling_matrix)
 

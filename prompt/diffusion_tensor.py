@@ -30,7 +30,7 @@ class Diffusion_tensor:
         self.relax = relax
 
 
-    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, fixed=1, scaling=1):
+    def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1, scaling=1):
         """Function for setting up the diffusion tensor.
 
         Keyword Arguments
@@ -47,6 +47,9 @@ class Diffusion_tensor:
         angle_units:  The units for the angle parameters.
 
         param_types:  A flag to select different parameter combinations.
+
+        axial_type:  A string, which if supplied will axially symmetric parameters, will restrict
+        the tensor to either being oblate or prolate.
 
         fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
 
@@ -83,6 +86,14 @@ class Diffusion_tensor:
 
         The 'angle_units' argument should either be the string 'deg' or 'rad'.  Parameters affected
         are:  theta, phi, alpha, beta, gamma.
+
+        The 'axial_type' argument should be 'oblate', 'prolate', or None.  The argument will be
+        ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the
+        constraint Dper >= Dpar is used.  If 'prolate' is given, then the constraint Dper <= Dpar is
+        used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
+        prevent minimisation of diffusion tensor parameters in a space with two minima, it is
+        recommended to specify which tensor to be minimised, thereby partitioning the two minima
+        into the two subspaces.
 
 
         Diagonal scaling.
@@ -144,6 +155,7 @@ class Diffusion_tensor:
             text = text + ", d_scale=" + `d_scale`
             text = text + ", angle_units=" + `angle_units`
             text = text + ", param_types=" + `param_types`
+            text = text + ", axial_type=" + `axial_type`
             text = text + ", fixed=" + `fixed`
             text = text + ", scaling=" + `scaling` + ")"
             print text
@@ -178,10 +190,9 @@ class Diffusion_tensor:
         if type(param_types) != int:
             raise RelaxIntError, ('parameter types', param_types)
 
-        # Check the validity of the angle_units argument.
-        valid_types = ['deg', 'rad']
-        if not angle_units in valid_types:
-            raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+        # Axial type argument.
+        if axial_type != None and type(axial_type) != str:
+            raise RelaxNoneStrError, ('axial type', axial_type)
 
         # The fixed flag.
         if type(fixed) != int or (fixed != 0 and fixed != 1):
@@ -192,4 +203,4 @@ class Diffusion_tensor:
             raise RelaxBinError, ('scaling', scaling)
 
         # Execute the functional code.
-        self.relax.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, fixed=fixed, scaling=scaling)
+        self.relax.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, axial_type=axial_type, fixed=fixed, scaling=scaling)
