@@ -52,8 +52,8 @@ class Model_free:
         Description
         ~~~~~~~~~~~
 
-        This function will copy all model-free data from 'run1' to 'run2'.  'run2' must contain no
-        model-free data.
+        This function will copy all model-free data from 'run1' to 'run2'.  'run2' must not contain
+        any model-free data.
 
 
         Examples

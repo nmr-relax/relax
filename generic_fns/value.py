@@ -22,6 +22,7 @@
 
 
 from re import compile, match
+import sys
 
 
 class Value:
@@ -31,16 +32,35 @@ class Value:
         self.relax = relax
 
 
+    def display(self, run=None, data_type=None):
+        """Function for displaying residue specific data values."""
+
+        # Arguments.
+        self.run = run
+        self.data_type = data_type
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError
+
+        # Print the data.
+        self.write_data(run, data_type, sys.stdout)
+
+
     def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
         """Function for setting residue specific data values."""
-
-        # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError
 
         # Test if the residue number is a valid regular expression.
         if type(res_num) == str:
@@ -134,3 +154,54 @@ class Value:
             # Warning.
             if hasattr(self.relax.data.res[run][i], 'warning'):
                 self.relax.data.res[run][i].warning = None
+
+
+    def write(self, run=None, data_type=None, file=None, dir=None, force=0):
+        """Function for writing data to a file."""
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError
+
+        # Open the file for writing.
+        relax_file = self.relax.file_ops.open_write_file(file, dir, force)
+
+        # Write the data.
+        self.write_data(run, data_type, relax_file)
+
+        # Close the file.
+        relax_file.close()
+
+
+    def write_data(self, run, data_type, file, return_value=None):
+        """Function for writing data."""
+
+        # Get the value and error returning function if required.
+        if not return_value:
+            # Function type.
+            function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
+            # Specific value function.
+            return_value = self.relax.specific_setup.setup('return_value', function_type)
+
+        # Test if the data exists.
+        for i in xrange(len(self.relax.data.res[run])):
+            value, error = return_value(run, i, data_type)
+
+        # Write a header line.
+        file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # Remap the data structure 'self.relax.data.res[run][i]'.
+            data = self.relax.data.res[run][i]
+
+            # Get the value and error.
+            value, error = return_value(run, i, data_type)
+
+            # Write the data.
+            file.write("%-5i%-6s%-30s%-30s\n" % (data.num, data.name, `value`, `error`))

@@ -38,6 +38,104 @@ class Diffusion_tensor:
         self.__relax__ = relax
 
 
+    def copy(self, run1=None, run2=None):
+        """Function for copying diffusion tensor data from run1 to run2.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run1:  The name of the run to copy the sequence from.
+
+        run2:  The name of the run to copy the sequence to.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will copy diffusion tensor data from 'run1' to 'run2'.  'run2' must contain no
+        diffusion tensor data.
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy the diffusion tensor from run 'm1' to run 'm2', type:
+
+        relax> diffusion_tensor.copy('m1', 'm2')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "diffusion_tensor.copy("
+            text = text + "run1=" + `run1`
+            text = text + ", run2=" + `run2` + ")"
+            print text
+
+        # The run1 argument.
+        if type(run1) != str:
+            raise RelaxStrError, ('run1', run1)
+
+        # The run2 argument.
+        if type(run2) != str:
+            raise RelaxStrError, ('run2', run2)
+
+        # Execute the functional code.
+        self.__relax__.generic.diffusion_tensor.copy(run1=run1, run2=run2)
+
+
+    def delete(self, run=None):
+        """Function for deleting diffusion tensor data.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will delete all diffusion tensor data for the given run.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "diffusion_tensor.delete("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.__relax__.generic.diffusion_tensor.delete(run=run)
+
+
+    def display(self, run=None):
+        """Function for displaying the diffusion tensor.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "diffusion_tensor.display("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.__relax__.generic.diffusion_tensor.display(run=run)
+
+
     def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1, scaling=1):
         """Function for setting up the diffusion tensor.
 
@@ -171,8 +269,8 @@ class Diffusion_tensor:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor("
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "diffusion_tensor.set("
             text = text + "run=" + `run`
             text = text + ", params=" + `params`
             text = text + ", time_scale=" + `time_scale`
@@ -227,4 +325,4 @@ class Diffusion_tensor:
             raise RelaxBinError, ('scaling', scaling)
 
         # Execute the functional code.
-        self.relax.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, axial_type=axial_type, fixed=fixed, scaling=scaling)
+        self.__relax__.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, axial_type=axial_type, fixed=fixed, scaling=scaling)

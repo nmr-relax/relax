@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+from copy import deepcopy
 from math import cos, pi, sin
 from Numeric import Float64, array
 
@@ -31,6 +32,29 @@ class Diffusion_tensor:
         self.relax = relax
 
 
+    def copy(self, run1=None, run2=None):
+        """Function for copying diffusion tensor data from run1 to run2."""
+
+        # Test if run1 exists.
+        if not run1 in self.relax.data.run_names:
+            raise RelaxNoRunError, run1
+
+        # Test if run2 exists.
+        if not run2 in self.relax.data.run_names:
+            raise RelaxNoRunError, run2
+
+        # Test if run1 contains diffusion tensor data.
+        if not self.relax.data.diff.has_key(run1):
+            raise RelaxNoTensorError, run1
+
+        # Test if run2 contains diffusion tensor data.
+        if self.relax.data.diff.has_key(run2):
+            raise RelaxTensorError, run2
+
+        # Copy the data.
+        self.relax.data.diff[run2] = deepcopy(self.relax.data.diff[run1])
+
+
     def data_names(self):
         """Function for returning a list of names of data structures associated with the sequence."""
 
@@ -40,7 +64,92 @@ class Diffusion_tensor:
         return names
 
 
-    def set(self, run, params, time_scale, d_scale, angle_units, param_types, axial_type, fixed, scaling):
+    def delete(self, run=None):
+        """Function for deleting diffusion tensor data."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if diffusion tensor data for the run exists.
+        if not self.relax.data.diff.has_key(run):
+            raise RelaxNoTensorError, run
+
+        # Delete the diffusion data.
+        del(self.relax.data.diff[run])
+
+        # Clean up the runs.
+        self.relax.generic.delete.clean_runs()
+
+
+    def display(self, run=None):
+        """Function for displaying the diffusion tensor."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if diffusion tensor data for the run exists.
+        if not self.relax.data.diff.has_key(run):
+            raise RelaxNoTensorError, run
+
+        # Isotropic diffusion.
+        if self.relax.data.diff[run].type == 'iso':
+            # Tensor type.
+            print "Type:  Isotropic diffusion"
+
+            # Parameters.
+            print "\nParameters {tm}."
+            print "tm (s):  " + `self.relax.data.diff[run].tm`
+
+            # Alternate parameters.
+            print "\nAlternate parameters {Diso}."
+            print "Diso (1/s):  " + `self.relax.data.diff[run].Diso`
+
+            # Fixed flag.
+            print "\nFixed:  " + `self.relax.data.diff[run].fixed`
+
+        # Anisotropic diffusion.
+        elif self.relax.data.diff[run].type == 'axial':
+            # Tensor type.
+            print "Type:  Axially symmetric anisotropic diffusion"
+
+            # Parameters.
+            print "\nParameters {Dpar, Dper, theta, phi}."
+            print "Dpar (1/s):  " + `self.relax.data.diff[run].Dpar`
+            print "Dper (1/s):  " + `self.relax.data.diff[run].Dper`
+            print "theta (rad):  " + `self.relax.data.diff[run].theta`
+            print "phi (rad):  " + `self.relax.data.diff[run].phi`
+
+            # Alternate parameters.
+            print "\nAlternate parameters {tm, Dratio, theta, phi}."
+            print "tm (s):  " + `self.relax.data.diff[run].tm`
+            print "Dratio:  " + `self.relax.data.diff[run].Dratio`
+            print "theta (rad):  " + `self.relax.data.diff[run].theta`
+            print "phi (rad):  " + `self.relax.data.diff[run].phi`
+
+            # Fixed flag.
+            print "\nFixed:  " + `self.relax.data.diff[run].fixed`
+
+        # Anisotropic diffusion.
+        elif self.relax.data.diff[run].type == 'aniso':
+            # Tensor type.
+            print "Type:  Anisotropic diffusion"
+
+            # Parameters.
+            print "\nParameters {Dx, Dy, Dz, alpha, beta, gamma}."
+            print "Dx (1/s):  " + `self.relax.data.diff[run].Dx`
+            print "Dy (1/s):  " + `self.relax.data.diff[run].Dy`
+            print "Dz (1/s):  " + `self.relax.data.diff[run].Dz`
+            print "alpha (rad):  " + `self.relax.data.diff[run].alpha`
+            print "beta (rad):  " + `self.relax.data.diff[run].beta`
+            print "gamma (rad):  " + `self.relax.data.diff[run].gamma`
+
+            # Fixed flag.
+            print "\nFixed:  " + `self.relax.data.diff[run].fixed`
+
+
+    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1, scaling=1):
         """Function for setting up the diffusion tensor."""
 
         # Arguments.

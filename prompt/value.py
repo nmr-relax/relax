@@ -39,6 +39,52 @@ class Value:
         self.__relax__ = relax
 
 
+    def display(self, run=None, data_type=None):
+        """Function for displaying residue specific data values.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        data_type:  The data type.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will display the residue specific data values for the given run.  The
+        data type argument can only be a single string.
+
+
+        Examples
+        ~~~~~~~~
+
+        To show all CSA values for the run 'm1', type:
+
+        relax> value.display('m1', 'CSA')
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "value.display("
+            text = text + "run=" + `run`
+            text = text + ", data_type=" + `data_type` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Data type.
+        if type(data_type) != str:
+            raise RelaxStrError, ('data type', data_type)
+
+        # Execute the functional code.
+        self.__relax__.generic.value.display(run=run, data_type=data_type)
+
+
     def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
         """Function for setting residue specific data values.
 
@@ -108,25 +154,6 @@ class Value:
         |   n   |   n   | Each data type matching the strings will be set to the corresponding     |
         |       |       | number.  Both arrays must be of equal length.                            |
         |_______|_______|__________________________________________________________________________|
-
-
-        The python function 'match', which uses regular expression, is used to determine which data
-        type to set values to, therefore various data_type strings can be used to select the same
-        data type.  Patterns used for matching for specific data types are listed below.  Regular
-        expression is also used in residue name and number selections, except this time the user
-        supplies the regular expression string.
-
-        This is a short description of python regular expression, for more information, see the
-        regular expression syntax section of the Python Library Reference.  Some of the regular
-        expression syntax used in this function is:
-
-            [] - A sequence or set of characters to match to a single character.  For example,
-            '[Ss]2' will match both 'S2' and 's2'.
-
-            ^ - Match the start of the string.
-
-            $ - Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
-            or 's2s'.
 
 
         Residue number and name argument.
@@ -248,7 +275,111 @@ class Value:
         self.__relax__.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num, res_name=res_name)
 
 
-    # Modify the docstring of the set method to include the docstring of the model-free specific function get_data_name.
-    ####################################################################################################################
+    def write(self, run=None, data_type=None, file=None, dir=None, force=0):
+        """Function for writing residue specific data values to a file.
 
-    set.__doc__ = set.__doc__ + "\n\n" + Model_free.get_data_name.__doc__ + "\n" + Model_free.default_value.__doc__ + "\n"
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        data_type:  The data type.
+
+        file:  The name of the file.
+
+        dir:  The directory name.
+
+        force:  A flag which, if set to 1, will cause the file to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If no directory name is given, the file will be placed in the current working directory.
+        The data type argument can only be a single string.
+
+
+        Examples
+        ~~~~~~~~
+
+        To write the CSA values for the run 'm1' to the file 'csa.txt', type:
+
+        relax> value.write('m1', 'CSA', 'csa.txt')
+        relax> value.write(run='m1', data_type='CSA', file='csa.txt')
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "value.write("
+            text = text + "run=" + `run`
+            text = text + ", data_type=" + `data_type`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Data type.
+        if type(data_type) != str:
+            raise RelaxStrError, ('data type', data_type)
+
+        # File.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The force flag.
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
+
+        # Execute the functional code.
+        self.__relax__.generic.value.write(run=run, data_type=data_type, file=file, dir=dir, force=force)
+
+
+    # Docstring modification.
+    #########################
+
+    re = """
+        Regular expression
+        ~~~~~~~~~~~~~~~~~~
+
+        The python function 'match', which uses regular expression, is used to determine which data
+        type to set values to, therefore various data_type strings can be used to select the same
+        data type.  Patterns used for matching for specific data types are listed below.  Regular
+        expression is also used in residue name and number selections, except this time the user
+        supplies the regular expression string.
+
+        This is a short description of python regular expression, for more information, see the
+        regular expression syntax section of the Python Library Reference.  Some of the regular
+        expression syntax used in this function is:
+
+            [] - A sequence or set of characters to match to a single character.  For example,
+            '[Ss]2' will match both 'S2' and 's2'.
+
+            ^ - Match the start of the string.
+
+            $ - Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
+            or 's2s'.
+
+    """
+
+    # Display function.
+    display.__doc__ = display.__doc__ + "\n\n" + re + "\n"
+    display.__doc__ = display.__doc__ + Model_free.get_data_name.__doc__ + "\n"
+
+    # Set function.
+    set.__doc__ = set.__doc__ + "\n\n" + re + "\n"
+    set.__doc__ = set.__doc__ + Model_free.get_data_name.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Model_free.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n"
+
+    # Write function.
+    write.__doc__ = write.__doc__ + "\n\n" + re + "\n"
+    write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n"

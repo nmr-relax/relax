@@ -53,7 +53,6 @@ class Delete:
         Valid data types include:
             None:  All data.
             res:  All residue specific data.
-            diff:  All diffusion tensor data.
         """
 
         # Function intro text.
@@ -64,8 +63,8 @@ class Delete:
             print text
 
         # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        if run != None and type(run) != str:
+            raise RelaxNoneStrError, ('run', run)
 
         # Data_type.
         if data_type != None and type(data_type) != str:

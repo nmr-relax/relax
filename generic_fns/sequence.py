@@ -110,7 +110,7 @@ class Sequence:
         # Delete the data.
         del(self.relax.data.res[run])
 
-        # Clean run.
+        # Clean up the runs.
         self.relax.generic.delete.clean_runs()
 
 

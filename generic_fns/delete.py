@@ -32,7 +32,7 @@ class Delete:
         """Function for deleting the data out of a file."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if run != None and not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
         # Run argument.
@@ -45,21 +45,35 @@ class Delete:
         self.data_type = data_type
 
         # Define the different classes of data type.
-        valid_types = [None, 'res', 'diff']
+        valid_types = [None, 'res']
 
         # Check the validity of the data type argument.
         if not self.data_type in valid_types:
             raise RelaxError, "The data type argument " + `self.data_type` + " is invalid and should be one of " + `valid_types` + "."
 
-        # Loop over the runs.
-        for run in self.runs:
-            # Delete the diffusion data.
-            if self.data_type == 'diff' or (self.data_type == None and self.relax.data.diff.has_key(run)):
-                del(self.relax.data.diff[run])
-
-            # Delete the residue specific data.
-            if self.data_type == 'res' or (self.data_type == None and self.relax.data.res.has_key(run)):
+        # Delete the residue specific data.
+        if self.data_type == 'res' or (self.data_type == None and self.relax.data.res.has_key(run)):
+            # Loop over the runs.
+            for run in self.runs:
                 del(self.relax.data.res[run])
+
+        # Delete all data.
+        if self.data_type == None:
+            # Find out if any data in 'self.relax.data' is assigned to a run.
+            for name in dir(self.relax.data):
+                # Get the object.
+                object = getattr(self.relax.data, name)
+
+                # Skip to the next data structure if the object is not a dictionary.
+                if not hasattr(object, 'keys'):
+                    continue
+
+                # Loop over the runs.
+                for run in self.runs:
+                    # Delete the data if the object contains the key 'run'.
+                    if object.has_key(run):
+                        del(object[run])
+
 
         # Clean up the runs, ie delete any runs for which there is no data left.
         self.clean_runs()
@@ -73,7 +87,7 @@ class Delete:
 
         # Find out if any data in 'self.relax.data' is assigned to a run.
         for name in dir(self.relax.data):
-            # Get the data and check that it is a dictionary.
+            # Skip to the next data structure if the object is not a dictionary.
             object = getattr(self.relax.data, name)
             if not hasattr(object, 'keys'):
                 continue

@@ -117,6 +117,10 @@ class Specific_setup:
         if self.function_type == 'read':
             return self.relax.specific.model_free.read_results
 
+        # Value and error returning function.
+        if self.function_type == 'return_value':
+            return self.relax.specific.model_free.return_value
+
         # Set function.
         if self.function_type == 'set':
             return self.relax.specific.model_free.set
@@ -140,6 +144,10 @@ class Specific_setup:
         # Data names function.
         if self.function_type == 'data_names':
             return self.relax.specific.relax_data.data_names
+
+        # Value and error returning function.
+        if self.function_type == 'return_value':
+            return self.relax.specific.relax_data.return_value
 
 
     def seq_funcs(self):

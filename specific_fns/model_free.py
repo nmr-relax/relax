@@ -556,8 +556,8 @@ class Model_free:
 
     def default_value(self, param):
         """
-
-        The default values are as follows:
+        Model-free default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
 
         _______________________________________________________________________________________
         |                                       |              |                              |
@@ -587,6 +587,7 @@ class Model_free:
         |                                       |              |                              |
         | Local tm                              | tm           | 10 * 1e-9                    |
         |_______________________________________|______________|______________________________|
+
         """
 
         # Bond length.
@@ -647,6 +648,9 @@ class Model_free:
 
                 # Delete the data.
                 delattr(data, name)
+
+        # Clean up the runs.
+        self.relax.generic.delete.clean_runs()
 
 
     def determine_param_set_type(self):
@@ -846,13 +850,8 @@ class Model_free:
 
     def get_data_name(self, name):
         """
-        Model-free data type string matching patterns.
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        Setting a parameter value may have no effect depending on which model-free model is chosen,
-        for example if S2f values and S2s values are set but the run corresponds to model-free model
-        'm4' then, because these data values are not parameters of the model, they will have no
-        effect.
+        Model-free data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
         |                        |              |                                                  |
@@ -889,8 +888,6 @@ class Model_free:
         | Local tm               | tm           | '^tm$'                                           |
         |________________________|______________|__________________________________________________|
 
-        Note that the Rex values are scaled quadratically with field strength and should be supplied
-        as the value for the first given field strength.
         """
 
         # Bond length.
@@ -2162,6 +2159,34 @@ class Model_free:
             self.relax.data.res[run][index].warning = warning
 
 
+    def return_value(self, run, i, data_type):
+        """Function for returning the value and error corresponding to 'data_type'."""
+
+        # Arguments.
+        self.run = run
+
+        # Get the object.
+        object_name = self.get_data_name(data_type)
+        if not object_name:
+            raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
+        object_error = object_name + "_error"
+
+        # Get the value.
+        if hasattr(self.relax.data.res[self.run][i], object_name):
+            value = getattr(self.relax.data.res[self.run][i], object_name)
+        else:
+            value = None
+
+        # Get the error.
+        if hasattr(self.relax.data.res[self.run][i], object_error):
+            error = getattr(self.relax.data.res[self.run][i], object_error)
+        else:
+            error = None
+
+        # Return the data.
+        return value, error
+
+
     def select(self, run=None, model=None, scaling=1, res_num=None):
         """Function for the selection of a preset model-free model."""
 
@@ -2449,7 +2474,19 @@ class Model_free:
 
 
     def set(self, run, value, data_type, index):
-        """The function for setting model-free residue specific data values."""
+        """
+        Model-free set details
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+        Setting a parameter value may have no effect depending on which model-free model is chosen,
+        for example if S2f values and S2s values are set but the run corresponds to model-free model
+        'm4' then, because these data values are not parameters of the model, they will have no
+        effect.
+
+        Note that the Rex values are scaled quadratically with field strength and should be supplied
+        as the value for the first given field strength.
+
+        """
 
         # Arguments.
         self.run = run
@@ -2477,6 +2514,8 @@ class Model_free:
             for i in xrange(len(self.relax.data.res[self.run][index].params)):
                 # Get the object.
                 object_name = self.get_data_name(self.relax.data.res[self.run][index].params[i])
+                if not object_name:
+                    raise RelaxError, "The model-free data type " + `self.relax.data.res[self.run][index].params[i]` + " does not exist."
 
                 # Initialise all data if it doesn't exist.
                 if not hasattr(self.relax.data.res[self.run][index], object_name):
@@ -2492,6 +2531,8 @@ class Model_free:
         else:
             # Get the object.
             object_name = self.get_data_name(data_type)
+            if not object_name:
+                raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
 
             # Initialise all data if it doesn't exist.
             if not hasattr(self.relax.data.res[self.run][index], object_name):

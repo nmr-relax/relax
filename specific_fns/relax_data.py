@@ -263,6 +263,9 @@ class Rx_data:
                 if data.noe_r1_table[j] > index:
                     data.noe_r1_table[j] = data.noe_r1_table[j] - 1
 
+        # Clean up the runs.
+        self.relax.generic.delete.clean_runs()
+
 
     def display(self, run=None, ri_label=None, frq_label=None):
         """Function for displaying relaxation data corresponding to ri_label and frq_label."""
@@ -285,7 +288,7 @@ class Rx_data:
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Print the data.
-        self.write_data(sys.stdout)
+        self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), sys.stdout, return_value=self.return_value)
 
 
     def find_index(self, data):
@@ -378,6 +381,31 @@ class Rx_data:
 
             # Update all data structures.
             self.update_data_structures(data, value, error)
+
+
+    def return_value(self, run, i, data_type):
+        """Function for returning the value and error corresponding to 'data_type'."""
+
+        # Arguments.
+        self.run = run
+
+        # Unpack the data_type tuple.
+        self.ri_label, self.frq_label = data_type
+
+        # Initialise.
+        value = None
+        error = None
+
+        # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+        index = self.find_index(self.relax.data.res[self.run][i])
+
+        # Get the data.
+        if index != None:
+            value = self.relax.data.res[self.run][i].relax_data[index]
+            error = self.relax.data.res[self.run][i].relax_error[index]
+
+        # Return the data.
+        return value, error
 
 
     def test_labels(self, run):
@@ -486,42 +514,7 @@ class Rx_data:
         relax_file = self.relax.file_ops.open_write_file(file, dir, force)
 
         # Write the data.
-        self.write_data(relax_file)
+        self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), relax_file, return_value=self.return_value)
 
         # Close the file.
         relax_file.close()
-
-
-    def write_data(self, file):
-        """Function for writing the relaxation data."""
-
-        # Write a header line.
-        file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
-            data = self.relax.data.res[self.run][i]
-
-            # Write the residue number.
-            file.write("%-5i" % data.num)
-
-            # Write the residue name.
-            file.write("%-6s" % data.name)
-
-            # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
-            index = self.find_index(data)
-
-            # Skip the residue if data does not exist.
-            if index == None:
-                file.write("\n")
-                continue
-
-            # Write the relaxation value.
-            file.write("%-30s" % `data.relax_data[index]`)
-
-            # Write the relaxation error.
-            file.write("%-30s" % `data.relax_error[index]`)
-
-            # End of the line.
-            file.write("\n")

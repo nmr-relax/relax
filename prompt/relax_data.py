@@ -425,7 +425,7 @@ class Relax_data:
 
         # File.
         if file != None and type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxNoneStrError, ('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
