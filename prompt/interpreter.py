@@ -39,8 +39,6 @@ from tab_completion import Tab_completion
 
 # User functions.
 from angles import Angles
-from create_run import Create_run
-from delete import Delete
 from dx import OpenDX
 from eliminate import Eliminate
 from fix import Fix
@@ -63,6 +61,7 @@ from noe import Noe
 from palmer import Palmer
 from relax_data import Relax_data
 from relax_fit import Relax_fit
+from run import Run
 from select import Select
 from sequence import Sequence
 from state import State
@@ -94,8 +93,6 @@ class Interpreter:
 
         # Place the user functions into the namespace of the interpreter class.
         self._Angles = Angles(relax)
-        self._Create_run = Create_run(relax)
-        self._Delete = Delete(relax)
         self._Eliminate = Eliminate(relax)
         self._Fix = Fix(relax)
         self._GPL = GPL
@@ -120,6 +117,7 @@ class Interpreter:
         self._Palmer = Palmer(relax)
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
+        self._Run = Run(relax)
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
         self._State = State(relax)
@@ -153,8 +151,6 @@ class Interpreter:
         # Place the user functions in the local namespace.
         angles = self._Angles.angles
         calc = self._Minimisation.calc
-        create_run = self._Create_run.create
-        delete = self._Delete.delete
         eliminate = self._Eliminate.eliminate
         fix = self._Fix.fix
         grid_search = self._Minimisation.grid_search
@@ -178,6 +174,7 @@ class Interpreter:
         palmer = self._Palmer
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
+        run = self._Run
         select = self._Select
         sequence = self._Sequence
         state = self._State
@@ -309,7 +306,7 @@ def interact_script(self, intro, local, script_file, quit):
 
     # Print the program introduction.
     if intro:
-        self.write("%s\n" % intro)
+        sys.stdout.write("%s\n" % intro)
 
     # Turn the intro flag on so functions will print their intro strings.
     local['self'].intro = 1
@@ -334,12 +331,12 @@ def interact_script(self, intro, local, script_file, quit):
     try:
         execfile(script_file, local)
     except KeyboardInterrupt:
-        sys.stdout.write("\nScript execution cancelled.\n")
+        sys.stderr.write("\nScript execution cancelled.\n")
     except AllRelaxErrors, instance:
         if Debug:
             self.showtraceback()
         else:
-            sys.stdout.write(instance.__str__())
+            sys.stderr.write(instance.__str__())
     except:
         raise
 

@@ -354,32 +354,34 @@ class Rx_data:
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file, dir)
+        if not file_data:
+            # Extract.
+            file_data = self.relax.IO.extract_data(file, dir)
 
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
+            # Count the number of header lines.
+            header_lines = 0
+            for i in xrange(len(file_data)):
+                try:
+                    int(file_data[i][num_col])
+                except:
+                    header_lines = header_lines + 1
+                else:
+                    break
 
-        # Remove the header.
-        file_data = file_data[header_lines:]
+            # Remove the header.
+            file_data = file_data[header_lines:]
 
-        # Strip the data.
-        file_data = self.relax.file_ops.strip(file_data)
+            # Strip the data.
+            file_data = self.relax.IO.strip(file_data)
 
-        # Test the validity of the relaxation data.
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-                eval(file_data[i][data_col])
-                eval(file_data[i][error_col])
-            except ValueError:
-                raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+            # Test the validity of the relaxation data.
+            for i in xrange(len(file_data)):
+                try:
+                    int(file_data[i][num_col])
+                    eval(file_data[i][data_col])
+                    eval(file_data[i][error_col])
+                except ValueError:
+                    raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
 
 
         # Global (non-residue specific) data.
@@ -633,7 +635,7 @@ class Rx_data:
             file = self.ri_label + "." + self.frq_label + ".out"
 
         # Open the file for writing.
-        relax_file = self.relax.file_ops.open_write_file(file, dir, force)
+        relax_file = self.relax.IO.open_write_file(file, dir, force)
 
         # Write the data.
         self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), relax_file, return_value=self.return_value)

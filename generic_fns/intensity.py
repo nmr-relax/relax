@@ -111,13 +111,13 @@ class Intensity:
             raise RelaxNoSequenceError, self.run
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file, dir)
+        file_data = self.relax.IO.extract_data(file, dir)
 
         # Remove the header.
         file_data = file_data[2:]
 
         # Strip the data.
-        file_data = self.relax.file_ops.strip(file_data)
+        file_data = self.relax.IO.strip(file_data)
 
         # The peak intensity column.
         if self.format == 'sparky':

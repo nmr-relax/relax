@@ -33,26 +33,63 @@ except ImportError, message:
 # Gzip compression module.
 from gzip import GzipFile
 
-from os import F_OK, access, makedirs, mkdir, remove, stat
+from os import F_OK, access, mkdir, remove, stat
 from os.path import expanduser
 from re import match, search
 from string import split
+import sys
+from sys import stdin, stdout, stderr
 
 
-class File_ops:
+class IO:
     def __init__(self, relax):
-        """Class containing the file operations"""
+        """Class containing the file operations.
+        
+        IO streams
+        ~~~~~~~~~~
+
+        Standard python IO streams:
+
+        sys.stdin  = self.python_stdin
+        sys.stdout = self.python_stdout
+        sys.stderr = self.python_stderr
+
+        Logging IO streams:
+
+        sys.stdin  = self.log_stdin  = self.python_stdin
+        sys.stdout = self.log_stdout = self.log_file
+        sys.stderr = self.log_stdout = (self.python_stderr, self.log_file)
+
+        Tee IO streams:
+
+        sys.stdin  = self.tee_stdin  = self.python_stdin
+        sys.stdout = self.tee_stdout = (self.python_stdout, self.tee_file)
+        sys.stderr = self.tee_stdout = (self.python_stderr, self.tee_file)
+        """
 
         self.relax = relax
+
+        # Standard python IO streams.
+        self.python_stdin  = stdin
+        self.python_stdout = stdout
+        self.python_stderr = stderr
+
+        # Logging IO streams.
+        self.log_stdin  = stdin
+        self.log_stdout = None
+        self.log_stderr = SplitIO()
+
+        # Tee IO streams.
+        self.tee_stdin  = stdin
+        self.tee_stdout = SplitIO()
+        self.tee_stderr = SplitIO()
 
 
     def delete(self, file_name=None, dir=None):
         """Function for deleting the given file."""
 
         # File path.
-        file_path = file_name
-        if dir:
-            file_path = expanduser(dir + '/' + file_path)
+        file_path = self.file_path(file_name, dir)
 
         # Test if the file exists and determine the compression type.
         if access(file_path, F_OK):
@@ -89,22 +126,78 @@ class File_ops:
         file.close()
 
 
-    def mkdir(self, dir):
+    def file_path(self, file_name=None, dir=None):
+        """Generate and expand the full file path."""
+
+        # File name.
+        file_path = file_name
+
+        # Add the directory.
+        if dir:
+            file_path = dir + '/' + file_path
+
+        # Expand any ~ characters.
+        file_path = expanduser(file_path)
+
+        # Return the file path.
+        return file_path
+
+
+    def log(self, file_name=None, dir=None, compress_type=0):
+        """Function for turning logging on."""
+
+        # Log file.
+        self.log_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, return_path=1)
+
+        # Print out.
+        print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
+        print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
+        print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
+
+        # Set the logging IO streams.
+        self.log_stdout = self.log_file
+        self.log_stderr.split(self.python_stderr, self.log_file)
+
+        # IO stream redirection.
+        sys.stdin  = self.log_stdin 
+        sys.stdout = self.log_stdout
+        sys.stderr = self.log_stderr
+
+
+    def logging_off(self, file_name=None, dir=None):
+        """Function for turning logging and teeing off."""
+
+        # Print out.
+        print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
+        print "Redirecting the sys.stdout IO stream to the standard python stdout IO stream."
+        print "Redirecting the sys.stderr IO stream to the standard python stderr IO stream."
+
+        # IO stream redirection.
+        sys.stdin  = self.python_stdin 
+        sys.stdout = self.python_stdout
+        sys.stderr = self.python_stderr
+
+
+    def mkdir(self, dir=None, print_flag=1):
         """Create the given directory, or exit if the directory exists."""
 
+        # No directory given.
+        if dir == None:
+            return
+
+        # Make the directory.
         try:
             mkdir(dir)
         except OSError:
-            print "Directory ./" + dir + " already exists.\n"
+            if print_flag:
+                print "Directory ./" + dir + " already exists.\n"
 
 
     def open_read_file(self, file_name=None, dir=None, compress_type=0, print_flag=1):
         """Open the file 'file' and return all the data."""
 
         # File path.
-        file_path = file_name
-        if dir:
-            file_path = expanduser(dir + '/' + file_path)
+        file_path = self.file_path(file_name, dir)
 
         # Test if the file exists and determine the compression type.
         if access(file_path, F_OK):
@@ -142,29 +235,28 @@ class File_ops:
         return file
 
 
-    def open_write_file(self, file_name=None, dir=None, force=0, compress_type=0, print_flag=1):
+    def open_write_file(self, file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
         """Function for opening a file for writing and creating directories if necessary."""
 
         # Create the directories.
-        if dir:
-            try:
-                makedirs(dir)
-            except OSError:
-                pass
+        self.mkdir(dir, print_flag=0)
 
         # File path.
-        file_path = file_name
-        if dir:
-            file_path = expanduser(dir + '/' + file_path)
+        file_path = self.file_path(file_name, dir)
 
-        # File extension.
+        # Bzip2 compression.
         if compress_type == 1 and not search('.bz2$', file_path):
+            # Bz2 module exists.
             if bz2_module:
                 file_path = file_path + '.bz2'
+
+            # Switch to gzip compression.
             else:
                 print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
-                file_path = file_path + '.gz'
-        elif compress_type == 2 and not search('.gz$', file_path):
+                compress_type = 2
+
+        # Gzip compression.
+        if compress_type == 2 and not search('.gz$', file_path):
             file_path = file_path + '.gz'
 
         # Fail if the file already exists and the force flag is set to 0.
@@ -177,26 +269,84 @@ class File_ops:
                 print "Opening the file " + `file_path` + " for writing."
             if compress_type == 0:
                 file = open(file_path, 'w')
-            elif compress_type == 1 and bz2_module:
+            elif compress_type == 1:
                 file = BZ2File(file_path, 'w')
-            elif compress_type == 2 or not bz2_module:
+            elif compress_type == 2:
                 file = GzipFile(file_path, 'w')
         except IOError, message:
             raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
 
         # Return the opened file.
-        return file
+        if return_path:
+            return file, file_path
+        else:
+            return file
 
 
     def strip(self, data):
-        """Function to remove all comment and empty lines from the data data structure."""
+        """Function to remove all comment and empty lines from the file data structure."""
 
+        # Initialise the new data array.
         new = []
+
+        # Loop over the data.
         for i in xrange(len(data)):
+            # Empty lines.
             if len(data[i]) == 0:
                 continue
+
+            # Comment lines.
             elif match("#", data[i][0]):
                 continue
+
+            # Data lines.
             else:
                 new.append(data[i])
+
+        # Return the new data structure.
         return new
+
+
+    def tee(self, file_name=None, dir=None, compress_type=0):
+        """Function for turning logging on."""
+
+        # Tee file.
+        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, return_path=1)
+
+        # Print out.
+        print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
+        print "Redirecting the sys.stdout IO stream to both the standard python stdout IO stream and the log file '%s'." % file_path
+        print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
+
+        # Set the tee IO streams.
+        self.tee_stdout.split(self.python_stdout, self.tee_file)
+        self.tee_stderr.split(self.python_stderr, self.tee_file)
+
+        # IO stream redirection.
+        sys.stdin  = self.tee_stdin 
+        sys.stdout = self.tee_stdout
+        sys.stderr = self.tee_stderr
+
+
+
+class SplitIO:
+    def __init__(self):
+        """Class for splitting an IO stream to two outputs."""
+
+
+    def split(self, stream1, stream2):
+        """Function for setting the streams."""
+
+        # Arguments.
+        self.stream1 = stream1
+        self.stream2 = stream2
+
+
+    def write(self, text):
+        """Replacement write function."""
+
+        # Write to stream1.
+        self.stream1.write(text)
+
+        # Write to stream2.
+        self.stream2.write(text)

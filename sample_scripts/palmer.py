@@ -21,7 +21,7 @@ def exec_stage_1(runs):
     for run in runs:
         # Create the run.
         print "\n\n# " + run + " #"
-        create_run(run, 'mf')
+        run.create(run, 'mf')
 
         # Load the sequence.
         sequence.read(run, 'noe.500.out')
@@ -76,7 +76,7 @@ def exec_stage_2(runs):
 
     # Create the model selection run.
     run = 'aic'
-    create_run(run, 'mf')
+    run.create(run, 'mf')
 
     # Model selection.
     model_selection(method='AIC', modsel_run=run)

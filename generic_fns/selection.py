@@ -84,10 +84,10 @@ class Selection:
         """Function for selecting the residues contained in a file."""
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file, dir)
+        file_data = self.relax.IO.extract_data(file, dir)
 
         # Strip the data.
-        file_data = self.relax.file_ops.strip(file_data)
+        file_data = self.relax.IO.strip(file_data)
 
         # Create the list of residues to select.
         select = []
@@ -221,10 +221,10 @@ class Selection:
         """Function for unselecting the residues contained in a file."""
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file, dir)
+        file_data = self.relax.IO.extract_data(file, dir)
 
         # Strip the data.
-        file_data = self.relax.file_ops.strip(file_data)
+        file_data = self.relax.IO.strip(file_data)
 
         # Create the list of residues to unselect.
         unselect = []

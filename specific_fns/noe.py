@@ -355,7 +355,7 @@ class Noe:
             raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
-        noe_file = self.relax.file_ops.open_write_file(file, dir, force)
+        noe_file = self.relax.IO.open_write_file(file, dir, force)
 
         # Write the data.
         self.relax.generic.value.write_data(self.run, None, noe_file, return_value=self.return_value)

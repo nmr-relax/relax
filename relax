@@ -57,7 +57,7 @@ except ImportError:
 
 # Command line option parser.
 try:
-    from optparse import OptionParser
+    from optparse import Option, OptionParser
 except ImportError:
     sys.stderr.write("The dependency 'Optik' has not been installed.\n")
     sys.exit()
@@ -65,7 +65,7 @@ except ImportError:
 # relax modules.
 from data import Data
 from errors import RelaxErrors
-from file_ops import File_ops
+from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
@@ -84,17 +84,14 @@ class Relax:
         # Set up the program internal errors.
         RelaxErrors()
 
-        # Create a string to pass to the interpreter to print.
-        self.set_intro_string()
-
-        # Debugging option set by the command line argument '--debug', 0 = off, 1 = on.
+        # Debugging flag (default is off).
         __builtin__.Debug = 0
 
         # The program data storage object.
         self.data = Data()
 
         # File operation functions.
-        self.file_ops = File_ops(self)
+        self.IO = IO(self)
 
         # Setup the specific setup object.
         self.specific_setup = Specific_setup(self)
@@ -106,12 +103,28 @@ class Relax:
         self.specific = Specific(self)
 
         # Process the command line arguments and determine the relax mode.
-        mode = self.arguments()
+        mode, log_file, tee_file = self.arguments()
+
+        # Logging.
+        if log_file:
+            self.IO.log(log_file)
+
+        # Tee.
+        elif tee_file:
+            self.IO.tee(tee_file)
 
         # Run the interpreter for the prompt or script modes.
         if mode == 'prompt' or mode == 'script':
+            # Create a string to pass to the interpreter to print.
+            self.set_intro_string()
+
+            # Run the interpreter.
             self.interpreter = Interpreter(self)
             self.interpreter.run()
+
+        # Threading mode.
+        elif mode == 'thread':
+            self.generic.threading.execute()
 
         # Test mode.
         elif mode == 'test':
@@ -126,11 +139,12 @@ class Relax:
         """Function for processing the command line arguments."""
 
         # Parser object.
-        parser = OptionParser(usage="usage: %prog [options] [script_file]", version="%prog unknown")
+        parser = RelaxParser(self, usage="usage: %prog [options] [script_file]", version="%prog unknown")
 
         # Recognised command line options.
         parser.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
-        parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output, not implemented yet')
+        parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
+        parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to sdtout and the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (a user should not invoke this mode)')
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
@@ -144,7 +158,25 @@ class Relax:
 
         # Logging.
         if options.log:
-            parser.error("not implemented yet")
+            # Exclusive modes.
+            if options.tee:
+                parser.error("the logging and tee options cannot be set simultaneously")
+
+            # The log file.
+            log_file = options.log
+        else:
+            log_file = None
+
+        # Tee.
+        if options.tee:
+            # Exclusive modes.
+            if options.log:
+                parser.error("the tee and logging options cannot be set simultaneously")
+
+            # The tee file.
+            tee_file = options.tee
+        else:
+            tee_file = None
 
         # Number of positional arguements should only be 0 or 1.  1 should be the script file.
         if len(args) > 1:
@@ -175,26 +207,22 @@ class Relax:
             elif options.licence:
                 parser.error("the relax modes test and licence are mutually exclusive")
 
-            # Return the mode.
-            return 'test'
+            # Set the mode.
+            mode = 'test'
 
         # Threaded mode.
-        if options.thread:
-            # Make sure no script is supplied.
-            if self.script_file:
-                parser.error("a script should not be supplied in test mode")
-
+        elif options.thread:
             # Exclusive modes.
             if options.test:
                 parser.error("the relax modes thread and test are mutually exclusive")
             elif options.licence:
                 parser.error("the relax modes thread and licence are mutually exclusive")
 
-            # Return the mode.
-            return 'thread'
+            # Set the mode.
+            mode = 'thread'
 
         # Licence mode.
-        if options.licence:
+        elif options.licence:
             # Make sure no script is supplied.
             if self.script_file:
                 parser.error("a script should not be supplied in test mode")
@@ -205,15 +233,19 @@ class Relax:
             elif options.thread:
                 parser.error("the relax modes licence and thread are mutually exclusive")
 
-            # Return the mode.
-            return 'licence'
+            # Set the mode.
+            mode = 'licence'
 
         # Script mode.
-        if self.script_file:
-            return 'script'
+        elif self.script_file:
+            mode = 'script'
 
         # Prompt mode (default).
-        return 'prompt'
+        else:
+            mode = 'prompt'
+
+        # Return.
+        return mode, log_file, tee_file
 
 
     def licence(self):
@@ -247,6 +279,33 @@ can be accessed by typing 'help'.
 
         # Don't actually do anything.
         return
+
+
+class RelaxParser(OptionParser):
+    def __init__(self, relax, usage=None, option_list=None, option_class=Option, version=None, conflict_handler="error", description=None, formatter=None, add_help_option=1, prog=None):
+        """Subclassed OptionParser class with a replacement error function."""
+
+        # Relax base class.
+        self.relax = relax
+
+        # Run the __init__ method of the OptionParser class.
+        OptionParser.__init__(self, usage, option_list, option_class, version, conflict_handler, description, formatter, add_help_option, prog)
+
+
+    def error(self, message):
+        """Replacement error function."""
+
+        # Usage message.
+        self.print_usage(sys.stderr)
+
+        # Raise a clean error.
+        try:
+            raise RelaxError, message
+        except AllRelaxErrors, instance:
+            sys.stderr.write(instance.__str__())
+
+        # Exit.
+        sys.exit()
 
 
 if __name__ == "__main__":

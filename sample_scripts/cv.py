@@ -27,7 +27,7 @@ for i in xrange(len(runs)):
         nuclei('N')
 
         # Create the run.
-        create_run(cv_runs[i][j], 'mf')
+        run.create(cv_runs[i][j], 'mf')
 
         # Load the sequence.
         sequence.read(cv_runs[i][j], 'noe.500.out')

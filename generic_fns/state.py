@@ -34,7 +34,7 @@ class State:
         """Function for loading a saved program state."""
 
         # Open the file for reading.
-        file = self.relax.file_ops.open_read_file(file_name=file, dir=dir, compress_type=compress_type)
+        file = self.relax.IO.open_read_file(file_name=file, dir=dir, compress_type=compress_type)
 
         # Unpickle the data class.
         self.relax.data = load(file)
@@ -47,7 +47,7 @@ class State:
         """Function for saving the program state."""
 
         # Open the file for writing.
-        file = self.relax.file_ops.open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
+        file = self.relax.IO.open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
 
         # Pickle the data class and write it to file
         dump(self.relax.data, file, 1)

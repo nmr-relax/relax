@@ -138,7 +138,7 @@ class Main:
             self.multi_model(local_tm=1)
 
             # Model selection run.
-            create_run('aic', 'mf')
+            run.create('aic', 'mf')
 
             # Model selection.
             self.model_selection(run='aic', dir=self.base_dir + 'aic')
@@ -161,7 +161,7 @@ class Main:
                 run = self.diff_model
 
                 # Create the run.
-                create_run(run, 'mf')
+                run.create(run, 'mf')
 
                 # Load the local tm diffusion model MI results.
                 read(run=run, file='results', dir='local_tm/aic')
@@ -203,11 +203,11 @@ class Main:
                 self.multi_model()
 
                 # Delete the run containing the optimised diffusion tensor.
-                delete('tensor')
+                run.delete('tensor')
 
                 # Create the final run (for model selection and final optimisation).
                 run = 'final'
-                create_run(run, 'mf')
+                run.create(run, 'mf')
 
                 # Model selection.
                 self.model_selection(run=run, dir=self.base_dir + 'aic')
@@ -231,7 +231,7 @@ class Main:
             ############################
 
             # Create the local_tm run.
-            create_run('local_tm', 'mf')
+            run.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
             read(run='local_tm', file='results', dir='local_tm/aic')
@@ -246,13 +246,13 @@ class Main:
                     continue
 
                 # Create the run.
-                create_run(model, 'mf')
+                run.create(model, 'mf')
 
                 # Load the diffusion model results.
                 read(run=model, file='results', dir=model + '/round_' + `self.round` + '/opt')
 
             # Create the run for model selection (which will be a copy of the selected diffusion model or run).
-            create_run('final', 'mf')
+            run.create('final', 'mf')
 
             # Model selection.
             self.model_selection(run='final', write_flag=0)
@@ -321,7 +321,7 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the run for the previous data.
-        create_run('tensor', 'mf')
+        run.create('tensor', 'mf')
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
@@ -360,7 +360,7 @@ class Main:
 
         for run in runs:
             # Create the run.
-            create_run(run, 'mf')
+            run.create(run, 'mf')
 
             # Load the sequence.
             sequence.read(run, 'noe.600.out')

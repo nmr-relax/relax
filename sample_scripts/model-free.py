@@ -1,8 +1,8 @@
 # Script for model-free analysis.
 
 # Create the run.
-name = 'tm4'
-create_run(name, 'mf')
+name = 'm4'
+run.create(name, 'mf')
 
 # Nuclei type
 nuclei('N')
@@ -22,7 +22,7 @@ relax_data.read(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
 relax_data.read(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
-#diffusion_tensor.set(name, 10e-9, fixed=1)
+diffusion_tensor.set(name, 10e-9, fixed=1)
 #diffusion_tensor.set(name, (2e-8, 1.3, 60, 290), param_types=1, axial_type='prolate', fixed=1)
 #diffusion_tensor.set(name, (9e-8, 0.5, 0.3, 60, 290, 100), fixed=0)
 value.set(name, 1.02 * 1e-10, 'bond_length')
@@ -49,11 +49,11 @@ grid_search(name, inc=11)
 minimise('newton', run=name)
 
 # Monte Carlo simulations.
-monte_carlo.setup(name, number=100)
-monte_carlo.create_data(name)
-monte_carlo.initial_values(name)
-minimise('newton', run=name)
-monte_carlo.error_analysis(name)
+#monte_carlo.setup(name, number=100)
+#monte_carlo.create_data(name)
+#monte_carlo.initial_values(name)
+#minimise('newton', run=name)
+#monte_carlo.error_analysis(name)
 
 # Finish.
 write(run=name, file='results', force=1)

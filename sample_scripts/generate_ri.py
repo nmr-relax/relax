@@ -48,7 +48,7 @@ def write(run):
 
 # Create the run
 run = 'test'
-create_run(run, 'mf')
+run.create(run, 'mf')
 
 # Set the nucleus type to nitrogen.
 nuclei('N')

@@ -21,7 +21,7 @@
 ###############################################################################
 
 from math import pi
-from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, mkdir, remove, spawnlp, system
+from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, spawnlp, system
 from re import match, search
 from string import split
 
@@ -63,10 +63,7 @@ class Palmer:
         # Directory creation.
         if dir == None:
             dir = run
-        try:
-            mkdir(dir)
-        except OSError:
-            pass
+        self.relax.IO.mkdir(dir, print_flag=0)
 
         # Place the arguments into 'self'.
         self.run = run

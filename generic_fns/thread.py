@@ -33,14 +33,21 @@ class Threading:
         self.relax = relax
 
 
+    def execute(self):
+        """Run relax in threading mode."""
+
+        # Execute the script.
+        execfile(self.relax.script_file)
+
+
     def read(self, file=None, dir=None):
         """Function for reading a hosts file."""
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file, dir)
+        file_data = self.relax.IO.extract_data(file, dir)
 
         # Strip data.
-        file_data = self.relax.file_ops.strip(file_data)
+        file_data = self.relax.IO.strip(file_data)
 
         # Do nothing if the file does not exist.
         if not file_data:
@@ -154,72 +161,128 @@ class Threading:
 
 
 
-class RelaxHostThread(Thread):
+class RelaxThread(Thread):
+    def __init__(self, job_queue, results_queue):
+
+        # Arguements.
+        self.job_queue = job_queue
+        self.results_queue = results_queue
+
+        # Initial killed flag.
+        self.killed = 0
+
+        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
+        Thread.__init__(self)
+
+        # Set the Thread method _Thread__stop to self.stop.
+        self._Thread__stop = self.stop
+
+
+    def run(self):
+        """Function for execution of the specific threading code."""
+
+        # Run until all results are returned.
+        try:
+            while 1:
+                # Get the data for the next queued job.
+                data = self.job_queue.get()
+
+                # Quit if the queue data is None.  None is the signal within relax for when all jobs have been completed.
+                if data == None:
+                    # Place None back into the job queue so that all the other waiting threads will terminate.
+                    self.job_queue.put(None)
+
+                    # Thread termination.
+                    break
+
+                # Run the thread specific code.
+                self.exec_thread_code(data)
+
+                # Place the results in the results queue.
+                self.results_queue.put(self.results)
+
+        # RelaxError.
+        except RelaxError, message:
+            print message
+            self.results_queue.put(RelaxError)
+
+        # KeyboardInterupt.
+        except KeyboardInterrupt:
+            self.results_queue.put(KeyboardInterrupt)
+
+        # All other errors.
+        except:
+            self.results_queue.put(Exception)
+            if not self.killed:
+                raise
+
+
+    def stop(self, killed=0):
+        """Modified stop function."""
+
+        # Set a class specific flag.
+        if killed:
+            self.killed = 1
+
+        # From the Thread class.
+        self._Thread__block.acquire()
+        self._Thread__stopped = True
+        self._Thread__block.notifyAll()
+        self._Thread__block.release()
+
+
+
+class RelaxHostThread(RelaxThread):
     def __init__(self, relax, hosts_queue, results_queue):
         """Initialisation of the thread."""
 
         # Arguments.
         self.relax = relax
-        self.job_queue = hosts_queue
-        self.results_queue = results_queue
 
-        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
-        Thread.__init__(self)
+        # Run the RelaxThread __init__ function (this is 'asserted' by the Thread class).
+        RelaxThread.__init__(self, hosts_queue, results_queue)
 
 
-    def run(self):
-        """Function for code execution."""
+    def exec_thread_code(self, data):
+        """Function containing the thread specific code.
+        
+        This code is for the testing of the hosts used in threading.
+        """
 
-        # Run until all results are returned.
-        while 1:
-            # Get the data for the next queued job.
-            data = self.job_queue.get()
+        # Expand the data structures.
+        host_data, job_index = data
+        self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = host_data
 
-            # Quit if the queue data is None.  None is the signal for when all jobs have been completed.
-            if data == None:
-                # Place None back into the job queue so that all the other waiting threads will terminate.
-                self.job_queue.put(None)
+        # Host failure flag.
+        fail = 0
 
-                # Thread termination.
-                break
+        # Text.
+        self.text = []
+        self.text.append("Host name:         " + self.host_name)
+        if self.user:
+            self.text.append("User name:         " + self.user)
+        self.text.append("Program path:      " + self.prog_path)
+        self.text.append("Working directory: " + self.swd)
+        self.text.append("Priority:          " + `self.priority`)
 
-            # Expand the data structures.
-            host_data, job_index = data
-            self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = host_data
+        # Test the SSH connection.
+        if self.host_name != 'localhost' and not fail and not self.test_ssh():
+            fail = 1
 
-            # Host failure flag.
-            fail = 0
+        # Test the working directory.
+        if not fail and not self.test_wd():
+            fail = 1
 
-            # Results.
-            self.results = []
-            self.results.append("Host name:         " + self.host_name)
-            if self.user:
-                self.results.append("User name:         " + self.user)
-            self.results.append("Program path:      " + self.prog_path)
-            self.results.append("Working directory: " + self.swd)
-            self.results.append("Priority:          " + `self.priority`)
+        # Test if relax works.
+        if not fail and not self.test_relax():
+            fail = 1
 
-            # Test the SSH connection.
-            if self.host_name != 'localhost' and not fail and not self.test_ssh():
-                print "Hello1"
-                fail = 1
+        # Host is accessible.
+        if not fail:
+            self.text.append("Host OK.")
 
-            # Test the working directory.
-            if not fail and not self.test_wd():
-                print "Hello2"
-                fail = 1
-
-            # Test if relax works.
-            if not fail and not self.test_relax():
-                print "Hello3"
-                fail = 1
-
-            # Host is accessible.
-            if not fail:
-                self.results.append("Host OK.")
-
-            # Place the results in the results queue.
-            self.results_queue.put((self.results, job_index, fail))
+        # Package the results.
+        self.results = (self.text, job_index, fail)
 
 
     def test_relax(self):
@@ -242,9 +305,9 @@ class RelaxHostThread(Thread):
         # Error. 
         if len(err):
             # Print out.
-            self.results.append("Cannot execute relax on %s using the program path %s" % (self.login, `self.prog_path`))
+            self.text.append("Cannot execute relax on %s using the program path %s" % (self.login, `self.prog_path`))
             for line in err:
-                self.results.append(line[0:-1])
+                self.text.append(line[0:-1])
 
             # Return fail.
             return 0
@@ -280,7 +343,7 @@ class RelaxHostThread(Thread):
         # Error.
         if len(err):
             # Print out.
-            self.results.append("Cannot establish a SSH connection to %s." % self.login)
+            self.text.append("Cannot establish a SSH connection to %s." % self.login)
 
             # Public key auth fail.
             key_auth = 1
@@ -288,41 +351,36 @@ class RelaxHostThread(Thread):
                 if search('Permission denied', line):
                     key_auth = 0
             if not key_auth:
-                self.results.append("Public key authenication failed.")
+                self.text.append("Public key authenication failed.")
                 return
 
             # All other errors.
             for line in err:
-                self.results.append(line[0:-1])
+                self.text.append(line[0:-1])
 
 
     def test_wd(self):
         """Function for testing if the working directory on the host machine exist."""
 
         # Test command.
-        test_cmd = "%s ls %s" % (self.login_cmd, self.swd)
+        test_cmd = "%s if test -d %s; then echo 'OK'; fi" % (self.login_cmd, self.swd)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
 
-        # Stderr.
-        err = child_stderr.readlines()
+        # Stdout.
+        out = child_stdout.readlines()
 
         # Close all pipes.
         child_stdin.close()
         child_stdout.close()
         child_stderr.close()
 
-        # Error. 
-        if len(err):
-            # Print out.
-            self.results.append("Cannot find the working directory %s on %s." % (self.swd, self.login))
-            for line in err:
-                self.results.append(line[0:-1])
+        # Directory exists. 
+        for line in out:
+            if search('OK', line):
+                return 1
 
-            # Return fail.
-            return 0
-
-        # No errors.
-        else:
-            return 1
+        # No directory.
+        self.text.append("Cannot find the working directory %s on %s." % (self.swd, self.host_name))
+        return 0

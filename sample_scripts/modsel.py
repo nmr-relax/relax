@@ -11,14 +11,14 @@ for run in runs:
     print "\n\n# " + run + " #"
 
     # Create the run.
-    create_run(run, 'mf')
+    run.create(run, 'mf')
 
     # Reload precalculated results from the file 'm1/results', etc.
     read(run=run, file='results', dir=run)
 
 # Model selection.
 eliminate()
-create_run('aic', 'mf')
+run.create('aic', 'mf')
 model_selection('AIC', 'aic')
 
 # Write the results.

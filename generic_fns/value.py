@@ -137,7 +137,7 @@ class Value:
                 raise RelaxValueError, (data_type, self.run)
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file)
+        file_data = self.relax.IO.extract_data(file)
 
         # Count the number of header lines.
         header_lines = 0
@@ -153,7 +153,7 @@ class Value:
         file_data = file_data[header_lines:]
 
         # Strip the data.
-        file_data = self.relax.file_ops.strip(file_data)
+        file_data = self.relax.IO.strip(file_data)
 
         # Do nothing if the file does not exist.
         if not file_data:
@@ -374,7 +374,7 @@ class Value:
             raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
-        file = self.relax.file_ops.open_write_file(file, dir, force)
+        file = self.relax.IO.open_write_file(file, dir, force)
 
         # Write the data.
         self.write_data(run, data_type, file)

@@ -70,10 +70,10 @@ class RW:
                 raise RelaxError, "Data corresponding to the run " + `run` + " exists."
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file_name=file, dir=directory)
+        file_data = self.relax.IO.extract_data(file_name=file, dir=directory)
 
         # Strip data.
-        file_data = self.relax.file_ops.strip(file_data)
+        file_data = self.relax.IO.strip(file_data)
 
         # Do nothing if the file does not exist.
         if not file_data:
@@ -111,7 +111,7 @@ class RW:
             raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
         # Open the file for writing.
-        results_file = self.relax.file_ops.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, print_flag=print_flag)
+        results_file = self.relax.IO.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, print_flag=print_flag)
 
         # Write the results.
         self.write_function(results_file, run)

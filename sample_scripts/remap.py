@@ -27,7 +27,7 @@ name = 'm5'
 nuclei('N')
 
 # Create the run 'name'.
-create_run(name, 'mf')
+run.create(name, 'mf')
 
 # Load the sequence.
 sequence.read(name, 'noe.500.out')

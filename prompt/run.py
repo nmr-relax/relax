@@ -22,12 +22,20 @@
 
 import sys
 
+import help
 
-class Create_run:
+
+class Run:
     def __init__(self, relax):
-        """Class containing the function for setting up a run type."""
+        # Help.
+        self.__relax_help__ = \
+        """Class for holding the functions for manipulating runs."""
 
-        self.relax = relax
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
+
+        # Place relax in the class namespace.
+        self.__relax__ = relax
 
 
     def create(self, run=None, run_type=None):
@@ -62,7 +70,7 @@ class Create_run:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "create_run("
             text = text + "run=" + `run`
             text = text + ", run_type=" + `run_type` + ")"
@@ -77,4 +85,33 @@ class Create_run:
             raise RelaxStrError, ('run_type', run_type)
 
         # Execute the functional code.
-        self.relax.generic.runs.create_run(run=run, run_type=run_type)
+        self.__relax__.generic.runs.create(run=run, run_type=run_type)
+
+
+    def delete(self, run=None):
+        """Function for deleting a run.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will destroy all data corresponding to the given run.
+        """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "delete("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run argument.
+        if run != None and type(run) != str:
+            raise RelaxNoneStrError, ('run', run)
+
+        # Execute the functional code.
+        self.relax.generic.runs.delete(run=run)

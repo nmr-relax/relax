@@ -21,7 +21,6 @@
 ###############################################################################
 
 from os import system
-from os.path import expanduser
 from re import match
 
 
@@ -170,9 +169,7 @@ class Grace:
             self.write(run=run, data_type=data_type, file=file, dir=dir, force=force)
 
         # File path.
-        self.file_path = file
-        if dir:
-            self.file_path = expanduser(dir + '/' + self.file_path)
+        self.file_path = self.relax.IO.file_path(file, dir)
 
         # Run Grace.
         system(grace_exe + " " + self.file_path + " &")
@@ -194,7 +191,7 @@ class Grace:
             raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
-        self.file = self.relax.file_ops.open_write_file(file, dir, force)
+        self.file = self.relax.IO.open_write_file(file, dir, force)
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]

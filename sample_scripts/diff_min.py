@@ -16,7 +16,7 @@ print "\n\n\n"
 
 for run in runs:
     # Create the run.
-    create_run(run, 'mf')
+    run.create(run, 'mf')
 
     # Load the sequence.
     sequence.read(run, 'noe.500.out')

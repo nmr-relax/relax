@@ -2,7 +2,7 @@
 
 # Create the run.
 name = 'jw'
-create_run(name, 'jw')
+run.create(name, 'jw')
 
 # Nuclei type
 nuclei('N')

@@ -22,7 +22,6 @@
 
 
 from Numeric import Float64, array, zeros
-from os import mkdir
 
 
 class Base_Map:
@@ -65,11 +64,7 @@ class Base_Map:
             self.num_points = 0
 
         # The OpenDX directory.
-        if self.dir:
-            try:
-                mkdir(self.dir)
-            except OSError:
-                pass
+        self.relax.IO.mkdir(self.dir, print_flag=0)
 
         # Get the map bounds.
         self.bounds = self.map_bounds(self.run, self.index)

@@ -23,7 +23,6 @@
 from math import sqrt
 from Numeric import Float64, dot, zeros
 from os import F_OK, access
-from os.path import expanduser
 import Scientific.IO.PDB
 
 
@@ -135,9 +134,7 @@ class PDB:
             raise RelaxNoSequenceError, self.run
 
         # The file path.
-        self.file_path = self.file
-        if self.dir:
-            self.file_path = expanduser(dir + '/' + self.file_path)
+        self.file_path = self.relax.IO.file_path(self.file, self.dir)
 
         # Test if the file exists.
         if not access(self.file_path, F_OK):
