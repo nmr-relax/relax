@@ -205,7 +205,7 @@ class Minimise:
             raise RelaxFuncSetupError, ('minimise', function_type)
 
         # Minimisation.
-        self.minimise(run=run, i=i, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        self.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
 
 
     def set(self, run=None, values=None, print_flag=1):

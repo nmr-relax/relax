@@ -34,7 +34,7 @@ model.select_mf(run=name, model=name)
 
 # Grid search.
 state.save('save', force=1)
-grid_search(name, inc=21)
+#grid_search(name, inc=21)
 
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)

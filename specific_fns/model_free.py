@@ -21,6 +21,7 @@
 ###############################################################################
 
 from copy import deepcopy
+from LinearAlgebra import inverse
 from math import pi
 from Numeric import Float64, array, matrixmultiply, ones, transpose, zeros
 from re import match
@@ -38,49 +39,49 @@ class Model_free:
         self.relax = relax
 
 
-    def assemble_param_vector(self, run, data):
+    def assemble_param_vector(self, data):
         """Function for assembling various pieces of data into a Numeric parameter array."""
 
         # Initialise.
-        param_vector = zeros(len(data.params[run]), Float64)
+        param_vector = zeros(len(data.params[self.run]), Float64)
 
         # Loop over the parameters.
-        for i in xrange(len(data.params[run])):
+        for i in xrange(len(data.params[self.run])):
             # S2.
-            if data.params[run][i] == 'S2' and data.s2[run] != None:
-                param_vector[i] = data.s2[run]
+            if data.params[self.run][i] == 'S2' and data.s2[self.run] != None:
+                param_vector[i] = data.s2[self.run]
 
             # S2f.
-            if data.params[run][i] == 'S2f' and data.s2f[run] != None:
-                param_vector[i] = data.s2f[run]
+            if data.params[self.run][i] == 'S2f' and data.s2f[self.run] != None:
+                param_vector[i] = data.s2f[self.run]
 
             # S2s.
-            if data.params[run][i] == 'S2s' and data.s2s[run] != None:
-                param_vector[i] = data.s2s[run]
+            if data.params[self.run][i] == 'S2s' and data.s2s[self.run] != None:
+                param_vector[i] = data.s2s[self.run]
 
             # te.
-            if data.params[run][i] == 'te' and data.te[run] != None:
-                param_vector[i] = data.te[run]
+            if data.params[self.run][i] == 'te' and data.te[self.run] != None:
+                param_vector[i] = data.te[self.run]
 
             # tf.
-            if data.params[run][i] == 'tf' and data.tf[run] != None:
-                param_vector[i] = data.tf[run]
+            if data.params[self.run][i] == 'tf' and data.tf[self.run] != None:
+                param_vector[i] = data.tf[self.run]
 
             # ts.
-            if data.params[run][i] == 'ts' and data.ts[run] != None:
-                param_vector[i] = data.ts[run]
+            if data.params[self.run][i] == 'ts' and data.ts[self.run] != None:
+                param_vector[i] = data.ts[self.run]
 
             # Rex.
-            if data.params[run][i] == 'Rex' and data.rex[run] != None:
-                param_vector[i] = data.rex[run]
+            if data.params[self.run][i] == 'Rex' and data.rex[self.run] != None:
+                param_vector[i] = data.rex[self.run]
 
             # r.
-            if data.params[run][i] == 'r' and data.r[run] != None:
-                param_vector[i] = data.r[run]
+            if data.params[self.run][i] == 'r' and data.r[self.run] != None:
+                param_vector[i] = data.r[self.run]
 
             # CSA.
-            if data.params[run][i] == 'CSA' and data.csa[run] != None:
-                param_vector[i] = data.csa[run]
+            if data.params[self.run][i] == 'CSA' and data.csa[self.run] != None:
+                param_vector[i] = data.csa[self.run]
 
         return param_vector
 
@@ -657,201 +658,6 @@ class Model_free:
         return A, b
 
 
-    def minimise(self, run=None, i=None, init_params=None, scaling_matrix=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
-        """Model-free minimisation."""
-
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # Make sure that the length of the parameter array is > 0.
-            if len(self.relax.data.res[i].params[run]) == 0:
-                raise RelaxError, "Cannot minimise a model with zero parameters."
-
-            # Create the initial parameter vector.
-            init_params = self.assemble_param_vector(run, self.relax.data.res[i])
-
-            # Diagonal scaling.
-            scaling_matrix = None
-            if self.relax.data.res[i].scaling[run]:
-                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
-                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
-
-        # Linear constraints.
-        if constraints:
-            A, b = self.linear_constraints(run, self.relax.data.res[i], i, scaling_matrix)
-
-        # Print out.
-        if print_flag >= 1:
-            if print_flag >= 2:
-                print "\n\n"
-            string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
-            string2 = ""
-            for j in xrange(len(string)):
-                string2 = string2 + "~"
-            print string
-            print string2
-
-        # Initialise the iteration counter and function, gradient, and Hessian call counters.
-        self.iter_count = 0
-        self.f_count = 0
-        self.g_count = 0
-        self.h_count = 0
-
-        # Global minimisation of all model-free parameters and diffusion tensor parameters.
-        if self.relax.data.diff[run].fixed:
-            pass # Maybe pass this in as an argument to Mf().
-
-        # Set up the relaxation data and errors and the function options.
-        relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
-        relax_error = array(self.relax.data.res[i].relax_error[run], Float64)
-
-        # Make sure that the errors are all positive numbers.
-        for j in xrange(len(relax_error)):
-            if relax_error[j] == 0.0:
-                message = "Zero error, minimisation not possible."
-                if print_flag >= 1:
-                    print message + "  Skipping residue."
-                self.relax.data.res[i].warning[run] = message
-                return
-            elif relax_error[j] < 0.0:
-                message = "Negative error."
-                if print_flag >= 1:
-                    print message + "  Skipping residue."
-                self.relax.data.res[i].warning[run] = message
-                return
-
-        # Initialise the function to minimise.
-        ######################################
-
-        # Isotropic diffusion.
-        if self.relax.data.diff[run].type == 'iso':
-            vectors = None
-
-        # Axially symmetric diffusion.
-        elif self.relax.data.diff[run].type == 'axial':
-            vectors = None
-
-        # Anisotropic diffusion.
-        elif self.relax.data.diff[run].type == 'aniso':
-            vectors = None
-            raise RelaxError, "Not coded yet."
-
-        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff[run].type, diff_params=[self.relax.data.diff[run].tm], scaling_matrix=scaling_matrix)
-
-
-        # Setup the minimisation algorithm when constraints are present.
-        ################################################################
-
-        if constraints and not match('^[Gg]rid', min_algor):
-            algor = min_options[0]
-        else:
-            algor = min_algor
-
-
-        # Levenberg-Marquardt minimisation.
-        ###################################
-
-        if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-            min_options = min_options + (self.mf.lm_dri, relax_error)
-
-
-        # Minimisation.
-        ###############
-
-        if constraints:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
-        else:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
-        if results == None:
-            return
-        self.params, self.func, iter, fc, gc, hc, self.warning = results
-        self.iter_count = self.iter_count + iter
-        self.f_count = self.f_count + fc
-        self.g_count = self.g_count + gc
-        self.h_count = self.h_count + hc
-
-        # Scaling.
-        if self.relax.data.res[i].scaling[run]:
-            self.params = matrixmultiply(scaling_matrix, self.params)
-
-        # Types.
-        types = self.relax.data.res[i].params[run]
-
-        # Loop over the minimised parameters.
-        for j in xrange(len(self.params)):
-            # S2.
-            if types[j] == 'S2':
-                self.relax.data.res[i].s2[run] = self.params[j]
-
-            # S2f.
-            elif types[j] == 'S2f':
-                # S2f.
-                self.relax.data.res[i].s2f[run] = self.params[j]
-
-                # Other order parameters.
-                for k in xrange(len(types)):
-                    # S2 = S2f.S2s
-                    if types[k] == 'S2s':
-                        self.relax.data.res[i].s2[run] = self.params[j] * self.params[k]
-
-                    # S2s = S2/S2f
-                    elif types[k] == 'S2':
-                        if self.params[j] == 0.0:
-                            self.relax.data.res[i].s2s[run] = 1e99
-                        else:
-                            self.relax.data.res[i].s2s[run] = self.params[k] / self.params[j]
-
-            # S2s.
-            elif types[j] == 'S2s':
-                self.relax.data.res[i].s2s[run] = self.params[j]
-
-            # te.
-            elif types[j] == 'te':
-                self.relax.data.res[i].te[run] = self.params[j]
-
-            # tf.
-            elif types[j] == 'tf':
-                self.relax.data.res[i].tf[run] = self.params[j]
-
-            # ts.
-            elif types[j] == 'ts':
-                self.relax.data.res[i].ts[run] = self.params[j]
-
-            # Rex.
-            elif types[j] == 'Rex':
-                self.relax.data.res[i].rex[run] = self.params[j]
-
-            # Bond length.
-            elif types[j] == 'r':
-                self.relax.data.res[i].r[run] = self.params[j]
-
-            # CSA.
-            elif types[j] == 'CSA':
-                self.relax.data.res[i].csa[run] = self.params[j]
-
-        # Chi-squared statistic.
-        self.relax.data.res[i].chi2[run] = self.func
-
-        # Iterations.
-        self.relax.data.res[i].iter[run] = self.iter_count
-
-        # Function evaluations.
-        self.relax.data.res[i].f_count[run] = self.f_count
-
-        # Gradient evaluations.
-        self.relax.data.res[i].g_count[run] = self.g_count
-
-        # Hessian evaluations.
-        self.relax.data.res[i].h_count[run] = self.h_count
-
-        # Warning.
-        self.relax.data.res[i].warning[run] = self.warning
-
-
     def map_bounds(self, index, params, run):
         """The function for creating bounds for the mapping function."""
 
@@ -966,6 +772,254 @@ class Model_free:
             tick_values.append(string)
 
         return labels, tick_locations, tick_values
+
+
+    def minimise(self, run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, print_flag):
+        """Model-free minimisation.
+        
+        Three types of parameter sets exist for which minimisation is different.  These are:
+            'mf' - Model-free parameters for single residues.
+            'diff' - Diffusion tensor parameters.
+            'all' - All model-free and all diffusion tensor parameters.
+        
+        """
+
+        # Arguments.
+        self.run = run
+        self.min_algor = min_algor
+        self.min_options = min_options
+        self.func_tol = func_tol
+        self.grad_tol = grad_tol
+        self.max_iterations = max_iterations
+        self.constraints = constraints
+        self.print_flag = print_flag
+
+        # Check if any model-free parameters are allowed to vary.
+        mf_all_fixed = 1
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Test the fixed flag.
+            if not hasattr(self.relax.data.res[i], 'fixed'):
+                mf_all_fixed = 0
+                break
+            if not self.relax.data.res[i].fixed[run]:
+                mf_all_fixed = 0
+                break
+
+        # Determine the type of parameter set.
+        if mf_all_fixed and self.relax.data.diff[run].fixed:
+            raise RelaxError, "All parameters are fixed."
+        elif mf_all_fixed and not self.relax.data.diff[run].fixed:
+            self.param_set = 'diff'
+        elif self.relax.data.diff[run].fixed:
+            self.param_set = 'mf'
+        else:
+            self.param_set = 'all'
+
+        # The parameter set 'mf'.
+        if self.param_set == 'mf':
+            self.minimise_mf_params()
+
+        # The parameter set 'diff'.
+        elif self.param_set == 'diff':
+            self.minimise_diff_params()
+
+        # The parameter set 'all'.
+        elif self.param_set == 'all':
+            self.minimise_all_params()
+
+
+    def minimise_mf_params(self):
+        """Function for minimising model-free parameters for single residues."""
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Make sure that the length of the parameter array is > 0.
+            if len(self.relax.data.res[i].params[self.run]) == 0:
+                raise RelaxError, "Cannot minimise a model with zero parameters."
+
+            # Create the initial parameter vector.
+            init_params = self.assemble_param_vector(self.relax.data.res[i])
+
+            # Diagonal scaling.
+            scaling_matrix = None
+            if self.relax.data.res[i].scaling[self.run]:
+                scaling_matrix = self.assemble_scaling_matrix(self.run, self.relax.data.res[i], i)
+                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
+
+        # Linear constraints.
+        if self.constraints:
+            A, b = self.linear_constraints(self.run, self.relax.data.res[i], i, scaling_matrix)
+
+        # Print out.
+        if self.print_flag >= 1:
+            if self.print_flag >= 2:
+                print "\n\n"
+            string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
+            string2 = ""
+            for j in xrange(len(string)):
+                string2 = string2 + "~"
+            print string
+            print string2
+
+        # Initialise the iteration counter and function, gradient, and Hessian call counters.
+        self.iter_count = 0
+        self.f_count = 0
+        self.g_count = 0
+        self.h_count = 0
+
+        # Set up the relaxation data and errors and the function options.
+        relax_data = array(self.relax.data.res[i].relax_data[self.run], Float64)
+        relax_error = array(self.relax.data.res[i].relax_error[self.run], Float64)
+
+        # Make sure that the errors are all positive numbers.
+        for j in xrange(len(relax_error)):
+            if relax_error[j] == 0.0:
+                message = "Zero error, minimisation not possible."
+                if self.print_flag >= 1:
+                    print message + "  Skipping residue."
+                self.relax.data.res[i].warning[run] = message
+                return
+            elif relax_error[j] < 0.0:
+                message = "Negative error."
+                if self.print_flag >= 1:
+                    print message + "  Skipping residue."
+                self.relax.data.res[i].warning[run] = message
+                return
+
+        # Initialise the function to minimise.
+        ######################################
+
+        # Isotropic diffusion.
+        if self.relax.data.diff[self.run].type == 'iso':
+            vectors = None
+
+        # Axially symmetric diffusion.
+        elif self.relax.data.diff[self.run].type == 'axial':
+            vectors = None
+
+        # Anisotropic diffusion.
+        elif self.relax.data.diff[self.run].type == 'aniso':
+            vectors = None
+            raise RelaxError, "Not coded yet."
+
+        self.mf = Mf(self.relax, run=self.run, i=i, equation=self.relax.data.res[i].equations[self.run], param_types=self.relax.data.res[i].params[self.run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[self.run], csa=self.relax.data.res[i].csa[self.run], diff_type=self.relax.data.diff[self.run].type, diff_params=[self.relax.data.diff[self.run].tm], scaling_matrix=scaling_matrix)
+
+
+        # Setup the minimisation algorithm when constraints are present.
+        ################################################################
+
+        if constraints and not match('^[Gg]rid', min_algor):
+            algor = min_options[0]
+        else:
+            algor = min_algor
+
+
+        # Levenberg-Marquardt minimisation.
+        ###################################
+
+        if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
+            min_options = min_options + (self.mf.lm_dri, relax_error)
+
+
+        # Minimisation.
+        ###############
+
+        if self.constraints:
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+        else:
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+        if results == None:
+            return
+        self.params, self.func, iter, fc, gc, hc, self.warning = results
+        self.iter_count = self.iter_count + iter
+        self.f_count = self.f_count + fc
+        self.g_count = self.g_count + gc
+        self.h_count = self.h_count + hc
+
+        # Scaling.
+        if self.relax.data.res[i].scaling[self.run]:
+            self.params = matrixmultiply(scaling_matrix, self.params)
+
+        # Types.
+        types = self.relax.data.res[i].params[self.run]
+
+        # Loop over the minimised parameters.
+        for j in xrange(len(self.params)):
+            # S2.
+            if types[j] == 'S2':
+                self.relax.data.res[i].s2[self.run] = self.params[j]
+
+            # S2f.
+            elif types[j] == 'S2f':
+                # S2f.
+                self.relax.data.res[i].s2f[self.run] = self.params[j]
+
+                # Other order parameters.
+                for k in xrange(len(types)):
+                    # S2 = S2f.S2s
+                    if types[k] == 'S2s':
+                        self.relax.data.res[i].s2[self.run] = self.params[j] * self.params[k]
+
+                    # S2s = S2/S2f
+                    elif types[k] == 'S2':
+                        if self.params[j] == 0.0:
+                            self.relax.data.res[i].s2s[self.run] = 1e99
+                        else:
+                            self.relax.data.res[i].s2s[self.run] = self.params[k] / self.params[j]
+
+            # S2s.
+            elif types[j] == 'S2s':
+                self.relax.data.res[i].s2s[self.run] = self.params[j]
+
+            # te.
+            elif types[j] == 'te':
+                self.relax.data.res[i].te[self.run] = self.params[j]
+
+            # tf.
+            elif types[j] == 'tf':
+                self.relax.data.res[i].tf[self.run] = self.params[j]
+
+            # ts.
+            elif types[j] == 'ts':
+                self.relax.data.res[i].ts[self.run] = self.params[j]
+
+            # Rex.
+            elif types[j] == 'Rex':
+                self.relax.data.res[i].rex[self.run] = self.params[j]
+
+            # Bond length.
+            elif types[j] == 'r':
+                self.relax.data.res[i].r[self.run] = self.params[j]
+
+            # CSA.
+            elif types[j] == 'CSA':
+                self.relax.data.res[i].csa[self.run] = self.params[j]
+
+        # Chi-squared statistic.
+        self.relax.data.res[i].chi2[self.run] = self.func
+
+        # Iterations.
+        self.relax.data.res[i].iter[self.run] = self.iter_count
+
+        # Function evaluations.
+        self.relax.data.res[i].f_count[self.run] = self.f_count
+
+        # Gradient evaluations.
+        self.relax.data.res[i].g_count[self.run] = self.g_count
+
+        # Hessian evaluations.
+        self.relax.data.res[i].h_count[self.run] = self.h_count
+
+        # Warning.
+        self.relax.data.res[i].warning[self.run] = self.warning
 
 
     def read_results(self, file_data, run):
