@@ -210,29 +210,85 @@ class Diffusion_tensor:
         # The diffusion type.
         self.relax.data.diff[self.run].type = 'aniso'
 
-        # (Dx, Dy, Dz, alpha, beta, gamma).
+        # (tm, Da, Dr, alpha, beta, gamma).
         if self.param_types == 0:
+            # Unpack the tuple.
+            tm, Da, Dr, alpha, beta, gamma = self.params
+
+            # Scaling.
+            tm = tm * self.time_scale
+            Da = Da * self.d_scale
+            Dr = Dr * self.d_scale
+
+            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
+            self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
+            self.relax.data.diff[self.run].Da = Da
+            self.relax.data.diff[self.run].Dr = Dr
+            self.relax.data.diff[self.run].Dx = self.relax.data.diff[self.run].Diso - Da + Dr
+            self.relax.data.diff[self.run].Dy = self.relax.data.diff[self.run].Diso - Da - Dr
+            self.relax.data.diff[self.run].Dz = self.relax.data.diff[self.run].Diso + 2.0*Da
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = tm
+
+        # (Diso, Da, Dr, alpha, beta, gamma).
+        elif self.param_types == 1:
+            # Unpack the tuple.
+            Diso, Da, Dr, alpha, beta, gamma = self.params
+
+            # Scaling.
+            Diso = Diso * self.d_scale
+            Da = Da * self.d_scale
+            Dr = Dr * self.d_scale
+
+            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
+            self.relax.data.diff[self.run].Diso = Diso
+            self.relax.data.diff[self.run].Da = Da
+            self.relax.data.diff[self.run].Dr = Dr
+            self.relax.data.diff[self.run].Dx = Diso - Da + Dr
+            self.relax.data.diff[self.run].Dy = Diso - Da - Dr
+            self.relax.data.diff[self.run].Dz = Diso + 2.0*Da
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = 1.0 / (6.0*Diso)
+
+        # (Dx, Dy, Dz, alpha, beta, gamma).
+        elif self.param_types == 2:
             # Unpack the tuple.
             Dx, Dy, Dz, alpha, beta, gamma = self.params
 
+            # Scaling.
+            Dx = Dx * self.d_scale
+            Dy = Dy * self.d_scale
+            Dz = Dz * self.d_scale
+
             # Diffusion tensor eigenvalues: Dx, Dy, Dz.
-            self.relax.data.diff[self.run].Dx = Dx * self.d_scale
-            self.relax.data.diff[self.run].Dy = Dy * self.d_scale
-            self.relax.data.diff[self.run].Dz = Dz * self.d_scale
+            self.relax.data.diff[self.run].Dx = Dx
+            self.relax.data.diff[self.run].Dy = Dy
+            self.relax.data.diff[self.run].Dz = Dz
+            self.relax.data.diff[self.run].Diso = (Dx + Dy + Dz) / 3.0
+            self.relax.data.diff[self.run].Da = (Dz - (Dx + Dy)/2.0) / 3.0
+            self.relax.data.diff[self.run].Dr = (Dx - Dy) / 2.0
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = 1.0 / (6.0*self.relax.data.diff[self.run].Diso)
 
         # Unknown parameter combination.
         else:
             raise RelaxUnknownParamCombError, ('param_types', self.param_types)
 
-        # Angles in radians.
+        # Convert the angles to radians.
         if self.angle_units == 'deg':
-            self.relax.data.diff[self.run].alpha = (alpha / 360.0) * 2.0 * pi
-            self.relax.data.diff[self.run].beta = (beta / 360.0) * 2.0 * pi
-            self.relax.data.diff[self.run].gamma = (gamma / 360.0) * 2.0 * pi
-        else:
-            self.relax.data.diff[self.run].alpha = alpha
-            self.relax.data.diff[self.run].beta = beta
-            self.relax.data.diff[self.run].gamma = gamma
+            alpha = (alpha / 360.0) * 2.0 * pi
+            beta = (beta / 360.0) * 2.0 * pi
+            gamma = (gamma / 360.0) * 2.0 * pi
+
+        # Make sure the angles are within their defined ranges.
+        self.relax.data.diff[self.run].alpha = self.wrap_angles(alpha, 0.0, 2.0*pi)
+        self.relax.data.diff[self.run].beta = self.wrap_angles(beta, 0.0, pi)
+        self.relax.data.diff[self.run].gamma = self.wrap_angles(gamma, 0.0, 2.0*pi)
+
+        # Unit vectors Dx, Dy, Dz.
 
 
     def axial(self):
@@ -247,51 +303,104 @@ class Diffusion_tensor:
             raise RelaxError, "The 'axial_type' argument " + `self.axial_type` + " should be 'oblate', 'prolate', or None."
         self.relax.data.diff[self.run].axial_type = self.axial_type
 
-        # (Dpar, Dper, theta, phi).
-        print self.param_types
+        # (tm, Dratio, theta, phi).
         if self.param_types == 0:
             # Unpack the tuple.
             tm, Dratio, theta, phi = self.params
 
+            # Scaling.
+            tm = tm * self.time_scale
+
             # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = 1.0 / (6.0 * tm * self.time_scale)
-            self.relax.data.diff[self.run].Dratio = Dratio * self.d_scale
-            self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * self.relax.data.diff[self.run].Dratio / (2.0 + self.relax.data.diff[self.run].Dratio)
-            self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (2.0 + self.relax.data.diff[self.run].Dratio)
+            self.relax.data.diff[self.run].Diso = 1.0 / (6.0 * tm)
+            self.relax.data.diff[self.run].Dratio = Dratio
+            self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * Dratio / (2.0 + Dratio)
+            self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (2.0 + Dratio)
 
             # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = tm * self.time_scale
+            self.relax.data.diff[self.run].tm = tm
 
-        # (tm, Dratio, theta, phi).
+        # (Dpar, Dper, theta, phi).
         elif self.param_types == 1:
             # Unpack the tuple.
             Dpar, Dper, theta, phi = self.params
 
+            # Scaling.
+            Dpar = Dpar * self.d_scale
+            Dper = Dper * self.d_scale
+
             # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Dpar = Dpar * self.d_scale
-            self.relax.data.diff[self.run].Dper = Dper * self.d_scale
-            self.relax.data.diff[self.run].Diso = (Dpar + 2.0 * Dper) * self.d_scale / 3.0
+            self.relax.data.diff[self.run].Dpar = Dpar
+            self.relax.data.diff[self.run].Dper = Dper
+            self.relax.data.diff[self.run].Diso = (Dpar + 2.0*Dper) / 3.0
             self.relax.data.diff[self.run].Dratio = Dpar / Dper
 
-            # Correlation times:  tm, t1, t2, t3.
+            # Global correlation time:  tm.
             self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
 
+        # (Diso, Dratio, theta, phi).
+        elif self.param_types == 2:
+            # Unpack the tuple.
+            Diso, Dratio, theta, phi = self.params
+
+            # Scaling.
+            Diso = Diso * self.d_scale
+
+            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
+            self.relax.data.diff[self.run].Diso = Diso
+            self.relax.data.diff[self.run].Dratio = Dratio
+            self.relax.data.diff[self.run].Dpar = 3.0 * Diso * Dratio / (2.0 + Dratio)
+            self.relax.data.diff[self.run].Dper = 3.0 * Diso / (2.0 + Dratio)
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
+
+        # (tm, Da, theta, phi).
+        elif self.param_types == 3:
+            # Unpack the tuple.
+            tm, Da, theta, phi = self.params
+
+            # Scaling.
+            tm = tm * self.time_scale
+            Da = Da * self.d_scale
+
+            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
+            self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
+            self.relax.data.diff[self.run].Dpar = self.relax.data.diff[self.run].Diso - Da
+            self.relax.data.diff[self.run].Dper = self.relax.data.diff[self.run].Diso + 2.0*Da
+            self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = tm
+
+        # (Diso, Da, theta, phi).
+        elif self.param_types == 4:
+            # Unpack the tuple.
+            Diso, Da, theta, phi = self.params
+
+            # Scaling.
+            Diso = Diso * self.d_scale
+            Da = Da * self.d_scale
+
+            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
+            self.relax.data.diff[self.run].Diso = Diso
+            self.relax.data.diff[self.run].Dpar = Diso - Da
+            self.relax.data.diff[self.run].Dper = Diso + 2.0*Da
+            self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
 
         # Unknown parameter combination.
         else:
             raise RelaxUnknownParamCombError, ('param_types', self.param_types)
-
-        # Correlation times:  t1, t2, t3.
-        self.relax.data.diff[self.run].t1 = 1.0 / (6.0 * self.relax.data.diff[self.run].Dper)
-        self.relax.data.diff[self.run].t2 = 1.0 / (5.0 * self.relax.data.diff[self.run].Dper + self.relax.data.diff[self.run].Dpar)
-        self.relax.data.diff[self.run].t3 = 1.0 / (2.0 * self.relax.data.diff[self.run].Dper + 4.0 * self.relax.data.diff[self.run].Dpar)
 
         # Convert the angles to radians.
         if self.angle_units == 'deg':
             theta = (theta / 360.0) * 2.0 * pi
             phi = (phi / 360.0) * 2.0 * pi
 
-        # Make sure the angles are between 0 and 2pi.
+        # Make sure the angles are within their defined ranges.
         self.relax.data.diff[self.run].theta = self.wrap_angles(theta, 0.0, pi)
         self.relax.data.diff[self.run].phi = self.wrap_angles(phi, 0.0, 2.0 * pi)
 
