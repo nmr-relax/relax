@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 
-# mf v0.4            4 January 2002        Edward d'Auvergne
+# mf v0.5            22 July 2002        Edward d'Auvergne
 #
 # Program to process all model-free input and output.
 #
@@ -23,15 +23,22 @@
 import sys
 from re import match
 
-from calc_relax_data import calc_relax_data
-from calc_chi2 import calc_chi2
+from main_relax_fit import main_relax_fit
+from main_palmer import main_palmer
 from data import data
 from file_ops import file_ops
-from star import star
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
 from usr_param import usr_param
+
+from functions.functions import functions
+from functions.chi2 import chi2
+from functions.jw import jw
+from functions.relax import relax
+
+
+from minimise.test import test
 
 from modsel.asymptotic import asymptotic
 from modsel.bootstrap import bootstrap
@@ -41,62 +48,68 @@ from modsel.farrow import farrow
 from modsel.palmer import palmer
 from modsel.overall_disc import overall_disc
 
+from palmer.star import star
+
 
 class mf:
 	def __init__(self):
 		"The top level class."
 
-		self.version = 0.4
-		self.calc_relax_data = calc_relax_data(self)
-		self.calc_chi2 = calc_chi2()
-		self.data = data(self)
-		self.data.usr_param = usr_param()
-		self.file_ops = file_ops(self)
-		self.star = star(self)
+		self.version = 0.5
+		self.print_intro()
 
-		# Debugging option.
+		# Debugging option, 0 = off, 1 = on.
 		self.debug = 0
 
-		self.print_header()
-
-		if not self.version == self.data.usr_param.version:
-			print "The versions numbers of the program and the file usr_param.py do not match."
-			print "Copy the correct version to the working directory."
-			print "Quitting script!"
+		# Import the user parameters.
+		self.usr_param = usr_param()
+		if not self.version == self.usr_param.version:
+			print "The versions numbers of the program and the file 'usr_param.py' do not match."
+			print "Copy the correct version to the working directory, quitting program."
 			sys.exit()
 
-		if match('^AIC$', self.data.usr_param.method):
-			asymptotic(self)
-		elif match('^AICc$', self.data.usr_param.method):
-			asymptotic(self)
-		elif match('^BIC$', self.data.usr_param.method):
-			asymptotic(self)
-		elif match('^Bootstrap$', self.data.usr_param.method):
-			bootstrap(self)
-		elif match('^CV$', self.data.usr_param.method):
-			cv(self)
-		elif match('^Expect$', self.data.usr_param.method):
-			exp_overall_disc(self)
-		elif match('^Farrow$', self.data.usr_param.method):
-			farrow(self)
-		elif match('^Palmer$', self.data.usr_param.method):
-			palmer(self)
-		elif match('^Overall$', self.data.usr_param.method):
-			overall_disc(self)
-		else:
-			print "The model-free analysis method is not set correctly.  Check self.method in"
-			print "the file 'usr_param.py' which should be in the working directory."
-			print "Quitting script!"
+		# Initialise the class self.mf.function to place program functions into.
+		self.functions = functions(self)
+
+		# Testing minimiser!  Temp code.
+		self.data = data(self)
+		self.file_ops = file_ops(self)
+		self.functions.relax = relax(self)
+		self.functions.chi2 = chi2()
+		self.functions.jw = jw()
+		test(self)
+		print "\n\n<<< Finished minimiser >>>\n\n"
+		sys.exit()
+
+		# Select the behaviour of the program.
+		if match(self.usr_param.program_type, 'relax_fit'):
+			self.data = data(self)
+			self.file_ops = file_ops(self)
+			main_relax_fit(self)
+
+		if match(self.usr_param.program_type, 'mf'):
+			self.calc_relax_data = calc_relax_data(self)
+			self.calc_chi2 = calc_chi2()
+			self.data = data(self)
+			self.file_ops = file_ops(self)
+			print "Not implemented yet, quitting program."
 			sys.exit()
 
+		if match(self.usr_param.program_type, 'palmer'):
+			self.calc_relax_data = calc_relax_data(self)
+			self.calc_chi2 = calc_chi2()
+			self.data = data(self)
+			self.file_ops = file_ops(self)
+			self.star = star(self)
+			main_palmer(self)
 
 
-	def print_header(self):
-		"Print the header to screen."
+	def print_intro(self):
+		"Print the program introduction."
 
 		print """
 
-		                      mf v0.4
+		                      mf v0.5
 
 		Program to process all model-free input and output.
 

@@ -1,23 +1,45 @@
-# usr_param.py v0.4                  4 January 2002        Edward d'Auvergne
+# usr_param.py v0.5                  4 January 2002        Edward d'Auvergne
 #
 # Class containing all the user specified parameters.  Used by the program mf.
 # Make sure the version numbers between the program and this class are identical.
 
+import sys
+from re import match
 
 class usr_param:
 	def __init__(self):
 		"Class containing parameters specified by the user"
 
-		self.version = 0.4
-		self.init_input()
-		self.init_method_param()
-		self.init_run_param()
-		self.init_mfin_param()
-		self.init_mfpar_param()
-		self.init_mfmodel_param()
+		self.version = 0.5
+		self.program_type = "palmer"
+
+		# Relaxation curve fitting.
+		if match(self.program_type, "relax_fit"):
+			self.relax_params()
+
+		# Normal program use.
+		elif match(self.program_type, "mf"):
+			self.input()
+			self.model_selection()
+
+		# Use Art Palmer's Modelfree minimiser.
+		elif match(self.program_type, "palmer"):
+			#self.init_input()
+			self.input()
+			self.model_selection()
+			self.palmer_method_param()
+			self.palmer_run_param()
+			self.palmer_mfin_param()
+			self.palmer_mfpar_param()
+			self.palmer_mfmodel_param()
+
+		# Quit if there is no match.
+		else:
+			print "Variable 'program_type' is not set correctly in usr_param.py, quitting program."
+			sys.exit()
 
 
-	def init_input(self):
+	def input(self):
 		"""Specify the input data.
 
 		To be compatible with the program Modelfree, the relaxation data should be placed in the order {R1, R2, NOE}
@@ -53,46 +75,40 @@ class usr_param:
 		self.nmr_frq.append(['500', 500.0, '1', '1', '1'])
 
 
-	def init_method_param(self):
-		"""Model-free analysis method info.
+	def model_selection(self):
+		"""Model selection method.  self.method can be set to the following:
 
-		self.method can be set to the following:
+		AIC:		Method of model-free analysis based on model selection using the Akaike Information Criteria.
 
-		AIC:		Method of model-free analysis based on model selection using the Akaike Information
-				Criteria.
+		AICc:		Method of model-free analysis based on model selection using the Akaike Information Criteria corrected
+				for finit sample size.
 
-		AICc:		Method of model-free analysis based on model selection using the Akaike Information
-				Criteria corrected for finit sample size.
+		BIC:		Method of model-free analysis based on model selection using the Schwartz Information Criteria.
 
-		BIC:		Method of model-free analysis based on model selection using the Schwartz
-				Information Criteria.
+		Bootstrap:	Modelfree analysis based on model selection using bootstrap methods to estimate the overall discrepancy.
 
-		Bootstrap:	Modelfree analysis based on model selection using bootstrap methods to
-				estimate the overall discrepancy.
+		CV:		Modelfree analysis based on model selection using cross-validation methods to estimate the overall discrepancy.
 
-		CV:		Modelfree analysis based on model selection using cross-validation methods to
-				estimate the overall discrepancy.
-
-		Expect:		Calculate the expected overall discrepancy (real model-free parameters
-				must be known).
+		Expect:		Calculate the expected overall discrepancy (real model-free parameters must be known).
 
 		Farrow:		The method given by Farrow et al., 1994.
 
 		Palmer:		The method given by Mandel et al., 1995.
 
-		Overall:	Calculate the realized overall discrepancy (real model-free parameters
-				must be known).
+		Overall:	Calculate the realized overall discrepancy (real model-free parameters must be known).
 		"""
 
-		self.method = 'CV'
+		self.method = 'AIC'
 
+
+	def palmer_method_param(self):
 		# The following three values are only used in Palmer's method and won't affect the others.
-		self.chi2_lim = 0.90      # Set the chi squared cutoff (1 - alpha critical value).
-		self.ftest_lim = 0.80     # Set the F-test cutoff (1 - alpha critical value).
+		self.chi2_lim = 0.90        # Set the chi squared cutoff (1 - alpha critical value).
+		self.ftest_lim = 0.80       # Set the F-test cutoff (1 - alpha critical value).
 		self.large_chi2 = 20.0      # Set the maximum chi squared value.
 
 
-	def init_run_param(self):
+	def palmer_run_param(self):
 		"Run file parameters"
 
 		self.pdb_file = 'Ap4Aase_new_3.pdb'
@@ -100,7 +116,7 @@ class usr_param:
 		self.pdb_full = self.pdb_path + self.pdb_file
 
 
-	def init_mfin_param(self):
+	def palmer_mfin_param(self):
 		"mfin file parameters"
 
 		self.diff = 'isotropic'
@@ -145,7 +161,7 @@ class usr_param:
 		self.phi['steps'] = '10'
 
 
-	def init_mfpar_param(self):
+	def palmer_mfpar_param(self):
 		"mfpar file parameters"
 
 		self.const = {}
@@ -159,7 +175,7 @@ class usr_param:
 		self.vector['atom2'] = 'H'
 
 
-	def init_mfmodel_param(self):
+	def palmer_mfmodel_param(self):
 		"mfmodel file parameters"
 
 		self.md1 = {}
@@ -216,3 +232,27 @@ class usr_param:
 			self.md2[param] = {}
 			for value in self.md1[param].keys():
 				self.md2[param][value] = self.md1[param][value]
+
+
+	def relax_params(self):
+		"Parameters used by the relaxation curve fitting."
+
+		# File type.  Only 'sparky' is implemented at the moment.
+		self.type = "sparky"
+
+		# Relaxation time an associated file.
+		self.input_info = []
+		self.input_info.append([0.0111, 'T1_10ms.list'])
+		self.input_info.append([0.0111, 'T1_10ms_b.list'])
+		self.input_info.append([0.0555, 'T1_50ms.list'])
+		self.input_info.append([0.1110, 'T1_100ms.list'])
+		self.input_info.append([0.1110, 'T1_100ms_b.list'])
+		self.input_info.append([0.2775, 'T1_250ms.list'])
+		self.input_info.append([0.5550, 'T1_500ms.list'])
+		self.input_info.append([0.5550, 'T1_500ms_b.list'])
+		self.input_info.append([1.1100, 'T1_1000ms.list'])
+		self.input_info.append([1.1100, 'T1_1000ms_b.list'])
+		self.input_info.append([1.6650, 'T1_1500ms.list'])
+
+		# Unresolved residues.
+		self.unresolved = [31, 52, 83, 84, 93, 95, 117, 120, 131, 134, 150, 153]

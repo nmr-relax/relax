@@ -605,7 +605,7 @@ class common_operations:
 				if self.mf.debug == 1:
 					self.mf.log.write("\n\n<<< F-test " + model + " >>>\n\n")
 			else:
-				print "The run '" + model + "'does not start with an m or f, quitting script!\n\n"
+				print "The run '" + model + "'does not start with an m or f, quitting program!\n\n"
 				sys.exit()
 			self.mf.file_ops.mkdir(dir=model)
 			self.mf.file_ops.open_mf_files(dir=model)

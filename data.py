@@ -3,7 +3,7 @@ from math import pi
 
 class data:
 	def __init__(self, mf):
-		"Class containing all the data"
+		"Class containing all the program data"
 
 		self.mf = mf
 
@@ -77,33 +77,33 @@ class data:
 
 		def default_data(self):
 
-			self.diff = self.mf.data.usr_param.diff
+			self.diff = self.mf.usr_param.diff
 			self.diff_search = 'none'
 			self.algorithm = 'fix'
 			self.sims = 'n'
 			self.sim_type = 'pred'
-			self.trim = self.mf.data.usr_param.trim
+			self.trim = self.mf.usr_param.trim
 			self.selection = 'none'
-			self.num_sim = self.mf.data.usr_param.num_sim
-			self.num_fields = `len(self.mf.data.nmr_frq)`
+			self.num_sim = self.mf.usr_param.num_sim
+			self.num_fields = `len(self.mf.usr_param.nmr_frq)`
 
 
 
 	def calc_constants(self):
 		"Calculate the dipolar and CSA constants."
 
-		self.rnh = float(self.mf.data.usr_param.const['rxh']) * 1e-10
-		self.csa = float(self.mf.data.usr_param.const['csa']) * 1e-6
+		self.rnh = float(self.mf.usr_param.const['rxh']) * 1e-10
+		self.csa = float(self.mf.usr_param.const['csa']) * 1e-6
 
 		# Dipolar constant.
 
-		dip = (self.mu0/(4.0*pi)) * self.h_bar * self.gh * self.gn * self.rnh**-3
+		dip = (self.mu0/(4.0*pi)) * self.h_bar * self.gh * self.gx * self.rnh**-3
 		self.dipole_const = (dip**2) / 4.0
 		dip_temp = self.dipole_const / 1e9
 
 		self.csa_const = []
 		csa_temp = []
-		for i in range(len(self.nmr_frq)):
+		for i in range(len(self.mf.usr_param.nmr_frq)):
 			csa_const = (self.csa**2) * (self.frq[i][1]**2) / 3.0
 			self.csa_const.append(csa_const)
 			csa_temp.append(csa_const/1e9)
@@ -113,7 +113,7 @@ class data:
 		#print "CSA: " + `self.csa`
 		#print "CSA^2: " + `self.csa**2`
 		#print "gH: " + `self.gh`
-		#print "gN: " + `self.gn`
+		#print "gN: " + `self.gx`
 		#print "h-bar: " + `self.h_bar`
 		#print "mu0: " + `self.mu0`
 		#print "frq1: " + `self.frq[0][1]`
@@ -127,10 +127,10 @@ class data:
 		"Calculate all the frequencies which lead to relaxation."
 
 		self.frq = []
-		for i in range(len(self.nmr_frq)):
+		for i in range(len(self.mf.usr_param.nmr_frq)):
 			self.frq.append([])
-			frqH = 2.0*pi * ( float(self.nmr_frq[i][1]) * 1e6 )
-			frqN = frqH * ( self.gn / self.gh )
+			frqH = 2.0*pi * ( float(self.mf.usr_param.nmr_frq[i][1]) * 1e6 )
+			frqN = frqH * ( self.gx / self.gh )
 			self.frq[i].append(0.0)
 			self.frq[i].append(frqN)
 			self.frq[i].append(frqH - frqN)
@@ -140,7 +140,7 @@ class data:
 
 	def init_constants(self):
 		self.gh = 26.7522e7
-		self.gn = -2.7126e7
+		self.gx = -2.7126e7
 		self.h = 6.6260755e-34
 		self.h_bar = self.h / ( 2.0*pi )
 		self.mu0 = 4.0*pi * 1e-7
@@ -148,14 +148,6 @@ class data:
 
 	def init_data(self):
 		"""Initilize the data
-
-		The structure of self.nmr_frq is as follows:  The length of the first dimension is equal to the number
-		of field strengths.  The fields of the second are:
-			0 - NMR frequency label
-			1 - NMR proton frequency in MHz
-			2 - R1 flag (0 or 1 depending if data is present).
-			3 - R2 flag (0 or 1 depending if data is present).
-			4 - NOE flag (0 or 1 depending if data is present).
 
 		The structure of self.input_info is as follows:  The fields of the first dimension correspond
 		to each relaxation data set and is flexible in size, ie len(self.input_info) = number of data sets.
@@ -174,7 +166,6 @@ class data:
 			[res][3] - Relaxation error
 		"""
 
-		self.nmr_frq = []
 		self.input_info = []
 		self.relax_data = []
 		self.num_data_sets = 0

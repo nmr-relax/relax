@@ -57,7 +57,7 @@ class file_ops:
 		try:
 			mkdir(dir)
 		except OSError:
-			print "Directory ./" + dir + " already exists, quitting script.\n"
+			print "Directory ./" + dir + " already exists, quitting program.\n"
 			sys.exit()
 
 
@@ -72,13 +72,13 @@ class file_ops:
 
 
 	def read_file(self, file_name, message=''):
-		"Attempt to read the file, or quit the script if it does not exist."
+		"Attempt to read the file, or quit the program if it does not exist."
 
 		try:
 			open(file_name, 'r')
 		except IOError:
 			sys.stdout.write(message)
-			sys.stdout.write("The file '" + file_name + "' does not exist, quitting script.\n\n\n")
+			sys.stdout.write("The file '" + file_name + "' does not exist, quitting program.\n\n\n")
 			sys.exit()
 		file = open(file_name, 'r')
 		return file
