@@ -21,8 +21,6 @@
 ###############################################################################
 
 
-from os import F_OK, access
-
 
 class RW:
     def __init__(self, relax):
@@ -57,13 +55,6 @@ class RW:
         # The directory.
         if directory == 'run':
             directory = run
-        elif directory == None:
-            directory = '.'
-
-        # The results file.
-        file_name = directory + '/' + file
-        if not access(file_name, F_OK):
-            raise RelaxFileError, ('relaxation data', file_name)
 
         # Make sure that there are no data structures corresponding to the run.
         for data_name in dir(self.relax.data):
@@ -79,7 +70,7 @@ class RW:
                 raise RelaxError, "Data corresponding to the run " + `run` + " exists."
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file_name)
+        file_data = self.relax.file_ops.extract_data(file_name=file, dir=directory)
 
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
@@ -89,15 +80,11 @@ class RW:
             raise RelaxFileEmptyError
 
         # Read the results.
-        self.read_function(run, file_name, file_data)
+        self.read_function(run, file, file_data)
 
 
-    def write_results(self, run=None, file="results", directory=None, force=0, format='columnar'):
-        """Create the directories and files for output.
-
-        The directory with the name of the run will be created.  The results will be placed in the
-        file 'results' in the run directory.
-        """
+    def write_results(self, run=None, file="results", directory=None, force=0, format='columnar', compress_type=1):
+        """Create the results file."""
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -106,9 +93,6 @@ class RW:
         # The directory.
         if directory == 'run':
             directory = run
-
-        # Open the file for writing.
-        results_file = self.relax.file_ops.open_write_file(file, directory, force)
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
@@ -125,6 +109,9 @@ class RW:
         # No function.
         if not self.write_function:
             raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+
+        # Open the file for writing.
+        results_file = self.relax.file_ops.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type)
 
         # Write the results.
         self.write_function(results_file, run)

@@ -1227,8 +1227,8 @@ class Model_free(Common_functions):
 
         Arguments.
 
-        The 'args' argument must be a tuple of length 2, the element of which must be numbers.  For
-        example to eliminate models which have a local tm value greater than 25 ns and models with
+        The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For
+        example, to eliminate models which have a local tm value greater than 25 ns and models with
         internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
         """
 
@@ -1734,9 +1734,13 @@ class Model_free(Common_functions):
 
                 # Loop over the model-free parameters.
                 for l in xrange(len(self.relax.data.res[self.run][k].params)):
-                    # Local tm (skip).
+                    # Local tm (do nothing).
                     if self.relax.data.res[self.run][k].params[l] == 'tm':
-                        continue
+                        # tm >= 0.
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        b.append(0.0 / self.scaling_matrix[i, i])
+                        j = j + 1
 
                     # Order parameters {S2, S2f, S2s}.
                     elif match('S2', self.relax.data.res[self.run][k].params[l]):
@@ -1992,6 +1996,10 @@ class Model_free(Common_functions):
         # Parameter set for the back-calculate function.
         if min_algor == 'back_calc' and self.param_set != 'local_tm':
             self.param_set = 'mf'
+
+        # Test if diffusion tensor data for the run exists.
+        if self.param_set != 'local_tm' and not self.relax.data.diff.has_key(self.run):
+            raise RelaxNoTensorError, self.run
 
         # Tests for the PDB file and unit vectors.
         if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':

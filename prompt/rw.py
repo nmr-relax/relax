@@ -85,7 +85,7 @@ class RW:
         self.relax.generic.rw.read_results(run=run, file=file, directory=dir, format=format)
 
 
-    def write(self, run=None, file='results', dir='run', force=0, format='columnar'):
+    def write(self, run=None, file='results', dir='run', force=0, format='columnar', compress_type=1):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -99,12 +99,21 @@ class RW:
 
         force:  A flag which, if set to 1, will cause the results file to be overwritten.
 
+        compress_type:  The type of compression to use when creating the file.
+
 
         Description
         ~~~~~~~~~~~
 
         If no directory name is given, the results file will be placed in a directory named after
         the run name.  To place the results file in the current working directory, set dir to None.
+
+        The compress_type argument can be set to:
+            0 - No compression (no extension).
+            1 - bzip2 compression ('.bz2' extension).
+            2 - gzip compression ('.gz' extension).
+        The default is for bzip2 compression.  It is not necessary to supply the file extension to
+        this function.
         """
 
         # Function intro text.
@@ -117,7 +126,8 @@ class RW:
             else:
                 text = text + ", dir=" + `dir`
             text = text + ", force=" + `force`
-            text = text + ", format=" + `format` + ")"
+            text = text + ", format=" + `format`
+            text = text + ", compress_type=" + `compress_type` + ")"
             print text
 
         # The run argument.
@@ -140,5 +150,9 @@ class RW:
         if type(format) != str:
             raise RelaxStrError, ('format', format)
 
+        # Compression type.
+        if type(compress_type) != int:
+            raise RelaxIntError, ('compression type', compress_type)
+
         # Execute the functional code.
-        self.relax.generic.rw.write_results(run=run, file=file, directory=dir, force=force, format=format)
+        self.relax.generic.rw.write_results(run=run, file=file, directory=dir, force=force, format=format, compress_type=compress_type)
