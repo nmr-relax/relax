@@ -1694,118 +1694,112 @@ class Model_free:
         file.write("\n")
 
 
-    def write_results(self, file, run):
+    def write_results(self, file, run, i):
         """Function for printing the core of the results file."""
 
-        # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
-            # Reassign data structure.
-            res = self.relax.data.res[i]
+        # Reassign data structure.
+        res = self.relax.data.res[i]
 
-            # Skip unselected residues.
-            if not res.select:
-                continue
+        # Residue number and name.
+        file.write("%-5s" % res.num)
+        file.write("%-6s" % res.name)
 
-            # Residue number and name.
-            file.write("%-5s" % res.num)
-            file.write("%-6s" % res.name)
-
-            # Test if the run exists.
-            if not run in res.runs:
-                file.write("\n")
-                continue
-
-            # Model details.
-            file.write("%-6s" % res.models[run])
-            file.write("%-10s" % res.equations[run])
-            file.write("%-36s" % replace(`res.params[run]`, ' ', ''))
-
-            # S2.
-            if res.s2[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `res.s2[run]`)
-
-            # S2f.
-            if res.s2f[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `res.s2f[run]`)
-
-            # S2s.
-            if res.s2s[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `res.s2s[run]`)
-
-            # tm.
-            if hasattr(res, 'tm') and res.tm.has_key(run) and res.tm[run] != None:
-                file.write("%-26s" % `res.tm[run] / 1e-12`)
-            else:
-                file.write("%-26s" % `self.relax.data.diff_params[run][0] / 1e-12`)
-
-            # tf.
-            if res.tf[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `res.tf[run] / 1e-12`)
-
-            # te or ts.
-            if res.te[run] == None and res.ts[run] == None:
-                file.write("%-26s" % "N/A")
-            elif res.te[run] != None:
-                file.write("%-26s" % `res.te[run] / 1e-12`)
-            else:
-                file.write("%-26s" % `res.ts[run] / 1e-12`)
-
-            # Rex.
-            if res.rex[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `res.rex[run] * (2.0 * pi * res.frq[run][0])**2`)
-
-            # Bond length.
-            if res.r[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `res.r[run] / 1e-10`)
-
-            # CSA.
-            if res.csa[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `res.csa[run] / 1e-6`)
-
-            # Chi-squared.
-            file.write("%-26s" % `res.chi2[run]`)
-
-            # Iterations
-            if res.iter[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.iter[run])
-
-            # Function count.
-            if res.f_count[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.f_count[run])
-
-            # Gradient count.
-            if res.g_count[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.g_count[run])
-
-            # Hessian count.
-            if res.h_count[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.h_count[run])
-
-            # Warning
-            if res.warning[run] != None:
-                file.write(res.warning[run])
-
-            # End of line.
+        # Test if the run exists.
+        if not run in res.runs:
             file.write("\n")
+            return
+
+        # Model details.
+        file.write("%-6s" % res.models[run])
+        file.write("%-10s" % res.equations[run])
+        file.write("%-36s" % replace(`res.params[run]`, ' ', ''))
+
+        # S2.
+        if res.s2[run] == None:
+            file.write("%-26s" % "N/A")
+        else:
+            file.write("%-26s" % `res.s2[run]`)
+
+        # S2f.
+        if res.s2f[run] == None:
+            file.write("%-26s" % "N/A")
+        else:
+            file.write("%-26s" % `res.s2f[run]`)
+
+        # S2s.
+        if res.s2s[run] == None:
+            file.write("%-26s" % "N/A")
+        else:
+            file.write("%-26s" % `res.s2s[run]`)
+
+        # tm.
+        if hasattr(res, 'tm') and res.tm.has_key(run) and res.tm[run] != None:
+            file.write("%-26s" % `res.tm[run] / 1e-12`)
+        else:
+            file.write("%-26s" % `self.relax.data.diff_params[run][0] / 1e-12`)
+
+        # tf.
+        if res.tf[run] == None:
+            file.write("%-26s" % "N/A")
+        else:
+            file.write("%-26s" % `res.tf[run] / 1e-12`)
+
+        # te or ts.
+        if res.te[run] == None and res.ts[run] == None:
+            file.write("%-26s" % "N/A")
+        elif res.te[run] != None:
+            file.write("%-26s" % `res.te[run] / 1e-12`)
+        else:
+            file.write("%-26s" % `res.ts[run] / 1e-12`)
+
+        # Rex.
+        if res.rex[run] == None:
+            file.write("%-26s" % "N/A")
+        else:
+            file.write("%-26s" % `res.rex[run] * (2.0 * pi * res.frq[run][0])**2`)
+
+        # Bond length.
+        if res.r[run] == None:
+            file.write("%-26s" % "N/A")
+        else:
+            file.write("%-26s" % `res.r[run] / 1e-10`)
+
+        # CSA.
+        if res.csa[run] == None:
+            file.write("%-26s" % "N/A")
+        else:
+            file.write("%-26s" % `res.csa[run] / 1e-6`)
+
+        # Chi-squared.
+        file.write("%-26s" % `res.chi2[run]`)
+
+        # Iterations
+        if res.iter[run] == None:
+            file.write("%-9s" % "None")
+        else:
+            file.write("%-9i" % res.iter[run])
+
+        # Function count.
+        if res.f_count[run] == None:
+            file.write("%-9s" % "None")
+        else:
+            file.write("%-9i" % res.f_count[run])
+
+        # Gradient count.
+        if res.g_count[run] == None:
+            file.write("%-9s" % "None")
+        else:
+            file.write("%-9i" % res.g_count[run])
+
+        # Hessian count.
+        if res.h_count[run] == None:
+            file.write("%-9s" % "None")
+        else:
+            file.write("%-9i" % res.h_count[run])
+
+        # Warning
+        if res.warning[run] != None:
+            file.write(res.warning[run])
+
+        # End of line.
+        file.write("\n")

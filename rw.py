@@ -87,12 +87,37 @@ class RW:
         except OSError:
             pass
 
-        # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("write", self.relax.data.res[0].equations[run])
-        #fns = self.relax.specific_setup.setup("write", self.relax.data.types[run])
-        if fns == None:
-            raise RelaxFuncSetupError, ('write', self.relax.data.res[i].equations[run])
-        self.write_header, self.write_results = fns
+        # Empty functions.
+        self.write_header = None
+        self.write_results = []
+        header_fn = None
+
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Append None to the write_results function array.
+            self.write_results.append(None)
+
+            # Reassign data structure.
+            res = self.relax.data.res[i]
+
+            # Skip unselected residues.
+            if not res.select:
+                continue
+
+            # Equation type specific function setup.
+            fns = self.relax.specific_setup.setup('write', res.equations[run])
+            if fns == None:
+                raise RelaxFuncSetupError, ('write', res.equations[run])
+
+            # Assign the header function.
+            if self.write_header == None:
+                self.write_header, self.write_results[i] = fns
+            else:
+                header_fn, self.write_results[i] = fns
+
+            # Make sure the header functions are the same.
+            if self.write_header == header_fn:
+                raise RelaxError, "The write header functions for the run " + `run` + " are not consistent between residues."
 
         # The results file.
         file_name = dir + "/" + file
@@ -103,8 +128,17 @@ class RW:
         # Write the header.
         self.write_header(results_file, run)
 
-        # Write the results.
-        self.write_results(results_file, run)
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Reassign data structure.
+            res = self.relax.data.res[i]
+
+            # Skip unselected residues.
+            if not res.select:
+                continue
+
+            # Write the results.
+            self.write_results[i](results_file, run, i)
 
         # Close the results file.
         results_file.close()
