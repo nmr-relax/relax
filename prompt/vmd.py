@@ -27,13 +27,15 @@ import help
 
 class Vmd:
     def __init__(self, relax):
-        """Class containing the VMD functions."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for interfacing with VMD."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def view(self, run=None):
@@ -53,7 +55,7 @@ class Vmd:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "vmd.view("
             text = text + "run=" + `run` + ")"
             print text
@@ -63,4 +65,4 @@ class Vmd:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.vmd.view(run=run)
+        self.__relax__.generic.vmd.view(run=run)

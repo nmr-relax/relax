@@ -27,25 +27,27 @@ import help
 
 class Molmol:
     def __init__(self, relax):
-        """Class containing the Molmol functions."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for interfacing with Molmol."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def clear_history(self):
         """Function for clearing the Molmol command history."""
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.clear_history()"
             print text
 
         # Execute the functional code.
-        self.relax.generic.molmol.clear_history()
+        self.__relax__.generic.molmol.clear_history()
 
 
     def command(self, command):
@@ -58,7 +60,7 @@ class Molmol:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.command("
             text = text + "command=" + `command` + ")"
             print text
@@ -68,7 +70,7 @@ class Molmol:
             raise RelaxStrError, ('command', command)
 
         # Execute the functional code.
-        self.relax.generic.molmol.write(command=command)
+        self.__relax__.generic.molmol.write(command=command)
 
 
     def view(self, run=None):
@@ -88,7 +90,7 @@ class Molmol:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.view("
             text = text + "run=" + `run` + ")"
             print text
@@ -98,4 +100,4 @@ class Molmol:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.molmol.view(run=run)
+        self.__relax__.generic.molmol.view(run=run)

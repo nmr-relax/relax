@@ -28,13 +28,15 @@ from specific_fns.model_free import Model_free
 
 class Value:
     def __init__(self, relax):
-        """Class containing functions for the setting up of data structures."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for setting data values."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
@@ -193,7 +195,7 @@ class Value:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.set("
             text = text + "run=" + `run`
             text = text + ", value=" + `value`
@@ -243,7 +245,7 @@ class Value:
             raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
-        self.relax.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num, res_name=res_name)
+        self.__relax__.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num, res_name=res_name)
 
 
     # Modify the docstring of the set method to include the docstring of the model-free specific function get_data_name.

@@ -26,30 +26,32 @@ import help
 
 class Format:
     def __init__(self, relax):
-        """Functions for printing data to standard out."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for printing data to standard out."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def format(self, *args):
-        """Function to print the names of all data structures in self.relax.data
+        """Function to print the names of all data structures in self.__relax__.data
 
-        With no arguments, the names of all data structures in self.relax.data are printed
+        With no arguments, the names of all data structures in self.__relax__.data are printed
         along with the data type.
         """
 
         self.args = args
 
-        # Print the names of all data structures in self.relax.data if no arguments are given.
+        # Print the names of all data structures in self.__relax__.data if no arguments are given.
         if len(self.args) == 0:
             print "Data structures:"
-            for name in dir(self.relax.data):
+            for name in dir(self.__relax__.data):
                 if not self.filter_data_structure(name):
-                    print "   " + name + " " + `type(getattr(self.relax.data, name))`
+                    print "   " + name + " " + `type(getattr(self.__relax__.data, name))`
             return
 
         # Sort out the arguments.
@@ -58,32 +60,32 @@ class Format:
 
         # Test if the data structure exists.
         try:
-            getattr(self.relax.data, self.struct)
+            getattr(self.__relax__.data, self.struct)
         except AttributeError:
-            print "Data structure 'self.relax.data." + self.struct + "' does not exist."
+            print "Data structure 'self.__relax__.data." + self.struct + "' does not exist."
             return
 
         # Sequence data.
         if self.struct == 'seq':
             # Test if sequence data is loaded.
             try:
-                self.relax.data.seq
+                self.__relax__.data.seq
             except AttributeError:
                 print "No sequence data loaded."
                 return
             self.indecies = self.select_residues()
             if not self.indecies:
                 return
-            self.print_data(self.relax.data.seq, seq_flag=1)
+            self.print_data(self.__relax__.data.seq, seq_flag=1)
 
         # Relaxation data.
         #elif self.struct == 'relax_data':
-        #    self.print_data(self.relax.data.seq, seq_flag=0)
+        #    self.print_data(self.__relax__.data.seq, seq_flag=0)
 
         # Other data.
         else:
             print "Data structure " + self.struct + ":"
-            print `getattr(self.relax.data, self.struct)`
+            print `getattr(self.__relax__.data, self.struct)`
 
 
     def print_data(self, data, seq_flag=0):

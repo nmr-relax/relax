@@ -27,13 +27,15 @@ import help
 
 class Select:
     def __init__(self, relax):
-        """Class containing the functions for selecting residues."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for selecting residues."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def all(self, run=None):
@@ -67,7 +69,7 @@ class Select:
         """
 
         # Function intro test.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.all("
             text = text + "run=" + `run` + ")"
             print text
@@ -77,7 +79,7 @@ class Select:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.selection.sel_all(run=run)
+        self.__relax__.generic.selection.sel_all(run=run)
 
 
     def res(self, run=None, num=None, name=None, change_all=0):
@@ -131,7 +133,7 @@ class Select:
         """
 
         # Function intro test.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.res("
             text = text + "run=" + `run`
             text = text + ", num=" + `num`
@@ -160,7 +162,7 @@ class Select:
             raise RelaxBinError, ('change_all', change_all)
 
         # Execute the functional code.
-        self.relax.generic.selection.sel_res(run=run, num=num, name=name, change_all=change_all)
+        self.__relax__.generic.selection.sel_res(run=run, num=num, name=name, change_all=change_all)
 
 
     def reverse(self, run=None):
@@ -188,7 +190,7 @@ class Select:
         """
 
         # Function intro test.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.reverse("
             text = text + "run=" + `run` + ")"
             print text
@@ -198,4 +200,4 @@ class Select:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.selection.reverse(run=run)
+        self.__relax__.generic.selection.reverse(run=run)

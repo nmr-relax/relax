@@ -27,12 +27,15 @@ import help
 
 class Model:
     def __init__(self, relax):
+        # Help.
+        self.__relax_help__ = \
         """Class for holding the preset model functions."""
 
-        self.relax = relax
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        # Place relax in the class namespace.
+        self.__relax__ = relax
 
 
     def create_mf(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
@@ -125,7 +128,7 @@ class Model:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model.create_mf("
             text = text + "run=" + `run`
             text = text + ", model=" + `model`
@@ -167,7 +170,7 @@ class Model:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.relax.specific.model_free.create(run=run, model=model, equation=equation, params=params, scaling=scaling, res_num=res_num)
+        self.__relax__.specific.model_free.create(run=run, model=model, equation=equation, params=params, scaling=scaling, res_num=res_num)
 
 
     def select_mf(self, run=None, model=None, scaling=1, res_num=None):
@@ -315,7 +318,7 @@ class Model:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model.select_mf("
             text = text + "run=" + `run`
             text = text + ", model=" + `model`
@@ -339,4 +342,4 @@ class Model:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.relax.specific.model_free.select(run=run, model=model, scaling=scaling, res_num=res_num)
+        self.__relax__.specific.model_free.select(run=run, model=model, scaling=scaling, res_num=res_num)

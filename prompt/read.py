@@ -27,13 +27,15 @@ import help
 
 class Read:
     def __init__(self, relax):
+        # Help.
+        self.__relax_help__ = \
         """Class containing functions for loading data."""
 
-        # Place relax in the class namespace.
-        self.relax = relax
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        # Place relax in the class namespace.
+        self.__relax__ = relax
 
 
     def relax_data(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
@@ -95,7 +97,7 @@ class Read:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "read.relax_data("
             text = text + "run=" + `run`
             text = text + ", ri_label=" + `ri_label`
@@ -157,7 +159,7 @@ class Read:
             raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
-        self.relax.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
+        self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
 
 
     def results(self, run=None, data_type=None, file='results', dir=None):
@@ -189,7 +191,7 @@ class Read:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "read.results("
             text = text + "run=" + `run`
             text = text + ", data_type=" + `data_type`
@@ -215,7 +217,7 @@ class Read:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.relax.generic.rw.read_results(run=run, data_type=data_type, file=file, dir=dir)
+        self.__relax__.generic.rw.read_results(run=run, data_type=data_type, file=file, dir=dir)
 
 
     def sequence(self, run=None, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):
@@ -267,7 +269,7 @@ class Read:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "read.sequence("
             text = text + "run=" + `run`
             text = text + ", file_name=" + `file_name`
@@ -300,4 +302,4 @@ class Read:
             raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
-        self.relax.generic.sequence.read(run=run, file_name=file_name, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)
+        self.__relax__.generic.sequence.read(run=run, file_name=file_name, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)

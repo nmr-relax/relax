@@ -113,9 +113,9 @@ class Interpreter:
         self._Palmer = Palmer(relax)
         self._Read = Read(relax)
         self._Select = Select(relax)
-        self._Value = Value(relax)
         self._State = State(relax)
         self._Unselect = Unselect(relax)
+        self._Value = Value(relax)
         self._Vmd = Vmd(relax)
 
 

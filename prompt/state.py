@@ -27,13 +27,15 @@ import help
 
 class State:
     def __init__(self, relax):
-        """Class containing the functions for manipulating the program state."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for saving or loading the program state."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def load(self, file=None, dir=None):
@@ -57,7 +59,7 @@ class State:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.load("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir` + ")"
@@ -72,7 +74,7 @@ class State:
             raise RelaxNoneStrError, ('directory', dir)
 
         # Execute the functional code.
-        self.relax.generic.state.load(file=file, dir=dir)
+        self.__relax__.generic.state.load(file=file, dir=dir)
 
 
     def save(self, file=None, dir=None, force=0):
@@ -105,7 +107,7 @@ class State:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.save("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
@@ -125,4 +127,4 @@ class State:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.relax.generic.state.save(file=file, dir=dir, force=force)
+        self.__relax__.generic.state.save(file=file, dir=dir, force=force)

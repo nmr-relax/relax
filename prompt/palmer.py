@@ -27,13 +27,15 @@ import help
 
 class Palmer:
     def __init__(self, relax):
-        """Functions for interoperability with Modelfree4."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for interfacing with Art Palmer's Modelfree 4."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def create(self, run=None, dir=None, force=0, diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
@@ -85,7 +87,7 @@ class Palmer:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.create("
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir`
@@ -151,7 +153,7 @@ class Palmer:
             raise RelaxStrError, ('atom2', atom2)
 
         # Execute the functional code.
-        self.relax.generic.palmer.create(run=run, dir=dir, force=force, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
+        self.__relax__.generic.palmer.create(run=run, dir=dir, force=force, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
 
 
     def execute(self, run=None, dir=None, force=0):
@@ -179,7 +181,7 @@ class Palmer:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.execute("
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir`
@@ -200,7 +202,7 @@ class Palmer:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.relax.generic.palmer.execute(run=run, dir=dir, force=force)
+        self.__relax__.generic.palmer.execute(run=run, dir=dir, force=force)
 
 
     def extract(self, run=None, dir=None):
@@ -215,7 +217,7 @@ class Palmer:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.extract("
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir` + ")"
@@ -231,4 +233,4 @@ class Palmer:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.relax.generic.palmer.extract(run=run, dir=dir)
+        self.__relax__.generic.palmer.extract(run=run, dir=dir)

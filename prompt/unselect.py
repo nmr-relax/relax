@@ -27,13 +27,15 @@ import help
 
 class Unselect:
     def __init__(self, relax):
-        """Class containing the functions for unselecting residues."""
+        # Help.
+        self.__relax_help__ = \
+        """Class containing functions for unselecting residues."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def all(self, run=None):
@@ -67,7 +69,7 @@ class Unselect:
         """
 
         # Function intro test.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "unselect.all("
             text = text + "run=" + `run` + ")"
             print text
@@ -77,7 +79,7 @@ class Unselect:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.selection.unsel_all(run=run)
+        self.__relax__.generic.selection.unsel_all(run=run)
 
 
     def res(self, run=None, num=None, name=None, change_all=0):
@@ -130,7 +132,7 @@ class Unselect:
         """
 
         # Function intro test.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "unselect.res("
             text = text + "run=" + `run`
             text = text + ", num=" + `num`
@@ -159,7 +161,7 @@ class Unselect:
             raise RelaxBinError, ('change_all', change_all)
 
         # Execute the functional code.
-        self.relax.generic.selection.unsel_res(run=run, num=num, name=name, change_all=change_all)
+        self.__relax__.generic.selection.unsel_res(run=run, num=num, name=name, change_all=change_all)
 
 
     def reverse(self, run=None):
@@ -187,7 +189,7 @@ class Unselect:
         """
 
         # Function intro test.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "unselect.reverse("
             text = text + "run=" + `run` + ")"
             print text
@@ -197,4 +199,4 @@ class Unselect:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.relax.generic.selection.reverse(run=run)
+        self.__relax__.generic.selection.reverse(run=run)

@@ -26,38 +26,40 @@ import help
 
 class Echo_data:
     def __init__(self, relax):
-        """Functions for printing data to standard out."""
+        # Help.
+        self.__relax_help__ = \
+        """Class for printing data to standard out."""
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
 
         # Place relax in the class namespace.
-        self.relax = relax
-
-        # Help.
-        self.__relax_help__ = help.relax_class_help
+        self.__relax__ = relax
 
 
     def echo(self, *args):
-        """Function to print the names of all data structures in self.relax.data
+        """Function to print the names of all data structures in self.__relax__.data
 
-        With no arguments, the names of all data structures in self.relax.data are printed along
+        With no arguments, the names of all data structures in self.__relax__.data are printed along
         with the data type.
         """
 
         self.args = args
 
-        # Print the names of all data structures in self.relax.data if no arguments are given.
+        # Print the names of all data structures in self.__relax__.data if no arguments are given.
         if len(self.args) == 0:
-            print dir(self.relax.data)
+            print dir(self.__relax__.data)
             return
 
         for struct in args:
             # Test if the data structure exists.
             try:
-                getattr(self.relax.data, struct)
+                getattr(self.__relax__.data, struct)
             except AttributeError:
-                print "Data structure 'self.relax.data." + struct + "' does not exist."
+                print "Data structure 'self.__relax__.data." + struct + "' does not exist."
                 continue
 
-            print `getattr(self.relax.data, struct)`
+            print `getattr(self.__relax__.data, struct)`
 
 
     def print_data(self, data, seq_flag=0):

@@ -32,16 +32,6 @@ This is a python class which contains user functions.  To list these functions, 
 period at the end of class name and hit the tab key, or type 'dir(class_name)'.
 """
 
-# Strip the leading newline character.
-relax_class_help = relax_class_help[1:]
-
-
-# Repr function used to print the 'relax_class_help' string.
-############################################################
-
-def repr():
-    return relax_class_help
-
 
 # Helper classes.
 #################
