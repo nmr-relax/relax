@@ -321,8 +321,13 @@ class RelaxErrors:
             self.text = "The " + name + " argument " + `value` + " is not valid regular expression."
 
 
-    # Parameter combination errors.
-    ###############################
+    # Data type errors.
+    ###################
+
+    # No data value.
+    class RelaxNoValueError(BaseError):
+        def __init__(self, name):
+            self.text = "The " + `name` + " value has not yet been set."
 
     # Unknown parameter combination.
     class RelaxUnknownParamCombError(BaseError):

@@ -76,7 +76,7 @@ class Value:
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         | None  | None  | This case is used to set the model parameters prior to minimisation.     |
-        |       |       | The model parameters are set to the hard wired values.                   |
+        |       |       | The model parameters are set to the default values.                      |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   1   | None  | Invalid combination.                                                     |
@@ -88,7 +88,7 @@ class Value:
         |       |       | corresponding number.                                                    |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
-        | None  |   1   | The data type matching the string will be set to the hard wired value.   |
+        | None  |   1   | The data type matching the string will be set to the default value.      |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   1   |   1   | The data type matching the string will be set to the supplied number.    |
@@ -97,8 +97,7 @@ class Value:
         |   n   |   1   | Invalid combination.                                                     |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
-        | None  |   n   | Each data type matching the strings will be set to the hard wired        |
-        |       |       | values.                                                                  |
+        | None  |   n   | Each data type matching the strings will be set to the default values.   |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   1   |   n   | Each data type matching the strings will be set to the supplied number.  |
@@ -140,7 +139,7 @@ class Value:
         Examples
         ~~~~~~~~
 
-        To set the parameter values for the run 'test' to the hard wired values, for all residues,
+        To set the parameter values for the run 'test' to the default values, for all residues,
         type:
 
         relax> value.set('test')
@@ -154,7 +153,7 @@ class Value:
         relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
 
 
-        To set the CSA value for the model-free run 'tm3' to the hard wired value, type:
+        To set the CSA value for the model-free run 'tm3' to the default value, type:
 
         relax> value.set('tm3', data_type='csa')
 
@@ -172,7 +171,7 @@ class Value:
         relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
 
 
-        To set both the bond length and the CSA value for the model-free run 'tm3' to the hard wired
+        To set both the bond length and the CSA value for the model-free run 'tm3' to the default
         values, type:
 
         relax> value.set('tm3', data_type=['bond length', 'csa'])
@@ -211,7 +210,7 @@ class Value:
         if value != None and type(value) != float and type(value) != int and type(value) != list:
             raise RelaxNoneFloatListError, ('value', value)
         if type(value) == list:
-            for i in len(value):
+            for i in range(len(value)):
                 if type(value[i]) != float and type(value[i]) != int:
                     raise RelaxListFloatError, ('value', value)
 
@@ -219,17 +218,17 @@ class Value:
         if data_type != None and type(data_type) != str and type(data_type) != list:
             raise RelaxNoneStrListError, ('data type', data_type)
         if type(data_type) == list:
-            for i in len(data_type):
-                if type(data_type) != str:
+            for i in range(len(data_type)):
+                if type(data_type[i]) != str:
                     raise RelaxListStrError, ('data type', data_type)
 
         # The invalid combination of a single value and no data_type argument.
         if (type(value) == float or type(value) == int) and data_type == None:
-            raise RelaxError, "Invalid combination, view the docstring for details by typing 'help(value.set)'"
+            raise RelaxError, "Invalid value and data type argument combination, for details by type 'help(value.set)'"
 
         # The invalid combination of an array of values and a single data_type string.
         if type(value) == list and type(data_type) == str:
-            raise RelaxError, "Invalid combination, view the docstring for details by typing 'help(value.set)'"
+            raise RelaxError, "Invalid value and data type argument combination, for details by type 'help(value.set)'"
 
         # Value array and data type array of equal length.
         if type(value) == list and type(data_type) == list and len(value) != len(data_type):
@@ -250,4 +249,4 @@ class Value:
     # Modify the docstring of the set method to include the docstring of the model-free specific function get_data_name.
     ####################################################################################################################
 
-    set.__doc__ = set.__doc__ + "\n\n" + Model_free.get_data_name.__doc__ + "\n" + Model_free.hard_wired_values.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + "\n\n" + Model_free.get_data_name.__doc__ + "\n" + Model_free.default_value.__doc__ + "\n"

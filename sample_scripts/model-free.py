@@ -7,7 +7,7 @@ read.sequence('noe.500.out')
 nuclei('N')
 
 # Create the run.
-name = 'm8'
+name = 'm4'
 create_run(name, 'mf')
 
 # Load a PDB file.
@@ -36,7 +36,7 @@ model.select_mf(run=name, model=name)
 #select.res(num=4574)
 # Fixed value.
 #from math import pi
-value.set(name, [ 0.97, 2.048*1e-9, 0.149 / (2.0 * pi * 600000000.0)**2 ])
+#value.set(name, [ 0.97, 2.048*1e-9, 0.149 / (2.0 * pi * 600000000.0)**2 ])
 #value.set(name, [ 6.00000000e-01, 5.00000000e-01, 1.00000000e-9])
 #value.set(name)
 #fix(name, 'all_res')
@@ -47,8 +47,8 @@ grid_search(name, inc=7, constraints=1, print_flag=1)
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)
 #minimise('newton', run=name, constraints=1, print_flag=20, max_iter=0)
-minimise('simplex', run=name, constraints=1)
-#minimise('newton', run=name)
+#minimise('simplex', run=name, constraints=1)
+minimise('newton', run=name)
 
 # Finish.
 write(run=name, file='results', force=1)

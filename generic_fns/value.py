@@ -107,7 +107,7 @@ class Value:
                         val = value
 
                     # Set the value of data type 'j' to 'val'.
-                    set(run=run, value=val, data_type=data_type[i], index=i)
+                    set(run=run, value=val, data_type=data_type[j], index=i)
 
 
             # Reset the minimisation statistics.

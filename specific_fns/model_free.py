@@ -915,10 +915,10 @@ class Model_free:
         return min_options
 
 
-    def hard_wired_values(self, param):
+    def default_value(self, param):
         """
 
-        The hard wired values are as follows:
+        The default values are as follows:
 
         _______________________________________________________________________________________
         |                                       |              |                              |
@@ -1432,12 +1432,20 @@ class Model_free:
             elif self.param_set == 'all':
                 print "The diffusion tensor parameters together with the model-free parameters for all residues will be used."
 
-        # The total number of residues.
+        # Count the total number of residues and test if the CSA and bond length values have been set.
         num_res = 0
         for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
+
+            # CSA value.
+            if not hasattr(self.relax.data.res[i], 'csa') or self.relax.data.res[i].csa[self.run] == None:
+                raise RelaxNoValueError, "CSA"
+
+            # Bond length value.
+            if not hasattr(self.relax.data.res[i], 'r') or self.relax.data.res[i].r[self.run] == None:
+                raise RelaxNoValueError, "bond length"
 
             # Increment the number of residues.
             num_res = num_res + 1
@@ -2160,21 +2168,23 @@ class Model_free:
             if value:
                 # Test if the length of the value array is equal to the length of the model-free parameter array.
                 if len(value) != len(self.relax.data.res[index].params[self.run]):
-                    raise RelaxError, "The length of the value array '" + len(value) + "' must be equal to the number of model-free parameters, '" + len(self.relax.data.res[index].params[self.run]) + "' for residue " + `self.relax.data.res[index].num` + " " + self.relax.data.res[index].name + "."
+                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the model-free parameter array, " + `self.relax.data.res[index].params[self.run]` + ", for residue " + `self.relax.data.res[index].num` + " " + self.relax.data.res[index].name + "."
 
-            # Hard wired values.
+            # Default values.
             else:
                 # Set 'value' to an empty array.
                 value = []
 
                 # Loop over the model-free parameters.
-                for k in xrange(len(self.relax.data.res[index].params[self.run])):
-                    value.append(self.hard_wired_value(self.relax.data.res[index].params[self.run]))
+                for i in xrange(len(self.relax.data.res[index].params[self.run])):
+                    value.append(self.default_value(self.relax.data.res[index].params[self.run][i]))
 
             # Loop over the model-free parameters.
-            for k in xrange(len(self.relax.data.res[index].params[self.run])):
+            for i in xrange(len(self.relax.data.res[index].params[self.run])):
                 # Get the object.
-                object_name = sel.get_data_name(self.relax.data.res[index].params[self.run][i])
+                object_name = self.get_data_name(self.relax.data.res[index].params[self.run][i])
+                if not hasattr(self.relax.data.res[index], object_name):
+                    self.initialise_mf_data(self.relax.data.res[index], self.run)
                 object = getattr(self.relax.data.res[index], object_name)
 
                 # Set the value.
@@ -2187,10 +2197,16 @@ class Model_free:
         else:
             # Get the object.
             object_name = self.get_data_name(data_type)
+            if not hasattr(self.relax.data.res[index], object_name):
+                self.initialise_mf_data(self.relax.data.res[index], self.run)
             object = getattr(self.relax.data.res[index], object_name)
 
+            # Default value.
+            if value == None:
+                value = self.default_value(object_name)
+
             # Set the value.
-            object[self.run] = float(value[i])
+            object[self.run] = float(value)
 
 
     def write_header(self, file, run):
