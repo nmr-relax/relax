@@ -1,6 +1,7 @@
 # General.
 ##########
 
+Fix scaling -> move from model.create_mf and model.select_mf to min, grid, etc.
 Combine the prompt functions 'value.set' and 'set'.
 Fix prompt/map.py (split and create a generic function).  Maybe remove dx/map.py?
 Change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
@@ -9,7 +10,6 @@ Change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
 # Model-free function.
 ######################
 
-Axially symmetric anisotropic formulae.
 Anisotropic formula.
 
 

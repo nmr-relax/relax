@@ -31,7 +31,7 @@ class Value:
         self.relax = relax
 
 
-    def set(self, run=None, data_type=None, val=None, err=None):
+    def set(self, run=None, data_type=None, val=None, err=None, res_num=None):
         """Function for setting data structure values."""
 
         # Test if sequence data is loaded.
@@ -46,6 +46,10 @@ class Value:
         for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
+                continue
+
+            # If res_num is set, then skip all other residues.
+            if res_num != None and res_num != self.relax.data.res[i].num:
                 continue
 
             # Bond length.

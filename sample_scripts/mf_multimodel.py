@@ -26,7 +26,7 @@ for run in runs:
     read.relax_data(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
     # Setup other values.
-    diffusion_tensor(run, 1e-8)
+    diffusion_tensor(run, 1e-8, fixed=0)
     #diffusion_tensor(run, (1e-8, 1.0, 360, 90), param_types=1, axial_type='oblate', fixed=1)
     value.set(run, 'bond_length', 1.02 * 1e-10)
     value.set(run, 'csa', -160 * 1e-6)
@@ -35,9 +35,8 @@ for run in runs:
     model.select_mf(run=run, model=run)
 
     # Minimise.
-    grid_search(run, inc=5)
-    minimise('simplex', run=run, max_iter=2000)
-    minimise('newton', run=run)
+    grid_search(run, inc=7)
+    minimise('simplex', run=run, constraints=0)
 
     # Print results.
     write(run=run, file='results', force=1)

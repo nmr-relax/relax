@@ -187,6 +187,11 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must either be a floating point number or None."
 
+    # None or integer.
+    class RelaxNoneIntError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be an integer or None."
+
     # None, integer, or string.
     class RelaxNoneIntStrError(BaseError):
         def __init__(self, name, value):

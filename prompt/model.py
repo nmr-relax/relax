@@ -35,7 +35,7 @@ class Model:
         self.__repr__ = message.main_class
 
 
-    def create_mf(self, run=None, model=None, equation=None, params=None, scaling=1):
+    def create_mf(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
         """Function to create a model-free model.
 
         Keyword Arguments
@@ -50,6 +50,8 @@ class Model:
         params:  The array of parameter names of the model.
 
         scaling:  The diagonal scaling flag.
+
+        res_num:  The residue number.
 
 
         Description
@@ -96,6 +98,12 @@ class Model:
         techniques fail when the model is not properly scaled.
 
 
+        Residue number.
+
+        If 'res_num' is supplied as an integer then the model will only be created for that residue,
+        otherwise the model will be created for all residues.
+
+
         Examples
         ~~~~~~~~
 
@@ -123,7 +131,8 @@ class Model:
             text = text + ", model=" + `model`
             text = text + ", equation=" + `equation`
             text = text + ", params=" + `params`
-            text = text + ", scaling=" + `scaling` + ")"
+            text = text + ", scaling=" + `scaling`
+            text = text + ", res_num=" + `res_num` + ")"
             print text
 
         # Run argument.
@@ -153,11 +162,15 @@ class Model:
         if type(scaling) != int or (scaling != 0 and scaling != 1):
             raise RelaxBinError, ('scaling', scaling)
 
+        # Residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
+
         # Execute the functional code.
-        self.relax.specific.model_free.create(run=run, model=model, equation=equation, params=params, scaling=scaling)
+        self.relax.specific.model_free.create(run=run, model=model, equation=equation, params=params, scaling=scaling, res_num=res_num)
 
 
-    def select_mf(self, run=None, model=None, scaling=1):
+    def select_mf(self, run=None, model=None, scaling=1, res_num=None):
         """Function for the selection of a preset model-free model.
 
         Keyword Arguments
@@ -285,6 +298,13 @@ class Model:
         techniques fail when the model is not properly scaled.
 
 
+        Residue number.
+
+        If 'res_num' is supplied as an integer then the model will only be selected for that
+        residue, otherwise the model will be selected for all residues.
+
+
+
         Examples
         ~~~~~~~~
 
@@ -314,6 +334,9 @@ class Model:
         if type(scaling) != int or (scaling != 0 and scaling != 1):
             raise RelaxBinError, ('scaling', scaling)
 
-        # Execute the functional code.
-        self.relax.specific.model_free.select(run=run, model=model, scaling=scaling)
+        # Residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
 
+        # Execute the functional code.
+        self.relax.specific.model_free.select(run=run, model=model, scaling=scaling, res_num=res_num)

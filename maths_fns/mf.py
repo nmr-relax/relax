@@ -159,7 +159,7 @@ class Mf:
                     #print name + ": " + `getattr(self.data[i], name)`
 
             # Fixed spectral density components, ie tm is not a parameter.
-            if self.param_set == 'mf' and 'tm' not in self.data[i].param_types:
+            if self.param_set == 'mf':
                 self.data[i].w_ti_sqrd = self.data[i].frq_sqrd_list_ext * self.data[i].ti ** 2
                 self.data[i].fact_ti = 1.0 / (1.0 + self.data[i].w_ti_sqrd)
 
@@ -217,8 +217,15 @@ class Mf:
             sigma_i are the values of the error set.
         """
 
+        # Test if the function has already been calculated with these parameter values.
+        if sum(self.params == self.func_test) == self.total_num_params:
+            return self.total_chi2
+
+        # Store the parameter values in data.func_test for testing on next call if the function has already been calculated.
+        self.func_test = self.params * 1.0
+
         # Temporary initialisation.
-        total_chi2 = 0.0
+        self.total_chi2 = 0.0
 
         # Loop over the residues.
         for i in xrange(self.num_res):
@@ -231,17 +238,6 @@ class Mf:
             # Diffusion tensor parameters.
             if self.pack_diff_params:
                 self.pack_diff_params()
-
-            print "\nself.diff_data.params: " + `self.diff_data.params`
-            print "self.params: " + `self.params`
-            print "S2 index: " + `data.s2_index`
-
-            # Test if the function has already been calculated with these parameter values.
-            if sum(self.params == self.func_test) == self.total_num_params:
-                return data.chi2
-
-            # Store the parameter values in data.func_test for testing on next call if the function has already been calculated.
-            self.func_test = self.params * 1.0
 
             # Diffusion tensor geometry calculations.
             if self.diff_data.calc_geom:
@@ -257,8 +253,11 @@ class Mf:
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
 
+            # Fixed spectral density components, ie tm is not a parameter.
+            data.w_ti_sqrd = data.frq_sqrd_list_ext * data.ti ** 2
+            data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
+
             # Calculate the components of the spectral densities.
-            print `data.calc_jw_comps`
             if data.calc_jw_comps:
                 data.calc_jw_comps(data, self.params)
 
@@ -279,9 +278,9 @@ class Mf:
             data.chi2 = chi2(data.relax_data, data.ri, data.errors)
 
             # Add the residue specific chi2 to the total chi2.
-            total_chi2 = total_chi2 + data.chi2
+            self.total_chi2 = self.total_chi2 + data.chi2
 
-        return total_chi2
+        return self.total_chi2
 
 
     def func_mf(self, params):
@@ -856,7 +855,7 @@ class Mf:
             param_index = param_index + data.num_params
 
             # No spectral density parameters {}.
-            if data.s2_index == None and data.te_index == None:
+            if self.param_set == 'mf' and data.s2_index == None and data.te_index == None:
                 # Equation.
                 data.calc_jw_comps = None
                 data.calc_jw = calc_jw
@@ -865,7 +864,7 @@ class Mf:
                 data.calc_djw_comps = None
 
             # Spectral density parameters {S2}.
-            elif data.s2_index != None and data.te_index == None:
+            elif self.param_set == 'mf' and data.s2_index != None and data.te_index == None:
                 # Equation.
                 data.calc_jw_comps = None
                 data.calc_jw = calc_S2_jw
@@ -875,7 +874,7 @@ class Mf:
                 data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
 
             # Spectral density parameters {S2, te}.
-            elif data.s2_index != None and data.te_index != None:
+            elif self.param_set == 'mf' and data.s2_index != None and data.te_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2_te_jw_comps
                 data.calc_jw = calc_S2_te_jw
@@ -892,49 +891,49 @@ class Mf:
             # Spectral density parameters {tm}.
             elif data.s2_index == None and data.te_index == None:
                 # Equation.
-                data.calc_jw_comps = calc_tm_jw_comps
+                data.calc_jw_comps = None
                 data.calc_jw = calc_jw
 
                 # Gradient.
                 data.calc_djw_comps = calc_tm_djw_comps
-                data.calc_djw[0] = calc_tm_djw_dtm
+                data.calc_djw[0] = calc_tm_djw_dDj
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_d2jw_dtm2
+                data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
 
             # Spectral density parameters {tm, S2}.
             elif data.s2_index != None and data.te_index == None:
                 # Equation.
-                data.calc_jw_comps = calc_tm_jw_comps
+                data.calc_jw_comps = None
                 data.calc_jw = calc_S2_jw
 
                 # Gradient.
                 data.calc_djw_comps = calc_tm_djw_comps
-                data.calc_djw[0] = calc_tm_S2_djw_dtm
+                data.calc_djw[0] = calc_tm_S2_djw_dDj
                 data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2_d2jw_dtm2
-                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_d2jw_dtmdS2
+                data.calc_d2jw[0][0] = calc_tm_S2_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_d2jw_dDjdS2
 
             # Spectral density parameters {tm, S2, te}.
             elif data.s2_index != None and data.te_index != None:
                 # Equation.
-                data.calc_jw_comps = calc_tm_S2_te_jw_comps
+                data.calc_jw_comps = calc_S2_te_jw_comps
                 data.calc_jw = calc_S2_te_jw
 
                 # Gradient.
                 data.calc_djw_comps = calc_tm_S2_te_djw_comps
-                data.calc_djw[0] = calc_tm_S2_te_djw_dtm
+                data.calc_djw[0] = calc_tm_S2_te_djw_dDj
                 data.calc_djw[data.s2_local_index] = calc_S2_te_djw_dS2
-                data.calc_djw[data.te_local_index] = calc_tm_S2_te_djw_dte
+                data.calc_djw[data.te_local_index] = calc_S2_te_djw_dte
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2_te_d2jw_dtm2
-                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_te_d2jw_dtmdS2
-                data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_tm_S2_te_d2jw_dtmdte
-                data.calc_d2jw[data.s2_local_index][data.te_local_index] = data.calc_d2jw[data.te_local_index][data.s2_local_index] = calc_tm_S2_te_d2jw_dS2dte
-                data.calc_d2jw[data.te_local_index][data.te_local_index] = calc_tm_S2_te_d2jw_dte2
+                data.calc_d2jw[0][0] = calc_tm_S2_te_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_te_d2jw_dDjdS2
+                data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_tm_S2_te_d2jw_dDjdte
+                data.calc_d2jw[data.s2_local_index][data.te_local_index] = data.calc_d2jw[data.te_local_index][data.s2_local_index] = calc_S2_te_d2jw_dS2dte
+                data.calc_d2jw[data.te_local_index][data.te_local_index] = calc_S2_te_d2jw_dte2
 
             # Bad parameter combination.
             else:
@@ -977,7 +976,7 @@ class Mf:
             param_index = param_index + data.num_params
 
             # Spectral density parameters {S2f, S2, ts}.
-            if data.s2f_index != None and data.tf_index == None and data.s2_index != None and data.ts_index != None:
+            if self.param_set == 'mf' and data.s2f_index != None and data.tf_index == None and data.s2_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_S2_ts_jw_comps
                 data.calc_jw = calc_S2f_S2_ts_jw
@@ -994,7 +993,7 @@ class Mf:
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2_ts_d2jw_dts2
 
             # Spectral density parameters {S2f, tf, S2, ts}.
-            elif data.s2f_index != None and data.tf_index != None and data.s2_index != None and data.ts_index != None:
+            elif self.param_set == 'mf' and data.s2f_index != None and data.tf_index != None and data.s2_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_tf_S2_ts_jw_comps
                 data.calc_jw = calc_S2f_tf_S2_ts_jw
@@ -1016,50 +1015,50 @@ class Mf:
             # Spectral density parameters {tm, S2f, S2, ts}.
             elif data.s2f_index != None and data.tf_index == None and data.s2_index != None and data.ts_index != None:
                 # Equation.
-                data.calc_jw_comps = calc_tm_S2f_S2_ts_jw_comps
+                data.calc_jw_comps = calc_S2f_S2_ts_jw_comps
                 data.calc_jw = calc_S2f_S2_ts_jw
 
                 # Gradient.
                 data.calc_djw_comps = calc_tm_S2f_S2_ts_djw_comps
-                data.calc_djw[0] = calc_tm_S2f_S2_ts_djw_dtm
-                data.calc_djw[data.s2f_local_index] = calc_tm_S2f_S2_ts_djw_dS2f
-                data.calc_djw[data.s2_local_index] = calc_tm_S2f_S2_ts_djw_dS2
-                data.calc_djw[data.ts_local_index] = calc_tm_S2f_S2_ts_djw_dts
+                data.calc_djw[0] = calc_tm_S2f_S2_ts_djw_dDj
+                data.calc_djw[data.s2f_local_index] = calc_S2f_S2_ts_djw_dS2f
+                data.calc_djw[data.s2_local_index] = calc_S2f_S2_ts_djw_dS2
+                data.calc_djw[data.ts_local_index] = calc_S2f_S2_ts_djw_dts
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2f_S2_ts_d2jw_dtm2
-                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dtmdS2f
-                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dtmdS2
-                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dtmdts
-                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[ts_local_index][data.s2f_local_index] = calc_tm_S2f_S2_ts_d2jw_dS2fdts
-                data.calc_d2jw[data.s2_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2_local_index] = calc_tm_S2f_S2_ts_d2jw_dS2dts
-                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_tm_S2f_S2_ts_d2jw_dts2
+                data.calc_d2jw[0][0] = calc_tm_S2f_S2_ts_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2f
+                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2
+                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdts
+                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_S2f_S2_ts_d2jw_dS2fdts
+                data.calc_d2jw[data.s2_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2_local_index] = calc_S2f_S2_ts_d2jw_dS2dts
+                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2_ts_d2jw_dts2
 
             # Spectral density parameters {tm, S2f, tf, S2, ts}.
             elif data.s2f_index != None and data.tf_index != None and data.s2_index != None and data.ts_index != None:
                 # Equation.
-                data.calc_jw_comps = calc_tm_S2f_tf_S2_ts_jw_comps
+                data.calc_jw_comps = calc_S2f_tf_S2_ts_jw_comps
                 data.calc_jw = calc_S2f_tf_S2_ts_jw
 
                 # Gradient.
                 data.calc_djw_comps = calc_tm_S2f_tf_S2_ts_djw_comps
-                data.calc_djw[0] = calc_tm_S2f_tf_S2_ts_djw_dtm
-                data.calc_djw[data.s2f_local_index] = calc_tm_S2f_tf_S2_ts_djw_dS2f
-                data.calc_djw[data.tf_local_index] = calc_tm_S2f_tf_S2_ts_djw_dtf
-                data.calc_djw[data.s2_local_index] = calc_tm_S2f_tf_S2_ts_djw_dS2
-                data.calc_djw[data.ts_local_index] = calc_tm_S2f_tf_S2_ts_djw_dts
+                data.calc_djw[0] = calc_tm_S2f_tf_S2_ts_djw_dDj
+                data.calc_djw[data.s2f_local_index] = calc_S2f_tf_S2_ts_djw_dS2f
+                data.calc_djw[data.tf_local_index] = calc_S2f_tf_S2_ts_djw_dtf
+                data.calc_djw[data.s2_local_index] = calc_S2f_S2_ts_djw_dS2
+                data.calc_djw[data.ts_local_index] = calc_S2f_S2_ts_djw_dts
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtm2
-                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2f
-                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2
-                data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdtf
-                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_tf_S2_ts_d2jw_dtmdts
-                data.calc_d2jw[data.s2f_local_index][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][data.s2f_local_index] = calc_tm_S2f_tf_S2_ts_d2jw_dS2fdtf
-                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_tm_S2f_tf_S2_ts_d2jw_dS2fdts
-                data.calc_d2jw[data.s2_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2_local_index] = calc_tm_S2f_tf_S2_ts_d2jw_dS2dts
-                data.calc_d2jw[data.tf_local_index][data.tf_local_index] = calc_tm_S2f_tf_S2_ts_d2jw_dtf2
-                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_tm_S2f_tf_S2_ts_d2jw_dts2
+                data.calc_d2jw[0][0] = calc_tm_S2f_tf_S2_ts_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2f
+                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdS2
+                data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_tm_S2f_tf_S2_ts_d2jw_dDjdtf
+                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2_ts_d2jw_dDjdts
+                data.calc_d2jw[data.s2f_local_index][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][data.s2f_local_index] = calc_S2f_tf_S2_ts_d2jw_dS2fdtf
+                data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_S2f_S2_ts_d2jw_dS2fdts
+                data.calc_d2jw[data.s2_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2_local_index] = calc_S2f_S2_ts_d2jw_dS2dts
+                data.calc_d2jw[data.tf_local_index][data.tf_local_index] = calc_S2f_tf_S2_ts_d2jw_dtf2
+                data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2_ts_d2jw_dts2
 
             # Bad parameter combination.
             else:
@@ -1102,7 +1101,7 @@ class Mf:
             param_index = param_index + data.num_params
 
             # Spectral density parameters {S2f, S2s, ts}.
-            if data.s2f_index != None and data.tf_index == None and data.s2s_index != None and data.ts_index != None:
+            if self.param_set == 'mf' and data.s2f_index != None and data.tf_index == None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_S2s_ts_jw_comps
                 data.calc_jw = calc_S2f_S2s_ts_jw
@@ -1119,7 +1118,7 @@ class Mf:
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2s_ts_d2jw_dts2
 
             # Spectral density parameters {S2f, tf, S2s, ts}.
-            elif data.s2f_index != None and data.tf_index != None and data.s2s_index != None and data.ts_index != None:
+            elif self.param_set == 'mf' and data.s2f_index != None and data.tf_index != None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_tf_S2s_ts_jw_comps
                 data.calc_jw = calc_S2f_tf_S2s_ts_jw
@@ -1146,16 +1145,16 @@ class Mf:
 
                 # Gradient.
                 data.calc_djw_comps = calc_tm_S2f_S2s_ts_djw_comps
-                data.calc_djw[0] = calc_tm_S2f_S2s_ts_djw_dtm
+                data.calc_djw[0] = calc_tm_S2f_S2s_ts_djw_dDj
                 data.calc_djw[data.s2f_local_index] = calc_tm_S2f_S2s_ts_djw_dS2f
                 data.calc_djw[data.s2s_local_index] = calc_tm_S2f_S2s_ts_djw_dS2s
                 data.calc_djw[data.ts_local_index] = calc_tm_S2f_S2s_ts_djw_dts
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2f_S2s_ts_d2jw_dtm2
-                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dtmdS2f
-                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dtmdS2s
-                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dtmdts
+                data.calc_d2jw[0][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdS2f
+                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdS2s
+                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_S2s_ts_d2jw_dDjdts
                 data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_tm_S2f_S2s_ts_d2jw_dS2fdts
                 data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_tm_S2f_S2s_ts_d2jw_dS2sdts
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_tm_S2f_S2s_ts_d2jw_dts2
@@ -1168,18 +1167,18 @@ class Mf:
 
                 # Gradient.
                 data.calc_djw_comps = calc_tm_S2f_tf_S2s_ts_djw_comps
-                data.calc_djw[0] = calc_tm_S2f_tf_S2s_ts_djw_dtm
+                data.calc_djw[0] = calc_tm_S2f_tf_S2s_ts_djw_dDj
                 data.calc_djw[data.s2f_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dS2f
                 data.calc_djw[data.tf_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dtf
                 data.calc_djw[data.s2s_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dS2s
                 data.calc_djw[data.ts_local_index] = calc_tm_S2f_tf_S2s_ts_djw_dts
 
                 # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtm2
-                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdS2f
-                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdS2s
-                data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdtf
-                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dtmdts
+                data.calc_d2jw[0][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdDk
+                data.calc_d2jw[0][data.s2f_local_index] = data.calc_d2jw[data.s2f_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdS2f
+                data.calc_d2jw[0][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdS2s
+                data.calc_d2jw[0][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdtf
+                data.calc_d2jw[0][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][0] = calc_tm_S2f_tf_S2s_ts_d2jw_dDjdts
                 data.calc_d2jw[data.s2f_local_index][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][data.s2f_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2fdtf
                 data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2fdts
                 data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_tm_S2f_tf_S2s_ts_d2jw_dS2sdts

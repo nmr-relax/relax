@@ -42,7 +42,7 @@ class Map:
 
         run:  The name of the run.
 
-        res_num:  Specification of the residue by number.
+        res_num:  The residue number.
 
         map_type:  The type of map to create.  For example the default, a 3D isosurface, the type is
         "Iso3D".  See below for more details.
@@ -107,26 +107,27 @@ class Map:
 
         The following commands will generate a map of the extended model-free space defined as run
         'm5' which consists of the parameters {S2f, S2s, ts}.  Files will be output into the
-        directory 'dx' and will be prefixed by 'map'.
+        directory 'dx' and will be prefixed by 'map'.  The residue, in this case, is number 6.
 
-        relax> map('m5')
-        relax> map('m5', 20, "map", "dx")
-        relax> map('m5', file="map", dir="dx")
-        relax> map(run='m5', inc=20, file="map", dir="dx")
-        relax> map(run='m5', type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx")
+        relax> map('m5', 6)
+        relax> map('m5', 6, 20, "map", "dx")
+        relax> map('m5', res_num=6, file="map", dir="dx")
+        relax> map(run='m5', res_num=6, inc=20, file="map", dir="dx")
+        relax> map(run='m5', res_num=6, type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx")
 
 
         The following commands will swap the S2s and ts axes of this map.
 
-        relax> map('m5', swap=[0, 2, 1])
-        relax> map(run='m5', type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx")
+        relax> map('m5', res_num=6, swap=[0, 2, 1])
+        relax> map(run='m5', res_num=6, type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx")
 
 
         To map the model-free space 'm4' defined by the parameters {S2, te, Rex}, name the results
-        'test', and not place the files in a subdirectory, use the following commands.
+        'test', and not place the files in a subdirectory, use the following commands (assuming
+        residue 2).
 
-        relax> map('m4', file='test', dir=None)
-        relax> map(run='m4', inc=100, file='test', dir=None)
+        relax> map('m4', res_num=2, file='test', dir=None)
+        relax> map(run='m4', res_num=2, inc=100, file='test', dir=None)
         """
 
         # Function intro text.

@@ -104,6 +104,10 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     if print_flag:
         print "\n" + print_prefix + "Searching the grid."
 
+    # Test if the grid is too large (ie total_steps is a long integer)
+    if type(total_steps) == long:
+        raise NameError, "A grid search of size " + `total_steps` + " is too large."
+
     # Search the grid.
     for i in xrange(total_steps):
         # Check that the grid point does not violate a constraint, and if it does, skip the function call.

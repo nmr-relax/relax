@@ -215,7 +215,7 @@ class Interpreter:
         self.intro = 1
 
         # Execute the script.
-        script(file, self.local)
+        prompt(intro=self.relax.intro_string, local=self.local, script_file=file)
 
         # Turn off the function intro flag.
         self.intro = 0

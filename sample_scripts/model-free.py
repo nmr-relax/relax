@@ -7,7 +7,7 @@ read.sequence('noe.500.out')
 nuclei('N')
 
 # Create the run.
-name = 'm4'
+name = 'm1'
 create_run(name, 'mf')
 
 # Load a PDB file.
@@ -41,7 +41,7 @@ model.select_mf(run=name, model=name)
 #set(name, [ 6.00000000e-01, 5.00000000e-01, 1.00000000e-9])
 
 # Grid search.
-grid_search(name, inc=11, constraints=0, print_flag=1)
+grid_search(name, inc=7, constraints=0, print_flag=1)
 
 # Minimise.
 #minimise('newton', run=name, constraints=1, max_iter=500)

@@ -338,7 +338,7 @@ class Model_free:
             self.relax.data.res[i].chi2[run] = self.mf.func(params, 0)
 
 
-    def create(self, run=None, model=None, equation=None, params=None, scaling=1):
+    def create(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
         """Function to create a model-free model."""
 
         # Test if sequence data is loaded.
@@ -461,7 +461,7 @@ class Model_free:
                 raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
 
         # Set up the model.
-        self.model_setup(run, model, equation, params, scaling)
+        self.model_setup(run, model, equation, params, scaling, res_num)
 
 
     def data_init(self, name):
@@ -720,8 +720,7 @@ class Model_free:
                 if not self.relax.data.res[i].select:
                     continue
 
-            # The number of model-free parameters for this residue.
-            if self.param_set == 'mf':
+                # The number of model-free parameters for this residue.
                 n = len(self.relax.data.res[i].params[self.run])
 
             # The number of diffusion tensor parameters.
@@ -781,7 +780,7 @@ class Model_free:
             if self.param_set == 'diff' or self.param_set == 'all':
                 # Isotropic diffusion {tm}.
                 if self.relax.data.diff[self.run].type == 'iso':
-                    min_options.append([inc[0], 0.0, 10.0 * 1e-9])
+                    min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
                     m = m + 1
 
                 # Axially symmetric diffusion {Dper, Dpar, theta, phi}.
@@ -848,6 +847,13 @@ class Model_free:
                 for j in xrange(n):
                     if upper[j] != None:
                         min_options[j][2] = upper[j]
+
+            # Test if the grid is too large.
+            grid_size = 1
+            for i in xrange(len(min_options)):
+                grid_size = grid_size * min_options[i][0]
+            if type(grid_size) == long:
+                raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
 
             # Minimisation.
             self.minimise(run=self.run, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=self.print_flag)
@@ -1497,7 +1503,6 @@ class Model_free:
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 min_options = min_options + (self.mf.lm_dri, relax_error)
 
-            print min_options
 
             # Minimisation.
             ###############
@@ -1540,13 +1545,17 @@ class Model_free:
             self.relax.data.res[i].warning[self.run] = self.warning
 
 
-    def model_setup(self, run, model, equation, params, scaling_flag):
+    def model_setup(self, run, model, equation, params, scaling_flag, res_num):
         """Function for updating various data structures depending on the model selected."""
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
+                continue
+
+            # If res_num is set, then skip all other residues.
+            if res_num != None and res_num != self.relax.data.res[i].num:
                 continue
 
             # Initialise the data structures (if needed).
@@ -1734,7 +1743,7 @@ class Model_free:
             self.relax.data.res[index].warning[run] = warning
 
 
-    def select(self, run=None, model=None, scaling=1):
+    def select(self, run=None, model=None, scaling=1, res_num=None):
         """Function for the selection of a preset model-free model."""
 
         # Test if sequence data is loaded.
@@ -2014,7 +2023,7 @@ class Model_free:
             raise RelaxError, "The model '" + model + "' is invalid."
 
         # Set up the model.
-        self.model_setup(run, model, equation, params, scaling)
+        self.model_setup(run, model, equation, params, scaling, res_num)
 
 
     def set(self, run, values, print_flag):
@@ -2127,7 +2136,7 @@ class Model_free:
                     for k in xrange(len(self.relax.data.res[index].params[self.run])):
                         # {S2, S2f, S2s}.
                         if match('S2', self.relax.data.res[index].params[self.run][k]):
-                            min_options.append(0.5)
+                            min_options.append(0.9)
 
                         # {te, tf, ts}.
                         elif match('t', self.relax.data.res[index].params[self.run][k]):
@@ -2214,19 +2223,28 @@ class Model_free:
 
         # S2.
         if res.s2[run] == None:
-            file.write("%-26s" % "N/A")
+            if res.s2f[run] != None and res.s2s[run] != None:
+                file.write("%-26s" % `res.s2f[run] * res.s2s[run]`)
+            else:
+                file.write("%-26s" % "N/A")
         else:
             file.write("%-26s" % `res.s2[run]`)
 
         # S2f.
         if res.s2f[run] == None:
-            file.write("%-26s" % "N/A")
+            if res.s2[run] != None and res.s2s[run] != None:
+                file.write("%-26s" % `res.s2[run] / res.s2s[run]`)
+            else:
+                file.write("%-26s" % "N/A")
         else:
             file.write("%-26s" % `res.s2f[run]`)
 
         # S2s.
         if res.s2s[run] == None:
-            file.write("%-26s" % "N/A")
+            if res.s2[run] != None and res.s2f[run] != None:
+                file.write("%-26s" % `res.s2[run] / res.s2f[run]`)
+            else:
+                file.write("%-26s" % "N/A")
         else:
             file.write("%-26s" % `res.s2s[run]`)
 

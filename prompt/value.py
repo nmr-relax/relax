@@ -100,7 +100,7 @@ class Main:
         self.data = self.create_data(file_data)
 
 
-    def set(self, run=None, data_type=None, val=None, err=None):
+    def set(self, run=None, data_type=None, val=None, err=None, res_num=None):
         """Function for setting data structure values.
 
         Keyword arguments
@@ -108,11 +108,20 @@ class Main:
 
         run:  The run to assign the values to.
 
-        data_type:  The data type.  This argument should be a string.
+        res_num:  The residue number.
+
+        data_type:  A string specifying the data type.
 
         val:  The value.
 
         err:  The error.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If 'res_num' is set to the default of None, then all residues will have the value of
+        'data_type' given by 'val', otherwise the single residue will be set to 'val'.
 
 
         Data type
@@ -136,7 +145,8 @@ class Main:
             text = text + "run=" + `run`
             text = text + ", data_type=" + `data_type`
             text = text + ", val=" + `val`
-            text = text + ", err=" + `err` + ")"
+            text = text + ", err=" + `err`
+            text = text + ", res_num=" + `res_num` + ")"
             print text
 
         # The run name.
@@ -160,5 +170,9 @@ class Main:
             if type(err) != float:
                 raise RelaxNoneFloatError, ('error', err)
 
+        # The residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
+
         # Execute the functional code.
-        self.relax.generic.value.set(run=run, data_type=data_type, val=val, err=err)
+        self.relax.generic.value.set(run=run, res_num=res_num, data_type=data_type, val=val, err=err)

@@ -148,14 +148,12 @@ class Main:
             print text
 
         # Residue number.
-        if num != None:
-            if type(num) != int and type(num) != str:
-                raise RelaxNoneIntStrError, ('residue number', num)
+        if num != None and type(num) != int and type(num) != str:
+            raise RelaxNoneIntStrError, ('residue number', num)
 
         # Residue name.
-        if name != None:
-            if type(name) != str:
-                raise RelaxNoneStrError, ('residue name', name)
+        if name != None and type(name) != str:
+            raise RelaxNoneStrError, ('residue name', name)
 
         # Neither are given.
         if num == None and name == None:
