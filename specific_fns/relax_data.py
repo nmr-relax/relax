@@ -332,7 +332,7 @@ class Rx_data:
                 setattr(data, name, self.data_init(name))
 
 
-    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, file_data=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
+    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for reading R1, R2, or NOE relaxation data."""
 
         # Arguments.
@@ -353,9 +353,14 @@ class Rx_data:
         if self.test_labels(run):
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
+        # File path.
+        self.file_path = file
+        if dir:
+            self.file_path = dir + '/' + self.file_path
+
         # Extract the data from the file.
-        if file:
-            file_data = self.relax.file_ops.extract_data(file)
+        if self.file_path:
+            file_data = self.relax.file_ops.extract_data(self.file_path)
 
         # Remove the header.
         if header_lines != None:

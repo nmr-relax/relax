@@ -30,7 +30,7 @@ class PDB:
         self.relax = relax
 
 
-    def pdb(self, run=None, file=None, model=None, load_seq=1):
+    def pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):
         """The pdb loading function.
 
         Keyword Arguments
@@ -39,6 +39,8 @@ class PDB:
         run:  The run to assign the structure to.
 
         file:  The name of the PDB file.
+
+        dir:  The directory where the file is located.
 
         model:  The PDB model number.
 
@@ -90,6 +92,7 @@ class PDB:
             text = sys.ps3 + "pdb("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
             text = text + ", model=" + `model`
             text = text + ", load_seq=" + `load_seq` + ")"
             print text
@@ -102,6 +105,10 @@ class PDB:
         if type(file) != str:
             raise RelaxStrError, ('file', file)
 
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
         # The model argument.
         if model != None:
             if type(model) != int and type(model) != str:
@@ -112,4 +119,4 @@ class PDB:
             raise RelaxBinError, ('load sequence flag', load_seq)
 
         # Execute the functional code.
-        self.relax.generic.pdb.pdb(run=run, file=file, model=model, load_seq=load_seq)
+        self.relax.generic.pdb.pdb(run=run, file=file, dir=dir, model=model, load_seq=load_seq)

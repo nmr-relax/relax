@@ -33,14 +33,19 @@ class File_ops:
         self.relax = relax
 
 
-    def extract_data(self, file_name, sep=None):
+    def extract_data(self, file_name, dir=None, sep=None):
         """Open the file 'file' and return all the data."""
+
+        # File path.
+        file_path = file_name
+        if dir:
+            file_path = dir + '/' + file_path
 
         # Test if the file exists.
         try:
-            file = open(file_name, 'r')
+            file = open(file_path, 'r')
         except IOError:
-            raise RelaxFileError, (None, file_name)
+            raise RelaxFileError, (None, file_path)
 
         # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
         lines = file.readlines()

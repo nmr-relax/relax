@@ -244,7 +244,7 @@ class Relax_data:
         self.__relax__.specific.relax_data.display(run=run, ri_label=ri_label, frq_label=frq_label)
 
 
-    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
+    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, dir=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
         """Function for reading R1, R2, or NOE relaxation data from a file.
 
         Keyword Arguments
@@ -259,6 +259,8 @@ class Relax_data:
         frq:  The spectrometer frequency in Hz.
 
         file:  The name of the file containing the relaxation data.
+
+        dir:  The directory where the file is located.
 
         num_col:  The residue number column (the default is 0, ie the first column).
 
@@ -316,6 +318,7 @@ class Relax_data:
             text = text + ", frq_label=" + `frq_label`
             text = text + ", frq=" + `frq`
             text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
             text = text + ", data_col=" + `data_col`
@@ -344,6 +347,10 @@ class Relax_data:
         if type(file) != str:
             raise RelaxStrError, ('file', file)
 
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
         # The number column.
         if type(num_col) != int:
             raise RelaxIntError, ('residue number column', num_col)
@@ -369,7 +376,7 @@ class Relax_data:
             raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
+        self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
 
 
     def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):

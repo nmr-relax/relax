@@ -173,7 +173,7 @@ class Sequence:
             raise RelaxSequenceError, run
 
         # Extract the data from the file.
-        file_data = self.relax.file_ops.extract_data(file)
+        file_data = self.relax.file_ops.extract_data(file, dir)
 
         # Remove the header.
         file_data = file_data[header_lines:]

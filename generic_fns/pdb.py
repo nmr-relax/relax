@@ -34,12 +34,13 @@ class PDB:
         self.relax = relax
 
 
-    def pdb(self, run=None, file=None, model=None, load_seq=1):
+    def pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):
         """The pdb loading function."""
 
         # Arguments.
         self.run = run
         self.file = file
+        self.dir = dir
         self.model = model
         self.load_seq = load_seq
 
@@ -51,9 +52,14 @@ class PDB:
         if not self.load_seq and not len(self.relax.data.res[self.run]):
             raise RelaxNoSequenceError, self.run
 
+        # The file path.
+        self.file_path = self.file
+        if self.dir:
+            self.file_path = dir + '/' + self.file_path
+
         # Test if the file exists.
-        if not access(self.file, F_OK):
-            raise RelaxFileError, ('PDB', self.file)
+        if not access(self.file_path, F_OK):
+            raise RelaxFileError, ('PDB', self.file_path)
 
         # Load the structures.
         self.load_structures()
@@ -80,11 +86,11 @@ class PDB:
             print "Loading the first structure from the PDB file."
 
             # Load the structure into 'str'.
-            str = Scientific.IO.PDB.Structure(self.file)
+            str = Scientific.IO.PDB.Structure(self.file_path)
 
             # Test the structure.
             if len(str) == 0:
-                raise RelaxPdbLoadError, self.file
+                raise RelaxPdbLoadError, self.file_path
 
             # Place the structure in 'self.relax.data.pdb[self.run]'.
             self.relax.data.pdb[self.run] = str
@@ -95,11 +101,11 @@ class PDB:
             print "Loading the structure i from the PDB file."
 
             # Load the structure into 'str'.
-            str = Scientific.IO.PDB.Structure(self.file, self.model)
+            str = Scientific.IO.PDB.Structure(self.file_path, self.model)
 
             # Test the structure.
             if len(str) == 0:
-                raise RelaxPdbLoadError, self.file
+                raise RelaxPdbLoadError, self.file_path
 
             # Place the structure in 'self.relax.data.pdb[self.run]'.
             self.relax.data.pdb[self.run] = str
@@ -115,7 +121,7 @@ class PDB:
             # Loop over all the other structures.
             while 1:
                 # Load the pdb files.
-                str = Scientific.IO.PDB.Structure(self.file, i)
+                str = Scientific.IO.PDB.Structure(self.file_path, i)
 
                 # Print out.
                 print str
@@ -123,7 +129,7 @@ class PDB:
                 # Test if the last structure has been reached.
                 if len(str) == 0:
                     if i == 1:
-                        raise RelaxPdbLoadError, self.file
+                        raise RelaxPdbLoadError, self.file_path
                     del str
                     break
 
