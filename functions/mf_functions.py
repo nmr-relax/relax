@@ -46,6 +46,18 @@ class mf_functions:
 		Stored:  No
 
 
+		The chi-sqared hessian matrix
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		File:  d2chi2_mf.py
+		Data structure:  self.d2chi2
+		Dimension:  2D, (model-free parameters, model-free parameters)
+		Type:  Numeric array, Float64
+		Dependencies:  self.ri, self.dri, self.d2ri, self.jw, self.djw, self.d2jw
+		Required by:  None
+		Stored:  No
+
+
 		The relaxation array
 		~~~~~~~~~~~~~~~~~~~~
 
@@ -67,6 +79,18 @@ class mf_functions:
 		Type:  Numeric matrix, Float64
 		Dependencies:  self.ri, self.jw, self.djw
 		Required by:  self.dchi2
+		Stored:  Yes
+
+
+		The relaxation hessian matrix
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		File:  d2ri_mf.py
+		Data structure:  self.d2ri
+		Dimension:  3D, (relaxation data, model-free parameters, model-free parameters)
+		Type:  Numeric matrix, Float64
+		Dependencies:  self.ri, self.dri, self.jw, self.djw, self.d2jw
+		Required by:  self.d2chi2
 		Stored:  Yes
 
 
@@ -96,9 +120,15 @@ class mf_functions:
 		"""
 
 		self.mf = mf
+
 		self.chi2 = chi2(self.mf)
 		self.dchi2 = dchi2(self.mf)
+		self.d2chi2 = d2chi2(self.mf)
+
 		self.Jw = Jw(self.mf)
 		self.dJw = dJw(self.mf)
+		self.d2Jw = d2Jw(self.mf)
+
 		self.Ri = Ri(self.mf)
 		self.dRi = dRi(self.mf)
+		self.d2Ri = d2Ri(self.mf)

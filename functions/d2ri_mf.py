@@ -6,13 +6,13 @@ from re import match
 
 class dRi:
 	def __init__(self, mf):
-		"Function for the calculation of the relaxation gradient matrix."
+		"Function for the calculation of the relaxation hessian matrix."
 
 		self.mf = mf
 
 
 	def calc(self, mf_params, diff_type, diff_params, mf_model):
-		"""Function for the calculation of the relaxation gradient matrix.
+		"""Function for the calculation of the relaxation hessian matrix.
 
 		Function arguments
 		~~~~~~~~~~~~~~~~~~
@@ -29,31 +29,35 @@ class dRi:
 		4:  mf_model - string.  The model-free model
 
 
-		The relaxation gradient matrix
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		The relaxation hessian matrix
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Data structure:  self.dri
-		Dimension:  2D, (relaxation data, model-free parameters)
+		Data structure:  self.d2ri
+		Dimension:  3D, (relaxation data, model-free parameters, model-free parameters)
 		Type:  Numeric matrix, Float64
-		Dependencies:  self.ri, self.jw, self.djw
-		Required by:  self.dchi2
+		Dependencies:  self.ri, self.dri, self.jw, self.djw, self.d2jw
+		Required by:  self.d2chi2
 		Stored:  Yes
-		Formulae:
-			Model-free parameter derivatives:
 
-				dR1         / dJ(wH-wN)         dJ(wN)         dJ(wH+wN) \        / dJ(wN) \ 
-				---  =  d . | ---------  +  3 . ------  +  6 . --------- |  + c . | ------ |
-				dmf         \    dmf             dmf              dmf    /        \  dmf   /
 
-				dR2     d   /     dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN) \     c   /     dJ(0)         dJ(wN) \ 
-				---  =  - . | 4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . --------- |  +  - . | 4 . -----  +  3 . ------ |
-				dmf     2   \      dmf         dmf             dmf            dmf             dmf     /     6   \      dmf           dmf   /
+		Formulae
+		~~~~~~~~
 
-				                       /     dJ(wH+wN)     dJ(wH-wN) \     /                         \   dR1
-				dNOE        gH    R1 . | 6 . ---------  -  --------- |  -  | 6 . J(wH+wN) - J(wH-wN) | . ---
-				----  = d . -- .       \        dmf           dmf    /     \                         /   dmf
-				dmf         gN    --------------------------------------------------------------------------
-				                                                 R1 ** 2
+		Model-free parameter - Model-free parameter (R1):
+
+			dR1         / dJ(wH-wN)         dJ(wN)         dJ(wH+wN) \        / dJ(wN) \ 
+			---  =  d . | ---------  +  3 . ------  +  6 . --------- |  + c . | ------ |
+			dmf         \    dmf             dmf              dmf    /        \  dmf   /
+
+			dR2     d   /     dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN) \     c   /     dJ(0)         dJ(wN) \ 
+			---  =  - . | 4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . --------- |  +  - . | 4 . -----  +  3 . ------ |
+			dmf     2   \      dmf         dmf             dmf            dmf             dmf     /     6   \      dmf           dmf   /
+
+			                       /     dJ(wH+wN)     dJ(wH-wN) \     /                         \   dR1
+			dNOE        gH    R1 . | 6 . ---------  -  --------- |  -  | 6 . J(wH+wN) - J(wH-wN) | . ---
+			----  = d . -- .       \        dmf           dmf    /     \                         /   dmf
+			dmf         gN    --------------------------------------------------------------------------
+			                                                 R1 ** 2
 
 
 			Chemical exchange derivatives:

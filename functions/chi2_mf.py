@@ -35,12 +35,16 @@ class chi2:
 		Dependencies:  self.ri, self.jw
 		Required by:  None
 		Stored:  No
-		Formula:
-			        _n_
-			        \    / (Ri - R(xi)) \ 2
-			Chi2  =  >   | ------------ |
-			        /__  \   sigma_i    /
-			        i=1
+
+
+		Formula
+		~~~~~~~
+		        _n_
+		        \    (Ri - Ri()) ** 2
+		Chi2  =  >   ----------------
+		        /__    sigma_i ** 2
+		        i=1
+
 
 		Returned is the chi-squared value.
 		"""

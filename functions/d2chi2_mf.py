@@ -1,14 +1,14 @@
 from Numeric import Float64, equal, zeros
 
-class dchi2:
+class d2chi2:
 	def __init__(self, mf):
-		"Function to create the chi-squared gradient vector."
+		"Function to create the chi-squared hessian matrix."
 
 		self.mf = mf
 
 
 	def calc(self, mf_params, diff_type, diff_params, mf_model, relax_data, errors):
-		"""Function to create the chi-squared gradient vector.
+		"""Function to create the chi-squared hessian matrix.
 
 		Function arguments
 		~~~~~~~~~~~~~~~~~~
@@ -26,23 +26,23 @@ class dchi2:
 		5:  relax_data - array.  An array containing the experimental relaxation values.
 		6:  errors - array.  An array containing the experimental errors.
 
-		The chi-sqared gradient array
+		The chi-sqared hessian matrix
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		Data structure:  self.dchi2
-		Dimension:  1D, (model-free parameters)
+		Data structure:  self.d2chi2
+		Dimension:  2D, (model-free parameters, model-free parameters)
 		Type:  Numeric array, Float64
-		Dependencies:  self.ri, self.jw, self.dri, self.djw
+		Dependencies:  self.ri, self.dri, self.d2ri, self.jw, self.djw, self.d2jw
 		Required by:  None
 		Stored:  No
 		Formula:
 			                  _n_
-			  d Chi2          \   / Ri - R(xi)       d R(xi)  \ 
-			----------  =  -2  >  | ----------  .  ---------- |
-			d mf_param        /__ \ sigma_i**2     d mf_param /
+			  d2 Chi2         \       1      / dRi()   dRi()                     d2 Ri()   \ 
+			-----------  =  2  >  ---------- | ----- . -----  -  (Ri - Ri()) . ----------- |
+			dmfj . dmfk       /__ sigma_i**2 \ dmf_j   dmf_k                   dmfj . dmfk / 
 			                  i=1
 
-		Returned is the chi-squared gradient array.
+		Returned is the chi-squared hessian matrix.
 		"""
 
 		self.mf_params = mf_params
@@ -53,7 +53,7 @@ class dchi2:
 		self.errors = errors
 
 		# debug.
-		#print "\n< dchi2 >"
+		#print "\n< d2chi2 >"
 		#print "Mf params: " + `self.mf_params`
 
 		# Test to see if relaxation array and spectral density matrix have previously been calculated for the current parameter values,
@@ -65,30 +65,55 @@ class dchi2:
 			self.mf.mf_functions.Ri.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
 			self.mf.data.mf_data.relax_test = test[:]
 
-		# Calculate the relaxation gradient matrix (important that the relaxation array has previously been calculated
-		# as the function dRi assumes this to be the case).
-		self.mf.mf_functions.dRi.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
+		test = [ self.relax_data[:], self.errors[:], self.mf_params.tolist(), self.mf_model ]
+		if test != self.mf.data.mf_data.gradient_test:
+			self.mf.mf_functions.dRi.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
+			self.mf.data.mf_data.gradient_test = test[:]
 
-		# Initialise the chi-squared gradient vector.
-		self.dchi2 = zeros((len(self.mf_params)), Float64)
+		# Calculate the relaxation hessian matrix (important that the relaxation gradient matrix has previously been calculated
+		# as the function d2Ri assumes this to be the case).
+		self.mf.mf_functions.d2Ri.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
 
-		# Calculate the chi-squared gradient vector.
+		# Initialise the chi-squared hessian matrix.
+		self.d2chi2 = zeros((len(self.mf_params), len(self.mf_params)), Float64)
+
+		# Calculate the chi-squared hessian matrix.
 		for i in range(len(self.relax_data)):
 			if self.errors[i] != 0.0:
 				# Model-free parameter independent terms.
-				a = -2.0 * (self.relax_data[i] - self.mf.data.mf_data.ri[i]) / (self.errors[i]**2)
-				for mf_param in range(len(self.mf_params)):
-					self.dchi2[mf_param] = self.dchi2[mf_param] + a * self.mf.data.mf_data.dri[i, mf_param]
+				a = 2.0 / (self.errors[i]**2)
+				b = self.relax_data[i] - self.mf.data.mf_data.ri[i]
+
+				# Loop over the model-free parameters.
+				for mfj in range(len(self.mf_params)):
+					# Loop over the model-free parameters from 1 to mfj.
+					for mfk in range(mfj + 1):
+						c = self.mf.data.mf_data.dri[i, mfj] * self.mf.data.mf_data.dri[i, mfk]
+						if mfj == mfk:
+							self.d2chi2[mfj][mfj] = self.d2chi2[mfj][mfj] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfj, mfj]
+						else:
+							self.d2chi2[mfj][mfk] = self.d2chi2[mfj][mfk] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfj, mfk]
+							self.d2chi2[mfk][mfj] = self.d2chi2[mfk][mfj] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfk, mfj]
 			else:
-				for mf_param in range(len(self.mf_params)):
-					self.dchi2[mf_param] = 1e99
+				# Loop over the model-free parameters.
+				for mfj in range(len(self.mf_params)):
+					# Loop over the model-free parameters from 1 to mfj.
+					for mfk in range(mfj + 1):
+						if mfj == mfk:
+							self.d2chi2[mfj][mfj] = 1e99
+						else:
+							self.d2chi2[mfj][mfk] = 1e99
+							self.d2chi2[mfk][mfj] = 1e99
+				break
 
 		# debug.
-		#print "J(w): " + `self.mf.data.mf_data.jw`
-		#print "dJ(w): " + `self.mf.data.mf_data.djw`
-		#print "Ri: " + `self.mf.data.mf_data.ri`
-		#print "dRi: " + `self.mf.data.mf_data.dri`
-		#print "dchi2: " + `self.dchi2`
+		#print "J(w):   " + `self.mf.data.mf_data.jw`
+		#print "dJ(w):  " + `self.mf.data.mf_data.djw`
+		#print "d2J(w): " + `self.mf.data.mf_data.d2jw`
+		#print "Ri:     " + `self.mf.data.mf_data.ri`
+		#print "dRi:    " + `self.mf.data.mf_data.dri`
+		#print "d2Ri:   " + `self.mf.data.mf_data.d2ri`
+		#print "d2chi2: " + `self.d2chi2`
 		#print "\n"
 
 		return self.dchi2

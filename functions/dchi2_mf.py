@@ -37,7 +37,7 @@ class dchi2:
 		Stored:  No
 		Formula:
 			                  _n_
-			  d Chi2          \   / Ri - R(xi)       d R(xi)  \ 
+			  d Chi2          \   /  Ri - Ri()       d Ri()   \ 
 			----------  =  -2  >  | ----------  .  ---------- |
 			d mf_param        /__ \ sigma_i**2     d mf_param /
 			                  i=1
@@ -68,6 +68,7 @@ class dchi2:
 		# Calculate the relaxation gradient matrix (important that the relaxation array has previously been calculated
 		# as the function dRi assumes this to be the case).
 		self.mf.mf_functions.dRi.calc(self.mf_params, self.diff_type, self.diff_params, self.mf_model)
+		self.mf.data.mf_data.gradient_test = test[:]
 
 		# Initialise the chi-squared gradient vector.
 		self.dchi2 = zeros((len(self.mf_params)), Float64)
@@ -82,12 +83,13 @@ class dchi2:
 			else:
 				for mf_param in range(len(self.mf_params)):
 					self.dchi2[mf_param] = 1e99
+				break
 
 		# debug.
-		#print "J(w): " + `self.mf.data.mf_data.jw`
+		#print "J(w):  " + `self.mf.data.mf_data.jw`
 		#print "dJ(w): " + `self.mf.data.mf_data.djw`
-		#print "Ri: " + `self.mf.data.mf_data.ri`
-		#print "dRi: " + `self.mf.data.mf_data.dri`
+		#print "Ri:    " + `self.mf.data.mf_data.ri`
+		#print "dRi:   " + `self.mf.data.mf_data.dri`
 		#print "dchi2: " + `self.dchi2`
 		#print "\n"
 
