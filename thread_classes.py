@@ -93,7 +93,7 @@ class Threading:
             if host_name == 'localhost':
                 login_cmd = None
             else:
-                login_cmd = 'ssh ' + login + ' '
+                login_cmd = 'ssh -o ForwardX11=no ' + login + ' '
 
              # Program path.
             prog_path = file_data[i][2]
@@ -616,6 +616,9 @@ class RelaxResultsThread(Thread):
         # Run the Thread __init__ function (this is 'asserted' by the Thread class).
         Thread.__init__(self)
 
+        # Set as a daemon.
+        self.setDaemon(1)
+
         # Arguements.
         self.job_queue = job_queue
         self.results_queue = results_queue
@@ -654,6 +657,9 @@ class RelaxKillThread(Thread):
 
         # Run the Thread __init__ function (this is 'asserted' by the Thread class).
         Thread.__init__(self)
+
+        # Set as a daemon.
+        self.setDaemon(1)
 
         # Arguments.
         self.thread = thread
@@ -804,7 +810,7 @@ class RelaxHostThread(RelaxThread):
         """Function for testing the SSH connection and public key authentication."""
 
         # Test command.
-        cmd = "ssh -o PasswordAuthentication=no %s \"echo 'relax> ssh ok'\"" % self.login
+        cmd = "ssh -o PasswordAuthentication=no -o ForwardX11=no %s \"echo 'relax> ssh ok'\"" % self.login
         self.start_child(cmd=cmd, remote_exe=0, close=0)
 
         # Test if the string 'relax, ssh ok' is in self.child.fromchild.
