@@ -21,10 +21,12 @@
 ###############################################################################
 
 
+from copy import deepcopy
 from math import pi
 from Numeric import Float64, array, ones, zeros
 from re import match
 from string import replace
+import sys
 
 from functions.mf import Mf
 from minimise.generic import generic_minimise
@@ -35,6 +37,26 @@ class Model_free:
         """Class containing functions specific to model-free analysis."""
 
         self.relax = relax
+
+
+    def calculate(self, run=None, i=None, params=None):
+        """Calculation of the model-free chi-squared value."""
+
+        # Diagonal scaling.
+        scaling_vector = None
+        if self.relax.data.res[i].scaling.has_key(run):
+            scaling_vector = self.relax.data.res[i].scaling[run]
+
+        # Set up the relaxation data and errors and the function options.
+        relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
+        relax_error = array(self.relax.data.res[i].relax_error[run], Float64)
+        self.function_ops = ()
+
+        # Initialise the functions used in the minimisation.
+        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_vector=scaling_vector)
+
+        # Chi-squared calculation.
+        self.relax.data.res[i].chi2[run] = self.mf.func(params, 0)
 
 
     def create(self, run=None, model=None, equation=None, params=None, scaling=1):
@@ -228,7 +250,7 @@ class Model_free:
 
             # Diagonal scaling.
             if scaling_flag:
-                self.relax.data.res[i].scaling[run] = self.scaling_vector(params, i)
+                self.relax.data.res[i].scaling[run] = self.scaling_vector(run, params, i)
 
             # Others.
             self.relax.data.res[i].s2[run] = None
@@ -284,7 +306,7 @@ class Model_free:
         return min_options
 
 
-    def grid_setup(self, params=None, index=None, inc_vector=None):
+    def grid_setup(self, run=None, params=None, index=None, inc_vector=None):
         """The grid search setup function."""
 
         # Initialise.
@@ -301,7 +323,7 @@ class Model_free:
 
             # Rex.
             elif params[i] == 'Rex':
-                min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[index].frq[0])**2])
+                min_options.append([inc_vector[i], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0])**2])
 
             # Bond length.
             elif params[i] == 'r':
@@ -347,6 +369,10 @@ class Model_free:
         # S2s.
         if not hasattr(data, 's2s'):
             data.s2s = {}
+
+        # tm.
+        if not hasattr(data, 'tm'):
+            data.tm = {}
 
         # te.
         if not hasattr(data, 'te'):
@@ -587,8 +613,8 @@ class Model_free:
     def macro_create(self, run=None, model=None, equation=None, params=None, scaling=1):
         """Macro to create a model-free model.
 
-        Arguments
-        ~~~~~~~~~
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
 
         run:  The run to assign the values to.
 
@@ -667,12 +693,12 @@ class Model_free:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "model.create_mf("
+            text = sys.macro_prompt + "model.create_mf("
             text = text + "run=" + `run`
             text = text + ", model=" + `model`
             text = text + ", equation=" + `equation`
             text = text + ", params=" + `params`
-            text = text + ", scaling=" + `scaling` + ")\n"
+            text = text + ", scaling=" + `scaling` + ")"
             print text
 
         # Run argument.
@@ -849,10 +875,10 @@ class Model_free:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "model.select_mf("
+            text = sys.macro_prompt + "model.select_mf("
             text = text + "run=" + `run`
             text = text + ", model=" + `model`
-            text = text + ", scaling=" + `scaling` + ")\n"
+            text = text + ", scaling=" + `scaling` + ")"
             print text
 
         # Run argument.
@@ -905,13 +931,13 @@ class Model_free:
         if self.relax.data.res[i].scaling.has_key(run):
             scaling_vector = self.relax.data.res[i].scaling[run]
 
-        # If any data is missing jump to the next residue.
-        relax_data = array(self.relax.data.res[i].relax_data, Float64)
-        relax_error = array(self.relax.data.res[i].relax_error, Float64)
+        # Set up the relaxation data and errors and the function options.
+        relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
+        relax_error = array(self.relax.data.res[i].relax_error[run], Float64)
         self.function_ops = ()
 
         # Initialise the functions used in the minimisation.
-        self.mf = Mf(self.relax, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
+        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_vector=scaling_vector)
 
         # Levenberg-Marquardt minimisation.
         if constraints and not match('^[Gg]rid', min_algor):
@@ -1027,7 +1053,7 @@ class Model_free:
 
             # Rex.
             elif params[i] == 'Rex':
-                bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.res[index].frq[0])**2]
+                bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0])**2]
 
             # Bond length.
             elif params[i] == 'r':
@@ -1074,11 +1100,11 @@ class Model_free:
             # Rex.
             elif params[swap[i]] == 'Rex':
                 # Labels.
-                labels = labels + "\"Rex (" + self.relax.data.res[index].frq_labels[0] + " MHz)\""
+                labels = labels + "\"Rex (" + self.relax.data.res[index].frq_labels[run][0] + " MHz)\""
 
                 # Tick values.
-                vals = bounds[swap[i], 0] * (2.0 * pi * self.relax.data.res[index].frq[0])**2
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.res[index].frq[0])**2
+                vals = bounds[swap[i], 0] * (2.0 * pi * self.relax.data.res[index].frq[run][0])**2
+                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.res[index].frq[run][0])**2
 
             # Bond length.
             elif params[swap[i]] == 'r':
@@ -1126,138 +1152,176 @@ class Model_free:
         return labels, tick_locations, tick_values
 
 
-    def print_header(self, file):
-        """Function for printing the header of the results file."""
-
-        # Residue number and name.
-        file.write("%-5s" % "Num")
-        file.write("%-6s" % "Name")
-
-        # Model details.
-        file.write("%-6s" % "Model")
-        file.write("%-10s" % "Equation")
-        file.write("%-36s" % "Params")
-
-        # Parameters.
-        file.write("%-26s" % "S2")
-        file.write("%-26s" % "S2f")
-        file.write("%-26s" % "S2s")
-        file.write("%-26s" % "tm_(ps)")
-        file.write("%-26s" % "tf_(ps)")
-        file.write("%-26s" % "te_or_ts_(ps)")
-        file.write("%-26s" % ("Rex_(" + self.relax.data.res[0].frq_labels[0] + "_MHz)"))
-        file.write("%-26s" % "Bond_length_(A)")
-        file.write("%-26s" % "CSA_(ppm)")
-
-        # Minimisation results.
-        file.write("%-26s" % "Chi-squared")
-        file.write("%-9s" % "Iter")
-        file.write("%-9s" % "f")
-        file.write("%-9s" % "g")
-        file.write("%-9s" % "h")
-        file.write("Warning")
-
-        # End of line.
-        file.write("\n")
-
-
-    def print_results(self, file, run):
+    def read_results(self, file_data, run):
         """Function for printing the core of the results file."""
 
-        # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
-            # Initialise.
-            types = self.relax.data.res[i].params[run]
+        # Remove the header.
+        file_data = file_data[1:]
 
+        # Loop over the file data.
+        for i in range(len(file_data)):
             # Residue number and name.
-            file.write("%-5s" % self.relax.data.res[i].num)
-            file.write("%-6s" % self.relax.data.res[i].name)
+            try:
+                num = int(file_data[i][0])
+            except ValueError:
+                print "Warning, the residue number " + file_data[i][0] + " is not an integer."
+                continue
+            name = file_data[i][1]
+
+            # Find the residue index.
+            index = None
+            for j in range(len(self.relax.data.res)):
+                if self.relax.data.res[j].num == num and self.relax.data.res[j].name == name:
+                    index = j
+                    break
+            if index == None:
+                print "Warning, residue " + `num` + " " + name + " cannot be found in the sequence."
+                continue
+
+            # Test if relaxation data has been loaded.
+            if not hasattr(self.relax.data.res[index], 'relax_data'):
+                print "Relaxation data has not been loaded.  This is required for the frequency data for Rex values."
+                break
 
             # Model details.
-            file.write("%-6s" % self.relax.data.res[i].models[run])
-            file.write("%-10s" % self.relax.data.res[i].equations[run])
-            file.write("%-36s" % replace(`types`, ' ', ''))
+            model = file_data[i][2]
+            equation = file_data[i][3]
+
+            # Paramters.
+            params = eval(file_data[i][4])
+            if type(params) != list:
+                print "Warning, the parameters " + file_data[i][4] + " is not an array."
+                continue
 
             # S2.
-            if self.relax.data.res[i].s2[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `self.relax.data.res[i].s2[run]`)
+            try:
+                s2 = float(file_data[i][5])
+            except ValueError:
+                s2 = None
 
             # S2f.
-            if self.relax.data.res[i].s2f[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `self.relax.data.res[i].s2f[run]`)
+            try:
+                s2f = float(file_data[i][6])
+            except ValueError:
+                s2f = None
 
             # S2s.
-            if self.relax.data.res[i].s2s[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `self.relax.data.res[i].s2s[run]`)
+            try:
+                s2s = float(file_data[i][7])
+            except ValueError:
+                s2s = None
 
             # tm.
-            if hasattr(self.relax.data.res[i], 'tm'):
-                file.write("%-26s" % `self.relax.data.res[i].tm[run] / 1e-12`)
-            else:
-                file.write("%-26s" % `self.relax.data.diff_params[0] / 1e-12`)
+            try:
+                tm = float(file_data[i][8])
+                tm = tm * 1e-12
+            except ValueError:
+                tm = None
 
             # tf.
-            if self.relax.data.res[i].tf[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `self.relax.data.res[i].tf[run] / 1e-12`)
+            try:
+                tf = float(file_data[i][9])
+                tf = tf * 1e-12
+            except ValueError:
+                tf = None
 
-            # te or ts.
-            if self.relax.data.res[i].te[run] == None and self.relax.data.res[i].ts[run] == None:
-                file.write("%-26s" % "N/A")
-            elif self.relax.data.res[i].te[run] != None:
-                file.write("%-26s" % `self.relax.data.res[i].te[run] / 1e-12`)
+            # te and ts.
+            try:
+                te = float(file_data[i][10])
+                te = te * 1e-12
+            except ValueError:
+                te = None
+            if "te" in params:
+                ts = None
             else:
-                file.write("%-26s" % `self.relax.data.res[i].ts[run] / 1e-12`)
+                ts = te
+                te = None
 
             # Rex.
-            if self.relax.data.res[i].rex[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `self.relax.data.res[i].rex[run] * (2.0 * pi * self.relax.data.res[i].frq[0])**2`)
+            try:
+                rex = float(file_data[i][11])
+                rex = rex / (2.0 * pi * self.relax.data.res[i].frq[run][0])**2
+            except ValueError:
+                rex = None
 
             # Bond length.
-            if self.relax.data.res[i].r[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `self.relax.data.res[i].r[run] / 1e-10`)
+            try:
+                r = float(file_data[i][12])
+                r = r * 1e-10
+            except ValueError:
+                r = None
 
             # CSA.
-            if self.relax.data.res[i].csa[run] == None:
-                file.write("%-26s" % "N/A")
-            else:
-                file.write("%-26s" % `self.relax.data.res[i].csa[run] / 1e-6`)
+            try:
+                csa = float(file_data[i][13])
+                csa = csa * 1e-6
+            except ValueError:
+                csa = None
 
             # Chi-squared.
-            file.write("%-26s" % `self.relax.data.res[i].chi2[run]`)
+            try:
+                chi2 = float(file_data[i][14])
+            except ValueError:
+                chi2 = None
 
-            # Iterations
-            file.write("%-9i" % self.relax.data.res[i].iter[run])
+            # Number of iterations.
+            try:
+                iter = int(file_data[i][15])
+            except ValueError:
+                iter = None
 
             # Function count.
-            file.write("%-9i" % self.relax.data.res[i].f_count[run])
+            try:
+                f_count = int(file_data[i][16])
+            except ValueError:
+                f_count = None
 
             # Gradient count.
-            file.write("%-9i" % self.relax.data.res[i].g_count[run])
+            try:
+                g_count = int(file_data[i][17])
+            except ValueError:
+                g_count = None
 
             # Hessian count.
-            file.write("%-9i" % self.relax.data.res[i].h_count[run])
+            try:
+                h_count = int(file_data[i][18])
+            except ValueError:
+                h_count = None
 
-            # Warning
-            if self.relax.data.res[i].warning[run] != None:
-                file.write(self.relax.data.res[i].warning[run])
+            # Warning.
+            if len(file_data[i]) > 19:
+                warning = file_data[19]
+                for j in range(20, len(file_data[i])):
+                    warning = warning + " " + file_data[i][j]
+            else:
+                warning = None
 
-            # End of line.
-            file.write("\n")
+            # Initialise the data structures (if needed).
+            self.initialise_mf_data(self.relax.data.res[index])
+
+            # Place the data into 'self.relax.data'.
+            self.relax.data.res[index].models[run] = model
+            self.relax.data.res[index].equations[run] = equation
+            self.relax.data.res[index].params[run] = params
+            self.relax.data.res[index].s2[run] = s2
+            self.relax.data.res[index].s2f[run] = s2f
+            self.relax.data.res[index].s2s[run] = s2s
+            self.relax.data.res[index].tm[run] = tm
+            self.relax.data.res[index].tf[run] = tf
+            self.relax.data.res[index].te[run] = te
+            self.relax.data.res[index].ts[run] = ts
+            self.relax.data.res[index].rex[run] = rex
+            self.relax.data.res[index].r[run] = r
+            self.relax.data.res[index].csa[run] = csa
+            self.relax.data.res[index].chi2[run] = chi2
+            self.relax.data.res[index].iter[run] = iter
+            self.relax.data.res[index].f_count[run] = f_count
+            self.relax.data.res[index].g_count[run] = g_count
+            self.relax.data.res[index].h_count[run] = h_count
+            self.relax.data.res[index].warning[run] = warning
 
 
-    def scaling_vector(self, params, index):
+    def scaling_vector(self, run, params, index):
         """Function for creating the scaling vector."""
 
         scaling_vector = []
@@ -1272,7 +1336,7 @@ class Model_free:
 
             # Rex.
             elif params[i] == 'Rex':
-                scaling_vector.append(1.0 / (2.0 * pi * self.relax.data.res[index].frq[0]) ** 2)
+                scaling_vector.append(1.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0]) ** 2)
 
             # Bond length.
             elif params[i] == 'r':
@@ -1568,3 +1632,134 @@ class Model_free:
 
         # Update the data structures.
         self.data_update(run, model, equation, params, scaling)
+
+
+    def write_header(self, file, run):
+        """Function for printing the header of the results file."""
+
+        # Residue number and name.
+        file.write("%-5s" % "Num")
+        file.write("%-6s" % "Name")
+
+        # Model details.
+        file.write("%-6s" % "Model")
+        file.write("%-10s" % "Equation")
+        file.write("%-36s" % "Params")
+
+        # Parameters.
+        file.write("%-26s" % "S2")
+        file.write("%-26s" % "S2f")
+        file.write("%-26s" % "S2s")
+        file.write("%-26s" % "tm_(ps)")
+        file.write("%-26s" % "tf_(ps)")
+        file.write("%-26s" % "te_or_ts_(ps)")
+        file.write("%-26s" % ("Rex_(" + self.relax.data.res[0].frq_labels[run][0] + "_MHz)"))
+        file.write("%-26s" % "Bond_length_(A)")
+        file.write("%-26s" % "CSA_(ppm)")
+
+        # Minimisation results.
+        file.write("%-26s" % "Chi-squared")
+        file.write("%-9s" % "Iter")
+        file.write("%-9s" % "f")
+        file.write("%-9s" % "g")
+        file.write("%-9s" % "h")
+        file.write("Warning")
+
+        # End of line.
+        file.write("\n")
+
+
+    def write_results(self, file, run):
+        """Function for printing the core of the results file."""
+
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Initialise.
+            types = self.relax.data.res[i].params[run]
+
+            # Residue number and name.
+            file.write("%-5s" % self.relax.data.res[i].num)
+            file.write("%-6s" % self.relax.data.res[i].name)
+
+            # Model details.
+            file.write("%-6s" % self.relax.data.res[i].models[run])
+            file.write("%-10s" % self.relax.data.res[i].equations[run])
+            file.write("%-36s" % replace(`types`, ' ', ''))
+
+            # S2.
+            if self.relax.data.res[i].s2[run] == None:
+                file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].s2[run]`)
+
+            # S2f.
+            if self.relax.data.res[i].s2f[run] == None:
+                file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].s2f[run]`)
+
+            # S2s.
+            if self.relax.data.res[i].s2s[run] == None:
+                file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].s2s[run]`)
+
+            # tm.
+            if hasattr(self.relax.data.res[i], 'tm') and self.relax.data.res[i].tm.has_key(run):
+                file.write("%-26s" % `self.relax.data.res[i].tm[run] / 1e-12`)
+            else:
+                file.write("%-26s" % `self.relax.data.diff_params[run][0] / 1e-12`)
+
+            # tf.
+            if self.relax.data.res[i].tf[run] == None:
+                file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].tf[run] / 1e-12`)
+
+            # te or ts.
+            if self.relax.data.res[i].te[run] == None and self.relax.data.res[i].ts[run] == None:
+                file.write("%-26s" % "N/A")
+            elif self.relax.data.res[i].te[run] != None:
+                file.write("%-26s" % `self.relax.data.res[i].te[run] / 1e-12`)
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].ts[run] / 1e-12`)
+
+            # Rex.
+            if self.relax.data.res[i].rex[run] == None:
+                file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].rex[run] * (2.0 * pi * self.relax.data.res[i].frq[run][0])**2`)
+
+            # Bond length.
+            if self.relax.data.res[i].r[run] == None:
+                file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].r[run] / 1e-10`)
+
+            # CSA.
+            if self.relax.data.res[i].csa[run] == None:
+                file.write("%-26s" % "N/A")
+            else:
+                file.write("%-26s" % `self.relax.data.res[i].csa[run] / 1e-6`)
+
+            # Chi-squared.
+            file.write("%-26s" % `self.relax.data.res[i].chi2[run]`)
+
+            # Iterations
+            file.write("%-9i" % self.relax.data.res[i].iter[run])
+
+            # Function count.
+            file.write("%-9i" % self.relax.data.res[i].f_count[run])
+
+            # Gradient count.
+            file.write("%-9i" % self.relax.data.res[i].g_count[run])
+
+            # Hessian count.
+            file.write("%-9i" % self.relax.data.res[i].h_count[run])
+
+            # Warning
+            if self.relax.data.res[i].warning[run] != None:
+                file.write(self.relax.data.res[i].warning[run])
+
+            # End of line.
+            file.write("\n")

@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import sys
+
 
 class Write:
     def __init__(self, relax):
@@ -28,7 +30,7 @@ class Write:
         self.relax = relax
 
 
-    def write(self, run=None, file="results", force=0):
+    def write(self, run=None, file="results", dir=None, force=0):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -38,16 +40,26 @@ class Write:
 
         file:  The name of the file to output results to.  The default is 'results'.
 
+        dir:  The directory to place the results file in.
+
         force:  A flag which if set to 1 will cause the results file to be overwitten if it already
         exists.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If no directory name is given, the results file will be placed in a directory named after
+        the run name.
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "write("
+            text = sys.macro_prompt + "write("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
-            text = text + ", force=" + `force` + ")\n"
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # The run argument.
@@ -60,10 +72,17 @@ class Write:
             print "The file name must be a string."
             return
 
+        # Directory.
+        if dir == None:
+            pass
+        elif type(dir) != str:
+            print "The directory name must be a string."
+            return
+
         # The force flag.
         if type(force) != int and force != 0 and force != 1:
             print "The force flag should be the integer values of either 0 or 1."
             return
 
         # Execute the functional code.
-        self.relax.write.write_data(run=run, file=file, force=force)
+        self.relax.rw.write_data(run=run, file=file, dir=dir, force=force)

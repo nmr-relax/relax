@@ -66,3 +66,9 @@ Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C and use swig t
 merge all print_data functions
 anisotropic diffusion (overall discrepancy)
 cross-validation (split and merge stages into common_ops.py)
+
+
+# Ideas.
+########
+
+Rather than passing the run name into all functions, setup functions to create and select the run.

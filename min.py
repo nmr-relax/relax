@@ -33,6 +33,32 @@ class Minimise:
         self.relax = relax
 
 
+    def calc(self, run=None):
+        """Function for calculating the function value."""
+
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Equation type specific function setup.
+            fns = self.relax.specific_setup.setup("calc", self.relax.data.res[i].equations[run])
+            if fns == None:
+                return
+            self.create_param_vector, self.calculate = fns
+
+            # Create the parameter vector.
+            params = self.create_param_vector(run, self.relax.data.res[i])
+
+            # Diagonal scaling.
+            if self.relax.data.res[i].scaling.has_key(run):
+                params = params / self.relax.data.res[i].scaling[run]
+
+            # Minimisation.
+            self.calculate(run=run, i=i, params=params)
+
+
     def fixed(self, run=None, values=None, print_flag=1):
         """Function for fixing the initial parameter values."""
 
@@ -91,7 +117,7 @@ class Minimise:
                     temp.append(inc)
                 inc = temp
 
-            min_options = self.grid_setup(params=self.relax.data.res[i].params[run], index=i, inc_vector=inc)
+            min_options = self.grid_setup(run=run, params=self.relax.data.res[i].params[run], index=i, inc_vector=inc)
 
             # Set the lower and upper bounds if these are supplied.
             if lower != None:

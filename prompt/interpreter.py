@@ -20,9 +20,9 @@
 #                                                                             #
 ###############################################################################
 
-
 import __builtin__
 from code import InteractiveConsole
+from os import F_OK, access
 import readline
 import sys
 
@@ -31,6 +31,7 @@ from command import Ls, Lh, Ll, system
 from print_all_data import Print_all_data
 
 # Macro functions.
+from calc import Calc
 from diffusion_tensor import Diffusion_tensor
 from dx import OpenDX
 from fixed import Fixed
@@ -39,13 +40,13 @@ from grid import Grid
 from init_data import Init_data
 from map import Map
 from minimise import Minimise
+from model_selection import Modsel
 from write import Write
 
 # Macro classes.
 import echo_data
 import format
 import model
-import model_selection
 import pdb
 import read
 import state
@@ -62,12 +63,13 @@ class Interpreter:
         # The prompts.
         sys.ps1 = 'relax> '
         sys.ps2 = 'relax| '
-        self.macro_prompt = '<macro> '
+        sys.macro_prompt = '\n<macro> '
 
         # The macro intro flag.
         self.intro = 0
 
         # Place the functions into the namespace of the interpreter class.
+        self._Calc = Calc(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._Fixed = Fixed(relax)
         self._GPL = GPL
@@ -75,6 +77,7 @@ class Interpreter:
         self._Init_data = Init_data(relax)
         self._Map = Map(relax)
         self._Minimise = Minimise(relax)
+        self._Modsel = Modsel(relax)
         self._OpenDX = OpenDX(relax)
         self._system = system
         self._Write = Write(relax)
@@ -83,7 +86,6 @@ class Interpreter:
         self._Echo_data = echo_data.Skin(relax)
         self._Format = format.Skin(relax)
         self._Model = model.Model(relax)
-        self._Model_selection = model_selection.Skin(relax)
         self._Pdb = pdb.Skin(relax)
         self._Read = read.Skin(relax)
         self._State = state.Skin(relax)
@@ -108,13 +110,15 @@ class Interpreter:
         gpl = GPL = self._GPL()
 
         # Place the functions in the local namespace.
-        diffusion_tensor = self._Diffusion_tensor.set
+        calc = self._Calc.calc
+        diffusion_tensor = self._Diffusion_tensor.diffusion_tensor
         dx = self._OpenDX.dx
         fixed = self._Fixed.fixed
         grid_search = self._Grid.grid_search
         init_data = self._Init_data.init
         map = self._Map.map
         minimise = self._Minimise.minimise
+        model_selection = self._Modsel.model_selection
         write = self._Write.write
 
         # Place the classes in the local namespace.
@@ -123,7 +127,6 @@ class Interpreter:
         read = self._Read
         pdb = self._Pdb
         model = self._Model
-        model_selection = self._Model_selection
         state = self._State
         value = self._Value
 
@@ -132,18 +135,22 @@ class Interpreter:
         intro_on = self._on
         execfile = __builtin__.execfile
         exit = bye = quit = q = _Exit()
+        script = self.script
 
         # Modify the help system.
         help_python = _Helper_python()
         help = _Helper()
 
+        # The local namespace.
+        self.local = locals()
+
         # Setup tab completion.
-        readline.set_completer(Tab_completion(name_space=locals()).finish)
-        readline.set_completer_delims(' \t\n`~!@#$%^&*()-=+{}\\|;:\'",<>/?')
+        readline.set_completer(Tab_completion(name_space=self.local).finish)
+        readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
         readline.parse_and_bind("tab: complete")
 
         # Go to the prompt.
-        prompt(intro=self.relax.intro_string, local=locals(), script=self.relax.script_file)
+        prompt(intro=self.relax.intro_string, local=self.local, script_file=self.relax.script_file)
 
 
     def _off(self):
@@ -160,6 +167,23 @@ class Interpreter:
         print "Macro intro's have been enabled."
 
 
+    def script(self, file=None):
+        """Macro for executing a script file."""
+
+        # File argument.
+        if file == None:
+            print "No script file has been specified."
+            return
+
+        # Turn on the macro intro flag.
+        self.intro = 1
+        
+        # Execute the script.
+        script(file, self.local)
+
+        # Turn off the macro intro flag.
+        self.intro = 0
+        
 
 class _Exit:
     def __repr__(self):
@@ -203,35 +227,22 @@ to the help function built into the normal python interpreter.\
         return pydoc.help(*args, **kwds)
 
 
-def interact(self, intro=None, local=None, script=None):
+def interact(self, intro=None, local=None, script_file=None):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
-    This will initially execute a command line specified script file before entering into the
-    prompt.
+    This will either execute a command line specified script file or enter into the prompt.
     """
 
     # Print the program introduction.
     self.write("%s\n" % intro)
 
     # Execute the script file, if given on the command line, and then exit.
-    if script != None:
+    if script_file != None:
         # Turn the intro flag on so macros will print there intro strings.
         local['self'].intro = 1
 
-        # Print the script.
-        file = open(script, 'r')
-        sys.stdout.write("script = " + `script` + "\n")
-        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
-        sys.stdout.write(file.read())
-        sys.stdout.write("----------------------------------------------------------------------------------------------------\n\n\n")
-        file.close()
-
         # Execute the script.
-        try:
-            execfile(script, local)
-        except KeyboardInterrupt:
-            sys.stdout.write("\nScript execution cancelled.\n")
-        sys.stdout.write("\n")
+        script(script_file, local)
         sys.exit()
 
     # Interactive prompt.
@@ -255,7 +266,7 @@ def interact(self, intro=None, local=None, script=None):
             more = 0
 
 
-def prompt(intro=None, local=None, script=None):
+def prompt(intro=None, local=None, script_file=None):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
@@ -266,4 +277,28 @@ def prompt(intro=None, local=None, script=None):
 
     # The console.
     console = InteractiveConsole(local)
-    console.interact(intro, local, script)
+    console.interact(intro, local, script_file)
+
+
+def script(script_file, local):
+    """Function for executing the script file."""
+
+    # Test if the script file exists.
+    if not access(script_file, F_OK):
+        sys.stderr.write("The script file '" + script_file + "' does not exist.\n")
+        return
+
+    # Print the script.
+    file = open(script_file, 'r')
+    sys.stdout.write("script = " + `script_file` + "\n")
+    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+    sys.stdout.write(file.read())
+    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+    file.close()
+
+    # Execute the script.
+    try:
+        execfile(script_file, local)
+    except KeyboardInterrupt:
+        sys.stdout.write("\nScript execution cancelled.\n")
+    sys.stdout.write("\n")

@@ -23,6 +23,7 @@
 
 from Numeric import zeros
 from re import match
+import sys
 from types import FunctionType
 
 
@@ -130,7 +131,7 @@ class Map:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "map("
+            text = sys.macro_prompt + "map("
             text = text + "run=" + `run`
             text = text + ", res_num=" + `res_num`
             text = text + ", map_type=" + `map_type`
@@ -143,7 +144,7 @@ class Map:
             text = text + ", point=" + `point`
             text = text + ", point_file=" + `point_file`
             text = text + ", remap=" + `remap`
-            text = text + ", labels=" + `labels` + ")\n"
+            text = text + ", labels=" + `labels` + ")"
             print text
 
         # The run argument.

@@ -24,14 +24,50 @@
 from os import F_OK, access, mkdir
 
 
-class Write:
+class RW:
     def __init__(self, relax):
-        """Class containing functions for writing data."""
+        """Class containing functions for reading and writing data."""
 
         self.relax = relax
 
 
-    def write_data(self, run=None, file="results", force=0):
+    def read_data(self, run=None, data_type=None, file='results', dir=None):
+        """Function for reading the data out of a file."""
+
+        # Test if the sequence data has been read.
+        if not len(self.relax.data.res):
+            print "The sequence data has not been read."
+            return
+
+        # Add the run to 'self.relax.data.runs'.
+        if not run in self.relax.data.runs:
+            self.relax.data.runs.append(run)
+
+        # Equation type specific function setup.
+        self.read_results = self.relax.specific_setup.setup("read", data_type)
+        if self.read_results == None:
+            print "Read error, no function corresponding to the data type exists."
+            return
+
+        # The results file.
+        if dir == None:
+            dir = run
+        file_name = dir + "/" + file
+        if not access(file_name, F_OK):
+            print "The file '" + file_name + "' does not exist."
+            return
+
+        # Extract the data from the file.
+        file_data = self.relax.file_ops.extract_data(file_name)
+
+        # Strip data.
+        file_data = self.relax.file_ops.strip(file_data)
+
+        # Read the results.
+        self.read_results(file_data, run)
+
+
+    def write_data(self, run=None, file="results", dir=None, force=0):
         """Create the directories and files for output.
 
         The directory with the name of the run will be created.  The results will be placed in the
@@ -44,29 +80,31 @@ class Write:
             return
 
         # Directory creation.
+        if dir == None:
+            dir = run
         try:
-            mkdir(run)
+            mkdir(dir)
         except OSError:
             pass
 
         # Equation type specific function setup.
-        fns = self.relax.specific_setup.setup("print", self.relax.data.res[0].equations[run])
+        fns = self.relax.specific_setup.setup("write", self.relax.data.res[0].equations[run])
         if fns == None:
             return
-        self.print_header, self.print_results = fns
+        self.write_header, self.write_results = fns
 
         # The results file.
-        file_name = run + "/" + file
+        file_name = dir + "/" + file
         if access(file_name, F_OK) and not force:
             print "The file '" + file_name + "' already exists.  Set the force flag to 1 to overwrite."
             return
         results_file = open(file_name, 'w')
 
-        # Print the header.
-        self.print_header(results_file)
+        # Write the header.
+        self.write_header(results_file, run)
 
-        # Print the results.
-        self.print_results(results_file, run)
+        # Write the results.
+        self.write_results(results_file, run)
 
         # Close the results file.
         results_file.close()

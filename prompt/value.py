@@ -22,6 +22,7 @@
 
 
 from re import match
+import sys
 
 from select_res import Select_res
 
@@ -56,6 +57,8 @@ class Macro_class(Select_res):
 
         Incomplete and broken code (and should probably be placed under the 'load' macro class.
         """
+
+        raise NameError, "Broken code."
 
         # Arguments
         if not type:
@@ -132,11 +135,11 @@ class Macro_class(Select_res):
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "value.set("
+            text = sys.macro_prompt + "value.set("
             text = text + "run=" + `run`
             text = text + ", data_type=" + `data_type`
             text = text + ", val=" + `val`
-            text = text + ", err=" + `err` + ")\n"
+            text = text + ", err=" + `err` + ")"
             print text
 
         # The run name.

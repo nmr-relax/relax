@@ -1,15 +1,25 @@
 # Script for model-free analysis.
+
+# Load the sequence.
 read.sequence('noe.500.out')
-read.rx_data('R1', '600', 600.0 * 1e6, 'r1.600.out')
-read.rx_data('R2', '600', 600.0 * 1e6, 'r2.600.out')
-read.rx_data('NOE', '600', 600.0 * 1e6, 'noe.600.out')
-read.rx_data('R1', '500', 500.0 * 1e6, 'r1.500.out')
-read.rx_data('R2', '500', 500.0 * 1e6, 'r2.500.out')
-read.rx_data('NOE', '500', 500.0 * 1e6, 'noe.500.out')
-diffusion_tensor('iso', 1e-8)
+
+# Set the run name (also the name of a preset model-free model).
 name = 'm5'
+
+# Load the relaxation data.
+read.rx_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
+read.rx_data(name, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
+read.rx_data(name, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
+read.rx_data(name, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
+read.rx_data(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
+read.rx_data(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
+
+# Setup other values.
+diffusion_tensor(name, 'iso', 1e-8)
 value.set(name, 'bond_length', 1.02 * 1e-10)
 value.set(name, 'csa', -160 * 1e-6)
+
+# Select the model-free model.
 model.select_mf(run=name, model=name)
 #model.create_mf(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
@@ -28,6 +38,7 @@ grid_search(name, inc=11)
 # Minimise.
 #minimise('newton', run=name, constraints=0, max_iter=0, print_flag=10)
 minimise('newton', run=name)
-write(run=name, file='results', force=1)
 
+# Finish.
+write(run=name, file='results', force=1)
 state.save('save', force=1)

@@ -22,6 +22,7 @@
 
 
 from Numeric import Float64, array, zeros
+import sys
 
 
 class Fixed:
@@ -64,10 +65,10 @@ class Fixed:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "fixed("
+            text = sys.macro_prompt + "fixed("
             text = text + "run=" + `run`
             text = text + ", values=" + `values`
-            text = text + ", print_flag=" + `print_flag` + ")\n"
+            text = text + ", print_flag=" + `print_flag` + ")"
             print text
 
         # The run argument.

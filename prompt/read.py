@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import sys
+
 
 class Skin:
     def __init__(self, relax):
@@ -35,7 +37,7 @@ class Skin:
         x = Macro_class(relax)
 
         # Place references to the interactive functions within the namespace of this skin class.
-        self.read = x.read
+        self.read_data = x.read_data
         self.rx_data = x.rx_data
         self.sequence = x.sequence
 
@@ -49,7 +51,7 @@ class Macro_class:
         self.sequence = self.relax.sequence.macro_read
 
 
-    def read(self, run=None, file=None, dir=None):
+    def read_data(self, run=None, data_type=None, file='results', dir=None):
         """Function for reading results from a file.
 
         Keyword Arguments
@@ -57,22 +59,43 @@ class Macro_class:
 
         run:  The name of the run.
 
+        data_type:  The type of data.
+
         file:  The name of the file to read results from.
 
         dir:  The directory where the file is located.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The name of the run can be any string.
+
+        The data_type argument specifies what type of data is to be read and must be one of the
+        following:
+            'mf' - model-free data
+
+        If no directory name is given, the results file will be seached for in a directory named
+        after the run name.
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "write("
+            text = sys.macro_prompt + "read_data("
             text = text + "run=" + `run`
-            text = text + ", file=" + `file` + ")\n"
-            text = text + ", dir=" + `dir` + ")\n"
+            text = text + ", data_type=" + `data_type`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir` + ")"
             print text
 
         # The run argument.
         if type(run) != str:
             print "The run argument " + `run` + " must be a string."
+            return
+
+        # The data_type argument.
+        if type(data_type) != str:
+            print "The data_type argument " + `data_type` + " must be a string."
             return
 
         # File.
@@ -81,9 +104,10 @@ class Macro_class:
             return
 
         # Directory.
-        if dir != None or type(dir) != str:
-            print "The directory name must be a string."
-            return
+        if dir != None:
+            if type(dir) != str:
+                print "The directory name must be a string or None."
+                return
 
         # Execute the functional code.
-        self.relax.read.read_data(run=run, file=file, dir=dir)
+        self.relax.rw.read_data(run=run, data_type=data_type, file=file, dir=dir)

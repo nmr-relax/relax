@@ -28,14 +28,25 @@ class Diffusion_tensor:
         self.relax = relax
 
 
-    def set(self, diff=None, params=None):
+    def set(self, run=None, diff=None, params=None):
         """Function for setting up the diffusion tensor."""
 
+        # Initialise the data structures.
+        if not hasattr(self.relax.data, 'diff_type'):
+            self.relax.data.diff_type = {}
+        if not hasattr(self.relax.data, 'diff_params'):
+            self.relax.data.diff_params = {}
+
+        # Test if the run already exists.
+        if self.relax.data.diff_type.has_key(run):
+            print "The run " + `run` + " has already been set."
+            return
+
         # Setup the diffusion type.
-        self.relax.data.diff_type = diff
+        self.relax.data.diff_type[run] = diff
 
         # Setup the parameter values.
         if diff == 'iso':
-            self.relax.data.diff_params = [params]
+            self.relax.data.diff_params[run] = [params]
         else:
-            self.relax.data.diff_params = params
+            self.relax.data.diff_params[run] = params

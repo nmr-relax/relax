@@ -45,7 +45,7 @@ class Print_all_data:
             string = string + "\nResidue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "\n\n"
             for name in dir(self.relax.data.res[i]):
                 if not self.filter_data_structure(self.relax.data.res[i], name):
-                    string = string + "self.relax.data." + name + ":\n" + `getattr(self.relax.data.res[i], name)` + "\n\n"
+                    string = string + "self.relax.data.res[" + `i` + "]." + name + ": " + `getattr(self.relax.data.res[i], name)` + "\n"
 
         return string
 

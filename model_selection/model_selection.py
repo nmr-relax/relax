@@ -20,9 +20,200 @@
 #                                                                             #
 ###############################################################################
 
+from copy import deepcopy
+from math import log
+
 
 class Model_selection:
-    def __init__(self, mf):
-        """Class used to store all the program functions."""
+    def __init__(self, relax):
+        """Class containing functions specific to model selection."""
 
-        self.mf = mf
+        self.relax = relax
+
+
+    def select(self, method=None, modsel_run=None, runs=None):
+        """Model selection function."""
+
+        # The runs argument.
+        if runs == None:
+            runs = self.relax.data.runs
+        else:
+            for run in runs:
+                if type(run) == list:
+                    for run2 in run:
+                        if not run2 in self.relax.data.runs:
+                            print "The run " + `run2` + " cannot be found."
+                            return
+                elif not run in self.relax.data.runs:
+                    print "The run " + `run` + " cannot be found."
+                    return
+
+        # Test if the run 'modsel_run' does not already exist.
+        if modsel_run in self.relax.data.runs:
+            print "The run " + `modsel_run` + " already exists."
+            return
+
+        # Initialise.
+        self.modsel_run = modsel_run
+        self.runs = deepcopy(runs)
+
+        # Select the model selection technique.
+        if method == 'AIC':
+            self.modsel = self.criteria_modsel
+            self.formula = self.aic
+        elif method == 'AICc':
+            self.modsel = self.criteria_modsel
+            self.formula = self.aicc
+        elif method == 'BIC':
+            self.modsel = self.criteria_modsel
+            self.formula = self.bic
+        elif method == 'CV':
+            self.modsel = self.cv
+        else:
+            print "The model selection technique " + `method` + " is not currently supported."
+            return
+
+        # Add the new run name 'modsel_run' to self.relax.data.runs
+        self.relax.data.runs.append(self.modsel_run)
+
+        # Loop over the sequence.
+        for i in range(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Model selection.
+            best_model = self.modsel(i)
+ 
+            # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
+            self.duplicate_data(best_model, modsel_run, i)
+
+
+    def aic(self, i, model, k, n):
+        """Akaike's Information Criteria (AIC).
+
+        The formula is:
+
+            AIC = chi2 + 2k
+
+        where:
+            chi2 is the minimised chi-squared value.
+            k is the number of parameters in the model.
+        """
+
+        return self.relax.data.res[i].chi2[model] + 2.0*k
+
+
+    def aicc(self, i, model, k, n):
+        """Small sample size corrected AIC.
+
+        The formula is:
+
+                               2k(k + 1)
+            AICc = chi2 + 2k + ---------
+                               n - k - 1
+
+        where:
+            chi2 is the minimised chi-squared value.
+            k is the number of parameters in the model.
+            n is the dimension of the relaxation data set.
+        """
+
+        return self.relax.data.res[i].chi2[model] + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
+
+
+    def bic(self, i, model, k, n):
+        """Bayesian or Schwarz Information Criteria.
+
+        The formula is:
+
+            BIC = chi2 + k ln n
+
+        where:
+            chi2 - is the minimised chi-squared value.
+            k - is the number of parameters in the model.
+            n is the dimension of the relaxation data set.
+        """
+
+        return self.relax.data.res[i].chi2[model] + k * log(n)
+
+
+    def criteria_modsel(self, i):
+        """Generic function for Information Criteria model selection."""
+
+        # Initial model.
+        best_model = None
+        best_crit = float('inf')
+
+        # Loop over the models.
+        for model in self.runs:
+            # Count the number of parameters in the model.
+            k = len(self.relax.data.res[i].params[model])
+
+            # Calculate the dimension of the relaxation data set.
+            n = len(self.relax.data.res[i].relax_data[model])
+
+            # Calculate the criterion value.
+            crit = self.formula(i, model, k, n)
+
+            # Select model.
+            if crit < best_crit:
+                best_model = model
+                best_crit = crit
+
+        return best_model
+
+
+    def cv(self, i):
+        """Single-item-out cross-validation."""
+
+        # Initial model.
+        best_model = None
+        best_crit = float('inf')
+
+        # Loop over the models.
+        for k in range(len(self.runs[0])):
+            # Sum of chi-squared values.
+            sum_crit = 0.0
+
+            # Loop over the validation samples and sum the chi-squared values.
+            for j in range(len(self.runs)):
+                sum_crit = self.relax.data.res[i].chi2[self.runs[j][k]]
+
+            # Cross-validation criterion (average chi-squared value).
+            crit = sum_crit / float(len(self.runs))
+
+            # Select model.
+            if crit < best_crit:
+                best_model = self.runs[0][k]
+                best_crit = crit
+
+        return best_model
+
+
+    def duplicate_data(self, best_model, modsel_run, i):
+        """Function for duplicating of run specific data.
+
+        The run specific data in self.relax.data.res[i] is copied from the run 'best_model' to the
+        run 'modsel_run'.
+        """
+
+        # Test if 'best_model' exists.
+        if not best_model in self.relax.data.runs:
+            raise NameError, "The run " + `best_model` + " cannot be found."
+
+        # Loop over all the data in self.relax.data.res[i]
+        for data in dir(self.relax.data.res[i]):
+            # Get the data object.
+            object = getattr(self.relax.data.res[i], data)
+
+            # Test if the object is a dictionary (hash).
+            if type(object) != dict:
+                continue
+
+            # Test if the object contains the key 'best_model'.
+            if not object.has_key(best_model):
+                continue
+
+            # Duplicate the data.
+            object[modsel_run] = deepcopy(object[best_model])

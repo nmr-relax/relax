@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import sys
+
 
 class Grid:
     def __init__(self, relax):
@@ -56,13 +58,13 @@ class Grid:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "grid_search("
+            text = sys.macro_prompt + "grid_search("
             text = text + "run=" + `run`
             text = text + ", lower=" + `lower`
             text = text + ", upper=" + `upper`
             text = text + ", inc=" + `inc`
             text = text + ", constraints=" + `constraints`
-            text = text + ", print_flag=" + `print_flag` + ")\n"
+            text = text + ", print_flag=" + `print_flag` + ")"
             print text
 
         # The run argument.

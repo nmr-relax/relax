@@ -33,7 +33,6 @@
 ###############################################################################
 
 
-from os import F_OK, access
 import profile
 import pstats
 from re import match
@@ -54,14 +53,13 @@ from model_free import Model_free
 from model_selection.model_selection import Model_selection
 from palmer import Palmer
 from prompt.interpreter import Interpreter
-from read import Read
+from rw import RW
 from rx_data import Rx_data
 from rx_fit import Rx_fit
 from sequence import Sequence
 from specific_setup import Specific_setup
 from state import State
 from value import Value
-from write import Write
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -87,16 +85,15 @@ class Relax:
         self.file_ops = File_ops(self)
         self.map = Map(self)
         self.min = Minimise(self)
-        #self.model_selection = Model_selection(self)
+        self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
         self.opendx = OpenDX(self)
-        self.read = Read(self)
+        self.rw = RW(self)
         self.rx_data = Rx_data(self)
         self.sequence = Sequence(self)
         self.specific_setup = Specific_setup(self)
         self.state = State(self)
         self.value = Value(self)
-        self.write = Write(self)
 
         # Process the command line arguments.
         self.arguments()
@@ -124,9 +121,6 @@ class Relax:
         # Script file.
         elif type(self.argv[1]) == str and len(self.argv) == 2:
             self.script_file = self.argv[1]
-            if not access(self.script_file, F_OK):
-                sys.stderr.write("The script file '" + self.script_file + "' does not exist.\n")
-                sys.exit()
 
         # Unknown argument.
         else:

@@ -36,7 +36,9 @@ class Specific_setup:
 
         # Model-free analysis.
         if match('mf', eqi):
-            if match('fixed', type):
+            if match('calc', type):
+                return self.relax.model_free.create_param_vector, self.relax.model_free.calculate
+            elif match('fixed', type):
                 return self.relax.model_free.create_param_vector, self.relax.model_free.fixed_setup, self.relax.model_free.minimise
             elif match('grid_search', type):
                 return self.relax.model_free.create_param_vector, self.relax.model_free.grid_setup, self.relax.model_free.minimise
@@ -48,8 +50,10 @@ class Specific_setup:
                 return self.relax.model_free.create_param_vector, self.relax.model_free.map_bounds, self.relax.model_free.minimise
             elif match('minimise', type):
                 return self.relax.model_free.create_param_vector, self.relax.model_free.minimise
-            elif match('print', type):
-                return self.relax.model_free.print_header, self.relax.model_free.print_results
+            elif match('read', type):
+                return self.relax.model_free.read_results
+            elif match('write', type):
+                return self.relax.model_free.write_header, self.relax.model_free.write_results
 
         # Unknown equation type.
         else:

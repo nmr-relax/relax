@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import sys
+
 
 class Skin:
     def __init__(self, relax):
@@ -66,8 +68,8 @@ class Macro_class:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "state.load("
-            text = text + "file_name=" + `file_name` + ")\n"
+            text = sys.macro_prompt + "state.load("
+            text = text + "file_name=" + `file_name` + ")"
             print text
 
         # Test arguments
@@ -108,9 +110,9 @@ class Macro_class:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "state.save("
+            text = sys.macro_prompt + "state.save("
             text = text + "file_name=" + `file_name`
-            text = text + ", force=" + `force` + ")\n"
+            text = text + ", force=" + `force` + ")"
             print text
 
         # File name.

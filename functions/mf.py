@@ -35,7 +35,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, relax, i=None, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_vector=None, print_flag=0):
+    def __init__(self, relax, run=None, i=None, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_vector=None, print_flag=0):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -44,6 +44,10 @@ class Mf:
         ~~~~~~~~~
 
         relax:  The program base class self.relax
+
+        run:  The name of the run.
+
+        i:  The index of residue.
 
         equation:  The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
 
@@ -68,6 +72,7 @@ class Mf:
 
         # Arguments.
         self.relax = relax
+        self.run = run
         self.i = i
         self.equation = equation
         self.param_types = param_types
@@ -113,9 +118,9 @@ class Mf:
     def calc_frq_list(self):
         """Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation."""
 
-        self.data.frq_list = zeros((self.relax.data.res[self.i].num_frq, 5), Float64)
-        for i in range(self.relax.data.res[self.i].num_frq):
-            frqH = 2.0 * pi * self.relax.data.res[self.i].frq[i]
+        self.data.frq_list = zeros((self.relax.data.res[self.i].num_frq[self.run], 5), Float64)
+        for i in range(self.relax.data.res[self.i].num_frq[self.run]):
+            frqH = 2.0 * pi * self.relax.data.res[self.i].frq[self.run][i]
             frqX = frqH * (self.relax.data.gx / self.relax.data.gh)
             self.data.frq_list[i, 1] = frqX
             self.data.frq_list[i, 2] = frqH - frqX
@@ -306,12 +311,12 @@ class Mf:
         self.data.g_ratio = self.relax.data.g_ratio
         self.data.h_bar = self.relax.data.h_bar
         self.data.mu0 = self.relax.data.mu0
-        self.data.num_ri = self.relax.data.res[self.i].num_ri
-        self.data.num_frq = self.relax.data.res[self.i].num_frq
-        self.data.frq = self.relax.data.res[self.i].frq
-        self.data.remap_table = self.relax.data.res[self.i].remap_table
-        self.data.noe_r1_table = self.relax.data.res[self.i].noe_r1_table
-        self.data.ri_labels = self.relax.data.res[self.i].ri_labels
+        self.data.num_ri = self.relax.data.res[self.i].num_ri[self.run]
+        self.data.num_frq = self.relax.data.res[self.i].num_frq[self.run]
+        self.data.frq = self.relax.data.res[self.i].frq[self.run]
+        self.data.remap_table = self.relax.data.res[self.i].remap_table[self.run]
+        self.data.noe_r1_table = self.relax.data.res[self.i].noe_r1_table[self.run]
+        self.data.ri_labels = self.relax.data.res[self.i].ri_labels[self.run]
 
         # Diagonal scaling data.
         if self.scaling_vector:
@@ -334,9 +339,9 @@ class Mf:
             self.data.two_fifths_tm_sqrd = 0.4 * self.data.diff_params[0] ** 2
 
         # Spectral density values, gradients, and Hessians.
-        self.data.jw = zeros((self.relax.data.res[self.i].num_frq, 5), Float64)
-        self.data.djw = zeros((self.relax.data.res[self.i].num_frq, 5, len(self.params)), Float64)
-        self.data.d2jw = zeros((self.relax.data.res[self.i].num_frq, 5, len(self.params), len(self.params)), Float64)
+        self.data.jw = zeros((self.relax.data.res[self.i].num_frq[self.run], 5), Float64)
+        self.data.djw = zeros((self.relax.data.res[self.i].num_frq[self.run], 5, len(self.params)), Float64)
+        self.data.d2jw = zeros((self.relax.data.res[self.i].num_frq[self.run], 5, len(self.params), len(self.params)), Float64)
 
         # Calculate the fixed components of the dipolar and CSA constants.
         calc_fixed_csa(self.data)
@@ -346,40 +351,40 @@ class Mf:
         self.data.dip_const_func = 0.0
         self.data.dip_const_grad = 0.0
         self.data.dip_const_hess = 0.0
-        self.data.csa_const_func = zeros((self.relax.data.res[self.i].num_frq), Float64)
-        self.data.csa_const_grad = zeros((self.relax.data.res[self.i].num_frq), Float64)
-        self.data.csa_const_hess = zeros((self.relax.data.res[self.i].num_frq), Float64)
+        self.data.csa_const_func = zeros((self.relax.data.res[self.i].num_frq[self.run]), Float64)
+        self.data.csa_const_grad = zeros((self.relax.data.res[self.i].num_frq[self.run]), Float64)
+        self.data.csa_const_hess = zeros((self.relax.data.res[self.i].num_frq[self.run]), Float64)
 
         # Components of the transformed relaxation equations.
-        self.data.dip_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.csa_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.rex_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.dip_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.csa_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
+        self.data.dip_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.csa_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.rex_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.dip_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.csa_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
-        self.data.dip_comps_grad = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.csa_comps_grad = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.rex_comps_grad = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.dip_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri, len(self.params)), Float64)
-        self.data.csa_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri, len(self.params)), Float64)
+        self.data.dip_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.csa_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.rex_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.dip_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params)), Float64)
+        self.data.csa_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params)), Float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
-        self.data.dip_comps_hess = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.csa_comps_hess = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.rex_comps_hess = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.dip_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri, len(self.params), len(self.params)), Float64)
-        self.data.csa_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri, len(self.params), len(self.params)), Float64)
+        self.data.dip_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.csa_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.rex_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.dip_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params), len(self.params)), Float64)
+        self.data.csa_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params), len(self.params)), Float64)
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
-        self.data.ri_prime = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.dri_prime = zeros((self.relax.data.res[self.i].num_ri, len(self.params)), Float64)
-        self.data.d2ri_prime = zeros((self.relax.data.res[self.i].num_ri, len(self.params), len(self.params)), Float64)
+        self.data.ri_prime = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.dri_prime = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params)), Float64)
+        self.data.d2ri_prime = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params), len(self.params)), Float64)
 
         # Initialise the data structures containing the R1 values at the position of and corresponding to the NOE.
-        self.data.r1 = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.dr1 = zeros((self.relax.data.res[self.i].num_ri, len(self.params)), Float64)
-        self.data.d2r1 = zeros((self.relax.data.res[self.i].num_ri, len(self.params), len(self.params)), Float64)
+        self.data.r1 = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.dr1 = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params)), Float64)
+        self.data.d2r1 = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params), len(self.params)), Float64)
 
 
     def init_r1_data(self):
@@ -395,29 +400,29 @@ class Mf:
         self.data.r1_data.csa_const_fixed = self.data.csa_const_fixed
 
         # Components of the transformed relaxation equations.
-        self.data.r1_data.dip_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.csa_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.dip_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.csa_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri), Float64)
+        self.data.r1_data.dip_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.csa_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.dip_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.csa_jw_comps_func = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
-        self.data.r1_data.dip_comps_grad = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.csa_comps_grad = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.rex_comps_grad = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.dip_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri, len(self.params)), Float64)
-        self.data.r1_data.csa_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri, len(self.params)), Float64)
+        self.data.r1_data.dip_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.csa_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.rex_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.dip_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params)), Float64)
+        self.data.r1_data.csa_jw_comps_grad = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params)), Float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
-        self.data.r1_data.dip_comps_hess = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.csa_comps_hess = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.rex_comps_hess = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.dip_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri, len(self.params), len(self.params)), Float64)
-        self.data.r1_data.csa_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri, len(self.params), len(self.params)), Float64)
+        self.data.r1_data.dip_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.csa_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.rex_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.dip_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params), len(self.params)), Float64)
+        self.data.r1_data.csa_jw_comps_hess = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params), len(self.params)), Float64)
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
-        self.data.r1_data.ri_prime = zeros((self.relax.data.res[self.i].num_ri), Float64)
-        self.data.r1_data.dri_prime = zeros((self.relax.data.res[self.i].num_ri, len(self.params)), Float64)
-        self.data.r1_data.d2ri_prime = zeros((self.relax.data.res[self.i].num_ri, len(self.params), len(self.params)), Float64)
+        self.data.r1_data.ri_prime = zeros((self.relax.data.res[self.i].num_ri[self.run]), Float64)
+        self.data.r1_data.dri_prime = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params)), Float64)
+        self.data.r1_data.d2ri_prime = zeros((self.relax.data.res[self.i].num_ri[self.run], len(self.params), len(self.params)), Float64)
 
         # Place a few function pointer arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
         self.data.r1_data.create_dri_prime = self.create_dri_prime
@@ -847,7 +852,7 @@ class Mf:
         self.get_r1, self.get_dr1, self.get_d2r1 = [], [], []
 
         # Fill the structures with None.
-        for i in range(self.relax.data.res[self.i].num_ri):
+        for i in range(self.relax.data.res[self.i].num_ri[self.run]):
             self.create_dip_func.append(None)
             self.create_dip_grad.append(None)
             self.create_dip_hess.append(None)
@@ -873,9 +878,9 @@ class Mf:
         # Select the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
         #############################################################################################
 
-        for i in range(self.relax.data.res[self.i].num_ri):
+        for i in range(self.relax.data.res[self.i].num_ri[self.run]):
             # The R1 equations.
-            if self.relax.data.res[self.i].ri_labels[i] == 'R1':
+            if self.relax.data.res[self.i].ri_labels[self.run][i] == 'R1':
                 self.create_csa_func[i] = comp_r1_csa_const
                 self.create_csa_grad[i] = comp_r1_csa_const
                 self.create_csa_hess[i] = comp_r1_csa_const
@@ -887,7 +892,7 @@ class Mf:
                 self.create_csa_jw_hess[i] = comp_r1_csa_jw
 
             # The R2 equations.
-            elif self.relax.data.res[self.i].ri_labels[i] == 'R2':
+            elif self.relax.data.res[self.i].ri_labels[self.run][i] == 'R2':
                 self.create_dip_func[i] = comp_r2_dip_const
                 self.create_dip_grad[i] = comp_r2_dip_const
                 self.create_dip_hess[i] = comp_r2_dip_const
@@ -904,14 +909,14 @@ class Mf:
                 self.create_csa_jw_hess[i] = comp_r2_csa_jw
 
             # The NOE equations.
-            elif self.relax.data.res[self.i].ri_labels[i] == 'NOE':
+            elif self.relax.data.res[self.i].ri_labels[self.run][i] == 'NOE':
                 self.create_dip_jw_func[i] = comp_sigma_noe_dip_jw
                 self.create_dip_jw_grad[i] = comp_sigma_noe_dip_jw
                 self.create_dip_jw_hess[i] = comp_sigma_noe_dip_jw
                 self.create_ri[i] = calc_noe
                 self.create_dri[i] = calc_dnoe
                 self.create_d2ri[i] = calc_d2noe
-                if self.relax.data.res[self.i].noe_r1_table[i] == None:
+                if self.relax.data.res[self.i].noe_r1_table[self.run][i] == None:
                     self.get_r1[i] = calc_r1
                     self.get_dr1[i] = calc_dr1
                     self.get_d2r1[i] = calc_d2r1

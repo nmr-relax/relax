@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import sys
+
 
 class Minimise:
     def __init__(self, relax):
@@ -105,13 +107,13 @@ class Minimise:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "minimise("
+            text = sys.macro_prompt + "minimise("
             text = text + "*args=" + `args`
             text = text + ", run=" + `run`
             text = text + ", func_tol=" + `func_tol`
             text = text + ", max_iterations=" + `max_iterations`
             text = text + ", constraints=" + `constraints`
-            text = text + ", print_flag=" + `print_flag` + ")\n"
+            text = text + ", print_flag=" + `print_flag` + ")"
             print text
 
         # Minimization algorithm.

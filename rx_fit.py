@@ -25,10 +25,8 @@
 
 import sys
 
-from common_ops import Common_ops
 
-
-class Rx_fit(Common_ops):
+class Rx_fit:
     def __init__(self):
         """Relaxation curve fitting."""
 

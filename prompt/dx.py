@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+import sys
+
 
 class OpenDX:
     def __init__(self, relax):
@@ -49,11 +51,11 @@ class OpenDX:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "dx("
+            text = sys.macro_prompt + "dx("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", dx_exec=" + `dx_exec`
-            text = text + ", execute=" + `execute` + ")\n"
+            text = text + ", execute=" + `execute` + ")"
             print text
 
         # File and directory name.

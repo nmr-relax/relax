@@ -20,66 +20,107 @@
 #                                                                             #
 ###############################################################################
 
-
-class Skin:
-    def __init__(self, relax):
-        """The class accessible to the interpreter.
-
-        The purpose of this class is to hide the variables and functions found within the namespace
-        of the macro class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the macro class data
-        structures are accessible.  For more flexibility use the macro class directly.
-        """
-
-        # Load the macro class into the namespace of this __init__ function.
-        x = Macro_class(relax)
-
-        # Place references to the interactive functions within the namespace of this skin class.
-        self.set = x.set
+import sys
 
 
-class Macro_class:
+class Modsel:
     def __init__(self, relax):
         """Class containing the macro for selecting which model selection method should be used."""
 
         self.relax = relax
 
 
-    def set(self, type=None):
-        """Macro for selecting which model selection method should be used.
+    def model_selection(self, method=None, modsel_run=None, runs=None):
+        """Macro for model selection.
 
-        !!!Remove references to model-free!!!
+        Keyword arguments
+        ~~~~~~~~~~~~~~~~~
 
-        The following types are supported:
+        method:  The model selection technique (see below).
 
-        AIC:        Method of model-free analysis based on model selection using the Akaike
-        Information Criteria.
+        modsel_run:  The run name to assign to the results of model selection.
 
-        AICc:       Method of model-free analysis based on model selection using the Akaike
-        Information Criteria corrected for finit sample size.
+        runs:  An array containing the names of all runs to include in the model selection.
 
-        BIC:        Method of model-free analysis based on model selection using the Schwartz
-        Information Criteria.
 
-        Bootstrap:  Modelfree analysis based on model selection using bootstrap methods to estimate
-        the overall discrepancy.
+        Description
+        ~~~~~~~~~~~
 
-        CV:         Modelfree analysis based on model selection using cross-validation methods to
-        estimate the overall discrepancy.
+        The following model selection methods are supported:
 
-        Expect:     Calculate the expected overall discrepancy (real model-free parameters must be
-        known).
+        AIC:  Akaike's Information Criteria.
 
-        Farrow:     The method given by Farrow et al., 1994.
+        AICc:  Small sample size corrected AIC.
 
-        Palmer:     The method given by Mandel et al., 1995.
+        BIC:  Bayesian or Schwarz Information Criteria.
 
-        Overall:    Calculate the realised overall discrepancy (real model-free parameters must be
-        known).
+        Bootstrap:  Bootstrap model selection.
+
+        CV:  Single-item-out cross-validation.
+
+        Expect:  The expected overall discrepancy (the true values of the parameters are required).
+
+        Farrow:  Old model-free method by Farrow et al., 1994.
+
+        Palmer:  Old model-free method by Mandel et al., 1995.
+
+        Overall:  The realised overall discrepancy (the true values of the parameters are required).
+
+
+        If the runs argument is not supplied then all runs currently set or loaded will be used for
+        model selection, although this could cause problems.  
+
+
+        Example
+        ~~~~~~~
+
+        For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the
+        program, the following commands will carry out AIC model selection and assign the results
+        to the run name 'mixed':
+
+        relax> model_selection('AIC', 'mixed')
+        relax> model_selection(method='AIC', modsel_run='mixed')
+        relax> model_selection('AIC', 'mixed', ['m1', 'm2', 'm3', 'm4', 'm5'])
+        relax> model_selection(method='AIC', modsel_run='mixed', runs=['m1', 'm2', 'm3', 'm4', 'm5'])
         """
 
-        if not type:
-            print "No model selection method given."
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = sys.macro_prompt + "model_selection("
+            text = text + "method=" + `method`
+            text = text + ", modsel_run=" + `modsel_run`
+            text = text + ", runs=" + `runs` + ")"
+            print text
+
+        # Method.
+        if type(method) != str:
+            print "The method argument must be a string."
             return
 
-        self.relax.data.modsel = type
+        # New run modsel_run.
+        if modsel_run == None:
+            print "The argument 'modsel_run' is required."
+            return
+        elif type(modsel_run) != str:
+            print "The modsel_run argument must be a string."
+            return
+
+        # Runs.
+        if runs == None:
+            pass
+        elif type(runs) != list:
+            print "The runs argument must be a list."
+            return
+        else:
+            for name in runs:
+                if type(name) == list:
+                    for name2 in name:
+                        if type(name2) != str:
+                            print "The elements of the second dimension of the runs argument must be strings."
+                            return
+                elif type(name) != str:
+                    print "The elements of the first dimension of the runs argument must be either strings or arrays."
+                    return
+
+        # Execute the functional code.
+        self.relax.model_selection.select(method=method, modsel_run=modsel_run, runs=runs)
