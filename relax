@@ -47,6 +47,7 @@ from dx.map import Map
 from dx.opendx import OpenDX
 from errors import RelaxErrors
 from file_ops import File_ops
+from fix import Fix
 from min import Minimise
 from model_free import Model_free
 from model_selection import Model_selection
@@ -94,6 +95,7 @@ class Relax:
         self.delete = Delete(self)
         self.diffusion_tensor = Diffusion_tensor(self)
         self.file_ops = File_ops(self)
+        self.fix = Fix(self)
         self.map = Map(self)
         self.min = Minimise(self)
         self.model_free = Model_free(self)

@@ -37,13 +37,11 @@ from print_all_data import Print_all_data
 
 # Macro functions.
 from angles import Angles
-from calc import Calc
 from delete import Delete
 from diffusion_tensor import Diffusion_tensor
 from dx import OpenDX
-from fixed import Fixed
+from fix import Fix
 from gpl import GPL
-from grid import Grid
 from init_data import Init_data
 from map import Map
 from minimise import Minimise
@@ -86,12 +84,10 @@ class Interpreter:
 
         # Place the functions into the namespace of the interpreter class.
         self._Angles = Angles(relax)
-        self._Calc = Calc(relax)
         self._Delete = Delete(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
-        self._Fixed = Fixed(relax)
+        self._Fix = Fix(relax)
         self._GPL = GPL
-        self._Grid = Grid(relax)
         self._Init_data = Init_data(relax)
         self._Map = Map(relax)
         self._Minimise = Minimise(relax)
@@ -138,12 +134,13 @@ class Interpreter:
 
         # Place the functions in the local namespace.
         angles = self._Angles.angles
-        calc = self._Calc.calc
+        calc = self._Minimise.calc
         delete = self._Delete.delete
         diffusion_tensor = self._Diffusion_tensor.diffusion_tensor
         dx = self._OpenDX.dx
-        fixed = self._Fixed.fixed
-        grid_search = self._Grid.grid_search
+        fix = self._Fix.fix
+        fixed = self._Minimise.fixed
+        grid_search = self._Minimise.grid_search
         init_data = self._Init_data.init
         map = self._Map.map
         minimise = self._Minimise.minimise

@@ -46,17 +46,34 @@ for run in runs:
 # Second model-free model selection stage.
 ##########################################
 
+# Set the run name.
+run = 'aic'
+
 # Model selection.
-model_selection('AIC', 'aic')
+model_selection(method='AIC', modsel_run=run)
+
+# Write the results.
+write(run=run, file='results', force=1)
 
 
 # Final diffusion tensor optimisation stage.
 ############################################
 
+# Let the diffusion tensor parameters be optimised.
+fix(run, 'diff', 0)
+
+# Create the Modelfree4 files (change sims as needed, see below).
+palmer.create(run=run, dir='final', force=1, sims=500)
+
+# Run Modelfree4.
+palmer.execute(run=run, dir='final', force=1)
+
+# Extract the Modelfree4 data from the 'mfout' file.
+palmer.extract(run=run, dir='final')
 
 
 # Finish.
 #########
 
-write(run='aic', file='results', force=1)
+# Either repeat all the above with the optimised diffusion tensor or run Monte Carlo simulations on the final results.
 state.save('save', force=1)

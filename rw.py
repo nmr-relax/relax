@@ -115,9 +115,12 @@ class RW:
             else:
                 header_fn, self.write_results[i] = fns
 
-            # Make sure the header functions are the same.
-            if self.write_header == header_fn:
-                raise RelaxError, "The write header functions for the run " + `run` + " are not consistent between residues."
+                # Make sure the header functions are the same.
+                if self.write_header != header_fn:
+                    print "Res: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
+                    print "self.write_header: " + `self.write_header`
+                    print "header_fn: " + `header_fn`
+                    raise RelaxError, "The write header functions for the run " + `run` + " are not consistent between residues."
 
         # The results file.
         file_name = dir + "/" + file

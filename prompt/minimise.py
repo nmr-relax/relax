@@ -25,9 +25,174 @@ import sys
 
 class Minimise:
     def __init__(self, relax):
-        """Class containing the fixed, grid, and minimisation macros."""
+        """Class containing the calc, fixed, grid, and minimisation macros."""
 
         self.relax = relax
+
+
+    def calc(self, run=None):
+        """Macro for calculating the function value.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+        """
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = sys.macro_prompt + "calc("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.relax.min.calc(run=run)
+
+
+    def fixed(self, run=None, values=None, print_flag=1):
+        """Macro for fixing the initial parameter values.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        values:  An array of numbers of length equal to the number of parameters in the model.
+
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
+
+
+        Examples
+        ~~~~~~~~
+
+        This command will fix the parameter values of the run 'm2', which is the original
+        model-free equation with parameters {S2, te}, before minimisation to the preselected values
+        of this function.
+
+        relax> fixed('m2')
+
+
+        This command will do the same except the S2 and te values will be set to one and ten ps
+        respectively.
+
+        relax> fixed('m2', [1.0, 10 * 10e-12])
+        relax> fixed(run='m2', values=[1.0, 10 * 10e-12])
+        """
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = sys.macro_prompt + "fixed("
+            text = text + "run=" + `run`
+            text = text + ", values=" + `values`
+            text = text + ", print_flag=" + `print_flag` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Relax defined values.
+        if values != None:
+            if type(values) != list:
+                raise RelaxListError, ('values', values)
+            for i in xrange(len(values)):
+                if type(values[i]) != float and type(values[i]) != int:
+                    raise RelaxListIntError, ('values', values)
+
+        # The print flag.
+        if type(print_flag) != int:
+            raise RelaxIntError, ('print_flag', print_flag)
+
+        # Execute the functional code.
+        self.relax.min.fixed(run=run, values=values, print_flag=print_flag)
+
+
+    def grid_search(self, run=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
+        """The grid search macro.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run to apply the grid search to.
+
+        lower:  An array of the lower bound parameter values for the grid search.  The length of the
+        array should be equal to the number of parameters in the model.
+
+        upper:  An array of the upper bound parameter values for the grid search.  The length of the
+        array should be equal to the number of parameters in the model.
+
+        inc:  The number of increments to search over.  If a single integer is given then the number
+        of increments will be equal in all dimensions.  Different numbers of increments in each
+        direction can be set if 'inc' is set to an array of integers of length equal to the number
+        of parameters.
+
+        constraints:  A flag specifying whether the parameters should be constrained.  The default
+        is to turn constraints on (constraints=1).
+
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
+        """
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = sys.macro_prompt + "grid_search("
+            text = text + "run=" + `run`
+            text = text + ", lower=" + `lower`
+            text = text + ", upper=" + `upper`
+            text = text + ", inc=" + `inc`
+            text = text + ", constraints=" + `constraints`
+            text = text + ", print_flag=" + `print_flag` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # The lower bounds.
+        if lower == None:
+            pass
+        elif type(lower) != list:
+            raise RelaxListError, ('lower bounds', lower)
+        else:
+            for i in xrange(len(lower)):
+                if type(lower[i]) != float and type(lower[i]) != int:
+                    raise RelaxListNumError, ('lower bounds', lower)
+
+        # The upper bounds.
+        if upper == None:
+            pass
+        elif type(upper) != list:
+            raise RelaxListError, ('upper bounds', upper)
+        else:
+            for i in xrange(len(upper)):
+                if type(upper[i]) != float and type(upper[i]) != int:
+                    raise RelaxListNumError, ('upper bounds', upper)
+
+        # The incrementation value.
+        if type(inc) == int:
+            pass
+        elif type(inc) == list:
+            for i in xrange(len(inc)):
+                if type(inc[i]) != int:
+                    raise RelaxIntListIntError, ('incrementation value', inc)
+        else:
+            raise RelaxIntListIntError, ('incrementation value', inc)
+
+        # Constraint flag.
+        if type(constraints) != int or (constraints != 0 and constraints != 1):
+            raise RelaxBinError, ('constraint flag', constraints)
+
+        # The print flag.
+        if type(print_flag) != int:
+            raise RelaxIntError, ('print flag', print_flag)
+
+        # Execute the functional code.
+        self.relax.min.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
 
 
     def minimise(self, *args, **keywords):

@@ -20,72 +20,54 @@
 #                                                                             #
 ###############################################################################
 
-
-from Numeric import Float64, array, zeros
 import sys
 
 
-class Fixed:
+class Fix:
     def __init__(self, relax):
-        """Class containing the fixed macro."""
+        """Class containing the macro for fixing or allowing parameter values to change."""
 
         self.relax = relax
 
 
-    def fixed(self, run=None, values=None, print_flag=1):
-        """Macro for fixing the initial parameter values.
+    def fix(self, run=None, param_type='diff', fixed=0):
+        """Macro for either fixing or allowing parameter values to change.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The name of the run.
 
-        values:  An array of numbers of length equal to the number of parameters in the model.
+        param_type:  The parameter type to be fixed or allowed to change.
 
-        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
-        output while higher values increase the amount of output.  The default value is 1.
-
-
-        Examples
-        ~~~~~~~~
-
-        This command will fix the parameter values of the run 'm2', which is the original
-        model-free equation with parameters {S2, te}, before minimisation to the preselected values
-        of this function.
-
-        relax> fixed('m2')
+        fixed:  A flag specifying if the parameters should be fixed or allowed to change.
 
 
-        This command will do the same except the S2 and te values will be set to one and ten ps
-        respectively.
+        Description
+        ~~~~~~~~~~~
 
-        relax> fixed('m2', [1.0, 10 * 10e-12])
-        relax> fixed(run='m2', values=[1.0, 10 * 10e-12])
+        Currently, the only param_type value supported is 'diff'.
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "fixed("
+            text = sys.macro_prompt + "fix("
             text = text + "run=" + `run`
-            text = text + ", values=" + `values`
-            text = text + ", print_flag=" + `print_flag` + ")"
+            text = text + "param_type=" + `param_type`
+            text = text + "fixed=" + `fixed` + ")"
             print text
 
         # The run argument.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # Relax defined values.
-        if values != None:
-            if type(values) != list:
-                raise RelaxListError, ('values', values)
-            for i in xrange(len(values)):
-                if type(values[i]) != float and type(values[i]) != int:
-                    raise RelaxListIntError, ('values', values)
+        # The param_type argument.
+        if type(param_type) != str:
+            raise RelaxStrError, ('param_type', param_type)
 
-        # The print flag.
-        if type(print_flag) != int:
-            raise RelaxIntError, ('print_flag', print_flag)
+        # The fixed argument.
+        if type(fixed) != int or (fixed != 0 and fixed != 1):
+            raise RelaxBinError, ('fixed', fixed)
 
         # Execute the functional code.
-        self.relax.min.fixed(run=run, values=values, print_flag=print_flag)
+        self.relax.fix.fix(run=run, param_type=param_type, fixed=fixed)

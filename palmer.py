@@ -119,6 +119,9 @@ class Palmer:
 
         # Loop over the frequencies.
         for j in xrange(self.relax.data.res[i].num_frq[self.run]):
+            # Set the data to None.
+            r1, r2, noe = None, None, None
+
             # Loop over the relevant relaxation data.
             for k in xrange(self.relax.data.res[i].num_ri[self.run]):
                 if self.relax.data.res[i].remap_table[self.run][k] != j:
@@ -139,12 +142,25 @@ class Palmer:
                     noe = self.relax.data.res[i].relax_data[self.run][k]
                     noe_err = self.relax.data.res[i].relax_error[self.run][k]
 
-            # Test if the R1, R2, and NOE exists for this frequency, otherwise skip the data.
-            if r1 and r2 and noe:
+            # Test if the R1 exists for this frequency, otherwise skip the data.
+            if r1:
                 file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.relax.data.res[i].frq[self.run][j]*1e-6, r1, r1_err, 1))
+            else:
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.relax.data.res[i].frq[self.run][j]*1e-6, 0, 0, 0))
+
+            # Test if the R2 exists for this frequency, otherwise skip the data.
+            if r2:
                 file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.relax.data.res[i].frq[self.run][j]*1e-6, r2, r2_err, 1))
+            else:
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.relax.data.res[i].frq[self.run][j]*1e-6, 0, 0, 0))
+
+            # Test if the NOE exists for this frequency, otherwise skip the data.
+            if noe:
                 file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.relax.data.res[i].frq[self.run][j]*1e-6, noe, noe_err, 1))
-                written = 1
+            else:
+                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.relax.data.res[i].frq[self.run][j]*1e-6, 0, 0, 0))
+
+            written = 1
 
         return written
 
@@ -210,8 +226,8 @@ class Palmer:
         file.write('%14.3f' % tm)
         file.write('%2i' % 1)
         file.write('%3i' % 0)
-        file.write('%5i' % 0)
-        file.write('%6i' % 0)
+        file.write('%5i' % 5)
+        file.write('%6i' % 15)
         file.write('%4i\n' % self.steps)
 
         # dratio.
@@ -220,7 +236,7 @@ class Palmer:
         file.write('%2i' % 1)
         file.write('%3i' % 0)
         file.write('%5i' % 0)
-        file.write('%6i' % 0)
+        file.write('%6i' % 2)
         file.write('%4i\n' % self.steps)
 
         # theta.
@@ -229,7 +245,7 @@ class Palmer:
         file.write('%2i' % 1)
         file.write('%3i' % 0)
         file.write('%5i' % 0)
-        file.write('%6i' % 0)
+        file.write('%6i' % 180)
         file.write('%4i\n' % self.steps)
 
         # phi.
@@ -238,7 +254,7 @@ class Palmer:
         file.write('%2i' % 1)
         file.write('%3i' % 0)
         file.write('%5i' % 0)
-        file.write('%6i' % 0)
+        file.write('%6i' % 360)
         file.write('%4i\n' % self.steps)
 
 
@@ -483,8 +499,8 @@ class Palmer:
                 data = self.get_mf_data('Rex', mfout, self.relax.data.res[i].num)
                 if data != None:
                     rex, rex_err = data
-                    self.relax.data.res[i].rex[run] = rex * (2.0 * pi * self.relax.data.res[i].frq[run][0])**2
-                    #self.relax.data.res[i].rex_err[run] = rex_err * (2.0 * pi * self.relax.data.res[i].frq[run][0])**2
+                    self.relax.data.res[i].rex[run] = rex / (2.0 * pi * self.relax.data.res[i].frq[run][0])**2
+                    #self.relax.data.res[i].rex_err[run] = rex_err / (2.0 * pi * self.relax.data.res[i].frq[run][0])**2
 
             # Get the chi-squared data.
             self.relax.data.res[i].chi2[run] = self.get_chi2(sims, mfout, self.relax.data.res[i].num)
