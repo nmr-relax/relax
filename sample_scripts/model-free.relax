@@ -15,5 +15,5 @@ model = 'm5'
 mf_model_select(model)
 #fixed(model, [ 0.6,  0.9,  5.0*1e-10 ])
 grid_search(model, inc=11)
-minimise('bfgs', model=model)
+minimise('exact', 'chol', model=model, max_iter=100000)
 state_save('save', 1)

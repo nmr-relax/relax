@@ -64,7 +64,7 @@ class newton(generic_minimise, line_search_functions):
 
 		# Default hessian modification.
 		if self.hessian_mod == None:
-			self.hessian_mod = 'GMW'
+			self.hessian_mod = 'Chol'
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
