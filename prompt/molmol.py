@@ -39,6 +39,8 @@ class Shell:
         x = Main(relax)
 
         # Place references to the interactive functions within the namespace of this class.
+        self.clear_history = x.clear_history
+        self.command = x.command
         self.view = x.view
 
         # __repr__.
@@ -50,6 +52,41 @@ class Main:
         """Class containing the Molmol functions."""
 
         self.relax = relax
+
+
+    def clear_history(self):
+        """Function for clearing the Molmol command history."""
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "molmol.clear_history()"
+            print text
+
+        # Execute the functional code.
+        self.relax.generic.molmol.clear_history()
+
+
+    def command(self, command):
+        """Function for executing a user supplied Molmol command.
+
+        Example
+        ~~~~~~~
+
+        relax> molmol.command("InitAll yes")
+        """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "molmol.command("
+            text = text + "command=" + `command` + ")"
+            print text
+
+        # The command argument.
+        if type(command) != str:
+            raise RelaxStrError, ('command', command)
+
+        # Execute the functional code.
+        self.relax.generic.molmol.write(command=command)
 
 
     def view(self):

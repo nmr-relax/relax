@@ -29,34 +29,90 @@ class Molmol:
 
         self.relax = relax
 
+        # Initialise the command history (for reopening Molmol pipes).
+        self.clear_history()
+
+
+    def clear_history(self):
+        """Function for clearing the Molmol command history."""
+
+        self.command_history = ""
+
+
+    def open_pipe(self):
+        """Function for opening a Molmol pipe."""
+
+        # Open the Molmol pipe.
+        self.relax.data.molmol = popen("molmol -f -", 'w', 0)
+
+        # Execute the command history.
+        if len(self.command_history) > 0:
+            self.write(self.command_history, store_command=0)
+            return
+
+        # Test if the PDB file has been loaded.
+        if hasattr(self.relax.data, 'pdb'):
+            self.open_pdb()
+
+        # Run InitAll to remove everything from molmol.
+        else:
+            self.write("InitAll yes")
+
 
     def open_pdb(self):
-        """Open the loaded PDB into Molmol."""
+        """Function for opening the PDB file in Molmol."""
 
-        # Test if a pipe has been opened.
-        if not hasattr(self.relax.data, 'molmol'):
+        # Test if the pipe is open.
+        if not self.pipe_open():
             return
 
         # Run InitAll to remove everything from molmol.
-        try:
-            self.relax.data.molmol.write('InitAll yes\n')
-        except IOError:
-            return
+        self.write("InitAll yes")
 
         # Open the PDB.
-        command = "ReadPdb " + self.relax.data.pdb.filename + "\n"
-        self.relax.data.molmol.write(command)
+        self.write("ReadPdb " + self.relax.data.pdb.filename)
+
+
+    def pipe_open(self):
+        """Function for testing if the Molmol pipe is open."""
+
+        # Test if a pipe has been opened.
+        if not hasattr(self.relax.data, 'molmol'):
+            return 0
+
+        # Test if the pipe has been broken.
+        try:
+            self.relax.data.molmol.write('\n')
+        except IOError:
+            return 0
+
+        # The pipe is open.
+        return 1
 
 
     def view(self):
         """Function for running Molmol."""
 
-        # Open a molmol pipe.
-        self.relax.data.molmol = popen("molmol -f -", 'w', 0)
+        # Open a Molmol pipe.
+        if self.pipe_open():
+            raise RelaxError, "The Molmol pipe already exists."
+        else:
+            self.open_pipe()
 
-        # Run InitAll to remove everything from molmol.
-        self.relax.data.molmol.write('InitAll yes\n')
 
-        # Test if the PDB file has been loaded.
-        if hasattr(self.relax.data, 'pdb'):
-            self.open_pdb()
+    def write(self, command=None, store_command=1):
+        """Function for writing to the Molmol pipe.
+
+        This function is also used to execute a user supplied Molmol command.
+        """
+
+        # Reopen the pipe if needed.
+        if not self.pipe_open():
+            self.open_pipe()
+
+        # Write the command to the pipe.
+        self.relax.data.molmol.write(command + '\n')
+
+        # Place the command in the command history.
+        if store_command:
+            self.command_history = self.command_history + command + "\n"
