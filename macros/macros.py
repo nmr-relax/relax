@@ -1,9 +1,7 @@
 import sys
 from re import match
 
-from bond_length import bond_length
 from command import *
-from csa import csa
 from diffusion_tensor import diffusion_tensor
 from echo_data import echo_data
 from fixed import fixed
@@ -23,8 +21,6 @@ class macros:
 	def __init__(self, relax):
 		"Class for holding all macros."
 
-		self.bond_length = bond_length(relax)
-		self.csa = csa(relax)
 		self.diffusion_tensor = diffusion_tensor(relax)
 		self.echo_data = echo_data(relax)
 		self.fixed = fixed(relax)
