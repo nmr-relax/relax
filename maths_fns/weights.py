@@ -116,3 +116,51 @@ def calc_axial_d2ci(data):
     data.d2ci[:, :, 0] = 3.0 * ((9.0 * data.delta**2 - 1.0) * op + data.delta * (3.0 * data.delta**2 - 1.0) * data.d2delta_dpsi2)
     data.d2ci[:, :, 1] = 6.0 * ((1.0 - 6.0 * data.delta**2) * op + data.delta * (1.0 - 2.0 * data.delta**2) * data.d2delta_dpsi2)
     data.d2ci[:, :, 2] = 3.0 * ((3.0 * data.delta**2 - 1.0) * op + data.delta * (data.delta**2 - 1.0) * data.d2delta_dpsi2)
+
+
+
+# Anisotropic weight equation.
+##############################
+
+def calc_aniso_ci(data, diff_data):
+    """Weight equations for axially symmetric diffusion.
+
+    The equations are:
+
+        c-2 = 3 . delta_alpha**2 . delta_beta**2
+        c-1 = 3 . delta_alpha**2 . delta_gamma**2
+        c0  = 1/4 (3(delta_alpha**4 + delta_beta**4 + delta_gamma**4) - 1 - e)
+        c1  = 3 . delta_beta**2 . delta_gamma**2
+        c2  = 1/4 (3(delta_alpha**4 + delta_beta**4 + delta_gamma**4) - 1 + e)
+
+    where:
+              Da - Dr                                                    Da + Dr                                                    2Da
+        e  =  ------- (delta_alpha**4 + 2delta_beta**2.delta_gamma**2) + ------- (delta_beta**4 + 2delta_alpha**2.delta_gamma**2) - --- (delta_gamma**4 + 2delta_alpha**2.delta_beta**2)
+                mu                                                         mu                                                       mu
+              __________________
+        mu = V Da**2 + Dr**2 / 3
+
+        delta_alpha is the dot product of the unit bond vector and the unit vector along Dx.
+
+        delta_beta is the dot product of the unit bond vector and the unit vector along Dy.
+
+        delta_gamma is the dot product of the unit bond vector and the unit vector along Dz.
+
+        alpha (in delta_alpha) is the directional cosine along Dx.
+
+        beta (in delta_beta) is the directional cosine along Dy.
+        
+        gamma (in delta_gamma) is the directional cosine along Dz.
+    """
+
+    # Calculate e.
+    e = (diff_data.params[1] - diff_data.params[2]) / data.mu * (data.delta_alpha**4 + 2.0 * data.delta_beta**2 * data.delta_gamma**2)
+    e = e + (diff_data.params[1] + diff_data.params[2]) / data.mu * (data.delta_beta**4 + 2.0 * data.delta_alpha**2 * data.delta_gamma**2)
+    e = e - 2.0 * diff_data.params[1] / data.mu * (data.delta_gamma**4 + 2.0 * data.delta_alpha**2 * data.delta_beta**2)
+
+    # Weights.
+    data.ci[0] = 3.0 * data.delta_alpha**2 * data.delta_beta**2
+    data.ci[1] = 3.0 * data.delta_alpha**2 * data.delta_gamma**2
+    data.ci[2] = 0.25 * (3.0(data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 - e)
+    data.ci[3] = 3.0 * data.delta_beta**2 * data.delta_gamma**2
+    data.ci[4] = 0.25 * (3.0(data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1 + e)
