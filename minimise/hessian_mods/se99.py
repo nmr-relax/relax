@@ -22,7 +22,7 @@
 
 from LinearAlgebra import cholesky_decomposition, eigenvalues, solve_linear_equations
 from MLab import tril
-from Numeric import Float64, array, array2string, dot, identity, sort, sqrt, take, transpose, zeros
+from Numeric import Float64, array, dot, identity, sort, sqrt, take, transpose, zeros
 
 
 def se99(dfk, d2fk, I, n, tau, tau_bar, mu, print_prefix, print_flag, return_matrix=0):
@@ -57,12 +57,8 @@ def se99(dfk, d2fk, I, n, tau, tau_bar, mu, print_prefix, print_flag, return_mat
         print print_prefix + "tau:     " + `tau`
         print print_prefix + "tau_bar: " + `tau_bar`
         print print_prefix + "mu:      " + `mu`
-        print print_prefix + "d2fk:"
-        for z in range(len(d2fk)):
-            print print_prefix + array2string(d2fk[z])
-        print print_prefix + "A:"
-        for z in range(len(A)):
-            print print_prefix + array2string(A[z])
+        print print_prefix + "d2fk:\n" + `d2fk`
+        print print_prefix + "A:\n" + `A`
         print print_prefix + "gamma: " + `gamma`
 
 
@@ -72,9 +68,7 @@ def se99(dfk, d2fk, I, n, tau, tau_bar, mu, print_prefix, print_flag, return_mat
     for j in range(n):
         if print_flag >= 3:
             print "\n" + print_prefix + "Iteration j = " + `j`
-            print print_prefix + "A:"
-            for z in range(len(A)):
-                print print_prefix + array2string(A[z])
+            print print_prefix + "A:\n" + `A`
             print print_prefix + "Phase 1."
 
         # Calculate max_Aii and min_Aii
@@ -108,15 +102,12 @@ def se99(dfk, d2fk, I, n, tau, tau_bar, mu, print_prefix, print_flag, return_mat
                 p[:, j], P[:, j] = temp_p, temp_P
 
                 # Permute A.
-                #l = dot(p, dot(l, p))
                 A = A + transpose(tril(A, -1))
                 A = dot(p, dot(A, p))
                 A = tril(A)
 
                 if print_flag >= 3:
-                    print print_prefix + "A:"
-                    for z in range(len(A)):
-                        print print_prefix + array2string(A[z])
+                    print print_prefix + "A:\n" + `A`
 
             min_num = 1e99
             for i in range(j+1, n):
@@ -133,33 +124,29 @@ def se99(dfk, d2fk, I, n, tau, tau_bar, mu, print_prefix, print_flag, return_mat
 
             # Debugging.
             if print_flag >= 3:
-                print print_prefix + "A:"
-                for z in range(len(A)):
-                    print print_prefix + array2string(A[z])
+                print print_prefix + "A:\n" + `A`
                 #import sys
                 #sys.exit()
 
     # The Cholesky factor.
-    A = A + transpose(tril(A, -1))
-    A = dot(P, dot(A, P))
-    A = tril(A)
+    #A = A + transpose(tril(A, -1))
+    #A = dot(P, dot(A, P))
+    #A = tril(A)
 
     # Debugging.
     if print_flag >= 3:
         print "\n" + print_prefix + "Fin"
-        print print_prefix + "A:"
-        for z in range(len(A)):
-            print print_prefix + "\t" + array2string(A[z], separator='\t')
-        print print_prefix + "E:"
-        for z in range(len(E)):
-            print print_prefix + array2string(E[z])
-        print print_prefix + "P:"
-        for z in range(len(P)):
-            print print_prefix + array2string(P[z])
-        #print print_prefix + "chol:\n" + `cholesky_decomposition(d2fk)`
+        print print_prefix + "d2fk:\n" + `d2fk`
+        print print_prefix + "A:\n" + `A`
+        print print_prefix + "chol:\n" + `cholesky_decomposition(d2fk)`
+        print print_prefix + "E:\n" + `E`
+        print print_prefix + "P:\n" + `P`
+        print print_prefix + "Reconstructed d2fk:\n" + `dot(A, transpose(A))`
+        print print_prefix + "Rotated d2fk:\n" + `dot(P, dot(dot(A, transpose(A)), P))`
+        print print_prefix + "d2fk + E:\n" + `d2fk + dot(P, dot(E, P))`
 
-    import sys
-    sys.exit()
+    #import sys
+    #sys.exit()
 
     # Calculate the Newton direction.
     y = solve_linear_equations(A, dfk)
@@ -223,15 +210,12 @@ def exec_phasetwo(A, P, I, E, j, n, tau, tau_bar, gamma, print_prefix, print_fla
                 p[:, j], P[:, j] = temp_p, temp_P
 
                 # Permute A.
-                #l = dot(p, dot(l, p))
                 A = A + transpose(tril(A, -1))
                 A = dot(p, dot(A, p))
                 A = tril(A)
 
                 if print_flag >= 3:
-                    print print_prefix + "A:"
-                    for z in range(len(A)):
-                        print print_prefix + array2string(A[z])
+                    print print_prefix + "A:\n" + `A`
 
             # Calculate Ejj and add to diagonal.
             normj = 0
@@ -272,13 +256,9 @@ def exec_phasetwo(A, P, I, E, j, n, tau, tau_bar, gamma, print_prefix, print_fla
         A[n-1, n-1] = sqrt(A[n-1, n-1] - A[n-1, n-2]**2)
 
         if print_flag >= 3:
-            print print_prefix + "mini:"
-            for z in range(len(mini)):
-                print print_prefix + array2string(mini[z])
+            print print_prefix + "mini:\n" + `mini`
             print print_prefix + "eigenvals: " + `eigenvals`
-            print print_prefix + "A:"
-            for z in range(len(A)):
-                print print_prefix + array2string(A[z])
+            print print_prefix + "A:\n" + `A`
 
 
 def jiter_factor(A, j, n):

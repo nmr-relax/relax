@@ -21,7 +21,8 @@
 ###############################################################################
 
 
-from LinearAlgebra import eigenvectors, solve_linear_equations
+from LinearAlgebra import cholesky_decomposition, eigenvectors, solve_linear_equations
+from MLab import tril, triu
 from Numeric import Float64, array, dot, sqrt, transpose
 
 
@@ -55,7 +56,7 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
     a = 1.0 * d2fk
     r = 0.0 * d2fk
     e = 0.0 * dfk
-    #P = 1.0 * I
+    P = 1.0 * I
 
     # Debugging.
     if print_flag >= 3:
@@ -65,24 +66,28 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
 
     # Main loop.
     for j in range(n):
-        ## Row and column swapping.
-        #q = j
-        #for i in range(j, n):
-        #    if abs(a[i, i]) >= abs(a[q, q]):
-        #        q = i
+        # Row and column swapping.
+        q = j
+        for i in range(j, n):
+            if abs(a[i, i]) >= abs(a[q, q]):
+                q = i
 
-        ## Interchange row and column j and q.
-        #p = 1.0 * I
-        #if q != j:
-        #    # Modify the permutation matrices.
-        #    temp_p, temp_P = 1.0*p[:, q], 1.0*P[:, q]
-        #    p[:, q], P[:, q] = p[:, j], P[:, j]
-        #    p[:, j], P[:, j] = temp_p, temp_P
+        # Interchange row and column j and q.
+        p = 1.0 * I
+        if q != j:
+            # Modify the permutation matrices.
+            temp_p, temp_P = 1.0*p[:, q], 1.0*P[:, q]
+            p[:, q], P[:, q] = p[:, j], P[:, j]
+            p[:, j], P[:, j] = temp_p, temp_P
 
-        #    # Permute a and r.
-        #    a = dot(p, dot(a, p))
-        #    r = dot(p, dot(r, p))
-        #    e = dot(p, e)
+            # Permute a and r.
+            #a = a + transpose(tril(a, -1))
+            a = dot(p, dot(a, transpose(p)))
+            #a = tril(a)
+            #r = r + transpose(triu(r, 1))
+            #r = dot(p, dot(r, transpose(p)))
+            #r = triu(r)
+            e = dot(p, e)
 
         # Calculate ljj.
         theta_j = 0.0
@@ -102,17 +107,22 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
                 a[k, i] = a[k, i] - dot(r[j, i], r[j, k])
 
     # The Cholesky factor.
-    L = transpose(r)
-    #L = dot(P, transpose(r))
+    #L = transpose(r)
+    print print_prefix + "r:\n" + `r`
+    r = r + transpose(triu(r, 1))
+    print print_prefix + "r:\n" + `r`
+    r = dot(P, dot(r, transpose(P)))
+    print print_prefix + "r:\n" + `r`
+    L = tril(r)
 
     # Debugging.
     if print_flag >= 3:
-        print print_prefix + "e: " + `e`
-        #print print_prefix + "e: " + `dot(P, e)`
-        #print print_prefix + "P:\n" + `P`
-        temp = dot(L,transpose(L))
-        print print_prefix + "d2fk reconstruted:\n" + `temp`
-        eigen = eigenvectors(temp)
+        print print_prefix + "e: " + `dot(P, e)`
+        print print_prefix + "P:\n" + `P`
+        print print_prefix + "L:\n" + `L`
+        print print_prefix + "chol:\n" + `cholesky_decomposition(d2fk)`
+        print print_prefix + "d2fk reconstruted:\n" + `dot(L, transpose(L))`
+        eigen = eigenvectors(r)
         print print_prefix + "Old eigenvalues: " + `old_eigen[0]`
         print print_prefix + "New eigenvalues: " + `eigen[0]`
 
