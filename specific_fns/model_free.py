@@ -1400,6 +1400,7 @@ class Model_free:
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 min_options = min_options + (self.mf.lm_dri, relax_error)
 
+            print min_options
 
             # Minimisation.
             ###############
@@ -1420,6 +1421,8 @@ class Model_free:
             if self.relax.data.res[i].scaling[self.run]:
                 self.params = matrixmultiply(self.scaling_matrix, self.params)
 
+            # Loop over the number of data sets.
+            #for j in xrange(num_data_sets):
             # Types.
             types = self.relax.data.res[i].params[self.run]
 

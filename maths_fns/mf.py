@@ -82,6 +82,16 @@ class Mf:
         self.diff_data.params = diff_params
         self.init_diff_data(self.diff_data)
 
+        # Set the function for packaging diffusion tensor parameters.
+        if self.diff_data.params:
+            self.pack_diff_params = None
+        elif self.diff_data.type == 'iso':
+            self.pack_diff_params = self.pack_diff_params_iso
+        elif self.diff_data.type == 'axial':
+            self.pack_diff_params = self.pack_diff_params_axial
+        elif self.diff_data.type == 'aniso':
+            self.pack_diff_params = self.pack_diff_params_aniso
+
         # Create the data array used to store data.
         self.data = []
         for i in xrange(self.num_res):
@@ -130,6 +140,10 @@ class Mf:
             if not self.setup_equations(self.data[i]):
                 raise RelaxError, "The model-free equations could not be setup."
 
+            # Diffusion tensor parameters.
+            if self.pack_diff_params:
+                self.pack_diff_params()
+
             # Calculate the correlation time components.
             if self.diff_data.calc_ti_comps:
                 self.diff_data.calc_ti_comps(self.diff_data)
@@ -165,16 +179,6 @@ class Mf:
             self.scaling_flag = 0
             self.set_params = self.set_params_unscaled
 
-        # Set the function for packaging diffusion tensor parameters.
-        if self.diff_data.params:
-            self.pack_diff_params = None
-        elif self.diff_data.type == 'iso':
-            self.pack_diff_params = self.pack_diff_params_iso
-        elif self.diff_data.type == 'axial':
-            self.pack_diff_params = self.pack_diff_params_axial
-        elif self.diff_data.type == 'aniso':
-            self.pack_diff_params = self.pack_diff_params_aniso
-
         # Set the functions self.func, self.dfunc, and self.d2func for minimising model-free parameter for a single residue.
         if param_set == 'mf':
             self.func = self.func_mf
@@ -190,8 +194,89 @@ class Mf:
         # Set the functions self.func, self.dfunc, and self.d2func for minimising diffusion tensor together with all model-free parameters.
         elif param_set == 'all':
             self.func = self.func_all
-            self.dfunc = self.dfunc_all
-            self.d2func = self.d2func_all
+            self.dfunc = None
+            self.d2func = None
+            #self.dfunc = self.dfunc_all
+            #self.d2func = self.d2func_all
+
+
+    def func_all(self, params):
+        """The function for calculating the model-free chi-squared value.
+
+        The chi-sqared equation
+        ~~~~~~~~~~~~~~~~~~~~~~~
+                _n_
+                \    (Ri - Ri()) ** 2
+        Chi2  =  >   ----------------
+                /__    sigma_i ** 2
+                i=1
+
+        where:
+            Ri are the values of the measured relaxation data set.
+            Ri() are the values of the back calculated relaxation data set.
+            sigma_i are the values of the error set.
+        """
+
+        # Temporary initialisation.
+        total_chi2 = 0.0
+
+        # Loop over the residues.
+        for i in xrange(self.num_res):
+            # Set self.data[i] to data.
+            data = self.data[i]
+
+            # Arguments
+            self.set_params(params)
+
+            # Diffusion tensor parameters.
+            if self.pack_diff_params:
+                self.pack_diff_params()
+
+            # Test if the function has already been calculated with these parameter values.
+            if sum(self.params == self.func_test) == self.total_num_params:
+                return data.chi2
+
+            # Store the parameter values in data.func_test for testing on next call if the function has already been calculated.
+            self.func_test = self.params * 1.0
+
+            # Diffusion tensor geometry calculations.
+            if self.diff_data.calc_geom:
+                self.diff_data.calc_geom(data, self.diff_data)
+
+            # Diffusion tensor weight calculations.
+            self.diff_data.calc_ci(data)
+
+            # Diffusion tensor correlation time components.
+            if self.diff_data.calc_ti_comps:
+                self.diff_data.calc_ti_comps(self.diff_data)
+
+            # Diffusion tensor correlation times.
+            self.diff_data.calc_ti(data, self.diff_data)
+
+            # Calculate the components of the spectral densities.
+            if data.calc_jw_comps:
+                data.calc_jw_comps(data, self.params)
+
+            # Calculate the spectral density values.
+            data.jw = data.calc_jw(data, self.params)
+
+            # Calculate the relaxation formula components.
+            data.create_ri_comps(data, self.params)
+
+            # Calculate the R1, R2, and sigma_noe values.
+            data.create_ri_prime(data)
+
+            # Calculate the R1, R2, and NOE values.
+            data.ri = data.ri_prime * 1.0
+            ri(data, self.params)
+
+            # Calculate the chi-squared value.
+            data.chi2 = chi2(data.relax_data, data.ri, data.errors)
+
+            # Add the residue specific chi2 to the total chi2.
+            total_chi2 = total_chi2 + data.chi2
+
+        return total_chi2
 
 
     def func_mf(self, params):
@@ -657,19 +742,19 @@ class Mf:
     def pack_diff_params_iso(self):
         """Function for extracting the iso diffusion parameters from the parameter vector."""
 
-        self.data.diff_params = self.params[0:1]
+        self.diff_data.params = self.params[0:1]
 
 
     def pack_diff_params_axial(self):
         """Function for extracting the axial diffusion parameters from the parameter vector."""
 
-        self.data.diff_params = self.params[0:4]
+        self.diff_data.params = self.params[0:4]
 
 
-    def pack_diff_params_iso(self):
+    def pack_diff_params_aniso(self):
         """Function for extracting the aniso diffusion parameters from the parameter vector."""
 
-        self.data.diff_params = self.params[0:6]
+        self.diff_data.params = self.params[0:6]
 
 
     def scale_gradient(self, dchi2):

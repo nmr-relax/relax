@@ -136,6 +136,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
                 print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `params`, "fk:", `f`)
             if print_flag >= 3:
                 print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
+                print print_prefix + "%-20s%-20s" % ("Params:", `params`)
                 print print_prefix + "%-20s%-20s" % ("Min params:", `min_params`)
                 print print_prefix + "%-20s%-20g\n" % ("Min f:", f_min)
 
