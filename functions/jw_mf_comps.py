@@ -33,7 +33,7 @@ from Numeric import Float64, zeros
 # Original {tm} and {tm, S2}.
 #############################
 
-def calc_iso_tm_jw_comps(data):
+def calc_tm_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the original model-free
@@ -64,7 +64,7 @@ def calc_iso_tm_jw_comps(data):
 # Original {S2, te}.
 ####################
 
-def calc_iso_S2_te_jw_comps(data):
+def calc_S2_te_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the original model-free
@@ -122,7 +122,7 @@ def calc_iso_S2_te_jw_comps(data):
 # Original {tm, S2, te}.
 ########################
 
-def calc_iso_tm_S2_te_jw_comps(data):
+def calc_tm_S2_te_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the original model-free
@@ -185,7 +185,7 @@ def calc_iso_tm_S2_te_jw_comps(data):
 # Extended {S2f, S2, ts}.
 #########################
 
-def calc_iso_S2f_S2_ts_jw_comps(data):
+def calc_S2f_S2_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
@@ -243,7 +243,7 @@ def calc_iso_S2f_S2_ts_jw_comps(data):
 # Extended {tm, S2f, S2, ts}.
 #############################
 
-def calc_iso_tm_S2f_S2_ts_jw_comps(data):
+def calc_tm_S2f_S2_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
@@ -306,7 +306,7 @@ def calc_iso_tm_S2f_S2_ts_jw_comps(data):
 # Extended 2 {S2f, S2s, ts}.
 ############################
 
-def calc_iso_S2f_S2s_ts_jw_comps(data):
+def calc_S2f_S2s_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
@@ -366,7 +366,7 @@ def calc_iso_S2f_S2s_ts_jw_comps(data):
 # Extended {S2f, tf, S2, ts}.
 #############################
 
-def calc_iso_S2f_tf_S2_ts_jw_comps(data):
+def calc_S2f_tf_S2_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
@@ -441,7 +441,7 @@ def calc_iso_S2f_tf_S2_ts_jw_comps(data):
 # Extended {tm, S2f, tf, S2, ts}.
 #################################
 
-def calc_iso_tm_S2f_tf_S2_ts_jw_comps(data):
+def calc_tm_S2f_tf_S2_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
@@ -521,7 +521,7 @@ def calc_iso_tm_S2f_tf_S2_ts_jw_comps(data):
 # Extended 2 {S2f, tf, S2s, ts}.
 ################################
 
-def calc_iso_S2f_tf_S2s_ts_jw_comps(data):
+def calc_S2f_tf_S2s_ts_jw_comps(data):
     """Spectral density component function.
 
     Calculate the components of the isotropic spectral density value for the extended model-free
@@ -604,7 +604,7 @@ def calc_iso_S2f_tf_S2s_ts_jw_comps(data):
 # Original {tm} and {tm, S2}.
 #############################
 
-def calc_iso_tm_djw_comps(data):
+def calc_tm_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the original model-free
@@ -624,7 +624,7 @@ def calc_iso_tm_djw_comps(data):
 # Original {S2, te}.
 ####################
 
-def calc_iso_S2_te_djw_comps(data):
+def calc_S2_te_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the original model-free
@@ -646,7 +646,7 @@ def calc_iso_S2_te_djw_comps(data):
 # Original {tm, S2, te}.
 ########################
 
-def calc_iso_tm_S2_te_djw_comps(data):
+def calc_tm_S2_te_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the original model-free
@@ -684,7 +684,7 @@ def calc_iso_tm_S2_te_djw_comps(data):
 # Extended {S2f, S2, ts}.
 #########################
 
-def calc_iso_S2f_S2_ts_djw_comps(data):
+def calc_S2f_S2_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
@@ -707,7 +707,7 @@ def calc_iso_S2f_S2_ts_djw_comps(data):
 # Extended {tm, S2f, S2, ts}.
 #############################
 
-def calc_iso_tm_S2f_S2_ts_djw_comps(data):
+def calc_tm_S2f_S2_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
@@ -748,7 +748,7 @@ def calc_iso_tm_S2f_S2_ts_djw_comps(data):
 # Extended {S2f, tf, S2, ts}.
 #############################
 
-def calc_iso_S2f_tf_S2_ts_djw_comps(data):
+def calc_S2f_tf_S2_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
@@ -777,7 +777,7 @@ def calc_iso_S2f_tf_S2_ts_djw_comps(data):
 # Extended {tm, S2f, tf, S2, ts}.
 #################################
 
-def calc_iso_tm_S2f_tf_S2_ts_djw_comps(data):
+def calc_tm_S2f_tf_S2_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
@@ -838,7 +838,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_comps(data):
 # Extended 2 {S2f, S2s, ts}.
 ############################
 
-def calc_iso_S2f_S2s_ts_djw_comps(data):
+def calc_S2f_S2s_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
@@ -867,7 +867,7 @@ def calc_iso_S2f_S2s_ts_djw_comps(data):
 # Extended 2 {S2f, tf, S2s, ts}.
 ################################
 
-def calc_iso_S2f_tf_S2s_ts_djw_comps(data):
+def calc_S2f_tf_S2s_ts_djw_comps(data):
     """Spectral density gradient component function.
 
     Calculate the components of the isotropic spectral density gradient for the extended model-free
