@@ -39,6 +39,7 @@ class file_ops:
 				self.mf.data.nmr_frq[frq].append(row[1][1])
 				# R1 data.
 				if not match('none', row[2][1]):
+					self.mf.data.nmr_frq[frq].append('1')
 					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
 					self.mf.data.input_info[num_data].append("R1")
@@ -46,8 +47,11 @@ class file_ops:
 					self.mf.data.input_info[num_data].append(float(row[1][1]))
 					self.mf.data.input_info[num_data].append(row[2][1])
 					num_data = num_data + 1
+				else:
+					self.mf.data.nmr_frq[frq].append('0')
 				# R2 data.
 				if not match('none', row[3][1]):
+					self.mf.data.nmr_frq[frq].append('1')
 					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
 					self.mf.data.input_info[num_data].append("R2")
@@ -55,8 +59,11 @@ class file_ops:
 					self.mf.data.input_info[num_data].append(float(row[1][1]))
 					self.mf.data.input_info[num_data].append(row[3][1])
 					num_data = num_data + 1
+				else:
+					self.mf.data.nmr_frq[frq].append('0')
 				# NOE data.
 				if not match('none', row[4][1]):
+					self.mf.data.nmr_frq[frq].append('1')
 					self.mf.data.input_info.append([])
 					self.mf.data.relax_data.append([])
 					self.mf.data.input_info[num_data].append("NOE")
@@ -64,6 +71,8 @@ class file_ops:
 					self.mf.data.input_info[num_data].append(float(row[1][1]))
 					self.mf.data.input_info[num_data].append(row[4][1])
 					num_data = num_data + 1
+				else:
+					self.mf.data.nmr_frq[frq].append('0')
 				frq = frq + 1
 		self.mf.data.num_frq = frq
 		self.mf.data.num_data_sets = num_data

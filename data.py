@@ -39,11 +39,14 @@ class data:
 		of field strengths.  The fields of the second are:
 			0 - NMR frequency label
 			1 - NMR proton frequency in MHz
+			2 - R1 flag (0 or 1 depending if data is present).
+			3 - R2 flag (0 or 1 depending if data is present).
+			4 - NOE flag (0 or 1 depending if data is present).
 
 		The structure of self.input_info is as follows:  The fields of the first dimension correspond
 		to each relaxation data set and is flexible in size, ie len(self.input_info) = number of data sets.
 		The second dimension have the following fixed fields taken from the file 'input':
-			0 - Data label (NOE, R1, or R2)
+			0 - Data type (NOE, R1, or R2)
 			1 - NMR frequency label
 			2 - NMR proton frequency in MHz
 			3 - The name of the file containing the relaxation data

@@ -70,12 +70,16 @@ class star:
 			self.data[i]['res_num'] = self.row[0][0]
 			self.data[i]['fstat'] = float(self.row[0][1])
 			self.data[i]['fstat_lim'] = float(self.row[1][1])
-			if self.data[i]['fstat_lim'] > 1.5 and self.data[i]['fstat'] < self.data[i]['fstat_lim']:
-				self.data[i]['ftest'] = 1
-			elif self.data[i]['fstat_lim'] < 1.5 and self.data[i]['fstat'] > 1.5:
-				self.data[i]['ftest'] = 1
-			else:
-				self.data[i]['ftest'] = 0
+			if self.data[i]['fstat_lim'] < 1.5:
+				if self.data[i]['fstat'] > 1.5:
+					self.data[i]['ftest'] = 1
+				else:
+					self.data[i]['ftest'] = 0
+			elif self.data[i]['fstat_lim'] >= 1.5:
+				if self.data[i]['fstat'] > self.data[i]['fstat_lim']:
+					self.data[i]['ftest'] = 1
+				else:
+					self.data[i]['ftest'] = 0
 
 
 	def get_rex(self):
