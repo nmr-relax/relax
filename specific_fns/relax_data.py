@@ -358,7 +358,8 @@ class Rx_data:
             file_data = self.relax.file_ops.extract_data(file)
 
         # Remove the header.
-        file_data = file_data[header_lines:]
+        if header_lines != None:
+            file_data = file_data[header_lines:]
 
         # Strip the data.
         file_data = self.relax.file_ops.strip(file_data)
