@@ -10,11 +10,51 @@ class mf_model(generic_functions):
 		self.relax = relax
 
 
-	def create(self, name=None, equation=None, param_types=None):
-		"Macro to create arbritary model-free models."
+	def create(self, model=None, equation=None, param_types=None):
+		"""Macro to create a model-free model.
 
-		if not name:
-			print "Model-free model name not given."
+		Arguments
+		~~~~~~~~~
+
+		model:		The name of the model-free model
+		equation:	The model-free equation to use.  To select the original model-free equation set the equation to 'mf_orig'.
+			To select the extended model-free equation set the equation to 'mf_ext'.
+		param_type:	The parameters of the model.
+
+
+		The following parameters are accepted for the original model-free equation:
+			S2:		The square of the generalised order parameter.
+			te:		The effective correlation time.
+		The following parameters are accepted for the extended model-free equation:
+			S2f:		The square of the generalised order parameter of the faster motion.
+			tf:		The effective correlation time of the faster motion.
+			S2s:		The square of the generalised order parameter of the slower motion.
+			ts:		The effective correlation time of the slower motion.
+		The following parameters are accepted for both the original and extended equations:
+			Rex:		The chemical exchange relaxation.
+			Bond length:	The average bond length <r>.
+			CSA:		The chemical shift anisotropy.
+
+
+		Examples
+		~~~~~~~~
+
+		The following commands will create the model-free model 'm1' which is based on the the original model-free equation and contains
+		the single parameter 'S2'
+
+		>>> mf_model_create('m1', 'mf_orig', ['S2'])
+		>>> mf_model_create(model='m1', param_types=['S2'], equation='mf_orig')
+
+
+		The following commands will create the model-free model 'large_model' which is based on the the extended model-free equation and contains
+		the seven parameters 'S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'.
+
+		>>> mf_model_create('large_model', 'mf_ext', ['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'])
+		>>> mf_model_create(model='large_model', param_types=['S2f', 'tf', 'S2s', 'ts', 'Rex', 'CSA', 'Bond length'], equation='mf_ext')
+		"""
+
+		if not model or type(model) != str:
+			print "Model-free model name is invalid."
 			return
 		elif not equation:
 			print "Model-free equation type not selected."
@@ -22,50 +62,107 @@ class mf_model(generic_functions):
 		elif not param_types:
 			print "Model-free parameters not given."
 			return
-		elif not equation == 'mf_orig' or not equation == 'mf_ext':
-			print "Model-free equation '" + equation + "' not supported."
+		elif not equation == 'mf_orig' and not equation == 'mf_ext':
+			print "Model-free equation '" + equation + "' is not supported."
 			return
 
-		# Add the model.
-		try:
-			self.relax.data.models.append(model)
-			self.relax.data.equations.append(equation)
-			self.relax.data.param_types.append(param_types)
-			self.relax.data.params.append([])
-		except AttributeError:
-			self.relax.data.models = [model]
-			self.relax.data.equations = [equation]
-			self.relax.data.param_types = [param_types]
-			self.relax.data.params = []
+		# Test if sequence data is loaded.
+		if not len(self.relax.data.seq):
+			print "Sequence data has to be loaded first."
+			return
 
+		# Arguments
+		self.model = model
+		self.equation = equation
+		self.types = param_types
 
-		# Create the params data structure.
-		for i in range(len(self.relax.data.seq)):
-			self.relax.data.params.append([None, None])
+		# Test the parameter names.
+		s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
+		for i in range(len(self.types)):
+			# Check if the parameter is a string.
+			if type(self.types[i]) != str:
+				print "The parameter " + `self.types[i]` + " is not a string."
+				return
+
+			# Test the parameter.
+			invalid_param = 0
+			if self.types[i] == 'S2':
+				if self.equation == 'mf_ext' or s2:
+					invalid_param = 1
+				s2 = 1
+			elif self.types[i] == 'te':
+				if self.equation == 'mf_ext' or te:
+					invalid_param = 1
+				s2_flag = 0
+				for j in range(len(self.types)):
+					if self.types[j] == 'S2':
+						s2_flag = 1
+				if not s2_flag:
+					invalid_param = 1
+				te = 1
+			elif self.types[i] == 'S2f':
+				if self.equation == 'mf_orig' or s2f:
+					invalid_param = 1
+				s2f = 1
+			elif self.types[i] == 'tf':
+				if self.equation == 'mf_orig' or tf:
+					invalid_param = 1
+				s2f_flag = 0
+				for j in range(len(self.types)):
+					if self.types[j] == 'S2f':
+						s2f_flag = 1
+				if not s2f_flag:
+					invalid_param = 1
+				tf = 1
+			elif self.types[i] == 'S2s':
+				if self.equation == 'mf_orig' or s2s:
+					invalid_param = 1
+				s2s = 1
+			elif self.types[i] == 'ts':
+				if self.equation == 'mf_orig' or ts:
+					invalid_param = 1
+				s2s_flag = 0
+				for j in range(len(self.types)):
+					if self.types[j] == 'S2s':
+						s2s_flag = 1
+				if not s2s_flag:
+					invalid_param = 1
+				ts = 1
+			elif self.types[i] == 'Rex':
+				if rex:
+					invalid_param = 1
+				rex = 1
+			elif self.types[i] == 'Bond length':
+				if r:
+					invalid_param = 1
+				r = 1
+			elif self.types[i] == 'CSA':
+				if csa:
+					invalid_param = 1
+				csa = 1
+			else:
+				print "The parameter " + self.types[i] + " is not supported."
+				return
+
+			# The invalid parameter flag is set.
+			if invalid_param:
+				print "The parameter array " + `self.types` + " contains an invalid parameter or combination of parameters."
+				return
+
+		# Update the data structures.
+		self.data_update()
 
 
 	def data_update(self):
 		"Function for updating various data structures depending on the model selected."
 
-		# Try to append the model name to the self.relax.data.models data structure.
-		# If self.relax.data.models does not exist, initialise the equations, param_types, params, and param_errors data structures.
-		try:
-			self.relax.data.models.append(self.model)
-		except AttributeError:
-			self.relax.data.models = [self.model]
-			self.relax.data.equations = []
-			self.relax.data.param_types = []
-			self.relax.data.params = []
-			self.relax.data.param_errors = []
-
 		# Update the equation and param_types data structures.
-		self.relax.data.equations.append(self.equation)
-		self.relax.data.param_types.append(self.types)
+		self.relax.data.equations[self.model] = self.equation
+		self.relax.data.param_types[self.model] = self.types
 
 		# Create the params data structure.
-		index = len(self.relax.data.models) - 1
-		self.relax.data.params.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types[index])), Float64))
-		self.relax.data.param_errors.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types[index])), Float64))
+		self.relax.data.params[self.model] = zeros((len(self.relax.data.seq), len(self.types)), Float64)
+		self.relax.data.param_errors[self.model] = zeros((len(self.relax.data.seq), len(self.types)), Float64)
 
 
 	def select(self, model):
@@ -123,7 +220,14 @@ class mf_model(generic_functions):
 		self.model = model
 
 		# Test if sequence data is loaded.
-		if not self.sequence_data_test(): return
+		if not len(self.relax.data.seq):
+			print "Sequence data has to be loaded first."
+			return
+
+		# Test if the model already exists.
+		if self.relax.data.equations.has_key(self.model):
+			print "The model " + self.model + " already exists."
+			return
 
 		# Block 1.
 		if model == 'm0':

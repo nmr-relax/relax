@@ -1,20 +1,73 @@
-# General
+# General.
+##########
+
+key -> "m1"
+key -> res_num (eg seq["-5"] = "Gly")
+Get the GPL text and place it in a file.
+change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
+data.grid_search["m1"]
+
+
+# Model-free function.
+######################
+
+Diagonal scaling.
+Calculate the R1 value, gradient, and hessian corresponding to the NOE when no R1 data exists.
+Local tm as a parameter.
+Axially symmetric anisotropic formulae.
+Anisotropic formula.
+
+
+# Monte-Carlo sims.
+###################
+
+Output file format (full double precision printout is essential!)
+res_num  res_name   mc_num  R1_600 R2_600 NOE_600  S2     te (ps)  Chi2    Iterations  Fc  Gc  Hc
+1        Gly        1       1.534  14.7   0.8345   0.756  163.5    0.0345  5           5   5   5
+1        Gly        2       1.545  14.45  0.8323   0.754  145.6    0.2966  12          12  12  12
+...
+2        Ala        1       0.921  12.234 0.5678   0.336  2864.2   0.0000  200         200 200 40
+
+Data:
+mc_params["m1"]["-5"][mc_num]
+mc_relax_data["m1"]["-5"][mc_num]
+
+
+# Macros.
 #########
 
-change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
-merge all print_data functions
+Write macros!
+Map model-free space.
+Grace.
+OpenDX.
+Molmol.
+
+# Functions.
+############
+
+Relaxation curves.
+NOE.
+SRLS.
+Reduced spectral density mapping.
+Diffusion tensor optimisation.
 
 
-# Speed
+# Speed.
+########
+
+Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C and use swig to integrate the C functions.
+
+
+# Bugs.
 #######
 
 
-# Bugs
+# Model selection methods.
+##########################
+
+
+# Old.
 ######
-
-
-# Model selection methods
-#########################
-
+merge all print_data functions
 anisotropic diffusion (overall discrepancy)
 cross-validation (split and merge stages into common_ops.py)

@@ -13,24 +13,6 @@ class min:
 		self.relax = relax
 
 
-	def find_model_index(self):
-		"""Function to find the index of the model.
-
-		If the model does not exist in self.relax.data.models, 'None' is returned, otherwise the index is returned.
-		"""
-
-		# Test if the model is within the data structure.
-		try:
-			for i in range(len(self.relax.data.models)):
-				if self.model == self.relax.data.models[i]:
-					return i
-		except AttributeError:
-			"Don't do anything."
-
-		print "The model '" + self.model + "' has not been created yet."
-		return None
-
-
 	def fixed(self, model, values=None, scaling_flag=0, min_debug=1):
 		"""Macro to fix the initial parameter values.
 
@@ -66,21 +48,26 @@ class min:
 			return
 
 		# Find the index of the model.
-		self.model_index = self.find_model_index()
-		if self.model_index == None: return
+		if not self.relax.data.equations.has_key(self.model):
+			print "The model '" + self.model + "' has not been created yet."
+			return
 
 		# User defined values.
 		self.values = values
-		if self.values:
-			if len(self.values) != len(self.relax.data.param_types[self.model_index]):
-				print "The argument 'values' must be an array of length equal to the number of parameters in the model."
-				print "Number of parameters = " + `len(self.relax.data.param_types[self.model_index])`
-				print "Length of 'values' = " + `len(self.values)`
-				return
-			for i in range(len(self.values)):
-				if type(self.values[i]) != float and type(self.values[i]) != int:
-					print "The argument 'values' must be an array of numbers."
+		if not self.values == None:
+			if type(self.values) == list:
+				if len(self.values) != len(self.relax.data.param_types[self.model]):
+					print "The argument 'values' must be an array of length equal to the number of parameters in the model."
+					print "Number of parameters = " + `len(self.relax.data.param_types[self.model])`
+					print "Length of 'values' = " + `len(self.values)`
 					return
+				for i in range(len(self.values)):
+					if type(self.values[i]) != float and type(self.values[i]) != int:
+						print "The argument 'values' must be an array of numbers."
+						return
+			else:
+				print "The argument 'values' must be an array of numbers."
+				return
 
 		# The scaling_flag.
 		self.scaling_flag = scaling_flag
@@ -101,84 +88,84 @@ class min:
 			self.min_options = array(self.values)
 		else:
 			# Fixed values.
-			self.min_options = zeros(len(self.relax.data.param_types[self.model_index]), Float64)
+			self.min_options = zeros(len(self.relax.data.param_types[self.model]), Float64)
 
 			# The original model-free equations.
-			if match('mf_orig', self.relax.data.equations[self.model_index]):
-				for i in range(len(self.relax.data.param_types[self.model_index])):
+			if match('mf_orig', self.relax.data.equations[self.model]):
+				for i in range(len(self.relax.data.param_types[self.model])):
 					# S2.
-					if match('S2', self.relax.data.param_types[self.model_index][i]):
+					if match('S2', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = 0.5
 
 					# te.
-					elif match('te', self.relax.data.param_types[self.model_index][i]):
+					elif match('te', self.relax.data.param_types[self.model][i]):
 						if self.scaling_flag:
 							self.min_options[i] = 100.0 * 1e-12 * self.c
 						else:
 							self.min_options[i] = 100.0 * 1e-12
 
 					# Rex.
-					elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+					elif match('Rex', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = 0.0
 
 					# Bond length.
-					elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+					elif match('Bond length', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = 1.02 * 1e-10
 
 					# CSA.
-					elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+					elif match('CSA', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = -170 * 1e-6
 
 					# Unknown parameter.
 					else:
-						print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the original model-free equation."
+						print "Unknown parameter '" + self.relax.data.param_types[self.model][i] + "' for the original model-free equation."
 						return
 
 			# The extended model-free equations.
-			elif match('mf_ext', self.relax.data.equations[self.model_index]):
-				for i in range(len(self.relax.data.param_types[self.model_index])):
+			elif match('mf_ext', self.relax.data.equations[self.model]):
+				for i in range(len(self.relax.data.param_types[self.model])):
 					# S2f.
-					if match('S2f', self.relax.data.param_types[self.model_index][i]):
+					if match('S2f', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = 0.5
 
 					# tf.
-					elif match('tf', self.relax.data.param_types[self.model_index][i]):
+					elif match('tf', self.relax.data.param_types[self.model][i]):
 						if self.scaling_flag:
 							self.min_options[i] = 10.0 * 1e-12 * self.c
 						else:
 							self.min_options[i] = 10.0 * 1e-12
 
 					# S2s.
-					elif match('S2s', self.relax.data.param_types[self.model_index][i]):
+					elif match('S2s', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = 0.5
 
 					# ts.
-					elif match('ts', self.relax.data.param_types[self.model_index][i]):
+					elif match('ts', self.relax.data.param_types[self.model][i]):
 						if self.scaling_flag:
 							self.min_options[i] = 1000.0 * 1e-12 * self.c
 						else:
 							self.min_options[i] = 1000.0 * 1e-12
 
 					# Rex.
-					elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+					elif match('Rex', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = 0.0
 
 					# Bond length.
-					elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+					elif match('Bond length', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = 1.02 * 1e-10
 
 					# CSA.
-					elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+					elif match('CSA', self.relax.data.param_types[self.model][i]):
 						self.min_options[i] = -170 * 1e-6
 
 					# Unknown parameter.
 					else:
-						print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the extended model-free equation."
+						print "Unknown parameter '" + self.relax.data.param_types[self.model][i] + "' for the extended model-free equation."
 						return
 
 			# Unknown eqation type.
 			else:
-				print "The equation " + `self.relax.data.equations[self.model_index]` + " has not been coded into the fixed parameter macro."
+				print "The equation " + `self.relax.data.equations[self.model]` + " has not been coded into the fixed parameter macro."
 				return
 
 		# Setup values used in the main iterative loop.
@@ -203,14 +190,15 @@ class min:
 			return
 
 		# Find the index of the model.
-		self.model_index = self.find_model_index()
-		if self.model_index == None: return
+		if not self.relax.data.equations.has_key(self.model):
+			print "The model '" + self.model + "' has not been created yet."
+			return
 
 		# The lower bounds.
 		self.lower = lower
 		if self.lower:
 			bad_arg = 0
-			if len(self.lower) != len(self.relax.data.param_types[self.model_index]):
+			if len(self.lower) != len(self.relax.data.param_types[self.model]):
 				bad_arg = 1
 			for i in range(len(self.lower)):
 				if type(self.lower[i]) != float and type(self.lower[i]) != int:
@@ -220,14 +208,14 @@ class min:
 				return
 		else:
 			self.lower = []
-			for i in range(len(self.relax.data.param_types[self.model_index])):
+			for i in range(len(self.relax.data.param_types[self.model])):
 				self.lower.append(None)
 
 		# The upper bounds.
 		self.upper = upper
 		if self.upper:
 			bad_arg = 0
-			if len(self.upper) != len(self.relax.data.param_types[self.model_index]):
+			if len(self.upper) != len(self.relax.data.param_types[self.model]):
 				bad_arg = 1
 			for i in range(len(self.upper)):
 				if type(self.upper[i]) != float and type(self.upper[i]) != int:
@@ -237,7 +225,7 @@ class min:
 				return
 		else:
 			self.upper = []
-			for i in range(len(self.relax.data.param_types[self.model_index])):
+			for i in range(len(self.relax.data.param_types[self.model])):
 				self.upper.append(None)
 
 		# The incrementation value.
@@ -245,7 +233,7 @@ class min:
 		if type(inc) != int and type(inc) != list:
 			bad_arg = 1
 		if type(inc) == list:
-			if len(inc) != len(self.relax.data.param_types[self.model_index]):
+			if len(inc) != len(self.relax.data.param_types[self.model]):
 				bad_arg = 1
 			for i in range(len(inc)):
 				if type(inc[i]) != int:
@@ -255,7 +243,7 @@ class min:
 			return
 		elif type(inc) == int:
 			self.inc = []
-			for i in range(len(self.relax.data.param_types[self.model_index])):
+			for i in range(len(self.relax.data.param_types[self.model])):
 				self.inc.append(inc)
 		else:
 			self.inc = inc
@@ -278,85 +266,85 @@ class min:
 		self.min_options = []
 
 		# The original model-free equations.
-		if match('mf_orig', self.relax.data.equations[self.model_index]):
-			for i in range(len(self.relax.data.param_types[self.model_index])):
+		if match('mf_orig', self.relax.data.equations[self.model]):
+			for i in range(len(self.relax.data.param_types[self.model])):
 				# S2.
-				if match('S2', self.relax.data.param_types[self.model_index][i]):
+				if match('S2', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], 0.0, 1.0])
 
 				# te.
-				elif match('te', self.relax.data.param_types[self.model_index][i]):
+				elif match('te', self.relax.data.param_types[self.model][i]):
 					if self.scaling_flag:
 						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
 					else:
 						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
 
 				# Rex.
-				elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+				elif match('Rex', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
 
 				# Bond length.
-				elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+				elif match('Bond length', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], 1.0 * 1e-10, 1.05 * 1e-10])
 
 				# CSA.
-				elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+				elif match('CSA', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], -120 * 1e-6, -200 * 1e-6])
 
 				# Unknown parameter.
 				else:
-					print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the original model-free equation."
+					print "Unknown parameter '" + self.relax.data.param_types[self.model][i] + "' for the original model-free equation."
 					return
 
 		# The extended model-free equations.
-		elif match('mf_ext', self.relax.data.equations[self.model_index]):
-			for i in range(len(self.relax.data.param_types[self.model_index])):
+		elif match('mf_ext', self.relax.data.equations[self.model]):
+			for i in range(len(self.relax.data.param_types[self.model])):
 				# S2f.
-				if match('S2f', self.relax.data.param_types[self.model_index][i]):
+				if match('S2f', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], 0.0, 1.0])
 
 				# tf.
-				elif match('tf', self.relax.data.param_types[self.model_index][i]):
+				elif match('tf', self.relax.data.param_types[self.model][i]):
 					if self.scaling_flag:
 						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
 					else:
 						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
 
 				# S2f.
-				elif match('S2s', self.relax.data.param_types[self.model_index][i]):
+				elif match('S2s', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], 0.0, 1.0])
 
 				# tf.
-				elif match('ts', self.relax.data.param_types[self.model_index][i]):
+				elif match('ts', self.relax.data.param_types[self.model][i]):
 					if self.scaling_flag:
 						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12 * self.c])
 					else:
 						self.min_options.append([self.inc[i], 0.0, 10000.0 * 1e-12])
 
 				# Rex.
-				elif match('Rex', self.relax.data.param_types[self.model_index][i]):
+				elif match('Rex', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
 
 				# Bond length.
-				elif match('Bond length', self.relax.data.param_types[self.model_index][i]):
+				elif match('Bond length', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], 1.0 * 1e-10, 1.1 * 1e-10])
 
 				# CSA.
-				elif match('CSA', self.relax.data.param_types[self.model_index][i]):
+				elif match('CSA', self.relax.data.param_types[self.model][i]):
 					self.min_options.append([self.inc[i], -120 * 1e-6, -200 * 1e-6])
 
 				# Unknown parameter.
 				else:
-					print "Unknown parameter '" + self.relax.data.param_types[self.model_index][i] + "' for the extended model-free equation."
+					print "Unknown parameter '" + self.relax.data.param_types[self.model][i] + "' for the extended model-free equation."
 					return
 
 		# Unknown eqation type.
 		else:
-			print "The equation " + `self.relax.data.equations[self.model_index]` + " has not been coded into the grid search macro."
+			print "The equation " + `self.relax.data.equations[self.model]` + " has not been coded into the grid search macro."
 			return
 
 		# Set the lower and upper bounds if these are supplied.
-		for i in range(len(self.relax.data.param_types[self.model_index])):
+		for i in range(len(self.relax.data.param_types[self.model])):
 			if not self.lower[i] == None:
 				self.min_options[i][1] = self.lower[i]
 			if not self.upper[i] == None:
@@ -398,7 +386,7 @@ class min:
 			self.g_count = self.g_count + gc
 			self.h_count = self.h_count + hc
 
-			self.relax.data.params[self.model_index][self.res] = self.params
+			self.relax.data.params[self.model][self.res] = self.params
 
 			if self.relax.min_debug:
 				print "\n\n<<< Finished minimiser >>>"
@@ -408,7 +396,7 @@ class min:
 		print "\n[ Done ]\n\n"
 
 
-	def minimise(self, model, min_algor=None, min_options=None, chi2_tol=1e-15, max_iterations=5000, scaling_flag=0, min_debug=1):
+	def minimise(self, model, min_algor=None, min_options=None, chi2_tol=1e-25, max_iterations=10000, scaling_flag=0, min_debug=1):
 		"Minimisation macro."
 
 		# The model argument.
@@ -430,8 +418,9 @@ class min:
 		self.max_iterations = max_iterations
 
 		# Find the index of the model.
-		self.model_index = self.find_model_index()
-		if self.model_index == None: return
+		if not self.relax.data.equations.has_key(self.model):
+			print "The model '" + self.model + "' has not been created yet."
+			return
 
 		# Set up the minimisation specific options.
 		# Line search methods.
@@ -449,7 +438,7 @@ class min:
 		If any data is missing, None will be returned which signals to the main iteration loop to jump to the next residue.
 		"""
 
-		if match('mf', self.relax.data.equations[self.model_index]):
+		if match('mf', self.relax.data.equations[self.model]):
 			self.data = zeros(self.relax.data.num_ri, Float64)
 			self.errors = zeros(self.relax.data.num_ri, Float64)
 
@@ -460,10 +449,10 @@ class min:
 				self.errors[i] = self.relax.data.relax_data[i][self.res, 1]
 
 			self.function_ops = ()
-			self.params = self.relax.data.params[self.model_index][self.res]
+			self.params = self.relax.data.params[self.model][self.res]
 
 			# Initialise the functions used in the minimisation.
-			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model_index], param_types=self.relax.data.param_types[self.model_index], init_params=self.params, relax_data=self.data, errors=self.errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params)
+			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model], param_types=self.relax.data.param_types[self.model], init_params=self.params, relax_data=self.data, errors=self.errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params)
 			self.func = self.mf.func
 			self.dfunc = self.mf.dfunc
 			self.d2func = self.mf.d2func

@@ -43,14 +43,3 @@ class generic_functions:
 			return 1
 		else:
 			return 0
-
-
-	def sequence_data_test(self):
-		"Test if sequence data is loaded."
-
-		try:
-			self.relax.data.seq
-			return 1
-		except AttributeError:
-			print "Sequence data has to be loaded first."
-			return 0
