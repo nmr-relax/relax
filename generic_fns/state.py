@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,7 +22,7 @@
 
 
 from Numeric import array
-from os import F_OK, access
+from os import F_OK, access, makedirs
 from cPickle import dump, load
 
 
@@ -33,14 +33,20 @@ class State:
         self.relax = relax
 
 
-    def load(self, file_name=None):
+    def load(self, file=None, dir=None):
         """Function for loading a saved program state."""
+
+        # File path.
+        if dir:
+            file_path = dir + '/' + file
+        else:
+            file_path = file
 
         # Open file for reading.
         try:
-            file = open(file_name, 'r')
+            file = open(file_path, 'r')
         except IOError:
-            raise RelaxFileError, ('save', file_name)
+            raise RelaxFileError, ('save', file_path)
 
         # Unpickle the data class.
         self.relax.data = load(file)
@@ -49,14 +55,27 @@ class State:
         file.close()
 
 
-    def save(self, file_name=None, force=0):
+    def save(self, file=None, dir=None, force=0):
         """Function for saving the program state."""
 
-        # Open file for writing.
-        if access(file_name, F_OK) and not force:
-            raise RelaxFileOverwriteError, (file_name, 'force flag')
+        # Create the directories.
+        if dir:
+            try:
+                makedirs(dir)
+            except OSError:
+                pass
+
+        # File path.
+        if dir:
+            file_path = dir + '/' + file
         else:
-            file = open(file_name, 'w')
+            file_path = file
+
+        # Open file for writing.
+        if access(file_path, F_OK) and not force:
+            raise RelaxFileOverwriteError, (file_path, 'force flag')
+        else:
+            file = open(file_path, 'w')
 
         # Pickle the data class and write it to file
         dump(self.relax.data, file, 1)

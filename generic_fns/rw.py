@@ -21,7 +21,8 @@
 ###############################################################################
 
 
-from os import F_OK, access, mkdir
+from os import F_OK, access, makedirs, mkdir
+from string import split
 
 
 class RW:
@@ -79,11 +80,11 @@ class RW:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-        # Directory creation.
+        # Create the directories.
         if dir == None:
             dir = run
         try:
-            mkdir(dir)
+            makedirs(dir)
         except OSError:
             pass
 

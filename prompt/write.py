@@ -71,9 +71,7 @@ class Write:
             raise RelaxStrError, ('file name', file)
 
         # Directory.
-        if dir == None:
-            pass
-        elif type(dir) != str:
+        if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
