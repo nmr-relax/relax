@@ -4,25 +4,33 @@ from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class cauchy_point(generic_trust_region, generic_minimise):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e5, delta0=1.0, eta=0.2):
-		"""Cauchy Point trust region algorithm.
+def cauchy_point(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e5, delta0=1.0, eta=0.2):
+	"""Cauchy Point trust region algorithm.
 
-		Page 69 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
-		The Cauchy point is defined by:
+	Page 69 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	The Cauchy point is defined by:
 
-			                 delta
-			pCk  =  - tau_k ------- dfk
-			                ||dfk||
+		                 delta
+		pCk  =  - tau_k ------- dfk
+		                ||dfk||
 
-		where:
-			delta_k is the trust region radius,
-			dfk is the gradient vector,
+	where:
+		delta_k is the trust region radius,
+		dfk is the gradient vector,
 
-			         / 1						if dfk . Bk . dfk <= 0
-			tau_k = <
-			         \ min(||dfk||**2/(delta . dfk . Bk . dfk), 1)	otherwise.
-		"""
+		         / 1						if dfk . Bk . dfk <= 0
+		tau_k = <
+		         \ min(||dfk||**2/(delta . dfk . Bk . dfk), 1)	otherwise.
+	"""
+
+	min = Cauchy_point(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta)
+	results = min.minimise()
+	return results
+
+
+class Cauchy_point(generic_trust_region, generic_minimise):
+	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta):
+		"Class for Cauchy Point trust region minimisation specific functions."
 
 		self.func = func
 		self.dfunc = dfunc
@@ -45,9 +53,6 @@ class cauchy_point(generic_trust_region, generic_minimise):
 
 		# Initialise the warning string.
 		self.warning = None
-
-		# Initialisation complete.
-		self.init_failure = 0
 
 
 	def new_param_func(self):

@@ -20,17 +20,16 @@ class generic_minimise:
 		# Initialise.
 		self.hessian_type = None
 		self.hessian_mod = None
-		self.init_failure = 0
 
 		# Test if the options are a tuple.
 		if type(min_options) != tuple:
 			print "The minimisation options " + `min_options` + " is not a tuple."
-			self.init_failure = 1; return
+			return
 
 		# Test that no more thant 2 options are given.
 		if len(min_options) > 2:
 			print "A maximum of two minimisation options is allowed (the Hessian type and Hessian modification)."
-			self.init_failure = 1; return
+			return
 
 		# Sort out the minimisation options.
 		for opt in min_options:
@@ -40,7 +39,7 @@ class generic_minimise:
 				self.hessian_mod = opt
 			else:
 				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid Hessian type or modification."
-				self.init_failure = 1; return
+				return
 
 		# Default Hessian type.
 		if self.hessian_type == None:
@@ -49,7 +48,7 @@ class generic_minimise:
 		# Make sure that no Hessian modification is used with the BFGS matrix.
 		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
 			print "When using the BFGS matrix, Hessian modifications should not be used."
-			self.init_failure = 1; return
+			return
 
 		# Default Hessian modification when the Hessian type is Newton.
 		if match('[Nn]ewton', self.hessian_type) and self.hessian_mod == None:
@@ -61,6 +60,8 @@ class generic_minimise:
 				print "Hessian type:  BFGS"
 			else:
 				print "Hessian type:  Newton"
+
+		return 1
 
 
 	def minimise(self):

@@ -4,8 +4,21 @@ from generic_minimise import generic_minimise
 from line_search_functions import line_search_functions
 
 
-class bfgs(generic_minimise, line_search_functions):
-	def __init__(self, func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
+def bfgs(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
+	"""Quasi-Newton BFGS minimisation.
+
+	"""
+
+	min = Bfgs(func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta)
+	if min.init_failure:
+		print "Initialisation of minimisation has failed."
+		return None
+	results = min.minimise()
+	return results
+
+
+class Bfgs(generic_minimise, line_search_functions):
+	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
 		"Class for Quasi-Newton BFGS minimisation specific functions."
 
 		self.func = func
@@ -18,8 +31,15 @@ class bfgs(generic_minimise, line_search_functions):
 		self.print_flag = print_flag
 
 		# Minimisation options.
-		self.line_search_option(min_options)
-		if self.init_failure: return
+		#######################
+
+		# Initialise.
+		self.init_failure = 0
+
+		# Minimisation options.
+		if not self.line_search_option(min_options):
+			self.init_failure = 1
+			return
 
 		# Set a0.
 		self.a0 = a0

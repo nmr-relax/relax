@@ -134,9 +134,6 @@ class method_of_multipliers:
 		self.d2L = zeros((len(self.xk), len(self.xk)), Float64)
 		self.test_structure = zeros(self.m)
 
-		# Minimise.
-		self.minimise()
-
 
 	def func_LA(self):
 		"""The augmented Lagrangian function.

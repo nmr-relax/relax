@@ -1,12 +1,20 @@
-import sys
-
 from Numeric import Float64, add, argsort, average, take, zeros
 
 from generic_minimise import generic_minimise
 
 
-class simplex(generic_minimise):
-	def __init__(self, func, args=(), x0=None, func_tol=1e-5, maxiter=None, full_output=0, print_flag=0):
+def simplex(func, args=(), x0=None, func_tol=1e-5, maxiter=None, full_output=0, print_flag=0):
+	"""Downhill simplex minimisation.
+
+	"""
+
+	min = Simplex(func, args, x0, func_tol, maxiter, full_output, print_flag)
+	results = min.minimise()
+	return results
+
+
+class Simplex(generic_minimise):
+	def __init__(self, func, args, x0, func_tol, maxiter, full_output, print_flag):
 		"Class for downhill simplex minimisation specific functions."
 
 		self.func = func
@@ -24,9 +32,6 @@ class simplex(generic_minimise):
 
 		# Initialise the warning string.
 		self.warning = None
-
-		# Initialisation complete.
-		self.init_failure = 0
 
 
 	def new_param_func(self):

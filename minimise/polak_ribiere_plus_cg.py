@@ -5,24 +5,35 @@ from generic_minimise import generic_minimise
 from line_search_functions import line_search_functions
 
 
-class polak_ribiere_plus(generic_conjugate_gradient, generic_minimise, line_search_functions):
-	def __init__(self, func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.1):
-		"""Polak-Ribière + conjugate gradient algorithm.
+def polak_ribiere_plus(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.1):
+	"""Polak-Ribière + conjugate gradient algorithm.
 
-		Page 122 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Page 122 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
 
-		The algorithm is:
+	The algorithm is:
 
-		Given x0
-		Evaluate f0 = f(x0), g0 = g(x0)
-		Set p0 = -g0, k = 0
-		while g0 != 0:
-			Compute ak and set xk+1 = xk + ak.pk
-			Evaluate gk+1
-			bk+1 = max(dot(gk+1, (gk+1 - gk)) / dot(gk, gk), 0)
-			pk+1 = -gk+1 + bk+1.pk
-			k = k + 1
-		"""
+	Given x0
+	Evaluate f0 = f(x0), g0 = g(x0)
+	Set p0 = -g0, k = 0
+	while g0 != 0:
+		Compute ak and set xk+1 = xk + ak.pk
+		Evaluate gk+1
+		bk+1 = max(dot(gk+1, (gk+1 - gk)) / dot(gk, gk), 0)
+		pk+1 = -gk+1 + bk+1.pk
+		k = k + 1
+	"""
+
+	min = Polak_ribiere_plus(func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta)
+	if min.init_failure:
+		print "Initialisation of minimisation has failed."
+		return None
+	results = min.minimise()
+	return results
+
+
+class Polak_ribiere_plus(generic_conjugate_gradient, generic_minimise, line_search_functions):
+	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
+		"Class for Polak-Ribière + conjugate gradient minimisation specific functions."
 
 		self.func = func
 		self.dfunc = dfunc
@@ -34,8 +45,15 @@ class polak_ribiere_plus(generic_conjugate_gradient, generic_minimise, line_sear
 		self.print_flag = print_flag
 
 		# Minimisation options.
-		self.line_search_option(min_options)
-		if self.init_failure: return
+		#######################
+
+		# Initialise.
+		self.init_failure = 0
+
+		# Line search options.
+		if not self.line_search_option(min_options):
+			self.init_failure = 1
+			return
 
 		# Set a0.
 		self.a0 = a0

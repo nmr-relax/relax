@@ -2,18 +2,28 @@ from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_l
 from Numeric import diagonal, dot, identity, matrixmultiply, outerproduct, sort, sqrt, transpose
 from re import match
 
-from bfgs import bfgs
-from newton import newton
+from bfgs import Bfgs
+from newton import Newton
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class exact_trust_region(generic_trust_region, generic_minimise, bfgs, newton):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16):
-		"""Exact trust region algorithm.
+def exact_trust_region(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16):
+	"""Exact trust region algorithm.
+
+	"""
+
+	min = Exact_trust_region(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, lambda0, delta_max, delta0, eta, mach_acc)
+	if min.init_failure:
+		print "Initialisation of minimisation has failed."
+		return None
+	results = min.minimise()
+	return results
 
 
-		"""
+class Exact_trust_region(generic_trust_region, generic_minimise, Bfgs, Newton):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, lambda0, delta_max, delta0, eta, mach_acc):
+		"Class for Exact trust region minimisation specific functions."
 
 		self.func = func
 		self.dfunc = dfunc
@@ -32,8 +42,15 @@ class exact_trust_region(generic_trust_region, generic_minimise, bfgs, newton):
 		self.eta = eta
 
 		# Minimisation options.
-		self.hessian_type_and_mod(min_options)
-		if self.init_failure: return
+		#######################
+
+		# Initialise.
+		self.init_failure = 0
+
+		# Hessian options.
+		if not self.hessian_type_and_mod(min_options):
+			self.init_failure = 1
+			return
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -49,9 +66,6 @@ class exact_trust_region(generic_trust_region, generic_minimise, bfgs, newton):
 
 		# Hessian modification function initialisation.
 		self.init_hessian_mod_funcs()
-
-		# Initialisation complete.
-		self.init_failure = 0
 
 
 	def new_param_func(self):

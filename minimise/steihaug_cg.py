@@ -1,40 +1,48 @@
 from LinearAlgebra import inverse
 from Numeric import Float64, dot, matrixmultiply, outerproduct, sqrt, zeros
 
-from newton import newton
+from newton import Newton
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class steihaug(generic_trust_region, generic_minimise, newton):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
-		"""Steihaug conjugate-gradient trust region algorithm.
+def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
+	"""Steihaug conjugate-gradient trust region algorithm.
 
-		Page 75 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	Page 75 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
 
-		The CG-Steihaug algorithm is:
+	The CG-Steihaug algorithm is:
 
-		epsilon > 0
-		p0 = 0, r0 = g, d0 = -r0
-		if ||r0|| < epsilon:
-			return p = p0
-		while 1:
-			if djT.B.dj <= 0:
-				Find tau such that p = pj + tau.dj minimises m(p) in (4.9) and
-				satisfies ||p|| = delta
-				return p
-			aj = rjT.rj / djT.B.dj
-			pj+1 = pj + aj.dj
-			if ||pj+1|| >= delta:
-				Find tau such that p = pj + tau.dj satisfies ||p|| = delta
-				return p
-			rj+1 = rj + aj.B.dj
-			if ||rj+1|| < epsilon.||r0||:
-				return p = pj+1
-			bj+1 = rj+1T.rj+1 / rjT.rj
-			dj+1 = rj+1 + bj+1.dj
+	epsilon > 0
+	p0 = 0, r0 = g, d0 = -r0
+	if ||r0|| < epsilon:
+		return p = p0
+	while 1:
+		if djT.B.dj <= 0:
+			Find tau such that p = pj + tau.dj minimises m(p) in (4.9) and
+			satisfies ||p|| = delta
+			return p
+		aj = rjT.rj / djT.B.dj
+		pj+1 = pj + aj.dj
+		if ||pj+1|| >= delta:
+			Find tau such that p = pj + tau.dj satisfies ||p|| = delta
+			return p
+		rj+1 = rj + aj.B.dj
+		if ||rj+1|| < epsilon.||r0||:
+			return p = pj+1
+		bj+1 = rj+1T.rj+1 / rjT.rj
+		dj+1 = rj+1 + bj+1.dj
 
-		"""
+	"""
+
+	min = Steihaug(func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, epsilon, delta_max, delta0, eta)
+	results = min.minimise()
+	return results
+
+
+class Steihaug(generic_trust_region, generic_minimise, Newton):
+	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, epsilon, delta_max, delta0, eta):
+		"Class for Steihaug conjugate-gradient trust region minimisation specific functions."
 
 		self.func = func
 		self.dfunc = dfunc
@@ -58,9 +66,6 @@ class steihaug(generic_trust_region, generic_minimise, newton):
 
 		# Initialise the warning string.
 		self.warning = None
-
-		# Initialisation complete.
-		self.init_failure = 0
 
 
 	def get_pk(self):

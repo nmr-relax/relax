@@ -4,31 +4,39 @@ from Numeric import Float64, zeros
 from generic_minimise import generic_minimise
 
 
-class levenberg_marquardt(generic_minimise):
-	def __init__(self, chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
-		"""Class for Levenberg-Marquardt minimisation specific functions.
+def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+	"""Levenberg-Marquardt minimimisation.
 
-		Function options
-		~~~~~~~~~~~~~~~~
+	Function options
+	~~~~~~~~~~~~~~~~
 
-		chi2_func:  User supplied chi-squared function which is run with the function parameters and args as options.
-		dchi2_func:  User supplied chi-squared gradient function which is run with the function parameters and args as options.
-		dfunc:  User supplied function which should return a vector of partial derivatives of the function which back calculates
-			values for the chi-squared function.
-		params:  The initial function parameter values.
-		errors:  The experimental errors.
-		args:  A tuple containing the arguments to send to chi2_func and dchi2_func.
-		maxiter:  The maximum number of iterations.
-		full_output:  A flag specifying what should be returned.
+	chi2_func:  User supplied chi-squared function which is run with the function parameters and args as options.
+	dchi2_func:  User supplied chi-squared gradient function which is run with the function parameters and args as options.
+	dfunc:  User supplied function which should return a vector of partial derivatives of the function which back calculates
+		values for the chi-squared function.
+	params:  The initial function parameter values.
+	errors:  The experimental errors.
+	args:  A tuple containing the arguments to send to chi2_func and dchi2_func.
+	maxiter:  The maximum number of iterations.
+	full_output:  A flag specifying what should be returned.
 
 
-		Output
-		~~~~~~
+	Output
+	~~~~~~
 
-		If full_output = 0, the parameter values and chi-squared value are returned as a tuple.
-		If full_output = 1, the parameter values, chi-squared value, number of iterations, and the warning flag are returned as a tuple.
+	If full_output = 0, the parameter values and chi-squared value are returned as a tuple.
+	If full_output = 1, the parameter values, chi-squared value, number of iterations, and the warning flag are returned as a tuple.
 
-		"""
+	"""
+
+	min = Levenberg_marquardt(chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag)
+	results = min.minimise()
+	return results
+
+
+class Levenberg_marquardt(generic_minimise):
+	def __init__(self, chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag):
+		"Class for Levenberg-Marquardt minimisation specific functions."
 
 		self.chi2_func = chi2_func
 		self.dchi2_func = dchi2_func
@@ -48,9 +56,6 @@ class levenberg_marquardt(generic_minimise):
 
 		# Initialise the warning string.
 		self.warning = None
-
-		# Initialisation complete.
-		self.init_failure = 0
 
 
 	def create_lm_matrix(self):

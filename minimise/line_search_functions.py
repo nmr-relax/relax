@@ -53,17 +53,16 @@ class line_search_functions:
 
 		# Initialise.
 		self.line_search_algor = None
-		self.init_failure = 0
 
 		# Test if the options are a tuple.
 		if type(min_options) != tuple:
 			print "The minimisation options " + `min_options` + " is not a tuple."
-			self.init_failure = 1; return
+			return
 
 		# No more than one option is allowed.
 		if len(min_options) > 1:
 			print "A maximum of one minimisation options is allowed (the line search algorithm)."
-			self.init_failure = 1; return
+			return
 
 		# Sort out the minimisation options.
 		for opt in min_options:
@@ -71,11 +70,13 @@ class line_search_functions:
 				self.line_search_algor = opt
 			else:
 				print "The minimisation option " + `opt` + " from " + `min_options` + " is not a valid line search algorithm."
-				self.init_failure = 1; return
+				return
 
 		# Default line search algorithm.
 		if self.line_search_algor == None:
 			self.line_search_algor = 'More Thuente'
+
+		return 1
 
 
 	def mt(self):

@@ -2,44 +2,55 @@ from LinearAlgebra import eigenvectors, inverse
 from Numeric import Float64, dot, identity, matrixmultiply, outerproduct, sort, sqrt
 from re import match
 
-from bfgs import bfgs
-from newton import newton
+from bfgs import Bfgs
+from newton import Newton
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16):
-		"""Dogleg trust region algorithm.
+def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16):
+	"""Dogleg trust region algorithm.
 
-		Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
-		The dogleg method is defined by the trajectory p(tau):
+	Page 71 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	The dogleg method is defined by the trajectory p(tau):
 
-			          / tau . pU			0 <= tau <= 1,
-			p(tau) = <
-			          \ pU + (tau - 1)(pB - pU),	1 <= tau <= 2.
+		          / tau . pU			0 <= tau <= 1,
+		p(tau) = <
+		          \ pU + (tau - 1)(pB - pU),	1 <= tau <= 2.
 
-		where:
-			tau is in [0, 2]
-			pU is the unconstrained minimiser along the steepest descent direction.
-			pB is the full step.
+	where:
+		tau is in [0, 2]
+		pU is the unconstrained minimiser along the steepest descent direction.
+		pB is the full step.
 
-		pU is defined by the formula:
+	pU is defined by the formula:
 
-			        gT.g
-			pU = - ------ g
-			       gT.B.g
+		        gT.g
+		pU = - ------ g
+		       gT.B.g
 
-		and pB by the formula:
+	and pB by the formula:
 
-			pB = - B^(-1).g
+		pB = - B^(-1).g
 
-		If the full step is within the trust region it is taken.  Otherwise the point at which the dogleg
-		trajectory intersects the trust region is taken.  This point can be found by solving the scalar
-		quadratic equation:
-			||pU + (tau - 1)(pB - pU)||^2 = delta^2
+	If the full step is within the trust region it is taken.  Otherwise the point at which the dogleg
+	trajectory intersects the trust region is taken.  This point can be found by solving the scalar
+	quadratic equation:
+		||pU + (tau - 1)(pB - pU)||^2 = delta^2
 
-		"""
+	"""
+
+	min = Dogleg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta, mach_acc)
+	if min.init_failure:
+		print "Initialisation of minimisation has failed."
+		return None
+	results = min.minimise()
+	return results
+
+
+class Dogleg(generic_trust_region, generic_minimise, Bfgs, Newton):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta, mach_acc):
+		"Class for Dogleg trust region minimisation specific functions."
 
 		self.func = func
 		self.dfunc = dfunc
@@ -57,8 +68,15 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.eta = eta
 
 		# Minimisation options.
-		self.hessian_type_and_mod(min_options)
-		if self.init_failure: return
+		#######################
+
+		# Initialise.
+		self.init_failure = 0
+
+		# Hessian options.
+		if not self.hessian_type_and_mod(min_options):
+			self.init_failure = 1
+			return
 
 		# Initialise the function, gradient, and Hessian evaluation counters.
 		self.f_count = 0
@@ -74,9 +92,6 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 
 		# Hessian modification function initialisation.
 		self.init_hessian_mod_funcs()
-
-		# Initialisation complete.
-		self.init_failure = 0
 
 
 	def dogleg(self):

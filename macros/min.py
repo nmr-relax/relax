@@ -429,10 +429,10 @@ class min:
 		"""
 
 		# Minimization algorithm.
-		self.min_algor = args[0]
-		if not self.min_algor:
+		if len(args) == 0:
 			print "The minimisation algorithm has not been specified."
 			return
+		self.min_algor = args[0]
 
 		# Minimization options.
 		self.min_options = args[1:]

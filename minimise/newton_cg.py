@@ -4,24 +4,34 @@ from Numeric import Float64, dot, matrixmultiply, sqrt, zeros
 from generic_minimise import generic_minimise
 from line_search_functions import line_search_functions
 
+def newton_cg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
+	"""Line search Newton conjugate gradient algorithm.
 
-class newton_cg(generic_minimise, line_search_functions):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
-		"""Line search Newton conjugate gradient algorithm.
+	Page 140 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
 
-		Page 140 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+	The algorithm is:
 
-		The algorithm is:
+	Given initial point x0.
+	while 1:
+		Compute a search direction pk by applying the CG method to Hk.pk = -gk,
+		   starting from x0 = 0.  Terminate when ||rk|| <= min(0.5,sqrt(||gk||)), or
+		   if negative curvature is encountered.
+		Set xk+1 = xk + ak.pk, where ak satisfies the Wolfe, Goldstein, or Armijo
+		   backtracking conditions.
 
-		Given initial point x0.
-		while 1:
-			Compute a search direction pk by applying the CG method to Hk.pk = -gk,
-			   starting from x0 = 0.  Terminate when ||rk|| <= min(0.5,sqrt(||gk||)), or
-			   if negative curvature is encountered.
-			Set xk+1 = xk + ak.pk, where ak satisfies the Wolfe, Goldstein, or Armijo
-			   backtracking conditions.
+	"""
 
-		"""
+	min = Newton_cg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta)
+	if min.init_failure:
+		print "Initialisation of minimisation has failed."
+		return None
+	results = min.minimise()
+	return results
+
+
+class Newton_cg(generic_minimise, line_search_functions):
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
+		"Class for newton conjugate gradient  minimisation specific functions."
 
 		self.func = func
 		self.dfunc = dfunc
@@ -34,8 +44,15 @@ class newton_cg(generic_minimise, line_search_functions):
 		self.print_flag = print_flag
 
 		# Minimisation options.
-		self.line_search_option(min_options)
-		if self.init_failure: return
+		#######################
+
+		# Initialise.
+		self.init_failure = 0
+
+		# Minimisation options.
+		if not self.line_search_option(min_options):
+			self.init_failure = 1
+			return
 
 		# Set a0.
 		self.a0 = a0
