@@ -71,6 +71,7 @@ from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
+from thread_classes import ThreadSetup
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -87,6 +88,9 @@ class Relax:
         # Debugging flag (default is off).
         __builtin__.Debug = 0
 
+        # Set the program introduction string to nothing.
+        self.intro_string = None
+
         # The program data storage object.
         self.data = Data()
 
@@ -102,10 +106,13 @@ class Relax:
         # Setup the object containing the specific functions.
         self.specific = Specific(self)
 
+        # Setup the object containing the thread setup functions.
+        self.thread_setup = ThreadSetup(self)
+
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
 
-        # Logging print flag.
+        # Make the IO redirection when threaded silent.
         print_flag = 1
         if mode == 'thread':
             print_flag = 0
@@ -129,7 +136,9 @@ class Relax:
 
         # Threading mode.
         elif mode == 'thread':
-            self.generic.threading.execute()
+            # Run the interpreter with no introduction.
+            self.interpreter = Interpreter(self)
+            self.interpreter.run()
 
         # Test mode.
         elif mode == 'test':
@@ -217,10 +226,6 @@ class Relax:
 
         # Threaded mode.
         elif options.thread:
-            # Make sure a script is supplied.
-            if not self.script_file:
-                parser.error("in threaded mode, a script is required")
-
             # Exclusive modes.
             if options.test:
                 parser.error("the relax modes thread and test are mutually exclusive")

@@ -21,13 +21,20 @@
 ###############################################################################
 
 from Queue import Queue
+from Numeric import sum, zeros
+from exceptions import Exception
 from os import popen3
+from random import randint
 from re import search
+from string import ascii_letters
 import sys
-from threading import Thread
+from threading import Lock, Thread
 
 
-class Threading:
+# Class for setting up threading.
+#################################
+
+class ThreadSetup:
     def __init__(self, relax):
         """Class containing the function to calculate the XH vector from the loaded structure."""
 
@@ -117,63 +124,258 @@ class Threading:
             for j in xrange(num_cpus):
                 self.host_data.append([host_name, user, login, login_cmd, prog_path, swd, priority])
 
-        # Total number of hosts in hosts file.
-        num_jobs = len(self.host_data)
+        # Threaded threading setup (for faster ssh responses).
+        RelaxHostParentThread(self.relax, self.host_data)
+
+        # Final print out.
+        print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_name)`
 
 
-        # Threading.
-        ############
+
+
+# The parent class containing the main threading loop.
+#######################################################
+
+class RelaxParentThread:
+    def __init__(self):
+        """Parent class containing the main threading loop."""
+
+        # The number of threads.
+        self.num_threads = len(self.relax.data.thread.host_name)
+
+
+    def run(self, tag=1, save_state=1):
+        """Run the main threading loop."""
+
+        # Generate a random string tag to add to all thread files.
+        if tag:
+            print "Generating a random tag:"
+            self.tag = ''
+            for i in xrange(5):
+                index = randint(0, len(ascii_letters)-1)
+                self.tag = self.tag + ascii_letters[index]
+            print "    %s\n" % self.tag
+            print "All files will be placed in the directory '%s' within the thread's working directory.\n" % self.tag
+
+        # Save the program state.
+        if save_state:
+            self.save_state_file = 'save_%s.gz' % self.tag
+            print "Saving the program state to send to the threads."
+            self.relax.generic.state.save(file=self.save_state_file, force=1, compress_type=2)
 
         # Initialise the job and results queues.
-        host_queue = Queue()
-        results_queue = Queue()
+        self.job_queue = Queue()
+        self.results_queue = Queue()
 
-        # Fill the job queue.
-        for i in xrange(num_jobs):
-            host_queue.put((self.host_data[i], i))
+        # Fill the job queue with the job indecies.
+        for i in xrange(self.num_jobs):
+            self.job_queue.put(i)
 
-        # Start threads for each host where each thread will run on the local machine.
-        for i in xrange(num_jobs):
-            RelaxHostThread(self.relax, host_queue, results_queue).start()
+        # Initialise an array of finished jobs.
+        self.finished_jobs = zeros(self.num_jobs)
+
+        # Initialise an array of locks for the jobs.
+        self.job_locks = []
+        for i in xrange(self.num_threads):
+            self.job_locks.append(Lock())
+
+        # Start all threads.
+        print "\nStarting all threads.\n"
+        self.threads = []
+        for i in xrange(self.num_threads):
+            self.threads.append(self.thread_object(i))
+            self.threads[i].start()
 
         # The main loop.
         terminated = 0
-        num_fin = 0
         while not terminated:
             # Get the next results off the results_queue.
-            results, job_index, fail = results_queue.get()
-            num_fin = num_fin + 1
+            job_number = self.results_queue.get()
 
-            # Print the results.
-            print "\n\nThread " + `job_index` + "\n"
-            for line in results:
-                print line
+            # The thread has caused a RelaxError.
+            if job_number == RelaxError:
+                self.thread_clean_up()
+                sys.exit()
 
-            # Add all good hosts to self.relax.data.thread
-            if not fail:
-                # Status.
-                if not self.relax.data.thread.status:
-                    self.relax.data.thread.status = 1
+            # The thread has caused an Exception.
+            if job_number == Exception:
+                self.thread_clean_up()
+                sys.exit()
 
-                # Store the details.
-                self.relax.data.thread.host_name.append(self.host_data[job_index][0])
-                self.relax.data.thread.user.append(self.host_data[job_index][1])
-                self.relax.data.thread.login.append(self.host_data[job_index][2])
-                self.relax.data.thread.login_cmd.append(self.host_data[job_index][3])
-                self.relax.data.thread.prog_path.append(self.host_data[job_index][4])
-                self.relax.data.thread.swd.append(self.host_data[job_index][5])
-                self.relax.data.thread.priority.append(self.host_data[job_index][6])
+            # Keyboard interrupt caught by the thread.
+            if job_number == KeyboardInterrupt:
+                self.thread_clean_up()
+                raise KeyboardInterrupt
+
+            # Update the finished jobs.
+            self.finished_jobs[job_number] = 1
 
             # All jobs have finished.
-            if num_fin == num_jobs:
-                # Add None to the host_queue to signal the threads to finish.
-                host_queue.put(None)
+            if sum(self.finished_jobs) == self.num_jobs:
+                # Add None to the job_queue to signal the threads to finish.
+                self.job_queue.put(None)
 
                 # Set the terminate flag to 1 to stop this main loop.
                 terminated = 1
 
-        # Final print out.
-        print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_name)`
+
+    def thread_clean_up(self):
+        """Function for cleaning up the threads."""
+
+        # Kill all threads.
+        for thread in self.threads:
+            thread.stop(killed=1)
+
+        # Delete the saved state file.
+        if hasattr(self, 'save_state_file'):
+            self.relax.IO.delete(file_name=self.save_state_file)
+
+
+
+# The relax threading base class.
+#################################
+
+class RelaxThread(Thread):
+    def __init__(self, i, job_queue, results_queue, finished_jobs, job_locks):
+        """The base class of all threads in relax."""
+
+        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
+        Thread.__init__(self)
+
+        # Arguements.
+        self.job_queue = job_queue
+        self.results_queue = results_queue
+        self.finished_jobs = finished_jobs
+        self.job_locks = job_locks
+
+        # Specific thread details.
+        self.host_name = self.relax.data.thread.host_name[i]
+        self.user      = self.relax.data.thread.user[i]
+        self.login     = self.relax.data.thread.login[i]
+        self.login_cmd = self.relax.data.thread.login_cmd[i]
+        self.prog_path = self.relax.data.thread.prog_path[i]
+        self.swd       = self.relax.data.thread.swd[i]
+        self.priority  = self.relax.data.thread.priority[i]
+
+        # Initial killed flag.
+        self.killed = 0
+
+        # Set the Thread method _Thread__stop to self.stop.
+        self._Thread__stop = self.stop
+
+        # Make the directory with the name of tag in the thread's working directory if it doesn't exist.
+        if not self.test_dir():
+            self.mkdir()
+
+        # Save state file.
+        self.save_state_file = "%s/%s/save.gz" % (self.swd, self.tag)
+
+        # Copy the temporary results file to the thread's working directory once during initialisation.
+        if not self.test_save_file():
+            self.copy_save_file()
+
+
+    def close_all_pipes(self):
+        """Function for closing all the stdin, stdout, and stderr pipes."""
+
+        self.stdin.close()
+        self.stdout.close()
+        self.stderr.close()
+
+
+    def copy_save_file(self):
+        """Function for the once off copying of the temporary results file to the thread's wd."""
+
+        # Copy command.
+        if self.host_name == 'localhost':
+            cmd = "cp -p save_%s.gz %s/%s/save.gz" % (self.tag, self.swd, self.tag)
+        else:
+            cmd = "scp -p save_%s.gz %s:%s/%s/save.gz" % (self.tag, self.login, self.swd, self.tag)
+        err = self.open_pipe(cmd=cmd, remote_exe=0, catch_err=1)
+
+        # The file could not be copied.
+        if len(err):
+            raise RelaxError, "The copy command `%s` could not be executed." % cmd
+
+
+    def exec_relax(self):
+        """Function for running an instance of relax in threading mode on the host machine."""
+
+        # Command.
+        cmd = "nice -n %s %s --thread --log %s %s" % (self.priority, self.prog_path, self.log_file, self.script_file)
+        self.open_pipe(cmd=cmd, close=0)
+
+        # Catch the results.
+        self.results = self.stdout.readlines()
+
+        # Close all pipes.
+        self.stdin.close()
+        self.stdout.close()
+
+        # Errors.
+        err = self.stderr.readlines()
+        if len(err):
+            for line in err:
+                print line[0:-1]
+
+        # Close the error pipe.
+        self.stderr.close()
+
+
+    def job_completed(self):
+        """Function for determining if a job has completed successfully."""
+
+        # The job has been finished by a faster thread.
+        if self.finished_jobs[self.sim] == 1:
+            return 0
+
+        # Success.
+        return self.completion_flag
+
+
+    def mkdir(self):
+        """Function for creating the directory 'self.tag' in the working directory."""
+
+        # Command for creating the directory.
+        cmd = "mkdir %s/%s" % (self.swd, self.tag)
+        err = self.open_pipe(cmd=cmd, catch_err=1)
+
+        # Cannot make the directory.
+        if len(err):
+            raise RelaxError, "The directory `%s/%s` could not be created on %s." % (self.swd, self.tag, self.host_name)
+
+
+    def open_pipe(self, cmd, catch_out=0, catch_err=0, remote_exe=1, close=1):
+        """Function for opening the stdin, stdout, and stderr pipes and placing them into 'self'."""
+
+        # Initialise text.
+        text = None
+
+        # Disallow racing.
+        if catch_out and catch_err:
+            raise RelaxError, "Cannot catch both stdout and stderr simultaneously, this causes racing."
+
+        # Modify the command for remote execution if necessary.
+        if remote_exe:
+            cmd = self.remote_command(cmd=cmd, login_cmd=self.login_cmd)
+
+        # Open the pipes.
+        self.stdin, self.stdout, self.stderr = popen3(cmd, 'r')
+
+        # Read the output.
+        if catch_out:
+            text = self.stdout.readlines()
+
+        # Read the errors.
+        if catch_err:
+            text = self.stderr.readlines()
+
+        # Close all pipes.
+        if close:
+            self.close_all_pipes()
+
+        # Return the caught text.
+        return text
 
 
     def remote_command(self, cmd, login_cmd):
@@ -187,35 +389,17 @@ class Threading:
         return cmd
 
 
-
-class RelaxThread(Thread):
-    def __init__(self, job_queue, results_queue):
-
-        # Arguements.
-        self.job_queue = job_queue
-        self.results_queue = results_queue
-
-        # Initial killed flag.
-        self.killed = 0
-
-        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
-        Thread.__init__(self)
-
-        # Set the Thread method _Thread__stop to self.stop.
-        self._Thread__stop = self.stop
-
-
     def run(self):
-        """Function for execution of the specific threading code."""
+        """Main function for execution of the specific threading code."""
 
         # Run until all results are returned.
         try:
             while 1:
-                # Get the data for the next queued job.
-                data = self.job_queue.get()
+                # Get the job number for the next queued job.
+                self.job_number = self.job_queue.get()
 
-                # Quit if the queue data is None.  None is the signal within relax for when all jobs have been completed.
-                if data == None:
+                # Quit if the job number is None, this is the signal for when all jobs have been completed.
+                if self.job_number == None:
                     # Place None back into the job queue so that all the other waiting threads will terminate.
                     self.job_queue.put(None)
 
@@ -223,12 +407,12 @@ class RelaxThread(Thread):
                     break
 
                 # Run the thread specific code.
-                self.exec_thread_code(data)
+                self.exec_thread_code(self.job_number)
 
                 # If the job has completed successfully, place the results in the results queue.
                 if self.job_completed():
-                    # Place the results in the results queue.
-                    self.results_queue.put(self.results)
+                    # Place the job number into the results queue.
+                    self.results_queue.put(self.job_number)
 
         # RelaxError.
         except RelaxError, message:
@@ -260,32 +444,97 @@ class RelaxThread(Thread):
         self._Thread__block.release()
 
 
-    def job_completed(self):
-        """Dummy job completion testing function, always return 1."""
 
-        return 1
+    def test_dir(self):
+        """Function for testing if the directory corresponding to tag exists."""
+
+        # Command for testing if directory exists.
+        cmd = "ls %s/%s" % (self.swd, self.tag)
+        err = self.open_pipe(cmd=cmd, catch_err=1)
+
+        # No directory.
+        if len(err):
+            return 0
+
+        # Directory exists.
+        else:
+            return 1
 
 
-class RelaxHostThread(RelaxThread):
-    def __init__(self, relax, hosts_queue, results_queue):
-        """Initialisation of the thread."""
+    def test_save_file(self):
+        """Function for testing if results file is already copied."""
+
+        # Command for testing if results file is already copied.
+        cmd = "ls %s" % self.save_state_file
+        err = self.open_pipe(cmd=cmd, catch_err=1)
+
+        # No file.
+        if len(err):
+            return 0
+
+        # File exists.
+        else:
+            return 1
+
+
+
+
+# Main threading loop for setting up threading.
+###############################################
+
+class RelaxHostParentThread(RelaxParentThread):
+    def __init__(self, relax, host_data):
+        """Threaded threading setup (for faster ssh responses)."""
 
         # Arguments.
         self.relax = relax
+        self.host_data = host_data
 
-        # Run the RelaxThread __init__ function (this is 'asserted' by the Thread class).
-        RelaxThread.__init__(self, hosts_queue, results_queue)
+        # Number of threads and number of jobs.
+        self.num_threads = self.num_jobs = len(self.host_data)
+
+        # Run the main loop.
+        self.run(tag=0, save_state=0)
+
+
+    def thread_object(self, i):
+        """Function for returning an initialised thread object."""
+
+        # Return the thread object.
+        return RelaxHostThread(self.relax, self.job_queue, self.results_queue, self.finished_jobs, self.job_locks, self.host_data[i])
+
+
+
+# Threads for setting up threading.
+###################################
+
+class RelaxHostThread(RelaxThread):
+    def __init__(self, relax, job_queue, results_queue, finished_jobs, job_locks, host_data):
+        """Initialisation of the thread."""
+
+        # Run the Thread __init__ function (this is 'asserted' by the Thread class).
+        Thread.__init__(self)
+
+        # Arguements.
+        self.relax = relax
+        self.job_queue = job_queue
+        self.results_queue = results_queue
+        self.finished_jobs = finished_jobs
+        self.job_locks = job_locks
+        self.host_data = host_data
+
+        # Initial killed flag.
+        self.killed = 0
+
+        # Set the Thread method _Thread__stop to self.stop.
+        self._Thread__stop = self.stop
 
 
     def exec_thread_code(self, data):
-        """Function containing the thread specific code.
-        
-        This code is for the testing of the hosts used in threading.
-        """
+        """Function for testing the hosts used in threading."""
 
         # Expand the data structures.
-        host_data, job_index = data
-        self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = host_data
+        self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = self.host_data
 
         # Host failure flag.
         fail = 0
@@ -314,30 +563,41 @@ class RelaxHostThread(RelaxThread):
         if not fail:
             self.text.append("%-20s%-10s" % ("Host status:", "[ OK ]"))
 
-        # Package the results.
-        self.results = (self.text, job_index, fail)
+        # Print the results.
+        print "\n\nThread " + `self.job_number` + "\n"
+        for line in self.text:
+            print line
+
+        # Add all good hosts to self.relax.data.thread
+        if not fail:
+            # Status.
+            if not self.relax.data.thread.status:
+                self.relax.data.thread.status = 1
+
+            # Store the details.
+            self.relax.data.thread.host_name.append(self.host_name)
+            self.relax.data.thread.user.append(self.user)
+            self.relax.data.thread.login.append(self.login)
+            self.relax.data.thread.login_cmd.append(self.login_cmd)
+            self.relax.data.thread.prog_path.append(self.prog_path)
+            self.relax.data.thread.swd.append(self.swd)
+            self.relax.data.thread.priority.append(self.priority)
+
+
+    def job_completed(self):
+        """Dummy job completion testing function, always return 1."""
+
+        return 1
 
 
     def test_relax(self):
         """Function for testing if the program path is valid and that relax can execute."""
 
         # Test command.
-        test_cmd = "%s --test" % self.prog_path
-        if self.login_cmd:
-            test_cmd = self.login_cmd + test_cmd
+        cmd = "%s --test" % self.prog_path
+        err = self.open_pipe(cmd=cmd, catch_err=1)
 
-        # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
-
-        # Stdout and stderr.
-        err = child_stderr.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-        child_stderr.close()
-
-        # Error. 
+        # Error.
         if len(err):
             # Print out.
             self.text.append("Cannot execute relax on %s using the program path %s" % (self.login, `self.prog_path`))
@@ -353,41 +613,35 @@ class RelaxHostThread(RelaxThread):
 
 
     def test_ssh(self):
-        """Function for testing the SSH connection."""
+        """Function for testing the SSH connection and public key authentication."""
+
+        # Initialise flag.
+        ssh_ok = 0
 
         # Test command.
-        test_cmd = "ssh -o PasswordAuthentication=no %s echo 'relax, ssh ok'" % self.login
+        cmd = "ssh -o PasswordAuthentication=no %s echo 'relax> ssh ok'" % self.login
+        self.open_pipe(cmd=cmd, remote_exe=0, close=0)
 
-        # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
-
-        # Stdout and stderr.
-        out = child_stdout.readlines()
-        err = child_stderr.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-        child_stderr.close()
-
-        # Test if the string 'relax, ssh ok' is in child_stdout.
+        # Test if the string 'relax, ssh ok' is in self.stdout.
+        out = self.stdout.readlines()
         for line in out:
-            if search('relax, ssh ok', line):
-                return 1
+            if search('relax> ssh ok', line):
+                ssh_ok = 1
+        self.stdout.close()
 
-        # Error.
+        # Read the errors.
+        err = self.stderr.readlines()
         if len(err):
-            # Print out.
+            # SSH failure message.
             self.text.append("Cannot establish a SSH connection to %s." % self.login)
 
-            # Public key auth fail.
+            # Public key authentication has failed.
             key_auth = 1
             for line in err:
                 if search('Permission denied', line):
                     key_auth = 0
             if not key_auth:
                 self.text.append("Public key authenication failed.")
-                return
 
             # All other errors.
             for line in err:
@@ -398,21 +652,10 @@ class RelaxHostThread(RelaxThread):
         """Function for testing if the working directory on the host machine exist."""
 
         # Test command.
-        test_cmd = "if test -d %s; then echo 'OK'; fi" % self.swd
-        test_cmd = self.relax.generic.threading.remote_command(cmd=test_cmd, login_cmd=self.login_cmd)
+        cmd = "if test -d %s; then echo 'OK'; fi" % self.swd
+        out = self.open_pipe(cmd=cmd, catch_out=1)
 
-        # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
-
-        # Stdout.
-        out = child_stdout.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-        child_stderr.close()
-
-        # Directory exists. 
+        # Directory exists.
         for line in out:
             if search('OK', line):
                 return 1

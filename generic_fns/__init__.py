@@ -41,6 +41,5 @@ __all__ = [ 'angles',
             'selection',
             'sequence',
             'state',
-            'thread',
             'value',
             'vmd' ]

@@ -22,14 +22,9 @@
 
 
 from Queue import Queue
-from Numeric import sum, zeros
-from exceptions import Exception
-from os import popen3, popen4
-from random import randint
-from string import ascii_letters
-import sys
-from time import sleep
-from generic_fns.thread import RelaxThread
+from os import popen3
+
+from thread_classes import RelaxParentThread, RelaxThread
 
 
 class Minimise:
@@ -112,7 +107,11 @@ class Minimise:
         elif hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
             # Threaded minimisation of simulations.
             if self.relax.data.thread.status:
-                self.minimise_sim_thread(run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag)
+                # Print out.
+                print "Threaded minimisation of Monte Carlo simulations.\n"
+
+                # Run the main threading loop.
+                RelaxMinParentThread(self.relax, run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag)
 
             # Non-threaded minimisation of simulations.
             else:
@@ -126,185 +125,56 @@ class Minimise:
             minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
 
 
-    def minimise_sim_thread(self, run, *min_args):
-        """Function for the minimisation of Monte Carlo simulations using threading."""
-
-        # Print out.
-        print "Threaded minimisation of Monte Carlo simulations.\n"
-
-        # Generate a random string tag to add to all thread files.
-        print "Generating a random tag:"
-        tag = ''
-        for i in xrange(5):
-            index = randint(0, len(ascii_letters)-1)
-            tag = tag + ascii_letters[index]
-        print "    %s\n" % tag
-        print "All files will be placed in the directory '%s' within the thread's working directory.\n" % tag
-
-        # Generate a temporary results file.
-        self.temp_file = 'save_%s.gz' % tag
-        print "Saving the program state to send to the threads."
-        self.relax.generic.state.save(file=self.temp_file, force=1, compress_type=2)
-
-        # Initialise the job and results queues.
-        job_queue = Queue()
-        results_queue = Queue()
-
-        # Fill the job queue.
-        for i in xrange(self.relax.data.sim_number[run]):
-            job_queue.put(i)
-
-        # Initialise an array of finished jobs.
-        self.finished_jobs = zeros(self.relax.data.sim_number[run])
-
-        # Start all threads.
-        print "\nStarting all threads.\n"
-        self.threads = []
-        for i in xrange(len(self.relax.data.thread.host_name)):
-            self.threads.append(RelaxMinimiseThread(self.relax, i, job_queue, results_queue, tag, run, min_args, self.finished_jobs))
-            self.threads[i].start()
-
-        # The main loop.
-        terminated = 0
-        try:
-            while not terminated:
-                # Get the next results off the results_queue.
-                sim_number = results_queue.get()
-
-                # Update the finished jobs.
-                self.finished_jobs[sim_number] = 1
-
-                # A thread has caused a RelaxError.
-                if sim_number == RelaxError:
-                    raise RelaxError
-
-                # A thread has caused an Exception.
-                if sim_number == Exception:
-                    raise RelaxError
-
-                # Keyboard interrupt caught by the thread.
-                if sim_number == KeyboardInterrupt:
-                    raise KeyboardInterrupt
-
-                # All jobs have finished.
-                if sum(self.finished_jobs) == self.relax.data.sim_number[run]:
-                    # Add None to the job_queue to signal the threads to finish.
-                    job_queue.put(None)
-
-                    # Set the terminate flag to 1 to stop this main loop.
-                    terminated = 1
-
-                # Print the simulation number.
-                print "Simulation " + `sim_number`
-
-        # Catch RelaxErrors and Exceptions.
-        except RelaxError:
-            self.thread_clean_up()
-            sys.exit()
-
-        # Catch the Keyboard Interrupt.
-        except KeyboardInterrupt:
-            self.thread_clean_up()
-            raise KeyboardInterrupt
-
-        # All other errors.
-        except:
-            self.thread_clean_up()
-            sys.exit()
 
 
-    def thread_clean_up(self):
-        """Function for cleaning up the threads."""
+# Main threading loop for the minimisation of Monte Carlo simulations. 
+######################################################################
 
-        # Kill all threads.
-        for thread in self.threads:
-            thread.stop(killed=1)
+class RelaxMinParentThread(RelaxParentThread):
+    def __init__(self, relax, parent_run, *min_args):
+        """Initialisation of the Monte Carlo simulation minimisation parent thread."""
 
-        # Delete the temporary results file.
-        self.relax.IO.delete(file_name=self.temp_file)
+        # Arguments.
+        self.relax = relax
+        self.parent_run = parent_run
+        self.min_args = min_args
+
+        # Run the RelaxParentThread __init__ function.
+        RelaxParentThread.__init__(self)
+
+        # The number of jobs.
+        self.num_jobs = self.relax.data.sim_number[self.parent_run]
+
+        # Run the main loop.
+        self.run()
 
 
+    def thread_object(self, i):
+        """Function for returning an initialised thread object."""
+
+        # Return the thread object.
+        return RelaxMinimiseThread(self.relax, i, self.job_queue, self.results_queue, self.finished_jobs, self.job_locks, self.tag, self.parent_run, self.min_args)
+
+
+
+# Threads for the minimisation of Monte Carlo simulations.
+##########################################################
 
 class RelaxMinimiseThread(RelaxThread):
-    def __init__(self, relax, i, job_queue, results_queue, tag, parent_run, min_args, finished_jobs):
+    def __init__(self, relax, i, job_queue, results_queue, finished_jobs, job_locks, tag, parent_run, min_args):
         """Initialisation of the thread."""
 
         # Arguments.
         self.relax = relax
-        self.i = i
         self.tag = tag
         self.parent_run = parent_run
         self.min_args = min_args
-        self.finished_jobs = finished_jobs
 
         # Run the RelaxThread __init__ function (this is 'asserted' by the Thread class).
-        RelaxThread.__init__(self, job_queue, results_queue)
+        RelaxThread.__init__(self, i, job_queue, results_queue, finished_jobs, job_locks)
 
         # Expand the minimisation arguments.
         self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag = self.min_args
-
-        # Make the directory with the name of tag in the thread's working directory if it doesn't exist.
-        if not self.test_dir():
-            self.mkdir()
-
-        # Results file.
-        self.results_file = "%s/%s/save.gz" % (self.relax.data.thread.swd[self.i], self.tag)
-
-        # Copy the temporary results file to the thread's working directory once during initialisation.
-        if not self.test_results_file():
-            self.copy_results()
-
-
-    def copy_results(self):
-        """Function for the once off copying of the temporary results file to the thread's wd."""
-
-        # Copy command.
-        if self.relax.data.thread.host_name[self.i] == 'localhost':
-            cmd = "cp -p save_%s.gz %s/%s/save.gz" % (self.tag, self.relax.data.thread.swd[self.i], self.tag)
-        else:
-            cmd = "scp -p save_%s.gz %s:%s/%s/save.gz" % (self.tag, self.relax.data.thread.login[self.i], self.relax.data.thread.swd[self.i], self.tag)
-
-        # Open a pipe for the copy.
-        child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
-
-        # Stderr.
-        err = child_stderr.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-        child_stderr.close()
-
-        # The file could not be copied.
-        if len(err):
-            raise RelaxError, "The copy command `%s` could not be executed." % cmd
-
-
-    def exec_relax(self):
-        """Function for running an instance of relax in threading mode on the host machine."""
-
-        # Command.
-        cmd = "nice -n %s %s --thread --log %s %s" % (self.relax.data.thread.priority[self.i], self.relax.data.thread.prog_path[self.i], self.log_file, self.script_file)
-        cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
-
-        # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
-
-        # Catch the results.
-        self.results = child_stdout.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-
-        # Errors.
-        err = child_stderr.readlines()
-        if len(err):
-            for line in err:
-                print line[0:-1]
-
-        # Close the error pipe.
-        child_stderr.close()
 
 
     def exec_thread_code(self, data):
@@ -330,8 +200,8 @@ class RelaxMinimiseThread(RelaxThread):
         self.thread_run = '%s_sim_%s' % (self.tag, self.sim)
 
         # Script and log files.
-        self.script_file = "%s/%s/script_sim_%s.py" % (self.relax.data.thread.swd[self.i], self.tag, self.sim)
-        self.log_file = "%s/%s/sim_%s.log" % (self.relax.data.thread.swd[self.i], self.tag, self.sim)
+        self.script_file = "%s/%s/script_sim_%s.py" % (self.swd, self.tag, self.sim)
+        self.log_file = "%s/%s/sim_%s.log" % (self.swd, self.tag, self.sim)
 
         # Generate the script file for the minimisation of sim number 'sim'.
         self.generate_script()
@@ -388,110 +258,22 @@ class RelaxMinimiseThread(RelaxThread):
 
         # Cat the text into the script file.
         cmd = "cat > %s" % self.script_file
-        cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
+        cmd = self.remote_command(cmd=cmd, login_cmd=self.login_cmd)
 
         # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
+        self.stdin, self.stdout, self.stderr = popen3(cmd, 'r')
 
         # Write the text to the pipe's stdin, then close it.
-        child_stdin.write(text)
-        child_stdin.close()
+        self.stdin.write(text)
+        self.stdin.close()
 
         # Stderr.
-        err = child_stderr.readlines()
+        err = self.stderr.readlines()
 
         # Close all pipes.
-        child_stdout.close()
-        child_stderr.close()
+        self.stdout.close()
+        self.stderr.close()
 
         # The file could not be copied.
         if len(err):
             raise RelaxError, "The command `%s` could not be executed." % cmd
-
-
-    def mkdir(self):
-        """Function for creating the directory 'tag' in the working directory."""
-
-        # Command for creating the directory.
-        cmd = "mkdir %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
-        cmd = self.relax.generic.threading.remote_command(cmd=cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
-
-        # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
-
-        # Stderr.
-        err = child_stderr.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-        child_stderr.close()
-
-        # Cannot make the directory.
-        if len(err):
-            raise RelaxError, "The directory `%s/%s` could not be created on %s." % (self.relax.data.thread.swd[self.i], self.tag, self.relax.data.thread.host_name[self.i])
-
-
-    def job_completed(self):
-        """Function for determining if a job has completed successfully."""
-
-        # The job has been finished by a faster thread.
-        if self.finished_jobs[self.sim] == 1:
-            return 0
-
-        # Success.
-        return self.completion_flag
-
-
-    def test_dir(self):
-        """Function for testing if the directory corresponding to tag exists."""
-
-        # Command for testing if directory exists.
-        test_cmd = "ls %s/%s" % (self.relax.data.thread.swd[self.i], self.tag)
-        test_cmd = self.relax.generic.threading.remote_command(cmd=test_cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
-
-        # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
-
-        # Stderr.
-        err = child_stderr.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-        child_stderr.close()
-
-        # No directory.
-        if len(err):
-            return 0
-
-        # Directory exists.
-        else:
-            return 1
-
-
-    def test_results_file(self):
-        """Function for testing if results file is already copied."""
-
-        # Command for testing if results file is already copied.
-        test_cmd = "ls %s" % self.results_file
-        test_cmd = self.relax.generic.threading.remote_command(cmd=test_cmd, login_cmd=self.relax.data.thread.login_cmd[self.i])
-
-        # Open a pipe.
-        child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
-
-        # Stderr.
-        err = child_stderr.readlines()
-
-        # Close all pipes.
-        child_stdin.close()
-        child_stdout.close()
-        child_stderr.close()
-
-        # No file.
-        if len(err):
-            return 0
-
-        # File exists.
-        else:
-            return 1
