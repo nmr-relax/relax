@@ -1,28 +1,79 @@
 import __builtin__
-from re import match
+from re import match, split
 
 
 class Tab_completion:
     def __init__(self, name_space={}, print_flag=0):
-        """Function for tab completion.
-
-        Some of this code is stolen from the python rlcompleter code and needs to be replaced.
-        """
+        """Function for tab completion."""
 
         self.name_space = name_space
         self.print_flag = print_flag
 
 
-    def finish(self, input, state):
-        """Return the next possible completion for 'text'"""
+    def class_attributes(self, temp_class):
+        list = dir(temp_class)
+        if hasattr(temp_class, '__bases__'):
+            for base in temp_class.__bases__:
+                list = list + self.class_attributes(base)
+        return list
+
+
+    def create_list(self):
+        """Function to create the dictionary of options for tab completion."""
+
+        self.list = self.name_space.keys()
+
+        self.options = []
+        for name in self.list:
+            if match(self.input, name) and name != "__builtins__":
+                self.options.append(name)
+
+
+    def create_sublist(self):
+        """Function to create the dictionary of options for tab completion."""
+
+        # Split the input.
+        list = split('\.', self.input)
+        if len(list) == 0:
+            return
+
+        # Construct the module and get the corresponding object.
+        module = list[0]
+        for i in range(1, len(list)-1):
+            module = module + '.' + list[i]
+        object = eval(module, self.name_space)
+
+        # Get the object attributes.
+        self.list = dir(object)
+
+        # If the object is a class, get all the class attributes as well.
+        if hasattr(object, '__class__'):
+            self.list.append('__class__')
+            self.list = self.list + self.class_attributes(object.__class__)
+
+        # Possible completions.
+        self.options = []
+        for name in self.list:
+            if match(list[-1], name) and name != "__builtins__":
+                self.options.append(module + '.' + name)
 
         if self.print_flag:
-            "\n"
+            print "List: " + `list`
+            print "Module: " + `module`
+            print "self.list: " + `self.list`
+            print "self.options: " + `self.options`
+
+
+    def finish(self, input, state):
+        """Return the next possible completion for 'input'"""
+
         self.input = input
         self.state = state
 
         # Create a list of all possible options.
         # Find a list of options by matching the input with self.list
+        if self.print_flag:
+            print "\nInput: " + `self.input`
         if not "." in self.input:
             if self.print_flag:
                 print "Creating list."
@@ -44,45 +95,3 @@ class Tab_completion:
             return self.options[self.state]
         else:
             return None
-
-
-    def create_sublist(self):
-        """Function to create the dictionary of options for tab completion."""
-
-        string = match(r"(\w+(\.\w+)*)\.(\w*)", self.input)
-        if not string:
-            return
-        module, text = string.group(1,3)
-        object = eval(module, self.name_space)
-        self.list = dir(object)
-        if hasattr(object, '__class__'):
-            self.list.append('__class__')
-            self.list = self.list + self.get_class_members(object.__class__)
-
-        self.options = []
-        for name in self.list:
-            if match(text, name) and name != "__builtins__":
-                self.options.append(module + '.' + name)
-
-        if self.print_flag:
-            print "self.list: " + `self.list`
-            print "self.options: " + `self.options`
-
-
-    def create_list(self):
-        """Function to create the dictionary of options for tab completion."""
-
-        self.list = self.name_space.keys()
-
-        self.options = []
-        for name in self.list:
-            if match(self.input, name) and name != "__builtins__":
-                self.options.append(name)
-
-
-    def get_class_members(self, temp_class):
-        list = dir(temp_class)
-        if hasattr(temp_class, '__bases__'):
-            for base in temp_class.__bases__:
-                list = list + self.get_class_members(base)
-        return list

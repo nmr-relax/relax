@@ -21,11 +21,35 @@
 ###############################################################################
 
 
-class Read:
+from generic_functions import Generic_functions
+
+
+class Skin:
     def __init__(self, relax):
-        """Class containing functions for reading data from a file."""
+        """The class accessible to the interpreter.
+
+        The purpose of this class is to hide the variables and functions found within the namespace
+        of the macro class, found below, except for those required for interactive use.  This is an
+        abstraction layer designed to avoid user confusion as none of the macro class data
+        structures are accessible.  For more flexibility use the macro class directly.
+        """
+
+        # Load the macro class into the namespace of this __init__ function.
+        x = Macro_class(relax)
+
+        # Place references to the interactive functions within the namespace of this skin class.
+        self.read = x.read
+        self.rx_data = x.rx_data
+        self.sequence = x.sequence
+
+
+class Macro_class(Generic_functions):
+    def __init__(self, relax):
+        """Class containing macros for loading data."""
 
         self.relax = relax
+        self.rx_data = self.relax.rx_data.macro_read
+        self.sequence = self.relax.sequence.macro_read
 
 
     def read(self, model=None, file=None, dir=None):

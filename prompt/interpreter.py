@@ -39,16 +39,15 @@ from grid import Grid
 from init_data import Init_data
 from map import Map
 from minimise import Minimise
-from read import Read
 from write import Write
 
 # Macro classes.
 import echo_data
 import format
-import load
 import model
 import model_selection
 import pdb
+import read
 import state
 import value
 
@@ -78,16 +77,15 @@ class Interpreter:
         self._Minimise = Minimise(relax)
         self._OpenDX = OpenDX(relax)
         self._system = system
-        self._Read = Read(relax)
         self._Write = Write(relax)
 
         # Place the classes into the interpreter class namespace.
         self._Echo_data = echo_data.Skin(relax)
         self._Format = format.Skin(relax)
-        self._Load = load.Skin(relax)
-        self._Pdb = pdb.Skin(relax)
         self._Model = model.Model(relax)
         self._Model_selection = model_selection.Skin(relax)
+        self._Pdb = pdb.Skin(relax)
+        self._Read = read.Skin(relax)
         self._State = state.Skin(relax)
         self._Value = value.Skin(relax)
 
@@ -117,13 +115,12 @@ class Interpreter:
         init_data = self._Init_data.init
         map = self._Map.map
         minimise = self._Minimise.minimise
-        read = self._Read.read
         write = self._Write.write
 
         # Place the classes in the local namespace.
         echo_data = self._Echo_data
         format = self._Format
-        load = self._Load
+        read = self._Read
         pdb = self._Pdb
         model = self._Model
         model_selection = self._Model_selection
@@ -142,6 +139,7 @@ class Interpreter:
 
         # Setup tab completion.
         readline.set_completer(Tab_completion(name_space=locals()).finish)
+        readline.set_completer_delims(' \t\n`~!@#$%^&*()-=+{}\\|;:\'",<>/?')
         readline.parse_and_bind("tab: complete")
 
         # Go to the prompt.
