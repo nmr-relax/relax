@@ -48,7 +48,6 @@ from interpreter import interpreter
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
-from usr_param import usr_param
 
 from model_selection.model_selection import model_selection
 
@@ -74,7 +73,7 @@ class relax:
 
         self.data = data()
         self.file_ops = file_ops(self)
-        self.model_selection = model_selection(self)
+        #self.model_selection = model_selection(self)
         self.model_free = model_free(self)
 
         # Command line arguments.
@@ -89,27 +88,13 @@ class relax:
         """Function for dealing with command line arguments"""
 
         # No arguments are given.
-        try:
-            self.argv[1]
-        except IndexError:
+        if len(self.argv) == 1:
             return
 
         # Help.
         if match('--help', self.argv[1]) or match('-h', self.argv[1]):
             self.print_help()
             sys.exit()
-
-        # Script file.
-        elif match('-s', self.argv[1]):
-            try:
-                self.argv[2]
-            except IndexError:
-                print "The name of the script file is not given."
-                sys.exit()
-            else:
-                print "This argument is yet to be coded."
-                print "use \"relax < file_name\" instead."
-                sys.exit()
 
         # Unknown argument.
         else:
@@ -120,9 +105,8 @@ class relax:
     def print_help(self):
         """Print the help message."""
 
-        print "\nUsage: relax [OPTION]"
+        print "\nUsage: relax [-h] [--help] [< script_file]"
         print "Options:"
-        print "   -s FILE      Specify the script file to use without an interface.\n"
         print "   --help       Display this help and exit.\n"
 
 

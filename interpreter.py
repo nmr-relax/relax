@@ -11,15 +11,17 @@ from tab_completion import tab_completion
 from macros.diffusion_tensor import diffusion_tensor
 from macros.gpl import gpl
 from macros.init_data import init_data
+from macros.map import map
+from macros.min import min
 
 # Macro classes.
 import macros.echo_data
 import macros.format
 import macros.load
+import macros.model
 import macros.min
-import macros.mf_model
+import macros.model_selection
 import macros.pdb
-import macros.modsel
 import macros.state
 import macros.value
 
@@ -34,6 +36,7 @@ class interpreter:
         # Place the macros into the namespace of the interpreter class.
         self._diffusion_tensor = diffusion_tensor(relax)
         self._init_data = init_data(relax)
+        self._min = min(relax)
 
 
     def run(self):
@@ -56,16 +59,18 @@ class interpreter:
 
         # Place the macro functions in the local namespace.
         diffusion_tensor = self._diffusion_tensor.set
+        fixed = self._min.fixed
+        grid_search = self._min.grid_search
         init_data = self._init_data.init
+        minimise = self._min.minimise
 
         # Place the macro classes in the local namespace.
         echo_data = macros.echo_data.skin(self.relax)
         format = macros.format.skin(self.relax)
         load = macros.load.skin(self.relax)
-        min = macros.min.skin(self.relax)
         pdb = macros.pdb.skin(self.relax)
-        mf_model = macros.mf_model.skin(self.relax)
-        modsel = macros.modsel.skin(self.relax)
+        model = macros.model.Model(self.relax)
+        model_selection = macros.model_selection.skin(self.relax)
         state = macros.state.skin(self.relax)
         value = macros.value.skin(self.relax)
 

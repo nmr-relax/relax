@@ -25,7 +25,7 @@ class skin:
         self.minimise = x.minimise
 
 
-class macro_class:
+class map:
     def __init__(self, relax):
         """Class containing functions specific to model-free analysis."""
 
