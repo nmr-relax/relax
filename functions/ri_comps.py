@@ -502,18 +502,22 @@ def r1_comps(data, i):
 	# Dipolar constant function value.
 	if data.r_index:
 		comp_dip_const_func(data, data.params[data.r_index])
-		data.dip_comps_func = data.dip_const_func
 
 	# CSA constant function value.
 	if data.csa_index:
 		comp_csa_const_func(data, data.params[data.csa_index])
-		data.csa_comps_func = data.csa_const_func[data.remap_table[i]]
+
+	# Dipolar constant components.
+	data.dip_comps_func[i] = data.dip_const_func
 
 	# Dipolar J(w) components
-	data.dip_jw_comps_func[0] = comp_r1_dip_jw(data.jw, data.remap_table[i])
+	data.dip_jw_comps_func[i] = comp_r1_dip_jw(data.jw, data.remap_table[i])
+
+	# CSA constant components.
+	data.csa_comps_func[i] = data.csa_const_func[data.remap_table[i]]
 
 	# CSA J(w) components.
-	data.csa_jw_comps_func[0] = comp_r1_csa_jw(data.jw, data.remap_table[i])
+	data.csa_jw_comps_func[i] = comp_r1_csa_jw(data.jw, data.remap_table[i])
 
 
 
@@ -792,19 +796,22 @@ def dr1_comps(data, i):
 	# Dipolar constant gradient value.
 	if data.r_index:
 		comp_dip_const_grad(data, data.params[data.r_index])
-		data.dip_comps_grad = data.dip_const_grad
 
 	# CSA constant gradient value.
 	if data.csa_index:
 		comp_csa_const_grad(data, data.params[data.csa_index])
-		data.csa_comps_grad = data.csa_const_grad[data.remap_table[i]]
+
+	# Dipolar constant components.
+	data.dip_comps_grad[i] = data.dip_const_grad
 
 	# Dipolar J(w) components
-	data.dip_jw_comps_grad[0] = comp_r1_dip_jw(data.djw, data.remap_table[i])
+	data.dip_jw_comps_grad[i] = comp_r1_dip_jw(data.djw, data.remap_table[i])
+
+	# CSA constant components.
+	data.csa_comps_grad[i] = data.csa_const_grad[data.remap_table[i]]
 
 	# CSA J(w) components.
-	data.csa_jw_comps_grad[0] = comp_r1_csa_jw(data.djw, data.remap_table[i])
-
+	data.csa_jw_comps_grad[i] = comp_r1_csa_jw(data.djw, data.remap_table[i])
 
 
 # The main functions for the calculation of the d2Ri components.
@@ -943,18 +950,22 @@ def d2r1_comps(data, i):
 	# Dipolar constant gradient value.
 	if data.r_index:
 		comp_dip_const_hess(data, data.params[data.r_index])
-		data.dip_comps_hess = data.dip_const_hess
 
 	# CSA constant gradient value.
 	if data.csa_index:
-		comp_csa_const_hess(data, data.params[data.csa_index])
-		data.csa_comps_hess = data.csa_const_hess[data.remap_table[i]]
+		comp_csa_const_hess(data)
+
+	# Dipolar constant components.
+	data.dip_comps_hess[i] = data.dip_const_hess
 
 	# Dipolar J(w) components
-	data.dip_jw_comps_hess[0] = comp_r1_dip_jw(data.d2jw, data.remap_table[i])
+	data.dip_jw_comps_hess[i] = comp_r1_dip_jw(data.d2jw, data.remap_table[i])
+
+	# CSA constant components.
+	data.csa_comps_hess[i] = data.csa_const_hess[data.remap_table[i]]
 
 	# CSA J(w) components.
-	data.csa_jw_comps_hess[0] = comp_r1_csa_jw(data.d2jw, data.remap_table[i])
+	data.csa_jw_comps_hess[i] = comp_r1_csa_jw(data.d2jw, data.remap_table[i])
 
 
 

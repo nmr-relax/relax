@@ -1,5 +1,3 @@
-from Numeric import Float64, zeros
-
 from data import data
 from ri_comps import r1_comps, dr1_comps, d2r1_comps
 from ri_prime import func_ri_prime
@@ -190,18 +188,12 @@ def calc_r1(data, i, frq_num):
 
 	"""
 
-	# Create and fill a temporary data class.
-	data.r1_data = data_class()
+	# Place data in the R1 data class.
 	data.r1_data.params = data.params
-	data.r1_data.jw = data.jw
-	data.r1_data.dip_comps_func = data.dip_const_func
-	data.r1_data.dip_jw_comps_func = zeros(1, Float64)
-	data.r1_data.csa_comps_func = data.csa_const_func[data.remap_table[i]]
-	data.r1_data.csa_jw_comps_func = zeros(1, Float64)
 	data.r1_data.remap_table = data.remap_table
-	data.r1_data.csa_index = data.csa_index
-	data.r1_data.r_index = data.r_index
-	data.r1_data.rex_index = data.rex_index
+	data.r1_data.jw = data.jw
+	data.r1_data.dip_const_func = data.dip_const_func
+	data.r1_data.csa_const_func = data.csa_const_func
 
 	# Calculate the r1 components.
 	r1_comps(data.r1_data, i)
@@ -209,7 +201,7 @@ def calc_r1(data, i, frq_num):
 	# Calculate the r1 value.
 	func_ri_prime(data.r1_data)
 
-	return data.r1_data.ri_prime[0]
+	return data.r1_data.ri_prime[i]
 
 
 def calc_dr1(data, i, frq_num):
@@ -233,23 +225,21 @@ def calc_dr1(data, i, frq_num):
 
 	"""
 
-	# Place data in the temporary data class.
+	# Place data in the R1 data class.
+	data.r1_data.params = data.params
+	data.r1_data.remap_table = data.remap_table
 	data.r1_data.djw = data.djw
-	data.r1_data.dip_comps_grad = data.dip_const_grad
-	data.r1_data.dip_jw_comps_grad = zeros((1, len(data.params)), Float64)
-	data.r1_data.csa_comps_grad = data.csa_const_grad[data.remap_table[i]]
-	data.r1_data.csa_jw_comps_grad = zeros((1, len(data.params)), Float64)
-	data.r1_data.rex_comps_grad = zeros(1, Float64)
-	data.r1_data.dri_prime = zeros((1, len(data.params)), Float64)
+	data.r1_data.dip_const_grad = data.dip_const_grad
+	data.r1_data.csa_const_grad = data.csa_const_grad
 
 	# Calculate the dr1 components.
 	dr1_comps(data.r1_data, i)
 
 	# Calculate the dr1 value.
 	for j in range(len(data.params)):
-		data.create_dri_prime[j](data.r1_data, j)
+		data.r1_data.create_dri_prime[j](data.r1_data, j)
 
-	return data.r1_data.dri_prime[0]
+	return data.r1_data.dri_prime[i]
 
 
 def calc_d2r1(data, i, frq_num):
@@ -257,14 +247,12 @@ def calc_d2r1(data, i, frq_num):
 
 	"""
 
-	# Place data in the temporary data class.
+	# Place data in the R1 data class.
+	data.r1_data.params = data.params
+	data.r1_data.remap_table = data.remap_table
 	data.r1_data.d2jw = data.d2jw
-	data.r1_data.dip_comps_hess = data.dip_const_hess
-	data.r1_data.dip_jw_comps_hess = zeros((1, len(data.params), len(data.params)), Float64)
-	data.r1_data.csa_comps_hess = data.csa_const_hess[data.remap_table[i]]
-	data.r1_data.csa_jw_comps_hess = zeros((1, len(data.params), len(data.params)), Float64)
-	data.r1_data.rex_comps_hess = zeros(1, Float64)
-	data.r1_data.d2ri_prime = zeros((1, len(data.params), len(data.params)), Float64)
+	data.r1_data.dip_const_hess = data.dip_const_hess
+	data.r1_data.csa_const_hess = data.csa_const_hess
 
 	# Calculate the dr1 components.
 	d2r1_comps(data.r1_data, i)
@@ -272,13 +260,13 @@ def calc_d2r1(data, i, frq_num):
 	# Calculate the dr1 value.
 	for j in range(len(data.params)):
 		for k in range(j + 1):
-			if data.create_d2ri_prime[j][k]:
-				data.create_d2ri_prime[j][k](data.r1_data, j, k)
+			if data.r1_data.create_d2ri_prime[j][k]:
+				data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
 				# Make the hessian symmetric.
 				if i != j:
-					data.d2ri_prime[:, k, j] = data.d2ri_prime[:, j, k]
+					data.r1_data.d2ri_prime[:, k, j] = data.r1_data.d2ri_prime[:, j, k]
 
-	return data.r1_data.d2ri_prime[0]
+	return data.r1_data.d2ri_prime[i]
 
 
 

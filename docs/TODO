@@ -7,7 +7,6 @@ change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
 # Model-free function.
 ######################
 
-Calculate the R1 value, gradient, and hessian corresponding to the NOE when no R1 data exists.
 Local tm as a parameter.
 Axially symmetric anisotropic formulae.
 Anisotropic formula.

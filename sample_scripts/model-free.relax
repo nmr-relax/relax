@@ -1,7 +1,7 @@
 # Script for model-free analysis.
 echo_on()
 load_sequence('noe.500.out')
-load_relax_data('R1', '600', 600.0 * 1e6, 'r1.600.out')
+#load_relax_data('R1', '600', 600.0 * 1e6, 'r1.600.out')
 load_relax_data('R2', '600', 600.0 * 1e6, 'r2.600.out')
 load_relax_data('NOE', '600', 600.0 * 1e6, 'noe.600.out')
 load_relax_data('R1', '500', 500.0 * 1e6, 'r1.500.out')
@@ -11,11 +11,11 @@ set_model_selection('AIC')
 value_setup('bond_length', 1.02 * 1e-10)
 value_setup('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-model = 'm5'
+model = 'm35'
 mf_model_select(model)
 #fixed(model)
 #fixed(model, [0.95, 2000*1e-12, 1e-24])
 #fixed(model, [1.02*1e-10, -160*1e-6, 0.388, 128*1e-12])
-grid_search(model, inc=11)
-minimise(model, 'newton', 'none', max_iterations=1000000, chi2_tol=1e-25)
+grid_search(model, inc=5)
+minimise(model, 'newton', max_iterations=1000000, chi2_tol=1e-25)
 state_save('save', 1)

@@ -75,9 +75,8 @@ class mf:
 		if not self.setup_equations():
 			print "The model-free equations could not be setup."
 
-		# Place a few function pointer arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
-		self.data.create_dri_prime = self.create_dri_prime
-		self.data.create_d2ri_prime = self.create_d2ri_prime
+		# Initialise the R1 data class used only if an NOE data set is collected but the R1 data of the same frequency has not.
+		self.init_r1_data()
 
 
 	def calc_frq_list(self):
@@ -348,6 +347,51 @@ class mf:
 		self.data.r1 = zeros((self.relax.data.num_ri), Float64)
 		self.data.dr1 = zeros((self.relax.data.num_ri, len(self.params)), Float64)
 		self.data.d2r1 = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
+
+
+	def init_r1_data(self):
+		"""Function for initialisation of the R1 data class.
+
+		This data class is only used if an NOE data set is collected but no R1 data set corresponding to the same frequency exists.
+		"""
+
+		self.data.r1_data = data()
+		self.data.r1_data.num_frq = self.data.num_frq
+		self.data.r1_data.dip_const_fixed = self.data.dip_const_fixed
+		self.data.r1_data.csa_const_fixed = self.data.csa_const_fixed
+
+		# Components of the transformed relaxation equations.
+		self.data.r1_data.dip_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.csa_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.dip_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.csa_jw_comps_func = zeros((self.relax.data.num_ri), Float64)
+
+		# Initialise the first partial derivative components of the transformed relaxation equations.
+		self.data.r1_data.dip_comps_grad = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.csa_comps_grad = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.rex_comps_grad = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.dip_jw_comps_grad = zeros((self.relax.data.num_ri, len(self.params)), Float64)
+		self.data.r1_data.csa_jw_comps_grad = zeros((self.relax.data.num_ri, len(self.params)), Float64)
+
+		# Initialise the first partial derivative components of the transformed relaxation equations.
+		self.data.r1_data.dip_comps_hess = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.csa_comps_hess = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.rex_comps_hess = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.dip_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
+		self.data.r1_data.csa_jw_comps_hess = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
+
+		# Initialise the transformed relaxation values, gradients, and hessians.
+		self.data.r1_data.ri_prime = zeros((self.relax.data.num_ri), Float64)
+		self.data.r1_data.dri_prime = zeros((self.relax.data.num_ri, len(self.params)), Float64)
+		self.data.r1_data.d2ri_prime = zeros((self.relax.data.num_ri, len(self.params), len(self.params)), Float64)
+
+		# Place a few function pointer arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
+		self.data.r1_data.create_dri_prime = self.create_dri_prime
+		self.data.r1_data.create_d2ri_prime = self.create_d2ri_prime
+
+		self.data.r1_data.csa_index = self.data.csa_index
+		self.data.r1_data.r_index = self.data.r_index
+		self.data.r1_data.rex_index = self.data.rex_index
 
 
 	def lm_dri(self):

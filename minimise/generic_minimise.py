@@ -124,4 +124,5 @@ class generic_minimise:
 		"Test for the local minimum."
 
 		if abs(self.fk_last - self.fk) <= self.func_tol:
+			self.warning = "Function tol reached."
 			return 1
