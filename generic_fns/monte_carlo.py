@@ -29,16 +29,36 @@ class Monte_carlo:
 
 
     def create_data(self, run=None, method=None):
-        """Function for creating simulation data."""
+        """Function for creating simulation data.
+
+        It is assumed that all data types are residue specific.
+        """
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
         # Test the method argument.
         valid_methods = ['back_calc', 'direct']
         if method not in valid_methods:
             raise RelaxError, "The method " + `method` + " is not valid."
+
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
+        # Specific Monte Carlo data creation, data return, and error return function setup.
+        create_mc_data = self.relax.specific_setup.setup('create_mc_data', function_type)
+        return_data = self.relax.specific_setup.setup('return_data', function_type)
+        return_error = self.relax.specific_setup.setup('return_error', function_type)
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[run])):
+            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            data = self.relax.data.res[run][i]
 
 
     def off(self, run=None):

@@ -343,6 +343,10 @@ class Model_free:
                     i = i + 1
 
 
+    def create_mc_data(self, run):
+        """"""
+
+
     def back_calc(self, run=None, index=None, ri_label=None, frq_label=None, frq=None):
         """Back-calculation of relaxation data from the model-free parameter values."""
 
