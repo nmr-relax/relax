@@ -1347,6 +1347,10 @@ class Model_free(Common_functions):
         # Arguments
         self.run = run
 
+        # Skip residues where there is no data or errors.
+        if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not hasattr(self.relax.data.res[self.run][i], 'relax_error'):
+            return
+
         # Test if the model-free model has been setup.
         for j in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
@@ -1378,6 +1382,10 @@ class Model_free(Common_functions):
 
         # Arguments
         self.run = run
+
+        # Skip residues where there is no data or errors.
+        if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not hasattr(self.relax.data.res[self.run][i], 'relax_error'):
+            return
 
         # Test if the model-free model has been setup.
         for j in xrange(len(self.relax.data.res[self.run])):

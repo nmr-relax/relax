@@ -58,6 +58,10 @@ class Eliminate:
                 names = param_names(self.run, i)
                 values = param_values(self.run, i)
 
+                # No data.
+                if names == None or values == None:
+                    continue
+
                 # Test that the names and values vectors are of equal length.
                 if len(names) != len(values):
                     raise RelaxError, "The names vector " + `names` + " is of a different length to the values vector " + `values` + "."

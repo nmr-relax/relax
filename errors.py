@@ -262,7 +262,7 @@ class RelaxErrors:
     # No sequence loaded.
     class RelaxNoSequenceError(BaseError):
         def __init__(self, run):
-            self.text = "The sequence data for the run " + `run` + " has not been loaded."
+            self.text = "The sequence data for the run " + `run` + " does not exist."
 
     # The sequence already exists.
     class RelaxSequenceError(BaseError):
