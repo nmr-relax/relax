@@ -1035,7 +1035,10 @@ class Model_free:
 
                     # S2s = S2/S2f
                     elif types[k] == 'S2':
-                        self.relax.data.res[i].s2s[run] = self.params[k] / self.params[j]
+                        if self.params[j] == 0.0:
+                            self.relax.data.res[i].s2s[run] = 1e99
+                        else:
+                            self.relax.data.res[i].s2s[run] = self.params[k] / self.params[j]
 
             # S2s.
             elif types[j] == 'S2s':

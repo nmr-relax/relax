@@ -4,7 +4,7 @@
 read.sequence('noe.500.out')
 
 # Set the run name (also the name of a preset model-free model).
-name = 'm4'
+name = 'm5'
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
