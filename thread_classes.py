@@ -25,6 +25,7 @@ from Numeric import sum, zeros
 from exceptions import Exception
 from random import randint
 from re import search
+from signal import SIGINT, getsignal, signal
 from string import ascii_letters
 import sys
 from threading import Lock, Thread
@@ -200,6 +201,9 @@ class RelaxParentThread:
         for i in xrange(self.num_jobs):
             self.job_locks.append(Lock())
 
+        # Singal handling for KeyboardInterrupt.
+        self.signal_setup()
+
         # Start all threads.
         print "\nStarting all threads.\n"
         self.threads = []
@@ -247,27 +251,49 @@ class RelaxParentThread:
                 # Break the main loop.
                 break
 
-        # Hang until all threads have terminated.
-        while 1:
-            # Thread clean up function.
-            self.thread_clean_up()
+        # Thread clean up function.
+        self.thread_clean_up()
 
-            # Count the number of terminated threads.
-            num_alive = 0
-            for i in xrange(self.num_threads):
-                num_alive = num_alive + self.threads[i].isAlive()
+        # Set the handler for KeyboardInterrupt back to the original signal.
+        signal(SIGINT, self.orig_signal)
 
-            # Break once all have terminated.
-            if num_alive == 0:
-                break
+
+    def signal_handler(self, sig_number, stack_frame):
+        """Function for handling KeyboardInterrupt."""
+
+        # Clean up the threads.
+        self.thread_clean_up()
+
+        # Set the handler for KeyboardInterrupt back to the original signal.
+        signal(SIGINT, self.orig_signal)
+
+        # Raise the keyboard interrupt exception
+        raise KeyboardInterrupt
+
+
+    def signal_setup(self):
+        """Singal handling for KeyboardInterrupt."""
+
+        # Store the original SIGINT signal
+        self.orig_signal = getsignal(SIGINT)
+
+        # Set the handler for the KeyboardInterrupt signal.
+        signal(SIGINT, self.signal_handler)
 
 
     def thread_clean_up(self):
         """Function for cleaning up the threads."""
 
+        # Print out.
+        print "Cleaning up threads."
+
+        # Place None onto the jobs queue.
+        self.job_queue.put(None)
+
         # Kill all threads.
-        for i in xrange(self.num_threads):
-            self.threads[i].stop()
+        for i in xrange(len(self.threads)):
+            self.threads[i].kill()
+            self.threads[i]._Thread__stop()
 
         # Delete the saved state file.
         if hasattr(self, 'save_state_file'):
@@ -300,9 +326,6 @@ class RelaxThread(Thread):
         self.swd       = self.relax.thread_data.swd[i]
         self.priority  = self.relax.thread_data.priority[i]
 
-        # Set the Thread method _Thread__stop to self.stop.
-        self._Thread__stop = self.stop
-
         # Minimal flag (run the maximal amount of code for a thread).
         self.minimal_flag = 0
 
@@ -321,9 +344,17 @@ class RelaxThread(Thread):
     def close_all_pipes(self):
         """Close all the stdin, stdout, and stderr pipes of the child (to flush the buffers)."""
 
-        self.child.tochild.close()
-        self.child.fromchild.close()
-        self.child.childerr.close()
+        # Close stdin.
+        if not self.child.tochild.closed:
+            self.child.tochild.close()
+
+        # Close stdout.
+        if not self.child.fromchild.closed:
+            self.child.fromchild.close()
+
+        # Close stderr.
+        if not self.child.childerr.closed:
+            self.child.childerr.close()
 
 
     def copy_save_file(self):
@@ -381,39 +412,6 @@ class RelaxThread(Thread):
             raise RelaxError, "The directory `%s/%s` could not be created on %s." % (self.swd, self.tag, self.host_name)
 
 
-    def start_child(self, cmd, catch_out=0, catch_err=0, remote_exe=1, close=1):
-        """Start the child process and place it in 'self.child'."""
-
-        # Initialise text.
-        text = None
-
-        # Disallow racing.
-        if catch_out and catch_err:
-            raise RelaxError, "Cannot catch both stdout and stderr simultaneously, this causes racing."
-
-        # Modify the command for remote execution if necessary.
-        if remote_exe:
-            cmd = self.remote_command(cmd=cmd, login_cmd=self.login_cmd)
-
-        # Open the pipes.
-        self.child = RelaxPopen3(cmd, capturestderr=1)
-
-        # Read the output.
-        if catch_out:
-            text = self.child.fromchild.readlines()
-
-        # Read the errors.
-        if catch_err:
-            text = self.child.childerr.readlines()
-
-        # Close all pipes.
-        if close:
-            self.close_all_pipes()
-
-        # Return the caught text.
-        return text
-
-
     def pre_locked_code(self):
         """Generic function for the pre-locked code."""
 
@@ -439,7 +437,8 @@ class RelaxThread(Thread):
         """Main function for execution of the specific threading code."""
 
         # Run until all results are returned.
-        try:
+        #try:
+        if 1:
             while 1:
                 # Get the job number for the next queued job.
                 self.job_number = self.job_queue.get()
@@ -489,22 +488,57 @@ class RelaxThread(Thread):
                 self.results_queue.put(self.job_number)
 
         # RelaxError.
-        except RelaxError, message:
-            sys.child.childerr.write(message)
-            self.results_queue.put(RelaxError)
+        #except RelaxError, message:
+        #    sys.child.childerr.write(message)
+        #    self.results_queue.put(RelaxError)
 
         # KeyboardInterupt.
-        except KeyboardInterrupt:
-            self.results_queue.put(KeyboardInterrupt)
+        #except KeyboardInterrupt:
+        #    self.results_queue.put(KeyboardInterrupt)
 
         # All other errors.
-        except:
-            self.results_queue.put(Exception)
-            raise
+        #except:
+        #    self.results_queue.put(Exception)
 
 
-    def stop(self):
-        """Modified stop function."""
+    def start_child(self, cmd, catch_out=0, catch_err=0, remote_exe=1, close=1):
+        """Start the child process and place it in 'self.child'."""
+
+        # Initialise text.
+        text = None
+
+        # Disallow racing.
+        if catch_out and catch_err:
+            raise RelaxError, "Cannot catch both stdout and stderr simultaneously, this causes racing."
+
+        # Modify the command for remote execution if necessary.
+        if remote_exe:
+            cmd = self.remote_command(cmd=cmd, login_cmd=self.login_cmd)
+
+        # Open the pipes.
+        self.child = RelaxPopen3(cmd, capturestderr=1)
+
+        # Read the output.
+        if catch_out:
+            text = self.child.fromchild.readlines()
+
+        # Read the errors.
+        if catch_err:
+            text = self.child.childerr.readlines()
+
+        # Close all pipes.
+        if close:
+            self.close_all_pipes()
+
+        # Return the caught text.
+        return text
+
+
+    def kill(self):
+        """Attempt to kill the thread."""
+
+        # Kill the child process.
+        self.child.kill(login_cmd=self.login_cmd)
 
         # Finish active jobs.
         if hasattr(self, 'job_number') and self.job_number != None:
@@ -514,16 +548,6 @@ class RelaxThread(Thread):
             # Release the job lock.
             if self.job_locks[self.job_number].locked():
                 self.job_locks[self.job_number].release()
-
-        # Kill the child process.
-        self.child.kill(login_cmd=self.login_cmd)
-
-        # From the Thread class.
-        self._Thread__block.acquire()
-        self._Thread__stopped = 1
-        self._Thread__block.notifyAll()
-        self._Thread__block.release()
-
 
 
     def test_dir(self):
@@ -603,9 +627,6 @@ class RelaxHostThread(RelaxThread):
         self.finished_jobs = finished_jobs
         self.job_locks = job_locks
         self.host_data = host_data
-
-        # Set the Thread method _Thread__stop to self.stop.
-        self._Thread__stop = self.stop
 
         # Minimal flag (run the minimal amount of code for a thread).
         self.minimal_flag = 1
