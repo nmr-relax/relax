@@ -1,0 +1,22 @@
+# Linux installation.
+#####################
+
+To install the program relax, first put the compressed archive in /usr/local/ and untar using the command:
+
+[/usr/local]$ tar zxvf relax.tar.gz
+
+Then either make a link in usr/local/bin to the file relax/relax using the command:
+
+[/usr/local/bin]$ ln -s /usr/local/relax/relax
+
+Or make an alias to the file by adding the following lines for the bash or csh/tcsh shells.
+
+Bash:
+	Global file:	/etc/bashrc
+	Local file:	~/.bashrc
+	Alias line:	alias relax="/usr/local/relax/relax"
+
+Csh / Tcsh:
+	Global file:	/etc/csh.cshrc
+	Local file:	~/.csh or ~/.tcsh
+	Alias line:	alias relax "/usr/local/relax/relax"
