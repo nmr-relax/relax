@@ -23,16 +23,12 @@
 
 from math import pi
 from re import match
-
-from diffusion import Diffusion
+from types import DictType, ListType
 
 
 class Data:
     def __init__(self):
         """Class containing all the program data."""
-
-        # Data classes.
-        self.diff = Diffusion()
 
         # Fundamental constants.
         self.h = 6.6260755e-34
@@ -40,8 +36,11 @@ class Data:
         self.h_bar = self.h / ( 2.0*pi )
         self.mu0 = 4.0 * pi * 1e-7
 
-        # The residue specific data
-        self.res = []
+        # Diffusion data.
+        self.diff = Diffusion()
+
+        # The residue specific data.
+        self.res = Residue()
 
         # The name of the runs.
         self.run_names = []
@@ -57,4 +56,113 @@ class Data:
             if match("^__", name):
                 continue
             text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
+        return text
+
+
+class Diffusion(DictType):
+    def __init__(self):
+        """Class containing all the diffusion tensor data."""
+
+
+    def __repr__(self):
+        text = "Diffusion tensor data:\n"
+        if len(self) == 0:
+            text = text + "  {}\n"
+        else:
+            i = 0
+            for key in self.keys():
+                if i == 0:
+                    text = text + "  { "
+                else:
+                    text = text + "  , "
+                text = text + "Diffusion tensor key " + `key` + ":\n"
+                for name in dir(self[key]):
+                    if match("^__", name):
+                        continue
+                    text = text + "    " + name + ", " + `type(getattr(self[key], name))` + "\n"
+                i = i + 1
+            text = text + "  }\n"
+
+        return text
+
+
+    def add_item(self, key):
+        """Function for adding an empty container to the dictionary."""
+
+        self[key] = DiffusionElement()
+
+
+class DiffusionElement:
+    def __init__(self):
+        """Empty data container for diffusion tensor data."""
+
+
+    def __repr__(self):
+        text = "Diffusion tensor data:\n"
+        for name in dir(self):
+            if match("^__", name):
+                continue
+            text = text + "    " + name + ", " + `type(getattr(self, name))` + "\n"
+        return text
+
+
+class Residue(DictType):
+    def __init__(self):
+        """Class containing all the residue specific data."""
+
+
+    def __repr__(self):
+        text = "Class containing all the residue specific data.\n\n"
+
+        # Empty.
+        if not len(self):
+            text = text + "The class contains no data.\n"
+
+        # Not empty.
+        else:
+            text = text + "The residue container contains the following keys:\n"
+            for key in self:
+                text = text + "    " + `key` + "\n"
+            text = text + "\nThese can be accessed by typing 'self.relax.data.res[key]'.\n"
+
+        return text
+
+
+    def add_list(self, key):
+        """Function for adding an empty container to the dictionary."""
+
+        self[key] = ResidueList()
+
+
+class ResidueList(ListType):
+    def __init__(self):
+        """Empty data container for residue specific data."""
+
+
+    def __repr__(self):
+        text = "Sequence data.\n\n"
+        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
+        for i in range(len(self)):
+            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
+        text = text + "\nThese can be accessed by typing 'self.relax.data.res[key][index]'.\n"
+        return text
+
+
+    def add_element(self):
+        """Function for appending an empty container to the list."""
+
+        self.append(ResidueElement())
+
+
+class ResidueElement:
+    def __init__(self):
+        """Empty data container."""
+
+
+    def __repr__(self):
+        text = "Residue specific data.\n\n"
+        for name in dir(self):
+            if match("^__", name):
+                continue
+            text = text + name + ":\n" + `getattr(self, name)` + "\n\n"
         return text
