@@ -22,7 +22,7 @@
 
 from copy import deepcopy
 from math import pi
-from Numeric import Float64, array, ones, zeros
+from Numeric import Float64, array, matrixmultiply, ones, transpose, zeros
 from re import match
 from string import replace
 import sys
@@ -85,42 +85,42 @@ class Model_free:
         return param_vector
 
 
-    def assemble_scaling_vector(self, run, data, index):
-        """Function for creating the scaling vector."""
+    def assemble_scaling_matrix(self, run, data, index):
+        """Function for creating the scaling matrix."""
 
         # Initialise.
-        scaling_vector = zeros(len(data.params[run]), Float64)
+        scaling_matrix = zeros((len(data.params[run]), len(data.params[run])), Float64)
 
         # Loop over the parameters.
         for i in range(len(data.params[run])):
             # tm.
             if data.params[run][i] == 'tm':
-                scaling_vector[i] = 1e-9
+                scaling_matrix[i, i] = 1e-9
 
             # te, tf, and ts.
             elif match('t', data.params[run][i]):
-                scaling_vector[i] = 1e-9
+                scaling_matrix[i, i] = 1e-9
 
             # Rex.
             elif data.params[run][i] == 'Rex':
-                scaling_vector[i] = 1.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0]) ** 2
+                scaling_matrix[i, i] = 1.0 / (2.0 * pi * self.relax.data.res[index].frq[run][0]) ** 2
 
             # Bond length.
             elif data.params[run][i] == 'r':
-                scaling_vector[i] = 1e-10
+                scaling_matrix[i, i] = 1e-10
 
             # CSA.
             elif data.params[run][i] == 'CSA':
-                scaling_vector[i] = 1e-4
+                scaling_matrix[i, i] = 1e-4
 
             # No scaling.
             else:
-                scaling_vector[i] = 1.0
+                scaling_matrix[i, i] = 1.0
 
-        return scaling_vector
+        return scaling_matrix
 
 
-    def calculate(self, run=None, i=None, params=None, scaling_vector=None):
+    def calculate(self, run=None, i=None, params=None, scaling_matrix=None):
         """Calculation of the model-free chi-squared value."""
 
         # Set up the relaxation data and errors and the function options.
@@ -129,7 +129,7 @@ class Model_free:
         self.function_ops = ()
 
         # Initialise the functions used in the minimisation.
-        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_vector=scaling_vector)
+        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_matrix=scaling_matrix)
 
         # Chi-squared calculation.
         self.relax.data.res[i].chi2[run] = self.mf.func(params, 0)
@@ -577,10 +577,6 @@ class Model_free:
         n = len(data.params[run])
         zero_array = zeros(n, Float64)
         j = 0
-        S = None
-        if data.scaling:
-            S = []
-            scaling_vector = self.assemble_scaling_vector(run, data, index)
 
         # The original model-free equations.
         for i in range(n):
@@ -593,9 +589,6 @@ class Model_free:
                 A[j+1][i] = -1.0
                 b.append(0.0)
                 b.append(-1.0)
-                if data.scaling:
-                    S.append(1.0 / scaling_vector[i])
-                    S.append(1.0 / scaling_vector[i])
                 j = j + 2
 
                 # S2 <= S2f and S2 <= S2s.
@@ -606,8 +599,6 @@ class Model_free:
                             A[j][i] = -1.0
                             A[j][k] = 1.0
                             b.append(0.0)
-                            if data.scaling:
-                                S.append(1.0 / scaling_vector[i])
                             j = j + 1
 
             # Correlation times {tm, te, tf, ts}.
@@ -616,8 +607,6 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
-                if data.scaling:
-                    S.append(1.0 / scaling_vector[i])
                 j = j + 1
 
                 # tf <= ts.
@@ -628,8 +617,6 @@ class Model_free:
                             A[j][i] = 1.0
                             A[j][k] = -1.0
                             b.append(0.0)
-                            if data.scaling:
-                                S.append(1.0 / scaling_vector[i])
                             j = j + 1
 
             # Rex.
@@ -637,8 +624,6 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
-                if data.scaling:
-                    S.append(1.0 / scaling_vector[i])
                 j = j + 1
 
             # Bond length.
@@ -648,15 +633,8 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                if data.scaling.has_key(run):
-                    b.append(0.9e-10 / data.scaling[run][i])
-                    b.append(-2e-10 / data.scaling[run][i])
-                else:
-                    b.append(0.9e-10)
-                    b.append(-2e-10)
-                if data.scaling:
-                    S.append(1.0 / scaling_vector[i])
-                    S.append(1.0 / scaling_vector[i])
+                b.append(0.9e-10)
+                b.append(-2e-10)
                 j = j + 2
 
             # CSA.
@@ -666,23 +644,15 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                if data.scaling.has_key(run):
-                    b.append(-300e-6 / data.scaling[run][i])
-                else:
-                    b.append(-300e-6)
+                b.append(-300e-6)
                 b.append(0.0)
-                if data.scaling:
-                    S.append(1.0 / scaling_vector[i])
-                    S.append(1.0 / scaling_vector[i])
                 j = j + 2
 
         # Convert to Numeric data structures.
         A = array(A, Float64)
         b = array(b, Float64)
-        if data.scaling:
-            S = array(S, Float64)
 
-        return A, b, S
+        return A, b
 
 
     def macro_create(self, run=None, model=None, equation=None, params=None, scaling=1):
@@ -968,12 +938,12 @@ class Model_free:
         self.select(run=run, model=model, scaling=scaling)
 
 
-    def minimise(self, run=None, i=None, init_params=None, scaling_vector=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
+    def minimise(self, run=None, i=None, init_params=None, scaling_matrix=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
         """Model-free minimisation."""
 
         # Linear constraints.
         if constraints:
-            A, b, S = self.linear_constraints(run, self.relax.data.res[i], i)
+            A, b = self.linear_constraints(run, self.relax.data.res[i], i)
 
         if print_flag >= 1:
             if print_flag >= 2:
@@ -997,7 +967,7 @@ class Model_free:
         self.function_ops = ()
 
         # Initialise the functions used in the minimisation.
-        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_vector=scaling_vector)
+        self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff_type[run], diff_params=self.relax.data.diff_params[run], scaling_matrix=scaling_matrix)
 
         # Levenberg-Marquardt minimisation.
         if constraints and not match('^[Gg]rid', min_algor):
@@ -1010,7 +980,7 @@ class Model_free:
 
         # Minimisation.
         if constraints:
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, S=S, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, scaling_matrix=scaling_matrix, full_output=1, print_flag=print_flag)
         else:
             results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.function_ops, x0=init_params, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
         if results == None:
@@ -1023,7 +993,7 @@ class Model_free:
 
         # Scaling.
         if self.relax.data.res[i].scaling[run]:
-            self.params = self.params * scaling_vector
+            self.params = matrixmultiply(scaling_matrix, self.params)
 
         # Types.
         types = self.relax.data.res[i].params[run]

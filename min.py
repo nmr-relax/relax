@@ -22,7 +22,8 @@
 
 
 from math import pi
-from Numeric import Float64, array, zeros
+from LinearAlgebra import inverse
+from Numeric import Float64, array, matrixmultiply, zeros
 from re import match
 
 
@@ -50,19 +51,19 @@ class Minimise:
             fns = self.relax.specific_setup.setup("calc", self.relax.data.res[i].equations[run])
             if fns == None:
                 raise RelaxFuncSetupError, ('function value calculation', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_vector, self.calculate = fns
+            self.assemble_param_vector, self.assemble_scaling_matrix, self.calculate = fns
 
             # Create the parameter vector.
             params = self.assemble_param_vector(run, self.relax.data.res[i])
 
             # Diagonal scaling.
-            scaling_vector = None
+            scaling_matrix = None
             if self.relax.data.res[i].scaling[run]:
-                scaling_vector = self.assemble_scaling_vector(run, self.relax.data.res[i], i)
-                params = params / scaling_vector
+                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
+                params = matrixmultiply(inverse(scaling_matrix), params)
 
             # Minimisation.
-            self.calculate(run=run, i=i, params=params, scaling_vector=scaling_vector)
+            self.calculate(run=run, i=i, params=params, scaling_matrix=scaling_matrix)
 
 
     def fixed(self, run=None, values=None, print_flag=1):
@@ -100,7 +101,7 @@ class Minimise:
             fns = self.relax.specific_setup.setup("fixed", self.relax.data.res[i].equations[run])
             if fns == None:
                 raise RelaxFuncSetupError, ('fixed initial parameter value', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_vector, self.fixed_setup, self.minimise = fns
+            self.assemble_param_vector, self.assemble_scaling_matrix, self.fixed_setup, self.minimise = fns
 
             # Setup the fixed parameter options.
             if values:
@@ -115,14 +116,14 @@ class Minimise:
             init_params = self.assemble_param_vector(run, self.relax.data.res[i])
 
             # Diagonal scaling.
-            scaling_vector = None
+            scaling_matrix = None
             if self.relax.data.res[i].scaling[run]:
-                scaling_vector = self.assemble_scaling_vector(run, self.relax.data.res[i], i)
-                init_params = init_params / scaling_vector
-                min_options = min_options / scaling_vector
+                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
+                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
+                min_options = matrixmultiply(inverse(scaling_matrix), min_options)
 
             # Minimisation.
-            self.minimise(run=run, i=i, init_params=init_params, scaling_vector=scaling_vector, min_algor="fixed", min_options=min_options, print_flag=print_flag)
+            self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor="fixed", min_options=min_options, print_flag=print_flag)
 
 
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=0, print_flag=1):
@@ -173,7 +174,7 @@ class Minimise:
             fns = self.relax.specific_setup.setup("grid_search", self.relax.data.res[i].equations[run])
             if fns == None:
                 raise RelaxFuncSetupError, ('grid search', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_vector, self.grid_setup, self.minimise = fns
+            self.assemble_param_vector, self.assemble_scaling_matrix, self.grid_setup, self.minimise = fns
 
             # Setup the grid search options.
             if type(inc) == int:
@@ -198,16 +199,16 @@ class Minimise:
             init_params = self.assemble_param_vector(run, self.relax.data.res[i])
 
             # Diagonal scaling.
-            scaling_vector = None
+            scaling_matrix = None
             if self.relax.data.res[i].scaling[run]:
-                scaling_vector = self.assemble_scaling_vector(run, self.relax.data.res[i], i)
-                init_params = init_params / scaling_vector
+                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
+                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
                 for j in range(len(min_options)):
-                    min_options[j][1] = min_options[j][1] / scaling_vector[j]
-                    min_options[j][2] = min_options[j][2] / scaling_vector[j]
+                    min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
+                    min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
 
             # Minimisation.
-            self.minimise(run=run, i=i, init_params=init_params, scaling_vector=scaling_vector, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
+            self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
 
 
     def min(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
@@ -231,16 +232,16 @@ class Minimise:
             fns = self.relax.specific_setup.setup("minimise", self.relax.data.res[i].equations[run])
             if fns == None:
                 raise RelaxFuncSetupError, ('minimisation', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_vector, self.minimise = fns
+            self.assemble_param_vector, self.assemble_scaling_matrix, self.minimise = fns
 
             # Create the initial parameter vector.
             init_params = self.assemble_param_vector(run, self.relax.data.res[i])
 
             # Diagonal scaling.
-            scaling_vector = None
+            scaling_matrix = None
             if self.relax.data.res[i].scaling[run]:
-                scaling_vector = self.assemble_scaling_vector(run, self.relax.data.res[i], i)
-                init_params = init_params / scaling_vector
+                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
+                init_params = matrixmultiply(inverse(scaling_matrix), init_params)
 
             # Minimisation.
-            self.minimise(run=run, i=i, init_params=init_params, scaling_vector=scaling_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+            self.minimise(run=run, i=i, init_params=init_params, scaling_matrix=scaling_matrix, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

@@ -21,11 +21,11 @@
 ###############################################################################
 
 
-from Numeric import dot
+from Numeric import dot, matrixmultiply
 
 
 class Constraint_linear:
-    def __init__(self, A=None, b=None):
+    def __init__(self, A=None, b=None, scaling_matrix=None):
         """Class for the creation of linear inequality constraint functions and gradients.
 
         The constraints are in the form:
@@ -57,7 +57,10 @@ class Constraint_linear:
         """
 
         # Initialise arguments.
-        self.A = A
+        if scaling_matrix:
+            self.A = matrixmultiply(A, scaling_matrix)
+        else:
+            self.A = A
         self.b = b
 
 

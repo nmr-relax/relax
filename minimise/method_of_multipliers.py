@@ -29,7 +29,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, S=None, mu0=1e-2, lambda0=None, epsilon0=1e5, gamma0=1e5, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, scaling_matrix=None, mu0=1e-2, lambda0=None, epsilon0=1e5, gamma0=1e5, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
@@ -124,7 +124,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
         print "\n"
         print "Method of Multipliers"
         print "~~~~~~~~~~~~~~~~~~~~~"
-    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, S, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
+    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, scaling_matrix, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
     if min.init_failure:
         print "Initialisation of minimisation has failed."
         return None
@@ -134,7 +134,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 
 
 class Method_of_multipliers(Min):
-    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, S, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
+    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, scaling_matrix, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
         """Class for Newton minimisation specific functions.
 
         Unless you know what you are doing, you should call the function 'method_of_multipliers'
@@ -152,7 +152,7 @@ class Method_of_multipliers(Min):
         if A != None and b != None:
             self.A = A
             self.b = b
-            self.constraint_linear = Constraint_linear(self.A, self.b)
+            self.constraint_linear = Constraint_linear(self.A, self.b, scaling_matrix)
             self.c = self.constraint_linear.func
             self.dc = self.constraint_linear.dfunc
             self.d2c = None
@@ -189,8 +189,7 @@ class Method_of_multipliers(Min):
             return
 
         # Constraint scaling vector.
-        self.S = S
-        print self.S
+        self.scaling_matrix = scaling_matrix
 
         # min_options.
         if len(min_options) == 0:
@@ -264,11 +263,11 @@ class Method_of_multipliers(Min):
 
         # Calculate the quadratic augmented Lagrangian value.
         for i in range(self.m):
-            if self.S[i] * self.ck[i] <= self.mu * self.lambda_k[i]:
-                L = L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.S[i] * self.ck[i]**2 / self.mu
+            if self.ck[i] <= self.mu * self.lambda_k[i]:
+                L = L  -  self.lambda_k[i] * self.ck[i]  +  0.5 * self.ck[i]**2 / self.mu
                 self.test_str[i] = 1
             else:
-                L = L  -  0.5 * self.mu * self.lambda_k[i]**2 / self.S[i]
+                L = L  -  0.5 * self.mu * self.lambda_k[i]**2
                 self.test_str[i] = 0
         return L
 
@@ -283,7 +282,7 @@ class Method_of_multipliers(Min):
         # Calculate the quadratic augmented Lagrangian gradient.
         for i in range(self.m):
             if self.test_str[i]:
-                self.dL = self.dL  -  (self.lambda_k[i] - self.S[i] * self.ck[i] / self.mu) * self.dck[i]
+                self.dL = self.dL  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.dck[i]
         return self.dL
 
 
@@ -297,7 +296,7 @@ class Method_of_multipliers(Min):
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in range(self.m):
             if self.test_str[i]:
-                d2L = d2L  +  self.S[i] * outerproduct(self.dck[i], self.dck[i]) / self.mu  -  (self.lambda_k[i] - self.S[i] * self.ck[i] / self.mu) * self.d2ck[i]
+                d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu  -  (self.lambda_k[i] - self.ck[i] / self.mu) * self.d2ck[i]
         return d2L
 
 
@@ -313,7 +312,7 @@ class Method_of_multipliers(Min):
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in range(self.m):
             if self.test_str[i]:
-                d2L = d2L  +  self.S[i] * outerproduct(self.dck[i], self.dck[i]) / self.mu
+                d2L = d2L  +  outerproduct(self.dck[i], self.dck[i]) / self.mu
         return d2L
 
 
@@ -369,7 +368,7 @@ class Method_of_multipliers(Min):
             # The update is given by the following formula:
             #    lambdai_k+1 = max(lambdai_k - ci(xk)/mu, 0)
             for i in range(self.m):
-                self.lambda_k[i] = max(self.lambda_k[i] - self.S[i] * self.ck[i] / self.mu, 0.0)
+                self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i] / self.mu, 0.0)
 
             # Update mu, epsilon, and gamma.
             self.mu = 0.1 * self.mu

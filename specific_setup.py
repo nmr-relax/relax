@@ -52,19 +52,19 @@ class Specific_setup:
         # Model-free analysis.
         elif match('mf', eqi):
             if match('calc', function_type):
-                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_vector, self.relax.model_free.calculate
+                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.calculate
             if match('delete', function_type):
                 return self.relax.model_free.data_names
             if match('fixed', function_type):
-                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_vector, self.relax.model_free.fixed_setup, self.relax.model_free.minimise
+                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.fixed_setup, self.relax.model_free.minimise
             if match('grid_search', function_type):
-                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_vector, self.relax.model_free.grid_setup, self.relax.model_free.minimise
+                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.grid_setup, self.relax.model_free.minimise
             if match('map_labels', function_type):
                 return self.relax.model_free.map_labels
             if match('map_space', function_type):
                 return self.relax.model_free.map_bounds, self.relax.model_free.minimise
             if match('minimise', function_type):
-                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_vector, self.relax.model_free.minimise
+                return self.relax.model_free.assemble_param_vector, self.relax.model_free.assemble_scaling_matrix, self.relax.model_free.minimise
             if match('read', function_type):
                 return self.relax.model_free.read_results
             if match('write', function_type):

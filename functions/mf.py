@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, array, multiply, ones, outerproduct, sum, zeros
+from Numeric import Float64, array, matrixmultiply, ones, outerproduct, sum, zeros
 from math import pi
 
 from data import Data
@@ -35,7 +35,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, relax, run=None, i=None, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_vector=None, print_flag=0):
+    def __init__(self, relax, run=None, i=None, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_matrix=None, print_flag=0):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -65,7 +65,7 @@ class Mf:
 
         diff_params:  An array with the diffusion parameters.
 
-        scaling_vector:  An array with the factors by which to scale the parameter vector.
+        scaling_matrix:  A diagonal matrix of scaling factors.
 
         print_flag:  A flag specifying how much should be printed to screen.
         """
@@ -77,7 +77,7 @@ class Mf:
         self.equation = equation
         self.param_types = param_types
         self.params = init_params
-        self.scaling_vector = scaling_vector
+        self.scaling_matrix = scaling_matrix
         self.print_flag = print_flag
 
         # Initialise the data class used to store data.
@@ -100,7 +100,7 @@ class Mf:
         self.init_data()
 
         # Set the functions.
-        if self.scaling_vector:
+        if self.scaling_matrix:
             self.scaling_flag = 1
             self.set_params = self.set_params_scaled
         else:
@@ -319,9 +319,9 @@ class Mf:
         self.data.ri_labels = self.relax.data.res[self.i].ri_labels[self.run]
 
         # Diagonal scaling data.
-        if self.scaling_vector:
-            self.data.scaling_vector = array(self.scaling_vector, Float64)
-            self.data.scaling_matrix = outerproduct(self.scaling_vector, self.scaling_vector)
+        if self.scaling_matrix:
+            self.data.scaling_matrix = self.scaling_matrix
+            self.data.scaling_matrix2 = self.scaling_matrix ** 2
 
         # Spectral density components.
         self.data.w_tm_sqrd = zeros((self.data.num_frq, 5), Float64)
@@ -438,7 +438,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            return multiply(self.data.dri, self.data.scaling_vector)
+            return matrixmultiply(self.data.scaling_matrix, self.data.dri)
         else:
             return self.data.dri
 
@@ -446,19 +446,19 @@ class Mf:
     def scale_gradient(self):
         """Function for the diagonal scaling of the chi-squared gradient."""
 
-        self.data.dchi2 = multiply(self.data.dchi2, self.data.scaling_vector)
+        self.data.dchi2 = matrixmultiply(self.data.scaling_matrix, self.data.dchi2)
 
 
     def scale_hessian(self):
         """Function for the diagonal scaling of the chi-squared Hessian."""
 
-        self.data.d2chi2 = multiply(self.data.d2chi2, self.data.scaling_matrix)
+        self.data.d2chi2 = matrixmultiply(self.data.scaling_matrix2, self.data.d2chi2)
 
 
     def set_params_scaled(self, params):
         """Function for setting self.data.params to the parameter vector times the scaling vector."""
 
-        self.data.params = multiply(params, self.data.scaling_vector)
+        self.data.params = matrixmultiply(self.data.scaling_matrix, params)
 
 
     def set_params_unscaled(self, params):
