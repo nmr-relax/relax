@@ -17,24 +17,25 @@ class file_ops:
 		self.relax.log.write(title)
 
 
-	def open_file(self, file_name):
+	def extract_data(self, file_name, sep=None):
 		"Open the file 'file' and return all the data."
 
-		file = open(file_name, 'r')
+		# Test if the file exists.
+		try:
+			file = open(file_name, 'r')
+		except IOError:
+			print "The file \"" + file_name + "\" does not exist."
+			return
+
+		# Create a data structure from the contents of the file split by either whitespace or the separator, sep.
 		lines = file.readlines()
 		data = []
-		i = 0
-		for line in lines:
-			if i != 0:
-				j = i - 1
-				row = split(line)
-				data.append([])
-				data[j].append(row[0])
-				data[j].append(row[1])
-				for k in range(len(row)):
-					if k > 1:
-						data[j].append(float(row[k]))
-			i = i + 1
+		for i in range(len(lines)):
+			if sep:
+				row = split(lines[i], sep)
+			else:
+				row = split(lines[i])
+			data.append(row)
 		return data
 
 
@@ -49,16 +50,16 @@ class file_ops:
 			print "Directory ./" + dir + " already exists.\n"
 
 
-	def read_file(self, file_name, message=''):
-		"Attempt to read the file, or quit the program if it does not exist."
-
-		try:
-			open(file_name, 'r')
-		except IOError:
-			print message
-			print "The file '" + file_name + "' does not exist, quitting program.\n\n\n"
-		file = open(file_name, 'r')
-		return file
+#	#def read_file(self, file_name, message=''):
+#	#	"Attempt to read the file, or quit the program if it does not exist."
+#
+#		try:
+#			open(file_name, 'r')
+#		except IOError:
+#			print message
+#			print "The file '" + file_name + "' does not exist, quitting program.\n\n\n"
+#		file = open(file_name, 'r')
+#		return file
 
 
 	def relax_data(self, file):
@@ -86,3 +87,17 @@ class file_ops:
 				data[j].append(float(row[3]))
 			i = i + 1
 		return data
+
+
+	def strip(self, data):
+		"Function to remove all comment and empty lines from the data data structure."
+
+		new = []
+		for i in range(len(data)):
+			if len(data[i]) == 0:
+				continue
+			elif match("#", data[i][0]):
+				continue
+			else:
+				new.append(data[i])
+		return new

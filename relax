@@ -31,6 +31,7 @@ from data import data
 from file_ops import file_ops
 
 from interpreter import interpreter
+from macros.macros import macros
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -58,7 +59,7 @@ class relax:
 		#	print "Copy the correct version to the working directory, quitting program."
 		#	sys.exit()
 
-		# Initialise the class self.self.function to place program functions into.
+		self.macros = macros(self)
 		self.data = data(self)
 		self.file_ops = file_ops(self)
 		self.model_selection = model_selection(self)

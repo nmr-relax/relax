@@ -7,15 +7,15 @@ class data:
 
 		self.relax = relax
 
-		self.init_data()
+		#self.init_data()
 		self.init_constants()
-		self.relax = self.mfin_data(self.relax)
-		self.asymptotic = self.init_asymptotic()
-		self.bootstrap = self.init_bootstrap()
-		self.cv = self.init_cv()
-		self.farrow = self.init_farrow()
-		self.palmer = self.init_palmer()
-		self.overall_disc = self.init_overall_disc()
+		#self.relax = self.mfin_data(self.relax)
+		#self.asymptotic = self.init_asymptotic()
+		#self.bootstrap = self.init_bootstrap()
+		#self.cv = self.init_cv()
+		#self.farrow = self.init_farrow()
+		#self.palmer = self.init_palmer()
+		#self.overall_disc = self.init_overall_disc()
 
 
 
@@ -180,7 +180,7 @@ class data:
 			self.frq_list[i].append(frqH - frqN)
 			self.frq_list[i].append(frqH)
 			self.frq_list[i].append(frqH + frqN)
-			
+
 			# Frequencies squared.
 			self.frq_sqrd_list[i].append(0.0)
 			self.frq_sqrd_list[i].append(frqN**2)
@@ -207,7 +207,7 @@ class data:
 		# The number of field strengths.
 		#	eg 2
 		self.num_frq = 0
-		
+
 		# Labels corresponding to the data type.
 		#	eg ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
 		self.data_types = []

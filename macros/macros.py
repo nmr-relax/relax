@@ -1,55 +1,29 @@
 import sys
 from re import match
 
-from print_macros import print_macros
+from bond_length import bond_length
+from csa import csa
+from echo_data import echo_data
+from load_relax_data import load_relax_data
+from load_seq import load_seq
+from ls import ls
+from pdb import pdb
+from mf_model import mf_model
+from set_diffusion_tensor import set_diffusion_tensor
+from set_model_selection import set_model_selection
 
 
-class macros(print_macros):
-	def __init__(self):
-		"Macros."
+class macros:
+	def __init__(self, relax):
+		"Class for holding all macros."
 
-
-	def load(self, file=None, num=0, name=1, data=2, error=3):
-		"""Macro to load the contents of a file into memory.
-
-
-
-		"""
-
-		if not file:
-			print "No file is specified."
-			return
-		print "\nExecuting macro load."
-		print "   File name: " + file
-		print "   Residue number column: " + `num`
-		print "   Residue name column:   " + `name`
-		print "   Data column:           " + `data`
-		print "   Error column:          " + `error`
-
-
-	def load_seq(self, file=None, num=0, name=1):
-		"""Macro to load the contents of a file into memory.
-
-		"""
-
-		if not file:
-			print "No file is specified."
-			return
-		print "\nExecuting macro load_seq."
-		print "   File name: " + file
-		print "   Residue number column: " + `num`
-		print "   Residue name column:   " + `name`
-
-		self.relax.data.seq = []
-		file_data = self.relax.file_ops.open_file(file)
-		for i in range(len(file_data)):
-			if len(file_data[i]) == 0:
-				continue
-			if match("#", file_data[i][0]):
-				continue
-			self.relax.data.seq.append([int(file_data[i][num]), file_data[i][name]])
-
-
-	def ls(self):
-		print "\nExecuting macro ls."
-		return
+		self.bond_length = bond_length(relax)
+		self.csa = csa(relax)
+		self.echo_data = echo_data(relax)
+		self.load_relax_data = load_relax_data(relax)
+		self.load_seq = load_seq(relax)
+		self.ls = ls
+		self.pdb = pdb(relax)
+		self.mf_model = mf_model(relax)
+		self.set_diffusion_tensor = set_diffusion_tensor(relax)
+		self.set_model_selection = set_model_selection(relax)
