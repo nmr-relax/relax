@@ -1,4 +1,4 @@
-from Numeric import Float64, ones, zeros
+from Numeric import Float64, zeros
 
 from generic_functions import generic_functions
 
@@ -84,7 +84,7 @@ class mf_model(generic_functions):
 			self.relax.data.param_types.append(['S2', 'te', 'Rex'])
 		elif model == 'm5':
 			self.relax.data.equations.append('mf_ext')
-			self.relax.data.param_types.append(['S2f', 'S2s', 'te'])
+			self.relax.data.param_types.append(['S2f', 'S2s', 'ts'])
 		else:
 			print "The model '" + model + "' is invalid."
 			return
@@ -92,5 +92,5 @@ class mf_model(generic_functions):
 
 		# Create the params data structure.
 		index = len(self.relax.data.models) - 1
-		self.relax.data.params.append(ones((len(self.relax.data.seq), len(self.relax.data.param_types[index])), Float64))
+		self.relax.data.params.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types[index])), Float64))
 		self.relax.data.param_errors.append(zeros((len(self.relax.data.seq), len(self.relax.data.param_types[index])), Float64))

@@ -1,55 +1,71 @@
 from Numeric import copy
 
-class Ri:
-	def __init__(self):
-		"An additional layer of equations to simplify the relaxation equations, gradients, and hessians."
-		
+
+def calc_ri(data, ri_funcs):
+	"""An additional layer of equations to simplify the relaxation equations, gradients, and hessians.
+
+	The R1 and R2 equations are left alone, while the NOE is calculated from the R1 and sigma_noe values.
 
 
-	def Ri(self):
-		"""An additional layer of equations to simplify the relaxation equations, gradients, and hessians.
+	The relaxation equations
+	~~~~~~~~~~~~~~~~~~~~~~~~
 
-		The R1 and R2 equations are left alone, while the NOE is decomposed into the cross relaxation rate equation and the R1 equation.
-
-
-		The relaxation equations
-		~~~~~~~~~~~~~~~~~~~~~~~~
-
-		Data structure:  self.data.ri
-		Dimension:  1D, (relaxation data)
-		Type:  Numeric array, Float64
-		Dependencies:  self.data.ri_prime
-		Required by:  self.data.chi2, self.data.dchi2, self.data.d2chi2
+	Data structure:  self.data.ri
+	Dimension:  1D, (relaxation data)
+	Type:  Numeric array, Float64
+	Dependencies:  self.data.ri_prime
+	Required by:  self.data.chi2, self.data.dchi2, self.data.d2chi2
 
 
-		Formulae
-		~~~~~~~~
+	Formulae
+	~~~~~~~~
 
-			R1()  =  R1'()
+		R1()  =  R1'()
 
 
-			R2()  =  R2'()
+		R2()  =  R2'()
 
-			               gH   sigma_noe()
-			NOE()  =  1 +  -- . -----------
-			               gN      R1()
+		               gH   sigma_noe()
+		NOE()  =  1 +  -- . -----------
+		               gN      R1()
 
-		"""
+	"""
 
-		# Calculate the transformed relaxation values.
-		self.Ri_prime()
+	# Calculate the NOE values.
+	for i in range(data.num_ri):
+		if ri_funcs[i]:
+			ri_funcs[i](data, i, data.remap_table[i])
 
-		# Initialise the relaxation values.
-		self.data.ri = copy.deepcopy(self.data.ri_prime)
 
-		# Calculate the NOE values.
-		for i in range(self.relax.data.num_ri):
-			if self.relax.data.data_types[i] == 'NOE':
-				if self.relax.data.noe_r1_table[i] == None:
-					raise NameError, "Incomplete code, need to somehow calculate the r1 value."
+def calc_noe(data, i, frq_num):
+	"Calculate the NOE value."
 
-				if self.data.ri_prime[self.relax.data.noe_r1_table[i]] == 0:
-					self.data.ri[i] = 1e99
-				else:
-					self.data.ri[i] = 1.0 + (self.relax.data.gh/self.relax.data.gx) * (self.data.ri_prime[i] / self.data.ri_prime[self.relax.data.noe_r1_table[i]])
+	# Get the r1 value either from data.ri_prime or by calculation if the value is not in data.ri_prime
+	if data.noe_r1_table[i] == None:
+		r1 = calc_r1(data, frq_num)
+	else:
+		r1 = data.ri_prime[data.noe_r1_table[i]]
 
+	# Calculate the NOE.
+	if r1 == 0.0:
+		data.ri[i] = 1e99
+	else:
+		data.ri[i] = 1.0 + data.g_ratio*(data.ri_prime[i] / r1)
+
+
+def calc_r1(data, frq_num):
+	"""Calculate the R1 value if there is no R1 data corresponding to the NOE data.
+
+	R1()  =  d . J_R1_d  +  c . J_R1_c
+
+	J_R1_d  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
+
+	J_R1_c  =  J(wN)
+
+	"""
+
+	dip_comp = data.dipole_const
+	j_dip_comp = data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 4]
+	csa_comp = data.csa_const[frq_num]
+	j_csa_comp = data.jw[frq_num, 1]
+	return dip_comp * j_dip_comp + csa_comp * j_csa_comp

@@ -13,7 +13,22 @@ class state(generic_functions):
 
 
 	def load(self, file_name=None):
-		"Macro for loading a saved program state."
+		"""Macro for loading a saved program state.
+
+		Options
+		~~~~~~~
+
+		file_name:	The file name, which must be a string, of a saved program state.
+
+
+		Examples
+		~~~~~~~~
+
+		The following will load the state saved in the file 'save'.
+		>>> state.load('save')
+		>>> state.load(file_name='save')
+
+		"""
 
 		# Arguments.
 		self.file_name = file_name
@@ -38,7 +53,27 @@ class state(generic_functions):
 
 
 	def save(self, file_name=None, force=0):
-		"Macro for saving the program state."
+		"""Macro for saving the program state.
+
+		Options
+		~~~~~~~
+
+		file_name:	The file name, which must be a string, to save the current program state in.
+		force:		A flag which if set to 1 will cause the file, if existant, to be overwritten.
+
+
+		Examples
+		~~~~~~~~
+
+		The following will save the current program state into the file 'save'.
+		>>> state.save('save')
+
+		If the file 'save' already exists, the following will save the current program state by overwriting
+		the file.
+		>>> state.save('save', 1)
+		>>> state.save(file_name='save', force=1)
+
+		"""
 
 		# Arguments.
 		self.file_name = file_name

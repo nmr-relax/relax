@@ -13,81 +13,6 @@ class min:
 		self.relax = relax
 
 
-	def calc_constants(self):
-		"""Calculate the dipolar and CSA constants.
-
-		Dipolar constants
-		~~~~~~~~~~~~~~~~~
-			      1   / mu0  \ 2  (gH.gN.h_bar)**2
-			d  =  - . | ---- |  . ----------------
-			      4   \ 4.pi /         <r**6>
-
-
-			         3   / mu0  \ 2  (gH.gN.h_bar)**2
-			d'  =  - - . | ---- |  . ----------------
-			         2   \ 4.pi /         <r**7>
-
-
-			       21   / mu0  \ 2  (gH.gN.h_bar)**2
-			d"  =  -- . | ---- |  . ----------------
-			       2    \ 4.pi /         <r**8>
-
-
-		CSA constants
-		~~~~~~~~~~~~~
-			      (wN.csa)**2
-			c  =  -----------
-			           3
-
-
-			       2.wN**2.csa
-			c'  =  -----------
-			            3
-
-
-			       2.wN**2
-			c"  =  -------
-			          3
-
-		"""
-
-		# Dipolar constants.
-		self.relax.data.dipole_const = zeros(len(self.relax.data.bond_length), Float64)
-		self.relax.data.dipole_prime = zeros(len(self.relax.data.bond_length), Float64)
-		self.relax.data.dipole_2prime = zeros(len(self.relax.data.bond_length), Float64)
-		for i in range(len(self.relax.data.bond_length)):
-			temp = ((self.relax.data.mu0 / (4.0*pi)) * self.relax.data.h_bar * self.relax.data.gh * self.relax.data.gx) ** 2
-			self.relax.data.dipole_const[i] = 0.25 * temp * self.relax.data.bond_length[i][0]**-6
-			self.relax.data.dipole_prime[i] = -1.5 * temp * self.relax.data.bond_length[i][0]**-7
-			self.relax.data.dipole_2prime[i] = 10.5 * temp * self.relax.data.bond_length[i][0]**-8
-
-		# CSA constants.
-		self.relax.data.csa_const = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
-		self.relax.data.csa_prime = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
-		self.relax.data.csa_2prime = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
-		for i in range(self.relax.data.num_frq):
-			for j in range(len(self.relax.data.csa)):
-				temp = self.relax.data.frq_sqrd_list[i, 1] / 3.0
-				self.relax.data.csa_const[i, j] = temp * self.relax.data.csa[j][0]**2
-				self.relax.data.csa_prime[i, j] = 2.0 * temp * self.relax.data.csa[j][0]
-				self.relax.data.csa_2prime[i, j] = 2.0 * temp
-
-
-	def calc_frq_list(self):
-		"Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation."
-
-		self.relax.data.frq_list = zeros((self.relax.data.num_frq, 5), Float64)
-		for i in range(self.relax.data.num_frq):
-			frqH = 2.0 * pi * self.relax.data.frq[i]
-			frqX = frqH * (self.relax.data.gx / self.relax.data.gh)
-			self.relax.data.frq_list[i, 1] = frqX
-			self.relax.data.frq_list[i, 2] = frqH - frqX
-			self.relax.data.frq_list[i, 3] = frqH
-			self.relax.data.frq_list[i, 4] = frqH + frqX
-
-		self.relax.data.frq_sqrd_list = self.relax.data.frq_list ** 2
-
-
 	def find_model_index(self):
 		"""Function to find the index of the model.
 
@@ -180,7 +105,7 @@ class min:
 		return grid_ops
 
 
-	def min(self, model=None, min_algor=None, min_options=None, min_debug=1, scaling_flag=0, chi2_tol=1e-15, max_iterations=5000, overwrite_flag=0):
+	def min(self, model=None, min_algor=None, min_options=None, min_debug=1, scaling_flag=0, chi2_tol=1e-15, max_iterations=5000):
 		"Minimisation macro."
 
 		# Arguments.
@@ -197,7 +122,6 @@ class min:
 		self.scaling_flag = scaling_flag
 		self.chi2_tol = chi2_tol
 		self.max_iterations = max_iterations
-		self.overwrite_flag = overwrite_flag
 
 		# Find the index of the model.
 		self.model_index = self.find_model_index()
@@ -221,9 +145,8 @@ class min:
 			self.g_count = 0
 			self.h_count = 0
 
-			# Setup the specific options for the tuple self.function_ops
-			self.setup_data()
-			if self.function_ops == None:
+			# Setup the function specific stuff.  If None or 0 is returned by self.setup_data, skip to the next residue.
+			if not self.setup_data():
 				continue
 
 			# Minimisation.
@@ -233,6 +156,8 @@ class min:
 			self.f_count = self.f_count + fc
 			self.g_count = self.g_count + gc
 			self.h_count = self.h_count + hc
+
+			self.relax.data.params[self.res] = self.params
 
 			if self.relax.min_debug:
 				print "\n\n<<< Finished minimiser >>>"
@@ -245,7 +170,7 @@ class min:
 	def minimisation_init(self):
 		"Set up the minimisation specific options."
 
-		if match('^[Nn]ewton$', self.min_algor):
+		if match('^[Bb][Ff][Gg][Ss]$', self.min_algor) or match('^[Nn]ewton$', self.min_algor):
 			if self.min_options == None:
 				self.min_options = 'More Thuente'
 
@@ -253,7 +178,7 @@ class min:
 	def setup_data(self):
 		"""Extract the data from self.relax.data.relax_data
 
-		If any data is missing, None will be returned.
+		If any data is missing, None will be returned which signals to the main iteration loop to jump to the next residue.
 		"""
 
 		if match('mf', self.relax.data.equations[self.model_index]):
@@ -266,19 +191,17 @@ class min:
 				self.data[i] = self.relax.data.relax_data[i][self.res, 0]
 				self.errors[i] = self.relax.data.relax_data[i][self.res, 1]
 
-			self.function_ops = (self.relax.data.diff_type, self.relax.data.diff_params, self.data, self.errors)
+			self.function_ops = ()
 			self.params = self.relax.data.params[self.model_index][self.res]
-			print "self.data: " + `self.data`
-			print "self.errors: " + `self.errors`
-			print "self.params: " + `self.params`
-			print "self.function_ops: " + `self.function_ops`
 
 			# Initialise the functions used in the minimisation.
-			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model_index], param_types=self.relax.data.param_types[self.model_index], bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0])
+			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model_index], param_types=self.relax.data.param_types[self.model_index], relax_data=self.data, errors=self.errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params)
 			self.func = self.mf.func
 			self.dfunc = self.mf.dfunc
 			self.d2func = self.mf.d2func
 			if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
-				self.min_options.append(mf.lm_dri)
+				self.min_options.append(self.mf.lm_dri)
+
+		return 1
 
 

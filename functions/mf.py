@@ -1,14 +1,36 @@
+from copy import deepcopy
 from math import pi
 from re import match
 
+from chi2 import calc_chi2
 from data import data
 from jw_mf import *
+from ri import *
+from ri_dipole_csa_comps import *
 from ri_prime import *
 
 
 class mf:
-	def __init__(self, relax, equation=None, param_types=None, bond_length=None, csa=None, scaling=None, print_flag=0):
-		"""asdf
+	def __init__(self, relax, equation=None, param_types=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling=None, print_flag=0):
+		"""The model-free minimisation class.
+
+		This class should be initialised before every calculation.
+
+		Arguments
+		~~~~~~~~~
+
+		relax:		The program base class self.relax
+		equation:	The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
+		param_types:	An array of the parameter types used in minimisation.
+		relax_data:	An array containing the experimental relaxation values.
+		errors:		An array containing the experimental errors.
+		bond_length:	The fixed bond length in meters.
+		csa:		The fixed CSA value.
+		diff_type:	The diffusion tensor string which should be either 'iso', 'axial', or 'aniso'.
+		diff_params:	An array with the diffusion parameters.
+		scaling:	An array with the factors by which to scale the parameter vector.
+		print_flag:	A flag specifying how much should be printed to screen.
+
 
 		"""
 
@@ -16,18 +38,24 @@ class mf:
 		self.relax = relax
 		self.equation = equation
 		self.param_types = param_types
-		self.bond_length = bond_length
-		self.csa = csa
 		self.scaling = scaling
 		self.print_flag = print_flag
 
 		# Initialise the data.
 		self.init_data()
+		self.data.relax_data = relax_data
+		self.data.errors = errors
+		self.data.bond_length = bond_length
+		self.data.csa = csa
+		self.data.diff_type = diff_type
+		self.data.diff_params = diff_params
 
 		# Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
 		self.calc_frq_list()
 
-		calc_ri_constants(self.data)
+		# Calculate the fixed components of the dipolar and CSA constants.
+		calc_fixed_csa(self.data)
+		calc_fixed_dip(self.data)
 
 		# Setup the equations.
 		if not self.setup_equations():
@@ -49,33 +77,71 @@ class mf:
 		self.data.frq_sqrd_list = self.data.frq_list ** 2
 
 
-	def func(self, params, diff_type, diff_params, relax_data, errors, print_flag=0):
-		"asdf"
+	def func(self, params, print_flag=0):
+		"""The function for calculating the model-free chi-squared value.
+
+		The chi-sqared equation
+		~~~~~~~~~~~~~~~~~~~~~~~
+		        _n_
+		        \    (Ri - Ri()) ** 2
+		Chi2  =  >   ----------------
+		        /__    sigma_i ** 2
+		        i=1
+
+		where:
+			Ri are the values of the measured relaxation data set.
+			Ri() are the values of the back calculated relaxation data set.
+			sigma_i are the values of the error set.
+
+		"""
 
 		# Arguments
 		self.data.params = params
-		self.data.diff_type = diff_type
-		self.data.diff_params = diff_params
-		self.data.relax_data = relax_data
-		self.data.errors = errors
 		self.print_flag = print_flag
 
-		self.calc_jw_data(self.data)
+		# Calculate the spectral density values.
+		self.calc_jw_comps(self.data)
 		create_jw_struct(self.data, self.calc_jw)
-		print "dir(data): " + `dir(self.data)`
-		print "J(w): " + `self.data.jw`
 
-		calc_ri_prime(self.data, self.ri_funcs)
-		print "dir(data): " + `dir(self.data)`
-		print "Ri_prime: " + `self.data.ri_prime`
-		import sys
-		sys.exit()
+		# Calculate the R1, R2, and sigma_noe values.
+		calc_ri_prime(self.data, self.ri_prime_funcs)
+
+		# Calculate the R1, R2, and NOE values.
+		self.data.ri = deepcopy(self.data.ri_prime)
+		calc_ri(self.data, self.ri_funcs)
+
+		# Calculate the chi-squared value.
+		self.data.chi2 = calc_chi2(self.data.relax_data, self.data.ri, self.data.errors)
+
+		return self.data.chi2
 
 
-	def dfunc(self, params, diff_type, diff_params, relax_data, errors, print_flag=0):
-		"asdf"
+	def dfunc(self, params, print_flag=0):
+		"""The function for calculating the model-free chi-squared gradient vector.
+		"""
 
-	def d2func(self, params, diff_type, diff_params, relax_data, errors, print_flag=0):
+		# Arguments
+		self.data.params = params
+		self.print_flag = print_flag
+
+		# Calculate the spectral density values.
+		self.calc_djw_comps(self.data)
+		create_djw_struct(self.data, self.calc_djw)
+
+		# Calculate the R1, R2, and sigma_noe values.
+		calc_dri_prime(self.data, self.dri_prime_funcs)
+
+		# Calculate the R1, R2, and NOE values.
+		self.data.dri = deepcopy(self.data.dri_prime)
+		calc_dri(self.data, self.dri_funcs)
+
+		# Calculate the chi-squared value.
+		self.data.dchi2 = calc_dchi2(self.data.relax_data, self.data.dri, self.data.errors)
+
+		return self.data.dchi2
+
+
+	def d2func(self, params, print_flag=0):
 		"asdf"
 
 
@@ -85,17 +151,17 @@ class mf:
 		# Initialise the data class used to store data.
 		self.data = data()
 
-		self.data.bond_length = self.bond_length
-		self.data.csa = self.csa
 		# Place some data structures from self.relax.data into the data class
 		self.data.gh = self.relax.data.gh
 		self.data.gx = self.relax.data.gx
+		self.data.g_ratio = self.relax.data.g_ratio
 		self.data.h_bar = self.relax.data.h_bar
 		self.data.mu0 = self.relax.data.mu0
 		self.data.num_ri = self.relax.data.num_ri
 		self.data.num_frq = self.relax.data.num_frq
 		self.data.frq = self.relax.data.frq
 		self.data.remap_table = self.relax.data.remap_table
+		self.data.noe_r1_table = self.relax.data.noe_r1_table
 		self.data.ri_labels = self.relax.data.ri_labels
 
 		# Initialise the spectral density values.
@@ -124,87 +190,166 @@ class mf:
 		# The original model-free equations.
 		if match('mf_orig', self.equation):
 			# Find the indecies of the parameters in self.param_types
-			self.r_index, self.csa_index, self.s2_index, self.te_index = None, None, None, None
+			self.data.s2_index, self.data.te_index, self.data.rex_index, self.data.r_index, self.data.csa_index = None, None, None, None, None
 			for i in range(len(self.param_types)):
 				if match('S2', self.param_types[i]):
-					self.s2_index = i
+					self.data.s2_index = i
 				elif match('te', self.param_types[i]):
-					self.te_index = i
+					self.data.te_index = i
 				elif match('Rex', self.param_types[i]):
-					self.r_index = i
+					self.data.rex_index = i
+				elif match('Bond length', self.param_types[i]):
+					self.data.r_index = i
 				elif match('CSA', self.param_types[i]):
-					self.csa_index = i
+					self.data.csa_index = i
 				else:
 					return 0
 
 			# Setup the equations for the calculation of spectral density values.
-			if not self.s2_index == None and not self.te_index == None:
+			if self.data.s2_index != None and self.data.te_index != None:
 				self.calc_jw = calc_iso_jw_s2_te
-				self.calc_jw_data = calc_iso_jw_s2_te_data
-				self.data.mf_indecies = [self.s2_index, self.te_index]
-			elif not self.s2_index == None and self.te_index == None:
+				self.calc_jw_comps = calc_iso_jw_s2_te_comps
+			elif self.data.s2_index != None:
 				self.calc_jw = calc_iso_jw_s2
-				self.calc_jw_data = calc_iso_jw_s2_data
-				self.data.mf_indecies = [self.s2_index]
-			elif self.s2_index == None and not self.te_index == None:
+				self.calc_jw_comps = calc_iso_jw_s2_comps
+			elif self.data.te_index != None:
 				print "Invalid model, you cannot have te as a parameter without S2 existing as well."
 				return 0
 			else:
 				print "Invalid combination of parameters for the original model-free equation."
 				return 0
 
-			# Package the indecies into a single structure.
-			self.data.ri_indecies = [self.r_index, self.csa_index]
-
 		# The extended model-free equations.
 		elif match('mf_ext', self.equation):
 			# Find the indecies of the parameters in self.param_types
-			self.r_index, self.csa_index, self.s2f_index, self.tf_index, self.s2s_index, self.ts_index = None, None, None, None, None, None
+			self.data.s2f_index, self.data.tf_index, self.data.s2s_index, self.data.ts_index, self.data.rex_index, self.data.r_index, self.data.csa_index,  = None, None, None, None, None, None, None
 			for i in range(len(self.param_types)):
 				if match('S2f', self.param_types[i]):
-					self.s2f_index = i
+					self.data.s2f_index = i
 				elif match('tf', self.param_types[i]):
-					self.tf_index = i
+					self.data.tf_index = i
 				elif match('S2s', self.param_types[i]):
-					self.s2s_index = i
+					self.data.s2s_index = i
 				elif match('ts', self.param_types[i]):
-					self.ts_index = i
+					self.data.ts_index = i
 				elif match('Rex', self.param_types[i]):
-					self.r_index = i
+					self.data.rex_index = i
+				elif match('Bond length', self.param_types[i]):
+					self.data.r_index = i
 				elif match('CSA', self.param_types[i]):
-					self.csa_index = i
+					self.data.csa_index = i
 				else: return 0
 
 			# Setup the equations for the calculation of spectral density values.
-			if not self.s2f_index == None and not self.tf_index == None and not self.s2s_index == None and not self.ts_index == None:
+			if self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
 				self.calc_jw = calc_iso_jw_s2f_tf_s2s_ts
-				self.calc_jw_data = calc_iso_jw_s2f_tf_s2s_ts_data
-				self.data.mf_indecies = [self.s2f_index, self.tf_index, self.s2s_index, self.ts_index]
-			elif not self.s2f_index == None and self.tf_index == None and not self.s2s_index == None and not self.ts_index == None:
+				self.calc_jw_comps = calc_iso_jw_s2f_tf_s2s_ts_comps
+			elif self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
 				self.calc_jw = calc_iso_jw_s2f_s2s_ts
-				self.calc_jw_data = calc_iso_jw_s2f_s2s_ts_data
-				self.data.mf_indecies = [self.s2f_index, self.s2s_index, self.ts_index]
+				self.calc_jw_comps = calc_iso_jw_s2f_s2s_ts_comps
 			else:
 				print "Invalid combination of parameters for the extended model-free equation."
 				return 0
 
-			self.data.ri_indecies = [self.r_index, self.csa_index]
-
 		else:
 			return 0
 
+
 		# The transformed relaxation equations.
 		self.ri_funcs = []
-		for i in range(self.relax.data.num_ri):
-			if self.relax.data.ri_labels[i]  == 'R1':
-				self.ri_funcs.append(calc_r1_prime)
-			elif self.relax.data.ri_labels[i] == 'R2':
-				if self.data.ri_indecies[0] == None:
-					self.ri_funcs.append(calc_r2_prime)
-				else:
-					self.ri_funcs.append(calc_r2_rex_prime)
-			elif self.relax.data.ri_labels[i] == 'NOE':
-				self.ri_funcs.append(calc_sigma_noe)
+		self.ri_prime_funcs = []
 
+		# Both the bond length and CSA are fixed.
+		if self.data.r_index == None and self.data.csa_index == None:
+			calc_dip_const(self.data)
+			calc_csa_const(self.data)
+			for i in range(self.relax.data.num_ri):
+				# The R1 equations.
+				if self.relax.data.ri_labels[i]  == 'R1':
+					self.ri_funcs.append(None)
+					self.ri_prime_funcs.append(calc_r1_prime)
+
+				# The R2 equations.
+				elif self.relax.data.ri_labels[i] == 'R2':
+					self.ri_funcs.append(None)
+					if self.data.rex_index == None:
+						self.ri_prime_funcs.append(calc_r2_prime)
+					else:
+						self.ri_prime_funcs.append(calc_r2_rex_prime)
+
+				# The NOE equations.
+				elif self.relax.data.ri_labels[i] == 'NOE':
+					self.ri_funcs.append(calc_noe)
+					self.ri_prime_funcs.append(calc_sigma_noe)
+
+		# The bond length is part of the parameter vector.
+		elif self.data.r_index != None and self.data.csa_index == None:
+			calc_csa_const(self.data)
+			for i in range(self.relax.data.num_ri):
+				# The R1 equations.
+				if self.relax.data.ri_labels[i]  == 'R1':
+					self.ri_funcs.append(None)
+					self.ri_prime_funcs.append(calc_r1_prime_r)
+
+				# The R2 equations.
+				elif self.relax.data.ri_labels[i] == 'R2':
+					self.ri_funcs.append(None)
+					if self.data.rex_index == None:
+						self.ri_prime_funcs.append(calc_r2_prime_r)
+					else:
+						self.ri_prime_funcs.append(calc_r2_rex_prime_r)
+
+				# The NOE equations.
+				elif self.relax.data.ri_labels[i] == 'NOE':
+					self.ri_funcs.append(calc_noe)
+					self.ri_prime_funcs.append(calc_sigma_noe_r)
+
+		# The CSA is part of the parameter vector.
+		elif self.data.r_index == None and self.data.csa_index != None:
+			calc_dip_const(self.data)
+			for i in range(self.relax.data.num_ri):
+				# The R1 equations.
+				if self.relax.data.ri_labels[i]  == 'R1':
+					self.ri_funcs.append(None)
+					self.ri_prime_funcs.append(calc_r1_prime_csa)
+
+				# The R2 equations.
+				elif self.relax.data.ri_labels[i] == 'R2':
+					self.ri_funcs.append(None)
+					if self.data.rex_index == None:
+						self.ri_prime_funcs.append(calc_r2_prime_csa)
+					else:
+						self.ri_prime_funcs.append(calc_r2_rex_prime_csa)
+
+				# The NOE equations.
+				elif self.relax.data.ri_labels[i] == 'NOE':
+					self.ri_funcs.append(calc_noe)
+					self.ri_prime_funcs.append(calc_sigma_noe)
+
+		# Both the bond length and CSA are part of the parameter vector.
+		elif self.data.r_index != None and self.data.csa_index != None:
+			for i in range(self.relax.data.num_ri):
+				# The R1 equations.
+				if self.relax.data.ri_labels[i]  == 'R1':
+					self.ri_funcs.append(None)
+					self.ri_prime_funcs.append(calc_r1_prime_r_csa)
+
+				# The R2 equations.
+				elif self.relax.data.ri_labels[i] == 'R2':
+					self.ri_funcs.append(None)
+					if self.data.rex_index == None:
+						self.ri_prime_funcs.append(calc_r2_prime_r_csa)
+					else:
+						self.ri_prime_funcs.append(calc_r2_rex_prime_r_csa)
+
+				# The NOE equations.
+				elif self.relax.data.ri_labels[i] == 'NOE':
+					self.ri_funcs.append(calc_noe)
+					self.ri_prime_funcs.append(calc_sigma_noe_r)
+
+		# Invalid combination of parameters.
+		else:
+			print "Invalid combination of parameters for the model-free equations."
+			return 0
 
 		return 1

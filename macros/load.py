@@ -49,7 +49,41 @@ class load(generic_functions):
 
 
 	def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-		"Macro for loading R1, R2, or NOE relaxation data."
+		"""Macro for loading R1, R2, or NOE relaxation data.
+
+		Options
+		~~~~~~~
+
+		ri_label:	A string describing the type of data.  Must be one of 'R1', 'R2', or 'NOE'.
+		frq_label:	A string to label the field strength, eg. '600'.  Can be anything as long as data 
+			collected at the same field strength have the same label.
+		frq:		The spectrometer frequency in Hz.
+		file_name:	The name of the file containing the relaxation data.
+		num_col:	The column number corresponding to the residue numbers (column numbering starts at 0).
+		name_col:	The column number corresponding to the residue names.
+		data_col:	The column number corresponding to the data.
+		error_col:	The column number corresponding to the experimental errors.
+		sep:		The column separator.  If nothing is specified the separator will be white space.
+
+
+		Examples
+		~~~~~~~~
+
+		The following will load the NOE relaxation data collected at 600 MHz out of a file called 'noe.600.out'
+		where the residue numbers, residue names, data, errors are in the first, second, third, and forth
+		columns respectively.
+		>>> load.relax_data('NOE', '600', 599.7 * 1e6, 'noe.600.out')
+		>>> load.relax_data(ri_label='NOE', frq_label='600', frq=600.0 * 1e6, file_name='noe.600.out')
+
+		The following will load the R2 data out of the file 'r2.out' where the residue numbers, residue names,
+		data, errors are in the second, third, fifth, and sixth columns respectively.  The columns are separated
+		by commas.
+		>>> load.sequence('R2', '800', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
+		>>> load.relax_data(ri_label='R2', frq_label='800', frq=8.0*1e8, file_name='r2.out', num_col=1, name_col=2, data_col=4, error_col=5, sep=','):
+
+		The following will load the R1 data out of the file 'r1.out' where the columns are separated by the symbol '%'
+		>>> load.sequence('R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
+		"""
 
 		# Arguments
 		self.ri_label = ri_label
@@ -107,7 +141,35 @@ class load(generic_functions):
 
 
 	def sequence(self, file_name=None, num_col=0, name_col=1, sep=None):
-		"Macro for loading sequence data."
+		"""Macro for loading sequence data.
+
+		Options
+		~~~~~~~
+
+		file_name:	The name of the file containing the sequence data.
+		num_col:	The column number corresponding to the residue numbers (column numbering starts at 0).
+		name_col:	The column number corresponding to the residue names.
+		sep:		The column separator.  If nothing is specified the separator will be white space.
+
+
+		Examples
+		~~~~~~~~
+
+		The following will load the sequence data out of a file called 'seq' where the residue numbers and
+		names are in the first and second columns respectively (these commands do exactly the same thing).
+		>>> load.sequence('seq')
+		>>> load.sequence('seq', 0, 1, None)
+		>>> load.sequence(file_name='seq', num_col=0, name_col=1, seq=None)
+
+		The following will load the sequence out of the file 'noe.out' which also contains the NOE values.
+		>>> load.sequence('noe.out')
+
+		The following will load the sequence out of the file 'noe.600.out' where the residue numbers are in
+		the second column, the names are in the sixth column and the columns are separated by commas.
+		>>> load.sequence('noe.600.out', 1, 5, ',')
+		>>> load.sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',')
+
+		"""
 
 		# Arguments
 		self.file_name = file_name

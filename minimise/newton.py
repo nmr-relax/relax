@@ -57,6 +57,8 @@ class newton(generic_line_search, generic_minimise):
 	def dir(self):
 		"Calculate the Newton direction."
 
+		print "dfk: " + `self.dfk`
+		print "d2fk: " + `self.d2fk`
 		self.pk = -matrixmultiply(inverse(self.d2fk), self.dfk)
 		if dot(self.dfk, self.pk) >= 0.0:
 			self.pk = -self.dfk
