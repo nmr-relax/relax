@@ -23,6 +23,7 @@
 import __builtin__
 from code import InteractiveConsole, softspace
 from os import F_OK, access
+import pydoc
 import readline
 import signal
 import sys
@@ -36,7 +37,7 @@ from tab_completion import Tab_completion
 from command import Ls, Lh, Ll, system
 from print_all_data import Print_all_data
 
-# Functions.
+# User functions.
 from angles import Angles
 from create_run import Create_run
 from delete import Delete
@@ -53,18 +54,18 @@ from pdb import PDB
 from vectors import Vectors
 from write import Write
 
-# Classes.
-import echo_data
-import format
-import model
-import molmol
-import palmer
-import read
-import select
-import set_value
-import state
-import unselect
-import vmd
+# User classes.
+from echo_data import Echo_data
+from format import Format
+from model import Model
+from molmol import Molmol
+from palmer import Palmer
+from read import Read
+from select import Select
+from state import State
+from unselect import Unselect
+from value import Value
+from vmd import Vmd
 
 
 class Interpreter:
@@ -86,7 +87,7 @@ class Interpreter:
         self._Numeric = Numeric
         self._Scientific = Scientific
 
-        # Place the functions into the namespace of the interpreter class.
+        # Place the user functions into the namespace of the interpreter class.
         self._Angles = Angles(relax)
         self._Create_run = Create_run(relax)
         self._Delete = Delete(relax)
@@ -104,18 +105,18 @@ class Interpreter:
         self._Vectors = Vectors(relax)
         self._Write = Write(relax)
 
-        # Place the classes into the interpreter class namespace.
-        self._Echo_data = echo_data.Shell(relax)
-        self._Format = format.Shell(relax)
-        self._Model = model.Model(relax)
-        self._Molmol = molmol.Shell(relax)
-        self._Palmer = palmer.Shell(relax)
-        self._Read = read.Shell(relax)
-        self._Select = select.Shell(relax)
-        self._Set_value = set_value.Shell(relax)
-        self._State = state.Shell(relax)
-        self._Unselect = unselect.Shell(relax)
-        self._Vmd = vmd.Shell(relax)
+        # Place the user classes into the interpreter class namespace.
+        self._Echo_data = Echo_data(relax)
+        self._Format = Format(relax)
+        self._Model = Model(relax)
+        self._Molmol = Molmol(relax)
+        self._Palmer = Palmer(relax)
+        self._Read = Read(relax)
+        self._Select = Select(relax)
+        self._Value = Value(relax)
+        self._State = State(relax)
+        self._Unselect = Unselect(relax)
+        self._Vmd = Vmd(relax)
 
 
     def run(self):
@@ -139,7 +140,7 @@ class Interpreter:
         # Place functions in the local namespace.
         gpl = GPL = self._GPL()
 
-        # Place the functions in the local namespace.
+        # Place the user functions in the local namespace.
         angles = self._Angles.angles
         calc = self._Minimise.calc
         create_run = self._Create_run.create
@@ -154,11 +155,10 @@ class Interpreter:
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei
         pdb = self._PDB.pdb
-        set = self._Minimise.set
         vectors = self._Vectors.vectors
         write = self._Write.write
 
-        # Place the classes in the local namespace.
+        # Place the user classes in the local namespace.
         echo_data = self._Echo_data
         format = self._Format
         palmer = self._Palmer
@@ -166,10 +166,10 @@ class Interpreter:
         model = self._Model
         molmol = self._Molmol
         select = self._Select
-        set_value = self._Set_value
         state = self._State
         unselect = self._Unselect
         vmd = self._Vmd
+        value = self._Value
 
         # Builtin interpreter functions.
         intro_off = self._off
@@ -252,7 +252,9 @@ type help_python().\
         if len(args) != 1 or type(args[0]) == str:
             print self.text
             return
-        import pydoc
+        if hasattr(args[0], '__relax_help__'):
+            sys.stdout.write(args[0].__relax_help__ + "\n")
+            return
         return pydoc.help(*args, **kwds)
 
 
@@ -266,7 +268,6 @@ to the help function built into the normal python interpreter.\
         return self.text
 
     def __call__(self, *args, **kwds):
-        import pydoc
         return pydoc.help(*args, **kwds)
 
 

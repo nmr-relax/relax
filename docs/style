@@ -1,18 +1,23 @@
 Indentation
 ~~~~~~~~~~~
 
-Indentation should be set to four spaces rather than a tab character.
-For vi, add the following lines to '~/.vimrc':
+Indentation should be set to four spaces rather than a tab character.  This is the recommendation
+given in the python style guide found at 'http://www.python.org/doc/essays/styleguide.html'.  For
+vi, add the following lines to '~/.vimrc':
 
 set tabstop=4
 set shiftwidth=4
 set expandtab
 
-Recent versions of vim contain a bug where the tabstop value cannot be changed using the '~/.vimrc'
-file (although typing ':set tabstop=4' in vim will fix it).  A permanent solution is to edit the
-file 'python.vim' which is located in the path '/usr/share/vim/ftplugin/' or equivalent.  It
-contains the comment '" Python always uses a 'tabstop' of 8.' and the setting 'setlocal ts=8'.  If
-these are deleted, the bug will be permanently removed!
+Recent versions of vim, 6.2 and above, contain a bug where the tabstop value cannot be changed
+using the '~/.vimrc' file (although typing ':set tabstop=4' in vim will fix it).  A permanent
+solution is to edit the file 'python.vim' which is located in the path '/usr/share/vim/ftplugin/'
+or equivalent.  It contains the two lines:
+
+" Python always uses a 'tabstop' of 8.
+setlocal ts=8
+
+If these lines are deleted, the bug will be permanently removed!
 
 
 Doc strings

@@ -21,9 +21,20 @@
 ###############################################################################
 
 
-def main_class():
-    text = ""
-    text = text + "This is a class which contains functions.  To see these functions, either supply the class\n"
-    text = text + "name to the function 'dir' by typing dir(the_name_of_this_class) or by placing a period at\n"
-    text = text + "the end of class name and hitting the tab key.\n"
-    return text
+# Generic string printed out for function classes.
+##################################################
+
+relax_class_help = """
+This is a python class which contains user functions.  To list these functions, either place a
+period at the end of class name and hit the tab key, or type 'dir(class_name)'.
+"""
+
+# Strip the leading newline character.
+relax_class_help = relax_class_help[1:]
+
+
+# Repr function used to print the 'relax_class_help' string.
+############################################################
+
+def repr():
+    return relax_class_help

@@ -101,28 +101,3 @@ class Minimise:
 
         # Minimisation.
         minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
-
-
-    def set(self, run=None, values=None, print_flag=1):
-        """Function for setting the initial parameter values."""
-
-        # Test if sequence data is loaded.
-        if not len(self.relax.data.res):
-            raise RelaxSequenceError
-
-        # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
-
-        # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
-
-        # Specific set function.
-        set = self.relax.specific_setup.setup('set', function_type)
-        if set == None:
-            raise RelaxFuncSetupError, ('set', function_type)
-
-        # Minimisation.
-        set(run=run, values=values, print_flag=print_flag)
-
-

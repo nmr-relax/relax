@@ -22,36 +22,19 @@
 
 import sys
 
-import message
+import help
 
 
-class Shell:
-    def __init__(self, relax):
-        """The class accessible to the interpreter.
-
-        The purpose of this class is to hide the variables and functions found within the namespace
-        of the main class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the main class data structures
-        are accessible.  For more flexibility use the main class directly.
-        """
-
-        # Load the main class into the namespace of this __init__ function.
-        x = Main(relax)
-
-        # Place references to the interactive functions within the namespace of this class.
-        self.create = x.create
-        self.execute = x.execute
-        self.extract = x.extract
-
-        # __repr__.
-        self.__repr__ = message.main_class
-
-
-class Main:
+class Palmer:
     def __init__(self, relax):
         """Functions for interoperability with Modelfree4."""
 
+        # Place relax in the class namespace.
         self.relax = relax
+
+        # Help.
+        self.__relax_help__ = help.relax_class_help
+        self.__repr__ = help.repr
 
 
     def create(self, run=None, dir=None, force=0, diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):

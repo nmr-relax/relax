@@ -22,7 +22,7 @@
 
 import sys
 
-import message
+import help
 
 
 class Model:
@@ -31,8 +31,9 @@ class Model:
 
         self.relax = relax
 
-        # __repr__.
-        self.__repr__ = message.main_class
+        # Help.
+        self.__relax_help__ = help.relax_class_help
+        self.__repr__ = help.repr
 
 
     def create_mf(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):

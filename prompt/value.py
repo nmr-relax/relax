@@ -22,35 +22,19 @@
 
 import sys
 
-import message
+import help
 
 
-class Shell:
-    def __init__(self, relax):
-        """The class accessible to the interpreter.
-
-        The purpose of this class is to hide the variables and functions found within the namespace
-        of the main class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the main class data structures
-        are accessible.  For more flexibility use the main class directly.
-        """
-
-        # Load the main class into the namespace of this __init__ function.
-        x = Main(relax)
-
-        # Place references to the interactive functions within the namespace of this class.
-        self.load = x.load
-        self.set = x.set
-
-        # __repr__.
-        self.__repr__ = message.main_class
-
-
-class Main:
+class Value:
     def __init__(self, relax):
         """Class containing functions for the setting up of data structures."""
 
+        # Place relax in the class namespace.
         self.relax = relax
+
+        # Help.
+        self.__relax_help__ = help.relax_class_help
+        #self.__repr__ = help.repr
 
 
     def load(self, type=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
@@ -176,3 +160,66 @@ class Main:
 
         # Execute the functional code.
         self.relax.generic.value.set(run=run, res_num=res_num, data_type=data_type, val=val, err=err)
+
+
+    def set(self, run=None, values=None, print_flag=1):
+        """Function for setting the initial parameter values.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        values:  An array of numbers of length equal to the number of parameters in the model.
+
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
+
+
+        Examples
+        ~~~~~~~~
+
+        This command will set the parameter values of the run 'm2', which is the original
+        model-free equation with parameters {S2, te}, before minimisation to the preselected values
+        of this function.
+
+        relax> set('m2')
+
+
+        This command will do the same except the S2 and te values will be set to one and ten ps
+        respectively.
+
+        relax> set('m2', [1.0, 10 * 10e-12])
+        relax> set(run='m2', values=[1.0, 10 * 10e-12])
+        """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "set("
+            text = text + "run=" + `run`
+            text = text + ", values=" + `values`
+            text = text + ", print_flag=" + `print_flag` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Relax defined values.
+        if values != None:
+            if type(values) != list:
+                raise RelaxListError, ('values', values)
+            for i in xrange(len(values)):
+                if type(values[i]) != float and type(values[i]) != int:
+                    raise RelaxListIntError, ('values', values)
+
+        # The print flag.
+        if type(print_flag) != int:
+            raise RelaxIntError, ('print_flag', print_flag)
+
+        # Execute the functional code.
+        self.relax.generic.minimise.set(run=run, values=values, print_flag=print_flag)
+
+
+    def write(self):
+        raise RelaxError, "Broken code."

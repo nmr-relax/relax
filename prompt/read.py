@@ -22,36 +22,19 @@
 
 import sys
 
-import message
+import help
 
 
-class Shell:
-    def __init__(self, relax):
-        """The class accessible to the interpreter.
-
-        The purpose of this class is to hide the variables and functions found within the namespace
-        of the main class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the main class data structures
-        are accessible.  For more flexibility use the main class directly.
-        """
-
-        # Load the main class into the namespace of this __init__ function.
-        x = Main(relax)
-
-        # Place references to the interactive functions within the namespace of this class.
-        self.read_results = x.read_results
-        self.relax_data = x.relax_data
-        self.sequence = x.sequence
-
-        # __repr__.
-        self.__repr__ = message.main_class
-
-
-class Main:
+class Read:
     def __init__(self, relax):
         """Class containing functions for loading data."""
 
+        # Place relax in the class namespace.
         self.relax = relax
+
+        # Help.
+        self.__relax_help__ = help.relax_class_help
+        self.__repr__ = help.repr
 
 
     def read_results(self, run=None, data_type=None, file='results', dir=None):

@@ -42,6 +42,18 @@ class Value:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
+        # Specific set function.
+        set = self.relax.specific_setup.setup('set', function_type)
+        if set == None:
+            raise RelaxFuncSetupError, ('set', function_type)
+
+        # Minimisation.
+        set(run=run, values=values, print_flag=print_flag)
+
+
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
