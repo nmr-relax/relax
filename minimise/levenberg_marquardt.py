@@ -1,7 +1,7 @@
 from LinearAlgebra import solve_linear_equations
 from Numeric import Float64, zeros
 
-from generic_minimise import generic_minimise
+from generic import Min
 
 
 def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
@@ -34,9 +34,13 @@ def levenberg_marquardt(chi2_func=None, dchi2_func=None, dfunc=None, errors=None
 	return results
 
 
-class Levenberg_marquardt(generic_minimise):
+class Levenberg_marquardt(Min):
 	def __init__(self, chi2_func, dchi2_func, dfunc, errors, args, x0, func_tol, maxiter, full_output, print_flag):
-		"Class for Levenberg-Marquardt minimisation specific functions."
+		"""Class for Levenberg-Marquardt minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function
+		'levenberg_marquardt' rather than using this class.
+		"""
 
 		self.chi2_func = chi2_func
 		self.dchi2_func = dchi2_func

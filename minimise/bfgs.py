@@ -1,7 +1,6 @@
 from Numeric import Float64, dot, identity, matrixmultiply, outerproduct
 
-from generic_minimise import generic_minimise
-from line_search_functions import line_search_functions
+from generic import Line_search, Min
 
 
 def bfgs(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
@@ -17,9 +16,13 @@ def bfgs(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, ma
 	return results
 
 
-class Bfgs(generic_minimise, line_search_functions):
+class Bfgs(Line_search, Min):
 	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
-		"Class for Quasi-Newton BFGS minimisation specific functions."
+		"""Class for Quasi-Newton BFGS minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function 'bfgs' rather than
+		using this class.
+		"""
 
 		self.func = func
 		self.dfunc = dfunc

@@ -1,6 +1,6 @@
 from Numeric import Float64, add, argsort, average, take, zeros
 
-from generic_minimise import generic_minimise
+from generic import Min
 
 
 def simplex(func, args=(), x0=None, func_tol=1e-5, maxiter=None, full_output=0, print_flag=0):
@@ -13,9 +13,13 @@ def simplex(func, args=(), x0=None, func_tol=1e-5, maxiter=None, full_output=0, 
 	return results
 
 
-class Simplex(generic_minimise):
+class Simplex(Min):
 	def __init__(self, func, args, x0, func_tol, maxiter, full_output, print_flag):
-		"Class for downhill simplex minimisation specific functions."
+		"""Class for downhill simplex minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function 'simplex' rather
+		than using this class.
+		"""
 
 		self.func = func
 		self.args = args

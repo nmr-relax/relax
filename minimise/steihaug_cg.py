@@ -2,8 +2,7 @@ from LinearAlgebra import inverse
 from Numeric import Float64, dot, matrixmultiply, outerproduct, sqrt, zeros
 
 from newton import Newton
-from generic_trust_region import generic_trust_region
-from generic_minimise import generic_minimise
+from generic import Min, Trust_region
 
 
 def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, epsilon=1e-8, delta_max=1e5, delta0=1.0, eta=0.2):
@@ -40,9 +39,13 @@ def steihaug(func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, max
 	return results
 
 
-class Steihaug(generic_trust_region, generic_minimise, Newton):
+class Steihaug(Min, Trust_region, Newton):
 	def __init__(self, func, dfunc, d2func, args, x0, func_tol, maxiter, full_output, print_flag, epsilon, delta_max, delta0, eta):
-		"Class for Steihaug conjugate-gradient trust region minimisation specific functions."
+		"""Class for Steihaug conjugate-gradient trust region minimisation specific functions."
+
+		Unless you know what you are doing, you should call the function 'steihaug' rather
+		than using this class.
+		"""
 
 		self.func = func
 		self.dfunc = dfunc

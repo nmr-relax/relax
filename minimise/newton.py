@@ -2,8 +2,7 @@ from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_l
 from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, transpose
 from re import match
 
-from generic_minimise import generic_minimise
-from line_search_functions import line_search_functions
+from generic import Line_search, Min
 
 
 def newton(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9, mach_acc=1e-16):
@@ -19,12 +18,12 @@ def newton(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func
 	return results
 
 
-class Newton(generic_minimise, line_search_functions):
+class Newton(Line_search, Min):
 	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta, mach_acc):
 		"""Class for Newton minimisation specific functions.
 
-		You should call the function 'newton' rather than using this class unless you know
-		what you are doing.
+		Unless you know what you are doing, you should call the function 'newton' rather
+		than using this class.
 		"""
 
 		self.func = func

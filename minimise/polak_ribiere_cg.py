@@ -1,8 +1,6 @@
 from Numeric import dot
 
-from generic_conjugate_gradient import generic_conjugate_gradient
-from generic_minimise import generic_minimise
-from line_search_functions import line_search_functions
+from generic import Conjugate_gradient, Line_search, Min
 
 
 def polak_ribiere(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.1):
@@ -31,9 +29,13 @@ def polak_ribiere(func, dfunc=None, args=(), x0=None, min_options=None, func_tol
 	return results
 
 
-class Polak_ribiere(generic_conjugate_gradient, generic_minimise, line_search_functions):
+class Polak_ribiere(Conjugate_gradient, Line_search, Min):
 	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
-		"Class for Polak-Ribière conjugate gradient minimisation specific functions."
+		"""Class for Polak-Ribière conjugate gradient minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function 'polak_ribiere'
+		rather than using this class.
+		"""
 
 		self.func = func
 		self.dfunc = dfunc

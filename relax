@@ -51,7 +51,7 @@ sys.path[0] = '.'
 from usr_param import usr_param
 
 from model_selection.model_selection import model_selection
-from minimise.minimisation import minimise
+from minimise.generic import minimise
 
 # Tests for installed packages.
 try:

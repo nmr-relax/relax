@@ -1,85 +1,101 @@
 from Numeric import Float64, zeros
 
+from generic import minimise
 #from bound_constraint import bound_constraint
 from linear_constraint import linear_constraint
 
 
-class method_of_multipliers:
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
-		"""The method of multipliers, also known as the augmented Lagrangian method.
+def method_of_multipliers(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1.0, tau0=1.0, lambda0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+	"""The method of multipliers, also known as the augmented Lagrangian method.
 
-		Three types of inequality constraint are supported.  These are linear, bound, and
-		general constraints and must be setup as follows.  The vector x is the vector of
-		model parameters.
+	Three types of inequality constraint are supported.  These are linear, bound, and general
+	constraints and must be setup as follows.  The vector x is the vector of model parameters.
 
-		Currently equality constraints are not implemented.
+	Currently equality constraints are not implemented.
 
 
-		Linear constraints
-		~~~~~~~~~~~~~~~~~~
+	Linear constraints
+	~~~~~~~~~~~~~~~~~~
 
-		These are defined as:
+	These are defined as:
 
-			A.x >= b
+		A.x >= b
 
-		where:
-			A is an m*n matrix where the rows are the transposed vectors, ai, of length
-			n.  The elements of ai are the coefficients of the model parameters.
+	where:
+		A is an m*n matrix where the rows are the transposed vectors, ai, of length n.  The
+		elements of ai are the coefficients of the model parameters.
 
-			x is the vector of model parameters of dimension n.
+		x is the vector of model parameters of dimension n.
 
-			b is the vector of scalars of dimension m.
+		b is the vector of scalars of dimension m.
 
-			m is the number of constraints.
+		m is the number of constraints.
 
-			n is the number of model parameters.
+		n is the number of model parameters.
 
-		eg if 0 <= q <= 1, q >= 1 - 2r, and 0 <= r, then:
+	eg if 0 <= q <= 1, q >= 1 - 2r, and 0 <= r, then:
 
-			| 1  0 |            |  0 |
-			|      |            |    |
-			|-1  0 |   | q |    | -1 |
-			|      | . |   | >= |    |
-			| 1  2 |   | r |    |  1 |
-			|      |            |    |
-			| 0  1 |            |  2 |
+		| 1  0 |            |  0 |
+		|      |            |    |
+		|-1  0 |   | q |    | -1 |
+		|      | . |   | >= |    |
+		| 1  2 |   | r |    |  1 |
+		|      |            |    |
+		| 0  1 |            |  2 |
 
-		To use linear constraints both the matrix A and vector b need to be supplied.
-
-
-		Bound constraints
-		~~~~~~~~~~~~~~~~~
-
-		These are defined as:
-
-			l <= x <= u
-
-		where l and u are the vectors of lower and upper bounds respectively.
-
-		eg if 0 <= q <= 1, r >= 0, s <= 3, then:
-
-			|  0  |    | q |    |  1  |
-			|  0  | <= | r | <= | inf |
-			|-inf |    | s |    |  3  |
-
-		To use bound constraints both vectors l and u need to be supplied.
+	To use linear constraints both the matrix A and vector b need to be supplied.
 
 
-		General constraints
-		~~~~~~~~~~~~~~~~~~~
+	Bound constraints
+	~~~~~~~~~~~~~~~~~
 
-		These are defined as:
+	These are defined as:
 
-			ci(x) >= 0
+		l <= x <= u
 
-		where ci(x) are the constraint functions.
+	where l and u are the vectors of lower and upper bounds respectively.
 
-		To use general constrains the functions c, dc, and d2c need to be supplied.  The
-		function c is the constraint function which should return the vector of constraint
-		values.  The function dc is the constraint gradient function which should return the
-		matrix of constraint gradient vectors.  The function d2c is the constraint Hessian
-		function which should return the 3D matrix of constraint Hessians.
+	eg if 0 <= q <= 1, r >= 0, s <= 3, then:
 
+		|  0  |    | q |    |  1  |
+		|  0  | <= | r | <= | inf |
+		|-inf |    | s |    |  3  |
+
+	To use bound constraints both vectors l and u need to be supplied.
+
+
+	General constraints
+	~~~~~~~~~~~~~~~~~~~
+
+	These are defined as:
+
+		ci(x) >= 0
+
+	where ci(x) are the constraint functions.
+
+	To use general constrains the functions c, dc, and d2c need to be supplied.  The function c
+	is the constraint function which should return the vector of constraint values.  The
+	function dc is the constraint gradient function which should return the matrix of constraint
+	gradient vectors.  The function d2c is the constraint Hessian function which should return
+	the 3D matrix of constraint Hessians.
+
+	"""
+
+	min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, func_tol, maxiter, full_output, print_flag)
+	if min.init_failure:
+		print "Initialisation of minimisation has failed."
+		return None
+	results = min.minimise()
+	return results
+
+
+
+class Method_of_multipliers:
+	def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, tau0, lambda0, func_tol, maxiter, full_output, print_flag):
+		"""Class for Newton minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function
+		'method_of_multipliers' rather than using this class.
 		"""
 
 		# Linear constraints.
@@ -94,7 +110,9 @@ class method_of_multipliers:
 
 		# Bound constraints.
 		elif l != None and u != None:
-			raise NameError, "Bound constraints are not implemented yet."
+			print "Bound constraints are not implemented yet."
+			self.init_failure = 1
+			return
 			self.l = l
 			self.u = u
 			#self.bound_constraint = bound_constraint(self.l, self.u)
@@ -111,7 +129,9 @@ class method_of_multipliers:
 
 		# Incorrectly supplied constraints.
 		else:
-			raise NameError, "The constraints have not been supplied correctly."
+			print "The constraints have been incorreclty supplied."
+			self.init_failure = 1
+			return
 
 		# Arguments.
 		self.func = func
@@ -127,6 +147,17 @@ class method_of_multipliers:
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+
+		# Minimisation options.
+		#######################
+
+		# Initialise the function, gradient, and Hessian evaluation counters.
+		self.f_count = 0
+		self.g_count = 0
+		self.h_count = 0
+
+		# Initialise the warning string.
+		self.warning = None
 
 		# Initialise data structures.
 		self.L = 0.0
@@ -219,8 +250,9 @@ class method_of_multipliers:
 			k = k + 1
 		"""
 
-		# Start the iteration counter.
+		# Start the iteration counters.
 		self.k = 0
+		self.j = 0
 
 		# Iterate until the local minima is found.
 		while 1:
@@ -230,10 +262,13 @@ class method_of_multipliers:
 					print "\n\n<<<Main iteration k=" + `self.k` + " >>>"
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 
-			# Get xk+1 (new parameter function).
-			self.new_param_func()
-
-			# Test for warnings.
+			# Unconstrained minimisation sub-loop.
+			results = minimise(func_LA, dfunc=func_dLA, d2func=func_d2LA, args=args, x0=self.xk, min_algor=min_algor, min_options=min_options, maxiter=maxiter, full_output=1, print_flag=print_flag)
+			self.xk_new, self.fk_new, j, f, g, h, self.warning = results
+			self.j = self.j + j
+			self.f_count = self.f_count + f
+			self.g_count = self.g_count + g
+			self.h_count = self.h_count + h
 			if self.warning != None:
 				break
 

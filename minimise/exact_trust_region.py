@@ -4,8 +4,7 @@ from re import match
 
 from bfgs import Bfgs
 from newton import Newton
-from generic_trust_region import generic_trust_region
-from generic_minimise import generic_minimise
+from generic import Min, Trust_region
 
 
 def exact_trust_region(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16):
@@ -21,9 +20,13 @@ def exact_trust_region(func, dfunc=None, d2func=None, args=(), x0=None, min_opti
 	return results
 
 
-class Exact_trust_region(generic_trust_region, generic_minimise, Bfgs, Newton):
+class Exact_trust_region(Min, Trust_region, Bfgs, Newton):
 	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, lambda0, delta_max, delta0, eta, mach_acc):
-		"Class for Exact trust region minimisation specific functions."
+		"""Class for Exact trust region minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function
+		'exact_trust_region' rather than using this class.
+		"""
 
 		self.func = func
 		self.dfunc = dfunc

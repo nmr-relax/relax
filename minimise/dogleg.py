@@ -4,8 +4,7 @@ from re import match
 
 from bfgs import Bfgs
 from newton import Newton
-from generic_trust_region import generic_trust_region
-from generic_minimise import generic_minimise
+from generic import Trust_region, Min
 
 
 def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, delta_max=1e10, delta0=1e5, eta=0.0001, mach_acc=1e-16):
@@ -48,9 +47,13 @@ def dogleg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func
 	return results
 
 
-class Dogleg(generic_trust_region, generic_minimise, Bfgs, Newton):
+class Dogleg(Trust_region, Min, Bfgs, Newton):
 	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, delta_max, delta0, eta, mach_acc):
-		"Class for Dogleg trust region minimisation specific functions."
+		"""Class for Dogleg trust region minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function 'dogleg' rather
+		than using this class.
+		"""
 
 		self.func = func
 		self.dfunc = dfunc

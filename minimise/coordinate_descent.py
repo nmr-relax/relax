@@ -1,7 +1,6 @@
 from Numeric import Float64, dot, identity
 
-from generic_minimise import generic_minimise
-from line_search_functions import line_search_functions
+from generic import Line_search, Min
 
 
 def coordinate_descent(func, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.1):
@@ -17,9 +16,13 @@ def coordinate_descent(func, dfunc=None, args=(), x0=None, min_options=None, fun
 	return results
 
 
-class Coordinate_descent(generic_minimise, line_search_functions):
+class Coordinate_descent(Line_search, Min):
 	def __init__(self, func, dfunc, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
-		"Class for back-and-forth coordinate descent minimisation specific functions."
+		"""Class for back-and-forth coordinate descent minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function
+		'coordinate_descent' rather than using this class.
+		"""
 
 		self.func = func
 		self.dfunc = dfunc
@@ -29,7 +32,7 @@ class Coordinate_descent(generic_minimise, line_search_functions):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
-		
+
 		# Minimisation options.
 		#######################
 

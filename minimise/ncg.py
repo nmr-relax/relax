@@ -1,10 +1,10 @@
 from LinearAlgebra import inverse
 from Numeric import Float64, dot, matrixmultiply, sqrt, zeros
 
-from generic_minimise import generic_minimise
-from line_search_functions import line_search_functions
+from generic import Line_search, Min
 
-def newton_cg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
+
+def ncg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, a0=1.0, mu=0.0001, eta=0.9):
 	"""Line search Newton conjugate gradient algorithm.
 
 	Page 140 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -21,7 +21,7 @@ def newton_cg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None,
 
 	"""
 
-	min = Newton_cg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta)
+	min = Ncg(func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta)
 	if min.init_failure:
 		print "Initialisation of minimisation has failed."
 		return None
@@ -29,9 +29,13 @@ def newton_cg(func, dfunc=None, d2func=None, args=(), x0=None, min_options=None,
 	return results
 
 
-class Newton_cg(generic_minimise, line_search_functions):
+class Ncg(Line_search, Min):
 	def __init__(self, func, dfunc, d2func, args, x0, min_options, func_tol, maxiter, full_output, print_flag, a0, mu, eta):
-		"Class for newton conjugate gradient  minimisation specific functions."
+		"""Class for newton conjugate gradient  minimisation specific functions.
+
+		Unless you know what you are doing, you should call the function 'ncg' rather than
+		using this class.
+		"""
 
 		self.func = func
 		self.dfunc = dfunc
