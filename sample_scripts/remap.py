@@ -35,9 +35,9 @@ value.set(name, 'csa', -160 * 1e-6)
 model.select_mf(name, name)
 
 # Map data.
-inc = 10
+inc = 100
 lower = [0.5, 0.5, 0]
-upper = [1.0, 1.0, 1000e-12]
+upper = [1.0, 1.0, 300e-12]
 swap = [0, 2, 1]
 point = [0.952, 0.582, 32.0e-12]
 point = [point[0], point[0]*point[1], point[2]]
