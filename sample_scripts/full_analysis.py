@@ -37,6 +37,10 @@ class Main:
         This approach has the advantage of eliminating the need for an initial estimate of a global
         diffusion tensor and removing all the problems associated with the initial estimate.
 
+        It is important that the number of parameters in a model does not excede the number of
+        relaxation data sets for that residue.  If this is the case, the list of models in the
+        'multi_model' functions will need to be trimmed.
+
 
         Model I - Local tm
         ~~~~~~~~~~~~~~~~~~
@@ -106,10 +110,19 @@ class Main:
 
         The methods used are identical to those of diffusion model MII, except that a fully
         anisotropic diffusion tenosr is used.  The base directory is './aniso/'.
+
+
+
+        Diffusion model selection
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        If self.diff_model is set to 'select', AIC model selection will be used to select between
+        the diffusion tensor models.  As the local tm diffusion model MI does not use the same set
+        of relaxation data during optimisation, MI must be excluded from the model selection.
         """
 
         # The diffusion model.
-        self.diff_model = 'oblate'
+        self.diff_model = 'select'
 
 
         # MI - Local tm.
@@ -126,7 +139,7 @@ class Main:
             create_run('aic', 'mf')
 
             # Model selection.
-            self.model_selection(run='aic')
+            self.model_selection(run='aic', dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
@@ -166,7 +179,7 @@ class Main:
                 elif self.diff_model == 'oblate':
                     diffusion_tensor.set(run, (10e-9, 0, 0, 0), axial_type='oblate', fixed=0)
                 elif self.diff_model == 'aniso':
-                    diffusion_tensor.set(run, (10e-9, 0, 0, 0, 0, 0), fixed=0)
+                    diffusion_tensor.set(run, (8.6e-09, -8e6, 0, 360, 90, 360), fixed=0)
 
                 # Minimise just the diffusion tensor.
                 fix(run, 'all_res')
@@ -188,12 +201,15 @@ class Main:
                 # Sequential optimisation of all model-free models (function must be modified to suit).
                 self.multi_model()
 
+                # Delete the run containing the optimised diffusion tensor.
+                delete('tensor')
+
                 # Create the final run (for model selection and final optimisation).
                 run = 'final'
                 create_run(run, 'mf')
 
                 # Model selection.
-                self.model_selection(run)
+                self.model_selection(run=run, dir=self.base_dir + 'aic')
 
                 # Final optimisation of all diffusion and model-free parameters.
                 fix(run, 'all', fixed=0)
@@ -204,6 +220,32 @@ class Main:
                 # Write the results.
                 dir = self.base_dir + 'opt'
                 write(run=run, file='results', dir=dir, force=1)
+
+
+        # Diffusion model selection (only MII to MV).
+        #############################################
+
+        elif self.diff_model == 'select':
+            # Loop over the models (overwrite the variable self.diff_model in the process).
+            for self.diff_model in ['iso', 'prolate', 'oblate', 'aniso']:
+                # Determine which was the last round of optimisation for each of the models.
+                self.round = self.determine_rnd() - 1
+
+                # Skip the diffusion model if no directories begining with 'round_' exist.
+                if self.round < 1:
+                    continue
+
+                # Create the run.
+                create_run(self.diff_model, 'mf')
+
+                # Load the diffusion model results.
+                read(run=self.diff_model, file='results', dir=self.diff_model + '/round_' + `self.round` + '/opt')
+
+            # Create the run for model selection (which will be a copy of the selected diffusion model or run).
+            create_run('final', 'mf')
+
+            # Model selection.
+            self.model_selection(run='final', dir='final')
 
 
         # Unknown script behaviour.
@@ -220,7 +262,6 @@ class Main:
         try:
             dir_list = listdir(getcwd() + '/' + self.diff_model)
         except:
-            print "Hello"
             return 0
 
         # Set the round to 'init' or 0 if there is no directory called 'init'.
@@ -254,18 +295,18 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the run for the previous data.
-        create_run('opt', 'mf')
+        create_run('tensor', 'mf')
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            read('opt', 'results', self.diff_model + '/init')
+            read('tensor', 'results', self.diff_model + '/init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            read('opt', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
+            read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, run=None):
+    def model_selection(self, run=None, dir=None):
         """Model selection function."""
 
         # Model elimination.
@@ -275,7 +316,6 @@ class Main:
         model_selection('AIC', run)
 
         # Write the results.
-        dir = self.base_dir + 'aic'
         write(run=run, file='results', dir=dir, force=1)
 
 
@@ -307,8 +347,9 @@ class Main:
             relax_data.read(run, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
             relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
-            # Copy the diffusion tensor from the run 'opt'.
-            diffusion_tensor.copy('opt', run)
+            # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
+            diffusion_tensor.copy('tensor', run)
+            fix(run, 'diff')
 
             # Set the bond length and CSA values.
             value.set(run, 1.02 * 1e-10, 'bond_length')

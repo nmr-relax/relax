@@ -1510,13 +1510,11 @@ class Model_free(Common_functions):
                     min_options[j][2] = self.upper[j]
 
         # Test if the grid is too large.
-        grid_size = 1
+        self.grid_size = 1
         for i in xrange(len(min_options)):
-            grid_size = grid_size * min_options[i][0]
-        if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
-        if self.print_flag >= 1:
-            print "The unconstrained grid search size is " + `grid_size` + " (constraints may decrease this size)."
+            self.grid_size = self.grid_size * min_options[i][0]
+        if type(self.grid_size) == long:
+            raise RelaxError, "A grid search of size " + `self.grid_size` + " is too large."
 
         # Diagonal scaling of minimisation options.
         for j in xrange(len(min_options)):
@@ -2100,8 +2098,10 @@ class Model_free(Common_functions):
                     if self.print_flag >= 2:
                         print "\n\n"
                     string = "Fitting to residue: " + `self.relax.data.res[self.run][index].num` + " " + self.relax.data.res[self.run][index].name
-                    print string
+                    print "\n\n" + string
                     print len(string) * '~'
+                if match('^[Gg]rid', min_algor):
+                    print "The unconstrained grid search size is " + `self.grid_size` + " (constraints may decrease this size).\n"
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             self.iter_count = 0
