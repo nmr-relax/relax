@@ -170,23 +170,32 @@ def calc_aniso_ci(data, diff_data):
         alpha (in delta_alpha) is the directional cosine along Dx.
 
         beta (in delta_beta) is the directional cosine along Dy.
-        
+
         gamma (in delta_gamma) is the directional cosine along Dz.
     """
 
     # Calculate mu.
     data.mu = sqrt(diff_data.params[1]**2 + diff_data.params[2]**2 / 3.0)
 
+    # Components.
+    data.c_alpha = data.delta_alpha**4 + 2.0 * data.delta_beta**2  * data.delta_gamma**2
+    data.c_beta  = data.delta_beta**4  + 2.0 * data.delta_alpha**2 * data.delta_gamma**2
+    data.c_gamma = data.delta_gamma**4 + 2.0 * data.delta_alpha**2 * data.delta_beta**2
+
+    data.e1 = (diff_data.params[1] - diff_data.params[2]) / data.mu
+    data.e2 = (diff_data.params[1] + diff_data.params[2]) / data.mu
+    data.e3 = 2.0 * diff_data.params[1] / data.mu
+
     # Calculate d.
-    d = 3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1
+    d = 3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1.0
 
     # Calculate e.
     if diff_data.params[1] == 0.0:
         e = 0.0
     else:
-        e = (diff_data.params[1] - diff_data.params[2]) / data.mu * (data.delta_alpha**4 + 2.0 * data.delta_beta**2 * data.delta_gamma**2)
-        e = e + (diff_data.params[1] + diff_data.params[2]) / data.mu * (data.delta_beta**4 + 2.0 * data.delta_alpha**2 * data.delta_gamma**2)
-        e = e - 2.0 * diff_data.params[1] / data.mu * (data.delta_gamma**4 + 2.0 * data.delta_alpha**2 * data.delta_beta**2)
+        e = data.e1 * data.c_alpha
+        e = e + data.e2 * data.c_beta
+        e = e - data.e3 * data.c_gamma
 
     # Weight c-2.
     data.ci[0] = 3.0 * data.delta_alpha**2 * data.delta_beta**2
@@ -239,13 +248,17 @@ def calc_aniso_dci(data, diff_data):
 
 
 
-         de       Da - Dr /        dda            /     ddb          ddg  \ \     Da + Dr /        ddb            /     dda          ddg  \ \ 
-        -----  =  ------- | da**3 -----  +  db.dg | dg -----  +  db ----- | |  +  ------- | db**3 -----  +  da.dg | dg -----  +  da ----- | |
-        dpsii       mu    \       dpsii           \    dpsii        dpsii / /       mu    \       dpsii           \    dpsii        dpsii / /
+         de         Da - Dr /        dda            /     ddb          ddg  \ \ 
+        -----  =    ------- | da**3 -----  +  db.dg | dg -----  +  db ----- | |
+        dpsii         mu    \       dpsii           \    dpsii        dpsii / /
 
-                      2Da /        ddg            /     dda          ddb  \ \ 
-                   -  --- | dg**3 -----  +  da.db | db -----  +  da ----- | |
-                      mu  \       dpsii           \    dpsii        dpsii / /
+                    Da + Dr /        ddb            /     dda          ddg  \ \ 
+                  + ------- | db**3 -----  +  da.dg | dg -----  +  da ----- | |
+                      mu    \       dpsii           \    dpsii        dpsii / /
+
+                    2Da /        ddg            /     dda          ddb  \ \ 
+                  - --- | dg**3 -----  +  da.db | db -----  +  da ----- | |
+                    mu  \       dpsii           \    dpsii        dpsii / /
 
 
     where psi = {alpha, beta, gamma}.
@@ -262,17 +275,17 @@ def calc_aniso_dci(data, diff_data):
         ----  =  0
         dDa
 
-        dc0       1 de
-        ---  =  - - ---
-        dDa       4 dDa
+        dc0        1 de
+        ---   =  - - ---
+        dDa        4 dDa
 
         dc1
-        ---  =  0
+        ---   =  0
         dDa
 
-        dc0     1 de
-        ---  =  - ---
-        dDa     4 dDa
+        dc2      1 de
+        ---   =  - ---
+        dDa      4 dDa
 
 
         de      1 / (3Da + Dr)Dr                          (3Da - Dr)Dr                          2Dr**2                        \ 
@@ -292,17 +305,17 @@ def calc_aniso_dci(data, diff_data):
         ----  =  0
         dDr
 
-        dc0       1 de
-        ---  =  - - ---
-        dDr       4 dDr
+        dc0        1 de
+        ---   =  - - ---
+        dDr        4 dDr
 
         dc1
-        ---  =  0
+        ---   =  0
         dDr
 
-        dc0     1 de
-        ---  =  - ---
-        dDr     4 dDr
+        dc2      1 de
+        ---   =  - ---
+        dDr      4 dDr
 
 
         de        1 / (3Da + Dr)Da                          (3Da - Dr)Da                          2Da.Dr                        \ 
@@ -310,20 +323,280 @@ def calc_aniso_dci(data, diff_data):
         dDr       3 \    mu**3                                 mu**3                              mu**3                         /
 
 
+    tm partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+        dc-2
+        ----  =  0
+        dtm
+
+        dc-1
+        ----  =  0
+        dtm
+
+        dc0
+        ---   =  0
+        dtm
+
+        dc1
+        ---   =  0
+        dtm
+
+        dc2
+        ---   =  0
+        dtm
 
     """
 
     # psii partial derivative.
     ##########################
 
+    # Components.
+    data.dc_dpsii_alpha_beta = data.delta_alpha * data.delta_beta * (data.delta_beta * data.ddelta_alpha_dpsi  +  data.delta_alpha * data.ddelta_beta_dpsi)
+    data.dc_dpsii_alpha_gamma = data.delta_alpha * data.delta_gamma * (data.delta_gamma * data.ddelta_alpha_dpsi  +  data.delta_alpha * data.ddelta_gamma_dpsi)
+    data.dc_dpsii_beta_gamma = data.delta_beta * data.delta_gamma * (data.delta_gamma * data.ddelta_beta_dpsi  +  data.delta_beta * data.ddelta_gamma_dpsi)
+
+    data.dc_dpsii_alpha = data.delta_alpha**3 * data.ddelta_alpha_dpsi
+    data.dc_dpsii_beta = data.delta_beta**3 * data.ddelta_beta_dpsi
+    data.dc_dpsii_gamma = data.delta_gamma**3 * data.ddelta_gamma_dpsi
+
+    data.dc_dpsii_alpha_ext = data.dc_dpsii_alpha + data.dc_dpsii_beta_gamma
+    data.dc_dpsii_beta_ext = data.dc_dpsii_beta + data.dc_dpsii_alpha_gamma
+    data.dc_dpsii_gamma_ext = data.dc_dpsii_gamma + data.dc_dpsii_alpha_beta
+
     # Calculate dd_dpsii.
-    dd_dpsii = 3.0 * (data.delta_alpha**3 * data.ddelta_alpha_dpsi  +  data.delta_beta**3 * data.ddelta_beta_dpsi  +  data.delta_gamma**3 * data.ddelta_gamma_dpsi)
+    dd_dpsii = 3.0 * (data.dc_dpsii_alpha + data.dc_dpsii_beta + data.dc_dpsii_gamma)
+
+    # Calculate de_dpsii.
+    de_dpsii = data.e1 * data.dc_dpsii_alpha
+    de_dpsii = de_dpsii + data.e2 * data.dc_dpsii_beta
+    de_dpsii = de_dpsii - data.e3 * data.dc_dpsii_gamma
+
+    # Weight c-2.
+    data.dci[3:, 0] = 6.0 * data.dc_dpsii_alpha_beta
+
+    # Weight c-1.
+    data.dci[3:, 1] = 6.0 * data.dc_dpsii_alpha_gamma
+
+    # Weight c0.
+    data.dci[3:, 2] = dd_dpsii - de_dpsii
+
+    # Weight c1.
+    data.dci[3:, 3] = 6.0 * data.dc_dpsii_beta_gamma
+
+    # Weight c2.
+    data.dci[3:, 4] = dd_dpsii - de_dpsii
+
+
+    # Da partial derivative.
+    ########################
+
+    # Components.
+    data.mu_cubed = data.mu**3
+
+    data.de1_dDa = (3.0 * diff_data.params[1] + diff_data.params[2]) * diff_data.params[2] / data.mu_cubed
+    data.de2_dDa = (3.0 * diff_data.params[1] - diff_data.params[2]) * diff_data.params[2] / data.mu_cubed
+    data.de3_dDa = 2.0 * diff_data.params[2]**2 / data.mu_cubed
+
+    # Calculate de_dDa.
+    de_dDa = (data.de1_dDa * data.c_alpha - data.de2_dDa * data.c_beta - data.de3_dDa * data.c_gamma) / 3.0
+
+    # Weight c0.
+    data.dci[1, 2] = -0.25 * de_dDa
+
+    # Weight c2.
+    data.dci[1, 4] = 0.25 * de_dDa
+
+
+    # Dr partial derivative.
+    ########################
+
+    # Components.
+    data.de1_dDr = (3.0 * diff_data.params[1] + diff_data.params[2]) * diff_data.params[1] / data.mu_cubed
+    data.de2_dDr = (3.0 * diff_data.params[1] - diff_data.params[2]) * diff_data.params[1] / data.mu_cubed
+    data.de3_dDr = 2.0 * diff_data.params[1] * diff_data.params[2] / data.mu_cubed
+
+    # Calculate de_dDr.
+    de_dDr = - (data.de1_dDr * data.c_alpha - data.de2_dDr * data.c_beta - data.de3_dDr * data.c_gamma) / 3.0
+
+    # Weight c0.
+    data.dci[2, 2] = -0.25 * de_dDr
+
+    # Weight c2.
+    data.dci[2, 4] = 0.25 * de_dDr
+
+
+# Anisotropic weight Hessian.
+#############################
+
+def calc_aniso_d2ci(data, diff_data):
+    """Weight Hessian for anisotropic diffusion.
+
+    psii-psij partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+           d2c-2          /       /  dda     dda          d2da     \            /  dda     ddb     ddb     dda  \           /  ddb     ddb          d2db     \ \ 
+        -----------  =  6 | db**2 | ----- . ----- + da ----------- |  +  2da.db | ----- . ----- + ----- . ----- |  +  da**2 | ----- . ----- + db ----------- | |
+        dpsii.dpsij       \       \ dpsii   dpsij      dpsii.dpsij /            \ dpsii   dpsij   dpsii   dpsij /           \ dpsii   dpsij      dpsii.dpsij / /
+
+
+           d2c-1          /       /  dda     dda          d2da     \            /  dda     ddg     ddg     dda  \           /  ddg     ddg          d2dg     \ \ 
+        -----------  =  6 | dg**2 | ----- . ----- + da ----------- |  +  2da.dg | ----- . ----- + ----- . ----- |  +  da**2 | ----- . ----- + dg ----------- | |
+        dpsii.dpsij       \       \ dpsii   dpsij      dpsii.dpsij /            \ dpsii   dpsij   dpsii   dpsij /           \ dpsii   dpsij      dpsii.dpsij / /
+
+
+           d2c0           /       /  dda     dda          d2da     \           /  ddb     ddb          d2db     \           /  ddg     ddg          d2dg     \ \         d2e
+        -----------  =  3 | da**2 | ----- . ----- + da ----------- |  +  db**2 | ----- . ----- + db ----------- |  +  dg**2 | ----- . ----- + dg ----------- | |  -  -----------
+        dpsii.dpsij       \       \ dpsii   dpsij      dpsii.dpsij /           \ dpsii   dpsij      dpsii.dpsij /           \ dpsii   dpsij      dpsii.dpsij / /     dpsii.dpsij
+
+
+           d2c1           /       /  ddb     ddb          d2db     \            /  ddb     ddg     ddg     ddb  \           /  ddg     ddg          d2dg     \ \ 
+        -----------  =  6 | dg**2 | ----- . ----- + db ----------- |  +  2db.dg | ----- . ----- + ----- . ----- |  +  db**2 | ----- . ----- + dg ----------- | |
+        dpsii.dpsij       \       \ dpsii   dpsij      dpsii.dpsij /            \ dpsii   dpsij   dpsii   dpsij /           \ dpsii   dpsij      dpsii.dpsij / /
+
+
+           d2c2           /       /  dda     dda          d2da     \           /  ddb     ddb          d2db     \           /  ddg     ddg          d2dg     \ \         d2e
+        -----------  =  3 | da**2 | ----- . ----- + da ----------- |  +  db**2 | ----- . ----- + db ----------- |  +  dg**2 | ----- . ----- + dg ----------- | |  +  -----------
+        dpsii.dpsij       \       \ dpsii   dpsij      dpsii.dpsij /           \ dpsii   dpsij      dpsii.dpsij /           \ dpsii   dpsij      dpsii.dpsij / /     dpsii.dpsij
 
 
 
-    data.dci[:, 0] = 3.0 * data.delta * (3.0 * data.delta**2 - 1.0) * data.ddelta_dpsi
-    data.dci[:, 1] = 6.0 * data.delta * (1.0 - 2.0 * data.delta**2) * data.ddelta_dpsi
-    data.dci[:, 2] = 3.0 * data.delta * (data.delta**2 - 1.0) * data.ddelta_dpsi
+            d2e         Da - Dr /       /    dda     dda          d2da     \ 
+        -----------  =  ------- | da**2 | 3 ----- . ----- + da ----------- |
+        dpsii.dpsij       mu    \       \   dpsii   dpsij      dpsii.dpsij /
+
+                                           /  ddb     ddb          d2db     \            /  ddb     ddg     ddg     ddb  \           /  ddg     ddg          d2dg     \ \ 
+                                  +  dg**2 | ----- . ----- + db ----------- |  +  2db.dg | ----- . ----- + ----- . ----- |  +  db**2 | ----- . ----- + dg ----------- | |
+                                           \ dpsii   dpsij      dpsii.dpsij /            \ dpsii   dpsij   dpsii   dpsij /           \ dpsii   dpsij      dpsii.dpsij / /
+
+                        Da + Dr /       /    ddb     ddb          d2db     \ 
+                     +  ------- | db**2 | 3 ----- . ----- + db ----------- |
+                          mu    \       \   dpsii   dpsij      dpsii.dpsij /
+
+                                           /  dda     dda          d2da     \            /  dda     ddg     ddg     dda  \           /  ddg     ddg          d2dg     \ \ 
+                                  +  dg**2 | ----- . ----- + da ----------- |  +  2da.dg | ----- . ----- + ----- . ----- |  +  da**2 | ----- . ----- + dg ----------- | |
+                                           \ dpsii   dpsij      dpsii.dpsij /            \ dpsii   dpsij   dpsii   dpsij /           \ dpsii   dpsij      dpsii.dpsij / /
+
+                        2Da /       /    ddg     ddg          d2dg     \ 
+                     -  --- | dg**2 | 3 ----- . ----- + da ----------- |
+                        mu  \       \   dpsii   dpsij      dpsii.dpsij /
+
+                                           /  dda     dda          d2da     \            /  dda     ddb     ddb     dda  \           /  ddb     ddb          d2db     \ \ 
+                                  +  db**2 | ----- . ----- + da ----------- |  +  2da.db | ----- . ----- + ----- . ----- |  +  da**2 | ----- . ----- + db ----------- | |
+                                           \ dpsii   dpsij      dpsii.dpsij /            \ dpsii   dpsij   dpsii   dpsij /           \ dpsii   dpsij      dpsii.dpsij / /
 
 
+    psii-Da partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+          d2c-2
+        ---------  =  0
+        dpsii.dDa
+
+
+          d2c-1
+        ---------  =  0
+        dpsii.dDa
+
+
+          d2c0             d2e
+        ---------  =  - ---------
+        dpsii.dDa       dpsii.dDa
+
+
+          d2c1
+        ---------  =  0
+        dpsii.dDa
+
+
+          d2c2           d2e
+        ---------  =  ---------
+        dpsii.dDa     dpsii.dDa
+
+
+
+           d2e          1 (3Da + Dr)Dr /        dda            /     ddb          ddg  \ \ 
+        ---------  =    - ------------ | da**3 -----  +  db.dg | dg -----  +  db ----- | |
+        dpsii.dDa       3    mu**3     \       dpsii           \    dpsii        dpsii / /
+
+                        1 (3Da - Dr)Dr /        ddb            /     dda          ddg  \ \ 
+                      - - ------------ | db**3 -----  +  da.dg | dg -----  +  da ----- | |
+                        3    mu**3     \       dpsii           \    dpsii        dpsii / /
+
+                        2 Dr**2 /        ddg            /     dda          ddb  \ \ 
+                      - - ----- | dg**3 -----  +  da.db | db -----  +  da ----- | |
+                        3 mu**3 \       dpsii           \    dpsii        dpsii / /
+
+
+    psii-Dr partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+          d2c-2
+        ---------  =  0
+        dpsii.dDr
+
+
+          d2c-1
+        ---------  =  0
+        dpsii.dDr
+
+
+          d2c0             d2e
+        ---------  =  - ---------
+        dpsii.dDr       dpsii.dDr
+
+
+          d2c1
+        ---------  =  0
+        dpsii.dDr
+
+
+          d2c2           d2e
+        ---------  =  ---------
+        dpsii.dDr     dpsii.dDr
+
+
+
+           d2e          1 (3Da + Dr)Da /        dda            /     ddb          ddg  \ \ 
+        ---------  =  - - ------------ | da**3 -----  +  db.dg | dg -----  +  db ----- | |
+        dpsii.dDr       3    mu**3     \       dpsii           \    dpsii        dpsii / /
+
+                        1 (3Da - Dr)Da /        ddb            /     dda          ddg  \ \ 
+                      - - ------------ | db**3 -----  +  da.dg | dg -----  +  da ----- | |
+                        3    mu**3     \       dpsii           \    dpsii        dpsii / /
+
+                        2 Dr**2 /        ddg            /     dda          ddb  \ \ 
+                      - - ----- | dg**3 -----  +  da.db | db -----  +  da ----- | |
+                        3 mu**3 \       dpsii           \    dpsii        dpsii / /
+
+
+    psii-tm partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+          d2c-2
+        ---------  =  0
+        dpsii.dtm
+
+
+          d2c-1
+        ---------  =  0
+        dpsii.dtm
+
+
+          d2c0
+        ---------  =  0
+        dpsii.dtm
+
+
+          d2c1
+        ---------  =  0
+        dpsii.dtm
+
+
+          d2c2
+        ---------  =  0
+        dpsii.dtm
+
+
+     """
 
