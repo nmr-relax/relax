@@ -201,7 +201,7 @@ class Value:
             self.reset_min_stats(self.run, i)
 
 
-    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
+    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None, force=0):
         """Function for setting residue specific data values."""
 
         # Test if the run exists.
@@ -236,7 +236,7 @@ class Value:
         set = self.relax.specific_setup.setup('set', function_type)
 
         # Test data corresponding to data_type already exists.
-        if data_type:
+        if data_type and not force:
             # Create an array with all data types.
             if type(data_type) == str:
                 data_type_array = [data_type]
