@@ -59,6 +59,7 @@ from rw import RW
 from diffusion_tensor import Diffusion_tensor
 from echo_data import Echo_data
 from format import Format
+from jw_mapping import Jw_mapping
 from model_free import Model_free
 from molmol import Molmol
 from monte_carlo import Monte_carlo
@@ -116,6 +117,7 @@ class Interpreter:
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._Echo_data = Echo_data(relax)
         self._Format = Format(relax)
+        self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
         self._Molmol = Molmol(relax)
         self._Monte_carlo = Monte_carlo(relax)
@@ -176,6 +178,7 @@ class Interpreter:
         diffusion_tensor = self._Diffusion_tensor
         echo_data = self._Echo_data
         format = self._Format
+        jw_mapping = self._Jw_mapping
         model_free = self._Model_free
         molmol = self._Molmol
         monte_carlo = self._Monte_carlo

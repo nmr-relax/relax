@@ -29,7 +29,7 @@ Relaxation dispersion.
 # Speed.
 ########
 
-Convert the chi2, ri, ri_prime, ri_comps, and jw_mf function to C
+Convert the chi2, ri, ri_prime, ri_comps, and jw_mf functions to C
 Use swig to integrate the C functions.  Maybe?
 
 

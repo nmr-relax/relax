@@ -36,18 +36,23 @@ class Specific_setup:
 
         # Initialise.
         self.function_type = function_type
+        function = None
 
         # Sequence data.
-        if match('seq', eqi):
+        if eqi == 'seq':
             function = self.seq_funcs()
 
         # Diffusion tensor.
-        elif match('diff', eqi):
+        elif eqi == 'diff':
             function = self.diff_funcs()
 
         # Relaxation curve fitting.
-        elif match('relax_fit', eqi):
+        elif eqi == 'relax_fit':
             function = self.relax_funcs()
+
+        # Reduced spectral density mapping.
+        elif eqi == 'jw':
+            function = self.jw_funcs()
 
         # Model-free analysis.
         elif eqi == 'mf':
@@ -64,6 +69,18 @@ class Specific_setup:
 
     def diff_funcs(self):
         """Diffusion tensor specific functions."""
+
+
+    def jw_funcs(self):
+        """Model-free analysis specific functions."""
+
+        # Calculate function.
+        if self.function_type == 'calculate':
+            return self.relax.specific.jw_mapping.calculate
+
+        # Value and error returning function.
+        if self.function_type == 'return_value':
+            return self.relax.specific.jw_mapping.return_value
 
 
     def mf_funcs(self):
