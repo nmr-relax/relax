@@ -321,7 +321,6 @@ class Mf:
         # Diagonal scaling data.
         if self.scaling_matrix:
             self.data.scaling_matrix = self.scaling_matrix
-            self.data.hessian_scaling_matrix = outerproduct(diagonal(self.scaling_matrix), diagonal(self.scaling_matrix))
 
         # Spectral density components.
         self.data.w_tm_sqrd = zeros((self.data.num_frq, 5), Float64)
@@ -438,7 +437,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            return matrixmultiply(self.data.scaling_matrix, self.data.dri)
+            return matrixmultiply(self.data.dri, self.data.scaling_matrix)
         else:
             return self.data.dri
 
@@ -446,7 +445,7 @@ class Mf:
     def scale_gradient(self):
         """Function for the diagonal scaling of the chi-squared gradient."""
 
-        self.data.dchi2 = matrixmultiply(self.data.scaling_matrix, self.data.dchi2)
+        self.data.dchi2 = matrixmultiply(self.data.dchi2, self.data.scaling_matrix)
 
 
     def scale_hessian(self):
@@ -455,6 +454,7 @@ class Mf:
         self.data.d2chi2 = matrixmultiply(self.data.scaling_matrix, matrixmultiply(self.data.d2chi2, self.data.scaling_matrix))
 
 #        # Remove!
+#        self.data.hessian_scaling_matrix = outerproduct(diagonal(self.scaling_matrix), diagonal(self.scaling_matrix))
 #        temp1 = matrixmultiply(self.data.d2chi2, self.data.hessian_scaling_matrix)
 #        temp2 = matrixmultiply(self.data.scaling_matrix, matrixmultiply(self.data.d2chi2, self.data.scaling_matrix))
 #        print "\nself.data.d2chi2:\n" + `self.data.d2chi2`
@@ -469,7 +469,7 @@ class Mf:
     def set_params_scaled(self, params):
         """Function for setting self.data.params to the parameter vector times the scaling vector."""
 
-        self.data.params = matrixmultiply(self.data.scaling_matrix, params)
+        self.data.params = matrixmultiply(params, self.data.scaling_matrix)
 
 
     def set_params_unscaled(self, params):

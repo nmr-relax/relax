@@ -4,7 +4,7 @@
 read.sequence('noe.500.out')
 
 # Set the run name (also the name of a preset model-free model).
-name = 'm2'
+name = 'm4'
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -23,7 +23,7 @@ value.set(name, 'csa', -160 * 1e-6)
 model.select_mf(run=name, model=name)
 #model.create_mf(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
-select.res(num=1725)
+#select.res(num=1725)
 
 # Fixed value.
 #from math import pi
@@ -31,15 +31,16 @@ select.res(num=1725)
 #fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
 #fixed(name, [ 10000*1e-12, 0.952, 0.0, 0.55406, 32*1e-12 ])
 #fixed(name, [ 10000*1e-12, 0.6, 0.0, 0.5, 1000*1e-12 ])
+fixed(name, [ 0.9,  1e-12,  0. ])
 #write(run=name, file='results_fixed', force=1)
 
 # Grid search.
-grid_search(name, inc=11)
+#grid_search(name, inc=11)
 #write(run=name, file='results_grid', force=1)
 
 # Minimise.
-#minimise('newton', run=name, constraints=0)
-minimise('newton', run=name, print_flag=1)
+minimise('newton', run=name, constraints=0, print_flag=1)
+#minimise('bfgs', run=name, print_flag=2)
 
 # Finish.
 write(run=name, file='results', force=1)

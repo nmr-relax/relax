@@ -95,11 +95,11 @@ class Model_free:
         for i in range(len(data.params[run])):
             # tm.
             if data.params[run][i] == 'tm':
-                scaling_matrix[i, i] = 1e-9
+                scaling_matrix[i, i] = 1e-12
 
             # te, tf, and ts.
             elif match('t', data.params[run][i]):
-                scaling_matrix[i, i] = 1e-9
+                scaling_matrix[i, i] = 1e-12
 
             # Rex.
             elif data.params[run][i] == 'Rex':
@@ -975,7 +975,7 @@ class Model_free:
         else:
             algor = min_algor
         if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-            min_options = min_options + (self.mf.lm_dri, errors)
+            min_options = min_options + (self.mf.lm_dri, relax_error)
 
 
         # Minimisation.

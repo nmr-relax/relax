@@ -112,6 +112,15 @@ class Bfgs(Line_search, Min):
         self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
         self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
+        # Debugging.
+        if self.print_flag >= 2:
+            print self.print_prefix + "pk:    " + `self.pk`
+            print self.print_prefix + "alpha: " + `self.alpha`
+            print self.print_prefix + "xk:    " + `self.xk`
+            print self.print_prefix + "xk+1:  " + `self.xk_new`
+            print self.print_prefix + "fk:    " + `self.fk`
+            print self.print_prefix + "fk+1:  " + `self.fk_new`
+
 
     def setup_bfgs(self):
         """Setup function.
