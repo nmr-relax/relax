@@ -86,7 +86,6 @@ class Relax_data:
     def copy(self, run1=None, run2=None, ri_label=None, frq_label=None):
         """Function for copying relaxation data from run1 to run2.
 
-
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
@@ -143,11 +142,11 @@ class Relax_data:
 
         # Relaxation data type.
         if ri_label != None and type(ri_label) != str:
-            raise RelaxStrError, ('relaxation label', ri_label)
+            raise RelaxNoneStrError, ('relaxation label', ri_label)
 
         # Frequency label.
         if frq_label != None and type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
+            raise RelaxNoneStrError, ('frequency label', frq_label)
 
         # Execute the functional code.
         self.__relax__.specific.relax_data.copy(run1=run1, run2=run2, ri_label=ri_label, frq_label=frq_label)
@@ -245,8 +244,8 @@ class Relax_data:
         self.__relax__.specific.relax_data.display(run=run, ri_label=ri_label, frq_label=frq_label)
 
 
-    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
-        """Function for reading R1, R2, or NOE relaxation data.
+    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
+        """Function for reading R1, R2, or NOE relaxation data from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -259,7 +258,7 @@ class Relax_data:
 
         frq:  The spectrometer frequency in Hz.
 
-        file_name:  The name of the file containing the relaxation data.
+        file:  The name of the file containing the relaxation data.
 
         num_col:  The residue number column (the default is 0, ie the first column).
 
@@ -290,7 +289,7 @@ class Relax_data:
 
         relax> relax_data.read('m1', 'NOE', '600', 599.7 * 1e6, 'noe.600.out')
         relax> relax_data.read('m1', ri_label='NOE', frq_label='600', frq=600.0 * 1e6,
-                               file_name='noe.600.out')
+                               file='noe.600.out')
 
 
         The following commands will read the R2 data out of the file 'r2.out' where the residue
@@ -299,7 +298,7 @@ class Relax_data:
 
         relax> relax_data.read('m1', 'R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
         relax> relax_data.read('m1', ri_label='R2', frq_label='800 MHz', frq=8.0*1e8,
-                               file_name='r2.out', num_col=1, name_col=2, data_col=4, error_col=5,
+                               file='r2.out', num_col=1, name_col=2, data_col=4, error_col=5,
                                sep=',', header_lines=1)
 
 
@@ -316,7 +315,7 @@ class Relax_data:
             text = text + ", ri_label=" + `ri_label`
             text = text + ", frq_label=" + `frq_label`
             text = text + ", frq=" + `frq`
-            text = text + ", file_name=" + `file_name`
+            text = text + ", file=" + `file`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
             text = text + ", data_col=" + `data_col`
@@ -342,8 +341,8 @@ class Relax_data:
             raise RelaxFloatError, ('frequency', frq)
 
         # The file name.
-        if type(file_name) != str:
-            raise RelaxStrError, ('file name', file_name)
+        if type(file) != str:
+            raise RelaxStrError, ('file', file)
 
         # The number column.
         if type(num_col) != int:
@@ -370,7 +369,7 @@ class Relax_data:
             raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
+        self.__relax__.specific.relax_data.read(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
 
 
     def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):

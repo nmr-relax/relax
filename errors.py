@@ -371,6 +371,11 @@ class RelaxErrors:
     # Data type errors.
     ###################
 
+    # Value already exists.
+    class RelaxValueError(BaseError):
+        def __init__(self, data_type, run):
+            self.text = "The data type " + `data_type` + " already exists for " + `run` +"."
+
     # No data value.
     class RelaxNoValueError(BaseError):
         def __init__(self, name):

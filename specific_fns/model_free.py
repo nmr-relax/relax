@@ -2473,7 +2473,7 @@ class Model_free:
         self.model_setup(self.run, model, equation, params, scaling, res_num)
 
 
-    def set(self, run, value, data_type, index):
+    def set(self, run=None, value=None, error=None, data_type=None, index=None):
         """
         Model-free set details
         ~~~~~~~~~~~~~~~~~~~~~~
@@ -2544,6 +2544,10 @@ class Model_free:
 
             # Set the value.
             setattr(self.relax.data.res[self.run][index], object_name, float(value))
+
+            # Set the error.
+            if error != None:
+                setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
 
 
     def skip_function(self, run=None, instance=None):

@@ -32,6 +32,58 @@ class Value:
         self.relax = relax
 
 
+    def copy(self, run1=None, run2=None, data_type=None):
+        """Function for copying residue specific data values from run1 to run2."""
+
+        # Arguments.
+        self.data_type = data_type
+
+        # Test if run1 exists.
+        if not run1 in self.relax.data.run_names:
+            raise RelaxNoRunError, run1
+
+        # Test if run2 exists.
+        if not run2 in self.relax.data.run_names:
+            raise RelaxNoRunError, run2
+
+        # Test if the sequence data for run1 is loaded.
+        if not self.relax.data.res.has_key(run1):
+            raise RelaxNoSequenceError
+
+        # Test if the sequence data for run2 is loaded.
+        if not self.relax.data.res.has_key(run2):
+            raise RelaxNoSequenceError
+
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
+
+        # Specific value and error returning function.
+        return_value = self.relax.specific_setup.setup('return_value', function_type)
+
+        # Specific set function.
+        set = self.relax.specific_setup.setup('set', function_type)
+
+        # Test if the data exists for run2.
+        for i in xrange(len(self.relax.data.res[run2])):
+            # Get the value and error for run2.
+            value, error = return_value(run2, i, data_type)
+
+            # Data exists.
+            if value != None or error != None:
+                raise RelaxValueError, (data_type, run2)
+
+        # Copy the values.
+        for i in xrange(len(self.relax.data.res[run1])):
+            # Get the value and error for run1.
+            value, error = return_value(run1, i, data_type)
+
+            # Set the values of run2.
+            set(run=run2, value=value, error=error, data_type=data_type, index=i)
+
+            # Reset the minimisation statistics.
+            self.reset_min_stats(run2, i)
+
+
     def display(self, run=None, data_type=None):
         """Function for displaying residue specific data values."""
 
@@ -49,6 +101,104 @@ class Value:
 
         # Print the data.
         self.write_data(run, data_type, sys.stdout)
+
+
+    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
+        """Function for reading residue specific data values from a file."""
+
+        # Arguments.
+        self.run = run
+        self.data_type = data_type
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError
+
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+
+        # Specific value and error returning function.
+        return_value = self.relax.specific_setup.setup('return_value', function_type)
+
+        # Specific set function.
+        set = self.relax.specific_setup.setup('set', function_type)
+
+        # Test data corresponding to data_type already exists.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Get the value and error.
+            value, error = return_value(self.run, i, data_type)
+
+            # Data exists.
+            if value != None or error != None:
+                raise RelaxValueError, (data_type, self.run)
+
+        # Extract the data from the file.
+        file_data = self.relax.file_ops.extract_data(file)
+
+        # Remove the header.
+        file_data = file_data[header_lines:]
+
+        # Strip the data.
+        file_data = self.relax.file_ops.strip(file_data)
+
+        # Test the validity of the data.
+        for i in xrange(len(file_data)):
+            try:
+                # Number column.
+                int(file_data[i][num_col])
+
+                # Value column.
+                if file_data[i][data_col] != 'None':
+                    float(file_data[i][data_col])
+
+                # Error column.
+                if error_col != None and file_data[i][error_col] != 'None':
+                    float(file_data[i][error_col])
+
+            except ValueError:
+                if error_col != None:
+                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                else:
+                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ")."
+
+        # Loop over the data.
+        for i in xrange(len(file_data)):
+            # Residue number.
+            res_num = int(file_data[i][num_col])
+
+            # Residue name.
+            res_name = file_data[i][name_col]
+
+            # Value.
+            if file_data[i][data_col] != 'None':
+                value = float(file_data[i][data_col])
+            else:
+                value = None
+
+            # Error.
+            if error_col != None and file_data[i][error_col] != 'None':
+                error = float(file_data[i][error_col])
+            else:
+                error = None
+
+            # Find the index of self.relax.data.res[self.run] which corresponds to the relaxation data set i.
+            index = None
+            for j in xrange(len(self.relax.data.res[self.run])):
+                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                    index = j
+                    break
+            if index == None:
+                raise RelaxNoResError, (res_num, res_name)
+
+            # Set the values of run2.
+            set(run=run, value=value, error=error, data_type=data_type, index=i)
+
+            # Reset the minimisation statistics.
+            self.reset_min_stats(self.run, i)
 
 
     def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
@@ -79,8 +229,30 @@ class Value:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
+        # Specific value and error returning function.
+        return_value = self.relax.specific_setup.setup('return_value', function_type)
+
         # Specific set function.
         set = self.relax.specific_setup.setup('set', function_type)
+
+        # Test data corresponding to data_type already exists.
+        if data_type:
+            # Create an array with all data types.
+            if type(data_type) == str:
+                data_type_array = [data_type]
+            else:
+                data_type_array = data_type
+
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[run])):
+                # Loop over the data types.
+                for name in data_type_array:
+                    # Get the value and error.
+                    temp_value, temp_error = return_value(run, i, name)
+
+                    # Data exists.
+                    if temp_value != None or temp_error != None:
+                        raise RelaxValueError, (name, run)
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[run])):
@@ -107,11 +279,11 @@ class Value:
 
             # Setting the model parameters prior to minimisation.
             if data_type == None:
-                set(run=run, value=value, data_type=data_type, index=i)
+                set(run=run, value=value, error=None, data_type=data_type, index=i)
 
             # Single data type.
             if type(data_type) == str:
-                set(run=run, value=value, data_type=data_type, index=i)
+                set(run=run, value=value, error=None, data_type=data_type, index=i)
 
             # Multiple data type.
             if type(data_type) == list:
@@ -125,35 +297,38 @@ class Value:
                         val = value
 
                     # Set the value of data type 'j' to 'val'.
-                    set(run=run, value=val, data_type=data_type[j], index=i)
-
+                    set(run=run, value=val, error=None, data_type=data_type[j], index=i)
 
             # Reset the minimisation statistics.
-            ####################################
+            self.reset_min_stats(run, i)
 
-            # Chi-squared.
-            if hasattr(self.relax.data.res[run][i], 'chi2'):
-                self.relax.data.res[run][i].chi2 = None
 
-            # Iteration count.
-            if hasattr(self.relax.data.res[run][i], 'iter'):
-                self.relax.data.res[run][i].iter = None
+    def reset_min_stats(self, run, i):
+        """Reset the minimisation statistics."""
 
-            # Function count.
-            if hasattr(self.relax.data.res[run][i], 'f_count'):
-                self.relax.data.res[run][i].f_count = None
+        # Chi-squared.
+        if hasattr(self.relax.data.res[run][i], 'chi2'):
+            self.relax.data.res[run][i].chi2 = None
 
-            # Gradient count.
-            if hasattr(self.relax.data.res[run][i], 'g_count'):
-                self.relax.data.res[run][i].g_count = None
+        # Iteration count.
+        if hasattr(self.relax.data.res[run][i], 'iter'):
+            self.relax.data.res[run][i].iter = None
 
-            # Hessian count.
-            if hasattr(self.relax.data.res[run][i], 'h_count'):
-                self.relax.data.res[run][i].h_count = None
+        # Function count.
+        if hasattr(self.relax.data.res[run][i], 'f_count'):
+            self.relax.data.res[run][i].f_count = None
 
-            # Warning.
-            if hasattr(self.relax.data.res[run][i], 'warning'):
-                self.relax.data.res[run][i].warning = None
+        # Gradient count.
+        if hasattr(self.relax.data.res[run][i], 'g_count'):
+            self.relax.data.res[run][i].g_count = None
+
+        # Hessian count.
+        if hasattr(self.relax.data.res[run][i], 'h_count'):
+            self.relax.data.res[run][i].h_count = None
+
+        # Warning.
+        if hasattr(self.relax.data.res[run][i], 'warning'):
+            self.relax.data.res[run][i].warning = None
 
 
     def write(self, run=None, data_type=None, file=None, dir=None, force=0):
@@ -185,7 +360,7 @@ class Value:
             # Function type.
             function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-            # Specific value function.
+            # Specific value and error returning function.
             return_value = self.relax.specific_setup.setup('return_value', function_type)
 
         # Test if the data exists.

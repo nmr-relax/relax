@@ -39,6 +39,61 @@ class Value:
         self.__relax__ = relax
 
 
+    def copy(self, run1=None, run2=None, data_type=None):
+        """Function for copying residue specific data values from run1 to run2.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run1:  The name of the run to copy from.
+
+        run2:  The name of the run to copy to.
+
+        data_type:  The data type.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Only one data type may be selected, therefore the data type argument should be a string.
+
+        If this function is used to change values of previously minimised runs, then the
+        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+        and Hessian count) will be reset to None.
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy the CSA values from the run 'm1' to 'm2', type:
+
+        relax> value.copy('m1', 'm2', 'CSA')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "value.copy("
+            text = text + "run1=" + `run1`
+            text = text + ", run2=" + `run2`
+            text = text + ", data_type=" + `data_type` + ")"
+            print text
+
+        # The run1 argument.
+        if type(run1) != str:
+            raise RelaxStrError, ('run1', run1)
+
+        # The run2 argument.
+        if type(run2) != str:
+            raise RelaxStrError, ('run2', run2)
+
+        # Relaxation data type.
+        if type(data_type) != str:
+            raise RelaxStrError, ('data type', data_type)
+
+        # Execute the functional code.
+        self.__relax__.generic.value.copy(run1=run1, run2=run2, data_type=data_type)
+
+
     def display(self, run=None, data_type=None):
         """Function for displaying residue specific data values.
 
@@ -53,8 +108,7 @@ class Value:
         Description
         ~~~~~~~~~~~
 
-        This function will display the residue specific data values for the given run.  The
-        data type argument can only be a single string.
+        Only one data type may be selected, therefore the data type argument should be a string.
 
 
         Examples
@@ -63,7 +117,6 @@ class Value:
         To show all CSA values for the run 'm1', type:
 
         relax> value.display('m1', 'CSA')
-
         """
 
         # Function intro text.
@@ -83,6 +136,110 @@ class Value:
 
         # Execute the functional code.
         self.__relax__.generic.value.display(run=run, data_type=data_type)
+
+
+    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
+        """Function for reading residue specific data values from a file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        data_type:  The data type.
+
+        frq:  The spectrometer frequency in Hz.
+
+        file:  The name of the file containing the relaxation data.
+
+        num_col:  The residue number column (the default is 0, ie the first column).
+
+        name_col:  The residue name column (the default is 1).
+
+        data_col:  The relaxation data column (the default is 2).
+
+        error_col:  The experimental error column (the default is 3).
+
+        sep:  The column separator (the default is white space).
+
+        header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Only one data type may be selected, therefore the data type argument should be a string.  If
+        the file only contains values and no errors, set the error column argument to None.
+
+        If this function is used to change values of previously minimised runs, then the
+        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+        and Hessian count) will be reset to None.
+
+
+        Examples
+        ~~~~~~~~
+
+        To load CSA values for the run 'm1' from the file 'csa_values' in the directory 'data', type
+        any of the following:
+
+        relax> value.read('m1', 'CSA', 'data/csa_value')
+        relax> value.read('m1', 'CSA', 'data/csa_value', 0, 1, 2, 3, None, 1)
+        relax> value.read(run='m1', data_type='CSA', file='data/csa_value', num_col=0, name_col=1,
+                          data_col=2, error_col=3, sep=None, header_lines=1)
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "value.read("
+            text = text + "run=" + `run`
+            text = text + ", data_type=" + `data_type`
+            text = text + ", file=" + `file`
+            text = text + ", num_col=" + `num_col`
+            text = text + ", name_col=" + `name_col`
+            text = text + ", data_col=" + `data_col`
+            text = text + ", error_col=" + `error_col`
+            text = text + ", sep=" + `sep`
+            text = text + ", header_lines=" + `header_lines` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Data type.
+        if type(data_type) != str:
+            raise RelaxStrError, ('data type', data_type)
+
+        # The file name.
+        if type(file) != str:
+            raise RelaxStrError, ('file', file)
+
+        # The number column.
+        if type(num_col) != int:
+            raise RelaxIntError, ('residue number column', num_col)
+
+        # The name column.
+        if type(name_col) != int:
+            raise RelaxIntError, ('residue name column', name_col)
+
+        # The data column.
+        if type(data_col) != int:
+            raise RelaxIntError, ('data column', data_col)
+
+        # The error column.
+        if error_col != None and type(error_col) != int:
+            raise RelaxNoneIntError, ('error column', error_col)
+
+        # Column separator.
+        if sep != None and type(sep) != str:
+            raise RelaxNoneStrError, ('column separator', sep)
+
+        # Header lines.
+        if type(header_lines) != int:
+            raise RelaxIntError, ('number of header lines', header_lines)
+
+        # Execute the functional code.
+        self.__relax__.generic.value.read(run=run, data_type=data_type, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
 
 
     def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
@@ -218,7 +375,6 @@ class Value:
         relax> value.set('m4', [0.56, 13e-12], ['S2', 'te'], 10)
         relax> value.set('m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
         relax> value.set(run='m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
-
         """
 
         # Function intro text.
@@ -306,7 +462,6 @@ class Value:
 
         relax> value.write('m1', 'CSA', 'csa.txt')
         relax> value.write(run='m1', data_type='CSA', file='csa.txt')
-
         """
 
         # Function intro text.
@@ -347,6 +502,7 @@ class Value:
     #########################
 
     __re_doc__ = """
+
         Regular expression
         ~~~~~~~~~~~~~~~~~~
 
@@ -370,9 +526,19 @@ class Value:
 
     """
 
+    # Copy function.
+    copy.__doc__ = copy.__doc__ + "\n\n" + __re_doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + Model_free.get_data_name.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + Model_free.set.__doc__ + "\n"
+
     # Display function.
     display.__doc__ = display.__doc__ + "\n\n" + __re_doc__ + "\n"
     display.__doc__ = display.__doc__ + Model_free.get_data_name.__doc__ + "\n"
+
+    # Read function.
+    read.__doc__ = read.__doc__ + "\n\n" + __re_doc__ + "\n"
+    read.__doc__ = read.__doc__ + Model_free.get_data_name.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + Model_free.set.__doc__ + "\n"
 
     # Set function.
     set.__doc__ = set.__doc__ + "\n\n" + __re_doc__ + "\n"
