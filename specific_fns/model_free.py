@@ -1137,6 +1137,9 @@ class Model_free(Common_functions):
     def duplicate_data(self, new_run=None, old_run=None, instance=None):
         """Function for duplicating data."""
 
+        # self.run for determining the parameter set.
+        self.run = old_run
+
         # Duplicate all non-residue specific data.
         for data_name in dir(self.relax.data):
             # Skip 'res'.
