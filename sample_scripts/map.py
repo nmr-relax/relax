@@ -1,5 +1,4 @@
 # Script for mapping the model-free space.
-echo.on()
 load.sequence('noe.500.out')
 load.relax_data('R1', '600', 600.0 * 1e6, 'r1.600.out')
 load.relax_data('R2', '600', 600.0 * 1e6, 'r2.600.out')
@@ -32,7 +31,4 @@ else:
     upper = None
     swap = None
     point = None
-
 map(name, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
-
-state.save("map.save", 1)

@@ -5,7 +5,7 @@ class Grid:
         self.relax = relax
 
 
-    def grid_search(self, model=None, lower=None, upper=None, inc=21, print_flag=1):
+    def grid_search(self, model=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
         """The grid search macro.
 
         Keyword Arguments
@@ -24,17 +24,21 @@ class Grid:
         direction can be set if 'inc' is set to an array of integers of length equal to the number
         of parameters.
 
+        constraints:  A flag specifying whether the parameters should be constrained.  The default
+        is to turn constraints on (constraints=1).
+
         print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
         """
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "grid_seacrh("
+            text = self.relax.interpreter.macro_prompt + "grid_search("
             text = text + "model=" + `model`
             text = text + ", lower=" + `lower`
             text = text + ", upper=" + `upper`
             text = text + ", inc=" + `inc`
+            text = text + ", constraints=" + `constraints`
             text = text + ", print_flag=" + `print_flag` + ")\n"
             print text
 
@@ -99,10 +103,15 @@ class Grid:
                 inc_vector.append(inc)
             inc = inc_vector
 
+        # Constraint flag.
+        if type(constraints) != int or (constraints != 0 and constraints != 1):
+            print "The constraint arguments must be either the integers 0 or 1."
+            return
+
         # The print flag.
         if type(print_flag) != int:
             print "The print_flag argument must be an integer."
             return
 
         # Execute the functional code.
-        self.relax.min.grid_search(model=model, lower=lower, upper=upper, inc=inc, print_flag=print_flag)
+        self.relax.min.grid_search(model=model, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)

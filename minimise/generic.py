@@ -185,7 +185,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
 
     # Grid search.
     if match('^[Gg]rid', min_algor):
-        xk, fk, k = grid(func=func, args=args, grid_ops=min_options, print_flag=print_flag)
+        xk, fk, k = grid(func=func, args=args, grid_ops=min_options, A=A, b=b, l=l, u=u, c=c, print_flag=print_flag)
         if full_output:
             results = (xk, fk, k, k, 0, 0, None)
         else:

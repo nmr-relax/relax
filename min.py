@@ -36,7 +36,7 @@ class Minimise:
         self.main_loop(model=model, min_algor="fixed", min_options=min_options, print_flag=print_flag)
 
 
-    def grid_search(self, model=None, lower=None, upper=None, inc=[], print_flag=1):
+    def grid_search(self, model=None, lower=None, upper=None, inc=[], constraints=0, print_flag=1):
         """The grid search function."""
 
         # Equation type specific function setup.
@@ -62,7 +62,7 @@ class Minimise:
                 min_options[i][2] = min_options[i][2] / self.relax.data.scaling[model][0][i]
 
         # Main iterative loop.
-        self.main_loop(model=model, min_algor='grid', min_options=min_options, print_flag=print_flag)
+        self.main_loop(model=model, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=print_flag)
 
 
     def minimise(self, model=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):

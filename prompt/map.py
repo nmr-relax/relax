@@ -97,6 +97,21 @@ class Map:
         relax> map(model='m4', inc=100, file='test', dir=None)
         """
 
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "map("
+            text = text + "model=" + `model`
+            text = text + ", map_type=" + `map_type`
+            text = text + ", inc=" + `inc`
+            text = text + ", lower=" + `lower`
+            text = text + ", upper=" + `upper`
+            text = text + ", swap=" + `swap`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", point=" + `point`
+            text = text + ", point_file=" + `point_file` + ")\n"
+            print text
+
         # The number of parameters.
         n = len(self.relax.data.param_types[model])
 

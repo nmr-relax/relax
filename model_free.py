@@ -590,9 +590,6 @@ class Model_free:
             # Levenberg-Marquardt minimisation.
             if match('[Ll][Mm]$', min_algor) or match('[Ll]evenburg-[Mm]arquardt$', min_algor):
                 min_options = min_options + (self.mf.lm_dri, errors)
-            # Levenberg-Marquardt minimisation with constraints.
-            elif constraints == 1 and (match('[Ll][Mm]$', min_options[0]) or match('[Ll]evenburg-[Mm]arquardt$', min_options[0])):
-                min_options = min_options + (self.mf.lm_dri, errors)
 
             # Minimisation.
             if constraints:

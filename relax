@@ -151,7 +151,7 @@ class Relax:
 This is free software which you are welcome to modify and redistribute under the conditions of the
 GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
 and comes with absolutely no warranty.  For details type GPL.
-        """
+"""
 
 
 
