@@ -6,7 +6,7 @@ read.sequence('noe.500.out')
 # Set the run names (also the names of preset model-free models).
 runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 
-for i in range(len(runs)):
+for i in xrange(len(runs)):
     # Load the relaxation data.
     read.relax_data(runs[i], 'R1', '600', 600.0 * 1e6, 'r1.600.out')
     read.relax_data(runs[i], 'R2', '600', 600.0 * 1e6, 'r2.600.out')

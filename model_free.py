@@ -45,7 +45,7 @@ class Model_free:
         param_vector = zeros(len(data.params[run]), Float64)
 
         # Loop over the parameters.
-        for i in range(len(data.params[run])):
+        for i in xrange(len(data.params[run])):
             # S2.
             if data.params[run][i] == 'S2' and data.s2[run] != None:
                 param_vector[i] = data.s2[run]
@@ -92,7 +92,7 @@ class Model_free:
         scaling_matrix = zeros((len(data.params[run]), len(data.params[run])), Float64)
 
         # Loop over the parameters.
-        for i in range(len(data.params[run])):
+        for i in xrange(len(data.params[run])):
             # tm.
             if data.params[run][i] == 'tm':
                 scaling_matrix[i, i] = 1e-15
@@ -149,7 +149,7 @@ class Model_free:
 
         # Check the validity of the parameter array.
         s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
-        for i in range(len(params)):
+        for i in xrange(len(params)):
             # Invalid parameter flag.
             invalid_param = 0
 
@@ -162,7 +162,7 @@ class Model_free:
 
                 # Does the array contain S2s.
                 s2s_flag = 0
-                for j in range(len(params)):
+                for j in xrange(len(params)):
                     if params[j] == 'S2s':
                         s2s_flag = 1
                 if s2s_flag:
@@ -177,7 +177,7 @@ class Model_free:
 
                 # Does the array contain the parameter S2.
                 s2_flag = 0
-                for j in range(len(params)):
+                for j in xrange(len(params)):
                     if params[j] == 'S2':
                         s2_flag = 1
                 if not s2_flag:
@@ -206,7 +206,7 @@ class Model_free:
 
                 # Does the array contain the parameter S2f.
                 s2f_flag = 0
-                for j in range(len(params)):
+                for j in xrange(len(params)):
                     if params[j] == 'S2f':
                         s2f_flag = 1
                 if not s2f_flag:
@@ -221,7 +221,7 @@ class Model_free:
 
                 # Does the array contain the parameter S2 or S2s.
                 flag = 0
-                for j in range(len(params)):
+                for j in xrange(len(params)):
                     if params[j] == 'S2' or params[j] == 'S2f':
                         flag = 1
                 if not flag:
@@ -370,7 +370,7 @@ class Model_free:
         """Function for updating various data structures depending on the model selected."""
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -390,7 +390,7 @@ class Model_free:
     def fixed_setup(self, params=None, min_options=None):
         """The fixed parameter value setup function."""
 
-        for i in range(len(params)):
+        for i in xrange(len(params)):
             # {S2, S2f, S2s}.
             if match('S2', params[i]):
                 min_options[i] = 0.5
@@ -425,7 +425,7 @@ class Model_free:
         # Initialise.
         min_options = []
 
-        for i in range(len(params)):
+        for i in xrange(len(params)):
             # {S2, S2f, S2s}.
             if match('S2', params[i]):
                 min_options.append([inc_vector[i], 0.0, 1.0])
@@ -475,7 +475,7 @@ class Model_free:
                 object[run] = value
 
 
-    def linear_constraints(self, run=None, data=None, index=None):
+    def linear_constraints(self, run=None, data=None, index=None, scaling_matrix=None):
         """Function for setting up the model-free linear constraint matrices A and b.
 
         Standard notation
@@ -579,7 +579,7 @@ class Model_free:
         j = 0
 
         # The original model-free equations.
-        for i in range(n):
+        for i in xrange(n):
             # Order parameters {S2, S2f, S2s}.
             if match('S2', data.params[run][i]):
                 # 0 <= S2 <= 1.
@@ -587,18 +587,18 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0)
-                b.append(-1.0)
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-1.0 / scaling_matrix[i, i])
                 j = j + 2
 
                 # S2 <= S2f and S2 <= S2s.
                 if data.params[run][i] == 'S2':
-                    for k in range(n):
+                    for k in xrange(n):
                         if data.params[run][k] == 'S2f' or data.params[run][k] == 'S2s':
                             A.append(zero_array * 0.0)
                             A[j][i] = -1.0
                             A[j][k] = 1.0
-                            b.append(0.0)
+                            b.append(0.0 / scaling_matrix[i, i])
                             j = j + 1
 
             # Correlation times {tm, te, tf, ts}.
@@ -608,13 +608,13 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0)
-                b.append(-10e6)
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-10e-9 / scaling_matrix[i, i])
                 j = j + 2
 
                 # tf <= ts.
                 if data.params[run][i] == 'ts':
-                    for k in range(n):
+                    for k in xrange(n):
                         if data.params[run][k] == 'tf':
                             A.append(zero_array * 0.0)
                             A[j][i] = 1.0
@@ -626,7 +626,7 @@ class Model_free:
             elif data.params[run][i] == 'Rex':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
-                b.append(0.0)
+                b.append(0.0 / scaling_matrix[i, i])
                 j = j + 1
 
             # Bond length.
@@ -636,8 +636,8 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.9e-10)
-                b.append(-2e-10)
+                b.append(0.9e-10 / scaling_matrix[i, i])
+                b.append(-2e-10 / scaling_matrix[i, i])
                 j = j + 2
 
             # CSA.
@@ -647,8 +647,8 @@ class Model_free:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(-300e-6)
-                b.append(0.0)
+                b.append(-300e-6 / scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
                 j = j + 2
 
         # Convert to Numeric data structures.
@@ -768,7 +768,7 @@ class Model_free:
             raise RelaxNoneError, 'parameter types'
         elif type(params) != list:
             raise RelaxListError, ('parameter types', params)
-        for i in range(len(params)):
+        for i in xrange(len(params)):
             if type(params[i]) != str:
                 raise RelaxListStrError, ('parameter types', params)
 
@@ -946,7 +946,7 @@ class Model_free:
 
         # Linear constraints.
         if constraints:
-            A, b = self.linear_constraints(run, self.relax.data.res[i], i)
+            A, b = self.linear_constraints(run, self.relax.data.res[i], i, scaling_matrix)
 
         if print_flag >= 1:
             if print_flag >= 2:
@@ -954,7 +954,7 @@ class Model_free:
             string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
             print string
             string2 = ""
-            for j in range(len(string)):
+            for j in xrange(len(string)):
                 string2 = string2 + "~"
             print string2
 
@@ -970,7 +970,7 @@ class Model_free:
         self.function_ops = ()
 
         # Make sure that the errors are all positive numbers.
-        for j in range(len(relax_error)):
+        for j in xrange(len(relax_error)):
             if relax_error[j] == 0.0:
                 message = "Zero error, minimisation not possible."
                 if print_flag >= 1:
@@ -1017,7 +1017,7 @@ class Model_free:
         types = self.relax.data.res[i].params[run]
 
         # Loop over the minimised parameters.
-        for j in range(len(self.params)):
+        for j in xrange(len(self.params)):
             # S2.
             if types[j] == 'S2':
                 self.relax.data.res[i].s2[run] = self.params[j]
@@ -1028,7 +1028,7 @@ class Model_free:
                 self.relax.data.res[i].s2f[run] = self.params[j]
 
                 # Other order parameters.
-                for k in range(len(types)):
+                for k in xrange(len(types)):
                     # S2 = S2f.S2s
                     if types[k] == 'S2s':
                         self.relax.data.res[i].s2[run] = self.params[j] * self.params[k]
@@ -1093,7 +1093,7 @@ class Model_free:
         # Bounds array.
         bounds = zeros((len(params), 2), Float64)
 
-        for i in range(len(params)):
+        for i in xrange(len(params)):
             # {S2, S2f, S2s}.
             if match('S2', params[i]):
                 bounds[i] = [0, 1]
@@ -1129,7 +1129,7 @@ class Model_free:
         loc_inc = inc / axis_incs
 
         # Increment over the model parameters.
-        for i in range(n):
+        for i in xrange(n):
             # {S2, S2f, S2s}.
             if match('S2', params[swap[i]]):
                 # Labels.
@@ -1183,7 +1183,7 @@ class Model_free:
             # Tick locations.
             string = "{"
             val = 0.0
-            for j in range(axis_incs + 1):
+            for j in xrange(axis_incs + 1):
                 string = string + " " + `val`
                 val = val + loc_inc
             string = string + " }"
@@ -1191,7 +1191,7 @@ class Model_free:
 
             # Tick values.
             string = "{"
-            for j in range(axis_incs + 1):
+            for j in xrange(axis_incs + 1):
                 if self.relax.data.res[index].scaling.has_key(run):
                     string = string + "\"" + "%.2f" % (vals * scaling_matrix[swap[i], swap[i]]) + "\" "
                 else:
@@ -1210,7 +1210,7 @@ class Model_free:
         file_data = file_data[1:]
 
         # Loop over the file data.
-        for i in range(len(file_data)):
+        for i in xrange(len(file_data)):
             # Residue number and name.
             try:
                 num = int(file_data[i][0])
@@ -1221,7 +1221,7 @@ class Model_free:
 
             # Find the residue index.
             index = None
-            for j in range(len(self.relax.data.res)):
+            for j in xrange(len(self.relax.data.res)):
                 if self.relax.data.res[j].num == num and self.relax.data.res[j].name == name:
                     index = j
                     break
@@ -1342,7 +1342,7 @@ class Model_free:
             # Warning.
             if len(file_data[i]) > 19:
                 warning = file_data[i][19]
-                for j in range(20, len(file_data[i])):
+                for j in xrange(20, len(file_data[i])):
                     warning = warning + " " + file_data[i][j]
             else:
                 warning = None

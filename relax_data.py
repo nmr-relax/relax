@@ -256,7 +256,7 @@ class Rx_data:
         file_data = self.relax.file_ops.strip(file_data)
 
         # Test the validity of the relaxation data.
-        for i in range(len(file_data)):
+        for i in xrange(len(file_data)):
             try:
                 int(file_data[i][num_col])
                 float(file_data[i][data_col])
@@ -265,7 +265,7 @@ class Rx_data:
                 raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
 
         # Loop over the relaxation data.
-        for i in range(len(file_data)):
+        for i in xrange(len(file_data)):
             # Get the data.
             res_num = int(file_data[i][num_col])
             res_name = file_data[i][name_col]
@@ -274,7 +274,7 @@ class Rx_data:
 
             # Find the index of self.relax.data.res which corresponds to the relaxation data set i.
             index = None
-            for j in range(len(self.relax.data.res)):
+            for j in xrange(len(self.relax.data.res)):
                 if self.relax.data.res[j].num == res_num and self.relax.data.res[j].name == res_name:
                     index = j
                     break
@@ -285,7 +285,7 @@ class Rx_data:
             self.initialise_relax_data(self.relax.data.res[index], run)
 
             # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
-            for j in range(self.relax.data.res[index].num_ri[run]):
+            for j in xrange(self.relax.data.res[index].num_ri[run]):
                if ri_label == self.relax.data.res[index].ri_labels[run][j] and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][j]]:
                     raise RelaxError, "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been read."
 
@@ -302,7 +302,7 @@ class Rx_data:
             # Find if the frequency self.frq has already been loaded.
             remap = len(self.relax.data.res[index].frq[run])
             flag = 0
-            for i in range(len(self.relax.data.res[index].frq[run])):
+            for i in xrange(len(self.relax.data.res[index].frq[run])):
                 if frq == self.relax.data.res[index].frq[run][i]:
                     remap = i
                     flag = 1
@@ -320,12 +320,12 @@ class Rx_data:
             self.relax.data.res[index].noe_r1_table[run].append(None)
             if ri_label == 'NOE':
                 # If the data corresponds to 'NOE', try to find if the corresponding 'R1' data has been read.
-                for i in range(self.relax.data.res[index].num_ri[run]):
+                for i in xrange(self.relax.data.res[index].num_ri[run]):
                     if self.relax.data.res[index].ri_labels[run][i] == 'R1' and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][i]]:
                         self.relax.data.res[index].noe_r1_table[run][self.relax.data.res[index].num_ri[run] - 1] = i
             if ri_label == 'R1':
                 # If the data corresponds to 'R1', try to find if the corresponding 'NOE' data has been read.
-                for i in range(self.relax.data.res[index].num_ri[run]):
+                for i in xrange(self.relax.data.res[index].num_ri[run]):
                     if self.relax.data.res[index].ri_labels[run][i] == 'NOE' and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][i]]:
                         self.relax.data.res[index].noe_r1_table[run][i] = self.relax.data.res[index].num_ri[run] - 1
 
@@ -344,9 +344,9 @@ class Rx_data:
 
     def curvefit_input(self):
         # Loop through each time point.
-        for spectra in range(len(self.usr_param.input_info)):
+        for spectra in xrange(len(self.usr_param.input_info)):
             print '\nProcessing data for time point ' + self.xmf.r1_data.input[i][0] + ' sec'
-            for j in range(len(self.xmf.r1_data.input[i])):     # Go through the three columns of the input file.
+            for j in xrange(len(self.xmf.r1_data.input[i])):     # Go through the three columns of the input file.
                 if j == 0:           # The time column.
                     self.xmf.r1_data.times.append(self.xmf.r1_data.input[i][0])     # Add the time to the 'times' array.
                     self.xmf.r1_data.input_data[i][0] = self.xmf.r1_data.input[i][0]
@@ -358,7 +358,7 @@ class Rx_data:
                     diff_list = []     # List of peak intensity differences for backbone peaks.
                 bb_no = 0            # Number of backbone peaks.
                 indole_no = 0        # Number of tryptophane indole peaks.
-                for k in range(len(self.xmf.r1_data.input_data[i][j])):     # Go through the lines of each spectra.
+                for k in xrange(len(self.xmf.r1_data.input_data[i][j])):     # Go through the lines of each spectra.
                     if non_residue(self.xmf.r1_data.input_data[i][j][k]):
                         continue     # Skip all non-residue lines.
                     test_res_no(self.xmf.r1_data.input_data[0][1][k][0],self.xmf.r1_data.input_data[i][j][k][0])     # Test if residue numbers match.
@@ -380,7 +380,7 @@ class Rx_data:
         self.xmf.r1_data.bb_intense.sort()
         self.xmf.r1_data.indole_intense.sort()
         sumSd = 0     # The sum of all the standard deviations.
-        for set in range(len(self.xmf.r1_data.diff)):
+        for set in xrange(len(self.xmf.r1_data.diff)):
             sd = stand_dev(self.xmf.r1_data.diff[set])
             print '\nThe standard deviation is: ' + `sd`
             sumSd = sumSd + sd

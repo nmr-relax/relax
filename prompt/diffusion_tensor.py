@@ -81,7 +81,7 @@ class Diffusion_tensor:
                 raise RelaxListError, ('axially symmetric diffusion parameter', params)
             elif len(params) != 4:
                 raise RelaxLenError, ('axially symmetric diffusion parameter', 4)
-            for i in range(len(params)):
+            for i in xrange(len(params)):
                 if type(params[i]) != float:
                     raise RelaxListFloatError, ('axially symmetric diffusion parameter', params)
 
@@ -91,7 +91,7 @@ class Diffusion_tensor:
                 raise RelaxListError, ('anisotropic diffusion parameter', params)
             elif len(params) != 6:
                 raise RelaxLenError, ('anisotropic diffusion parameter', 6)
-            for i in range(len(params)):
+            for i in xrange(len(params)):
                 if type(params[i]) != float:
                     raise RelaxListFloatError, ('anisotropic diffusion parameter', params)
 

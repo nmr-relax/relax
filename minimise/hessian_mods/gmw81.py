@@ -43,9 +43,9 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
     # Calculate gamma(A) and xi(A).
     gamma = 0.0
     xi = 0.0
-    for i in range(n):
+    for i in xrange(n):
         gamma = max(abs(d2fk[i, i]), gamma)
-        for j in range(i+1, n):
+        for j in xrange(i+1, n):
             xi = max(abs(d2fk[i, j]), xi)
 
     # Calculate delta and beta.
@@ -68,10 +68,10 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         print print_prefix + "d2fk:\n" + `d2fk`
 
     # Main loop.
-    for j in range(n):
+    for j in xrange(n):
         # Row and column swapping, find the index > j of the largest diagonal element.
         q = j
-        for i in range(j+1, n):
+        for i in xrange(j+1, n):
             if abs(a[i, i]) >= abs(a[q, q]):
                 q = i
 
@@ -97,7 +97,7 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         # Calculate dj.
         theta_j = 0.0
         if j < n-1:
-            for i in range(j+1, n):
+            for i in xrange(j+1, n):
                 theta_j = max(theta_j, abs(a[j, i]))
         dj = max(abs(a[j, j]), (theta_j/beta)**2, delta)
 
@@ -107,9 +107,9 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
 
         # Calculate row j of r and update a.
         r[j, j] = sqrt(dj)     # Damned sqrt introduces roundoff error.
-        for i in range(j+1, n):
+        for i in xrange(j+1, n):
             r[j, i] = a[j, i] / r[j, j]
-            for k in range(j+1, i+1):
+            for k in xrange(j+1, i+1):
                 a[i, k] = a[k, i] = a[k, i] - r[j, i] * r[j, k]     # Keep matrix a symmetric.
 
     # The Cholesky factor of d2fk.
@@ -127,7 +127,7 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         print print_prefix + "dot(P, chol(L.LT)):\n" + `dot(P, cholesky_decomposition(dot(L, transpose(L))))`
         print print_prefix + "dot(P, chol(P.L.LT.PT)):\n" + `dot(P, cholesky_decomposition(dot(P, dot(dot(L, transpose(L)), transpose(P)))))`
         E = 0.0 * d2fk
-        for i in range(n):
+        for i in xrange(n):
             E[i, i] = e[i]
         E = dot(P, dot(E, transpose(P)))
         print print_prefix + "E:\n" + `E`

@@ -93,7 +93,7 @@ class RW:
         header_fn = None
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Append None to the write_results function array.
             self.write_results.append(None)
 
@@ -129,7 +129,7 @@ class RW:
         self.write_header(results_file, run)
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Reassign data structure.
             res = self.relax.data.res[i]
 

@@ -51,19 +51,19 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
     # Initialise.
     n = len(grid_ops)
+    grid_size = 0
     total_steps = 1
     step_num = ones((n))
     params = zeros((n), Float64)
     min_params = zeros((n), Float64)
     param_values = []   # This data structure eliminates the round-off error of summing a step size value to the parameter value.
-    for k in range(n):
+    for k in xrange(n):
         params[k] = grid_ops[k][1]
         min_params[k] = grid_ops[k][1]
         total_steps = total_steps * grid_ops[k][0]
         param_values.append([])
-        for i in range(grid_ops[k][0]):
+        for i in xrange(grid_ops[k][0]):
             param_values[k].append(i * (grid_ops[k][2] - grid_ops[k][1]) / (grid_ops[k][0] - 1))
-    grid = []
 
     # Print out.
     if print_flag:
@@ -97,26 +97,17 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     else:
         constraint_flag = 0
 
-
-    # Create the grid.
-    ##################
-
-    # Add initial 'params' to the grid (if acceptable).
-    if constraint_flag:
-        ci = c(params)
-        if min(ci) >= 0.0:
-            grid.append(1.0 * params)
-        grid.append(1.0 * params)
+    # Set a ridiculously large initial grid value.
+    f_min = 1e300
 
     # Initial print out.
     if print_flag:
-        print "\n" + print_prefix + "Creating the grid."
-        if constraint_flag:
-            print print_prefix + "Excluding points which violate the constraints."
+        print "\n" + print_prefix + "Searching the grid."
 
-    for i in range(total_steps):
+    # Search the grid.
+    for i in xrange(total_steps):
         # Loop over the parameters.
-        for k in range(n):
+        for k in xrange(n):
             if step_num[k] < grid_ops[k][0]:
                 step_num[k] = step_num[k] + 1
                 params[k] = param_values[k][step_num[k]-1]
@@ -125,37 +116,19 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
                 step_num[k] = 1
                 params[k] = grid_ops[k][1]
 
-        # Add 'params' to the grid (if acceptable).
+        # Check that the grid point does not violate a constraint, and if it does, move to the next point.
         if constraint_flag:
             ci = c(params)
             if min(ci) >= 0.0:
-                grid.append(1.0 * params)
-        else:
-            grid.append(1.0 * params)
+                continue
 
-
-    # Search the grid.
-    ##################
-
-    # Back calculate the initial grid value.
-    f_min = 1e300
-
-    # Initial print out.
-    if print_flag:
-        print "\n" + print_prefix + "Searching the grid."
-        print print_prefix + "%-23s%-20i" % ("Total number of steps:", len(grid))
-        if print_flag >= 3:
-            print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
-
-    # Loop over the grid.
-    for i in range(len(grid)):
         # Back calculate the current function value.
-        f = apply(func, (grid[i],)+args)
+        f = apply(func, (params,)+args)
 
         # Test if the current function value is less than the least function value.
         if f < f_min:
             f_min = f
-            min_params = grid[i]
+            min_params = params
 
             # Print out code.
             if print_flag:
@@ -164,7 +137,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         # Print out code.
         if print_flag >= 2:
             if f != f_min:
-                print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `grid[i]`, "fk:", `f`)
+                print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `params`, "fk:", `f`)
             if print_flag >= 3:
                 print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
                 print print_prefix + "%-20s%-20s" % ("Min params:", `min_params`)
@@ -172,4 +145,4 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
 
     # Return the results.
-    return min_params, f_min, len(grid)
+    return min_params, f_min, grid_size

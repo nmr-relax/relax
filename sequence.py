@@ -139,14 +139,14 @@ class Sequence:
             raise RelaxFileEmptyError
 
         # Test if the sequence data is valid.
-        for i in range(len(file_data)):
+        for i in xrange(len(file_data)):
             try:
                 int(file_data[i][num_col])
             except ValueError:
                 raise RelaxError, "Sequence data is invalid."
 
         # Fill the array self.relax.data.res with data containers and place sequence data into the array.
-        for i in range(len(file_data)):
+        for i in xrange(len(file_data)):
             # Append a data container.
             self.relax.data.res.append(Residue())
 

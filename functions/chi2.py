@@ -49,7 +49,7 @@ def chi2(data, back_calc_vals, errors):
     # Calculate the chi-squared statistic.
     a = ((data - back_calc_vals) / errors)**2
     chi2 = 0.0
-    for i in range(len(data)):
+    for i in xrange(len(data)):
         chi2 = chi2 + a[i]
     return chi2
 
@@ -86,7 +86,7 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
     a = -2.0 * (data - back_calc_vals) / (errors**2)
 
     # Calculate the chi-squared gradient.
-    for i in range(len(data)):
+    for i in xrange(len(data)):
         dchi2 = dchi2 + a[i] * back_calc_grad[i]
 
     return dchi2
@@ -123,9 +123,9 @@ def d2chi2(data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
     yi_diff = data - back_calc_vals
 
     # Calculate the chi-squared Hessian.
-    for i in range(len(data)):
+    for i in xrange(len(data)):
         # Loop over the parameters.
-        for j in range(num_params):
+        for j in xrange(num_params):
             d2chi2[j] = d2chi2[j] + a[i] * (back_calc_grad[i, j] * back_calc_grad[i] - yi_diff[i] * back_calc_hess[i, j])
 
     return d2chi2

@@ -40,7 +40,7 @@ class Print_all_data:
                 print "self.relax.data." + name + ":\n" + `getattr(self.relax.data, name)` + "\n"
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             print "\nResidue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + "\n"
             for name in dir(self.relax.data.res[i]):
                 if not self.filter_data_structure(self.relax.data.res[i], name):

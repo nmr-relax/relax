@@ -54,7 +54,7 @@ class Tab_completion:
 
         # Construct the module and get the corresponding object.
         module = list[0]
-        for i in range(1, len(list)-1):
+        for i in xrange(1, len(list)-1):
             module = module + '.' + list[i]
         object = eval(module, self.name_space)
 

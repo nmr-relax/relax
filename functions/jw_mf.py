@@ -346,7 +346,7 @@ def create_djw_struct(data, calc_djw):
          dr
     """
 
-    for j in range(len(data.params)):
+    for j in xrange(len(data.params)):
         if calc_djw[j]:
             data.djw[:, :, j] = calc_djw[j](data)
 
@@ -1192,8 +1192,8 @@ def create_d2jw_struct(data, calc_d2jw):
         dr**2
     """
 
-    for j in range(len(data.params)):
-        for k in range(j + 1):
+    for j in xrange(len(data.params)):
+        for k in xrange(j + 1):
             if calc_d2jw[j][k]:
                 data.d2jw[:, :, j, k] = calc_d2jw[j][k](data)
                 # Make the Hessian symmetric.

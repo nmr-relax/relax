@@ -157,7 +157,7 @@ class Map:
 
         # Residue index.
         index = None
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             if self.relax.data.res[i].num == res_num:
                 index = i
                 break
@@ -179,7 +179,7 @@ class Map:
                 raise RelaxListError, ('lower bounds', lower)
             if len(lower) != n:
                 raise RelaxLenError, ('lower bounds', n)
-            for i in range(n):
+            for i in xrange(n):
                 if type(lower[i]) != int and type(lower[i]) != float:
                     raise RelaxListNumError, ('lower bounds', lower)
 
@@ -189,7 +189,7 @@ class Map:
                 raise RelaxListError, ('upper bounds', upper)
             if len(upper) != n:
                 raise RelaxLenError, ('upper bounds', n)
-            for i in range(n):
+            for i in xrange(n):
                 if type(upper[i]) != int and type(upper[i]) != float:
                     raise RelaxListNumError, ('upper bounds', upper)
 
@@ -200,7 +200,7 @@ class Map:
             if len(swap) != n:
                 raise RelaxLenError, ('axes swapping', n)
             test = zeros(n)
-            for i in range(n):
+            for i in xrange(n):
                 if type(swap[i]) != int:
                     raise RelaxListIntError, ('axes swapping', swap)
                 if swap[i] >= n:
@@ -208,7 +208,7 @@ class Map:
                 elif swap[i] < 0:
                     raise RelaxError, "All integers of the swap argument must be positive."
                 test[swap[i]] = 1
-            for i in range(n):
+            for i in xrange(n):
                 if test[i] != 1:
                     raise RelaxError, "The swap argument is invalid (possibly duplicated integer values)."
 
@@ -230,7 +230,7 @@ class Map:
                 raise RelaxLenError, ('point', n)
             elif type(point_file) != str:
                 raise RelaxStrError, ('point file name', point_file)
-            for i in range(n):
+            for i in xrange(n):
                 if type(point[i]) != int and type(point[i]) != float:
                     raise RelaxListNumError, ('point', point)
 
@@ -245,7 +245,7 @@ class Map:
                 raise RelaxListError, ('axis labels', labels)
             elif len(labels) != n:
                 raise RelaxLenError, ('axis labels', n)
-            for i in range(n):
+            for i in xrange(n):
                 if type(labels[i]) != str:
                     raise RelaxListStrError, ('axis labels', labels)
 

@@ -41,7 +41,7 @@ class Grace:
         else:
             file.write(self.grace_header(type + ' values', subtitle, 'Residue Number', type, 'xydy'))
 
-        for res in range(len(self.relax.data.results)):
+        for res in xrange(len(self.relax.data.results)):
             if match('S2', type) and self.relax.data.results[res]['s2']:
                 file.write(self.relax.data.results[res]['res_num'] + " ")
                 file.write(`self.relax.data.results[res]['s2']` + " ")

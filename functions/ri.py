@@ -56,7 +56,7 @@ def ri(data, create_ri, get_r1):
     """
 
     # Calculate the NOE values.
-    for i in range(data.num_ri):
+    for i in xrange(data.num_ri):
         if create_ri[i]:
             create_ri[i](data, i, data.remap_table[i], get_r1)
 
@@ -97,7 +97,7 @@ def dri(data, create_dri, get_dr1):
     """
 
     # Loop over the relaxation values and modify the NOE gradients.
-    for i in range(data.num_ri):
+    for i in xrange(data.num_ri):
         if create_dri[i]:
             create_dri[i](data, i, data.remap_table[i], get_dr1)
 
@@ -142,7 +142,7 @@ def d2ri(data, create_d2ri, get_d2r1):
     """
 
     # Loop over the relaxation values and modify the NOE Hessians.
-    for i in range(data.num_ri):
+    for i in xrange(data.num_ri):
         if create_d2ri[i]:
             create_d2ri[i](data, i, data.remap_table[i], get_d2r1)
 
@@ -192,7 +192,7 @@ def calc_d2noe(data, i, frq_num, get_d2r1):
     if data.r1[i] == 0.0:
         data.d2ri[i] = 1e99
     else:
-        for j in range(len(data.params)):
+        for j in xrange(len(data.params)):
             a = data.ri_prime[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
             b = data.r1[i] * (data.dri_prime[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri_prime[i] - data.r1[i] * data.d2ri_prime[i, j])
             data.d2ri[i, j] = data.g_ratio * (1.0 / data.r1[i]**3) * (a - b)
@@ -255,7 +255,7 @@ def calc_dr1(data, i, frq_num):
     dr1_comps(data.r1_data, i)
 
     # Calculate the dr1 value.
-    for j in range(len(data.params)):
+    for j in xrange(len(data.params)):
         data.r1_data.create_dri_prime[j](data.r1_data, j)
 
     return data.r1_data.dri_prime[i]
@@ -275,8 +275,8 @@ def calc_d2r1(data, i, frq_num):
     d2r1_comps(data.r1_data, i)
 
     # Calculate the dr1 value.
-    for j in range(len(data.params)):
-        for k in range(j + 1):
+    for j in xrange(len(data.params)):
+        for k in xrange(j + 1):
             if data.r1_data.create_d2ri_prime[j][k]:
                 data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
                 # Make the Hessian symmetric.

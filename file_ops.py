@@ -52,7 +52,7 @@ class File_ops:
         # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
         lines = file.readlines()
         data = []
-        for i in range(len(lines)):
+        for i in xrange(len(lines)):
             if sep:
                 row = split(lines[i], sep)
             else:
@@ -118,7 +118,7 @@ class File_ops:
         """Function to remove all comment and empty lines from the data data structure."""
 
         new = []
-        for i in range(len(data)):
+        for i in xrange(len(data)):
             if len(data[i]) == 0:
                 continue
             elif match("#", data[i][0]):

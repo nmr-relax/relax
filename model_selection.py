@@ -59,7 +59,7 @@ class Model_selection:
             raise RelaxError, "The run " + `modsel_run` + " already exists."
 
         # Test if each run has a valid parameter and chi-squared data structure.
-        #for i in range(len(self.relax.data.res)):
+        #for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             #if not self.relax.data.res[i].select:
             #    continue
@@ -106,7 +106,7 @@ class Model_selection:
             raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -236,12 +236,12 @@ class Model_selection:
         best_crit = float('inf')
 
         # Loop over the models.
-        for k in range(len(self.runs[0])):
+        for k in xrange(len(self.runs[0])):
             # Sum of chi-squared values.
             sum_crit = 0.0
 
             # Loop over the validation samples and sum the chi-squared values.
-            for j in range(len(self.runs)):
+            for j in xrange(len(self.runs)):
                 sum_crit = sum_crit + self.relax.data.res[i].chi2[self.runs[j][k]]
 
             # Cross-validation criterion (average chi-squared value).

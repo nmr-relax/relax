@@ -36,7 +36,7 @@ def cholesky(dfk, d2fk, I, n, print_prefix, print_flag, return_matrix=0):
 
     # Find the minimum diagonal value of the Hessian.
     min_aii = 1e99
-    for i in range(n):
+    for i in xrange(n):
         min_aii = min(d2fk[i, i], min_aii)
 
     # Calculate the Frobenius norm of the Hessian.
@@ -67,7 +67,7 @@ def cholesky(dfk, d2fk, I, n, print_prefix, print_flag, return_matrix=0):
             L = cholesky_decomposition(matrix)
             if print_flag >= 3:
                 print print_prefix + "\tCholesky matrix L:"
-                for i in range(n):
+                for i in xrange(n):
                     print print_prefix + "\t\t" + `L[i]`
             break
         except "LinearAlgebraError":

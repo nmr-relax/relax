@@ -51,11 +51,11 @@ class Iso3D(Base_Map):
 
         # Create the map.
         values[self.swap[0]] = self.bounds[self.swap[0], 0]
-        for i in range((self.inc + 1)):
+        for i in xrange((self.inc + 1)):
             values[self.swap[1]] = self.bounds[self.swap[1], 0]
-            for j in range((self.inc + 1)):
+            for j in xrange((self.inc + 1)):
                 values[self.swap[2]] = self.bounds[self.swap[2], 0]
-                for k in range((self.inc + 1)):
+                for k in xrange((self.inc + 1)):
                     # Calculate the function values.
                     self.minimise(run=self.run, i=self.index, init_params=self.remap(values), scaling_matrix=self.scaling_matrix, min_algor='fixed', min_options=self.remap(values), print_flag=0)
 
@@ -103,7 +103,7 @@ class Iso3D(Base_Map):
 
         # Calculate the coordinate values.
         coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
-        for i in range(self.n):
+        for i in xrange(self.n):
             point_file.write("%-15.5g" % coords[self.swap[i]])
         point_file.write("1\n")
 
@@ -180,11 +180,11 @@ class Iso3D(Base_Map):
 
             # Tick locations.
             tick_locations = []
-            for i in range(3):
+            for i in xrange(3):
                 string = "{"
                 inc = self.inc / axis_incs
                 val = 0.0
-                for i in range(axis_incs + 1):
+                for i in xrange(axis_incs + 1):
                     string = string + " " + `val`
                     val = val + inc
                 string = string + " }"
@@ -193,10 +193,10 @@ class Iso3D(Base_Map):
             # Tick values.
             tick_values = []
             inc = (self.bounds[:, 1] - self.bounds[:, 0]) / axis_incs
-            for i in range(3):
+            for i in xrange(3):
                 vals = self.bounds[self.swap[i], 0] * 1.0
                 string = "{"
-                for j in range(axis_incs + 1):
+                for j in xrange(axis_incs + 1):
                     if self.relax.data.res[self.index].scaling.has_key(self.run):
                         string = string + "\"" + "%.2g" % (vals * self.scaling_matrix[self.swap[i], self.swap[i]]) + "\" "
                     else:

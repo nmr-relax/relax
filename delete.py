@@ -108,7 +108,7 @@ class Delete:
                     keep_runs.append(key)
 
         # Find out if any data in 'self.relax.data.res[i]' is assigned to a run.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             for name in dir(self.relax.data.res[i]):
                 # Get the data and check that it is a dictionary.
                 object = getattr(self.relax.data.res[i], name)
@@ -138,7 +138,7 @@ class Delete:
         ###############
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -178,7 +178,7 @@ class Delete:
                 return
 
         # Find out if any data in 'self.relax.data.res[i]' is assigned to the run.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             for name in dir(self.relax.data.res[i]):
                 # Get the data and check that it is a dictionary.
                 object = getattr(self.relax.data.res[i], name)

@@ -119,7 +119,7 @@ class Mf:
         """Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation."""
 
         self.data.frq_list = zeros((self.relax.data.res[self.i].num_frq[self.run], 5), Float64)
-        for i in range(self.relax.data.res[self.i].num_frq[self.run]):
+        for i in xrange(self.relax.data.res[self.i].num_frq[self.run]):
             frqH = 2.0 * pi * self.relax.data.res[self.i].frq[self.run][i]
             frqX = frqH * (self.relax.data.gx / self.relax.data.gh)
             self.data.frq_list[i, 1] = frqX
@@ -222,7 +222,7 @@ class Mf:
         self.create_dri_comps(self.data, self.create_dip_grad, self.create_dip_jw_grad, self.create_csa_grad, self.create_csa_jw_grad, self.create_rex_grad)
 
         # Calculate the R1, R2, and sigma_noe gradients.
-        for i in range(len(self.data.params)):
+        for i in xrange(len(self.data.params)):
             self.create_dri_prime[i](self.data, i)
 
         # Calculate the R1, R2, and NOE gradients.
@@ -279,8 +279,8 @@ class Mf:
         self.create_d2ri_comps(self.data, self.create_dip_hess, self.create_dip_jw_hess, self.create_csa_hess, self.create_csa_jw_hess, None)
 
         # Calculate the R1, R2, and sigma_noe Hessians.
-        for i in range(len(self.data.params)):
-            for j in range(i + 1):
+        for i in xrange(len(self.data.params)):
+            for j in xrange(i + 1):
                 if self.create_d2ri_prime[i][j]:
                     self.create_d2ri_prime[i][j](self.data, i, j)
 
@@ -328,7 +328,7 @@ class Mf:
         self.data.w_te_tm_sqrd = zeros((self.data.num_frq, 5), Float64)
         self.data.te_denom = zeros((self.data.num_frq, 5), Float64)
         tm_flag = 0
-        for i in range(len(self.param_types)):
+        for i in xrange(len(self.param_types)):
             if self.param_types == 'tm':
                 tm_flag = 1
         if not tm_flag:
@@ -484,10 +484,10 @@ class Mf:
         # Initialise the spectral density gradient and Hessian function lists.
         self.calc_djw = []
         self.calc_d2jw = []
-        for i in range(len(self.params)):
+        for i in xrange(len(self.params)):
             self.calc_djw.append(None)
             self.calc_d2jw.append([])
-            for j in range(len(self.params)):
+            for j in xrange(len(self.params)):
                 self.calc_d2jw[i].append(None)
 
 
@@ -497,7 +497,7 @@ class Mf:
         if self.equation == 'mf_orig':
             # Find the indecies of the parameters in self.param_types
             self.data.tm_index, self.data.s2_index, self.data.te_index, self.data.rex_index, self.data.r_index, self.data.csa_index = None, None, None, None, None, None
-            for i in range(len(self.param_types)):
+            for i in xrange(len(self.param_types)):
                 if self.param_types[i] == 'tm':
                     self.data.tm_index = i
                 elif self.param_types[i] == 'S2':
@@ -607,7 +607,7 @@ class Mf:
         elif self.equation == 'mf_ext':
             # Find the indecies of the parameters in self.param_types
             self.data.tm_index, self.data.s2f_index, self.data.tf_index, self.data.s2_index, self.data.ts_index, self.data.rex_index, self.data.r_index, self.data.csa_index,  = None, None, None, None, None, None, None, None
-            for i in range(len(self.param_types)):
+            for i in xrange(len(self.param_types)):
                 if self.param_types[i] == 'tm':
                     self.data.tm_index = i
                 elif self.param_types[i] == 'S2f':
@@ -725,7 +725,7 @@ class Mf:
         elif self.equation == 'mf_ext2':
             # Find the indecies of the parameters in self.param_types
             self.data.tm_index, self.data.s2f_index, self.data.tf_index, self.data.s2s_index, self.data.ts_index, self.data.rex_index, self.data.r_index, self.data.csa_index,  = None, None, None, None, None, None, None, None
-            for i in range(len(self.param_types)):
+            for i in xrange(len(self.param_types)):
                 if self.param_types[i] == 'tm':
                     self.data.tm_index = i
                 elif self.param_types[i] == 'S2f':
@@ -863,7 +863,7 @@ class Mf:
         self.get_r1, self.get_dr1, self.get_d2r1 = [], [], []
 
         # Fill the structures with None.
-        for i in range(self.relax.data.res[self.i].num_ri[self.run]):
+        for i in xrange(self.relax.data.res[self.i].num_ri[self.run]):
             self.create_dip_func.append(None)
             self.create_dip_grad.append(None)
             self.create_dip_hess.append(None)
@@ -889,7 +889,7 @@ class Mf:
         # Select the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
         #############################################################################################
 
-        for i in range(self.relax.data.res[self.i].num_ri[self.run]):
+        for i in xrange(self.relax.data.res[self.i].num_ri[self.run]):
             # The R1 equations.
             if self.relax.data.res[self.i].ri_labels[self.run][i] == 'R1':
                 self.create_csa_func[i] = comp_r1_csa_const
@@ -947,11 +947,11 @@ class Mf:
             self.create_ri_prime = func_ri_prime_rex
 
         # dri_prime and d2ri_prime.
-        for i in range(len(self.data.params)):
+        for i in xrange(len(self.data.params)):
             if self.param_types[i] == 'Rex':
                 self.create_dri_prime.append(func_dri_drex_prime)
                 self.create_d2ri_prime.append([])
-                for j in range(len(self.data.params)):
+                for j in xrange(len(self.data.params)):
                     if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
                     elif self.param_types[j] == 'r':
@@ -963,7 +963,7 @@ class Mf:
             elif self.param_types[i] == 'r':
                 self.create_dri_prime.append(func_dri_dr_prime)
                 self.create_d2ri_prime.append([])
-                for j in range(len(self.data.params)):
+                for j in xrange(len(self.data.params)):
                     if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
                     elif self.param_types[j] == 'r':
@@ -975,7 +975,7 @@ class Mf:
             elif self.param_types[i] == 'CSA':
                 self.create_dri_prime.append(func_dri_dcsa_prime)
                 self.create_d2ri_prime.append([])
-                for j in range(len(self.data.params)):
+                for j in xrange(len(self.data.params)):
                     if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
                     elif self.param_types[j] == 'r':
@@ -987,7 +987,7 @@ class Mf:
             else:
                 self.create_dri_prime.append(func_dri_djw_prime)
                 self.create_d2ri_prime.append([])
-                for j in range(len(self.data.params)):
+                for j in xrange(len(self.data.params)):
                     if self.param_types[j] == 'Rex':
                         self.create_d2ri_prime[i].append(None)
                     elif self.param_types[j] == 'r':
@@ -1015,7 +1015,7 @@ class Mf:
             # Calculate the dipolar and CSA constant components.
             comp_dip_const_func(self.data, self.data.bond_length)
             comp_csa_const_func(self.data, self.data.csa)
-            for i in range(self.data.num_ri):
+            for i in xrange(self.data.num_ri):
                 self.data.dip_comps_func[i] = self.data.dip_const_func
                 if self.create_dip_func[i]:
                     self.data.dip_comps_func[i] = self.create_dip_func[i](self.data.dip_const_func)
@@ -1039,7 +1039,7 @@ class Mf:
 
             # Calculate the CSA constant.
             comp_csa_const_func(self.data, self.data.csa)
-            for i in range(self.data.num_ri):
+            for i in xrange(self.data.num_ri):
                 if self.create_csa_func[i]:
                     self.data.csa_comps_func[i] = self.create_csa_func[i](self.data.csa_const_func[self.data.remap_table[i]])
 
@@ -1060,7 +1060,7 @@ class Mf:
 
             # Calculate the dipolar constant.
             comp_dip_const_func(self.data, self.data.bond_length)
-            for i in range(self.data.num_ri):
+            for i in xrange(self.data.num_ri):
                 self.data.dip_comps_func[i] = self.data.dip_const_func
                 if self.create_dip_func[i]:
                     self.data.dip_comps_func[i] = self.create_dip_func[i](self.data.dip_const_func)

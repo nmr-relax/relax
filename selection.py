@@ -38,7 +38,7 @@ class Selection:
             raise RelaxSequenceError
 
         # Loop over the sequence and set the selection flag to 1.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             self.relax.data.res[i].select = 1
 
 
@@ -50,7 +50,7 @@ class Selection:
             raise RelaxSequenceError
 
         # Loop over the sequence and set the selection flag to 0.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             self.relax.data.res[i].select = 0
 
 
@@ -62,7 +62,7 @@ class Selection:
             raise RelaxSequenceError
 
         # Loop over the sequence and reverse the selection flag.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             if self.relax.data.res[i].select:
                 self.relax.data.res[i].select = 0
             else:
@@ -91,7 +91,7 @@ class Selection:
             raise RelaxSequenceError
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Unselect all residues.
             if unselect:
                 self.relax.data.res[i].select = 0

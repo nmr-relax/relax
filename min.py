@@ -42,7 +42,7 @@ class Minimise:
             raise RelaxSequenceError
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -74,7 +74,7 @@ class Minimise:
             raise RelaxSequenceError
 
         # Test the validity of the arguments.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -92,7 +92,7 @@ class Minimise:
                     raise RelaxLenError, ('values', n)
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -134,7 +134,7 @@ class Minimise:
             raise RelaxSequenceError
 
         # Test the validity of the arguments.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -165,7 +165,7 @@ class Minimise:
                 print lower
                 print len(lower)
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
@@ -179,7 +179,7 @@ class Minimise:
             # Setup the grid search options.
             if type(inc) == int:
                 temp = []
-                for j in range(len(self.relax.data.res[i].params[run])):
+                for j in xrange(len(self.relax.data.res[i].params[run])):
                     temp.append(inc)
                 inc = temp
 
@@ -187,11 +187,11 @@ class Minimise:
 
             # Set the lower and upper bounds if these are supplied.
             if lower != None:
-                for j in range(len(self.relax.data.res[i].params[run])):
+                for j in xrange(len(self.relax.data.res[i].params[run])):
                     if lower[j] != None:
                         min_options[j][1] = lower[j]
             if upper != None:
-                for j in range(len(self.relax.data.res[i].params[run])):
+                for j in xrange(len(self.relax.data.res[i].params[run])):
                     if upper[j] != None:
                         min_options[j][2] = upper[j]
 
@@ -203,7 +203,7 @@ class Minimise:
             if self.relax.data.res[i].scaling[run]:
                 scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
                 init_params = matrixmultiply(inverse(scaling_matrix), init_params)
-                for j in range(len(min_options)):
+                for j in xrange(len(min_options)):
                     min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
                     min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
 
@@ -219,7 +219,7 @@ class Minimise:
             raise RelaxSequenceError
 
         # Loop over the sequence.
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue

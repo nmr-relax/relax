@@ -150,11 +150,11 @@ class Levenberg_marquardt(Min):
         i_variance = 1.0 / self.errors**2
 
         # Loop over the error points from i=1 to n.
-        for i in range(len(self.errors)):
+        for i in xrange(len(self.errors)):
             # Loop over all function parameters.
-            for param_j in range(self.n):
+            for param_j in xrange(self.n):
                 # Loop over the function parameters from the first to 'param_j' to create the Levenberg-Marquardt matrix.
-                for param_k in range(param_j + 1):
+                for param_k in xrange(param_j + 1):
                     if param_j == param_k:
                         matrix_jk = i_variance[i] * self.df[i, param_j] * self.df[i, param_k] * (1.0 + self.l)
                         self.lm_matrix[param_j, param_k] = self.lm_matrix[param_j, param_k] + matrix_jk

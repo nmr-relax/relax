@@ -77,7 +77,7 @@ class Grid:
         elif type(lower) != list:
             raise RelaxListError, ('lower bounds', lower)
         else:
-            for i in range(len(lower)):
+            for i in xrange(len(lower)):
                 if type(lower[i]) != float and type(lower[i]) != int:
                     raise RelaxListNumError, ('lower bounds', lower)
 
@@ -87,7 +87,7 @@ class Grid:
         elif type(upper) != list:
             raise RelaxListError, ('upper bounds', upper)
         else:
-            for i in range(len(upper)):
+            for i in xrange(len(upper)):
                 if type(upper[i]) != float and type(upper[i]) != int:
                     raise RelaxListNumError, ('upper bounds', upper)
 
@@ -95,7 +95,7 @@ class Grid:
         if type(inc) == int:
             pass
         elif type(inc) == list:
-            for i in range(len(inc)):
+            for i in xrange(len(inc)):
                 if type(inc[i]) != int:
                     raise RelaxIntListIntError, ('incrementation value', inc)
         else:

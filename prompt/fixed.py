@@ -79,7 +79,7 @@ class Fixed:
         if values != None:
             if type(values) != list:
                 raise RelaxListError, ('values', values)
-            for i in range(len(values)):
+            for i in xrange(len(values)):
                 if type(values[i]) != float and type(values[i]) != int:
                     raise RelaxListIntError, ('values', values)
 

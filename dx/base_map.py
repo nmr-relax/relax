@@ -37,7 +37,7 @@ class Base_Map:
 
         # Residue index.
         index = None
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             if self.relax.data.res[i].num == res_num:
                 index = i
                 break
@@ -67,7 +67,7 @@ class Base_Map:
 
         # Find the index of res_num.
         self.res_index = None
-        for i in range(len(self.relax.data.res)):
+        for i in xrange(len(self.relax.data.res)):
             if self.relax.data.res[i].num == self.res_num:
                 self.res_index = i
                 break
@@ -107,14 +107,14 @@ class Base_Map:
 
         # Diagonal scaling.
         if self.relax.data.res[index].scaling.has_key(self.run):
-            for i in range(len(self.bounds[0])):
+            for i in xrange(len(self.bounds[0])):
                 self.bounds[:, i] = matrixmultiply(inverse(self.scaling_matrix), self.bounds[:, i])
             if point != None:
                 self.point = matrixmultiply(inverse(self.scaling_matrix), self.point)
 
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)
-        for i in range(self.n):
+        for i in xrange(self.n):
             self.step_size[i] = (self.bounds[i, 1] - self.bounds[i, 0]) / self.inc
 
         # Map the space.

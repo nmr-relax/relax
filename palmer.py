@@ -138,7 +138,7 @@ class Palmer:
         mfdata = self.relax.mfdata
 
         mfdata.write("\nspin     " + self.relax.data.relax_data[0][res][1] + "_" + self.relax.data.relax_data[0][res][0] + "\n")
-        for i in range(self.relax.data.num_ri):
+        for i in xrange(self.relax.data.num_ri):
             mfdata.write('%-7s' % self.relax.data.data_types[i])
             mfdata.write('%-10s' % self.relax.data.frq_label[self.relax.data.remap_table[i]])
             mfdata.write('%20s' % self.relax.data.relax_data[i][res][2])
@@ -164,7 +164,7 @@ class Palmer:
         mfin.write("selection       " + self.relax.data.mfin.selection + "\n\n")
         mfin.write("sim_algorithm   " + self.relax.data.mfin.algorithm + "\n\n")
         mfin.write("fields          " + `self.relax.data.num_frq`)
-        for frq in range(self.relax.data.num_frq):
+        for frq in xrange(self.relax.data.num_frq):
             mfin.write("  " + `self.relax.data.frq[frq]*1e-6`)
         mfin.write("\n")
         # tm.
@@ -322,7 +322,7 @@ class Palmer:
         self.create_mfin()
 
         self.create_run(dir='final')
-        for res in range(len(self.relax.data.relax_data[0])):
+        for res in xrange(len(self.relax.data.relax_data[0])):
             if match('0', self.relax.data.results[res]['model']):
                 model = 'none'
             elif match('2+3', self.relax.data.results[res]['model']):
@@ -493,7 +493,7 @@ class Palmer:
                 self.relax.data.mfin.selection = 'ftest'
                 self.create_mfin()
             self.create_run(dir=model)
-            for res in range(len(self.relax.data.relax_data[0])):
+            for res in xrange(len(self.relax.data.relax_data[0])):
                 # Mfdata.
                 self.create_mfdata(res)
                 # Mfmodel.
@@ -524,14 +524,14 @@ class Palmer:
                 self.log_params('M1', self.relax.usr_param.md1)
                 self.log_params('M2', self.relax.usr_param.md2)
 
-            for i in range(self.relax.data.num_ri):
+            for i in xrange(self.relax.data.num_ri):
                 cv_dir = model + "/" + model + "-" + self.relax.data.frq_label[self.relax.data.remap_table[i]] + "_" + self.relax.data.data_types[i]
                 self.relax.file_ops.mkdir(dir=cv_dir)
                 open_mf_files(dir=cv_dir)
                 self.relax.data.mfin.selection = 'none'
                 self.create_mfin()
                 self.create_run(dir=model)
-                for res in range(len(self.relax.data.relax_data[0])):
+                for res in xrange(len(self.relax.data.relax_data[0])):
                     # Mfdata.
                     self.create_mfdata(res, i)
                     # Mfmodel.

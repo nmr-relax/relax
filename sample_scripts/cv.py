@@ -7,9 +7,9 @@ frqs = [600.0 * 1e6, 600.0 * 1e6, 600.0 * 1e6, 500.0 * 1e6, 500.0 * 1e6, 500.0 *
 file_names = ['r1.600.out', 'r2.600.out', 'noe.600.out', 'r1.500.out', 'r2.500.out', 'noe.500.out']
 runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 cv_runs = []
-for i in range(len(ri_labels)):
+for i in xrange(len(ri_labels)):
     cv_runs.append([])
-    for j in range(len(runs)):
+    for j in xrange(len(runs)):
         cv_runs[i].append(runs[j] + "_" + ri_labels[i] + "_" + frq_labels[i])
 
 # Load the sequence.
@@ -25,11 +25,11 @@ if not precalc:
     print "\n"
 
     # Loop over the relaxation data for single-item-out cross-validation.
-    for i in range(len(ri_labels)):
+    for i in xrange(len(ri_labels)):
         # Loop over the preset model-free models 1 to 5.
-        for j in range(len(cv_runs[i])):
+        for j in xrange(len(cv_runs[i])):
             # Create the calibration set by loading all relaxation data except the index 'i'.
-            for k in range(len(ri_labels)):
+            for k in xrange(len(ri_labels)):
                 if k == i:
                     continue
                 read.relax_data(cv_runs[i][j], ri_labels[k], frq_labels[k], frqs[k], file_names[k])
@@ -58,9 +58,9 @@ print "#################"
 print "\n"
 
 # Load all the relaxation data.
-for i in range(len(ri_labels)):
+for i in xrange(len(ri_labels)):
     # Loop over the model-free models.
-    for j in range(len(cv_runs[i])):
+    for j in xrange(len(cv_runs[i])):
         # Delete the relaxation data from the calibration set.
         delete(cv_runs[i][j], data_type='relax_data')
 
@@ -92,7 +92,7 @@ print "\n"
 
 # Delete the relaxation data copied over to the run 'cv' and then load all the data.
 delete('cv', data_type='relax_data')
-for i in range(len(ri_labels)):
+for i in xrange(len(ri_labels)):
     read.relax_data('cv', ri_labels[i], frq_labels[i], frqs[i], file_names[i])
 
 # Set up the global rotational correlation time.
