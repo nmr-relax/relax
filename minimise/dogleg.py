@@ -57,52 +57,8 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.eta = eta
 
 		# Minimisation options.
-		#######################
-
-		# Initialise.
-		self.hessian_type = None
-		self.hessian_mod = None
-		self.init_failure = 0
-
-		# Test if the options are a tuple.
-		if type(min_options) != tuple:
-			print "The minimisation options " + `min_options` + " is not a tuple."
-			self.init_failure = 1; return
-
-		# Test that no more thant 2 options are given.
-		if len(min_options) > 2:
-			print "A maximum of two minimisation options is allowed (the hessian type and hessian modification)."
-			self.init_failure = 1; return
-
-		# Sort out the minimisation options.
-		for opt in min_options:
-			if self.hessian_type == None and (match('[Bb][Ff][Gg][Ss]', opt) or match('[Nn]ewton', opt)):
-				self.hessian_type = opt
-			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
-				self.hessian_mod = opt
-			else:
-				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid hessian type or modification."
-				self.init_failure = 1; return
-
-		# Default hessian type.
-		if self.hessian_type == None:
-			self.hessian_type = 'Newton'
-
-		# Make sure that no hessian modification is used with the BFGS matrix.
-		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
-			print "When using the BFGS matrix, hessian modifications should not be used."
-			self.init_failure = 1; return
-
-		# Default hessian modification when the hessian type is Newton.
-		if match('[Nn]ewton', self.hessian_type) and self.hessian_mod == None:
-			self.hessian_mod = 'GMW'
-
-		# Print the hessian type info.
-		if self.print_flag:
-			if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
-				print "Hessian type:  BFGS"
-			else:
-				print "Hessian type:  Newton"
+		self.hessian_type_and_mod(min_options, default_mod='Chol')
+		if self.init_failure: return
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
@@ -118,6 +74,9 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 
 		# Hessian modification function initialisation.
 		self.init_hessian_mod_funcs()
+
+		# Initialisation complete.
+		self.init_failure = 0
 
 
 	def dogleg(self):

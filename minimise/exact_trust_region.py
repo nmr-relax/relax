@@ -11,8 +11,6 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, lambda0=10.0, delta_max=1e5, delta0=1.0, eta=0.2):
 		"""Exact trust region algorithm.
 
-		Moré, J. J., and Sorensen D. C. 1983, Computing a trust region step.
-		SIAM J. Sci. Stat. Comput. 4, 553-572.
 
 		"""
 
@@ -31,24 +29,32 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 		self.delta = delta0
 		self.eta = eta
 
+		# Minimisation options.
+		self.hessian_type_and_mod(min_options)
+		if self.init_failure: return
+
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
 		self.g_count = 0
 		self.h_count = 0
 
 		# Initialise the warning string.
-		self.warning = "Incomplete code, minimisation bypassed."
-		print "Incomplete code, minimisation bypassed."
+		self.warning = None
 
 		# Initialisation complete.
-		self.init_failure = 1
+		self.init_failure = 0
 
 
 	def new_param_func(self):
 		"""Find the exact trust region solution.
 
-		Algorithm 3.14
+		Moré, J. J., and Sorensen D. C. 1983, Computing a trust region step.
+		SIAM J. Sci. Stat. Comput. 4, 553-572.
 		"""
+
+		self.warning = "Incomplete code, minimisation bypassed."
+		print "Incomplete code, minimisation bypassed."
+		return
 
 		# Initialisation.
 		iter = 0

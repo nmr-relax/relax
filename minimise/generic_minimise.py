@@ -1,3 +1,6 @@
+from re import match
+
+
 class generic_minimise:
 	def __init__(self):
 		"""Base class containing the main minimisation iterative loop algorithm.
@@ -5,6 +8,59 @@ class generic_minimise:
 		The algorithm is defined in the minimise function.
 		Also supplied are generic setup, convergence tests, and update functions.
 		"""
+
+
+	def hessian_type_and_mod(self, min_options, default_type='Newton', default_mod='GMW'):
+		"""Hessian type and modification options.
+
+		Function for sorting out the minimisation options when either the hessian type or
+		hessian modification can be selected.
+		"""
+
+		# Initialise.
+		self.hessian_type = None
+		self.hessian_mod = None
+		self.init_failure = 0
+
+		# Test if the options are a tuple.
+		if type(min_options) != tuple:
+			print "The minimisation options " + `min_options` + " is not a tuple."
+			self.init_failure = 1; return
+
+		# Test that no more thant 2 options are given.
+		if len(min_options) > 2:
+			print "A maximum of two minimisation options is allowed (the hessian type and hessian modification)."
+			self.init_failure = 1; return
+
+		# Sort out the minimisation options.
+		for opt in min_options:
+			if self.hessian_type == None and (match('[Bb][Ff][Gg][Ss]', opt) or match('[Nn]ewton', opt)):
+				self.hessian_type = opt
+			elif self.hessian_mod == None and self.valid_hessian_mod(opt):
+				self.hessian_mod = opt
+			else:
+				print "The minimisation option " + `opt` + " from " + `min_options` + " is neither a valid hessian type or modification."
+				self.init_failure = 1; return
+
+		# Default hessian type.
+		if self.hessian_type == None:
+			self.hessian_type = default_type
+
+		# Make sure that no hessian modification is used with the BFGS matrix.
+		if match('[Bb][Ff][Gg][Ss]', self.hessian_type) and self.hessian_mod != None:
+			print "When using the BFGS matrix, hessian modifications should not be used."
+			self.init_failure = 1; return
+
+		# Default hessian modification when the hessian type is Newton.
+		if match('[Nn]ewton', self.hessian_type) and self.hessian_mod == None:
+			self.hessian_mod = default_mod
+
+		# Print the hessian type info.
+		if self.print_flag:
+			if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
+				print "Hessian type:  BFGS"
+			else:
+				print "Hessian type:  Newton"
 
 
 	def minimise(self):
@@ -127,6 +183,9 @@ class generic_minimise:
 				print "tol:         " + `self.func_tol`
 			self.warning = "Function tol reached."
 			return 1
+		else:
+			if self.print_flag == 2:
+				print "Pass function tol test."
 
 
 	def update(self):

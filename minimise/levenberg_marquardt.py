@@ -49,6 +49,9 @@ class levenberg_marquardt(generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
+		# Initialisation complete.
+		self.init_failure = 0
+
 
 	def create_lm_matrix(self):
 		"""Function to create the Levenberg-Marquardt matrix.

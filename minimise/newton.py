@@ -186,10 +186,14 @@ class newton(generic_minimise, line_search_functions):
 			beta = sqrt(max(gamma, xi / sqrt(self.n**2 - 1.0), self.mach_acc))
 
 		# Initialise data structures.
-		a = self.d2fk
+		a = 1.0 * self.d2fk
 		r = 0.0 * self.d2fk
 		e = 0.0 * self.xk
 		P = 1.0 * self.I
+
+		if self.print_flag == 2:
+			old_eigen = eigenvectors(self.d2fk)
+			print "d2fk: " + `self.d2fk`
 
 		# Main loop.
 		for j in range(self.n):
@@ -218,7 +222,7 @@ class newton(generic_minimise, line_search_functions):
 			r[j, j] = sqrt(dj)
 
 			# Calculate e (not really needed!).
-			#e[j] = dj - a[j, j]
+			e[j] = dj - a[j, j]
 
 			# Calculate l and a.
 			for i in range(j+1, self.n):
@@ -228,6 +232,22 @@ class newton(generic_minimise, line_search_functions):
 
 		# The Cholesky factor.
 		self.L = dot(P, transpose(r))
+
+		if self.print_flag == 2:
+			print "e: " + `dot(P, dot(e, transpose(P)))`
+			temp = dot(self.L,transpose(self.L))
+			print "d2fk:\n" + `self.d2fk`
+			print "d2fk reconstruted:\n" + `temp`
+			eigen = eigenvectors(temp)
+			print "Old eigenvalues: " + `old_eigen[0]`
+			print "New eigenvalues: " + `eigen[0]`
+			sorted = sort(old_eigen[0])
+			if sorted[0] > 0.0:
+				for i in range(len(e)):
+					if e[i] != 0.0:
+						print "\n### Fail ###\n"
+						import sys
+						sys.exit()
 
 		# Calculate the Newton direction.
 		y = solve_linear_equations(self.L, self.dfk)

@@ -69,9 +69,9 @@ class generic_trust_region:
 			self.shift_flag = 1
 			if self.print_flag == 2:
 				print "rho > eta, " + `self.rho` + " > " + `self.eta`
-				print "Moving to: " + `self.xk_new`
+				print "Moving to, self.xk_new: " + `self.xk_new`
 		else:
 			self.shift_flag = 0
 			if self.print_flag == 2:
 				print "rho < eta, " + `self.rho` + " < " + `self.eta`
-				print "Not moving: " + `self.xk`
+				print "Not moving, self.xk: " + `self.xk`

@@ -15,5 +15,5 @@ model = 'm5'
 mf_model_select(model)
 #fixed(model, [ 0.6,  0.9,  5.0*1e-10 ])
 grid_search(model, inc=11)
-minimise('newton', model=model)
+minimise('dogleg', 'gmw', model=model, min_debug=1)
 state_save('save', 1)
