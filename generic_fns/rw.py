@@ -66,7 +66,7 @@ class RW:
         self.read_function(file_data, run)
 
 
-    def write_results(self, run=None, file="results", dir=None, force=0):
+    def write_results(self, run=None, file="results", dir=None, force=0, format='columnar'):
         """Create the directories and files for output.
 
         The directory with the name of the run will be created.  The results will be placed in the
@@ -87,20 +87,19 @@ class RW:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific header writing and results writing functions.
-        self.write_header = self.relax.specific_setup.setup('write_header', function_type)
-        self.write_function = self.relax.specific_setup.setup('write_results', function_type)
+        if format == 'xml':
+            try:
+                self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type)
+            except:
+                raise RelaxError, "The XML format is not currently supported for the run " + `run` + "."
+        elif format == 'columnar':
+            try:
+                self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type)
+            except:
+                raise RelaxError, "The columnar format is not currently supported for the run " + `run` + "."
 
-        # Write the header.
-        self.write_header(results_file, run)
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[run])):
-            # Skip unselected residues.
-            if not self.relax.data.res[run][i].select:
-                continue
-
-            # Write the results.
-            self.write_function(results_file, run, i)
+        # Write the results.
+        self.write_function(results_file, run)
 
         # Close the results file.
         results_file.close()

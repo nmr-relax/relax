@@ -10,31 +10,10 @@ Fix scaling -> move from model.create_mf and model.select_mf to min, grid, etc.
 Anisotropic formula.
 
 
-# Monte-Carlo sims.
-###################
-
-Output file format (full double precision printout is essential!)
-res_num  res_name   mc_num  R1_600 R2_600 NOE_600  S2     te (ps)  Chi2    Iterations  Fc  Gc  Hc
-1        Gly        1       1.534  14.7   0.8345   0.756  163.5    0.0345  5           5   5   5
-1        Gly        2       1.545  14.45  0.8323   0.754  145.6    0.2966  12          12  12  12
-...
-2        Ala        1       0.921  12.234 0.5678   0.336  2864.2   0.0000  200         200 200 40
-
-Data:
-mc_params["m1"]["-5"][mc_num]
-mc_relax_data["m1"]["-5"][mc_num]
-
-
 # Prompt functions.
 ###################
 
 Grace.
-
-
-# Minimisation.
-###############
-
-Log grid search.
 
 
 # Functions.

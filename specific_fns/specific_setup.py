@@ -169,13 +169,13 @@ class Specific_setup:
         if self.function_type == 'unselect':
             return self.relax.specific.model_free.unselect
 
-        # Write header function.
-        if self.function_type == 'write_header':
-            return self.relax.specific.model_free.write_header
+        # Write results function (XML format).
+        if self.function_type == 'write_xml_results':
+            return self.relax.specific.model_free.write_xml_results
 
-        # Write results function.
-        if self.function_type == 'write_results':
-            return self.relax.specific.model_free.write_results
+        # Write results function (Columnar format).
+        if self.function_type == 'write_columnar_results':
+            return self.relax.specific.model_free.write_columnar_results
 
 
     def relax_funcs(self):

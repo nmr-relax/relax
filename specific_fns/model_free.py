@@ -934,8 +934,11 @@ class Model_free:
         if self.param_set != 'diff':
             # Loop over all residues.
             for i in xrange(len(self.relax.data.res[self.run])):
+                # Remap the residue data structure.
+                res = self.relax.data.res[self.run][i]
+
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not res.select:
                     continue
 
                 # Only add parameters for a single residue if index has a value.
@@ -943,76 +946,76 @@ class Model_free:
                     continue
 
                 # Loop over the model-free parameters.
-                for j in xrange(len(self.relax.data.res[self.run][i].params)):
+                for j in xrange(len(res.params)):
                     # tm.
-                    if self.relax.data.res[self.run][i].params[j] == 'tm':
+                    if res.params[j] == 'tm':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].tm = self.param_vector[param_index]
+                            res.tm = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].tm_sim[sim_index] = self.param_vector[param_index]
+                            res.tm_sim[sim_index] = self.param_vector[param_index]
 
                     # S2.
-                    elif self.relax.data.res[self.run][i].params[j] == 'S2':
+                    elif res.params[j] == 'S2':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].s2 = self.param_vector[param_index]
+                            res.s2 = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].s2_sim[sim_index] = self.param_vector[param_index]
+                            res.s2_sim[sim_index] = self.param_vector[param_index]
 
                     # S2f.
-                    elif self.relax.data.res[self.run][i].params[j] == 'S2f':
+                    elif res.params[j] == 'S2f':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].s2f = self.param_vector[param_index]
+                            res.s2f = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].s2f_sim[sim_index] = self.param_vector[param_index]
+                            res.s2f_sim[sim_index] = self.param_vector[param_index]
 
                     # S2s.
-                    elif self.relax.data.res[self.run][i].params[j] == 'S2s':
+                    elif res.params[j] == 'S2s':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].s2s = self.param_vector[param_index]
+                            res.s2s = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].s2s_sim[sim_index] = self.param_vector[param_index]
+                            res.s2s_sim[sim_index] = self.param_vector[param_index]
 
                     # te.
-                    elif self.relax.data.res[self.run][i].params[j] == 'te':
+                    elif res.params[j] == 'te':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].te = self.param_vector[param_index]
+                            res.te = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].te_sim[sim_index] = self.param_vector[param_index]
+                            res.te_sim[sim_index] = self.param_vector[param_index]
 
                     # tf.
-                    elif self.relax.data.res[self.run][i].params[j] == 'tf':
+                    elif res.params[j] == 'tf':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].tf = self.param_vector[param_index]
+                            res.tf = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].tf_sim[sim_index] = self.param_vector[param_index]
+                            res.tf_sim[sim_index] = self.param_vector[param_index]
 
                     # ts.
-                    elif self.relax.data.res[self.run][i].params[j] == 'ts':
+                    elif res.params[j] == 'ts':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].ts = self.param_vector[param_index]
+                            res.ts = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].ts_sim[sim_index] = self.param_vector[param_index]
+                            res.ts_sim[sim_index] = self.param_vector[param_index]
 
                     # Rex.
-                    elif self.relax.data.res[self.run][i].params[j] == 'Rex':
+                    elif res.params[j] == 'Rex':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].rex = self.param_vector[param_index]
+                            res.rex = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].rex_sim[sim_index] = self.param_vector[param_index]
+                            res.rex_sim[sim_index] = self.param_vector[param_index]
 
                     # r.
-                    elif self.relax.data.res[self.run][i].params[j] == 'r':
+                    elif res.params[j] == 'r':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].r = self.param_vector[param_index]
+                            res.r = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].r_sim[sim_index] = self.param_vector[param_index]
+                            res.r_sim[sim_index] = self.param_vector[param_index]
 
                     # CSA.
-                    elif self.relax.data.res[self.run][i].params[j] == 'CSA':
+                    elif res.params[j] == 'CSA':
                         if sim_index == None:
-                            self.relax.data.res[self.run][i].csa = self.param_vector[param_index]
+                            res.csa = self.param_vector[param_index]
                         else:
-                            self.relax.data.res[self.run][i].csa_sim[sim_index] = self.param_vector[param_index]
+                            res.csa_sim[sim_index] = self.param_vector[param_index]
 
                     # Unknown parameter.
                     else:
@@ -1020,6 +1023,61 @@ class Model_free:
 
                     # Increment the parameter index.
                     param_index = param_index + 1
+
+        # Calculate all order parameters after unpacking the vector.
+        if self.param_set != 'diff':
+            # Loop over all residues.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Remap the residue data structure.
+                res = self.relax.data.res[self.run][i]
+
+                # Skip unselected residues.
+                if not res.select:
+                    continue
+
+                # Only add parameters for a single residue if index has a value.
+                if index != None and i != index:
+                    continue
+
+                # Normal values.
+                if sim_index == None:
+                    # S2.
+                    if 'S2' not in res.params and 'S2f' in res.params and 'S2s' in res.params:
+                        res.s2 = res.s2f * res.s2s
+
+                    # S2f.
+                    if 'S2f' not in res.params and 'S2' in res.params and 'S2s' in res.params:
+                        if res.s2s == 0.0:
+                            res.s2f = 1e99
+                        else:
+                            res.s2f = res.s2 / res.s2s
+
+                    # S2s.
+                    if 'S2s' not in res.params and 'S2' in res.params and 'S2f' in res.params:
+                        if res.s2f == 0.0:
+                            res.s2s = 1e99
+                        else:
+                            res.s2s = res.s2 / res.s2f
+
+                # Simulation values.
+                else:
+                    # S2.
+                    if 'S2' not in res.params and 'S2f' in res.params and 'S2s' in res.params:
+                        res.s2_sim[sim_index] = res.s2f_sim[sim_index] * res.s2s_sim[sim_index]
+
+                    # S2f.
+                    if 'S2f' not in res.params and 'S2' in res.params and 'S2s' in res.params:
+                        if res.s2s_sim[sim_index] == 0.0:
+                            res.s2f_sim[sim_index] = 1e99
+                        else:
+                            res.s2f_sim[sim_index] = res.s2_sim[sim_index] / res.s2s_sim[sim_index]
+
+                    # S2s.
+                    if 'S2s' not in res.params and 'S2' in res.params and 'S2f' in res.params:
+                        if res.s2f_sim[sim_index] == 0.0:
+                            res.s2s_sim[sim_index] = 1e99
+                        else:
+                            res.s2s_sim[sim_index] = res.s2_sim[sim_index] / res.s2f_sim[sim_index]
 
 
     def duplicate_data(self, new_run=None, old_run=None, instance=None):
@@ -2633,7 +2691,7 @@ class Model_free:
         object_name = self.get_data_name(data_type)
         if not object_name:
             raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
-        object_error = object_name + "_error"
+        object_error = object_name + "_err"
 
         # Get the value.
         if hasattr(self.relax.data.res[self.run][i], object_name):
@@ -3117,7 +3175,7 @@ class Model_free:
 
                 # Increment.
                 inc = inc + 1
- 
+
 
     def sim_init_values(self, run):
         """Function for initialising Monte Carlo parameter values."""
@@ -3440,202 +3498,269 @@ class Model_free:
             self.relax.data.select[self.run] = 0
 
 
-    def write_header(self, file, run):
-        """Function for printing the header of the results file."""
+    def write_columnar_line(self, file=None, select=1, num=None, name=None, data_set=None, model=None, equation=None, params=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None):
+        """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
-        file.write("%-5s" % "Num")
-        file.write("%-6s" % "Name")
+        file.write("%-5s%-6s" % (num, name))
+
+        # Unselected residues.
+        if not select:
+            file.write("\n")
+            return
+
+        # Data set.
+        file.write("%-10s" % data_set)
 
         # Model details.
-        file.write("%-6s" % "Model")
-        file.write("%-10s" % "Equation")
-        file.write("%-36s" % "Params")
+        file.write("%-6s%-10s%-36s" % (model, equation, params))
 
         # Parameters.
-        file.write("%-26s" % "S2")
-        file.write("%-26s" % "S2f")
-        file.write("%-26s" % "S2s")
-        file.write("%-26s" % "tm_(ns)")
-        file.write("%-26s" % "tf_(ps)")
-        file.write("%-26s" % "te_or_ts_(ps)")
-        file.write("%-26s" % ("Rex_(1st_field)"))
-        file.write("%-26s" % "Bond_length_(A)")
-        file.write("%-26s" % "CSA_(ppm)")
+        file.write("%-26s" % s2)
+        file.write("%-26s" % s2f)
+        file.write("%-26s" % s2s)
+        file.write("%-26s" % local_tm)
+        file.write("%-26s" % tf)
+        file.write("%-26s" % te)
+        file.write("%-26s" % rex)
+        file.write("%-26s" % r)
+        file.write("%-26s" % csa)
 
         # Minimisation results.
-        file.write("%-26s" % "Chi-squared")
-        file.write("%-9s" % "Iter")
-        file.write("%-9s" % "f")
-        file.write("%-9s" % "g")
-        file.write("%-9s" % "h")
-        file.write("Warning")
+        file.write("%-26s%-9s%-9s%-9s%-9s%-9s " % (chi2, i, f, g, h, warn))
 
-        # End of line.
+        # End of the line.
         file.write("\n")
 
 
-    def write_results(self, file, run, i):
-        """Function for printing the core of the results file."""
+    def write_columnar_results(self, file, run):
+        """Function for printing the results into a file."""
 
-        # Reassign data structure.
-        res = self.relax.data.res[run][i]
+        # Arguments.
+        self.run = run
 
-        # Residue number and name.
-        file.write("%-5s" % res.num)
-        file.write("%-6s" % res.name)
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
 
-        # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            file.write("\n")
+
+        # Header.
+        #########
+
+        # Write the header line.
+        self.write_columnar_line(file=file, num='Num', name='Name', data_set='Data_set', model='Model', equation='Equation', params='Params', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning')
+
+
+        # Model-free parameter values.
+        ##############################
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Reassign data structure.
+            res = self.relax.data.res[self.run][i]
+
+            # Unselected residues.
+            if not res.select:
+                self.write_columnar_line(file=file, select=0)
+                continue
+
+            # Model details.
+            params=replace(`res.params`, ' ', '')
+
+            # tm.
+            if hasattr(res, 'tm') and res.tm != None:
+                local_tm = res.tm / 1e-9
+            else:
+                local_tm = None
+
+            # tf.
+            if res.tf == None:
+                tf = None
+            else:
+                tf = res.tf / 1e-12
+
+            # te or ts.
+            if res.te == None and res.ts == None:
+                te = None
+            elif res.te != None:
+                te = res.te / 1e-12
+            else:
+                te = res.ts / 1e-12
+
+            # Rex.
+            if res.rex == None:
+                rex = None
+            else:
+                rex = res.rex * (2.0 * pi * res.frq[0])**2
+
+            # Bond length.
+            if res.r == None:
+                r = None
+            else:
+                r = res.r / 1e-10
+
+            # CSA.
+            if res.csa == None:
+                csa = None
+            else:
+                csa = res.csa / 1e-6
+
+            # Minimisation details (global minimisation results).
+            if self.param_set == 'diff' or self.param_set == 'all':
+                chi2 = self.relax.data.chi2[self.run]
+                iter = self.relax.data.iter[self.run]
+                f = self.relax.data.f_count[self.run]
+                g = self.relax.data.g_count[self.run]
+                h = self.relax.data.h_count[self.run]
+                warn = self.relax.data.warning[self.run]
+
+            # Minimisation details (individual residue results).
+            else:
+                chi2 = res.chi2
+                iter = res.iter
+                f = res.f_count
+                g = res.g_count
+                h = res.h_count
+                warn = res.warning
+
+            # Write the line.
+            self.write_columnar_line(file=file, num=res.num, name=res.name, data_set='value', model=res.model, equation=res.equation, params=params, s2=res.s2, s2f=res.s2f, s2s=res.s2s, local_tm=local_tm, tf=tf, te=te, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn)
+
+
+        # Errors.
+        #########
+
+        # Skip this section and the next if no simulations have been setup.
+        if not hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[self.run] == 0:
             return
 
-        # No model.
-        if not hasattr(res, 'model'):
-            file.write("\n")
-            return
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Reassign data structure.
+            res = self.relax.data.res[self.run][i]
 
-        # Model details.
-        file.write("%-6s" % res.model)
-        file.write("%-10s" % res.equation)
-        file.write("%-36s" % replace(`res.params`, ' ', ''))
+            # Unselected residues.
+            if not res.select:
+                self.write_columnar_line(file=file, select=0)
+                continue
 
-        # S2.
-        if res.s2 == None:
-            if res.s2f != None and res.s2s != None:
-                file.write("%-26s" % `res.s2f * res.s2s`)
+            # Model details.
+            params=replace(`res.params`, ' ', '')
+
+            # tm.
+            if hasattr(res, 'tm_err') and res.tm_err != None:
+                local_tm = res.tm_err / 1e-9
             else:
-                file.write("%-26s" % "N/A")
-        else:
-            file.write("%-26s" % `res.s2`)
+                local_tm = None
 
-        # S2f.
-        if res.s2f == None:
-            if res.s2 != None and res.s2s != None:
-                if res.s2s == 0.0:
-                    file.write("%-26s" % "inf")
+            # tf.
+            if res.tf_err == None:
+                tf = None
+            else:
+                tf = res.tf_err / 1e-12
+
+            # te or ts.
+            if res.te_err == None and res.ts_err == None:
+                te = None
+            elif res.te_err != None:
+                te = res.te_err / 1e-12
+            else:
+                te = res.ts_err / 1e-12
+
+            # Rex.
+            if res.rex_err == None:
+                rex = None
+            else:
+                rex = res.rex_err * (2.0 * pi * res.frq[0])**2
+
+            # Bond length.
+            if res.r_err == None:
+                r = None
+            else:
+                r = res.r_err / 1e-10
+
+            # CSA.
+            if res.csa_err == None:
+                csa = None
+            else:
+                csa = res.csa_err / 1e-6
+
+            # Write the line.
+            self.write_columnar_line(file=file, num=res.num, name=res.name, data_set='error', model=res.model, equation=res.equation, params=params, s2=res.s2_err, s2f=res.s2f_err, s2s=res.s2s_err, local_tm=local_tm, tf=tf, te=te, rex=rex, r=r, csa=csa)
+
+
+        # Simulation values.
+        ####################
+
+        # Loop over the simulations.
+        for i in xrange(self.relax.data.sim_number[self.run]):
+            # Loop over the sequence.
+            for j in xrange(len(self.relax.data.res[self.run])):
+                # Reassign data structure.
+                res = self.relax.data.res[self.run][j]
+
+                # Unselected residues.
+                if not res.select:
+                    self.write_columnar_line(file=file, select=0)
+                    continue
+
+                # Model details.
+                params=replace(`res.params`, ' ', '')
+
+                # tm.
+                if hasattr(res, 'tm') and res.tm_sim[i] != None:
+                    local_tm = res.tm_sim[i] / 1e-9
                 else:
-                    file.write("%-26s" % `res.s2 / res.s2s`)
-            else:
-                file.write("%-26s" % "N/A")
-        else:
-            file.write("%-26s" % `res.s2f`)
+                    local_tm = None
 
-        # S2s.
-        if res.s2s == None:
-            if res.s2 != None and res.s2f != None:
-                if res.s2f == 0.0:
-                    file.write("%-26s" % "inf")
+                # tf.
+                if res.tf_sim[i] == None:
+                    tf = None
                 else:
-                    file.write("%-26s" % `res.s2 / res.s2f`)
-            else:
-                file.write("%-26s" % "N/A")
-        else:
-            file.write("%-26s" % `res.s2s`)
+                    tf = res.tf_sim[i] / 1e-12
 
-        # tm.
-        if hasattr(res, 'tm') and res.tm != None:
-            file.write("%-26s" % `res.tm / 1e-9`)
-        else:
-            file.write("%-26s" % `self.relax.data.diff[run].tm / 1e-9`)
+                # te or ts.
+                if res.te_sim[i] == None and res.ts_sim[i] == None:
+                    te = None
+                elif res.te_sim[i] != None:
+                    te = res.te_sim[i] / 1e-12
+                else:
+                    te = res.ts_sim[i] / 1e-12
 
-        # tf.
-        if res.tf == None:
-            file.write("%-26s" % "N/A")
-        else:
-            file.write("%-26s" % `res.tf / 1e-12`)
+                # Rex.
+                if res.rex_sim[i] == None:
+                    rex = None
+                else:
+                    rex = res.rex_sim[i] * (2.0 * pi * res.frq[0])**2
 
-        # te or ts.
-        if res.te == None and res.ts == None:
-            file.write("%-26s" % "N/A")
-        elif res.te != None:
-            file.write("%-26s" % `res.te / 1e-12`)
-        else:
-            file.write("%-26s" % `res.ts / 1e-12`)
+                # Bond length.
+                if res.r_sim[i] == None:
+                    r = None
+                else:
+                    r = res.r_sim[i] / 1e-10
 
-        # Rex.
-        if res.rex == None:
-            file.write("%-26s" % "N/A")
-        else:
-            file.write("%-26s" % `res.rex * (2.0 * pi * res.frq[0])**2`)
+                # CSA.
+                if res.csa_sim[i] == None:
+                    csa = None
+                else:
+                    csa = res.csa_sim[i] / 1e-6
 
-        # Bond length.
-        if res.r == None:
-            file.write("%-26s" % "N/A")
-        else:
-            file.write("%-26s" % `res.r / 1e-10`)
+                # Minimisation details (global minimisation results).
+                if self.param_set == 'diff' or self.param_set == 'all':
+                    chi2 = self.relax.data.chi2_sim[self.run][i]
+                    iter = self.relax.data.iter_sim[self.run][i]
+                    f = self.relax.data.f_count_sim[self.run][i]
+                    g = self.relax.data.g_count_sim[self.run][i]
+                    h = self.relax.data.h_count_sim[self.run][i]
+                    warn = self.relax.data.warning_sim[self.run][i]
 
-        # CSA.
-        if res.csa == None:
-            file.write("%-26s" % "N/A")
-        else:
-            file.write("%-26s" % `res.csa / 1e-6`)
+                # Minimisation details (individual residue results).
+                else:
+                    chi2 = res.chi2_sim[i]
+                    iter = res.iter_sim[i]
+                    f = res.f_count_sim[i]
+                    g = res.g_count_sim[i]
+                    h = res.h_count_sim[i]
+                    warn = res.warning_sim[i]
 
-        # Minimisation details (global minimisation results).
-        if res.chi2 == None:
-            # Chi-squared.
-            file.write("%-26s" % `self.relax.data.chi2[run]`)
-
-            # Iterations
-            if self.relax.data.iter[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % self.relax.data.iter[run])
-
-            # Function count.
-            if self.relax.data.f_count[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % self.relax.data.f_count[run])
-
-            # Gradient count.
-            if self.relax.data.g_count[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % self.relax.data.g_count[run])
-
-            # Hessian count.
-            if self.relax.data.h_count[run] == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % self.relax.data.h_count[run])
-
-            # Warning
-            if self.relax.data.warning[run] != None:
-                file.write(self.relax.data.warning[run])
-
-        # Minimisation details (individual residue results).
-        else:
-            # Chi-squared.
-            file.write("%-26s" % `res.chi2`)
-
-            # Iterations
-            if res.iter == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.iter)
-
-            # Function count.
-            if res.f_count == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.f_count)
-
-            # Gradient count.
-            if res.g_count == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.g_count)
-
-            # Hessian count.
-            if res.h_count == None:
-                file.write("%-9s" % "None")
-            else:
-                file.write("%-9i" % res.h_count)
-
-            # Warning
-            if res.warning != None:
-                file.write(res.warning)
-
-        # End of line.
-        file.write("\n")
+                # Write the line.
+                self.write_columnar_line(file=file, num=res.num, name=res.name, data_set='sim_'+`i`, model=res.model, equation=res.equation, params=params, s2=res.s2_sim[i], s2f=res.s2f_sim[i], s2s=res.s2s_sim[i], local_tm=local_tm, tf=tf, te=te, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn)
