@@ -41,6 +41,7 @@ class Skin:
         # Place references to the interactive functions within the namespace of this skin class.
         self.create = x.create
         self.execute = x.execute
+        self.extract = x.extract
 
         # __repr__.
         self.__repr__ = message.macro_class
@@ -211,3 +212,34 @@ class Macro_class:
 
         # Execute the functional code.
         self.relax.palmer.execute(run=run, dir=dir, force=force)
+
+
+    def extract(self, run=None, dir=None):
+        """Macro for extracting data from the Modelfree4 'mfout' star formatted file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        dir:  The directory where the file 'mfout' is found.  The default is the value of 'run'.
+        """
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = sys.macro_prompt + "palmer.extract("
+            text = text + "run=" + `run`
+            text = text + ", dir=" + `dir` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Directory.
+        if dir != None:
+            if type(dir) != str:
+                raise RelaxNoneStrError, ('directory name', dir)
+
+        # Execute the functional code.
+        self.relax.palmer.extract(run=run, dir=dir)

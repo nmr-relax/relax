@@ -47,11 +47,11 @@ class PDB:
         ~~~~~~~~~~~
 
         The model argument can have several values:
-            
+
             None - If the argument is set to None, the default value, then the first structure in
         the PDB file will be extracted.  This should be the value used if the structure is
         determined using X-ray crystalography.
-        
+
             i - If the argument is set to the integer, i, then the structure extracted will be the
         one begining with the line 'MODEL i' in the PDB file.  If no such model exists, then nothing
         will be loaded.  For example, if the lowest energy structure in an NMR ensemble is structure

@@ -56,7 +56,7 @@ class Nuclei:
         # Set the proton gyromagnetic ratio.
         self.relax.data.gh = 26.7522e7
         #self.relax.data.gh = 26.7522212e7
- 
+
 
         # Calculate the ratio of the gyromagnetic ratios.
         self.relax.data.g_ratio = self.relax.data.gh / self.relax.data.gx

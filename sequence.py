@@ -38,7 +38,7 @@ class Sequence:
 
     def load_PDB_sequence(self):
         """Function for loading the sequence out of a PDB file.
-        
+
         This needs to be modified to handle multiple peptide chains.
         """
 

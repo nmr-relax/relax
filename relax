@@ -51,7 +51,7 @@ from min import Minimise
 from model_free import Model_free
 from model_selection import Model_selection
 from nuclei import Nuclei
-from palmer.main import Palmer
+from palmer import Palmer
 from pdb import PDB
 from prompt.interpreter import Interpreter
 from relax_data import Rx_data

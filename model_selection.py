@@ -114,6 +114,7 @@ class Model_selection:
             # Test if data exists for this residue.
             flag = 0
             for run in runs:
+                # Cross-validation.
                 if type(run) == list:
                     for run2 in run:
                         if not hasattr(self.relax.data.res[i], 'params'):
@@ -124,8 +125,8 @@ class Model_selection:
                             flag = 1
                         elif not self.relax.data.res[i].chi2.has_key(run2):
                             flag = 1
-                        elif type(self.relax.data.res[i].chi2[run2]) != float:
-                            flag = 1
+
+                # All other selection methods.
                 else:
                     if not hasattr(self.relax.data.res[i], 'params'):
                         flag = 1
@@ -134,8 +135,6 @@ class Model_selection:
                     elif not hasattr(self.relax.data.res[i], 'chi2'):
                         flag = 1
                     elif not self.relax.data.res[i].chi2.has_key(run):
-                        flag = 1
-                    elif type(self.relax.data.res[i].chi2[run]) != float:
                         flag = 1
             if flag:
                 continue
@@ -266,7 +265,11 @@ class Model_selection:
         if not best_model in self.relax.data.runs:
             raise RelaxError, "The run " + `best_model` + " cannot be found."
 
-        # Loop over all the data in self.relax.data.res[i]
+        # Duplicate the diffusion tensor data.
+        if self.relax.data.diff.has_key(best_model):
+            self.relax.data.diff[modsel_run] = deepcopy(self.relax.data.diff[best_model])
+        
+        # Duplicate the residue specific data.
         for data in dir(self.relax.data.res[i]):
             # Get the data object.
             object = getattr(self.relax.data.res[i], data)
