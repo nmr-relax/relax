@@ -64,6 +64,7 @@ class relax:
 		self.file_ops = file_ops(self)
 		self.model_selection = model_selection(self)
 		self.minimise = minimise
+		self.model_free = model_free(self)
 
 		# Test if command line arguments are given, else run the interpreter.
 		try:
@@ -80,7 +81,6 @@ class relax:
 		#	relax_fit(self)
 
 		#elif match('^[Mm][Ff]$', self.usr_param.program_type):
-		#	model_free(self)
 
 		#elif match('^[Pp]almer$', self.usr_param.program_type):
 		#	palmer(self)

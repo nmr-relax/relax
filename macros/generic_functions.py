@@ -17,8 +17,8 @@ class generic_functions:
 			return 1
 		elif type(getattr(self.relax.data, name)) == types.ClassType:
 			return 1
-		elif type(getattr(self.relax.data, name)) == types.InstanceType:
-			return 1
+#		elif type(getattr(self.relax.data, name)) == types.InstanceType:
+#			return 1
 		elif type(getattr(self.relax.data, name)) == types.MethodType:
 			return 1
 		elif type(getattr(self.relax.data, name)) == types.NoneType:

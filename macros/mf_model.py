@@ -1,3 +1,4 @@
+from functions.mf_functions import mf_functions
 from generic_functions import generic_functions
 
 
@@ -41,6 +42,8 @@ class mf_model(generic_functions):
 			self.relax.data.mf_equation = [equation]
 			self.relax.data.mf_param_types = [param_types]
 			self.relax.data.mf_params = []
+
+		self.relax.data.func = mf_functions(self.relax)
 
 		# Create the mf_params data structure.
 		for i in range(len(self.relax.data.seq)):
@@ -97,6 +100,8 @@ class mf_model(generic_functions):
 			print "The model '" + model + "' is invalid."
 			print "[ failed ]"
 			return
+
+		self.relax.data.func = mf_functions(self.relax)
 
 		# Create the mf_params data structure.
 		for i in range(len(self.relax.data.seq)):

@@ -1,3 +1,6 @@
+from Numeric import array
+
+
 class load_state:
 	def __init__(self, relax):
 		"Class containing the macro for loading a saved program state."
@@ -28,7 +31,7 @@ class load_state:
 			print "[ failed ]"
 			return
 
-		for line in file.readlines():
-			exec(line)
+		# Execute the file to reload all data.
+		exec(file)
 
 		print "[ OK ]"

@@ -1,4 +1,5 @@
-from Numeric import Float64, array
+from math import pi
+from Numeric import Float64, array, zeros
 from re import match
 import sys
 
@@ -9,16 +10,15 @@ from functions.mf_trans_functions import mf_trans_functions
 
 class model_free(common_ops):
 	def __init__(self, relax):
-		"Class used to create and process input and output for the program Modelfree 4."
+		"Class containing functions specific to model-free analysis."
 
 		self.relax = relax
 
-		self.update_data()
-		self.ask_stage()
-		if match('1', self.relax.data.stage):
-			self.minimisation()
-		elif match('^2', self.relax.data.stage):
-			self.model_selection()
+		# Ancient code.
+		#self.update_data()
+		#self.ask_stage()
+		#if match('1', self.relax.data.stage):
+		#	self.minimisation()
 
 
 	def minimisation(self):
@@ -126,57 +126,79 @@ class model_free(common_ops):
 		self.relax.results.close()
 
 
-	def model_selection(self):
-		"Model selection stage."
+	def calc_constants(self):
+		"""Calculate the dipolar and CSA constants.
 
-	def ask_stage(self):
-		"User input of stage number."
+		Dipolar constants
+		~~~~~~~~~~~~~~~~~
+			      1   / mu0  \ 2  (gH.gN.h_bar)**2
+			d  =  - . | ---- |  . ----------------
+			      4   \ 4.pi /         <r**6>
 
-		print "\n[ Select the stage for model-free analysis ]\n"
-		print "The stages are:"
-		print "   Stage 1 (1):  Minimisation."
-		print "   Stage 2 (2):  Model selection."
 
-		while 1:
-			input = raw_input('> ')
-			valid_stages = ['1', '2']
-			if input in valid_stages:
-				self.relax.data.stage = input
-				break
-			else:
-				print "Invalid stage number.  Choose either 1 or 2."
-		if match('1', self.relax.data.stage):
-			while 1:
-				print "Please select which model-free model to fit to."
-				print "   (1): Model-free model 1, {S2}."
-				print "   (2): Model-free model 2, {S2, te}."
-				print "   (3): Model-free model 3, {S2, Rex}."
-				print "   (4): Model-free model 4, {S2, te, Rex}."
-				print "   (5): Model-free model 5, {S2f, S2s, ts}."
-				input = raw_input('> ')
-				valid_stages = ['1', '2', '3', '4', '5']
-				if input in valid_stages:
-					self.relax.data.model = 'm' + input
-					break
-				else:
-					print "Invalid model-free model."
-		elif match('2', self.relax.data.stage):
-			while 1:
-				print "Stage 2 has the following two options for the final run:"
-				print "   (a):   No optimization of the diffusion tensor."
-				print "   (b):   Optimization of the diffusion tensor."
-				input = raw_input('> ')
-				valid_stages = ['a', 'b']
-				if input in valid_stages:
-					self.relax.data.stage = self.relax.data.stage + input
-					break
-				else:
-					print "Invalid option, choose either a or b."
+			         3   / mu0  \ 2  (gH.gN.h_bar)**2
+			d'  =  - - . | ---- |  . ----------------
+			         2   \ 4.pi /         <r**7>
 
-		print "The stage chosen is " + self.relax.data.stage + "\n"
-		if match('1', self.relax.data.stage):
-			print "The model-free model chosen is " + self.relax.data.model
-		print "\n"
+
+			       21   / mu0  \ 2  (gH.gN.h_bar)**2
+			d"  =  -- . | ---- |  . ----------------
+			       2    \ 4.pi /         <r**8>
+
+
+		CSA constants
+		~~~~~~~~~~~~~
+			      (wN.csa)**2
+			c  =  -----------
+			           3
+
+
+			       2.wN**2.csa
+			c'  =  -----------
+			            3
+
+
+			       2.wN**2
+			c"  =  -------
+			          3
+
+		"""
+
+		# Dipolar constants.
+		self.relax.data.dipole_const = zeros(len(self.relax.data.bond_length), Float64)
+		self.relax.data.dipole_prime = zeros(len(self.relax.data.bond_length), Float64)
+		self.relax.data.dipole_2prime = zeros(len(self.relax.data.bond_length), Float64)
+		for i in range(len(self.relax.data.bond_length)):
+			temp = ((self.relax.data.mu0 / (4.0*pi)) * self.relax.data.h_bar * self.relax.data.gh * self.relax.data.gx) ** 2
+			self.relax.data.dipole_const[i] = 0.25 * temp * self.relax.data.bond_length[i][0]**-6
+			self.relax.data.dipole_prime[i] = -1.5 * temp * self.relax.data.bond_length[i][0]**-7
+			self.relax.data.dipole_2prime[i] = 10.5 * temp * self.relax.data.bond_length[i][0]**-8
+
+		# CSA constants.
+		self.relax.data.csa_const = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
+		self.relax.data.csa_prime = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
+		self.relax.data.csa_2prime = zeros((self.relax.data.num_frq, len(self.relax.data.csa)), Float64)
+		for i in range(self.relax.data.num_frq):
+			for j in range(len(self.relax.data.csa)):
+				temp = self.relax.data.frq_sqrd_list[i, 1] / 3.0
+				self.relax.data.csa_const[i, j] = temp * self.relax.data.csa[j][0]**2
+				self.relax.data.csa_prime[i, j] = 2.0 * temp * self.relax.data.csa[j][0]
+				self.relax.data.csa_2prime[i, j] = 2.0 * temp
+
+
+	def calc_frq_list(self):
+		"Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation."
+
+		self.relax.data.frq_list = zeros((self.relax.data.num_frq, 5), Float64)
+		for i in range(self.relax.data.num_frq):
+			frqH = 2.0 * pi * self.relax.data.frq[i]
+			frqX = frqH * (self.relax.data.gx / self.relax.data.gh)
+			self.relax.data.frq_list[i, 1] = frqX
+			self.relax.data.frq_list[i, 2] = frqH - frqX
+			self.relax.data.frq_list[i, 3] = frqH
+			self.relax.data.frq_list[i, 4] = frqH + frqX
+
+		self.relax.data.frq_sqrd_list = self.relax.data.frq_list ** 2
 
 
 	def init_fixed_params(self):
