@@ -217,6 +217,11 @@ class RelaxErrors:
         def __init__(self, name, value):
             self.text = "The " + name + " argument " + `value` + " must either be a string or None."
 
+    # None, string, or list.
+    class RelaxNoneStrListError(BaseError):
+        def __init__(self, name, value):
+            self.text = "The " + name + " argument " + `value` + " must either be a string or None."
+
     # String.
     class RelaxStrError(BaseError):
         def __init__(self, name, value):

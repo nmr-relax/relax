@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from re import match
+from re import compile, match
 
 
 class Value:
@@ -31,7 +31,7 @@ class Value:
         self.relax = relax
 
 
-    def set(self, run=None, value=None, data_type=None, res_num=None):
+    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
         """Function for setting residue specific data values."""
 
         # Test if sequence data is loaded.
@@ -42,6 +42,20 @@ class Value:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
+        # Test if the residue number is a valid regular expression.
+        if type(res_num) == str:
+            try:
+                compile(res_num)
+            except:
+                raise RelaxRegExpError, ('residue number', res_num)
+
+        # Test if the residue name is a valid regular expression.
+        if res_name:
+            try:
+                compile(res_name)
+            except:
+                raise RelaxRegExpError, ('residue name', res_name)
+
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
@@ -50,54 +64,54 @@ class Value:
         if set == None:
             raise RelaxFuncSetupError, ('set', function_type)
 
-        # Go to the specific code.
-        set(run=run, value=value, data_type=data_type, res_num=res_num)
-        return
-
-
-        # To be deleted.
-        ################
-
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res)):
+            # Residue skipping.
+            ###################
+
             # Skip unselected residues.
             if not self.relax.data.res[i].select:
                 continue
 
-            # If res_num is set, then skip all other residues.
-            if res_num != None and res_num != self.relax.data.res[i].num:
-                continue
+            # If 'res_num' is not None, skip the residue if there is no match.
+            if type(res_num) == int:
+                if not self.relax.data.res[i].num == res_num:
+                    continue
+            elif type(res_num) == str:
+                if not match(res_num, `self.relax.data.res[i].num`):
+                    continue
 
-            # Bond length.
-            if match('[Bb]ond[ -_][Ll]ength', data_type):
-                if hasattr(self.relax.data.res[i], 'r'):
-                    if self.relax.data.res[i].r.has_key(run):
-                        print "Warning: The bond length of residue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + " has already been specified."
-                        continue
-                else:
-                    self.relax.data.res[i].r = {}
-                    if err:
-                        self.relax.data.res[i].r_error = {}
+            # If 'res_name' is not None, skip the residue if there is no match.
+            if res_name != None:
+                if not match(res_name, self.relax.data.res[i].name):
+                    continue
 
-                self.relax.data.res[i].r[run] = float(val)
-                if err:
-                    self.relax.data.res[i].r_error[run] = float(err)
 
-            # CSA.
-            elif match('[Cc][Ss][Aa]', data_type):
-                if hasattr(self.relax.data.res[i], 'csa'):
-                    if self.relax.data.res[i].csa.has_key(run):
-                        print "Warning: The CSA of residue " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name + " has already been specified."
-                        continue
-                else:
-                    self.relax.data.res[i].csa = {}
-                    if err:
-                        self.relax.data.res[i].csa_error = {}
+            # Go to the specific code.
+            ##########################
 
-                self.relax.data.res[i].csa[run] = float(val)
-                if err:
-                    self.relax.data.res[i].csa_error[run] = float(err)
+            set(run=run, value=value, data_type=data_type, index=i)
 
-            # Bad type.
-            else:
-                raise RelaxError, "The data type " + `data_type` + " is not supported."
+
+            # Reset the minimisation statistics.
+            ####################################
+
+            # Chi-squared.
+            if hasattr(self.relax.data.res[i], 'chi2') and self.relax.data.res[i].chi2.has_key(run):
+                self.relax.data.res[i].chi2[run] = None
+
+            # Iteration count.
+            if hasattr(self.relax.data.res[i], 'iter') and self.relax.data.res[i].iter.has_key(run):
+                self.relax.data.res[i].iter[run] = None
+
+            # Function count.
+            if hasattr(self.relax.data.res[i], 'f_count') and self.relax.data.res[i].f_count.has_key(run):
+                self.relax.data.res[i].f_count[run] = None
+
+            # Gradient count.
+            if hasattr(self.relax.data.res[i], 'g_count') and self.relax.data.res[i].g_count.has_key(run):
+                self.relax.data.res[i].g_count[run] = None
+
+            # Hessian count.
+            if hasattr(self.relax.data.res[i], 'h_count') and self.relax.data.res[i].h_count.has_key(run):
+                self.relax.data.res[i].h_count[run] = None

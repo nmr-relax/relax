@@ -702,34 +702,34 @@ class Model_free:
         ____________________________________________________________________________________________
         |                        |              |                                                  |
         | Data type              | Object name  | Patterns                                         |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Bond length            | r            | '^r$' or '^[Bb]ond[ -_][Ll]ength$'               |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Order parameter S2     | s2           | '^[Ss]2$'                                        |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Order parameter S2f    | s2f          | '^[Ss]2f$'                                       |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Order parameter S2s    | s2s          | '^[Ss]2s$'                                       |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Correlation time te    | te           | '^te$'                                           |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Correlation time tf    | tf           | '^tf$'                                           |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Correlation time ts    | ts           | '^ts$'                                           |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Local tm               | tm           | '^tm$'                                           |
-        |------------------------|--------------|--------------------------------------------------|
+        |________________________|______________|__________________________________________________|
 
 
         The hard wired values are as follows:
@@ -750,6 +750,36 @@ class Model_free:
             return 'r'
 
         # CSA.
+        if match('^[Cc][Ss][Aa]$', name):
+            return 'csa'
+
+        # Order parameter S2.
+        if match('^[Ss]2$', name):
+            return 's2'
+
+        # Order parameter S2f.
+        if match('^[Ss]2f$', name):
+            return 's2f'
+
+        # Order parameter S2s.
+        if match('^[Ss]2s$', name):
+            return 's2s'
+
+        # Correlation time te.
+        if match('^te$', name):
+            return 'te'
+
+        # Correlation time tf.
+        if match('^tf$', name):
+            return 'tf'
+
+        # Correlation time ts.
+        if match('^ts$', name):
+            return 'ts'
+
+        # Local tm.
+        if match('^tm$', name):
+            return 'tm'
 
 
     def grid_search(self, run, lower, upper, inc, constraints, print_flag):
@@ -2056,7 +2086,7 @@ class Model_free:
         self.model_setup(run, model, equation, params, scaling, res_num)
 
 
-    def set(self, run, value, data_type, res_num):
+    def set(self, run, value, data_type, index):
         """The function for setting model-free residue specific data values."""
 
         # Arguments.
@@ -2067,139 +2097,38 @@ class Model_free:
 
         if data_type != None:
             # Get the name of the data object.
-            object = self.get_data_name(data_type)
-            print object
+            object_name = self.get_data_name(data_type)
             import sys; sys.exit()
 
 
-        # To be deleted.
-        ################
 
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
 
-        # The number of set instances and number of model-free parameter sets.
-        if self.param_set == 'mf':
-            num_instances = len(self.relax.data.res)
-            num_mf_param_sets = 1
-        elif self.param_set == 'diff':
-            num_instances = 1
-            num_mf_param_sets = 0
-        elif self.param_set == 'all':
-            num_instances = 1
-            num_mf_param_sets = len(self.relax.data.res)
+            # Loop over the model-free parameters.
+            for k in xrange(len(self.relax.data.res[index].params[self.run])):
+                # {S2, S2f, S2s}.
+                if match('S2', self.relax.data.res[index].params[self.run][k]):
+                    min_options.append(0.5)
 
-        # Loop over the set instances.
-        for i in xrange(num_instances):
-            # Individual residue stuff.
-            if self.param_set == 'mf':
-                # Skip unselected residues.
-                if not self.relax.data.res[i].select:
-                    continue
-
-            # The number of model-free parameters for this residue.
-            if self.param_set == 'mf':
-                n = len(self.relax.data.res[i].params[run])
-
-            # The number of diffusion tensor parameters.
-            else:
-                # Isotropic diffusion.
-                if self.relax.data.diff[self.run].type == 'iso':
-                    n = 1
-
-                # Axially symmetric diffusion.
-                elif self.relax.data.diff[self.run].type == 'axial':
-                    n = 4
-
-                # Anisotropic diffusion.
-                elif self.relax.data.diff[self.run].type == 'aniso':
-                    n = 6
-
-            # Sum the diffusion tensor parameters and all model-free parameters.
-            if self.param_set == 'all':
-                # Loop over all residues.
-                for j in xrange(len(self.relax.data.res)):
-                    # Skip unselected residues.
-                    if not self.relax.data.res[j].select:
-                        continue
-
-                    # Sum n.
-                    n = n + len(self.relax.data.res[j].params[self.run])
-
-            # Make sure that the length of the parameter array is > 0.
-            if n == 0:
-                raise RelaxError, "Cannot set parameter values for a model with zero parameters."
-
-            # Values.
-            if values:
-                # Test the length of values.
-                if len(values) != n:
-                    raise RelaxLenError, ('values', n)
-
-                # Set the minimisation options to the values.
-                min_options = values
-
-            # Inbuilt values.
-            else:
-                # Initialise min_options.
-                min_options = []
-
-                # Diffusion tensor values.
-                if self.param_set == 'diff' or self.param_set == 'all':
-                    # Isotropic diffusion {tm}.
-                    if self.relax.data.diff[self.run].type == 'iso':
-                        min_options.append(10.0 * 1e-9)
-
-                    # Axially symmetric diffusion {Dper, Dpar, theta, phi}.
-                    elif self.relax.data.diff[self.run].type == 'axial':
-                        min_options.append(2.0 * 1e7)
-                        min_options.append(2.0 * 1e7)
-                        min_options.append(pi)
-                        min_options.append(pi)
-
-                    # Anisotropic diffusion {Dx, Dy, Dz, alpha, beta, gamma}.
-                    elif self.relax.data.diff[self.run].type == 'aniso':
-                        min_options.append(2.0 * 1e7)
-                        min_options.append(2.0 * 1e7)
-                        min_options.append(2.0 * 1e7)
-                        min_options.append(pi)
-                        min_options.append(pi)
-                        min_options.append(pi)
-
-                # Model-free parameter values, loop over the number of model-free parameter sets.
-                for j in xrange(num_mf_param_sets):
-                    # Set the sequence index.
-                    if self.param_set == 'mf':
-                        index = i
+                # {te, tf, ts}.
+                elif match('t', self.relax.data.res[index].params[self.run][k]):
+                    if self.relax.data.res[index].params[self.run][k] == 'tf':
+                        min_options.append(10.0 * 1e-12)
+                    elif self.relax.data.res[index].params[self.run][k] == 'ts':
+                        min_options.append(1000.0 * 1e-12)
                     else:
-                        index = j
+                        min_options.append(100.0 * 1e-12)
 
-                    # Loop over the model-free parameters.
-                    for k in xrange(len(self.relax.data.res[index].params[self.run])):
-                        # {S2, S2f, S2s}.
-                        if match('S2', self.relax.data.res[index].params[self.run][k]):
-                            min_options.append(0.5)
+                # Rex.
+                if self.relax.data.res[index].params[self.run][k] == 'Rex':
+                    min_options.append(0.0)
 
-                        # {te, tf, ts}.
-                        elif match('t', self.relax.data.res[index].params[self.run][k]):
-                            if self.relax.data.res[index].params[self.run][k] == 'tf':
-                                min_options.append(10.0 * 1e-12)
-                            elif self.relax.data.res[index].params[self.run][k] == 'ts':
-                                min_options.append(1000.0 * 1e-12)
-                            else:
-                                min_options.append(100.0 * 1e-12)
+                # Bond length.
+                if self.relax.data.res[index].params[self.run][k] == 'r':
+                    min_options.append(1.02 * 1e-10)
 
-                        # Rex.
-                        if self.relax.data.res[index].params[self.run][k] == 'Rex':
-                            min_options.append(0.0)
-
-                        # Bond length.
-                        if self.relax.data.res[index].params[self.run][k] == 'r':
-                            min_options.append(1.02 * 1e-10)
-
-                        # CSA.
-                        if self.relax.data.res[index].params[self.run][k] == 'CSA':
-                            min_options.append(-170 * 1e-6)
+                # CSA.
+                if self.relax.data.res[index].params[self.run][k] == 'CSA':
+                    min_options.append(-170 * 1e-6)
 
 
     def write_header(self, file, run):

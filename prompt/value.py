@@ -37,7 +37,7 @@ class Value:
         self.__relax_help__ = help.relax_class_help
 
 
-    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None, force=0):
+    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
         """Function for setting residue specific data values.
 
         Keyword arguments
@@ -47,44 +47,73 @@ class Value:
 
         value:  The value(s).
 
-        data_type:  A string or array of strings specifying the data type to assign the value to.
+        data_type:  The data type(s).
 
         res_num:  The residue number.
 
         res_name:  The residue name.
 
-        force:  A flag specifying whether to force the setting of values.
-
 
         Description
         ~~~~~~~~~~~
 
-        Value argument.
+        If this function is used to change values of previously minimised runs, then the
+        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+        and Hessian count) will be reset to None.
 
-        The value argument can be a single value, an array of values, or None, the choice of which
-        determines the behaviour of this function.
-        
-        Single value:  If a single value is given, then the data_type argument must be supplied.
-        All data types matching the data_type string(s) will be given the supplied value.
-        
-        Array of values:  If an array of values is given, then the data_type argument must be None
-        or an array of equal length.  If data_type is set to None, the length of the values array
-        must equal the number of parameters in the model for an individual residue.  The parameters
-        will be set to the values of the array.
-        
-        None:  If None is given as the value, then the data_type argument can be either None or a
-        string.  If data_type is None then all residue specific data consisting of the parameters
-        of the model will be set to the hard wired values.  Otherwise if data_types is a string,
-        then all data types matching that string will have their values set to the hard wired
-        values.
-        
 
-        Data type argument.
+        The value argument can be a single value, an array of values, or None while the data type
+        argument can be a string, array of strings, or None.  The choice of which combination
+        determines the behaviour of this function.  The following table describes what occurs in
+        each instance.  The Value column refers to the 'value' argument while the Type column refers
+        to the 'data_type' argument.  In these columns, 'None' corresponds to None, '1' corresponds
+        to either a single value or single string, and 'n' corresponds to either an array of values
+        or an array of strings.
 
-        This argument must be a string and is only accepted if the value argument is a single number
-        or None.  The python regular expression function 'match' is used to determine which data
+        ____________________________________________________________________________________________
+        |       |       |                                                                          |
+        | Value | Type  | Description                                                              |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        | None  | None  | This case is used to set the model parameters prior to minimisation.     |
+        |       |       | The model parameters are set to the hard wired values.                   |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        |   1   | None  | Invalid combination.                                                     |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        |   n   | None  | This case is used to set the model parameters prior to minimisation.     |
+        |       |       | The length of the value array must be equal to the number of model       |
+        |       |       | parameters for an individual residue.  The parameters will be set to the |
+        |       |       | values of the array.                                                     |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        | None  |   1   | The data type matching the string will be set to the hard wired value.   |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        |   1   |   1   | The data type matching the string will be set to the supplied number.    |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        |   n   |   1   | Invalid combination.                                                     |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        | None  |   n   | Each data type matching the strings will be set to the hard wired        |
+        |       |       | values.                                                                  |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        |   1   |   n   | Each data type matching the strings will be set to the supplied number.  |
+        |_______|_______|__________________________________________________________________________|
+        |       |       |                                                                          |
+        |   n   |   n   | Each data type matching the strings will be set to the corresponding     |
+        |       |       | number.  Both arrays must be of equal length.                            |
+        |_______|_______|__________________________________________________________________________|
+
+
+        The python function 'match', which uses regular expression, is used to determine which data
         type to set values to, therefore various data_type strings can be used to select the same
-        data type.  Patterns used for matching for specific runs are listed below.
+        data type.  Patterns used for matching for specific data types are listed below.  Regular
+        expression is also used in residue name and number selections, except this time the user
+        supplies the regular expression string.
 
         This is a short description of python regular expression, for more information, see the
         regular expression syntax section of the Python Library Reference.  Some of the regular
@@ -101,17 +130,11 @@ class Value:
 
         Residue number and name argument.
 
-        If the res_num argument is left on the default of None, then values will apply to all
-        residues.  Otherwise the residue number can either be set to an integer for selecting a
-        single residue or a python regular expression string for selecting multiple residues.  The
-        residue name argument must be a string and can use regular expression as well.
-
-
-        The force flag.
-
-        If this argument is set to the default of 0 and the data already has values, then an error
-        is raised and the values are not changed.  Otherwise if set to 1, then the data values will
-        be set even if data values already exist.
+        If the 'res_num' and 'res_name' arguments are left as the defaults of None, then values will
+        apply to all residues.  Otherwise the residue number can be set to either an integer for
+        selecting a single residue or a python regular expression string for selecting multiple
+        residues.  The residue name argument must be a string and can use regular expression as
+        well.
 
 
         Examples
@@ -122,11 +145,13 @@ class Value:
         relax> value.set('m1', -170 * 1e-6, 'csa')
         relax> value.set('m1', value=-170 * 1e-6, data_type='csa')
 
+
         To set the NH bond length of all residues in the model-free run 'm5' to 1.02 Angstroms,
         type:
 
         relax> value.set('m5', 1.02 * 1e-10, 'bond_length')
         relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
+
 
         To set the parameter values of residue 10, which is the model-free run 'm4' and has the
         parameters {S2, te, Rex}, the following can be used.  Note that the Rex term should be the
@@ -135,12 +160,18 @@ class Value:
         relax> value.set('m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
         relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
 
+
         To set the S2 and te parameter values for model-free run 'm4' which has the parameters
         {S2, te, Rex} to 0.56 and 13e-12, type:
 
         relax> value.set('m4', [0.56, 13e-12], ['S2', 'te'], 10)
         relax> value.set('m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
 
+
+        To set the parameter values for the run 'test' to the hard wired values, for all residues,
+        type:
+
+        relax> value.set('test')
         """
 
         # Function intro text.
@@ -150,7 +181,7 @@ class Value:
             text = text + ", value=" + `value`
             text = text + ", data_type=" + `data_type`
             text = text + ", res_num=" + `res_num`
-            text = text + ", force=" + `force` + ")"
+            text = text + ", res_name=" + `res_name` + ")"
             print text
 
         # The run name.
@@ -166,85 +197,42 @@ class Value:
                     raise RelaxListFloatError, ('value', value)
 
         # Data type.
-        if data_type != None and type(data_type) != str:
-            raise RelaxNoneStrError, ('data type', data_type)
+        if data_type != None and type(data_type) != str and type(data_type) != list:
+            raise RelaxNoneStrListError, ('data type', data_type)
+        if type(data_type) == list:
+            for i in len(data_type):
+                if type(data_type) != str:
+                    raise RelaxListStrError, ('data type', data_type)
 
         # If the value argument is a single value, make sure the data_type argument is set.
         if (type(value) == float or type(value) == int) and data_type == None:
-            raise RelaxError, "When the value is a single number, the data_type argument must be set."
-            
-        # If the value argument is an array, make sure data_type is None.
-        if type(value) == list and data_type != None:
-            raise RelaxError, "When the value are given as an array, the data_type argument must be None."
+            raise RelaxError, "When the value is a single number, the data_type argument must be supplied."
 
-        # The residue number.
-        if res_num != None and type(res_num) != int:
-            raise RelaxNoneIntError, ('residue number', res_num)
+        # If the value argument is an array, make sure data_type is None or an array of strings.
+        if type(value) == list and data_type != None and type(data_type) != list:
+            raise RelaxError, "When the value argument is an array, the data_type argument must either be None or an array of strings."
 
-        # Execute the functional code.
-        self.relax.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num)
+        # If the data_type argument is a single string, make sure the value argument is a single value or None.
+        if type(data_type) == str and value != None and type(value) != float and type(value) != str:
+            raise RelaxError, "When the data type argument is a single string, the value argument must either be None or a single value."
 
+        # It the data_type argument is None, make sure the value argument is an array of numbers or None.
+        if data_type == None and value != None and type(value) != list:
+            raise RelaxError, "When the data type argument is None, the value argument must either be None or an array of numbers."
 
-    def set_old(self, run=None, values=None, print_flag=1):
-        """Function for setting the initial parameter values.
+        # Residue number.
+        if res_num != None and type(res_num) != int and type(res_num) != str:
+            raise RelaxNoneIntStrError, ('residue number', res_num)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        values:  An array of numbers of length equal to the number of parameters in the model.
-
-        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
-        output while higher values increase the amount of output.  The default value is 1.
-
-
-        Examples
-        ~~~~~~~~
-
-        This command will set the parameter values of the run 'm2', which is the original
-        model-free equation with parameters {S2, te}, before minimisation to the preselected values
-        of this function.
-
-        relax> set('m2')
-
-
-        This command will do the same except the S2 and te values will be set to one and ten ps
-        respectively.
-
-        relax> set('m2', [1.0, 10 * 10e-12])
-        relax> set(run='m2', values=[1.0, 10 * 10e-12])
-        """
-
-        # Function intro text.
-        if self.relax.interpreter.intro:
-            text = sys.ps3 + "set("
-            text = text + "run=" + `run`
-            text = text + ", values=" + `values`
-            text = text + ", print_flag=" + `print_flag` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Relax defined values.
-        if values != None:
-            if type(values) != list:
-                raise RelaxListError, ('values', values)
-            for i in xrange(len(values)):
-                if type(values[i]) != float and type(values[i]) != int:
-                    raise RelaxListIntError, ('values', values)
-
-        # The print flag.
-        if type(print_flag) != int:
-            raise RelaxIntError, ('print_flag', print_flag)
+        # Residue name.
+        if res_name != None and type(res_name) != str:
+            raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
-        self.relax.generic.minimise.set(run=run, values=values, print_flag=print_flag)
+        self.relax.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num, res_name=res_name)
 
 
     # Modify the docstring of the set method to include the docstring of the model-free specific function get_data_name.
     ####################################################################################################################
 
-    set.__doc__ = set.__doc__ + "\n" + Model_free.get_data_name.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + "\n\n" + Model_free.get_data_name.__doc__ + "\n"

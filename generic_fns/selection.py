@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -88,7 +88,7 @@ class Selection:
             if type(num) == int:
                 if not self.relax.data.res[i].num == num:
                     continue
-            if type(num) == str:
+            elif type(num) == str:
                 if not match(num, `self.relax.data.res[i].num`):
                     continue
 
