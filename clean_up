@@ -1,3 +1,5 @@
+#! /bin/sh
+
 rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
 rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
 rm -f *.o */*.o */*/*.o */*/*/*.o
