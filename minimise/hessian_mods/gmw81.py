@@ -78,14 +78,14 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
         # Interchange row and column j and q.
         p = 1.0 * I
         if q != j:
-            # Modify the permutation matrices by swaping rows.
-            row_p, row_P = 1.0*p[q], 1.0*P[q]
-            p[q], P[q] = p[j], P[j]
-            p[j], P[j] = row_p, row_P
+            # Modify the permutation matrices by swaping columns.
+            row_p, row_P = 1.0*p[:, q], 1.0*P[:, q]
+            p[:, q], P[:, q] = p[:, j], P[:, j]
+            p[:, j], P[:, j] = row_p, row_P
 
-            # Permute a.
-            a = dot(p, dot(a, transpose(p)))
-            r = dot(p, dot(r, transpose(p)))
+            # Permute a and r (p = pT).
+            a = dot(p, dot(a, p))
+            r = dot(r, p)
 
         # Calculate ljj.
         theta_j = 0.0
@@ -93,31 +93,47 @@ def gmw(dfk, d2fk, I, n, mach_acc, print_prefix, print_flag, return_matrix=0):
             for i in range(j+1, n):
                 theta_j = max(theta_j, abs(a[j, i]))
         dj = max(abs(a[j, j]), (theta_j/beta)**2, delta)
-        r[j, j] = sqrt(dj)
 
         # Calculate e (not really needed!).
         if print_flag >= 3:
             e[j] = dj - a[j, j]
 
-        # Calculate l and a.
+        # Calculate r and a.
+        r[j, j] = sqrt(dj)
         for i in range(j+1, n):
             r[j, i] = a[j, i] / r[j, j]
             for k in range(j+1, i+1):
-                a[k, i] = a[k, i] - r[j, i]*r[j, k]
+                a[i, k] = a[k, i] = a[k, i] - r[j, i] * r[j, k]
 
     # The Cholesky factor.
     L = dot(P, transpose(r))
 
     # Debugging.
     if print_flag >= 3:
-        print print_prefix + "e: " + `dot(P, e)`
+        print print_prefix + "r:\n" + `r`
+        print print_prefix + "e: " + `e`
+        print print_prefix + "e rot: " + `dot(P, e)`
         print print_prefix + "P:\n" + `P`
         print print_prefix + "L:\n" + `L`
+        print print_prefix + "L.LT:\n" + `dot(L, transpose(L))`
+        print print_prefix + "L.LT - d2fk:\n" + `dot(L, transpose(L)) - d2fk`
+        print print_prefix + "dot(P, chol(L.LT)):\n" + `dot(P, cholesky_decomposition(dot(L, transpose(L))))`
+        print print_prefix + "dot(P, chol(P.L.LT.PT)):\n" + `dot(P, cholesky_decomposition(dot(P, dot(dot(L, transpose(L)), transpose(P)))))`
+        E = 0.0 * d2fk
+        for i in range(n):
+            E[i, i] = e[i]
+        E = dot(P, dot(E, transpose(P)))
+        print print_prefix + "E:\n" + `E`
+        print print_prefix + "PT.d2fk+E.P:\n" + `dot(transpose(P), dot(d2fk+E, P))`
         try:
-            print print_prefix + "chol:\n" + `cholesky_decomposition(d2fk)`
+            chol = cholesky_decomposition(dot(transpose(P), dot(d2fk+E, P)))
+            print print_prefix + "chol(PT.d2fk+E.P):\n" + `chol`
+            print print_prefix + "rT - chol(PT.d2fk+E.P):\n" + `transpose(r) - chol`
+            chol = dot(P, chol)
+            print print_prefix + "chol:\n" + `chol`
+            print print_prefix + "chol reconstructed:\n" + `dot(chol, transpose(chol))`
         except LinAlgError:
             print print_prefix + "Matrix is not positive definite - Cholesky decomposition cannot be computed."
-        print print_prefix + "d2fk reconstruted:\n" + `dot(L, transpose(L))`
         eigen = eigenvectors(r)
         print print_prefix + "Old eigenvalues: " + `old_eigen[0]`
         print print_prefix + "New eigenvalues: " + `eigen[0]`

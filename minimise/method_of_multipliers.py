@@ -372,7 +372,7 @@ class Method_of_multipliers(Min):
                 self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i] / self.mu, 0.0)
 
             # Update mu, epsilon, and gamma.
-            self.mu = 0.1 * self.mu
+            self.mu = 0.2 * self.mu
             self.epsilon = 1e-2 * self.epsilon
             self.gamma = 1e-2 * self.gamma
             if self.mu < 1e-99:
