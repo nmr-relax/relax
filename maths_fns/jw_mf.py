@@ -477,9 +477,6 @@ def calc_aniso_djw_dDj(data, params, j):
         -----  =  -   >  | ci . ---  ----------------  +  --- . ti ------------ |
          dDj      5  /__ \      dDj  (1 + (w.ti)^2)^2     dDj      1 + (w.ti)^2 /
                      i=m
-
-    return 0.4 * sum(data.dci[j] * data.ti * data.fact_ti, axis=2)
-
     """
 
     return 0.4 * sum(data.ci * data.dti[j] * data.fact_ti_djw_dti  +  data.dci[j] * data.ti * data.fact_ti, axis=2)
