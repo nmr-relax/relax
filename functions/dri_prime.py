@@ -170,7 +170,7 @@ def dri_prime(data, create_dri_prime_comps, create_dri_prime):
 
 
 def comp_dr1_dmf_prime(data, i, frq_num):
-	"""Calculate the dr1 components.
+	"""Calculate the dr1/dmf components.
 
 	dR1()
 	-----  =  d . J_R1_d_prime  +  c . J_R1_c_prime
@@ -190,8 +190,20 @@ def comp_dr1_dmf_prime(data, i, frq_num):
 	data.csa_jw_comps_prime[:, i] = data.djw[frq_num, 1]
 
 
+def comp_dr1_drex_prime(data, i, frq_num):
+	"""Calculate the dr1/drex components.
+
+	dR1()
+	-----  =  0
+	dRex
+
+	"""
+
+	return
+
+
 def comp_dr2_dmf_prime(data, i, frq_num):
-	"""Calculate the dr2 components.
+	"""Calculate the dr2/dmf components.
 
 	dR2()     d                    c
 	-----  =  - . J_R2_d_prime  +  - . J_R2_c_prime
@@ -209,11 +221,11 @@ def comp_dr2_dmf_prime(data, i, frq_num):
 
 	data.dip_jw_comps_prime[:, i] = 4.0*data.djw[frq_num, 0] + data.djw[frq_num, 2] + 3.0*data.djw[frq_num, 1] + 6.0*data.djw[frq_num, 3] + 6.0*data.djw[frq_num, 4]
 	data.csa_jw_comps_prime[:, i] = 4.0*data.djw[frq_num, 0] + 3.0*data.djw[frq_num, 1]
-	data.rex_comps_prime[:, i] = (1e-8 * relax.data.frq[frq_num])**2
+	data.rex_comps_prime[:, i] = (1e-8 * data.frq[frq_num])**2
 
 
 def comp_dr2_drex_prime(data, i, frq_num):
-	"""Calculate the dr2 components.
+	"""Calculate the dr2/drex components.
 
 	 dR2()
 	------  =  (2.pi.wH)**2
@@ -221,11 +233,11 @@ def comp_dr2_drex_prime(data, i, frq_num):
 
 	"""
 
-	data.rex_comps_prime[:, i] = (1e-8 * relax.data.frq[frq_num])**2
+	data.rex_comps_prime[:, i] = (1e-8 * data.frq[frq_num])**2
 
 
 def comp_dsigma_noe_dmf_prime(data, i, frq_num):
-	"""Calculate the dsigma_noe components.
+	"""Calculate the dsigma_noe/dmf components.
 
 	dsigma_noe()
 	------------  = d . J_sigma_noe_prime
@@ -238,6 +250,18 @@ def comp_dsigma_noe_dmf_prime(data, i, frq_num):
 	"""
 
 	data.dip_jw_comps_prime[:, i] = 6.0*data.djw[frq_num, 4] - data.djw[frq_num, 2]
+
+
+def comp_dsigma_noe_drex_prime(data, i, frq_num):
+	"""Calculate the dsigma_noe/drex components.
+
+	dsigma_noe()
+	------------  =  0
+	    dcsa
+
+	"""
+
+	return
 
 
 def func_dcsa_prime(data, i):

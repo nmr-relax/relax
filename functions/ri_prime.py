@@ -110,7 +110,7 @@ def comp_r2_prime_rex(data, i, frq_num):
 	data.dip_jw_comps[i] = 4.0*data.jw[frq_num, 0] + data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 3] + 6.0*data.jw[frq_num, 4]
 	data.csa_comps[i] = data.csa_const[frq_num] / 6.0
 	data.csa_jw_comps[i] = 4.0*data.jw[frq_num, 0] + 3.0*data.jw[frq_num, 1]
-	data.rex_comps[i] = data.params[data.ri_indecies[0]] * (1e-8 * data.frq[frq_num])**2
+	data.rex_comps[i] = data.params[data.rex_index] * (1e-8 * data.frq[frq_num])**2
 
 
 def comp_sigma_noe(data, i, frq_num):

@@ -157,7 +157,7 @@ class min:
 			self.g_count = self.g_count + gc
 			self.h_count = self.h_count + hc
 
-			self.relax.data.params[self.res] = self.params
+			self.relax.data.params[self.model_index][self.res] = self.params
 
 			if self.relax.min_debug:
 				print "\n\n<<< Finished minimiser >>>"

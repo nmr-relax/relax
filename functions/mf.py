@@ -124,7 +124,7 @@ class mf:
 		ri_prime(self.data, self.create_ri_prime_comps, self.create_ri_prime)
 
 		# Calculate the R1, R2, and NOE values.
-		self.data.ri = self.data.ri_prime
+		self.data.ri = deepcopy(self.data.ri_prime)
 		ri(self.data, self.create_ri, self.get_r1)
 
 		# Calculate the chi-squared value.
@@ -166,8 +166,10 @@ class mf:
 		dri_prime(self.data, self.create_dri_prime_comps, self.create_dri_prime)
 
 		# Calculate the R1, R2, and NOE values.
-		self.data.dri = self.data.dri_prime
+		self.data.dri = deepcopy(self.data.dri_prime)
+
 		dri(self.data, self.create_dri, self.get_dr1)
+
 
 		# Calculate the chi-squared value.
 		self.data.dchi2 = dchi2(self.data.relax_data, self.data.ri, self.data.dri, self.data.errors)
@@ -267,7 +269,7 @@ class mf:
 			elif self.data.s2_index != None:
 				self.calc_jw = calc_iso_s2_jw
 				self.calc_jw_comps = calc_iso_s2_jw_comps
-				self.calc_djw[self.data.s2_index] = calc_iso_S2_te_djw_dS2
+				self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
 			elif self.data.te_index != None:
 				print "Invalid model, you cannot have te as a parameter without S2 existing as well."
 				return 0
@@ -359,15 +361,7 @@ class mf:
 					self.create_ri.append(None)
 					self.create_dri.append(None)
 					self.create_ri_prime_comps.append(comp_r1_prime)
-					for j in range(len(self.data.params)):
-						if match('Rex', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dr1_drex_prime)
-						elif match('Bond length', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dr1_dr_prime)
-						elif match('CSA', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dr1_dcsa_prime)
-						else:
-							self.create_dri_prime_comps.append(comp_dr1_dmf_prime)
+					self.create_dri_prime_comps.append(comp_dr1_dmf_prime)
 
 				# The R2 equations.
 				elif self.relax.data.ri_labels[i] == 'R2':
@@ -376,31 +370,15 @@ class mf:
 					if self.data.rex_index == None:
 						self.create_ri_prime_comps.append(comp_r2_prime)
 					else:
-						self.create_ri_prime_comps.append(comp_r2_rex_prime)
-					for j in range(len(self.data.params)):
-						if match('Rex', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dr2_drex_prime)
-						elif match('Bond length', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dr2_dr_prime)
-						elif match('CSA', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dr2_dcsa_prime)
-						else:
-							self.create_dri_prime_comps.append(comp_dr2_dmf_prime)
+						self.create_ri_prime_comps.append(comp_r2_prime_rex)
+					self.create_dri_prime_comps.append(comp_dr2_dmf_prime)
 
 				# The NOE equations.
 				elif self.relax.data.ri_labels[i] == 'NOE':
 					self.create_ri.append(calc_noe)
 					self.create_dri.append(calc_dnoe)
 					self.create_ri_prime_comps.append(comp_sigma_noe)
-					for j in range(len(self.data.params)):
-						if match('Rex', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dsigma_noe_drex_prime)
-						elif match('Bond length', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dsigma_noe_dr_prime)
-						elif match('CSA', self.param_types[j]):
-							self.create_dri_prime_comps.append(comp_dsigma_noe_dcsa_prime)
-						else:
-							self.create_dri_prime_comps.append(comp_dsigma_noe_dmf_prime)
+					self.create_dri_prime_comps.append(comp_dsigma_noe_dmf_prime)
 
 			# Make pointers to the function for the calculation of ri_prime values.
 			if self.data.rex_index == None:
