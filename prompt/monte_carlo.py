@@ -157,11 +157,10 @@ class Monte_carlo:
         the functions 'grid_search' and 'minimise' will only effect the simulations and not the
         model parameters.
 
-        The initial values of the parameters of each simulation is set to the minimised parameters
-        of the model.  A grid search can be undertaken for each simulation although, because the
-        parameters already have initial values, this would be computationally expensive and
-        unnecessary.  The minimisation function should be executed for a second time after running
-        this function.
+        The initial values of the parameters for each simulation is set to the minimised parameters
+        of the model.  A grid search can be undertaken for each simulation instead, although this
+        is computationally expensive and unnecessary.  The minimisation function should be executed
+        for a second time after running this function.
 
         The prune argument is equivalent to Art Palmer's 'trim' parameter in Modelfree.  The
         argument value is the proportion of simulations removed prior to error calculation.  If
@@ -312,7 +311,44 @@ class Monte_carlo:
         Monte Carlo Simulation Overview
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        Write me!
+        For proper error analysis using Monte Carlo simulations, as implemented in relax, a sequence
+        of function calls is required to implement the various components of the analysis.  The
+        steps for Monte Carlo simulations is described below.
+
+        1.  Initially, the measured data set together with the corresponding error set should be
+        loaded into relax.
+
+        2.  Chi-squared minimisation is used to optimise the parameters of the chosen model.
+
+        3.  Monte Carlo simulations needs to be set up, ie the number, n, of simulations set.
+
+        4.  The simulation data needs to be calculated.  The minimised model parameters from step 2
+        are used to back calculate a data set.  The error set is then used to randomise, assuming
+        Gaussian errors, the back calculated data set n times.  This creates a synthetic data set
+        for each Monte Carlo simulation.
+
+        5.  Prior to minimisation of each of the simulations, initial simulation parameter estimates
+        are required.  These initial estimates should be set to the optimised model parameters.  It
+        is possible to use a grid search for each simulation for the initial estimate instead,
+        however, this is extremely computationally expensive.
+
+        6.  Each simulation requires minimisation.  The techniques used should be the same as that
+        in step 2, excluding the grid search.
+
+        7.  The model parameter errors are calculated from the distribution of the simulation
+        parameters.
+
+
+        An example for model-free analysis which includes just the functions for implementing the
+        above steps is:
+
+        relax> grid_search('m1', inc=11)                             # Step 2.
+        relax> minimise('newton', run='m1')                          # Step 2.
+        relax> monte_carlo.setup('m1', number=500)                   # Step 3.
+        relax> monte_carlo.create_data('m1', method='back_calc')     # Step 4.
+        relax> monte_carlo.initial_values('m1')                      # Step 5.
+        relax> minimise('newton', run='m1')                          # Step 6.
+        relax> monte_carlo.error_analysis('m1')                      # Step 7.
     """
 
     create_data.__doc__ = create_data.__doc__ + "\n\n" + __description__
