@@ -81,6 +81,10 @@ class Monte_carlo:
             # Get the errors.
             error = return_error(run, i)
 
+            # No data or errors.
+            if not data or not error:
+                continue
+
             # Loop over the Monte Carlo simulations.
             random = []
             for j in xrange(self.relax.data.sim_number[run]):
