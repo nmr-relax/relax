@@ -65,7 +65,14 @@ class Data:
         # Host data for threading.
         self.thread = Element()
         self.thread.status = 0
-        self.thread.host_data = []
+        self.thread.host_name = []
+        self.thread.user = []
+        self.thread.login = []
+        self.thread.login_cmd = []
+        self.thread.cp_cmd = []
+        self.thread.prog_path = []
+        self.thread.swd = []
+        self.thread.priority = []
 
 
     def __repr__(self):

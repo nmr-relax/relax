@@ -33,7 +33,7 @@ except ImportError, message:
 # Gzip compression module.
 from gzip import GzipFile
 
-from os import F_OK, access, makedirs, mkdir, stat
+from os import F_OK, access, makedirs, mkdir, remove, stat
 from os.path import expanduser
 from re import match, search
 from string import split
@@ -44,6 +44,28 @@ class File_ops:
         """Class containing the file operations"""
 
         self.relax = relax
+
+
+    def delete(self, file_name=None, dir=None):
+        """Function for deleting the given file."""
+
+        # File path.
+        file_path = file_name
+        if dir:
+            file_path = expanduser(dir + '/' + file_path)
+
+        # Test if the file exists and determine the compression type.
+        if access(file_path, F_OK):
+            pass
+        elif access(file_path + '.bz2', F_OK):
+            file_path = file_path + '.bz2'
+        elif access(file_path + '.gz', F_OK):
+            file_path = file_path + '.gz'
+        else:
+            raise RelaxFileError, file_path
+
+        # Remove the file.
+        remove(file_path)
 
 
     def extract_data(self, file_name=None, dir=None, sep=None, compress_type=0):

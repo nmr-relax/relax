@@ -23,7 +23,7 @@
 
 class Delete:
     def __init__(self, relax):
-        """Class containing functions for reading and writing data."""
+        """Class containing functions for deleting data."""
 
         self.relax = relax
 

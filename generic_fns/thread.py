@@ -62,9 +62,15 @@ class Threading:
 
             # Host login
             if host_name != 'localhost' and user:
-                login = user + "@" + host_name
+                login = user + '@' + host_name
             else:
-                login = host_name
+                login = None
+
+            # Login command.
+            if host_name == 'localhost':
+                login_cmd = ''
+            else:
+                login_cmd = 'ssh ' + login
 
              # Program path.
             prog_path = file_data[i][2]
@@ -86,7 +92,7 @@ class Threading:
                 raise RelaxIntError, ('priority', priority)
 
             # Update the host data structure.
-            self.host_data.append([host_name, user, login, prog_path, swd, priority])
+            self.host_data.append([host_name, user, login, login_cmd, prog_path, swd, priority])
 
         # Total number of hosts in hosts file.
         num_jobs = len(self.host_data)
@@ -126,8 +132,14 @@ class Threading:
                 if not self.relax.data.thread.status:
                     self.relax.data.thread.status = 1
 
-                # Details.
-                self.relax.data.thread.host_data.append(self.host_data[job_index])
+                # Store the details.
+                self.relax.data.thread.host_name.append(self.host_data[job_index][0])
+                self.relax.data.thread.user.append(self.host_data[job_index][1])
+                self.relax.data.thread.login.append(self.host_data[job_index][2])
+                self.relax.data.thread.login_cmd.append(self.host_data[job_index][3])
+                self.relax.data.thread.prog_path.append(self.host_data[job_index][4])
+                self.relax.data.thread.swd.append(self.host_data[job_index][5])
+                self.relax.data.thread.priority.append(self.host_data[job_index][6])
 
             # All jobs have finished.
             if num_fin == num_jobs:
@@ -138,7 +150,7 @@ class Threading:
                 terminated = 1
 
         # Final print out.
-        print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_data)`
+        print "\nTotal number of active threads: " + `len(self.relax.data.thread.host_name)`
 
 
 
@@ -173,30 +185,33 @@ class RelaxHostThread(Thread):
 
             # Expand the data structures.
             host_data, job_index = data
-            host_name, user, login, prog_path, swd, priority = host_data
+            self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = host_data
 
             # Host failure flag.
             fail = 0
 
             # Results.
             self.results = []
-            self.results.append("Host name:         " + host_name)
-            if user:
-                self.results.append("User name:         " + user)
-            self.results.append("Program path:      " + prog_path)
-            self.results.append("Working directory: " + swd)
-            self.results.append("Priority:          " + `priority`)
+            self.results.append("Host name:         " + self.host_name)
+            if self.user:
+                self.results.append("User name:         " + self.user)
+            self.results.append("Program path:      " + self.prog_path)
+            self.results.append("Working directory: " + self.swd)
+            self.results.append("Priority:          " + `self.priority`)
 
             # Test the SSH connection.
-            if host_name != 'localhost' and not fail and not self.test_ssh(login):
+            if self.host_name != 'localhost' and not fail and not self.test_ssh():
+                print "Hello1"
                 fail = 1
 
             # Test the working directory.
-            if not fail and not self.test_wd(login, swd):
+            if not fail and not self.test_wd():
+                print "Hello2"
                 fail = 1
 
             # Test if relax works.
-            if not fail and not self.test_relax(login, prog_path):
+            if not fail and not self.test_relax():
+                print "Hello3"
                 fail = 1
 
             # Host is accessible.
@@ -207,14 +222,11 @@ class RelaxHostThread(Thread):
             self.results_queue.put((self.results, job_index, fail))
 
 
-    def test_relax(self, login, prog_path):
+    def test_relax(self):
         """Function for testing if the program path is valid and that relax can execute."""
 
         # Test command.
-        if login == 'localhost':
-            test_cmd = "%s --test" % prog_path
-        else:
-            test_cmd = "ssh %s %s --test" % (login, prog_path)
+        test_cmd = "%s %s --test" % (self.login_cmd, self.prog_path)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
@@ -230,7 +242,7 @@ class RelaxHostThread(Thread):
         # Error. 
         if len(err):
             # Print out.
-            self.results.append("Cannot execute relax on %s using the program path %s" % (login, `prog_path`))
+            self.results.append("Cannot execute relax on %s using the program path %s" % (self.login, `self.prog_path`))
             for line in err:
                 self.results.append(line[0:-1])
 
@@ -242,11 +254,11 @@ class RelaxHostThread(Thread):
             return 1
 
 
-    def test_ssh(self, login):
+    def test_ssh(self):
         """Function for testing the SSH connection."""
 
         # Test command.
-        test_cmd = "ssh -o PasswordAuthentication=no %s echo 'relax, ssh ok'" % login
+        test_cmd = "ssh -o PasswordAuthentication=no %s echo 'relax, ssh ok'" % self.login
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
@@ -268,7 +280,7 @@ class RelaxHostThread(Thread):
         # Error.
         if len(err):
             # Print out.
-            self.results.append("Cannot establish a SSH connection to %s." % login)
+            self.results.append("Cannot establish a SSH connection to %s." % self.login)
 
             # Public key auth fail.
             key_auth = 1
@@ -284,14 +296,11 @@ class RelaxHostThread(Thread):
                 self.results.append(line[0:-1])
 
 
-    def test_wd(self, login, swd):
+    def test_wd(self):
         """Function for testing if the working directory on the host machine exist."""
 
         # Test command.
-        if login == 'localhost':
-            test_cmd = "ls %s" % swd
-        else:
-            test_cmd = "ssh %s ls %s" % (login, swd)
+        test_cmd = "%s ls %s" % (self.login_cmd, self.swd)
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
@@ -307,7 +316,7 @@ class RelaxHostThread(Thread):
         # Error. 
         if len(err):
             # Print out.
-            self.results.append("Cannot find the working directory %s on %s." % (swd, login))
+            self.results.append("Cannot find the working directory %s on %s." % (self.swd, self.login))
             for line in err:
                 self.results.append(line[0:-1])
 

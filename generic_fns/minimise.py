@@ -21,13 +21,14 @@
 ###############################################################################
 
 
-from Queue import Queue
-from math import pi
 from LinearAlgebra import inverse
 from Numeric import Float64, array, matrixmultiply, zeros
+from Queue import Queue
+from os import popen3, popen4
+from math import pi
 from random import randint
 from re import match
-from string import ascii_uppercase
+from string import ascii_letters
 from threading import Thread
 
 
@@ -124,15 +125,20 @@ class Minimise:
     def minimise_sim_thread(self, run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag):
         """Function for the minimisation of Monte Carlo simulations using threading."""
 
+        # Print out.
+        print "Minimisation of Monte Carlo simulations will be threaded.\n"
+
         # Generate a random string tag to add to all thread files.
         tag = ''
         for i in xrange(5):
-            index = randint(0, len(ascii_uppercase)-1)
-            tag = tag + ascii_uppercase[index]
+            index = randint(0, len(ascii_letters)-1)
+            tag = tag + ascii_letters[index]
+        print "The random tag " + `tag` + " will be attached to all files generated for or by the threads."
 
         # Generate a temporary results file.
-        temp_file = 'init_results_' + tag
-        self.relax.generic.rw.write_results(run=run, file=temp_file, directory='/tmp/', force=1, print_flag=0)
+        temp_file = 'results_' + tag
+        print "Saving the current results for run " + `run` + " in the file " + `temp_file` + " for initialising all threads."
+        self.relax.generic.rw.write_results(run=run, file=temp_file, directory='/tmp', force=1, compress_type=0)
 
         # Initialise the job and results queues.
         job_queue = Queue()
@@ -143,7 +149,7 @@ class Minimise:
             job_queue.put(i)
 
         # Start all threads.
-        for i in xrange(len(self.relax.data.thread.host_data)):
+        for i in xrange(len(self.relax.data.thread.host_name)):
             RelaxMinimiseThread(self.relax, i, job_queue, results_queue, tag).start()
 
         # The main loop.
@@ -162,6 +168,9 @@ class Minimise:
                 # Set the terminate flag to 1 to stop this main loop.
                 terminated = 1
 
+        # Delete the temporary results file.
+        self.relax.file_ops.delete(file_name=temp_file, dir='/tmp')
+
 
 class RelaxMinimiseThread(Thread):
     def __init__(self, relax, i, job_queue, results_queue, tag):
@@ -177,8 +186,28 @@ class RelaxMinimiseThread(Thread):
         # Run the Thread __init__ function (this is 'asserted' by the Thread class).
         Thread.__init__(self)
 
-        # 
-        print self.relax.data.thread.thread_data[5]
+        # Copy the temporary results file to the thread's working directory once during initialisation.
+        if self.relax.data.thread.host_name[i] == 'localhost':
+            cmd = "cp -p /tmp/results_%s %s/" % (tag, self.relax.data.thread.swd[i])
+        else:
+            cmd = "scp -p /tmp/results_%s %s:%s/" % (tag, self.relax.data.thread.login[i], self.relax.data.thread.swd[i])
+
+        # Open a pipe for the copy.
+        child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
+
+        # Stderr.
+        err = child_stderr.readlines()
+
+        # Close all pipes.
+        child_stdin.close()
+        child_stdout.close()
+        child_stderr.close()
+
+        for line in out:
+            print line
+
+
+
 
     def run(self):
         """Function for the minimisation of a single simulation."""
