@@ -1,4 +1,23 @@
 # Script for mapping the model-free space.
+
+from Numeric import Float64, array
+
+
+def remap(values):
+    """Remapping function."""
+
+    if values[0] == 0.0:
+        s2s = 1e99
+    else:
+        s2s = values[1]/values[0]
+
+    s2f = values[0]
+    ts = values[2]
+
+    #print "{S2f = " + `s2f` + ", S2s = " + `s2s` + ", ts = " + `ts` + "}"
+    return array([s2f, s2s, ts], Float64)
+
+
 load.sequence('noe.500.out')
 load.relax_data('R1', '600', 600.0 * 1e6, 'r1.600.out')
 load.relax_data('R2', '600', 600.0 * 1e6, 'r2.600.out')
@@ -14,22 +33,12 @@ name = 'm5'
 model.select_mf(name)
 
 # Map data.
-inc = 100
-from math import pi
-if name == 'm4':
-    lower = [0.0, 0, 0]
-    upper = [1, 200e-9, 0.2 / (2.0 * pi * 600000000.0)**2]
-    swap = None
-    point = [0.931, 8192e-12, 0.0 / (2.0 * pi * 600000000.0)**2]
-elif name == 'm5':
-    lower = [0.8, 0.8, 0]
-    upper = [1, 1, 10e-12]
-    swap = [0, 2, 1]
-    point = [1.000, 0.831, 0.1e-12]
-else:
-    lower = None
-    upper = None
-    swap = None
-    point = None
-map(name, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
-#dx()
+inc = 20
+lower = [0.0, 0.0, 0]
+upper = [1.0, 1.0, 2000e-12]
+swap = [0, 2, 1]
+point = [0.952, 0.582, 32.0e-12]
+point = [point[0], point[0]*point[1], point[2]]
+
+map(name, inc=inc, lower=lower, upper=upper, swap=swap, file='remap', point=point, remap=remap, labels=['S2f', 'S2', 'ts'])
+dx(file='remap')

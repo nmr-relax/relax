@@ -14,7 +14,8 @@ model.select_mf(name)
 
 # Fixed value.
 #from math import pi
-#fixed(name, [ 1.0, 0.97079038042891785, 37.21314724414016*1e-12 ])
+#fixed(name, [ 1.0, 0.00098968548153832454, 0.49064527970472477*1e-12 ])
+#fixed(name, [ 1.0, 0.55407702219286714, 28.490830609207805*1e-12 ])
 #fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
 #write(model=name, file='results_fixed', force=1)
 
@@ -24,7 +25,7 @@ grid_search(name, inc=11)
 
 # Minimise.
 #minimise('newton', model=name, constraints=0)
-minimise('newton', model=name)
+minimise('bfgs', model=name)
 write(model=name, file='results', force=1)
 
 state.save('save', force=1)

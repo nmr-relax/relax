@@ -31,7 +31,7 @@ class Base_Map:
         """The space mapping base class."""
 
 
-    def map_space(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point"):
+    def map_space(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
         """Generic function for mapping a space."""
 
         # Equation type specific function setup.
@@ -46,6 +46,9 @@ class Base_Map:
         self.swap = swap
         self.file = file
         self.dir = dir
+        if remap != None:
+            self.remap = remap
+        self.labels = labels
 
         # Number of parameters.
         self.n = len(self.relax.data.param_types[self.model])
@@ -96,3 +99,9 @@ class Base_Map:
         if self.num_points == 1:
             self.create_point()
         self.create_map()
+
+
+    def remap(self, values):
+        """Base class remapping function which returns the values unmodified."""
+
+        return values

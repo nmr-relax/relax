@@ -61,7 +61,7 @@ class Iso3D(Base_Map):
                 values[self.swap[2]] = self.bounds[self.swap[2], 0]
                 for k in range((self.inc + 1)):
                     # Calculate the function values.
-                    self.main_loop(model=self.model, min_algor='fixed', min_options=values, print_flag=0)
+                    self.main_loop(model=self.model, min_algor='fixed', min_options=self.remap(values), print_flag=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if self.relax.data.min_results[self.model][0][0] > 1e20:
@@ -168,14 +168,19 @@ class Iso3D(Base_Map):
         self.map_labels = self.relax.specific_setup.setup("map_labels", self.model)
 
         # Default labels.
-        if self.map_labels == None:
+        if self.map_labels == None or self.labels != None:
             # Axis increments.
             axis_incs = 5.0
 
             # Labels.
-            labels = "{\"" + self.relax.data.param_types[self.model][self.swap[0]] + "\" \""
-            labels = labels + self.relax.data.param_types[self.model][self.swap[1]] + "\" \""
-            labels = labels + self.relax.data.param_types[self.model][self.swap[2]] + "\"}"
+            if self.labels:
+                labels = "{\"" + self.labels[self.swap[0]] + "\" \""
+                labels = labels + self.labels[self.swap[1]] + "\" \""
+                labels = labels + self.labels[self.swap[2]] + "\"}"
+            else:
+                labels = "{\"" + self.relax.data.param_types[self.model][self.swap[0]] + "\" \""
+                labels = labels + self.relax.data.param_types[self.model][self.swap[1]] + "\" \""
+                labels = labels + self.relax.data.param_types[self.model][self.swap[2]] + "\"}"
 
             # Tick locations.
             tick_locations = []

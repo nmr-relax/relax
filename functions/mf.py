@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, ones, outerproduct, sum, zeros
+from Numeric import Float64, array, multiply, ones, outerproduct, sum, zeros
 from math import pi
 from re import match
 
@@ -315,7 +315,7 @@ class Mf:
 
         # Diagonal scaling data.
         if self.scaling_vector:
-            self.data.scaling_vector = self.scaling_vector
+            self.data.scaling_vector = array(self.scaling_vector, Float64)
             self.data.scaling_matrix = outerproduct(self.scaling_vector, self.scaling_vector)
 
         # Spectral density components.
@@ -428,7 +428,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            return self.data.dri * self.data.scaling_vector
+            return multiply(self.data.dri, self.data.scaling_vector)
         else:
             return self.data.dri
 
@@ -436,19 +436,19 @@ class Mf:
     def scale_gradient(self):
         """Function for the diagonal scaling of the chi-squared gradient."""
 
-        self.data.dchi2 = self.data.dchi2 * self.data.scaling_vector
+        self.data.dchi2 = multiply(self.data.dchi2, self.data.scaling_vector)
 
 
     def scale_hessian(self):
         """Function for the diagonal scaling of the chi-squared gradient."""
 
-        self.data.d2chi2 = self.data.d2chi2 * self.data.scaling_matrix
+        self.data.d2chi2 = multiply(self.data.d2chi2, self.data.scaling_matrix)
 
 
     def set_params_scaled(self, params):
         """Function for setting self.data.params to the parameter vector times the scaling vector."""
 
-        self.data.params = params * self.data.scaling_vector
+        self.data.params = multiply(params, self.data.scaling_vector)
 
 
     def set_params_unscaled(self, params):

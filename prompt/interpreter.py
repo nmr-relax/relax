@@ -227,7 +227,7 @@ def interact(self, intro=None, local=None, script=None):
 
         # Execute the script.
         try:
-            execfile(script, globals(), local)
+            execfile(script, local)
         except KeyboardInterrupt:
             sys.stdout.write("\nScript execution cancelled.\n")
         sys.stdout.write("\n")

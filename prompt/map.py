@@ -23,6 +23,7 @@
 
 from Numeric import zeros
 from re import match
+from types import FunctionType
 
 
 class Map:
@@ -32,7 +33,7 @@ class Map:
         self.relax = relax
 
 
-    def map(self, model=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point"):
+    def map(self, model=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
         """Function for creating a map of the given space in OpenDX format.
 
         Keyword Arguments
@@ -73,6 +74,12 @@ class Map:
         be placed.  The length must be equal to the number of parameters.
 
         point_file:  The name of that the point output files will be prefixed with.
+
+        remap:  A user supplied remapping function.  This function will receive the parameter array
+        and must return an array of equal length.
+
+        labels:  The axis labels.  If supplied this argument should be an array of strings of length
+        equal to the number of parameters.
 
 
         Map type
@@ -131,7 +138,9 @@ class Map:
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", point=" + `point`
-            text = text + ", point_file=" + `point_file` + ")\n"
+            text = text + ", point_file=" + `point_file`
+            text = text + ", remap=" + `remap`
+            text = text + ", labels=" + `labels` + ")\n"
             print text
 
         # The number of parameters.
@@ -159,7 +168,7 @@ class Map:
                 print "The lower bounds argument must be an array."
                 return
             if len(lower) != n:
-                print "The lower bounds array must be of length equal to the number of parameters."
+                print "The lower array must be of length " + `n` + "."
                 return
             for i in range(n):
                 if type(lower[i]) != int and type(lower[i]) != float:
@@ -172,7 +181,7 @@ class Map:
                 print "The upper bounds argument must be an array."
                 return
             if len(upper) != n:
-                print "The upper bounds array must be of length equal to the number of parameters."
+                print "The upper array must be of length " + `n` + "."
                 return
             for i in range(n):
                 if type(upper[i]) != int and type(upper[i]) != float:
@@ -185,7 +194,7 @@ class Map:
                 print "The swap argument must be an array."
                 return
             if len(swap) != n:
-                print "The swap array must be of length " + `n`
+                print "The swap array must be of length " + `n` + "."
                 return
             test = zeros(n)
             for i in range(n):
@@ -218,7 +227,7 @@ class Map:
                 print "The point argument must be an array."
                 return
             elif len(point) != n:
-                print "The point array must be of length " + `n`
+                print "The point array must be of length " + `n` + "."
                 return
             elif type(point_file) != str:
                 print "The point file name must be a string."
@@ -228,6 +237,23 @@ class Map:
                     print "The elements of the point array must be numbers."
                     return
 
+        # Remap function.
+        if remap != None:
+            if type(remap) is not FunctionType:
+                print "The remap argument must be a function."
+                return
+
+        # Axis labels.
+        if labels != None:
+            if type(labels) != list:
+                print "The labels argument must be an array."
+                return
+            elif len(labels) != n:
+                print "The labels array must be of length " + `n` + "."
+            for i in range(n):
+                if type(labels[i]) != str:
+                    print "The elements of the labels array must be strings."
+
         # Space type.
         if type(map_type) != str:
             print "The map_type argument must be a string."
@@ -236,7 +262,7 @@ class Map:
             if n != 3:
                 print "The 3D isosurface map requires a strictly 3 parameter model."
                 return
-            self.relax.map.Iso3D.map_space(model=model, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file)
+            self.relax.map.Iso3D.map_space(model=model, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
         else:
             print "The map type '" + map_type + "' is not supported."
             return

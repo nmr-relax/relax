@@ -106,7 +106,8 @@ class Minimise:
         # Macro intro text.
         if self.relax.interpreter.intro:
             text = self.relax.interpreter.macro_prompt + "minimise("
-            text = text + "model=" + `model`
+            text = text + "*args=" + `args`
+            text = text + ", model=" + `model`
             text = text + ", func_tol=" + `func_tol`
             text = text + ", max_iterations=" + `max_iterations`
             text = text + ", constraints=" + `constraints`
@@ -126,7 +127,7 @@ class Minimise:
         min_options = args[1:]
 
         # Test for invalid keywords.
-        valid_keywords = ['model', 'func_tol', 'grad_tol', 'max_iterations', 'constraints', 'print_flag']
+        valid_keywords = ['model', 'func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'print_flag']
         for key in keywords:
             valid = 0
             for valid_key in valid_keywords:

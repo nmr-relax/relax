@@ -323,7 +323,7 @@ class Newton(Line_search, Min):
         # Calculate the Newton direction.
         y = solve_linear_equations(self.L, self.dfk)
         if return_matrix:
-            return -solve_linear_equations(transpose(self.L), y), dot(self.L,transpose(self.L))
+            return -solve_linear_equations(transpose(self.L), y), dot(self.L, transpose(self.L))
         else:
             return -solve_linear_equations(transpose(self.L), y)
 
