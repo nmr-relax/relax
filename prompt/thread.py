@@ -25,7 +25,7 @@ import sys
 import help
 
 
-class Thread:
+class Threading:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
@@ -111,4 +111,4 @@ class Thread:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.__relax__.generic.thread.read(file=file, dir=dir)
+        self.__relax__.generic.threading.read(file=file, dir=dir)

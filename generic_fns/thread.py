@@ -21,10 +21,12 @@
 ###############################################################################
 
 from os import popen3
+from Queue import Queue
 from re import search
+from threading import Thread
 
 
-class Thread:
+class Threading:
     def __init__(self, relax):
         """Class containing the function to calculate the XH vector from the loaded structure."""
 
@@ -45,11 +47,13 @@ class Thread:
             raise RelaxFileEmptyError
 
         # Loop over the hosts.
+        self.host_data = []
         for i in xrange(len(file_data)):
             # Host name.
             host_name = file_data[i][0]
             if host_name == '-':
                 host_name = 'localhost'
+
 
             # User name.
             user = file_data[i][1]
@@ -81,29 +85,137 @@ class Thread:
             except ValueError:
                 raise RelaxIntError, ('priority', priority)
 
-            # Print out.
-            print "\n\nHost " + `i` + "\n"
-            print "Host name:         " + host_name
+            # Update the host data structure.
+            self.host_data.append([host_name, user, login, prog_path, swd, priority])
+
+        # Total number of hosts in hosts file.
+        num_hosts = len(self.host_data)
+
+
+        # Threading.
+        ############
+
+        # Initialise the job and results queues and finished hosts array.
+        host_queue = Queue()
+        results_queue = Queue()
+        finished_hosts = []
+
+        # Fill the job queue and finished hosts array.
+        for i in xrange(num_hosts):
+            host_queue.put(self.host_data[i])
+            finished_hosts.append(0)
+
+        # Start threads for each host where each thread will run on the local machine.
+        for i in xrange(2):
+            RelaxHostThread(self.relax, host_queue, results_queue).start()
+
+        # Determine if all results have been collected.
+        num_fin = 0
+        while num_fin <= num_hosts:
+            print "Inside main loop."
+            # Get the next results off the results_queue.
+            results, host_data, fail = results_queue.get()
+
+            # Test which host job has finished.
+            for i in xrange(num_hosts):
+                if self.host_data[i] == host_data:
+                    finished_hosts[i] == 1
+                    host = i
+
+            # Print the results.
+            print "\n\nHost " + `host` + "\n"
+            for line in results:
+                print line
+
+            # Add all good hosts to self.relax.data.
+            if not fail:
+                pass
+
+            num_fin = num_fin + 1
+
+            # All jobs have finished.
+            all_finished = 1
+            for i in xrange(num_hosts):
+                if finished_hosts[i] == 0:
+                    all_finished = 0
+            print all_finished
+            if all_finished:
+                print "\n\n\nAll finished.\n\n\n"""
+                # Add None to the host_queue to signal to the threads to finish.
+                host_queue.put(None)
+
+                # Set the terminate flag to 1 to stop this main loop.
+                terminated = 1
+
+
+class RelaxThread(Thread):
+    def __init__(self):
+
+        # Run the Thread __init__ function.
+        Thread.__init__(self)
+
+
+
+class RelaxHostThread(RelaxThread):
+    def __init__(self, relax, hosts_queue, results_queue):
+        """"""
+
+        # Arguments.
+        self.relax = relax
+        self.job_queue = hosts_queue
+        self.results_queue = results_queue
+
+        # Run the RelaxThread __init__ function.
+        RelaxThread.__init__(self)
+
+
+    def run(self):
+        """Function for code execution."""
+
+        # Run until all results are returned.
+        while 1:
+            print "Inside RelaxHostThread.run loop."
+            # Get the data for the next queued job.
+            host_data = self.job_queue.get()
+            print "Host data: " + `host_data`
+
+            # Quit if host_data is None.  When this is the case, all jobs have been completed.
+            if host_data == None:
+                break
+
+            # Expand the host_data structure.
+            host_name, user, login, prog_path, swd, priority = host_data
+
+            # Host failure flag.
+            fail = 0
+
+            # Results.
+            self.results = []
+            self.results.append("Host name:         " + host_name)
             if user:
-                print "User name:         " + user
-            print "Program path:      " + prog_path
-            print "Working directory: " + swd
-            print "Priority:          " + `priority`
+                self.results.append("User name:         " + user)
+            self.results.append("Program path:      " + prog_path)
+            self.results.append("Working directory: " + swd)
+            self.results.append("Priority:          " + `priority`)
 
             # Test the SSH connection.
-            if not self.test_ssh(login):
-                continue
+            if not fail and not self.test_ssh(login):
+                fail = 1
 
             # Test the working directory.
-            if not self.test_wd(login, swd):
-                continue
+            if not fail and not self.test_wd(login, swd):
+                fail = 1
 
             # Test if relax works.
-            if not self.test_relax(login, prog_path):
-                continue
+            if not fail and not self.test_relax(login, prog_path):
+                fail = 1
 
             # Host is accessible.
-            print "Host OK."
+            if not fail:
+                self.results.append("Host OK.")
+
+            # Place the results in the results queue.
+            self.results_queue.put((self.results, host_data, fail))
 
 
     def test_relax(self, login, prog_path):
@@ -119,9 +231,9 @@ class Thread:
         err = child_stderr.readlines()
         if len(err):
             # Print out.
-            print "Cannot execute relax on %s using the program path %s" % (login, `prog_path`)
+            self.results.append("Cannot execute relax on %s using the program path %s" % (login, `prog_path`))
             for line in err:
-                print line[0:-1]
+                self.results.append(line[0:-1])
 
             # Return fail.
             return 0
@@ -152,7 +264,7 @@ class Thread:
         err = child_stderr.readlines()
         if len(err):
             # Print out.
-            print "Cannot establish a SSH connection to %s." % login
+            self.results.append("Cannot establish a SSH connection to %s." % login)
 
             # Public key auth fail.
             key_auth = 1
@@ -160,12 +272,12 @@ class Thread:
                 if search('Permission denied', line):
                     key_auth = 0
             if not key_auth:
-                print "Public key authenication failed."
+                self.results.append("Public key authenication failed.")
                 return
 
             # All other errors.
             for line in err:
-                print line[0:-1]
+                self.results.append(line[0:-1])
 
 
     def test_wd(self, login, swd):
@@ -181,9 +293,9 @@ class Thread:
         err = child_stderr.readlines()
         if len(err):
             # Print out.
-            print "Cannot find the working directory %s on %s." % (swd, login)
+            self.results.append("Cannot find the working directory %s on %s." % (swd, login))
             for line in err:
-                print line[0:-1]
+                self.results.append(line[0:-1])
 
             # Return fail.
             return 0
