@@ -177,45 +177,6 @@ class RelaxMinimiseThread(RelaxThread):
         self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag = self.min_args
 
 
-    def pre_locked_code(self):
-        """Function containing the thread specific code.
-        
-        This code is for the minimisation of a single Monte Carlo simulation.
-        """
-
-        # Start up relax as a thread.
-        self.exec_relax()
-
-        # Thread run name.
-        self.thread_run = '%s_sim_%s' % (self.tag, self.job_number)
-
-        # Log file.
-        self.log_file = "%s/%s/sim_%s.log" % (self.swd, self.tag, self.job_number)
-
-        # Generate the script file for the minimisation of sim number 'sim'.
-        self.generate_script()
-
-
-    def post_locked_code(self):
-        # Create a run in the parent to temporarily store the data prior to copying into the main run.
-        self.relax.generic.runs.create(run=self.thread_run, run_type=self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)])
-
-        # Read the data into the run.
-        self.relax.generic.results.read(run=self.thread_run, file_data=self.results, print_flag=0)
-
-        # Copy the results from the thread run to the parent run.
-        self.relax.generic.results.copy(run1=self.thread_run, run2=self.parent_run, sim=self.job_number)
-
-        # Delete the thread run
-        self.relax.generic.runs.delete(self.thread_run)
-
-        # Set the results to the completed simulation number.
-        self.results = self.job_number
-
-        # Job completed successfully.
-        self.completion_flag = 1
-
-
     def generate_script(self):
         """Function for generating the script for the thread to minimise sim `sim`."""
 
@@ -223,7 +184,7 @@ class RelaxMinimiseThread(RelaxThread):
         fn = []
 
         # Function: Load the program state.
-        fn.append("self.relax.generic.state.load(file='%s')" % self.results_file)
+        fn.append("self.relax.generic.state.load(file='%s')" % self.save_state_file)
 
         # Function: Minimise.
         fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.parent_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.job_number))
@@ -261,3 +222,22 @@ class RelaxMinimiseThread(RelaxThread):
         # The file could not be copied.
         if len(err):
             raise RelaxError, "The command `%s` could not be executed." % cmd
+
+
+    def post_locked_code(self):
+        """Code to run after locking the job."""
+
+        # Create a run in the parent to temporarily store the data prior to copying into the main run.
+        self.relax.generic.runs.create(run=self.thread_run, run_type=self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)])
+
+        # Read the data into the run.
+        self.relax.generic.results.read(run=self.thread_run, file_data=self.results, print_flag=0)
+
+        # Copy the results from the thread run to the parent run.
+        self.relax.generic.results.copy(run1=self.thread_run, run2=self.parent_run, sim=self.job_number)
+
+        # Delete the thread run.
+        self.relax.generic.runs.delete(self.thread_run)
+
+        # Print out.
+        print "Simulation: " + `self.job_number`

@@ -169,4 +169,4 @@ class Threading:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.__relax__.thread_setup.read(file=file, dir=dir)
+        self.__relax__.threading.read(file=file, dir=dir)

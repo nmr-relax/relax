@@ -36,7 +36,7 @@ from data import Element
 # Class for setting up threading.
 #################################
 
-class ThreadSetup:
+class Threading:
     def __init__(self, relax):
         """Class containing the function to calculate the XH vector from the loaded structure."""
 
@@ -204,14 +204,19 @@ class RelaxParentThread:
         print "\nStarting all threads.\n"
         self.threads = []
         for i in xrange(self.num_threads):
+            # Instantiate and place the thread in 'self.threads'.
             self.threads.append(self.thread_object(i))
+
+            # Start the thread.
             self.threads[i].start()
+
+            # Name the thread.
+            self.threads[i].setName("Thread-" + `i`)
 
         # The main loop.
         while 1:
             # Get the next results off the results_queue.
             job_number = self.results_queue.get()
-            print "job: " + `job_number`
 
             # The thread has caused a RelaxError.
             if job_number == RelaxError:
@@ -243,7 +248,6 @@ class RelaxParentThread:
                 break
 
         # Hang until all threads have terminated.
-        print "Waiting for all threads to terminate."
         while 1:
             # Thread clean up function.
             self.thread_clean_up()
@@ -256,7 +260,6 @@ class RelaxParentThread:
             # Break once all have terminated.
             if num_alive == 0:
                 break
-        print "All threads terminated."
 
 
     def thread_clean_up(self):
@@ -299,6 +302,9 @@ class RelaxThread(Thread):
 
         # Set the Thread method _Thread__stop to self.stop.
         self._Thread__stop = self.stop
+
+        # Minimal flag (run the maximal amount of code for a thread).
+        self.minimal_flag = 0
 
         # Make the directory with the name of tag in the thread's working directory if it doesn't exist.
         if not self.test_dir():
@@ -404,6 +410,16 @@ class RelaxThread(Thread):
         return text
 
 
+    def pre_locked_code(self):
+        """Generic function for the pre-locked code."""
+
+        # Generate the script file.
+        self.generate_script()
+
+        # Execute relax and run the script.
+        self.exec_relax()
+
+
     def remote_command(self, cmd, login_cmd):
         """Return the string required for either local or remote execution of the command."""
 
@@ -415,7 +431,7 @@ class RelaxThread(Thread):
         return cmd
 
 
-    def run(self):
+    def run(self, expanded_flag=1):
         """Main function for execution of the specific threading code."""
 
         # Run until all results are returned.
@@ -438,19 +454,20 @@ class RelaxThread(Thread):
                 # Place the job back into the job queue.  This is to make the threads fail safe and so that idle faster threads will pick up the jobs of the slower threads.
                 self.job_queue.put(self.job_number)
 
+                # Run all the code.
+                if not self.minimal_flag:
+                    # Script and log files.
+                    self.script_file = "%s/%s/script_%s_job_%s.py" % (self.swd, self.tag, self.getName(), self.job_number)
+                    self.log_file = "%s/%s/%s_job_%s.log" % (self.swd, self.tag, self.getName(), self.job_number)
+
+                    # Thread run name.
+                    self.thread_run = 'job_%s' % self.job_number
+
                 # Run the specific code prior to locking the job.
                 self.pre_locked_code()
 
                 # Lock the job.
-                #print "\nThread: " + self.getName()
-                #print "Job: " + `self.job_number`
-                #print "Acquiring lock"
-                #print "Host name: " + self.host_name
                 self.job_locks[self.job_number].acquire()
-                #print "\nThread: " + self.getName()
-                #print "Job: " + `self.job_number`
-                #print "UnLocked"
-                #print "Host name: " + self.host_name
 
                 # Job termination if finished by a faster thread.
                 if self.finished_jobs[self.job_number] == 1:
@@ -485,7 +502,7 @@ class RelaxThread(Thread):
         """Modified stop function."""
 
         # Finish active jobs.
-        if self.job_number != None:
+        if hasattr(self, 'job_number') and self.job_number != None:
             # Set the job to finished.
             self.finished_jobs[self.job_number] = 1
 
@@ -582,9 +599,12 @@ class RelaxHostThread(RelaxThread):
         # Set the Thread method _Thread__stop to self.stop.
         self._Thread__stop = self.stop
 
+        # Minimal flag (run the minimal amount of code for a thread).
+        self.minimal_flag = 1
+
 
     def pre_locked_code(self):
-        """Function for testing the hosts used in threading."""
+        """Code to run prior to locking the job."""
 
         # Expand the data structures.
         self.host_name, self.user, self.login, self.login_cmd, self.prog_path, self.swd, self.priority = self.host_data[self.job_number]
@@ -618,10 +638,12 @@ class RelaxHostThread(RelaxThread):
 
 
     def post_locked_code(self):
+        """Code to run after locking the job."""
+
         # Print the results.
-        print "\n\nThread " + `self.job_number` + "\n"
         for line in self.text:
             print line
+        print "\n"
 
         # Add all good hosts to self.relax.thread_data
         if not self.fail:

@@ -71,7 +71,7 @@ from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
-from thread_classes import ThreadData, ThreadSetup
+from thread_classes import Threading, ThreadData
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -110,7 +110,7 @@ class Relax:
         self.specific = Specific(self)
 
         # Setup the object containing the thread setup functions.
-        self.thread_setup = ThreadSetup(self)
+        self.threading = Threading(self)
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
@@ -139,9 +139,8 @@ class Relax:
 
         # Threading mode.
         elif mode == 'thread':
-            # Run the interpreter with no introduction.
-            self.interpreter = Interpreter(self)
-            self.interpreter.run()
+            # Execute the script.
+            self.threading.execute()
 
         # Test mode.
         elif mode == 'test':
@@ -229,6 +228,10 @@ class Relax:
 
         # Threaded mode.
         elif options.thread:
+            # Make sure a script is supplied.
+            if not self.script_file:
+                parser.error("in threaded mode, a script is required")
+
             # Exclusive modes.
             if options.test:
                 parser.error("the relax modes thread and test are mutually exclusive")
