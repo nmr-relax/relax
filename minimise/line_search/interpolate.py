@@ -1,124 +1,123 @@
 from Numeric import sqrt
 
 def cubic_int(a, b, fa, fb, ga, gb):
-	"""Cubic interpolation using f(a), f(b), g(a), and g(b).
+    """Cubic interpolation using f(a), f(b), g(a), and g(b).
 
-	Equations
-	~~~~~~~~~
+    Equations
+    ~~~~~~~~~
 
-	f(a) = a'a**3 + b'a**2 + c'a + d'
-	f(b) = a'b**3 + b'b**2 + c'b + d'
-	g(a) = 3a'a**2 + 2b'a + c'
-	g(b) = 3a'b**2 + 2b'b + c'
-
-
-	Interpolation
-	~~~~~~~~~~~~~
-
-	The extrema are the roots of the quadratic equation:
-
-		3a'*alpha**2 + 2b'*alpha + c' = 0
-
-	The cubic interpolant is given by the formula:
-
-		                   g(b) + beta2 - beta1
-		ac = b - (b - a) . ---------------------
-		                   g(b) - g(a) + 2*beta2
-
-	where:
-		                          f(a) - f(b)
-		beta1 = g(a) + g(b) - 3 . -----------
-		                             a - b
-
-		if a < b:
-			beta2 = sqrt(beta1**2 - g(a).g(b))
-		else:
-			beta2 = -sqrt(beta1**2 - g(a).g(b))
-	"""
+    f(a) = a'a**3 + b'a**2 + c'a + d'
+    f(b) = a'b**3 + b'b**2 + c'b + d'
+    g(a) = 3a'a**2 + 2b'a + c'
+    g(b) = 3a'b**2 + 2b'b + c'
 
 
-	beta1 = ga + gb - 3.0*(fa - fb)/(a - b)
-	if a < b:
-		beta2 = sqrt(beta1**2 - ga*gb)
-	else:
-		beta2 = -sqrt(beta1**2 - ga*gb)
-	alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
-	return alpha
+    Interpolation
+    ~~~~~~~~~~~~~
+
+    The extrema are the roots of the quadratic equation:
+
+        3a'*alpha**2 + 2b'*alpha + c' = 0
+
+    The cubic interpolant is given by the formula:
+
+                           g(b) + beta2 - beta1
+        ac = b - (b - a) . ---------------------
+                           g(b) - g(a) + 2*beta2
+
+    where:
+                                  f(a) - f(b)
+        beta1 = g(a) + g(b) - 3 . -----------
+                                     a - b
+
+        if a < b:
+            beta2 = sqrt(beta1**2 - g(a).g(b))
+        else:
+            beta2 = -sqrt(beta1**2 - g(a).g(b))
+    """
+
+
+    beta1 = ga + gb - 3.0*(fa - fb)/(a - b)
+    if a < b:
+        beta2 = sqrt(beta1**2 - ga*gb)
+    else:
+        beta2 = -sqrt(beta1**2 - ga*gb)
+    alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
+    return alpha
 
 
 def cubic_ext(a, b, fa, fb, ga, gb, full_output=0):
-	"""Cubic Extrapolation using f(a), f(b), g(a), and g(b).
+    """Cubic Extrapolation using f(a), f(b), g(a), and g(b).
 
-	Extrapolation
-	~~~~~~~~~~~~~
+    Extrapolation
+    ~~~~~~~~~~~~~
 
-	The extrema are the roots of the quadratic equation:
+    The extrema are the roots of the quadratic equation:
 
-		3a'*alpha**2 + 2b'*alpha + c' = 0
+        3a'*alpha**2 + 2b'*alpha + c' = 0
 
-	The cubic extrapolant is given by the formula:
+    The cubic extrapolant is given by the formula:
 
-		                   g(b) + beta2 - beta1
-		ac = b - (b - a) . ---------------------
-		                   g(b) - g(a) + 2*beta2
+                           g(b) + beta2 - beta1
+        ac = b - (b - a) . ---------------------
+                           g(b) - g(a) + 2*beta2
 
-	where:
+    where:
 
-		                          f(a) - f(b)
-		beta1 = g(a) + g(b) - 3 . -----------
-		                             a - b
+                                  f(a) - f(b)
+        beta1 = g(a) + g(b) - 3 . -----------
+                                     a - b
 
-		if a < b:
-			beta2 = sqrt(max(0.0, beta1**2 - g(a).g(b)))
-		else:
-			beta2 = -sqrt(max(0.0, beta1**2 - g(a).g(b)))
+        if a < b:
+            beta2 = sqrt(max(0.0, beta1**2 - g(a).g(b)))
+        else:
+            beta2 = -sqrt(max(0.0, beta1**2 - g(a).g(b)))
+    """
 
-	"""
 
+    beta1 = ga + gb - 3.0*(fa - fb)/(a - b)
+    if a < b:
+        beta2 = sqrt(max(0.0, beta1**2 - ga*gb))
+    else:
+        beta2 = -sqrt(max(0.0, beta1**2 - ga*gb))
 
-	beta1 = ga + gb - 3.0*(fa - fb)/(a - b)
-	if a < b:
-		beta2 = sqrt(max(0.0, beta1**2 - ga*gb))
-	else:
-		beta2 = -sqrt(max(0.0, beta1**2 - ga*gb))
+    alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
 
-	alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
-
-	if full_output:
-		return alpha, beta1, beta2
-	else:
-		return alpha
+    if full_output:
+        return alpha, beta1, beta2
+    else:
+        return alpha
 
 
 def quadratic_fafbga(a, b, fa, fb, ga):
-	"""Quadratic interpolation using f(a), f(b), and g(a).
+    """Quadratic interpolation using f(a), f(b), and g(a).
 
-	The extremum of the quadratic is given by:
+    The extremum of the quadratic is given by:
 
-		             1             g(a)
-		aq  =  a  +  - . -------------------------
-		             2   f(a) - f(b) - (a - b)g(a)
-	"""
+                     1             g(a)
+        aq  =  a  +  - . -------------------------
+                     2   f(a) - f(b) - (a - b)g(a)
+    """
 
-	denom = fa - fb - (a - b)*ga
-	if denom == 0.0:
-		return 1e99
-	else:
-		return a + 0.5 * ga / denom
+    denom = fa - fb - (a - b)*ga
+    if denom == 0.0:
+        return 1e99
+    else:
+        return a + 0.5 * ga / denom
 
 
 def quadratic_gagb(a, b, ga, gb):
-	"""Quadratic interpolation using g(a) and g(b).
+    """Quadratic interpolation using g(a) and g(b).
 
-	The extremum of the quadratic is given by:
+    The extremum of the quadratic is given by:
 
-		       bg(a) - ag(b)
-		aq  =  -------------
-		        g(a) - g(b)
-	"""
+               bg(a) - ag(b)
+        aq  =  -------------
+                g(a) - g(b)
+    """
 
-	denom = ga - gb
-	if denom == 0.0:
-		return 1e99
-	else:
-		return (b*ga - a*gb) / denom
+    denom = ga - gb
+    if denom == 0.0:
+        return 1e99
+    else:
+        return (b*ga - a*gb) / denom

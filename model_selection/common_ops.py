@@ -5,7 +5,7 @@ import sys
 
 
 class common_operations:
-	def __init__(self):
-		"Operations, functions, etc common to the different model-free analysis methods."
+    def __init__(self):
+        """Operations, functions, etc common to the different model-free analysis methods."""
 
 

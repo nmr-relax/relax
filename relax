@@ -1,35 +1,35 @@
 #! /usr/bin/python
 
-#################################################################################
-#                                                                               #
-#                                     relax                                     #
-#                                                                               #
-#                    a program for relaxation data analysis                     #
-#                                                                               #
-#                              by Edward d'Auvergne                             #
-#                                                                               #
-#################################################################################
-#                                                                               #
-#                                    License                                    #
-#                                                                               #
-# relax, a program for relaxation data analysis.                                #
-# Copyright (C) 2003 Edward d'Auvergne                                          #
-#                                                                               #
-# This program is free software; you can redistribute it and/or modify          #
-# it under the terms of the GNU General Public License as published by          #
-# the Free Software Foundation; either version 2 of the License, or             #
-# (at your option) any later version.                                           #
-#                                                                               #
-# This program is distributed in the hope that it will be useful,               #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of                #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                 #
-# GNU Library General Public License for more details.                          #
-#                                                                               #
-# You should have received a copy of the GNU General Public License             #
-# along with this program; if not, write to the Free Software                   #
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.    #
-#                                                                               #
-#################################################################################
+###############################################################################
+#                                                                             #
+#                                    relax                                    #
+#                                                                             #
+#                   a program for relaxation data analysis                    #
+#                                                                             #
+#                             by Edward d'Auvergne                            #
+#                                                                             #
+###############################################################################
+#                                                                             #
+#                                   License                                   #
+#                                                                             #
+# relax, a program for relaxation data analysis.                              #
+# Copyright (C) 2003 Edward d'Auvergne                                        #
+#                                                                             #
+# This program is free software; you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU Library General Public License for more details.                        #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program; if not, write to the Free Software                 #
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  #
+#                                                                             #
+###############################################################################
 
 
 import profile
@@ -54,82 +54,82 @@ from model_selection.model_selection import model_selection
 
 # Tests for installed packages.
 try:
-	import Numeric
+    import Numeric
 except ImportError:
-	print "The python package Numeric cannot be found."
-	sys.exit()
+    print "The python package Numeric cannot be found."
+    sys.exit()
 
 
 class relax:
-	def __init__(self, argv):
-		"The top level class."
+    def __init__(self, argv):
+        """The top level class."""
 
-		self.argv = argv
+        self.argv = argv
 
-		# Create a string to pass to the interpreter to print.
-		self.set_intro_string()
+        # Create a string to pass to the interpreter to print.
+        self.set_intro_string()
 
-		# Debugging option, 0 = off, 1 = on.
-		self.debug = 0
+        # Debugging option, 0 = off, 1 = on.
+        self.debug = 0
 
-		self.data = data()
-		self.file_ops = file_ops(self)
-		self.model_selection = model_selection(self)
-		self.model_free = model_free(self)
+        self.data = data()
+        self.file_ops = file_ops(self)
+        self.model_selection = model_selection(self)
+        self.model_free = model_free(self)
 
-		# Command line arguments.
-		self.arguments()
+        # Command line arguments.
+        self.arguments()
 
-		# Run the interpreter.
-		self.interpreter = interpreter(self)
-		self.interpreter.run()
-
-
-	def arguments(self):
-		"Function for dealing with command line arguments"
-
-		# No arguments are given.
-		try:
-			self.argv[1]
-		except IndexError:
-			return
-
-		# Help.
-		if match('--help', self.argv[1]) or match('-h', self.argv[1]):
-			self.print_help()
-			sys.exit()
-
-		# Script file.
-		elif match('-s', self.argv[1]):
-			try:
-				self.argv[2]
-			except IndexError:
-				print "The name of the script file is not given."
-				sys.exit()
-			else:
-				print "This argument is yet to be coded."
-				print "use \"relax < file_name\" instead."
-				sys.exit()
-
-		# Unknown argument.
-		else:
-			print "Try \"relax --help\" for more information."
-			sys.exit()
+        # Run the interpreter.
+        self.interpreter = interpreter(self)
+        self.interpreter.run()
 
 
-	def print_help(self):
-		"Print the help message."
+    def arguments(self):
+        """Function for dealing with command line arguments"""
 
-		print "\nUsage: relax [OPTION]"
-		print "Options:"
-		print "   -s FILE      Specify the script file to use without an interface.\n"
-		print "   --help       Display this help and exit.\n"
+        # No arguments are given.
+        try:
+            self.argv[1]
+        except IndexError:
+            return
+
+        # Help.
+        if match('--help', self.argv[1]) or match('-h', self.argv[1]):
+            self.print_help()
+            sys.exit()
+
+        # Script file.
+        elif match('-s', self.argv[1]):
+            try:
+                self.argv[2]
+            except IndexError:
+                print "The name of the script file is not given."
+                sys.exit()
+            else:
+                print "This argument is yet to be coded."
+                print "use \"relax < file_name\" instead."
+                sys.exit()
+
+        # Unknown argument.
+        else:
+            print "Try \"relax --help\" for more information."
+            sys.exit()
 
 
-	def set_intro_string(self):
-		"Create the program introduction."
+    def print_help(self):
+        """Print the help message."""
 
-		self.intro_string = """
+        print "\nUsage: relax [OPTION]"
+        print "Options:"
+        print "   -s FILE      Specify the script file to use without an interface.\n"
+        print "   --help       Display this help and exit.\n"
+
+
+    def set_intro_string(self):
+        """Create the program introduction."""
+
+        self.intro_string = """
 
 
                                             relax
@@ -142,18 +142,19 @@ class relax:
 This is free software which you are welcome to modify and redistribute under the conditions of the
 GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
 and comes with absolutely no warranty.  For details type GPL.
-		"""
+        """
 
 
 
 if __name__ == "__main__":
-	profile_flag = 0
+    # Change this flag to 1 for code profiling.
+    profile_flag = 0
 
-	if not profile_flag:
-		relax(sys.argv)
-	else:
-		def print_stats(stats):
-			pstats.Stats(stats).sort_stats(-1).print_stats()
+    if not profile_flag:
+        relax(sys.argv)
+    else:
+        def print_stats(stats):
+            pstats.Stats(stats).sort_stats(-1).print_stats()
 
-		profile.Profile.print_stats = print_stats
-		profile.run('relax(sys.argv)')
+        profile.Profile.print_stats = print_stats
+        profile.run('relax(sys.argv)')
