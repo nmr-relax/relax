@@ -57,29 +57,43 @@ class Threading:
         default behaviour is that the parent instance of relax will execute all the code, however if
         a hosts file is read or a hosts entry manually entered, then the threaded code will run on
         the specified hosts.  This function is for reading a hosts file which should contain an
-        an entry for each computer and each processor on which to run calculations.
+        an entry for each computer on which to run calculations.
 
         For remote computers, a SSH connection will be attempted.  Public key authentication must be
         enabled to run calculations on remote machines so that thread can be created without asking
-        for a password.  View the ssh man page for setting up public key authentication.
+        for a password.  Details on how to do this are given below.
 
-        The format of the hosts file is as follows.  The first column is reserved for the host name
-        or IP address of the computer on which to run a thread.  The second column is the login name
-        of the user on the remote machine.  The default, specified by the character '-', is to use
-        the same name as the current user.  The third is the full program path.  The default,
-        specified by '-', is to run 'relax'.  This only works if relax can be found in the
-        environmental variable $PATH, alias are not recognised.  The fourth column is the working
-        directory where temporary files are stored.  The default, again specified by the character
-        '-', is '~/.relax' where the tilde '~' symbol represents the home directory.  The fifth
-        column is the priority value for running the program, where the default is 15.  Any lines
-        beginning with a hash will be ignored.  An example is:
+
+        The format of the hosts file is as follows.  Default values are specified by placing the
+        character '-' in the corresponding column.  Columns can be separated by any whitespace
+        character, and all columns must contain an entry.  Any lines beginning with a hash will be
+        ignored.
+        
+        Column 1:  The host name or IP address of the computer on which to run a thread.
+
+        Column 2:  The login name of the user on the remote machine.  The default is to use the same
+        name as the current user.
+        
+        Column 3:  The full program path.  The default is to run 'relax'.  This only works if relax
+        can be found in the environmental variable $PATH, as alias are not recognised.
+        
+        Column 4:  The working directory where thread specific files are stored.  The default is
+        '~/.relax' where the tilde '~' symbol represents the user's home directory on the remote
+        machine.
+
+        Column 5:  The priority value for running the program.  The default is 15.  The remote
+        instances of relax will be niced to this value.
+
+        Column 6:  The number of CPU or CPU cores on the machine.  The default is 1.  A thread is
+        started for each CPU.
+
+        An example is:
 
         -------------------------------------------------------------------------------------------
-        # Host          User name       Program path            Working directory       Priority
-        localhost       -               -                       -                       0
-        localhost       -               -                       -                       0
-        192.168.0.10    dauvergne       /usr/local/bin/relax    -                       -
-        192.168.0.11    edward          -                       -                       -
+        # Host          User name       Program path            Working directory    Priority  CPUs
+        localhost       -               -                       -                    0         2
+        192.168.0.10    dauvergne       /usr/local/bin/relax    -                    -         -
+        192.168.0.11    edward          -                       -                    -         -
         -------------------------------------------------------------------------------------------
 
         In this case, two threads will be run on the parent computer which would be either a dual
@@ -87,8 +101,8 @@ class Threading:
         highest level user priority of 0.  The other two machines will have single threads running
         with a low priority of 15.
 
-        Once threading is enabled, to allow calculations to run on the parent machine, at least one
-        'localhost' entry must be supplied.
+        Once threading is enabled, to allow calculations to run on the parent machine a 'localhost'
+        entry should be included.
 
 
         If the keyword argument 'dir' is set to None, the hosts file will be assumed to be in the
@@ -98,20 +112,45 @@ class Threading:
         SSH Public Key Authentication
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        To enable SSH Public Key Authentication to be able to use ssh, sftp, and scp from the parent
-        machine to the hosts without having to type your password, use the following steps.
+        To enable SSH Public Key Authentication for the use of ssh, sftp, and scp without having to
+        type a password, use the following steps.  This is essential for running a thread on a
+        remote machine.
 
         If the files 'id_rsa' and 'id_rsa.pub' do not exist in the directory '~/.ssh', type:
 
-        $ ssh-keygen -t rsa (Type [Enter] 3 times)
-
-        Once the two files exist, type:
-
-        (Make sure you replace 'zucchini' with the name of the machine you want to forward to).
+        $ ssh-keygen -t rsa
+        
+        Press enter three times when asked for input.  This will generate the two identification
+        files.  Then, to copy the public key into the authorized_keys file on the remote machine,
+        type:
 
         $ ssh zucchini "echo $(cat ~/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys"
 
-        Finished. You can now type 'ssh zucchini' and login without typing your password.
+        Make sure you replace 'zucchini' with the name or IP address of the remote machine.  To use
+        DSA rather than RSA authentication, replace 'rsa' with 'dsa' in the above commands.
+        Normally the sshd keyword StrictModes, which is found in the file '/etc/ssh/sshd_config', is
+        set to 'yes' or, if unspecified, defaults to 'yes'.  In this case, public key authentication
+        may fail as the permissions of the remote file '~/.ssh/authorized_keys' may be too
+        permissive.  The file should only be read/write for the user, ie 600.  To remotely change
+        the permissions, type:
+
+        $ ssh zucchini "chmod 600 ~/.ssh/authorized_keys"
+
+        One last keyword may need to be changed in the file '/etc/ssh/sshd_config'.  If the keyword
+        PubkeyAuthentication is set to 'no', change this to 'yes'.  The default is yes, so if the
+        keyword is missing or is commented out, nothing needs to be done.
+
+        Public key authentication should now work.  To test, type:
+        
+        $ ssh zucchini
+        
+        This should securely login into the remote machine without asking for a password.  If a
+        password prompt appears, check all the permissions on the directory '~/.ssh' and all files
+        within or set the sshd_config keyword StrictModes to 'no'.
+
+        $ ssh zucchini "chmod 700 ~/.ssh/"
+        $ ssh zucchini "chmod 600 ~/.ssh/*"
+        $ ssh zucchini "chmod 644 ~/.ssh/*.pub"
         """
 
         # Function intro text.

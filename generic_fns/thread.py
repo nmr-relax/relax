@@ -56,11 +56,14 @@ class Threading:
         # Loop over the hosts.
         self.host_data = []
         for i in xrange(len(file_data)):
+            # Test to see if the correct number of columns exist.
+            if len(file_data[i]) != 6:
+                raise RelaxError, "The number of columns in the hosts file line " + `file_data[i]` + " should be six."
+
             # Host name.
             host_name = file_data[i][0]
             if host_name == '-':
                 host_name = 'localhost'
-
 
             # User name.
             user = file_data[i][1]
@@ -68,12 +71,12 @@ class Threading:
                 user = None
 
             # Host login
-            if host_name != 'localhost' and user:
-                login = user + '@' + host_name
-            elif host_name != 'localhost':
-                login = host_name
-            else:
+            if host_name == 'localhost':
                 login = None
+            elif user:
+                login = user + '@' + host_name
+            else:
+                login = host_name
 
             # Login command.
             if host_name == 'localhost':
@@ -96,12 +99,22 @@ class Threading:
             if priority == '-':
                 priority = 15
             try:
-                int(priority)
+                priority = int(priority)
             except ValueError:
                 raise RelaxIntError, ('priority', priority)
 
+            # Number of CPUs.
+            num_cpus = file_data[i][5]
+            if num_cpus == '-':
+                num_cpus = 1
+            try:
+                num_cpus = int(num_cpus)
+            except ValueError:
+                raise RelaxIntError, ('CPUs', num_cpus)
+
             # Update the host data structure.
-            self.host_data.append([host_name, user, login, login_cmd, prog_path, swd, priority])
+            for j in xrange(num_cpus):
+                self.host_data.append([host_name, user, login, login_cmd, prog_path, swd, priority])
 
         # Total number of hosts in hosts file.
         num_jobs = len(self.host_data)
@@ -365,10 +378,9 @@ class RelaxHostThread(RelaxThread):
         """Function for testing if the working directory on the host machine exist."""
 
         # Test command.
+        test_cmd = "if test -d %s; then echo 'OK'; fi" % self.swd
         if self.login_cmd:
-            test_cmd = "%s 'if test -d %s; then echo 'OK'; fi'" % (self.login_cmd, self.swd)
-        else:
-            test_cmd = "if test -d %s; then echo 'OK'; fi" % self.swd
+            test_cmd = self.login_cmd + " \"" + test_cmd + "\""
 
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(test_cmd, 'r')
