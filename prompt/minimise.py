@@ -162,8 +162,8 @@ class Minimise:
             min_options = args
 
         # Print flag.
-        if type(print_flag) != int or (print_flag != 0 and print_flag != 1):
-            raise RelaxBinError, ('print flag', print_flag)
+        if type(print_flag) != int:
+            raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
         self.relax.min.min(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
