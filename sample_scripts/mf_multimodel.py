@@ -25,7 +25,7 @@ for i in range(len(runs)):
 
     # Minimise.
     grid_search(runs[i], inc=11)
-    minimise('newton', 'eigen', run=runs[i])
+    minimise('newton', run=runs[i])
 
     # Print results.
     write(run=runs[i], file='results', force=1)
