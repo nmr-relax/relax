@@ -25,7 +25,7 @@ import sys
 import help
 
 
-class Model:
+class Model_free:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
@@ -38,7 +38,53 @@ class Model:
         self.__relax__ = relax
 
 
-    def create_mf(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
+    def copy(self, run1=None, run2=None):
+        """Function for copying model-free data from run1 to run2.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run1:  The name of the run to copy the sequence from.
+
+        run2:  The name of the run to copy the sequence to.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will copy all model-free data from 'run1' to 'run2'.  'run2' must contain no
+        model-free data.
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy all model-free data from the run 'm1' to the run 'm2', type:
+
+        relax> model_free.copy('m1', 'm2')
+        relax> model_free.copy(run1='m1', run2='m2')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "model_free.copy("
+            text = text + "run1=" + `run1`
+            text = text + ", run2=" + `run2` + ")"
+            print text
+
+        # The run1 argument.
+        if type(run1) != str:
+            raise RelaxStrError, ('run1', run1)
+
+        # The run2 argument.
+        if type(run2) != str:
+            raise RelaxStrError, ('run2', run2)
+
+        # Execute the functional code.
+        self.__relax__.specific.model_free.copy(run1=run1, run2=run2)
+
+
+    def create_model(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
         """Function to create a model-free model.
 
         Keyword Arguments
@@ -169,7 +215,38 @@ class Model:
         self.__relax__.specific.model_free.create(run=run, model=model, equation=equation, params=params, scaling=scaling, res_num=res_num)
 
 
-    def select_mf(self, run=None, model=None, scaling=1, res_num=None):
+    def delete(self, run=None):
+        """Function for deleting all model-free data corresponding to the run.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Examples
+        ~~~~~~~~
+
+        To delete all model-free data corresponding to the run 'm2', type:
+
+        relax> model_free.delete('m2')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "model_free.delete("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.__relax__.specific.model_free.delete(run=run)
+
+
+    def select_model(self, run=None, model=None, scaling=1, res_num=None):
         """Function for the selection of a preset model-free model.
 
         Keyword Arguments

@@ -83,6 +83,76 @@ class Relax_data:
         self.__relax__.specific.relax_data.back_calc(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq)
 
 
+    def copy(self, run1=None, run2=None, ri_label=None, frq_label=None):
+        """Function for copying relaxation data from run1 to run2.
+
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run1:  The name of the run to copy the sequence from.
+
+        run2:  The name of the run to copy the sequence to.
+
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength label.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will copy relaxation data from 'run1' to 'run2'.  If ri_label and frq_label
+        are not given then all relaxation data will be copied, otherwise only a specific data set
+        will be copied.
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy all relaxation data from run 'm1' to run 'm9', type one of:
+
+        relax> relax_data.copy('m1', 'm9')
+        relax> relax_data.copy(run1='m1', run2='m9')
+        relax> relax_data.copy('m1', 'm9', None, None)
+        relax> relax_data.copy(run1='m1', run2='m9', ri_label=None, frq_label=None)
+
+        To copy only the NOE relaxation data with the frq_label of '800' from 'm3' to 'm6', type one
+        of:
+
+        relax> relax_data.copy('m3', 'm6', 'NOE', '800')
+        relax> relax_data.copy(run1='m3', run2='m6', ri_label='NOE', frq_label='800')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_data.copy("
+            text = text + "run1=" + `run1`
+            text = text + ", run2=" + `run2`
+            text = text + ", ri_label=" + `ri_label`
+            text = text + ", frq_label=" + `frq_label` + ")"
+            print text
+
+        # The run1 argument.
+        if type(run1) != str:
+            raise RelaxStrError, ('run1', run1)
+
+        # The run2 argument.
+        if type(run2) != str:
+            raise RelaxStrError, ('run2', run2)
+
+        # Relaxation data type.
+        if ri_label != None and type(ri_label) != str:
+            raise RelaxStrError, ('relaxation label', ri_label)
+
+        # Frequency label.
+        if frq_label != None and type(frq_label) != str:
+            raise RelaxStrError, ('frequency label', frq_label)
+
+        # Execute the functional code.
+        self.__relax__.specific.relax_data.copy(run1=run1, run2=run2, ri_label=ri_label, frq_label=frq_label)
+
+
     def delete(self, run=None, ri_label=None, frq_label=None):
         """Function for deleting the relaxation data corresponding to ri_label and frq_label.
 

@@ -46,7 +46,7 @@ for i in xrange(len(runs)):
         value.set(cv_runs[i][j], -160 * 1e-6, 'csa')
 
         # Select the preset model-free models.
-        model.select_mf(run=cv_runs[i][j], model=runs[i])
+        model_free.select_model(run=cv_runs[i][j], model=runs[i])
 
         # Minimisation of the calibration set.
         grid_search(cv_runs[i][j], inc=11)

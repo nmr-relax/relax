@@ -24,8 +24,8 @@ value.set(name, 1.02 * 1e-10, 'bond_length')
 value.set(name, -170 * 1e-6, 'csa')
 
 # Select the model-free model.
-model.select_mf(run=name, model=name)
-#model.create_mf(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
+model_free.select_model(run=name, model=name)
+#model_free.create_model(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Map data.
 inc = 20

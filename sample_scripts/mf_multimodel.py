@@ -33,7 +33,7 @@ for run in runs:
     value.set(run, -160 * 1e-6, 'csa')
 
     # Select the model-free model.
-    model.select_mf(run=run, model=run)
+    model_free.select_model(run=run, model=run)
 
     # Minimise.
     grid_search(run, inc=7)

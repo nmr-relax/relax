@@ -278,6 +278,20 @@ class RelaxErrors:
             self.text = "Relaxation data corresponding to ri_label = " + `ri_label` + " and frq_label = " + `frq_label` + " already exists."
 
 
+    # Model-free errors.
+    ####################
+
+    # No model-free data.
+    class RelaxNoMfError(BaseError):
+        def __init__(self, run):
+            self.text = "Model-free data corresponding to the run " + `run` + " does not exist."
+
+    # Model-free data already exists.
+    class RelaxMfError(BaseError):
+        def __init__(self, run):
+            self.text = "Model-free data corresponding to the run " + `run` + " already exists."
+
+
     # Tensor errors.
     ################
 

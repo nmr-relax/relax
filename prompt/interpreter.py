@@ -57,7 +57,7 @@ from write import Write
 # User classes.
 from echo_data import Echo_data
 from format import Format
-from model import Model
+from model_free import Model_free
 from molmol import Molmol
 from noe import Noe
 from palmer import Palmer
@@ -82,7 +82,7 @@ class Interpreter:
         # The prompts.
         sys.ps1 = 'relax> '
         sys.ps2 = 'relax| '
-        sys.ps3 = '\n<fn> '
+        sys.ps3 = '\n<func> '
 
         # The function intro flag.
         self.intro = 0
@@ -112,7 +112,7 @@ class Interpreter:
         # Place the user classes into the interpreter class namespace.
         self._Echo_data = Echo_data(relax)
         self._Format = Format(relax)
-        self._Model = Model(relax)
+        self._Model_free = Model_free(relax)
         self._Molmol = Molmol(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
@@ -173,7 +173,7 @@ class Interpreter:
         read = self._Read
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
-        model = self._Model
+        model_free = self._Model_free
         molmol = self._Molmol
         noe = self._Noe
         select = self._Select

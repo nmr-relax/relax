@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+from copy import deepcopy 
 import sys
 
 
@@ -48,7 +49,7 @@ class Rx_data:
             raise RelaxNoSequenceError
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
-        if self.test_labels():
+        if self.test_labels(run):
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
         # Function type.
@@ -67,6 +68,76 @@ class Rx_data:
 
             # Update all data structures.
             self.update_data_structures(data, value)
+
+
+    def copy(self, run1=None, run2=None, ri_label=None, frq_label=None):
+        """Function for copying relaxation data from run1 to run2."""
+
+        # Arguments.
+        self.ri_label = ri_label
+        self.frq_label = frq_label
+
+        # Test if run1 exists.
+        if not run1 in self.relax.data.run_names:
+            raise RelaxNoRunError, run1
+
+        # Test if run2 exists.
+        if not run2 in self.relax.data.run_names:
+            raise RelaxNoRunError, run2
+
+        # Test if the sequence data for run1 is loaded.
+        if not self.relax.data.res.has_key(run1):
+            raise RelaxNoSequenceError
+
+        # Test if the sequence data for run2 is loaded.
+        if not self.relax.data.res.has_key(run2):
+            raise RelaxNoSequenceError
+
+        # Copy all data.
+        if ri_label == None and frq_label == None:
+            # Get all data structure names.
+            names = self.data_names()
+
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[run1])):
+                # Remap the data structure 'self.relax.data.res[run1][i]'.
+                data1 = self.relax.data.res[run1][i]
+                data2 = self.relax.data.res[run2][i]
+
+                # Loop through the data structure names.
+                for name in names:
+                    # Skip the data structure if it does not exist.
+                    if not hasattr(data1, name):
+                        continue
+
+                    # Copy the data structure.
+                    setattr(data2, name, deepcopy(getattr(data1, name)))
+
+        # Copy a specific data set.
+        else:
+            # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' exists for run1.
+            if not self.test_labels(run1):
+                raise RelaxNoRiError, (self.ri_label, self.frq_label)
+
+            # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' exists for run2.
+            if self.test_labels(run2):
+                raise RelaxRiError, (self.ri_label, self.frq_label)
+
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[run1])):
+                # Remap the data structure 'self.relax.data.res[run1][i]'.
+                data1 = self.relax.data.res[run1][i]
+                data2 = self.relax.data.res[run2][i]
+
+                # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+                index = self.find_index(data1)
+
+                # Get the value and error from run1.
+                value = data1.relax_data[index]
+                error = data1.relax_error[index]
+
+                # Update all data structures for run2.
+                self.update_data_structures(data2, value, error)
 
 
     def data_init(self, name):
@@ -150,7 +221,7 @@ class Rx_data:
             raise RelaxNoSequenceError
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-        if not self.test_labels():
+        if not self.test_labels(run):
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Loop over the sequence.
@@ -210,7 +281,7 @@ class Rx_data:
             raise RelaxNoSequenceError
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-        if not self.test_labels():
+        if not self.test_labels(run):
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Print the data.
@@ -264,7 +335,7 @@ class Rx_data:
             raise RelaxNoSequenceError
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
-        if self.test_labels():
+        if self.test_labels(run):
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
         # Extract the data from the file.
@@ -309,16 +380,16 @@ class Rx_data:
             self.update_data_structures(data, value, error)
 
 
-    def test_labels(self):
+    def test_labels(self, run):
         """Test if data corresponding to 'self.ri_label' and 'self.frq_label' currently exists."""
 
         # Initialise.
         exists = 0
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
-            data = self.relax.data.res[self.run][i]
+        for i in xrange(len(self.relax.data.res[run])):
+            # Remap the data structure 'self.relax.data.res[run][i]'.
+            data = self.relax.data.res[run][i]
 
             # No ri data.
             if not hasattr(data, 'num_ri'):
@@ -404,7 +475,7 @@ class Rx_data:
             raise RelaxNoSequenceError
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-        if not self.test_labels():
+        if not self.test_labels(run):
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Create the file name if none is given.

@@ -271,6 +271,55 @@ class Model_free:
         self.minimise(run=self.run, min_algor='calc', min_options=res_num)
 
 
+    def copy(self, run1=None, run2=None):
+        """Function for copying all model-free data from run1 to run2."""
+
+        # Test if run1 exists.
+        if not run1 in self.relax.data.run_names:
+            raise RelaxNoRunError, run1
+
+        # Test if run2 exists.
+        if not run2 in self.relax.data.run_names:
+            raise RelaxNoRunError, run2
+
+        # Test if the sequence data for run1 is loaded.
+        if not self.relax.data.res.has_key(run1):
+            raise RelaxNoSequenceError
+
+        # Test if the sequence data for run2 is loaded.
+        if not self.relax.data.res.has_key(run2):
+            raise RelaxNoSequenceError
+
+        # Get all data structure names.
+        names = self.data_names()
+
+        # Test if run2 contains any model-free data.
+        for i in xrange(len(self.relax.data.res[run2])):
+            # Remap the data structure 'self.relax.data.res[run2][i]'.
+            data = self.relax.data.res[run2][i]
+
+            # Loop through the data structure names.
+            for name in names:
+                # Raise an error if data exists.
+                if hasattr(data, name):
+                    raise RelaxMfError, run2
+
+        # Copy the data.
+        for i in xrange(len(self.relax.data.res[run1])):
+            # Remap the data structure 'self.relax.data.res[run1][i]'.
+            data1 = self.relax.data.res[run1][i]
+            data2 = self.relax.data.res[run2][i]
+
+            # Loop through the data structure names.
+            for name in names:
+                # Skip the data structure if it does not exist.
+                if not hasattr(data1, name):
+                    continue
+
+                # Copy the data structure.
+                setattr(data2, name, deepcopy(getattr(data1, name)))
+
+
     def create(self, run=None, model=None, equation=None, params=None, scaling=1, res_num=None):
         """Function to create a model-free model."""
 
@@ -566,6 +615,38 @@ class Model_free:
                 return 10.0 * 1e-9
             else:
                 return 100.0 * 1e-12
+
+
+    def delete(self, run):
+        """Function for deleting all model-free data."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError
+
+        # Get all data structure names.
+        names = self.data_names()
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            data = self.relax.data.res[self.run][i]
+
+            # Loop through the data structure names.
+            for name in names:
+                # Skip the data structure if it does not exist.
+                if not hasattr(data, name):
+                    continue
+
+                # Delete the data.
+                delattr(data, name)
 
 
     def determine_param_set_type(self):
