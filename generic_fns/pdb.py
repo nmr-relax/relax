@@ -34,7 +34,7 @@ class PDB:
         self.relax = relax
 
 
-    def pdb(self, run, file, model, load_seq):
+    def pdb(self, run=None, file=None, model=None, load_seq=1):
         """The pdb loading function."""
 
         # Arguments.
@@ -57,6 +57,9 @@ class PDB:
 
         # Load the structures.
         self.load_structures()
+
+        # Model.
+        self.relax.data.pdb[self.run].user_model = self.model
 
         # Print the PDB info.
         print self.relax.data.pdb[self.run]
@@ -107,7 +110,7 @@ class PDB:
 
             # Initialisation.
             self.relax.data.pdb[self.run] = []
-            i = 1
+            i = 0
 
             # Loop over all the other structures.
             while 1:

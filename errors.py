@@ -287,10 +287,10 @@ class RelaxErrors:
     # Model-free errors.
     ####################
 
-    # No model-free data.
-    class RelaxNoMfError(BaseError):
+    # No model-free model.
+    class RelaxNoMfModelError(BaseError):
         def __init__(self, run):
-            self.text = "Model-free data corresponding to the run " + `run` + " does not exist."
+            self.text = "The model-free models corresponding to the run " + `run` + " have not been setup."
 
     # Model-free data already exists.
     class RelaxMfError(BaseError):

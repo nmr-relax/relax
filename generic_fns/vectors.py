@@ -31,6 +31,16 @@ class Vectors:
         self.relax = relax
 
 
+    def set(self, run=None, res=None, xh_vect=None):
+        """Function for setting the XH and XH unit vectors."""
+
+        # Place the XH vector in 'self.relax.data.res[run][i].xh_vect'.
+        self.relax.data.res[run][res].xh_vect = xh_vect
+
+        # Calculate the normalised vector.
+        self.relax.data.res[run][res].xh_unit = self.relax.data.res[run][res].xh_vect / sqrt(dot(self.relax.data.res[run][res].xh_vect, self.relax.data.res[run][res].xh_vect))
+
+
     def vectors(self, run, heteronuc, proton):
         """Function for calculating the XH vector from the loaded structure."""
 

@@ -460,8 +460,15 @@ class Model_free:
     def create_mc_data(self, run, i):
         """Function for creating the Monte Carlo Ri data."""
 
+        # Arguments
+        self.run = run
+
         # Initialise the data data structure.
         data = []
+
+        # Test if the model is set.
+        if not hasattr(self.relax.data.res[self.run][i], 'model') or not self.relax.data.res[self.run][i].model:
+            raise RelaxNoMfModelError, self.run
 
         # Loop over the relaxation data.
         for j in xrange(len(self.relax.data.res[run][i].relax_data)):
@@ -825,6 +832,16 @@ class Model_free:
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
+
+        # Test if the params data structure exists for all residues.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][i].select:
+                continue
+
+            # No params.
+            if not hasattr(self.relax.data.res[self.run][i], 'params'):
+                return None
 
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = 0
@@ -1307,7 +1324,7 @@ class Model_free:
 
             # Not setup.
             if not self.relax.data.res[self.run][j].model:
-                raise RelaxError, "The model-free models have not been setup."
+                raise RelaxNoMfModelError, self.run
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -1339,7 +1356,7 @@ class Model_free:
 
             # Not setup.
             if not self.relax.data.res[self.run][j].model:
-                raise RelaxError, "The model-free models have not been setup."
+                raise RelaxNoMfModelError, self.run
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -1959,7 +1976,7 @@ class Model_free:
 
             # Not setup.
             if not self.relax.data.res[self.run][i].model:
-                raise RelaxError, "The model-free models have not been setup."
+                raise RelaxNoMfModelError, self.run
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -2590,6 +2607,14 @@ class Model_free:
             elif header[i] == 'gamma_(deg)':
                 col['gamma'] = i
 
+            # PDB and XH vector.
+            elif header[i] == 'PDB':
+                col['pdb'] = i
+            elif header[i] == 'PDB_model':
+                col['pdb_model'] = i
+            elif header[i] == 'XH_vector':
+                col['xh_vect'] = i
+
             # Relaxation data.
             elif header[i] == 'Ri_labels':
                 col['ri_labels'] = i
@@ -2691,6 +2716,10 @@ class Model_free:
             # Temporary diffusion tensor parameters.
             temp_diff_params = []
 
+            # No tensor.
+            if diff_type == 'None':
+                diff_type = None
+
             # Isotropic.
             if diff_type == 'iso':
                 try:
@@ -2734,7 +2763,67 @@ class Model_free:
             axial_type = diff_type
         if diff_type == 'iso':
             diff_params = diff_params[0]
-        self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
+        if diff_type:
+            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, axial_type=axial_type)
+
+
+        # PDB and XH vector.
+        ####################
+
+        # Test if the relaxation data is consistent.
+        pdb = None
+        pdb_model = None
+        for i in xrange(len(file_data)):
+            # File name.
+            if not pdb:
+                pdb = file_data[i][col['pdb']]
+                pdb_model = eval(file_data[i][col['pdb_model']])
+
+            # Test the file name.
+            if pdb != file_data[i][col['pdb']]:
+                raise RelaxError, "The PDB file name is not consistent for all residues."
+
+            # Test the model number.
+            if pdb_model != eval(file_data[i][col['pdb_model']]):
+                raise RelaxError, "The PDB model number is not consistent for all residues."
+
+        # Load the PDB.
+        if not pdb == 'None':
+            self.relax.generic.pdb.pdb(run=self.run, file=pdb, model=pdb_model)
+
+        # XH vectors.
+        for i in xrange(len(file_data)):
+            # Skip all lines where the data_set column is not 'value'.
+            if file_data[i][col['data_set']] != 'value':
+                continue
+
+            # Residue number.
+            try:
+                res_num = int(file_data[i][col['num']])
+            except ValueError:
+                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+            res_name = file_data[i][col['name']]
+
+            # Find the residue index.
+            index = None
+            for j in xrange(len(self.relax.data.res[self.run])):
+                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                    index = j
+                    break
+            if index == None:
+                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+
+            # The vector.
+            xh_vect = eval(file_data[i][col['xh_vect']])
+            if xh_vect:
+                try:
+                    xh_vect = array(xh_vect, Float64)
+                except:
+                    raise RelaxError, "The XH vector " + file_data[i][col['xh_vect']] + " is invalid."
+
+            # Set the vector.
+            if xh_vect:
+                self.relax.generic.vectors.set(run=self.run, res=index, xh_vect=xh_vect)
 
 
         # Relaxation data.
@@ -2754,83 +2843,85 @@ class Model_free:
             if ri_labels != eval(file_data[i][col['ri_labels']]) or remap_table != eval(file_data[i][col['remap_table']]) or frq_labels != eval(file_data[i][col['frq_labels']]) or frq != eval(file_data[i][col['frq']]):
                 raise RelaxError, "The relaxation data is not consistent for all residues."
 
-        # Loop over the relaxation data sets.
-        for j in xrange(len(ri_labels)):
-            # Data and error column.
-            data_col = col['frq'] + j + 1
-            error_col = col['frq'] + len(ri_labels) + j + 1
+        # Relaxation data exists.
+        if ri_labels and remap_table and frq_labels and frq:
+            # Loop over the relaxation data sets.
+            for j in xrange(len(ri_labels)):
+                # Data and error column.
+                data_col = col['frq'] + j + 1
+                error_col = col['frq'] + len(ri_labels) + j + 1
 
-            # Reconstruct a data array.
-            data_array = []
-            for i in xrange(len(file_data)):
-                # Skip all lines where the data_set column is not 'value'.
-                if file_data[i][col['data_set']] != 'value':
-                    continue
+                # Reconstruct a data array.
+                data_array = []
+                for i in xrange(len(file_data)):
+                    # Skip all lines where the data_set column is not 'value'.
+                    if file_data[i][col['data_set']] != 'value':
+                        continue
 
-                # Skip when data_col is None.
-                if eval(file_data[i][data_col]) == None:
-                    continue
+                    # Skip when data_col is None.
+                    if eval(file_data[i][data_col]) == None:
+                        continue
 
-                # Append an array containing the residue number and name and the data and error values.
-                data_array.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
+                    # Append an array containing the residue number and name and the data and error values.
+                    data_array.append([file_data[i][col['num']], file_data[i][col['name']], file_data[i][data_col], file_data[i][error_col]])
 
-            # Read the relaxation data.
-            self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=data_array)
+                # Read the relaxation data.
+                self.relax.specific.relax_data.read(run=self.run, ri_label=ri_labels[j], frq_label=frq_labels[remap_table[j]], frq=frq[remap_table[j]], file_data=data_array)
 
-        # Simulation data.
-        if len(sims):
-            for i in xrange(len(file_data)):
-                # Skip all lines where the data_set column is not 'value'.
-                if file_data[i][col['data_set']] != 'value':
-                    continue
+            # Simulation data.
+            if len(sims):
+                for i in xrange(len(file_data)):
+                    # Skip all lines where the data_set column is not 'value'.
+                    if file_data[i][col['data_set']] != 'value':
+                        continue
 
-                # Residue number and name.
-                try:
-                    res_num = int(file_data[i][col['num']])
-                except ValueError:
-                    raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-                res_name = file_data[i][col['name']]
+                    # Residue number and name.
+                    try:
+                        res_num = int(file_data[i][col['num']])
+                    except ValueError:
+                        raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
+                    res_name = file_data[i][col['name']]
 
-                # Find the residue index.
-                res_index = None
-                for j in xrange(len(self.relax.data.res[self.run])):
-                    if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
-                        res_index = j
-                        break
-                if res_index == None:
-                    raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
+                    # Find the residue index.
+                    res_index = None
+                    for j in xrange(len(self.relax.data.res[self.run])):
+                        if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                            res_index = j
+                            break
+                    if res_index == None:
+                        raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
 
-                # Initialise the simulation data.
-                sim_data = []
+                    # Initialise the simulation data.
+                    sim_data = []
 
-                # Loop over the simulations.
-                for j in xrange(len(sims)):
-                    # Append an empty array to sim_data.
-                    sim_data.append([])
+                    # Loop over the simulations.
+                    for j in xrange(len(sims)):
+                        # Append an empty array to sim_data.
+                        sim_data.append([])
 
-                    # Sim label.
-                    sim_label = 'sim_' + `j`
+                        # Sim label.
+                        sim_label = 'sim_' + `j`
 
-                    # Find the line of the data file corresponding to the residue number and name and the sim label.
-                    for k in xrange(len(file_data)):
-                        if int(file_data[k][col['num']]) == res_num and file_data[k][col['name']] == res_name and file_data[k][col['data_set']] == sim_label:
-                            # Loop over the relaxation data sets.
-                            for l in xrange(len(ri_labels)):
-                                # Data column.
-                                data_col = col['frq'] + l + 1
+                        # Find the line of the data file corresponding to the residue number and name and the sim label.
+                        for k in xrange(len(file_data)):
+                            if int(file_data[k][col['num']]) == res_num and file_data[k][col['name']] == res_name and file_data[k][col['data_set']] == sim_label:
+                                # Loop over the relaxation data sets.
+                                for l in xrange(len(ri_labels)):
+                                    # Data column.
+                                    data_col = col['frq'] + l + 1
 
-                                # Skip when data_col is None.
-                                if eval(file_data[k][data_col]) == None:
-                                    continue
+                                    # Skip when data_col is None.
+                                    if eval(file_data[k][data_col]) == None:
+                                        continue
 
-                                # Add the data to sim_data.
-                                try:
-                                    sim_data[j].append(eval(file_data[k][data_col]))
-                                except ValueError:
-                                    raise RelaxError, "The relaxation data " + `file_data[k][data_col]` + " is not a floating point number."
+                                    # Add the data to sim_data.
+                                    try:
+                                        sim_data[j].append(eval(file_data[k][data_col]))
+                                    except ValueError:
+                                        raise RelaxError, "The relaxation data " + `file_data[k][data_col]` + " is not a floating point number."
 
-                # Pack the simulation data.
-                self.sim_pack_data(self.run, res_index, sim_data)
+                    # Pack the simulation data.
+                    self.sim_pack_data(self.run, res_index, sim_data)
 
 
         # Model-free data.
@@ -2866,7 +2957,11 @@ class Model_free:
 
             # Set up the model-free models.
             if data_set == 'value':
-                self.model_setup(self.run, model=file_data[i][col['model']], equation=file_data[i][col['eqi']], params=eval(file_data[i][col['params']]), res_num=res_num)
+                model = file_data[i][col['model']]
+                equation = file_data[i][col['eqi']]
+                params = eval(file_data[i][col['params']])
+                if model and equation and params:
+                    self.model_setup(self.run, model=model, equation=equation, params=params, res_num=res_num)
 
             # Values.
             if data_set == 'value':
@@ -2905,7 +3000,10 @@ class Model_free:
                     te = float(file_data[i][col['te']]) * 1e-12
                 except ValueError:
                     te = None
-                if "te" in res.params:
+                if not hasattr(res, 'params'):
+                    res.te = None
+                    res.ts = None
+                elif "te" in res.params:
                     res.te = te
                     res.ts = None
                 else:
@@ -3944,7 +4042,7 @@ class Model_free:
             self.relax.data.select[self.run] = 0
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, tf=None, te=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -3984,6 +4082,13 @@ class Model_free:
         if diff_params:
             for i in xrange(len(diff_params)):
                 file.write("%-25s " % diff_params[i])
+
+        # PDB.
+        file.write("%-40s " % pdb)
+        file.write("%-10s " % pdb_model)
+
+        # XH vector.
+        file.write("%-70s " % xh_vect)
 
         # Relaxation data setup.
         if ri_labels:
@@ -4046,12 +4151,13 @@ class Model_free:
         # Relaxation data and errors.
         ri = []
         ri_error = []
-        for i in xrange(self.relax.data.num_ri[self.run]):
-            ri.append('Ri_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
-            ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
+        if hasattr(self.relax.data, 'num_ri'):
+            for i in xrange(self.relax.data.num_ri[self.run]):
+                ri.append('Ri_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
+                ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', tf='tf_(ps)', te='te_or_ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -4061,6 +4167,7 @@ class Model_free:
         nucleus = self.relax.generic.nuclei.find_nucleus()
 
         # Diffusion parameters.
+        diff_type = None
         diff_params = None
         if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
             # Isotropic.
@@ -4080,11 +4187,25 @@ class Model_free:
                 diff_type = 'aniso'
                 diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma * 360 / (2.0 * pi)`]
 
+        # PDB.
+        if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
+            pdb = self.relax.data.pdb[self.run].filename
+            pdb_model = self.relax.data.pdb[self.run].user_model
+        else:
+            pdb = None
+            pdb_model = None
+
         # Relaxation data setup.
-        ri_labels = replace(`self.relax.data.ri_labels[self.run]`, ' ', '')
-        remap_table = replace(`self.relax.data.remap_table[self.run]`, ' ', '')
-        frq_labels = replace(`self.relax.data.frq_labels[self.run]`, ' ', '')
-        frq = replace(`self.relax.data.frq[self.run]`, ' ', '')
+        try:
+            ri_labels = replace(`self.relax.data.ri_labels[self.run]`, ' ', '')
+            remap_table = replace(`self.relax.data.remap_table[self.run]`, ' ', '')
+            frq_labels = replace(`self.relax.data.frq_labels[self.run]`, ' ', '')
+            frq = replace(`self.relax.data.frq[self.run]`, ' ', '')
+        except AttributeError:
+            ri_labels = `None`
+            remap_table = `None`
+            frq_labels = `None`
+            frq = `None`
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -4097,7 +4218,38 @@ class Model_free:
                 continue
 
             # Model details.
-            params=replace(`res.params`, ' ', '')
+            if hasattr(res, 'model'):
+                model = res.model
+            else:
+                model = None
+
+            if hasattr(res, 'equation'):
+                equation = res.equation
+            else:
+                equation = None
+
+            if hasattr(res, 'params'):
+                params = replace(`res.params`, ' ', '')
+            else:
+                params = None
+
+            # S2.
+            if hasattr(res, 's2'):
+                s2 = res.s2
+            else:
+                s2 = None
+
+            # S2f.
+            if hasattr(res, 's2f'):
+                s2f = res.s2f
+            else:
+                s2f = None
+
+            # S2s.
+            if hasattr(res, 's2s'):
+                s2s = res.s2s
+            else:
+                s2s = None
 
             # tm.
             if hasattr(res, 'tm') and res.tm != None:
@@ -4106,13 +4258,13 @@ class Model_free:
                 local_tm = None
 
             # tf.
-            if res.tf == None:
+            if not hasattr(res, 'tf') or res.tf == None:
                 tf = None
             else:
                 tf = res.tf / 1e-12
 
             # te or ts.
-            if res.te == None and res.ts == None:
+            if not hasattr(res, 'te') or res.te == None and not hasattr(res, 'ts') or res.ts == None:
                 te = None
             elif res.te != None:
                 te = res.te / 1e-12
@@ -4120,67 +4272,83 @@ class Model_free:
                 te = res.ts / 1e-12
 
             # Rex.
-            if res.rex == None:
+            if not hasattr(res, 'rex') or res.rex == None:
                 rex = None
             else:
                 rex = res.rex * (2.0 * pi * res.frq[0])**2
 
             # Bond length.
-            if res.r == None:
+            if not hasattr(res, 'r') or res.r == None:
                 r = None
             else:
                 r = res.r / 1e-10
 
             # CSA.
-            if res.csa == None:
+            if not hasattr(res, 'csa') or res.csa == None:
                 csa = None
             else:
                 csa = res.csa / 1e-6
 
-            # Minimisation details (global minimisation results).
-            if self.param_set == 'diff' or self.param_set == 'all':
-                chi2 = self.relax.data.chi2[self.run]
-                iter = self.relax.data.iter[self.run]
-                f = self.relax.data.f_count[self.run]
-                g = self.relax.data.g_count[self.run]
-                h = self.relax.data.h_count[self.run]
-                if type(self.relax.data.warning[self.run]) == str:
-                    warn = replace(self.relax.data.warning[self.run], ' ', '_')
-                else:
-                    warn = self.relax.data.warning[self.run]
+            # Minimisation details.
+            try:
+                # Global minimisation results.
+                if self.param_set == 'diff' or self.param_set == 'all':
+                    chi2 = self.relax.data.chi2[self.run]
+                    iter = self.relax.data.iter[self.run]
+                    f = self.relax.data.f_count[self.run]
+                    g = self.relax.data.g_count[self.run]
+                    h = self.relax.data.h_count[self.run]
+                    if type(self.relax.data.warning[self.run]) == str:
+                        warn = replace(self.relax.data.warning[self.run], ' ', '_')
+                    else:
+                        warn = self.relax.data.warning[self.run]
 
-            # Minimisation details (individual residue results).
-            else:
-                chi2 = res.chi2
-                iter = res.iter
-                f = res.f_count
-                g = res.g_count
-                h = res.h_count
-                if type(res.warning) == str:
-                    warn = replace(res.warning, ' ', '_')
+                # Individual residue results.
                 else:
-                    warn = res.warning
+                    chi2 = res.chi2
+                    iter = res.iter
+                    f = res.f_count
+                    g = res.g_count
+                    h = res.h_count
+                    if type(res.warning) == str:
+                        warn = replace(res.warning, ' ', '_')
+                    else:
+                        warn = res.warning
+            except AttributeError:
+                chi2 = None
+                iter = None
+                f = None
+                g = None
+                h = None
+                warn = None
+
+            # XH vector.
+            if hasattr(res, 'xh_vect'):
+                xh_vect = replace(`res.xh_vect.tolist()`, ' ', '')
+            else:
+                xh_vect = None
 
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            for i in xrange(self.relax.data.num_ri[self.run]):
-                # Find the residue specific data corresponding to i.
-                index = None
-                for j in xrange(res.num_ri):
-                    if res.ri_labels[j] == self.relax.data.ri_labels[self.run][i] and res.frq_labels[res.remap_table[j]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]]:
-                        index = j
+            if hasattr(self.relax.data, 'num_ri'):
+                for i in xrange(self.relax.data.num_ri[self.run]):
+                    # Find the residue specific data corresponding to i.
+                    index = None
+                    for j in xrange(res.num_ri):
+                        if res.ri_labels[j] == self.relax.data.ri_labels[self.run][i] and res.frq_labels[res.remap_table[j]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]]:
+                            index = j
 
-                # Data exists for this data type.
-                if index != None:
-                    ri.append(`res.relax_data[index]`)
-                    ri_error.append(`res.relax_error[index]`)
-                else:
-                    ri.append(None)
-                    ri_error.append(None)
+                    # Data exists for this data type.
+                    if index != None:
+                        ri.append(`res.relax_data[index]`)
+                        ri_error.append(`res.relax_error[index]`)
+                    else:
+                        ri.append(None)
+                        ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2`, s2f=`res.s2f`, s2s=`res.s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -4223,6 +4391,14 @@ class Model_free:
                 elif self.relax.data.diff[self.run].type == 'aniso':
                     diff_params = [None, None, None, None, None, None]
 
+        # PDB.
+        if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
+            pdb = self.relax.data.pdb[self.run].filename
+            pdb_model = self.relax.data.pdb[self.run].user_model
+        else:
+            pdb = None
+            pdb_model = None
+
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
@@ -4234,7 +4410,10 @@ class Model_free:
                 continue
 
             # Model details.
-            params=replace(`res.params`, ' ', '')
+            if hasattr(res, 'params'):
+                params = replace(`res.params`, ' ', '')
+            else:
+                params = None
 
             # tm.
             if hasattr(res, 'tm_err') and res.tm_err != None:
@@ -4274,6 +4453,12 @@ class Model_free:
             else:
                 csa = res.csa_err / 1e-6
 
+            # XH vector.
+            if hasattr(res, 'xh_vect'):
+                xh_vect = replace(`res.xh_vect.tolist()`, ' ', '')
+            else:
+                xh_vect = None
+
             # Relaxation data and errors.
             ri = []
             ri_error = []
@@ -4282,7 +4467,7 @@ class Model_free:
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_err`, s2f=`res.s2f_err`, s2s=`res.s2s_err`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='error', nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_err`, s2f=`res.s2f_err`, s2s=`res.s2s_err`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -4321,6 +4506,14 @@ class Model_free:
                     elif self.relax.data.diff[self.run].type == 'aniso':
                         diff_params = [None, None, None, None, None, None]
 
+            # PDB.
+            if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
+                pdb = self.relax.data.pdb[self.run].filename
+                pdb_model = self.relax.data.pdb[self.run].user_model
+            else:
+                pdb = None
+                pdb_model = None
+
             # Loop over the sequence.
             for j in xrange(len(self.relax.data.res[self.run])):
                 # Reassign data structure.
@@ -4332,7 +4525,10 @@ class Model_free:
                     continue
 
                 # Model details.
-                params=replace(`res.params`, ' ', '')
+                if hasattr(res, 'params'):
+                    params = replace(`res.params`, ' ', '')
+                else:
+                    params = None
 
                 # tm.
                 if hasattr(res, 'tm') and res.tm_sim[i] != None:
@@ -4396,6 +4592,12 @@ class Model_free:
                     else:
                         warn = res.warning_sim[i]
 
+                # XH vector.
+                if hasattr(res, 'xh_vect'):
+                    xh_vect = replace(`res.xh_vect.tolist()`, ' ', '')
+                else:
+                    xh_vect = None
+
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
@@ -4415,4 +4617,4 @@ class Model_free:
                         ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_sim[i]`, s2f=`res.s2f_sim[i]`, s2s=`res.s2s_sim[i]`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=res.num, name=res.name, select=res.select, data_set='sim_'+`i`, nucleus=nucleus, model=res.model, equation=res.equation, params=params, param_set=self.param_set, s2=`res.s2_sim[i]`, s2f=`res.s2f_sim[i]`, s2s=`res.s2s_sim[i]`, local_tm=`local_tm`, tf=`tf`, te=`te`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
