@@ -25,76 +25,9 @@ from ri_comps import r1_comps, dr1_comps, d2r1_comps
 from ri_prime import func_ri_prime
 
 
-def ri(data, params):
-    """Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
-
-    The R1 and R2 equations are left alone, while the NOE is calculated from the R1 and sigma_noe
-    values.
-
-
-    The relaxation equations
-    ~~~~~~~~~~~~~~~~~~~~~~~~
-
-    Data structure:  data.ri
-    Dimension:  1D, (relaxation data)
-    Type:  Numeric array, Float64
-    Dependencies:  data.ri_prime
-    Required by:  data.chi2, data.dchi2, data.d2chi2
-
-
-    Formulae
-    ~~~~~~~~
-
-    R1()  =  R1'()
-
-
-    R2()  =  R2'()
-
-                   gH   sigma_noe()
-    NOE()  =  1 +  -- . -----------
-                   gN      R1()
-    """
-
-    # Calculate the NOE values.
-    for i in xrange(data.num_ri):
-        if data.create_ri[i]:
-            data.create_ri[i](data, i, data.remap_table[i], data.get_r1, params)
-
-
 def dri(data, params):
     """Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
-
-    The R1 and R2 equations are left alone, while the NOE is decomposed into the cross relaxation
-    rate equation and the R1 equation.
-
-
-    The relaxation gradients
-    ~~~~~~~~~~~~~~~~~~~~~~~~
-
-    Data structure:  data.dri
-    Dimension:  2D, (parameters, relaxation data)
-    Type:  Numeric array, Float64
-    Dependencies:  data.ri_prime, data.dri_prime
-    Required by:  data.dchi2, data.d2chi2
-
-
-    Formulae
-    ~~~~~~~~
-
-     dR1()       dR1'()
-    -------  =  -------
-    dthetaj     dthetaj
-
-
-     dR2()       dR2'()
-    -------  =  -------
-    dthetaj     dthetaj
-
-
-     dNOE()     gH      1      /        dsigma_noe()                    dR1()  \ 
-    -------  =  -- . ------- . | R1() . ------------  -  sigma_noe() . ------- |
-    dthetaj     gN   R1()**2   \          dthetaj                      dthetaj /
-    """
+   """
 
     # Loop over the relaxation values and modify the NOE gradients.
     for i in xrange(data.num_ri):
@@ -104,42 +37,7 @@ def dri(data, params):
 
 def d2ri(data, params):
     """Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
-
-    The R1 and R2 equations are left alone, while the NOE is decomposed into the cross relaxation
-    rate equation and the R1 equation.
-
-
-    The relaxation Hessians
-    ~~~~~~~~~~~~~~~~~~~~~~~
-
-    Data structure:  data.d2ri
-    Dimension:  3D, (parameters, parameters, relaxation data)
-    Type:  Numeric array, Float64
-    Dependencies:  data.ri_prime, data.dri_prime, data.d2ri_prime
-    Required by:  data.d2chi2
-
-
-    Formulae
-    ~~~~~~~~
-
-         d2R1()             d2R1'()
-    ---------------  =  ---------------
-    dthetai.dthetaj     dthetai.dthetaj
-
-
-         d2R2()             d2R2'()
-    ---------------  =  ---------------
-    dthetai.dthetaj     dthetai.dthetaj
-
-
-        d2NOE()         gH      1      /               /      dR1()     dR1()                  d2R1()     \ 
-    ---------------  =  -- . ------- . | sigma_noe() . | 2 . ------- . -------  -  R1() . --------------- |
-    dthetai.dthetaj     gN   R1()**3   \               \     dthetai   dthetaj            dthetai.dthetaj /
-
-                 / dsigma_noe()    dR1()       dR1()    dsigma_noe()             d2sigma_noe()  \ \ 
-        - R1() . | ------------ . -------  +  ------- . ------------  -  R1() . --------------- | |
-                 \   dthetai      dthetaj     dthetai     dthetaj               dthetai.dthetaj / /
-    """
+   """
 
     # Loop over the relaxation values and modify the NOE Hessians.
     for i in xrange(data.num_ri):
@@ -157,14 +55,14 @@ def calc_noe(data, i, frq_num, get_r1, params):
     Half this code needs to be shifted into the function initialisation code.
     """
 
-    # Get the r1 value either from data.ri_prime or by calculation if the value is not in data.ri_prime
+    # Get the r1 value either from data.ri or by calculation if the value is not in data.ri
     data.r1[i] = get_r1[i](data, i, frq_num, params)
 
     # Calculate the NOE.
     if data.r1[i] == 0.0:
         data.ri[i] = 1e99
     else:
-        data.ri[i] = 1.0 + data.g_ratio*(data.ri_prime[i] / data.r1[i])
+        data.ri[i] = 1.0 + data.g_ratio*(data.ri[i] / data.r1[i])
 
 
 def calc_dnoe(data, i, frq_num, get_dr1, params):
@@ -178,7 +76,7 @@ def calc_dnoe(data, i, frq_num, get_dr1, params):
     if data.r1[i] == 0.0:
         data.dri[i] = 1e99
     else:
-        data.dri[i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[i] - data.ri_prime[i] * data.dr1[i])
+        data.dri[i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri[i] - data.ri[i] * data.dr1[i])
 
 
 def calc_d2noe(data, i, frq_num, get_d2r1, params):
@@ -194,8 +92,8 @@ def calc_d2noe(data, i, frq_num, get_d2r1, params):
     else:
         print "Num params: " + `data.num_params`
         for j in xrange(data.num_params):
-            a = data.ri_prime[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
-            b = data.r1[i] * (data.dri_prime[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri_prime[i] - data.r1[i] * data.d2ri_prime[i, j])
+            a = data.ri[i] * (2.0 * data.dr1[i, j] * data.dr1[i] - data.r1[i] * data.d2r1[i, j])
+            b = data.r1[i] * (data.dri[i, j] * data.dr1[i] + data.dr1[i, j] * data.dri[i] - data.r1[i] * data.d2ri[i, j])
             data.d2ri[i, j] = data.g_ratio * (1.0 / data.r1[i]**3) * (a - b)
 
 
@@ -221,7 +119,7 @@ def calc_r1(data, i, frq_num, params):
     # Calculate the r1 value.
     func_ri_prime(data.r1_data)
 
-    return data.r1_data.ri_prime[i]
+    return data.r1_data.ri[i]
 
 
 def calc_dr1(data, i, frq_num, params):
@@ -255,9 +153,9 @@ def calc_dr1(data, i, frq_num, params):
 
     # Calculate the dr1 value.
     for j in xrange(data.num_params):
-        data.r1_data.create_dri_prime[j](data.r1_data, j)
+        data.r1_data.create_dri[j](data.r1_data, j)
 
-    return data.r1_data.dri_prime[i]
+    return data.r1_data.dri[i]
 
 
 def calc_d2r1(data, i, frq_num, params):
@@ -275,13 +173,13 @@ def calc_d2r1(data, i, frq_num, params):
     # Calculate the dr1 value.
     for j in xrange(data.num_params):
         for k in xrange(j + 1):
-            if data.r1_data.create_d2ri_prime[j][k]:
-                data.r1_data.create_d2ri_prime[j][k](data.r1_data, j, k)
+            if data.r1_data.create_d2ri[j][k]:
+                data.r1_data.create_d2ri[j][k](data.r1_data, j, k)
                 # Make the Hessian symmetric.
                 if i != j:
-                    data.r1_data.d2ri_prime[i, k, j] = data.r1_data.d2ri_prime[i, j, k]
+                    data.r1_data.d2ri[i, k, j] = data.r1_data.d2ri[i, j, k]
 
-    return data.r1_data.d2ri_prime[i]
+    return data.r1_data.d2ri[i]
 
 
 
@@ -289,18 +187,18 @@ def calc_d2r1(data, i, frq_num, params):
 #######################
 
 def extract_r1(data, i, frq_num, params):
-    """Get the R1 value from data.ri_prime"""
+    """Get the R1 value from data.ri"""
 
-    return data.ri_prime[data.noe_r1_table[i]]
+    return data.ri[data.noe_r1_table[i]]
 
 
 def extract_dr1(data, i, frq_num, params):
-    """Get the dR1 value from data.dri_prime"""
+    """Get the dR1 value from data.dri"""
 
-    return data.dri_prime[data.noe_r1_table[i]]
+    return data.dri[data.noe_r1_table[i]]
 
 
 def extract_d2r1(data, i, frq_num, params):
-    """Get the d2R1 value from data.d2ri_prime"""
+    """Get the d2R1 value from data.d2ri"""
 
-    return data.d2ri_prime[data.noe_r1_table[i]]
+    return data.d2ri[data.noe_r1_table[i]]

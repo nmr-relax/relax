@@ -304,44 +304,44 @@
 def func_ri_prime(data):
     """Calculate the transformed relaxation values."""
 
-    data.ri_prime = data.dip_comps_func * data.dip_jw_comps_func + data.csa_comps_func * data.csa_jw_comps_func
+    return data.dip_comps_func * data.dip_jw_comps_func + data.csa_comps_func * data.csa_jw_comps_func
 
 
 def func_ri_prime_rex(data):
     """Calculate the transformed relaxation values."""
 
-    data.ri_prime = data.dip_comps_func * data.dip_jw_comps_func + data.csa_comps_func * data.csa_jw_comps_func + data.rex_comps_func
+    return data.dip_comps_func * data.dip_jw_comps_func + data.csa_comps_func * data.csa_jw_comps_func + data.rex_comps_func
 
 
 # Transformed relaxation gradients.
 ###################################
 
 # dRi/dJ(w)
-def func_dri_djw_prime(data, jw_index):
+def func_dri_djw_prime(data):
     """Spectral density parameter derivatives."""
 
-    data.dri_prime[:, jw_index] = data.dip_comps_func * data.dip_jw_comps_grad[:, jw_index] + data.csa_comps_func * data.csa_jw_comps_grad[:, jw_index]
+    return data.dip_comps_func * data.dip_jw_comps_grad + data.csa_comps_func * data.csa_jw_comps_grad
 
 
 # dRi/dRex
-def func_dri_drex_prime(data, rex_index):
+def func_dri_drex_prime(data):
     """Chemical exchange derivatives."""
 
-    data.dri_prime[:, rex_index] = data.rex_comps_grad
+    return data.rex_comps_grad
 
 
 # dRi/dr
-def func_dri_dr_prime(data, r_index):
+def func_dri_dr_prime(data):
     """Bond length derivatives."""
 
-    data.dri_prime[:, r_index] = data.dip_comps_grad * data.dip_jw_comps_func
+    return data.dip_comps_grad * data.dip_jw_comps_func
 
 
 # dRi/dCSA
-def func_dri_dcsa_prime(data, csa_index):
+def func_dri_dcsa_prime(data):
     """CSA derivatives."""
 
-    data.dri_prime[:, csa_index] = data.csa_comps_grad * data.csa_jw_comps_func
+    return data.csa_comps_grad * data.csa_jw_comps_func
 
 
 
@@ -351,7 +351,7 @@ def func_dri_dcsa_prime(data, csa_index):
 
 
 # d2Ri/dJ(w)i.dJ(w)j
-def func_d2ri_djwidjwj_prime(data, jw_i_index, jw_j_index):
+def func_d2ri_djwidjwj_prime(data):
     """Spectral density parameter / spectral density parameter Hessian.
 
       d2R1()
@@ -371,11 +371,11 @@ def func_d2ri_djwidjwj_prime(data, jw_i_index, jw_j_index):
     dJwi.dJwj
     """
 
-    data.d2ri_prime[:, jw_i_index, jw_j_index] = data.d2ri_prime[:, jw_j_index, jw_i_index] = data.dip_comps_func * data.dip_jw_comps_hess[:, jw_i_index, jw_j_index] + data.csa_comps_func * data.csa_jw_comps_hess[:, jw_i_index, jw_j_index]
+    return data.dip_comps_func * data.dip_jw_comps_hess + data.csa_comps_func * data.csa_jw_comps_hess
 
 
 # d2Ri/dJ(w).dCSA
-def func_d2ri_djwdcsa_prime(data, jw_index, csa_index):
+def func_d2ri_djwdcsa_prime(data):
     """Spectral density parameter / CSA Hessian.
 
      d2R1()
@@ -395,11 +395,11 @@ def func_d2ri_djwdcsa_prime(data, jw_index, csa_index):
     dJw.dcsa
     """
 
-    data.d2ri_prime[:, jw_index, csa_index] = data.d2ri_prime[:, csa_index, jw_index] = data.csa_comps_grad * data.csa_jw_comps_grad[:, jw_index]
+    return data.csa_comps_grad * data.csa_jw_comps_grad
 
 
 # d2Ri/dJ(w).dr
-def func_d2ri_djwdr_prime(data, jw_index, r_index):
+def func_d2ri_djwdr_prime(data):
     """Spectral density parameter / bond length Hessian.
 
     d2R1()
@@ -419,11 +419,11 @@ def func_d2ri_djwdr_prime(data, jw_index, r_index):
     dJw.dr
     """
 
-    data.d2ri_prime[:, jw_index, r_index] = data.d2ri_prime[:, r_index, jw_index] = data.dip_comps_grad * data.dip_jw_comps_grad[:, jw_index]
+    return data.dip_comps_grad * data.dip_jw_comps_grad
 
 
 # d2Ri/dCSA^2
-def func_d2ri_dcsa2_prime(data, csa_i_index, csa_j_index):
+def func_d2ri_dcsa2_prime(data):
     """CSA / CSA Hessian.
 
      d2R1()
@@ -443,11 +443,11 @@ def func_d2ri_dcsa2_prime(data, csa_i_index, csa_j_index):
     dcsa**2
     """
 
-    data.d2ri_prime[:, csa_i_index, csa_j_index] = data.d2ri_prime[:, csa_j_index, csa_i_index] = data.csa_comps_hess * data.csa_jw_comps_func
+    return data.csa_comps_hess * data.csa_jw_comps_func
 
 
 # d2Ri/dr^2
-def func_d2ri_dr2_prime(data, r_i_index, r_j_index):
+def func_d2ri_dr2_prime(data):
     """Bond length / bond length Hessian.
 
     d2R1()
@@ -467,4 +467,4 @@ def func_d2ri_dr2_prime(data, r_i_index, r_j_index):
     dr**2
     """
 
-    data.d2ri_prime[:, r_i_index, r_j_index] = data.d2ri_prime[:, r_j_index, r_i_index] = data.dip_comps_hess * data.dip_jw_comps_func
+    return data.dip_comps_hess * data.dip_jw_comps_func

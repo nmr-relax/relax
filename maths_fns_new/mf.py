@@ -42,6 +42,7 @@ class Mf:
 
         This class should be initialised before every calculation.
 
+
         Arguments
         ~~~~~~~~~
 
@@ -62,6 +63,91 @@ class Mf:
         diff_params:  An array with the diffusion parameters.
 
         scaling_matrix:  A diagonal matrix of scaling factors.
+
+
+
+        Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The R1 and R2 equations are left alone, while the NOE is calculated from the R1 and
+        sigma_noe values.
+
+
+        The relaxation equations
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Data structure:  data.ri
+        Dimension:  1D, (relaxation data)
+        Type:  Numeric array, Float64
+        Dependencies:  data.ri_prime
+        Required by:  data.chi2, data.dchi2, data.d2chi2
+
+
+        R1()  =  R1'()
+
+
+        R2()  =  R2'()
+
+                       gH   sigma_noe()
+        NOE()  =  1 +  -- . -----------
+                       gN      R1()
+
+
+
+        The relaxation gradients
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Data structure:  data.dri
+        Dimension:  2D, (parameters, relaxation data)
+        Type:  Numeric array, Float64
+        Dependencies:  data.ri_prime, data.dri_prime
+        Required by:  data.dchi2, data.d2chi2
+
+
+         dR1()       dR1'()
+        -------  =  -------
+        dthetaj     dthetaj
+
+
+         dR2()       dR2'()
+        -------  =  -------
+        dthetaj     dthetaj
+
+
+         dNOE()     gH      1      /        dsigma_noe()                    dR1()  \ 
+        -------  =  -- . ------- . | R1() . ------------  -  sigma_noe() . ------- |
+        dthetaj     gN   R1()**2   \          dthetaj                      dthetaj /
+
+
+
+        The relaxation Hessians
+        ~~~~~~~~~~~~~~~~~~~~~~~
+
+        Data structure:  data.d2ri
+        Dimension:  3D, (parameters, parameters, relaxation data)
+        Type:  Numeric array, Float64
+        Dependencies:  data.ri_prime, data.dri_prime, data.d2ri_prime
+        Required by:  data.d2chi2
+
+
+             d2R1()             d2R1'()
+        ---------------  =  ---------------
+        dthetai.dthetaj     dthetai.dthetaj
+
+
+             d2R2()             d2R2'()
+        ---------------  =  ---------------
+        dthetai.dthetaj     dthetai.dthetaj
+
+
+            d2NOE()         gH      1      /               /      dR1()     dR1()                  d2R1()     \ 
+        ---------------  =  -- . ------- . | sigma_noe() . | 2 . ------- . -------  -  R1() . --------------- |
+        dthetai.dthetaj     gN   R1()**3   \               \     dthetai   dthetaj            dthetai.dthetaj /
+
+                     / dsigma_noe()    dR1()       dR1()    dsigma_noe()             d2sigma_noe()  \ \ 
+            - R1() . | ------------ . -------  +  ------- . ------------  -  R1() . --------------- | |
+                     \   dthetai      dthetaj     dthetai     dthetaj               dthetai.dthetaj / /
+
 
 
         The chi-sqared equation
@@ -314,11 +400,12 @@ class Mf:
         data.create_ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe values.
-        data.create_ri_prime(data)
+        data.ri = data.create_ri_prime(data)
 
-        # Calculate the R1, R2, and NOE values.
-        data.ri = data.ri_prime * 1.0
-        ri(data, params)
+        # Calculate the NOE values.
+        for m in xrange(data.num_ri):
+            if data.create_ri[m]:
+                data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
 
         # Calculate the chi-squared value.
         data.chi2 = chi2(data.relax_data, data.ri, data.errors)
@@ -366,11 +453,12 @@ class Mf:
         data.create_ri_comps(data, params)
 
         # Calculate the R1, R2, and sigma_noe values.
-        data.create_ri_prime(data)
+        data.ri = data.create_ri_prime(data)
 
-        # Calculate the R1, R2, and NOE values.
-        data.ri = data.ri_prime * 1.0
-        ri(data, params)
+        # Calculate the NOE values.
+        for m in xrange(data.num_ri):
+            if data.create_ri[m]:
+                data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
 
         # Calculate the chi-squared value.
         data.chi2 = chi2(data.relax_data, data.ri, data.errors)
@@ -428,11 +516,12 @@ class Mf:
             data.create_ri_comps(data, data.param_values)
 
             # Calculate the R1, R2, and sigma_noe values.
-            data.create_ri_prime(data)
+            data.ri = data.create_ri_prime(data)
 
-            # Calculate the R1, R2, and NOE values.
-            data.ri = data.ri_prime * 1.0
-            ri(data, data.param_values)
+            # Calculate the NOE values.
+            for m in xrange(data.num_ri):
+                if data.create_ri[m]:
+                    data.create_ri[m](data, m, data.remap_table[m], data.get_r1, data.param_values)
 
             # Calculate the chi-squared value.
             data.chi2 = chi2(data.relax_data, data.ri, data.errors)
@@ -493,11 +582,12 @@ class Mf:
             data.create_ri_comps(data, params)
 
             # Calculate the R1, R2, and sigma_noe values.
-            data.create_ri_prime(data)
+            data.ri = data.create_ri_prime(data)
 
-            # Calculate the R1, R2, and NOE values.
-            data.ri = data.ri_prime * 1.0
-            ri(data, params)
+            # Calculate the NOE values.
+            for m in xrange(data.num_ri):
+                if data.create_ri[m]:
+                    data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
 
             # Calculate the chi-squared value.
             data.chi2 = chi2(data.relax_data, data.ri, data.errors)
@@ -532,24 +622,26 @@ class Mf:
         if data.calc_djw_comps:
             data.calc_djw_comps(data, params)
 
-        # Calculate the spectral density gradients.
-        for j in xrange(data.num_params):
+        # Loop over the parameters.
+        for j in xrange(data.total_num_params):
+            # Calculate the spectral density gradients.
             if data.calc_djw[j]:
-                data.djw[:, :, j] = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+                data.djw = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
 
-        # Calculate the relaxation gradient components.
-        data.create_dri_comps(data, params)
+            # Calculate the relaxation gradient components.
+            data.create_dri_comps(data, params)
 
-        # Calculate the R1, R2, and sigma_noe gradients.
-        for j in xrange(data.num_params):
-            data.create_dri_prime[j](data, j)
+            # Calculate the R1, R2, and sigma_noe gradients.
+            data.dri = data.create_dri_prime[j](data)
+            print data.dri
 
-        # Calculate the R1, R2, and NOE gradients.
-        data.dri = data.dri_prime * 1.0
-        dri(data, params)
+            # Loop over the relaxation values and modify the NOE gradients.
+            for m in xrange(data.num_ri):
+                if data.create_dri[m]:
+                    data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params)
 
-        # Calculate the chi-squared gradient.
-        data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
+            # Calculate the chi-squared gradient.
+            data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri, data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -1186,8 +1278,8 @@ class Mf:
 
         # Empty spectral density values, gradients, and Hessians.
         data.jw = zeros((data.num_frq, 5), Float64)
-        data.djw = zeros((data.num_frq, 5, data.total_num_params), Float64)
-        data.d2jw = zeros((data.num_frq, 5, data.total_num_params, data.total_num_params), Float64)
+        data.djw = zeros((data.num_frq, 5), Float64)
+        data.d2jw = zeros((data.num_frq, 5), Float64)
 
         # Calculate the fixed components of the dipolar and CSA constants.
         data.csa_const_fixed = zeros(data.num_frq, Float64)
@@ -1199,45 +1291,40 @@ class Mf:
         data.dip_const_func = 0.0
         data.dip_const_grad = 0.0
         data.dip_const_hess = 0.0
-        data.csa_const_func = zeros((data.num_frq), Float64)
-        data.csa_const_grad = zeros((data.num_frq), Float64)
-        data.csa_const_hess = zeros((data.num_frq), Float64)
+        data.csa_const_func = zeros(data.num_frq, Float64)
+        data.csa_const_grad = zeros(data.num_frq, Float64)
+        data.csa_const_hess = zeros(data.num_frq, Float64)
 
         # Components of the transformed relaxation equations.
-        data.dip_comps_func = zeros((data.num_ri), Float64)
-        data.csa_comps_func = zeros((data.num_ri), Float64)
-        data.rex_comps_func = zeros((data.num_ri), Float64)
-        data.dip_jw_comps_func = zeros((data.num_ri), Float64)
-        data.csa_jw_comps_func = zeros((data.num_ri), Float64)
+        data.dip_comps_func = zeros(data.num_ri, Float64)
+        data.csa_comps_func = zeros(data.num_ri, Float64)
+        data.rex_comps_func = zeros(data.num_ri, Float64)
+        data.dip_jw_comps_func = zeros(data.num_ri, Float64)
+        data.csa_jw_comps_func = zeros(data.num_ri, Float64)
 
         # First partial derivative components of the transformed relaxation equations.
-        data.dip_comps_grad = zeros((data.num_ri), Float64)
-        data.csa_comps_grad = zeros((data.num_ri), Float64)
-        data.rex_comps_grad = zeros((data.num_ri), Float64)
-        data.dip_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
-        data.csa_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
+        data.dip_comps_grad = zeros(data.num_ri, Float64)
+        data.csa_comps_grad = zeros(data.num_ri, Float64)
+        data.rex_comps_grad = zeros(data.num_ri, Float64)
+        data.dip_jw_comps_grad = zeros(data.num_ri, Float64)
+        data.csa_jw_comps_grad = zeros(data.num_ri, Float64)
 
         # First partial derivative components of the transformed relaxation equations.
-        data.dip_comps_hess = zeros((data.num_ri), Float64)
-        data.csa_comps_hess = zeros((data.num_ri), Float64)
-        data.rex_comps_hess = zeros((data.num_ri), Float64)
-        data.dip_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
-        data.csa_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
-
-        # Transformed relaxation values, gradients, and Hessians.
-        data.ri_prime = zeros((data.num_ri), Float64)
-        data.dri_prime = zeros((data.num_ri, data.total_num_params), Float64)
-        data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        data.dip_comps_hess = zeros(data.num_ri, Float64)
+        data.csa_comps_hess = zeros(data.num_ri, Float64)
+        data.rex_comps_hess = zeros(data.num_ri, Float64)
+        data.dip_jw_comps_hess = zeros(data.num_ri, Float64)
+        data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
 
         # Data structures containing the Ri values.
-        data.ri = zeros((data.num_ri), Float64)
-        data.dri = zeros((data.num_ri, data.total_num_params), Float64)
-        data.d2ri = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        data.ri = zeros(data.num_ri, Float64)
+        data.dri = zeros(data.num_ri, Float64)
+        data.d2ri = zeros(data.num_ri, Float64)
 
         # Data structures containing the R1 values at the position of and corresponding to the NOE.
-        data.r1 = zeros((data.num_ri), Float64)
-        data.dr1 = zeros((data.num_ri, data.total_num_params), Float64)
-        data.d2r1 = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        data.r1 = zeros(data.num_ri, Float64)
+        data.dr1 = zeros(data.num_ri, Float64)
+        data.d2r1 = zeros(data.num_ri, Float64)
 
         # Data structures containing the chi-squared values.
         data.chi2 = 0.0
@@ -1270,20 +1357,20 @@ class Mf:
         r1_data.dip_comps_grad = zeros(data.num_ri, Float64)
         r1_data.csa_comps_grad = zeros(data.num_ri, Float64)
         r1_data.rex_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.dip_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
-        r1_data.csa_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
+        r1_data.dip_jw_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.csa_jw_comps_grad = zeros(data.num_ri, Float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
         r1_data.dip_comps_hess = zeros(data.num_ri, Float64)
         r1_data.csa_comps_hess = zeros(data.num_ri, Float64)
         r1_data.rex_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.dip_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
-        r1_data.csa_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        r1_data.dip_jw_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
-        r1_data.ri_prime = zeros(data.num_ri, Float64)
-        r1_data.dri_prime = zeros((data.num_ri, data.total_num_params), Float64)
-        r1_data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        r1_data.ri = zeros(data.num_ri, Float64)
+        r1_data.dri = zeros(data.num_ri, Float64)
+        r1_data.d2ri = zeros(data.num_ri, Float64)
 
         # Place a few function arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
         r1_data.create_dri_prime = data.create_dri_prime

@@ -73,7 +73,7 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
     """
 
     # Calculate the chi-squared gradient.
-    return -2.0 * sum((data - back_calc_vals) / (errors**2) * transpose(back_calc_grad), axis=1)
+    return -2.0 * sum((data - back_calc_vals) / (errors**2) * back_calc_grad)
 
 
 # Chi-squared Hessian.
