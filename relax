@@ -44,7 +44,7 @@ except ImportError:
 
 from data import Data
 from file_ops import File_ops
-from map import Map
+from dx.map import Map
 from model_free import Model_free
 from model_selection.model_selection import Model_selection
 from palmer import Palmer

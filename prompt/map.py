@@ -1,4 +1,5 @@
 from Numeric import zeros
+from re import match
 
 
 class Map:
@@ -8,17 +9,17 @@ class Map:
         self.relax = relax
 
 
-    def map(self, model=None, inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point_file="point", point=None):
-        """Function for creating a map of the given space.
-        
-        OpenDX is the program used to view the output.  Currently only 3D and 4D mappings are
-        implemented.
+    def map(self, model=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point"):
+        """Function for creating a map of the given space in OpenDX format.
 
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         model:  The name of the model.
+
+        map_type:  The type of map to create.  For example the default, a 3D isosurface, the type is
+        "Iso3D".  See below for more details.
 
         inc:  The number of increments to map in each dimension.  This value controls the resolution
         of the map.
@@ -46,6 +47,28 @@ class Map:
         dir:  The directory to output files to.  Set this to 'None' if you do not want the files to
         be placed in subdirectory.  If the directory does not exist, it will be created.
 
+        point:  An array of parameter values where a point in the map, shown as a red sphere, will
+        be placed.  The length must be equal to the number of parameters.
+
+        point_file:  The name of that the point output files will be prefixed with.
+
+
+        Map type
+        ~~~~~~~~
+
+        The map type can be changed by supplying the 'map_type' keyword argument.  Here is a list of
+        currently supported map types:
+        _____________________________________________________________________________
+        |                                           |                               |
+        | Surface type                              | Patterns                      |
+        |-------------------------------------------|-------------------------------|
+        |                                           |                               |
+        | 3D isosurface                             | '^[Ii]so3[Dd]'                |
+        |-------------------------------------------|-------------------------------|
+
+        Pattern syntax is simply regular expression syntax where square brackets [] means any
+        character within the brackets, ^ means the start of the string, etc.
+
 
         Examples
         ~~~~~~~~
@@ -58,13 +81,13 @@ class Map:
         relax> map('m5', 20, "map", "dx")
         relax> map('m5', file="map", dir="dx")
         relax> map(model='m5', inc=20, file="map", dir="dx")
-        relax> map(model='m5', inc=20, swap=[0, 1, 2], file="map", dir="dx")
+        relax> map(model='m5', type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx")
 
 
         The following commands will swap the S2s and ts axes of this map.
 
         relax> map('m5', swap=[0, 2, 1])
-        relax> map(model='m5', inc=20, swap=[0, 2, 1], file="map", dir="dx")
+        relax> map(model='m5', type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx")
 
 
         To map the model-free space 'm4' defined by the parameters {S2, te, Rex}, name the results
@@ -152,25 +175,31 @@ class Map:
             print "The directory name must be a string or 'None'."
             return
 
-        # Point file.
+        # Point.
         if point != None:
-            if type(point_file) != str:
-                print "The point file name must be a string."
-                return
-            elif type(point) != list:
+            if type(point) != list:
                 print "The point argument must be an array."
                 return
             elif len(point) != n:
                 print "The point array must be of length " + `n`
+                return
+            elif type(point_file) != str:
+                print "The point file name must be a string."
                 return
             for i in range(n):
                 if type(point[i]) != int and type(point[i]) != float:
                     print "The elements of the point array must be numbers."
                     return
 
-        # Size of map.
-        if n != 3 and n != 4:
-            print `n` + "D space mapping is not implemented."
+        # Space type.
+        if type(map_type) != str:
+            print "The map_type argument must be a string."
             return
-        
-        self.relax.map.map_space(model=model, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point_file=point_file, point=point)
+        if match("^[Ii]so3[Dd]", map_type):
+            if n != 3:
+                print "The 3D isosurface map requires a strictly 3 parameter model."
+                return
+            self.relax.map.Iso3D.map_space(model=model, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file)
+        else:
+            print "The map type '" + map_type + "' is not supported."
+            return

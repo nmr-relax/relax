@@ -42,7 +42,7 @@ def create_jw_struct(data, calc_jw):
 
 def calc_iso_jw(data):
     """Spectral density function.
-    
+
     Calculate the isotropic spectral density value for the original model-free formula with no
     parameters.
 
@@ -61,7 +61,7 @@ def calc_iso_jw(data):
 
 def calc_iso_s2_jw(data):
     """Spectral density function.
-    
+
     Calculate the isotropic spectral density value for the original model-free formula with the
     single parameter S2.
 
@@ -80,7 +80,7 @@ def calc_iso_s2_jw(data):
 
 def calc_iso_s2_te_jw(data):
     """Spectral density function.
-    
+
     Calculate the isotropic spectral density value for the original model-free formula with the
     parameters S2 and te.
 
@@ -99,7 +99,7 @@ def calc_iso_s2_te_jw(data):
 
 def calc_iso_s2f_s2s_ts_jw(data):
     """Spectral density function.
-    
+
     Calculate the isotropic spectral density value for the extended model-free formula with the
     parameters S2f, S2s, and ts.
 
@@ -118,7 +118,7 @@ def calc_iso_s2f_s2s_ts_jw(data):
 
 def calc_iso_s2f_tf_s2s_ts_jw(data):
     """Spectral density function.
-    
+
     Calculate the isotropic spectral density value for the extended model-free formula with the
     parameters S2f, tf, S2s, and ts.
 

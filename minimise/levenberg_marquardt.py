@@ -191,7 +191,7 @@ class Levenberg_marquardt(Min):
 
     def update(self):
         """Update function
-        
+
         Update the chi-squared value, chi-squared gradient vector, and derivative function matrix.
         """
 

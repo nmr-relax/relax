@@ -235,15 +235,15 @@ class Min:
         ~~~~~~~~~~~~~~~~~
 
         model:  The name of the model.
-        
+
         func_tol:  The function tolerance.  This is used to terminate minisation once the function
         value between iterations is less than the tolerance.  The default value is 1e-25.
-        
+
         max_iter:  The maximum number of iterations.  The default value is 1e7.
-        
+
         constraints:  A flag specifying whether the parameters should be constrained.  The default
         is to turn constraints on (constraints=1).
-        
+
         print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
         output, one is intermediate output, while two is maximal output.  The default value is 1.
         """

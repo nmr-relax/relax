@@ -6,7 +6,7 @@ from Numeric import Float64, zeros
 
 def calc_iso_s2_te_jw_comps(data):
     """Spectral density component function.
-    
+
     Calculate the components of the isotropic spectral density value for the original model-free
     formula with the parameters S2 and te.
 
@@ -110,7 +110,7 @@ def calc_iso_s2f_s2s_ts_jw_comps(data):
 
 def calc_iso_s2f_tf_s2s_ts_jw_comps(data):
     """Spectral density component function.
-    
+
     Calculate the components of the isotropic spectral density value for the extended model-free
     formula with the parameters S2f, tf, S2s, and ts.
 

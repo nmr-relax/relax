@@ -29,19 +29,28 @@ class Macro_class(Generic_functions):
     def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Macro for loading R1, R2, or NOE relaxation data.
 
+
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-        frq_label:    A string to label the field strength, ie '600'.  Can be anything as long as
-            data collected at the same field strength have the same label.
-        frq:        The spectrometer frequency in Hz.
-        file_name:    The name of the file containing the relaxation data.
-        num_col:    The residue number column (the default is 0, ie the first column).
-        name_col:    The residue name column (the default is 1).
-        data_col:    The relaxation data column (the default is 2).
-        error_col:    The experimental error column (the default is 3).
-        sep:        The column separator (the default is white space).
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength in MHz, ie '600'.  This string can be anything as long as 
+        data collected at the same field strength have the same label.
+
+        frq:  The spectrometer frequency in Hz.
+
+        file_name:  The name of the file containing the relaxation data.
+
+        num_col:  The residue number column (the default is 0, ie the first column).
+
+        name_col:  The residue name column (the default is 1).
+
+        data_col:  The relaxation data column (the default is 2).
+
+        error_col:  The experimental error column (the default is 3).
+
+        sep:  The column separator (the default is white space).
 
 
         Examples
@@ -69,9 +78,6 @@ class Macro_class(Generic_functions):
         separated by the symbol '%'
 
         relax> load_relax_data('R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
-
-
-        FIN
         """
 
         # Arguments
@@ -141,10 +147,13 @@ class Macro_class(Generic_functions):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        file_name:    The name of the file containing the sequence data.
-        num_col:    The residue number column (the default is 0, ie the first column).
-        name_col:    The residue name column (the default is 1).
-        sep:        The column separator (the default is white space).
+        file_name:  The name of the file containing the sequence data.
+
+        num_col:  The residue number column (the default is 0, ie the first column).
+
+        name_col:  The residue name column (the default is 1).
+
+        sep:  The column separator (the default is white space).
 
 
         Examples
@@ -173,9 +182,6 @@ class Macro_class(Generic_functions):
 
         relax> load_sequence('noe.600.out', 1, 5, ',')
         relax> load_sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',')
-
-
-        FIN
         """
 
         # Arguments

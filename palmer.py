@@ -486,7 +486,7 @@ class Palmer(Common_ops):
 
     def stage_initial_cv(self):
         """Initial stage function for cross validation.
-        
+
         Creation of the files for the Modelfree calculations for the models in self.relax.data.runs
         """
 
