@@ -636,34 +636,34 @@ def calc_aniso_dti(data, diff_data):
     ########################
 
     # t-1.
-    data.dti[1, 1] = 12.0 * data.t_m1_comp_sqrd
-    if data.dti[1, 1] == 0.0:
-        data.dti[1, 1] = 1e99
+    data.dti[2, 1] = 12.0 * data.t_m1_comp_sqrd
+    if data.dti[2, 1] == 0.0:
+        data.dti[2, 1] = 1e99
     else:
-        data.dti[1, 1] = 1.0 / data.dti[1, 1]
+        data.dti[2, 1] = 1.0 / data.dti[2, 1]
 
     # t0.
-    data.dti[1, 2] = 18.0 * data.mu * data.t_0_comp_sqrd
-    if data.dti[1, 2] == 0.0:
+    data.dti[2, 2] = 18.0 * data.mu * data.t_0_comp_sqrd
+    if data.dti[2, 2] == 0.0:
         if data.mu != 0.0:
-            data.dti[1, 2] = 1e99
+            data.dti[2, 2] = 1e99
     else:
-        data.dti[1, 2] = diff_data.params[2] / data.dti[1, 2]
+        data.dti[2, 2] = diff_data.params[2] / data.dti[2, 2]
 
     # t1.
-    data.dti[1, 3] = -12.0 * data.t_1_comp_sqrd
-    if data.dti[1, 3] == 0.0:
-        data.dti[1, 3] = 1e99
+    data.dti[2, 3] = -12.0 * data.t_1_comp_sqrd
+    if data.dti[2, 3] == 0.0:
+        data.dti[2, 3] = 1e99
     else:
-        data.dti[1, 3] = 1.0 / data.dti[1, 3]
+        data.dti[2, 3] = 1.0 / data.dti[2, 3]
 
     # t2.
-    data.dti[1, 4] = -18.0 * data.mu * data.t_2_comp_sqrd
-    if data.dti[1, 4] == 0.0:
+    data.dti[2, 4] = -18.0 * data.mu * data.t_2_comp_sqrd
+    if data.dti[2, 4] == 0.0:
         if data.mu != 0.0:
-            data.dti[1, 4] = 1e99
+            data.dti[2, 4] = 1e99
     else:
-        data.dti[1, 4] = diff_data.params[2] / data.dti[1, 4]
+        data.dti[2, 4] = diff_data.params[2] / data.dti[2, 4]
 
 
 
