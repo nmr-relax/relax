@@ -608,7 +608,6 @@ class Mf:
         Used in the minimisation of model-free parameters for a single residue.
         """
 
-        print "\nParams: " + `params`
         # Test if the function has already been called, otherwise run self.func.
         if sum(params == self.func_test) != self.total_num_params:
             self.func(params)
@@ -645,14 +644,6 @@ class Mf:
                 if data.create_dri[m]:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params)
 
-            print "jw:\n" + `data.jw`
-            print "ri_prime:\n" + `data.ri_prime`
-            print "ri:\n" + `data.ri`
-
-            print "djw:\n" + `data.djw`
-            print "dri_prime:\n" + `data.dri_prime`
-            print "dri:\n" + `data.dri`
-
             # Calculate the chi-squared gradient.
             data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri, data.errors)
 
@@ -660,9 +651,7 @@ class Mf:
         if self.scaling_flag:
             data.dchi2 = matrixmultiply(data.dchi2, self.scaling_matrix)
 
-        print "dchi2:\n" + `data.dchi2`
-
-        return data.dchi2
+        return data.dchi2 * 1.0
 
 
     def dfunc_local_tm(self, params):

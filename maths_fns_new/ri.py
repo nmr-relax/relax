@@ -76,13 +76,7 @@ def calc_dnoe(data, i, frq_num, get_dr1, params):
     if data.r1[i] == 0.0:
         data.dri[i] = 1e99
     else:
-        print "\n"
-        print "r1:        %-40.66g" % data.r1[i]
-        print "dri_prime: %-40.66g" % data.dri_prime[i]
-        print "ri_prime:  %-40.66g" % data.ri_prime[i]
-        print "dr1:       %-40.66g" % data.dr1[i]
         data.dri[i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[i] - data.ri_prime[i] * data.dr1[i])
-        print "dri:       %-40.66g" % data.dri[i]
 
 
 def calc_d2noe(data, i, frq_num, get_d2r1, params):
