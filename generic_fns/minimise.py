@@ -64,8 +64,17 @@ class Minimise:
         # Specific grid search function.
         grid_search = self.relax.specific_setup.setup('grid_search', function_type)
 
+        # Monte Carlo simulation grid search.
+        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
+            # Loop over the simulations.
+            for i in xrange(self.relax.data.sim_number[run]):
+                if print_flag:
+                    print "Simulation " + `i+1`
+                grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag-1, sim_index=i)
+
         # Grid search.
-        grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        else:
+            grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
 
 
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
@@ -81,5 +90,14 @@ class Minimise:
         # Specific minimisation function.
         minimise = self.relax.specific_setup.setup('minimise', function_type)
 
+        # Monte Carlo simulation minimisation.
+        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
+            # Loop over the simulations.
+            for i in xrange(self.relax.data.sim_number[run]):
+                if print_flag:
+                    print "Simulation " + `i+1`
+                minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag-1, sim_index=i)
+
         # Minimisation.
-        minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        else:
+            minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

@@ -54,7 +54,9 @@ minimise('newton', run=name)
 monte_carlo.setup(name, number=10)
 monte_carlo.create_data(name)
 monte_carlo.initial_values(name)
-#minimise('newton', run=name)
+minimise('newton', run=name)
+monte_carlo.error_analysis(name)
+#print self.relax.data.res[name][0]
 
 # Finish.
 write(run=name, file='results', force=1)

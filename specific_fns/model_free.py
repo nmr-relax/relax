@@ -132,7 +132,7 @@ class Model_free:
                     self.param_names.append(self.relax.data.res[self.run][i].params[j])
 
 
-    def assemble_param_vector(self, index=None, param_set=None):
+    def assemble_param_vector(self, index=None, sim_index=None, param_set=None):
         """Function for assembling various pieces of data into a Numeric parameter array."""
 
         # Initialise.
@@ -140,8 +140,30 @@ class Model_free:
         if param_set == None:
             param_set = self.param_set
 
+        # Monte Carlo diffusion tensor parameters.
+        if sim_index != None and (param_set == 'diff' or param_set == 'all'):
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].Dratio_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].theta_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].phi_sim[sim_index])
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                param_vector.append(self.relax.data.diff[self.run].Dx_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].Dy_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].Dz_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].alpha_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].beta_sim[sim_index])
+                param_vector.append(self.relax.data.diff[self.run].gamma_sim[sim_index])
+
         # Diffusion tensor parameters.
-        if param_set == 'diff' or param_set == 'all':
+        elif param_set == 'diff' or param_set == 'all':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
                 param_vector.append(self.relax.data.diff[self.run].tm)
@@ -179,6 +201,8 @@ class Model_free:
                     if self.relax.data.res[self.run][i].params[j] == 'tm':
                         if self.relax.data.res[self.run][i].tm == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].tm_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].tm)
 
@@ -186,6 +210,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'S2':
                         if self.relax.data.res[self.run][i].s2 == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].s2_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].s2)
 
@@ -193,6 +219,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'S2f':
                         if self.relax.data.res[self.run][i].s2f == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].s2f_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].s2f)
 
@@ -200,6 +228,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'S2s':
                         if self.relax.data.res[self.run][i].s2s == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].s2s_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].s2s)
 
@@ -207,6 +237,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'te':
                         if self.relax.data.res[self.run][i].te == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].te_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].te)
 
@@ -214,6 +246,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'tf':
                         if self.relax.data.res[self.run][i].tf == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].tf_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].tf)
 
@@ -221,6 +255,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'ts':
                         if self.relax.data.res[self.run][i].ts == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].ts_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].ts)
 
@@ -228,6 +264,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'Rex':
                         if self.relax.data.res[self.run][i].rex == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].rex_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].rex)
 
@@ -235,6 +273,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'r':
                         if self.relax.data.res[self.run][i].r == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].r_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].r)
 
@@ -242,6 +282,8 @@ class Model_free:
                     elif self.relax.data.res[self.run][i].params[j] == 'CSA':
                         if self.relax.data.res[self.run][i].csa == None:
                             param_vector.append(0.0)
+                        elif sim_index != None:
+                            param_vector.append(self.relax.data.res[self.run][i].csa_sim[sim_index])
                         else:
                             param_vector.append(self.relax.data.res[self.run][i].csa)
 
@@ -821,14 +863,39 @@ class Model_free:
             return 'all'
 
 
-    def disassemble_param_vector(self, index=None):
+    def disassemble_param_vector(self, index=None, sim_index=None):
         """Function for disassembling the parameter vector."""
 
         # Initialise.
         param_index = 0
 
+        # Monte Carlo diffusion tensor parameters.
+        if sim_index != None and (self.param_set == 'diff' or self.param_set == 'all'):
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                param_index = param_index + 1
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                self.relax.data.diff[self.run].Dratio_sim[sim_index] = self.param_vector[1]
+                self.relax.data.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
+                self.relax.data.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
+                param_index = param_index + 4
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                self.relax.data.diff[self.run].Dx_sim[sim_index] = self.param_vector[0]
+                self.relax.data.diff[self.run].Dy_sim[sim_index] = self.param_vector[1]
+                self.relax.data.diff[self.run].Dz_sim[sim_index] = self.param_vector[2]
+                self.relax.data.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
+                self.relax.data.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
+                self.relax.data.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
+                param_index = param_index + 6
+
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        elif self.param_set == 'diff' or self.param_set == 'all':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
@@ -868,43 +935,73 @@ class Model_free:
                 for j in xrange(len(self.relax.data.res[self.run][i].params)):
                     # tm.
                     if self.relax.data.res[self.run][i].params[j] == 'tm':
-                        self.relax.data.res[self.run][i].tm = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].tm = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].tm_sim[sim_index] = self.param_vector[param_index]
 
                     # S2.
                     elif self.relax.data.res[self.run][i].params[j] == 'S2':
-                        self.relax.data.res[self.run][i].s2 = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].s2 = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].s2_sim[sim_index] = self.param_vector[param_index]
 
                     # S2f.
                     elif self.relax.data.res[self.run][i].params[j] == 'S2f':
-                        self.relax.data.res[self.run][i].s2f = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].s2f = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].s2f_sim[sim_index] = self.param_vector[param_index]
 
                     # S2s.
                     elif self.relax.data.res[self.run][i].params[j] == 'S2s':
-                        self.relax.data.res[self.run][i].s2s = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].s2s = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].s2s_sim[sim_index] = self.param_vector[param_index]
 
                     # te.
                     elif self.relax.data.res[self.run][i].params[j] == 'te':
-                        self.relax.data.res[self.run][i].te = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].te = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].te_sim[sim_index] = self.param_vector[param_index]
 
                     # tf.
                     elif self.relax.data.res[self.run][i].params[j] == 'tf':
-                        self.relax.data.res[self.run][i].tf = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].tf = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].tf_sim[sim_index] = self.param_vector[param_index]
 
                     # ts.
                     elif self.relax.data.res[self.run][i].params[j] == 'ts':
-                        self.relax.data.res[self.run][i].ts = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].ts = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].ts_sim[sim_index] = self.param_vector[param_index]
 
                     # Rex.
                     elif self.relax.data.res[self.run][i].params[j] == 'Rex':
-                        self.relax.data.res[self.run][i].rex = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].rex = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].rex_sim[sim_index] = self.param_vector[param_index]
 
                     # r.
                     elif self.relax.data.res[self.run][i].params[j] == 'r':
-                        self.relax.data.res[self.run][i].r = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].r = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].r_sim[sim_index] = self.param_vector[param_index]
 
                     # CSA.
                     elif self.relax.data.res[self.run][i].params[j] == 'CSA':
-                        self.relax.data.res[self.run][i].csa = self.param_vector[param_index]
+                        if sim_index == None:
+                            self.relax.data.res[self.run][i].csa = self.param_vector[param_index]
+                        else:
+                            self.relax.data.res[self.run][i].csa_sim[sim_index] = self.param_vector[param_index]
 
                     # Unknown parameter.
                     else:
@@ -1181,7 +1278,7 @@ class Model_free:
         return self.param_vector
 
 
-    def grid_search(self, run, lower, upper, inc, constraints, print_flag):
+    def grid_search(self, run, lower, upper, inc, constraints, print_flag, sim_index=None):
         """The grid search function."""
 
         # Arguments.
@@ -1190,7 +1287,7 @@ class Model_free:
         self.inc = inc
 
         # Minimisation.
-        self.minimise(run=run, min_algor='grid', constraints=constraints, print_flag=print_flag)
+        self.minimise(run=run, min_algor='grid', constraints=constraints, print_flag=print_flag, sim_index=sim_index)
 
 
     def grid_search_setup(self, index=None):
@@ -1329,6 +1426,150 @@ class Model_free:
 
     def init_sim_values(self, run):
         """Function for initialising Monte Carlo parameter values."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Get the data names.
+        data_names = self.data_names()
+
+        # Exclusion list.
+        excluded_names = ['model', 'equation', 'params', 'scaling']
+
+        # List of diffusion tensor parameters.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                diff_params = ['tm']
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                diff_params = ['tm', 'Dratio', 'theta', 'phi']
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+
+        # Minimisation statistic object names.
+        min_objects = ['chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning']
+
+
+        # Test if Monte Carlo parameter values have already been set.
+        #############################################################
+
+        # Diffusion tensor parameters and non residue specific minimisation statistics.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Loop over the parameters.
+            for object_name in diff_params:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Test if the simulation object already exists.
+                if hasattr(self.relax.data.diff[self.run], sim_object_name):
+                    raise RelaxError, "Monte Carlo parameter values have already been set."
+
+            # Loop over the minimisation stats objects.
+            for object_name in min_objects:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Test if the simulation object already exists.
+                if hasattr(self.relax.data, sim_object_name):
+                    raise RelaxError, "Monte Carlo parameter values have already been set."
+
+        # Residue specific parameters.
+        if self.param_set != 'diff':
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Loop over all the data names.
+                for object_name in data_names:
+                    # Skip excluded names.
+                    if object_name in excluded_names:
+                        continue
+
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Test if the simulation object already exists.
+                    if hasattr(self.relax.data.res[self.run][i], sim_object_name):
+                        raise RelaxError, "Monte Carlo parameter values have already been set."
+
+
+        # Set the Monte Carlo parameter values.
+        #######################################
+
+        # Diffusion tensor parameters and non residue specific minimisation statistics.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Loop over the parameters.
+            for object_name in diff_params:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(self.relax.data.diff[self.run], sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(self.relax.data.diff[self.run], sim_object_name)
+
+                # Loop over the simulations.
+                for j in xrange(self.relax.data.sim_number[self.run]):
+                    # Copy and append the data.
+                    sim_object.append(deepcopy(getattr(self.relax.data.diff[self.run], object_name)))
+
+            # Loop over the minimisation stats objects.
+            for object_name in min_objects:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(self.relax.data, sim_object_name, {})
+
+                # Get the simulation object.
+                sim_object = getattr(self.relax.data, sim_object_name)
+
+                # Add the run.
+                sim_object[self.run] = []
+
+                # Loop over the simulations.
+                for j in xrange(self.relax.data.sim_number[self.run]):
+                    # Get the object.
+                    object = getattr(self.relax.data, object_name)
+
+                    # Copy and append the data.
+                    sim_object[self.run].append(deepcopy(object[self.run]))
+
+        # Residue specific parameters.
+        if self.param_set != 'diff':
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Loop over all the data names.
+                for object_name in data_names:
+                    # Skip excluded names.
+                    if object_name in excluded_names:
+                        continue
+
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Create the simulation object.
+                    setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+
+                    # Get the simulation object.
+                    sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+
+                    # Loop over the simulations.
+                    for j in xrange(self.relax.data.sim_number[self.run]):
+                        # Copy and append the data.
+                        sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
 
 
     def initialise_mf_data(self, data, run):
@@ -1776,7 +2017,7 @@ class Model_free:
         return labels, tick_locations, tick_values
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, print_flag=0, sim_index=None):
         """Model-free minimisation.
 
         Three types of parameter sets exist for which minimisation is different.  These are:
@@ -1914,7 +2155,7 @@ class Model_free:
 
             else:
                 # Create the initial parameter vector.
-                self.param_vector = self.assemble_param_vector(index=index)
+                self.param_vector = self.assemble_param_vector(index=index, sim_index=sim_index)
 
                 # Diagonal scaling.
                 self.assemble_scaling_matrix(index=index)
@@ -1984,7 +2225,10 @@ class Model_free:
                 remap_table = [[0]]
                 noe_r1_table = [[None]]
                 ri_labels = [[min_options[1]]]
-                xh_unit_vectors = [None]
+                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
+                    xh_unit_vectors = [self.relax.data.res[self.run][index].xh_unit]
+                else:
+                    xh_unit_vectors = [None]
 
                 # Count the number of model-free parameters for the residue index.
                 num_params = [len(self.relax.data.res[self.run][index].params)]
@@ -2009,18 +2253,25 @@ class Model_free:
                         raise RelaxError, "Negative error for residue '" + `self.relax.data.res[self.run][seq_index].num` + " " + self.relax.data.res[self.run][seq_index].name + "', minimisation not possible."
 
                 # Repackage the data.
-                relax_data.append(self.relax.data.res[self.run][seq_index].relax_data)
+                if sim_index == None:
+                    relax_data.append(self.relax.data.res[self.run][seq_index].relax_data)
+                else:
+                    relax_data.append(self.relax.data.res[self.run][seq_index].relax_sim_data[sim_index])
                 relax_error.append(self.relax.data.res[self.run][seq_index].relax_error)
                 equations.append(self.relax.data.res[self.run][seq_index].equation)
                 param_types.append(self.relax.data.res[self.run][seq_index].params)
-                r.append(self.relax.data.res[self.run][seq_index].r)
-                csa.append(self.relax.data.res[self.run][seq_index].csa)
                 num_frq.append(self.relax.data.res[self.run][seq_index].num_frq)
                 frq.append(self.relax.data.res[self.run][seq_index].frq)
                 num_ri.append(self.relax.data.res[self.run][seq_index].num_ri)
                 remap_table.append(self.relax.data.res[self.run][seq_index].remap_table)
                 noe_r1_table.append(self.relax.data.res[self.run][seq_index].noe_r1_table)
                 ri_labels.append(self.relax.data.res[self.run][seq_index].ri_labels)
+                if sim_index == None:
+                    r.append(self.relax.data.res[self.run][seq_index].r)
+                    csa.append(self.relax.data.res[self.run][seq_index].csa)
+                else:
+                    r.append(self.relax.data.res[self.run][seq_index].r_sim[sim_index])
+                    csa.append(self.relax.data.res[self.run][seq_index].csa_sim[sim_index])
 
                 # Model-free parameter values.
                 if self.param_set == 'local_tm':
@@ -2066,9 +2317,6 @@ class Model_free:
                 # Anisotropic diffusion.
                 elif diff_type == 'aniso':
                     diff_params = [data.Dx, data.Dy, data.Dz, data.alpha, data.beta, data.gamma]
-
-                # Convert to a Numeric array.
-                #diff_params = array(diff_params, Float64)
 
 
             # Initialise the function to minimise.
@@ -2134,47 +2382,91 @@ class Model_free:
                 self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(index=index)
+            self.disassemble_param_vector(index=index, sim_index=sim_index)
 
-            # Sequence specific minimisation statistics.
-            if self.param_set == 'mf' or self.param_set == 'local_tm':
-                # Chi-squared statistic.
-                self.relax.data.res[self.run][i].chi2 = self.func
+            # Monte Carlo minimisation statistics.
+            if sim_index != None:
+                # Sequence specific minimisation statistics.
+                if self.param_set == 'mf' or self.param_set == 'local_tm':
+                    # Chi-squared statistic.
+                    self.relax.data.res[self.run][i].chi2_sim[sim_index] = self.func
 
-                # Iterations.
-                self.relax.data.res[self.run][i].iter = self.iter_count
+                    # Iterations.
+                    self.relax.data.res[self.run][i].iter_sim[sim_index] = self.iter_count
 
-                # Function evaluations.
-                self.relax.data.res[self.run][i].f_count = self.f_count
+                    # Function evaluations.
+                    self.relax.data.res[self.run][i].f_count_sim[sim_index] = self.f_count
 
-                # Gradient evaluations.
-                self.relax.data.res[self.run][i].g_count = self.g_count
+                    # Gradient evaluations.
+                    self.relax.data.res[self.run][i].g_count_sim[sim_index] = self.g_count
 
-                # Hessian evaluations.
-                self.relax.data.res[self.run][i].h_count = self.h_count
+                    # Hessian evaluations.
+                    self.relax.data.res[self.run][i].h_count_sim[sim_index] = self.h_count
 
-                # Warning.
-                self.relax.data.res[self.run][i].warning = self.warning
+                    # Warning.
+                    self.relax.data.res[self.run][i].warning_sim[sim_index] = self.warning
 
-            # Global minimisation statistics.
-            elif self.param_set == 'diff' or self.param_set == 'all':
-                # Chi-squared statistic.
-                self.relax.data.chi2[self.run] = self.func
+                # Global minimisation statistics.
+                elif self.param_set == 'diff' or self.param_set == 'all':
+                    # Chi-squared statistic.
+                    self.relax.data.chi2_sim[self.run][sim_index] = self.func
 
-                # Iterations.
-                self.relax.data.iter[self.run] = self.iter_count
+                    # Iterations.
+                    self.relax.data.iter_sim[self.run][sim_index] = self.iter_count
 
-                # Function evaluations.
-                self.relax.data.f_count[self.run] = self.f_count
+                    # Function evaluations.
+                    self.relax.data.f_count_sim[self.run][sim_index] = self.f_count
 
-                # Gradient evaluations.
-                self.relax.data.g_count[self.run] = self.g_count
+                    # Gradient evaluations.
+                    self.relax.data.g_count_sim[self.run][sim_index] = self.g_count
 
-                # Hessian evaluations.
-                self.relax.data.h_count[self.run] = self.h_count
+                    # Hessian evaluations.
+                    self.relax.data.h_count_sim[self.run][sim_index] = self.h_count
 
-                # Warning.
-                self.relax.data.warning[self.run] = self.warning
+                    # Warning.
+                    self.relax.data.warning_sim[self.run][sim_index] = self.warning
+
+            # Normal statistics.
+            else:
+                # Sequence specific minimisation statistics.
+                if self.param_set == 'mf' or self.param_set == 'local_tm':
+                    # Chi-squared statistic.
+                    self.relax.data.res[self.run][i].chi2 = self.func
+
+                    # Iterations.
+                    self.relax.data.res[self.run][i].iter = self.iter_count
+
+                    # Function evaluations.
+                    self.relax.data.res[self.run][i].f_count = self.f_count
+
+                    # Gradient evaluations.
+                    self.relax.data.res[self.run][i].g_count = self.g_count
+
+                    # Hessian evaluations.
+                    self.relax.data.res[self.run][i].h_count = self.h_count
+
+                    # Warning.
+                    self.relax.data.res[self.run][i].warning = self.warning
+
+                # Global minimisation statistics.
+                elif self.param_set == 'diff' or self.param_set == 'all':
+                    # Chi-squared statistic.
+                    self.relax.data.chi2[self.run] = self.func
+
+                    # Iterations.
+                    self.relax.data.iter[self.run] = self.iter_count
+
+                    # Function evaluations.
+                    self.relax.data.f_count[self.run] = self.f_count
+
+                    # Gradient evaluations.
+                    self.relax.data.g_count[self.run] = self.g_count
+
+                    # Hessian evaluations.
+                    self.relax.data.h_count[self.run] = self.h_count
+
+                    # Warning.
+                    self.relax.data.warning[self.run] = self.warning
 
 
     def model_setup(self, run, model, equation, params, scaling_flag, res_num):
@@ -2803,7 +3095,7 @@ class Model_free:
         as a field strength independent value.  Use the following formula to get the correct value:
 
             value = Rex / (2.0 * pi * frequency) ** 2
-            
+
         where:
             Rex is the chemical exchange value for the current frequency.
             pi is in the namespace of relax, ie just type 'pi'.

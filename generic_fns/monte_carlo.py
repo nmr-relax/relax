@@ -87,7 +87,22 @@ class Monte_carlo:
             pack_sim_data(run, i, random)
 
 
-    def initial_values(self, run):
+    def error_analysis(self, run=None, prune=0):
+        """Function for calculating errors from the Monte Carlo simulations."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if simulations have been set up.
+        if not hasattr(self.relax.data, 'sim_state'):
+            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
+
+    def initial_values(self, run=None):
         """Function for setting the initial simulation parameter values."""
 
         # Test if the run exists.
