@@ -9,7 +9,7 @@ quadratic = quadratic_fafbga
 secant = quadratic_gagb
 
 
-def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=0):
+def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=1):
 	"""A line search algorithm from More and Thuente.
 
 	More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
@@ -184,12 +184,19 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 		# Limit.
 		if print_flag:
 			print "Limiting"
+			print "   Ik_lim: " + `Ik_lim`
 		if bracketed:
+			print "   Bracketed."
 			Ik_lim[0] = min(Ik_new['a'][0], Ik_new['a'][1])
 			Ik_lim[1] = max(Ik_new['a'][0], Ik_new['a'][1])
 		else:
-			Ik_lim[0] = a_new['a'] + 1.1 * (a_new['a'] - Ik['a'][0])
-			Ik_lim[1] = a_new['a'] + 4.0 * (a_new['a'] - Ik['a'][0])
+			print "   Not bracketed."
+			print "   a_new['a']: " + `a_new['a']`
+			print "   xtrapl:     " + `1.1`
+			Ik_lim[0] = a_new['a'] + 1.1 * (a_new['a'] - Ik_new['a'][0])
+			Ik_lim[1] = a_new['a'] + 4.0 * (a_new['a'] - Ik_new['a'][0])
+		if print_flag:
+			print "   Ik_lim: " + `Ik_lim`
 
 		# The step must be between a_min and a_max.
 		if a_new['a'] < a_min:
@@ -213,14 +220,11 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 		a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
 		a_new['phi_prime'] = dot(apply(func_prime, (x + a_new['a']*p,)+args), p)
 
+		# Shift data from k+1 to k.
+		k = k + 1
 		if print_flag:
 			print "Bracketed: " + `bracketed`
 			print_data("Final", k, a_new, Ik_new, Ik_lim, x, p, print_flag)
-
-		# Shift data from k+1 to k.
-		if print_flag:
-			print "Shifting data from k+1 to k."
-		k = k + 1
 		a = deepcopy(a_new)
 		Ik = deepcopy(Ik_new)
 
@@ -238,10 +242,10 @@ def print_data(text, k, a, Ik, Ik_lim, x, p, print_flag=0):
 	print "   phi_I:       " + `Ik['phi']`
 	print "   phi_I_prime: " + `Ik['phi_prime']`
 	print "   Ik_lim:      " + `Ik_lim`
-	print "   xi:          " + `x + a['a']*p`
+#	print "   xi:          " + `x + a['a']*p`
 
 
-def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66, print_flag=0):
+def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66, print_flag=1):
 	"""Trial value selection and interval updating.
 
 	Trial value selection
@@ -351,16 +355,16 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 		bracketed = 1
 		
 		# Compute ac and as.
-		#temp1 = gl + gt + 3.0*(fl - ft) / (at - al)
-		#if at > al:
-		#	temp2 = -sqrt(temp1**2 - gl*gt)
-		#else:
-		#	temp2 = sqrt(temp1**2 - gl*gt)
-		#temp3 = (temp1 + temp2 - gt) / (2.0*temp2 + gl - gt)
-		#ac = at + temp3*(al - at)
+		temp1 = gl + gt + 3.0*(fl - ft) / (at - al)
+		if at > al:
+			temp2 = -sqrt(temp1**2 - gl*gt)
+		else:
+			temp2 = sqrt(temp1**2 - gl*gt)
+		temp3 = (temp1 + temp2 - gt) / (2.0*temp2 + gl - gt)
+		ac = at + temp3*(al - at)
 		#print "\t\tac: " + `ac`
 
-		ac = cubic(al, at, fl, ft, gl, gt)
+		#ac = cubic(al, at, fl, ft, gl, gt)
 		as = secant(al, at, gl, gt)
 
 		if print_flag:
@@ -387,9 +391,9 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 		# Compute ac and as.
 		temp1 = gl + gt + 3.0*(fl - ft) / (at - al)
 		if at > al:
-			temp2 = sqrt(max(temp1**2 - gl*gt, 0.0))
-		else:
 			temp2 = -sqrt(max(temp1**2 - gl*gt, 0.0))
+		else:
+			temp2 = sqrt(max(temp1**2 - gl*gt, 0.0))
 		temp3 = (temp2 + temp1 - gt) / (2.0 * temp2 + gl - gt)
 		if print_flag:
 			print "\t\tTemp1: " + `temp1`
@@ -526,9 +530,6 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 			print "\t\tat:                  " + `at`
 			print "\t\ta['phi']:            " + `a['phi']`
 			print "\t\ta['phi_prime']:      " + `a['phi_prime']`
-			print "\t\tIk['a']:             " + `Ik['a']`
-			print "\t\tIk['phi']:           " + `Ik['phi']`
-			print "\t\tIk['phi_prime']:     " + `Ik['phi_prime']`
 			print "\t\tIk_new['a']:         " + `Ik_new['a']`
 			print "\t\tIk_new['phi']:       " + `Ik_new['phi']`
 			print "\t\tIk_new['phi_prime']: " + `Ik_new['phi_prime']`

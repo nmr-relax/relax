@@ -50,21 +50,23 @@ def cubic(a, b, fa, fb, ga, gb):
 	# Calculate the cooefficients.
 	temp = (a-b)**3
 
-	a_prime = (-2.0*fa + 2.0*fb + a*ga - b*ga + a*gb - b*gb) / temp
-	b_prime = (-a**2*ga - 2.0*a**2*gb + 3.0*a*fa - 3.0*a*fb - a*b*ga + a*b*gb + 3.0*b*fa - 3.0*b*fb + 2.0*b**2*ga + b**2*gb) / temp
-	c_prime = (a**3*gb + 2.0*a**2*b*ga + a**2*b*gb - 6.0*a*b*fa + 6.0*a*b*fb - a*b**2*ga - 2.0*a*b**2*gb - b**3*ga) / temp
+	#a_prime = (-2.0*fa + 2.0*fb + a*ga - b*ga + a*gb - b*gb) / temp
+	#b_prime = (-a**2*ga - 2.0*a**2*gb + 3.0*a*fa - 3.0*a*fb - a*b*ga + a*b*gb + 3.0*b*fa - 3.0*b*fb + 2.0*b**2*ga + b**2*gb) / temp
+	#c_prime = (a**3*gb + 2.0*a**2*b*ga + a**2*b*gb - 6.0*a*b*fa + 6.0*a*b*fb - a*b**2*ga - 2.0*a*b**2*gb - b**3*ga) / temp
+	a_prime = (2.0*(fb - fa) + (a - b)*(ga + gb))
+	b_prime = (3.0*(a + b)*(fa - fb) + (2.0*b**2 - a**2 - a*b)*ga - (2.0*a**2 - a*b - b**2)*gb)
+	c_prime = (6.0*a*b*(fb -fa) + b*(2.0*a**2 - a*b - b**2)*ga - a*(2.0*b**2 - a*b - a**2)*gb)
 
 	# Find the extrema.
-	temp2 = -b_prime / (3.0*a_prime)
-	temp3 = sqrt(b_prime**2 - 3.0*a_prime*c_prime) / (3.0*a_prime)
+	temp2 = sqrt(b_prime**2 - 3.0*a_prime*c_prime)
 
-	alpha = temp2 + temp3
+	alpha = (-b_prime + temp2) / (3.0*a_prime)
 
 	# Find the minimum.
-	if 6.0*a_prime*alpha + 2.0*b_prime > 0.0:
+	if (6.0*a_prime*alpha + 2.0*b_prime) * temp > 0.0:
 		return alpha
 	else:
-		return temp2 - temp3
+		return -(b_prime + temp2) / (3.0*a_prime)
 
 
 def quadratic_fafbga(a, b, fa, fb, ga):

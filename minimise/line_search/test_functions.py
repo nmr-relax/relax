@@ -238,8 +238,6 @@ def dfunc456(alpha, beta1, beta2):
 	temp = array([0.0], Float64)
 	g1 = sqrt(1.0 + beta1**2) - beta1
 	g2 = sqrt(1.0 + beta2**2) - beta2
-	print "g1: " + `g1`
-	print "g2: " + `g2`
 	a = -g1 * (1.0 - alpha[0]) / sqrt((1.0 - alpha[0])**2 + beta2**2)
 	b = g2 * alpha[0] / sqrt(alpha[0]**2 + beta1**2)
 	temp[0] = a + b
