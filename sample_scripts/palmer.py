@@ -11,8 +11,7 @@ nuclei('N')
 ########################################
 
 # Set the run name (also the name of a preset model-free model).
-runs = ['m3', 'm4', 'm5']
-#runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 
 # Loop over the runs.
 for run in runs:
@@ -51,8 +50,8 @@ for run in runs:
 model_selection('AIC', 'aic')
 
 
-# Final model-free minimisation stage with diffusion tensor optimisation.
-#########################################################################
+# Final diffusion tensor optimisation stage.
+############################################
 
 
 

@@ -25,7 +25,7 @@ import sys
 
 class Minimise:
     def __init__(self, relax):
-        """Class containing the minimisation macro."""
+        """Class containing the fixed, grid, and minimisation macros."""
 
         self.relax = relax
 
