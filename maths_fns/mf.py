@@ -26,6 +26,7 @@ from math import pi
 
 from data import Data
 
+from weights import *
 from jw_mf_comps import *
 from jw_mf import *
 from ri_comps import *
@@ -185,10 +186,19 @@ class Mf:
         # Store the parameter values in self.data.func_test for testing on next call if the function has already been calculated.
         self.data.func_test = self.data.params * 1.0
 
-        # Calculate the spectral density values.
+        # Loop over the indecies of the generic model-free equations.
+        #for self.data.i in xrange(self.data.num_indecies):
+
+        # Calculate the weights.
+        self.data.ci = self.calc_ci(self.data)
+        print "ci: " + `self.data.ci`
+
+        # Calculate the components of the spectral densities.
         if self.calc_jw_comps[0]:
             self.calc_jw_comps[0](self.data)
-        create_jw_struct(self.data, self.calc_jw[0])
+
+        # Calculate the spectral density values.
+        self.data.jw = self.calc_jw[0](self.data)
 
         # Calculate the relaxation formula components.
         self.create_ri_comps[0](self.data, self.create_dip_func[0], self.create_dip_jw_func[0], self.create_csa_func[0], self.create_csa_jw_func[0], self.create_rex_func[0])
@@ -238,10 +248,14 @@ class Mf:
         # Store the parameter values in self.data.grad_test for testing on next call if the gradient has already been calculated.
         self.data.grad_test = self.data.params * 1.0
 
-        # Calculate the spectral density gradients.
+        # Calculate the spectral density gradient components.
         if self.calc_djw_comps[0]:
             self.calc_djw_comps[0](self.data)
-        create_djw_struct(self.data, self.calc_djw[0])
+
+        # Calculate the spectral density gradients.
+        for i in xrange(self.data.total_num_params):
+            if self.calc_djw[0]:
+                self.data.djw[:, :, j] = self.calc_djw[0][j](self.data)
 
         # Calculate the relaxation gradient components.
         self.create_dri_comps[0](self.data, self.create_dip_grad[0], self.create_dip_jw_grad[0], self.create_csa_grad[0], self.create_csa_jw_grad[0], self.create_rex_grad[0])
@@ -297,7 +311,14 @@ class Mf:
         self.data.hess_test = self.data.params * 1.0
 
         # Calculate the spectral density Hessians.
-        create_d2jw_struct(self.data, self.calc_d2jw[0])
+        for i in xrange(self.data.total_num_params):
+            for j in xrange(i + 1):
+                if self.calc_d2jw[0][i][j]:
+                    self.data.d2jw[0][:, :, i, j] = self.calc_d2jw[0][i][j](self.data)
+
+                    # Make the Hessian symmetric.
+                    if i != j:
+                        self.data.d2jw[0][:, :, j, i] = self.data.d2jw[0][:, :, i, j]
 
         # Calculate the relaxation Hessian components.
         self.create_d2ri_comps[0](self.data, self.create_dip_hess[0], self.create_dip_jw_hess[0], self.create_csa_hess[0], self.create_csa_jw_hess[0], None)
@@ -541,17 +562,17 @@ class Mf:
         # Initialisation code.
         ######################
 
-        # Initialise function data structures.
-        self.calc_jw, self.calc_djw, self.calc_d2jw = [], [], []
-        self.calc_jw_comps, self.calc_djw_comps = [], []
-
-        # Initialise the index data structures.
+        # Initialise the parameter index data structures.
         self.data.tm_index = []
         self.data.s2_index, self.data.s2f_index, self.data.s2s_index = [], [], []
         self.data.te_index, self.data.tf_index, self.data.ts_index = [], [], []
         self.data.rex_index, self.data.r_index, self.data.csa_index = [], [], []
 
-        # Initialise relaxation equation components.
+        # Initialise the data structures for the spectral density functions.
+        self.calc_jw, self.calc_djw, self.calc_d2jw = [], [], []
+        self.calc_jw_comps, self.calc_djw_comps = [], []
+
+        # Initialise the data structures for the relaxation equation component functions.
         self.create_dip_func, self.create_dip_grad, self.create_dip_hess = [], [], []
         self.create_csa_func, self.create_csa_grad, self.create_csa_hess = [], [], []
         self.create_rex_func, self.create_rex_grad = [], []
@@ -559,25 +580,18 @@ class Mf:
         self.create_dip_jw_func, self.create_dip_jw_grad, self.create_dip_jw_hess = [], [], []
         self.create_csa_jw_func, self.create_csa_jw_grad, self.create_csa_jw_hess = [], [], []
 
-        # Initialise the Ri' function data structures.
+        # Initialise the data structures for the Ri component functions.
+        self.create_ri_comps, self.create_dri_comps, self.create_d2ri_comps = [], [], []
+
+        # Initialise the data structures for the Ri' functions.
         self.create_ri_prime, self.create_dri_prime, self.create_d2ri_prime = [], [], []
 
-        # Initialise the Ri function data structures.
+        # Initialise the data structures for the Ri functions
         self.create_ri, self.create_dri, self.create_d2ri = [], [], []
         self.get_r1, self.get_dr1, self.get_d2r1 = [], [], []
 
-        # Initialise the Ri component data structures.
-        self.create_ri_comps, self.create_dri_comps, self.create_d2ri_comps = [], [], []
-
         # Loop over the data sets.
         for i in xrange(self.data.num_data_sets):
-            # Fill function data structures with None or an empty array.
-            self.calc_jw.append(None)
-            self.calc_djw.append([])
-            self.calc_d2jw.append([])
-            self.calc_jw_comps.append(None)
-            self.calc_djw_comps.append(None)
-
             # Fill the index data structures with None.
             self.data.tm_index.append(None)
             self.data.s2_index.append(None)
@@ -589,6 +603,13 @@ class Mf:
             self.data.rex_index.append(None)
             self.data.r_index.append(None)
             self.data.csa_index.append(None)
+
+            # Fill the spectral density function data structures with None or an empty array.
+            self.calc_jw.append(None)
+            self.calc_djw.append([])
+            self.calc_d2jw.append([])
+            self.calc_jw_comps.append(None)
+            self.calc_djw_comps.append(None)
 
             # Fill the relaxation equation components with empty arrays.
             self.create_dip_func.append([])
@@ -655,6 +676,14 @@ class Mf:
                 self.get_r1[i].append(None)
                 self.get_dr1[i].append(None)
                 self.get_d2r1[i].append(None)
+
+        # Set up the weight functions.
+        if self.data.diff_type == 'iso':
+            self.calc_ci = calc_ci_iso
+        elif self.data.diff_type == 'axial':
+            self.calc_ci = calc_ci_axial
+        elif self.data.diff_type == 'aniso':
+            self.calc_ci = calc_ci_aniso
 
         # Loop over the data sets.
         for i in xrange(self.data.num_data_sets):

@@ -26,9 +26,7 @@
 # Spectral density values. #
 ############################
 
-def create_jw_struct(data, calc_jw):
-    """Function to create the model-free spectral density values.
-
+"""
     The spectral density equation
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -84,9 +82,7 @@ def create_jw_struct(data, calc_jw):
         J(w)  =  -   >  ci . ti | ------------  +  -------------------------  +  ------------------------- |
                  5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                     i=m
-    """
-
-    data.jw = calc_jw(data)
+"""
 
 
 
@@ -284,9 +280,7 @@ def calc_S2f_tf_S2s_ts_jw(data):
 # Spectral density gradients. #
 ###############################
 
-def create_djw_struct(data, calc_djw):
-    """Function to create model-free spectral density gradients.
-
+"""
     The spectral density gradients
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -443,11 +437,7 @@ def create_djw_struct(data, calc_djw):
         dJ(w)
         -----  =  0
          dr
-    """
-
-    for j in xrange(data.total_num_params):
-        if calc_djw[j]:
-            data.djw[:, :, j] = calc_djw[j](data)
+"""
 
 
 
@@ -1341,16 +1331,7 @@ def create_d2jw_struct(data, calc_d2jw):
         d2J(w)
         ------  =  0
         dr**2
-    """
-
-    for j in xrange(data.total_num_params):
-        for k in xrange(j + 1):
-            if calc_d2jw[j][k]:
-                data.d2jw[:, :, j, k] = calc_d2jw[j][k](data)
-                # Make the Hessian symmetric.
-                if j != k:
-                    data.d2jw[:, :, k, j] = data.d2jw[:, :, j, k]
-
+"""
 
 
 # Original Dj - Dk partial derivative.

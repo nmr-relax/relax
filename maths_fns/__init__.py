@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,4 +28,5 @@ __all__ = [ 'chi2',
             'mf',
             'ri_comps',
             'ri_prime',
-            'ri' ]
+            'ri',
+            'weights' ]
