@@ -3,7 +3,6 @@
 # Create the run
 run = 'noe'
 create_run(run, 'noe')
-create_run('a', 'noe')
 
 # Load the sequence from a PDB file.
 pdb(run, 'Ap4Aase_new_3.pdb', load_seq=1)
