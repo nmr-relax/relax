@@ -138,6 +138,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
                 print print_prefix + "%-20s%-20s" % ("Increment:", `step_num`)
                 print print_prefix + "%-20s%-20s" % ("Params:", `params`)
                 print print_prefix + "%-20s%-20s" % ("Min params:", `min_params`)
+                print print_prefix + "%-20s%-20g\n" % ("f:", f)
                 print print_prefix + "%-20s%-20g\n" % ("Min f:", f_min)
 
         # Loop over the parameters.

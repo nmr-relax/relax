@@ -89,67 +89,71 @@ class Model_free:
                             self.param_vector.append(self.relax.data.res[i].tm[self.run])
 
                     # S2.
-                    if self.relax.data.res[i].params[self.run][j] == 'S2':
+                    elif self.relax.data.res[i].params[self.run][j] == 'S2':
                         if self.relax.data.res[i].s2[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].s2[self.run])
 
                     # S2f.
-                    if self.relax.data.res[i].params[self.run][j] == 'S2f':
+                    elif self.relax.data.res[i].params[self.run][j] == 'S2f':
                         if self.relax.data.res[i].s2f[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].s2f[self.run])
 
                     # S2s.
-                    if self.relax.data.res[i].params[self.run][j] == 'S2s':
+                    elif self.relax.data.res[i].params[self.run][j] == 'S2s':
                         if self.relax.data.res[i].s2s[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].s2s[self.run])
 
                     # te.
-                    if self.relax.data.res[i].params[self.run][j] == 'te':
+                    elif self.relax.data.res[i].params[self.run][j] == 'te':
                         if self.relax.data.res[i].te[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].te[self.run])
 
                     # tf.
-                    if self.relax.data.res[i].params[self.run][j] == 'tf':
+                    elif self.relax.data.res[i].params[self.run][j] == 'tf':
                         if self.relax.data.res[i].tf[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].tf[self.run])
 
                     # ts.
-                    if self.relax.data.res[i].params[self.run][j] == 'ts':
+                    elif self.relax.data.res[i].params[self.run][j] == 'ts':
                         if self.relax.data.res[i].ts[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].ts[self.run])
 
                     # Rex.
-                    if self.relax.data.res[i].params[self.run][j] == 'Rex':
+                    elif self.relax.data.res[i].params[self.run][j] == 'Rex':
                         if self.relax.data.res[i].rex[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].rex[self.run])
 
                     # r.
-                    if self.relax.data.res[i].params[self.run][j] == 'r':
+                    elif self.relax.data.res[i].params[self.run][j] == 'r':
                         if self.relax.data.res[i].r[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].r[self.run])
 
                     # CSA.
-                    if self.relax.data.res[i].params[self.run][j] == 'CSA':
+                    elif self.relax.data.res[i].params[self.run][j] == 'CSA':
                         if self.relax.data.res[i].csa[self.run] == None:
                             self.param_vector.append(0.0)
                         else:
                             self.param_vector.append(self.relax.data.res[i].csa[self.run])
+
+                    # Unknown parameter.
+                    else:
+                        raise RelaxError, "Unknown parameter."
 
         # Convert to a Numeric array.
         self.param_vector = array(self.param_vector, Float64)
@@ -592,6 +596,99 @@ class Model_free:
             return 'mf'
         else:
             return 'all'
+
+
+    def disassemble_param_vector(self, index=None):
+        """Function for disassembling the parameter vector."""
+
+        # Initialise.
+        param_index = 0
+
+        # Diffusion tensor parameters.
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                self.relax.data.diff[self.run].tm = self.param_vector[0]
+                param_index = param_index + 1
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                self.relax.data.diff[self.run].Dper = self.param_vector[0]
+                self.relax.data.diff[self.run].Dpar = self.param_vector[1]
+                self.relax.data.diff[self.run].theta = self.param_vector[2]
+                self.relax.data.diff[self.run].phi = self.param_vector[3]
+                param_index = param_index + 4
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                self.relax.data.diff[self.run].Dx = self.param_vector[0]
+                self.relax.data.diff[self.run].Dy = self.param_vector[1]
+                self.relax.data.diff[self.run].Dz = self.param_vector[2]
+                self.relax.data.diff[self.run].alpha = self.param_vector[3]
+                self.relax.data.diff[self.run].beta = self.param_vector[4]
+                self.relax.data.diff[self.run].gamma = self.param_vector[5]
+                param_index = param_index + 6
+
+        # Model-free parameters.
+        if self.param_set == 'mf' or self.param_set == 'all':
+            # Loop over all residues.
+            for i in xrange(len(self.relax.data.res)):
+                # Skip unselected residues.
+                if not self.relax.data.res[i].select:
+                    continue
+
+                # Only add parameters for a single residue if index has a value.
+                if index != None and i != index:
+                    continue
+
+                # Loop over the model-free parameters.
+                for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                    # tm.
+                    if self.relax.data.res[i].params[self.run][j] == 'tm':
+                        self.relax.data.res[i].tm[self.run] = self.param_vector[param_index]
+
+                    # S2.
+                    elif self.relax.data.res[i].params[self.run][j] == 'S2':
+                        self.relax.data.res[i].s2[self.run] = self.param_vector[param_index]
+
+                    # S2f.
+                    elif self.relax.data.res[i].params[self.run][j] == 'S2f':
+                        self.relax.data.res[i].s2f[self.run] = self.param_vector[param_index]
+
+                    # S2s.
+                    elif self.relax.data.res[i].params[self.run][j] == 'S2s':
+                        self.relax.data.res[i].s2s[self.run] = self.param_vector[param_index]
+
+                    # te.
+                    elif self.relax.data.res[i].params[self.run][j] == 'te':
+                        self.relax.data.res[i].te[self.run] = self.param_vector[param_index]
+
+                    # tf.
+                    elif self.relax.data.res[i].params[self.run][j] == 'tf':
+                        self.relax.data.res[i].tf[self.run] = self.param_vector[param_index]
+
+                    # ts.
+                    elif self.relax.data.res[i].params[self.run][j] == 'ts':
+                        self.relax.data.res[i].ts[self.run] = self.param_vector[param_index]
+
+                    # Rex.
+                    elif self.relax.data.res[i].params[self.run][j] == 'Rex':
+                        self.relax.data.res[i].rex[self.run] = self.param_vector[param_index]
+
+                    # r.
+                    elif self.relax.data.res[i].params[self.run][j] == 'r':
+                        self.relax.data.res[i].r[self.run] = self.param_vector[param_index]
+
+                    # CSA.
+                    elif self.relax.data.res[i].params[self.run][j] == 'CSA':
+                        self.relax.data.res[i].csa[self.run] = self.param_vector[param_index]
+
+                    # Unknown parameter.
+                    else:
+                        raise RelaxError, "Unknown parameter."
+
+                    # Increment the parameter index.
+                    param_index = param_index + 1
 
 
     def grid_search(self, run, lower, upper, inc, constraints, print_flag):
@@ -1411,7 +1508,7 @@ class Model_free:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
             if results == None:
                 return
-            self.params, self.func, iter, fc, gc, hc, self.warning = results
+            self.param_vector, self.func, iter, fc, gc, hc, self.warning = results
             self.iter_count = self.iter_count + iter
             self.f_count = self.f_count + fc
             self.g_count = self.g_count + gc
@@ -1419,64 +1516,10 @@ class Model_free:
 
             # Scaling.
             if self.relax.data.res[i].scaling[self.run]:
-                self.params = matrixmultiply(self.scaling_matrix, self.params)
+                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
 
-            # Loop over the number of data sets.
-            #for j in xrange(num_data_sets):
-            # Types.
-            types = self.relax.data.res[i].params[self.run]
-
-            # Loop over the minimised parameters.
-            for j in xrange(len(self.params)):
-                # S2.
-                if types[j] == 'S2':
-                    self.relax.data.res[i].s2[self.run] = self.params[j]
-
-                # S2f.
-                elif types[j] == 'S2f':
-                    # S2f.
-                    self.relax.data.res[i].s2f[self.run] = self.params[j]
-
-                    # Other order parameters.
-                    for k in xrange(len(types)):
-                        # S2 = S2f.S2s
-                        if types[k] == 'S2s':
-                            self.relax.data.res[i].s2[self.run] = self.params[j] * self.params[k]
-
-                        # S2s = S2/S2f
-                        elif types[k] == 'S2':
-                            if self.params[j] == 0.0:
-                                self.relax.data.res[i].s2s[self.run] = 1e99
-                            else:
-                                self.relax.data.res[i].s2s[self.run] = self.params[k] / self.params[j]
-
-                # S2s.
-                elif types[j] == 'S2s':
-                    self.relax.data.res[i].s2s[self.run] = self.params[j]
-
-                # te.
-                elif types[j] == 'te':
-                    self.relax.data.res[i].te[self.run] = self.params[j]
-
-                # tf.
-                elif types[j] == 'tf':
-                    self.relax.data.res[i].tf[self.run] = self.params[j]
-
-                # ts.
-                elif types[j] == 'ts':
-                    self.relax.data.res[i].ts[self.run] = self.params[j]
-
-                # Rex.
-                elif types[j] == 'Rex':
-                    self.relax.data.res[i].rex[self.run] = self.params[j]
-
-                # Bond length.
-                elif types[j] == 'r':
-                    self.relax.data.res[i].r[self.run] = self.params[j]
-
-                # CSA.
-                elif types[j] == 'CSA':
-                    self.relax.data.res[i].csa[self.run] = self.params[j]
+            # Disassemble the parameter vector.
+            self.disassemble_param_vector()
 
             # Chi-squared statistic.
             self.relax.data.res[i].chi2[self.run] = self.func
