@@ -368,7 +368,7 @@ def calc_aniso_dci(data, diff_data):
     dd_dpsii = 3.0 * (data.dc_dpsii_alpha + data.dc_dpsii_beta + data.dc_dpsii_gamma)
 
     # Calculate de_dpsii.
-    de_dpsii = data.e1 * data.dc_dpsii_alpha + data.e2 * data.dc_dpsii_beta - data.e3 * data.dc_dpsii_gamma
+    de_dpsii = data.e1 * data.dc_dpsii_alpha_ext + data.e2 * data.dc_dpsii_beta_ext - data.e3 * data.dc_dpsii_gamma_ext
 
     # Weight c-2.
     data.dci[3:, 0] = 6.0 * data.dc_dpsii_alpha_beta

@@ -613,6 +613,8 @@ def calc_aniso_dti(data, diff_data):
     if data.dti[1, 2] == 0.0:
         if data.mu != 0.0:
             data.dti[1, 2] = 1e99
+        else:
+            data.dti[1, 2] = 0.0
     else:
         data.dti[1, 2] = diff_data.params[1] / data.dti[1, 2]
 
@@ -628,6 +630,8 @@ def calc_aniso_dti(data, diff_data):
     if data.dti[1, 4] == 0.0:
         if data.mu != 0.0:
             data.dti[1, 4] = 1e99
+        else:
+            data.dti[1, 4] = 0.0
     else:
         data.dti[1, 4] = diff_data.params[1] / data.dti[1, 4]
 
@@ -647,6 +651,8 @@ def calc_aniso_dti(data, diff_data):
     if data.dti[2, 2] == 0.0:
         if data.mu != 0.0:
             data.dti[2, 2] = 1e99
+        else:
+            data.dti[2, 2] = 0.0
     else:
         data.dti[2, 2] = diff_data.params[2] / data.dti[2, 2]
 
@@ -662,6 +668,8 @@ def calc_aniso_dti(data, diff_data):
     if data.dti[2, 4] == 0.0:
         if data.mu != 0.0:
             data.dti[2, 4] = 1e99
+        else:
+            data.dti[2, 4] = 0.0
     else:
         data.dti[2, 4] = diff_data.params[2] / data.dti[2, 4]
 
