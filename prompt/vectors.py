@@ -31,7 +31,7 @@ class Vectors:
 
 
     def vectors(self, run=None, heteronuc='N', proton='H'):
-        """Function for calculating XH vectors from the structure.
+        """Function for calculating unit XH vectors from the structure.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
@@ -41,6 +41,14 @@ class Vectors:
         heteronuc:  The name of the heteronucleus as specified in the PDB file.
 
         proton:  The name of the proton as specified in the PDB file.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function is essential for model-free analysis and should be executed after loading a
+        PDB file.  If the previously loaded PDB file contained multiple structures, this function
+        will calculate unit XH vectors for all structures and then average them.
 
 
         Example
