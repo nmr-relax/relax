@@ -10,7 +10,7 @@ class generic_minimise:
 		"""
 
 
-	def hessian_type_and_mod(self, min_options, default_type='Newton', default_mod='GMW'):
+	def hessian_type_and_mod(self, min_options, default_type='Newton', default_mod='Chol'):
 		"""Hessian type and modification options.
 
 		Function for sorting out the minimisation options when either the hessian type or

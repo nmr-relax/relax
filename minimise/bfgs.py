@@ -53,11 +53,6 @@ class bfgs(generic_minimise, line_search_functions):
 		# Calculate the BFGS direction.
 		self.pk = -matrixmultiply(self.Hk, self.dfk)
 
-		# Take a steepest descent step if self.pk is not a descent dir.
-		if dot(self.dfk, self.pk) >= 0.0:
-			print "Step: " + `self.k` + ".  Switching to a steepest descent step to avoid an ascent direction."
-			self.pk = -self.dfk
-
 		# Line search.
 		self.line_search()
 
@@ -87,23 +82,25 @@ class bfgs(generic_minimise, line_search_functions):
 
 		self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
-		# BFGS matrix update.
+		# sk and yk.
 		sk = self.xk_new - self.xk
 		yk = self.dfk_new - self.dfk
-		if dot(yk, sk) == 0:
+		dot_yk_sk = dot(yk, sk)
+
+		# rho k.
+		if dot_yk_sk == 0:
 			raise NameError, "The BFGS matrix is indefinite.  This should not occur."
 			rk = 1e99
 		else:
-			rk = 1.0 / dot(yk, sk)
+			rk = 1.0 / dot_yk_sk
 
+		# Preconditioning.
 		if self.k == 0:
-			self.Hk = dot(yk, sk) / dot(yk, yk) * self.I
+			self.Hk = dot_yk_sk / dot(yk, yk) * self.I
 
-		a = self.I - rk*outerproduct(sk, yk)
-		b = self.I - rk*outerproduct(yk, sk)
-		c = rk*outerproduct(sk, sk)
-		matrix = matrixmultiply(matrixmultiply(a, self.Hk), b) + c
-		self.Hk = matrix
+		self.Hk = matrixmultiply(self.I - rk*outerproduct(sk, yk), self.Hk)
+		self.Hk = matrixmultiply(self.Hk, self.I - rk*outerproduct(yk, sk))
+		self.Hk = self.Hk + rk*outerproduct(sk, sk)
 
 		# Shift xk+1 data to xk.
 		self.xk = self.xk_new * 1.0

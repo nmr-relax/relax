@@ -57,7 +57,7 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		self.eta = eta
 
 		# Minimisation options.
-		self.hessian_type_and_mod(min_options, default_mod='Chol')
+		self.hessian_type_and_mod(min_options)
 		if self.init_failure: return
 
 		# Initialise the function, gradient, and hessian evaluation counters.
@@ -86,7 +86,14 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 		try:
 			pB = -matrixmultiply(self.Hk, self.dfk)
 		except AttributeError:
+			# Backup the hessian as the function self.get_pk may modify it.
+			d2fk_backup = 1.0 * self.d2fk
+
+			# The modified Newton step.
 			pB = self.get_pk()
+
+			# Restore the hessian.
+			self.d2fk = d2fk_backup
 		norm_pB = sqrt(dot(pB, pB))
 
 		# Test if the full step is within the trust region.
@@ -177,8 +184,6 @@ class dogleg(generic_trust_region, generic_minimise, bfgs, newton):
 			self.setup_newton()
 			self.specific_update = self.update_newton
 			self.hessian_update = self.hessian_update_newton
-		else:
-			raise NameError, "Matrix type " + `self.hessian_type` + " invalid for dogleg minimisation."
 
 
 	def update(self):

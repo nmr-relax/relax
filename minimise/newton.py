@@ -87,10 +87,13 @@ class newton(generic_minimise, line_search_functions):
 		self.init_hessian_mod_funcs()
 
 
-	def cholesky(self):
+	def cholesky(self, return_matrix=0):
 		"""Cholesky with added multiple of the identity.
 
-		Algorithm 6.3 from page 145.
+		Algorithm 6.3 from page 145 of 'Numerical Optimization' by Jorge Nocedal and Stephen
+		J. Wright, 1999.
+
+		Returns the modified Newton step.
 		"""
 
 		# Calculate the Frobenius norm of the hessian and the minimum diagonal value.
@@ -135,13 +138,19 @@ class newton(generic_minimise, line_search_functions):
 
 		# Calculate the Newton direction.
 		y = solve_linear_equations(self.L, self.dfk)
-		return -solve_linear_equations(transpose(self.L), y)
+		if return_matrix:
+			return -solve_linear_equations(transpose(self.L), y), matrix
+		else:
+			return -solve_linear_equations(transpose(self.L), y)
 
 
-	def eigenvalue(self):
+	def eigenvalue(self, return_matrix=0):
 		"""The eigenvalue hessian modification.
 
-		This modification is based on equation 6.14 from page 144.
+		This modification is based on equation 6.14 from page 144 of 'Numerical
+		Optimization' by Jorge Nocedal and Stephen J. Wright, 1999.
+
+		Returns the modified Newton step.
 		"""
 
 		if self.print_flag == 2:
@@ -150,25 +159,31 @@ class newton(generic_minimise, line_search_functions):
 		eigen = eigenvectors(self.d2fk)
 		eigenvals = sort(eigen[0])
 		tau = max(0.0, self.delta - eigenvals[0])
-		self.d2fk = self.d2fk + tau * self.I
+		matrix = self.d2fk + tau * self.I
 
 		# Debugging.
 		if self.print_flag == 2:
 			print "Eigenvalues: " + `eigenvals`
 			print "tau: " + `tau`
-			print "d2fk: " + `self.d2fk`
+			print "d2fk: " + `matrix`
 
 		# Calculate the Newton direction.
-		return -matrixmultiply(inverse(self.d2fk), self.dfk)
+		if return_matrix:
+			return -matrixmultiply(inverse(matrix), self.dfk), matrix
+		else:
+			return -matrixmultiply(inverse(matrix), self.dfk)
 
 
-	def gmw(self):
+	def gmw(self, return_matrix=0):
 		"""The Gill, Murray, and Wright modified Cholesky algorithm.
 
-		Algorithm 6.5 from page 148.
+		Algorithm 6.5 from page 148 of 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright,
+		1999.
+
+		Returns the modified Newton step.
 		"""
 
-		#self.d2fk = array([[-0.004, 2, 1], [2, 6, 3], [1, 3, 4]], Float64)
+		#self.d2fk = array([[4, 2, 1], [2, 6, 3], [1, 3, -0.004]], Float64)
 
 		# Calculate gamma(A) and xi(A).
 		gamma = 0.0
@@ -186,7 +201,7 @@ class newton(generic_minimise, line_search_functions):
 			beta = sqrt(max(gamma, xi / sqrt(self.n**2 - 1.0), self.mach_acc))
 
 		# Initialise data structures.
-		a = 1.0 * self.d2fk
+		a = self.d2fk
 		r = 0.0 * self.d2fk
 		e = 0.0 * self.xk
 		P = 1.0 * self.I
@@ -251,7 +266,10 @@ class newton(generic_minimise, line_search_functions):
 
 		# Calculate the Newton direction.
 		y = solve_linear_equations(self.L, self.dfk)
-		return -solve_linear_equations(transpose(self.L), y)
+		if return_matrix:
+			return -solve_linear_equations(transpose(self.L), y), dot(self.L,transpose(self.L))
+		else:
+			return -solve_linear_equations(transpose(self.L), y)
 
 
 	def init_hessian_mod_funcs(self):
@@ -309,7 +327,8 @@ class newton(generic_minimise, line_search_functions):
 	def setup_newton(self):
 		"""Setup function.
 
-		The initial Newton function value, gradient vector, and hessian matrix are calculated.
+		The initial Newton function value, gradient vector, and hessian matrix are
+		calculated.
 		"""
 
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
@@ -317,10 +336,13 @@ class newton(generic_minimise, line_search_functions):
 		self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
 
 
-	def unmodified_hessian(self):
+	def unmodified_hessian(self, return_matrix=0):
 		"Calculate the pure Newton direction."
 
-		return -matrixmultiply(inverse(self.d2fk), self.dfk)
+		if return_matrix:
+			return -matrixmultiply(inverse(self.d2fk), self.dfk), self.d2fk
+		else:
+			return -matrixmultiply(inverse(self.d2fk), self.dfk)
 
 
 	def update_newton(self):

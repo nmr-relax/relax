@@ -1,14 +1,15 @@
-from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse
+from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_linear_equations
 from Numeric import diagonal, dot, identity, matrixmultiply, outerproduct, sort, sqrt, transpose
 from re import match
 
+from bfgs import bfgs
 from newton import newton
 from generic_trust_region import generic_trust_region
 from generic_minimise import generic_minimise
 
 
-class exact_trust_region(generic_trust_region, generic_minimise, newton):
-	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, lambda0=10.0, delta_max=1e5, delta0=1.0, eta=0.2):
+class exact_trust_region(generic_trust_region, generic_minimise, bfgs, newton):
+	def __init__(self, func, dfunc=None, d2func=None, args=(), x0=None, min_options=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0, lambda0=0.0, delta_max=1e5, delta0=1.0, eta=0.2, mach_acc=1e-16):
 		"""Exact trust region algorithm.
 
 
@@ -23,6 +24,7 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
+		self.mach_acc = mach_acc
 
 		self.lambda0 = lambda0
 		self.delta_max = delta_max
@@ -41,6 +43,13 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 		# Initialise the warning string.
 		self.warning = None
 
+		# Constants.
+		self.n = len(self.xk)
+		self.I = identity(len(self.xk))
+
+		# Hessian modification function initialisation.
+		self.init_hessian_mod_funcs()
+
 		# Initialisation complete.
 		self.init_failure = 0
 
@@ -48,8 +57,65 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 	def new_param_func(self):
 		"""Find the exact trust region solution.
 
+		Algorithm 4.4 from page 81 of 'Numerical Optimization' by Jorge Nocedal and
+		Stephen J. Wright, 1999.
+
+		This is only implemented for positive definite matrices.
+		"""
+
+		# Matrix modification.
+		pB, matrix = self.get_pk(return_matrix=1)
+
+		# The exact trust region algorithm.
+		l = 0
+		lambda_l = self.lambda0
+
+		while l < 3:
+			# Calculate the matrix B + lambda(l).I
+			B = matrix + lambda_l * self.I
+
+			# Factor B + lambda(l).I = RT.R
+			R = cholesky_decomposition(B)
+
+			# Solve RT.R.pl = -g
+			y = solve_linear_equations(R, self.dfk)
+			y = -solve_linear_equations(transpose(R), y)
+			dot_pl = dot(y, y)
+
+			# Solve RT.ql = pl
+			y = solve_linear_equations(transpose(R), y)
+
+			# lambda(l+1) update.
+			lambda_l = lambda_l + (dot_pl / dot(y, y)) * ((sqrt(dot_pl) - self.delta) / self.delta)
+
+			# Safeguard.
+			lambda_l = max(0.0, lambda_l)
+
+			if self.print_flag == 2:
+				print "\tl: " + `l` + ", lambda(l) fin: " + `lambda_l`
+
+			l = l + 1
+
+		# Calculate the step.
+		R = cholesky_decomposition(matrix + lambda_l * self.I)
+		y = solve_linear_equations(R, self.dfk)
+		self.pk = -solve_linear_equations(transpose(R), y)
+
+		if self.print_flag == 2:
+			print "Step: " + `self.pk`
+
+		# Find the new parameter vector and function value at that point.
+		self.xk_new = self.xk + self.pk
+		self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+
+
+	def old_param_func(self):
+		"""Find the exact trust region solution.
+
 		Moré, J. J., and Sorensen D. C. 1983, Computing a trust region step.
 		SIAM J. Sci. Stat. Comput. 4, 553-572.
+
+		This function is incomplete.
 		"""
 
 		self.warning = "Incomplete code, minimisation bypassed."
@@ -211,8 +277,15 @@ class exact_trust_region(generic_trust_region, generic_minimise, newton):
 
 		"""
 
-		self.setup_newton()
-		self.specific_update = self.update_newton
+		# Type specific functions.
+		if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
+			self.setup_bfgs()
+			self.specific_update = self.update_bfgs
+			self.d2fk = inverse(self.Hk)
+			self.warning = "Incomplete code."
+		elif match('[Nn]ewton', self.hessian_type):
+			self.setup_newton()
+			self.specific_update = self.update_newton
 
 
 	def update(self):

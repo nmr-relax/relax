@@ -242,7 +242,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Ee]xact', min_algor):
 		if print_flag:
 			print "\n\n<<< Exact trust region minimisation >>>"
-		min = exact_trust_region(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = exact_trust_region(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if min.init_failure: print "Initialisation of minimisation has failed."; return
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
