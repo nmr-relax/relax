@@ -7,19 +7,20 @@ sys.ps2 = 'relax| '
 
 from tab_completion import tab_completion
 
-# Macros.
+# Macro functions.
 from macros.diffusion_tensor import diffusion_tensor
-from macros.echo_data import echo_data
-from macros.format import format
 from macros.gpl import gpl
 from macros.init_data import init_data
+
+# Macro classes.
+import macros.echo_data
+import macros.format
 import macros.load
-from macros.min import min
+import macros.min
 import macros.mf_model
-from macros.pdb import pdb
-from macros.set_model_selection import set_model_selection
+import macros.pdb
+import macros.modsel
 import macros.state
-from macros.tab import tab
 import macros.value
 
 
@@ -31,14 +32,8 @@ class interpreter:
 		self.relax = relax
 
 		# Place the macros into the namespace of the interpreter class.
-		self.diffusion_tensor = diffusion_tensor(relax)
-		self.echo_data = echo_data(relax)
-		self.format = format(relax)
-		self.init_data = init_data(relax)
-		self.min = min(relax)
-		self.pdb = pdb(relax)
-		self.set_model_selection = set_model_selection(relax)
-		self.tab = tab(readline)
+		self._diffusion_tensor = diffusion_tensor(relax)
+		self._init_data = init_data(relax)
 
 
 	def run(self):
@@ -59,21 +54,20 @@ class interpreter:
 		# Place functions in the local namespace.
 		GPL = gpl()
 
-		# Place the macros in the local namespace.
-		diffusion_tensor = self.diffusion_tensor.set
-		echo_data = self.echo_data.echo
-		fixed = self.min.fixed
-		format = self.format.format
-		grid_search = self.min.grid_search
-		init_data = self.init_data.init
-		load = macros.load.load_macro(self.relax)
-		minimise = self.min.minimise
-		pdb = self.pdb.set
-		mf_model = macros.mf_model.mf_model(self.relax)
-		set_model_selection = self.set_model_selection.set
-		state = macros.state.state(self.relax)
-		tab = self.tab.run
-		value = macros.value.value(self.relax)
+		# Place the macro functions in the local namespace.
+		diffusion_tensor = self._diffusion_tensor.set
+		init_data = self._init_data.init
+
+		# Place the macro classes in the local namespace.
+		echo_data = macros.echo_data.skin(self.relax)
+		format = macros.format.skin(self.relax)
+		load = macros.load.skin(self.relax)
+		min = macros.min.skin(self.relax)
+		pdb = macros.pdb.skin(self.relax)
+		mf_model = macros.mf_model.skin(self.relax)
+		modsel = macros.modsel.skin(self.relax)
+		state = macros.state.skin(self.relax)
+		value = macros.value.skin(self.relax)
 
 		# Builtin interpreter functions.
 		echo = _Echo()

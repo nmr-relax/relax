@@ -1,11 +1,29 @@
 from data import data
-from Numeric import array
 from os import F_OK, access
 
 from generic_functions import generic_functions
 
 
-class state(generic_functions):
+class skin:
+	def __init__(self, relax):
+		"""The class accessible to the interpreter.
+
+		The purpose of this class is to hide the variables and functions found within the
+		namespace of the macro class, found below, except for those required for interactive
+		use.  This is an abstraction layer designed to avoid user confusion as none of the
+		macro class data structures are accessible.  For more flexibility use the macro
+		class directly.
+		"""
+
+		# Load the macro class into the namespace of this __init__ function.
+		x = macro_class(relax)
+
+		# Place references to the interactive functions within the namespace of this skin class.
+		self.load = x.load
+		self.save = x.save
+
+
+class macro_class(generic_functions):
 	def __init__(self, relax):
 		"Class containing the macros for manipulating the program state."
 

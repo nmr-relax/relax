@@ -1,1 +1,1 @@
-__all__ = [ 'bfgs', 'coordinate_descent', 'grid', 'levenberg_marquardt', 'minimise', 'newton', 'simplex', 'steepest_descent' ]
+__all__ = [ 'base_classes', 'bfgs', 'cauchy_point', 'constraint_linear', 'coordinate_descent', 'dogleg', 'exact_trust_region', 'fletcher_reeves_cg', 'generic', 'grid', 'hestenes_stiefel_cg', 'levenberg_marquardt', 'method_of_multipliers', 'ncg', 'newton', 'polak_ribiere_cg', 'polak_ribiere_plus_cg', 'simplex', 'steepest_descent', 'steihaug_cg' ]

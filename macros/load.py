@@ -1,24 +1,26 @@
 from generic_functions import generic_functions
 
 
-class load_macro:
+class skin:
 	def __init__(self, relax):
 		"""The class accessible to the interpreter.
 
-		The purpose of this class is to hide the variables and functions inside the
-		namespace of 'load_main', except for those required for interactive use, from the
-		user.
+		The purpose of this class is to hide the variables and functions found within the
+		namespace of the macro class, found below, except for those required for interactive
+		use.  This is an abstraction layer designed to avoid user confusion as none of the
+		macro class data structures are accessible.  For more flexibility use the macro
+		class directly.
 		"""
 
-		# Load the parent class into this namespace.
-		x = parent(relax)
+		# Load the macro class into the namespace of this __init__ function.
+		x = macro_class(relax)
 
-		# Interactive functions.
+		# Place references to the interactive functions within the namespace of this skin class.
 		self.relax_data = x.relax_data
 		self.sequence = x.sequence
 
 
-class parent(generic_functions):
+class macro_class(generic_functions):
 	def __init__(self, relax):
 		"Class containing macros for loading data."
 
