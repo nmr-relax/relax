@@ -22,8 +22,8 @@
 
 
 from Queue import Queue
-from os import popen3
 
+from processes import RelaxPopen3
 from thread_classes import RelaxParentThread, RelaxThread
 
 
@@ -189,35 +189,35 @@ class RelaxMinimiseThread(RelaxThread):
         # Function: Minimise.
         fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.parent_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.job_number))
 
-        # Function: Turn logging off.  This is so that the results can come back through the pipe's stdout.
+        # Function: Turn logging off.  This is so that the results can come back through the child's stdout pipe.
         fn.append("self.relax.IO.logging_off()")
 
         # Generate the main text of the script file.
         text = ''
         for i in xrange(len(fn)):
-            text = text + "print \"\\n" + fn[i] + "\"\n"
+            text = text + "\nprint \"\\n" + fn[i] + "\"\n"
             text = text + fn[i] + "\n"
 
-        # Function: Write the to stdout.
+        # Function: Write the results to stdout.
         text = text + "self.relax.generic.results.display(run='%s')\n" % (self.parent_run)
 
         # Cat the text into the script file.
         cmd = "cat > %s" % self.script_file
         cmd = self.remote_command(cmd=cmd, login_cmd=self.login_cmd)
 
-        # Open a pipe.
-        self.stdin, self.stdout, self.stderr = popen3(cmd, 'r')
+        # Start the child process.
+        self.child = RelaxPopen3(cmd, capturestderr=1)
 
-        # Write the text to the pipe's stdin, then close it.
-        self.stdin.write(text)
-        self.stdin.close()
+        # Write the text to the child's stdin, then close it.
+        self.child.tochild.write(text)
+        self.child.tochild.close()
 
-        # Stderr.
-        err = self.stderr.readlines()
+        # Catch errors.
+        err = self.child.childerr.readlines()
 
         # Close all pipes.
-        self.stdout.close()
-        self.stderr.close()
+        self.child.fromchild.close()
+        self.child.childerr.close()
 
         # The file could not be copied.
         if len(err):

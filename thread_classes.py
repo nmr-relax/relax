@@ -23,7 +23,6 @@
 from Queue import Queue
 from Numeric import sum, zeros
 from exceptions import Exception
-from os import popen3
 from random import randint
 from re import search
 from string import ascii_letters
@@ -31,6 +30,7 @@ import sys
 from threading import Lock, Thread
 
 from data import Element
+from processes import RelaxPopen3
 
 
 # Class for setting up threading.
@@ -257,9 +257,9 @@ class RelaxParentThread:
             for i in xrange(self.num_threads):
                 num_alive = num_alive + self.threads[i].isAlive()
 
-            # Break once all have terminated.
+            # Exit once all have terminated.
             if num_alive == 0:
-                break
+                sys.exit()
 
 
     def thread_clean_up(self):
@@ -319,11 +319,11 @@ class RelaxThread(Thread):
 
 
     def close_all_pipes(self):
-        """Function for closing all the stdin, stdout, and stderr pipes."""
+        """Close all the stdin, stdout, and stderr pipes of the child (to flush the buffers)."""
 
-        self.stdin.close()
-        self.stdout.close()
-        self.stderr.close()
+        self.child.tochild.close()
+        self.child.fromchild.close()
+        self.child.childerr.close()
 
 
     def copy_save_file(self):
@@ -334,7 +334,7 @@ class RelaxThread(Thread):
             cmd = "cp -p save_%s.gz %s/%s/save.gz" % (self.tag, self.swd, self.tag)
         else:
             cmd = "scp -p save_%s.gz %s:%s/%s/save.gz" % (self.tag, self.login, self.swd, self.tag)
-        err = self.open_pipe(cmd=cmd, remote_exe=0, catch_err=1)
+        err = self.start_child(cmd=cmd, remote_exe=0, catch_err=1)
 
         # The file could not be copied.
         if len(err):
@@ -346,23 +346,23 @@ class RelaxThread(Thread):
 
         # Command.
         cmd = "nice -n %s %s --thread --log %s %s" % (self.priority, self.prog_path, self.log_file, self.script_file)
-        self.open_pipe(cmd=cmd, close=0)
+        self.start_child(cmd=cmd, close=0)
 
         # Catch the results.
-        self.results = self.stdout.readlines()
+        self.results = self.child.fromchild.readlines()
 
         # Close all pipes.
-        self.stdin.close()
-        self.stdout.close()
+        self.child.tochild.close()
+        self.child.fromchild.close()
 
         # Errors.
-        err = self.stderr.readlines()
+        err = self.child.childerr.readlines()
         if len(err):
             for line in err:
                 print line[0:-1]
 
         # Close the error pipe.
-        self.stderr.close()
+        self.child.childerr.close()
 
 
     def mkdir(self):
@@ -370,15 +370,15 @@ class RelaxThread(Thread):
 
         # Command for creating the directory.
         cmd = "mkdir %s/%s" % (self.swd, self.tag)
-        err = self.open_pipe(cmd=cmd, catch_err=1)
+        err = self.start_child(cmd=cmd, catch_err=1)
 
         # Cannot make the directory.
         if len(err):
             raise RelaxError, "The directory `%s/%s` could not be created on %s." % (self.swd, self.tag, self.host_name)
 
 
-    def open_pipe(self, cmd, catch_out=0, catch_err=0, remote_exe=1, close=1):
-        """Function for opening the stdin, stdout, and stderr pipes and placing them into 'self'."""
+    def start_child(self, cmd, catch_out=0, catch_err=0, remote_exe=1, close=1):
+        """Start the child process and place it in 'self.child'."""
 
         # Initialise text.
         text = None
@@ -392,15 +392,15 @@ class RelaxThread(Thread):
             cmd = self.remote_command(cmd=cmd, login_cmd=self.login_cmd)
 
         # Open the pipes.
-        self.stdin, self.stdout, self.stderr = popen3(cmd, 'r')
+        self.child = RelaxPopen3(cmd, capturestderr=1)
 
         # Read the output.
         if catch_out:
-            text = self.stdout.readlines()
+            text = self.child.fromchild.readlines()
 
         # Read the errors.
         if catch_err:
-            text = self.stderr.readlines()
+            text = self.child.childerr.readlines()
 
         # Close all pipes.
         if close:
@@ -439,6 +439,7 @@ class RelaxThread(Thread):
             while 1:
                 # Get the job number for the next queued job.
                 self.job_number = self.job_queue.get()
+
                 # Quit if the job number is None, this is the signal for when all jobs have been completed.
                 if self.job_number == None:
                     # Place None back into the job queue so that all the other waiting threads will terminate.
@@ -485,7 +486,7 @@ class RelaxThread(Thread):
 
         # RelaxError.
         except RelaxError, message:
-            sys.stderr.write(message)
+            sys.child.childerr.write(message)
             self.results_queue.put(RelaxError)
 
         # KeyboardInterupt.
@@ -510,6 +511,9 @@ class RelaxThread(Thread):
             if self.job_locks[self.job_number].locked():
                 self.job_locks[self.job_number].release()
 
+        # Kill the child process.
+        self.child.kill()
+
         # From the Thread class.
         self._Thread__block.acquire()
         self._Thread__stopped = 1
@@ -523,7 +527,7 @@ class RelaxThread(Thread):
 
         # Command for testing if directory exists.
         cmd = "ls %s/%s" % (self.swd, self.tag)
-        err = self.open_pipe(cmd=cmd, catch_err=1)
+        err = self.start_child(cmd=cmd, catch_err=1)
 
         # No directory.
         if len(err):
@@ -539,7 +543,7 @@ class RelaxThread(Thread):
 
         # Command for testing if results file is already copied.
         cmd = "ls %s" % self.save_state_file
-        err = self.open_pipe(cmd=cmd, catch_err=1)
+        err = self.start_child(cmd=cmd, catch_err=1)
 
         # No file.
         if len(err):
@@ -666,7 +670,7 @@ class RelaxHostThread(RelaxThread):
 
         # Test command.
         cmd = "%s --test" % self.prog_path
-        err = self.open_pipe(cmd=cmd, catch_err=1)
+        err = self.start_child(cmd=cmd, catch_err=1)
 
         # Error.
         if len(err):
@@ -691,17 +695,17 @@ class RelaxHostThread(RelaxThread):
 
         # Test command.
         cmd = "ssh -o PasswordAuthentication=no %s echo 'relax> ssh ok'" % self.login
-        self.open_pipe(cmd=cmd, remote_exe=0, close=0)
+        self.start_child(cmd=cmd, remote_exe=0, close=0)
 
-        # Test if the string 'relax, ssh ok' is in self.stdout.
-        out = self.stdout.readlines()
+        # Test if the string 'relax, ssh ok' is in self.child.fromchild.
+        out = self.child.fromchild.readlines()
         for line in out:
             if search('relax> ssh ok', line):
                 ssh_ok = 1
-        self.stdout.close()
+        self.child.fromchild.close()
 
         # Read the errors.
-        err = self.stderr.readlines()
+        err = self.child.childerr.readlines()
         if len(err):
             # SSH failure message.
             self.text.append("Cannot establish a SSH connection to %s." % self.login)
@@ -724,7 +728,7 @@ class RelaxHostThread(RelaxThread):
 
         # Test command.
         cmd = "if test -d %s; then echo 'OK'; fi" % self.swd
-        out = self.open_pipe(cmd=cmd, catch_out=1)
+        out = self.start_child(cmd=cmd, catch_out=1)
 
         # Directory exists.
         for line in out:
