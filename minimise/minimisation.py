@@ -215,8 +215,8 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 			print "\tEigenvalue modification."
 		elif match("^[Cc]hol", hessian_mod):
 			print "\tCholesky with added multiple of the identity."
-		elif match("^[Mm]odified[ -_][Cc]holesky$", hessian_mod) or match("^[Mm]od$", hessian_mod):
-			print "\tModified Cholesky."
+		elif match("^[Gg][Mm][Ww]", hessian_mod):
+			print "\tThe Gill, Murray, and Wright modified Cholesky algorithm."
 
 		print ""
 
