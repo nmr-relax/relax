@@ -21,18 +21,27 @@ class mf:
         Arguments
         ~~~~~~~~~
 
-        relax:          The program base class self.relax
-        equation:       The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
-        param_types:    An array of the parameter types used in minimisation.
-        relax_data:     An array containing the experimental relaxation values.
-        errors:         An array containing the experimental errors.
-        bond_length:    The fixed bond length in meters.
-        csa:            The fixed CSA value.
-        diff_type:      The diffusion tensor string which should be either 'iso', 'axial', or
-            'aniso'.
-        diff_params:    An array with the diffusion parameters.
-        scaling_vector: An array with the factors by which to scale the parameter vector.
-        print_flag:     A flag specifying how much should be printed to screen.
+        relax:  The program base class self.relax
+
+        equation:  The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
+
+        param_types:  An array of the parameter types used in minimisation.
+
+        relax_data:  An array containing the experimental relaxation values.
+
+        errors:  An array containing the experimental errors.
+
+        bond_length:  The fixed bond length in meters.
+
+        csa:  The fixed CSA value.
+
+        diff_type:  The diffusion tensor string which should be either 'iso', 'axial', or 'aniso'.
+
+        diff_params:  An array with the diffusion parameters.
+
+        scaling_vector:  An array with the factors by which to scale the parameter vector.
+
+        print_flag:  A flag specifying how much should be printed to screen.
         """
 
         # Arguments.
