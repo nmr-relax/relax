@@ -20,8 +20,19 @@
 #                                                                             #
 ###############################################################################
 
-from bz2 import BZ2File
+import __builtin__
+
+# BZ2 compression module.
+try:
+    from bz2 import BZ2File
+    __builtin__.bz2_module = 1
+except ImportError, message:
+    __builtin__.bz2_module = 0
+    __builtin__.bz2_module_message = message.args[0]
+
+# Gzip compression module.
 from gzip import GzipFile
+
 from os import F_OK, access, makedirs, mkdir
 from re import match, search
 from string import split
@@ -94,11 +105,14 @@ class File_ops:
             if compress_type == 0:
                 file = open(file_path, 'r')
             elif compress_type == 1:
-                file = BZ2File(file_path, 'r')
+                if bz2_module:
+                    file = BZ2File(file_path, 'r')
+                else:
+                    raise RelaxError, "Cannot open the file " + `file_path` + ".  " + bz2_module_message + "."
             elif compress_type == 2:
                 file = GzipFile(file_path, 'r')
         except IOError, message:
-            raise RelaxError, "Cannot open the file " + `file_name` + ".  " + message.args[1] + "."
+            raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
 
         # Return the opened file.
         return file
@@ -121,7 +135,11 @@ class File_ops:
 
         # File extension.
         if compress_type == 1 and not search('.bz2$', file_path):
-            file_path = file_path + '.bz2'
+            if not bz2_module:
+                file_path = file_path + '.bz2'
+            else:
+                print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
+                file_path = file_path + '.gz'
         elif compress_type == 2 and not search('.gz$', file_path):
             file_path = file_path + '.gz'
 
@@ -134,9 +152,9 @@ class File_ops:
             print "Opening the file " + `file_path` + " for writing."
             if compress_type == 0:
                 file = open(file_path, 'w')
-            elif compress_type == 1:
+            elif compress_type == 1 and bz2_module:
                 file = BZ2File(file_path, 'w')
-            elif compress_type == 2:
+            elif compress_type == 2 or not bz2_module:
                 file = GzipFile(file_path, 'w')
         except IOError, message:
             raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
