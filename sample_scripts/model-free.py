@@ -7,7 +7,7 @@ read.sequence('noe.500.out')
 nuclei('N')
 
 # Create the run.
-name = 'tm4'
+name = 'm4'
 create_run(name, 'mf')
 
 # Load a PDB file.
