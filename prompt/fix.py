@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class Fix:
     def __init__(self, relax):
-        """Class containing the macro for fixing or allowing parameter values to change."""
+        """Class containing the function for fixing or allowing parameter values to change."""
 
         self.relax = relax
 
 
     def fix(self, run=None, param_type='diff', fixed=0):
-        """Macro for either fixing or allowing parameter values to change.
+        """Function for either fixing or allowing parameter values to change.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -49,9 +49,9 @@ class Fix:
         Currently, the only param_type value supported is 'diff'.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "fix("
+            text = sys.ps3 + "fix("
             text = text + "run=" + `run`
             text = text + "param_type=" + `param_type`
             text = text + "fixed=" + `fixed` + ")"

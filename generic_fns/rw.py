@@ -31,7 +31,7 @@ class RW:
         self.relax = relax
 
 
-    def read_data(self, run=None, data_type=None, file='results', dir=None):
+    def read_results(self, run=None, data_type=None, file='results', dir=None):
         """Function for reading the data out of a file."""
 
         # Test if the sequence data has been read.
@@ -43,8 +43,8 @@ class RW:
             raise RelaxNoRunError, run
 
         # Equation type specific function setup.
-        self.read_results = self.relax.specific_setup.setup('read', data_type)
-        if self.read_results == None:
+        self.read_function = self.relax.specific_setup.setup('read', data_type)
+        if self.read_function == None:
             raise RelaxFuncSetupError, ('read', data_type)
 
         # The results file.
@@ -65,10 +65,10 @@ class RW:
             raise RelaxFileEmptyError
 
         # Read the results.
-        self.read_results(file_data, run)
+        self.read_function(file_data, run)
 
 
-    def write_data(self, run=None, file="results", dir=None, force=0):
+    def write_results(self, run=None, file="results", dir=None, force=0):
         """Create the directories and files for output.
 
         The directory with the name of the run will be created.  The results will be placed in the
@@ -96,8 +96,8 @@ class RW:
             raise RelaxFuncSetupError, ('write_header', res.equations[run])
 
         # Equation type specific function setup.
-        self.write_results = self.relax.specific_setup.setup('write_results', equation)
-        if self.write_results == None:
+        self.write_function = self.relax.specific_setup.setup('write_results', equation)
+        if self.write_function == None:
             raise RelaxFuncSetupError, ('write_results', res.equations[run])
 
         # The results file.
@@ -119,7 +119,7 @@ class RW:
                 continue
 
             # Write the results.
-            self.write_results(results_file, run, i)
+            self.write_function(results_file, run, i)
 
         # Close the results file.
         results_file.close()

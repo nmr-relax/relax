@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,9 +21,9 @@
 ###############################################################################
 
 
-def macro_class():
+def main_class():
     text = ""
-    text = text + "This is a macro class which contains macro functions.  To see the available functions, either\n"
-    text = text + "supply the class name to the dir function by typing dir(macro_class) or by placing a period at\n"
+    text = text + "This is a class which contains functions.  To see these functions, either supply the class\n"
+    text = text + "name to the function 'dir' by typing dir(the_name_of_this_class) or by placing a period at\n"
     text = text + "the end of class name and hitting the tab key.\n"
     return text

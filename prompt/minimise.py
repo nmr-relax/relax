@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class Minimise:
     def __init__(self, relax):
-        """Class containing the calc, fixed, grid, and minimisation macros."""
+        """Class containing the calc, grid, minimisation, and set functions."""
 
         self.relax = relax
 
 
     def calc(self, run=None):
-        """Macro for calculating the function value.
+        """Function for calculating the function value.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -39,9 +39,9 @@ class Minimise:
         run:  The name of the run.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "calc("
+            text = sys.ps3 + "calc("
             text = text + "run=" + `run` + ")"
             print text
 
@@ -53,67 +53,8 @@ class Minimise:
         self.relax.generic.minimise.calc(run=run)
 
 
-    def fixed(self, run=None, values=None, print_flag=1):
-        """Macro for fixing the initial parameter values.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        values:  An array of numbers of length equal to the number of parameters in the model.
-
-        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
-        output while higher values increase the amount of output.  The default value is 1.
-
-
-        Examples
-        ~~~~~~~~
-
-        This command will fix the parameter values of the run 'm2', which is the original
-        model-free equation with parameters {S2, te}, before minimisation to the preselected values
-        of this function.
-
-        relax> fixed('m2')
-
-
-        This command will do the same except the S2 and te values will be set to one and ten ps
-        respectively.
-
-        relax> fixed('m2', [1.0, 10 * 10e-12])
-        relax> fixed(run='m2', values=[1.0, 10 * 10e-12])
-        """
-
-        # Macro intro text.
-        if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "fixed("
-            text = text + "run=" + `run`
-            text = text + ", values=" + `values`
-            text = text + ", print_flag=" + `print_flag` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Relax defined values.
-        if values != None:
-            if type(values) != list:
-                raise RelaxListError, ('values', values)
-            for i in xrange(len(values)):
-                if type(values[i]) != float and type(values[i]) != int:
-                    raise RelaxListIntError, ('values', values)
-
-        # The print flag.
-        if type(print_flag) != int:
-            raise RelaxIntError, ('print_flag', print_flag)
-
-        # Execute the functional code.
-        self.relax.generic.minimise.fixed(run=run, values=values, print_flag=print_flag)
-
-
     def grid_search(self, run=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
-        """The grid search macro.
+        """The grid search function.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -138,9 +79,9 @@ class Minimise:
         output while higher values increase the amount of output.  The default value is 1.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "grid_search("
+            text = sys.ps3 + "grid_search("
             text = text + "run=" + `run`
             text = text + ", lower=" + `lower`
             text = text + ", upper=" + `upper`
@@ -196,15 +137,15 @@ class Minimise:
 
 
     def minimise(self, *args, **keywords):
-        """Minimisation macro.
+        """Minimisation function.
 
         Arguments
         ~~~~~~~~~
 
         The arguments are all strings which specify the minimiser to use as well as its options.  A
-        minimum of one argument is required.  As this macro calls the function 'generic_minimise',
-        to see the full list of allowed arguments import 'generic_minimise' and view its docstring
-        by typing:
+        minimum of one argument is required.  As this calls the function 'generic_minimise', to see
+        the full list of allowed arguments import 'generic_minimise' and view its docstring by
+        typing:
 
         relax> from minimise.generic import generic_minimise
         relax> help(generic_minimise)
@@ -230,7 +171,7 @@ class Minimise:
         output while higher values increase the amount of output.  The default value is 1.
         """
 
-        # Macro intro text is found at the end.
+        # Function intro text is found at the end.
 
         # Keyword: run.
         if keywords.has_key('run'):
@@ -270,9 +211,9 @@ class Minimise:
         else:
             print_flag = 1
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "minimise("
+            text = sys.ps3 + "minimise("
             text = text + "*args=" + `args`
             text = text + ", run=" + `run`
             text = text + ", func_tol=" + `func_tol`
@@ -332,3 +273,62 @@ class Minimise:
 
         # Execute the functional code.
         self.relax.generic.minimise.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+
+
+    def set(self, run=None, values=None, print_flag=1):
+        """Function for setting the initial parameter values.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        values:  An array of numbers of length equal to the number of parameters in the model.
+
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
+
+
+        Examples
+        ~~~~~~~~
+
+        This command will set the parameter values of the run 'm2', which is the original
+        model-free equation with parameters {S2, te}, before minimisation to the preselected values
+        of this function.
+
+        relax> set('m2')
+
+
+        This command will do the same except the S2 and te values will be set to one and ten ps
+        respectively.
+
+        relax> set('m2', [1.0, 10 * 10e-12])
+        relax> set(run='m2', values=[1.0, 10 * 10e-12])
+        """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "set("
+            text = text + "run=" + `run`
+            text = text + ", values=" + `values`
+            text = text + ", print_flag=" + `print_flag` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Relax defined values.
+        if values != None:
+            if type(values) != list:
+                raise RelaxListError, ('values', values)
+            for i in xrange(len(values)):
+                if type(values[i]) != float and type(values[i]) != int:
+                    raise RelaxListIntError, ('values', values)
+
+        # The print flag.
+        if type(print_flag) != int:
+            raise RelaxIntError, ('print_flag', print_flag)
+
+        # Execute the functional code.
+        self.relax.generic.minimise.set(run=run, values=values, print_flag=print_flag)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class View:
     def __init__(self, relax):
-        """Class containing the view macro."""
+        """Class containing the view function."""
 
         self.relax = relax
 
 
     def view(self):
-        """Macro for viewing the collection of molecules extracted from the PDB file.
+        """Function for viewing the collection of molecules extracted from the PDB file.
 
 
         Example
@@ -40,9 +40,9 @@ class View:
         relax> view()
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "view()"
+            text = sys.ps3 + "view()"
             print text
 
         # Execute the functional code.

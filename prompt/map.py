@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -129,9 +129,9 @@ class Map:
         relax> map(run='m4', inc=100, file='test', dir=None)
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "map("
+            text = sys.ps3 + "map("
             text = text + "run=" + `run`
             text = text + ", res_num=" + `res_num`
             text = text + ", map_type=" + `map_type`

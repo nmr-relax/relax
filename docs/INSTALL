@@ -62,8 +62,8 @@ normal use.
 OpenDX:
 -------
 
-Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping macro, and
-is executed by passing the command 'dx' to the command line with various options.
+Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping function,
+and is executed by passing the command 'dx' to the command line with various options.
 
 
 VMD:

@@ -26,7 +26,7 @@ from Numeric import Float64, array
 
 class Diffusion_tensor:
     def __init__(self, relax):
-        """Class containing the macro for setting up the diffusion tensor."""
+        """Class containing the function for setting up the diffusion tensor."""
 
         self.relax = relax
 

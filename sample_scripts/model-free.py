@@ -29,8 +29,8 @@ model.select_mf(run=name, model=name)
 #select.res(num=4574)
 # Fixed value.
 #from math import pi
-#fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
-#fixed(name, [ 6.00000000e-01, 0.00000000e+00, 5.00000000e-01, 1.00000000e-9])
+#set(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
+#set(name, [ 6.00000000e-01, 0.00000000e+00, 5.00000000e-01, 1.00000000e-9])
 
 # Grid search.
 state.save('save', force=1)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,36 +24,36 @@
 import message
 
 
-class Skin:
+class Shell:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
         The purpose of this class is to hide the variables and functions found within the namespace
-        of the macro class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the macro class data
-        structures are accessible.  For more flexibility use the macro class directly.
+        of the main class, found below, except for those required for interactive use.  This is an
+        abstraction layer designed to avoid user confusion as none of the main class data structures
+        are accessible.  For more flexibility use the main class directly.
         """
 
-        # Load the macro class into the namespace of this __init__ function.
-        x = Macro_class(relax)
+        # Load the main class into the namespace of this __init__ function.
+        x = Main(relax)
 
-        # Place references to the interactive functions within the namespace of this skin class.
+        # Place references to the interactive functions within the namespace of this class.
         self.echo = x.echo
         self.print_data = x.print_data
 
         # __repr__.
-        self.__repr__ = message.macro_class
+        self.__repr__ = message.main_class
 
 
-class Macro_class:
+class Main:
     def __init__(self, relax):
-        """Macros for printing data to standard out."""
+        """Functions for printing data to standard out."""
 
         self.relax = relax
 
 
     def echo(self, *args):
-        """Macro to print the names of all data structures in self.relax.data
+        """Function to print the names of all data structures in self.relax.data
 
         With no arguments, the names of all data structures in self.relax.data are printed along
         with the data type.
@@ -78,7 +78,7 @@ class Macro_class:
 
 
     def print_data(self, data, seq_flag=0):
-        """Macro to print data according to the argument list given."""
+        """Function to print data according to the argument list given."""
 
         if seq_flag:
             print "%-5s%-5s" % ("num", "name")

@@ -26,8 +26,8 @@ mc_params["m1"]["-5"][mc_num]
 mc_relax_data["m1"]["-5"][mc_num]
 
 
-# Macros.
-#########
+# Prompt functions.
+###################
 
 Grace.
 Molmol.

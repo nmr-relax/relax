@@ -35,7 +35,7 @@ from tab_completion import Tab_completion
 from command import Ls, Lh, Ll, system
 from print_all_data import Print_all_data
 
-# Macro functions.
+# Functions.
 from angles import Angles
 from create_run import Create_run
 from delete import Delete
@@ -53,7 +53,7 @@ from vectors import Vectors
 from view import View
 from write import Write
 
-# Macro classes.
+# Classes.
 import echo_data
 import format
 import model
@@ -74,9 +74,9 @@ class Interpreter:
         # The prompts.
         sys.ps1 = 'relax> '
         sys.ps2 = 'relax| '
-        sys.macro_prompt = '\n<macro> '
+        sys.ps3 = '\n<fn> '
 
-        # The macro intro flag.
+        # The function intro flag.
         self.intro = 0
 
         # Python modules.
@@ -103,21 +103,21 @@ class Interpreter:
         self._Write = Write(relax)
 
         # Place the classes into the interpreter class namespace.
-        self._Echo_data = echo_data.Skin(relax)
-        self._Format = format.Skin(relax)
+        self._Echo_data = echo_data.Shell(relax)
+        self._Format = format.Shell(relax)
         self._Model = model.Model(relax)
-        self._Palmer = palmer.Skin(relax)
-        self._Read = read.Skin(relax)
-        self._Select = select.Skin(relax)
-        self._State = state.Skin(relax)
-        self._Value = value.Skin(relax)
+        self._Palmer = palmer.Shell(relax)
+        self._Read = read.Shell(relax)
+        self._Select = select.Shell(relax)
+        self._State = state.Shell(relax)
+        self._Value = value.Shell(relax)
 
 
     def run(self):
         """Run the python interpreter.
 
         The namespace of this function is the namespace seen inside the interpreter.  All user
-        accessable functions, macros, etc, should be placed in this namespace.
+        accessable functions, classes, etc, should be placed in this namespace.
         """
 
         # Python modules.
@@ -142,7 +142,6 @@ class Interpreter:
         diffusion_tensor = self._Diffusion_tensor.diffusion_tensor
         dx = self._OpenDX.dx
         fix = self._Fix.fix
-        fixed = self._Minimise.fixed
         grid_search = self._Minimise.grid_search
         init_data = self._Init_data.init
         map = self._Map.map
@@ -150,6 +149,7 @@ class Interpreter:
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei
         pdb = self._PDB.pdb
+        set = self._Minimise.set
         vectors = self._Vectors.vectors
         view = self._View.view
         write = self._Write.write
@@ -189,21 +189,21 @@ class Interpreter:
 
 
     def _off(self):
-        """Function for turning the macro intro's off."""
+        """Function for turning the function intro's off."""
 
         self.intro = 0
-        print "Macro intro's have been disabled."
+        print "Function intro's have been disabled."
 
 
     def _on(self):
-        """Function for turning the macro intro's on."""
+        """Function for turning the function intro's on."""
 
         self.intro = 1
-        print "Macro intro's have been enabled."
+        print "Function intro's have been enabled."
 
 
     def script(self, file=None):
-        """Macro for executing a script file."""
+        """Function for executing a script file."""
 
         # File argument.
         if file == None:
@@ -211,13 +211,13 @@ class Interpreter:
         elif type(file) != str:
             raise RelaxStrError, ('file', file)
 
-        # Turn on the macro intro flag.
+        # Turn on the function intro flag.
         self.intro = 1
 
         # Execute the script.
         script(file, self.local)
 
-        # Turn off the macro intro flag.
+        # Turn off the function intro flag.
         self.intro = 0
 
 
@@ -274,7 +274,7 @@ def interact(self, intro=None, local=None, script_file=None):
 
     # Execute the script file, if given on the command line, and then exit.
     if script_file != None:
-        # Turn the intro flag on so macros will print there intro strings.
+        # Turn the intro flag on so functions will print there intro strings.
         local['self'].intro = 1
 
         # Execute the script.

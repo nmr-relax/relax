@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class Angles:
     def __init__(self, relax):
-        """Class containing the macro for calculating XH bond angles."""
+        """Class containing the function for calculating XH bond angles."""
 
         self.relax = relax
 
 
     def angles(self, run=None):
-        """Macro for calculating the angles between the XH bond vector and the diffusion tensor.
+        """Function for calculating the angles between the XH bond vector and the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -50,9 +50,9 @@ class Angles:
         If the diffusion tensor is fully anisotropic, then the three angles will be calculated.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "angles("
+            text = sys.ps3 + "angles("
             text = text + "run=" + `run` + ")"
             print text
 

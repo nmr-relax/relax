@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,36 +25,36 @@ import sys
 import message
 
 
-class Skin:
+class Shell:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
         The purpose of this class is to hide the variables and functions found within the namespace
-        of the macro class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the macro class data
-        structures are accessible.  For more flexibility use the macro class directly.
+        of the main class, found below, except for those required for interactive use.  This is an
+        abstraction layer designed to avoid user confusion as none of the main class data structures
+        are accessible.  For more flexibility use the main class directly.
         """
 
-        # Load the macro class into the namespace of this __init__ function.
-        x = Macro_class(relax)
+        # Load the main class into the namespace of this __init__ function.
+        x = Main(relax)
 
-        # Place references to the interactive functions within the namespace of this skin class.
+        # Place references to the interactive functions within the namespace of this class.
         self.load = x.load
         self.save = x.save
 
         # __repr__.
-        self.__repr__ = message.macro_class
+        self.__repr__ = message.main_class
 
 
-class Macro_class:
+class Main:
     def __init__(self, relax):
-        """Class containing the macros for manipulating the program state."""
+        """Class containing the functions for manipulating the program state."""
 
         self.relax = relax
 
 
     def load(self, file_name=None):
-        """Macro for loading a saved program state.
+        """Function for loading a saved program state.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -71,9 +71,9 @@ class Macro_class:
         relax> state.load(file_name='save')
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "state.load("
+            text = sys.ps3 + "state.load("
             text = text + "file_name=" + `file_name` + ")"
             print text
 
@@ -86,7 +86,7 @@ class Macro_class:
 
 
     def save(self, file_name=None, force=0):
-        """Macro for saving the program state.
+        """Function for saving the program state.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -112,9 +112,9 @@ class Macro_class:
         relax> state.save(file_name='save', force=1)
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "state.save("
+            text = sys.ps3 + "state.save("
             text = text + "file_name=" + `file_name`
             text = text + ", force=" + `force` + ")"
             print text

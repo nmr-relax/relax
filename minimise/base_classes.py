@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,11 +22,11 @@
 
 
 # This module contains the following base classes:
-#    Min:            The base class containing the main iterative minimisation loop and
+#    Min:                The base class containing the main iterative minimisation loop and
 #        a few other base class functions.
 #    Line_search:        The base class containing the generic line search functions.
-#    Trust_region:        The base class containing the generic trust-region functions.
-#    Conjugate_gradient:    The base class containing the generic conjugate gradient functions.
+#    Trust_region:       The base class containing the generic trust-region functions.
+#    Conjugate_gradient: The base class containing the generic conjugate gradient functions.
 
 
 # Inbuilt python modules.
@@ -374,7 +374,7 @@ class Line_search:
 
 
     def mt(self):
-        """Function for running the Moré and Thuente line search."""
+        """Function for running the More and Thuente line search."""
 
         self.alpha, fc, gc = more_thuente(self.func, self.dfunc, self.args, self.xk, self.fk, self.dfk, self.pk, a_init=self.a0, mu=self.mu, eta=self.eta, print_flag=0)
         self.f_count = self.f_count + fc
@@ -422,7 +422,7 @@ class Line_search:
             self.line_search = self.nww
         elif match('^[Mm]ore[ _][Tt]huente$', self.line_search_algor) or match('^[Mm][Tt]', self.line_search_algor):
             if self.print_flag:
-                print self.print_prefix + "Line search:  Moré and Thuente line search."
+                print self.print_prefix + "Line search:  More and Thuente line search."
             self.line_search = self.mt
         elif match('^[Nn]one$', self.line_search_algor):
             if self.print_flag:

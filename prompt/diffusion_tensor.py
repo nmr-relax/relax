@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class Diffusion_tensor:
     def __init__(self, relax):
-        """Class containing the macro for setting up the diffusion tensor."""
+        """Class containing the function for setting up the diffusion tensor."""
 
         self.relax = relax
 
 
     def diffusion_tensor(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, fixed=1):
-        """Macro for setting up the diffusion tensor.
+        """Function for setting up the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -96,8 +96,8 @@ class Diffusion_tensor:
 
 
         To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
-        1.417e7, Theta value of 67.174°, and Phi value of -83.718°, and assign it to the run 'axial',
-        type one of:
+        1.417e7, Theta value of 67.174 degrees, and Phi value of -83.718 degrees, and assign it to
+        the run 'axial', type one of:
 
         relax> diffusion_tensor('axial', (1.698e7, 1.417e7, 67.174, -83.718))
         relax> diffusion_tensor(run='axial', params=(1.698e7, 1.417e7, 67.174, -83.718))
@@ -111,7 +111,7 @@ class Diffusion_tensor:
 
 
         To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, Theta value
-        of 20°, and Phi value of 20°, and assign it to the run '26', type:
+        of 20 degrees, and Phi value of 20 degrees, and assign it to the run '26', type:
 
         relax> diffusion_tensor('axial', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
 
@@ -127,9 +127,9 @@ class Diffusion_tensor:
         relax> diffusion_tensor('diff', 10e-9, fixed=0)
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "diffusion_tensor.set("
+            text = sys.ps3 + "diffusion_tensor.set("
             text = text + "run=" + `run`
             text = text + ", params=" + `params`
             text = text + ", time_scale=" + `time_scale`

@@ -71,11 +71,11 @@ class Specific_setup:
 
         # Fixed setup function.
         if self.function_type == 'fixed':
-            return self.relax.specific.model_free.fixed_setup
+            return self.relax.specific.model_free.fixed
 
         # Grid setup function.
         if self.function_type == 'grid_search':
-            return self.relax.specific.model_free.grid_setup
+            return self.relax.specific.model_free.grid_search
 
         # Map labels.
         if self.function_type == 'map_labels':

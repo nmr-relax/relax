@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class PDB:
     def __init__(self, relax):
-        """Class containing the macro for loading a pdb file."""
+        """Class containing the function for loading a pdb file."""
 
         self.relax = relax
 
 
     def pdb(self, file=None, model=None, load_seq=1):
-        """The pdb loading macro.
+        """The pdb loading function.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -83,9 +83,9 @@ class PDB:
 
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "pdb("
+            text = sys.ps3 + "pdb("
             text = text + "file=" + `file`
             text = text + ", model=" + `model`
             text = text + ", load_seq=" + `load_seq` + ")"

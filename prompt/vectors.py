@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class Vectors:
     def __init__(self, relax):
-        """Class containing the macro to calculate XH vectors from the structure."""
+        """Class containing the function to calculate XH vectors from the structure."""
 
         self.relax = relax
 
 
     def vectors(self, heteronuc='N', proton='H'):
-        """Macro for calculating XH vectors from the structure.
+        """Function for calculating XH vectors from the structure.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
@@ -57,9 +57,9 @@ class Vectors:
         relax> vectors(proton='HN')
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "vectors("
+            text = sys.ps3 + "vectors("
             text = text + "heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton` + ")"
             print text

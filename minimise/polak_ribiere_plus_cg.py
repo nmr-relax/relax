@@ -27,7 +27,7 @@ from base_classes import Conjugate_gradient, Line_search, Min
 
 
 def polak_ribiere_plus(func=None, dfunc=None, args=(), x0=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, a0=1.0, mu=0.0001, eta=0.1, full_output=0, print_flag=0, print_prefix=""):
-    """Polak-Ribière + conjugate gradient algorithm.
+    """Polak-Ribiere + conjugate gradient algorithm.
 
     Page 122 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
 
@@ -48,7 +48,7 @@ def polak_ribiere_plus(func=None, dfunc=None, args=(), x0=None, min_options=None
         if print_flag >= 2:
             print print_prefix
         print print_prefix
-        print print_prefix + "Polak-Ribière + conjugate gradient minimisation"
+        print print_prefix + "Polak-Ribiere + conjugate gradient minimisation"
         print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     min = Polak_ribiere_plus(func, dfunc, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, full_output, print_flag, print_prefix)
     if min.init_failure:
@@ -60,7 +60,7 @@ def polak_ribiere_plus(func=None, dfunc=None, args=(), x0=None, min_options=None
 
 class Polak_ribiere_plus(Conjugate_gradient, Line_search, Min):
     def __init__(self, func, dfunc, args, x0, min_options, func_tol, grad_tol, maxiter, a0, mu, eta, full_output, print_flag, print_prefix):
-        """Class for Polak-Ribière + conjugate gradient minimisation specific functions.
+        """Class for Polak-Ribiere + conjugate gradient minimisation specific functions.
 
         Unless you know what you are doing, you should call the function 'polak_ribiere_plus' rather
         than using this class.
@@ -111,7 +111,7 @@ class Polak_ribiere_plus(Conjugate_gradient, Line_search, Min):
 
 
     def calc_bk(self):
-        """Function to calcaluate the Polak-Ribière + beta value."""
+        """Function to calcaluate the Polak-Ribiere + beta value."""
 
         # Calculate beta at k+1.
         bk_new = dot(self.dfk_new, self.dfk_new - self.dfk) / self.dot_dfk

@@ -25,13 +25,13 @@ import sys
 
 class Create_run:
     def __init__(self, relax):
-        """Class containing the macro for setting up a run type."""
+        """Class containing the function for setting up a run type."""
 
         self.relax = relax
 
 
     def create(self, run=None, run_type=None):
-        """Macro for setting up a run type.
+        """Function for setting up a run type.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -57,9 +57,9 @@ class Create_run:
         relax> create_run('m5', 'mf')
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "create_run("
+            text = sys.ps3 + "create_run("
             text = text + "run=" + `run`
             text = text + ", run_type=" + `run_type` + ")"
             print text

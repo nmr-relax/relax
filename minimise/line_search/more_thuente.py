@@ -33,9 +33,9 @@ secant = quadratic_gagb
 
 
 def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.1, print_flag=0):
-    """A line search algorithm from Moré and Thuente.
+    """A line search algorithm from More and Thuente.
 
-    Moré, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient
+    More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient
     decrease. ACM Trans. Math. Softw. 20, 286-307.
 
 

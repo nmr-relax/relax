@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,37 +25,37 @@ import sys
 import message
 
 
-class Skin:
+class Shell:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
         The purpose of this class is to hide the variables and functions found within the namespace
-        of the macro class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the macro class data
-        structures are accessible.  For more flexibility use the macro class directly.
+        of the main class, found below, except for those required for interactive use.  This is an
+        abstraction layer designed to avoid user confusion as none of the main class data structures
+        are accessible.  For more flexibility use the main class directly.
         """
 
-        # Load the macro class into the namespace of this __init__ function.
-        x = Macro_class(relax)
+        # Load the main class into the namespace of this __init__ function.
+        x = Main(relax)
 
-        # Place references to the interactive functions within the namespace of this skin class.
+        # Place references to the interactive functions within the namespace of this class.
         self.create = x.create
         self.execute = x.execute
         self.extract = x.extract
 
         # __repr__.
-        self.__repr__ = message.macro_class
+        self.__repr__ = message.main_class
 
 
-class Macro_class:
+class Main:
     def __init__(self, relax):
-        """Class containing the macros for interoperability with Modelfree4."""
+        """Functions for interoperability with Modelfree4."""
 
         self.relax = relax
 
 
     def create(self, run=None, dir=None, force=0, diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
-        """Macro for creating the Modelfree4 input files.
+        """Function for creating the Modelfree4 input files.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -102,9 +102,9 @@ class Macro_class:
         This can be used to execute modelfree4.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "palmer.create("
+            text = sys.ps3 + "palmer.create("
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force`
@@ -173,7 +173,7 @@ class Macro_class:
 
 
     def execute(self, run=None, dir=None, force=0):
-        """Macro for executing Modelfree4.
+        """Function for executing Modelfree4.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -196,9 +196,9 @@ class Macro_class:
         placed on the command line as '-s pdb_file_name'.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "palmer.execute("
+            text = sys.ps3 + "palmer.execute("
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -222,7 +222,7 @@ class Macro_class:
 
 
     def extract(self, run=None, dir=None):
-        """Macro for extracting data from the Modelfree4 'mfout' star formatted file.
+        """Function for extracting data from the Modelfree4 'mfout' star formatted file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -232,9 +232,9 @@ class Macro_class:
         dir:  The directory where the file 'mfout' is found.  The default is the value of 'run'.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "palmer.extract("
+            text = sys.ps3 + "palmer.extract("
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir` + ")"
             print text

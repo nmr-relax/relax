@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,13 +26,13 @@ import types
 
 class Print_all_data:
     def __init__(self, relax):
-        """Class containing the macros for manipulating the program state."""
+        """Class containing the functions for manipulating the program state."""
 
         self.relax = relax
 
 
     def __repr__(self):
-        """Macro for printing all the data in self.relax.data"""
+        """Function for printing all the data in self.relax.data"""
 
         # Loop over the data structures in self.relax.data
         for name in dir(self.relax.data):

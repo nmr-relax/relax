@@ -63,7 +63,7 @@ write(run=run, file='results', force=1)
 ############################################
 
 # Let the diffusion tensor parameters be optimised.
-fix(run, 'diff', 0)
+set(run, 'diff', 0)
 
 # Create the Modelfree4 files (change sims as needed, see below).
 palmer.create(run=run, dir='final', force=1, sims=0)

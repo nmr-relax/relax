@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ import sys
 
 class OpenDX:
     def __init__(self, relax):
-        """Macro for the execution of OpenDX."""
+        """Function for the execution of OpenDX."""
 
         self.relax = relax
 
@@ -49,9 +49,9 @@ class OpenDX:
         execution off.
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "dx("
+            text = sys.ps3 + "dx("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", dx_exec=" + `dx_exec`

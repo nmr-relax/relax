@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class Modsel:
     def __init__(self, relax):
-        """Class containing the macro for selecting which model selection method should be used."""
+        """Class containing the function for selecting which model selection method should be used."""
 
         self.relax = relax
 
 
     def model_selection(self, method=None, modsel_run=None, runs=None):
-        """Macro for model selection.
+        """Function for model selection.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
@@ -84,9 +84,9 @@ class Modsel:
         relax> model_selection(method='AIC', modsel_run='mixed', runs=['m1', 'm2', 'm3', 'm4', 'm5'])
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "model_selection("
+            text = sys.ps3 + "model_selection("
             text = text + "method=" + `method`
             text = text + ", modsel_run=" + `modsel_run`
             text = text + ", runs=" + `runs` + ")"

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,13 @@ import sys
 
 class Nuclei:
     def __init__(self, relax):
-        """Class containing the macro for setting the gyromagnetic ratio of the heteronucleus."""
+        """Class containing the function for setting the gyromagnetic ratio of the heteronucleus."""
 
         self.relax = relax
 
 
     def nuclei(self, heteronuc='N'):
-        """Macro for setting the gyromagnetic ratio of the heteronucleus.
+        """Function for setting the gyromagnetic ratio of the heteronucleus.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
@@ -48,9 +48,9 @@ class Nuclei:
             C - Carbon, 2.2e7
         """
 
-        # Macro intro text.
+        # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "nuclei("
+            text = sys.ps3 + "nuclei("
             text = text + "heteronuc=" + `heteronuc` + ")"
             print text
 

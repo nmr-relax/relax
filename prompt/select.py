@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,38 +25,38 @@ import sys
 import message
 
 
-class Skin:
+class Shell:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
         The purpose of this class is to hide the variables and functions found within the namespace
-        of the macro class, found below, except for those required for interactive use.  This is an
-        abstraction layer designed to avoid user confusion as none of the macro class data
-        structures are accessible.  For more flexibility use the macro class directly.
+        of the main class, found below, except for those required for interactive use.  This is an
+        abstraction layer designed to avoid user confusion as none of the main class data structures
+        are accessible.  For more flexibility use the main class directly.
         """
 
-        # Load the macro class into the namespace of this __init__ function.
-        x = Macro_class(relax)
+        # Load the main class into the namespace of this __init__ function.
+        x = Main(relax)
 
-        # Place references to the interactive functions within the namespace of this skin class.
+        # Place references to the interactive functions within the namespace of this class.
         self.all = x.all
         self.none = x.none
         self.res = x.res
         self.reverse = x.reverse
 
         # __repr__.
-        self.__repr__ = message.macro_class
+        self.__repr__ = message.main_class
 
 
-class Macro_class:
+class Main:
     def __init__(self, relax):
-        """Class containing the macros for selecting and unselecting residues."""
+        """Class containing the functions for selecting and unselecting residues."""
 
         self.relax = relax
 
 
     def all(self):
-        """Macro for selection all residues.
+        """Function for selection all residues.
 
         Examples
         ~~~~~~~~
@@ -66,9 +66,9 @@ class Macro_class:
         relax> selection.all()
         """
 
-        # Macro intro test.
+        # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "selection.all()"
+            text = sys.ps3 + "selection.all()"
             print text
 
         # Execture the functional code.
@@ -76,7 +76,7 @@ class Macro_class:
 
 
     def none(self):
-        """Macro for unselecting all residues.
+        """Function for unselecting all residues.
 
         Examples
         ~~~~~~~~
@@ -86,9 +86,9 @@ class Macro_class:
         relax> selection.none()
         """
 
-        # Macro intro test.
+        # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "selection.none()"
+            text = sys.ps3 + "selection.none()"
             print text
 
         # Execture the functional code.
@@ -96,7 +96,7 @@ class Macro_class:
 
 
     def res(self, num=None, name=None, unselect=1):
-        """Macro for the selection of specific residues.
+        """Function for the selection of specific residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -139,9 +139,9 @@ class Macro_class:
         relax> selection.res(num='5', name='CYS')
         """
 
-        # Macro intro test.
+        # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "selection.res("
+            text = sys.ps3 + "selection.res("
             text = text + "num=" + `num`
             text = text + ", name=" + `name`
             text = text + ", unselect=" + `unselect` + ")"
@@ -170,7 +170,7 @@ class Macro_class:
 
 
     def reverse(self):
-        """Macro for the reversal of the residue selection.
+        """Function for the reversal of the residue selection.
 
         Examples
         ~~~~~~~~
@@ -180,9 +180,9 @@ class Macro_class:
         relax> selection.reverse()
         """
 
-        # Macro intro test.
+        # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "selection.reverse()"
+            text = sys.ps3 + "selection.reverse()"
             print text
 
         # Execture the functional code.

@@ -165,7 +165,7 @@ class Exact_trust_region(Hessian_mods, Trust_region, Min, Bfgs, Newton):
     def old_param_func(self):
         """Find the exact trust region solution.
 
-        Moré, J. J., and Sorensen D. C. 1983, Computing a trust region step.  SIAM J. Sci. Stat.
+        More, J. J., and Sorensen D. C. 1983, Computing a trust region step.  SIAM J. Sci. Stat.
         Comput. 4, 553-572.
 
         This function is incomplete.
