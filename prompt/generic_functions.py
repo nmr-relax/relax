@@ -3,7 +3,7 @@ from re import match
 import types
 
 
-class generic_functions:
+class Generic_functions:
     def __init__(self):
         """Base class containing generic functions used by many macros."""
 

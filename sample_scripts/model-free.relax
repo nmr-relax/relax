@@ -11,7 +11,7 @@ model_selection.set('AIC')
 value.set('bond_length', 1.02 * 1e-10)
 value.set('csa', -160 * 1e-6)
 diffusion_tensor('iso', 1e-8)
-name = 'm5'
+name = 'm4'
 model.select_mf(name)
 #fixed(name, [ 0.6,  0.9,  5.0*1e-10 ])
 #fixed(name, [ 1.0,  10.0*1e-10, 0.0 / (2.0 * pi * 600000000.0)**2 ])

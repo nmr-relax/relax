@@ -12,10 +12,10 @@
 import sys
 from re import match
 
-from common_ops import common_operations
+from common_ops import Common_operations
 
 
-class palmer(common_operations):
+class Palmer(Common_operations):
     def __init__(self, relax):
         """The model-free analysis of Palmer.
 

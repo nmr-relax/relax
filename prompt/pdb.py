@@ -1,4 +1,4 @@
-class skin:
+class Skin:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
@@ -9,13 +9,13 @@ class skin:
         """
 
         # Load the macro class into the namespace of this __init__ function.
-        x = macro_class(relax)
+        x = Macro_class(relax)
 
         # Place references to the interactive functions within the namespace of this skin class.
         self.set = x.set
 
 
-class macro_class:
+class Macro_class:
     def __init__(self, relax):
         """Class containing the macro for setting the pdb file."""
 

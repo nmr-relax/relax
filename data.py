@@ -1,7 +1,7 @@
 from math import pi
 
 
-class data:
+class Data:
     def __init__(self):
         """Class containing all the program data."""
 

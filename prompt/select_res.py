@@ -1,4 +1,4 @@
-class select_res:
+class Select_res:
     def __init__(self):
         """Base class containing functions for the selection of residues."""
 

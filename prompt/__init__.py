@@ -17,3 +17,10 @@ __all__ = ['command',
            'tab',
            'value',
            'write']
+
+__doc__ = \
+"""Package for the prompt based interface.
+
+The functions should only contain code for checking the validity of arguments.  If any other code is
+required, this should be placed elsewhere.
+"""

@@ -2,7 +2,7 @@ from Numeric import Float64, ones, outerproduct, sum, zeros
 from math import pi
 from re import match
 
-from data import data
+from data import Data
 
 from jw_mf_comps import *
 from jw_mf import *
@@ -12,7 +12,7 @@ from ri import *
 from chi2 import *
 
 
-class mf:
+class Mf:
     def __init__(self, relax, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_vector=None, print_flag=0):
         """The model-free minimisation class.
 
@@ -53,7 +53,7 @@ class mf:
         self.print_flag = print_flag
 
         # Initialise the data class used to store data.
-        self.data = data()
+        self.data = Data()
 
         # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
         self.calc_frq_list()
@@ -361,7 +361,7 @@ class mf:
         corresponding to the same frequency exists.
         """
 
-        self.data.r1_data = data()
+        self.data.r1_data = Data()
         self.data.r1_data.num_frq = self.data.num_frq
         self.data.r1_data.dip_const_fixed = self.data.dip_const_fixed
         self.data.r1_data.csa_const_fixed = self.data.csa_const_fixed

@@ -14,10 +14,10 @@ import sys
 from math import log, pi
 from re import match
 
-from common_ops import common_operations
+from common_ops import Common_operations
 
 
-class exp_overall_disc(common_operations):
+class Exp_overall_disc(Common_operations):
     def __init__(self, relax):
         """Model-free analysis based on the expected overall discrepancy."""
 

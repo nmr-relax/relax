@@ -1,7 +1,7 @@
-from data import data
+from data import Data
 
 
-class init_data:
+class Init_data:
     def __init__(self, relax):
         """Class containing the macro for reinitialising self.relax.data"""
 
@@ -11,4 +11,4 @@ class init_data:
     def init(self):
         """Macro for reinitialising self.relax.data"""
 
-        self.relax.data = data()
+        self.relax.data = Data()

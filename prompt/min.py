@@ -3,30 +3,32 @@ from Numeric import Float64, array, zeros
 from re import match
 
 
-class min:
+class Min:
     def __init__(self, relax):
         """Class containing functions specific to model-free analysis."""
 
         self.relax = relax
 
 
-    def fixed(self, model, values=None, print_flag=1):
-        """Macro to fix the initial parameter values.
+    def fixed(self, model=None, values=None, print_flag=1):
+        """Function for fixing the initial parameter values.
 
-        Arguments
-        ~~~~~~~~~
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
 
-        model:      The name of the model.
-        values:     An array of numbers of length equal to the number of parameters in the model.
-        print_flag: (so is this)
+        model:  The name of the model.
+
+        values:  An array of numbers of length equal to the number of parameters in the model.
+
+        print_flag:  (so is this)
 
 
         Examples
         ~~~~~~~~
 
         This command will fix the parameter values of the model 'm2', which is the original
-        model-free equation with parameters [S2, te], before minimisation to the preselected values
-        of this macro.
+        model-free equation with parameters {S2, te}, before minimisation to the preselected values
+        of this function.
 
         relax> fixed('m2')
 
@@ -36,9 +38,6 @@ class min:
 
         relax> fixed('m2', [1.0, 10 * 10e-12])
         relax> fixed('m2', values=[1.0, 10 * 10e-12])
-
-
-        FIN
         """
 
         # The model argument.
@@ -84,7 +83,7 @@ class min:
 
         # Unknown equation type.
         else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the fixed parameter macro."
+            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the fixed parameter function."
             return
 
         ######
@@ -108,13 +107,10 @@ class min:
         main_loop(model=model, min_algor='fixed', min_options=min_options, print_flag=print_flag)
 
 
-    def grid_search(self, model, lower=None, upper=None, inc=21, print_flag=1):
-        """The grid search Macro.
+    def grid_search(self, model=None, lower=None, upper=None, inc=21, print_flag=1):
+        """The grid search function.
 
         Generate the data structure of model-free grid options for the grid search.
-
-
-        FIN
         """
 
         # The model argument.
@@ -193,7 +189,7 @@ class min:
 
         # Unknown equation type.
         else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search macro."
+            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search function."
             return
 
         ######
@@ -221,23 +217,35 @@ class min:
 
 
     def minimise(self, *args, **keywords):
-        """Minimisation macro.
+        """Minimisation function.
 
-        The arguments specify the minimiser to use as well as the minimisation options.
+        Arguments
+        ~~~~~~~~~
 
-        The following keywords can be supplied, any others will be ignored.
-            model - a string specifying which model to minimise (this must be given).
-            func_tol - the function tolerance between iterations, used to terminate minisation.  The
-                default value is 1e-25.
-            max_iter - the maximum number of iterations.  The default value is 1e7.
-            constraints - a flag specifying whether the parameters should be constrained.  The
-                default is to turn constraints on (constraints=1).
-            print_flag - the amount of information to print to screen.  Zero corresponds to minimal
-                output, one is intermediate output, while two is maximal output.  The default value
-                is 1.
+        The arguments are all strings which specify which minimiser to use as well as the
+        minimisation options.  At least one argument is required.  As this function calls the
+        generic minimisation function 'generic_minimise', to see the full list of allowed arguments
+        import the function and view its docstring by typing:
+
+        relax> from minimise.generic import generic_minimise
+        relax> help(generic_minimise)
 
 
-        FIN
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        model:  The name of the model.
+        
+        func_tol:  The function tolerance.  This is used to terminate minisation once the function
+        value between iterations is less than the tolerance.  The default value is 1e-25.
+        
+        max_iter:  The maximum number of iterations.  The default value is 1e7.
+        
+        constraints:  A flag specifying whether the parameters should be constrained.  The default
+        is to turn constraints on (constraints=1).
+        
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output, one is intermediate output, while two is maximal output.  The default value is 1.
         """
 
         # Minimization algorithm.
@@ -325,7 +333,7 @@ class min:
 
         # Unknown equation type.
         else:
-            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search macro."
+            print "The equation " + `self.relax.data.equations[model]` + " has not been coded into the grid search function."
             return
 
         ######

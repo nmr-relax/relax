@@ -36,30 +36,26 @@ import profile
 import pstats
 from re import match
 import sys
-
-from model_free import model_free
-from palmer import palmer
-from relax_fit import relax_fit
-
-from data import data
-from file_ops import file_ops
-
-from interpreter import interpreter
-
-sys.path.append(sys.path[0])
-sys.path[0] = '.'
-
-from model_selection.model_selection import model_selection
-
-# Tests for installed packages.
 try:
     import Numeric
 except ImportError:
     print "The python package Numeric cannot be found."
     sys.exit()
 
+from data import Data
+from file_ops import File_ops
+from map import Map
+from model_free import Model_free
+from model_selection.model_selection import Model_selection
+from palmer import Palmer
+from prompt.interpreter import Interpreter
+from relax_fit import Relax_fit
 
-class relax:
+sys.path.append(sys.path[0])
+sys.path[0] = '.'
+
+
+class Relax:
     def __init__(self, argv):
         """The top level class."""
 
@@ -71,16 +67,17 @@ class relax:
         # Debugging option, 0 = off, 1 = on.
         self.debug = 0
 
-        self.data = data()
-        self.file_ops = file_ops(self)
-        #self.model_selection = model_selection(self)
-        self.model_free = model_free(self)
+        self.data = Data()
+        self.file_ops = File_ops(self)
+        self.map = Map(self)
+        #self.model_selection = Model_selection(self)
+        self.model_free = Model_free(self)
 
         # Command line arguments.
         self.arguments()
 
         # Run the interpreter.
-        self.interpreter = interpreter(self)
+        self.interpreter = Interpreter(self)
         self.interpreter.run()
 
 
@@ -135,10 +132,10 @@ if __name__ == "__main__":
     profile_flag = 0
 
     if not profile_flag:
-        relax(sys.argv)
+        Relax(sys.argv)
     else:
         def print_stats(stats):
             pstats.Stats(stats).sort_stats(-1).print_stats()
 
         profile.Profile.print_stats = print_stats
-        profile.run('relax(sys.argv)')
+        profile.run('Relax(sys.argv)')

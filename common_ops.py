@@ -4,7 +4,7 @@ from string import split
 import sys
 
 
-class common_ops:
+class Common_ops:
     def __init__(self, relax):
         """Operations, functions, etc common to the different model-free analysis methods."""
 

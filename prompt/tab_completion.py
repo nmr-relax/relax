@@ -2,7 +2,7 @@ import __builtin__
 from re import match
 
 
-class tab_completion:
+class Tab_completion:
     def __init__(self, name_space={}, print_flag=0):
         """Function for tab completion.
 

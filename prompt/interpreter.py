@@ -5,81 +5,95 @@ import sys
 sys.ps1 = 'relax> '
 sys.ps2 = 'relax| '
 
-from tab_completion import tab_completion
+from tab_completion import Tab_completion
+from command import Ls, Lh, Ll, system
+from print_all_data import Print_all_data
 
 # Macro functions.
-from macros.diffusion_tensor import diffusion_tensor
-from macros.gpl import gpl
-from macros.init_data import init_data
-from macros.map import map
-from macros.min import min
+from diffusion_tensor import Diffusion_tensor
+from gpl import GPL
+from init_data import Init_data
+from map import Map
+from min import Min
 
 # Macro classes.
-import macros.echo_data
-import macros.format
-import macros.load
-import macros.model
-import macros.min
-import macros.model_selection
-import macros.pdb
-import macros.state
-import macros.value
+import echo_data
+import format
+import load
+import model
+import min
+import model_selection
+import pdb
+import state
+import value
 
 
-class interpreter:
+class Interpreter:
     def __init__(self, relax):
         """The interpreter class."""
 
         # Place the program class structure under self.relax
         self.relax = relax
 
-        # Place the macros into the namespace of the interpreter class.
-        self._diffusion_tensor = diffusion_tensor(relax)
-        self._init_data = init_data(relax)
-        self._min = min(relax)
+        # Place the functions into the namespace of the interpreter class.
+        self._diffusion_tensor = Diffusion_tensor(relax)
+        self._gpl = GPL
+        self._init_data = Init_data(relax)
+        self._map = Map(relax)
+        self._min = Min(relax)
+        self._system = system
 
+        # Place the classes into the interpreter class namespace.
+        self._echo_data = echo_data.Skin(relax)
+        self._format = format.Skin(relax)
+        self._load = load.Skin(relax)
+        self._pdb = pdb.Skin(relax)
+        self._model = model.Model(relax)
+        self._model_selection = model_selection.Skin(relax)
+        self._state = state.Skin(relax)
+        self._value = value.Skin(relax)
 
     def run(self):
         """Run the python interpreter.
 
-        The namespace of this function is the namespace seen inside the interpreter.  All macros
+        The namespace of this function is the namespace seen inside the interpreter.  All functions
         should be defined in this namespace.
         """
 
-        # Import the macros emulating system commands.
-        from macros.command import ls, lh, ll, system
-        from macros.print_all_data import print_all_data
-        lh = lh()
-        ll = ll()
-        ls = ls()
-        print_all_data = print_all_data(self.relax)
+        # Import the functions emulating system commands.
+        lh = Lh()
+        ll = Ll()
+        ls = Ls()
+        system = self._system
+        print_all_data = Print_all_data(self.relax)
 
         # Place functions in the local namespace.
-        GPL = gpl()
+        gpl = GPL = self._gpl()
 
-        # Place the macro functions in the local namespace.
+        # Place the functions in the local namespace.
         diffusion_tensor = self._diffusion_tensor.set
         fixed = self._min.fixed
         grid_search = self._min.grid_search
         init_data = self._init_data.init
+        map = self._map.map
         minimise = self._min.minimise
 
-        # Place the macro classes in the local namespace.
-        echo_data = macros.echo_data.skin(self.relax)
-        format = macros.format.skin(self.relax)
-        load = macros.load.skin(self.relax)
-        pdb = macros.pdb.skin(self.relax)
-        model = macros.model.Model(self.relax)
-        model_selection = macros.model_selection.skin(self.relax)
-        state = macros.state.skin(self.relax)
-        value = macros.value.skin(self.relax)
+        # Place the classes in the local namespace.
+        echo_data = self._echo_data
+        format = self._format
+        load = self._load
+        pdb = self._pdb
+        model = self._model
+        model_selection = self._model_selection
+        state = self._state
+        value = self._value
 
         # Builtin interpreter functions.
         echo = _Echo()
         exit = bye = quit = q = _Exit()
 
         # Setup tab completion.
-        readline.set_completer(tab_completion(name_space=locals()).finish)
+        readline.set_completer(Tab_completion(name_space=locals()).finish)
         readline.parse_and_bind("tab: complete")
 
         # Modify the help system.
@@ -94,14 +108,14 @@ class _Echo:
     def off(self):
         """Macro for turning off the echoing of commands.
 
-        The default program state is no echoing but if the macro echo_on() has been run and you no
-        longer want the echoing, this macro will turn it off.
+        The default program state is no echoing but if the function echo_on() has been run and you
+        no longer want the echoing, this function will turn it off.
 
 
         Example
         ~~~~~~~
 
-        To run the macro, type the following.
+        To run the function, type the following.
 
         >>> echo_off()
 
@@ -116,15 +130,15 @@ class _Echo:
     def on(self):
         """Macro for turning on the echoing of commands.
 
-        The default program state is no echoing but if this macro is run all commands will be echoed
-        exactly as typed.  This is useful for scipting as commands run from a script are not printed
-        to screen.  To turn echoing off, run the macro echo_off()
+        The default program state is no echoing but if this function is run all commands will be
+        echoed exactly as typed.  This is useful for scipting as commands run from a script are not
+        printed to screen.  To turn echoing off, run the function echo_off()
 
 
         Example
         ~~~~~~~
 
-        To run the macro, type the following.
+        To run the function, type the following.
 
         >>> echo_on()
 
@@ -161,11 +175,11 @@ class _Exit:
 
 class _Helper:
     text = """\
-For assistence in using a macro, simply type help(macro).  In addition to macros, if help(object)
-is typed, the help for the python object is returned.  This system is similar to the help function
-built into the python interpreter, which has been renamed to help_python, with the interactive
-component removed.  For the interactive python help the interactive python help system, type
-help_python().\
+For assistence in using a function, simply type help(function).  In addition to functions, if
+help(object) is typed, the help for the python object is returned.  This system is similar to the
+help function built into the python interpreter, which has been renamed to help_python, with the
+interactive component removed.  For the interactive python help the interactive python help system,
+type help_python().\
     """
 
     def __repr__(self):

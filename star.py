@@ -1,7 +1,7 @@
 from re import match
 from string import split
 
-class star:
+class Star:
     def __init__(self, relax):
         """Class to extract model-free data from the STAR formatted mfout file."""
 

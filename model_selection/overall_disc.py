@@ -24,10 +24,10 @@
 import sys
 from math import log, pi
 
-from common_ops import common_operations
+from common_ops import Common_operations
 
 
-class overall_disc(common_operations):
+class Overall_disc(Common_operations):
     def __init__(self, relax):
         """Calculation of the theoretical overall discrepancy."""
 

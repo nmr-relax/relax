@@ -1,7 +1,7 @@
 from re import match
 
 
-class tab:
+class Tab:
     def __init__(self, readline):
         """The interpreter class."""
 

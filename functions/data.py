@@ -1,4 +1,4 @@
-class data:
+class Data:
     def __init__(self):
         """A class for the storage of temporary data."""
 

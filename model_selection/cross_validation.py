@@ -15,10 +15,10 @@
 import sys
 from re import match
 
-from common_ops import common_operations
+from common_ops import Common_operations
 
 
-class cv(common_operations):
+class CV(Common_operations):
     def __init__(self, relax):
         """Model-free analysis based on cross-validation model selection methods."""
 

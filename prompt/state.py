@@ -1,10 +1,10 @@
-from data import data
 from os import F_OK, access
 
-from generic_functions import generic_functions
+from data import Data
+from generic_functions import Generic_functions
 
 
-class skin:
+class Skin:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
@@ -15,14 +15,14 @@ class skin:
         """
 
         # Load the macro class into the namespace of this __init__ function.
-        x = macro_class(relax)
+        x = Macro_class(relax)
 
         # Place references to the interactive functions within the namespace of this skin class.
         self.load = x.load
         self.save = x.save
 
 
-class macro_class(generic_functions):
+class Macro_class(Generic_functions):
     def __init__(self, relax):
         """Class containing the macros for manipulating the program state."""
 
@@ -66,7 +66,7 @@ class macro_class(generic_functions):
             return
 
         # Reinitialise self.relax.data
-        self.relax.data = data()
+        self.relax.data = Data()
 
         # Execute the file to reload all data.
         exec(file)

@@ -1,9 +1,9 @@
-class gpl:
+class GPL:
     def __repr__(self):
-        help(GPL)
+        help(gpl)
         return "The GNU General Public License."
 
-def GPL():
+def gpl():
     """
                     GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991

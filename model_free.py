@@ -1,11 +1,12 @@
+from math import pi
 from Numeric import Float64, ones, zeros
 from re import match
 
-from functions.mf import mf
+from functions.mf import Mf
 from minimise.generic import generic_minimise
 
 
-class model_free:
+class Model_free:
     def __init__(self, relax):
         """Class containing functions specific to model-free analysis."""
 
@@ -173,8 +174,6 @@ class model_free:
                 for i in range(len(string)):
                     string2 = string2 + "~"
                 print string2
-            else:
-                print "Residue: " + `self.relax.data.seq[self.res][0]` + " " + self.relax.data.seq[self.res][1]
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             self.iter_count = 0
@@ -198,7 +197,7 @@ class model_free:
             self.function_ops = ()
 
             # Initialise the functions used in the minimisation.
-            self.mf = mf(self.relax, equation=self.relax.data.equations[model], param_types=self.relax.data.param_types[model], init_params=self.relax.data.params[model][self.res], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
+            self.mf = Mf(self.relax, equation=self.relax.data.equations[model], param_types=self.relax.data.param_types[model], init_params=self.relax.data.params[model][self.res], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
 
             # Levenberg-Marquardt minimisation.
             if match('[Ll][Mm]$', min_algor) or match('[Ll]evenburg-[Mm]arquardt$', min_algor):
@@ -219,9 +218,80 @@ class model_free:
 
             # Place the results in various data structures.
             self.relax.data.params[model][self.res] = self.params
-            self.relax.data.params[model][self.res] = self.params
+            self.relax.data.min_results[model][self.res] = [self.func, self.iter_count, self.f_count, self.g_count, self.h_count]
 
-        print "\n[ Done ]\n\n"
+
+    def map_bounds(self, model=None):
+        """The function for creating bounds for the mapping function."""
+
+        # Bounds array.
+        bounds = zeros((len(self.relax.data.param_types[model]), 2), Float64)
+
+        # The original model-free equations.
+        if match('mf_orig', self.relax.data.equations[model]):
+            for i in range(len(self.relax.data.param_types[model])):
+                # S2.
+                if match('S2', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 1]
+
+                # te.
+                elif match('te', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 1e-8]
+
+                # Rex.
+                elif match('Rex', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2]
+
+                # Bond length.
+                elif match('Bond length', self.relax.data.param_types[model][i]):
+                    bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
+
+                # CSA.
+                elif match('CSA', self.relax.data.param_types[model][i]):
+                    bounds[i] = [-100 * 1e-6, -300 * 1e-6]
+
+                # Unknown parameter.
+                else:
+                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the original model-free equation."
+                    return bounds
+
+        # The extended model-free equations.
+        elif match('mf_ext', self.relax.data.equations[model]):
+            for i in range(len(self.relax.data.param_types[model])):
+                # S2f.
+                if match('S2f', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 1]
+
+                # tf.
+                elif match('tf', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 1e-8]
+
+                # S2s.
+                elif match('S2s', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 1]
+
+                # ts.
+                elif match('ts', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 1e-8]
+
+                # Rex.
+                elif match('Rex', self.relax.data.param_types[model][i]):
+                    bounds[i] = [0, 3]
+
+                # Bond length.
+                elif match('Bond length', self.relax.data.param_types[model][i]):
+                    bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
+
+                # CSA.
+                elif match('CSA', self.relax.data.param_types[model][i]):
+                    bounds[i] = [-100 * 1e-6, -300 * 1e-6]
+
+                # Unknown parameter.
+                else:
+                    print "Unknown parameter '" + self.relax.data.param_types[model][i] + "' for the extended model-free equation."
+                    return bounds
+
+        return bounds
 
 
     def print_header(self):
@@ -496,6 +566,11 @@ class model_free:
             self.relax.data.scaling
         except AttributeError:
             self.relax.data.scaling = {}
+        try:
+            self.relax.data.min_results
+        except AttributeError:
+            self.relax.data.min_results = {}
+
         self.relax.data.equations[self.model] = self.equation
         self.relax.data.param_types[self.model] = self.types
 
@@ -507,6 +582,9 @@ class model_free:
         if self.scaling:
             self.relax.data.scaling[self.model] = zeros((len(self.relax.data.seq), len(self.types)), Float64)
             self.relax.data.scaling[self.model][:] = self.scale_vect
+
+        # Minimisation results.
+        self.relax.data.min_results[self.model] = zeros((len(self.relax.data.seq), 5), Float64)
 
 
     def scaling_vector(self):

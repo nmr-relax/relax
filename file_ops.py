@@ -3,7 +3,7 @@ from re import match
 from string import split
 import sys
 
-class file_ops:
+class File_ops:
     def __init__(self, relax):
         """Class containing the file operations"""
 

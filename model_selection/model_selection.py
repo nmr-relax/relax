@@ -1,4 +1,4 @@
-class model_selection:
+class Model_selection:
     def __init__(self, mf):
         """Class used to store all the program functions."""
 

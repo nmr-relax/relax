@@ -1,7 +1,7 @@
-from generic_functions import generic_functions
+from generic_functions import Generic_functions
 
 
-class skin:
+class Skin:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
@@ -12,14 +12,14 @@ class skin:
         """
 
         # Load the macro class into the namespace of this __init__ function.
-        x = macro_class(relax)
+        x = Macro_class(relax)
 
         # Place references to the interactive functions within the namespace of this skin class.
         self.relax_data = x.relax_data
         self.sequence = x.sequence
 
 
-class macro_class(generic_functions):
+class Macro_class(Generic_functions):
     def __init__(self, relax):
         """Class containing macros for loading data."""
 
@@ -29,8 +29,8 @@ class macro_class(generic_functions):
     def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Macro for loading R1, R2, or NOE relaxation data.
 
-        Arguments
-        ~~~~~~~~~
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
 
         ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
         frq_label:    A string to label the field strength, ie '600'.  Can be anything as long as
@@ -138,8 +138,8 @@ class macro_class(generic_functions):
     def sequence(self, file_name=None, num_col=0, name_col=1, sep=None):
         """Macro for loading sequence data.
 
-        Arguments
-        ~~~~~~~~~
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
 
         file_name:    The name of the file containing the sequence data.
         num_col:    The residue number column (the default is 0, ie the first column).

@@ -2,9 +2,9 @@ from re import match
 from os import chmod
 import sys
 
-from common_ops import common_ops
+from common_ops import Common_ops
 
-class palmer(common_ops):
+class Palmer(Common_ops):
     def __init__(self, relax):
         """Class used to create and process input and output for the program Modelfree 4."""
 

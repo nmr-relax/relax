@@ -27,8 +27,8 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     specifying the amount of detail to print to screen.
 
 
-    Arguments
-    ~~~~~~~~~
+    Keyword Arguments
+    ~~~~~~~~~~~~~~~~~
 
     func:  The function which returns the function value.
 
@@ -42,14 +42,14 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
 
     min_algor:  A string specifying which minimisation technique to use.
 
-    min_options: A tuple to pass to the minimisation function as the min_options keyword.
+    min_options:  A tuple to pass to the minimisation function as the min_options keyword.
 
-    func_tol:   The function tolerance value.  Once the function value between iterations decreases
+    func_tol:  The function tolerance value.  Once the function value between iterations decreases
     below this value, minimisation is terminated.
 
-    maxiter:   The maximum number of iterations.
+    maxiter:  The maximum number of iterations.
 
-    full_output: A flag specifying which data structures should be returned.  The following values
+    full_output:  A flag specifying which data structures should be returned.  The following values
     will return, in tuple form, the following data:
         0 - xk
         1 - (xk, fk, k, f_count, g_count, h_count, warning)

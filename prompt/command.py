@@ -1,7 +1,7 @@
 import os
 
 
-class lh:
+class Lh:
     def __repr__(self):
         """Function which executes the Unix command 'ls -alh'"""
 
@@ -9,7 +9,7 @@ class lh:
         return "ls -alh"
 
 
-class ll:
+class Ll:
     def __repr__(self):
         """Function which executes the Unix command 'ls -l'"""
 
@@ -17,7 +17,7 @@ class ll:
         return "ls -l"
 
 
-class ls:
+class Ls:
     def __repr__(self):
         """Function which executes the Unix command 'ls'"""
 

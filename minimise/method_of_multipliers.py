@@ -1,8 +1,8 @@
 from Numeric import Float64, dot, outerproduct, sqrt, zeros
 from re import match
 
-#from bound_constraint import bound_constraint
-from constraint_linear import constraint_linear
+#from bound_constraint import Bound_constraint
+from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
@@ -155,7 +155,7 @@ class Method_of_multipliers(Min):
                 self.b[3] = -1.0
             # Remove to here.
 
-            self.constraint_linear = constraint_linear(self.A, self.b)
+            self.constraint_linear = Constraint_linear(self.A, self.b)
             self.c = self.constraint_linear.func
             self.dc = self.constraint_linear.dfunc
             self.d2c = None

@@ -1,8 +1,8 @@
-from generic_functions import generic_functions
-from select_res import select_res
+from generic_functions import Generic_functions
+from select_res import Select_res
 
 
-class skin:
+class Skin:
     def __init__(self, relax):
         """The class accessible to the interpreter.
 
@@ -13,14 +13,14 @@ class skin:
         """
 
         # Load the macro class into the namespace of this __init__ function.
-        x = macro_class(relax)
+        x = Macro_class(relax)
 
         # Place references to the interactive functions within the namespace of this skin class.
         self.echo = x.echo
         self.print_data = x.print_data
 
 
-class macro_class(generic_functions, select_res):
+class Macro_class(Generic_functions, Select_res):
     def __init__(self, relax):
         """Macros for printing data to standard out."""
 

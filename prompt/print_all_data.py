@@ -1,7 +1,7 @@
-from generic_functions import generic_functions
+from generic_functions import Generic_functions
 
 
-class print_all_data(generic_functions):
+class Print_all_data(Generic_functions):
     def __init__(self, relax):
         """Class containing the macros for manipulating the program state."""
 

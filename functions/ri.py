@@ -1,7 +1,5 @@
-from data import data
 from ri_comps import r1_comps, dr1_comps, d2r1_comps
 from ri_prime import func_ri_prime
-data_class = data
 
 
 def ri(data, create_ri, get_r1):

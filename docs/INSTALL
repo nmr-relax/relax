@@ -12,11 +12,11 @@ Then either make a link in usr/local/bin to the file relax/relax using the comma
 Or make an alias to the file by adding the following lines for the bash or csh/tcsh shells.
 
 Bash:
-	Global file:	/etc/bashrc
-	Local file:	~/.bashrc
-	Alias line:	alias relax="/usr/local/relax/relax"
+    Global file:  /etc/bashrc
+    Local file:  ~/.bashrc
+    Alias line:  alias relax="/usr/local/relax/relax"
 
 Csh / Tcsh:
-	Global file:	/etc/csh.cshrc
-	Local file:	~/.csh or ~/.tcsh
-	Alias line:	alias relax "/usr/local/relax/relax"
+    Global file:  /etc/csh.cshrc
+    Local file:  ~/.csh or ~/.tcsh
+    Alias line:  alias relax "/usr/local/relax/relax"

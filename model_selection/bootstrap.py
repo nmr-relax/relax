@@ -12,10 +12,10 @@ import sys
 from math import log, pi
 from re import match
 
-from common_ops import common_operations
+from common_ops import Common_operations
 
 
-class bootstrap(common_operations):
+class Bootstrap(Common_operations):
     def __init__(self, relax):
         """Model-free analysis based on bootstrap model selection."""
 
