@@ -1,3 +1,4 @@
+import sys
 from Numeric import Float64, zeros
 
 class d2chi2:

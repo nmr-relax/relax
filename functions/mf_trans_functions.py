@@ -63,3 +63,6 @@ class mf_trans_functions(chi2, dchi2, d2chi2, Ri, dRi, d2Ri, Ri_prime, dRi_prime
 		else:
 			raise NameError, "Should not be here."
 
+
+	def lm_dri(self):
+		return self.data.dri

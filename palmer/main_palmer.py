@@ -119,8 +119,8 @@ class main_palmer:
 		for i in range(self.mf.data.num_ri):
 			mfdata.write('%-7s' % self.mf.data.data_types[i])
 			mfdata.write('%-10s' % self.mf.data.frq_label[self.mf.data.remap_table[i]])
-			mfdata.write('%10s' % self.mf.data.relax_data[i][res][2])
-			mfdata.write('%10s' % self.mf.data.relax_data[i][res][3])
+			mfdata.write('%20s' % self.mf.data.relax_data[i][res][2])
+			mfdata.write('%20s' % self.mf.data.relax_data[i][res][3])
 			mfdata.write(' %-3s\n' % flag)
 
 
