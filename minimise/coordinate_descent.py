@@ -1,4 +1,4 @@
-from Numeric import Float64, copy, dot, identity, zeros
+from Numeric import Float64, copy, dot, identity
 
 from generic_line_search import generic_line_search
 from generic_minimise import generic_minimise
@@ -76,77 +76,3 @@ class coordinate_descent(generic_line_search, generic_minimise):
 		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 		self.d2fk = None
-
-def crap():
-	# Initial values before the first iteration.
-	xk = x0
-	fk = apply(func, (x0,)+args)
-	dfk = apply(dfunc, (x0,)+args)
-
-
-	# Start the iteration counter.
-	k = 0
-
-	# Debugging code.
-	if print_flag == 1:
-		k2 = 0
-
-	# Iterate until the local minima is found.
-	while 1:
-		# Debugging code.
-		if print_flag >= 1:
-			if print_flag == 2:
-				print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
-			else:
-				if k2 == 100:
-					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
-					k2 = 0
-
-		# Calculate the initial step length a0.
-		if k == 0:
-			a0 = 1.0
-		else:
-			a0 = alpha * dot(dfk_old, pk_old) / dot(dfk, pk)
-
-		# Backtracking line search.
-		if match('^[Bb]ack', line_search_algor):
-			alpha = backtrack(func, args, xk, fk, dfk, pk, a_init=a0)
-		# Nocedal and Wright interpolation based line search.
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
-			alpha = nocedal_wright_interpol(func, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, print_flag=0)
-		# Nocedal and Wright line search for the Wolfe conditions.
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
-			alpha = nocedal_wright_wolfe(func, dfunc, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, eta=0.1, print_flag=0)
-		# More and Thuente line search.
-		elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
-			alpha = more_thuente(func, dfunc, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, eta=0.1, print_flag=1)
-		# No line search.
-		elif match('^[Nn]one$', line_search_algor):
-			alpha = a0
-		# No match to line search string.
-		else:
-			raise NameError, "The line search algorithm " + line_search_algor + " is not setup for back-and-forth coordinate descent minimisation.\n"
-
-		# Find the parameter vector, function value, and gradient vector for iteration k+1.
-		xk_new = xk + alpha * pk
-		fk_new = apply(func, (xk_new,)+args)
-		dfk_new = apply(dfunc, (xk_new,)+args)
-
-		# Test for the local minimum.
-		if abs(fk - fk_new) <= tol:
-			if print_flag:
-				print "fk: " + `fk`
-				print "fk_new: " + `fk_new`
-				print "<Fin>"
-
-		# Update to the next iteration number.
-		k = k + 1
-		dfk_old = copy.deepcopy(dfk)
-		pk_old = copy.deepcopy(pk)
-		xk = xk_new
-		fk = fk_new
-		dfk = copy.deepcopy(dfk_new)
-
-		# Debugging code.
-		if print_flag == 1:
-			k2 = k2 + 1

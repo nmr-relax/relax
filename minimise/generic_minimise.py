@@ -46,7 +46,7 @@ class generic_minimise:
 			1 - Maximum number of iterations have been reached.
 		"""
 
-	
+
 	def generic_minimise(self):
 		"""Generic code for iterative minimisers.
 
@@ -88,10 +88,14 @@ class generic_minimise:
 			self.xk = copy.deepcopy(self.xk_new)
 			self.update_data()
 
-			# Test for the local minimum or if the maximum number of iterations has been reached.
-			if abs(self.fk_last - self.fk) <= self.func_tol or self.k >= self.maxiter:
-				if self.k >= self.maxiter:
-					self.warning = "Maximum number of iterations reached"
+			# Test if maximum number of iterations have been reached.
+			if self.k >= self.maxiter:
+				self.warning = "Maximum number of iterations reached"
+				break
+
+			# Tests.
+			finished = self.tests()
+			if finished:
 				break
 
 			# Update data for the next iteration.
@@ -121,4 +125,14 @@ class generic_minimise:
 		self.g_count = 0
 		self.h_count = 0
 
+		# Initialise the warning string.
 		self.warning = None
+
+
+	def tests(self):
+		"Test for the local minimum."
+
+		if abs(self.fk_last - self.fk) <= self.func_tol:
+			return 1
+		else:
+			return 0

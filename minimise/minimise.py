@@ -19,15 +19,18 @@ from grid import grid
 from generic_trust_region import generic_trust_region
 #from generic_conjugate_grad import generic_conjugate_grad
 
-# Line search minimisers.
+# Line search algorithms.
 from coordinate_descent import coordinate_descent
 from steepest_descent import steepest_descent
 from bfgs import bfgs
 from newton import newton
 
-# Trust region minimisers.
-#from cauchy_point import cauchy_point
+# Trust region algorithms.
 from levenberg_marquardt import levenberg_marquardt
+#from cauchy_point import cauchy_point
+
+# Other algorithms.
+from simplex import simplex
 
 
 def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
@@ -190,8 +193,24 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Ll][Mm]$', minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		self = newton()
-		results = levenberg_marquardt(func, dfunc, minimiser[1], minimiser[2], x0, args=args, tol=func_tol, maxiter=maxiter, full_output=1, print_flag=print_flag)
+		self = levenberg_marquardt()
+		results = levenberg_marquardt.minimise(self, func, dfunc, minimiser[1], minimiser[2], x0, args=args, func_tol=func_tol, maxiter=maxiter, full_output=1, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = results
+		else:
+			xk = results
+
+
+	# Other algorithms.
+	###################
+
+	# Simplex minimisation.
+	elif match('^[Ss]implex$', minimiser[0]):
+		if print_flag:
+			print "\n\n<<< Simplex minimisation >>>"
+		self = simplex()
+		results = simplex.minimise(self, func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		#results = simplex_scipy(func, x0, args=args, xtol=1e-30, ftol=func_tol, maxiter=maxiter, full_output=1, disp=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = results
 		else:

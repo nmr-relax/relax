@@ -32,7 +32,7 @@ class main_model_free:
 
 		# Minimisation options.
 		chi2_tol = 1e-15
-		max_iterations = 10000
+		max_iterations = 5000
 
 		# Initialise the iteration counter and function, gradient, and hessian call counters.
 		self.iter_count = 0
