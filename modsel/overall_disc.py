@@ -1,4 +1,4 @@
-# Calculate the overall discrepency.
+# Calculate the overall discrepancy.
 #
 # The input relaxation data for this method should be the operating model data (the theoretical, back calculated
 # relaxation values) which has been Gaussian randomized for a given error.  The original operating model data
@@ -13,10 +13,10 @@
 # The program is divided into the following stages:
 #	Stage 1:   Creation of the files for the model-free calculations for models 1 to 5 for the randomized
 #		data.
-#	Stage 2a:  Calculation of the overall discrepency for model selection, and the creation of the final
+#	Stage 2a:  Calculation of the overall discrepancy for model selection, and the creation of the final
 #		run.  Monte Carlo simulations are used to find errors, and the diffusion tensor is unoptimized.
 #		Files are placed in the directory 'final'.
-#	Stage 2b:  Calculation of the overall discrepency for model selection, and the creation of the final
+#	Stage 2b:  Calculation of the overall discrepancy for model selection, and the creation of the final
 #		optimization run.  Monte Carlo simulations are used to find errors, and the diffusion tensor
 #		is optimized.  Files are placed in the directory 'optimized'.
 #	Stage 3:   Extraction of optimized data.
@@ -29,11 +29,11 @@ from common_ops import common_operations
 
 class overall_disc(common_operations):
 	def __init__(self, mf):
-		"Calculation of the theoretical overall discrepency."
+		"Calculation of the theoretical overall discrepancy."
 
 		self.mf = mf
 
-		print "Modelfree analysis based on the overall discrepency for model selection."
+		print "Modelfree analysis based on the overall discrepancy for model selection."
 		self.initialize()
 		message = "See the file 'modsel/overall_disc.py' for details.\n"
 		self.mf.file_ops.read_file('op_data', message)

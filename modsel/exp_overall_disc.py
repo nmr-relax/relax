@@ -1,6 +1,6 @@
-# A method based on model selection using bootstrap criteria.
+# Model selection using the expected overall discrepancy.
 #
-# The Kullback-Leibeler discrepancy is used.
+# The input relaxation data for this method should be the true data (theoretical, back calculated relaxation values).
 #
 # The program is divided into the following stages:
 #	Stage 1:  Creation of the files for the model-free calculations for models 1 to 5.  Monte Carlo
@@ -17,13 +17,13 @@ from re import match
 from common_ops import common_operations
 
 
-class bootstrap(common_operations):
+class exp_overall_disc(common_operations):
 	def __init__(self, mf):
-		"Model-free analysis based on bootstrap model selection."
+		"Model-free analysis based on the expected overall discrepancy."
 
 		self.mf = mf
 
-		print "Model-free analysis based on bootstrap criteria model selection."
+		print "Model-free analysis based on the expected overall discrepancy."
 		self.initialize()
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 		self.mf.data.mfin.default_data()
@@ -40,9 +40,9 @@ class bootstrap(common_operations):
 		tm = float(self.mf.data.usr_param.tm['val']) * 1e-9
 
 		if self.mf.debug == 1:
-			self.mf.log.write("\n\n<<< Bootstrap model selection >>>\n\n")
+			self.mf.log.write("\n\n<<< Expected overall discrepancy >>>\n\n")
 
-		print "Calculating the bootstrap criteria"
+		print "Calculating the expected overall discrepancy"
 		for res in range(len(self.mf.data.relax_data[0])):
 			print "Residue: " + self.mf.data.relax_data[0][res][1] + " " + self.mf.data.relax_data[0][res][0]
 			self.mf.data.results.append({})
@@ -61,7 +61,7 @@ class bootstrap(common_operations):
 
 			for model in self.mf.data.runs:
 				if self.mf.debug == 1:
-					self.mf.log.write("\nCalculating bootstrap estimate for res " + `res` + ", model " + model + "\n\n")
+					self.mf.log.write("\nCalculating expected overall discrepancy for res " + `res` + ", model " + model + "\n\n")
 					for set in range(len(self.mf.data.input_info)):
 						self.mf.log.write("-------------------")
 					self.mf.log.write("\n")
@@ -86,14 +86,13 @@ class bootstrap(common_operations):
 					if self.mf.debug == 1:
 						self.mf.log.write("%5s%-10i%2s" % ("Sim: ", sim, " |"))
 
-					#if match('m1', model):
-					#	back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2] ])
-					#elif match('m2', model) or match('m3', model):
-					#	back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3] ])
-					#elif match('m4', model) or match('m5', model):
-					#	back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3], file[sim][4] ])
-					#chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
-					chi2 = float(file[sim][1])
+					if match('m1', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2] ])
+					elif match('m2', model) or match('m3', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3] ])
+					elif match('m4', model) or match('m5', model):
+						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ file[sim][2], file[sim][3], file[sim][4] ])
+					chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
 					sum_chi2 = sum_chi2 + chi2
 
 					if self.mf.debug == 1:
@@ -105,24 +104,24 @@ class bootstrap(common_operations):
 				if self.mf.debug == 1:
 					self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
 
-				data[model][res]['bootstrap'] = ave_chi2 / (2.0 * n)
+				data[model][res]['expect'] = ave_chi2 / (2.0 * n)
 
 			# Select model.
 			min = 'm1'
 			for model in self.mf.data.runs:
-				if data[model][res]['bootstrap'] < data[min][res]['bootstrap']:
+				if data[model][res]['expect'] < data[min][res]['expect']:
 					min = model
-			if data[min][res]['bootstrap'] == float('inf'):
+			if data[min][res]['expect'] == float('inf'):
 				self.mf.data.results[res] = self.fill_results(data[min][res], model='0')
 			else:
 				self.mf.data.results[res] = self.fill_results(data[min][res], model=min[1])
 
 			if self.mf.debug == 1:
-				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['bootstrap']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['bootstrap']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['bootstrap']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['bootstrap']` + "\n")
-				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['bootstrap']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m1): " + `data['m1'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m2): " + `data['m2'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m3): " + `data['m3'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m4): " + `data['m4'][res]['expect']` + "\n")
+				self.mf.log.write(self.mf.data.usr_param.method + " (m5): " + `data['m5'][res]['expect']` + "\n")
 				self.mf.log.write("The selected model is: " + min + "\n\n")
 
 			print "   Model " + self.mf.data.results[res]['model']
@@ -189,12 +188,12 @@ class bootstrap(common_operations):
 			for model in self.mf.data.runs:
 				file.write('%-19.3f' % self.mf.data.data[model][res]['chi2'])
 
-			# Bootstrap criteria.
-			file.write('\n%-20s' % 'Bootstrap')
+			# Expected overall discrepancy.
+			file.write('\n%-20s' % 'Expect')
 			for model in self.mf.data.runs:
-				file.write('%-19.3f' % self.mf.data.data[model][res]['bootstrap'])
+				file.write('%-19.3f' % self.mf.data.data[model][res]['expect'])
 
-				file_crit.write('%-25s' % `self.mf.data.data[model][res]['bootstrap']`)
+				file_crit.write('%-25s' % `self.mf.data.data[model][res]['expect']`)
 			file_crit.write('\n')
 
 		file.write('\n')

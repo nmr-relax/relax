@@ -1,4 +1,4 @@
-# usr_param.py v0.3                  4 January 2002        Edward d'Auvergne
+# usr_param.py v0.4                  4 January 2002        Edward d'Auvergne
 #
 # Class containing all the user specified parameters.  Used by the program mf.
 # Make sure the version numbers between the program and this class are identical.
@@ -8,7 +8,7 @@ class usr_param:
 	def __init__(self):
 		"Class containing parameters specified by the user"
 
-		self.version = 0.3
+		self.version = 0.4
 		self.init_input()
 		self.init_method_param()
 		self.init_run_param()
@@ -27,14 +27,14 @@ class usr_param:
 		to each relaxation data set and is flexible in size, ie len(self.input_info) = number of data sets.
 		The second dimension have the following fixed fields:
 			0 - Data type (R1, R2, or NOE)
-			1 - NMR frequency label
-			2 - NMR proton frequency in MHz
+			1 - NMR frequancy label
+			2 - NMR proton frequancy in MHz
 			3 - The name of the file containing the relaxation data
 
 		The structure of self.nmr_frq is as follows:  The length of the first dimension is equal to the number
 		of field strengths.  The fields of the second are:
-			0 - NMR frequency label
-			1 - NMR proton frequency in MHz
+			0 - NMR frequancy label
+			1 - NMR proton frequancy in MHz
 			2 - R1 flag (0 or 1 depending if data is present).
 			3 - R2 flag (0 or 1 depending if data is present).
 			4 - NOE flag (0 or 1 depending if data is present).
@@ -58,26 +58,29 @@ class usr_param:
 
 		self.method can be set to the following:
 
-		AIC:	Method of model-free analysis based on model selection using the Akaike Information
-			Criteria.
+		AIC:		Method of model-free analysis based on model selection using the Akaike Information
+				Criteria.
 
-		AICc:	Method of model-free analysis based on model selection using the Akaike Information
-			Criteria corrected for finit sample size.
+		AICc:		Method of model-free analysis based on model selection using the Akaike Information
+				Criteria corrected for finit sample size.
 
-		BIC:	Method of model-free analysis based on model selection using the Schwartz
-			Information Criteria.
+		BIC:		Method of model-free analysis based on model selection using the Schwartz
+				Information Criteria.
 
 		Bootstrap:	Modelfree analysis based on model selection using bootstrap methods to
-				estimate the overall discrepency.
+				estimate the overall discrepancy.
 
-		CV:	Modelfree analysis based on model selection using cross-validation methods to
-				estimate the overall discrepency.
+		CV:		Modelfree analysis based on model selection using cross-validation methods to
+				estimate the overall discrepancy.
 
-		Farrow:	The method given by Farrow et al., 1994.
+		Expect:		Calculate the expected overall discrepancy (real model-free parameters
+				must be known).
 
-		Palmer:	The method given by Mandel et al., 1995.
+		Farrow:		The method given by Farrow et al., 1994.
 
-		Overall:	Calculate the realized overall discrepency (real model-free parameters
+		Palmer:		The method given by Mandel et al., 1995.
+
+		Overall:	Calculate the realized overall discrepancy (real model-free parameters
 				must be known).
 		"""
 

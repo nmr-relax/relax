@@ -2,7 +2,7 @@
 # /data03/dauvergne/bin/python
 
 
-# mf v0.3            4 January 2002        Edward d'Auvergne
+# mf v0.4            4 January 2002        Edward d'Auvergne
 #
 # Program to process all model-free input and output.
 
@@ -22,6 +22,7 @@ from usr_param import usr_param
 from modsel.asymptotic import asymptotic
 from modsel.bootstrap import bootstrap
 from modsel.cross_validation import cv
+from modsel.exp_overall_disc import exp_overall_disc
 from modsel.farrow import farrow
 from modsel.palmer import palmer
 from modsel.overall_disc import overall_disc
@@ -31,7 +32,7 @@ class mf:
 	def __init__(self):
 		"The top level class."
 
-		self.version = 0.3
+		self.version = 0.4
 		self.calc_relax_data = calc_relax_data(self)
 		self.calc_chi2 = calc_chi2()
 		self.data = data(self)
@@ -60,6 +61,8 @@ class mf:
 			bootstrap(self)
 		elif match('^CV$', self.data.usr_param.method):
 			cv(self)
+		elif match('^Expect$', self.data.usr_param.method):
+			exp_overall_disc(self)
 		elif match('^Farrow$', self.data.usr_param.method):
 			farrow(self)
 		elif match('^Palmer$', self.data.usr_param.method):
@@ -79,7 +82,7 @@ class mf:
 
 		print """
 
-		                      mf v0.3
+		                      mf v0.4
 
 		Program to process all model-free input and output.
 

@@ -62,7 +62,7 @@ class data:
 
 	class init_overall_disc:
 		def __init__(self):
-			"Data specific for model-free analysis using the overall discrepency."
+			"Data specific for model-free analysis using the overall discrepancy."
 
 			self.name = 'Overall'
 			self.op_data = []
