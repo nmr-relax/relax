@@ -74,20 +74,26 @@ class generic_minimise:
 						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 						self.k2 = 1
 
-			# Execute the function used to find the new parameters.
-			self.new_param_func()
-
-			# Make a backup of the current data.
 			try:
+				# Execute the function used to find the new parameters.
+				self.new_param_func()
+
+				# Make a backup of the current data.
 				self.backup_current_data()
-			except AttributeError:
-				"No need to backup the current data."
 
-			# Update the data.
-			try:
+				# Update the data.
 				self.update_data()
+
 			except AttributeError:
-				"No need to update the current data."
+				"No need to backup or update the current data."
+				pass
+			except "LinearAlgebraError", message:
+				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
+				break
+			except OverflowError, message:
+				self.warning = "OverflowError: " + message.args[0] + " (fatal minimisation error)."
+				break
+
 
 			# Test if maximum number of iterations have been reached.
 			if self.k >= self.maxiter:
