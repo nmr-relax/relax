@@ -2063,6 +2063,7 @@ class Mf:
                     data.calc_djw[data.ts_local_index] = calc_S2f_S2s_ts_djw_dts
 
                     # Hessian.
+                    data.calc_d2jw[data.s2f_local_index][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][data.s2f_local_index] = calc_S2f_S2s_ts_d2jw_dS2fdS2s
                     data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_S2f_S2s_ts_d2jw_dS2fdts
                     data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_S2f_S2s_ts_d2jw_dS2sdts
                     data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2s_ts_d2jw_dts2
@@ -2081,6 +2082,7 @@ class Mf:
                     data.calc_djw[data.ts_local_index] = calc_S2f_tf_S2s_ts_djw_dts
 
                     # Hessian.
+                    data.calc_d2jw[data.s2f_local_index][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][data.s2f_local_index] = calc_S2f_S2s_ts_d2jw_dS2fdS2s
                     data.calc_d2jw[data.s2f_local_index][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][data.s2f_local_index] = calc_S2f_tf_S2s_ts_d2jw_dS2fdtf
                     data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_S2f_tf_S2s_ts_d2jw_dS2fdts
                     data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_S2f_tf_S2s_ts_d2jw_dS2sdts
@@ -2107,6 +2109,7 @@ class Mf:
                     data.calc_djw[data.ts_local_index] = calc_diff_S2f_S2s_ts_djw_dts
 
                     # Hessian.
+                    data.calc_d2jw[data.s2f_local_index][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][data.s2f_local_index] = calc_S2f_S2s_ts_d2jw_dS2fdS2s
                     data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_diff_S2f_S2s_ts_d2jw_dS2fdts
                     data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_diff_S2f_S2s_ts_d2jw_dS2sdts
                     data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_diff_S2f_S2s_ts_d2jw_dts2
@@ -2223,6 +2226,7 @@ class Mf:
                     data.calc_djw[data.ts_local_index] = calc_diff_S2f_tf_S2s_ts_djw_dts
 
                     # Hessian.
+                    data.calc_d2jw[data.s2f_local_index][data.s2s_local_index] = data.calc_d2jw[data.s2s_local_index][data.s2f_local_index] = calc_S2f_S2s_ts_d2jw_dS2fdS2s
                     data.calc_d2jw[data.s2f_local_index][data.tf_local_index] = data.calc_d2jw[data.tf_local_index][data.s2f_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dS2fdtf
                     data.calc_d2jw[data.s2f_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2f_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dS2fdts
                     data.calc_d2jw[data.tf_local_index][data.tf_local_index] = calc_diff_S2f_tf_S2s_ts_d2jw_dtf2
