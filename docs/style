@@ -18,10 +18,10 @@ It contains the two lines:
 setlocal ts=8
 
 If these lines are deleted, the bug will be removed.  Another way to fix the problem is to install
-newer versions of the runtime files.
+newer versions of the runtime files (which will pretty much do the same thing).
 
 
 Doc strings
 ~~~~~~~~~~~
 
-These should be set to no more than 100 characters long.
+These should be set to no more than 100 characters long including leading whitespaces.
