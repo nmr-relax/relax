@@ -113,16 +113,23 @@ class Main:
 
 
 
-        Diffusion model selection
-        ~~~~~~~~~~~~~~~~~~~~~~~~~
+        Final run
+        ~~~~~~~~~
 
-        If self.diff_model is set to 'select', AIC model selection will be used to select between
-        the diffusion tensor models.  As the local tm diffusion model MI does not use the same set
-        of relaxation data during optimisation, MI must be excluded from the model selection.
+        Once all the diffusion models have converged, the final run can be executed.  This is done
+        by setting the variable self.diff_model to 'final'.  This consists of two steps, diffusion
+        tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to
+        select between the diffusion tensor models.  As the local tm diffusion model MI does not use
+        the same set of relaxation data during optimisation, MI must be excluded from the model
+        selection.  Monte Carlo simulations are then run soley on this selected diffusion model.
+        Minimisation of the model is bypassed as it is assumed that the model is already fully
+        optimised (if this is not the case the final run is not yet appropriate).
+
+        The final black-box model-free results will be placed in the file 'final/results'.
         """
 
         # The diffusion model.
-        self.diff_model = 'select'
+        self.diff_model = 'final'
 
 
         # MI - Local tm.
@@ -222,10 +229,13 @@ class Main:
                 write(run=run, file='results', dir=dir, force=1)
 
 
-        # Diffusion model selection (only MII to MV).
-        #############################################
+        # Final run.
+        ############
 
-        elif self.diff_model == 'select':
+        elif self.diff_model == 'final':
+            # Diffusion model selection (only MII to MV).
+            #############################################
+
             # Loop over the models (overwrite the variable self.diff_model in the process).
             for self.diff_model in ['iso', 'prolate', 'oblate', 'aniso']:
                 # Determine which was the last round of optimisation for each of the models.
@@ -245,7 +255,24 @@ class Main:
             create_run('final', 'mf')
 
             # Model selection.
-            self.model_selection(run='final', dir='final')
+            self.model_selection(run='final', write=0)
+
+
+            # Monte Carlo simulations.
+            ##########################
+
+            monte_carlo.setup('final', number=200)
+            monte_carlo.create_data('final')
+            monte_carlo.initial_values('final')
+            minimise('newton', run='final')
+            monte_carlo.error_analysis('final')
+
+
+            # Write the final results.
+            ##########################
+
+            write(run='final', file='results', dir='final', force=1)
+
 
 
         # Unknown script behaviour.
@@ -306,7 +333,7 @@ class Main:
             read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, run=None, dir=None):
+    def model_selection(self, run=None, dir=None, write=1):
         """Model selection function."""
 
         # Model elimination.
@@ -316,7 +343,8 @@ class Main:
         model_selection('AIC', run)
 
         # Write the results.
-        write(run=run, file='results', dir=dir, force=1)
+        if write:
+            write(run=run, file='results', dir=dir, force=1)
 
 
     def multi_model(self):

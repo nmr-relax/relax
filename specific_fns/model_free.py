@@ -907,54 +907,81 @@ class Model_free(Common_functions):
         # Initialise.
         param_index = 0
 
-        # Monte Carlo diffusion tensor parameters.
+        # Diffusion tensor parameters of the Monte Carlo simulations.
         if sim_index != None and (self.param_set == 'diff' or self.param_set == 'all'):
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
+                # Sim values.
                 self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+
+                # Parameter index.
                 param_index = param_index + 1
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
+                # Minimised value of theta and phi (to wrap the angles in a window around these angles).
+                theta = self.relax.data.diff[self.run].theta
+                phi = self.relax.data.diff[self.run].phi
+
+                # Sim values.
                 self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
                 self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
-                self.relax.data.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
-                self.relax.data.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
+                self.relax.data.diff[self.run].theta_sim[sim_index] = self.relax.generic.angles.wrap_angles(self.param_vector[2], theta - pi/2.0, theta + pi/2.0)
+                self.relax.data.diff[self.run].phi_sim[sim_index] = self.relax.generic.angles.wrap_angles(self.param_vector[3], phi - pi, phi + pi)
+
+                # Parameter index.
                 param_index = param_index + 4
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
+                # Minimised value of alpha, beta, and gamma (to wrap the angles in a window around these angles).
+                alpha = self.relax.data.diff[self.run].alpha
+                beta = self.relax.data.diff[self.run].beta
+                gamma = self.relax.data.diff[self.run].gamma
+
+                # Sim values.
                 self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
                 self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
                 self.relax.data.diff[self.run].Dr_sim[sim_index] = self.param_vector[2]
-                self.relax.data.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
-                self.relax.data.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
-                self.relax.data.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
+                self.relax.data.diff[self.run].alpha_sim[sim_index] = self.relax.generic.angles.wrap_angles(self.param_vector[3], alpha - pi, alpha + pi)
+                self.relax.data.diff[self.run].beta_sim[sim_index] = self.relax.generic.angles.wrap_angles(self.param_vector[4], beta - pi/2.0, beta + pi/2.0)
+                self.relax.data.diff[self.run].gamma_sim[sim_index] = self.relax.generic.angles.wrap_angles(self.param_vector[5], gamma - pi, gamma + pi)
+
+                # Parameter index.
                 param_index = param_index + 6
 
         # Diffusion tensor parameters.
         elif self.param_set == 'diff' or self.param_set == 'all':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
+                # Values.
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
+
+                # Parameter index.
                 param_index = param_index + 1
 
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
+                # Values.
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
                 self.relax.data.diff[self.run].Da = self.param_vector[1]
                 self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(self.param_vector[2], 0.0, pi)
                 self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(self.param_vector[3], 0.0, 2.0*pi)
+
+                # Parameter index.
                 param_index = param_index + 4
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
+                # Values.
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
                 self.relax.data.diff[self.run].Da = self.param_vector[1]
                 self.relax.data.diff[self.run].Dr = self.param_vector[2]
                 self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(self.param_vector[3], 0.0, 2.0*pi)
                 self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(self.param_vector[4], 0.0, pi)
                 self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(self.param_vector[5], 0.0, 2.0*pi)
+
+                # Parameter index.
                 param_index = param_index + 6
 
         # Model-free parameters.
@@ -4415,11 +4442,11 @@ class Model_free(Common_functions):
 
                 # Axially symmetric.
                 elif self.relax.data.diff[self.run].type == 'axial':
-                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err`, `self.relax.data.diff[self.run].phi_err`]
+                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_err * 360 / (2.0 * pi)`]
 
                 # Anisotropic.
                 elif self.relax.data.diff[self.run].type == 'aniso':
-                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].Dr_err`, `self.relax.data.diff[self.run].alpha_err`, `self.relax.data.diff[self.run].beta_err`, `self.relax.data.diff[self.run].gamma_err`]
+                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].Dr_err`, `self.relax.data.diff[self.run].alpha_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_err * 360 / (2.0 * pi)`]
 
             # No errors.
             else:
@@ -4522,11 +4549,11 @@ class Model_free(Common_functions):
 
                     # Axially symmetric.
                     elif self.relax.data.diff[self.run].type == 'axial':
-                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i]`, `self.relax.data.diff[self.run].phi_sim[i]`]
+                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_sim[i] * 360 / (2.0 * pi)`]
 
                     # Anisotropic.
                     elif self.relax.data.diff[self.run].type == 'aniso':
-                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].Dr_sim[i]`, `self.relax.data.diff[self.run].alpha_sim[i]`, `self.relax.data.diff[self.run].beta_sim[i]`, `self.relax.data.diff[self.run].gamma_sim[i]`]
+                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].Dr_sim[i]`, `self.relax.data.diff[self.run].alpha_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_sim[i] * 360 / (2.0 * pi)`]
 
                 # No simulation values.
                 else:
