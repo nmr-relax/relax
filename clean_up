@@ -1,5 +1,5 @@
-rm -f *.pyc
-rm -f */*.pyc
-rm -f */*/*.pyc
-rm -f */*/*/*.pyc
+rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
+rm -f *.o */*.o */*/*.o */*/*/*.o
+rm -f *.so */*.so */*/*.so */*/*/*.so
+
 rm -f doc
