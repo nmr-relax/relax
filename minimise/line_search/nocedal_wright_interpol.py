@@ -28,6 +28,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 
 	# Initialise values.
 	i = 1
+	f_count = 0
 	a0 = {}
 	a0['a'] = 0.0
 	a0['phi'] = f
@@ -37,6 +38,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 	a = {}
 	a['a'] = a_init
 	a['phi'] = apply(func, (x + a['a']*p,)+args)
+	f_count = f_count + 1
 
 	if print_flag == 1:
 		print "\n<Line search initial values>"
@@ -48,7 +50,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 
 	# Check for sufficient decrease.  If so, return a_init.  Otherwise the interval [0, a_init] contains acceptable step lengths.
 	if a['phi'] <= a0['phi'] + mu * a['a'] * a0['phi_prime']:
-		return a['a']
+		return a['a'], f_count
 
 	# Backup a_last.
 	a_last = deepcopy(a)
@@ -57,10 +59,11 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 	a_new = - 0.5 * a0['phi_prime'] * a['a']**2 / (a['phi'] - a0['phi'] - a0['phi_prime']*a['a'])
 	a['a'] = a_new
 	a['phi'] = apply(func, (x + a['a']*p,)+args)
+	f_count = f_count + 1
 
 	# Check for sufficient decrease.  If so, return a['a'].
 	if a['phi'] <= a0['phi'] + mu * a['a'] * a0['phi_prime']:
-		return a['a']
+		return a['a'], f_count
 
 	while 1:
 		if print_flag == 1:
@@ -78,15 +81,17 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 		a_new = {}
 		a_new['a'] = (-fact_b + sqrt(fact_b**2 - 3.0 * fact_a * a0['phi_prime'])) / (3.0 * fact_a)
 		a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
+		f_count = f_count + 1
 
 		# Check for sufficient decrease.  If so, return a_new['a'].
 		if a_new['phi'] <= a0['phi'] + mu * a_new['a'] * a0['phi_prime']:
-			return a_new['a']
+			return a_new['a'], f_count
 
 		# Safeguarding.
 		if a['a'] - a_new['a'] > 0.5 * a['a'] or 1.0 - a_new['a']/a['a'] < 0.9:
 			a_new['a'] = 0.5 * a['a']
 			a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
+			f_count = f_count + 1
 
 		# Updating.
 		a_last = deepcopy(a)

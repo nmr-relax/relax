@@ -1,5 +1,5 @@
 import sys
-from Numeric import array
+from Numeric import Float64, array
 from re import match
 
 
@@ -61,12 +61,13 @@ class main_model_free:
 		elif match('^[Ff]ixed', self.mf.usr_param.init_params[0]):
 			init_params = [self.mf.usr_param.init_params[0], self.init_fixed_params()]
 
-		# Initialise the fixed model-free parameter options.
-		elif match('^[Ll][Mm]$', self.mf.usr_param.minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', self.mf.usr_param.minimiser[0]):
+		# Initialise the Levenberg-Marquardt minimisation options.
+		if match('^[Ll][Mm]$', self.mf.usr_param.minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', self.mf.usr_param.minimiser[0]):
 			if self.scaling_flag:
-				self.mf.usr_param.minimiser[1] = self.mf.mf_trans_functions.lm_dri
+				self.mf.usr_param.minimiser.append(self.mf.mf_trans_functions.lm_dri)
 			else:
-				self.mf.usr_param.minimiser[1] = self.mf.mf_functions.lm_dri
+				self.mf.usr_param.minimiser.append(self.mf.mf_functions.lm_dri)
+			self.mf.usr_param.minimiser.append([])
 
 		# Print a header into the results file.
 		self.print_header()
@@ -85,14 +86,16 @@ class main_model_free:
 				relax_data.append(self.mf.data.relax_data[data][self.res][2])
 				errors.append(self.mf.data.relax_data[data][self.res][3])
 			function_ops = (diff_type, diff_params, mf_model, relax_data, errors)
+			if match('^[Ll][Mm]$', self.mf.usr_param.minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', self.mf.usr_param.minimiser[0]):
+				self.mf.usr_param.minimiser[2] = errors
 
 			# Initialisation of model-free parameter values.
-			results = self.mf.minimise(func, args=function_ops, minimiser=init_params, full_output=1, print_flag=self.mf.min_debug)
-			self.params, self.chi2, iter, fc, gc, hc, warn_flag = results
+			results = self.mf.minimise(func, dfunc=dfunc, d2func=d2func, args=function_ops, x0=None, minimiser=init_params, full_output=1, print_flag=self.mf.min_debug)
+			self.params, self.chi2, iter, fc, gc, hc, self.warning = results
 
 			# Minimisation.
-			results = self.mf.minimise(func, x0=self.params, dfunc=dfunc, d2func=d2func, args=function_ops, minimiser=self.mf.usr_param.minimiser, func_tol=chi2_tol, maxiter=max_iterations, full_output=1, print_flag=self.mf.min_debug)
-			self.params, self.chi2, iter, fc, gc, hc, warn_flag = results
+			results = self.mf.minimise(func, dfunc=dfunc, d2func=d2func, args=function_ops, x0=self.params, minimiser=self.mf.usr_param.minimiser, func_tol=chi2_tol, maxiter=max_iterations, full_output=1, print_flag=self.mf.min_debug)
+			self.params, self.chi2, iter, fc, gc, hc, self.warning = results
 			self.iter_count = self.iter_count + iter
 			self.f_count = self.f_count + fc
 			self.g_count = self.g_count + gc
@@ -158,21 +161,21 @@ class main_model_free:
 			params = array([0.5], Float64)
 		elif match('m2', self.mf.data.model):
 			if self.scaling_flag:
-				params = array([0.5, 1e-12 * self.c], Float64)
+				params = array([0.5, 100.0 * 1e-12 * self.c], Float64)
 			else:
-				params = array([0.5, 1e-12], Float64)
+				params = array([0.5, 100.0 * 1e-12], Float64)
 		elif match('m3', self.mf.data.model):
 			params = array([0.5, 0.0], Float64)
 		elif match('m4', self.mf.data.model):
 			if self.scaling_flag:
-				params = array([0.5, 0.0, 1e-12 * self.c], Float64)
+				params = array([0.5, 0.0, 100.0 * 1e-12 * self.c], Float64)
 			else:
-				params = array([0.5, 0.0, 1e-12], Float64)
+				params = array([0.5, 0.0, 100.0 * 1e-12], Float64)
 		elif match('m5', self.mf.data.model):
 			if self.scaling_flag:
-				params = array([0.5, 0.5, 1e-12 * self.c], Float64)
+				params = array([0.5, 0.5, 100.0 * 1e-12 * self.c], Float64)
 			else:
-				params = array([0.5, 0.5, 1e-12], Float64)
+				params = array([0.5, 0.5, 100.0 * 1e-12], Float64)
 
 		return params
 
@@ -237,7 +240,8 @@ class main_model_free:
 		self.mf.results.write("%-15s" % "Iterations")
 		self.mf.results.write("%-15s" % "Func calls")
 		self.mf.results.write("%-15s" % "Grad calls")
-		self.mf.results.write("%-15s\n" % "Hessian calls")
+		self.mf.results.write("%-15s" % "Hessian calls")
+		self.mf.results.write("%-30s\n" % "Warning")
 
 
 	def print_results(self):
@@ -288,5 +292,8 @@ class main_model_free:
 		self.mf.results.write("%-15s" % `self.iter_count`)
 		self.mf.results.write("%-15s" % `self.f_count`)
 		self.mf.results.write("%-15s" % `self.g_count`)
-		self.mf.results.write("%-15s\n" % `self.h_count`)
-
+		self.mf.results.write("%-15s" % `self.h_count`)
+		if self.warning:
+			self.mf.results.write("%-30s\n" % `self.warning`)
+		else:
+			self.mf.results.write("\n")

@@ -31,6 +31,8 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 
 	# Initialise values.
 	i = 1
+	f_count = 0
+	g_count = 0
 	a0 = {}
 	a0['a'] = 0.0
 	a0['phi'] = f
@@ -40,12 +42,16 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 	a_max['a'] = max_a
 	a_max['phi'] = apply(func, (x + a_max['a']*p,)+args)
 	a_max['phi_prime'] = dot(apply(func_prime, (x + a_max['a']*p,)+args), p)
+	f_count = f_count + 1
+	g_count = g_count + 1
 
 	# Initialise sequence data.
 	a = {}
 	a['a'] = a_init
 	a['phi'] = apply(func, (x + a['a']*p,)+args)
 	a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
+	f_count = f_count + 1
+	g_count = g_count + 1
 
 	if print_flag == 1:
 		print "\n<Line search initial values>"
@@ -63,7 +69,7 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 		if not a['phi'] <= a0['phi'] + mu * a['a'] * a0['phi_prime']:
 			if print_flag == 1:
 				print "\tSufficient decrease condition is violated - zooming"
-			return zoom(func, func_prime, args, x, f, g, p, mu, eta, i, a0, a_last, a, tol, print_flag=print_flag)
+			return zoom(func, func_prime, args, f_count, g_count, x, f, g, p, mu, eta, i, a0, a_last, a, tol, print_flag=print_flag)
 		if print_flag == 1:
 			print "\tSufficient decrease condition is OK"
 
@@ -71,7 +77,7 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 		if abs(a['phi_prime']) <= -eta * a0['phi_prime']:
 			if print_flag == 1:
 				print "\tCurvature condition OK, returning a"
-			return a['a']
+			return a['a'], f_count, g_count
 		if print_flag == 1:
 			print "\tCurvature condition is violated"
 
@@ -81,7 +87,7 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 			if print_flag == 1:
 				print "\tGradient at a['a'] is positive - zooming"
 			# The arguments to zoom are a followed by a_last, because the function value at a_last will be higher than at a.
-			return zoom(func, func_prime, args, x, f, g, p, mu, eta, i, a0, a, a_last, tol, print_flag=print_flag)
+			return zoom(func, func_prime, args, f_count, g_count, x, f, g, p, mu, eta, i, a0, a, a_last, tol, print_flag=print_flag)
 		if print_flag == 1:
 			print "\tGradient is negative"
 
@@ -96,6 +102,8 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 		a['a'] = a_new
 		a['phi'] = apply(func, (x + a['a']*p,)+args)
 		a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
+		f_count = f_count + 1
+		g_count = g_count + 1
 		i = i + 1
 		if print_flag:
 			print_data("Final (a)", i, a)
@@ -105,7 +113,7 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
 		if abs(a_last['phi'] - a['phi']) <= tol:
 			if print_flag == 1:
 				print "abs(a_last['phi'] - a['phi']) <= tol"
-			return a['a']
+			return a['a'], f_count, g_count
 
 
 def print_data(text, k, a):
@@ -118,7 +126,7 @@ def print_data(text, k, a):
 	print "   phi_prime:      " + `a['phi_prime']`
 
 
-def zoom(func, func_prime, args, x, f, g, p, mu, eta, i, a0, a_lo, a_hi, tol, print_flag=0):
+def zoom(func, func_prime, args, f_count, g_count, x, f, g, p, mu, eta, i, a0, a_lo, a_hi, tol, print_flag=0):
 	"""Find the minimum function value in the open interval (a_lo, a_hi)
 
 	Algorithm 3.3, page 60, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -142,6 +150,8 @@ def zoom(func, func_prime, args, x, f, g, p, mu, eta, i, a0, a_lo, a_hi, tol, pr
 		# Calculate the function and gradient value at aj['a'].
 		aj['phi'] = apply(func, (x + aj['a']*p,)+args)
 		aj['phi_prime'] = dot(apply(func_prime, (x + aj['a']*p,)+args), p)
+		f_count = f_count + 1
+		g_count = g_count + 1
 
 		if print_flag == 1:
 			print_data("a_lo", i, a_lo)
@@ -157,7 +167,7 @@ def zoom(func, func_prime, args, x, f, g, p, mu, eta, i, a0, a_lo, a_hi, tol, pr
 				if print_flag == 1:
 					print "aj: " + `aj`
 					print "<Finished zooming>"
-				return aj['a']
+				return aj['a'], f_count, g_count
 	
 			# Determine if a_hi needs to be reset.
 			if aj['phi_prime'] * (a_hi['a'] - a_lo['a']) >= 0.0:
@@ -170,7 +180,7 @@ def zoom(func, func_prime, args, x, f, g, p, mu, eta, i, a0, a_lo, a_hi, tol, pr
 			if print_flag == 1:
 				print "abs(aj_last['phi'] - aj['phi']) <= tol"
 				print "<Finished zooming>"
-			return aj['a']
+			return aj['a'], f_count, g_count
 
 		# Update.
 		aj_last = deepcopy(aj)

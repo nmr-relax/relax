@@ -1,71 +1,88 @@
 from Numeric import Float64, copy, dot, identity, zeros
-from re import match
 
-# Line search functions.
-from line_search.backtrack import backtrack
-from line_search.nocedal_wright_interpol import nocedal_wright_interpol
-from line_search.nocedal_wright_wolfe import nocedal_wright_wolfe
-from line_search.more_thuente import more_thuente
+from generic_line_search import generic_line_search
+from generic_minimise import generic_minimise
 
 
-def coordinate_descent(func, dfunc, x0, line_search_algor='Not set', args=(), tol=1e-15, maxiter=1000, full_output=0, print_flag=2):
-	"""Back-and-forth coordinate descent minimisation.
-
-	Function options
-	~~~~~~~~~~~~~~~~
-
-	func		- The function to minimise.
-	dfunc		- The function which returns the gradient vector.
-	x0		- The initial parameter vector.
-	line_search	- The line search function.
-	args		- The tuple of arguments to supply to the functions func, and dfunc.
-	tol		- The cutoff value used to terminate minimisation by comparison to the difference in function values between iterations.
-	maxiter		- The maximum number of iterations.
-	full_output	- A flag specifying what should be returned (see below).
-	print_flag	- A flag specifying how much information should be printed to standard output during minimisation:
-
-	The print flag corresponds to:
-		0 - No output.
-		1 - Minimal output.
-		2 - Full output.
+class coordinate_descent(generic_line_search, generic_minimise):
+	def __init__(self):
+		"Class for back-and-forth coordinate descent minimisation specific functions."
 
 
-	Returned objects
-	~~~~~~~~~~~~~~~~
+	def minimise(self, *min_args):
+		"Back-and-forth coordinate descent minimisation."
 
-	If full_output=0, then only the minimised parameter vector is returned.
-	If full_output=1, then the minimised parameter vector, function value at the minimum, number of iterations, and a warning flag are returned.
-	The warning flag corresponds to:
-		0 - Minimisation terminated successfully.
-		1 - Maximum number of iterations have been reached.
+		# Generic data initialisation.
+		self.min_args = min_args
+		self.init_data()
+
+		# The initial function value and gradient vector.
+		self.update_data()
+
+		# Set a0.
+		self.a0 = 1.0
+
+		# Create the coordinate descent directions, and initialise the coordinate descent iteration number and direction flag.
+		self.cd_dir = identity(len(self.xk), Float64)
+		self.n = 0
+		self.back = 0
+
+		# Line search constants for the Wolfe conditions.
+		self.mu = 0.0001
+		self.eta = 0.1
+
+		# Minimisation.
+		self.generic_minimise()
+
+		if self.full_output:
+			return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
+		else:
+			return self.xk
 
 
-	Internal variables
-	~~~~~~~~~~~~~~~~~~
+	def backup_current_data(self):
+		"Function to backup the current data dfk into dfk_last."
 
-	k		- The iteration number.
-	n		- The coordinate descent iteration number.
-	dir		- Matrix containing the coordinate descent directions.
-	back		- Flag specifying if the minimiser should move back (1) or forth (0).
-	pk		- Descent direction of the iteration number k.
-	xk		- Parameter vector at iteration number k.
-	fk		- Function value at xk.
-	dfk		- Gradient vector at xk.
-	xk_new		- Parameter vector at iteration number k+1.
-	fk_new		- Function value at xk+1.
-	dfk_new		- Gradient vector at xk+1.
+		self.dfk_last = copy.deepcopy(self.dfk)
 
-	"""
 
+	def dir(self):
+		"Return  the back-and-forth coordinate search direction for iteration k."
+
+		# The direction pk is forced to be a descent direction.
+		if dot(self.dfk, self.cd_dir[self.n]) > 0.0:
+			self.pk = -self.cd_dir[self.n]
+		else:
+			self.pk = self.cd_dir[self.n]
+
+		# Update the coordinate descent iteration number and direction flag.
+		if not self.back:
+			if self.n < len(self.xk) - 1:
+				self.n = self.n + 1
+			else:
+				self.back = 1
+				self.n = self.n - 1
+		else:
+			if self.n > 0:
+				self.n = self.n - 1
+			else:
+				back = 0
+				self.n = self.n + 1
+
+
+	def update_data(self):
+		"Function to update the function value, gradient vector, and hessian matrix"
+
+		self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+		self.d2fk = None
+
+def crap():
 	# Initial values before the first iteration.
 	xk = x0
 	fk = apply(func, (x0,)+args)
 	dfk = apply(dfunc, (x0,)+args)
 
-	# Create the coordinate descent directions, and initialise the coordinate descent iteration number and direction flag.
-	dir = identity(len(xk), Float64)
-	n = 0
-	back = 0
 
 	# Start the iteration counter.
 	k = 0
@@ -76,13 +93,6 @@ def coordinate_descent(func, dfunc, x0, line_search_algor='Not set', args=(), to
 
 	# Iterate until the local minima is found.
 	while 1:
-		# Check if the maximum number of iterations has been reached.
-		if k >= maxiter:
-			if full_output:
-				return xk, fk, k, 1
-			else:
-				return xk
-
 		# Debugging code.
 		if print_flag >= 1:
 			if print_flag == 2:
@@ -91,27 +101,6 @@ def coordinate_descent(func, dfunc, x0, line_search_algor='Not set', args=(), to
 				if k2 == 100:
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
 					k2 = 0
-
-		# Calculate the back-and-forth coordinate search direction for iteration k.
-		# The direction pk is forced to be a descent direction.
-		if dot(dfk, dir[n]) > 0.0:
-			pk = -dir[n]
-		else:
-			pk = dir[n]
-
-		# Update the coordinate descent iteration number and direction flag.
-		if not back:
-			if n < len(xk) - 1:
-				n = n + 1
-			else:
-				back = 1
-				n = n - 1
-		else:
-			if n > 0:
-				n = n - 1
-			else:
-				back = 0
-				n = n + 1
 
 		# Calculate the initial step length a0.
 		if k == 0:
@@ -149,10 +138,6 @@ def coordinate_descent(func, dfunc, x0, line_search_algor='Not set', args=(), to
 				print "fk: " + `fk`
 				print "fk_new: " + `fk_new`
 				print "<Fin>"
-			if full_output:
-				return xk_new, fk_new, k+1, 0
-			else:
-				return xk_new
 
 		# Update to the next iteration number.
 		k = k + 1

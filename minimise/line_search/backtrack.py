@@ -1,6 +1,6 @@
 from Numeric import dot
 
-def backtrack(func, args, xk, fk, dfk, pk, a_init=1.0, rho=0.5, c=1e-4):
+def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4):
 	"""Backtracking line search.
 
 	Procedure 3.1, page 41, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -12,11 +12,11 @@ def backtrack(func, args, xk, fk, dfk, pk, a_init=1.0, rho=0.5, c=1e-4):
 
 	func		- The function to minimise.
 	args		- The tuple of arguments to supply to the functions func.
-	xk		- The parameter vector at minimisation step k.
-	fk		- The function value at the point xk.
-	dfk		- The function gradient vector at the point xk.
-	pk		- The descent direction.
-	a0		- Initial step length.
+	x		- The parameter vector.
+	f		- The function value at the point x.
+	g		- The gradient vector at the point x.
+	p		- The descent direction.
+	a_init		- Initial step length.
 	rho		- The step length scaling factor (should be between 0 and 1).
 	c		- Constant between 0 and 1 determining the slope for the sufficient decrease condition.
 
@@ -37,14 +37,15 @@ def backtrack(func, args, xk, fk, dfk, pk, a_init=1.0, rho=0.5, c=1e-4):
 	"""
 
 	# Initialise values.
-	ai = a_init
+	a = a_init
+	f_count = 0
 
 	while 1:
-		xai = xk + ai*pk
-		fai = apply(func, (xai,)+args)
+		fk = apply(func, (x + a*p,)+args)
+		f_count = f_count + 1
 
 		# Check if the sufficient decrease condition is met.  If not, scale the step length by rho.
-		if fai <= fk + c*ai*dot(dfk, pk):
-			return xai
+		if fk <= f + c*a*dot(g, p):
+			return a, f_count
 		else:
-			ai = rho*ai
+			a = rho*a

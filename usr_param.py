@@ -21,7 +21,8 @@ class usr_param:
 		# Normal program use.
 		elif match(self.program_type, "mf"):
 		#elif match(self.program_type, "^[Mm][Ff]$"):
-			self.init_params = ['Grid', 21]
+			self.init_params = ['fixed']
+			#self.init_params = ['Grid', 21]
 			self.minimiser = ['Newton', 'More Thuente']
 			self.input()
 			self.model_selection()

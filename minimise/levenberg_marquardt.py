@@ -3,7 +3,7 @@ from LinearAlgebra import solve_linear_equations
 from Numeric import copy, Float64, concatenate, zeros
 from re import match
 
-def levenberg_marquardt(chi2_func, dchi2_func, dfunc, params, errors, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+def levenberg_marquardt(chi2_func, dchi2_func, dfunc, errors, params, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
 	"""Levenberg-Marquardt minimisation function.
 
 	Function options
@@ -28,7 +28,7 @@ def levenberg_marquardt(chi2_func, dchi2_func, dfunc, params, errors, args=(), t
 
 	"""
 
-	warning_flag = 0
+	warning = None
 
 	# Initial value of lambda (the Levenberg-Marquardt fudge factor).
 	l = 1.0
@@ -111,13 +111,13 @@ def levenberg_marquardt(chi2_func, dchi2_func, dfunc, params, errors, args=(), t
 		
 		# Check to see if the maximum number of iterations have been reached.
 		if minimise_num >= maxiter:
-			warning_flag = 1
+			warning = "Maximum number of iterations reached"
 			break
 
 		minimise_num = minimise_num + 1
 
 	if full_output:
-		return params, chi2, minimise_num, warning_flag
+		return params, chi2, minimise_num, warning
 	else:
 		return params, chi2
 

@@ -1,7 +1,7 @@
 from Numeric import dot, sqrt
 
 
-def trust_region(delta_max=1e5, delta0=1.0, eta=0.2):
+def generic_trust_region(delta_max=1e5, delta0=1.0, eta=0.2):
 	"""An algorithm for trust region radius selection.
 
 	Page 68 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999

@@ -44,6 +44,8 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 
 	# Initialise values.
 	k = 0
+	f_count = 0
+	g_count = 0
 	mod_flag = 1
 	bracketed = 0
 	a0 = {}
@@ -63,6 +65,8 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 	a['a'] = a_init
 	a['phi'] = apply(func, (x + a['a']*p,)+args)
 	a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
+	f_count = f_count + 1
+	g_count = g_count + 1
 
 	# Initialise interval data.
 	Ik = {}
@@ -104,7 +108,7 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 			if print_flag:
 				print "\tYes."
 				print "<Line search has converged>\n"
-			return a['a']
+			return a['a'], f_count, g_count
 		if print_flag:
 			print "\tNo."
 
@@ -116,13 +120,13 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 				if print_flag:
 					print "\tYes."
 					print "<Min alpha has been reached>\n"
-				return a['a']
+				return a['a'], f_count, g_count
 		if a['a'] == a_max:
 			if a['phi'] <= suff_dec and a['phi_prime'] <= curv:
 				if print_flag:
 					print "\tYes."
 					print "<Max alpha has been reached>\n"
-				return a['a']
+				return a['a'], f_count, g_count
 		if print_flag:
 			print "\tNo."
 
@@ -134,7 +138,7 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 				if print_flag:
 					print "\tYes."
 					print "<Stopping due to roundoff error>\n"
-				return a['a']
+				return a['a'], f_count, g_count
 			if print_flag:
 				print "\tNo."
 
@@ -145,7 +149,7 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 				if print_flag:
 					print "\tYes."
 					print "<Stopping tol>\n"
-				return a['a']
+				return a['a'], f_count, g_count
 			if print_flag:
 				print "\tNo."
 
@@ -219,6 +223,8 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_m
 			print "Calculating new values."
 		a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
 		a_new['phi_prime'] = dot(apply(func_prime, (x + a_new['a']*p,)+args), p)
+		f_count = f_count + 1
+		g_count = g_count + 1
 
 		# Shift data from k+1 to k.
 		k = k + 1
