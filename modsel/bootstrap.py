@@ -35,10 +35,11 @@ class bootstrap(common_operations):
 
 		sum_ln_err = 0.0
 		for i in range(len(self.mf.data.relax_data)):
-			if self.mf.data.relax_data[i][res][3] == 0:
-				ln_err = -99.0
+			var = float(self.mf.data.relax_data[i][res][3]) ** 2
+			if var == 0.0:
+				ln_err = -100.0
 			else:
-				ln_err = log(float(self.mf.data.relax_data[i][res][3]))
+				ln_err = log(var)
 			sum_ln_err = sum_ln_err + ln_err
 
 
@@ -88,8 +89,12 @@ class bootstrap(common_operations):
 		ave_chi2 = sum_chi2 / num_sims
 		#self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
 
+		#self.mf.log.write("A: " + `n*log(2.0*pi)` + "\nB: " + `sum_ln_err` + "\nC: " + `ave_chi2` + "\n")
 		bootstrap = n*log(2.0*pi) + sum_ln_err + ave_chi2
+		#self.mf.log.write("Bootstrap: " + `bootstrap` + "\n")
 		bootstrap = bootstrap / (2.0*n)
+		#self.mf.log.write("Bootstrap: " + `bootstrap` + "\n" + "\n")
+
 		return bootstrap
 
 

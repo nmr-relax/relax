@@ -39,10 +39,11 @@ class asymptotic(common_operations):
 
 		sum_ln_err = 0.0
 		for i in range(len(self.mf.data.relax_data)):
-			if self.mf.data.relax_data[i][res][3] == 0:
-				ln_err = -99.0
+			var = float(self.mf.data.relax_data[i][res][3]) ** 2
+			if var == 0.0:
+				ln_err = -100.0
 			else:
-				ln_err = log(float(self.mf.data.relax_data[i][res][3]))
+				ln_err = log(var)
 			sum_ln_err = sum_ln_err + ln_err
 
 		if match('^AIC$', self.mf.data.usr_param.method):

@@ -12,6 +12,6 @@ class calc_chi2:
 			if real_err[set] == 0:
 				chi2_set = 1e99
 			else:
-				chi2_set = chi2_set / real_err[set]
+				chi2_set = chi2_set / (real_err[set]**2)
 			self.chi2 = self.chi2 + chi2_set
 		return self.chi2
