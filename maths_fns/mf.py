@@ -104,6 +104,7 @@ class Mf:
 
             # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
             self.data[i].frq_list = zeros((num_frq[i], 5), Float64)
+            self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), Float64)
             self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), Float64)
             for j in xrange(num_frq[i]):
                 frqH = 2.0 * pi * frq[i][j]
@@ -114,6 +115,7 @@ class Mf:
                 self.data[i].frq_list[j, 4] = frqH + frqX
             self.data[i].frq_sqrd_list = self.data[i].frq_list ** 2
             for j in xrange(self.diff_data.num_indecies):
+                self.data[i].frq_list_ext[:, :, j] = self.data[i].frq_list
                 self.data[i].frq_sqrd_list_ext[:, :, j] = self.data[i].frq_sqrd_list
 
             # Store supplied data in self.data
@@ -217,9 +219,7 @@ class Mf:
         elif param_set == 'all':
             self.func = self.func_all
             self.dfunc = self.dfunc_all
-            self.d2func = None
-            #self.dfunc = self.dfunc_all
-            #self.d2func = self.d2func_all
+            self.d2func = self.d2func_all
 
 
     def func_all(self, params):
@@ -250,7 +250,7 @@ class Mf:
         if sum(self.params == self.func_test) == self.total_num_params:
             return self.total_chi2
 
-        # Store the parameter values in data.func_test for testing on next call if the function has already been calculated.
+        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
         self.func_test = self.params * 1.0
 
         # Set the total chi2 to zero.
@@ -336,7 +336,7 @@ class Mf:
         if sum(self.params == self.func_test) == self.total_num_params:
             return data.chi2
 
-        # Store the parameter values in data.func_test for testing on next call if the function has already been calculated.
+        # Store the parameter values in self.func_test for testing on next call if the function has already been calculated.
         self.func_test = self.params * 1.0
 
         # Diffusion tensor geometry calculations.
@@ -408,7 +408,7 @@ class Mf:
         if sum(self.params == self.func_test) != self.total_num_params:
             self.func_all(params)
 
-        # Store the parameter values in data.grad_test for testing on next call if the gradient has already been calculated.
+        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
         self.grad_test = self.params * 1.0
 
         # Set the total chi2 gradient to zero.
@@ -457,20 +457,20 @@ class Mf:
             # Calculate the chi-squared gradient.
             data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
 
-            # Construct the global generic model-free Hessian gradient.
+
+            # Index for the construction of the global generic model-free gradient.
             index = self.diff_data.num_params
+
+            # Diffusion parameter part of the global generic model-free gradient.
             self.total_dchi2[0:index] = self.total_dchi2[0:index] + data.dchi2[0:index]
+
+            # Model-free parameter part of the global generic model-free gradient.
             self.total_dchi2[data.start_index:data.end_index] = self.total_dchi2[data.start_index:data.end_index] + data.dchi2[index:]
 
-            #print "djw:\n" + `data.djw`
-            #print "dri_prime:\n" + `data.dri_prime`
-            #print "dri:\n" + `data.dri`
-            #print "dchi2:\n" + `data.dchi2`
         # Diagonal scaling.
         if self.scaling_flag:
             self.total_dchi2 = self.scale_gradient(self.total_dchi2)
 
-        #import sys; sys.exit()
         return self.total_dchi2
 
 
@@ -505,7 +505,7 @@ class Mf:
         if sum(self.params == self.func_test) != self.total_num_params:
             self.func_mf(params)
 
-        # Store the parameter values in data.grad_test for testing on next call if the gradient has already been calculated.
+        # Store the parameter values in self.grad_test for testing on next call if the gradient has already been calculated.
         self.grad_test = self.params * 1.0
 
         # Diffusion tensor geometry calculations.
@@ -553,6 +553,104 @@ class Mf:
         return data.dchi2
 
 
+    def d2func_all(self, params):
+        """The function for calculating the model-free chi-squared Hessian matrix.
+
+        The chi-sqared Hessian
+        ~~~~~~~~~~~~~~~~~~~~~~
+                             _n_
+             d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
+        ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
+        dthetaj.dthetak      /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
+                             i=1
+
+        where:
+            Ri are the values of the measured relaxation data set.
+            Ri() are the values of the back calculated relaxation data set.
+            sigma_i are the values of the error set.
+        """
+
+        # Arguments
+        self.set_params(params)
+
+        # Diffusion tensor parameters.
+        if self.pack_diff_params:
+            self.pack_diff_params()
+
+        # Test if the Hessian has already been calculated with these parameter values.
+        if sum(self.params == self.hess_test) == self.total_num_params:
+            return self.total_d2chi2
+
+        # Test if the gradient has already been called, otherwise run self.dfunc_mf.
+        if sum(self.params == self.grad_test) != self.total_num_params:
+            self.dfunc_mf(params)
+
+        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
+        self.hess_test = self.params * 1.0
+
+        # Set the total chi2 Hessian to zero.
+        self.total_d2chi2 = self.total_d2chi2 * 0.0
+
+        # Loop over the residues.
+        for i in xrange(self.num_res):
+            # Set self.data[i] to data.
+            data = self.data[i]
+
+            # Diffusion tensor geometry calculations.
+            if self.diff_data.calc_d2geom:
+               self.diff_data.calc_d2geom(data, self.diff_data)
+
+            # Diffusion tensor weight calculations.
+            if self.diff_data.calc_d2ci:
+                self.diff_data.calc_d2ci(data)
+
+            # Diffusion tensor correlation times.
+            if self.diff_data.calc_d2ti:
+               self.diff_data.calc_d2ti(data, self.diff_data)
+
+            # Calculate the spectral density Hessians.
+            for i in xrange(data.total_num_params):
+                for j in xrange(i + 1):
+                    if data.calc_d2jw[i][j]:
+                        data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, self.params)
+
+            # Calculate the relaxation Hessian components.
+            data.create_d2ri_comps(data, self.params)
+
+            # Calculate the R1, R2, and sigma_noe Hessians.
+            for i in xrange(data.total_num_params):
+                for j in xrange(i + 1):
+                    if data.create_d2ri_prime[i][j]:
+                        data.create_d2ri_prime[i][j](data, i, j)
+
+            # Calculate the R1, R2, and NOE Hessians.
+            data.d2ri = data.d2ri_prime * 1.0
+            d2ri(data, self.params)
+
+            # Calculate the chi-squared Hessian.
+            data.d2chi2 = d2chi2(data.relax_data, data.ri, data.dri, data.d2ri, data.errors)
+
+
+            # Index for the construction of the global generic model-free Hessian.
+            index = self.diff_data.num_params
+
+            # Pure diffusion parameter part of the global generic model-free Hessian.
+            self.total_d2chi2[0:index, 0:index] = self.total_d2chi2[0:index, 0:index] + data.d2chi2[0:index, 0:index]
+
+            # Pure model-free parameter part of the global generic model-free Hessian.
+            self.total_d2chi2[data.start_index:data.end_index, data.start_index:data.end_index] = self.total_d2chi2[data.start_index:data.end_index, data.start_index:data.end_index] + data.d2chi2[index:, index:]
+
+            # Off diagonal diffusion and model-free parameter parts of the global generic model-free Hessian.
+            self.total_d2chi2[0:index, data.start_index:data.end_index] = self.total_d2chi2[0:index, data.start_index:data.end_index] + data.d2chi2[0:index, index:]
+            self.total_d2chi2[data.start_index:data.end_index, 0:index] = self.total_d2chi2[data.start_index:data.end_index, 0:index] + data.d2chi2[index:, 0:index]
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            self.total_d2chi2 = self.scale_hessian(self.total_d2chi2)
+
+        return self.total_d2chi2
+
+
     def d2func_mf(self, params):
         """The function for calculating the model-free chi-squared Hessian matrix.
 
@@ -584,8 +682,8 @@ class Mf:
         if sum(self.params == self.grad_test) != self.total_num_params:
             self.dfunc_mf(params)
 
-        # Store the parameter values in data.hess_test for testing on next call if the Hessian has already been calculated.
-        data.hess_test = self.params * 1.0
+        # Store the parameter values in self.hess_test for testing on next call if the Hessian has already been calculated.
+        self.hess_test = self.params * 1.0
 
         # Diffusion tensor geometry calculations.
         #if self.diff_data.calc_d2geom:
@@ -602,11 +700,7 @@ class Mf:
         for i in xrange(data.num_params):
             for j in xrange(i + 1):
                 if data.calc_d2jw[i][j]:
-                    data.d2jw[:, :, i, j] = data.calc_d2jw[i][j](data, self.params)
-
-                    # Make the Hessian symmetric.
-                    if i != j:
-                        data.d2jw[:, :, j, i] = data.d2jw[:, :, i, j]
+                    data.d2jw[:, :, i, j] = data.d2jw[:, :, j, i] = data.calc_d2jw[i][j](data, self.params)
 
         # Calculate the relaxation Hessian components.
         data.create_d2ri_comps(data, self.params)
@@ -616,10 +710,6 @@ class Mf:
             for j in xrange(i + 1):
                 if data.create_d2ri_prime[i][j]:
                     data.create_d2ri_prime[i][j](data, i, j)
-
-                    # Make the Hessian symmetric.
-                    if i != j:
-                        data.d2ri_prime[:, j, i] = data.d2ri_prime[:, i, j]
 
         # Calculate the R1, R2, and NOE Hessians.
         data.d2ri = data.d2ri_prime * 1.0
@@ -736,6 +826,7 @@ class Mf:
         data.ti = zeros(diff_data.num_indecies, Float64)
         if self.diff_data.type == 'iso':
             data.dti = zeros((1, diff_data.num_indecies), Float64)
+            data.d2ti = zeros((1, 1, diff_data.num_indecies), Float64)
         elif self.diff_data.type == 'axial':
             data.dci = zeros((2, diff_data.num_indecies), Float64)
             data.dti = zeros((2, diff_data.num_indecies), Float64)

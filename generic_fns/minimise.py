@@ -49,12 +49,12 @@ class Minimise:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Equation type specific calculate function setup.
-        self.calculate = self.relax.specific_setup.setup('calc', function_type)
-        if self.calculate == None:
+        calculate = self.relax.specific_setup.setup('calc', function_type)
+        if calculate == None:
             raise RelaxFuncSetupError, ('calculate', function_type)
 
         # Minimisation.
-        self.calculate(run=run, print_flag=print_flag)
+        calculate(run=run, print_flag=print_flag)
 
 
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):
@@ -72,12 +72,12 @@ class Minimise:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific grid search function.
-        self.grid_search = self.relax.specific_setup.setup('grid_search', function_type)
-        if self.grid_search == None:
+        grid_search = self.relax.specific_setup.setup('grid_search', function_type)
+        if grid_search == None:
             raise RelaxFuncSetupError, ('grid search', function_type)
 
         # Grid search.
-        self.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
 
 
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, print_flag=1):
@@ -95,12 +95,12 @@ class Minimise:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific minimisation function.
-        self.minimise = self.relax.specific_setup.setup('minimise', function_type)
-        if self.minimise == None:
+        minimise = self.relax.specific_setup.setup('minimise', function_type)
+        if minimise == None:
             raise RelaxFuncSetupError, ('minimise', function_type)
 
         # Minimisation.
-        self.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
+        minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)
 
 
     def set(self, run=None, values=None, print_flag=1):
@@ -118,11 +118,11 @@ class Minimise:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific set function.
-        self.set = self.relax.specific_setup.setup('set', function_type)
-        if self.set == None:
+        set = self.relax.specific_setup.setup('set', function_type)
+        if set == None:
             raise RelaxFuncSetupError, ('set', function_type)
 
         # Minimisation.
-        self.set(run=run, values=values, print_flag=print_flag)
+        set(run=run, values=values, print_flag=print_flag)
 
 

@@ -371,7 +371,7 @@ def func_d2ri_djwidjwj_prime(data, jw_i_index, jw_j_index):
     dJwi.dJwj
     """
 
-    data.d2ri_prime[:, jw_i_index, jw_j_index] = data.dip_comps_func * data.dip_jw_comps_hess[:, jw_i_index, jw_j_index] + data.csa_comps_func * data.csa_jw_comps_hess[:, jw_i_index, jw_j_index]
+    data.d2ri_prime[:, jw_i_index, jw_j_index] = data.d2ri_prime[:, jw_j_index, jw_i_index] = data.dip_comps_func * data.dip_jw_comps_hess[:, jw_i_index, jw_j_index] + data.csa_comps_func * data.csa_jw_comps_hess[:, jw_i_index, jw_j_index]
 
 
 # d2Ri/dJ(w).dCSA
@@ -395,31 +395,7 @@ def func_d2ri_djwdcsa_prime(data, jw_index, csa_index):
     dJw.dcsa
     """
 
-    data.d2ri_prime[:, jw_index, csa_index] = data.csa_comps_grad * data.csa_jw_comps_grad[:, jw_index]
-
-
-# d2Ri/dCSA.dJ(w)
-def func_d2ri_dcsadjw_prime(data, csa_index, jw_index):
-    """Spectral density parameter / CSA Hessian.
-
-     d2R1()
-    --------  =  csa_const_grad . csa_Jw_R1_grad
-    dJw.dcsa
-
-     d2R2()      csa_const_grad
-    --------  =  -------------- . csa_Jw_R2_grad
-    dJw.dcsa           6
-
-    d2sigma_noe()
-    -------------  =  0
-      dJw.dcsa
-
-     d2Ri()
-    --------  =  csa_comps_grad . csa_jw_comps_grad
-    dJw.dcsa
-    """
-
-    data.d2ri_prime[:, csa_index, jw_index] = data.csa_comps_grad * data.csa_jw_comps_grad[:, jw_index]
+    data.d2ri_prime[:, jw_index, csa_index] = data.d2ri_prime[:, csa_index, jw_index] = data.csa_comps_grad * data.csa_jw_comps_grad[:, jw_index]
 
 
 # d2Ri/dJ(w).dr
@@ -443,31 +419,7 @@ def func_d2ri_djwdr_prime(data, jw_index, r_index):
     dJw.dr
     """
 
-    data.d2ri_prime[:, jw_index, r_index] = data.dip_comps_grad * data.dip_jw_comps_grad[:, jw_index]
-
-
-# d2Ri/dr.dJ(w)
-def func_d2ri_drdjw_prime(data, r_index, jw_index):
-    """Spectral density parameter / bond length Hessian.
-
-    d2R1()
-    ------  =  dip_const_grad . dip_Jw_R1_grad
-    dJw.dr
-
-    d2R2()     dip_const_grad
-    ------  =  -------------- . dip_Jw_R2_grad
-    dJw.dr           2
-
-    d2sigma_noe()
-    -------------  =  dip_const_grad . dip_Jw_sigma_noe_grad
-       dJw.dr
-
-    d2Ri()
-    ------  =  dip_comps_grad . dip_jw_comps_grad
-    dJw.dr
-    """
-
-    data.d2ri_prime[:, r_index, jw_index] = data.dip_comps_grad * data.dip_jw_comps_grad[:, jw_index]
+    data.d2ri_prime[:, jw_index, r_index] = data.d2ri_prime[:, r_index, jw_index] = data.dip_comps_grad * data.dip_jw_comps_grad[:, jw_index]
 
 
 # d2Ri/dCSA^2
@@ -491,7 +443,7 @@ def func_d2ri_dcsa2_prime(data, csa_i_index, csa_j_index):
     dcsa**2
     """
 
-    data.d2ri_prime[:, csa_i_index, csa_j_index] = data.csa_comps_hess * data.csa_jw_comps_func
+    data.d2ri_prime[:, csa_i_index, csa_j_index] = data.d2ri_prime[:, csa_j_index, csa_i_index] = data.csa_comps_hess * data.csa_jw_comps_func
 
 
 # d2Ri/dr^2
@@ -515,4 +467,4 @@ def func_d2ri_dr2_prime(data, r_i_index, r_j_index):
     dr**2
     """
 
-    data.d2ri_prime[:, r_i_index, r_j_index] = data.dip_comps_hess * data.dip_jw_comps_func
+    data.d2ri_prime[:, r_i_index, r_j_index] = data.d2ri_prime[:, r_j_index, r_i_index] = data.dip_comps_hess * data.dip_jw_comps_func
