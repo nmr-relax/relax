@@ -22,6 +22,7 @@
 
 
 __all__ = [ 'chi2',
+            'correlation_time',
             'data',
             'jw_mf_comps',
             'jw_mf',

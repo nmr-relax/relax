@@ -27,6 +27,7 @@ from math import pi
 from data import Data
 
 from weights import *
+from correlation_time import *
 from jw_mf_comps import *
 from jw_mf import *
 from ri_comps import *

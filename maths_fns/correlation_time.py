@@ -23,13 +23,13 @@
 from Numeric import Float64, array
 
 
-# Weights for the generic model-free formulae.
-##############################################
+# Diffusional correlation times for the generic model-free formulae.
+####################################################################
 
-def calc_ci_iso(data):
-    """Weight equations for isotropic diffusion.
+def calc_ti_iso(data):
+    """Diffusional correlation times for isotropic diffusion.
 
-    c0 = 1
+    t0 = tm
     """
 
     return array(1, Float64)
