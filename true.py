@@ -40,60 +40,12 @@ class true(common_operations):
 		self.mf = mf
 
 		print "Modelfree analysis based on the overall discrepency for model selection."
+		self.initialize()
 		message = "See the file 'true.py' for details."
 		self.mf.file_ops.read_file('op_data', message)
 		self.mf.data.true.op_data = self.mf.file_ops.open_file(file_name='op_data')
-		self.mf.data.true.stage = self.ask_stage()
-		title = "<<< Stage " + self.mf.data.true.stage + " of the true criteria based modelfree analysis >>>\n\n\n"
-		self.start_up(self.mf.data.true.stage, title)
-		
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
-
-		if match('1', self.mf.data.true.stage):
-			print "\n[ Stage 1 ]\n"
-			self.initial_runs(sims='n')
-			print "\n[ End of stage 1 ]\n\n"
-
-		if match('2a', self.mf.data.true.stage):
-			print "\n[ Stage 2a ]\n"
-			self.mf.file_ops.mkdir('final')
-			self.stage2()
-			self.final_run()
-			print "\n[ End of stage 2a ]\n\n"
-
-		if match('2b', self.mf.data.true.stage):
-			print "\n[ Stage 2b ]\n"
-			self.mf.file_ops.mkdir('optimize')
-			self.stage2()
-			self.final_run_optimized()
-			print "\n[ End of stage 2b ]\n\n"
-
-		if match('3', self.mf.data.true.stage):
-			print "\n[ Stage 3 ]\n"
-			self.stage3()
-			print "\n[ End of stage 3 ]\n\n"
-
-
-	def ask_stage(self):
-		"User input of stage number."
-
-		print "\n[ Select the stage for Modelfree analysis ]\n"
-		print "The stages are:"
-		print "   Stage 1 (1):    Creation of the files for the modelfree calculations for models 1 to 5."
-		print "   Stage 2 (2a):   Model selection and creation of a final run with simulations."
-		print "   Stage 2 (2b):   Model selection and creation of a final optimization run."
-		print "   Stage 3 (3):    Extraction of optimized data."
-		print "For more information, see the file 'true.py'"
-
-		while 1:
-			stage = raw_input('> ')
-			valid_stages = ['1', '2a', '2b', '3']
-			if stage in valid_stages:
-				break
-			else:
-				print "Invalid stage number.  Choose either 1, 2a, 2b, or 3."
-		print "The stage chosen is " + stage + "\n"
-		return stage
+		self.goto_stage()
 
 
 	def calc_crit(self, res, n, k, chisq):

@@ -27,8 +27,9 @@ class asymptotic(common_operations):
 		self.mf = mf
 
 		print "Model-free analysis based on " + self.mf.data.usr_param.method + " model selection."
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 		self.initialize()
+		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+		self.goto_stage()
 
 
 	def calc_crit(self, res, n, k, chisq):

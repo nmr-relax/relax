@@ -22,16 +22,13 @@ class palmer(common_operations):
 		self.mf = mf
 
 		print "Palmer's method for model-free analysis. (Mandel et al., 1995)"
-
 		self.initialize()
-
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
 		if self.mf.data.num_data_sets > 3:
 			print "\nThe number of data sets is greater than 3.  Setting up additional F-tests."
 			self.mf.data.runs.append('f-m2m4')
 			self.mf.data.runs.append('f-m2m5')
 			self.mf.data.runs.append('f-m3m4')
-
 		self.goto_stage()
 
 

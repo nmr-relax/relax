@@ -22,8 +22,9 @@ class bootstrap(common_operations):
 		self.mf = mf
 
 		print "Model-free analysis based on bootstrap model selection."
-		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
 		self.initialize()
+		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+		self.goto_stage()
 
 	def initial_runs(self):
 		"Creation of the files for the Modelfree calculations for models 1 to 5."

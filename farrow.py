@@ -18,12 +18,13 @@ class farrow(common_operations):
 		self.mf = mf
 
 		print "Farrow's method for model-free analysis. (Farrow et al., 1994)"
+		self.initialize()
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
 		if self.mf.data.num_data_sets > 3:
 			self.mf.data.runs.append('f-m2m4')
 			self.mf.data.runs.append('f-m2m5')
 			self.mf.data.runs.append('f-m3m4')
-		self.initialize()
+		self.goto_stage()
 
 
 	def initial_runs(self):
