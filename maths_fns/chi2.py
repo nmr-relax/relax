@@ -101,6 +101,7 @@ def d2chi2(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_h
     #return 2.0 * sum((back_calc_grad_j * back_calc_grad_k - (data - back_calc_vals) * back_calc_hess) / errors**2)
 
     # Calculate the chi-squared Hessian.
+    # This is faster than the above sums, and having the errors term first appears to minimise roundoff errors.
     d2chi2 = 0.0
     for i in xrange(len(data)):
         d2chi2 = d2chi2 + 2.0 / (errors[i]**2) * (back_calc_grad_j[i] * back_calc_grad_k[i] - (data[i] - back_calc_vals[i]) * back_calc_hess[i])

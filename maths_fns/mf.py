@@ -304,13 +304,6 @@ class Mf:
             # Calculate the correlation times ti.
             self.diff_data.calc_ti(self.data[i], self.diff_data)
 
-            # Print out the contents of self.data[i].
-            if 0:
-                print "Contents of self.data[i]."
-                for name in dir(self.data[i]):
-                    print name + ": " + `type(getattr(self.data[i], name))`
-                    #print name + ": " + `getattr(self.data[i], name)`
-
             # ti spectral density components.
             if self.param_set == 'mf':
                 self.data[i].w_ti_sqrd = self.data[i].frq_sqrd_list_ext * self.data[i].ti ** 2
@@ -933,31 +926,6 @@ class Mf:
             data.d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(data.d2chi2, self.scaling_matrix))
 
         # Return a copy of the Hessian.
-        #print ""
-        #for j in xrange(data.total_num_params):
-        #    for k in xrange(j + 1):
-        #        for l in xrange(len(data.d2ri[j, k])):
-        #            print "d2ri_prime[" + `j` + ", " + `k` + ", " + `l` + "]: %-40.66g" % data.d2ri_prime[j, k, l]
-        #print ""
-        #for j in xrange(data.total_num_params):
-        #    for k in xrange(j + 1):
-        #        for l in xrange(len(data.d2ri[j, k])):
-        #            print "d2ri[" + `j` + ", " + `k` + ", " + `l` + "]: %-40.66g" % data.d2ri[j, k, l]
-        #print ""
-        #for j in xrange(data.total_num_params):
-        #    for l in xrange(len(data.dri[j])):
-        #        print "dri[" + `j` + ", " + `l` + "]: %-40.66g" % data.dri[j, l]
-        #print ""
-        #for l in xrange(len(data.ri)):
-        #    print "ri[" + `l` + "]: %-40.66g" % data.ri[l]
-        #print ""
-        #for l in xrange(len(data.relax_data)):
-        #    print "relax_data[" + `l` + "]: %-40.66g" % data.relax_data[l]
-        #print ""
-        #for j in xrange(data.total_num_params):
-        #    for k in xrange(j + 1):
-        #        print "d2chi2[" + `j` + ", " + `k` + "]: %-40.66g" % data.d2chi2[j, k]
-        #print "d2chi2:\n: " + `data.d2chi2`
         return data.d2chi2 * 1.0
 
 

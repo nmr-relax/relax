@@ -28,12 +28,19 @@ for run in runs:
 
     # Setup other values.
     #diffusion_tensor.set(run, 1e-8, fixed=0)
-    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=1, axial_type='oblate', fixed=1)
+    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=1, axial_type='oblate', fixed=0)
     value.set(run, 1.02 * 1e-10, 'bond_length')
     value.set(run, -160 * 1e-6, 'csa')
+    value.set(run, 0.970, 's2')
+    value.set(run, 1.0, 's2f')
+    value.set(run, 2048e-12, 'te')
+    value.set(run, 2048e-12, 'tf')
+    value.set(run, 2048e-12, 'ts')
+    value.set(run, 0.149/(2*pi*600e6)**2, 'rex')
 
     # Select the model-free model.
     model_free.select_model(run=run, model=run)
+    fix(run, 'all_res')
 
     # Minimise.
     grid_search(run, inc=5)

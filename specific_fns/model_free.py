@@ -1420,7 +1420,7 @@ class Model_free:
         j = 0
 
         # Diffusion tensor parameters.
-        if self.param_set != 'mf':
+        if self.param_set != 'mf' and self.relax.data.diff.has_key(self.run):
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
                 # tm >= 0.
@@ -2143,6 +2143,11 @@ class Model_free:
 
     def model_setup(self, run, model, equation, params, scaling_flag, res_num):
         """Function for updating various data structures depending on the model selected."""
+
+        # Test that no diffusion tensor exists for the run if tm is a parameter in the model.
+        for param in params:
+            if param == 'tm' and self.relax.data.diff.has_key(run):
+                raise RelaxTensorError, run
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[run])):
