@@ -82,7 +82,7 @@ class Main:
             raise RelaxStrError, ('file name', file_name)
 
         # Execute the functional code.
-        self.relax.state.load(file_name=file_name)
+        self.relax.generic.state.load(file_name=file_name)
 
 
     def save(self, file_name=None, force=0):

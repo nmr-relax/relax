@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,13 +29,80 @@ class Fix:
         self.relax = relax
 
 
-    def fix(self, run, param_type, fixed):
+    def fix(self, run, element, fixed):
         """Function for fixing or allowing parameter values to change."""
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+
+        # Residue number.
+        if type(element) == int:
+            # Test if sequence data is loaded.
+            if not len(self.relax.data.res):
+                raise RelaxSequenceError
+
+            # Loop over the sequence to find the residue.
+            index = None
+            for i in xrange(len(self.relax.data.res)):
+                if self.relax.data.res[i].num == element:
+                    index = i
+                    break
+
+            # The residue cannot be found.
+            if index == None:
+                raise RelaxNoResError, element
+
+            # Set the fixed flag.
+            if not hasattr(self.relax.data.res[index], 'fixed'):
+                self.relax.data.res[index].fixed = {}
+            self.relax.data.res[index].fixed[run] = fixed
+
+
         # Diffusion tensor.
-        if param_type == 'diff':
+        elif element == 'diff':
+            # Test if the diffusion tensor data is loaded.
+            if not self.relax.data.diff.has_key(run):
+                raise RelaxNoTensorError, run
+
+            # Set the fixed flag.
             self.relax.data.diff[run].fixed = fixed
+
+
+        # All residues.
+        elif element == 'all_res':
+            # Test if sequence data is loaded.
+            if not len(self.relax.data.res):
+                raise RelaxSequenceError
+
+            # Loop over the sequence and set the fixed flag.
+            for i in xrange(len(self.relax.data.res)):
+                if not hasattr(self.relax.data.res[i], 'fixed'):
+                    self.relax.data.res[i].fixed = {}
+                self.relax.data.res[i].fixed[run] = fixed
+
+
+        # All parameters.
+        elif element == 'all':
+            # Test if sequence data is loaded.
+            if not len(self.relax.data.res):
+                raise RelaxSequenceError
+
+            # Test if the diffusion tensor data is loaded.
+            if not self.relax.data.diff.has_key(run):
+                raise RelaxNoTensorError, run
+
+            # Set the fixed flag for the diffusion tensor.
+            self.relax.data.diff[run].fixed = fixed
+
+            # Loop over the sequence and set the fixed flag.
+            for i in xrange(len(self.relax.data.res)):
+                if not hasattr(self.relax.data.res[i], 'fixed'):
+                    self.relax.data.res[i].fixed = {}
+                self.relax.data.res[i].fixed[run] = fixed
+
 
         # Unknown.
         else:
-            raise RelaxError, "The 'param_type' argument must currently be set to 'diff'."
+            raise RelaxError, "The 'element' argument " + `element` + " is unknown."

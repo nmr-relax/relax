@@ -1,6 +1,7 @@
 # General.
 ##########
 
+Combine the prompt functions 'value.set' and 'set'.
 Change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
 
 
