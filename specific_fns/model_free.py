@@ -704,10 +704,13 @@ class Model_free:
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Bond length            | r            | '^r$' or '^[Bb]ond[ -_][Ll]ength$'               |
+        | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Chemical exchange      | rex          | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Order parameter S2     | s2           | '^[Ss]2$'                                        |
@@ -731,18 +734,8 @@ class Model_free:
         | Local tm               | tm           | '^tm$'                                           |
         |________________________|______________|__________________________________________________|
 
-
-        The hard wired values are as follows:
-
-            r   = 1.02e-10
-            csa = -160e-6
-            s2  = 0.8
-            s2f = 0.8
-            s2s = 0.8
-            te  = 1000e-12
-            tf  = 100e-12
-            ts  = 1000e-12
-            tm  = 1e-9
+        Note that the Rex values are scaled quadratically with field strength and should be supplied
+        as the value for the first given field strength.
         """
 
         # Bond length.
@@ -752,6 +745,10 @@ class Model_free:
         # CSA.
         if match('^[Cc][Ss][Aa]$', name):
             return 'csa'
+
+        # Rex
+        if match('^[Rr]ex$', name) or match('[Cc]emical[ -_][Ee]xchange', name):
+            return 'rex'
 
         # Order parameter S2.
         if match('^[Ss]2$', name):
@@ -916,6 +913,69 @@ class Model_free:
             min_options[j][2] = min_options[j][2] / self.scaling_matrix[j, j]
 
         return min_options
+
+
+    def hard_wired_values(self, param):
+        """
+
+        The hard wired values are as follows:
+
+        _______________________________________________________________________________________
+        |                                       |              |                              |
+        | Data type                             | Object name  | Value                        |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Bond length                           | r            | 1.02 * 1e-10                 |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | CSA                                   | csa          | -170 * 1e-6                  |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Chemical exchange relaxation          | rex          | 0.0                          |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Order parameters S2, S2f, and S2s     | s2, s2f, s2s | 0.8                          |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Correlation time te                   | te           | 100 * 1e-12                  |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Correlation time tf                   | tf           | 10 * 1e-12                   |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Correlation time ts                   | ts           | 1000 * 1e-12                 |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Local tm                              | tm           | 10 * 1e-9                    |
+        |_______________________________________|______________|______________________________|
+        """
+
+        # Bond length.
+        if param == 'r':
+            return 1.02 * 1e-10
+
+        # CSA.
+        if param == 'CSA':
+            return -170 * 1e-6
+
+        # Rex.
+        if param == 'Rex':
+            return 0.0
+
+        # {S2, S2f, S2s}.
+        if match('S2', param):
+            return 0.8
+
+        # {te, tf, ts}.
+        elif match('t', param):
+            if param == 'tf':
+                return 10.0 * 1e-12
+            elif param == 'ts':
+                return 1000.0 * 1e-12
+            elif param == 'tm':
+                return 10.0 * 1e-9
+            else:
+                return 100.0 * 1e-12
 
 
     def initialise_mf_data(self, data, run):
@@ -2092,43 +2152,45 @@ class Model_free:
         # Arguments.
         self.run = run
 
-        # Individual data type.
-        #######################
+        # Setting the model parameters prior to minimisation.
+        #####################################################
 
-        if data_type != None:
-            # Get the name of the data object.
-            object_name = self.get_data_name(data_type)
-            import sys; sys.exit()
+        if data_type == None:
+            # The values are supplied by the user:
+            if value:
+                # Test if the length of the value array is equal to the length of the model-free parameter array.
+                if len(value) != len(self.relax.data.res[index].params[self.run]):
+                    raise RelaxError, "The length of the value array '" + len(value) + "' must be equal to the number of model-free parameters, '" + len(self.relax.data.res[index].params[self.run]) + "' for residue " + `self.relax.data.res[index].num` + " " + self.relax.data.res[index].name + "."
 
+            # Hard wired values.
+            else:
+                # Set 'value' to an empty array.
+                value = []
 
-
+                # Loop over the model-free parameters.
+                for k in xrange(len(self.relax.data.res[index].params[self.run])):
+                    value.append(self.hard_wired_value(self.relax.data.res[index].params[self.run]))
 
             # Loop over the model-free parameters.
             for k in xrange(len(self.relax.data.res[index].params[self.run])):
-                # {S2, S2f, S2s}.
-                if match('S2', self.relax.data.res[index].params[self.run][k]):
-                    min_options.append(0.5)
+                # Get the object.
+                object_name = sel.get_data_name(self.relax.data.res[index].params[self.run][i])
+                object = getattr(self.relax.data.res[index], object_name)
 
-                # {te, tf, ts}.
-                elif match('t', self.relax.data.res[index].params[self.run][k]):
-                    if self.relax.data.res[index].params[self.run][k] == 'tf':
-                        min_options.append(10.0 * 1e-12)
-                    elif self.relax.data.res[index].params[self.run][k] == 'ts':
-                        min_options.append(1000.0 * 1e-12)
-                    else:
-                        min_options.append(100.0 * 1e-12)
+                # Set the value.
+                object[self.run] = float(value[i])
 
-                # Rex.
-                if self.relax.data.res[index].params[self.run][k] == 'Rex':
-                    min_options.append(0.0)
 
-                # Bond length.
-                if self.relax.data.res[index].params[self.run][k] == 'r':
-                    min_options.append(1.02 * 1e-10)
+        # Individual data type.
+        #######################
 
-                # CSA.
-                if self.relax.data.res[index].params[self.run][k] == 'CSA':
-                    min_options.append(-170 * 1e-6)
+        else:
+            # Get the object.
+            object_name = self.get_data_name(data_type)
+            object = getattr(self.relax.data.res[index], object_name)
+
+            # Set the value.
+            object[self.run] = float(value[i])
 
 
     def write_header(self, file, run):

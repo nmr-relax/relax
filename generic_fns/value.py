@@ -95,6 +95,21 @@ class Value:
             if type(data_type) == str:
                 set(run=run, value=value, data_type=data_type, index=i)
 
+            # Multiple data type.
+            if type(data_type) == list:
+                for j in range(len(data_type)):
+                    # Get the value of the data type 'j'.
+                    if type(value) == None:
+                        val = None
+                    elif type(value) == list:
+                        val = value[j]
+                    else:
+                        val = value
+
+                    # Set the value of data type 'j' to 'val'.
+                    set(run=run, value=val, data_type=data_type[i], index=i)
+
+
             # Reset the minimisation statistics.
             ####################################
 

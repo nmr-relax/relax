@@ -147,8 +147,8 @@ class Value:
 
 
         To set the parameter values of residue 10, which is the model-free run 'm4' and has the
-        parameters {S2, te, Rex}, the following can be used.  Note that the Rex term should be the
-        chemical exchange value for the first given field strength.
+        parameters {S2, te, Rex}, the following can be used.  Rex term is the value for the first
+        given field strength.
 
         relax> value.set('m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
         relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
@@ -231,6 +231,10 @@ class Value:
         if type(value) == list and type(data_type) == str:
             raise RelaxError, "Invalid combination, view the docstring for details by typing 'help(value.set)'"
 
+        # Value array and data type array of equal length.
+        if type(value) == list and type(data_type) == list and len(value) != len(data_type):
+            raise RelaxError, "Both the value array and data type array must be of equal length."
+
         # Residue number.
         if res_num != None and type(res_num) != int and type(res_num) != str:
             raise RelaxNoneIntStrError, ('residue number', res_num)
@@ -246,4 +250,4 @@ class Value:
     # Modify the docstring of the set method to include the docstring of the model-free specific function get_data_name.
     ####################################################################################################################
 
-    set.__doc__ = set.__doc__ + "\n\n" + Model_free.get_data_name.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + "\n\n" + Model_free.get_data_name.__doc__ + "\n" + Model_free.hard_wired_values.__doc__ + "\n"

@@ -36,7 +36,7 @@ model.select_mf(run=name, model=name)
 #select.res(num=4574)
 # Fixed value.
 #from math import pi
-#value.set(name, [ 0.97, 2.048*1e-9, 0.149 / (2.0 * pi * 600000000.0)**2 ])
+value.set(name, [ 0.97, 2.048*1e-9, 0.149 / (2.0 * pi * 600000000.0)**2 ])
 #value.set(name, [ 6.00000000e-01, 5.00000000e-01, 1.00000000e-9])
 #value.set(name)
 #fix(name, 'all_res')
