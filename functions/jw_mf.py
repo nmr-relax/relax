@@ -41,9 +41,12 @@ def create_jw_struct(data, calc_jw):
 
     Formulae
     ~~~~~~~~
+                      _n_
+                 2    \         /      1       \ 
+        J(w)  =  - S2  >  ci.ti | ------------ |
+                 5    /__       \ 1 + (w.ti)^2 /
+                      i=m
 
-    Original
-    ~~~~~~~~
 
                  2    /      S2             (1 - S2)(te + tm)te    \ 
         J(w)  =  - tm | ------------  +  ------------------------- |
