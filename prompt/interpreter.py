@@ -32,6 +32,7 @@ from print_all_data import Print_all_data
 
 # Macro functions.
 from diffusion_tensor import Diffusion_tensor
+from dx import OpenDX
 from fixed import Fixed
 from gpl import GPL
 from grid import Grid
@@ -74,6 +75,7 @@ class Interpreter:
         self._Init_data = Init_data(relax)
         self._Map = Map(relax)
         self._Minimise = Minimise(relax)
+        self._OpenDX = OpenDX(relax)
         self._system = system
         self._Write = Write(relax)
 
@@ -107,6 +109,7 @@ class Interpreter:
 
         # Place the functions in the local namespace.
         diffusion_tensor = self._Diffusion_tensor.set
+        dx = self._OpenDX.dx
         fixed = self._Fixed.fixed
         grid_search = self._Grid.grid_search
         init_data = self._Init_data.init

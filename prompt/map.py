@@ -35,7 +35,6 @@ class Map:
     def map(self, model=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point"):
         """Function for creating a map of the given space in OpenDX format.
 
-
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 

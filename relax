@@ -48,6 +48,7 @@ from data import Data
 from file_ops import File_ops
 from diffusion_tensor import Diffusion_tensor
 from dx.map import Map
+from dx.opendx import OpenDX
 from load import Load
 from min import Minimise
 from model_free import Model_free
@@ -87,6 +88,7 @@ class Relax:
         self.min = Minimise(self)
         #self.model_selection = Model_selection(self)
         self.model_free = Model_free(self)
+        self.opendx = OpenDX(self)
         self.specific_setup = Specific_setup(self)
         self.state = State(self)
         self.value = Value(self)

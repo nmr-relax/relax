@@ -14,7 +14,7 @@ name = 'm4'
 model.select_mf(name)
 
 # Map data.
-inc = 20
+inc = 10
 from math import pi
 if name == 'm4':
     lower = [0.94, 0, 0]
@@ -32,3 +32,4 @@ else:
     swap = None
     point = None
 map(name, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
+dx()

@@ -128,7 +128,7 @@ class Grid:
 
         # Constraint flag.
         if type(constraints) != int or (constraints != 0 and constraints != 1):
-            print "The constraint arguments must be either the integers 0 or 1."
+            print "The constraint flag should be the integer values of either 0 or 1."
             return
 
         # The print flag.

@@ -65,9 +65,60 @@ class Minimise:
 
         # Macro intro text is found at the end.
 
+        # Keyword: model.
+        if keywords.has_key('model'):
+            model = keywords['model']
+        else:
+            model = None
+
+        # Keyword: func_tol.
+        if keywords.has_key('func_tol'):
+            func_tol = keywords['func_tol']
+        else:
+            func_tol = 1e-25
+
+        # Keyword: grad_tol.
+        if keywords.has_key('grad_tol'):
+            grad_tol = keywords['grad_tol']
+        else:
+            grad_tol = None
+
+        # Keyword: max_iterations.
+        if keywords.has_key('max_iterations'):
+            max_iterations = keywords['max_iterations']
+        elif keywords.has_key('max_iter'):
+            max_iterations = keywords['max_iter']
+        else:
+            max_iterations = 10000000
+
+        # Keyword: constraints.
+        if keywords.has_key('constraints'):
+            constraints = keywords['constraints']
+        else:
+            constraints = 1
+
+        # Keyword: print_flag.
+        if keywords.has_key('print_flag'):
+            print_flag = keywords['print_flag']
+        else:
+            print_flag = 1
+
+        # Macro intro text.
+        if self.relax.interpreter.intro:
+            text = self.relax.interpreter.macro_prompt + "minimise("
+            text = text + "model=" + `model`
+            text = text + ", func_tol=" + `func_tol`
+            text = text + ", max_iterations=" + `max_iterations`
+            text = text + ", constraints=" + `constraints`
+            text = text + ", print_flag=" + `print_flag` + ")\n"
+            print text
+
         # Minimization algorithm.
         if len(args) == 0:
             print "The minimisation algorithm has not been specified."
+            return
+        elif type(args[0]) != str:
+            print "The minimisation algorithm should be a string."
             return
         min_algor = args[0]
 
@@ -86,69 +137,47 @@ class Minimise:
                 return
 
         # The model keyword.
-        if keywords.has_key('model'):
-            model = keywords['model']
-            if type(model) != str:
-                print "The model argument " + `model` + " must be a string."
-                return
-        else:
+        if model == None:
             print "No model has been given."
+            return
+        elif type(model) != str:
+            print "The model argument " + `model` + " must be a string."
             return
         # self.res causing problems here!
         #if len(self.relax.data.params[model][self.res]) == 0:
         #    print "The minimisation of a zero parameter model is not allowed."
         #    return
-        if not self.relax.data.equations.has_key(model):   # Find the index of the model.
+        elif not self.relax.data.equations.has_key(model):   # Find the index of the model.
             print "The model '" + model + "' has not been created yet."
             return
 
         # The function tolerance value.
-        if keywords.has_key('func_tol'):
-            func_tol = keywords['func_tol']
-        else:
-            func_tol = 1e-25
-
-        # The gradient tolerance value.
-        if keywords.has_key('grad_tol'):
-            grad_tol = keywords['grad_tol']
-        else:
-            grad_tol = None
-
-        # The maximum number of iterations.
-        if keywords.has_key('max_iterations'):
-            max_iterations = keywords['max_iterations']
-        elif keywords.has_key('max_iter'):
-            max_iterations = keywords['max_iter']
-        else:
-            max_iterations = 10000000
-
-        # Constraint flag.
-        if keywords.has_key('constraints'):
-            constraints = keywords['constraints']
-        else:
-            constraints = 1
-        if constraints == 1:
-            min_algor = 'Method of Multipliers'
-            min_options = args
-        elif constraints != 0:
-            print "The constraints flag (constraints=" + `constraints` + ") must be either 0 or 1."
+        if func_tol != None and type(func_tol) != int and type(func_tol) != float:
+            print "The function tolerance should be either a number or 'None'."
             return
 
-        # Print options.
-        if keywords.has_key('print_flag'):
-            print_flag = keywords['print_flag']
-        else:
-            print_flag = 1
+        # The gradient tolerance value.
+        if grad_tol != None and type(grad_tol) != int and type(grad_tol) != float:
+            print "The gradient tolerance should be either a number or 'None'."
+            return
 
-        # Macro intro text.
-        if self.relax.interpreter.intro:
-            text = self.relax.interpreter.macro_prompt + "minimise("
-            text = text + "model=" + `model`
-            text = text + ", func_tol=" + `func_tol`
-            text = text + ", max_iterations=" + `max_iterations`
-            text = text + ", constraints=" + `constraints`
-            text = text + ", print_flag=" + `print_flag` + ")\n"
-            print text
+        # The maximum number of iterations.
+        if type(max_iterations) != int and type(max_iterations) != float:
+            print "The maximum number of iterations argument should be a number."
+            return
+
+        # Constraint flag.
+        if type(constraints) != int and constraints != 0 and constraints != 1:
+            print "The constraint flag should be the integer values of either 0 or 1."
+            return
+        elif constraints == 1:
+            min_algor = 'Method of Multipliers'
+            min_options = args
+
+        # Print flag.
+        if type(print_flag) != int and print_flag != 0 and print_flag != 1:
+            print "The print flag should be the integer values of either 0 or 1."
+            return
 
         # Execute the functional code.
         self.relax.min.minimise(model=model, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, print_flag=print_flag)

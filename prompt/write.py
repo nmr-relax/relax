@@ -31,7 +31,6 @@ class Write:
     def write(self, model=None, file="results", force=0):
         """Function for writing results to a file.
 
-
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
@@ -66,4 +65,5 @@ class Write:
             print "The force flag should be the integer values of either 0 or 1."
             return
 
+        # Execute the functional code.
         self.relax.write.write_data(model=model, file=file, force=force)
