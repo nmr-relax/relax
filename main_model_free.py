@@ -20,8 +20,7 @@ class main_model_free:
 		self.lm = self.mf.minimise.levenberg_marquardt
 		self.steepest_descent = self.mf.minimise.steepest_descent
 		self.coordinate_descent = self.mf.minimise.coordinate_descent
-		self.newton = self.mf.minimise.newton
-		self.bfgs = self.mf.minimise.bfgs
+		self.generic_line_search = self.mf.minimise.generic_line_search
 
 		self.mf.data.stage, self.mf.data.model = self.ask_stage()
 		self.mf.file_ops.mkdir(self.mf.data.model)
@@ -182,9 +181,7 @@ class main_model_free:
 			
 			# Quasi-Newton BFGS minimisation.
 			elif match('^[Bb][Ff][Gg][Ss]$', self.mf.usr_param.minimiser):
-				if self.mf.min_debug >= 1:
-					print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-				output = self.bfgs(func, dfunc, params, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
+				output = self.generic_line_search(func, dfunc, None, params, minimiser=self.mf.usr_param.minimiser, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
 				params, chi2, iter, warn_flag = output
 				print "iter:       " + `iter`
 				print "warn flag:  " + `warn_flag`
@@ -201,9 +198,7 @@ class main_model_free:
 
 			# Newton minimisation.
 			elif match('^[Nn]ewton$', self.mf.usr_param.minimiser):
-				if self.mf.min_debug >= 1:
-					print "\n\n<<< Newton minimisation >>>"
-				output = self.newton(func, dfunc, d2func, params, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
+				output = self.generic_line_search(func, dfunc, d2func, params, minimiser=self.mf.usr_param.minimiser, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
 				params, chi2, iter, warn_flag = output
 				print "iter:       " + `iter`
 				print "warn flag:  " + `warn_flag`

@@ -21,6 +21,7 @@ class usr_param:
 		elif match(self.program_type, "^[Mm][Ff]$"):
 			self.minimiser = 'Newton'
 			self.line_search_algor = 'More Thuente'
+			self.hessian = 'Hessian'
 			self.input()
 			self.model_selection()
 			self.palmer_method_param()

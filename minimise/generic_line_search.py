@@ -1,6 +1,10 @@
-from LinearAlgebra import inverse
-from Numeric import copy, matrixmultiply
+from Numeric import Float64, zeros
+from copy import deepcopy
 from re import match
+
+from generic_minimise import generic_minimise
+import bfgs
+import newton
 
 # Line search functions.
 from line_search.backtrack import backtrack
@@ -9,7 +13,7 @@ from line_search.nocedal_wright_wolfe import nocedal_wright_wolfe
 from line_search.more_thuente import more_thuente
 
 
-def newton(func, dfunc, d2func, x0, line_search_algor='Not set', args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
+def generic_line_search(func, dfunc, d2func, x0, minimiser=None, line_search_algor=None, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
 	"""Pure Newton minimisation.
 
 	Function options
@@ -54,81 +58,85 @@ def newton(func, dfunc, d2func, x0, line_search_algor='Not set', args=(), tol=1e
 
 	"""
 
-	# Initial values before the first iteration.
+	# Setup the min_func arguments.
+	min_func_args = (minimiser, line_search_algor,)
+
+	# Initialisation code.
 	xk = x0
-	fk = apply(func, (x0,)+args)
-	dfk = apply(dfunc, (x0,)+args)
-	d2fk = apply(d2func, (x0,)+args)
+	fk = 0.0
+	dfk = zeros((len(xk)), Float64)
+	d2fk = zeros((len(xk), len(xk)), Float64)
 
-	# Start the iteration counter.
-	k = 0
+	xk_new = zeros((len(xk)), Float64)
+	fk_new = 0.0
+	dfk_new = zeros((len(xk)), Float64)
+	d2fk_new = zeros((len(xk), len(xk)), Float64)
 
-	# Debugging code.
-	if print_flag == 1:
-		k2 = 0
+	f_args = deepcopy(args)
+	df_args = deepcopy(args)
+	d2f_args = deepcopy(args)
 
-	# Iterate until the local minima is found.
-	while 1:
-		if print_flag == 2:
-			print "\n\n<<<Newton iteration k=" + `k` + " >>>"
-		# Check if the maximum number of iterations has been reached.
-		if k >= maxiter:
-			if full_output:
-				return xk, fk, k, 1
-			else:
-				return xk
+	print "xk: " + `xk`
+	print "fk: " + `fk`
+	print "dfk: " + `dfk`
+	print "d2fk: " + `d2fk`
+	print "xk_new: " + `xk_new`
+	print "fk_new: " + `fk_new`
+	print "dfk_new: " + `dfk_new`
+	print "d2fk_new: " + `d2fk_new`
 
-		# Debugging code.
-		if print_flag >= 1:
-			if print_flag == 2:
-				print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
-			else:
-				if k2 == 100:
-					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
-					k2 = 0
+	if match('^[Bb][Ff][Gg][Ss]$', minimiser):
+		bfgs.setup(func, dfunc, d2func, f_args, df_args, d2f_args, xk, fk, dfk, d2fk, xk_new, fk_new, dfk_new, d2fk_new, args, print_flag)
+	elif match('^[Nn]ewton$', minimiser):
+		newton.setup(func, dfunc, d2func, f_args, df_args, d2f_args, xk, fk, dfk, d2fk, args, print_flag)
 
-		# Calculate the Newton search direction for iteration k.
-		pk = -matrixmultiply(inverse(d2fk), dfk)
+	print "xk: " + `xk`
+	print "fk: " + `fk`
+	print "dfk: " + `dfk`
+	print "d2fk: " + `d2fk`
+	print "xk_new: " + `xk_new`
+	print "fk_new: " + `fk_new`
+	print "dfk_new: " + `dfk_new`
+	print "d2fk_new: " + `d2fk_new`
 
-		# Backtracking line search.
-		if match('^[Bb]ack', line_search_algor):
-			alpha = backtrack(func, args, xk, fk, dfk, pk, a_init=1.0)
-		# Nocedal and Wright interpolation based line search.
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
-			alpha = nocedal_wright_interpol(func, args, xk, fk, dfk, pk, a_init=1.0, mu=0.0001, print_flag=0)
-		# Nocedal and Wright line search for the Wolfe conditions.
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
-			alpha = nocedal_wright_wolfe(func, dfunc, args, xk, fk, dfk, pk, a_init=1.0, mu=0.0001, eta=0.9, print_flag=0)
-		# More and Thuente line search.
-		elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
-			alpha = more_thuente(func, dfunc, args, xk, fk, dfk, pk, a_init=1.0, mu=0.0001, eta=0.9, print_flag=0)
-		# No line search.
-		elif match('^[Nn]one$', line_search_algor):
-			alpha = 1.0
-		# No match to line search string.
-		else:
-			raise NameError, "The line search algorithm " + line_search_algor + " is not setup for Newton minimisation.\n"
+	# Main part of the minimisation.
+	output = generic_minimise(func, dfunc, d2func, f_args, df_args, d2f_args, xk, fk, dfk, d2fk, xk_new, fk_new, dfk_new, d2fk_new, min_func, min_func_args, tol, maxiter, print_flag)
+	xk_fin, fk_fin, k, warn_flag = output
 
-		# Find the parameter vector, function value, gradient vector, and hessian matrix for iteration k+1.
-		xk_new = xk + alpha * pk
-		fk_new = apply(func, (xk_new,)+args)
-		dfk_new = apply(dfunc, (xk_new,)+args)
-		d2fk_new = apply(d2func, (xk_new,)+args)
+	# Return the final values.
+	if full_output:
+		return xk_fin, fk_fin, k, warn_flag
+	else:
+		return xk_fin
 
-		# Test for the local minimum.
-		if abs(fk - fk_new) <= tol:
-			if full_output:
-				return xk_new, fk_new, k+1, 0
-			else:
-				return xk_new
 
-		# Update data for the next iteration.
-		k = k + 1
-		xk = xk_new
-		fk = fk_new
-		dfk = copy.deepcopy(dfk_new)
-		d2fk = copy.deepcopy(d2fk_new)
+def min_func(func, dfunc, d2func, args, xk, fk, dfk, d2fk, minimiser, line_search_algor):
 
-		# Debugging code.
-		if print_flag == 1:
-			k2 = k2 + 1
+	# Calculate the search direction for iteration k.
+	if match('^[Bb][Ff][Gg][Ss]$', minimiser):
+		pk = bfgs.dir(dfk, d2fk)
+	elif match('^[Nn]ewton$', minimiser):
+		pk = newton.dir(dfk, d2fk)
+
+	# Backtracking line search.
+	if match('^[Bb]ack', line_search_algor):
+		alpha = backtrack(func, args, xk, fk, dfk, pk, a_init=1.0)
+	# Nocedal and Wright interpolation based line search.
+	elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
+		alpha = nocedal_wright_interpol(func, args, xk, fk, dfk, pk, a_init=1.0, mu=0.0001, print_flag=0)
+	# Nocedal and Wright line search for the Wolfe conditions.
+	elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
+		alpha = nocedal_wright_wolfe(func, dfunc, args, xk, fk, dfk, pk, a_init=1.0, mu=0.0001, eta=0.9, print_flag=0)
+	# More and Thuente line search.
+	elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
+		alpha = more_thuente(func, dfunc, args, xk, fk, dfk, pk, a_init=1.0, mu=0.0001, eta=0.9, print_flag=0)
+	# No line search.
+	elif match('^[Nn]one$', line_search_algor):
+		alpha = 1.0
+	# No match to line search string.
+	else:
+		raise NameError, "The line search algorithm " + line_search_algor + " is not setup for Newton minimisation.\n"
+
+	# Find the new parameter vector.
+	xk_new = xk + alpha * pk
+	return xk_new

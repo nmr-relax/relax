@@ -1,4 +1,4 @@
-from Numeric import dot, norm
+from Numeric import dot, sqrt
 
 
 def trust_region(delta_max=1e5, delta0=1.0, eta=0.2):
@@ -15,7 +15,7 @@ def trust_region(delta_max=1e5, delta0=1.0, eta=0.2):
 		rho = calc_rho(func, xk, pk, dfk, Bk)
 
 		# Calculate the Euclidean norm of pk.
-		norm_pk = norm(pk)
+		norm_pk = sqrt(dot(pk, pk))
 
 		# Choose the trust region radius for the next iteration.
 		# Rho is close to zero or negative, therefore the trust region is shrunk.
