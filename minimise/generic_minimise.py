@@ -44,22 +44,22 @@ class generic_minimise:
 						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 
 			# Get xk+1 (new parameter function).
-			self.new_param_func()
-			#try:
-			#	self.new_param_func()
-			#except "LinearAlgebraError", message:
-			#	self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
-			#	break
-			#except OverflowError, message:
-			#	if type(message.args[0]) == int:
-			#		text = message.args[1]
-			#	else:
-			#		text = message.args[0]
-			#	self.warning = "OverflowError: " + text + " (fatal minimisation error)."
-			#	break
-			#except NameError, message:
-			#	self.warning = message.args[0] + " (fatal minimisation error)."
-			#	break
+			#self.new_param_func()
+			try:
+				self.new_param_func()
+			except "LinearAlgebraError", message:
+				self.warning = "LinearAlgebraError: " + message + " (fatal minimisation error)."
+				break
+			except OverflowError, message:
+				if type(message.args[0]) == int:
+					text = message.args[1]
+				else:
+					text = message.args[0]
+				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
+				break
+			except NameError, message:
+				self.warning = message.args[0] + " (fatal minimisation error)."
+				break
 
 			# Test for warnings.
 			if self.warning != None:
@@ -75,7 +75,15 @@ class generic_minimise:
 				break
 
 			# Update function.
-			self.update()
+			try:
+				self.update()
+			except OverflowError, message:
+				if type(message.args[0]) == int:
+					text = message.args[1]
+				else:
+					text = message.args[0]
+				self.warning = "OverflowError: " + text + " (fatal minimisation error)."
+				break
 
 			# Iteration counter update.
 			self.k = self.k + 1

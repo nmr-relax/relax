@@ -139,7 +139,7 @@ class newton(generic_line_search, generic_minimise):
 		"""
 
 		# Debugging (REMOVE!!!).
-		#self.d2fk = array([[4, 2, 1], [2, 6, 3], [1, 3, -0.004]], Float64)
+		#self.d2fk = array([[-0.004, 2, 1], [2, 6, 3], [1, 3, 4]], Float64)
 		if self.print_flag == 2:
 			print "d2fk: " + `self.d2fk`
 			eigen = eigenvectors(self.d2fk)
@@ -164,6 +164,7 @@ class newton(generic_line_search, generic_minimise):
 		d = 0.0 * self.xk
 		l = 1.0 * self.I
 		e = 0.0 * self.xk
+		P = 1.0 * self.I
 
 		# Initial diagonal elements of c.
 		for k in range(self.n):
@@ -175,30 +176,35 @@ class newton(generic_line_search, generic_minimise):
 				print "\n<j: " + `j` + ">"
 
 			# Row and column swapping.
-			#p = 1.0 * self.I
-			#q = j
-			#for i in range(j, self.n):
-			#	if abs(c[q, q]) <= abs(c[i, i]):
-			#		q = i
-			#if self.print_flag == 2:
-			#	print "Row and column swapping."
-			#	print "i range: " + `range(j, self.n)`
-			#	print "q: " + `q`
-			#	print "c: " + `c`
-			#	print "d: " + `d`
-			#	print "l: " + `l`
-			#if q != j:
-			#	p[q, j] = p[j, q] = 1.0
-			#	p[q, q] = p[j, j] = 0.0
-			#	c = dot(p, dot(c, p))
-			#	d = dot(p, dot(d, p))
-			#	l = dot(p, dot(l, p))
-			#	self.d2fk = dot(p, dot(self.d2fk, p))
-			#	if self.print_flag == 2:
-			#		print "p: " + `p`
-			#		print "c(mod): " + `c`
-			#		print "d(mod): " + `d`
-			#		print "l(mod): " + `l`
+			p = 1.0 * self.I
+			q = j
+			for i in range(j, self.n):
+				if abs(c[q, q]) <= abs(c[i, i]):
+					q = i
+			if self.print_flag == 2:
+				print "Row and column swapping."
+				print "i range: " + `range(j, self.n)`
+				print "q: " + `q`
+				print "a: " + `self.d2fk`
+				print "c: " + `c`
+				print "d: " + `d`
+				print "l: " + `l`
+			if q != j:
+				# Modify the permutation matrices.
+				temp_p, temp_P = 1.0*p[:, q], 1.0*P[:, q]
+				p[:, q], P[:, q] = p[:, j], P[:, j]
+				p[:, j], P[:, j] = temp_p, temp_P
+
+				# Permute both c and d2fk.
+				c = dot(p, dot(c, p))
+				self.d2fk = dot(p, dot(self.d2fk, p))
+
+				if self.print_flag == 2:
+					print "p: " + `p`
+					print "a(mod): " + `self.d2fk`
+					print "c(mod): " + `c`
+					print "d(mod): " + `d`
+					print "l(mod): " + `l`
 
 			# Calculate the elements of l.
 			if self.print_flag == 2:
@@ -258,15 +264,12 @@ class newton(generic_line_search, generic_minimise):
 			if self.print_flag == 2:
 				print "c: " + `c`
 
-			#if q != j:
-			#	self.d2fk = dot(p, dot(self.d2fk, p))
-
 			# Calculate e.
 			e[j] = d[j] - c[j, j]
 
-		self.d2fk = d2fk_orig
 		for i in range(self.n):
 			self.d2fk[i, i] = self.d2fk[i, i] + e[i]
+		self.d2fk = dot(P, dot(self.d2fk, transpose(P)))
 
 		# Debugging.
 		if self.print_flag == 2:
@@ -283,6 +286,7 @@ class newton(generic_line_search, generic_minimise):
 				temp[i, i] = d[i]
 			print "m: " + `dot(l, sqrt(temp))`
 			print "mmT: " + `dot(dot(l, sqrt(temp)), transpose(dot(l, sqrt(temp))))`
+			print "P: " + `P`
 			print "e: " + `e`
 			print "d2fk: " + `self.d2fk`
 			eigen = eigenvectors(self.d2fk)
