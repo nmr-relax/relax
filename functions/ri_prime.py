@@ -1,8 +1,3 @@
-from math import pi
-from Numeric import Float64, zeros
-from re import match
-
-
 def calc_ri_prime(data, ri_prime_funcs):
 	"""Function for back calculation of the transformed relaxation values R1, R2, and sigma_noe.
 
@@ -60,7 +55,7 @@ def calc_ri_prime(data, ri_prime_funcs):
 		ri_prime_funcs[i](data, i, data.remap_table[i])
 
 	# Calculate the transformed relaxation values.
-	data.ri_prime = data.dip_comps * data.j_dip_comps + data.csa_comps * data.j_csa_comps + data.rex_comps
+	data.ri_prime = data.dip_comps * data.dip_jw_comps + data.csa_comps * data.csa_jw_comps + data.rex_comps
 
 
 def calc_r1_prime(data, i, frq_num):
@@ -74,9 +69,9 @@ def calc_r1_prime(data, i, frq_num):
 
 	"""
 	data.dip_comps[i] = data.dipole_const
-	data.j_dip_comps[i] = data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 4]
+	data.dip_jw_comps[i] = data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 4]
 	data.csa_comps[i] = data.csa_const[frq_num]
-	data.j_csa_comps[i] = data.jw[frq_num, 1]
+	data.csa_jw_comps[i] = data.jw[frq_num, 1]
 
 
 def calc_r2_prime(data, i, frq_num):
@@ -93,9 +88,9 @@ def calc_r2_prime(data, i, frq_num):
 	"""
 
 	data.dip_comps[i] = data.dipole_const / 2.0
-	data.j_dip_comps[i] = 4.0*data.jw[frq_num, 0] + data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 3] + 6.0*data.jw[frq_num, 4]
+	data.dip_jw_comps[i] = 4.0*data.jw[frq_num, 0] + data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 3] + 6.0*data.jw[frq_num, 4]
 	data.csa_comps[i] = data.csa_const[frq_num] / 6.0
-	data.j_csa_comps[i] = 4.0*data.jw[frq_num, 0] + 3.0*data.jw[frq_num, 1]
+	data.csa_jw_comps[i] = 4.0*data.jw[frq_num, 0] + 3.0*data.jw[frq_num, 1]
 
 
 def calc_r2_rex_prime(data, i, frq_num):
@@ -112,9 +107,9 @@ def calc_r2_rex_prime(data, i, frq_num):
 	"""
 
 	data.dip_comps[i] = data.dipole_const / 2.0
-	data.j_dip_comps[i] = 4.0*data.jw[frq_num, 0] + data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 3] + 6.0*data.jw[frq_num, 4]
+	data.dip_jw_comps[i] = 4.0*data.jw[frq_num, 0] + data.jw[frq_num, 2] + 3.0*data.jw[frq_num, 1] + 6.0*data.jw[frq_num, 3] + 6.0*data.jw[frq_num, 4]
 	data.csa_comps[i] = data.csa_const[frq_num] / 6.0
-	data.j_csa_comps[i] = 4.0*data.jw[frq_num, 0] + 3.0*data.jw[frq_num, 1]
+	data.csa_jw_comps[i] = 4.0*data.jw[frq_num, 0] + 3.0*data.jw[frq_num, 1]
 	data.rex_comps[i] = data.params[data.ri_indecies[0]] * (1e-8 * data.frq[frq_num])**2
 
 
@@ -128,4 +123,4 @@ def calc_sigma_noe(data, i, frq_num):
 	"""
 
 	data.dip_comps[i] = data.dipole_const
-	data.j_dip_comps[i] = 6.0*data.jw[frq_num, 4] - data.jw[frq_num, 2]
+	data.dip_jw_comps[i] = 6.0*data.jw[frq_num, 4] - data.jw[frq_num, 2]

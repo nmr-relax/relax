@@ -1,5 +1,5 @@
 from Numeric import Float64, zeros
-from re import match
+
 
 def create_jw_struct(data, calc_jw):
 	"""Function to create the model-free spectral density values.
@@ -42,7 +42,7 @@ def create_jw_struct(data, calc_jw):
 		data.jw[i, 4] = calc_jw(i, 4, data)
 
 
-def calc_iso_jw_s2(i, frq_index, data):
+def calc_iso_s2_jw(i, frq_index, data):
 	"""Calculate the isotropic spectral density value for the original model-free formula with the single parameter S2.
 
 	The formula is:
@@ -56,7 +56,7 @@ def calc_iso_jw_s2(i, frq_index, data):
 	return 0.4 * (data.s2_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]))
 
 
-def calc_iso_jw_s2_comps(data):
+def calc_iso_s2_jw_comps(data):
 	"Calculate some data used in the calculation of values, gradients, and hessians."
 
 	data.tm_sqrd = data.diff_params[0] ** 2
@@ -68,7 +68,7 @@ def calc_iso_jw_s2_comps(data):
 			data.omega_tm_sqrd[i, frq_index] = data.frq_sqrd_list[i][frq_index] * data.tm_sqrd
 
 
-def calc_iso_jw_s2_te(i, frq_index, data):
+def calc_iso_s2_te_jw(i, frq_index, data):
 	"""Calculate the isotropic spectral density value for the original model-free formula with the parameters S2 and te.
 
 	The formula is:
@@ -82,7 +82,7 @@ def calc_iso_jw_s2_te(i, frq_index, data):
 	return 0.4 * (data.s2_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2_index]) * data.te_prime / (1.0 + data.omega_te_prime_sqrd[i, frq_index]))
 
 
-def calc_iso_jw_s2_te_comps(data):
+def calc_iso_s2_te_jw_comps(data):
 	"Calculate some data used in the calculation of values, gradients, and hessians."
 
 	data.tm_sqrd = data.diff_params[0] ** 2
@@ -99,7 +99,7 @@ def calc_iso_jw_s2_te_comps(data):
 			data.omega_te_prime_sqrd[i, frq_index] = data.frq_sqrd_list[i][frq_index] * data.te_prime_sqrd
 
 
-def calc_iso_jw_s2f_s2s_ts(i, frq_index, data):
+def calc_iso_s2f_s2s_ts_jw(i, frq_index, data):
 	"""Calculate the isotropic spectral density value for the extended model-free formula with the parameters S2f, S2s, and ts.
 
 	The formula is:
@@ -113,7 +113,7 @@ def calc_iso_jw_s2f_s2s_ts(i, frq_index, data):
 	return 0.4 * data.params[data.s2f_index] * (data.s2s_tm / (1.0 + data.omega_tm_sqrd[i, frq_index]) + (1.0 - data.params[data.s2s_index]) * data.ts_prime / (1.0 + data.omega_ts_prime_sqrd[i, frq_index]))
 
 
-def calc_iso_jw_s2f_s2s_ts_comps(data):
+def calc_iso_s2f_s2s_ts_jw_comps(data):
 	"Calculate some data used in the calculation of values, gradients, and hessians."
 
 	data.tm_sqrd = data.diff_params[0] ** 2
@@ -132,7 +132,7 @@ def calc_iso_jw_s2f_s2s_ts_comps(data):
 			data.omega_ts_prime_sqrd[i, frq_index] = data.frq_sqrd_list[i][frq_index] * data.ts_prime_sqrd
 
 
-def calc_iso_jw_s2f_tf_s2s_ts(i, frq_index, data):
+def calc_iso_s2f_tf_s2s_ts_jw(i, frq_index, data):
 	"""Calculate the isotropic spectral density value for the extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
 	The formula is:
@@ -149,19 +149,19 @@ def calc_iso_jw_s2f_tf_s2s_ts(i, frq_index, data):
 	return 0.4 * (a + b + c)
 
 
-def calc_iso_jw_s2f_tf_s2s_ts_comps(data):
+def calc_iso_s2f_tf_s2s_ts_jw_comps(data):
 	"Calculate some data used in the calculation of values, gradients, and hessians."
 
 	data.tm_sqrd = data.diff_params[0] ** 2
 
-	data.s2 = data.params[data.s2f_index] * data.params[s2s_index]
-	data.fact_f = data.diff_params[0] / (data.params[tf_index] + data.diff_params[0])
-	data.fact_s = data.diff_params[0] / (data.params[ts_index] + data.diff_params[0])
-	data.tf_prime = data.params[tf_index] * data.fact_f
-	data.ts_prime = data.params[ts_index] * data.fact_s
+	data.s2 = data.params[data.s2f_index] * data.params[data.s2s_index]
+	data.fact_f = data.diff_params[0] / (data.params[data.tf_index] + data.diff_params[0])
+	data.fact_s = data.diff_params[0] / (data.params[data.ts_index] + data.diff_params[0])
+	data.tf_prime = data.params[data.tf_index] * data.fact_f
+	data.ts_prime = data.params[data.ts_index] * data.fact_s
 	data.tf_prime_sqrd = data.tf_prime ** 2
 	data.ts_prime_sqrd = data.ts_prime ** 2
-	data.s2s_tm = data.params[s2s_index] * data.diff_params[0]
+	data.s2s_tm = data.params[data.s2s_index] * data.diff_params[0]
 	data.s2_tm = data.s2 * data.diff_params[0]
 
 	data.omega_tm_sqrd = zeros((data.num_frq, 5), Float64)

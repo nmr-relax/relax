@@ -1,6 +1,3 @@
-from Numeric import copy
-
-
 def calc_ri(data, ri_funcs):
 	"""An additional layer of equations to simplify the relaxation equations, gradients, and hessians.
 

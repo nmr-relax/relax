@@ -7,9 +7,13 @@ from data import data
 from jw_mf import *
 from djw_mf import *
 
-from ri import *
 from ri_dipole_csa_comps import *
+
 from ri_prime import *
+from dri_prime import *
+
+from ri import *
+from dri import *
 
 from chi2 import calc_chi2
 
@@ -133,7 +137,6 @@ class mf:
 		self.print_flag = print_flag
 
 		# Calculate the spectral density values.
-		self.calc_djw_comps(self.data)
 		create_djw_struct(self.data, self.calc_djw)
 
 		# Calculate the R1, R2, and sigma_noe values.
@@ -178,13 +181,20 @@ class mf:
 
 		# Initialise the components of the transformed relaxation equations.
 		self.data.dip_comps = zeros((self.relax.data.num_ri), Float64)
-		self.data.j_dip_comps = zeros((self.relax.data.num_ri), Float64)
+		self.data.dip_jw_comps = zeros((self.relax.data.num_ri), Float64)
 		self.data.csa_comps = zeros((self.relax.data.num_ri), Float64)
-		self.data.j_csa_comps = zeros((self.relax.data.num_ri), Float64)
+		self.data.csa_jw_comps = zeros((self.relax.data.num_ri), Float64)
 		self.data.rex_comps = zeros((self.relax.data.num_ri), Float64)
 
-		# Initialise the transformed relaxation values.
+		self.data.dip_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.dip_jw_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.csa_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.csa_jw_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
+		self.data.rex_comps_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
+
+		# Initialise the transformed relaxation values, gradients, and hessians.
 		self.data.ri_prime = zeros((self.relax.data.num_ri), Float64)
+		self.data.dri_prime = zeros((len(self.params), self.relax.data.num_ri), Float64)
 
 
 	def lm_dri(self):
@@ -195,6 +205,10 @@ class mf:
 
 	def setup_equations(self):
 		"Setup the equations used to calculate the chi-squared statistic."
+
+		self.calc_djw = []
+		for i in range(len(self.params)):
+			self.calc_djw.append(None)
 
 		# The original model-free equations.
 		if match('mf_orig', self.equation):
@@ -216,11 +230,14 @@ class mf:
 
 			# Setup the equations for the calculation of spectral density values.
 			if self.data.s2_index != None and self.data.te_index != None:
-				self.calc_jw = calc_iso_jw_s2_te
-				self.calc_jw_comps = calc_iso_jw_s2_te_comps
+				self.calc_jw = calc_iso_s2_te_jw
+				self.calc_jw_comps = calc_iso_s2_te_jw_comps
+				self.calc_djw[self.data.s2_index] = calc_iso_S2_te_djw_dS2
+				self.calc_djw[self.data.te_index] = calc_iso_S2_te_djw_dte
 			elif self.data.s2_index != None:
-				self.calc_jw = calc_iso_jw_s2
-				self.calc_jw_comps = calc_iso_jw_s2_comps
+				self.calc_jw = calc_iso_s2_jw
+				self.calc_jw_comps = calc_iso_s2_jw_comps
+				self.calc_djw[self.data.s2_index] = calc_iso_S2_te_djw_dS2
 			elif self.data.te_index != None:
 				print "Invalid model, you cannot have te as a parameter without S2 existing as well."
 				return 0
@@ -251,11 +268,18 @@ class mf:
 
 			# Setup the equations for the calculation of spectral density values.
 			if self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
-				self.calc_jw = calc_iso_jw_s2f_tf_s2s_ts
-				self.calc_jw_comps = calc_iso_jw_s2f_tf_s2s_ts_comps
+				self.calc_jw = calc_iso_s2f_tf_s2s_ts_jw
+				self.calc_jw_comps = calc_iso_s2f_tf_s2s_ts_jw_comps
+				self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2s_ts_djw_dS2f
+				self.calc_djw[self.data.tf_index] = calc_iso_S2f_S2s_ts_djw_dtf
+				self.calc_djw[self.data.s2s_index] = calc_iso_S2f_S2s_ts_djw_dS2s
+				self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2s_ts_djw_dts
 			elif self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
-				self.calc_jw = calc_iso_jw_s2f_s2s_ts
-				self.calc_jw_comps = calc_iso_jw_s2f_s2s_ts_comps
+				self.calc_jw = calc_iso_s2f_s2s_ts_jw
+				self.calc_jw_comps = calc_iso_s2f_s2s_ts_jw_comps
+				self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2s_ts_djw_dS2f
+				self.calc_djw[self.data.s2s_index] = calc_iso_S2f_S2s_ts_djw_dS2s
+				self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2s_ts_djw_dts
 			else:
 				print "Invalid combination of parameters for the extended model-free equation."
 				return 0

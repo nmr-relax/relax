@@ -15,8 +15,8 @@ class state(generic_functions):
 	def load(self, file_name=None):
 		"""Macro for loading a saved program state.
 
-		Options
-		~~~~~~~
+		Arguments
+		~~~~~~~~~
 
 		file_name:	The file name, which must be a string, of a saved program state.
 
@@ -55,8 +55,8 @@ class state(generic_functions):
 	def save(self, file_name=None, force=0):
 		"""Macro for saving the program state.
 
-		Options
-		~~~~~~~
+		Arguments
+		~~~~~~~~~
 
 		file_name:	The file name, which must be a string, to save the current program state in.
 		force:		A flag which if set to 1 will cause the file, if existant, to be overwritten.

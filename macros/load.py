@@ -51,8 +51,8 @@ class load(generic_functions):
 	def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
 		"""Macro for loading R1, R2, or NOE relaxation data.
 
-		Options
-		~~~~~~~
+		Arguments
+		~~~~~~~~~
 
 		ri_label:	A string describing the type of data.  Must be one of 'R1', 'R2', or 'NOE'.
 		frq_label:	A string to label the field strength, eg. '600'.  Can be anything as long as data 
@@ -143,8 +143,8 @@ class load(generic_functions):
 	def sequence(self, file_name=None, num_col=0, name_col=1, sep=None):
 		"""Macro for loading sequence data.
 
-		Options
-		~~~~~~~
+		Arguments
+		~~~~~~~~~
 
 		file_name:	The name of the file containing the sequence data.
 		num_col:	The column number corresponding to the residue numbers (column numbering starts at 0).
