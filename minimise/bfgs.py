@@ -1,8 +1,7 @@
-from Numeric import copy
+from Numeric import Float64, copy, dot, identity, matrixmultiply, outerproduct
 
-def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
-	"""Steepest descent minimisation.
-
+def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+	"""Quasi-Newton BFGS minimisation.
 
 	Function options
 	~~~~~~~~~~~~~~~~
@@ -11,7 +10,7 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 	dfunc		- The function which returns the gradient vector.
 	x0		- The initial parameter vector.
 	line_search	- The line search function.
-	args		- The tuple of arguments to supply to the functions func and dfunc.
+	args		- The tuple of arguments to supply to the functions func, and dfunc.
 	tol		- The cutoff value used to terminate minimisation by comparison to the difference in function values between iterations.
 	maxiter		- The maximum number of iterations.
 	full_output	- A flag specifying what should be returned (see below).
@@ -31,17 +30,24 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 	The warning flag corresponds to:
 		0 - Minimisation terminated successfully.
 		1 - Maximum number of iterations have been reached.
+		2 - Minimisation cannot continue due to precision loss.
 
 
 	Internal variables
 	~~~~~~~~~~~~~~~~~~
 
-	k	- The iteration number.
-	xk	- Parameter vector at iteration number k.
-	fk	- Function value at xk.
-	fk_last	- Function value at xk-1.
-	dfk	- Gradient vector at xk.
-	pk	- Descent direction of the iteration number k.
+	k		- The iteration number.
+	pk		- Descent direction of the iteration number k.
+	xk		- Parameter vector at iteration number k.
+	fk		- Function value at xk.
+	dfk		- Gradient vector at xk.
+	Hk		- BFGS approximation to the inverse hessian matrix at xk.
+	xk_new		- Parameter vector at iteration number k+1.
+	fk_new		- Function value at xk+1.
+	dfk_new		- Gradient vector at xk+1.
+	Hk_new		- BFGS approximation to the inverse hessian matrix at xk+1.
+	sk		- Secant equation vector (xk+1 - xk)
+	yk		- Secant equation vector (dfk+1 - dfk)
 
 	"""
 
@@ -49,6 +55,8 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 	xk = x0
 	fk = apply(func, (x0,)+args)
 	dfk = apply(dfunc, (x0,)+args)
+	I = identity(len(x0), Float64)
+	Hk = identity(len(x0), Float64)
 
 	# Start the iteration counter.
 	k = 0
@@ -75,9 +83,11 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
 					k2 = 0
 
-		# Find the parameter vector, function value, and gradient vector for iteration k.
-		# The search direction, pk, is equal to -dfk for the steepest descent method.
-		xk_new = line_search(func, dfunc, args, xk, fk, dfk, -dfk)
+		# Calculate the Quasi-Newton search direction for iteration k.
+		pk = -matrixmultiply(Hk, dfk)
+
+		# Find the parameter vector, function value, and gradient vector for iteration k+1.
+		xk_new = line_search(func, dfunc, args, xk, fk, dfk, pk)
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
 
@@ -88,11 +98,28 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 			else:
 				return xk_new
 
-		# Increment the iteration number k and move the k+1 parameter vector, function value, and gradient vector to the k values.
+		# BFGS matrix update.
+		sk = xk_new - xk
+		yk = dfk_new - dfk
+		if dot(yk, sk) == 0:
+			if full_output:
+				return xk_new, fk_new, k+1, 2
+			else:
+				return xk_new
+			
+		rk = 1.0 / dot(yk, sk)
+
+		a = I - rk*outerproduct(sk, yk)
+		b = I - rk*outerproduct(yk, sk)
+		c = rk*outerproduct(sk, sk)
+		Hk_new = matrixmultiply(matrixmultiply(a, Hk), b) + c
+
+		# Increment the iteration number k and move the k+1 parameter vector, function value, gradient vector, and inverse hessian matrix to the k values.
 		k = k + 1
 		xk = xk_new
 		fk = fk_new
 		dfk = copy.deepcopy(dfk_new)
+		Hk = copy.deepcopy(Hk_new)
 
 		# Debugging code.
 		if print_flag == 1:
