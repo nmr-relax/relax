@@ -37,7 +37,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, total_num_params=0, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=0, vectors=None):
+    def __init__(self, total_num_params=0, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -85,12 +85,16 @@ class Mf:
         # Set the function for packaging diffusion tensor parameters.
         if self.diff_data.params:
             self.pack_diff_params = None
+            self.param_index = 0
         elif self.diff_data.type == 'iso':
             self.pack_diff_params = self.pack_diff_params_iso
+            self.param_index = 1
         elif self.diff_data.type == 'axial':
             self.pack_diff_params = self.pack_diff_params_axial
+            self.param_index = 4
         elif self.diff_data.type == 'aniso':
             self.pack_diff_params = self.pack_diff_params_aniso
+            self.param_index = 6
 
         # Create the data array used to store data.
         self.data = []
@@ -133,6 +137,19 @@ class Mf:
             self.data[i].num_params = num_params[i]
             self.data[i].xh_unit_vector = vectors[i]
 
+            # Indecies for constructing the global generic model-free gradient and Hessian kite.
+            if i == 0:
+                self.data[i].start_index = self.diff_data.num_params
+            else:
+                self.data[i].start_index = self.data[i-1].end_index
+            self.data[i].end_index = self.data[i].start_index + self.data[i].num_params
+
+            # Total number of parameters.
+            if self.param_set == 'mf':
+                self.data[i].total_num_params = self.data[i].num_params
+            else:
+                self.data[i].total_num_params = self.data[i].num_params + self.diff_data.num_params
+
             # Initialise the residue specific data.
             self.init_res_data(self.data[i], self.diff_data)
 
@@ -158,7 +175,7 @@ class Mf:
                     print name + ": " + `type(getattr(self.data[i], name))`
                     #print name + ": " + `getattr(self.data[i], name)`
 
-            # Fixed spectral density components, ie tm is not a parameter.
+            # ti spectral density components.
             if self.param_set == 'mf':
                 self.data[i].w_ti_sqrd = self.data[i].frq_sqrd_list_ext * self.data[i].ti ** 2
                 self.data[i].fact_ti = 1.0 / (1.0 + self.data[i].w_ti_sqrd)
@@ -179,6 +196,11 @@ class Mf:
             self.scaling_flag = 0
             self.set_params = self.set_params_unscaled
 
+        # Initialise the total chi2 value, gradient, and Hessian data structures.
+        self.total_chi2 = 0.0
+        self.total_dchi2 = zeros((self.total_num_params), Float64)
+        self.total_d2chi2 = zeros((self.total_num_params, self.total_num_params), Float64)
+
         # Set the functions self.func, self.dfunc, and self.d2func for minimising model-free parameter for a single residue.
         if param_set == 'mf':
             self.func = self.func_mf
@@ -194,7 +216,7 @@ class Mf:
         # Set the functions self.func, self.dfunc, and self.d2func for minimising diffusion tensor together with all model-free parameters.
         elif param_set == 'all':
             self.func = self.func_all
-            self.dfunc = None
+            self.dfunc = self.dfunc_all
             self.d2func = None
             #self.dfunc = self.dfunc_all
             #self.d2func = self.d2func_all
@@ -217,6 +239,13 @@ class Mf:
             sigma_i are the values of the error set.
         """
 
+        # Arguments
+        self.set_params(params)
+
+        # Diffusion tensor parameters.
+        if self.pack_diff_params:
+            self.pack_diff_params()
+
         # Test if the function has already been calculated with these parameter values.
         if sum(self.params == self.func_test) == self.total_num_params:
             return self.total_chi2
@@ -224,20 +253,13 @@ class Mf:
         # Store the parameter values in data.func_test for testing on next call if the function has already been calculated.
         self.func_test = self.params * 1.0
 
-        # Temporary initialisation.
+        # Set the total chi2 to zero.
         self.total_chi2 = 0.0
 
         # Loop over the residues.
         for i in xrange(self.num_res):
             # Set self.data[i] to data.
             data = self.data[i]
-
-            # Arguments
-            self.set_params(params)
-
-            # Diffusion tensor parameters.
-            if self.pack_diff_params:
-                self.pack_diff_params()
 
             # Diffusion tensor geometry calculations.
             if self.diff_data.calc_geom:
@@ -253,7 +275,7 @@ class Mf:
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
 
-            # Fixed spectral density components, ie tm is not a parameter.
+            # ti spectral density components.
             data.w_ti_sqrd = data.frq_sqrd_list_ext * data.ti ** 2
             data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
 
@@ -352,6 +374,99 @@ class Mf:
         data.chi2 = chi2(data.relax_data, data.ri, data.errors)
 
         return data.chi2
+
+
+    def dfunc_all(self, params):
+        """The function for calculating the model-free chi-squared gradient vector.
+
+        The chi-sqared gradient
+        ~~~~~~~~~~~~~~~~~~~~~~~
+                       _n_
+         dChi2         \   /  Ri - Ri()      dRi()  \ 
+        -------  =  -2  >  | ----------  .  ------- |
+        dthetaj        /__ \ sigma_i**2     dthetaj /
+                       i=1
+
+        where:
+            Ri are the values of the measured relaxation data set.
+            Ri() are the values of the back calculated relaxation data set.
+            sigma_i are the values of the error set.
+        """
+
+        # Arguments
+        self.set_params(params)
+
+        # Diffusion tensor parameters.
+        if self.pack_diff_params:
+            self.pack_diff_params()
+
+        # Test if the gradient has already been calculated with these parameter values.
+        if sum(self.params == self.grad_test) == self.total_num_params:
+            return self.total_dchi2
+
+        # Test if the function has already been called, otherwise run self.func_mf.
+        if sum(self.params == self.func_test) != self.total_num_params:
+            self.func_all(params)
+
+        # Store the parameter values in data.grad_test for testing on next call if the gradient has already been calculated.
+        self.grad_test = self.params * 1.0
+
+        # Set the total chi2 gradient to zero.
+        self.total_dchi2 = self.total_dchi2 * 0.0
+
+        # Loop over the residues.
+        for i in xrange(self.num_res):
+            # Set self.data[i] to data.
+            data = self.data[i]
+
+            # Diffusion tensor geometry calculations.
+            if self.diff_data.calc_dgeom:
+                self.diff_data.calc_dgeom(data, self.diff_data)
+
+            # Diffusion tensor weight calculations.
+            if self.diff_data.calc_dci:
+                self.diff_data.calc_dci(data)
+
+            # Diffusion tensor correlation time gradient components.
+            if self.diff_data.calc_dti_comps:
+                self.diff_data.calc_dti_comps(self.diff_data)
+
+            # Diffusion tensor correlation times.
+            self.diff_data.calc_dti(data, self.diff_data)
+
+            # Calculate the spectral density gradient components.
+            if data.calc_djw_comps:
+                data.calc_djw_comps(data, self.params)
+
+            # Calculate the spectral density gradients.
+            for i in xrange(data.total_num_params):
+                if data.calc_djw[i]:
+                    data.djw[:, :, i] = data.calc_djw[i](data, self.params)
+
+            # Calculate the relaxation gradient components.
+            data.create_dri_comps(data, self.params)
+
+            # Calculate the R1, R2, and sigma_noe gradients.
+            for i in xrange(data.total_num_params):
+                data.create_dri_prime[i](data, i)
+
+            # Calculate the R1, R2, and NOE gradients.
+            data.dri = data.dri_prime * 1.0
+            dri(data, self.params)
+
+            # Calculate the chi-squared gradient.
+            data.dchi2 = dchi2(data.relax_data, data.ri, data.dri, data.errors)
+
+            # Construct the global generic model-free Hessian gradient.
+            index = self.diff_data.num_params
+            self.total_dchi2[0:index] = self.total_dchi2[0:index] + data.dchi2[0:index]
+            self.total_dchi2[data.start_index:data.end_index] = self.total_dchi2[data.start_index:data.end_index] + data.dchi2[index:]
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            self.total_dchi2 = self.scale_gradient(self.total_dchi2)
+
+        return self.total_dchi2
 
 
     def dfunc_mf(self, params):
@@ -605,9 +720,21 @@ class Mf:
     def init_res_data(self, data, diff_data):
         """Function for the initialisation of the residue specific data."""
 
-        # Weights and global correlation times for the model-free equations.
+        # Weights and global correlation time values, gradients, and Hessians for the model-free equations.
         data.ci = zeros(diff_data.num_indecies, Float64)
         data.ti = zeros(diff_data.num_indecies, Float64)
+        if self.diff_data.type == 'iso':
+            data.dti = zeros((1, diff_data.num_indecies), Float64)
+        elif self.diff_data.type == 'axial':
+            data.dci = zeros((2, diff_data.num_indecies), Float64)
+            data.dti = zeros((2, diff_data.num_indecies), Float64)
+            data.d2ci = zeros((2, 2, diff_data.num_indecies), Float64)
+            data.d2ti = zeros((2, 2, diff_data.num_indecies), Float64)
+        elif self.diff_data.type == 'aniso':
+            data.dci = zeros((6, diff_data.num_indecies), Float64)
+            data.dti = zeros((3, diff_data.num_indecies), Float64)
+            data.d2ci = zeros((6, 6, diff_data.num_indecies), Float64)
+            data.d2ti = zeros((3, 3, diff_data.num_indecies), Float64)
 
         # Empty spectral density components.
         data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
@@ -621,8 +748,8 @@ class Mf:
 
         # Empty spectral density values, gradients, and Hessians.
         data.jw = zeros((data.num_frq, 5), Float64)
-        data.djw = zeros((data.num_frq, 5, data.num_params), Float64)
-        data.d2jw = zeros((data.num_frq, 5, data.num_params, data.num_params), Float64)
+        data.djw = zeros((data.num_frq, 5, data.total_num_params), Float64)
+        data.d2jw = zeros((data.num_frq, 5, data.total_num_params, data.total_num_params), Float64)
 
         # Calculate the fixed components of the dipolar and CSA constants.
         data.csa_const_fixed = zeros(data.num_frq, Float64)
@@ -649,35 +776,35 @@ class Mf:
         data.dip_comps_grad = zeros((data.num_ri), Float64)
         data.csa_comps_grad = zeros((data.num_ri), Float64)
         data.rex_comps_grad = zeros((data.num_ri), Float64)
-        data.dip_jw_comps_grad = zeros((data.num_ri, data.num_params), Float64)
-        data.csa_jw_comps_grad = zeros((data.num_ri, data.num_params), Float64)
+        data.dip_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
+        data.csa_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
 
         # First partial derivative components of the transformed relaxation equations.
         data.dip_comps_hess = zeros((data.num_ri), Float64)
         data.csa_comps_hess = zeros((data.num_ri), Float64)
         data.rex_comps_hess = zeros((data.num_ri), Float64)
-        data.dip_jw_comps_hess = zeros((data.num_ri, data.num_params, data.num_params), Float64)
-        data.csa_jw_comps_hess = zeros((data.num_ri, data.num_params, data.num_params), Float64)
+        data.dip_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        data.csa_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
         # Transformed relaxation values, gradients, and Hessians.
         data.ri_prime = zeros((data.num_ri), Float64)
-        data.dri_prime = zeros((data.num_ri, data.num_params), Float64)
-        data.d2ri_prime = zeros((data.num_ri, data.num_params, data.num_params), Float64)
+        data.dri_prime = zeros((data.num_ri, data.total_num_params), Float64)
+        data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
         # Data structures containing the Ri values.
         data.ri = zeros((data.num_ri), Float64)
-        data.dri = zeros((data.num_ri, data.num_params), Float64)
-        data.d2ri = zeros((data.num_ri, data.num_params, data.num_params), Float64)
+        data.dri = zeros((data.num_ri, data.total_num_params), Float64)
+        data.d2ri = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
         # Data structures containing the R1 values at the position of and corresponding to the NOE.
         data.r1 = zeros((data.num_ri), Float64)
-        data.dr1 = zeros((data.num_ri, data.num_params), Float64)
-        data.d2r1 = zeros((data.num_ri, data.num_params, data.num_params), Float64)
+        data.dr1 = zeros((data.num_ri, data.total_num_params), Float64)
+        data.d2r1 = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
         # Data structures containing the chi-squared values.
         data.chi2 = 0.0
-        data.dchi2 = zeros((data.num_params), Float64)
-        data.d2chi2 = zeros((data.num_params, data.num_params), Float64)
+        data.dchi2 = zeros((data.total_num_params), Float64)
+        data.d2chi2 = zeros((data.total_num_params, data.total_num_params), Float64)
 
 
     def init_res_r1_data(self, data):
@@ -705,20 +832,20 @@ class Mf:
         r1_data.dip_comps_grad = zeros(data.num_ri, Float64)
         r1_data.csa_comps_grad = zeros(data.num_ri, Float64)
         r1_data.rex_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.dip_jw_comps_grad = zeros((data.num_ri, data.num_params), Float64)
-        r1_data.csa_jw_comps_grad = zeros((data.num_ri, data.num_params), Float64)
+        r1_data.dip_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
+        r1_data.csa_jw_comps_grad = zeros((data.num_ri, data.total_num_params), Float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
         r1_data.dip_comps_hess = zeros(data.num_ri, Float64)
         r1_data.csa_comps_hess = zeros(data.num_ri, Float64)
         r1_data.rex_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.dip_jw_comps_hess = zeros((data.num_ri, data.num_params, data.num_params), Float64)
-        r1_data.csa_jw_comps_hess = zeros((data.num_ri, data.num_params, data.num_params), Float64)
+        r1_data.dip_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        r1_data.csa_jw_comps_hess = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
         r1_data.ri_prime = zeros(data.num_ri, Float64)
-        r1_data.dri_prime = zeros((data.num_ri, data.num_params), Float64)
-        r1_data.d2ri_prime = zeros((data.num_ri, data.num_params, data.num_params), Float64)
+        r1_data.dri_prime = zeros((data.num_ri, data.total_num_params), Float64)
+        r1_data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
 
         # Place a few function pointer arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
         r1_data.create_dri_prime = data.create_dri_prime
@@ -791,15 +918,15 @@ class Mf:
         # Initialisation.
         #################
 
-        # Initialise the parameter index.
+        # The number of diffusion parameters.
         if self.diff_data.params:
-            param_index = 0
+            num_diff_params = 0
         elif self.diff_data.type == 'iso':
-            param_index = 1
+            num_diff_params = 1
         elif self.diff_data.type == 'axial':
-            param_index = 4
+            num_diff_params = 4
         elif self.diff_data.type == 'aniso':
-            param_index = 6
+            num_diff_params = 6
 
         # Indecies.
         data.tm_index, data.tm_local_index = None, None
@@ -819,163 +946,173 @@ class Mf:
         # Create empty spectral density gradient and Hessian function data structures.
         data.calc_djw = []
         data.calc_d2jw = []
-        for i in xrange(data.num_params):
+        for i in xrange(data.total_num_params):
             data.calc_djw.append(None)
             data.calc_d2jw.append([])
-            for j in xrange(data.num_params):
+            for j in xrange(data.total_num_params):
                 data.calc_d2jw[i].append(None)
 
 
-        # The original model-free equations {tm, S2, te, Rex, r, CSA}.
-        ##############################################################
+        # The original model-free equations {S2, te, Rex, r, CSA}.
+        ##########################################################
 
         if data.equations == 'mf_orig':
             # Find the indecies of the model-free parameters.
             for i in xrange(data.num_params):
                 if data.param_types[i] == 'S2':
-                    data.s2_local_index = i
-                    data.s2_index = param_index + i
+                    data.s2_local_index = num_diff_params + i
+                    data.s2_index = self.param_index + i
                 elif data.param_types[i] == 'te':
-                    data.te_local_index = i
-                    data.te_index = param_index + i
+                    data.te_local_index = num_diff_params + i
+                    data.te_index = self.param_index + i
                 elif data.param_types[i] == 'Rex':
-                    data.rex_local_index = i
-                    data.rex_index = param_index + i
+                    data.rex_local_index = num_diff_params + i
+                    data.rex_index = self.param_index + i
                 elif data.param_types[i] == 'r':
-                    data.r_local_index = i
-                    data.r_index = param_index + i
+                    data.r_local_index = num_diff_params + i
+                    data.r_index = self.param_index + i
                 elif data.param_types[i] == 'CSA':
-                    data.csa_local_index = i
-                    data.csa_index = param_index + i
+                    data.csa_local_index = num_diff_params + i
+                    data.csa_index = self.param_index + i
                 else:
                     print "Unknown parameter."
                     return 0
 
             # Increment the parameter index.
-            param_index = param_index + data.num_params
+            self.param_index = self.param_index + data.num_params
 
-            # No spectral density parameters {}.
-            if self.param_set == 'mf' and data.s2_index == None and data.te_index == None:
-                # Equation.
-                data.calc_jw_comps = None
-                data.calc_jw = calc_jw
+            # Single residue minimisation with fixed diffusion parameters.
+            if self.param_set == 'mf':
+                # No model-free parameters {}.
+                if data.s2_index == None and data.te_index == None:
+                    # Equation.
+                    data.calc_jw_comps = None
+                    data.calc_jw = calc_jw
 
-                # Gradient.
-                data.calc_djw_comps = None
+                    # Gradient.
+                    data.calc_djw_comps = None
 
-            # Spectral density parameters {S2}.
-            elif self.param_set == 'mf' and data.s2_index != None and data.te_index == None:
-                # Equation.
-                data.calc_jw_comps = None
-                data.calc_jw = calc_S2_jw
+                # Model-free parameters {S2}.
+                elif data.s2_index != None and data.te_index == None:
+                    # Equation.
+                    data.calc_jw_comps = None
+                    data.calc_jw = calc_S2_jw
 
-                # Gradient.
-                data.calc_djw_comps = None
-                data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
+                    # Gradient.
+                    data.calc_djw_comps = None
+                    data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
 
-            # Spectral density parameters {S2, te}.
-            elif self.param_set == 'mf' and data.s2_index != None and data.te_index != None:
-                # Equation.
-                data.calc_jw_comps = calc_S2_te_jw_comps
-                data.calc_jw = calc_S2_te_jw
+                # Model-free parameters {S2, te}.
+                elif data.s2_index != None and data.te_index != None:
+                    # Equation.
+                    data.calc_jw_comps = calc_S2_te_jw_comps
+                    data.calc_jw = calc_S2_te_jw
 
-                # Gradient.
-                data.calc_djw_comps = calc_S2_te_djw_comps
-                data.calc_djw[data.s2_local_index] = calc_S2_te_djw_dS2
-                data.calc_djw[data.te_local_index] = calc_S2_te_djw_dte
+                    # Gradient.
+                    data.calc_djw_comps = calc_S2_te_djw_comps
+                    data.calc_djw[data.s2_local_index] = calc_S2_te_djw_dS2
+                    data.calc_djw[data.te_local_index] = calc_S2_te_djw_dte
 
-                # Hessian.
-                data.calc_d2jw[data.s2_local_index][data.te_local_index] = data.calc_d2jw[data.te_local_index][data.s2_local_index] = calc_S2_te_d2jw_dS2dte
-                data.calc_d2jw[data.te_local_index][data.te_local_index] = calc_S2_te_d2jw_dte2
+                    # Hessian.
+                    data.calc_d2jw[data.s2_local_index][data.te_local_index] = data.calc_d2jw[data.te_local_index][data.s2_local_index] = calc_S2_te_d2jw_dS2dte
+                    data.calc_d2jw[data.te_local_index][data.te_local_index] = calc_S2_te_d2jw_dte2
 
-            # Spectral density parameters {tm}.
-            elif data.s2_index == None and data.te_index == None:
-                # Equation.
-                data.calc_jw_comps = None
-                data.calc_jw = calc_jw
+                # Bad parameter combination.
+                else:
+                    print "Invalid combination of parameters for the extended model-free equation."
+                    return 0
 
-                # Gradient.
-                data.calc_djw_comps = calc_tm_djw_comps
-                data.calc_djw[0] = calc_tm_djw_dDj
-
-                # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
-
-            # Spectral density parameters {tm, S2}.
-            elif data.s2_index != None and data.te_index == None:
-                # Equation.
-                data.calc_jw_comps = None
-                data.calc_jw = calc_S2_jw
-
-                # Gradient.
-                data.calc_djw_comps = calc_tm_djw_comps
-                data.calc_djw[0] = calc_tm_S2_djw_dDj
-                data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
-
-                # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2_d2jw_dDjdDk
-                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_d2jw_dDjdS2
-
-            # Spectral density parameters {tm, S2, te}.
-            elif data.s2_index != None and data.te_index != None:
-                # Equation.
-                data.calc_jw_comps = calc_S2_te_jw_comps
-                data.calc_jw = calc_S2_te_jw
-
-                # Gradient.
-                data.calc_djw_comps = calc_tm_S2_te_djw_comps
-                data.calc_djw[0] = calc_tm_S2_te_djw_dDj
-                data.calc_djw[data.s2_local_index] = calc_S2_te_djw_dS2
-                data.calc_djw[data.te_local_index] = calc_S2_te_djw_dte
-
-                # Hessian.
-                data.calc_d2jw[0][0] = calc_tm_S2_te_d2jw_dDjdDk
-                data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_te_d2jw_dDjdS2
-                data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_tm_S2_te_d2jw_dDjdte
-                data.calc_d2jw[data.s2_local_index][data.te_local_index] = data.calc_d2jw[data.te_local_index][data.s2_local_index] = calc_S2_te_d2jw_dS2dte
-                data.calc_d2jw[data.te_local_index][data.te_local_index] = calc_S2_te_d2jw_dte2
-
-            # Bad parameter combination.
+            # Minimisation with variable diffusion parameters.
             else:
-                print "Invalid combination of parameters for the extended model-free equation."
-                return 0
+                # Diffusion parameters and no model-free parameters {}.
+                if data.s2_index == None and data.te_index == None:
+                    # Equation.
+                    data.calc_jw_comps = None
+                    data.calc_jw = calc_jw
+
+                    # Gradient.
+                    data.calc_djw_comps = calc_tm_djw_comps
+                    data.calc_djw[0] = calc_tm_djw_dDj
+
+                    # Hessian.
+                    data.calc_d2jw[0][0] = calc_tm_d2jw_dDjdDk
+
+                # Diffusion parameters and model-free parameters {S2}.
+                elif data.s2_index != None and data.te_index == None:
+                    # Equation.
+                    data.calc_jw_comps = None
+                    data.calc_jw = calc_S2_jw
+
+                    # Gradient.
+                    data.calc_djw_comps = calc_tm_djw_comps
+                    data.calc_djw[0] = calc_tm_S2_djw_dDj
+                    data.calc_djw[data.s2_local_index] = calc_S2_djw_dS2
+
+                    # Hessian.
+                    data.calc_d2jw[0][0] = calc_tm_S2_d2jw_dDjdDk
+                    data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_d2jw_dDjdS2
+
+                # Diffusion parameters and model-free parameters {S2, te}.
+                elif data.s2_index != None and data.te_index != None:
+                    # Equation.
+                    data.calc_jw_comps = calc_S2_te_jw_comps
+                    data.calc_jw = calc_S2_te_jw
+
+                    # Gradient.
+                    data.calc_djw_comps = calc_tm_S2_te_djw_comps
+                    data.calc_djw[0] = calc_tm_S2_te_djw_dDj
+                    data.calc_djw[data.s2_local_index] = calc_S2_te_djw_dS2
+                    data.calc_djw[data.te_local_index] = calc_S2_te_djw_dte
+
+                    # Hessian.
+                    data.calc_d2jw[0][0] = calc_tm_S2_te_d2jw_dDjdDk
+                    data.calc_d2jw[0][data.s2_local_index] = data.calc_d2jw[data.s2_local_index][0] = calc_tm_S2_te_d2jw_dDjdS2
+                    data.calc_d2jw[0][data.te_local_index] = data.calc_d2jw[data.te_local_index][0] = calc_tm_S2_te_d2jw_dDjdte
+                    data.calc_d2jw[data.s2_local_index][data.te_local_index] = data.calc_d2jw[data.te_local_index][data.s2_local_index] = calc_S2_te_d2jw_dS2dte
+                    data.calc_d2jw[data.te_local_index][data.te_local_index] = calc_S2_te_d2jw_dte2
+
+                # Bad parameter combination.
+                else:
+                    print "Invalid combination of parameters for the extended model-free equation."
+                    return 0
 
 
-        # The extended model-free equations {tm, S2f, tf, S2, ts, Rex, r, CSA}.
-        #######################################################################
+
+        # The extended model-free equations {S2f, tf, S2, ts, Rex, r, CSA}.
+        ###################################################################
 
         elif data.equations == 'mf_ext':
             # Find the indecies of the model-free parameters.
             for i in xrange(data.num_params):
                 if data.param_types[i] == 'S2f':
-                    data.s2f_local_index = i
-                    data.s2f_index = param_index + i
+                    data.s2f_local_index = num_diff_params + i
+                    data.s2f_index = self.param_index + i
                 elif data.param_types[i] == 'tf':
-                    data.tf_local_index = i
-                    data.tf_index = param_index + i
+                    data.tf_local_index = num_diff_params + i
+                    data.tf_index = self.param_index + i
                 elif data.param_types[i] == 'S2':
-                    data.s2_local_index = i
-                    data.s2_index = param_index + i
+                    data.s2_local_index = num_diff_params + i
+                    data.s2_index = self.param_index + i
                 elif data.param_types[i] == 'ts':
-                    data.ts_local_index = i
-                    data.ts_index = param_index + i
+                    data.ts_local_index = num_diff_params + i
+                    data.ts_index = self.param_index + i
                 elif data.param_types[i] == 'Rex':
-                    data.rex_local_index = i
-                    data.rex_index = param_index + i
+                    data.rex_local_index = num_diff_params + i
+                    data.rex_index = self.param_index + i
                 elif data.param_types[i] == 'r':
-                    data.r_local_index = i
-                    data.r_index = param_index + i
+                    data.r_local_index = num_diff_params + i
+                    data.r_index = self.param_index + i
                 elif data.param_types[i] == 'CSA':
-                    data.csa_local_index = i
-                    data.csa_index = param_index + i
+                    data.csa_local_index = num_diff_params + i
+                    data.csa_index = self.param_index + i
                 else:
                     print "Unknown parameter."
                     return 0
 
             # Increment the parameter index.
-            param_index = param_index + data.num_params
+            self.param_index = self.param_index + data.num_params
 
-            # Spectral density parameters {S2f, S2, ts}.
+            # Model-free parameters {S2f, S2, ts}.
             if self.param_set == 'mf' and data.s2f_index != None and data.tf_index == None and data.s2_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_S2_ts_jw_comps
@@ -992,7 +1129,7 @@ class Mf:
                 data.calc_d2jw[data.s2_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2_local_index] = calc_S2f_S2_ts_d2jw_dS2dts
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2_ts_d2jw_dts2
 
-            # Spectral density parameters {S2f, tf, S2, ts}.
+            # Model-free parameters {S2f, tf, S2, ts}.
             elif self.param_set == 'mf' and data.s2f_index != None and data.tf_index != None and data.s2_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_tf_S2_ts_jw_comps
@@ -1012,7 +1149,7 @@ class Mf:
                 data.calc_d2jw[data.tf_local_index][data.tf_local_index] = calc_S2f_tf_S2_ts_d2jw_dtf2
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2_ts_d2jw_dts2
 
-            # Spectral density parameters {tm, S2f, S2, ts}.
+            # Diffusion parameters and model-free parameters {S2f, S2, ts}.
             elif data.s2f_index != None and data.tf_index == None and data.s2_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_S2_ts_jw_comps
@@ -1034,7 +1171,7 @@ class Mf:
                 data.calc_d2jw[data.s2_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2_local_index] = calc_S2f_S2_ts_d2jw_dS2dts
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2_ts_d2jw_dts2
 
-            # Spectral density parameters {tm, S2f, tf, S2, ts}.
+            # Diffusion parameters and model-free parameters {S2f, tf, S2, ts}.
             elif data.s2f_index != None and data.tf_index != None and data.s2_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_tf_S2_ts_jw_comps
@@ -1073,34 +1210,34 @@ class Mf:
             # Find the indecies of the model-free parameters.
             for i in xrange(data.num_params):
                 if data.param_types[i] == 'S2f':
-                    data.s2f_local_index = i
-                    data.s2f_index = param_index + i
+                    data.s2f_local_index = num_diff_params + i
+                    data.s2f_index = self.param_index + i
                 elif data.param_types[i] == 'tf':
-                    data.tf_local_index = i
-                    data.tf_index = param_index + i
+                    data.tf_local_index = num_diff_params + i
+                    data.tf_index = self.param_index + i
                 elif data.param_types[i] == 'S2s':
-                    data.s2s_local_index = i
-                    data.s2s_index = param_index + i
+                    data.s2s_local_index = num_diff_params + i
+                    data.s2s_index = self.param_index + i
                 elif data.param_types[i] == 'ts':
-                    data.ts_local_index = i
-                    data.ts_index = param_index + i
+                    data.ts_local_index = num_diff_params + i
+                    data.ts_index = self.param_index + i
                 elif data.param_types[i] == 'Rex':
-                    data.rex_local_index = i
-                    data.rex_index = param_index + i
+                    data.rex_local_index = num_diff_params + i
+                    data.rex_index = self.param_index + i
                 elif data.param_types[i] == 'r':
-                    data.r_local_index = i
-                    data.r_index = param_index + i
+                    data.r_local_index = num_diff_params + i
+                    data.r_index = self.param_index + i
                 elif data.param_types[i] == 'CSA':
-                    data.csa_local_index = i
-                    data.csa_index = param_index + i
+                    data.csa_local_index = num_diff_params + i
+                    data.csa_index = self.param_index + i
                 else:
                     print "Unknown parameter."
                     return 0
 
             # Increment the parameter index.
-            param_index = param_index + data.num_params
+            self.param_index = self.param_index + data.num_params
 
-            # Spectral density parameters {S2f, S2s, ts}.
+            # Model-free parameters {S2f, S2s, ts}.
             if self.param_set == 'mf' and data.s2f_index != None and data.tf_index == None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_S2s_ts_jw_comps
@@ -1117,7 +1254,7 @@ class Mf:
                 data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_S2f_S2s_ts_d2jw_dS2sdts
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_S2s_ts_d2jw_dts2
 
-            # Spectral density parameters {S2f, tf, S2s, ts}.
+            # Model-free parameters {S2f, tf, S2s, ts}.
             elif self.param_set == 'mf' and data.s2f_index != None and data.tf_index != None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_S2f_tf_S2s_ts_jw_comps
@@ -1137,7 +1274,7 @@ class Mf:
                 data.calc_d2jw[data.tf_local_index][data.tf_local_index] = calc_S2f_tf_S2s_ts_d2jw_dtf2
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_S2f_tf_S2s_ts_d2jw_dts2
 
-            # Spectral density parameters {tm, S2f, S2s, ts}.
+            # Diffusion parameters and model-free parameters {S2f, S2s, ts}.
             elif data.s2f_index != None and data.tf_index == None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_tm_S2f_S2s_ts_jw_comps
@@ -1159,7 +1296,7 @@ class Mf:
                 data.calc_d2jw[data.s2s_local_index][data.ts_local_index] = data.calc_d2jw[data.ts_local_index][data.s2s_local_index] = calc_tm_S2f_S2s_ts_d2jw_dS2sdts
                 data.calc_d2jw[data.ts_local_index][data.ts_local_index] = calc_tm_S2f_S2s_ts_d2jw_dts2
 
-            # Spectral density parameters {tm, S2f, tf, S2s, ts}.
+            # Diffusion parameters and model-free parameters {S2f, tf, S2s, ts}.
             elif data.s2f_index != None and data.tf_index != None and data.s2s_index != None and data.ts_index != None:
                 # Equation.
                 data.calc_jw_comps = calc_tm_S2f_tf_S2s_ts_jw_comps
@@ -1301,52 +1438,52 @@ class Mf:
             data.create_ri_prime = func_ri_prime_rex
 
         # dri_prime and d2ri_prime.
-        for i in xrange(data.num_params):
-            if data.param_types[i] == 'Rex':
+        for i in xrange(data.total_num_params):
+            if data.param_types[i-num_diff_params] == 'Rex':
                 data.create_dri_prime.append(func_dri_drex_prime)
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.num_params):
-                    if data.param_types[k] == 'Rex':
+                for k in xrange(data.total_num_params):
+                    if data.param_types[k-num_diff_params] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k] == 'r':
+                    elif data.param_types[k-num_diff_params] == 'r':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k] == 'CSA':
+                    elif data.param_types[k-num_diff_params] == 'CSA':
                         data.create_d2ri_prime[i].append(None)
                     else:
                         data.create_d2ri_prime[i].append(None)
-            elif data.param_types[i] == 'r':
+            elif data.param_types[i-num_diff_params] == 'r':
                 data.create_dri_prime.append(func_dri_dr_prime)
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.num_params):
-                    if data.param_types[k] == 'Rex':
+                for k in xrange(data.total_num_params):
+                    if data.param_types[k-num_diff_params] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k] == 'r':
+                    elif data.param_types[k-num_diff_params] == 'r':
                         data.create_d2ri_prime[i].append(func_d2ri_dr2_prime)
-                    elif data.param_types[k] == 'CSA':
+                    elif data.param_types[k-num_diff_params] == 'CSA':
                         data.create_d2ri_prime[i].append(None)
                     else:
                         data.create_d2ri_prime[i].append(func_d2ri_drdjw_prime)
-            elif data.param_types[i] == 'CSA':
+            elif data.param_types[i-num_diff_params] == 'CSA':
                 data.create_dri_prime.append(func_dri_dcsa_prime)
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.num_params):
-                    if data.param_types[k] == 'Rex':
+                for k in xrange(data.total_num_params):
+                    if data.param_types[k-num_diff_params] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k] == 'r':
+                    elif data.param_types[k-num_diff_params] == 'r':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k] == 'CSA':
+                    elif data.param_types[k-num_diff_params] == 'CSA':
                         data.create_d2ri_prime[i].append(func_d2ri_dcsa2_prime)
                     else:
                         data.create_d2ri_prime[i].append(func_d2ri_dcsadjw_prime)
             else:
                 data.create_dri_prime.append(func_dri_djw_prime)
                 data.create_d2ri_prime.append([])
-                for k in xrange(data.num_params):
-                    if data.param_types[k] == 'Rex':
+                for k in xrange(data.total_num_params):
+                    if data.param_types[k-num_diff_params] == 'Rex':
                         data.create_d2ri_prime[i].append(None)
-                    elif data.param_types[k] == 'r':
+                    elif data.param_types[k-num_diff_params] == 'r':
                         data.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
-                    elif data.param_types[k] == 'CSA':
+                    elif data.param_types[k-num_diff_params] == 'CSA':
                         data.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
                     else:
                         data.create_d2ri_prime[i].append(func_d2ri_djwidjwj_prime)

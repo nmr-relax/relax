@@ -67,93 +67,91 @@ class Model_free:
                 self.param_vector.append(self.relax.data.diff[self.run].beta)
                 self.param_vector.append(self.relax.data.diff[self.run].gamma)
 
-        # Model-free parameters.
-        if self.param_set == 'mf' or self.param_set == 'all':
-            # Loop over all residues.
-            for i in xrange(len(self.relax.data.res)):
-                # Skip unselected residues.
-                if not self.relax.data.res[i].select:
-                    continue
+        # Loop over all residues.
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
 
-                # Only add parameters for a single residue if index has a value.
-                if index != None and i != index:
-                    continue
+            # Only add parameters for a single residue if index has a value.
+            if index != None and i != index:
+                continue
 
-                # Loop over the model-free parameters.
-                for j in xrange(len(self.relax.data.res[i].params[self.run])):
-                    # tm.
-                    if self.relax.data.res[i].params[self.run][j] == 'tm':
-                        if self.relax.data.res[i].tm[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].tm[self.run])
-
-                    # S2.
-                    elif self.relax.data.res[i].params[self.run][j] == 'S2':
-                        if self.relax.data.res[i].s2[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].s2[self.run])
-
-                    # S2f.
-                    elif self.relax.data.res[i].params[self.run][j] == 'S2f':
-                        if self.relax.data.res[i].s2f[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].s2f[self.run])
-
-                    # S2s.
-                    elif self.relax.data.res[i].params[self.run][j] == 'S2s':
-                        if self.relax.data.res[i].s2s[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].s2s[self.run])
-
-                    # te.
-                    elif self.relax.data.res[i].params[self.run][j] == 'te':
-                        if self.relax.data.res[i].te[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].te[self.run])
-
-                    # tf.
-                    elif self.relax.data.res[i].params[self.run][j] == 'tf':
-                        if self.relax.data.res[i].tf[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].tf[self.run])
-
-                    # ts.
-                    elif self.relax.data.res[i].params[self.run][j] == 'ts':
-                        if self.relax.data.res[i].ts[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].ts[self.run])
-
-                    # Rex.
-                    elif self.relax.data.res[i].params[self.run][j] == 'Rex':
-                        if self.relax.data.res[i].rex[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].rex[self.run])
-
-                    # r.
-                    elif self.relax.data.res[i].params[self.run][j] == 'r':
-                        if self.relax.data.res[i].r[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].r[self.run])
-
-                    # CSA.
-                    elif self.relax.data.res[i].params[self.run][j] == 'CSA':
-                        if self.relax.data.res[i].csa[self.run] == None:
-                            self.param_vector.append(0.0)
-                        else:
-                            self.param_vector.append(self.relax.data.res[i].csa[self.run])
-
-                    # Unknown parameter.
+            # Loop over the model-free parameters.
+            for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                # tm.
+                if self.relax.data.res[i].params[self.run][j] == 'tm':
+                    if self.relax.data.res[i].tm[self.run] == None:
+                        self.param_vector.append(0.0)
                     else:
-                        raise RelaxError, "Unknown parameter."
+                        self.param_vector.append(self.relax.data.res[i].tm[self.run])
+
+                # S2.
+                elif self.relax.data.res[i].params[self.run][j] == 'S2':
+                    if self.relax.data.res[i].s2[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].s2[self.run])
+
+                # S2f.
+                elif self.relax.data.res[i].params[self.run][j] == 'S2f':
+                    if self.relax.data.res[i].s2f[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].s2f[self.run])
+
+                # S2s.
+                elif self.relax.data.res[i].params[self.run][j] == 'S2s':
+                    if self.relax.data.res[i].s2s[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].s2s[self.run])
+
+                # te.
+                elif self.relax.data.res[i].params[self.run][j] == 'te':
+                    if self.relax.data.res[i].te[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].te[self.run])
+
+                # tf.
+                elif self.relax.data.res[i].params[self.run][j] == 'tf':
+                    if self.relax.data.res[i].tf[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].tf[self.run])
+
+                # ts.
+                elif self.relax.data.res[i].params[self.run][j] == 'ts':
+                    if self.relax.data.res[i].ts[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].ts[self.run])
+
+                # Rex.
+                elif self.relax.data.res[i].params[self.run][j] == 'Rex':
+                    if self.relax.data.res[i].rex[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].rex[self.run])
+
+                # r.
+                elif self.relax.data.res[i].params[self.run][j] == 'r':
+                    if self.relax.data.res[i].r[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].r[self.run])
+
+                # CSA.
+                elif self.relax.data.res[i].params[self.run][j] == 'CSA':
+                    if self.relax.data.res[i].csa[self.run] == None:
+                        self.param_vector.append(0.0)
+                    else:
+                        self.param_vector.append(self.relax.data.res[i].csa[self.run])
+
+                # Unknown parameter.
+                else:
+                    raise RelaxError, "Unknown parameter."
 
         # Convert to a Numeric array.
         self.param_vector = array(self.param_vector, Float64)
@@ -692,171 +690,139 @@ class Model_free:
 
 
     def grid_search(self, run, lower, upper, inc, constraints, print_flag):
-        """The grid search setup function."""
+        """The grid search function."""
 
         # Arguments.
-        self.run = run
-        self.print_flag = print_flag
+        self.lower = lower
+        self.upper = upper
+        self.inc = inc
 
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        # Minimisation.
+        self.minimise(run=run, min_algor='grid', constraints=constraints, print_flag=print_flag)
 
-        # The number of grid search instances and number of model-free parameter sets.
-        if self.param_set == 'mf':
-            num_instances = len(self.relax.data.res)
-            num_mf_param_sets = 1
-        elif self.param_set == 'diff':
-            num_instances = 1
-            num_mf_param_sets = 0
-        elif self.param_set == 'all':
-            num_instances = 1
-            num_mf_param_sets = len(self.relax.data.res)
 
-        # Loop over the grid search instances.
-        for i in xrange(num_instances):
-            # Individual residue stuff.
-            if self.param_set == 'mf':
-                # Skip unselected residues.
-                if not self.relax.data.res[i].select:
-                    continue
+    def grid_search_setup(self, index=None):
+        """The grid search setup function."""
 
-                # The number of model-free parameters for this residue.
-                n = len(self.relax.data.res[i].params[self.run])
+        # The length of the parameter array.
+        n = len(self.param_vector)
 
-            # The number of diffusion tensor parameters.
-            else:
-                # Isotropic diffusion.
-                if self.relax.data.diff[self.run].type == 'iso':
-                    n = 1
+        # Make sure that the length of the parameter array is > 0.
+        if n == 0:
+            raise RelaxError, "Cannot run a grid search on a model with zero parameters."
 
-                # Axially symmetric diffusion.
-                elif self.relax.data.diff[self.run].type == 'axial':
-                    n = 4
+        # Lower bounds.
+        if self.lower != None:
+            if len(self.lower) != n:
+                raise RelaxLenError, ('lower bounds', n)
 
-                # Anisotropic diffusion.
-                elif self.relax.data.diff[self.run].type == 'aniso':
-                    n = 6
+        # Upper bounds.
+        if self.upper != None:
+            if len(self.upper) != n:
+                raise RelaxLenError, ('upper bounds', n)
 
-            # Sum the diffusion tensor parameters and all model-free parameters.
-            if self.param_set == 'all':
-                # Loop over all residues.
-                for j in xrange(len(self.relax.data.res)):
-                    # Skip unselected residues.
-                    if not self.relax.data.res[j].select:
-                        continue
+        # Increment.
+        if type(self.inc) == list:
+            if len(self.inc) != n:
+                raise RelaxLenError, ('increment', n)
+            inc = self.inc
+        elif type(self.inc) == int:
+            temp = []
+            for j in xrange(n):
+                temp.append(self.inc)
+            inc = temp
 
-                    # Sum n.
-                    n = n + len(self.relax.data.res[j].params[self.run])
+        # Minimisation options initialisation.
+        min_options = []
+        m = 0
 
-            # Make sure that the length of the parameter array is > 0.
-            if n == 0:
-                raise RelaxError, "Cannot run a grid search on a model with zero parameters."
+        # Minimisation options for diffusion tensor parameters.
+        if self.param_set != 'mf':
+            # Isotropic diffusion {tm}.
+            if self.relax.data.diff[self.run].type == 'iso':
+                min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
+                m = m + 1
 
-            # Lower bounds.
-            if lower != None:
-                if len(lower) != n:
-                    raise RelaxLenError, ('lower bounds', n)
+            # Axially symmetric diffusion {Dper, Dpar, theta, phi}.
+            if self.relax.data.diff[self.run].type == 'axial':
+                min_options.append([inc[0], 0.0, 10.0 * 1e9])
+                min_options.append([inc[1], 0.0, 10.0 * 1e9])
+                min_options.append([inc[2], 0.0, 2 * pi])
+                min_options.append([inc[3], 0.0, 2 * pi])
+                m = m + 4
 
-            # Upper bounds.
-            if upper != None:
-                if len(upper) != n:
-                    raise RelaxLenError, ('upper bounds', n)
+            # Anisotropic diffusion {Dx, Dy, Dz, alpha, beta, gamma}.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                min_options.append([inc[0], 0.0, 10.0 * 1e9])
+                min_options.append([inc[1], 0.0, 10.0 * 1e9])
+                min_options.append([inc[2], 0.0, 10.0 * 1e9])
+                min_options.append([inc[3], 0.0, 2 * pi])
+                min_options.append([inc[4], 0.0, 2 * pi])
+                min_options.append([inc[5], 0.0, 2 * pi])
+                m = m + 6
 
-            # Increment.
-            if type(inc) == list:
-                if len(inc) != n:
-                    raise RelaxLenError, ('increment', n)
-            if type(inc) == int:
-                temp = []
-                for j in xrange(n):
-                    temp.append(inc)
-                inc = temp
+        # Loop over all residues.
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
 
-            # Minimisation options initialisation.
-            min_options = []
-            m = 0
+            # Only add parameters for a single residue if index has a value.
+            if index != None and i != index:
+                continue
 
-            # Minimisation options for diffusion tensor parameters.
-            if self.param_set == 'diff' or self.param_set == 'all':
-                # Isotropic diffusion {tm}.
-                if self.relax.data.diff[self.run].type == 'iso':
-                    min_options.append([inc[0], 1.0 * 1e-9, 10.0 * 1e-9])
-                    m = m + 1
+            # Loop over the model-free parameters.
+            for j in xrange(len(self.relax.data.res[i].params[self.run])):
+                # {S2, S2f, S2s}.
+                if match('S2', self.relax.data.res[i].params[self.run][j]):
+                    min_options.append([inc[m], 0.0, 1.0])
 
-                # Axially symmetric diffusion {Dper, Dpar, theta, phi}.
-                if self.relax.data.diff[self.run].type == 'axial':
-                    min_options.append([inc[0], 0.0, 10.0 * 1e9])
-                    min_options.append([inc[1], 0.0, 10.0 * 1e9])
-                    min_options.append([inc[2], 0.0, 2 * pi])
-                    min_options.append([inc[3], 0.0, 2 * pi])
-                    m = m + 4
+                # {te, tf, ts}.
+                elif match('t', self.relax.data.res[i].params[self.run][j]):
+                    min_options.append([inc[m], 0.0, 5000.0 * 1e-12])
 
-                # Anisotropic diffusion {Dx, Dy, Dz, alpha, beta, gamma}.
-                elif self.relax.data.diff[self.run].type == 'aniso':
-                    min_options.append([inc[0], 0.0, 10.0 * 1e9])
-                    min_options.append([inc[1], 0.0, 10.0 * 1e9])
-                    min_options.append([inc[2], 0.0, 10.0 * 1e9])
-                    min_options.append([inc[3], 0.0, 2 * pi])
-                    min_options.append([inc[4], 0.0, 2 * pi])
-                    min_options.append([inc[5], 0.0, 2 * pi])
-                    m = m + 6
+                # Rex.
+                elif self.relax.data.res[i].params[self.run][j] == 'Rex':
+                    min_options.append([inc[m], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[i].frq[self.run][0])**2])
 
-            # Minimisation options for the model-free parameters, loop over the number of model-free parameter sets.
-            for j in xrange(num_mf_param_sets):
-                # Set the sequence index.
-                if self.param_set == 'mf':
-                    index = i
+                # Bond length.
+                elif self.relax.data.res[i].params[self.run][j] == 'r':
+                    min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
+
+                # CSA.
+                elif self.relax.data.res[i].params[self.run][j] == 'CSA':
+                    min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
+
+                # Unknown option.
                 else:
-                    index = j
+                    raise RelaxError, "Unknown model-free parameter."
 
-                # Loop over the model-free parameters.
-                for k in xrange(len(self.relax.data.res[index].params[self.run])):
-                    # {S2, S2f, S2s}.
-                    if match('S2', self.relax.data.res[index].params[self.run][k]):
-                        min_options.append([inc[m], 0.0, 1.0])
+                # Increment m.
+                m = m + 1
 
-                    # {te, tf, ts}.
-                    elif match('t', self.relax.data.res[index].params[self.run][k]):
-                        min_options.append([inc[m], 0.0, 5000.0 * 1e-12])
+        # Set the lower and upper bounds if these are supplied.
+        if self.lower != None:
+            for j in xrange(n):
+                if self.lower[j] != None:
+                    min_options[j][1] = self.lower[j]
+        if self.upper != None:
+            for j in xrange(n):
+                if self.upper[j] != None:
+                    min_options[j][2] = self.upper[j]
 
-                    # Rex.
-                    elif self.relax.data.res[index].params[self.run][k] == 'Rex':
-                        min_options.append([inc[m], 0.0, 10.0 / (2.0 * pi * self.relax.data.res[index].frq[self.run][0])**2])
+        # Test if the grid is too large.
+        grid_size = 1
+        for i in xrange(len(min_options)):
+            grid_size = grid_size * min_options[i][0]
+        if type(grid_size) == long:
+            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
 
-                    # Bond length.
-                    elif self.relax.data.res[index].params[self.run][k] == 'r':
-                        min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
+        # Diagonal scaling of minimisation options.
+        for j in xrange(len(min_options)):
+            min_options[j][1] = min_options[j][1] / self.scaling_matrix[j, j]
+            min_options[j][2] = min_options[j][2] / self.scaling_matrix[j, j]
 
-                    # CSA.
-                    elif self.relax.data.res[index].params[self.run][k] == 'CSA':
-                        min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
-
-                    # Unknown option.
-                    else:
-                        raise RelaxError, "Unknown model-free parameter."
-
-                    # Increment m.
-                    m = m + 1
-
-            # Set the lower and upper bounds if these are supplied.
-            if lower != None:
-                for j in xrange(n):
-                    if lower[j] != None:
-                        min_options[j][1] = lower[j]
-            if upper != None:
-                for j in xrange(n):
-                    if upper[j] != None:
-                        min_options[j][2] = upper[j]
-
-            # Test if the grid is too large.
-            grid_size = 1
-            for i in xrange(len(min_options)):
-                grid_size = grid_size * min_options[i][0]
-            if type(grid_size) == long:
-                raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
-
-            # Minimisation.
-            self.minimise(run=self.run, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=self.print_flag)
+        return min_options
 
 
     def initialise_mf_data(self, data, run):
@@ -992,7 +958,7 @@ class Model_free:
         j = 0
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if self.param_set != 'mf':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
                 # tm >= 0.
@@ -1066,7 +1032,7 @@ class Model_free:
                     continue
 
                 # Only add parameters for a single residue if index has a value.
-                if index != None and j != index:
+                if index != None and k != index:
                     continue
 
                 # Save current value of i.
@@ -1325,15 +1291,15 @@ class Model_free:
 
         # The number of residues, minimisation instances, and data sets for each parameter set type.
         if self.param_set == 'mf':
-            num_instances = num_res
+            num_instances = len(self.relax.data.res)
             num_data_sets = 1
             num_res = 1
         elif self.param_set == 'diff':
             num_instances = 1
-            num_data_sets = num_res
+            num_data_sets = len(self.relax.data.res)
         elif self.param_set == 'all':
             num_instances = 1
-            num_data_sets = num_res
+            num_data_sets = len(self.relax.data.res)
 
         # Loop over the minimisation instances.
         for i in xrange(num_instances):
@@ -1360,12 +1326,9 @@ class Model_free:
             self.assemble_scaling_matrix(index=index)
             self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
 
-            # Scaling of grid options.
+            # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                # Diagonal scaling of minimisation options.
-                for j in xrange(len(min_options)):
-                    min_options[j][1] = min_options[j][1] / self.scaling_matrix[j, j]
-                    min_options[j][2] = min_options[j][2] / self.scaling_matrix[j, j]
+                min_options = self.grid_search_setup(index=index)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
@@ -1411,39 +1374,43 @@ class Model_free:
             for j in xrange(num_data_sets):
                 # Set the sequence index.
                 if self.param_set == 'mf':
-                    index = i
+                    seq_index = i
                 else:
-                    index = j
+                    seq_index = j
+
+                # Skip unselected residues.
+                if not self.relax.data.res[seq_index].select:
+                    continue
 
                 # Make sure that the errors are strictly positive numbers.
-                for k in xrange(len(self.relax.data.res[index].relax_error[self.run])):
-                    if self.relax.data.res[index].relax_error[self.run][k] == 0.0:
-                        raise RelaxError, "Zero error for residue '" + `self.relax.data.res[index].num[self.run]` + " " + self.relax.data.res[index].name[self.run] + "', minimisation not possible."
-                    elif self.relax.data.res[index].relax_error[self.run][k] < 0.0:
-                        raise RelaxError, "Negative error for residue '" + `self.relax.data.res[index].num[self.run]` + " " + self.relax.data.res[index].name[self.run] + "', minimisation not possible."
+                for k in xrange(len(self.relax.data.res[seq_index].relax_error[self.run])):
+                    if self.relax.data.res[seq_index].relax_error[self.run][k] == 0.0:
+                        raise RelaxError, "Zero error for residue '" + `self.relax.data.res[seq_index].num[self.run]` + " " + self.relax.data.res[seq_index].name[self.run] + "', minimisation not possible."
+                    elif self.relax.data.res[seq_index].relax_error[self.run][k] < 0.0:
+                        raise RelaxError, "Negative error for residue '" + `self.relax.data.res[seq_index].num[self.run]` + " " + self.relax.data.res[seq_index].name[self.run] + "', minimisation not possible."
 
                 # Repackage the data.
-                relax_data.append(self.relax.data.res[index].relax_data[self.run])
-                relax_error.append(self.relax.data.res[index].relax_error[self.run])
-                equations.append(self.relax.data.res[index].equations[self.run])
-                param_types.append(self.relax.data.res[index].params[self.run])
-                r.append(self.relax.data.res[index].r[self.run])
-                csa.append(self.relax.data.res[index].csa[self.run])
-                num_frq.append(self.relax.data.res[index].num_frq[self.run])
-                frq.append(self.relax.data.res[index].frq[self.run])
-                num_ri.append(self.relax.data.res[index].num_ri[self.run])
-                remap_table.append(self.relax.data.res[index].remap_table[self.run])
-                noe_r1_table.append(self.relax.data.res[index].noe_r1_table[self.run])
-                ri_labels.append(self.relax.data.res[index].ri_labels[self.run])
+                relax_data.append(self.relax.data.res[seq_index].relax_data[self.run])
+                relax_error.append(self.relax.data.res[seq_index].relax_error[self.run])
+                equations.append(self.relax.data.res[seq_index].equations[self.run])
+                param_types.append(self.relax.data.res[seq_index].params[self.run])
+                r.append(self.relax.data.res[seq_index].r[self.run])
+                csa.append(self.relax.data.res[seq_index].csa[self.run])
+                num_frq.append(self.relax.data.res[seq_index].num_frq[self.run])
+                frq.append(self.relax.data.res[seq_index].frq[self.run])
+                num_ri.append(self.relax.data.res[seq_index].num_ri[self.run])
+                remap_table.append(self.relax.data.res[seq_index].remap_table[self.run])
+                noe_r1_table.append(self.relax.data.res[seq_index].noe_r1_table[self.run])
+                ri_labels.append(self.relax.data.res[seq_index].ri_labels[self.run])
 
                 # Vectors.
                 if not self.relax.data.diff[self.run].type == 'iso':
-                    xh_unit_vectors.append(self.relax.data.res[index].xh_unit)
+                    xh_unit_vectors.append(self.relax.data.res[seq_index].xh_unit)
                 else:
                     xh_unit_vectors.append(None)
 
                 # Count the number of model-free parameters for the residue index.
-                num_params.append(len(self.relax.data.res[index].params[self.run]))
+                num_params.append(len(self.relax.data.res[seq_index].params[self.run]))
 
             # Convert to Numeric arrays.
             relax_data = array(relax_data, Float64)
@@ -1524,7 +1491,7 @@ class Model_free:
                 self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector()
+            self.disassemble_param_vector(index=index)
 
             # Chi-squared statistic.
             self.relax.data.res[i].chi2[self.run] = self.func
@@ -2233,7 +2200,10 @@ class Model_free:
         # S2f.
         if res.s2f[run] == None:
             if res.s2[run] != None and res.s2s[run] != None:
-                file.write("%-26s" % `res.s2[run] / res.s2s[run]`)
+                if res.s2s[run] == 0.0:
+                    file.write("%-26s" % "inf")
+                else:
+                    file.write("%-26s" % `res.s2[run] / res.s2s[run]`)
             else:
                 file.write("%-26s" % "N/A")
         else:
@@ -2242,7 +2212,10 @@ class Model_free:
         # S2s.
         if res.s2s[run] == None:
             if res.s2[run] != None and res.s2f[run] != None:
-                file.write("%-26s" % `res.s2[run] / res.s2f[run]`)
+                if res.s2f[run] == 0.0:
+                    file.write("%-26s" % "inf")
+                else:
+                    file.write("%-26s" % `res.s2[run] / res.s2f[run]`)
             else:
                 file.write("%-26s" % "N/A")
         else:

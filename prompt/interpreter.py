@@ -61,6 +61,7 @@ import palmer
 import read
 import select
 import state
+import unselect
 import value
 
 
@@ -110,6 +111,7 @@ class Interpreter:
         self._Read = read.Shell(relax)
         self._Select = select.Shell(relax)
         self._State = state.Shell(relax)
+        self._Unselect = unselect.Shell(relax)
         self._Value = value.Shell(relax)
 
 
@@ -162,6 +164,7 @@ class Interpreter:
         model = self._Model
         select = self._Select
         state = self._State
+        unselect = self._Unselect
         value = self._Value
 
         # Builtin interpreter functions.

@@ -40,7 +40,6 @@ class Shell:
 
         # Place references to the interactive functions within the namespace of this class.
         self.all = x.all
-        self.none = x.none
         self.res = x.res
         self.reverse = x.reverse
 
@@ -50,53 +49,33 @@ class Shell:
 
 class Main:
     def __init__(self, relax):
-        """Class containing the functions for selecting and unselecting residues."""
+        """Class containing the functions for selecting residues."""
 
         self.relax = relax
 
 
     def all(self):
-        """Function for selection all residues.
+        """Function for selecting all residues.
 
         Examples
         ~~~~~~~~
 
         To select all residues type:
 
-        relax> selection.all()
+        relax> select.all()
         """
 
         # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "selection.all()"
+            text = sys.ps3 + "select.all()"
             print text
 
         # Execture the functional code.
-        self.relax.generic.selection.all()
+        self.relax.generic.selection.sel_all()
 
 
-    def none(self):
-        """Function for unselecting all residues.
-
-        Examples
-        ~~~~~~~~
-
-        To have no residues selected type:
-
-        relax> selection.none()
-        """
-
-        # Function intro test.
-        if self.relax.interpreter.intro:
-            text = sys.ps3 + "selection.none()"
-            print text
-
-        # Execture the functional code.
-        self.relax.generic.selection.none()
-
-
-    def res(self, num=None, name=None, unselect=1):
-        """Function for the selection of specific residues.
+    def res(self, num=None, name=None, change_all=0):
+        """Function for selecting specific residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -105,21 +84,22 @@ class Main:
 
         name:  The residue name.
 
-        unselect:  A flag specifying if all other residues should be unselected.
+        change_all:  A flag specifying if all other residues should be changed.
+
 
         Description
         ~~~~~~~~~~~
 
         The residue number can be either an integer for selecting a single residue or a python
-        regular expression in string form for selecting integers.  For details about using regular
-        expression, see the python documentation for the module 're'.
+        regular expression, in string form, for selecting multiple residues.  For details about
+        using regular expression, see the python documentation for the module 're'.
 
         The residue name argument must be a string.  Regular expression is also allowed.
 
-        If the unselect argument is 0, then the current selection is unmodified and the residues
-        matched using the number and name arguments will be selected.  If on the other hand unselect
-        is 1, then all residues not selected using the number and name arguments will be unselected.
-
+        The 'change_all' flag argument default is zero meaning that all residues currently either
+        selected or unselected will remain that way.  Setting the argument to 1 will cause all
+        residues not specified by 'num' or 'name' to become unselected.
+        
 
         Examples
         ~~~~~~~~
@@ -127,24 +107,24 @@ class Main:
         To select only glycines and alanines, assuming they have been loaded with the names GLY and
         ALA, type:
 
-        relax> selection.res(name='GLY|ALA', unselect=1)
-        relax> selection.res(name='[GA]L[YA]', unselect=1)
+        relax> select.res(name='GLY|ALA', change_all=1)
+        relax> select.res(name='[GA]L[YA]', change_all=1)
 
         To select residue 5 CYS in addition to the currently selected residues, type:
 
-        relax> selection.res(5)
-        relax> selection.res(5, 'CYS')
-        relax> selection.res('5')
-        relax> selection.res('5', 'CYS')
-        relax> selection.res(num='5', name='CYS')
+        relax> select.res(5)
+        relax> select.res(5, 'CYS')
+        relax> select.res('5')
+        relax> select.res('5', 'CYS')
+        relax> select.res(num='5', name='CYS')
         """
 
         # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "selection.res("
+            text = sys.ps3 + "select.res("
             text = text + "num=" + `num`
             text = text + ", name=" + `name`
-            text = text + ", unselect=" + `unselect` + ")"
+            text = text + ", change_all=" + `change_all` + ")"
             print text
 
         # Residue number.
@@ -159,12 +139,12 @@ class Main:
         if num == None and name == None:
             raise RelaxError, "At least one of the number or name arguments is required."
 
-        # Unselect flag.
-        if type(unselect) != int or (unselect != 0 and unselect != 1):
-            raise RelaxBinError, ('unselect', unselect)
+        # Change all flag.
+        if type(change_all) != int or (change_all != 0 and change_all != 1):
+            raise RelaxBinError, ('change_all', change_all)
 
         # Execture the functional code.
-        self.relax.generic.selection.res(num=num, name=name, unselect=unselect)
+        self.relax.generic.selection.sel_res(num=num, name=name, change_all=change_all)
 
 
     def reverse(self):
@@ -175,12 +155,12 @@ class Main:
 
         To unselect all currently selected residues and select those which are unselected type:
 
-        relax> selection.reverse()
+        relax> select.reverse()
         """
 
         # Function intro test.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "selection.reverse()"
+            text = sys.ps3 + "select.reverse()"
             print text
 
         # Execture the functional code.
