@@ -49,7 +49,7 @@ class Macro_class(Generic_functions):
         self.relax = relax
 
 
-    def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=1):
         """Macro for loading R1, R2, or NOE relaxation data.
 
         Keyword Arguments
@@ -74,6 +74,8 @@ class Macro_class(Generic_functions):
 
         sep:  The column separator (the default is white space).
 
+        header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
+
 
         Examples
         ~~~~~~~~
@@ -93,7 +95,8 @@ class Macro_class(Generic_functions):
 
         relax> load.relax_data('R2', '800 MHz', 8.0 * 1e8, 'r2.out', 1, 2, 4, 5, ',')
         relax> load.relax_data(ri_label='R2', frq_label='800 MHz', frq=8.0*1e8, file_name='r2.out',
-                               num_col=1, name_col=2, data_col=4, error_col=5, sep=',')
+                               num_col=1, name_col=2, data_col=4, error_col=5, sep=',',
+                               header_lines=1)
 
 
         The following commands will load the R1 data out of the file 'r1.out' where the columns are
@@ -113,7 +116,8 @@ class Macro_class(Generic_functions):
             text = text + ", name_col=" + `name_col`
             text = text + ", data_col=" + `data_col`
             text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep` + ")\n"
+            text = text + ", sep=" + `sep`
+            text = text + ", header_lines=" + `header_lines` + ")\n"
             print text
 
         # Relaxation data type.
@@ -149,11 +153,16 @@ class Macro_class(Generic_functions):
             print "The column separator argument 'sep' should be either a string or None."
             return
 
+        # Header lines.
+        elif type(header_lines) != int:
+            print "The number of header lines argument 'header_lines' should be an integer."
+            return
+
         # Execute the functional code.
-        self.relax.load.relax_data(ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
+        self.relax.load.relax_data(ri_label=ri_label, frq_label=frq_label, frq=frq, file_name=file_name, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep, header_lines=header_lines)
 
 
-    def sequence(self, file_name=None, num_col=0, name_col=1, sep=None):
+    def sequence(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):
         """Macro for loading sequence data.
 
         Keyword Arguments
@@ -167,6 +176,8 @@ class Macro_class(Generic_functions):
 
         sep:  The column separator (the default is white space).
 
+        header_lines:  The number of lines at the top of the file to skip (the default is 1 line).
+
 
         Examples
         ~~~~~~~~
@@ -178,7 +189,7 @@ class Macro_class(Generic_functions):
         relax> load.sequence('seq', 0, 1)
         relax> load.sequence('seq', 0, 1, None)
         relax> load.sequence('seq', num_col=0, name_col=1)
-        relax> load.sequence(file_name='seq', num_col=0, name_col=1, seq=None)
+        relax> load.sequence(file_name='seq', num_col=0, name_col=1, seq=None, header_lines=1)
 
 
         The following commands will load the sequence out of the file 'noe.out' which also contains
@@ -193,7 +204,8 @@ class Macro_class(Generic_functions):
         are separated by commas.
 
         relax> load.sequence('noe.600.out', 1, 5, ',')
-        relax> load.sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',')
+        relax> load.sequence(file_name='noe.600.out', num_col=1, name_col=5, seq=',',
+                             header_lines=1)
         """
 
         # Macro intro text.
@@ -202,7 +214,8 @@ class Macro_class(Generic_functions):
             text = text + "file_name=" + `file_name`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
-            text = text + ", sep=" + `sep` + ")\n"
+            text = text + ", sep=" + `sep`
+            text = text + ", header_lines=" + `header_lines` + ")\n"
             print text
 
         # The file name.
@@ -223,5 +236,10 @@ class Macro_class(Generic_functions):
             print "The column separator argument 'sep' should be either a string or None."
             return
 
+        # Header lines.
+        elif type(header_lines) != int:
+            print "The number of header lines argument 'header_lines' should be an integer."
+            return
+
         # Execute the functional code.
-        self.relax.load.sequence(file_name=file_name, num_col=num_col, name_col=name_col, sep=sep)
+        self.relax.load.sequence(file_name=file_name, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)

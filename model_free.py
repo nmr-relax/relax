@@ -1089,6 +1089,9 @@ class Model_free:
                     file.write("%-26s" % `params[j] / 1e-10`)
                     flag = 0
                     continue
+            if self.relax.data.bond_length[i][0]:
+                file.write("%-26s" % `self.relax.data.bond_length[i][0] / 1e-10`)
+                flag = 0
             if flag:
                 file.write("%-26s" % "N/A")
 
@@ -1099,6 +1102,9 @@ class Model_free:
                     file.write("%-26s" % `params[j] / 1e-6`)
                     flag = 0
                     continue
+            if self.relax.data.csa[i][0]:
+                file.write("%-26s" % `self.relax.data.csa[i][0] / 1e-6`)
+                flag = 0
             if flag:
                 file.write("%-26s" % "N/A")
 
@@ -1154,8 +1160,10 @@ class Model_free:
 
         # Test if the model already exists.
         try:
-            self.relax.data.equations
+            self.relax.data.equations[model]
         except AttributeError:
+            pass
+        except KeyError:
             pass
         else:
             print "Models have already been set."

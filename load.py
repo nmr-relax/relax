@@ -31,7 +31,7 @@ class Load(Generic_functions):
         self.relax = relax
 
 
-    def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    def relax_data(self, ri_label=None, frq_label=None, frq=None, file_name=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None, header_lines=None):
         """Function for loading R1, R2, or NOE relaxation data."""
 
         # Arguments
@@ -58,6 +58,9 @@ class Load(Generic_functions):
             print "No relaxation data loaded."
             return
 
+        # Remove the header.
+        file_data = file_data[header_lines:-1]
+
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
 
@@ -81,7 +84,7 @@ class Load(Generic_functions):
         self.relax.data.relax_data.append(self.create_data(data))
 
 
-    def sequence(self, file_name=None, num_col=0, name_col=1, sep=None):
+    def sequence(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=None):
         """Function for loading sequence data."""
 
         # Test if the sequence data has already been loaded.
@@ -101,6 +104,9 @@ class Load(Generic_functions):
         if not file_data:
             print "No sequence data loaded."
             return
+
+        # Remove the header.
+        file_data = file_data[header_lines:-1]
 
         # Strip data.
         file_data = self.relax.file_ops.strip(file_data)
