@@ -1476,21 +1476,23 @@ class Mf:
             # Set the total dri gradient to zero.
             self.total_dri = self.total_dri * 0.0
 
+            # Ri indecies.
+            ri_start_index = 0
+            ri_end_index = 0
+
             # Loop over the residues.
             for i in xrange(self.num_res):
                 # Set self.data[i] to data.
                 data = self.data[i]
 
-                # Index for the construction of the global generic model-free gradient.
-                index = self.diff_data.num_params
+                # Increment Ri end index.
+                ri_end_index = ri_end_index + data.num_ri
 
                 # Diffusion parameter part of the global generic model-free gradient.
-                #from Numeric import shape
-                #print "Total dri: " + `shape(self.total_dri)`
-                #print "dri: " + `shape(data.dri)`
-                #print "total_dri[0:index]: " + `shape(self.total_dri[0:index])`
-                #print "data.dri[0:index]: " + `shape(data.dri[0:index])`
-                self.total_dri[:, 0:index] = self.total_dri[:, 0:index] + data.dri[0:index]
+                self.total_dri[0:self.diff_data.num_params, ri_start_index:ri_end_index] = self.total_dri[0:self.diff_data.num_params, ri_start_index:ri_end_index] + data.dri[0:self.diff_data.num_params]
+
+                # Increment Ri start index.
+                ri_start_index = ri_start_index + data.num_ri
 
             # dri.
             dri = self.total_dri
@@ -1499,28 +1501,26 @@ class Mf:
             # Set the total dri gradient to zero.
             self.total_dri = self.total_dri * 0.0
 
+            # Ri indecies.
+            ri_start_index = 0
+            ri_end_index = 0
+
             # Loop over the residues.
             for i in xrange(self.num_res):
                 # Set self.data[i] to data.
                 data = self.data[i]
 
-                # Index for the construction of the global generic model-free gradient.
-                index = self.total_num_params
+                # Increment Ri end index.
+                ri_end_index = ri_end_index + data.num_ri
 
                 # Diffusion parameter part of the global generic model-free gradient.
-                from Numeric import shape
-                #print "Total dri: " + `shape(self.total_dri)`
-                #print "dri: " + `shape(data.dri)`
-                print "total_dri[:, 0:index]: " + `shape(self.total_dri[:, 0:index])`
-                print "data.dri[0:index]: " + `shape(data.dri[0:index])`
-                #print "total_dri[data.start_index:data.end_index]: " + `shape(self.total_dri[data.start_index:data.end_index])`
-                #print "data.dri[index:]: " + `shape(data.dri[index:])`
-                #print "data.start_index: " + `data.start_index`
-                #print "data.end_index: " + `data.end_index`
-                self.total_dri[:, 0:index] = self.total_dri[:, 0:index] + data.dri[0:index]
+                self.total_dri[0:self.diff_data.num_params, ri_start_index:ri_end_index] = self.total_dri[0:self.diff_data.num_params, ri_start_index:ri_end_index] + data.dri[0:self.diff_data.num_params]
 
                 # Model-free parameter part of the global generic model-free gradient.
-                self.total_dri[:, data.start_index:data.end_index] = self.total_dri[:, data.start_index:data.end_index] + data.dri[index:]
+                self.total_dri[data.start_index:data.end_index, ri_start_index:ri_end_index] = self.total_dri[data.start_index:data.end_index, ri_start_index:ri_end_index] + data.dri[self.diff_data.num_params:]
+
+                # Increment Ri start index.
+                ri_start_index = ri_start_index + data.num_ri
 
             # dri.
             dri = self.total_dri
