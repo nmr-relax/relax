@@ -861,7 +861,7 @@ class Model_free:
         for i in range(len(param_types)):
             # te, tf, and ts.
             if match('t', param_types[i]):
-                self.scale_vect[i] = 1e-15
+                self.scale_vect[i] = 1e-12
 
             # Rex.
             elif param_types[i] == 'Rex':

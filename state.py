@@ -23,6 +23,7 @@
 
 from Numeric import array
 from os import F_OK, access
+from cPickle import dump, load
 
 from data import Data
 from generic_functions import Generic_functions
@@ -48,8 +49,8 @@ class State(Generic_functions):
         # Reinitialise self.relax.data
         self.relax.data = Data()
 
-        # Execute the file to reload all data.
-        exec(file)
+        # Unpickle the data class.
+        self.relax.data = load(file)
 
         # Close the file.
         file.close()
@@ -65,11 +66,8 @@ class State(Generic_functions):
         else:
             file = open(file_name, 'w')
 
-        # Loop over the data structures in self.relax.data
-        for name in dir(self.relax.data):
-            if not self.filter_data_structure(name):
-                file.write("self.relax.data." + name + " = " + `getattr(self.relax.data, name)`)
-                file.write("\n")
+        # Pickle the data class and write it to file
+        dump(self.relax.data, file, 1)
 
         # Close the file.
         file.close()
