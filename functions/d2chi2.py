@@ -6,7 +6,7 @@ class d2chi2:
 		"Function to create the chi-squared hessian."
 
 
-	def d2chi2(self, params, diff_type, diff_params, model, relax_data, errors):
+	def d2chi2(self, params, diff_type, diff_params, model, relax_data, errors, print_flag=0):
 		"""Function to create the chi-squared hessian.
 
 		Function arguments
@@ -46,7 +46,7 @@ class d2chi2:
 		"""
 
 		# debug.
-		if self.mf.min_debug == 2:
+		if print_flag == 2:
 			print "\n< d2chi2 >"
 			print "Params: " + `params`
 
@@ -101,7 +101,7 @@ class d2chi2:
 				break
 
 		# debug.
-		if self.mf.min_debug == 2:
+		if print_flag == 2:
 			print "J(w):   " + `self.data.jw`
 			print "dJ(w):  " + `self.data.djw`
 			print "d2J(w): " + `self.data.d2jw`

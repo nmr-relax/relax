@@ -2,7 +2,10 @@
 
 import sys
 
-class main_relax_fit:
+from common_ops import common_ops
+
+
+class relax_fit(common_ops):
 	def __init__(self):
 		"Relaxation curve fitting."
 

@@ -23,9 +23,10 @@
 import sys
 from re import match
 
-from main_model_free import main_model_free
-from main_relax_fit import main_relax_fit
-from common_ops import common_ops
+from model_free import model_free
+from palmer import palmer
+from relax_fit import relax_fit
+
 from data import data
 from file_ops import file_ops
 
@@ -33,23 +34,8 @@ sys.path.append(sys.path[0])
 sys.path[0] = '.'
 from usr_param import usr_param
 
-from functions.mf_functions import mf_functions
-from functions.mf_trans_functions import mf_trans_functions
-
+from model_selection.model_selection import model_selection
 from minimise.minimise import minimise
-
-from model_selection.model_selection import modsel
-from model_selection.asymptotic import asymptotic
-from model_selection.bootstrap import bootstrap
-from model_selection.cross_validation import cv
-from model_selection.exp_overall_disc import exp_overall_disc
-from model_selection.farrow import farrow
-from model_selection.palmer import palmer
-from model_selection.overall_disc import overall_disc
-
-from palmer.main_palmer import main_palmer
-from palmer.star import star
-
 
 class mf:
 	def __init__(self):
@@ -69,46 +55,23 @@ class mf:
 			sys.exit()
 
 		# Initialise the class self.mf.function to place program functions into.
-		self.mf_functions = mf_functions(self)
-		self.mf_trans_functions = mf_trans_functions(self)
-		self.modsel = modsel(self)
+		self.data = data(self)
+		self.file_ops = file_ops(self)
+		self.model_selection = model_selection(self)
+		self.minimise = minimise
 
 		# Select the behaviour of the program.
-		if match(self.usr_param.program_type, 'relax_fit'):
-			self.data = data(self)
-			self.file_ops = file_ops(self)
-			main_relax_fit(self)
+		if match('^[Rr]elax[- _][Ff]it$', self.usr_param.program_type):
+			relax_fit(self)
 
-		if match(self.usr_param.program_type, 'mf'):
-			self.data = data(self)
-			self.common_ops = common_ops(self)
-			self.common_ops.update_data()
-			self.file_ops = file_ops(self)
-			self.minimise = minimise
-			self.modsel.asymptotic = asymptotic(self)
-			self.modsel.bootstrap = bootstrap(self)
-			self.modsel.cv = cv(self)
-			self.modsel.exp_overall_disc = exp_overall_disc(self)
-			self.modsel.farrow = farrow(self)
-			self.modsel.palmer = palmer(self)
-			self.modsel.overall_disc = overall_disc(self)
-			main_model_free(self)
+		elif match('^[Mm][Ff]$', self.usr_param.program_type):
+			model_free(self)
 
-		if match(self.usr_param.program_type, 'palmer'):
-			self.data = data(self)
-			self.common_ops = common_ops(self)
-			self.common_ops.update_data()
-			self.file_ops = file_ops(self)
-			self.modsel.asymptotic = asymptotic(self)
-			self.modsel.bootstrap = bootstrap(self)
-			self.modsel.cv = cv(self)
-			self.modsel.exp_overall_disc = exp_overall_disc(self)
-			self.modsel.farrow = farrow(self)
-			self.modsel.palmer = palmer(self)
-			self.modsel.overall_disc = overall_disc(self)
-			self.star = star(self)
-			main_palmer(self)
+		elif match('^[Pp]almer$', self.usr_param.program_type):
+			palmer(self)
 
+		else:
+			print "The program type " + `self.usr_param.program_type` + " does not exist."
 
 	def print_intro(self):
 		"Print the program introduction."

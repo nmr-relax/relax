@@ -1,16 +1,17 @@
 from re import match
 from os import chmod
 import sys
+
 from common_ops import common_ops
 
-class main_palmer(common_ops):
+class palmer(common_ops):
 	def __init__(self, mf):
 		"Class used to create and process input and output for the program Modelfree 4."
 
 		self.mf = mf
 
 		print "Model-free analysis based on " + self.mf.usr_param.method + " model selection."
-		self.mf.data.stage = self.ask_stage()
+		self.ask_stage()
 		title = "<<< Stage " + self.mf.data.stage + " - "
 		title = title + self.mf.usr_param.method + " model selection >>>\n\n\n"
 
@@ -74,11 +75,11 @@ class main_palmer(common_ops):
 			input = raw_input('> ')
 			valid_stages = ['1', '2', '3']
 			if input in valid_stages:
-				stage = input
+				self.mf.data.stage = input
 				break
 			else:
 				print "Invalid stage number.  Choose either 1, 2, or 3."
-		if match('2', stage):
+		if match('2', self.mf.data.stage):
 			while 1:
 				print "Stage 2 has the following two options for the final run:"
 				print "   (a):   No optimization of the diffusion tensor."
@@ -86,13 +87,12 @@ class main_palmer(common_ops):
 				input = raw_input('> ')
 				valid_stages = ['a', 'b']
 				if input in valid_stages:
-					stage = stage + input
+					self.mf.data.stage = self.mf.data.stage + input
 					break
 				else:
 					print "Invalid option, choose either a or b."
 
-		print "The stage chosen is " + stage + "\n"
-		return stage
+		print "The stage chosen is " + self.mf.data.stage + "\n"
 
 
 	def close_mf_files(self, dir):

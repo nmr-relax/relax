@@ -10,7 +10,7 @@ class file_ops:
 		self.mf = mf
 
 
-	def init_log_file(self, title):
+	def init_log_file(self, title='Log file'):
 		"Initialise the log file."
 
 		self.mf.log = open('log.stage' + self.mf.data.stage, 'w')

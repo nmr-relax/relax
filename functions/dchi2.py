@@ -5,7 +5,7 @@ class dchi2:
 		"Function to create the chi-squared gradient."
 
 
-	def dchi2(self, params, diff_type, diff_params, model, relax_data, errors):
+	def dchi2(self, params, diff_type, diff_params, model, relax_data, errors, print_flag=0):
 		"""Function to create the chi-squared gradient.
 
 		Function arguments
@@ -51,7 +51,7 @@ class dchi2:
 		"""
 
 		# debug.
-		if self.mf.min_debug == 2:
+		if print_flag == 2:
 			print "\n< dchi2 >"
 			print "Params: " + `params`
 
@@ -91,7 +91,7 @@ class dchi2:
 				break
 
 		# debug.
-		if self.mf.min_debug == 2:
+		if print_flag == 2:
 			print "J(w):  " + `self.data.jw`
 			print "dJ(w): " + `self.data.djw`
 			print "Ri:    " + `self.data.ri`

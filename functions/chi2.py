@@ -3,7 +3,7 @@ class chi2:
 		"Function to calculate the chi-squared value."
 
 
-	def chi2(self, params, diff_type, diff_params, model, relax_data, errors):
+	def chi2(self, params, diff_type, diff_params, model, relax_data, errors, print_flag=0):
 		"""Function to calculate the chi-squared value.
 
 		Function arguments
@@ -49,7 +49,7 @@ class chi2:
 		"""
 
 		# debug.
-		if self.mf.min_debug == 2:
+		if print_flag == 2:
 			print "\n< chi2 >"
 			print "Params: " + `params`
 
@@ -80,7 +80,7 @@ class chi2:
 				continue
 
 		# debug.
-		if self.mf.min_debug == 2:
+		if print_flag == 2:
 			print "J(w): " + `self.data.jw`
 			print "Ri: " + `self.data.ri`
 			print "chi2: " + `self.data.chi2`

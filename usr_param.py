@@ -11,16 +11,14 @@ class usr_param:
 		"Class containing parameters specified by the user"
 
 		self.version = 0.5
-		self.program_type = "mf"
+		self.program_type = 'mf'
 
 		# Relaxation curve fitting.
-		if match(self.program_type, "relax_fit"):
-		#if match(self.program_type, "^[Rr]elax[ _][Ff]it$"):
+		if match('^[Rr]elax[ _][Ff]it$', self.program_type):
 			self.relax_params()
 
 		# Normal program use.
-		elif match(self.program_type, "mf"):
-		#elif match(self.program_type, "^[Mm][Ff]$"):
+		elif match('^[Mm][Ff]$', self.program_type):
 			self.init_params = ['fixed']
 			#self.init_params = ['Grid', 21]
 			self.minimiser = ['Newton', 'More Thuente']
@@ -33,8 +31,7 @@ class usr_param:
 			self.palmer_mfmodel_param()
 
 		# Use Art Palmer's Modelfree minimiser.
-		elif match(self.program_type, "palmer"):
-		#elif match(self.program_type, "^[Pp]almer$"):
+		elif match('^[Pp]almer$', self.program_type):
 			#self.init_input()
 			self.input()
 			self.model_selection()

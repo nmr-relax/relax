@@ -1,20 +1,38 @@
-import sys
 from Numeric import Float64, array
 from re import match
+import sys
+
+from common_ops import common_ops
+from functions.mf_functions import mf_functions
+from functions.mf_trans_functions import mf_trans_functions
 
 
-class main_model_free:
+class model_free(common_ops):
 	def __init__(self, mf):
 		"Class used to create and process input and output for the program Modelfree 4."
 
 		self.mf = mf
 
-		self.mf.data.stage, self.mf.data.model = self.ask_stage()
-		self.mf.file_ops.mkdir(self.mf.data.model)
-		self.mf.common_ops.extract_relax_data()
-		self.mf.results = open(self.mf.data.model + '/results', 'w')
+		if self.mf.debug == 1:
+			self.mf.file_ops.init_log_file()
+
+		self.update_data()
+		self.ask_stage()
+		if match('1', self.mf.data.stage):
+			self.minimisation_stage()
+		elif match('^2', self.mf.data.stage):
+			self.model_selection_stage()
+		else:
+			raise NameError, "No stage chosen."
+
+
+	def minimisation_stage(self):
+		self.extract_relax_data()
 		self.mf.data.calc_frq()
 		self.mf.data.calc_constants()
+
+		self.mf.file_ops.mkdir(self.mf.data.model)
+		self.mf.results = open(self.mf.data.model + '/results', 'w')
 
 		print "\n\n[ Model-free fitting ]\n"
 		diff_type = 'iso'
@@ -36,31 +54,33 @@ class main_model_free:
 
 		# Set the function, gradient, and hessian functions.
 		if self.scaling_flag:
-			func = self.mf.mf_trans_functions.chi2
-			dfunc = self.mf.mf_trans_functions.dchi2
-			d2func = self.mf.mf_trans_functions.d2chi2
+			self.functions = mf_trans_functions(self.mf)
+			func = self.functions.chi2
+			dfunc = self.functions.dchi2
+			d2func = self.functions.d2chi2
 		else:
-			func = self.mf.mf_functions.chi2
-			dfunc = self.mf.mf_functions.dchi2
-			d2func = self.mf.mf_functions.d2chi2
+			self.functions = mf_functions(self.mf)
+			func = self.functions.chi2
+			dfunc = self.functions.dchi2
+			d2func = self.functions.d2chi2
 
 		# The value of the constant.
 		self.c = 1e10
 
 		# Initialise the grid options.
-		if match('^[Gg]rid', self.mf.usr_param.init_params[0]):
+		if match('[Gg]rid', self.mf.usr_param.init_params[0]):
 			init_params = [self.mf.usr_param.init_params[0], self.init_grid_ops()]
 
 		# Initialise the fixed model-free parameter options.
-		elif match('^[Ff]ixed', self.mf.usr_param.init_params[0]):
+		elif match('[Ff]ixed', self.mf.usr_param.init_params[0]):
 			init_params = [self.mf.usr_param.init_params[0], self.init_fixed_params()]
 
 		# Initialise the Levenberg-Marquardt minimisation options.
-		if match('^[Ll][Mm]$', self.mf.usr_param.minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', self.mf.usr_param.minimiser[0]):
+		if match('[Ll][Mm]$', self.mf.usr_param.minimiser[0]) or match('[Ll]evenburg-[Mm]arquardt$', self.mf.usr_param.minimiser[0]):
 			if self.scaling_flag:
-				self.mf.usr_param.minimiser.append(self.mf.mf_trans_functions.lm_dri)
+				self.mf.usr_param.minimiser.append(mf_trans_functions.lm_dri)
 			else:
-				self.mf.usr_param.minimiser.append(self.mf.mf_functions.lm_dri)
+				self.mf.usr_param.minimiser.append(mf_functions.lm_dri)
 			self.mf.usr_param.minimiser.append([])
 
 		# Print a header into the results file.
@@ -111,23 +131,26 @@ class main_model_free:
 		self.mf.results.close()
 
 
+	def model_selection_stage(self):
+		"Model selection stage."
+
 	def ask_stage(self):
 		"User input of stage number."
 
 		print "\n[ Select the stage for model-free analysis ]\n"
 		print "The stages are:"
-		print "   Stage 1 (1):  Model-free fitting of the relaxation data."
+		print "   Stage 1 (1):  Minimisation."
 		print "   Stage 2 (2):  Model selection."
 
 		while 1:
 			input = raw_input('> ')
 			valid_stages = ['1', '2']
 			if input in valid_stages:
-				stage = input
+				self.mf.data.stage = input
 				break
 			else:
 				print "Invalid stage number.  Choose either 1 or 2."
-		if match('1', stage):
+		if match('1', self.mf.data.stage):
 			while 1:
 				print "Please select which model-free model to fit to."
 				print "   (1): Model-free model 1, {S2}."
@@ -138,17 +161,27 @@ class main_model_free:
 				input = raw_input('> ')
 				valid_stages = ['1', '2', '3', '4', '5']
 				if input in valid_stages:
-					model = input
+					self.mf.data.model = 'm' + input
 					break
 				else:
 					print "Invalid model-free model."
+		elif match('2', self.mf.data.stage):
+			while 1:
+				print "Stage 2 has the following two options for the final run:"
+				print "   (a):   No optimization of the diffusion tensor."
+				print "   (b):   Optimization of the diffusion tensor."
+				input = raw_input('> ')
+				valid_stages = ['a', 'b']
+				if input in valid_stages:
+					self.mf.data.stage = self.mf.data.stage + input
+					break
+				else:
+					print "Invalid option, choose either a or b."
 
-		print "The stage chosen is " + stage
-		if match('1', stage):
-			print "The model-free model chosen is " + model
+		print "The stage chosen is " + self.mf.data.stage + "\n"
+		if match('1', self.mf.data.stage):
+			print "The model-free model chosen is " + self.mf.data.model
 		print "\n"
-
-		return stage, 'm' + model
 
 
 	def init_fixed_params(self):
