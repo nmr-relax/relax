@@ -1786,7 +1786,7 @@ class Model_free:
         # Number of residues, minimisation instances, and data sets for the back-calculate function.
         if min_algor == 'back_calc':
             num_instances = 1
-            num_data_sets = 1
+            num_data_sets = 0
             num_res = 1
 
         # Loop over the minimisation instances.
@@ -1809,14 +1809,22 @@ class Model_free:
 
             # Index for the back_calc function.
             if min_algor == 'back_calc':
+                # Index for the back_calc function.
                 index = min_options[0]
 
-            # Create the initial parameter vector.
-            self.assemble_param_vector(index=index)
+                # Create the initial parameter vector.
+                self.assemble_param_vector(index=index)
 
-            # Diagonal scaling.
-            self.assemble_scaling_matrix(index=index)
-            self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+                # Diagonal scaling.
+                self.scaling_matrix = None
+
+            else:
+                # Create the initial parameter vector.
+                self.assemble_param_vector(index=index)
+
+                # Diagonal scaling.
+                self.assemble_scaling_matrix(index=index)
+                self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
@@ -1836,7 +1844,7 @@ class Model_free:
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
                     if self.print_flag >= 2:
                         print "\n\n"
-                    string = "Fitting to residue: " + `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name
+                    string = "Fitting to residue: " + `self.relax.data.res[self.run][index].num` + " " + self.relax.data.res[self.run][index].name
                     print string
                     print len(string) * '~'
 
@@ -1867,25 +1875,22 @@ class Model_free:
             # Set up the data for the back_calc function.
             if min_algor == 'back_calc':
                 # The data.
-                relax_data.append(0.0)
-                relax_error.append(0.000001)
-                equations.append(self.relax.data.res[self.run][index].equation)
-                param_types.append(self.relax.data.res[self.run][index].params)
-                r.append(self.relax.data.res[self.run][index].r)
-                csa.append(self.relax.data.res[self.run][index].csa)
-                num_frq.append(1)
-                frq.append([min_options[3]])
-                num_ri.append(1)
-                remap_table.append([0])
-                noe_r1_table.append([None])
-                ri_labels.append([min_options[1]])
-                xh_unit_vectors.append(None)
+                relax_data = [0.0]
+                relax_error = [0.000001]
+                equations = [self.relax.data.res[self.run][index].equation]
+                param_types = [self.relax.data.res[self.run][index].params]
+                r = [self.relax.data.res[self.run][index].r]
+                csa = [self.relax.data.res[self.run][index].csa]
+                num_frq = [1]
+                frq = [[min_options[3]]]
+                num_ri = [1]
+                remap_table = [[0]]
+                noe_r1_table = [[None]]
+                ri_labels = [[min_options[1]]]
+                xh_unit_vectors = [None]
 
                 # Count the number of model-free parameters for the residue index.
-                num_params.append(len(self.relax.data.res[self.run][index].params))
-
-                # Set the number of data sets to zero to skip the following section.
-                num_data_sets = 0
+                num_params = [len(self.relax.data.res[self.run][index].params)]
 
             # Loop over the number of data sets.
             for j in xrange(num_data_sets):
@@ -1936,9 +1941,9 @@ class Model_free:
             # Convert to Numeric arrays.
             relax_data = array(relax_data, Float64)
             relax_error = array(relax_error, Float64)
-            r = array(r, Float64)
-            csa = array(csa, Float64)
-            frq = array(frq, Float64)
+            #r = array(r, Float64)
+            #csa = array(csa, Float64)
+            #frq = array(frq, Float64)
 
             # Diffusion tensor type.
             if self.param_set == 'local_tm':
@@ -1949,31 +1954,23 @@ class Model_free:
             # Package the diffusion tensor parameters.
             diff_params = None
             if self.param_set == 'mf':
-                # Initialise.
-                diff_params = []
+                # Alias.
+                data = self.relax.data.diff[self.run]
 
                 # Isotropic diffusion.
                 if diff_type == 'iso':
-                    diff_params.append(self.relax.data.diff[self.run].tm)
+                    diff_params = [data.tm]
 
                 # Axially symmetric diffusion.
                 elif diff_type == 'axial':
-                    diff_params.append(self.relax.data.diff[self.run].tm)
-                    diff_params.append(self.relax.data.diff[self.run].Dratio)
-                    diff_params.append(self.relax.data.diff[self.run].theta)
-                    diff_params.append(self.relax.data.diff[self.run].phi)
+                    diff_params = [data.tm, data.Dratio, data.theta, data.phi]
 
                 # Anisotropic diffusion.
                 elif diff_type == 'aniso':
-                    diff_params.append(self.relax.data.diff[self.run].Dx)
-                    diff_params.append(self.relax.data.diff[self.run].Dy)
-                    diff_params.append(self.relax.data.diff[self.run].Dz)
-                    diff_params.append(self.relax.data.diff[self.run].alpha)
-                    diff_params.append(self.relax.data.diff[self.run].beta)
-                    diff_params.append(self.relax.data.diff[self.run].gamma)
+                    diff_params = [data.Dx, data.Dy, data.Dz, data.alpha, data.beta, data.gamma]
 
                 # Convert to a Numeric array.
-                diff_params = array(diff_params, Float64)
+                #diff_params = array(diff_params, Float64)
 
 
             # Initialise the function to minimise.
@@ -2673,8 +2670,14 @@ class Model_free:
         effect.
 
         Note that the Rex values are scaled quadratically with field strength and should be supplied
-        as the value for the first given field strength.
+        as a field strength independent value.  Use the following formula to get the correct value:
 
+            value = Rex / (2.0 * pi * frequency) ** 2
+            
+        where:
+            Rex is the chemical exchange value for the current frequency.
+            pi is in the namespace of relax, ie just type 'pi'.
+            frequency is the proton frequency corresponding to the data.
         """
 
         # Arguments.

@@ -243,8 +243,22 @@ class Value:
             else:
                 data_type_array = data_type
 
-            # Loop over the sequence.
+            # Test if the values already exist.
             for i in xrange(len(self.relax.data.res[run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[run][i].select:
+                    continue
+
+                # If 'res_num' is not None, skip the residue if there is no match.
+                if type(res_num) == int and not self.relax.data.res[run][i].num == res_num:
+                    continue
+                elif type(res_num) == str and not match(res_num, `self.relax.data.res[run][i].num`):
+                    continue
+
+                # If 'res_name' is not None, skip the residue if there is no match.
+                if res_name != None and not match(res_name, self.relax.data.res[run][i].name):
+                    continue
+
                 # Loop over the data types.
                 for name in data_type_array:
                     # Get the value and error.

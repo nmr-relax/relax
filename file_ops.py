@@ -87,7 +87,10 @@ class File_ops:
             raise RelaxFileOverwriteError, (file_name, 'force flag')
 
         # Open the file for writing.
-        open_file = open(file_name, 'w')
+        try:
+            open_file = open(file_name, 'w')
+        except IOError, message:
+            raise RelaxError, "Cannot open the file " + `file_name` + ".  " + message.args[1] + "."
 
         # Return the opened file.
         return open_file

@@ -226,14 +226,14 @@ class Interpreter:
         """Function for turning the function intro's off."""
 
         self.intro = 0
-        print "Function intro's have been disabled."
+        print "Function intros have been disabled."
 
 
     def _on(self):
         """Function for turning the function intro's on."""
 
         self.intro = 1
-        print "Function intro's have been enabled."
+        print "Function intros have been enabled."
 
 
     def script(self, file=None, quit=0):

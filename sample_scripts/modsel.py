@@ -28,6 +28,7 @@ for run in runs:
     read.results(run=run, data_type='mf', file='results', dir=run)
 
 # Model selection.
+eliminate()
 create_run('aic', 'mf')
 model_selection('AIC', 'aic')
 

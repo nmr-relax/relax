@@ -63,6 +63,9 @@ class Rx_data:
             # Remap the data structure 'self.relax.data.res[self.run][i]'.
             data = self.relax.data.res[self.run][i]
 
+            # Initialise all data structures.
+            self.update_data_structures(data)
+
             # Back-calculate the relaxation value.
             value = back_calculate(run=self.run, index=i, ri_label=self.ri_label, frq_label=frq_label, frq=self.frq)
 
@@ -438,31 +441,50 @@ class Rx_data:
         # Initialise the relaxation data structures (if needed).
         self.initialise_relax_data(data)
 
+        # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+        index = self.find_index(data)
+
+        # Append empty data.
+        if index == None:
+            data.relax_data.append(None)
+            data.relax_error.append(None)
+            data.ri_labels.append(None)
+            data.remap_table.append(None)
+            data.noe_r1_table.append(None)
+
+        # Set the index value.
+        if index == None:
+            i = len(data.relax_data) - 1
+        else:
+            i = index
+
         # Relaxation data and errors.
-        data.relax_data.append(value)
-        data.relax_error.append(error)
+        data.relax_data[i] = value
+        data.relax_error[i] = error
 
         # Update the number of relaxation data points.
-        data.num_ri = data.num_ri + 1
+        if index == None:
+            data.num_ri = data.num_ri + 1
 
         # Add ri_label to the data types.
-        data.ri_labels.append(self.ri_label)
+        data.ri_labels[i] = self.ri_label
 
         # Find if the frequency self.frq has already been loaded.
         remap = len(data.frq)
         flag = 0
-        for i in xrange(len(data.frq)):
-            if self.frq == data.frq[i]:
-                remap = i
+        for j in xrange(len(data.frq)):
+            if self.frq == data.frq[j]:
+                remap = j
                 flag = 1
 
         # Update the remap table.
-        data.remap_table.append(remap)
+        data.remap_table[i] = remap
 
         # Update the data structures which have a length equal to the number of field strengths.
         if not flag:
             # Update the number of frequencies.
-            data.num_frq = data.num_frq + 1
+            if index == None:
+                data.num_frq = data.num_frq + 1
 
             # Update the frequency labels.
             data.frq_labels.append(self.frq_label)
@@ -471,19 +493,18 @@ class Rx_data:
             data.frq.append(self.frq)
 
         # Update the NOE R1 translation table.
-        data.noe_r1_table.append(None)
-
         # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
         if self.ri_label == 'NOE':
-            for i in xrange(data.num_ri):
-                if data.ri_labels[i] == 'R1' and self.frq_label == data.frq_labels[data.remap_table[i]]:
-                    data.noe_r1_table[data.num_ri - 1] = i
+            for j in xrange(data.num_ri):
+                if data.ri_labels[j] == 'R1' and self.frq_label == data.frq_labels[data.remap_table[j]]:
+                    data.noe_r1_table[data.num_ri - 1] = j
 
+        # Update the NOE R1 translation table.
         # If the data corresponds to 'R1', try to find if the corresponding NOE data.
         if self.ri_label == 'R1':
-            for i in xrange(data.num_ri):
-                if data.ri_labels[i] == 'NOE' and self.frq_label == data.frq_labels[data.remap_table[i]]:
-                    data.noe_r1_table[i] = data.num_ri - 1
+            for j in xrange(data.num_ri):
+                if data.ri_labels[j] == 'NOE' and self.frq_label == data.frq_labels[data.remap_table[j]]:
+                    data.noe_r1_table[j] = data.num_ri - 1
 
 
     def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):
