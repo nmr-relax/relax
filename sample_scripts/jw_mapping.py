@@ -32,5 +32,5 @@ calc(name)
 monte_carlo.error_analysis(name)
 
 # Finish.
-write(run=name, file='results', force=1)
+results.write(run=name, file='results', force=1)
 state.save('save', force=1)

@@ -164,7 +164,7 @@ class Main:
                 run.create(run, 'mf')
 
                 # Load the local tm diffusion model MI results.
-                read(run=run, file='results', dir='local_tm/aic')
+                results.read(run=run, file='results', dir='local_tm/aic')
 
                 # Remove the tm parameter.
                 model_free.remove_tm(run=run)
@@ -188,7 +188,7 @@ class Main:
                 minimise('newton', run=run)
 
                 # Write the results.
-                write(run=run, file='results', dir=self.base_dir, force=1)
+                results.write(run=run, file='results', dir=self.base_dir, force=1)
 
 
             # Normal round of optimisation for diffusion models MII to MV.
@@ -220,7 +220,7 @@ class Main:
 
                 # Write the results.
                 dir = self.base_dir + 'opt'
-                write(run=run, file='results', dir=dir, force=1)
+                results.write(run=run, file='results', dir=dir, force=1)
 
 
         # Final run.
@@ -234,7 +234,7 @@ class Main:
             run.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
-            read(run='local_tm', file='results', dir='local_tm/aic')
+            results.read(run='local_tm', file='results', dir='local_tm/aic')
 
             # Loop over models MII to MV.
             for model in ['iso', 'prolate', 'oblate', 'aniso']:
@@ -249,7 +249,7 @@ class Main:
                 run.create(model, 'mf')
 
                 # Load the diffusion model results.
-                read(run=model, file='results', dir=model + '/round_' + `self.round` + '/opt')
+                results.read(run=model, file='results', dir=model + '/round_' + `self.round` + '/opt')
 
             # Create the run for model selection (which will be a copy of the selected diffusion model or run).
             run.create('final', 'mf')
@@ -271,7 +271,7 @@ class Main:
             # Write the final results.
             ##########################
 
-            write(run='final', file='results', dir='final', force=1)
+            results.write(run='final', file='results', dir='final', force=1)
 
 
         # Unknown script behaviour.
@@ -325,11 +325,11 @@ class Main:
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            read('tensor', 'results', self.diff_model + '/init')
+            results.read('tensor', 'results', self.diff_model + '/init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
+            results.read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
 
 
     def model_selection(self, run=None, dir=None, write_flag=1):
@@ -343,7 +343,7 @@ class Main:
 
         # Write the results.
         if write_flag:
-            write(run=run, file='results', dir=dir, force=1)
+            results.write(run=run, file='results', dir=dir, force=1)
 
 
     def multi_model(self, local_tm=0):
@@ -398,7 +398,7 @@ class Main:
 
             # Write the results.
             dir = self.base_dir + run
-            write(run=run, file='results', dir=dir, force=1)
+            results.write(run=run, file='results', dir=dir, force=1)
 
 
 # The main class.

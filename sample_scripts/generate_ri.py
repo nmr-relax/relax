@@ -77,4 +77,4 @@ back_calc(run)
 errors(run)
 
 # Write the relaxation data to file.
-write(run)
+results.write(run)

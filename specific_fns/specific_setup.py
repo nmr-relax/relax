@@ -100,6 +100,10 @@ class Specific_setup:
         if self.eqi == 'calculate':
             return self.relax.specific.jw_mapping.calculate
 
+        # Copy function.
+        if self.eqi == 'copy':
+            return self.relax.specific.jw_mapping.copy
+
         # Create Monte Carlo data function (same as data returning function).
         if self.eqi == 'create_mc_data':
             return self.relax.specific.jw_mapping.return_data
@@ -151,6 +155,10 @@ class Specific_setup:
         # Calculate function.
         if self.eqi == 'calculate':
             return self.relax.specific.model_free.calculate
+
+        # Copy function.
+        if self.eqi == 'copy':
+            return self.relax.specific.model_free.copy
 
         # Create Monte Carlo data function.
         if self.eqi == 'create_mc_data':

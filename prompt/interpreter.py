@@ -48,7 +48,6 @@ from minimisation import Minimisation
 from model_selection import Modsel
 from nuclei import Nuclei
 from pdb import PDB
-from rw import RW
 
 # User classes.
 from diffusion_tensor import Diffusion_tensor
@@ -61,6 +60,7 @@ from noe import Noe
 from palmer import Palmer
 from relax_data import Relax_data
 from relax_fit import Relax_fit
+from results import Results
 from run import Run
 from select import Select
 from sequence import Sequence
@@ -103,7 +103,6 @@ class Interpreter:
         self._OpenDX = OpenDX(relax)
         self._PDB = PDB(relax)
         self._system = system
-        self._RW = RW(relax)
 
         # Place the user classes into the interpreter class namespace.
         self._Diffusion_tensor = Diffusion_tensor(relax)
@@ -117,6 +116,7 @@ class Interpreter:
         self._Palmer = Palmer(relax)
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
+        self._Results = Results(relax)
         self._Run = Run(relax)
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
@@ -159,8 +159,6 @@ class Interpreter:
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei
         pdb = self._PDB.pdb
-        read = self._RW.read
-        write = self._RW.write
 
         # Place the user classes in the local namespace.
         diffusion_tensor = self._Diffusion_tensor
@@ -174,6 +172,7 @@ class Interpreter:
         palmer = self._Palmer
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
+        results = self._Results
         run = self._Run
         select = self._Select
         sequence = self._Sequence

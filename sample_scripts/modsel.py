@@ -14,7 +14,7 @@ for run in runs:
     run.create(run, 'mf')
 
     # Reload precalculated results from the file 'm1/results', etc.
-    read(run=run, file='results', dir=run)
+    results.read(run=run, file='results', dir=run)
 
 # Model selection.
 eliminate()
@@ -23,5 +23,5 @@ model_selection('AIC', 'aic')
 
 # Write the results.
 state.save('save', force=1)
-write(run='aic', file='results', force=1)
+results.write(run='aic', file='results', force=1)
 

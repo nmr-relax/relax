@@ -141,7 +141,7 @@ class Minimise:
         # Generate a temporary results file.
         self.temp_file = tag + '_initial_results'
         print "Saving the current results for run " + `run` + " in the file 'initial_results' for initialising all threads."
-        self.relax.generic.rw.write_results(run=run, file=self.temp_file, directory='/tmp', force=1, compress_type=0)
+        self.relax.generic.results.write(run=run, file=self.temp_file, directory='/tmp', force=1, compress_type=0)
         print ""
 
         # Initialise the job and results queues.
@@ -281,8 +281,8 @@ class RelaxMinimiseThread(RelaxThread):
         # Open a pipe.
         child_stdin, child_stdout, child_stderr = popen3(cmd, 'r')
 
-        # Stdout and stderr.
-        out = child_stdout.readlines()
+        # Catch the results.
+        self.results = child_stdout.readlines()
 
         # Close all pipes.
         child_stdin.close()
@@ -292,7 +292,7 @@ class RelaxMinimiseThread(RelaxThread):
         err = child_stderr.readlines()
         if len(err):
             for line in err:
-                print line
+                print line[0:-1]
 
         # Close the error pipe.
         child_stderr.close()
@@ -308,7 +308,7 @@ class RelaxMinimiseThread(RelaxThread):
         self.sim = data
 
         # Thread run name.
-        self.thread_run = 'sim_%s' % self.sim
+        self.thread_run = '%s_sim_%s' % (self.tag, self.sim)
 
         # Script and log files.
         self.script_file = "%s/%s/script_sim_%s.py" % (self.relax.data.thread.swd[self.i], self.tag, self.sim)
@@ -319,6 +319,18 @@ class RelaxMinimiseThread(RelaxThread):
 
         # Execute relax and run the script.
         self.exec_relax()
+
+        # Create a run in the parent to temporarily store the data prior to copying into the main run.
+        self.relax.generic.runs.create(run=self.thread_run, run_type=self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)])
+
+        # Read the data into the run.
+        self.relax.generic.results.read(run=self.thread_run, file_data=self.results)
+
+        # Copy the results from the thread run to the parent run.
+        self.relax.generic.results.copy(run1=self.thread_run, run2=self.parent_run, sim=self.sim)
+
+        # Delete the thread run
+        self.relax.generic.runs.delete(self.thread_run)
 
         # Set the results to the completed simulation number.
         self.results = self.sim
@@ -334,19 +346,22 @@ class RelaxMinimiseThread(RelaxThread):
         fn.append("self.relax.generic.runs.create(run='%s', run_type='%s')" % (self.thread_run, self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)]))
 
         # Function: Read the results.
-        fn.append("self.relax.generic.rw.read_results(run='%s', file='%s')" % (self.thread_run, self.results_file))
+        fn.append("self.relax.generic.results.read(run='%s', file='%s')" % (self.thread_run, self.results_file))
 
         # Function: Minimise.
         fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.thread_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.sim))
 
-        # Function: Write the results.
-        fn.append("self.relax.generic.rw.write_results(run='%s', file='%s', directory='%s', force=1)" % (self.thread_run, 'sim_' + `self.sim`, self.relax.data.thread.swd[self.i] + '/' + self.tag))
+        # Function: Turn logging off.  This is so that the results can come back through the pipe's stdout.
+        fn.append("self.relax.IO.logging_off()")
 
-        # Generate the text of the script file.
+        # Generate the main text of the script file.
         text = ''
         for i in xrange(len(fn)):
             text = text + "print \"\\n" + fn[i] + "\"\n"
             text = text + fn[i] + "\n"
+
+        # Function: Write the to stdout.
+        text = text + "self.relax.generic.results.display(run='%s')\n" % (self.thread_run)
 
         # Cat the text into the script file.
         cmd = "%s cat > %s" % (self.relax.data.thread.login_cmd[self.i], self.script_file)

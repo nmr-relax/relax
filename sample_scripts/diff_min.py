@@ -63,7 +63,7 @@ for run in runs:
     minimise('newton', run=run, max_iter=5000)
 
     # Write the results.
-    write(run=run, file='results', force=1)
+    results.write(run=run, file='results', force=1)
 
 # Save the program state.
 state.save('save', force=1)

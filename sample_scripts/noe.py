@@ -41,7 +41,7 @@ grace.view(file='sat.agr')
 grace.view(file='noe.agr')
 
 # Write the results.
-write(run, file='results', dir=None, force=1)
+results.write(run, file='results', dir=None, force=1)
 
 # Save the program state.
 state.save('save', force=1)

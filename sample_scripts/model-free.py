@@ -49,12 +49,12 @@ grid_search(name, inc=11)
 minimise('newton', run=name)
 
 # Monte Carlo simulations.
-#monte_carlo.setup(name, number=100)
-#monte_carlo.create_data(name)
-#monte_carlo.initial_values(name)
-#minimise('newton', run=name)
-#monte_carlo.error_analysis(name)
+monte_carlo.setup(name, number=100)
+monte_carlo.create_data(name)
+monte_carlo.initial_values(name)
+minimise('newton', run=name)
+monte_carlo.error_analysis(name)
 
 # Finish.
-write(run=name, file='results', force=1)
+results.write(run=name, file='results', force=1)
 state.save('save', force=1)

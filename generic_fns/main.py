@@ -21,7 +21,6 @@
 ###############################################################################
 
 from angles import Angles
-from runs import Runs
 from delete import Delete
 from dx.opendx import OpenDX
 from diffusion_tensor import Diffusion_tensor
@@ -36,7 +35,8 @@ from monte_carlo import Monte_carlo
 from nuclei import Nuclei
 from palmer import Palmer
 from pdb import PDB
-from rw import RW
+from results import Results
+from runs import Runs
 from selection import Selection
 from sequence import Sequence
 from state import State
@@ -54,7 +54,6 @@ class Generic:
 
         # Set up all the classes.
         self.angles = Angles(self.relax)
-        self.runs = Runs(self.relax)
         self.delete = Delete(self.relax)
         self.diffusion_tensor = Diffusion_tensor(self.relax)
         self.eliminate = Eliminate(self.relax)
@@ -69,7 +68,8 @@ class Generic:
         self.opendx = OpenDX(self.relax)
         self.palmer = Palmer(self.relax)
         self.pdb = PDB(self.relax)
-        self.rw = RW(self.relax)
+        self.results = Results(self.relax)
+        self.runs = Runs(self.relax)
         self.selection = Selection(self.relax)
         self.sequence = Sequence(self.relax)
         self.state = State(self.relax)

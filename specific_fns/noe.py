@@ -136,7 +136,7 @@ class Noe:
         self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
 
 
-    def read_columnar_results(self, run, file_name, file_data):
+    def read_columnar_results(self, run, file_data):
         """Function for reading the results file."""
 
         # Arguments.
@@ -170,7 +170,7 @@ class Noe:
 
         # Test the file.
         if len(col) < 2:
-            raise RelaxInvalidFileError, file_name
+            raise RelaxInvalidDataError
 
 
         # Sequence.

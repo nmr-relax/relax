@@ -65,11 +65,9 @@ class Runs:
             if not hasattr(object, 'keys'):
                 continue
 
-            # Loop over the runs.
-            for run in self.runs:
-                # Delete the data if the object contains the key 'run'.
-                if object.has_key(run):
-                    del(object[run])
+            # Delete the data if the object contains the key 'run'.
+            if object.has_key(run):
+                del(object[run])
 
         # Clean up the runs, ie delete any runs for which there is no data left.
         self.eliminate_unused_runs()

@@ -66,12 +66,12 @@ class Run:
 
         To set up a model-free analysis run with the name 'm5', type:
 
-        relax> create_run('m5', 'mf')
+        relax> run.create('m5', 'mf')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "create_run("
+            text = sys.ps3 + "run.create("
             text = text + "run=" + `run`
             text = text + ", run_type=" + `run_type` + ")"
             print text
@@ -105,7 +105,7 @@ class Run:
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "delete("
+            text = sys.ps3 + "run.delete("
             text = text + "run=" + `run` + ")"
             print text
 

@@ -105,25 +105,30 @@ class IO:
         remove(file_path)
 
 
-    def extract_data(self, file_name=None, dir=None, sep=None, compress_type=0):
+    def extract_data(self, file_name=None, dir=None, file_data=None, sep=None, compress_type=0):
         """Open the file 'file' and return all the data."""
 
-        # Open the file.
-        file = self.open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
+        # Data not already extracted from the file.
+        if not file_data:
+            # Open the file.
+            file = self.open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
+
+            # Read lines.
+            file_data = file.readlines()
 
         # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
-        lines = file.readlines()
         data = []
-        for i in xrange(len(lines)):
+        for i in xrange(len(file_data)):
             if sep:
-                row = split(lines[i], sep)
+                row = split(file_data[i], sep)
             else:
-                row = split(lines[i])
+                row = split(file_data[i])
             data.append(row)
         return data
 
         # Close the file.
-        file.close()
+        if not file_data:
+            file.close()
 
 
     def file_path(self, file_name=None, dir=None):
@@ -143,16 +148,17 @@ class IO:
         return file_path
 
 
-    def log(self, file_name=None, dir=None, compress_type=0):
+    def log(self, file_name=None, dir=None, compress_type=0, print_flag=1):
         """Function for turning logging on."""
 
         # Log file.
-        self.log_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, return_path=1)
+        self.log_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
 
         # Print out.
-        print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
-        print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
-        print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
+        if print_flag:
+            print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
+            print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
+            print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
 
         # Set the logging IO streams.
         self.log_stdout = self.log_file
@@ -164,13 +170,14 @@ class IO:
         sys.stderr = self.log_stderr
 
 
-    def logging_off(self, file_name=None, dir=None):
+    def logging_off(self, file_name=None, dir=None, print_flag=1):
         """Function for turning logging and teeing off."""
 
         # Print out.
-        print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
-        print "Redirecting the sys.stdout IO stream to the standard python stdout IO stream."
-        print "Redirecting the sys.stderr IO stream to the standard python stderr IO stream."
+        if print_flag:
+            print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
+            print "Redirecting the sys.stdout IO stream to the standard python stdout IO stream."
+            print "Redirecting the sys.stderr IO stream to the standard python stderr IO stream."
 
         # IO stream redirection.
         sys.stdin  = self.python_stdin 
@@ -307,16 +314,17 @@ class IO:
         return new
 
 
-    def tee(self, file_name=None, dir=None, compress_type=0):
+    def tee(self, file_name=None, dir=None, compress_type=0, print_flag=1):
         """Function for turning logging on."""
 
         # Tee file.
-        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, return_path=1)
+        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
 
         # Print out.
-        print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
-        print "Redirecting the sys.stdout IO stream to both the standard python stdout IO stream and the log file '%s'." % file_path
-        print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
+        if print_flag:
+            print "Redirecting the sys.stdin IO stream to the standard python stdin IO stream."
+            print "Redirecting the sys.stdout IO stream to both the standard python stdout IO stream and the log file '%s'." % file_path
+            print "Redirecting the sys.stderr IO stream to both the standard python stderr IO stream and the log file '%s'." % file_path
 
         # Set the tee IO streams.
         self.tee_stdout.split(self.python_stdout, self.tee_file)

@@ -22,12 +22,46 @@
 
 import sys
 
+import help
 
-class RW:
+
+class Results:
     def __init__(self, relax):
-        """Class for writing data to a file."""
+        # Help.
+        self.__relax_help__ = \
+        """Class for manipulating results."""
 
-        self.relax = relax
+        # Add the generic help string.
+        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
+
+        # Place relax in the class namespace.
+        self.__relax__ = relax
+
+
+    def display(self, run=None, format='columnar'):
+        """Function for displaying the results of the run.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        format:  The format of the output.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "results.display("
+            text = text + "run=" + `run`
+            text = text + ", format=" + `format` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.__relax__.generic.results.display(run=run)
 
 
     def read(self, run=None, file='results', dir='run', format='columnar'):
@@ -57,8 +91,8 @@ class RW:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
-            text = sys.ps3 + "read("
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "results.read("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             if dir == 'run':
@@ -85,11 +119,11 @@ class RW:
             raise RelaxStrError, ('format', format)
 
         # Execute the functional code.
-        self.relax.generic.rw.read_results(run=run, file=file, directory=dir, format=format)
+        self.__relax__.generic.results.read(run=run, file=file, directory=dir, format=format)
 
 
     def write(self, run=None, file='results', dir='run', force=0, format='columnar', compress_type=1):
-        """Function for writing results to a file.
+        """Function for writing results of the run to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -101,6 +135,8 @@ class RW:
         dir:  The directory name.
 
         force:  A flag which, if set to 1, will cause the results file to be overwritten.
+
+        format:  The format of the output.
 
         compress_type:  The type of compression to use when creating the file.
 
@@ -122,8 +158,8 @@ class RW:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
-            text = sys.ps3 + "write("
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "results.write("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             if dir == 'run':
@@ -160,4 +196,4 @@ class RW:
             raise RelaxIntError, ('compression type', compress_type)
 
         # Execute the functional code.
-        self.relax.generic.rw.write_results(run=run, file=file, directory=dir, force=force, format=format, compress_type=compress_type)
+        self.__relax__.generic.results.write(run=run, file=file, directory=dir, force=force, format=format, compress_type=compress_type)

@@ -82,7 +82,7 @@ def exec_stage_2(runs):
     model_selection(method='AIC', modsel_run=run)
 
     # Write the results.
-    write(run=run, file='results', force=1)
+    results.write(run=run, file='results', force=1)
 
     # Save the program state.
     state.save('stage2.save', force=1)

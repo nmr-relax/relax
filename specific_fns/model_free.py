@@ -406,7 +406,7 @@ class Model_free(Common_functions):
         self.minimise(run=self.run, min_algor='calc', min_options=res_num, sim_index=sim_index)
 
 
-    def copy(self, run1=None, run2=None):
+    def copy(self, run1=None, run2=None, sim=None):
         """Function for copying all model-free data from run1 to run2."""
 
         # Test if run1 exists.
@@ -433,17 +433,6 @@ class Model_free(Common_functions):
         # Get all data structure names.
         names = self.data_names()
 
-        # Test if run2 contains any model-free data.
-        for i in xrange(len(self.relax.data.res[run2])):
-            # Remap the data structure 'self.relax.data.res[run2][i]'.
-            data = self.relax.data.res[run2][i]
-
-            # Loop through the data structure names.
-            for name in names:
-                # Raise an error if data exists.
-                if hasattr(data, name):
-                    raise RelaxMfError, run2
-
         # Copy the data.
         for i in xrange(len(self.relax.data.res[run1])):
             # Remap the data structure 'self.relax.data.res[run1][i]'.
@@ -452,12 +441,30 @@ class Model_free(Common_functions):
 
             # Loop through the data structure names.
             for name in names:
-                # Skip the data structure if it does not exist.
-                if not hasattr(data1, name):
-                    continue
+                # All data.
+                if not sim:
+                    # Skip the data structure if it does not exist.
+                    if not hasattr(data1, name):
+                        continue
 
-                # Copy the data structure.
-                setattr(data2, name, deepcopy(getattr(data1, name)))
+                    # Copy the data structure.
+                    setattr(data2, name, deepcopy(getattr(data1, name)))
+
+                # Copy just the simulation data for the simulation 'sim'.
+                else:
+                    # Sim data name
+                    name = name + '_sim'
+
+                    # Skip the data structure if it does not exist in both runs.
+                    if not hasattr(data1, name) or not hasattr(data2, name):
+                        continue
+
+                    # Get the objects.
+                    object1 = getattr(data1, name)
+                    object2 = getattr(data2, name)
+
+                    # Copy the data.
+                    object2[sim] = object1[sim]
 
 
     def create_mc_data(self, run, i):
@@ -2598,7 +2605,7 @@ class Model_free(Common_functions):
             return 1
 
 
-    def read_columnar_results(self, run, file_name, file_data):
+    def read_columnar_results(self, run, file_data):
         """Function for reading the results file."""
 
         # Arguments.
@@ -2714,7 +2721,7 @@ class Model_free(Common_functions):
 
         # Test the file.
         if len(col) < 2:
-            raise RelaxInvalidFileError, file_name
+            raise RelaxInvalidDataError
 
 
         # Initialise some data structures and flags.

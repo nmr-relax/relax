@@ -105,13 +105,18 @@ class Relax:
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
 
+        # Logging print flag.
+        print_flag = 1
+        if mode == 'thread':
+            print_flag = 0
+
         # Logging.
         if log_file:
-            self.IO.log(log_file)
+            self.IO.log(log_file, print_flag=print_flag)
 
         # Tee.
         elif tee_file:
-            self.IO.tee(tee_file)
+            self.IO.tee(tee_file, print_flag=print_flag)
 
         # Run the interpreter for the prompt or script modes.
         if mode == 'prompt' or mode == 'script':

@@ -53,7 +53,7 @@ for i in xrange(len(runs)):
         minimise('newton', 'chol', run=cv_runs[i][j])
 
         # Write the results.
-        write(run=cv_runs[i][j], force=1)
+        results.write(run=cv_runs[i][j], force=1)
 
 
 print "\n\n\n\n"
@@ -100,5 +100,5 @@ for i in xrange(len(ri_labels)):
 minimise('newton', run='cv')
 
 # Finish.
-write(run='cv', file='results', force=1)
+results.write(run='cv', file='results', force=1)
 state.save('save', force=1)

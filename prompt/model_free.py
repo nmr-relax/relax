@@ -38,7 +38,7 @@ class Model_free:
         self.__relax__ = relax
 
 
-    def copy(self, run1=None, run2=None):
+    def copy(self, run1=None, run2=None, sim=None):
         """Function for copying model-free data from run1 to run2.
 
         Keyword Arguments
@@ -48,12 +48,15 @@ class Model_free:
 
         run2:  The name of the run to copy the sequence to.
 
+        sim:  The simulation number.
+
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy all model-free data from 'run1' to 'run2'.  'run2' must not contain
-        any model-free data.
+        This function will copy all model-free data from 'run1' to 'run2'.  Any model-free data in
+        'run2' will be overwritten.  If the argument 'sim' is an integer, then only data from that
+        simulation will be copied.
 
 
         Examples
@@ -69,7 +72,8 @@ class Model_free:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.copy("
             text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
+            text = text + ", run2=" + `run2`
+            text = text + ", sim=" + `sim` + ")"
             print text
 
         # The run1 argument.
@@ -80,8 +84,12 @@ class Model_free:
         if type(run2) != str:
             raise RelaxStrError, ('run2', run2)
 
+        # The sim argument.
+        if type(sim) != int:
+            raise RelaxIntError, ('sim', sim)
+
         # Execute the functional code.
-        self.__relax__.specific.model_free.copy(run1=run1, run2=run2)
+        self.__relax__.specific.model_free.copy(run1=run1, run2=run2, sim=sim)
 
 
     def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
