@@ -29,7 +29,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, scaling_matrix=None, mu0=1e-2, lambda0=None, epsilon0=1e5, gamma0=1e5, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-2, lambda0=None, epsilon0=1e2, gamma0=1e2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
@@ -124,7 +124,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
         print "\n"
         print "Method of Multipliers"
         print "~~~~~~~~~~~~~~~~~~~~~"
-    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, scaling_matrix, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
+    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
     if min.init_failure:
         print "Initialisation of minimisation has failed."
         return None
@@ -134,7 +134,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 
 
 class Method_of_multipliers(Min):
-    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, scaling_matrix, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
+    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
         """Class for Newton minimisation specific functions.
 
         Unless you know what you are doing, you should call the function 'method_of_multipliers'
@@ -152,7 +152,7 @@ class Method_of_multipliers(Min):
         if A != None and b != None:
             self.A = A
             self.b = b
-            self.constraint_linear = Constraint_linear(self.A, self.b, scaling_matrix)
+            self.constraint_linear = Constraint_linear(self.A, self.b)
             self.c = self.constraint_linear.func
             self.dc = self.constraint_linear.dfunc
             self.d2c = None
@@ -160,8 +160,8 @@ class Method_of_multipliers(Min):
             self.m = len(self.b)
             if print_flag >= 2:
                 print "Linear constraint matrices."
-                print "A: " + `self.A`
-                print "b: " + `self.b`
+                print "A:\n" + `self.A`
+                print "b:\n" + `self.b`
 
         # Bound constraints.
         elif l != None and u != None:
@@ -196,12 +196,6 @@ class Method_of_multipliers(Min):
         self.min_algor = min_options[0]
         self.min_options = min_options[1:]
 
-        # Initial Lagrange multipliers.
-        if lambda0 == None:
-            self.lambda_k = zeros(self.m, Float64)
-        else:
-            self.lambda_k = lambda0
-
         # Function arguments.
         self.args = args
         self.func = func
@@ -230,6 +224,16 @@ class Method_of_multipliers(Min):
 
         # Initialise the warning string.
         self.warning = None
+
+        # Initial Lagrange multipliers.
+        if lambda0 == None:
+            self.lambda_k = zeros(self.m, Float64)
+            self.ck = apply(self.c, (self.xk,)+args)
+            for i in range(self.m):
+                if self.ck[i] <= 0.0:
+                    self.lambda_k[i] = 1e2
+        else:
+            self.lambda_k = lambda0
 
         # Initialise data structures.
         self.test_str = zeros(self.m)

@@ -41,7 +41,7 @@ from levenberg_marquardt import levenberg_marquardt
 from method_of_multipliers import method_of_multipliers
 
 
-def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, scaling_matrix=None, full_output=0, print_flag=0, print_prefix=""):
+def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, full_output=0, print_flag=0, print_prefix=""):
     """Generic minimisation function.
 
     This is a generic function which can be used to access all minimisers using the same set of
@@ -85,8 +85,6 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     dc:  User supplied constraint gradient function.
 
     d2c:  User supplied constraint Hessian function.
-
-    scaling_matrix:  Diagonal scaling matrix of scaling factors.
 
     full_output:  A flag specifying which data structures should be returned.  The following values
     will return, in tuple form, the following data:
@@ -316,7 +314,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
 
     # Method of Multipliers.
     elif match('^[Mm][Oo][Mm]$', min_algor) or match('[Mm]ethod of [Mm]ultipliers$', min_algor):
-        results = method_of_multipliers(func=func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, A=A, b=b, l=l, u=u, c=c, dc=dc, d2c=d2c, scaling_matrix=scaling_matrix, func_tol=func_tol, grad_tol=grad_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+        results = method_of_multipliers(func=func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, min_options=min_options, A=A, b=b, l=l, u=u, c=c, dc=dc, d2c=d2c, func_tol=func_tol, grad_tol=grad_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 
 
     # No match to minimiser string.
