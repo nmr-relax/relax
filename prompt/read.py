@@ -52,8 +52,8 @@ class Macro_class:
         """Class containing macros for loading data."""
 
         self.relax = relax
-        self.relax_data = self.relax.relax_data.macro_read
-        self.sequence = self.relax.sequence.macro_read
+        self.relax_data = self.relax.specific.relax_data.macro_read
+        self.sequence = self.relax.generic.sequence.macro_read
 
 
     def read_data(self, run=None, data_type=None, file='results', dir=None):

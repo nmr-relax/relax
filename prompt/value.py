@@ -161,4 +161,4 @@ class Macro_class:
                 raise RelaxNoneFloatError, ('error', err)
 
         # Execute the functional code.
-        self.relax.value.set(run=run, data_type=data_type, val=val, err=err)
+        self.relax.generic.value.set(run=run, data_type=data_type, val=val, err=err)

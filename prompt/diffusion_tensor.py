@@ -179,4 +179,4 @@ class Diffusion_tensor:
             raise RelaxBinError, ('fixed flag', fixed)
 
         # Execute the functional code.
-        self.relax.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, fixed=fixed)
+        self.relax.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, fixed=fixed)

@@ -59,4 +59,4 @@ class Nuclei:
             raise RelaxStrError, ('heteronucleus', heteronuc)
 
         # Execute the functional code.
-        self.relax.nuclei.nuclei(heteronuc=heteronuc)
+        self.relax.generic.nuclei.nuclei(heteronuc=heteronuc)

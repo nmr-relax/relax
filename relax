@@ -39,32 +39,13 @@ import pstats
 from re import match
 import sys
 
-from angles import Angles
-from create_run import Create_run
 from data.main import Data
-from delete import Delete
-from diffusion_tensor import Diffusion_tensor
-from dx.map import Map
-from dx.opendx import OpenDX
 from errors import RelaxErrors
 from file_ops import File_ops
-from fix import Fix
-from min import Minimise
-from model_free import Model_free
-from model_selection import Model_selection
-from nuclei import Nuclei
-from palmer import Palmer
-from pdb import PDB
+from generic_fns.main import Generic
 from prompt.interpreter import Interpreter
-from relax_data import Rx_data
-from rw import RW
-from selection import Selection
-from sequence import Sequence
-from specific_setup import Specific_setup
-from state import State
-from value import Value
-from vectors import Vectors
-from view import View
+from specific_fns.main import Specific
+from specific_fns.specific_setup import Specific_setup
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -72,11 +53,12 @@ sys.path[0] = '.'
 
 class Relax:
     def __init__(self, argv):
-        """The top level class."""
+        """The top level class for initialising the program."""
 
+        # Command line arguments.
         self.argv = argv
 
-        # Set up the user errors.
+        # Set up the program internal errors.
         RelaxErrors()
 
         # Test if all the dependencies are installed.
@@ -88,33 +70,20 @@ class Relax:
         # Debugging option, 0 = off, 1 = on.
         self.debug = 0
 
-        # The program data storage class.
+        # The program data storage object.
         self.data = Data()
 
-        # Various functions.
-        self.angles = Angles(self)
-        self.create_run = Create_run(self)
-        self.delete = Delete(self)
-        self.diffusion_tensor = Diffusion_tensor(self)
+        # File operation functions.
         self.file_ops = File_ops(self)
-        self.fix = Fix(self)
-        self.map = Map(self)
-        self.min = Minimise(self)
-        self.model_free = Model_free(self)
-        self.model_selection = Model_selection(self)
-        self.nuclei = Nuclei(self)
-        self.opendx = OpenDX(self)
-        self.palmer = Palmer(self)
-        self.pdb = PDB(self)
-        self.relax_data = Rx_data(self)
-        self.rw = RW(self)
-        self.selection = Selection(self)
-        self.sequence = Sequence(self)
+
+        # Setup the specific setup object.
         self.specific_setup = Specific_setup(self)
-        self.state = State(self)
-        self.value = Value(self)
-        self.vectors = Vectors(self)
-        self.view = View(self)
+
+        # Setup the object containing the generic functions.
+        self.generic = Generic(self)
+
+        # Setup the object containing the specific functions.
+        self.specific = Specific(self)
 
         # Process the command line arguments.
         self.arguments()

@@ -128,4 +128,4 @@ class Macro_class:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.relax.state.save(file_name=file_name, force=force)
+        self.relax.generic.state.save(file_name=file_name, force=force)
