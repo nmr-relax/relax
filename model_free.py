@@ -1335,11 +1335,15 @@ class Model_free:
 
             # Warning.
             if len(file_data[i]) > 19:
-                warning = file_data[19]
+                warning = file_data[i][19]
                 for j in range(20, len(file_data[i])):
                     warning = warning + " " + file_data[i][j]
             else:
                 warning = None
+
+            # Initialise the runs data structure.
+            if not hasattr(self.relax.data.res[index], 'runs'):
+                self.relax.data.res[index].runs = []
 
             # Initialise the data structures (if needed).
             self.initialise_mf_data(self.relax.data.res[index], run)
@@ -1689,108 +1693,113 @@ class Model_free:
 
         # Loop over the sequence.
         for i in range(len(self.relax.data.res)):
+            # Reassign data structure.
+            res = self.relax.data.res[i]
+
             # Skip unselected residues.
-            if not self.relax.data.res[i].select:
+            if not res.select:
                 continue
 
-            # Initialise.
-            types = self.relax.data.res[i].params[run]
-
             # Residue number and name.
-            file.write("%-5s" % self.relax.data.res[i].num)
-            file.write("%-6s" % self.relax.data.res[i].name)
+            file.write("%-5s" % res.num)
+            file.write("%-6s" % res.name)
+
+            # Test if the run exists.
+            if not run in res.runs:
+                file.write("\n")
+                continue
 
             # Model details.
-            file.write("%-6s" % self.relax.data.res[i].models[run])
-            file.write("%-10s" % self.relax.data.res[i].equations[run])
-            file.write("%-36s" % replace(`types`, ' ', ''))
+            file.write("%-6s" % res.models[run])
+            file.write("%-10s" % res.equations[run])
+            file.write("%-36s" % replace(`res.params[run]`, ' ', ''))
 
             # S2.
-            if self.relax.data.res[i].s2[run] == None:
+            if res.s2[run] == None:
                 file.write("%-26s" % "N/A")
             else:
-                file.write("%-26s" % `self.relax.data.res[i].s2[run]`)
+                file.write("%-26s" % `res.s2[run]`)
 
             # S2f.
-            if self.relax.data.res[i].s2f[run] == None:
+            if res.s2f[run] == None:
                 file.write("%-26s" % "N/A")
             else:
-                file.write("%-26s" % `self.relax.data.res[i].s2f[run]`)
+                file.write("%-26s" % `res.s2f[run]`)
 
             # S2s.
-            if self.relax.data.res[i].s2s[run] == None:
+            if res.s2s[run] == None:
                 file.write("%-26s" % "N/A")
             else:
-                file.write("%-26s" % `self.relax.data.res[i].s2s[run]`)
+                file.write("%-26s" % `res.s2s[run]`)
 
             # tm.
-            if hasattr(self.relax.data.res[i], 'tm') and self.relax.data.res[i].tm.has_key(run) and self.relax.data.res[i].tm[run] != None:
-                file.write("%-26s" % `self.relax.data.res[i].tm[run] / 1e-12`)
+            if hasattr(res, 'tm') and res.tm.has_key(run) and res.tm[run] != None:
+                file.write("%-26s" % `res.tm[run] / 1e-12`)
             else:
                 file.write("%-26s" % `self.relax.data.diff_params[run][0] / 1e-12`)
 
             # tf.
-            if self.relax.data.res[i].tf[run] == None:
+            if res.tf[run] == None:
                 file.write("%-26s" % "N/A")
             else:
-                file.write("%-26s" % `self.relax.data.res[i].tf[run] / 1e-12`)
+                file.write("%-26s" % `res.tf[run] / 1e-12`)
 
             # te or ts.
-            if self.relax.data.res[i].te[run] == None and self.relax.data.res[i].ts[run] == None:
+            if res.te[run] == None and res.ts[run] == None:
                 file.write("%-26s" % "N/A")
-            elif self.relax.data.res[i].te[run] != None:
-                file.write("%-26s" % `self.relax.data.res[i].te[run] / 1e-12`)
+            elif res.te[run] != None:
+                file.write("%-26s" % `res.te[run] / 1e-12`)
             else:
-                file.write("%-26s" % `self.relax.data.res[i].ts[run] / 1e-12`)
+                file.write("%-26s" % `res.ts[run] / 1e-12`)
 
             # Rex.
-            if self.relax.data.res[i].rex[run] == None:
+            if res.rex[run] == None:
                 file.write("%-26s" % "N/A")
             else:
-                file.write("%-26s" % `self.relax.data.res[i].rex[run] * (2.0 * pi * self.relax.data.res[i].frq[run][0])**2`)
+                file.write("%-26s" % `res.rex[run] * (2.0 * pi * res.frq[run][0])**2`)
 
             # Bond length.
-            if self.relax.data.res[i].r[run] == None:
+            if res.r[run] == None:
                 file.write("%-26s" % "N/A")
             else:
-                file.write("%-26s" % `self.relax.data.res[i].r[run] / 1e-10`)
+                file.write("%-26s" % `res.r[run] / 1e-10`)
 
             # CSA.
-            if self.relax.data.res[i].csa[run] == None:
+            if res.csa[run] == None:
                 file.write("%-26s" % "N/A")
             else:
-                file.write("%-26s" % `self.relax.data.res[i].csa[run] / 1e-6`)
+                file.write("%-26s" % `res.csa[run] / 1e-6`)
 
             # Chi-squared.
-            file.write("%-26s" % `self.relax.data.res[i].chi2[run]`)
+            file.write("%-26s" % `res.chi2[run]`)
 
             # Iterations
-            if self.relax.data.res[i].iter[run] == None:
+            if res.iter[run] == None:
                 file.write("%-9s" % "None")
             else:
-                file.write("%-9i" % self.relax.data.res[i].iter[run])
+                file.write("%-9i" % res.iter[run])
 
             # Function count.
-            if self.relax.data.res[i].f_count[run] == None:
+            if res.f_count[run] == None:
                 file.write("%-9s" % "None")
             else:
-                file.write("%-9i" % self.relax.data.res[i].f_count[run])
+                file.write("%-9i" % res.f_count[run])
 
             # Gradient count.
-            if self.relax.data.res[i].g_count[run] == None:
+            if res.g_count[run] == None:
                 file.write("%-9s" % "None")
             else:
-                file.write("%-9i" % self.relax.data.res[i].g_count[run])
+                file.write("%-9i" % res.g_count[run])
 
             # Hessian count.
-            if self.relax.data.res[i].h_count[run] == None:
+            if res.h_count[run] == None:
                 file.write("%-9s" % "None")
             else:
-                file.write("%-9i" % self.relax.data.res[i].h_count[run])
+                file.write("%-9i" % res.h_count[run])
 
             # Warning
-            if self.relax.data.res[i].warning[run] != None:
-                file.write(self.relax.data.res[i].warning[run])
+            if res.warning[run] != None:
+                file.write(res.warning[run])
 
             # End of line.
             file.write("\n")

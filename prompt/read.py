@@ -86,7 +86,7 @@ class Macro_class:
 
         # Macro intro text.
         if self.relax.interpreter.intro:
-            text = sys.macro_prompt + "read_data("
+            text = sys.macro_prompt + "read.read_data("
             text = text + "run=" + `run`
             text = text + ", data_type=" + `data_type`
             text = text + ", file=" + `file`

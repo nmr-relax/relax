@@ -59,10 +59,10 @@ class Model_selection:
             raise RelaxError, "The run " + `modsel_run` + " already exists."
 
         # Test if each run has a valid parameter and chi-squared data structure.
-        for i in range(len(self.relax.data.res)):
+        #for i in range(len(self.relax.data.res)):
             # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
+            #if not self.relax.data.res[i].select:
+            #    continue
 
             # Loop over the runs.
             #for run in runs:
@@ -88,7 +88,6 @@ class Model_selection:
 
 
         # Initialise.
-        self.modsel_run = modsel_run
         self.runs = deepcopy(runs)
 
         # Select the model selection technique.
@@ -125,6 +124,8 @@ class Model_selection:
                             flag = 1
                         elif not self.relax.data.res[i].chi2.has_key(run2):
                             flag = 1
+                        elif type(self.relax.data.res[i].chi2[run2]) != float:
+                            flag = 1
                 else:
                     if not hasattr(self.relax.data.res[i], 'params'):
                         flag = 1
@@ -134,17 +135,22 @@ class Model_selection:
                         flag = 1
                     elif not self.relax.data.res[i].chi2.has_key(run):
                         flag = 1
+                    elif type(self.relax.data.res[i].chi2[run]) != float:
+                        flag = 1
             if flag:
                 continue
 
             # Model selection.
             best_model = self.modsel(i)
 
+            # Add the modsel_run to self.relax.data.res[i].runs
+            self.relax.data.res[i].runs.append(modsel_run)
+
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
             self.duplicate_data(best_model, modsel_run, i)
 
         # Add the new run name 'modsel_run' to self.relax.data.runs
-        self.relax.data.runs.append(self.modsel_run)
+        self.relax.data.runs.append(modsel_run)
 
 
     def aic(self, i, model, k, n):

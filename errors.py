@@ -205,8 +205,13 @@ class RelaxErrors:
     # Run errors.
     #############
 
-    # No run.
+    # Run already exists.
     class RelaxRunError(BaseError):
+        def __init__(self, run):
+            self.text = "The run " + `run` + " already exists."
+
+    # No run.
+    class RelaxNoRunError(BaseError):
         def __init__(self, run):
             self.text = "The run " + `run` + " does not exist."
 
