@@ -234,14 +234,16 @@ class RelaxParentThread:
 
             # Keyboard interrupt caught by the thread.
             if job_number == KeyboardInterrupt:
-                self.thread_clean_up()
-                raise KeyboardInterrupt
+                break
+                #self.thread_clean_up()
+                #raise KeyboardInterrupt
 
             # Update the finished jobs.
             self.finished_jobs[job_number] = 1
 
             # Release the lock (finished jobs must be updated first).
-            self.job_locks[job_number].release()
+            if self.job_locks[job_number].locked():
+                self.job_locks[job_number].release()
 
             # All jobs have finished.
             if sum(self.finished_jobs) == self.num_jobs:
@@ -257,12 +259,16 @@ class RelaxParentThread:
         # Set the handler for KeyboardInterrupt back to the original signal.
         signal(SIGINT, self.orig_signal)
 
+        if job_number == KeyboardInterrupt:
+            raise KeyboardInterrupt
+
 
     def signal_handler(self, sig_number, stack_frame):
         """Function for handling KeyboardInterrupt."""
 
         # Clean up the threads.
         self.thread_clean_up()
+        self.results_queue.put(KeyboardInterrupt)
 
         # Set the handler for KeyboardInterrupt back to the original signal.
         signal(SIGINT, self.orig_signal)
