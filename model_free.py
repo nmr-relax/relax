@@ -603,11 +603,14 @@ class Model_free:
 
             # Correlation times {tm, te, tf, ts}.
             elif match('t', data.params[run][i]):
-                # te >= 0.
+                # 0 <= te <= 10000 ps.
+                A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 b.append(0.0)
-                j = j + 1
+                b.append(-10000.0)
+                j = j + 2
 
                 # tf <= ts.
                 if data.params[run][i] == 'ts':

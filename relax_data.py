@@ -329,6 +329,14 @@ class Rx_data:
                     if self.relax.data.res[index].ri_labels[run][i] == 'NOE' and frq_label == self.relax.data.res[index].frq_labels[run][self.relax.data.res[index].remap_table[run][i]]:
                         self.relax.data.res[index].noe_r1_table[run][i] = self.relax.data.res[index].num_ri[run] - 1
 
+            # Initialise the runs data structure.
+            if not hasattr(self.relax.data.res[index], 'runs'):
+                self.relax.data.res[index].runs = []
+
+            # Add the run to the runs list.
+            if not run in self.relax.data.res[index].runs:
+                self.relax.data.res[index].runs.append(run)
+
         # Add the run to the runs list.
         if not run in self.relax.data.runs:
             self.relax.data.runs.append(run)

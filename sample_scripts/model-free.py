@@ -4,7 +4,7 @@
 read.sequence('noe.500.out')
 
 # Set the run name (also the name of a preset model-free model).
-name = 'm1'
+name = 'm5'
 
 # Load the relaxation data.
 read.relax_data(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -22,7 +22,7 @@ value.set(name, 'csa', -160 * 1e-6)
 # Select the model-free model.
 model.select_mf(run=name, model=name)
 
-select.res(num=2640)
+#select.res(num=4574)
 # Fixed value.
 #from math import pi
 #fixed(name, [ 0.95, 10.0*1e-9, 0.0 / (2.0 * pi * 600000000.0)**2 ])
