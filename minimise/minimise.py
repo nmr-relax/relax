@@ -12,17 +12,8 @@ except ImportError:
 	print "Scipy is not installed, cannot use simplex, BFGS, or Newton conjugate gradient minimisation from the scipy package."
 	noscipy_flag = 1
 
-# Temp.
-from scipy_optimize import fmin
-simplex_scipy = fmin
-noscipy_flag = 0
-
 # Grid search.
 from grid import grid
-
-# Generic minimisation classes.
-from generic_trust_region import generic_trust_region
-#from generic_conjugate_grad import generic_conjugate_grad
 
 # Line search algorithms.
 from coordinate_descent import coordinate_descent
@@ -32,7 +23,7 @@ from newton import newton
 
 # Trust region algorithms.
 from levenberg_marquardt import levenberg_marquardt
-#from cauchy_point import cauchy_point
+from cauchy_point import cauchy_point
 
 # Other algorithms.
 from simplex import simplex
@@ -95,16 +86,14 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	if match('^[Gg]rid', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Grid search >>>"
-		results = grid(func, args=args, grid_ops=minimiser[1], print_flag=print_flag)
-		xk, fk, k = results
+		xk, fk, k = grid(func, args=args, grid_ops=minimiser[1], print_flag=print_flag)
 		f_count = k
 
 	# Fixed parameter values.
 	elif match('^[Ff]ixed', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Fixed initial parameter values >>>"
-		xk = minimiser[1]
-		fk = apply(func, (xk,)+args)
+		fk = apply(func, (minimiser[1],)+args)
 		k, f_count = 1, 1
 
 
@@ -153,45 +142,41 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Cc][Dd]$', minimiser[0]) or match('^[Cc]oordinate-[Dd]escent$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
-		min = coordinate_descent()
-		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = coordinate_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
-			xk, fk, k, f_count, g_count, h_count, warning = results
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
-			xk = results
+			xk = min.minimise()
 
 	# Steepest descent minimisation.
 	elif match('^[Ss][Dd]$', minimiser[0]) or match('^[Ss]teepest[ _][Dd]escent$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Steepest descent minimisation >>>"
-		min = steepest_descent()
-		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = steepest_descent(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
-			xk, fk, k, f_count, g_count, h_count, warning = results
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
-			xk = results
+			xk = min.minimise()
 
 	# Quasi-Newton BFGS minimisation.
 	elif match('^[Bb][Ff][Gg][Ss]$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-		min = bfgs()
-		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = bfgs(func, dfunc=dfunc, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
-			xk, fk, k, f_count, g_count, h_count, warning = results
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
-			xk = results
+			xk = min.minimise()
 
 	# Newton minimisation.
 	elif match('^[Nn]ewton$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Newton minimisation >>>"
-		min = newton()
-		results = min.minimise(func, dfunc, d2func, args, x0, minimiser, func_tol, maxiter, full_output, print_flag)
+		min = newton(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, line_search_algor=minimiser[1], func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
-			xk, fk, k, f_count, g_count, h_count, warning = results
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
-			xk = results
+			xk = min.minimise()
 
 
 	# Trust-region algorithms.
@@ -201,12 +186,21 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 	elif match('^[Ll][Mm]$', minimiser[0]) or match('^[Ll]evenburg-[Mm]arquardt$', minimiser[0]):
 		if print_flag:
 			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		min = levenberg_marquardt()
-		results = min.minimise(func, dfunc, minimiser[1], minimiser[2], x0, args=args, func_tol=func_tol, maxiter=maxiter, full_output=1, print_flag=print_flag)
+		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=minimiser[1], errors=minimiser[2], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
-			xk, fk, k, f_count, g_count, h_count, warning = results
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
-			xk = results
+			xk = min.minimise()
+
+	# Cauchy point minimisation.
+	elif match('^[Cc]auchy', minimiser[0]):
+		if print_flag:
+			print "\n\n<<< Cauchy point minimisation >>>"
+		min = cauchy_point(func, dfunc=dfunc, d2func=d2func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		if full_output:
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
+		else:
+			xk = min.minimise()
 
 
 	# Other algorithms.
@@ -217,11 +211,10 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, minimiser=None, fu
 		if print_flag:
 			print "\n\n<<< Simplex minimisation >>>"
 		min = simplex(func, args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
-		results = min.minimise()
 		if full_output:
-			xk, fk, k, f_count, g_count, h_count, warning = results
+			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:
-			xk = results
+			xk = min.minimise()
 
 
 	# No match to minimiser string.

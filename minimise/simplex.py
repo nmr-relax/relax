@@ -14,7 +14,6 @@ class simplex(generic_minimise):
 		self.maxiter = maxiter
 		self.full_output = full_output
 		self.print_flag = print_flag
-		#self.print_flag = 2
 
 		# Initialise the function, gradient, and hessian evaluation counters.
 		self.f_count = 0
@@ -24,69 +23,47 @@ class simplex(generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
-
-	def minimise(self):
-		"""Downhill simplex minimisation function.
-
-		This code needs extensive modification to work.
-		"""
-
+		# Initialise some constants.
 		self.n = len(self.xk)
 		self.m = self.n + 1
-		if self.print_flag == 2:
-			print "n: " + `self.n`
-			print "m: " + `self.m`
 
+		# Initialise the simplex.
 		self.create_simplex()
 		self.order_simplex()
 
-		if self.print_flag == 2:
-			print "\n\nMinimisation run number: " + `0`
-			print "Initial simplex:\n" + `self.simplex`
-			print "Initial function vector:\n" + `self.simplex_vals`
-		self.k = 1
+		self.xk = self.simplex[0]
+		self.fk = self.simplex_vals[0]
 
-		# Iterate until the minimiser is finished.
-		while 1:
-			# Print debugging info
-			if self.print_flag == 2:
-				print "\n\n< Minimisation run number: " + `self.k` + " >"
-				print "Simplex:\n" + `self.simplex`
-				print "Function vector:\n" + `self.simplex_vals`
-
-			if self.tests():
-				break
-
-			self.pivot_point = average(self.simplex[:-1])
-
-			# Simplex movement.
-			self.reflect_flag = 1
-			self.shrink_flag = 0
-			self.reflect()
-			if self.reflect_val <= self.simplex_vals[0]:
-				self.extend()
-			elif self.reflect_val >= self.simplex_vals[-2]:
-				self.reflect_flag = 0
-				if self.reflect_val < self.simplex_vals[-1]:
-					self.contract()
-				else:
-					self.contract_orig()
-			if self.reflect_flag:
-				self.simplex[-1], self.simplex_vals[-1] = self.reflect_vector, self.reflect_val
-			if self.shrink_flag:
-				self.shrink()
-			# Done.
-
-			self.order_simplex()
-
-			self.k = self.k + 1
-
-		if self.print_flag:
-			print "The final simplex is: " + `self.simplex`
-			print "The final function vector is: " + `self.simplex_vals`
+		# Minimisation.
+		self.minimise = self.generic_minimise
 
 
-		return self.simplex[0], self.simplex_vals[0], self.k, self.f_count, self.g_count, self.h_count, self.warning
+	def new_param_func(self):
+		"Simplex movement."
+
+		self.reflect_flag = 1
+		self.shrink_flag = 0
+
+		self.pivot_point = average(self.simplex[:-1])
+
+		self.reflect()
+		if self.reflect_val <= self.simplex_vals[0]:
+			self.extend()
+		elif self.reflect_val >= self.simplex_vals[-2]:
+			self.reflect_flag = 0
+			if self.reflect_val < self.simplex_vals[-1]:
+				self.contract()
+			else:
+				self.contract_orig()
+		if self.reflect_flag:
+			self.simplex[-1], self.simplex_vals[-1] = self.reflect_vector, self.reflect_val
+		if self.shrink_flag:
+			self.shrink()
+
+		self.order_simplex()
+
+		self.xk = self.simplex[0]
+		self.fk = self.simplex_vals[0]
 
 
 	def contract(self):
@@ -170,7 +147,4 @@ class simplex(generic_minimise):
 	def tests(self):
 		# Finish minimising when the function difference is insignificant.
 		if abs(self.simplex_vals[-1] - self.simplex_vals[0]) < self.func_tol:
-			return 1
-		if self.k > self.maxiter:
-			self.warning = "Maximum number of iterations reached."
 			return 1

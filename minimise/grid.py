@@ -45,7 +45,7 @@ def grid(func, grid_ops, args=(), print_flag=0):
 	f_min = f
 
 	# Debugging code.
-	if print_flag >= 1:
+	if print_flag:
 		print "\n%-23s%-20i\n" % ("Total number of steps:", total_steps)
 		if print_flag == 2:
 			print "%-20s%-20s\n" % ("Step size:", `step_size`)
@@ -78,7 +78,7 @@ def grid(func, grid_ops, args=(), print_flag=0):
 			min_params = copy.deepcopy(params)
 
 			# Debugging code.
-			if print_flag >= 1:
+			if print_flag:
 				print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", step, "Min params:", `min_params`, "Function value:", `f_min`)
 
 		# Debugging code.

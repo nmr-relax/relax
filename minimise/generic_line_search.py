@@ -70,27 +70,27 @@ class generic_line_search:
 			"a0 should not be changed."
 
 		# Backtracking line search.
-		if match('^[Bb]ack', self.minimiser[1]):
+		if match('^[Bb]ack', self.line_search_algor):
 			self.alpha, fc = backtrack(self.func, self.args, self.xk, self.fk, self.dfk, self.pk, a_init=self.a0)
 		# Nocedal and Wright interpolation based line search.
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', self.minimiser[1]):
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', self.line_search_algor):
 			self.alpha, fc = nocedal_wright_interpol(self.func, self.args, self.xk, self.fk, self.dfk, self.pk, a_init=self.a0, mu=self.mu, print_flag=0)
 		# Nocedal and Wright line search for the Wolfe conditions.
-		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', self.minimiser[1]):
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', self.line_search_algor):
 			self.alpha, fc, gc = nocedal_wright_wolfe(self.func, self.dfunc, self.args, self.xk, self.fk, self.dfk, self.pk, a_init=self.a0, mu=self.mu, eta=self.eta, print_flag=0)
 		# More and Thuente line search.
-		elif match('^[Mm]ore[ _][Tt]huente$', self.minimiser[1]):
+		elif match('^[Mm]ore[ _][Tt]huente$', self.line_search_algor):
 			self.alpha, fc, gc = more_thuente(self.func, self.dfunc, self.args, self.xk, self.fk, self.dfk, self.pk, a_init=self.a0, mu=self.mu, eta=self.eta, print_flag=0)
 		# No line search.
-		elif match('^[Nn]one$', self.minimiser[1]):
+		elif match('^[Nn]one$', self.line_search_algor):
 			self.alpha = self.a0
 		# No match to line search string.
 		else:
-			raise NameError, "The line search algorithm " + self.minimiser[1] + " is not setup for Newton minimisation.\n"
+			raise NameError, "The line search algorithm " + self.line_search_algor + " is not coded.\n"
 
 		self.f_count = self.f_count + fc
 		self.g_count = self.g_count + gc
 		self.h_count = self.h_count + hc
 
 		# Find the new parameter vector.
-		return self.xk + self.alpha * self.pk
+		self.xk_new = self.xk + self.alpha * self.pk

@@ -1,65 +1,73 @@
-from Numeric import dot, sqrt
+from Numeric import copy, dot, sqrt
 
 
-def generic_trust_region(delta_max=1e5, delta0=1.0, eta=0.2):
-	"""An algorithm for trust region radius selection.
+class generic_trust_region:
+	def __init__(self):
+		"Class containing non-specific trust region algorithm code."
 
-	Page 68 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
-	"""
 
-	while 1:
+	def new_param_func(self):
+		"""An algorithm for trust region radius selection.
+
+		Page 68 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
+		"""
+
 		# Optain pk.
-		pk = get_pk()
+		self.calc_pk()
 
 		# Evaluate rho.
-		rho = calc_rho(func, xk, pk, dfk, Bk)
+		self.calc_rho()
 
 		# Calculate the Euclidean norm of pk.
-		norm_pk = sqrt(dot(pk, pk))
+		self.norm_pk = sqrt(dot(self.pk, self.pk))
+
+		if self.print_flag == 2:
+			print "Delta orig: " + `self.delta`
+			print "rho:        " + `self.rho`
+			print "pk:         " + `self.pk`
+			print "||pk||:     " + `self.norm_pk`
+			print "dfk:        " + `self.dfk`
 
 		# Choose the trust region radius for the next iteration.
 		# Rho is close to zero or negative, therefore the trust region is shrunk.
-		if rho < 0.25:
-			delta_new = 0.25 * norm_pk
+		if self.rho < 0.25:
+			self.delta_new = 0.25 * self.norm_pk
 		# Rho is close to one and pk has reached the boundary of the trust region, therefore the trust region is expanded.
-		elif rho > 0.75 and norm_pk == delta:
-			delta_new = min(2.0*delta, delta_max)
+		elif self.rho > 0.75 and self.norm_pk == self.delta:
+			self.delta_new = min(2.0*self.delta, self.delta_max)
 		# Rho is positive but not close to one, therefore the trust region is unaltered.
 		else:
-			delta_new = delta
+			self.delta_new = self.delta
+
+		if self.print_flag == 2:
+			print "Delta fin: " + `self.delta`
 
 		# Choose the position for the next iteration.
-		if rho > eta:
-			xk_new = xk + pk
+		if self.rho > self.eta:
+			self.xk_new = self.xk + self.pk
 		else:
-			xk_new = xk
-
-		# Update.
-		delta = delta_new
-		xk = xk_new
+			self.xk_new = copy.deepcopy(self.xk)
 
 
-def calc_rho(func, xk, pk, dfk, Bk):
-	"""Function to calculate the ratio rho used to choose the trust region radius.
+	def calc_rho(self):
+		"""Function to calculate the ratio rho used to choose the trust region radius.
 
-	The ratio is defined as:
+		The ratio is defined as:
 
-		        f(xk) - f(xk + pk)
-		rho  =  ------------------
-		          mk(0) - mk(pk)
+			        f(xk) - f(xk + pk)
+			rho  =  ------------------
+			          mk(0) - mk(pk)
 
-	Where the numerator is called the actual reduction and the denominator is the predicted reduction.
-	"""
+		Where the numerator is called the actual reduction and the denominator is the predicted reduction.
+		"""
 
-	# Actual reduction.
-	fk = apply(func, (xk,)+args)
-	f_pk = apply(func, (xk + pk,)+args)
-	act_red = f - f_p
+		# Actual reduction.
+		fxkpk, self.f_count = apply(self.func, (self.xk + self.pk,)+self.args), self.f_count + 1
+		act_red = self.fk - fxkpk
 
-	# Predicted reduction.
-	mk_pk = fk + dot(dfk, pk) + 0.5 * dot(pk, dot(Bk, pk))
-	pred_red = f - mk_pk
+		# Predicted reduction.
+		mk_pk = self.fk + dot(self.dfk, self.pk) + 0.5 * dot(self.pk, dot(self.d2fk, self.pk))
+		pred_red = self.fk - mk_pk
 
-	# Rho.
-	rho = act_red / pred_red
-	return rho
+		# Rho.
+		self.rho = act_red / pred_red

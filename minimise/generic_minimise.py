@@ -74,19 +74,20 @@ class generic_minimise:
 						print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", self.k, "Min params:", `self.xk`, "Function value:", `self.fk`)
 						self.k2 = 1
 
-			# Find the new parameter vector self.xk_new.
-			self.xk_new = self.new_param_func()
+			# Execute the function used to find the new parameters.
+			self.new_param_func()
 
 			# Make a backup of the current data.
-			self.fk_last = self.fk
 			try:
 				self.backup_current_data()
 			except AttributeError:
-				"Don't backup the current data."
+				"No need to backup the current data."
 
-			# Find the parameter vector, function value, gradient vector, and hessian matrix for iteration k+1.
-			self.xk = copy.deepcopy(self.xk_new)
-			self.update_data()
+			# Update the data.
+			try:
+				self.update_data()
+			except AttributeError:
+				"No need to update the current data."
 
 			# Test if maximum number of iterations have been reached.
 			if self.k >= self.maxiter:
@@ -94,8 +95,7 @@ class generic_minimise:
 				break
 
 			# Tests.
-			finished = self.tests()
-			if finished:
+			if self.tests():
 				break
 
 			# Update data for the next iteration.
@@ -105,28 +105,10 @@ class generic_minimise:
 			if self.print_flag:
 				self.k2 = self.k2 + 1
 
-
-	def init_data(self):
-		"Generic data initialisation."
-
-		self.func = self.min_args[0]
-		self.dfunc = self.min_args[1]
-		self.d2func = self.min_args[2]
-		self.args = self.min_args[3]
-		self.xk = self.min_args[4]
-		self.minimiser = self.min_args[5]
-		self.func_tol = self.min_args[6]
-		self.maxiter = self.min_args[7]
-		self.full_output = self.min_args[8]
-		self.print_flag = self.min_args[9]
-
-		# Initialise the function, gradient, and hessian evaluation counters.
-		self.f_count = 0
-		self.g_count = 0
-		self.h_count = 0
-
-		# Initialise the warning string.
-		self.warning = None
+		if self.full_output:
+			return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
+		else:
+			return self.xk
 
 
 	def tests(self):
@@ -134,5 +116,3 @@ class generic_minimise:
 
 		if abs(self.fk_last - self.fk) <= self.func_tol:
 			return 1
-		else:
-			return 0

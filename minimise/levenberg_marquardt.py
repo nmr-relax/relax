@@ -1,16 +1,12 @@
 from LinearAlgebra import solve_linear_equations
-from Numeric import Float64, zeros
+from Numeric import Float64, copy, zeros
 
 from generic_minimise import generic_minimise
 
 
 class levenberg_marquardt(generic_minimise):
-	def __init__(self):
-		"Class for Levenberg-Marquardt minimisation specific functions."
-
-
-	def minimise(self, chi2_func, dchi2_func, dfunc, errors, x0, args=(), func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
-		"""Levenberg-Marquardt minimisation.
+	def __init__(self, chi2_func=None, dchi2_func=None, dfunc=None, errors=None, args=(), x0=None, func_tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
+		"""Class for Levenberg-Marquardt minimisation specific functions.
 
 		Function options
 		~~~~~~~~~~~~~~~~
@@ -53,20 +49,23 @@ class levenberg_marquardt(generic_minimise):
 		# Initialise the warning string.
 		self.warning = None
 
-		# The initial Newton function value, gradient vector, and hessian matrix.
-		self.update_data()
+		# The initial chi-squared value, chi-squared gradient vector, and derivative function matrix.
+		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
+		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
+		self.df = self.dfunc()
 
 		# Initial value of lambda (the Levenberg-Marquardt fudge factor).
 		self.l = 1.0
 		self.n = len(self.xk)
 
 		# Minimisation.
-		self.generic_minimise()
+		self.minimise = self.generic_minimise
 
-		if self.full_output:
-			return self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
-		else:
-			return self.xk
+
+	def backup_current_data(self):
+		"Function to backup the current data into fk_last."
+
+		self.fk_last = self.fk
 
 
 	def create_lm_matrix(self):
@@ -122,10 +121,8 @@ class levenberg_marquardt(generic_minimise):
 		self.param_change = solve_linear_equations(self.lm_matrix, self.dfk)
 
 		# Add the current parameter vector to the parameter change vector to find the new parameter vector.
-		xk_new = zeros(self.n, Float64)
-		xk_new = self.xk + self.param_change
-
-		return xk_new
+		self.xk_new = zeros(self.n, Float64)
+		self.xk_new = self.xk + self.param_change
 
 
 	def tests(self):
@@ -146,6 +143,7 @@ class levenberg_marquardt(generic_minimise):
 	def update_data(self):
 		"Function to update the chi-squared value, chi-squared gradient vector, and derivative function matrix."
 
+		self.xk = copy.deepcopy(self.xk_new)
 		self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
 		self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
 		self.df = self.dfunc()
