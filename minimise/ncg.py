@@ -137,8 +137,11 @@ class Ncg(Line_search, Min):
             # Negative curvature test.
             if curv <= 0.0:
                 if i == 0:
-                    ai = dot_ri / curv
-                    return xi + ai*pi
+                    if dot_ri == 0.0:
+                        return xi
+                    else:
+                        ai = dot_ri / curv
+                        return xi + ai*pi
                 else:
                     return xi
             if sqrt(dot_ri) <= residual_test:

@@ -29,7 +29,7 @@ from constraint_linear import Constraint_linear
 from base_classes import Min
 
 
-def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, mu0=1e-2, lambda0=None, epsilon0=1e2, gamma0=1e2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
+def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, min_options=(), A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, lambda0=None, mu0=1e-2, epsilon0=1e2, gamma0=1e2, scale_mu=0.5, scale_epsilon=1e-2, scale_gamma=1e-2, func_tol=1e-25, grad_tol=None, maxiter=1e6, full_output=0, print_flag=0):
     """The method of multipliers, also known as the augmented Lagrangian method.
 
     Page 515 from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999, 2nd ed.
@@ -118,13 +118,26 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
     the constraint gradient function which should return the matrix of constraint gradients.  The
     function d2c is the constraint Hessian function which should return the 3D matrix of constraint
     Hessians.
+
+    
+    Initial values
+    ~~~~~~~~~~~~~~
+
+    These are the default initial values:
+
+        mu0 = 1e-5
+        epsilon0 = 1e-2
+        gamma0 = 1e-2
+        scale_mu = 0.5
+        scale_epsilon = 1e-2
+        scale_gamma = 1e-2
     """
 
     if print_flag:
         print "\n"
         print "Method of Multipliers"
         print "~~~~~~~~~~~~~~~~~~~~~"
-    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag)
+    min = Method_of_multipliers(func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, lambda0, mu0, epsilon0, gamma0, scale_mu, scale_epsilon, scale_gamma, func_tol, grad_tol, maxiter, full_output, print_flag)
     if min.init_failure:
         print "Initialisation of minimisation has failed."
         return None
@@ -134,7 +147,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
 
 
 class Method_of_multipliers(Min):
-    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, mu0, lambda0, epsilon0, gamma0, func_tol, grad_tol, maxiter, full_output, print_flag):
+    def __init__(self, func, dfunc, d2func, args, x0, min_options, A, b, l, u, c, dc, d2c, lambda0, mu0, epsilon0, gamma0, scale_mu, scale_epsilon, scale_gamma, func_tol, grad_tol, maxiter, full_output, print_flag):
         """Class for Newton minimisation specific functions.
 
         Unless you know what you are doing, you should call the function 'method_of_multipliers'
@@ -205,6 +218,9 @@ class Method_of_multipliers(Min):
         self.mu = mu0
         self.epsilon = epsilon0
         self.gamma = gamma0
+        self.scale_mu = scale_mu
+        self.scale_epsilon = scale_epsilon
+        self.scale_gamma = scale_gamma
         self.func_tol = func_tol
         self.grad_tol = grad_tol
         self.maxiter = maxiter
@@ -372,9 +388,9 @@ class Method_of_multipliers(Min):
                 self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i] / self.mu, 0.0)
 
             # Update mu, epsilon, and gamma.
-            self.mu = 0.2 * self.mu
-            self.epsilon = 1e-2 * self.epsilon
-            self.gamma = 1e-2 * self.gamma
+            self.mu = self.scale_mu * self.mu
+            self.epsilon = self.scale_epsilon * self.epsilon
+            self.gamma = self.scale_gamma * self.gamma
             if self.mu < 1e-99:
                 self.warning = "Mu too small."
                 break
