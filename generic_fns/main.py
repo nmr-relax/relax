@@ -29,6 +29,7 @@ from diffusion_tensor import Diffusion_tensor
 from fix import Fix
 from minimise import Minimise
 from model_selection import Model_selection
+from molmol import Molmol
 from nuclei import Nuclei
 from palmer import Palmer
 from pdb import PDB
@@ -38,7 +39,7 @@ from sequence import Sequence
 from state import State
 from value import Value
 from vectors import Vectors
-from view import View
+from vmd import Vmd
 
 
 class Generic:
@@ -57,6 +58,7 @@ class Generic:
         self.map = Map(self.relax)
         self.minimise = Minimise(self.relax)
         self.model_selection = Model_selection(self.relax)
+        self.molmol = Molmol(self.relax)
         self.nuclei = Nuclei(self.relax)
         self.opendx = OpenDX(self.relax)
         self.palmer = Palmer(self.relax)
@@ -67,4 +69,4 @@ class Generic:
         self.state = State(self.relax)
         self.value = Value(self.relax)
         self.vectors = Vectors(self.relax)
-        self.view = View(self.relax)
+        self.vmd = Vmd(self.relax)

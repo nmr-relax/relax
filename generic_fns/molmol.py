@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,33 +20,43 @@
 #                                                                             #
 ###############################################################################
 
-import os
-from Scientific.Visualization import VMD
+from os import popen
 
 
-class View:
+class Molmol:
     def __init__(self, relax):
         """Class containing the functions for viewing molecules."""
 
         self.relax = relax
 
 
+    def open_pdb(self):
+        """Open the loaded PDB into Molmol."""
+
+        # Test if a pipe has been opened.
+        if not hasattr(self.relax.data, 'molmol'):
+            return
+
+        # Run InitAll to remove everything from molmol.
+        try:
+            self.relax.data.molmol.write('InitAll yes\n')
+        except IOError:
+            return
+
+        # Open the PDB.
+        command = "ReadPdb " + self.relax.data.pdb.filename + "\n"
+        self.relax.data.molmol.write(command)
+
+
     def view(self):
-        """Function for viewing the collection of molecules using VMD."""
+        """Function for running Molmol."""
+
+        # Open a molmol pipe.
+        self.relax.data.molmol = popen("molmol -f -", 'w', 0)
+
+        # Run InitAll to remove everything from molmol.
+        self.relax.data.molmol.write('InitAll yes\n')
 
         # Test if the PDB file has been loaded.
-        if not hasattr(self.relax.data, 'pdb'):
-            raise RelaxPdbError
-
-        # Create an empty scene.
-        self.relax.data.scene = VMD.Scene()
-
-        # Add the molecules to the scene.
-        if type(self.relax.data.pdb) == list:
-            for i in range(len(self.relax.data.pdb)):
-                self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb[i]))
-        else:
-            self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb))
-
-        # View the scene.
-        self.relax.data.scene.view()
+        if hasattr(self.relax.data, 'pdb'):
+            self.open_pdb()

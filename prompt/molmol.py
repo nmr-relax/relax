@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -47,7 +47,7 @@ class Shell:
 
 class Main:
     def __init__(self, relax):
-        """Class containing the VMD functions."""
+        """Class containing the Molmol functions."""
 
         self.relax = relax
 
@@ -55,17 +55,16 @@ class Main:
     def view(self):
         """Function for viewing the collection of molecules extracted from the PDB file.
 
-
         Example
         ~~~~~~~
 
-        relax> vmd.view()
+        relax> molmol.view()
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "vmd.view()"
+            text = sys.ps3 + "molmol.view()"
             print text
 
         # Execute the functional code.
-        self.relax.generic.vmd.view()
+        self.relax.generic.molmol.view()

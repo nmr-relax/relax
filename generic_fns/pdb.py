@@ -113,3 +113,6 @@ class PDB:
         # Sequence loading.
         if load_seq and not len(self.relax.data.res):
             self.relax.generic.sequence.load_PDB_sequence()
+
+        # Load into Molmol (if running).
+        self.relax.generic.molmol.open_pdb()

@@ -24,6 +24,7 @@ import __builtin__
 from code import InteractiveConsole, softspace
 from os import F_OK, access
 import readline
+import signal
 import sys
 
 # Python modules accessable on the command prompt.
@@ -50,19 +51,20 @@ from model_selection import Modsel
 from nuclei import Nuclei
 from pdb import PDB
 from vectors import Vectors
-from view import View
 from write import Write
 
 # Classes.
 import echo_data
 import format
 import model
+import molmol
 import palmer
 import read
 import select
 import state
 import unselect
 import value
+import vmd
 
 
 class Interpreter:
@@ -100,19 +102,20 @@ class Interpreter:
         self._PDB = PDB(relax)
         self._system = system
         self._Vectors = Vectors(relax)
-        self._View = View(relax)
         self._Write = Write(relax)
 
         # Place the classes into the interpreter class namespace.
         self._Echo_data = echo_data.Shell(relax)
         self._Format = format.Shell(relax)
         self._Model = model.Model(relax)
+        self._Molmol = molmol.Shell(relax)
         self._Palmer = palmer.Shell(relax)
         self._Read = read.Shell(relax)
         self._Select = select.Shell(relax)
         self._State = state.Shell(relax)
         self._Unselect = unselect.Shell(relax)
         self._Value = value.Shell(relax)
+        self._Vmd = vmd.Shell(relax)
 
 
     def run(self):
@@ -153,7 +156,6 @@ class Interpreter:
         pdb = self._PDB.pdb
         set = self._Minimise.set
         vectors = self._Vectors.vectors
-        view = self._View.view
         write = self._Write.write
 
         # Place the classes in the local namespace.
@@ -162,10 +164,12 @@ class Interpreter:
         palmer = self._Palmer
         read = self._Read
         model = self._Model
+        molmol = self._Molmol
         select = self._Select
         state = self._State
         unselect = self._Unselect
         value = self._Value
+        vmd = self._Vmd
 
         # Builtin interpreter functions.
         intro_off = self._off
@@ -308,7 +312,14 @@ def interact(self, intro=None, local=None, script_file=None):
         # Quit.
         sys.exit()
 
+
     # Interactive prompt.
+    #####################
+
+    # Ignore SIGINT.
+    signal.signal(2, 1)
+
+    # Prompt.
     more = 0
     while 1:
         try:

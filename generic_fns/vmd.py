@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,11 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-import os
 from Scientific.Visualization import VMD
 
 
-class View:
+class Vmd:
     def __init__(self, relax):
         """Class containing the functions for viewing molecules."""
 
@@ -39,14 +38,14 @@ class View:
             raise RelaxPdbError
 
         # Create an empty scene.
-        self.relax.data.scene = VMD.Scene()
+        self.relax.data.vmd_scene = VMD.Scene()
 
         # Add the molecules to the scene.
         if type(self.relax.data.pdb) == list:
             for i in range(len(self.relax.data.pdb)):
-                self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb[i]))
+                self.relax.data.vmd_scene.addObject(VMD.Molecules(self.relax.data.pdb[i]))
         else:
-            self.relax.data.scene.addObject(VMD.Molecules(self.relax.data.pdb))
+            self.relax.data.vmd_scene.addObject(VMD.Molecules(self.relax.data.pdb))
 
         # View the scene.
-        self.relax.data.scene.view()
+        self.relax.data.vmd_scene.view()
