@@ -1,0 +1,15 @@
+Indentation
+~~~~~~~~~~~
+
+Indentation should be set to four spaces rather than a tab character.
+For vi, add the following lines to '~/.vimrc':
+
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+
+Doc strings
+~~~~~~~~~~~
+
+These should be set to no more than 100 characters long.
