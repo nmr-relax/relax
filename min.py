@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -47,11 +47,20 @@ class Minimise:
             if not self.relax.data.res[i].select:
                 continue
 
-            # Equation type specific function setup.
-            fns = self.relax.specific_setup.setup("calc", self.relax.data.res[i].equations[run])
-            if fns == None:
-                raise RelaxFuncSetupError, ('function value calculation', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_matrix, self.calculate = fns
+            # Equation type specific parameter vector function setup.
+            self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', self.relax.data.res[i].equations[run])
+            if self.assemble_param_vector == None:
+                raise RelaxFuncSetupError, ('parameter vector', self.relax.data.res[i].equations[run])
+
+            # Equation type specific scaling matrix function setup.
+            self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
+            if self.assemble_scaling matrix == None:
+                raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
+
+            # Equation type specific calculate function setup.
+            self.calculate = self.relax.specific_setup.setup('calc', self.relax.data.res[i].equations[run])
+            if self.calculate == None:
+                raise RelaxFuncSetupError, ('calculate', self.relax.data.res[i].equations[run])
 
             # Create the parameter vector.
             params = self.assemble_param_vector(run, self.relax.data.res[i])
@@ -97,11 +106,25 @@ class Minimise:
             if not self.relax.data.res[i].select:
                 continue
 
-            # Equation type specific function setup.
-            fns = self.relax.specific_setup.setup("fixed", self.relax.data.res[i].equations[run])
-            if fns == None:
-                raise RelaxFuncSetupError, ('fixed initial parameter value', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_matrix, self.fixed_setup, self.minimise = fns
+            # Equation type specific parameter vector function setup.
+            self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', self.relax.data.res[i].equations[run])
+            if self.assemble_param_vector == None:
+                raise RelaxFuncSetupError, ('parameter vector', self.relax.data.res[i].equations[run])
+
+            # Equation type specific scaling matrix function setup.
+            self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
+            if self.assemble_scaling matrix == None:
+                raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
+
+            # Equation type specific fixed setup function setup.
+            self.fixed_setup = self.relax.specific_setup.setup('fixed', self.relax.data.res[i].equations[run])
+            if self.fixed_setup == None:
+                raise RelaxFuncSetupError, ('fixed setup', self.relax.data.res[i].equations[run])
+
+            # Equation type specific minimise function setup.
+            self.minimise = self.relax.specific_setup.setup('minimise', self.relax.data.res[i].equations[run])
+            if self.minimise == None:
+                raise RelaxFuncSetupError, ('minimise', self.relax.data.res[i].equations[run])
 
             # Setup the fixed parameter options.
             if values:
@@ -167,11 +190,25 @@ class Minimise:
             if not self.relax.data.res[i].select:
                 continue
 
-            # Equation type specific function setup.
-            fns = self.relax.specific_setup.setup("grid_search", self.relax.data.res[i].equations[run])
-            if fns == None:
-                raise RelaxFuncSetupError, ('grid search', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_matrix, self.grid_setup, self.minimise = fns
+            # Equation type specific parameter vector function setup.
+            self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', self.relax.data.res[i].equations[run])
+            if self.assemble_param_vector == None:
+                raise RelaxFuncSetupError, ('parameter vector', self.relax.data.res[i].equations[run])
+
+            # Equation type specific scaling matrix function setup.
+            self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
+            if self.assemble_scaling matrix == None:
+                raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
+
+            # Equation type specific grid setup function setup.
+            self.grid_setup = self.relax.specific_setup.setup('grid_search', self.relax.data.res[i].equations[run])
+            if self.grid_setup == None:
+                raise RelaxFuncSetupError, ('grid setup', self.relax.data.res[i].equations[run])
+
+            # Equation type specific minimise function setup.
+            self.minimise = self.relax.specific_setup.setup('minimise', self.relax.data.res[i].equations[run])
+            if self.minimise == None:
+                raise RelaxFuncSetupError, ('minimise', self.relax.data.res[i].equations[run])
 
             # Setup the grid search options.
             if type(inc) == int:
@@ -225,11 +262,20 @@ class Minimise:
             if len(self.relax.data.res[i].params[run]) == 0:
                 raise RelaxError, "Cannot minimise a model with zero parameters."
 
-            # Equation type specific function setup.
-            fns = self.relax.specific_setup.setup("minimise", self.relax.data.res[i].equations[run])
-            if fns == None:
-                raise RelaxFuncSetupError, ('minimisation', self.relax.data.res[i].equations[run])
-            self.assemble_param_vector, self.assemble_scaling_matrix, self.minimise = fns
+            # Equation type specific parameter vector function setup.
+            self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', self.relax.data.res[i].equations[run])
+            if self.assemble_param_vector == None:
+                raise RelaxFuncSetupError, ('parameter vector', self.relax.data.res[i].equations[run])
+
+            # Equation type specific scaling matrix function setup.
+            self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', self.relax.data.res[i].equations[run])
+            if self.assemble_scaling matrix == None:
+                raise RelaxFuncSetupError, ('scaling matrix', self.relax.data.res[i].equations[run])
+
+            # Equation type specific minimise function setup.
+            self.minimise = self.relax.specific_setup.setup('minimise', self.relax.data.res[i].equations[run])
+            if self.minimise == None:
+                raise RelaxFuncSetupError, ('minimise', self.relax.data.res[i].equations[run])
 
             # Create the initial parameter vector.
             init_params = self.assemble_param_vector(run, self.relax.data.res[i])

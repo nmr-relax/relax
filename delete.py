@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -48,9 +48,9 @@ class Delete:
             raise RelaxError, "The data type argument " + `data_type` + " is invalid and should be one of either " + `global_types` + " or " + `sequence_types` + "."
 
         # Equation type specific function setup.
-        self.data_names = self.relax.specific_setup.setup("delete", data_type)
+        self.data_names = self.relax.specific_setup.setup('data_names', data_type)
         if self.data_names == None:
-            raise RelaxFuncSetupError, ('delete', data_type)
+            raise RelaxFuncSetupError, ('data_names', data_type)
 
         # Delete the global data types.
         if data_type in global_types:

@@ -951,10 +951,11 @@ class Model_free:
         if print_flag >= 1:
             if print_flag >= 2:
                 print "\n\n"
-            print "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
+            string = "Fitting to residue: " + `self.relax.data.res[i].num` + " " + self.relax.data.res[i].name
             string2 = ""
             for j in xrange(len(string)):
                 string2 = string2 + "~"
+            print string
             print string2
 
         # Initialise the iteration counter and function, gradient, and Hessian call counters.
@@ -962,6 +963,10 @@ class Model_free:
         self.f_count = 0
         self.g_count = 0
         self.h_count = 0
+
+        # Global minimisation of all model-free parameters and diffusion tensor parameters.
+        if self.relax.data.diff[run].fixed:
+            pass # Maybe pass this in as an argument to Mf().
 
         # Set up the relaxation data and errors and the function options.
         relax_data = array(self.relax.data.res[i].relax_data[run], Float64)
@@ -987,26 +992,32 @@ class Model_free:
 
         # Isotropic diffusion.
         if self.relax.data.diff[run].type == 'iso':
-            pass
-
+            vectors = None
 
         # Axially symmetric diffusion.
         elif self.relax.data.diff[run].type == 'axial':
-            raise RelaxError, "Not coded yet."
+            vectors = None
 
         # Anisotropic diffusion.
         elif self.relax.data.diff[run].type == 'aniso':
+            vectors = None
             raise RelaxError, "Not coded yet."
 
         self.mf = Mf(self.relax, run=run, i=i, equation=self.relax.data.res[i].equations[run], param_types=self.relax.data.res[i].params[run], init_params=init_params, relax_data=relax_data, errors=relax_error, bond_length=self.relax.data.res[i].r[run], csa=self.relax.data.res[i].csa[run], diff_type=self.relax.data.diff[run].type, diff_params=[self.relax.data.diff[run].tm], scaling_matrix=scaling_matrix)
 
-        # Levenberg-Marquardt minimisation.
-        ###################################
+
+        # Setup the minimisation algorithm when constraints are present.
+        ################################################################
 
         if constraints and not match('^[Gg]rid', min_algor):
             algor = min_options[0]
         else:
             algor = min_algor
+
+
+        # Levenberg-Marquardt minimisation.
+        ###################################
+
         if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
             min_options = min_options + (self.mf.lm_dri, relax_error)
 
