@@ -9,7 +9,7 @@ quadratic = quadratic_fafbga
 secant = quadratic_gagb
 
 
-def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-15, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=0):
+def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=0):
 	"""A line search algorithm from More and Thuente.
 
 	More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
@@ -55,7 +55,8 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 	if not a_min:
 		a_min = 0.0
 	if not a_max:
-		a_max = 1.0 / mu * ((a0['phi'] - phi_min) / -a0['phi_prime'])
+		#a_max = 1.0 / mu * ((a0['phi'] - phi_min) / -a0['phi_prime'])
+		a_max = 4.0*max(1.0,a_init)
 	Ik_lim = [0.0, 5.0*a_init]
 	width = a_max - a_min
 	width2 = 2.0*width
@@ -73,7 +74,7 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 	Ik['phi_prime'] = [a0['phi_prime'], a0['phi_prime']]
 
 	if print_flag:
-		print_data("Pre", k, a0, Ik, Ik_lim, x, p, print_flag)
+		print_data("Pre", -1, a0, Ik, Ik_lim, x, p, print_flag)
 
 	# Test for errors.
 	if a0['phi_prime'] >= 0.0:
@@ -85,7 +86,7 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 
 	while 1:
 		if print_flag:
-			print "\n<Line search iteration k = " + `k` + " >"
+			print "\n<Line search iteration k = " + `k+1` + " >"
 			print "Bracketed: " + `bracketed`
 			print_data("Initial", k, a, Ik, Ik_lim, x, p, print_flag)
 
@@ -127,8 +128,8 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 		if print_flag:
 			print "\tNo."
 
-		# Test for roundoff error.
 		if bracketed:
+			# Test for roundoff error.
 			if print_flag:
 				print "Testing for roundoff error."
 			if a['a'] <= Ik_lim[0] or a['a'] >= Ik_lim[1]:
@@ -139,8 +140,7 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 			if print_flag:
 				print "\tNo."
 
-		# Test (works without bracketed test, but could be due to the selection of the wrong case)
-		if bracketed:
+			# Test to see if a_tol has been reached.
 			if print_flag:
 				print "Testing tol."
 			if Ik_lim[1] - Ik_lim[0] <= a_tol * Ik_lim[1]:
@@ -173,12 +173,13 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 
 		# Bisection step.
 		if bracketed:
-			if abs(Ik_new['a'][0] - Ik_new['a'][1]) >= 0.66 * width2:
+			size = abs(Ik_new['a'][0] - Ik_new['a'][1])
+			if size >= 0.66 * width2:
 				if print_flag:
 					print "Bisection step."
 				a_new['a'] = 0.5 * (Ik_new['a'][0] + Ik_new['a'][1])
-				width2 = width
-				width = abs(Ik_new['a'][0] - Ik_new['a'][1])
+			width2 = width
+			width = size
 
 		# Limit.
 		if print_flag:
@@ -229,7 +230,7 @@ def print_data(text, k, a, Ik, Ik_lim, x, p, print_flag=0):
 	"Temp func for debugging."
 
 	print text + " data printout:"
-	print "   Iteration:   " + `k`
+	print "   Iteration:   " + `k+1`
 	print "   a:           " + `a['a']`
 	print "   phi:         " + `a['phi']`
 	print "   phi_prime:   " + `a['phi_prime']`
