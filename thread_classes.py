@@ -28,6 +28,7 @@ from re import search
 from signal import SIGINT, getsignal, signal
 from string import ascii_letters
 import sys
+from time import sleep
 from threading import Lock, Thread
 
 from data import Element
@@ -222,21 +223,9 @@ class RelaxParentThread:
             # Get the next results off the results_queue.
             job_number = self.results_queue.get()
 
-            # The thread has caused a RelaxError.
-            if job_number == RelaxError:
-                self.thread_clean_up()
-                sys.exit()
-
-            # The thread has caused an Exception.
-            if job_number == Exception:
-                self.thread_clean_up()
-                sys.exit()
-
             # Keyboard interrupt caught by the thread.
             if job_number == KeyboardInterrupt:
                 break
-                #self.thread_clean_up()
-                #raise KeyboardInterrupt
 
             # Update the finished jobs.
             self.finished_jobs[job_number] = 1
@@ -259,6 +248,7 @@ class RelaxParentThread:
         # Set the handler for KeyboardInterrupt back to the original signal.
         signal(SIGINT, self.orig_signal)
 
+        # Raise the KeyboardInterrupt if caught in a thread.
         if job_number == KeyboardInterrupt:
             raise KeyboardInterrupt
 
@@ -332,8 +322,11 @@ class RelaxThread(Thread):
         self.swd       = self.relax.thread_data.swd[i]
         self.priority  = self.relax.thread_data.priority[i]
 
-        # Minimal flag (run the maximal amount of code for a thread).
-        self.minimal_flag = 0
+        # Flag for when relax will be spawned on the host machine.
+        self.spawn_relax_flag = 1
+
+        # Kill flag.
+        self.kill_flag = 0
 
         # Make the directory with the name of tag in the thread's working directory if it doesn't exist.
         if not self.test_dir():
@@ -443,29 +436,29 @@ class RelaxThread(Thread):
         """Main function for execution of the specific threading code."""
 
         # Run until all results are returned.
-        #try:
-        if 1:
-            while 1:
-                # Get the job number for the next queued job.
-                self.job_number = self.job_queue.get()
+        while 1:
+            # Get the job number for the next queued job.
+            self.job_number = self.job_queue.get()
 
-                # Quit if the job number is None, this is the signal for when all jobs have been completed.
-                if self.job_number == None:
-                    # Place None back into the job queue so that all the other waiting threads will terminate.
-                    self.job_queue.put(None)
+            # Quit if the job number is None, this is the signal for when all jobs have been completed.
+            if self.job_number == None:
+                # Place None back into the job queue so that all the other waiting threads will terminate.
+                self.job_queue.put(None)
 
-                    # Thread termination (breaking of the while loop).
-                    break
+                # Thread termination (breaking of the while loop).
+                break
 
-                # Job termination if finished by a faster thread.
-                if self.finished_jobs[self.job_number] == 1:
-                    continue
+            # Job termination if finished by a faster thread.
+            if self.finished_jobs[self.job_number] == 1:
+                continue
 
-                # Place the job back into the job queue.  This is to make the threads fail safe and so that idle faster threads will pick up the jobs of the slower threads.
-                self.job_queue.put(self.job_number)
+            # Place the job back into the job queue.  This is to make the threads fail safe and so that idle faster threads will pick up the jobs of the slower threads.
+            self.job_queue.put(self.job_number)
 
+            # Catch all exceptions in the specific code.
+            try:
                 # Run all the code.
-                if not self.minimal_flag:
+                if self.spawn_relax_flag:
                     # Script and log files.
                     self.script_file = "%s/%s/script_%s_job_%s.py" % (self.swd, self.tag, self.getName(), self.job_number)
                     self.log_file = "%s/%s/%s_job_%s.log" % (self.swd, self.tag, self.getName(), self.job_number)
@@ -490,21 +483,32 @@ class RelaxThread(Thread):
                 # Run the specific code after locking the job.
                 self.post_locked_code()
 
-                # Place the job number into the results queue.
-                self.results_queue.put(self.job_number)
+            # KeyboardInterupt.
+            except KeyboardInterrupt:
+                self.results_queue.put(KeyboardInterrupt)
 
-        # RelaxError.
-        #except RelaxError, message:
-        #    sys.child.childerr.write(message)
-        #    self.results_queue.put(RelaxError)
+            # All other errors.
+            except:
+                # Catch a kill.
+                if self.kill_flag:
+                    print "Hello"
+                    break
 
-        # KeyboardInterupt.
-        #except KeyboardInterrupt:
-        #    self.results_queue.put(KeyboardInterrupt)
+                # Print the exception if in debugging mode.
+                if Debug:
+                    raise
 
-        # All other errors.
-        #except:
-        #    self.results_queue.put(Exception)
+                # Print out.
+                print "%s, job %s on %s: failed.  Thread sleeping for 5 minutes." % (self.getName(), self.job_number, self.host_name)
+
+                # Sleep for 5 min.
+                sleep(300)
+
+                # Skip to the next job.
+                continue
+
+            # Place the job number into the results queue.
+            self.results_queue.put(self.job_number)
 
 
     def start_child(self, cmd, catch_out=0, catch_err=0, remote_exe=1, close=1):
@@ -542,6 +546,9 @@ class RelaxThread(Thread):
 
     def kill(self):
         """Attempt to kill the thread."""
+
+        # Set the thread's kill flag.
+        self.kill_flag = 1
 
         # Kill the child process.
         self.child.kill(login_cmd=self.login_cmd)
@@ -634,8 +641,8 @@ class RelaxHostThread(RelaxThread):
         self.job_locks = job_locks
         self.host_data = host_data
 
-        # Minimal flag (run the minimal amount of code for a thread).
-        self.minimal_flag = 1
+        # Relax will not be spawned on the host machine (except for testing).
+        self.spawn_relax_flag = 0
 
 
     def pre_locked_code(self):
