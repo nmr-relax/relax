@@ -1,0 +1,53 @@
+
+mfin File Listing
+
+optimization              tval
+seed                   -169008
+search                    grid
+diffusion            isotropic           none
+      fix 
+simulations               pred            100          0.000
+selection                ftest
+      fix 
+fields                       2        600.000        500.000
+
+
+tm                0.111E+02    1    2      0.900E+01      0.130E+02  100
+
+Starting initial grid search for model 1
+
+Initial chi-square:   0.3494E+05
+
+Best chi-square:   0.1046E+05
+
+Starting fix isotropic diffusion optimization for model 1
+
+Total Chi-Square:    0.103E+05
+tm:     11.090
+
+
+
+Starting initial grid search for model 2
+
+Initial chi-square:   0.3494E+05
+
+Best chi-square:   0.4026E+04
+
+Starting fix isotropic diffusion optimization for model 2
+
+Total Chi-Square:    0.297E+04
+tm:     11.090
+
+Starting   100 Simulations
+ Simulation    10
+ Simulation    20
+ Simulation    30
+ Simulation    40
+ Simulation    50
+ Simulation    60
+ Simulation    70
+ Simulation    80
+ Simulation    90
+ Simulation   100
+
+Starting final output
