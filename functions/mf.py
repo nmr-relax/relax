@@ -4,9 +4,16 @@ from re import match
 
 from data import data
 
-from jw_mf import *
-from djw_mf import *
-from d2jw_mf import *
+old_flag = 0
+if old_flag:
+	from jw_mf_old import *
+	from djw_mf_old import *
+	from d2jw_mf_old import *
+	calc_iso_s2f_s2s_ts_djw_comps = None
+	calc_iso_s2f_tf_s2s_ts_djw_comps = None
+else:
+	from jw_mf_comps import *
+	from jw_mf import *
 
 from ri_comps import *
 from ri_prime import *
@@ -163,6 +170,8 @@ class mf:
 		#temp_chi2 = self.func(params, print_flag)
 
 		# Calculate the spectral density gradients.
+		if self.calc_djw_comps:
+			self.calc_djw_comps(self.data)
 		create_djw_struct(self.data, self.calc_djw)
 
 		# Calculate the relaxation gradient components.
@@ -328,7 +337,11 @@ class mf:
 	def lm_dri(self):
 		"Return the function used for Levenberg-Marquardt minimisation."
 
-		return self.data.dri
+		# Diagonal scaling.
+		if self.scaling_flag:
+			return self.data.dri * self.data.scaling_vector
+		else:
+			return self.data.dri
 
 
 	def scale_gradient(self):
@@ -393,6 +406,7 @@ class mf:
 			if self.data.s2_index != None and self.data.te_index != None:
 				self.calc_jw = calc_iso_s2_te_jw
 				self.calc_jw_comps = calc_iso_s2_te_jw_comps
+				self.calc_djw_comps = calc_iso_s2_te_djw_comps
 				self.calc_djw[self.data.s2_index] = calc_iso_S2_te_djw_dS2
 				self.calc_djw[self.data.te_index] = calc_iso_S2_te_djw_dte
 				self.calc_d2jw[self.data.s2_index][self.data.te_index] = self.calc_d2jw[self.data.te_index][self.data.s2_index] = calc_iso_S2_te_d2jw_dS2dte
@@ -400,6 +414,7 @@ class mf:
 			elif self.data.s2_index != None:
 				self.calc_jw = calc_iso_s2_jw
 				self.calc_jw_comps = calc_iso_s2_jw_comps
+				self.calc_djw_comps = None
 				self.calc_djw[self.data.s2_index] = calc_iso_S2_djw_dS2
 			elif self.data.te_index != None and self.data.s2_index == None:
 				print "Invalid model, you cannot have te as a parameter without S2 existing as well."
@@ -407,6 +422,7 @@ class mf:
 			else:
 				self.calc_jw = calc_iso_jw
 				self.calc_jw_comps = calc_iso_jw_comps
+				self.calc_djw_comps = None
 
 		# The extended model-free equations.
 		####################################
@@ -435,6 +451,7 @@ class mf:
 			if self.data.s2f_index != None and self.data.tf_index != None and self.data.s2s_index != None and self.data.ts_index != None:
 				self.calc_jw = calc_iso_s2f_tf_s2s_ts_jw
 				self.calc_jw_comps = calc_iso_s2f_tf_s2s_ts_jw_comps
+				self.calc_djw_comps = calc_iso_s2f_tf_s2s_ts_djw_comps
 				self.calc_djw[self.data.s2f_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2f
 				self.calc_djw[self.data.tf_index] = calc_iso_S2f_tf_S2s_ts_djw_dtf
 				self.calc_djw[self.data.s2s_index] = calc_iso_S2f_tf_S2s_ts_djw_dS2s
@@ -448,6 +465,7 @@ class mf:
 			elif self.data.s2f_index != None and self.data.tf_index == None and self.data.s2s_index != None and self.data.ts_index != None:
 				self.calc_jw = calc_iso_s2f_s2s_ts_jw
 				self.calc_jw_comps = calc_iso_s2f_s2s_ts_jw_comps
+				self.calc_djw_comps = calc_iso_s2f_s2s_ts_djw_comps
 				self.calc_djw[self.data.s2f_index] = calc_iso_S2f_S2s_ts_djw_dS2f
 				self.calc_djw[self.data.s2s_index] = calc_iso_S2f_S2s_ts_djw_dS2s
 				self.calc_djw[self.data.ts_index] = calc_iso_S2f_S2s_ts_djw_dts

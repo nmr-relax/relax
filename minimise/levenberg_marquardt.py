@@ -93,22 +93,22 @@ class levenberg_marquardt(generic_minimise):
 		# Create the Levenberg-Marquardt matrix with elements equal to zero.
 		self.lm_matrix = zeros((self.n, self.n), Float64)
 
+		# Calculate the inverse of the variance to minimise calculations.
+		i_variance = 1.0 / self.errors**2
+
 		# Loop over the error points from i=1 to n.
 		for i in range(len(self.errors)):
-			# Calculate the inverse of the variance to minimise calculations.
-			i_variance = 1.0 / self.errors[i]**2
-
 			# Loop over all function parameters.
 			for param_j in range(self.n):
 				# Loop over the function parameters from the first to 'param_j' to create the Levenberg-Marquardt matrix.
 				for param_k in range(param_j + 1):
 					if param_j == param_k:
-						matrix_jk = i_variance * self.df[param_j, i] * self.df[param_k, i] * (1.0 + self.l)
+						matrix_jk = i_variance[i] * self.df[i, param_j] * self.df[i, param_k] * (1.0 + self.l)
+						self.lm_matrix[param_j, param_k] = self.lm_matrix[param_j, param_k] + matrix_jk
 					else:
-						matrix_jk = i_variance * self.df[param_j, i] * self.df[param_k, i]
-
-					self.lm_matrix[param_j, param_k] = self.lm_matrix[param_j, param_k] + matrix_jk
-					self.lm_matrix[param_k, param_j] = self.lm_matrix[param_k, param_j] + matrix_jk
+						matrix_jk = i_variance[i] * self.df[i, param_j] * self.df[i, param_k]
+						self.lm_matrix[param_j, param_k] = self.lm_matrix[param_j, param_k] + matrix_jk
+						self.lm_matrix[param_k, param_j] = self.lm_matrix[param_k, param_j] + matrix_jk
 
 
 	def new_param_func(self):

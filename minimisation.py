@@ -187,7 +187,7 @@ def minimise(func, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, mi
 	elif match('^[Ll][Mm]$', min_algor) or match('^[Ll]evenburg-[Mm]arquardt$', min_algor):
 		if print_flag:
 			print "\n\n<<< Levenberg-Marquardt minimisation >>>"
-		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options, errors=minimiser[2], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
+		min = levenberg_marquardt(chi2_func=func, dchi2_func=dfunc, dfunc=min_options[0], errors=min_options[1], args=args, x0=x0, func_tol=func_tol, maxiter=maxiter, full_output=full_output, print_flag=print_flag)
 		if full_output:
 			xk, fk, k, f_count, g_count, h_count, warning = min.minimise()
 		else:

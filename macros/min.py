@@ -383,7 +383,7 @@ class min:
 				self.dfunc = self.mf.dfunc
 				self.d2func = self.mf.d2func
 				if match('[Ll][Mm]$', self.min_algor) or match('[Ll]evenburg-[Mm]arquardt$', self.min_algor):
-					self.min_options.append(self.mf.lm_dri)
+					self.min_options = [self.mf.lm_dri, errors]
 
 			# Minimisation.
 			results = self.relax.minimise(self.func, dfunc=self.dfunc, d2func=self.d2func, args=self.function_ops, x0=self.relax.data.params[self.model][self.res], min_algor=self.min_algor, min_options=self.min_options, func_tol=self.chi2_tol, maxiter=self.max_iterations, full_output=1, print_flag=self.relax.min_debug)
