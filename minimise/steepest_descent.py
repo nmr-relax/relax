@@ -1,6 +1,14 @@
-from Numeric import copy
+from Numeric import copy, dot
+from re import match
 
-def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
+# Line search functions.
+from line_search.backtrack import backtrack
+from line_search.nocedal_wright_interpol import nocedal_wright_interpol
+from line_search.nocedal_wright_wolfe import nocedal_wright_wolfe
+from line_search.more_thuente import more_thuente
+
+
+def steepest_descent(func, dfunc, x0, line_search_algor='Not set', args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=0):
 	"""Steepest descent minimisation.
 
 
@@ -49,6 +57,7 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 	xk = x0
 	fk = apply(func, (x0,)+args)
 	dfk = apply(dfunc, (x0,)+args)
+	a0 = 1.0
 
 	# Start the iteration counter.
 	k = 0
@@ -75,10 +84,29 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 					print "%-6s%-8i%-12s%-65s%-16s%-20s" % ("Step:", k, "Min params:", `xk`, "Function value:", `fk`)
 					k2 = 0
 
-		# Find the parameter vector, function value, and gradient vector for iteration k.
 		# The search direction, pk, is equal to -dfk for the steepest descent method.
 		pk = -dfk
-		alpha = line_search(func, dfunc, args, xk, pk, fk, dfk)
+
+		# Backtracking line search.
+		if match('^[Bb]ack', line_search_algor):
+			alpha = backtrack(func, args, xk, fk, dfk, pk, a_init=a0)
+		# Nocedal and Wright interpolation based line search.
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
+			alpha = nocedal_wright_interpol(func, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, print_flag=0)
+		# Nocedal and Wright line search for the Wolfe conditions.
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
+			alpha = nocedal_wright_wolfe(func, dfunc, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, eta=0.1, print_flag=0)
+		# More and Thuente line search.
+		elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
+			alpha = more_thuente(func, dfunc, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, eta=0.1, print_flag=0)
+		# No line search.
+		elif match('^[Nn]one$', line_search_algor):
+			alpha = a0
+		# No match to line search string.
+		else:
+			raise NameError, "The line search algorithm " + line_search_algor + " is not setup for steepest descent minimisation.\n"
+
+		# Find the parameter vector, function value, and gradient vector for iteration k.
 		xk_new = xk + alpha * pk
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
@@ -89,6 +117,9 @@ def steepest_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=10
 				return xk_new, fk_new, k+1, 0
 			else:
 				return xk_new
+
+		# Calculate the initial step length a0 for the iteration k+1.
+		a0 = alpha * dot(dfk, -dfk) / dot(dfk_new, -dfk_new)
 
 		# Increment the iteration number k and move the k+1 parameter vector, function value, and gradient vector to the k values.
 		k = k + 1

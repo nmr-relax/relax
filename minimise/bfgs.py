@@ -1,6 +1,14 @@
 from Numeric import Float64, copy, dot, identity, matrixmultiply, outerproduct
+from re import match
 
-def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
+# Line search functions.
+from line_search.backtrack import backtrack
+from line_search.nocedal_wright_interpol import nocedal_wright_interpol
+from line_search.nocedal_wright_wolfe import nocedal_wright_wolfe
+from line_search.more_thuente import more_thuente
+
+
+def bfgs(func, dfunc, x0, line_search_algor='Not set', args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
 	"""Quasi-Newton BFGS minimisation.
 
 	Function options
@@ -9,7 +17,6 @@ def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_out
 	func		- The function to minimise.
 	dfunc		- The function which returns the gradient vector.
 	x0		- The initial parameter vector.
-	line_search	- The line search function.
 	args		- The tuple of arguments to supply to the functions func, and dfunc.
 	tol		- The cutoff value used to terminate minimisation by comparison to the difference in function values between iterations.
 	maxiter		- The maximum number of iterations.
@@ -86,8 +93,26 @@ def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_out
 		# Calculate the Quasi-Newton search direction for iteration k.
 		pk = -matrixmultiply(Hk, dfk)
 
+		# Backtracking line search.
+		if match('^[Bb]ack', line_search_algor):
+			alpha = backtrack(func, args, xk, fk, dfk, pk, a_init=1.0)
+		# Nocedal and Wright interpolation based line search.
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
+			alpha = nocedal_wright_interpol(func, args, xk, fk, dfk, pk, a_init=1.0, mu=0.001, print_flag=0)
+		# Nocedal and Wright line search for the Wolfe conditions.
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
+			alpha = nocedal_wright_wolfe(func, dfunc, args, xk, fk, dfk, pk, a_init=1.0, mu=0.001, eta=0.9, print_flag=0)
+		# More and Thuente line search.
+		elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
+			alpha = more_thuente(func, dfunc, args, xk, fk, dfk, pk, a_init=1.0, mu=0.001, eta=0.9, print_flag=0)
+		# No line search.
+		elif match('^[Nn]one$', line_search_algor):
+			alpha = 1.0
+		# No match to line search string.
+		else:
+			raise NameError, "The line search algorithm " + line_search_algor + " is not setup for quasi-Newton BFGS minimisation.\n"
+
 		# Find the parameter vector, function value, and gradient vector for iteration k+1.
-		alpha = line_search(func, dfunc, args, xk, pk, fk, dfk, a_min=0.0, a_max=1e5)
 		xk_new = xk + alpha * pk
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
@@ -107,7 +132,7 @@ def bfgs(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_out
 				return xk_new, fk_new, k+1, 2
 			else:
 				return xk_new
-			
+
 		rk = 1.0 / dot(yk, sk)
 
 		a = I - rk*outerproduct(sk, yk)

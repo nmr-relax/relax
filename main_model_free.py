@@ -121,10 +121,6 @@ class main_model_free:
 				errors.append(self.mf.data.relax_data[data][res][3])
 			function_ops = ( diff_type, diff_params, mf_model, relax_data, errors )
 
-			line_search = self.mf.minimise.line_search_more_thuente
-			#line_search = self.mf.minimise.backtrack_line
-			type = "More and Thuente"
-
 			# Grid search.
 			params, chi2 = self.mf.minimise.grid(func, grid_ops, args=function_ops, print_flag=self.mf.min_debug)
 			if self.mf.min_debug >= 1:
@@ -170,7 +166,7 @@ class main_model_free:
 			elif match('^[Cc][Dd]$', self.mf.usr_param.minimiser) or match('^[Cc]oordinate-[Dd]escent$', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Back-and-forth coordinate descent minimisation >>>"
-				output = self.coordinate_descent(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
+				output = self.coordinate_descent(func, dfunc, params, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
 				params, chi2, iter, warn_flag = output
 				print "iter:       " + `iter`
 				print "warn flag:  " + `warn_flag`
@@ -179,7 +175,7 @@ class main_model_free:
 			elif match('^[Ss][Dd]$', self.mf.usr_param.minimiser) or match('^[Ss]teepest[ _][Dd]escent$', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Steepest descent minimisation >>>"
-				output = self.steepest_descent(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
+				output = self.steepest_descent(func, dfunc, params, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
 				params, chi2, iter, warn_flag = output
 				print "iter:       " + `iter`
 				print "warn flag:  " + `warn_flag`
@@ -188,7 +184,7 @@ class main_model_free:
 			elif match('^[Bb][Ff][Gg][Ss]$', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Quasi-Newton BFGS minimisation >>>"
-				output = self.bfgs(func, dfunc, params, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
+				output = self.bfgs(func, dfunc, params, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
 				params, chi2, iter, warn_flag = output
 				print "iter:       " + `iter`
 				print "warn flag:  " + `warn_flag`
@@ -207,7 +203,7 @@ class main_model_free:
 			elif match('^[Nn]ewton$', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Newton minimisation >>>"
-				output = self.newton(func, dfunc, d2func, params, type, line_search, args=function_ops, tol=tol, maxiter=max, full_output=1)
+				output = self.newton(func, dfunc, d2func, params, line_search_algor=self.mf.usr_param.line_search_algor, args=function_ops, tol=tol, maxiter=max, full_output=1, print_flag=self.mf.min_debug)
 				params, chi2, iter, warn_flag = output
 				print "iter:       " + `iter`
 				print "warn flag:  " + `warn_flag`
@@ -224,8 +220,7 @@ class main_model_free:
 
 			# No match to minimiser string.
 			else:
-				raise NameError, "Minimiser type set incorrectly, " + `self.mf.usr_param.minimiser` + " not programmed.\n"
-				sys.exit()
+				raise NameError, "Minimiser type set incorrectly, " + self.mf.usr_param.minimiser + " not programmed.\n"
 
 			if self.mf.min_debug >= 1:
 				print "\n\n<<< Finished minimiser >>>"

@@ -1,6 +1,14 @@
 from Numeric import Float64, copy, dot, identity, zeros
+from re import match
 
-def coordinate_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=1000, full_output=0, print_flag=1):
+# Line search functions.
+from line_search.backtrack import backtrack
+from line_search.nocedal_wright_interpol import nocedal_wright_interpol
+from line_search.nocedal_wright_wolfe import nocedal_wright_wolfe
+from line_search.more_thuente import more_thuente
+
+
+def coordinate_descent(func, dfunc, x0, line_search_algor='Not set', args=(), tol=1e-15, maxiter=1000, full_output=0, print_flag=2):
 	"""Back-and-forth coordinate descent minimisation.
 
 	Function options
@@ -105,22 +113,51 @@ def coordinate_descent(func, dfunc, x0, line_search, args=(), tol=1e-5, maxiter=
 				back = 0
 				n = n + 1
 
+		# Calculate the initial step length a0.
+		if k == 0:
+			a0 = 1.0
+		else:
+			a0 = alpha * dot(dfk_old, pk_old) / dot(dfk, pk)
+
+		# Backtracking line search.
+		if match('^[Bb]ack', line_search_algor):
+			alpha = backtrack(func, args, xk, fk, dfk, pk, a_init=a0)
+		# Nocedal and Wright interpolation based line search.
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', line_search_algor):
+			alpha = nocedal_wright_interpol(func, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, print_flag=0)
+		# Nocedal and Wright line search for the Wolfe conditions.
+		elif match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', line_search_algor):
+			alpha = nocedal_wright_wolfe(func, dfunc, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, eta=0.1, print_flag=0)
+		# More and Thuente line search.
+		elif match('^[Mm]ore[ _][Tt]huente$', line_search_algor):
+			alpha = more_thuente(func, dfunc, args, xk, fk, dfk, pk, a_init=a0, mu=0.001, eta=0.1, print_flag=1)
+		# No line search.
+		elif match('^[Nn]one$', line_search_algor):
+			alpha = a0
+		# No match to line search string.
+		else:
+			raise NameError, "The line search algorithm " + line_search_algor + " is not setup for back-and-forth coordinate descent minimisation.\n"
 
 		# Find the parameter vector, function value, and gradient vector for iteration k+1.
-		alpha = line_search(func, dfunc, args, xk, pk, fk, dfk)
 		xk_new = xk + alpha * pk
 		fk_new = apply(func, (xk_new,)+args)
 		dfk_new = apply(dfunc, (xk_new,)+args)
 
 		# Test for the local minimum.
 		if abs(fk - fk_new) <= tol:
+			if print_flag:
+				print "fk: " + `fk`
+				print "fk_new: " + `fk_new`
+				print "<Fin>"
 			if full_output:
 				return xk_new, fk_new, k+1, 0
 			else:
 				return xk_new
 
-		# Increment the iteration number k and move the k+1 parameter vector, function value, gradient vector, and inverse hessian matrix to the k values.
+		# Update to the next iteration number.
 		k = k + 1
+		dfk_old = copy.deepcopy(dfk)
+		pk_old = copy.deepcopy(pk)
 		xk = xk_new
 		fk = fk_new
 		dfk = copy.deepcopy(dfk_new)

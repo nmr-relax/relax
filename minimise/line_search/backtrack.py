@@ -1,6 +1,6 @@
 from Numeric import dot
 
-def backtrack(func, args, xk, fk, dfk, pk, a0=1.0, rho=0.5, c=1e-4):
+def backtrack(func, args, xk, fk, dfk, pk, a_init=1.0, rho=0.5, c=1e-4):
 	"""Backtracking line search.
 
 	Procedure 3.1, page 41, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright, 1999
@@ -37,7 +37,7 @@ def backtrack(func, args, xk, fk, dfk, pk, a0=1.0, rho=0.5, c=1e-4):
 	"""
 
 	# Initialise values.
-	ai = a0
+	ai = a_init
 
 	while 1:
 		xai = xk + ai*pk

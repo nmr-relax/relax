@@ -3,13 +3,14 @@ from copy import deepcopy
 from math import sqrt
 from Numeric import copy, dot
 
-from interpolate import cubic, quadratic_fafbga, quadratic_gagb
+from interpolate import cubic_int, cubic_ext, quadratic_fafbga, quadratic_gagb
 
+cubic = cubic_int
 quadratic = quadratic_fafbga
 secant = quadratic_gagb
 
 
-def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_min=None, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.9, print_flag=1):
+def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=None, a_max=None, a_tol=1e-10, phi_min=-1e3, mu=0.001, eta=0.1, print_flag=0):
 	"""A line search algorithm from More and Thuente.
 
 	More, J. J., and Thuente, D. J. 1994, Line search algorithms with guaranteed sufficient decrease.
@@ -41,21 +42,17 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 	was used as the phi(0) component has no effect on the results.
 	"""
 
-	if print_flag:
-		print "\n<Line search initial values>"
-
 	# Initialise values.
 	k = 0
 	mod_flag = 1
 	bracketed = 0
 	a0 = {}
 	a0['a'] = 0.0
-	a0['phi'] = phi0
-	a0['phi_prime'] = dot(phi0_prime, p)
+	a0['phi'] = f
+	a0['phi_prime'] = dot(g, p)
 	if not a_min:
 		a_min = 0.0
 	if not a_max:
-		#a_max = 1.0 / mu * ((a0['phi'] - phi_min) / -a0['phi_prime'])
 		a_max = 4.0*max(1.0,a_init)
 	Ik_lim = [0.0, 5.0*a_init]
 	width = a_max - a_min
@@ -70,11 +67,12 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 	# Initialise interval data.
 	Ik = {}
 	Ik['a'] = [0.0, 0.0]
-	Ik['phi'] = [phi0, phi0]
+	Ik['phi'] = [a0['phi'], a0['phi']]
 	Ik['phi_prime'] = [a0['phi_prime'], a0['phi_prime']]
 
 	if print_flag:
-		print_data("Pre", -1, a0, Ik, Ik_lim, x, p)
+		print "\n<Line search initial values>"
+		print_data("Pre", -1, a0, Ik, Ik_lim)
 
 	# Test for errors.
 	if a0['phi_prime'] >= 0.0:
@@ -88,7 +86,7 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 		if print_flag:
 			print "\n<Line search iteration k = " + `k+1` + " >"
 			print "Bracketed: " + `bracketed`
-			print_data("Initial", k, a, Ik, Ik_lim, x, p)
+			print_data("Initial", k, a, Ik, Ik_lim)
 
 		# Test values.
 		curv = mu * a0['phi_prime']
@@ -165,11 +163,11 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 			psi_l_prime = Ik['phi_prime'][0] - curv
 			psi_u_prime = Ik['phi_prime'][1] - curv
 
-			a_new['a'], Ik_new, bracketed = update(a, Ik, a['a'], Ik['a'][0], Ik['a'][1], psi, psi_l, psi_u, psi_prime, psi_l_prime, psi_u_prime, bracketed, Ik_lim)
+			a_new['a'], Ik_new, bracketed = update(a, Ik, a['a'], Ik['a'][0], Ik['a'][1], psi, psi_l, psi_u, psi_prime, psi_l_prime, psi_u_prime, bracketed, Ik_lim, print_flag=print_flag)
 		else:
 			if print_flag:
 				print "Choosing ak and updating the interval Ik using the function phi."
-			a_new['a'], Ik_new, bracketed = update(a, Ik, a['a'], Ik['a'][0], Ik['a'][1], a['phi'], Ik['phi'][0], Ik['phi'][1], a['phi_prime'], Ik['phi_prime'][0], Ik['phi_prime'][1], bracketed, Ik_lim)
+			a_new['a'], Ik_new, bracketed = update(a, Ik, a['a'], Ik['a'][0], Ik['a'][1], a['phi'], Ik['phi'][0], Ik['phi'][1], a['phi_prime'], Ik['phi_prime'][0], Ik['phi_prime'][1], bracketed, Ik_lim, print_flag=print_flag)
 
 		# Bisection step.
 		if bracketed:
@@ -226,13 +224,13 @@ def more_thuente(func, func_prime, args, x, p, phi0, phi0_prime, a_init=1.0, a_m
 		k = k + 1
 		if print_flag:
 			print "Bracketed: " + `bracketed`
-			print_data("Final", k, a_new, Ik_new, Ik_lim, x, p)
+			print_data("Final", k, a_new, Ik_new, Ik_lim)
 		a = deepcopy(a_new)
 		Ik = deepcopy(Ik_new)
 
 
 
-def print_data(text, k, a, Ik, Ik_lim, x, p):
+def print_data(text, k, a, Ik, Ik_lim):
 	"Temp func for debugging."
 
 	print text + " data printout:"
@@ -246,7 +244,7 @@ def print_data(text, k, a, Ik, Ik_lim, x, p):
 	print "   Ik_lim:      " + `Ik_lim`
 
 
-def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66, print_flag=1):
+def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66, print_flag=0):
 	"""Trial value selection and interval updating.
 
 	Trial value selection
@@ -368,12 +366,12 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 			print "\tat selection, case 3."
 
 		# Interpolation.
-		ac, beta1, beta2 = cubic(al, at, fl, ft, gl, gt, full_output=1)
+		ac, beta1, beta2 = cubic_ext(al, at, fl, ft, gl, gt, full_output=1)
 
 		if ac > at and beta2 != 0.0:
 			# Leave ac as ac.
 			if print_flag:
-				print "\t\tTemp3 < 0.0 and temp2 != 0.0"
+				print "\t\tac > at and beta2 != 0.0"
 		elif at > al:
 			# Set ac to the upper limit.
 			if print_flag:

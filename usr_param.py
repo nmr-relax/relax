@@ -14,14 +14,13 @@ class usr_param:
 		self.program_type = "palmer"
 
 		# Relaxation curve fitting.
-		if match(self.program_type, "relax_fit"):
+		if match(self.program_type, "^[Rr]elax[ _][Ff]it$"):
 			self.relax_params()
 
 		# Normal program use.
-		elif match(self.program_type, "mf"):
-			self.mf.data.model = 'm1'
-			#self.minimiser = 'Simplex'   # Simplex minimisation.
-			self.minimiser = 'LM'   # Levenberg-Marquardt minimisation.
+		elif match(self.program_type, "^[Mm][Ff]$"):
+			self.minimiser = 'Newton'
+			self.line_search_algor = 'More Thuente'
 			self.input()
 			self.model_selection()
 			self.palmer_method_param()
@@ -31,7 +30,7 @@ class usr_param:
 			self.palmer_mfmodel_param()
 
 		# Use Art Palmer's Modelfree minimiser.
-		elif match(self.program_type, "palmer"):
+		elif match(self.program_type, "^[Pp]almer$"):
 			#self.init_input()
 			self.input()
 			self.model_selection()

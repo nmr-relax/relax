@@ -1,6 +1,6 @@
 from Numeric import sqrt
 
-def cubic(a, b, fa, fb, ga, gb, full_output=0):
+def cubic_int(a, b, fa, fb, ga, gb):
 	"""Cubic interpolation using f(a), f(b), g(a), and g(b).
 
 	Equations
@@ -26,7 +26,6 @@ def cubic(a, b, fa, fb, ga, gb, full_output=0):
 		                   g(b) - g(a) + 2*beta2
 
 	where:
-
 		                          f(a) - f(b)
 		beta1 = g(a) + g(b) - 3 . -----------
 		                             a - b
@@ -35,7 +34,6 @@ def cubic(a, b, fa, fb, ga, gb, full_output=0):
 			beta2 = sqrt(beta1**2 - g(a).g(b))
 		else:
 			beta2 = -sqrt(beta1**2 - g(a).g(b))
-
 	"""
 
 
@@ -44,8 +42,48 @@ def cubic(a, b, fa, fb, ga, gb, full_output=0):
 		beta2 = sqrt(beta1**2 - ga*gb)
 	else:
 		beta2 = -sqrt(beta1**2 - ga*gb)
+	alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
+	return alpha
+
+
+def cubic_ext(a, b, fa, fb, ga, gb, full_output=0):
+	"""Cubic Extrapolation using f(a), f(b), g(a), and g(b).
+
+	Extrapolation
+	~~~~~~~~~~~~~
+
+	The extrema are the roots of the quadratic equation:
+
+		3a'*alpha**2 + 2b'*alpha + c' = 0
+
+	The cubic extrapolant is given by the formula:
+
+		                   g(b) + beta2 - beta1
+		ac = b - (b - a) . ---------------------
+		                   g(b) - g(a) + 2*beta2
+
+	where:
+
+		                          f(a) - f(b)
+		beta1 = g(a) + g(b) - 3 . -----------
+		                             a - b
+
+		if a < b:
+			beta2 = sqrt(max(0.0, beta1**2 - g(a).g(b)))
+		else:
+			beta2 = -sqrt(max(0.0, beta1**2 - g(a).g(b)))
+
+	"""
+
+
+	beta1 = ga + gb - 3.0*(fa - fb)/(a - b)
+	if a < b:
+		beta2 = sqrt(max(0.0, beta1**2 - ga*gb))
+	else:
+		beta2 = -sqrt(max(0.0, beta1**2 - ga*gb))
 
 	alpha = b - (b - a)*(gb + beta2 - beta1)/(gb - ga + 2.0*beta2)
+
 	if full_output:
 		return alpha, beta1, beta2
 	else:
@@ -64,7 +102,7 @@ def quadratic_fafbga(a, b, fa, fb, ga):
 
 	denom = fa - fb - (a - b)*ga
 	if denom == 0.0:
-		return inf
+		return 1e99
 	else:
 		return a + 0.5 * ga / denom
 
@@ -81,6 +119,6 @@ def quadratic_gagb(a, b, ga, gb):
 
 	denom = ga - gb
 	if denom == 0.0:
-		return inf
+		return 1e99
 	else:
 		return (b*ga - a*gb) / denom
