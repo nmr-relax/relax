@@ -157,6 +157,10 @@ class Specific_setup:
         if self.function_type == 'set':
             return self.relax.specific.model_free.set
 
+        # Set error function.
+        if self.function_type == 'set_error':
+            return self.relax.specific.model_free.set_error
+
         # Skip function.
         if self.function_type == 'skip_function':
             return self.relax.specific.model_free.skip_function

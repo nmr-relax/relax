@@ -1908,7 +1908,7 @@ class Model_free:
         self.param_set = self.determine_param_set_type()
 
         # Parameter set for the back-calculate function.
-        if min_algor == 'back_calc':
+        if min_algor == 'back_calc' and self.param_set != 'local_tm':
             self.param_set = 'mf'
 
         # Tests for the PDB file and unit vectors.
@@ -3015,6 +3015,105 @@ class Model_free:
             if error != None:
                 setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
 
+
+    def set_error(self, run, instance, index, error):
+        """Function for setting parameter errors."""
+
+        # Arguments.
+        self.run = run
+
+        # Increment counter for the parameter set 'all'.
+        inc = 0
+
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
+
+        # Diffusion tensor parameter errors.
+        ####################################
+
+        if self.param_set == 'diff' or self.param_set == 'all':
+            # Isotropic diffusion.
+            if self.relax.data.diff[self.run].type == 'iso':
+                # Return the parameter array.
+                if index == 0:
+                    self.relax.data.diff[self.run].tm_err = error
+
+                # Increment.
+                inc = inc + 1
+
+            # Axially symmetric diffusion.
+            elif self.relax.data.diff[self.run].type == 'axial':
+                # Return the parameter array.
+                if index == 0:
+                    self.relax.data.diff[self.run].tm_err = error
+                elif index == 1:
+                    self.relax.data.diff[self.run].Dratio_err = error
+                elif index == 2:
+                    self.relax.data.diff[self.run].theta_err = error
+                elif index == 3:
+                    self.relax.data.diff[self.run].phi_err = error
+
+                # Increment.
+                inc = inc + 4
+
+            # Anisotropic diffusion.
+            elif self.relax.data.diff[self.run].type == 'aniso':
+                # Return the parameter array.
+                if index == 0:
+                    self.relax.data.diff[self.run].tm_err = error
+                elif index == 1:
+                    self.relax.data.diff[self.run].Da_err = error
+                elif index == 2:
+                    self.relax.data.diff[self.run].Dr_err = error
+                elif index == 3:
+                    self.relax.data.diff[self.run].alpha_err = error
+                elif index == 4:
+                    self.relax.data.diff[self.run].beta_err = error
+                elif index == 5:
+                    self.relax.data.diff[self.run].gamma_err = error
+
+                # Increment.
+                inc = inc + 6
+
+
+        # Model-free parameter errors for the parameter set 'all'.
+        ##########################################################
+
+        if self.param_set == 'all':
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Loop over the residue specific parameters.
+                for param in param_names:
+                    # Return the parameter array.
+                    if index == inc:
+                        setattr(self.relax.data.res[self.run][i], param + "_err", error)
+
+                    # Increment.
+                    inc = inc + 1
+
+
+        # Model-free parameters for the parameter sets 'mf' and 'local_tm'.
+        ###################################################################
+
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][instance].select:
+                return
+
+            # Loop over the residue specific parameters.
+            for param in param_names:
+                # Return the parameter array.
+                if index == inc:
+                    setattr(self.relax.data.res[self.run][instance], param + "_err", error)
+
+                # Increment.
+                inc = inc + 1
+ 
 
     def sim_init_values(self, run):
         """Function for initialising Monte Carlo parameter values."""

@@ -481,6 +481,7 @@ class Palmer:
         mfout_file.close()
 
         # Find out if simulations were carried out.
+        sims = 0
         for i in xrange(len(mfout)):
             if search('_iterations', mfout[i]):
                 row = split(mfout[i])

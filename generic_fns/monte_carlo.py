@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+from copy import deepcopy
+from math import sqrt
 from random import gauss
 
 
@@ -88,7 +90,21 @@ class Monte_carlo:
 
 
     def error_analysis(self, run=None, prune=0):
-        """Function for calculating errors from the Monte Carlo simulations."""
+        """Function for calculating errors from the Monte Carlo simulations.
+
+        The standard deviation formula used to calculate the errors is the square root of the
+        bias-corrected variance, given by the formula:
+
+                       ____________________________
+                      /   1
+            sd  =    /  ----- * sum({Xi - Xav}^2)]
+                   \/   n - 1
+
+        where:
+            n is the total number of simulations.
+            Xi is the parameter value for simulation i.
+            Xav is the mean parameter value for all simulations.
+        """
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -101,10 +117,11 @@ class Monte_carlo:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Specific number of instances function.
+        # Specific number of instances, return simulation chi2 array, return simulation parameter array, and set error functions.
         count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
         return_sim_chi2 = self.relax.specific_setup.setup('return_sim_chi2', function_type)
         return_sim_param = self.relax.specific_setup.setup('return_sim_param', function_type)
+        set_error = self.relax.specific_setup.setup('set_error', function_type)
 
         # Count the number of instances.
         num_instances = count_num_instances(run)
@@ -113,18 +130,72 @@ class Monte_carlo:
         for instance in xrange(num_instances):
             # Get the array of simulation chi-squared values.
             chi2_array = return_sim_chi2(run, instance)
-            print chi2_array
+
+            # The total number of simulations.
+            n = len(chi2_array)
+
+            # Initialise an array of indecies to prune.
+            indecies_to_skip = []
+
+            # Pruning.
+            if prune > 0.0:
+                # Create a sorted array of chi-squared values.
+                chi2_sorted = deepcopy(chi2_array)
+                chi2_sorted.sort()
+
+                # Number of indecies to remove from one side of the chi2 distribution.
+                num = int(float(n) * 0.5 * prune)
+
+                # Remove the lower tail.
+                for i in xrange(num):
+                    indecies_to_skip.append(chi2_array.index(chi2_sorted[i]))
+
+                # Remove the upper tail.
+                for i in xrange(n-num, n):
+                    indecies_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
             # Loop over the parameters.
             index = 0
             while 1:
                 # Get the array of simulation parameters for the index.
                 param_array = return_sim_param(run, instance, index)
-                print param_array
 
-                # Break.
+                # Break (no more parameters).
                 if param_array == None:
                     break
+
+                # Simulation parameters with values (ie not None).
+                if param_array[0] != None:
+                    # Calculate the mean parameter value for all simulations.
+                    Xav = 0.0
+                    for i in xrange(n):
+                        # Prune.
+                        if i in indecies_to_skip:
+                            continue
+
+                        # Sum.
+                        Xav = Xav + param_array[i]
+                    Xav = Xav / (float(n) - float(len(indecies_to_skip)))
+
+                    # Calculate the sum part of the standard deviation.
+                    sd = 0.0
+                    for i in xrange(n):
+                        # Prune.
+                        if i in indecies_to_skip:
+                            continue
+
+                        # Sum.
+                        sd = sd + (param_array[i] - Xav)**2
+
+                    # Calculate the standard deviation.
+                    sd = sqrt(sd / (float(n) - float(len(indecies_to_skip)) - 1.0))
+
+                # Simulation parameters with the value None.
+                else:
+                    sd = None
+
+                # Set the parameter error.
+                set_error(run, instance, index, sd)
 
                 # Increment the parameter index.
                 index = index + 1

@@ -6,7 +6,7 @@
 #   Stage 1:  Initial model-free minimisation.
 #   Stage 2:  Model-free model selection.
 #   Stage 3:  Final optimisation of diffusion tensor parameters together with model-free parameters.
-stage = 3
+stage = 1
 
 
 # Functions.
@@ -27,8 +27,8 @@ def exec_stage_1(runs):
         sequence.read(run, 'noe.500.out')
 
         # PDB.
-        pdb(run, 'Ap4Aase_new_3.pdb')
-        vectors(run)
+        #pdb(run, 'Ap4Aase_new_3.pdb')
+        #vectors(run)
 
         # Load the relaxation data.
         relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -47,7 +47,7 @@ def exec_stage_1(runs):
         model_free.select_model(run=run, model=run)
 
         # Create the Modelfree4 files.
-        palmer.create(run=run, force=0, sims=0)
+        palmer.create(run=run, force=0, sims=200)
 
         # Run Modelfree4.
         palmer.execute(run=run, force=1)
