@@ -134,6 +134,9 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
             if print_flag:
                 print print_prefix + "%-3s%-8i%-4s%-65s%-4s%-20s" % ("k:", i, "xk:", `min_params`, "fk:", `f_min`)
 
+        # Grid count.
+        grid_size = grid_size + 1
+
         # Print out code.
         if print_flag >= 2:
             if f != f_min:
