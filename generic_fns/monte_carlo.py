@@ -28,16 +28,70 @@ class Monte_carlo:
         self.relax = relax
 
 
-    def randomise(self, run=None, number=None, prune=None, method=None):
-        """Function for setting up Monte Carlo simulations."""
-
-        # Arguments.
-        self.run = run
-        self.number = number
-        self.prune = prune
-        self.method = method
+    def create_data(self, run=None, method=None):
+        """Function for creating simulation data."""
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
+        # Test the method argument.
+        valid_methods = ['back_calc', 'direct']
+        if method not in valid_methods:
+            raise RelaxError, "The method " + `method` + " is not valid."
+
+
+    def off(self, run=None):
+        """Function for turning simulations off."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if simulations have been set up.
+        if not hasattr(self.relax.data, 'sim_state'):
+            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+
+        # Turn simulations off.
+        self.relax.data.sim_state[run] = 0
+
+
+    def on(self, run=None):
+        """Function for turning simulations on."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if simulations have been set up.
+        if not hasattr(self.relax.data, 'sim_state'):
+            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+
+        # Turn simulations on.
+        self.relax.data.sim_state[run] = 1
+
+
+    def setup(self, run=None, number=0):
+        """Function for setting up Monte Carlo simulations."""
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if Monte Carlo simulations have already been set up for the given run.
+        if hasattr(self.relax.data, 'sim_number') and self.relax.data.sim_number.has_key(run):
+            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have already been set up."
+
+        # Create the data structure 'sim_number' if it doesn't exist.
+        if not hasattr(self.relax.data, 'sim_number'):
+            self.relax.data.sim_number = {}
+
+        # Add the simulation number.
+        self.relax.data.sim_number[run] = number
+
+        # Create the data structure 'sim_state'.
+        if not hasattr(self.relax.data, 'sim_state'):
+            self.relax.data.sim_state = {}
+
+        # Turn simulations on.
+        self.relax.data.sim_state[run] = 1
