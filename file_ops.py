@@ -1,6 +1,7 @@
-import sys
+from os import mkdir, chmod
 from re import match
 from string import split
+import sys
 
 class file_ops:
 	def __init__(self, mf):
@@ -8,9 +9,27 @@ class file_ops:
 
 		self.mf = mf
 
-	def input(self):
-		"Extract all the information from the input file"
-		### Change structure so data is returned, ie no refs to self.mf ###
+
+	def close_mf_files(self, dir):
+		"Close the mfin, mfdata, mfmodel, mfpar, and run files, and make the run file executable."
+
+		self.mf.mfin.close()
+		self.mf.mfdata.close()
+		self.mf.mfmodel.close()
+		self.mf.mfpar.close()
+		self.mf.run.close()
+		chmod(dir + '/run', 0777)
+		
+	
+	def init_log_file(self, stage, title):
+		"Initialize the log file."
+		
+		self.mf.log = open('log.stage' + stage, 'w')
+		self.mf.log.write(title)
+
+
+	def open_input(self):
+		"Open the input file."
 
 		try:
 			open("input", 'r')
@@ -18,68 +37,52 @@ class file_ops:
 			print "Input file \"input\" does not exist, quitting script!\n"
 			sys.exit()
 		input = open("input", 'r')
-		lines = input.readlines()
-		frq = 0
-		num_data = 0
-		for i in range(len(lines)):
-			row = [[]]
-			row[0] = split(lines[i])
-			try:
-				row[0][0]
-			except IndexError:
-				continue
-			if match('NMR_frq_label', row[0][0]):
-				self.mf.data.nmr_frq.append([])
-				row.append(split(lines[i+1]))
-				row.append(split(lines[i+2]))
-				row.append(split(lines[i+3]))
-				row.append(split(lines[i+4]))
-				# NMR data.
-				self.mf.data.nmr_frq[frq].append(row[0][1])
-				self.mf.data.nmr_frq[frq].append(row[1][1])
-				# R1 data.
-				if not match('none', row[2][1]):
-					self.mf.data.nmr_frq[frq].append('1')
-					self.mf.data.input_info.append([])
-					self.mf.data.relax_data.append([])
-					self.mf.data.input_info[num_data].append("R1")
-					self.mf.data.input_info[num_data].append(row[0][1])
-					self.mf.data.input_info[num_data].append(float(row[1][1]))
-					self.mf.data.input_info[num_data].append(row[2][1])
-					num_data = num_data + 1
-				else:
-					self.mf.data.nmr_frq[frq].append('0')
-				# R2 data.
-				if not match('none', row[3][1]):
-					self.mf.data.nmr_frq[frq].append('1')
-					self.mf.data.input_info.append([])
-					self.mf.data.relax_data.append([])
-					self.mf.data.input_info[num_data].append("R2")
-					self.mf.data.input_info[num_data].append(row[0][1])
-					self.mf.data.input_info[num_data].append(float(row[1][1]))
-					self.mf.data.input_info[num_data].append(row[3][1])
-					num_data = num_data + 1
-				else:
-					self.mf.data.nmr_frq[frq].append('0')
-				# NOE data.
-				if not match('none', row[4][1]):
-					self.mf.data.nmr_frq[frq].append('1')
-					self.mf.data.input_info.append([])
-					self.mf.data.relax_data.append([])
-					self.mf.data.input_info[num_data].append("NOE")
-					self.mf.data.input_info[num_data].append(row[0][1])
-					self.mf.data.input_info[num_data].append(float(row[1][1]))
-					self.mf.data.input_info[num_data].append(row[4][1])
-					num_data = num_data + 1
-				else:
-					self.mf.data.nmr_frq[frq].append('0')
-				frq = frq + 1
-		self.mf.data.num_frq = frq
-		self.mf.data.num_data_sets = num_data
+		return input
+
+
+	def mkdir(self, dir):
+		"Create the given directory, or exit if the directory exists."
+
+		self.mf.log.write("Making directory " + dir + "\n")
+		try:
+			mkdir(dir)
+		except OSError:
+			print "Directory ./" + dir + " already exists, quitting script.\n"
+			sys.exit()
+
+
+	def open_mf_files(self, dir):
+		"Open the mfin, mfdata, mfmodel, mfpar, and run files for writing."
+
+		self.mf.mfin = open(dir + '/mfin', 'w')
+		self.mf.mfdata = open(dir + '/mfdata', 'w')
+		self.mf.mfmodel = open(dir + '/mfmodel', 'w')
+		self.mf.mfpar = open(dir + '/mfpar', 'w')
+		self.mf.run = open(dir + '/run', 'w')
+	
+	
+	def read_file(self, file_name):
+		"Attempt to read the file, or quit the script if it does not exist."
+
+		try:
+			open(file_name, 'r')
+		except IOError:
+			print "The file '" + file_name + "' does not exist, quitting script.\n\n"
+			sys.exit()
+		file = open(file_name, 'r')
+		return file
 
 
 	def relax_data(self, file):
-		"Open the relaxation data in the file 'file' and return a 2D array with the data."
+		"""Open the relaxation data in the file 'file' and return all the data.
+		
+		It is assumed that the file has four columns separated by whitespace.  The columns should be:
+			0 - Residue numbers
+			1 - Residue names
+			2 - R1, R2, or NOE values
+			3 - The errors
+		"""
+		
 		lines = open(file, 'r')
 		lines = lines.readlines()
 		data = []

@@ -3,24 +3,15 @@ class data:
 		"Class containing all the data"
 
 		self.init_data()
-		self.aic = self.init_aic()
-		self.bic = self.init_bic()
+		self.asymptotic = self.init_asymptotic()
 		self.palmer = self.init_palmer()
 
 
-	class init_aic:
+	class init_asymptotic:
 		def __init__(self):
-			"Data specific for the modelfree analysis using AIC model selection."
+			"Data specific for the modelfree analysis using asymptotic model selection."
 
-			self.name = 'AIC'
-			self.stage = '0'
-
-
-	class init_bic:
-		def __init__(self):
-			"Data specific for the modelfree analysis using BIC model selection."
-
-			self.name = 'BIC'
+			self.name = 'Asymptotic'
 			self.stage = '0'
 
 

@@ -1,5 +1,5 @@
-from os import mkdir, chmod
 from re import match
+from string import split
 import sys
 
 
@@ -8,17 +8,6 @@ class common_operations:
 		"Operations, functions, etc common to the different modelfree analysis methods."
 
 
-	def close_files(self, dir):
-		"Close the mfin, mfdata, mfmodel, mfpar, and run files, and make the run file executable."
-
-		self.mfin.close()
-		self.mfdata.close()
-		self.mfmodel.close()
-		self.mfpar.close()
-		self.run.close()
-		chmod(dir + '/run', 0777)
-		
-	
 	def create_mfdata(self, res, flag='1'):
 		"Create the Modelfree input file mfdata"
 
@@ -44,7 +33,7 @@ class common_operations:
 					text = text + '%10s' % '0.000'
 					text = text + '%10s' % '0.000'
 					text = text + ' %-3s\n' % '0'
-		self.mfdata.write(text)
+		self.mf.mfdata.write(text)
 
 
 	def create_mfin(self, sel='none', algorithm='fix', diffusion_search='none', sims='y'):
@@ -100,7 +89,7 @@ class common_operations:
 		text = text + '%6s' % self.mf.data.usr_param.phi['upper']
 		text = text + '%4s\n' % self.mf.data.usr_param.phi['steps']
 		
-		self.mfin.write(text)
+		self.mf.mfin.write(text)
 
 
 	def create_mfmodel(self, res, md, type='M1'):
@@ -166,7 +155,7 @@ class common_operations:
 		text = text + '%12s' % md['rex']['upper']
 		text = text + ' %-4s\n' % md['rex']['steps']
 
-		self.mfmodel.write(text)
+		self.mf.mfmodel.write(text)
 
 
 	def create_mfpar(self, res):
@@ -185,7 +174,7 @@ class common_operations:
 		text = text + '%-4s' % self.mf.data.usr_param.vector['atom1']
 		text = text + '%-4s\n' % self.mf.data.usr_param.vector['atom2']
 
-		self.mfpar.write(text)
+		self.mf.mfpar.write(text)
 
 
 	def create_run(self, dir):
@@ -198,7 +187,70 @@ class common_operations:
 			copy(self.mf.data.usr_param.pdb_full, dir)
 			text = text + " -s " + self.mf.data.usr_param.pdb_file
 		text = text + "\n"
-		self.run.write(text)
+		self.mf.run.write(text)
+
+
+	def extract_input(self, input):
+		"Extract all the information from the input file."
+
+		lines = input.readlines()
+		frq = 0
+		num_data = 0
+		for i in range(len(lines)):
+			row = [[]]
+			row[0] = split(lines[i])
+			try:
+				row[0][0]
+			except IndexError:
+				continue
+			if match('NMR_frq_label', row[0][0]):
+				self.mf.data.nmr_frq.append([])
+				row.append(split(lines[i+1]))
+				row.append(split(lines[i+2]))
+				row.append(split(lines[i+3]))
+				row.append(split(lines[i+4]))
+				# NMR data.
+				self.mf.data.nmr_frq[frq].append(row[0][1])
+				self.mf.data.nmr_frq[frq].append(row[1][1])
+				# R1 data.
+				if not match('none', row[2][1]):
+					self.mf.data.nmr_frq[frq].append('1')
+					self.mf.data.input_info.append([])
+					self.mf.data.relax_data.append([])
+					self.mf.data.input_info[num_data].append("R1")
+					self.mf.data.input_info[num_data].append(row[0][1])
+					self.mf.data.input_info[num_data].append(float(row[1][1]))
+					self.mf.data.input_info[num_data].append(row[2][1])
+					num_data = num_data + 1
+				else:
+					self.mf.data.nmr_frq[frq].append('0')
+				# R2 data.
+				if not match('none', row[3][1]):
+					self.mf.data.nmr_frq[frq].append('1')
+					self.mf.data.input_info.append([])
+					self.mf.data.relax_data.append([])
+					self.mf.data.input_info[num_data].append("R2")
+					self.mf.data.input_info[num_data].append(row[0][1])
+					self.mf.data.input_info[num_data].append(float(row[1][1]))
+					self.mf.data.input_info[num_data].append(row[3][1])
+					num_data = num_data + 1
+				else:
+					self.mf.data.nmr_frq[frq].append('0')
+				# NOE data.
+				if not match('none', row[4][1]):
+					self.mf.data.nmr_frq[frq].append('1')
+					self.mf.data.input_info.append([])
+					self.mf.data.relax_data.append([])
+					self.mf.data.input_info[num_data].append("NOE")
+					self.mf.data.input_info[num_data].append(row[0][1])
+					self.mf.data.input_info[num_data].append(float(row[1][1]))
+					self.mf.data.input_info[num_data].append(row[4][1])
+					num_data = num_data + 1
+				else:
+					self.mf.data.nmr_frq[frq].append('0')
+				frq = frq + 1
+		self.mf.data.num_frq = frq
+		self.mf.data.num_data_sets = num_data
 
 
 	def extract_relax_data(self):
@@ -242,14 +294,49 @@ class common_operations:
 		return results
 
 
-	def final_optimization(self):
+	def final_run(self):
+		"""Model selection and the creation of the final run.
+		
+		Monte Carlo simulations are used to find errors, and the diffusion tensor is unoptimized.
+		Files are placed in the directory 'final'.
+		"""
+
+		self.mf.file_ops.open_mf_files(dir='final')
+		self.create_mfin(sims='y')
+
+		self.create_run(dir='final')
+		for res in range(len(self.mf.data.relax_data[0])):
+			if match('0', self.mf.data.results[res]['model']):
+				model = 'none'
+			elif match('2+3', self.mf.data.results[res]['model']):
+				model = 'none'
+			elif match('4+5', self.mf.data.results[res]['model']):
+				model = 'none'
+			elif match('^1', self.mf.data.results[res]['model']):
+				model = "m1"
+			else:
+				model = 'm' + self.mf.data.results[res]['model']
+			self.set_run_flags(model)
+			# Mfdata.
+			if match('none', model):
+				self.create_mfdata(res, flag='0')
+			else:
+				self.create_mfdata(res, flag='1')
+			# Mfmodel.
+			self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+			# Mfpar.
+			self.create_mfpar(res)
+		self.mf.file_ops.close_mf_files(dir='final')
+
+
+	def final_run_optimized(self):
 		"""The final optimization run.
 		
 		Create the modelfree4 files for the optimization of the diffusion tensor together with
 		the model free parameters for the selected models.
 		"""
 
-		self.open_mf_files(dir='optimize')
+		self.mf.file_ops.open_mf_files(dir='optimize')
 		if match('isotropic', self.mf.data.usr_param.diff):
 			self.create_mfin(algorithm='brent', diffusion_search='grid')
 		elif match('axial', self.mf.data.usr_param.diff):
@@ -258,18 +345,18 @@ class common_operations:
 		self.create_run(dir='optimize')
 		for res in range(len(self.mf.data.relax_data[0])):
 			if match('0', self.mf.data.results[res]['model']):
-				self.opt_model = 'none'
+				model = 'none'
 			elif match('2+3', self.mf.data.results[res]['model']):
-				self.opt_model = 'none'
+				model = 'none'
 			elif match('4+5', self.mf.data.results[res]['model']):
-				self.opt_model = 'none'
+				model = 'none'
 			elif match('^1', self.mf.data.results[res]['model']):
-				self.opt_model = "m1"
+				model = "m1"
 			else:
-				self.opt_model = 'm' + self.mf.data.results[res]['model']
-			self.set_run_flags(self.opt_model)
+				model = 'm' + self.mf.data.results[res]['model']
+			self.set_run_flags(model)
 			# Mfdata.
-			if match('none', self.opt_model):
+			if match('none', model):
 				self.create_mfdata(res, flag='0')
 			else:
 				self.create_mfdata(res, flag='1')
@@ -277,7 +364,7 @@ class common_operations:
 			self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
 			# Mfpar.
 			self.create_mfpar(res)
-		self.close_files(dir='optimize')
+		self.mf.file_ops.close_mf_files(dir='optimize')
 
 
 	def grace(self, file_name, type, subtitle):
@@ -376,6 +463,41 @@ class common_operations:
 		return text
 
 
+	def initial_runs(self, sims='n'):
+		"Creation of the files for the modelfree calculations for models 1 to 5 and the F-tests."
+		
+		for run in self.mf.data.runs:
+			if match('^m', run):
+				print "Creating input files for model " + run
+				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
+			elif match('^f', run):
+				print "Creating input files for the F-test " + run
+				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
+			else:
+				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
+				sys.exit()
+			self.mf.file_ops.mkdir(dir=run)
+			self.mf.file_ops.open_mf_files(dir=run)
+			self.set_run_flags(run)
+			self.log_params('M1', self.mf.data.usr_param.md1)
+			self.log_params('M2', self.mf.data.usr_param.md2)
+			if match('^m', run):
+				self.create_mfin()
+			elif match('^f', run):
+				self.create_mfin(sel='ftest')
+			self.create_run(dir=run)
+			for res in range(len(self.mf.data.relax_data[0])):
+				# Mfdata.
+				self.create_mfdata(res)
+				# Mfmodel.
+				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
+				if match('^f', run):
+					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
+				# Mfpar.
+				self.create_mfpar(res)
+			self.mf.file_ops.close_mf_files(dir=run)
+
+
 	def log_input_info(self):
 		self.mf.log.write("The input info data structure is:\n" + `self.mf.data.input_info` + "\n\n")
 		for i in range(len(self.mf.data.input_info)):
@@ -404,27 +526,6 @@ class common_operations:
 		self.mf.log.write(text)
 
 
-	def mkdir(self, dir):
-		"Create the given directory, or exit if the directory exists."
-
-		self.mf.log.write("Making directory " + dir + "\n")
-		try:
-			mkdir(dir)
-		except OSError:
-			print "Directory ./" + dir + " already exists, quitting script.\n"
-			sys.exit()
-
-
-	def open_mf_files(self, dir):
-		"Open the mfin, mfdata, mfmodel, mfpar, and run files for writing."
-
-		self.mfin = open(dir + '/mfin', 'w')
-		self.mfdata = open(dir + '/mfdata', 'w')
-		self.mfmodel = open(dir + '/mfmodel', 'w')
-		self.mfpar = open(dir + '/mfpar', 'w')
-		self.run = open(dir + '/run', 'w')
-	
-	
 	def print_data(self, ftests='n'):
 		"Print the results into the results file."
 
@@ -507,18 +608,6 @@ class common_operations:
 		self.results_file.close()
 
 
-	def read_file(self, file_name):
-		"Attempt to read the file, or quit the script if it does not exist."
-
-		try:
-			open(file_name, 'r')
-		except IOError:
-			print "The file '" + file_name + "' does not exist, quitting script.\n\n"
-			sys.exit()
-		file = open(file_name, 'r')
-		return file
-
-
 	def set_run_flags(self, run):
 		"Reset, and then set the flags in self.mf.data.usr_param.md1 and md2."
 		
@@ -587,3 +676,18 @@ class common_operations:
 			self.mf.data.usr_param.md2['ss2']['flag'] = '1'
 			self.mf.data.usr_param.md2['te']['flag']  = '1'
 			self.mf.data.usr_param.md2['rex']['flag'] = '1'
+
+
+	def stage3(self):
+		print "Stage 3 not implemented yet.\n"
+		sys.exit()
+
+
+	def start_up(self, stage, title):
+		"A few operations to start up the program."
+
+		self.mf.file_ops.init_log_file(stage, title)
+		input = self.mf.file_ops.open_input()
+		self.extract_input(input)
+		self.extract_relax_data()
+		self.log_input_info()

@@ -1,8 +1,9 @@
 # The method given by (Mandel et al., 1995) is divided into the three stages:
 #
-#	Stage 1:   Creation of the files for the modelfree calculations for models 1 to 5,
+#	Stage 1:   Creation of the files for the initial modelfree calculations for models 1 to 5,
 #		and f-tests between them.
-#	Stage 2:   Model selection and creation of the final optimization run.  The modelfree
+#	Stage 2a:   Model selection.
+#	Stage 2b:   Model selection and creation of the final optimization run.  The modelfree
 #		input files for optimization are placed into the directory "optimize".
 #	Stage 3:   Extraction of optimized data.
 #
@@ -22,11 +23,8 @@ class palmer(common_operations):
 
 		print "Palmer's method for modelfree analysis. (Mandel et al., 1995)"
 		self.mf.data.palmer.stage = self.ask_stage()
-		self.init_log_file(self.mf.data.palmer.stage)
-
-		self.mf.file_ops.input()
-		self.extract_relax_data()
-		self.log_input_info()
+		title = "<<< Stage " + self.mf.data.palmer.stage + " of Palmer's method for Modelfree analysis >>>\n\n\n"
+		self.start_up(self.mf.data.palmer.stage, title)
 
 		self.mf.data.runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'f-m1m2', 'f-m1m3']
 		if self.mf.data.num_data_sets > 3:
@@ -36,7 +34,7 @@ class palmer(common_operations):
 
 		if match('1', self.mf.data.palmer.stage):
 			print "\n[ Stage 1 ]\n"
-			self.stage1()
+			self.initial_runs(sims='y')
 			print "\n[ End of stage 1 ]\n\n"
 
 		if match('2a', self.mf.data.palmer.stage):
@@ -46,9 +44,9 @@ class palmer(common_operations):
 
 		if match('2b', self.mf.data.palmer.stage):
 			print "\n[ Stage 2b ]\n"
-			self.mkdir('optimize')
+			self.mf.file_ops.mkdir('optimize')
 			self.stage2()
-			self.final_optimization()
+			self.final_run_optimized()
 			print "\n[ End of stage 2b ]\n\n"
 
 		if match('3', self.mf.data.palmer.stage):
@@ -75,15 +73,6 @@ class palmer(common_operations):
 				print "Invalid stage number.  Choose either 1, 2a, 2b, or 3."
 		print "The stage chosen is " + stage + "\n"
 		return stage
-
-
-	def init_log_file(self, stage):
-		"Initialize the log file."
-		
-		self.mf.log = open('log.stage' + stage, 'w')
-		text = "<<< Stage " + stage + " of Palmer's method for Modelfree "
-		text = text + "analysis >>>\n\n\n"
-		self.mf.log.write(text)
 
 
 	def model_selection(self):
@@ -206,45 +195,12 @@ class palmer(common_operations):
 				self.mf.data.results[res] = self.fill_results(data['m1'][res], model='0')
 
 
-	def stage1(self):
-		for run in self.mf.data.runs:
-			if match('^m', run):
-				print "Creating input files for model " + run
-				self.mf.log.write("\n\n<<< Model " + run + " >>>\n\n")
-			elif match('^f', run):
-				print "Creating input files for the F-test " + run
-				self.mf.log.write("\n\n<<< F-test " + run + " >>>\n\n")
-			else:
-				print "The run '" + run + "'does not start with an m or f, quitting script!\n\n"
-				sys.exit()
-			self.mkdir(dir=run)
-			self.open_mf_files(dir=run)
-			self.set_run_flags(run)
-			self.log_params('M1', self.mf.data.usr_param.md1)
-			self.log_params('M2', self.mf.data.usr_param.md2)
-			if match('^m', run):
-				self.create_mfin()
-			elif match('^f', run):
-				self.create_mfin(sel='ftest')
-			self.create_run(dir=run)
-			for res in range(len(self.mf.data.relax_data[0])):
-				# Mfdata.
-				self.create_mfdata(res)
-				# Mfmodel.
-				self.create_mfmodel(res, self.mf.data.usr_param.md1, type='M1')
-				if match('^f', run):
-					self.create_mfmodel(res, self.mf.data.usr_param.md2, type='M2')
-				# Mfpar.
-				self.create_mfpar(res)
-			self.close_files(dir=run)
-
-
 	def stage2(self):
-		self.mkdir('grace')
+		self.mf.file_ops.mkdir('grace')
 
 		print "\n[ Modelfree data extraction ]\n"
 		for run in self.mf.data.runs:
-			mfout = self.read_file(run + '/mfout')
+			mfout = self.mf.file_ops.read_file(run + '/mfout')
 			mfout_lines = mfout.readlines()
 			mfout.close()
 			print "Extracting modelfree data from " + run + "/mfout."
@@ -281,8 +237,3 @@ class palmer(common_operations):
 		self.grace('grace/te.agr', 'te', subtitle="After model selection, unoptimized")
 		self.grace('grace/Rex.agr', 'Rex', subtitle="After model selection, unoptimized")
 		self.grace('grace/SSE.agr', 'SSE', subtitle="After model selection, unoptimized")
-
-
-	def stage3(self):
-		print "Stage 3 not implemented yet.\n"
-		sys.exit()

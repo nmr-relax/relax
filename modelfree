@@ -40,8 +40,7 @@ from star import star
 sys.path.append('.')
 from usr_param import usr_param
 
-from aic import aic
-from bic import bic
+from asymptotic import asymptotic
 from palmer import palmer
 
 
@@ -57,9 +56,9 @@ class mf:
 		self.print_header()
 
 		if match('AIC', self.data.usr_param.method):
-			aic(self)
+			asymptotic(self)
 		elif match('BIC', self.data.usr_param.method):
-			bic(self)
+			asymptotic(self)
 		elif match('Palmer', self.data.usr_param.method):
 			palmer(self)
 		else:
