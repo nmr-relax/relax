@@ -81,9 +81,9 @@ def calc_axial_dci(data, diff_data):
     where psi = {theta, phi}
     """
 
-    data.dci[:, 0] = 3.0 * data.delta * (3.0 * data.delta**2 - 1.0) * data.ddelta_dpsi
-    data.dci[:, 1] = 6.0 * data.delta * (1.0 - 2.0 * data.delta**2) * data.ddelta_dpsi
-    data.dci[:, 2] = 3.0 * data.delta * (data.delta**2 - 1.0) * data.ddelta_dpsi
+    data.dci[2:, 0] = 3.0 * data.delta * (3.0 * data.delta**2 - 1.0) * data.ddelta_dpsi
+    data.dci[2:, 1] = 6.0 * data.delta * (1.0 - 2.0 * data.delta**2) * data.ddelta_dpsi
+    data.dci[2:, 2] = 3.0 * data.delta * (data.delta**2 - 1.0) * data.ddelta_dpsi
 
 
 
@@ -114,9 +114,9 @@ def calc_axial_d2ci(data, diff_data):
     op = outerproduct(data.ddelta_dpsi, data.ddelta_dpsi)
 
     # Hessian.
-    data.d2ci[:, :, 0] = 3.0 * ((9.0 * data.delta**2 - 1.0) * op + data.delta * (3.0 * data.delta**2 - 1.0) * data.d2delta_dpsi2)
-    data.d2ci[:, :, 1] = 6.0 * ((1.0 - 6.0 * data.delta**2) * op + data.delta * (1.0 - 2.0 * data.delta**2) * data.d2delta_dpsi2)
-    data.d2ci[:, :, 2] = 3.0 * ((3.0 * data.delta**2 - 1.0) * op + data.delta * (data.delta**2 - 1.0) * data.d2delta_dpsi2)
+    data.d2ci[2:, 2:, 0] = 3.0 * ((9.0 * data.delta**2 - 1.0) * op + data.delta * (3.0 * data.delta**2 - 1.0) * data.d2delta_dpsi2)
+    data.d2ci[2:, 2:, 1] = 6.0 * ((1.0 - 6.0 * data.delta**2) * op + data.delta * (1.0 - 2.0 * data.delta**2) * data.d2delta_dpsi2)
+    data.d2ci[2:, 2:, 2] = 3.0 * ((3.0 * data.delta**2 - 1.0) * op + data.delta * (data.delta**2 - 1.0) * data.d2delta_dpsi2)
 
 
 
@@ -182,9 +182,14 @@ def calc_aniso_ci(data, diff_data):
     data.c_beta  = data.delta_beta**4  + 2.0 * data.delta_alpha**2 * data.delta_gamma**2
     data.c_gamma = data.delta_gamma**4 + 2.0 * data.delta_alpha**2 * data.delta_beta**2
 
-    data.e1 = (diff_data.params[1] - diff_data.params[2]) / data.mu
-    data.e2 = (diff_data.params[1] + diff_data.params[2]) / data.mu
-    data.e3 = 2.0 * diff_data.params[1] / data.mu
+    if data.mu == 0.0:
+        data.e1 = 0.0
+        data.e2 = 0.0
+        data.e3 = 0.0
+    else:
+        data.e1 = (diff_data.params[1] - diff_data.params[2]) / data.mu
+        data.e2 = (diff_data.params[1] + diff_data.params[2]) / data.mu
+        data.e3 = 2.0 * diff_data.params[1] / data.mu
 
     # Calculate d.
     d = 3.0 * (data.delta_alpha**4 + data.delta_beta**4 + data.delta_gamma**4) - 1.0
@@ -390,9 +395,14 @@ def calc_aniso_dci(data, diff_data):
     # Components.
     data.mu_cubed = data.mu**3
 
-    data.de1_dDa = (3.0 * diff_data.params[1] + diff_data.params[2]) * diff_data.params[2] / data.mu_cubed
-    data.de2_dDa = (3.0 * diff_data.params[1] - diff_data.params[2]) * diff_data.params[2] / data.mu_cubed
-    data.de3_dDa = 2.0 * diff_data.params[2]**2 / data.mu_cubed
+    if data.mu == 0.0:
+        data.de1_dDa = 0.0
+        data.de2_dDa = 0.0
+        data.de3_dDa = 0.0
+    else:
+        data.de1_dDa = (3.0 * diff_data.params[1] + diff_data.params[2]) * diff_data.params[2] / data.mu_cubed
+        data.de2_dDa = (3.0 * diff_data.params[1] - diff_data.params[2]) * diff_data.params[2] / data.mu_cubed
+        data.de3_dDa = 2.0 * diff_data.params[2]**2 / data.mu_cubed
 
     # Calculate de_dDa.
     de_dDa = (data.de1_dDa * data.c_alpha - data.de2_dDa * data.c_beta - data.de3_dDa * data.c_gamma) / 3.0
@@ -408,9 +418,14 @@ def calc_aniso_dci(data, diff_data):
     ########################
 
     # Components.
-    data.de1_dDr = (3.0 * diff_data.params[1] + diff_data.params[2]) * diff_data.params[1] / data.mu_cubed
-    data.de2_dDr = (3.0 * diff_data.params[1] - diff_data.params[2]) * diff_data.params[1] / data.mu_cubed
-    data.de3_dDr = 2.0 * diff_data.params[1] * diff_data.params[2] / data.mu_cubed
+    if data.mu == 0.0:
+        data.de1_dDr = 0.0
+        data.de2_dDr = 0.0
+        data.de3_dDr = 0.0
+    else:
+        data.de1_dDr = (3.0 * diff_data.params[1] + diff_data.params[2]) * diff_data.params[1] / data.mu_cubed
+        data.de2_dDr = (3.0 * diff_data.params[1] - diff_data.params[2]) * diff_data.params[1] / data.mu_cubed
+        data.de3_dDr = 2.0 * diff_data.params[1] * diff_data.params[2] / data.mu_cubed
 
     # Calculate de_dDr.
     de_dDr = - (data.de1_dDr * data.c_alpha - data.de2_dDr * data.c_beta - data.de3_dDr * data.c_gamma) / 3.0
@@ -840,9 +855,14 @@ def calc_aniso_d2ci(data, diff_data):
     # Components.
     mu_five = data.mu**5
 
-    d2e1_dDa2 = (6.0 * diff_data.params[1]**2 + 3.0 * diff_data.params[1] * diff_data.params[2] - diff_data.params[2]**2) * diff_data.params[2] / mu_five
-    d2e2_dDa2 = (6.0 * diff_data.params[1]**2 - 3.0 * diff_data.params[1] * diff_data.params[2] - diff_data.params[2]**2) * diff_data.params[2] / mu_five
-    d2e3_dDa2 = 6.0 * diff_data.params[1] * diff_data.params[2]**2 / mu_five
+    if data.mu == 0.0:
+        d2e1_dDa2 = 0.0
+        d2e2_dDa2 = 0.0
+        d2e3_dDa2 = 0.0
+    else:
+        d2e1_dDa2 = (6.0 * diff_data.params[1]**2 + 3.0 * diff_data.params[1] * diff_data.params[2] - diff_data.params[2]**2) * diff_data.params[2] / mu_five
+        d2e2_dDa2 = (6.0 * diff_data.params[1]**2 - 3.0 * diff_data.params[1] * diff_data.params[2] - diff_data.params[2]**2) * diff_data.params[2] / mu_five
+        d2e3_dDa2 = 6.0 * diff_data.params[1] * diff_data.params[2]**2 / mu_five
 
     # Calculate d2e_dDa2.
     d2e_dDa2 = -1.0 / 3.0 (d2e1_dDa2 * data.c_alpha - d2e2_dDa2 * data.c_beta - d2e2_dDa2 * data.c_gamma)
@@ -858,9 +878,14 @@ def calc_aniso_d2ci(data, diff_data):
     ###########################
 
     # Components.
-    d2e1_dDa_dDr = (9.0 * diff_data.params[1]**3 + 6.0 * diff_data.params[1]**2 * diff_data.params[2] - 6.0 * diff_data.params[1] * diff_data.params[2]**2 - diff_data.params[2]**3) / mu_five
-    d2e2_dDa_dDr = (9.0 * diff_data.params[1]**3 - 6.0 * diff_data.params[1]**2 * diff_data.params[2] - 6.0 * diff_data.params[1] * diff_data.params[2]**2 + diff_data.params[2]**3) / mu_five
-    d2e3_dDa_dDr = 2.0 * (diff_data.params[1]**2 - diff_data.params[2]**2) * diff_data.params[2] / mu_five
+    if data.mu == 0.0:
+        d2e1_dDa_dDr = 0.0
+        d2e2_dDa_dDr = 0.0
+        d2e3_dDa_dDr = 0.0
+    else:
+        d2e1_dDa_dDr = (9.0 * diff_data.params[1]**3 + 6.0 * diff_data.params[1]**2 * diff_data.params[2] - 6.0 * diff_data.params[1] * diff_data.params[2]**2 - diff_data.params[2]**3) / mu_five
+        d2e2_dDa_dDr = (9.0 * diff_data.params[1]**3 - 6.0 * diff_data.params[1]**2 * diff_data.params[2] - 6.0 * diff_data.params[1] * diff_data.params[2]**2 + diff_data.params[2]**3) / mu_five
+        d2e3_dDa_dDr = 2.0 * (diff_data.params[1]**2 - diff_data.params[2]**2) * diff_data.params[2] / mu_five
 
     # Calculate d2e_dDa2.
     d2e_dDa_dDr = 1.0 / 9.0 (d2e1_dDa_dDr * data.c_alpha - d2e2_dDa_dDr * data.c_beta - d2e2_dDa_dDr * data.c_gamma)
@@ -876,9 +901,14 @@ def calc_aniso_d2ci(data, diff_data):
     ###########################
 
     # Components.
-    d2e1_dDr2 = (3.0 * diff_data.params[1]**2 - 9.0 * diff_data.params[1] * diff_data.params[2] - 2.0 * diff_data.params[2]**2) * diff_data.params[1] / mu_five
-    d2e2_dDr2 = (3.0 * diff_data.params[1]**2 + 9.0 * diff_data.params[1] * diff_data.params[2] - 2.0 * diff_data.params[2]**2) * diff_data.params[1] / mu_five
-    d2e3_dDr2 = 2.0 * (3.0 * diff_data.params[1]**2 - 2.0 * diff_data.params[2]**2) * diff_data.params[1] / mu_five
+    if data.mu == 0.0:
+        d2e1_dDr2 = 0.0
+        d2e2_dDr2 = 0.0
+        d2e3_dDr2 = 0.0
+    else:
+        d2e1_dDr2 = (3.0 * diff_data.params[1]**2 - 9.0 * diff_data.params[1] * diff_data.params[2] - 2.0 * diff_data.params[2]**2) * diff_data.params[1] / mu_five
+        d2e2_dDr2 = (3.0 * diff_data.params[1]**2 + 9.0 * diff_data.params[1] * diff_data.params[2] - 2.0 * diff_data.params[2]**2) * diff_data.params[1] / mu_five
+        d2e3_dDr2 = 2.0 * (3.0 * diff_data.params[1]**2 - 2.0 * diff_data.params[2]**2) * diff_data.params[1] / mu_five
 
     # Calculate d2e_dDr2.
     d2e_dDr2 = -1.0 / 9.0 (d2e1_dDr2 * data.c_alpha - d2e2_dDr2 * data.c_beta - d2e2_dDr2 * data.c_gamma)

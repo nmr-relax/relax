@@ -284,37 +284,254 @@ def calc_aniso_ti(data, diff_data):
     # Calculate mu.
     data.mu = sqrt(diff_data.params[1]**2 + diff_data.params[2]**2 / 3.0)
 
+    # Components.
+    data.t_m2_comp = data.Diso + diff_data.params[1]
+    data.t_m1_comp = data.Diso - 0.5 * (diff_data.params[1] + diff_data.params[1])
+    data.t_0_comp  = data.Diso - data.mu
+    data.t_1_comp  = data.Diso - 0.5 * (diff_data.params[1] - diff_data.params[1])
+    data.t_2_comp  = data.Diso + data.mu
+
     # t-2.
-    data.ti[0] = 6.0 * (data.Diso + diff_data.params[1])
+    data.ti[0] = 6.0 * data.t_m2_comp
     if data.ti[0] == 0.0:
         data.ti[0] = 1e99
     else:
         data.ti[0] = 1.0 / data.ti[0]
 
     # t-1.
-    data.ti[1] = 6.0 * (data.Diso - 0.5 * (diff_data.params[1] + diff_data.params[1]))
+    data.ti[1] = 6.0 * data.t_m1_comp
     if data.ti[1] == 0.0:
         data.ti[1] = 1e99
     else:
         data.ti[1] = 1.0 / data.ti[1]
 
     # t0.
-    data.ti[2] = 6.0 * (data.Diso - data.mu)
+    data.ti[2] = 6.0 * data.t_0_comp
     if data.ti[2] == 0.0:
         data.ti[2] = 1e99
     else:
         data.ti[2] = 1.0 / data.ti[2]
 
     # t1.
-    data.ti[3] = 6.0 * (data.Diso - 0.5 * (diff_data.params[1] - diff_data.params[1]))
+    data.ti[3] = 6.0 * data.t_1_comp
     if data.ti[3] == 0.0:
         data.ti[3] = 1e99
     else:
         data.ti[3] = 1.0 / data.ti[3]
 
     # t2.
-    data.ti[4] = 6.0 * (data.Diso + data.mu)
+    data.ti[4] = 6.0 * data.t_2_comp
     if data.ti[4] == 0.0:
         data.ti[4] = 1e99
     else:
         data.ti[4] = 1.0 / data.ti[4]
+
+
+
+# Anisotropic global correlation time gradient.
+###############################################
+
+def calc_aniso_dti(data, diff_data):
+    """Diffusional correlation times.
+
+    tm partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+        dt-2       1 dDiso
+        ----  =  - - ----- (Diso + Da)**-1
+        dtm        6  dtm
+
+        dt-1       1 dDiso
+        ----  =  - - ----- (Diso - (Da + Dr)/2)**-1
+        dtm        6  dtm
+
+        dt0        1 dDiso
+        ---   =  - - ----- (Diso - mu)**-1
+        dtm        6  dtm
+
+        dt1        1 dDiso
+        ---   =  - - ----- (Diso - (Da - Dr)/2)**-1
+        dtm        6  dtm
+
+        dt2        1 dDiso
+        ---   =  - - ----- (Diso + mu)**-1
+        dtm        6  dtm
+
+
+        dDiso
+        -----  =  -1/6 * tm**-2
+         dtm
+
+
+    Da partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+        dt-2
+        ----  =  -1/6 (Diso + Da)**-2
+        dDa
+
+        dt-1
+        ----  =  1/12 (Diso - (Da + Dr)/2)**-2
+        dDa
+
+        dt0
+        ---   =  1/6 Da/mu (Diso - mu)**-2
+        dDa
+
+        dt1
+        ---   =  1/12 (Diso - (Da - Dr)/2)**-2
+        dDa
+
+        dt2
+        ---   =  -1/6 Da/mu (Diso + mu)**-2
+        dDa
+
+
+    Dr partial derivatives
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+        dt-2
+        ----  =  0
+        dDr
+
+        dt-1
+        ----  =  1/12 (Diso - (Da + Dr)/2)**-2
+        dDr
+
+        dt0
+        ---   =  1/18 Da/mu (Diso - mu)**-2
+        dDr
+
+        dt1
+        ---   =  -1/12 (Diso - (Da - Dr)/2)**-2
+        dDr
+
+        dt2
+        ---   =  -1/18 Da/mu (Diso + mu)**-2
+        dDr
+
+    """
+
+    # Components.
+    data.t_m2_comp_sqrd = data.t_m2_comp**2
+    data.t_m1_comp_sqrd = data.t_m1_comp**2
+    data.t_0_comp_sqrd  = data.t_0_comp**2
+    data.t_1_comp_sqrd  = data.t_1_comp**2
+    data.t_2_comp_sqrd  = data.t_2_comp**2
+
+
+    # tm partial derivative.
+    ########################
+
+    # Components.
+    data.inv_dDiso_dtm = -6.0 * diff_data.params[0]**2
+
+    # t-2.
+    data.dti[0, 0] = -6.0 * data.inv_dDiso_dtm * data.t_m2_comp_sqrd
+    if data.dti[0, 0] == 0.0:
+        data.dti[0, 0] = 1e99
+    else:
+        data.dti[0, 0] = 1.0 / data.dti[0, 0]
+
+    # t-1.
+    data.dti[0, 1] = -6.0 * data.inv_dDiso_dtm * data.t_m1_comp_sqrd
+    if data.dti[0, 1] == 0.0:
+        data.dti[0, 1] = 1e99
+    else:
+        data.dti[0, 1] = 1.0 / data.dti[0, 1]
+
+    # t0.
+    data.dti[0, 2] = -6.0 * data.inv_dDiso_dtm * data.t_0_comp_sqrd
+    if data.dti[0, 2] == 0.0:
+        data.dti[0, 2] = 1e99
+    else:
+        data.dti[0, 2] = 1.0 / data.dti[0, 2]
+
+    # t1.
+    data.dti[0, 3] = -6.0 * data.inv_dDiso_dtm * data.t_1_comp_sqrd
+    if data.dti[0, 3] == 0.0:
+        data.dti[0, 3] = 1e99
+    else:
+        data.dti[0, 3] = 1.0 / data.dti[0, 3]
+
+    # t2.
+    data.dti[0, 4] = -6.0 * data.inv_dDiso_dtm * data.t_2_comp_sqrd
+    if data.dti[0, 4] == 0.0:
+        data.dti[0, 4] = 1e99
+    else:
+        data.dti[0, 4] = 1.0 / data.dti[0, 4]
+
+
+    # Da partial derivative.
+    ########################
+
+    # t-2.
+    data.dti[1, 0] = -6.0 * data.t_m2_comp_sqrd
+    if data.dti[1, 0] == 0.0:
+        data.dti[1, 0] = 1e99
+    else:
+        data.dti[1, 0] = 1.0 / data.dti[1, 0]
+
+    # t-1.
+    data.dti[1, 1] = 12.0 * data.t_m1_comp_sqrd
+    if data.dti[1, 1] == 0.0:
+        data.dti[1, 1] = 1e99
+    else:
+        data.dti[1, 1] = 1.0 / data.dti[1, 1]
+
+    # t0.
+    data.dti[1, 2] = 6.0 * data.mu * data.t_0_comp_sqrd
+    if data.dti[1, 2] == 0.0:
+        if data.mu != 0.0:
+            data.dti[1, 2] = 1e99
+    else:
+        data.dti[1, 2] = diff_data.params[1] / data.dti[1, 2]
+
+    # t1.
+    data.dti[1, 3] = 12.0 * data.t_1_comp_sqrd
+    if data.dti[1, 3] == 0.0:
+        data.dti[1, 3] = 1e99
+    else:
+        data.dti[1, 3] = 1.0 / data.dti[1, 3]
+
+    # t2.
+    data.dti[1, 4] = -6.0 * data.mu * data.t_2_comp_sqrd
+    if data.dti[1, 4] == 0.0:
+        if data.mu != 0.0:
+            data.dti[1, 4] = 1e99
+    else:
+        data.dti[1, 4] = diff_data.params[1] / data.dti[1, 4]
+
+
+    # Dr partial derivative.
+    ########################
+
+    # t-1.
+    data.dti[1, 1] = 12.0 * data.t_m1_comp_sqrd
+    if data.dti[1, 1] == 0.0:
+        data.dti[1, 1] = 1e99
+    else:
+        data.dti[1, 1] = 1.0 / data.dti[1, 1]
+
+    # t0.
+    data.dti[1, 2] = 18.0 * data.mu * data.t_0_comp_sqrd
+    if data.dti[1, 2] == 0.0:
+        if data.mu != 0.0:
+            data.dti[1, 2] = 1e99
+    else:
+        data.dti[1, 2] = diff_data.params[2] / data.dti[1, 2]
+
+    # t1.
+    data.dti[1, 3] = -12.0 * data.t_1_comp_sqrd
+    if data.dti[1, 3] == 0.0:
+        data.dti[1, 3] = 1e99
+    else:
+        data.dti[1, 3] = 1.0 / data.dti[1, 3]
+
+    # t2.
+    data.dti[1, 4] = -18.0 * data.mu * data.t_2_comp_sqrd
+    if data.dti[1, 4] == 0.0:
+        if data.mu != 0.0:
+            data.dti[1, 4] = 1e99
+    else:
+        data.dti[1, 4] = diff_data.params[2] / data.dti[1, 4]

@@ -623,7 +623,7 @@ class Mf:
         for j in xrange(data.total_num_params):
             # Calculate the spectral density gradients.
             if data.calc_djw[j]:
-                data.djw = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+                data.djw = data.calc_djw[j](data, params, j)
             else:
                 data.djw = data.djw * 0.0
 
@@ -684,7 +684,7 @@ class Mf:
         for j in xrange(data.total_num_params):
             # Calculate the spectral density gradients.
             if data.calc_djw[j]:
-                data.djw = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+                data.djw = data.calc_djw[j](data, params, j)
             else:
                 data.djw = data.djw * 0.0
 
@@ -759,7 +759,7 @@ class Mf:
             for j in xrange(data.total_num_params):
                 # Calculate the spectral density gradients.
                 if data.calc_djw[j]:
-                    data.djw = data.calc_djw[j](data, data.param_values, j, self.diff_data.num_D_params)
+                    data.djw = data.calc_djw[j](data, data.param_values, j)
                 else:
                     data.djw = data.djw * 0.0
 
@@ -843,7 +843,7 @@ class Mf:
             for j in xrange(data.total_num_params):
                 # Calculate the spectral density gradients.
                 if data.calc_djw[j]:
-                    data.djw = data.calc_djw[j](data, params, j, self.diff_data.num_D_params)
+                    data.djw = data.calc_djw[j](data, params, j)
                 else:
                     data.djw = data.djw * 0.0
 
@@ -901,7 +901,7 @@ class Mf:
             for k in xrange(j + 1):
                 # Calculate the spectral density Hessians.
                 if data.calc_d2jw[j][k]:
-                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
                 else:
                     data.d2jw = data.d2jw * 0.0
 
@@ -954,7 +954,7 @@ class Mf:
             for k in xrange(j + 1):
                 # Calculate the spectral density Hessians.
                 if data.calc_d2jw[j][k]:
-                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
                 else:
                     data.d2jw = data.d2jw * 0.0
 
@@ -1025,7 +1025,7 @@ class Mf:
                 for k in xrange(j + 1):
                     # Calculate the spectral density Hessians.
                     if data.calc_d2jw[j][k]:
-                        data.d2jw = data.calc_d2jw[j][k](data, data.param_values, j, k, self.diff_data.num_D_params)
+                        data.d2jw = data.calc_d2jw[j][k](data, data.param_values, j, k)
                     else:
                         data.d2jw = data.d2jw * 0.0
 
@@ -1099,7 +1099,7 @@ class Mf:
                 for k in xrange(j + 1):
                     # Calculate the spectral density Hessians.
                     if data.calc_d2jw[j][k]:
-                        data.d2jw = data.calc_d2jw[j][k](data, params, j, k, self.diff_data.num_D_params)
+                        data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
                     else:
                         data.d2jw = data.d2jw * 0.0
 
@@ -1157,7 +1157,6 @@ class Mf:
         if diff_data.type == 'iso':
             # Number of diffusion parameters.
             diff_data.num_params = 1
-            diff_data.num_D_params = 1
 
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 1
@@ -1182,7 +1181,6 @@ class Mf:
         elif diff_data.type == 'axial':
             # Number of diffusion parameters.
             diff_data.num_params = 4
-            diff_data.num_D_params = 2
 
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 3
@@ -1203,22 +1201,21 @@ class Mf:
             diff_data.calc_d2ti = calc_axial_d2ti
 
             # Unit vectors.
-            diff_data.dpar_unit_vector = zeros(3, Float64)
+            diff_data.dpar = zeros(3, Float64)
 
-            # Unit vector gradient.
-            diff_data.dpar_unit_vector_dtheta = zeros(3, Float64)
-            diff_data.dpar_unit_vector_dphi = zeros(3, Float64)
+            # Unit vector gradients.
+            diff_data.dpar_dtheta = zeros(3, Float64)
+            diff_data.dpar_dphi = zeros(3, Float64)
 
-            # Unit vector Hessian.
-            diff_data.dpar_unit_vector_dtheta2 = zeros(3, Float64)
-            diff_data.dpar_unit_vector_dthetadphi = zeros(3, Float64)
-            diff_data.dpar_unit_vector_dphi2 = zeros(3, Float64)
+            # Unit vector Hessians.
+            diff_data.dpar_dtheta2 = zeros(3, Float64)
+            diff_data.dpar_dthetadphi = zeros(3, Float64)
+            diff_data.dpar_dphi2 = zeros(3, Float64)
 
         # Anisotropic diffusion.
         elif diff_data.type == 'aniso':
             # Number of diffusion parameters.
             diff_data.num_params = 6
-            diff_data.num_D_params = 3
 
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 5
@@ -1230,18 +1227,54 @@ class Mf:
 
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_aniso_ci
-            #diff_data.calc_dci = calc_aniso_dci
-            #diff_data.calc_d2ci = calc_aniso_d2ci
+            diff_data.calc_dci = calc_aniso_dci
+            diff_data.calc_d2ci = calc_aniso_d2ci
 
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_aniso_ti
-            #diff_data.calc_dti = calc_aniso_dti
+            diff_data.calc_dti = calc_aniso_dti
             #diff_data.calc_d2ti = calc_aniso_d2ti
 
             # Unit vectors.
             diff_data.dx = zeros(3, Float64)
             diff_data.dy = zeros(3, Float64)
             diff_data.dz = zeros(3, Float64)
+
+            # Unit vector gradients.
+            diff_data.ddx_dalpha = zeros(3, Float64)
+            diff_data.ddx_dbeta = zeros(3, Float64)
+            diff_data.ddx_dgamma = zeros(3, Float64)
+
+            diff_data.ddy_dalpha = zeros(3, Float64)
+            diff_data.ddy_dbeta = zeros(3, Float64)
+            diff_data.ddy_dgamma = zeros(3, Float64)
+
+            diff_data.ddz_dalpha = zeros(3, Float64)
+            diff_data.ddz_dbeta = zeros(3, Float64)
+            diff_data.ddz_dgamma = zeros(3, Float64)
+
+            # Unit vector Hessians.
+            diff_data.d2dx_dalpha2 = zeros(3, Float64)
+            diff_data.d2dx_dalpha_dbeta = zeros(3, Float64)
+            diff_data.d2dx_dalpha_dgamma = zeros(3, Float64)
+            diff_data.d2dx_dbeta2 = zeros(3, Float64)
+            diff_data.d2dx_dbeta_dgamma = zeros(3, Float64)
+            diff_data.d2dx_dgamma2 = zeros(3, Float64)
+
+            diff_data.d2dy_dalpha2 = zeros(3, Float64)
+            diff_data.d2dy_dalpha_dbeta = zeros(3, Float64)
+            diff_data.d2dy_dalpha_dgamma = zeros(3, Float64)
+            diff_data.d2dy_dbeta2 = zeros(3, Float64)
+            diff_data.d2dy_dbeta_dgamma = zeros(3, Float64)
+            diff_data.d2dy_dgamma2 = zeros(3, Float64)
+
+            diff_data.d2dz_dalpha2 = zeros(3, Float64)
+            diff_data.d2dz_dalpha_dbeta = zeros(3, Float64)
+            diff_data.d2dz_dalpha_dgamma = zeros(3, Float64)
+            diff_data.d2dz_dbeta2 = zeros(3, Float64)
+            diff_data.d2dz_dbeta_dgamma = zeros(3, Float64)
+            diff_data.d2dz_dgamma2 = zeros(3, Float64)
+
 
     def init_res_data(self, data, diff_data):
         """Function for the initialisation of the residue specific data."""
@@ -1259,8 +1292,8 @@ class Mf:
         # Axially symmetric diffusion.
         elif self.diff_data.type == 'axial':
             # Weight gradient and Hessian.
-            data.dci = zeros((2, diff_data.num_indecies), Float64)
-            data.d2ci = zeros((2, 2, diff_data.num_indecies), Float64)
+            data.dci = zeros((4, diff_data.num_indecies), Float64)
+            data.d2ci = zeros((4, 4, diff_data.num_indecies), Float64)
 
             # Global correlation time gradient and Hessian.
             data.dti = zeros((2, diff_data.num_indecies), Float64)
@@ -1270,8 +1303,6 @@ class Mf:
             data.delta = 0
 
             # Dot product gradient.
-            data.ddelta_dtheta = zeros(3, Float64)
-            data.ddelta_dphi = zeros(3, Float64)
             data.ddelta_dpsi = zeros(2, Float64)
 
             # Dot product Hessian.
@@ -1286,6 +1317,21 @@ class Mf:
             # Global correlation time gradient and Hessian.
             data.dti = zeros((3, diff_data.num_indecies), Float64)
             data.d2ti = zeros((3, 3, diff_data.num_indecies), Float64)
+
+            # Dot products.
+            data.delta_alpha = 0.0
+            data.delta_beta  = 0.0
+            data.delta_gamma = 0.0
+
+            # Dot product gradients.
+            data.ddelta_alpha_dpsi = zeros(3, Float64)
+            data.ddelta_beta_dpsi = zeros(3, Float64)
+            data.ddelta_gamma_dpsi = zeros(3, Float64)
+
+            # Dot product Hessians.
+            data.d2delta_alpha_dpsi2 = zeros((3, 3), Float64)
+            data.d2delta_beta_dpsi2 = zeros((3, 3), Float64)
+            data.d2delta_gamma_dpsi2 = zeros((3, 3), Float64)
 
         # Empty spectral density components.
         data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)

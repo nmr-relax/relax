@@ -43,12 +43,12 @@ def calc_axial_geom(data, diff_data):
     """
 
     # The unit Dpar vector.
-    diff_data.dpar_unit_vector[0] = sin(diff_data.params[2]) * cos(diff_data.params[3])
-    diff_data.dpar_unit_vector[1] = sin(diff_data.params[2]) * sin(diff_data.params[3])
-    diff_data.dpar_unit_vector[2] = cos(diff_data.params[2])
+    diff_data.dpar[0] = sin(diff_data.params[2]) * cos(diff_data.params[3])
+    diff_data.dpar[1] = sin(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar[2] = cos(diff_data.params[2])
 
     # Delta.
-    data.delta = dot(data.xh_unit_vector, diff_data.dpar_unit_vector)
+    data.delta = dot(data.xh_unit_vector, diff_data.dpar)
 
 
 
@@ -74,18 +74,18 @@ def calc_axial_dgeom(data, diff_data):
     """
 
     # The theta partial derivative of the unit Dpar vector.
-    diff_data.dpar_unit_vector_dtheta[0] = cos(diff_data.params[2]) * cos(diff_data.params[3])
-    diff_data.dpar_unit_vector_dtheta[1] = cos(diff_data.params[2]) * sin(diff_data.params[3])
-    diff_data.dpar_unit_vector_dtheta[2] = -sin(diff_data.params[2])
+    diff_data.dpar_dtheta[0] = cos(diff_data.params[2]) * cos(diff_data.params[3])
+    diff_data.dpar_dtheta[1] = cos(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar_dtheta[2] = -sin(diff_data.params[2])
 
     # The phi partial derivative of the unit Dpar vector.
-    diff_data.dpar_unit_vector_dphi[0] = -sin(diff_data.params[2]) * sin(diff_data.params[3])
-    diff_data.dpar_unit_vector_dphi[1] = sin(diff_data.params[2]) * cos(diff_data.params[3])
-    diff_data.dpar_unit_vector_dphi[2] = 0.0
+    diff_data.dpar_dphi[0] = -sin(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar_dphi[1] = sin(diff_data.params[2]) * cos(diff_data.params[3])
+    diff_data.dpar_dphi[2] = 0.0
 
-    # delta gradient.
-    data.ddelta_dpsi[0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta)
-    data.ddelta_dpsi[1] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi)
+    # Delta gradient.
+    data.ddelta_dpsi[0] = dot(data.xh_unit_vector, diff_data.dpar_dtheta)
+    data.ddelta_dpsi[1] = dot(data.xh_unit_vector, diff_data.dpar_dphi)
 
 
 
@@ -117,24 +117,24 @@ def calc_axial_d2geom(data, diff_data):
     """
 
     # The theta-theta second partial derivative of the unit Dpar vector.
-    diff_data.dpar_unit_vector_dtheta2[0] = -sin(diff_data.params[2]) * cos(diff_data.params[3])
-    diff_data.dpar_unit_vector_dtheta2[1] = -sin(diff_data.params[2]) * sin(diff_data.params[3])
-    diff_data.dpar_unit_vector_dtheta2[2] = -cos(diff_data.params[2])
+    diff_data.dpar_dtheta2[0] = -sin(diff_data.params[2]) * cos(diff_data.params[3])
+    diff_data.dpar_dtheta2[1] = -sin(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar_dtheta2[2] = -cos(diff_data.params[2])
 
     # The theta-phi second partial derivative of the unit Dpar vector.
-    diff_data.dpar_unit_vector_dthetadphi[0] = -cos(diff_data.params[2]) * sin(diff_data.params[3])
-    diff_data.dpar_unit_vector_dthetadphi[1] = cos(diff_data.params[2]) * cos(diff_data.params[3])
-    diff_data.dpar_unit_vector_dthetadphi[2] = 0.0
+    diff_data.dpar_dthetadphi[0] = -cos(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar_dthetadphi[1] = cos(diff_data.params[2]) * cos(diff_data.params[3])
+    diff_data.dpar_dthetadphi[2] = 0.0
 
     # The phi-phi second partial derivative of the unit Dpar vector.
-    diff_data.dpar_unit_vector_dphi2[0] = -sin(diff_data.params[2]) * cos(diff_data.params[3])
-    diff_data.dpar_unit_vector_dphi2[1] = -sin(diff_data.params[2]) * sin(diff_data.params[3])
-    diff_data.dpar_unit_vector_dphi2[2] = 0.0
+    diff_data.dpar_dphi2[0] = -sin(diff_data.params[2]) * cos(diff_data.params[3])
+    diff_data.dpar_dphi2[1] = -sin(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar_dphi2[2] = 0.0
 
     # delta Hessian.
-    data.d2delta_dpsi2[0, 0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dtheta2)
-    data.d2delta_dpsi2[0, 1] = data.d2delta_dpsi2[1, 0] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dthetadphi)
-    data.d2delta_dpsi2[1, 1] = dot(data.xh_unit_vector, diff_data.dpar_unit_vector_dphi2)
+    data.d2delta_dpsi2[0, 0] = dot(data.xh_unit_vector, diff_data.dpar_dtheta2)
+    data.d2delta_dpsi2[0, 1] = data.d2delta_dpsi2[1, 0] = dot(data.xh_unit_vector, diff_data.dpar_dthetadphi)
+    data.d2delta_dpsi2[1, 1] = dot(data.xh_unit_vector, diff_data.dpar_dphi2)
 
 
 

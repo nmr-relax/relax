@@ -26,10 +26,10 @@ for run in runs:
     relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
     # Setup other values.
-    #diffusion_tensor.set(run, 1e-8, fixed=1)
-    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=0, axial_type='oblate', fixed=1)
+    #diffusion_tensor.set(run, 1e-8, fixed=0)
+    diffusion_tensor.set(run, (1e-8, 1.0, 60, 290), param_types=0, axial_type='oblate', fixed=0)
     value.set(run, 1.02 * 1e-10, 'bond_length')
-    value.set(run, -170 * 1e-6, 'csa')
+    value.set(run, -160 * 1e-6, 'csa')
     #value.set(run, 0.970, 's2')
     #value.set(run, 1.0, 's2f')
     #value.set(run, 2048e-12, 'te')
