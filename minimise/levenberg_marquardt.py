@@ -104,7 +104,7 @@ class levenberg_marquardt:
 					self.l = self.l * 10.0
 			else:
 				# Finish minimising when the chi-squared difference is insignificant.
-				if self.chi2 - self.chi2_new < 1e-10:
+				if self.chi2 - self.chi2_new < 1e-20:
 					if self.mf.min_debug == 2:
 						print "\n%-29s%-40e" % ("Chi-squared diff:", self.chi2 - self.chi2_new)
 						print "%-29s%-40e" % ("Chi-squared diff limit:", 1e-10)

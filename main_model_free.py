@@ -106,12 +106,15 @@ class main_model_free:
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Simplex minimisation >>>"
 				factor = 1.0
+				num_runs = 0.0
 				for i in range(10):
 					self.simplex = self.create_simplex(params, grid_ops, factor)
 					if self.mf.min_debug >= 1:
 						print "\nThe initial simplex is: " + `self.simplex`
-					params, chi2 = self.mf.minimise.simplex.fit(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, self.simplex)
+					params, chi2, runs = self.mf.minimise.simplex.fit(self.mf.functions.relax.Ri, function_ops, derivative_flag, self.mf.functions.chi2.relax_data, values, errors, self.simplex)
 					factor = factor / 10.0
+					num_runs = num_runs + runs
+				print "\n\nTotal number of runs: " + `num_runs`
 
 			# Levenberg-Marquardt minimisation.
 			elif match('LM', self.mf.usr_param.minimiser):

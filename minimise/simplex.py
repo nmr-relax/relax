@@ -91,7 +91,7 @@ class simplex:
 			# Reflection.
 			#############
 			reflection_vector = self.move(self.simplex[index_high], 1.0)
-			reflection_chi2 = self.chi2_func(self.values, function(self.function_option, self.derivative_flags, reflection_vector), self.errors)
+			reflection_chi2 = self.chi2_func(self.values, function(self.function_options, self.derivative_flag, reflection_vector), self.errors)
 			if self.mf.min_debug == 2:
 				print "%-29s%-40s" % ("Reflection vector:", `reflection_vector`)
 				print "%-29s%-40s" % ("Reflection chi2:", `reflection_chi2`)
@@ -106,7 +106,7 @@ class simplex:
 			############
 			if reflection_chi2 <= self.chi2[index_low]:
 				extension_vector = self.move(self.simplex[index_high], 2.0)
-				extension_chi2 = self.chi2_func(self.values, function(self.function_option, self.derivative_flags, extension_vector), self.errors)
+				extension_chi2 = self.chi2_func(self.values, function(self.function_options, self.derivative_flag, extension_vector), self.errors)
 				if self.mf.min_debug == 2:
 					print "%-29s%-40s" % ("Extension vector:", `extension_vector`)
 					print "%-29s%-40s" % ("Extension chi2:", `extension_chi2`)
@@ -121,7 +121,7 @@ class simplex:
 			##############
 			elif reflection_chi2 >= self.chi2[index_2nd_high]:
 				contract_vector = self.move(self.simplex[index_high], -0.5)
-				contract_chi2 = self.chi2_func(self.values, function(self.function_option, self.derivative_flags, contract_vector), self.errors)
+				contract_chi2 = self.chi2_func(self.values, function(self.function_options, self.derivative_flag, contract_vector), self.errors)
 				if self.mf.min_debug == 2:
 					print "%-29s%-40s" % ("Contraction vector:", `contract_vector`)
 					print "%-29s%-40s" % ("Contraction chi2:", `contract_chi2`)
@@ -168,7 +168,7 @@ class simplex:
 			print "The final simplex is: " + `self.simplex`
 			print "The final chi2 vector is: " + `self.chi2`
 
-		return self.simplex[index_low], self.chi2[index_low]
+		return self.simplex[index_low], self.chi2[index_low], minimise_num
 
 
 	def move(self, vertex, factor):
