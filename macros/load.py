@@ -117,11 +117,14 @@ class macro_class(generic_functions):
 		file_data = self.relax.file_ops.strip(file_data)
 
 		# Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists, and if so, do not load or update the data.
-		for i in range(self.relax.data.num_ri):
-			if self.ri_label == self.relax.data.ri_labels[i] and self.frq_label == self.relax.data.frq_labels[self.relax.data.remap_table[i]]:
-				print "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been loaded."
-				print "To load the data, either delete the original or use different labels."
-				return
+		try:
+			for i in range(self.relax.data.num_ri):
+				if self.ri_label == self.relax.data.ri_labels[i] and self.frq_label == self.relax.data.frq_labels[self.relax.data.remap_table[i]]:
+					print "The relaxation data corresponding to " + `ri_label` + " and " + `frq_label` + " has already been loaded."
+					print "To load the data, either delete the original or use different labels."
+					return
+		except AttributeError:
+			pass
 
 		# Update the data.
 		self.update_data()
@@ -188,7 +191,11 @@ class macro_class(generic_functions):
 			return
 
 		# Test if the sequence data has already been loaded.
-		if len(self.relax.data.seq) > 0:
+		try:
+			self.relax.data.seq
+		except AttributeError:
+			pass
+		else:
 			print "The sequence data has already been loaded."
 			print "To reload, delete the original sequence data (self.relax.data.seq)."
 			return
@@ -207,8 +214,9 @@ class macro_class(generic_functions):
 		# Place the data in self.relax.data.seq
 		seq = []
 		for i in range(len(file_data)):
+			label = file_data[i][self.num_col] + '_' + file_data[i][self.name_col]
 			try:
-				seq.append([int(file_data[i][self.num_col]), file_data[i][self.name_col]])
+				seq.append([int(file_data[i][self.num_col]), file_data[i][self.name_col], label])
 			except ValueError:
 				print "Sequence data is invalid."
 				return
@@ -217,6 +225,63 @@ class macro_class(generic_functions):
 
 	def update_data(self):
 		"Update the relaxation data structures."
+
+		# Data initialisation.
+		######################
+
+		# The number of data points, eg 6.
+		try:
+			self.relax.data.num_ri
+		except AttributeError:
+			self.relax.data.num_ri = 0
+
+		# The number of field strengths, eg 2.
+		try:
+			self.relax.data.num_frq
+		except AttributeError:
+			self.relax.data.num_frq = 0
+
+		# Labels corresponding to the data type, eg ['NOE', 'R1', 'R2', 'NOE', 'R1', 'R2']
+		try:
+			self.relax.data.ri_labels
+		except AttributeError:
+			self.relax.data.ri_labels = []
+
+		# A translation table to map relaxation data points to their frequencies, eg [0, 0, 0, 1, 1, 1]
+		try:
+			self.relax.data.remap_table
+		except AttributeError:
+			self.relax.data.remap_table = []
+
+		# A translation table to direct the NOE data points to the R1 data points.  Used to speed up
+		# calculations by avoiding the recalculation of R1 values.  eg [None, None, 0, None, None, 3]
+		try:
+			self.relax.data.noe_r1_table
+		except AttributeError:
+			self.relax.data.noe_r1_table = []
+
+		# The NMR frequency labels, eg ['600', '500']
+		try:
+			self.relax.data.frq_labels
+		except AttributeError:
+			self.relax.data.frq_labels = []
+
+		# The NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
+		try:
+			self.relax.data.frq
+		except AttributeError:
+			self.relax.data.frq = []
+
+		# The structure of self.relax_data is as follows:  The first dimension corresponds to each
+		# relaxation data point.  The fields point to 2D data structures containing the data from
+		# the relaxation file (missing the single header line), ie:
+		#	[res][1] - Relaxation value
+		#	[res][2] - Relaxation error
+		#	[res][3] - Flag, 0 = no data, 1 = data.
+		try:
+			self.relax.data.relax_data
+		except AttributeError:
+			self.relax.data.relax_data = []
 
 		# Update the number of relaxation data points.
 		self.relax.data.num_ri = self.relax.data.num_ri + 1

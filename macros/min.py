@@ -432,10 +432,9 @@ class macro_class:
 			self.g_count = self.g_count + gc
 			self.h_count = self.h_count + hc
 
+			# Place the results in various data structures.
 			self.relax.data.params[self.model][self.res] = self.params
-
-			# Write the results to file.
-			# To do.
+			self.relax.data.params[self.model][self.res] = self.params
 
 		print "\n[ Done ]\n\n"
 

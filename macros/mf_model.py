@@ -202,6 +202,10 @@ class macro_class(generic_functions):
 		"Function for updating various data structures depending on the model selected."
 
 		# Update the equation and param_types data structures.
+		try:
+			self.relax.data.equations
+		except AttributeError:
+			self.relax.data.equations = []
 		self.relax.data.equations[self.model] = self.equation
 		self.relax.data.param_types[self.model] = self.types
 
@@ -328,8 +332,12 @@ class macro_class(generic_functions):
 			return
 
 		# Test if the model already exists.
-		if self.relax.data.equations.has_key(self.model):
-			print "The model " + self.model + " already exists."
+		try:
+			self.relax.data.equations
+		except AttributeError:
+			pass
+		else:
+			print "Models have already been set."
 			return
 
 		# Test the scaling flag.
