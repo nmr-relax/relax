@@ -171,6 +171,8 @@ class Levenberg_marquardt(Min):
         self.create_lm_matrix()
 
         # Solve the Levenberg-Marquardt equation to get the vector of function parameter changes.
+        #print "\nself.lm_matrix:\n" + `self.lm_matrix`
+        #print "\nself.dfk:\n" + `self.dfk`
         self.pk = solve_linear_equations(self.lm_matrix, self.dfk)
 
         # Find the new parameter vector and function value at that point.

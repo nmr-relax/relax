@@ -2251,7 +2251,19 @@ class Model_free(Common_functions):
             ###################################
 
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-                min_options = min_options + (self.mf.lm_dri, relax_error)
+                # Total number of ri.
+                number_ri = 0
+                for k in xrange(len(relax_error)):
+                    number_ri = number_ri + len(relax_error[k])
+
+                # Reconstruct the error data structure.
+                lm_error = zeros(number_ri, Float64)
+                index = 0
+                for k in xrange(len(relax_error)):
+                    lm_error[index:len(relax_error[k])] = relax_error[k]
+                    index = index + len(relax_error[k])
+
+                min_options = min_options + (self.mf.lm_dri, lm_error)
 
 
             # Chi-squared calculation.

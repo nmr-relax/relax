@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, matrixmultiply, ones, sum, zeros
+from Numeric import Float64, matrixmultiply, ones, sum, transpose, zeros
 from math import pi
 import sys
 
@@ -328,29 +328,32 @@ class Mf:
         self.total_dchi2 = zeros((self.total_num_params), Float64)
         self.total_d2chi2 = zeros((self.total_num_params, self.total_num_params), Float64)
 
+        # Initialise the total ri gradient data structure (for Levenberg-Marquardt minimisation).
+        self.total_dri = zeros((self.total_num_params), Float64)
+
         # Set the functions self.func, self.dfunc, and self.d2func.
         ###########################################################
 
         # Functions for minimising model-free parameters for a single residue.
-        if param_set == 'mf':
+        if self.param_set == 'mf':
             self.func = self.func_mf
             self.dfunc = self.dfunc_mf
             self.d2func = self.d2func_mf
 
         # Functions for minimising model-free parameters for a single residue with a local tm.
-        elif param_set == 'local_tm':
+        elif self.param_set == 'local_tm':
             self.func = self.func_local_tm
             self.dfunc = self.dfunc_local_tm
             self.d2func = self.d2func_local_tm
 
         # Functions for minimising diffusion tensor parameters with all model-free parameters fixed.
-        elif param_set == 'diff':
+        elif self.param_set == 'diff':
             self.func = self.func_diff
             self.dfunc = self.dfunc_diff
             self.d2func = self.d2func_diff
 
         # Functions for minimising diffusion tensor parameters together with all model-free parameters.
-        elif param_set == 'all':
+        elif self.param_set == 'all':
             self.func = self.func_all
             self.dfunc = self.dfunc_all
             self.d2func = self.d2func_all
@@ -785,7 +788,7 @@ class Mf:
             self.total_dchi2[0:index] = self.total_dchi2[0:index] + data.dchi2[0:index]
 
             # Model-free parameter part of the global generic model-free gradient.
-            self.total_dchi2[data.start_index:data.end_index] = self.total_dchi2[data.start_index:data.end_index] + data.dchi2[index:]
+            #self.total_dchi2[data.start_index:data.end_index] = self.total_dchi2[data.start_index:data.end_index] + data.dchi2[index:]
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -1460,11 +1463,40 @@ class Mf:
     def lm_dri(self):
         """Return the function used for Levenberg-Marquardt minimisation."""
 
+        # Create dri.
+        if self.param_set == 'mf' or self.param_set == 'local_tm':
+            dri = self.data[0].dri
+        else:
+            # Set the total dri gradient to zero.
+            self.total_dri = self.total_dri * 0.0
+
+            # Loop over the residues.
+            for i in xrange(self.num_res):
+                # Set self.data[i] to data.
+                data = self.data[i]
+
+                # Index for the construction of the global generic model-free gradient.
+                index = self.diff_data.num_params
+
+                # Diffusion parameter part of the global generic model-free gradient.
+                self.total_dri[0:index] = self.total_dri[0:index] + data.dri[0:index]
+
+                # Model-free parameter part of the global generic model-free gradient.
+                self.total_dri[data.start_index:data.end_index] = self.total_dri[data.start_index:data.end_index] + data.dri[index:]
+
+            # dri.
+            dri = self.total_dri
+
+        # Transpose dri.
+        dri = transpose(dri)
+
         # Diagonal scaling.
         if self.scaling_flag:
-            return matrixmultiply(self.data.dri, self.scaling_matrix)
-        else:
-            return self.data.dri
+            for i in xrange(len(dri)):
+                dri[i] = matrixmultiply(dri[i], self.scaling_matrix)
+
+        # Return dri.
+        return dri
 
 
     def setup_equations(self, data):
