@@ -744,8 +744,12 @@ class Mf:
         # Set the total chi2 gradient to zero.
         self.total_dchi2 = self.total_dchi2 * 0.0
 
+        aaa = 1
         # Loop over the residues.
         for i in xrange(self.num_res):
+            if aaa:
+                print "\n\n\nResidue: " + `i`
+
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -787,6 +791,19 @@ class Mf:
                 # Calculate the chi-squared gradient.
                 data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
 
+                if aaa:
+                    print "\n\nj:" + `j`
+                    print "\ndci[j]: " + `data.dci[j]`
+                    try:
+                        print "\ndti[j]: " + `data.dti[j]`
+                    except:
+                        pass
+
+                    print `data.calc_djw[j]`
+                    print "djw[j]: " + `data.djw`
+
+                    print "dChi2: " + `data.dchi2[j]`
+
             # Index for the construction of the global generic model-free gradient.
             index = self.diff_data.num_params
 
@@ -799,6 +816,10 @@ class Mf:
         # Diagonal scaling.
         if self.scaling_flag:
             self.total_dchi2 = matrixmultiply(self.total_dchi2, self.scaling_matrix)
+
+        if aaa:
+            print "Total dChi2: " + `self.total_dchi2`
+            import sys; sys.exit()
 
         # Return a copy of the gradient.
         return self.total_dchi2 * 1.0
