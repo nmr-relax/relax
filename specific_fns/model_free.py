@@ -1606,6 +1606,7 @@ class Model_free:
 
                 # Model-free parameter values.
                 if self.param_set == 'local_tm':
+                    pass
 
                 # Vectors.
                 if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
