@@ -31,6 +31,3 @@ Palmer (Mandel et. al., 1995)
 ############
 
 Send only the minimisation results rather than the entire results output.
-Make the threads fail safe.
-Requeue the last jobs so that faster machines can finish the calculations.
-Write the script to the pipe's stdin.
