@@ -34,7 +34,7 @@ class Minimise:
         self.relax = relax
 
 
-    def calc(self, run=None):
+    def calc(self, run=None, print_flag=1):
         """Function for calculating the function value."""
 
         # Test if sequence data is loaded.
@@ -48,38 +48,13 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Equation type specific parameter vector function setup.
-        self.assemble_param_vector = self.relax.specific_setup.setup('param_vector', function_type)
-        if self.assemble_param_vector == None:
-            raise RelaxFuncSetupError, ('parameter vector', function_type)
-
-        # Equation type specific scaling matrix function setup.
-        self.assemble_scaling_matrix = self.relax.specific_setup.setup('scaling_matrix', function_type)
-        if self.assemble_scaling_matrix == None:
-            raise RelaxFuncSetupError, ('scaling matrix', function_type)
-
         # Equation type specific calculate function setup.
         self.calculate = self.relax.specific_setup.setup('calc', function_type)
         if self.calculate == None:
             raise RelaxFuncSetupError, ('calculate', function_type)
 
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res)):
-            # Skip unselected residues.
-            if not self.relax.data.res[i].select:
-                continue
-
-            # Create the parameter vector.
-            params = self.assemble_param_vector(run, self.relax.data.res[i])
-
-            # Diagonal scaling.
-            scaling_matrix = None
-            if self.relax.data.res[i].scaling[run]:
-                scaling_matrix = self.assemble_scaling_matrix(run, self.relax.data.res[i], i)
-                params = matrixmultiply(inverse(scaling_matrix), params)
-
-            # Minimisation.
-            self.calculate(run=run, i=i, params=params, scaling_matrix=scaling_matrix)
+        # Minimisation.
+        self.calculate(run=run, print_flag=print_flag)
 
 
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):

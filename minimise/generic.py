@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -131,7 +131,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |-----------------------------------|-----------------------------------------------------|
     |                                   |                                                     |
     | Grid search                       | '^[Gg]rid'                                          |
-    | Fixed parameter values            | '^[Ff]ixed'                                         |
+    | Set parameter values              | '^[Ss]et'                                           |
     |-----------------------------------|-----------------------------------------------------|
 
 
@@ -214,14 +214,14 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
         else:
             results = xk
 
-    # Fixed parameter values.
-    elif match('^[Ff]ixed', min_algor):
+    # Set parameter values.
+    elif match('^[Ss]et', min_algor):
         if print_flag:
             if print_flag >= 2:
                 print print_prefix
             print print_prefix
-            print print_prefix + "Fixed initial parameter values"
-            print print_prefix + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+            print print_prefix + "Set parameter values"
+            print print_prefix + "~~~~~~~~~~~~~~~~~~~~"
         xk = min_options
         fk = apply(func, (xk,)+args)
         if full_output:

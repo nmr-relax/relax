@@ -26,5 +26,5 @@ class Data:
         """A class for the storage of temporary data."""
 
         # Data structures which are required to be initialised.
-        #self.relax_test = []
-        #self.gradient_test = []
+        self.frq_list = []
+        self.frq_sqrd_list = []

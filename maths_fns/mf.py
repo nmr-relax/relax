@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import Float64, array, diagonal, matrixmultiply, ones, outerproduct, sum, zeros
+from Numeric import Float64, matrixmultiply, ones, sum, zeros
 from math import pi
 
 from data import Data
@@ -35,19 +35,13 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, relax, run=None, i=None, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling_matrix=None, print_flag=0):
+    def __init__(self, param_set, num_data_sets, equations, param_types, init_params, relax_data, errors, bond_length, csa, diff_type, diff_params, scaling_matrix, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, g_ratio, h_bar, mu0):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
 
         Arguments
         ~~~~~~~~~
-
-        relax:  The program base class self.relax
-
-        run:  The name of the run.
-
-        i:  The index of residue.
 
         equation:  The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
 
@@ -66,27 +60,31 @@ class Mf:
         diff_params:  An array with the diffusion parameters.
 
         scaling_matrix:  A diagonal matrix of scaling factors.
-
-        print_flag:  A flag specifying how much should be printed to screen.
         """
 
         # Arguments.
-        self.relax = relax
-        self.run = run
-        self.i = i
-        self.equation = equation
+        self.param_set = param_set
+        self.equations = equations
         self.param_types = param_types
-        self.params = init_params
         self.scaling_matrix = scaling_matrix
-        self.print_flag = print_flag
 
         # Initialise the data class used to store data.
         self.data = Data()
 
-        # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
-        self.calc_frq_list()
+        # Loop over the data sets.
+        for i in xrange(num_data_sets):
+            # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
+            self.data.frq_list.append(zeros((num_frq[i], 5), Float64))
+            for j in xrange(num_frq[i]):
+                frqH = 2.0 * pi * frq[i][j]
+                frqX = frqH * g_ratio
+                self.data.frq_list[i][j, 1] = frqX
+                self.data.frq_list[i][j, 2] = frqH - frqX
+                self.data.frq_list[i][j, 3] = frqH
+                self.data.frq_list[i][j, 4] = frqH + frqX
+            self.data.frq_sqrd_list.append(self.data.frq_list[i] ** 2)
 
-        # Initialise the data.
+        # Store some data in self.data
         self.data.params = zeros(len(init_params), Float64)
         self.data.func_test = pi * ones(len(init_params), Float64)
         self.data.grad_test = pi * ones(len(init_params), Float64)
@@ -97,6 +95,22 @@ class Mf:
         self.data.csa = csa
         self.data.diff_type = diff_type
         self.data.diff_params = diff_params
+        self.data.gh = gh
+        self.data.gx = gx
+        self.data.g_ratio = g_ratio
+        self.data.h_bar = h_bar
+        self.data.mu0 = mu0
+        self.data.num_ri = num_ri
+        self.data.num_frq = num_frq
+        self.data.frq = frq
+        self.data.remap_table = remap_table
+        self.data.noe_r1_table = noe_r1_table
+        self.data.ri_labels = ri_labels
+
+        # Sum length.
+        self.data.sum_len = len(self.data.ti)
+
+        # Initialise the data.
         self.init_data()
 
         # Set the functions.
@@ -111,26 +125,11 @@ class Mf:
         if not self.setup_equations():
             raise NameError, "The model-free equations could not be setup."
 
-        # Initialise the R1 data class used only if an NOE data set is collected but the R1 data of the same frequency has not.
+        # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
         self.init_r1_data()
 
 
-    def calc_frq_list(self):
-        """Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation."""
-
-        self.data.frq_list = zeros((self.relax.data.res[self.i].num_frq[self.run], 5), Float64)
-        for i in xrange(self.relax.data.res[self.i].num_frq[self.run]):
-            frqH = 2.0 * pi * self.relax.data.res[self.i].frq[self.run][i]
-            frqX = frqH * (self.relax.data.gx / self.relax.data.gh)
-            self.data.frq_list[i, 1] = frqX
-            self.data.frq_list[i, 2] = frqH - frqX
-            self.data.frq_list[i, 3] = frqH
-            self.data.frq_list[i, 4] = frqH + frqX
-
-        self.data.frq_sqrd_list = self.data.frq_list ** 2
-
-
-    def func(self, params, print_flag=0):
+    def func(self, params):
         """The function for calculating the model-free chi-squared value.
 
         The chi-sqared equation
@@ -149,7 +148,6 @@ class Mf:
 
         # Arguments
         self.set_params(params)
-        self.print_flag = print_flag
 
         # Test if the function has already been calculated with these parameter values.
         if sum(self.data.params == self.data.func_test) == len(self.data.params):
@@ -180,7 +178,7 @@ class Mf:
         return self.data.chi2
 
 
-    def dfunc(self, params, print_flag=0):
+    def dfunc(self, params):
         """The function for calculating the model-free chi-squared gradient vector.
 
         The chi-sqared gradient
@@ -199,7 +197,6 @@ class Mf:
 
         # Arguments
         self.set_params(params)
-        self.print_flag = print_flag
 
         # Test if the gradient has already been calculated with these parameter values.
         if sum(self.data.params == self.data.grad_test) == len(self.data.params):
@@ -208,7 +205,7 @@ class Mf:
 
         # Test if the function has already been called
         if sum(self.data.params == self.data.func_test) != len(self.data.params):
-            temp_chi2 = self.func(params, print_flag)
+            raise RelaxError, "Should not be here."
 
         # Store the parameter values in self.data.grad_test for testing on next call if the gradient has already been calculated.
         self.data.grad_test = self.data.params * 1.0
@@ -239,7 +236,7 @@ class Mf:
         return self.data.dchi2
 
 
-    def d2func(self, params, print_flag=0):
+    def d2func(self, params):
         """The function for calculating the model-free chi-squared Hessian matrix.
 
         The chi-sqared Hessian
@@ -258,7 +255,6 @@ class Mf:
 
         # Arguments
         self.set_params(params)
-        self.print_flag = print_flag
 
         # Test if the Hessian has already been calculated with these parameter values.
         if sum(self.data.params == self.data.hess_test) == len(self.data.params):
@@ -267,7 +263,7 @@ class Mf:
 
         # Test if the gradient has already been called
         if sum(self.data.params == self.data.grad_test) != len(self.data.params):
-            temp_dchi2 = self.dfunc(params, print_flag)
+            raise RelaxError, "Should not be here."
 
         # Store the parameter values in self.data.hess_test for testing on next call if the Hessian has already been calculated.
         self.data.hess_test = self.data.params * 1.0
@@ -304,22 +300,6 @@ class Mf:
 
     def init_data(self):
         """Function for initialisation of the data."""
-
-        # Place some data structures from self.relax.data into the data class
-        self.data.gh = self.relax.data.gh
-        self.data.gx = self.relax.data.gx
-        self.data.g_ratio = self.relax.data.g_ratio
-        self.data.h_bar = self.relax.data.h_bar
-        self.data.mu0 = self.relax.data.mu0
-        self.data.num_ri = self.relax.data.res[self.i].num_ri[self.run]
-        self.data.num_frq = self.relax.data.res[self.i].num_frq[self.run]
-        self.data.frq = self.relax.data.res[self.i].frq[self.run]
-        self.data.remap_table = self.relax.data.res[self.i].remap_table[self.run]
-        self.data.noe_r1_table = self.relax.data.res[self.i].noe_r1_table[self.run]
-        self.data.ri_labels = self.relax.data.res[self.i].ri_labels[self.run]
-
-        # The length.
-        self.data.len = len(self.data.ti)
 
         # Diagonal scaling data.
         if self.scaling_matrix:
@@ -455,18 +435,6 @@ class Mf:
         """Function for the diagonal scaling of the chi-squared Hessian."""
 
         self.data.d2chi2 = matrixmultiply(self.data.scaling_matrix, matrixmultiply(self.data.d2chi2, self.data.scaling_matrix))
-
-#        # Remove!
-#        self.data.hessian_scaling_matrix = outerproduct(diagonal(self.scaling_matrix), diagonal(self.scaling_matrix))
-#        temp1 = matrixmultiply(self.data.d2chi2, self.data.hessian_scaling_matrix)
-#        temp2 = matrixmultiply(self.data.scaling_matrix, matrixmultiply(self.data.d2chi2, self.data.scaling_matrix))
-#        print "\nself.data.d2chi2:\n" + `self.data.d2chi2`
-#        print "\nself.data.scaling_matrix:\n" + `self.data.scaling_matrix`
-#        print "\nself.data.hessian_scaling_matrix:\n" + `self.data.hessian_scaling_matrix`
-#        print "\ntemp1:\n" + `temp1`
-#        print "\ntemp2:\n" + `temp2`
-#        import sys
-#        sys.exit()
 
 
     def set_params_scaled(self, params):

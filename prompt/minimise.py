@@ -30,7 +30,7 @@ class Minimise:
         self.relax = relax
 
 
-    def calc(self, run=None):
+    def calc(self, run=None, print_flag=1):
         """Function for calculating the function value.
 
         Keyword Arguments
@@ -42,15 +42,20 @@ class Minimise:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "calc("
-            text = text + "run=" + `run` + ")"
+            text = text + "run=" + `run`
+            text = text + ", print_flag=" + `print_flag` + ")"
             print text
 
         # The run argument.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
+        # The print flag.
+        if type(print_flag) != int:
+            raise RelaxIntError, ('print flag', print_flag)
+
         # Execute the functional code.
-        self.relax.generic.minimise.calc(run=run)
+        self.relax.generic.minimise.calc(run=run, print_flag=print_flag)
 
 
     def grid_search(self, run=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
