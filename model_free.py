@@ -611,8 +611,13 @@ class Model_free:
             self.mf = Mf(self.relax, equation=self.relax.data.equations[model], param_types=self.relax.data.param_types[model], init_params=self.relax.data.params[model][self.res], relax_data=data, errors=errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params, scaling_vector=scaling_vector)
 
             # Levenberg-Marquardt minimisation.
-            if match('[Ll][Mm]$', min_algor) or match('[Ll]evenburg-[Mm]arquardt$', min_algor):
+            if constraints and not match('^[Gg]rid', min_algor):
+                algor = min_options[0]
+            else:
+                algor = min_algor
+            if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 min_options = min_options + (self.mf.lm_dri, errors)
+
 
             # Minimisation.
             if constraints:

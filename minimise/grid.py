@@ -53,14 +53,16 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     n = len(grid_ops)
     total_steps = 1
     step_num = ones((n))
-    step_size = zeros((n), Float64)
     params = zeros((n), Float64)
     min_params = zeros((n), Float64)
+    param_values = []   # This data structure eliminates the round-off error of summing a step size value to the parameter value.
     for k in range(n):
-        step_size[k] = (grid_ops[k][2] - grid_ops[k][1]) / (grid_ops[k][0] - 1)
         params[k] = grid_ops[k][1]
         min_params[k] = grid_ops[k][1]
         total_steps = total_steps * grid_ops[k][0]
+        param_values.append([])
+        for i in range(grid_ops[k][0]):
+            param_values[k].append(i * (grid_ops[k][2] - grid_ops[k][1]) / (grid_ops[k][0] - 1))
     grid = []
 
     # Print out.
@@ -117,7 +119,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         for k in range(n):
             if step_num[k] < grid_ops[k][0]:
                 step_num[k] = step_num[k] + 1
-                params[k] = params[k] + step_size[k]
+                params[k] = param_values[k][step_num[k]-1]
                 break    # Exit so that the other step numbers are not incremented.
             else:
                 step_num[k] = 1
