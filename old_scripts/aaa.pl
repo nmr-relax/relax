@@ -113,6 +113,7 @@ if ( $stage == 2 ) {
 			}
 			&s2;                        # Extract the S2 data.
 			&s2f;                       # Extract the S2f data.
+			&s2s;                       # Extract the S2s data.
 			&te;                        # Extract the te data.
 			&rex;                       # Extract the Rex data.
 			&sse;                       # Extract the SSE data.
@@ -150,6 +151,10 @@ if ( $stage == 2 ) {
 		print DLOG "AIC model selection.\n\n";
 		print "Model selection set to \"AIC\"\n";
 		&aic_model_select;        # Do AIC model selection.
+	} elsif ( $selection =~ "BIC" ) {
+		print DLOG "BIC model selection.\n\n";
+		print "Model selection set to \"BIC\"\n";
+		&bic_model_select;        # Do BIC model selection.
 	} elsif ( $selection =~ "Hand" ) {
 		print DLOG "Hand model selection.\n\n";
 		print "\n[ Extraction of Models from \"hand.selection\" ]\n";
@@ -201,6 +206,7 @@ if ( $stage == 3 ) {
 	}
 	&s2;                                        # Extract the S2 data.
 	&s2f;                                       # Extract the S2f data.
+	&s2s;                                       # Extract the S2s data.
 	&te;                                        # Extract the te data.
 	&rex;                                       # Extract the Rex data.
 	&sse;                                       # Extract the SSE data.
@@ -275,6 +281,7 @@ sub open_stage2_files {
 	open(RESULTS, ">results.stage2");
 	open(S2AGR, ">grace/S2.stage2.agr");
 	open(S2FAGR, ">grace/S2f.stage2.agr");
+	open(S2SAGR, ">grace/S2s.stage2.agr");
 	open(TEAGR, ">grace/te.stage2.agr");
 	open(REXAGR, ">grace/Rex.stage2.agr");
 	open(SSEAGR, ">grace/SSE.stage2.agr");
@@ -294,6 +301,7 @@ sub open_stage3_files {
 	open(RESULTS, ">results.final");
 	open(S2AGR, ">grace/S2.final.agr");
 	open(S2FAGR, ">grace/S2f.final.agr");
+	open(S2SAGR, ">grace/S2s.final.agr");
 	open(TEAGR, ">grace/te.final.agr");
 	open(REXAGR, ">grace/Rex.final.agr");
 	open(SSEAGR, ">grace/SSE.final.agr");
@@ -511,8 +519,8 @@ sub mfdata {
 	foreach $n ( 0 .. $#input ) {
 		($NMR_frq_label, $data_type) = split(' ',$input[$n]);
 		&create_data_info($data_type,$NMR_frq_label);     # Create the data info.
-		printf DATA "%-7s%-10s%10s", $data_type, $NMR_frq_label, $raw_data[$res]{$data_label};
-		printf DATA "%10s %-3s\n", $raw_data[$res]{$data_err_label}, $flag;
+		printf DATA "%-7s%-10s%25s", $data_type, $NMR_frq_label, $raw_data[$res]{$data_label};
+		printf DATA "%25s %-3s\n", $raw_data[$res]{$data_err_label}, $flag;
 	}
 }
 
@@ -660,6 +668,9 @@ sub orig_data {
 		&end;            # Check for the end of the data and terminate the loop.
 		&create_data_info($data_type,$NMR_frq_label);    # Create the variables for the original data.
 		$data{$model}[$res]{$data_label} = $row[1];
+		if ( $row[2] == 0 ) {
+			$row[2] = 0.0005;
+		}
 		$data{$model}[$res]{$data_err_label} = $row[2];
 		$data{$model}[$res]{$data_fit_label} = $row[4];
 		$data{$model}[$res]{$data_SSE_label} = ($row[4] - $row[1])**2 / $row[2]**2;
@@ -704,6 +715,24 @@ sub s2f {
 		print $log_fh "    Res $row[0], $row[1]±$row[5].\n";
 		$data{$model}[$res]{S2f} = $row[1];
 		$data{$model}[$res]{S2f_err} = $row[5];
+		++$res;
+	}
+}
+
+# Extract the S2s data.
+sub s2s {
+	until ( $row[0] eq "S2s" && $row[1] eq "()" ) {     # Goto the S2s data.
+		@row = split(' ',<MFOUT>);
+	}
+	$res = 0;                # Init residue count.
+	print $log_fh "\n$model Extracting S2s values.\n";
+	while ( <MFOUT> ) {      # Loop until the end of the S2s data.
+		@row = split(' ',$_);
+		&end;            # Check for the end of the data and terminate the loop.
+		&data_lineup;    # Check residue line up.
+		print $log_fh "    Res $row[0], $row[1]±$row[5].\n";
+		$data{$model}[$res]{S2s} = $row[1];
+		$data{$model}[$res]{S2s_err} = $row[5];
 		++$res;
 	}
 }
@@ -909,6 +938,8 @@ sub full_model_select {
 			S2_err  => "",
 			S2f     => "",
 			S2f_err => "",
+			S2s     => "",
+			S2s_err => "",
 			te      => "",
 			te_err  => "",
 			Rex     => "",
@@ -985,6 +1016,8 @@ sub full_model_select {
 			$results[$res]{S2_err}  = $data{m5}[$res]{S2_err};
 			$results[$res]{S2f}     = $data{m5}[$res]{S2f};
 			$results[$res]{S2f_err} = $data{m5}[$res]{S2f_err};
+			$results[$res]{S2s}     = $data{m5}[$res]{S2s};
+			$results[$res]{S2s_err} = $data{m5}[$res]{S2s_err};
 			$results[$res]{te}      = $data{m5}[$res]{te};
 			$results[$res]{te_err}  = $data{m5}[$res]{te_err};
 			$results[$res]{SSE}     = $data{m5}[$res]{SSE};
@@ -1010,6 +1043,8 @@ sub reduced_model_select {
 			S2_err  => "",
 			S2f     => "",
 			S2f_err => "",
+			S2s     => "",
+			S2s_err => "",
 			te      => "",
 			te_err  => "",
 			Rex     => "",
@@ -1083,6 +1118,8 @@ sub reduced_model_select {
 			$results[$res]{S2_err}  = $data{m5}[$res]{S2_err};
 			$results[$res]{S2f}     = $data{m5}[$res]{S2f};
 			$results[$res]{S2f_err} = $data{m5}[$res]{S2f_err};
+			$results[$res]{S2s}     = $data{m5}[$res]{S2s};
+			$results[$res]{S2s_err} = $data{m5}[$res]{S2s_err};
 			$results[$res]{te}      = $data{m5}[$res]{te};
 			$results[$res]{te_err}  = $data{m5}[$res]{te_err};
 			$results[$res]{SSE}     = $data{m5}[$res]{SSE};
@@ -1110,6 +1147,8 @@ sub ftest_model_select {
 			S2_err  => "",
 			S2f     => "",
 			S2f_err => "",
+			S2s     => "",
+			S2s_err => "",
 			te      => "",
 			te_err  => "",
 			Rex     => "",
@@ -1275,6 +1314,8 @@ sub ftest_model_select {
 			$results[$res]{S2_err}  = $data{m5}[$res]{S2_err};
 			$results[$res]{S2f}     = $data{m5}[$res]{S2f};
 			$results[$res]{S2f_err} = $data{m5}[$res]{S2f_err};
+			$results[$res]{S2s}     = $data{m5}[$res]{S2s};
+			$results[$res]{S2s_err} = $data{m5}[$res]{S2s_err};
 			$results[$res]{te}      = $data{m5}[$res]{te};
 			$results[$res]{te_err}  = $data{m5}[$res]{te_err};
 			$results[$res]{SSE}     = $data{m5}[$res]{SSE};
@@ -1305,6 +1346,8 @@ sub aic_model_select {
 			S2_err  => "",
 			S2f     => "",
 			S2f_err => "",
+			S2s     => "",
+			S2s_err => "",
 			te      => "",
 			te_err  => "",
 			Rex     => "",
@@ -1320,48 +1363,28 @@ sub aic_model_select {
 
 		# Calculate AIC factors.
 		# m1.
-		if ( $data{m1}[$res]{SSE} == 0 ) {
-			$LogML = -99;
-		} else {
-			$LogML = log($data{m1}[$res]{SSE}/$n);
-		}
-		$AIC[0] = (1 + log(2*$pi)) + $LogML + (2 * 1 / $n);
+		$AIC[0] = $n*log(2*$pi) + $data{m1}[$res]{SSE} + 2*1;
+		$AIC[0] = $AIC[0] / ( 2 * $n );
 		$data{m1}[$res]{AIC} = $AIC[0];
 
 		# m2.
-		if ( $data{m2}[$res]{SSE} == 0 ) {
-			$LogML = -99;
-		} else {
-			$LogML = log($data{m2}[$res]{SSE}/$n);
-		}
-		$AIC[1] = (1 + log(2*$pi)) + $LogML + (2 * 1 / $n);
+		$AIC[1] = $n*log(2*$pi) + $data{m2}[$res]{SSE} + 2*2;
+		$AIC[1] = $AIC[1] / ( 2 * $n );
 		$data{m2}[$res]{AIC} = $AIC[1];
 
 		# m3.
-		if ( $data{m3}[$res]{SSE} == 0 ) {
-			$LogML = -99;
-		} else {
-			$LogML = log($data{m3}[$res]{SSE}/$n);
-		}
-		$AIC[2] = (1 + log(2*$pi)) + $LogML + (2 * 1 / $n);
+		$AIC[2] = $n*log(2*$pi) + $data{m3}[$res]{SSE} + 2*2;
+		$AIC[2] = $AIC[2] / ( 2 * $n );
 		$data{m3}[$res]{AIC} = $AIC[2];
 
 		# m4.
-		if ( $data{m4}[$res]{SSE} == 0 ) {
-			$LogML = -99;
-		} else {
-			$LogML = log($data{m4}[$res]{SSE}/$n);
-		}
-		$AIC[3] = (1 + log(2*$pi)) + $LogML + (2 * 1 / $n);
+		$AIC[3] = $n*log(2*$pi) + $data{m4}[$res]{SSE} + 2*3;
+		$AIC[3] = $AIC[3] / ( 2 * $n );
 		$data{m4}[$res]{AIC} = $AIC[3];
 
 		# m5.
-		if ( $data{m5}[$res]{SSE} == 0 ) {
-			$LogML = -99;
-		} else {
-			$LogML = log($data{m5}[$res]{SSE}/$n);
-		}
-		$AIC[4] = (1 + log(2*$pi)) + $LogML + (2 * 1 / $n);
+		$AIC[4] = $n*log(2*$pi) + $data{m5}[$res]{SSE} + 2*3;
+		$AIC[4] = $AIC[4] / ( 2 * $n );
 		$data{m5}[$res]{AIC} = $AIC[4];
 
 
@@ -1421,6 +1444,129 @@ sub aic_model_select {
 			$results[$res]{S2_err}  = $data{m5}[$res]{S2_err};
 			$results[$res]{S2f}     = $data{m5}[$res]{S2f};
 			$results[$res]{S2f_err} = $data{m5}[$res]{S2f_err};
+			$results[$res]{S2s}     = $data{m5}[$res]{S2s};
+			$results[$res]{S2s_err} = $data{m5}[$res]{S2s_err};
+			$results[$res]{te}      = $data{m5}[$res]{te};
+			$results[$res]{te_err}  = $data{m5}[$res]{te_err};
+			$results[$res]{SSE}     = $data{m5}[$res]{SSE};
+		}
+	}
+}
+
+# Do BIC model selection.
+sub bic_model_select {
+	print $log_fh "\n\n<<<BIC Model Selection>>>";
+	for $res ( 0 .. $total_res ) {                 # Loop from first to last residue.
+		printf $log_fh "\n\n%-22s\n", "   Checking res $data{m1}[$res]{resNo}";
+
+		### Set up.
+		$results[$res] = {
+			resNo   => $data{m1}[$res]{resNo},
+			model   => "",
+			S2      => "",
+			S2_err  => "",
+			S2f     => "",
+			S2f_err => "",
+			S2s     => "",
+			S2s_err => "",
+			te      => "",
+			te_err  => "",
+			Rex     => "",
+			Rex_err => "",
+			SSE     => "",
+		};
+		$pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862;
+		$n = $num_data_sets;
+		$BIC = [];
+		$select_model = 0;
+
+		### BIC Model selection.
+
+		# Calculate BIC factors.
+		# m1.
+		$BIC[0] = $n*log(2*$pi) + $data{m1}[$res]{SSE} + 1*log($n);
+		$BIC[0] = $BIC[0] / ( 2 * $n );
+		$data{m1}[$res]{BIC} = $BIC[0];
+
+		# m2.
+		$BIC[1] = $n*log(2*$pi) + $data{m2}[$res]{SSE} + 2*log($n);
+		$BIC[1] = $BIC[1] / ( 2 * $n );
+		$data{m2}[$res]{BIC} = $BIC[1];
+
+		# m3.
+		$BIC[2] = $n*log(2*$pi) + $data{m3}[$res]{SSE} + 2*log($n);
+		$BIC[2] = $BIC[2] / ( 2 * $n );
+		$data{m3}[$res]{BIC} = $BIC[2];
+
+		# m4.
+		$BIC[3] = $n*log(2*$pi) + $data{m4}[$res]{SSE} + 3*log($n);
+		$BIC[3] = $BIC[3] / ( 2 * $n );
+		$data{m4}[$res]{BIC} = $BIC[3];
+
+		# m5.
+		$BIC[4] = $n*log(2*$pi) + $data{m5}[$res]{SSE} + 3*log($n);
+		$BIC[4] = $BIC[4] / ( 2 * $n );
+		$data{m5}[$res]{BIC} = $BIC[4];
+
+
+		# Select model.
+		$index = 0;
+		for ( $i = 0; $i <= $#BIC; $i++ ) {
+			if ( $BIC[$i] < $BIC[$index] ) {
+				$index = $i;
+			}
+		}
+		$select_model = $index + 1;
+		print $log_fh "\tBIC (m1) $BIC[0]\n";
+		print $log_fh "\tBIC (m2) $BIC[1]\n";
+		print $log_fh "\tBIC (m3) $BIC[2]\n";
+		print $log_fh "\tBIC (m4) $BIC[3]\n";
+		print $log_fh "\tBIC (m5) $BIC[4]\n";
+		print $log_fh "\tThe index is $index\n";
+		print $log_fh "\tTherefore the selected model is $select_model\n";
+
+		### Setting variables.
+		if ( $select_model == 1 ) {
+			printf $log_fh "%-12s", "[Model 1]";
+			$results[$res]{model}   = 1;
+			$results[$res]{S2}      = $data{m1}[$res]{S2};
+			$results[$res]{S2_err}  = $data{m1}[$res]{S2_err};
+			$results[$res]{SSE}     = $data{m1}[$res]{SSE};
+		} elsif ( $select_model == 2 ) {
+			printf $log_fh "%-12s", "[Model 2]";
+			$results[$res]{model}   = 2;
+			$results[$res]{S2}      = $data{m2}[$res]{S2};
+			$results[$res]{S2_err}  = $data{m2}[$res]{S2_err};
+			$results[$res]{te}      = $data{m2}[$res]{te};
+			$results[$res]{te_err}  = $data{m2}[$res]{te_err};
+			$results[$res]{SSE}     = $data{m2}[$res]{SSE};
+		} elsif ( $select_model == 3 ) {
+			printf $log_fh "%-12s", "[Model 3]";
+			$results[$res]{model}   = 3;
+			$results[$res]{S2}      = $data{m3}[$res]{S2};
+			$results[$res]{S2_err}  = $data{m3}[$res]{S2_err};
+			$results[$res]{Rex}     = $data{m3}[$res]{Rex};
+			$results[$res]{Rex_err} = $data{m3}[$res]{Rex_err};
+			$results[$res]{SSE}     = $data{m3}[$res]{SSE};
+		} elsif ( $select_model == 4 ) {
+			printf $log_fh "%-12s", "[Model 4]";
+			$results[$res]{model}   = 4;
+			$results[$res]{S2}      = $data{m4}[$res]{S2};
+			$results[$res]{S2_err}  = $data{m4}[$res]{S2_err};
+			$results[$res]{te}      = $data{m4}[$res]{te};
+			$results[$res]{te_err}  = $data{m4}[$res]{te_err};
+			$results[$res]{Rex}     = $data{m4}[$res]{Rex};
+			$results[$res]{Rex_err} = $data{m4}[$res]{Rex_err};
+			$results[$res]{SSE}     = $data{m4}[$res]{SSE};
+		} elsif ( $select_model == 5 ) {
+			printf $log_fh "%-12s", "[Model 5]";
+			$results[$res]{model}   = 5;
+			$results[$res]{S2}      = $data{m5}[$res]{S2};
+			$results[$res]{S2_err}  = $data{m5}[$res]{S2_err};
+			$results[$res]{S2f}     = $data{m5}[$res]{S2f};
+			$results[$res]{S2f_err} = $data{m5}[$res]{S2f_err};
+			$results[$res]{S2s}     = $data{m5}[$res]{S2s};
+			$results[$res]{S2s_err} = $data{m5}[$res]{S2s_err};
 			$results[$res]{te}      = $data{m5}[$res]{te};
 			$results[$res]{te_err}  = $data{m5}[$res]{te_err};
 			$results[$res]{SSE}     = $data{m5}[$res]{SSE};
@@ -1445,6 +1591,8 @@ sub extract_handsel {
 			S2_err  => "",
 			S2f     => "",
 			S2f_err => "",
+			S2s     => "",
+			S2s_err => "",
 			te      => "",
 			te_err  => "",
 			Rex     => "",
@@ -1481,6 +1629,8 @@ sub extract_handsel {
 			$results[$res]{S2_err}  = $data{$model}[$res]{S2_err};
 			$results[$res]{S2f}     = $data{$model}[$res]{S2f};
 			$results[$res]{S2f_err} = $data{$model}[$res]{S2f_err};
+			$results[$res]{S2s}     = $data{$model}[$res]{S2s};
+			$results[$res]{S2s_err} = $data{$model}[$res]{S2s_err};
 			$results[$res]{te}      = $data{$model}[$res]{te};
 			$results[$res]{te_err}  = $data{$model}[$res]{te_err};
 			$results[$res]{SSE}     = $data{$model}[$res]{SSE};
@@ -1492,7 +1642,7 @@ sub extract_handsel {
 # Create the output files ./results.*.
 sub results {
 	printf RESULTS "%-6s%-6s%-13s", "ResNo", "Model", "    S2";
-	printf RESULTS "%-13s%-19s%-13s", "    S2f", "       te", "    Rex";
+	printf RESULTS "%-13s%-13s%-19s%-13s", "    S2f", "    S2s", "       te", "    Rex";
 	printf RESULTS "%-10s\n", "    SSE";
 	for $res ( 0 .. $total_res ) {           # Loop from first to last residue.
 		printf RESULTS "%-6s%-6s", $results[$res]{resNo}, $results[$res]{model};
@@ -1503,6 +1653,11 @@ sub results {
 		}
 		if ( $results[$res]{S2f} ) {     # All residues with an S2f value.
 			printf RESULTS "%5s%1s%-5s  ", $results[$res]{S2f}, "±", $results[$res]{S2f_err};
+		} else {
+			printf RESULTS "%13s", "";
+		}
+		if ( $results[$res]{S2s} ) {     # All residues with an S2s value.
+			printf RESULTS "%5s%1s%-5s  ", $results[$res]{S2s}, "±", $results[$res]{S2s_err};
 		} else {
 			printf RESULTS "%13s", "";
 		}
@@ -1530,6 +1685,7 @@ sub grace {
 	}
 	&grace_header("S2AGR","S2 values",$sub_title,"Residue Number","S2","xydy");           # Create a grace header.
 	&grace_header("S2FAGR","S2f values",$sub_title,"Residue Number","S2f","xydy");        # Create a grace header.
+	&grace_header("S2SAGR","S2s values",$sub_title,"Residue Number","S2s","xydy");        # Create a grace header.
 	&grace_header("TEAGR","te values",$sub_title,"Residue Number","te (ps)","xydy");      # Create a grace header.
 	&grace_header("REXAGR","Rex values",$sub_title,"Residue Number","Rex (1/s)","xydy");  # Create a grace header.
 	&grace_header("SSEAGR","SSE values",$sub_title,"Residue Number","SSE","xy");          # Create a grace header.
@@ -1539,6 +1695,9 @@ sub grace {
 		}
 		if ( $results[$res]{S2f} ) {     # All residues with an S2f value.
 			print S2FAGR "$results[$res]{resNo} $results[$res]{S2f} $results[$res]{S2f_err}\n";
+		}
+		if ( $results[$res]{S2s} ) {     # All residues with an S2s value.
+			print S2SAGR "$results[$res]{resNo} $results[$res]{S2s} $results[$res]{S2s_err}\n";
 		}
 		if ( $results[$res]{te} ) {      # All residues with an te value.
 			print TEAGR "$results[$res]{resNo} $results[$res]{te} $results[$res]{te_err}\n";
@@ -1552,6 +1711,7 @@ sub grace {
 	}
 	print S2AGR "&\n";
 	print S2FAGR "&\n";
+	print S2SAGR "&\n";
 	print TEAGR "&\n";
 	print REXAGR "&\n";
 	print SSEAGR "&\n";
@@ -1690,6 +1850,7 @@ sub print_data {
 		print DLOG "<<< Residue $data{m1}[$res]{resNo}, Model $results[$res]{model} >>>\n";
 		printf DLOG "%-10s", "";
 		printf DLOG "%-8s%-8s%-8s%-8s", "S2", "S2_err", "S2f", "S2f_err";
+		printf DLOG "%-8s%-8s", "S2s", "S2s_err";
 		printf DLOG "%-10s%-10s%-8s%-8s", "te", "te_err", "Rex", "Rex_err";
 		printf DLOG "%-10s%-10s%-10s", "SSE", "SSElim", "SSE<$SSEtile";
 		printf DLOG "%-10s%-10s\n", "LargeSSE", "ZeroSSE";
@@ -1700,6 +1861,8 @@ sub print_data {
 				printf DLOG "%-8s", $data{$model}[$res]{S2_err};
 				printf DLOG "%-8s", $data{$model}[$res]{S2f};
 				printf DLOG "%-8s", $data{$model}[$res]{S2f_err};
+				printf DLOG "%-8s", $data{$model}[$res]{S2s};
+				printf DLOG "%-8s", $data{$model}[$res]{S2s_err};
 				printf DLOG "%-10s", $data{$model}[$res]{te};
 				printf DLOG "%-10s", $data{$model}[$res]{te_err};
 				printf DLOG "%-8s", $data{$model}[$res]{Rex};
@@ -1733,10 +1896,18 @@ sub print_data {
 			printf DLOG "\n";
 		}
 		if ( $selection =~ "AIC" ) {
-			printf DLOG "%-3s%13s\n", "", "AIC";
+			printf DLOG "%-3s%13s\n", "", "AIC/2n";
 			for $model ( @models ) {            # Loop for the 5 mfout files.
 				if ( $model =~ /^m/ ) {     # Models 1 to 5.
 					printf DLOG "%-3s%13.8f\n", $model, $data{$model}[$res]{AIC};
+				}
+			}
+		}
+		if ( $selection =~ "BIC" ) {
+			printf DLOG "%-3s%13s\n", "", "BIC/2n";
+			for $model ( @models ) {            # Loop for the 5 mfout files.
+				if ( $model =~ /^m/ ) {     # Models 1 to 5.
+					printf DLOG "%-3s%13.8f\n", $model, $data{$model}[$res]{BIC};
 				}
 			}
 		}
@@ -1777,6 +1948,8 @@ sub final_results {
 			S2_err  => "",
 			S2f     => "",
 			S2f_err => "",
+			S2s     => "",
+			S2s_err => "",
 			te      => "",
 			te_err  => "",
 			Rex     => "",
@@ -1820,6 +1993,8 @@ sub final_results {
 			$results[$res]{S2_err}  = $data{opt}[$res]{S2_err};
 			$results[$res]{S2f}     = $data{opt}[$res]{S2f};
 			$results[$res]{S2f_err} = $data{opt}[$res]{S2f_err};
+			$results[$res]{S2s}     = $data{opt}[$res]{S2s};
+			$results[$res]{S2s_err} = $data{opt}[$res]{S2s_err};
 			$results[$res]{te}      = $data{opt}[$res]{te};
 			$results[$res]{te_err}  = $data{opt}[$res]{te_err};
 			$results[$res]{SSE}     = $data{opt}[$res]{SSE};
@@ -1852,6 +2027,7 @@ sub close_stage_files {
 	close(RESULTS);
 	close(S2AGR);
 	close(S2FAGR);
+	close(S2SAGR);
 	close(TEAGR);
 	close(REXAGR);
 	close(SSEAGR);

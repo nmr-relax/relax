@@ -7,5 +7,5 @@ NOE           noe.600.out
 NMR_frq_label 500
 NMR_frq       500.241
 R1            R1.500.out
-R2            none
+R2            R2.500.out
 NOE           noe.500.out

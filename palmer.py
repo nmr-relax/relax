@@ -322,16 +322,29 @@ class palmer(common_operations):
 	def print_results(self):
 		"Print the results into the results file."
 		
-		text = '%-6s%-6s%-13s%-13s%-19s' % ( 'ResNo', 'Model', '    S2', '    S2f', '       te' )
-		text = text + '%-13s%-10s\n' % ( '    Rex', '    SSE' )
+		text = '%-6s%-6s%-13s%-13s%-13s' % ( 'ResNo', 'Model', '    S2', '    S2f', '    S2s' )
+		text = text + '%-19s%-13s%-10s\n' % ( '       te', '    Rex', '    SSE' )
 		for res in range(len(self.mf.data.results)):
 			text = text + '%-6s' % self.mf.data.results[res]['res_num']
 			text = text + '%-6s' % self.mf.data.results[res]['model']
-			text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] )
-			text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] )
-			text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] )
-			text = text + '%8s%1s%-8s  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] )
-			text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] )
+			
+			if match('[1,2,3,4,5]', self.mf.data.results[res]['model']):
+				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2'], '±', self.mf.data.results[res]['s2_err'] )
+			else:
+				text = text + '%13s' % ''
+			if match('5', self.mf.data.results[res]['model']):
+				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2f'], '±', self.mf.data.results[res]['s2f_err'] )
+				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['s2s'], '±', self.mf.data.results[res]['s2s_err'] )
+			else:
+				text = text + '%26s' % ''
+			if match('[2,4,5]', self.mf.data.results[res]['model']):
+				text = text + '%8s%1s%-8s  ' % ( self.mf.data.results[res]['te'], '±', self.mf.data.results[res]['te_err'] )
+			else:
+				text = text + '%19s' % ''
+			if match('[3,4]', self.mf.data.results[res]['model']):
+				text = text + '%5s%1s%-5s  ' % ( self.mf.data.results[res]['rex'], '±', self.mf.data.results[res]['rex_err'] )
+			else:
+				text = text + '%13s' % ''
 			text = text + '%10s\n' % self.mf.data.results[res]['sse']
 		self.results_file.write(text)
 

@@ -47,7 +47,7 @@ class usr_param:
 
 		self.diff = 'isotropic'
 		#self.diff = 'axial'
-		self.no_sim = '500'
+		self.no_sim = '100'
 		self.trim = '0'               # Trim unconverged simulations.
 
 		# tm
@@ -62,7 +62,7 @@ class usr_param:
 		# dratio
 		self.dratio = {}
 		self.dratio['val']   = '1.123'
-		self.dratio['flag']  = '0'
+		self.dratio['flag']  = '1'
 		self.dratio['bound'] = '0'
 		self.dratio['lower'] = '0.6'
 		self.dratio['upper'] = '1.5'
@@ -71,7 +71,7 @@ class usr_param:
 		# theta
 		self.theta = {}
 		self.theta['val']   = '87.493'
-		self.theta['flag']  = '0'
+		self.theta['flag']  = '1'
 		self.theta['bound'] = '0'
 		self.theta['lower'] = '-90'
 		self.theta['upper'] = '90'
@@ -80,7 +80,7 @@ class usr_param:
 		# phi
 		self.phi = {}
 		self.phi['val']   = '-52.470'
-		self.phi['flag']  = '0'
+		self.phi['flag']  = '1'
 		self.phi['bound'] = '0'
 		self.phi['lower'] = '-90'
 		self.phi['upper'] = '90'
