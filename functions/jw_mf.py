@@ -90,13 +90,14 @@ def create_jw_struct(data, calc_jw):
 
 
 
-# Original, no params and {tm}.
-###############################
+# Original, no params or {tm}.
+##############################
 
 def calc_jw(data):
     """Spectral density function.
 
-    Calculate the spectral density values for the original model-free formula with no parameters.
+    Calculate the spectral density values for the original model-free formula with no parameters {}
+    or the single parameter {tm}.
 
     The formula is:
 
@@ -116,14 +117,14 @@ def calc_jw(data):
 
 
 
-# Original {S2} and {tm, S2}.
-#############################
+# Original {S2} or {tm, S2}.
+############################
 
 def calc_S2_jw(data):
     """Spectral density function.
 
     Calculate the spectral density values for the original model-free formula with the single
-    parameter S2.
+    parameter {S2} or the parameters {tm, S2}.
 
     The formula is:
 
@@ -143,14 +144,14 @@ def calc_S2_jw(data):
 
 
 
-# Original {S2, te} and {tm, S2, te}.
-#####################################
+# Original {S2, te} or {tm, S2, te}.
+####################################
 
 def calc_S2_te_jw(data):
     """Spectral density function.
 
     Calculate the spectral density values for the original model-free formula with the parameters
-    S2 and te.
+    {S2, te} or the parameters {tm, S2, te}.
 
     The model-free formula is:
 
@@ -170,14 +171,14 @@ def calc_S2_te_jw(data):
 
 
 
-# Extended {S2f, S2, ts} and {tm, S2f, S2, ts}.
-###############################################
+# Extended {S2f, S2, ts} or {tm, S2f, S2, ts}.
+##############################################
 
 def calc_S2f_S2_ts_jw(data):
     """Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
-    S2f, S2, and ts.
+    {S2f, S2, ts} or the parameters {tm, S2f, S2, ts}.
 
     The model-free formula is:
 
@@ -197,14 +198,14 @@ def calc_S2f_S2_ts_jw(data):
 
 
 
-# Extended {S2f, tf, S2, ts} and {tm, S2f, tf, S2, ts}.
-#######################################################
+# Extended {S2f, tf, S2, ts} or {tm, S2f, tf, S2, ts}.
+######################################################
 
 def calc_S2f_tf_S2_ts_jw(data):
     """Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
-    S2f, tf, S2, and ts.
+    {S2f, tf, S2, ts} or the parameters {tm, S2f, tf, S2, ts}.
 
     The model-free formula is:
 
@@ -224,14 +225,14 @@ def calc_S2f_tf_S2_ts_jw(data):
 
 
 
-# Extended 2 {S2f, S2s, ts} and {tm, S2f, S2s, ts}.
-###################################################
+# Extended 2 {S2f, S2s, ts} or {tm, S2f, S2s, ts}.
+##################################################
 
 def calc_S2f_S2s_ts_jw(data):
     """Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
-    S2f, S2s, and ts.
+    {S2f, S2s, ts} or the parameters {tm, S2f, S2s, ts}.
 
     The model-free formula is:
 
@@ -251,14 +252,14 @@ def calc_S2f_S2s_ts_jw(data):
 
 
 
-# Extended 2 {S2f, tf, S2s, ts} and {tm, S2f, tf, S2s, ts}.
-###########################################################
+# Extended 2 {S2f, tf, S2s, ts} or {tm, S2f, tf, S2s, ts}.
+##########################################################
 
 def calc_S2f_tf_S2s_ts_jw(data):
     """Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
-    S2f, tf, S2s, and ts.
+    {S2f, tf, S2s, ts} or the parameters {tm, S2f, tf, S2s, ts}.
 
     The model-free formula is:
 
@@ -303,19 +304,32 @@ def create_djw_struct(data, calc_djw):
     Original
     ~~~~~~~~
 
-        dJ(w)     2 /        1 - (w.tm)^2                         (te + tm)^2 - (w.te.tm)^2   \ 
-        -----  =  - | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-         dtm      5 \      (1 + (w.tm)^2)^2                     ((te + tm)^2 + (w.te.tm)^2)^2 /
+                     _n_
+        dJ(w)     2  \        dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
+         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+                     i=m
 
 
-        dJ(w)     2    /      1                 (te + tm).te        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
+                     _n_
+        dJ(w)     2  \    dci       /      S2             (1 - S2)(te + ti)te    \ 
+        -----  =  -   >  ----- . ti | ------------  +  ------------------------- |
+        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                     i=m
 
 
-        dJ(w)     2                   (te + tm)^2 - (w.te.tm)^2
-        -----  =  - tm^2 . (1 - S2) -----------------------------
-         dte      5                 ((te + tm)^2 + (w.te.tm)^2)^2
+                     _n_
+        dJ(w)     2  \           /      1                 (te + ti)te         \ 
+        -----  =  -   >  ci . ti | ------------  -  ------------------------- |
+         dS2      5  /__         \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                     i=m
+
+
+                             _n_
+        dJ(w)     2          \                 (te + ti)^2 - (w.te.ti)^2
+        -----  =  - (1 - S2)  >  ci . ti^2 . -----------------------------
+         dte      5          /__             ((te + ti)^2 + (w.te.ti)^2)^2
+                             i=m
 
 
         dJ(w)
@@ -336,29 +350,46 @@ def create_djw_struct(data, calc_djw):
     Extended
     ~~~~~~~~
 
-        dJ(w)     2 /        1 - (w.tm)^2                          (tf + tm)^2 - (w.tf.tm)^2                           (ts + tm)^2 - (w.ts.tm)^2   \ 
-        -----  =  - | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
-         dtm      5 \      (1 + (w.tm)^2)^2                      ((tf + tm)^2 + (w.tf.tm)^2)^2                       ((ts + tm)^2 + (w.ts.tm)^2)^2 /
+                     _n_
+        dJ(w)     2  \        dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
+         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                     i=m
 
 
-        dJ(w)       2    /       (tf + tm).tf                  (ts + tm).ts        \ 
-        -----  =  - - tm | -------------------------  -  ------------------------- |
-        dS2f        5    \ (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                     _n_
+        dJ(w)     2  \    dci       /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
+        -----  =  -   >  ----- . ti | ------------  +  -------------------------  +  ------------------------- |
+        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                     i=m
 
 
-        dJ(w)     2    /      1                 (ts + tm).ts        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+                     _n_
+        dJ(w)     2  \           /      1                 (ts + ti).ts        \ 
+        -----  =  -   >  ci . ti | ------------  -  ------------------------- |
+         dS2      5  /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                     i=m
 
 
-        dJ(w)     2                    (tf + tm)^2 - (w.tf.tm)^2
-        -----  =  - tm^2 . (1 - S2f) -----------------------------
-         dtf      5                  ((tf + tm)^2 + (w.tf.tm)^2)^2
+                       _n_
+        dJ(w)       2  \           /       (tf + ti).tf                  (ts + ti).ts        \ 
+        -----  =  - -   >  ci . ti | -------------------------  -  ------------------------- |
+        dS2f        5  /__         \ (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
 
 
-        dJ(w)     2                     (ts + tm)^2 - (w.ts.tm)^2
-        -----  =  - tm^2 . (S2f - S2) -----------------------------
-         dts      5                   ((ts + tm)^2 + (w.ts.tm)^2)^2
+                              _n_
+        dJ(w)     2           \               (tf + ti)^2 - (w.tf.ti)^2
+        -----  =  - (1 - S2f)  >  ci . ti^2 -----------------------------
+         dtf      5           /__           ((tf + ti)^2 + (w.tf.ti)^2)^2
+                              i=m
+
+
+                               _n_
+        dJ(w)     2            \               (ts + ti)^2 - (w.ts.ti)^2
+        -----  =  - (S2f - S2)  >  ci . ti^2 -----------------------------
+         dts      5            /__           ((ts + ti)^2 + (w.ts.ti)^2)^2
+                               i=m
 
 
         dJ(w)
@@ -379,24 +410,24 @@ def create_djw_struct(data, calc_djw):
     Extended 2
     ~~~~~~~~~~
 
-        dJ(w)     2    /     S2s                (tf + tm).tf              (1 - S2s)(ts + tm).ts   \ 
-        -----  =  - tm | ------------  -  -------------------------  +  ------------------------- |
-        dS2f      5    \ 1 + (w.tm)^2     (tf + tm)^2 + (w.tf.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+        dJ(w)     2    /     S2s                (tf + ti).tf              (1 - S2s)(ts + ti).ts   \ 
+        -----  =  - ti | ------------  -  -------------------------  +  ------------------------- |
+        dS2f      5    \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
 
 
-        dJ(w)     2        /      1                 (ts + tm).ts        \ 
-        -----  =  - tm.S2f | ------------  -  ------------------------- |
-        dS2s      5        \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
+        dJ(w)     2        /      1                 (ts + ti).ts        \ 
+        -----  =  - ti.S2f | ------------  -  ------------------------- |
+        dS2s      5        \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
 
 
-        dJ(w)     2                    (tf + tm)^2 - (w.tf.tm)^2
-        -----  =  - tm^2 . (1 - S2f) -----------------------------
-         dtf      5                  ((tf + tm)^2 + (w.tf.tm)^2)^2
+        dJ(w)     2                    (tf + ti)^2 - (w.tf.ti)^2
+        -----  =  - ti^2 . (1 - S2f) -----------------------------
+         dtf      5                  ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
-        dJ(w)     2                       (ts + tm)^2 - (w.ts.tm)^2
-        -----  =  - tm^2 . S2f(1 - S2s) -----------------------------
-         dts      5                     ((ts + tm)^2 + (w.ts.tm)^2)^2
+        dJ(w)     2                       (ts + ti)^2 - (w.ts.ti)^2
+        -----  =  - ti^2 . S2f(1 - S2s) -----------------------------
+         dts      5                     ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
         dJ(w)
@@ -420,174 +451,201 @@ def create_djw_struct(data, calc_djw):
 
 
 
-# Original {tm}.
-################
+# Original Dj partial derivative.
+#################################
 
-def calc_iso_tm_djw_dtm(data):
+# {tm}
+
+def calc_tm_djw_dDj(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the tm partial derivative of the original
-    model-free formula with the single parameter tm.
+    Calculate the spectral desity values for the tm partial derivative of the original model-free
+    formula with the single parameter {tm}.
 
     The model-free gradient is:
 
-        dJ(w)     2 /   1 - (w.tm)^2   \ 
-        -----  =  - | ---------------- |
-         dtm      5 \ (1 + (w.tm)^2)^2 /
+                     _n_
+        dJ(w)     2  \        dti  /   1 - (w.ti)^2   \ 
+        -----  =  -   >  ci . ---  | ---------------- |
+         dDj      5  /__      dDj  \ (1 + (w.ti)^2)^2 /
+                     i=m
     """
 
-    return 0.4 * data.fact_djw_dtm
+    djw = 1.0 * data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.dti[i] * data.fact_djw_dti[i]
+
+    return 0.4 * djw
 
 
+# {tm, S2}
 
-# Original {S2}.
-################
-
-def calc_iso_S2_djw_dS2(data):
+def calc_tm_S2_djw_dDj(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
-    model-free formula with the single parameter S2.
+    Calculate the spectral desity values for the tm partial derivative of the original model-free
+    formula with the parameters {tm, S2}.
 
     The model-free gradient is:
 
-        dJ(w)     2    /      1       \ 
-        -----  =  - tm | ------------ |
-         dS2      5    \ 1 + (w.tm)^2 /
+                       _n_
+        dJ(w)     2    \        dti  /   1 - (w.ti)^2   \ 
+        -----  =  - S2  >  ci . ---  | ---------------- |
+         dDj      5    /__      dDj  \ (1 + (w.ti)^2)^2 /
+                       i=m
     """
 
-    return data.two_fifths_tm * data.fact_tm
+    djw = 1.0 * data.ci[0] * data.dti[0] * data.fact_djw_dti[0]
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.dti[i] * data.fact_djw_dti[i]
+
+    return 0.4 * data.params[data.s2_index] * djw
 
 
+# {tm, S2, te}
 
-# Original {tm, S2}.
-####################
-
-def calc_iso_tm_S2_djw_dtm(data):
+def calc_tm_S2_te_djw_dDj(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the tm partial derivative of the original
-    model-free formula with the parameters tm and S2.
+    Calculate the spectral desity values for the tm partial derivative of the original model-free
+    formula with the parameters {tm, S2, te}.
 
     The model-free gradient is:
 
-        dJ(w)     2          1 - (w.tm)^2
-        -----  =  - . S2 . ----------------
-         dtm      5        (1 + (w.tm)^2)^2
+                     _n_
+        dJ(w)     2  \        dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
+         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+                     i=m
     """
 
-    return 0.4 * data.params[data.s2_index] * data.fact_djw_dtm
+    djw = 1.0 * data.ci[0] * data.dti[0] * (data.params[data.s2_index] * data.fact1_djw_dti[0] + data.one_s2 * data.fact2_djw_dti[0])
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.dti[i] * (data.params[data.s2_index] * data.fact1_djw_dti[i] + data.one_s2 * data.fact2_djw_dti[i])
+
+    return 0.4 * djw
 
 
-def calc_iso_tm_S2_djw_dS2(data):
+
+# Original Psij partial derivative.
+###################################
+
+# Please code me!!!
+
+
+
+# Original S2 partial derivative.
+#################################
+
+# {S2} or {tm, S2}
+
+def calc_S2_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
-    model-free formula with the parameters tm and S2.
+    Calculate the spectral desity values for the S2 partial derivative of the original model-free
+    formula with the single parameter {S2} or the parameters {tm, S2}.
 
     The model-free gradient is:
 
-        dJ(w)     2    /      1       \ 
-        -----  =  - tm | ------------ |
-         dS2      5    \ 1 + (w.tm)^2 /
+                     _n_
+        dJ(w)     2  \           /      1       \ 
+        -----  =  -   >  ci . ti | ------------ |
+         dS2      5  /__         \ 1 + (w.ti)^2 /
+                     i=m
     """
 
-    return data.two_fifths_tm * data.fact_tm
+    djw = 1.0 * data.ci[0] * data.ti[0] * data.fact_ti[0]
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.ti[i] * data.fact_ti[i]
+
+    return 0.4 * djw
 
 
+# {S2, te} or {tm, S2, te}
 
-# Original {S2, te}.
-####################
-
-def calc_iso_S2_te_djw_dS2(data):
+def calc_S2_te_djw_dS2(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
-    model-free formula with the parameters S2 and te.
+    Calculate the spectral desity values for the S2 partial derivative of the original model-free
+    formula with the parameters {S2, te} or the parameters {tm, S2, te}.
 
     The model-free gradient is:
 
-        dJ(w)     2    /      1                 (te + tm).te        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
+                     _n_
+        dJ(w)     2  \           /      1                 (te + ti)te         \ 
+        -----  =  -   >  ci . ti | ------------  -  ------------------------- |
+         dS2      5  /__         \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                     i=m
     """
 
-    return data.two_fifths_tm * (data.fact_tm - data.te_tm_te * data.inv_te_denom)
+    djw = 1.0 * data.ci[0] * data.ti[0] * (data.fact_ti[0] - data.te_ti_te[0] * data.inv_te_denom[0])
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.ti[i] * (data.fact_ti[i] - data.te_ti_te[i] * data.inv_te_denom[i])
+
+    return 0.4 * djw
 
 
-def calc_iso_S2_te_djw_dte(data):
+
+# Original te partial derivative.
+#################################
+
+# {S2, te} or {tm, S2, te}
+
+def calc_S2_te_djw_dte(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the te partial derivative of the original
-    model-free formula with the parameters S2 and te.
+    Calculate the spectral desity values for the te partial derivative of the original model-free
+    formula with the parameters {S2, te} or the parameters {tm, S2, te}.
 
     The model-free gradient is:
 
-        dJ(w)     2                   (te + tm)^2 - (w.te.tm)^2
-        -----  =  - tm^2 . (1 - S2) -----------------------------
-         dte      5                 ((te + tm)^2 + (w.te.tm)^2)^2
+                             _n_
+        dJ(w)     2          \                 (te + ti)^2 - (w.te.ti)^2
+        -----  =  - (1 - S2)  >  ci . ti^2 . -----------------------------
+         dte      5          /__             ((te + ti)^2 + (w.te.ti)^2)^2
+                             i=m
     """
 
-    return data.fact_djw_dte * data.one_s2
+    djw = 1.0 * data.ci[0] * data.fact_djw_dte[0]
+
+    for i in xrange(1, data.len):
+        djw = djw + data.ci[i] * data.fact_djw_dte[i]
+
+    return 0.4 * data.one_s2 * djw
 
 
 
-# Original {tm, S2, te}.
-########################
+# Extended Dj partial derivative.
+#################################
 
-def calc_iso_tm_S2_te_djw_dtm(data):
+# {tm, S2f, S2, ts}
+
+def calc_tm_S2f_S2_ts_djw_dtm(data):
     """Spectral density gradient.
 
-    Calculate the isotropic spectral desity values for the tm partial derivative of the original
-    model-free formula with the parameters tm, S2, and te.
+    Calculate the spectral desity values for the tm partial derivative of the extended model-free
+    formula with the parameters {tm, S2f, S2, ts}.
 
-    The model-free gradient is:
+    The formula is:
 
-        dJ(w)     2 /        1 - (w.tm)^2                         (te + tm)^2 - (w.te.tm)^2   \ 
-        -----  =  - | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-         dtm      5 \      (1 + (w.tm)^2)^2                     ((te + tm)^2 + (w.te.tm)^2)^2 /
+        dJ(w)     2 /        1 - (w.tm)^2                           (ts + tm)^2 - (w.ts.tm)^2   \ 
+        -----  =  - | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |
+         dtm      5 \      (1 + (w.tm)^2)^2                       ((ts + tm)^2 + (w.ts.tm)^2)^2 /
     """
 
-    return 0.4 * (data.params[data.s2_index] * data.fact1_djw_dtm + data.one_s2 * data.fact2_djw_dtm)
-
-
-def calc_iso_tm_S2_te_djw_dS2(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the S2 partial derivative of the original
-    model-free formula with the parameters tm, S2, and te.
-
-    The model-free gradient is:
-
-        dJ(w)     2    /      1                 (te + tm).te        \ 
-        -----  =  - tm | ------------  -  ------------------------- |
-         dS2      5    \ 1 + (w.tm)^2     (te + tm)^2 + (w.te.tm)^2 /
-    """
-
-    return data.two_fifths_tm * (data.fact_tm - data.te_tm_te * data.inv_te_denom)
-
-
-def calc_iso_tm_S2_te_djw_dte(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the te partial derivative of the original
-    model-free formula with the parameters tm, S2, and te.
-
-    The model-free gradient is:
-
-        dJ(w)     2                   (te + tm)^2 - (w.te.tm)^2
-        -----  =  - tm^2 . (1 - S2) -----------------------------
-         dte      5                 ((te + tm)^2 + (w.te.tm)^2)^2
-    """
-
-    return data.fact_djw_dte * data.one_s2
+    return 0.4 * (data.params[data.s2_index] * data.fact1_djw_dtm + data.s2f_s2 * data.fact2_djw_dtm)
 
 
 
 # Extended {S2f, S2, ts}.
 #########################
 
-def calc_iso_S2f_S2_ts_djw_dS2f(data):
+def calc_S2f_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
@@ -603,7 +661,7 @@ def calc_iso_S2f_S2_ts_djw_dS2f(data):
     return data.two_fifths_tm * data.ts_tm_ts * data.inv_ts_denom
 
 
-def calc_iso_S2f_S2_ts_djw_dS2(data):
+def calc_S2f_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
@@ -619,7 +677,7 @@ def calc_iso_S2f_S2_ts_djw_dS2(data):
     return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_S2f_S2_ts_djw_dts(data):
+def calc_S2f_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the ts partial derivative of the extended
@@ -636,26 +694,7 @@ def calc_iso_S2f_S2_ts_djw_dts(data):
 
 
 
-# Extended {tm, S2f, S2, ts}.
-#############################
-
-def calc_iso_tm_S2f_S2_ts_djw_dtm(data):
-    """Spectral density gradient.
-
-    Calculate the isotropic spectral desity values for the tm partial derivative of the extended
-    model-free formula with the parameters tm, S2f, S2, and ts.
-
-    The formula is:
-
-        dJ(w)     2 /        1 - (w.tm)^2                           (ts + tm)^2 - (w.ts.tm)^2   \ 
-        -----  =  - | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |
-         dtm      5 \      (1 + (w.tm)^2)^2                       ((ts + tm)^2 + (w.ts.tm)^2)^2 /
-    """
-
-    return 0.4 * (data.params[data.s2_index] * data.fact1_djw_dtm + data.s2f_s2 * data.fact2_djw_dtm)
-
-
-def calc_iso_tm_S2f_S2_ts_djw_dS2f(data):
+def calc_tm_S2f_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
@@ -671,7 +710,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dS2f(data):
     return data.two_fifths_tm * data.ts_tm_ts * data.inv_ts_denom
 
 
-def calc_iso_tm_S2f_S2_ts_djw_dS2(data):
+def calc_tm_S2f_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
@@ -687,7 +726,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dS2(data):
     return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_tm_S2f_S2_ts_djw_dts(data):
+def calc_tm_S2f_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the ts partial derivative of the extended
@@ -707,7 +746,7 @@ def calc_iso_tm_S2f_S2_ts_djw_dts(data):
 # Extended {S2f, tf, S2, ts}.
 #############################
 
-def calc_iso_S2f_tf_S2_ts_djw_dS2f(data):
+def calc_S2f_tf_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
@@ -723,7 +762,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dS2f(data):
     return - data.two_fifths_tm * (data.tf_tm_tf * data.inv_tf_denom - data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_S2f_tf_S2_ts_djw_dS2(data):
+def calc_S2f_tf_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
@@ -739,7 +778,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dS2(data):
     return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_S2f_tf_S2_ts_djw_dtf(data):
+def calc_S2f_tf_S2_ts_djw_dtf(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the tf partial derivative of the extended
@@ -755,7 +794,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dtf(data):
     return data.fact_djw_dtf * data.one_s2f
 
 
-def calc_iso_S2f_tf_S2_ts_djw_dts(data):
+def calc_S2f_tf_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the ts partial derivative of the extended
@@ -775,7 +814,7 @@ def calc_iso_S2f_tf_S2_ts_djw_dts(data):
 # Extended {tm, S2f, tf, S2, ts}.
 #################################
 
-def calc_iso_tm_S2f_tf_S2_ts_djw_dtm(data):
+def calc_tm_S2f_tf_S2_ts_djw_dtm(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
@@ -791,7 +830,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dtm(data):
     return 0.4 * (data.params[data.s2_index] * data.fact1_djw_dtm + data.one_s2f * data.fact2_djw_dtm + data.s2f_s2 * data.fact3_djw_dtm)
 
 
-def calc_iso_tm_S2f_tf_S2_ts_djw_dS2f(data):
+def calc_tm_S2f_tf_S2_ts_djw_dS2f(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
@@ -807,7 +846,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dS2f(data):
     return -data.two_fifths_tm * (data.tf_tm_tf * data.inv_tf_denom - data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_tm_S2f_tf_S2_ts_djw_dS2(data):
+def calc_tm_S2f_tf_S2_ts_djw_dS2(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2 partial derivative of the extended
@@ -823,7 +862,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dS2(data):
     return data.two_fifths_tm * (data.fact_tm - data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_tm_S2f_tf_S2_ts_djw_dtf(data):
+def calc_tm_S2f_tf_S2_ts_djw_dtf(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the tf partial derivative of the extended
@@ -839,7 +878,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dtf(data):
     return data.fact_djw_dtf * data.one_s2f
 
 
-def calc_iso_tm_S2f_tf_S2_ts_djw_dts(data):
+def calc_tm_S2f_tf_S2_ts_djw_dts(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the ts partial derivative of the extended
@@ -859,7 +898,7 @@ def calc_iso_tm_S2f_tf_S2_ts_djw_dts(data):
 # Extended 2 {S2f, S2s, ts}.
 ############################
 
-def calc_iso_S2f_S2s_ts_djw_dS2f(data):
+def calc_S2f_S2s_ts_djw_dS2f(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
@@ -875,7 +914,7 @@ def calc_iso_S2f_S2s_ts_djw_dS2f(data):
     return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm + data.one_s2s * data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_S2f_S2s_ts_djw_dS2s(data):
+def calc_S2f_S2s_ts_djw_dS2s(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2s partial derivative of the extended
@@ -891,7 +930,7 @@ def calc_iso_S2f_S2s_ts_djw_dS2s(data):
     return data.fact_djw_ds2s * data.params[data.s2f_index]
 
 
-def calc_iso_S2f_S2s_ts_djw_dts(data):
+def calc_S2f_S2s_ts_djw_dts(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the ts partial derivative of the extended
@@ -911,7 +950,7 @@ def calc_iso_S2f_S2s_ts_djw_dts(data):
 # Extended 2 {S2f, tf, S2s, ts}.
 ################################
 
-def calc_iso_S2f_tf_S2s_ts_djw_dS2f(data):
+def calc_S2f_tf_S2s_ts_djw_dS2f(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2f partial derivative of the extended
@@ -927,7 +966,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2f(data):
     return data.two_fifths_tm * (data.params[data.s2s_index] * data.fact_tm - data.tf_tm_tf * data.inv_tf_denom + data.one_s2s * data.ts_tm_ts * data.inv_ts_denom)
 
 
-def calc_iso_S2f_tf_S2s_ts_djw_dS2s(data):
+def calc_S2f_tf_S2s_ts_djw_dS2s(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the S2s partial derivative of the extended
@@ -943,7 +982,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dS2s(data):
     return data.fact_djw_ds2s * data.params[data.s2f_index]
 
 
-def calc_iso_S2f_tf_S2s_ts_djw_dtf(data):
+def calc_S2f_tf_S2s_ts_djw_dtf(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the tf partial derivative of the extended
@@ -959,7 +998,7 @@ def calc_iso_S2f_tf_S2s_ts_djw_dtf(data):
     return data.fact_djw_dtf * data.one_s2f
 
 
-def calc_iso_S2f_tf_S2s_ts_djw_dts(data):
+def calc_S2f_tf_S2s_ts_djw_dts(data):
     """Spectral density gradient.
 
     Calculate the isotropic spectral desity values for the ts partial derivative of the extended
@@ -1273,7 +1312,7 @@ def create_d2jw_struct(data, calc_d2jw):
 # Original {tm}.
 ################
 
-def calc_iso_tm_d2jw_dtm2(data):
+def calc_tm_d2jw_dtm2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
@@ -1293,7 +1332,7 @@ def calc_iso_tm_d2jw_dtm2(data):
 # Original {tm, S2}.
 ####################
 
-def calc_iso_tm_S2_d2jw_dtm2(data):
+def calc_tm_S2_d2jw_dtm2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
@@ -1309,7 +1348,7 @@ def calc_iso_tm_S2_d2jw_dtm2(data):
     return -2.0 * data.two_fifths_tm * data.params[data.s2_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3
 
 
-def calc_iso_tm_S2_d2jw_dtmdS2(data):
+def calc_tm_S2_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
@@ -1329,7 +1368,7 @@ def calc_iso_tm_S2_d2jw_dtmdS2(data):
 # Original {S2, te}.
 ###################
 
-def calc_iso_S2_te_d2jw_dS2dte(data):
+def calc_S2_te_d2jw_dS2dte(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2 - te double partial derivative of the
@@ -1345,7 +1384,7 @@ def calc_iso_S2_te_d2jw_dS2dte(data):
     return -data.fact_djw_dte
 
 
-def calc_iso_S2_te_d2jw_dte2(data):
+def calc_S2_te_d2jw_dte2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the te - te double partial derivative of the
@@ -1366,7 +1405,7 @@ def calc_iso_S2_te_d2jw_dte2(data):
 # Original {tm, S2, te}.
 ########################
 
-def calc_iso_tm_S2_te_d2jw_dtm2(data):
+def calc_tm_S2_te_d2jw_dtm2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
@@ -1384,7 +1423,7 @@ def calc_iso_tm_S2_te_d2jw_dtm2(data):
     return -0.8 * (data.params[data.s2_index] * data.params[data.tm_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3 + fact)
 
 
-def calc_iso_tm_S2_te_d2jw_dtmdS2(data):
+def calc_tm_S2_te_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
@@ -1400,7 +1439,7 @@ def calc_iso_tm_S2_te_d2jw_dtmdS2(data):
     return 0.4 * (data.fact1_djw_dtm - data.fact2_djw_dtm)
 
 
-def calc_iso_tm_S2_te_d2jw_dtmdte(data):
+def calc_tm_S2_te_d2jw_dtmdte(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - te double partial derivative of the
@@ -1416,7 +1455,7 @@ def calc_iso_tm_S2_te_d2jw_dtmdte(data):
     return 0.8 * data.one_s2 * data.params[data.tm_index] * data.params[data.te_index] * data.te_tm * (data.te_tm_sqrd - 3.0 * data.w_te_tm_sqrd) * data.inv_te_denom**3
 
 
-def calc_iso_tm_S2_te_d2jw_dS2dte(data):
+def calc_tm_S2_te_d2jw_dS2dte(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2 - te double partial derivative of the
@@ -1432,7 +1471,7 @@ def calc_iso_tm_S2_te_d2jw_dS2dte(data):
     return -data.fact_djw_dte
 
 
-def calc_iso_tm_S2_te_d2jw_dte2(data):
+def calc_tm_S2_te_d2jw_dte2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the te - te double partial derivative of the
@@ -1453,7 +1492,7 @@ def calc_iso_tm_S2_te_d2jw_dte2(data):
 # Extended {S2f, S2, ts}.
 #########################
 
-def calc_iso_S2f_S2_ts_d2jw_dS2fdts(data):
+def calc_S2f_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
@@ -1469,7 +1508,7 @@ def calc_iso_S2f_S2_ts_d2jw_dS2fdts(data):
     return data.fact_djw_dts
 
 
-def calc_iso_S2f_S2_ts_d2jw_dS2dts(data):
+def calc_S2f_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
@@ -1485,7 +1524,7 @@ def calc_iso_S2f_S2_ts_d2jw_dS2dts(data):
     return -data.fact_djw_dts
 
 
-def calc_iso_S2f_S2_ts_d2jw_dts2(data):
+def calc_S2f_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
@@ -1506,7 +1545,7 @@ def calc_iso_S2f_S2_ts_d2jw_dts2(data):
 # Extended {tm, S2f, S2, ts}.
 #############################
 
-def calc_iso_tm_S2f_S2_ts_d2jw_dtm2(data):
+def calc_tm_S2f_S2_ts_d2jw_dtm2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
@@ -1524,7 +1563,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtm2(data):
     return -0.8 * (data.params[data.s2_index] * data.params[data.tm_index] * data.frq_sqrd_list * (3.0 - data.w_tm_sqrd) * data.fact_tm**3 + fact)
 
 
-def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2f(data):
+def calc_tm_S2f_S2_ts_d2jw_dtmdS2f(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - S2f double partial derivative of the
@@ -1540,7 +1579,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2f(data):
     return 0.4 * data.fact2_djw_dtm
 
 
-def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2(data):
+def calc_tm_S2f_S2_ts_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
@@ -1556,7 +1595,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtmdS2(data):
     return 0.4 * (data.fact1_djw_dtm - data.fact2_djw_dtm)
 
 
-def calc_iso_tm_S2f_S2_ts_d2jw_dtmdts(data):
+def calc_tm_S2f_S2_ts_d2jw_dtmdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - ts double partial derivative of the
@@ -1572,7 +1611,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dtmdts(data):
     return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) * data.inv_ts_denom**3
 
 
-def calc_iso_tm_S2f_S2_ts_d2jw_dS2fdts(data):
+def calc_tm_S2f_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
@@ -1588,7 +1627,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dS2fdts(data):
     return data.fact_djw_dts
 
 
-def calc_iso_tm_S2f_S2_ts_d2jw_dS2dts(data):
+def calc_tm_S2f_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
@@ -1604,7 +1643,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dS2dts(data):
     return -data.fact_djw_dts
 
 
-def calc_iso_tm_S2f_S2_ts_d2jw_dts2(data):
+def calc_tm_S2f_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
@@ -1625,7 +1664,7 @@ def calc_iso_tm_S2f_S2_ts_d2jw_dts2(data):
 # Extended {S2f, tf, S2, ts}.
 #############################
 
-def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
+def calc_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f - tf double partial derivative of the
@@ -1641,7 +1680,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
     return -data.fact_djw_dtf
 
 
-def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdts(data):
+def calc_S2f_tf_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
@@ -1657,7 +1696,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dS2fdts(data):
     return data.fact_djw_dts
 
 
-def calc_iso_S2f_tf_S2_ts_d2jw_dS2dts(data):
+def calc_S2f_tf_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
@@ -1673,7 +1712,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dS2dts(data):
     return -data.fact_djw_dts
 
 
-def calc_iso_S2f_tf_S2_ts_d2jw_dtf2(data):
+def calc_S2f_tf_S2_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tf - tf double partial derivative of the
@@ -1690,7 +1729,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dtf2(data):
     return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
 
 
-def calc_iso_S2f_tf_S2_ts_d2jw_dts2(data):
+def calc_S2f_tf_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
@@ -1711,7 +1750,7 @@ def calc_iso_S2f_tf_S2_ts_d2jw_dts2(data):
 # Extended {tm, S2f, tf, S2, ts}.
 #################################
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtm2(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dtm2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - tm double partial derivative of the
@@ -1742,7 +1781,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtm2(data):
     return -0.8 * (fact1 + fact2 + fact3)
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2f(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2f(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - S2f double partial derivative of the
@@ -1758,7 +1797,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2f(data):
     return -0.4 * (data.fact2_djw_dtm - data.fact3_djw_dtm)
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dtmdS2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - S2 double partial derivative of the
@@ -1774,7 +1813,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdS2(data):
     return 0.4 * (data.fact1_djw_dtm - data.fact3_djw_dtm)
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdtf(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dtmdtf(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - tf double partial derivative of the
@@ -1790,7 +1829,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdtf(data):
     return 0.8 * data.one_s2f * data.params[data.tm_index] * data.params[data.tf_index] * data.tf_tm * (data.tf_tm_sqrd - 3.0 * data.w_tf_tm_sqrd) * data.inv_tf_denom**3
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tm - ts double partial derivative of the
@@ -1806,7 +1845,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtmdts(data):
     return 0.8 * data.s2f_s2 * data.params[data.tm_index] * data.params[data.ts_index] * data.ts_tm * (data.ts_tm_sqrd - 3.0 * data.w_ts_tm_sqrd) * data.inv_ts_denom**3
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f - tf double partial derivative of the
@@ -1822,7 +1861,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdtf(data):
     return -data.fact_djw_dtf
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdts(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f - ts double partial derivative of the
@@ -1838,7 +1877,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2fdts(data):
     return data.fact_djw_dts
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2dts(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dS2dts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2 - ts double partial derivative of the
@@ -1854,7 +1893,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dS2dts(data):
     return -data.fact_djw_dts
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the tf - tf double partial derivative of the
@@ -1871,7 +1910,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dtf2(data):
     return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
 
 
-def calc_iso_tm_S2f_tf_S2_ts_d2jw_dts2(data):
+def calc_tm_S2f_tf_S2_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the ts - ts double partial derivative of the
@@ -1892,7 +1931,7 @@ def calc_iso_tm_S2f_tf_S2_ts_d2jw_dts2(data):
 # Extended 2 {S2f, S2s, ts}.
 ############################
 
-def calc_iso_S2f_S2s_ts_d2jw_dS2fdS2s(data):
+def calc_S2f_S2s_ts_d2jw_dS2fdS2s(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f/S2s double partial derivative of the
@@ -1908,7 +1947,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dS2fdS2s(data):
     return data.fact_djw_ds2s
 
 
-def calc_iso_S2f_S2s_ts_d2jw_dS2fdts(data):
+def calc_S2f_S2s_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f/ts double partial derivative of the
@@ -1924,7 +1963,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dS2fdts(data):
     return data.fact_djw_dts * data.one_s2s
 
 
-def calc_iso_S2f_S2s_ts_d2jw_dS2sdts(data):
+def calc_S2f_S2s_ts_d2jw_dS2sdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2s/ts double partial derivative of the
@@ -1940,7 +1979,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dS2sdts(data):
     return -data.fact_djw_dts * data.params[data.s2f_index]
 
 
-def calc_iso_S2f_S2s_ts_d2jw_dts2(data):
+def calc_S2f_S2s_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the ts/ts double partial derivative of the
@@ -1961,7 +2000,7 @@ def calc_iso_S2f_S2s_ts_d2jw_dts2(data):
 # Extended 2 {S2f, tf, S2s, ts}.
 ################################
 
-def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdS2s(data):
+def calc_S2f_tf_S2s_ts_d2jw_dS2fdS2s(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f/S2s double partial derivative of the
@@ -1977,7 +2016,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdS2s(data):
     return data.fact_djw_ds2s
 
 
-def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdtf(data):
+def calc_S2f_tf_S2s_ts_d2jw_dS2fdtf(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f/ts double partial derivative of the
@@ -1993,7 +2032,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdtf(data):
     return -data.fact_djw_dtf
 
 
-def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdts(data):
+def calc_S2f_tf_S2s_ts_d2jw_dS2fdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2f/ts double partial derivative of the
@@ -2009,7 +2048,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2fdts(data):
     return data.fact_djw_dts * data.one_s2s
 
 
-def calc_iso_S2f_tf_S2s_ts_d2jw_dS2sdts(data):
+def calc_S2f_tf_S2s_ts_d2jw_dS2sdts(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the S2s/ts double partial derivative of the
@@ -2025,7 +2064,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dS2sdts(data):
     return -data.fact_djw_dts * data.params[data.s2f_index]
 
 
-def calc_iso_S2f_tf_S2s_ts_d2jw_dtf2(data):
+def calc_S2f_tf_S2s_ts_d2jw_dtf2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the ts/ts double partial derivative of the
@@ -2042,7 +2081,7 @@ def calc_iso_S2f_tf_S2s_ts_d2jw_dtf2(data):
     return -2.0*data.two_fifths_tm_sqrd * data.one_s2f * num * data.inv_tf_denom**3
 
 
-def calc_iso_S2f_tf_S2s_ts_d2jw_dts2(data):
+def calc_S2f_tf_S2s_ts_d2jw_dts2(data):
     """Spectral density Hessian.
 
     Calculate the isotropic spectral desity values for the ts/ts double partial derivative of the
