@@ -103,23 +103,64 @@ class data:
 
 
 	def calc_constants(self):
-		"Calculate the dipolar and CSA constants."
+		"""Calculate the dipolar and CSA constants.
+
+		Dipolar constants
+		~~~~~~~~~~~~~~~~~
+			      1   / mu0  \ 2  (gH.gN.h_bar)**2
+			d  =  - . | ---- |  . ----------------
+			      4   \ 4.pi /         <r**6>
+
+
+			         3   / mu0  \ 2  (gH.gN.h_bar)**2
+			d'  =  - - . | ---- |  . ----------------
+			         2   \ 4.pi /         <r**7>
+
+
+			       21   / mu0  \ 2  (gH.gN.h_bar)**2
+			d"  =  -- . | ---- |  . ----------------
+			       2    \ 4.pi /         <r**8>
+
+
+		CSA constants
+		~~~~~~~~~~~~~
+			      (wN.csa)**2
+			c  =  -----------
+			           3
+
+
+			       2.wN**2.csa
+			c'  =  -----------
+			            3
+
+
+			       2.wN**2
+			c"  =  -------
+			          3
+
+		"""
 
 		self.rnh = float(self.mf.usr_param.const['rxh'])
 		self.csa = float(self.mf.usr_param.const['csa'])
 
 		# Dipolar constant.
 
-		dip = (self.mu0/(4.0*pi)) * self.h_bar * self.gh * self.gx * self.rnh**-3
-		self.dipole_const = (dip**2) / 4.0
+		a = ((self.mu0/(4.0*pi)) * self.h_bar * self.gh * self.gx) ** 2
+		self.dipole_const = 0.25 * a * self.rnh**-6
+		self.dipole_prime = -1.5 * a * self.rnh**-7
+		self.dipole_2prime = 10.5 * a * self.rnh**-8
 		dip_temp = self.dipole_const / 1e9
 
 		self.csa_const = []
+		self.csa_prime = []
+		self.csa_2prime = []
 		csa_temp = []
 		for i in range(self.num_frq):
-			csa_const = (self.csa**2) * (self.frq_list[i][1]**2) / 3.0
-			self.csa_const.append(csa_const)
-			csa_temp.append(csa_const/1e9)
+			a = (self.frq_list[i][1]**2) / 3.0
+			self.csa_const.append(a * self.csa**2)
+			self.csa_prime.append(2.0 * a * self.csa)
+			self.csa_2prime.append(2.0 * a)
+			csa_temp.append(0.0)
 
 		if self.mf.debug == 1:
 			print "%-20s%-20s" % ("r(NH):", `self.rnh`)

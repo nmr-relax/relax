@@ -28,7 +28,7 @@ class main_model_free:
 		########
 
 		# Debugging flag
-		self.mf.min_debug = 1
+		self.mf.min_debug = 2
 
 		# Limits flag, 0 = no limits, 1 = set limits.
 		limits_flag = 0
@@ -105,6 +105,7 @@ class main_model_free:
 			#params = [0.950, 0.585, 33.0*1e-12]
 			#params = [0.900, 0.0*1e-12, 0.0/(1e-8 * self.mf.data.frq[0])**2]
 			#params = [0.900, 100*1e-12, 2.76038451e-17]
+			#params = [6.31578947e-01, 8.42105263e-01, 5.26315789e-10]
 			#chi2 = 0.0
 
 			# Simplex minimisation.
@@ -144,7 +145,7 @@ class main_model_free:
 			elif match('Newton', self.mf.usr_param.minimiser):
 				if self.mf.min_debug >= 1:
 					print "\n\n<<< Newton Conjugate Gradient minimisation >>>"
-				output = newton(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, fhess_p=None, fhess=None, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
+				output = newton(self.mf.mf_functions.chi2.calc, params, fprime=self.mf.mf_functions.dchi2.calc, fhess_p=None, fhess=self.mf.mf_functions.d2chi2.calc, args=function_ops, maxiter=10000, full_output=1, disp=self.mf.min_debug)
 				params, chi2, num_func_calls, num_grad_calls, num_hessian_calls, warn_flag = output
 
 			# None.

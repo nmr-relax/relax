@@ -26,21 +26,30 @@ class dchi2:
 		5:  relax_data - array.  An array containing the experimental relaxation values.
 		6:  errors - array.  An array containing the experimental errors.
 
-		The chi-sqared gradient array
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		The chi-sqared gradient
+		~~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.dchi2
 		Dimension:  1D, (model-free parameters)
 		Type:  Numeric array, Float64
-		Dependencies:  self.ri, self.jw, self.dri, self.djw
+		Dependencies:  self.ri, self.dri
 		Required by:  None
 		Stored:  No
-		Formula:
-			                  _n_
-			  d Chi2          \   /  Ri - Ri()       d Ri()   \ 
-			----------  =  -2  >  | ----------  .  ---------- |
-			d mf_param        /__ \ sigma_i**2     d mf_param /
-			                  i=1
+
+
+		Formula
+		~~~~~~~
+		              _n_
+		d Chi2        \   /  Ri - Ri()     d Ri() \ 
+		------  =  -2  >  | ----------  .  ------ |
+		 d mf         /__ \ sigma_i**2      d mf  /
+		              i=1
+
+		where:
+			Ri are the values of the measured relaxation data set.
+			Ri() are the values of the back calculated relaxation data set.
+			sigma_i are the values of the error set.
 
 		Returned is the chi-squared gradient array.
 		"""
@@ -53,8 +62,9 @@ class dchi2:
 		self.errors = errors
 
 		# debug.
-		#print "\n< dchi2 >"
-		#print "Mf params: " + `self.mf_params`
+		if self.mf.min_debug == 2:
+			print "\n< dchi2 >"
+			print "Mf params: " + `self.mf_params`
 
 		# Test to see if relaxation array and spectral density matrix have previously been calculated for the current parameter values,
 		# ie, if the derivative is calculated before the function evaluation!
@@ -86,11 +96,12 @@ class dchi2:
 				break
 
 		# debug.
-		#print "J(w):  " + `self.mf.data.mf_data.jw`
-		#print "dJ(w): " + `self.mf.data.mf_data.djw`
-		#print "Ri:    " + `self.mf.data.mf_data.ri`
-		#print "dRi:   " + `self.mf.data.mf_data.dri`
-		#print "dchi2: " + `self.dchi2`
-		#print "\n"
+		if self.mf.min_debug == 2:
+			print "J(w):  " + `self.mf.data.mf_data.jw`
+			print "dJ(w): " + `self.mf.data.mf_data.djw`
+			print "Ri:    " + `self.mf.data.mf_data.ri`
+			print "dRi:   " + `self.mf.data.mf_data.dri`
+			print "dchi2: " + `self.dchi2`
+			print "\n"
 
 		return self.dchi2

@@ -26,21 +26,25 @@ class d2chi2:
 		5:  relax_data - array.  An array containing the experimental relaxation values.
 		6:  errors - array.  An array containing the experimental errors.
 
-		The chi-sqared hessian matrix
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		The chi-sqared hessian
+		~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.d2chi2
 		Dimension:  2D, (model-free parameters, model-free parameters)
 		Type:  Numeric array, Float64
-		Dependencies:  self.ri, self.dri, self.d2ri, self.jw, self.djw, self.d2jw
+		Dependencies:  self.ri, self.dri, self.d2ri
 		Required by:  None
 		Stored:  No
-		Formula:
-			                  _n_
-			  d2 Chi2         \       1      / dRi()   dRi()                     d2 Ri()   \ 
-			-----------  =  2  >  ---------- | ----- . -----  -  (Ri - Ri()) . ----------- |
-			dmfj . dmfk       /__ sigma_i**2 \ dmf_j   dmf_k                   dmfj . dmfk / 
-			                  i=1
+
+
+		Formula
+		~~~~~~~
+			                _n_
+			 d2chi2         \       1      / dRi()   dRi()                     d2 Ri()   \ 
+			---------  =  2  >  ---------- | ----- . -----  -  (Ri - Ri()) . ----------- |
+			dmfj.dmfk       /__ sigma_i**2 \ dmf_j   dmf_k                   dmfj . dmfk / 
+			                i=1
 
 		Returned is the chi-squared hessian matrix.
 		"""
@@ -53,8 +57,9 @@ class d2chi2:
 		self.errors = errors
 
 		# debug.
-		#print "\n< d2chi2 >"
-		#print "Mf params: " + `self.mf_params`
+		if self.mf.min_debug == 2:
+			print "\n< d2chi2 >"
+			print "Mf params: " + `self.mf_params`
 
 		# Test to see if relaxation array and spectral density matrix have previously been calculated for the current parameter values,
 		# ie, if the derivative is calculated before the function evaluation!
@@ -83,22 +88,37 @@ class d2chi2:
 				# Model-free parameter independent terms.
 				a = 2.0 / (self.errors[i]**2)
 				b = self.relax_data[i] - self.mf.data.mf_data.ri[i]
+				print "Relax data: " + `self.relax_data[i]`
+				print "Back calc:  " + `self.mf.data.mf_data.ri[i]`
+				print "Diff:       " + `self.relax_data[i] - self.mf.data.mf_data.ri[i]`
+				print "a:          " + `a`
 
 				# Loop over the model-free parameters.
 				for mfj in range(len(self.mf_params)):
-					# Loop over the model-free parameters from 1 to mfj.
+					print "\tmfj: " + `mfj`
+					# Loop over the model-free parameters from 1 to mfk.
 					for mfk in range(mfj + 1):
+						print "\t\tmfk: " + `mfk`
 						c = self.mf.data.mf_data.dri[i, mfj] * self.mf.data.mf_data.dri[i, mfk]
+						print "\t\t\tdrij:                  " + `self.mf.data.mf_data.dri[i, mfj]`
+						print "\t\t\tdrik:                  " + `self.mf.data.mf_data.dri[i, mfk]`
+						print "\t\t\tdrij*drik:             " + `c`
+						print "\t\t\td2ri:                  " + `self.mf.data.mf_data.d2ri[i, mfj, mfk]`
+						print "\t\t\tdiff*d2ri:             " + `b * self.mf.data.mf_data.d2ri[i, mfj, mfk]`
+						print "\t\t\tdrij*drik - diff*d2ri: " + `c - b * self.mf.data.mf_data.d2ri[i, mfj, mfk]`
 						if mfj == mfk:
-							self.d2chi2[mfj][mfj] = self.d2chi2[mfj][mfj] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfj, mfj]
+							self.d2chi2[mfj][mfj] = self.d2chi2[mfj][mfj] + a * c
+							#self.d2chi2[mfj][mfj] = self.d2chi2[mfj][mfj] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfj, mfj])
 						else:
-							self.d2chi2[mfj][mfk] = self.d2chi2[mfj][mfk] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfj, mfk]
-							self.d2chi2[mfk][mfj] = self.d2chi2[mfk][mfj] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfk, mfj]
+							self.d2chi2[mfj][mfk] = self.d2chi2[mfj][mfk] + a * c
+							self.d2chi2[mfk][mfj] = self.d2chi2[mfk][mfj] + a * c
+							#self.d2chi2[mfj][mfk] = self.d2chi2[mfj][mfk] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfj, mfk])
+							#self.d2chi2[mfk][mfj] = self.d2chi2[mfk][mfj] + a * (c - b * self.mf.data.mf_data.d2ri[i, mfk, mfj])
 			else:
 				# Loop over the model-free parameters.
-				for mfj in range(len(self.mf_params)):
-					# Loop over the model-free parameters from 1 to mfj.
-					for mfk in range(mfj + 1):
+				for mfk in range(len(self.mf_params)):
+					# Loop over the model-free parameters from 1 to mfk.
+					for mfj in range(mfk + 1):
 						if mfj == mfk:
 							self.d2chi2[mfj][mfj] = 1e99
 						else:
@@ -107,13 +127,14 @@ class d2chi2:
 				break
 
 		# debug.
-		#print "J(w):   " + `self.mf.data.mf_data.jw`
-		#print "dJ(w):  " + `self.mf.data.mf_data.djw`
-		#print "d2J(w): " + `self.mf.data.mf_data.d2jw`
-		#print "Ri:     " + `self.mf.data.mf_data.ri`
-		#print "dRi:    " + `self.mf.data.mf_data.dri`
-		#print "d2Ri:   " + `self.mf.data.mf_data.d2ri`
-		#print "d2chi2: " + `self.d2chi2`
-		#print "\n"
+		if self.mf.min_debug == 2:
+			print "J(w):   " + `self.mf.data.mf_data.jw`
+			print "dJ(w):  " + `self.mf.data.mf_data.djw`
+			print "d2J(w): " + `self.mf.data.mf_data.d2jw`
+			print "Ri:     " + `self.mf.data.mf_data.ri`
+			print "dRi:    " + `self.mf.data.mf_data.dri`
+			print "d2Ri:   " + `self.mf.data.mf_data.d2ri`
+			print "d2chi2: " + `self.d2chi2`
+			print "\n"
 
-		return self.dchi2
+		return self.d2chi2

@@ -29,27 +29,34 @@ class Jw:
 		4:  mf_model - string.  The model-free model
 
 
-		The spectral density matrix
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		The spectral density equation
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.jw
 		Dimension:  2D, (number of NMR frequencies, 5 spectral density frequencies)
 		Type:  Numeric matrix, Float64
 		Dependencies:  None
-		Required by:  self.ri, self.dri
+		Required by:  self.ri, self.dri, self.d2ri
 		Stored:  Yes
-		Formulae:
-			Normal model-free equation (S2 and te):
 
-				         2 /    S2 . tm        (1 - S2) . t' \ 
-				J(w)  =  - | -------------  -  ------------- |
-				         5 \ 1 + (w.tm)**2     1 + (w.t')**2 /
 
-			Extended model-free equation (S2f, S2s, and ts):
+		Formulae
+		~~~~~~~~
 
-				         2 /    S2 . tm        (S2f - S2) . t' \ 
-				J(w)  =  - | -------------  -  --------------- |
-				         5 \ 1 + (w.tm)**2      1 + (w.t')**2  /
+		Original
+		~~~~~~~~
+
+			         2 /    S2 . tm        (1 - S2) . te' \ 
+			J(w)  =  - | -------------  +  -------------- |
+			         5 \ 1 + (w.tm)**2     1 + (w.te')**2 /
+
+
+		Extended
+		~~~~~~~~
+
+			         2 /    S2 . tm        (1 - Sf2) . tf'     (S2f - S2) . ts' \ 
+			J(w)  =  - | -------------  +  ---------------  +  ---------------- |
+			         5 \ 1 + (w.tm)**2     1 + (w.tf')**2       1 + (w.ts')**2  /
 
 		"""
 

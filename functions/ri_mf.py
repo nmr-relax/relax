@@ -29,23 +29,46 @@ class Ri:
 		4:  mf_model - string.  The model-free model
 
 
-		The relaxation array
-		~~~~~~~~~~~~~~~~~~~~
+		The relaxation equations
+		~~~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.ri
 		Dimension:  1D, (relaxation data)
 		Type:  Numeric array, Float64
 		Dependencies:  self.jw
-		Required by:  self.chi2, self.dchi2
+		Required by:  self.chi2, self.dchi2, self.d2chi2
 		Stored:  Yes
-		Formulae:
-			Normal relaxation equations (Abragam, 1961)
-				R1  = d * [J(wH-wN) + 3J(wN) + 6J(wH+wN)] + c * [J(wN)]
-				R2  = d/2 * [4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)] + c/6 * [4J(0) + 3J(wN)] + Rex
-				NOE = 1 + (d/R1).(gH/gN).[6J(wH+wN) - J(wH-wN)]
 
-				d = ((mu0/4.pi).(gN.gH.h_bar/(2.<rNH>**-3)))**2
-				c = ((wN.csa)**2)/3
+
+		Formulae
+		~~~~~~~~
+
+		Relaxation equations
+		~~~~~~~~~~~~~~~~~~~~
+
+			R1()  =  d . [J(wH-wN) + 3J(wN) + 6J(wH+wN)]  +  c . [J(wN)]
+
+
+			         d                                                        c
+			R2()  =  - . [4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)]  +  - . [4J(0) + 3J(wN)]  +  Rex
+			         2                                                        6
+
+
+			                d     gH
+			NOE()  =  1 +  ---- . -- . [6J(wH+wN) - J(wH-wN)]
+			               R1()   gN
+
+
+		Constants
+		~~~~~~~~~
+			      1   / mu0    gH.gN.h_bar \ 2
+			d  =  - . | ---- . ----------- |
+			      4   \ 4.pi     <r**3>    /
+
+
+			    (wN.csa)**2
+			c = -----------
+			         3
 
 
 		It is assumed that the spectral density matrix, self.mf.data.mf_data.jw, has not been calculated yet.

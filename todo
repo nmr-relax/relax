@@ -1,6 +1,7 @@
 # General
 #########
 
+change the order of the frequency data structures, ie flip J(wH-wN) and J(wN).
 merge all print_data functions
 fix LM min, start inside while loop
 

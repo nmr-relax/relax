@@ -29,54 +29,84 @@ class dJw:
 		4:  mf_model - string.  The model-free model
 
 
-		The spectral density gradient 3D matrix
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		The spectral density gradient
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.djw
 		Dimension:  3D, (number of NMR frequencies, 5 spectral density frequencies, model-free parameters)
 		Type:  Numeric 3D matrix, Float64
 		Dependencies:  None
-		Required by:  self.dri
+		Required by:  self.dri, self.d2ri
 		Stored:  Yes
-		Formulae:
-			For order parameters derivatives, the following equations are used:
-				Normal model-free equation (S2 and te):
-
-					d J(w)     2 /       tm                t'      \ 
-					------  =  - | -------------  -  ------------- |
-					 dS2       5 \ 1 + (w.tm)**2     1 + (w.t')**2 /
-
-				Extended model-free equation (S2f, S2s, and ts):
-
-					dJ(w)     2 /    S2s.tm         (1 - S2s).t'  \ 
-					-----  =  - | -------------  +  ------------- |
-					dS2f      5 \ 1 + (w.tm)**2     1 + (w.t')**2 /
 
 
-					dJ(w)     2         /       tm                t'      \ 
-					-----  =  - . S2f . | -------------  -  ------------- |
-					dS2s      5         \ 1 + (w.tm)**2     1 + (w.t')**2 /
+		Formulae
+		~~~~~~~~
+
+		Original
+		~~~~~~~~
+
+			dJ(w)     2 /       tm                te'      \ 
+			-----  =  - | -------------  -  -------------- |
+			 dS2      5 \ 1 + (w.tm)**2     1 + (w.te')**2 /
 
 
-			For correlation time derivatives, the following equations are used:
-				Normal model-free equation (S2 and te):
-
-					dJ(w)     2                1 - (w.t')**2      /   tm    \ 
-					-----  =  - . (1 - S2) . ------------------ . | ------- |**2
-					 dte      5              (1 + (w.t')**2)**2   \ tm + te /
-
-				Extended model-free equation (S2f, S2s, and ts):
-
-					d J(w)     2                       1 - (w.t')**2      /   tm    \ 
-					------  =  - . S2f . (1 - S2s) . ------------------ . | ------- |**2
-					 dts       5                     (1 + (w.t')**2)**2   \ tm + ts /
+			dJ(w)     2                1 - (w.te')**2      /   tm    \ 2
+			-----  =  - . (1 - S2) . ------------------- . | ------- |
+			 dte      5              (1 + (w.te')**2)**2   \ te + tm /
 
 
-			The partial derivative with respect to chemical exchange is:
+			dJ(w)
+			-----  =  0
+			dRex
 
-					d J(w)
-					------  =  0
-					 dRex
+
+			dJ(w)
+			-----  =  0
+			dcsa
+
+
+			dJ(w)
+			-----  =  0
+			 dr
+
+
+		Extended
+		~~~~~~~~
+
+			dJ(w)     2 /    S2s.tm               tf'          (1 - S2s).ts' \ 
+			-----  =  - | -------------  -  -------------- +  -------------- |
+			dS2f      5 \ 1 + (w.tm)**2     1 + (w.tf')**2    1 + (w.ts')**2 /
+
+
+			dJ(w)     2.S2f   /       tm                ts'      \ 
+			-----  =  ----- . | -------------  -  -------------- |
+			dS2s        5     \ 1 + (w.tm)**2     1 + (w.ts')**2 /
+
+
+			dJ(w)     2                 1 - (w.tf')**2      /   tm    \ 2
+			-----  =  - . (1 - S2f) . ------------------- . | ------- |
+			 dtf      5               (1 + (w.tf')**2)**2   \ tf + tm /
+
+
+			dJ(w)     2.S2f                 1 - (w.ts')**2      /   tm    \ 2
+			-----  =  ----- . (1 - S2s) . ------------------- . | ------- |
+			 dts        5                 (1 + (w.ts')**2)**2   \ ts + tm /
+
+
+			dJ(w)
+			-----  =  0
+			dRex
+
+
+			dJ(w)
+			-----  =  0
+			dcsa
+
+
+			dJ(w)
+			-----  =  0
+			 dr
 		"""
 
 		self.mf_params = mf_params

@@ -27,12 +27,12 @@ class chi2:
 		6:  errors - array.  An array containing the experimental errors.
 
 
-		The chi-sqared value/statistic
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		The chi-sqared equation
+		~~~~~~~~~~~~~~~~~~~~~~~
 
 		Data structure:  self.chi2
-		Type:  Single double precision floating point value.
-		Dependencies:  self.ri, self.jw
+		Type:  Double precision floating point value.
+		Dependencies:  self.ri
 		Required by:  None
 		Stored:  No
 
@@ -45,6 +45,10 @@ class chi2:
 		        /__    sigma_i ** 2
 		        i=1
 
+		where:
+			Ri are the values of the measured relaxation data set.
+			Ri() are the values of the back calculated relaxation data set.
+			sigma_i are the values of the error set.
 
 		Returned is the chi-squared value.
 		"""
@@ -57,8 +61,9 @@ class chi2:
 		self.errors = errors
 
 		# debug.
-		#print "\n< chi2 >"
-		#print "Mf params: " + `self.mf_params`
+		if self.mf.min_debug == 2:
+			print "\n< chi2 >"
+			print "Mf params: " + `self.mf_params`
 
 		# Test to see if relaxation array and spectral density matrix have previously been calculated for the current parameter values,
 		# ie, if the derivative is calculated before the function evaluation!
@@ -81,9 +86,10 @@ class chi2:
 				continue
 
 		# debug.
-		#print "J(w): " + `self.mf.data.mf_data.jw`
-		#print "Ri: " + `self.mf.data.mf_data.ri`
-		#print "chi2: " + `self.chi2`
-		#print "\n"
+		if self.mf.min_debug == 2:
+			print "J(w): " + `self.mf.data.mf_data.jw`
+			print "Ri: " + `self.mf.data.mf_data.ri`
+			print "chi2: " + `self.chi2`
+			print "\n"
 
 		return self.chi2
