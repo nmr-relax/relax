@@ -3072,7 +3072,10 @@ class Model_free(Common_functions):
                     self.relax.data.f_count[self.run] = eval(file_data[i][col['f_count']])
                     self.relax.data.g_count[self.run] = eval(file_data[i][col['g_count']])
                     self.relax.data.h_count[self.run] = eval(file_data[i][col['h_count']])
-                    self.relax.data.warning[self.run] = eval(replace(file_data[i][col['warn']], '_', ' '))
+                    if file_data[i][col['warn']] == 'None':
+                        self.relax.data.warning[self.run] = None
+                    else:
+                        self.relax.data.warning[self.run] = replace(file_data[i][col['warn']], '_', ' ')
 
                 # Minimisation details (individual residue results).
                 else:
@@ -3081,7 +3084,10 @@ class Model_free(Common_functions):
                     data.f_count = eval(file_data[i][col['f_count']])
                     data.g_count = eval(file_data[i][col['g_count']])
                     data.h_count = eval(file_data[i][col['h_count']])
-                    data.warning = eval(replace(file_data[i][col['warn']], '_', ' '))
+                    if file_data[i][col['warn']] == 'None':
+                        data.warning = None
+                    else:
+                        data.warning = replace(file_data[i][col['warn']], '_', ' ')
 
             # Errors.
             if data_set == 'error':
@@ -3238,7 +3244,10 @@ class Model_free(Common_functions):
                     self.relax.data.f_count_sim[self.run].append(eval(file_data[i][col['f_count']]))
                     self.relax.data.g_count_sim[self.run].append(eval(file_data[i][col['g_count']]))
                     self.relax.data.h_count_sim[self.run].append(eval(file_data[i][col['h_count']]))
-                    self.relax.data.warning_sim[self.run].append(eval(replace(file_data[i][col['warn']], '_', ' ')))
+                    if file_data[i][col['warn']] == 'None':
+                        self.relax.data.warning_sim[self.run].append(None)
+                    else:
+                        self.relax.data.warning_sim[self.run].append(replace(file_data[i][col['warn']], '_', ' '))
 
                 # Minimisation details (individual residue results).
                 else:
@@ -3247,7 +3256,10 @@ class Model_free(Common_functions):
                     data.f_count_sim.append(eval(file_data[i][col['f_count']]))
                     data.g_count_sim.append(eval(file_data[i][col['g_count']]))
                     data.h_count_sim.append(eval(file_data[i][col['h_count']]))
-                    data.warning_sim.append(eval(replace(file_data[i][col['warn']], '_', ' ')))
+                    if file_data[i][col['warn']] == 'None':
+                        data.warning_sim.append(None)
+                    else:
+                        data.warning_sim.append(replace(file_data[i][col['warn']], '_', ' '))
 
 
     def remove_tm(self, run, res_num):
