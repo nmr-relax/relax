@@ -61,11 +61,15 @@ class Sequence:
             self.relax.data.res[i].select = 1
 
 
-    def read(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=None):
+    def read(self, run=None, file_name=None, num_col=0, name_col=1, sep=None, header_lines=None):
         """Function for reading sequence data."""
 
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
         # Test if the sequence data has already been read.
-        if len(self.relax.data.res):
+        if self.relax.data.res.has_key(run):
             raise RelaxError, "The sequence data has already been loaded."
 
         # Extract the data from the file.
@@ -88,17 +92,15 @@ class Sequence:
             except ValueError:
                 raise RelaxError, "Sequence data is invalid."
 
-        # Fill the array self.relax.data.res with data containers and place sequence data into the array.
+        # Add the run to 'self.relax.data'.
+        self.relax.data.res.add_list(run)
+
+        # Fill the array 'self.relax.data.res[run]' with data containers and place sequence data into the array.
         for i in xrange(len(file_data)):
             # Append a data container.
-            self.relax.data.res.append(Residue())
+            self.relax.data.res[run].add_element()
 
             # Insert the data.
-            self.relax.data.res[i].num = int(file_data[i][num_col])
-            self.relax.data.res[i].name = file_data[i][name_col]
-            self.relax.data.res[i].select = 1
-
-
-class Residue:
-    def __init__(self):
-        """Empty data container."""
+            self.relax.data.res[run][i].num = int(file_data[i][num_col])
+            self.relax.data.res[run][i].name = file_data[i][name_col]
+            self.relax.data.res[run][i].select = 1

@@ -1,14 +1,14 @@
 # Script for model-free analysis.
 
-# Load the sequence.
-read.sequence('noe.500.out')
+# Create the run.
+name = 'm4'
+create_run(name, 'mf')
 
 # Nuclei type
 nuclei('N')
 
-# Create the run.
-name = 'm4'
-create_run(name, 'mf')
+# Load the sequence.
+read.sequence(name, 'noe.500.out')
 
 # Load a PDB file.
 #pdb('example.pdb')

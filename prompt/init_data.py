@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from data.main import Data
+from data import Data
 
 
 class Init_data:

@@ -40,7 +40,7 @@ import pstats
 from re import match
 import sys
 
-from data.main import Data
+from data import Data
 from errors import RelaxErrors
 from file_ops import File_ops
 from generic_fns.main import Generic

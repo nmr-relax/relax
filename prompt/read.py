@@ -218,11 +218,13 @@ class Read:
         self.relax.generic.rw.read_results(run=run, data_type=data_type, file=file, dir=dir)
 
 
-    def sequence(self, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):
+    def sequence(self, run=None, file_name=None, num_col=0, name_col=1, sep=None, header_lines=1):
         """Function for reading sequence data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
 
         file_name:  The name of the file containing the sequence data.
 
@@ -267,7 +269,8 @@ class Read:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "read.sequence("
-            text = text + "file_name=" + `file_name`
+            text = text + "run=" + `run`
+            text = text + ", file_name=" + `file_name`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
             text = text + ", sep=" + `sep`
@@ -297,4 +300,4 @@ class Read:
             raise RelaxIntError, ('number of header lines', header_lines)
 
         # Execute the functional code.
-        self.relax.generic.sequence.read(file_name=file_name, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)
+        self.relax.generic.sequence.read(run=run, file_name=file_name, num_col=num_col, name_col=name_col, sep=sep, header_lines=header_lines)
