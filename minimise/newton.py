@@ -122,7 +122,7 @@ def newton(func, dfunc, d2func, x0, line_search_algor='Not set', args=(), tol=1e
 			else:
 				return xk_new
 
-		# Increment the iteration number and move the k+1 parameter vector, function value, gradient vector, and hessian matrix to the k values.
+		# Update data for the next iteration.
 		k = k + 1
 		xk = xk_new
 		fk = fk_new
