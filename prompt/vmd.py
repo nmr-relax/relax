@@ -22,10 +22,32 @@
 
 import sys
 
+import message
 
-class View:
+
+class Shell:
     def __init__(self, relax):
-        """Class containing the view function."""
+        """The class accessible to the interpreter.
+
+        The purpose of this class is to hide the variables and functions found within the namespace
+        of the main class, found below, except for those required for interactive use.  This is an
+        abstraction layer designed to avoid user confusion as none of the main class data structures
+        are accessible.  For more flexibility use the main class directly.
+        """
+
+        # Load the main class into the namespace of this __init__ function.
+        x = Main(relax)
+
+        # Place references to the interactive functions within the namespace of this class.
+        self.view = x.view
+
+        # __repr__.
+        self.__repr__ = message.main_class
+
+
+class Main:
+    def __init__(self, relax):
+        """Class containing the VMD functions."""
 
         self.relax = relax
 
@@ -37,13 +59,13 @@ class View:
         Example
         ~~~~~~~
 
-        relax> view()
+        relax> vmd.view()
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "view()"
+            text = sys.ps3 + "vmd.view()"
             print text
 
         # Execute the functional code.
-        self.relax.generic.view.view()
+        self.relax.generic.vmd.view()
