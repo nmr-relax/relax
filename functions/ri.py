@@ -10,11 +10,11 @@ def calc_ri(data, ri_funcs):
 	The relaxation equations
 	~~~~~~~~~~~~~~~~~~~~~~~~
 
-	Data structure:  self.data.ri
+	Data structure:  data.ri
 	Dimension:  1D, (relaxation data)
 	Type:  Numeric array, Float64
-	Dependencies:  self.data.ri_prime
-	Required by:  self.data.chi2, self.data.dchi2, self.data.d2chi2
+	Dependencies:  data.ri_prime
+	Required by:  data.chi2, data.dchi2, data.d2chi2
 
 
 	Formulae

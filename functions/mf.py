@@ -2,16 +2,19 @@ from copy import deepcopy
 from math import pi
 from re import match
 
-from chi2 import calc_chi2
 from data import data
+
 from jw_mf import *
+from djw_mf import *
+
 from ri import *
 from ri_dipole_csa_comps import *
 from ri_prime import *
 
+from chi2 import calc_chi2
 
 class mf:
-	def __init__(self, relax, equation=None, param_types=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling=None, print_flag=0):
+	def __init__(self, relax, equation=None, param_types=None, init_params=None, relax_data=None, errors=None, bond_length=None, csa=None, diff_type=None, diff_params=None, scaling=None, print_flag=0):
 		"""The model-free minimisation class.
 
 		This class should be initialised before every calculation.
@@ -38,11 +41,13 @@ class mf:
 		self.relax = relax
 		self.equation = equation
 		self.param_types = param_types
+		self.params = init_params
 		self.scaling = scaling
 		self.print_flag = print_flag
 
 		# Initialise the data.
 		self.init_data()
+		self.data.params = init_params
 		self.data.relax_data = relax_data
 		self.data.errors = errors
 		self.data.bond_length = bond_length
@@ -99,6 +104,9 @@ class mf:
 		self.data.params = params
 		self.print_flag = print_flag
 
+		# Store the parameter vector in self.data.func_test
+		self.data.func_test = params
+
 		# Calculate the spectral density values.
 		self.calc_jw_comps(self.data)
 		create_jw_struct(self.data, self.calc_jw)
@@ -107,7 +115,7 @@ class mf:
 		calc_ri_prime(self.data, self.ri_prime_funcs)
 
 		# Calculate the R1, R2, and NOE values.
-		self.data.ri = deepcopy(self.data.ri_prime)
+		self.data.ri = self.data.ri_prime
 		calc_ri(self.data, self.ri_funcs)
 
 		# Calculate the chi-squared value.
@@ -164,8 +172,9 @@ class mf:
 		self.data.noe_r1_table = self.relax.data.noe_r1_table
 		self.data.ri_labels = self.relax.data.ri_labels
 
-		# Initialise the spectral density values.
+		# Initialise the spectral density values, gradients, and hessians.
 		self.data.jw = zeros((self.relax.data.num_frq, 5), Float64)
+		self.data.djw = zeros((self.relax.data.num_frq, 5, len(self.params)), Float64)
 
 		# Initialise the components of the transformed relaxation equations.
 		self.data.dip_comps = zeros((self.relax.data.num_ri), Float64)

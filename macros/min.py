@@ -195,7 +195,7 @@ class min:
 			self.params = self.relax.data.params[self.model_index][self.res]
 
 			# Initialise the functions used in the minimisation.
-			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model_index], param_types=self.relax.data.param_types[self.model_index], relax_data=self.data, errors=self.errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params)
+			self.mf = mf(self.relax, equation=self.relax.data.equations[self.model_index], param_types=self.relax.data.param_types[self.model_index], init_params=self.params, relax_data=self.data, errors=self.errors, bond_length=self.relax.data.bond_length[self.res][0], csa=self.relax.data.csa[self.res][0], diff_type=self.relax.data.diff_type, diff_params=self.relax.data.diff_params)
 			self.func = self.mf.func
 			self.dfunc = self.mf.dfunc
 			self.d2func = self.mf.d2func

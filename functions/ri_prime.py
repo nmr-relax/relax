@@ -9,11 +9,11 @@ def calc_ri_prime(data, ri_prime_funcs):
 	The transformed relaxation equations
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	Data structure:  self.data.ri_prime
+	Data structure:  data.ri_prime
 	Dimension:  1D, (transformed relaxation data)
 	Type:  Numeric array, Float64
-	Dependencies:  self.data.jw
-	Required by:  self.data.ri, self.data.dri, self.data.d2ri
+	Dependencies:  data.jw
+	Required by:  data.ri, data.dri, data.d2ri
 
 
 	Formulae

@@ -4,6 +4,34 @@ from re import match
 def create_jw_struct(data, calc_jw):
 	"""Function to create the model-free spectral density values.
 
+	The spectral density equation
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	Data structure:  data.jw
+	Dimension:  2D, (number of NMR frequencies, 5 spectral density frequencies)
+	Type:  Numeric matrix, Float64
+	Dependencies:  None
+	Required by:  data.ri, data.dri, data.d2ri
+
+
+	Formulae
+	~~~~~~~~
+
+	Original
+	~~~~~~~~
+
+		         2 /    S2 . tm        (1 - S2) . te' \ 
+		J(w)  =  - | -------------  +  -------------- |
+		         5 \ 1 + (w.tm)**2     1 + (w.te')**2 /
+
+
+	Extended
+	~~~~~~~~
+
+		         2 /    S2 . tm        (1 - S2f) . tf'     (S2f - S2) . ts' \ 
+		J(w)  =  - | -------------  +  ---------------  +  ---------------- |
+		         5 \ 1 + (w.tm)**2     1 + (w.tf')**2       1 + (w.ts')**2  /
+
 	"""
 
 	for i in range(data.num_frq):
@@ -15,7 +43,7 @@ def create_jw_struct(data, calc_jw):
 
 
 def calc_iso_jw_s2(i, frq_index, data):
-	"""Calculate the isotropic spectral density values for the single parameter S2.
+	"""Calculate the isotropic spectral density value for the original model-free formula with the single parameter S2.
 
 	The formula is:
 
@@ -41,7 +69,7 @@ def calc_iso_jw_s2_comps(data):
 
 
 def calc_iso_jw_s2_te(i, frq_index, data):
-	"""Calculate the isotropic spectral density values for the parameters S2 and te.
+	"""Calculate the isotropic spectral density value for the original model-free formula with the parameters S2 and te.
 
 	The formula is:
 
@@ -72,7 +100,7 @@ def calc_iso_jw_s2_te_comps(data):
 
 
 def calc_iso_jw_s2f_s2s_ts(i, frq_index, data):
-	"""Calculate the model 5 spectral density values for isotropic rotational diffusion.
+	"""Calculate the isotropic spectral density value for the extended model-free formula with the parameters S2f, S2s, and ts.
 
 	The formula is:
 
@@ -105,11 +133,11 @@ def calc_iso_jw_s2f_s2s_ts_comps(data):
 
 
 def calc_iso_jw_s2f_tf_s2s_ts(i, frq_index, data):
-	"""Calculate the model 5 spectral density values for isotropic rotational diffusion.
+	"""Calculate the isotropic spectral density value for the extended model-free formula with the parameters S2f, tf, S2s, and ts.
 
 	The formula is:
 
-		         2 /    S2 . tm        (1 - Sf2) . tf'     (S2f - S2) . ts' \ 
+		         2 /    S2 . tm        (1 - S2f) . tf'     (S2f - S2) . ts' \ 
 		J(w)  =  - | -------------  +  ---------------  +  ---------------- |
 		         5 \ 1 + (w.tm)**2     1 + (w.tf')**2       1 + (w.ts')**2  /
 
