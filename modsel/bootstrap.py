@@ -15,7 +15,6 @@ from math import log, pi
 from re import match
 
 from common_ops import common_operations
-from discrepancies import kl
 
 
 class bootstrap(common_operations):
@@ -23,7 +22,6 @@ class bootstrap(common_operations):
 		"Model-free analysis based on bootstrap model selection."
 
 		self.mf = mf
-		self.kl = kl()
 
 		print "Model-free analysis based on bootstrap criteria model selection."
 		self.initialize()
@@ -107,7 +105,7 @@ class bootstrap(common_operations):
 				if self.mf.debug == 1:
 					self.mf.log.write("\nAverage Chi2 is: " + `ave_chi2` + "\n\n")
 
-				data[model][res]['bootstrap'] = self.kl.calc(n, ave_chi2, err)
+				data[model][res]['bootstrap'] = ave_chi2 / (2.0 * n)
 
 			# Select model.
 			min = 'm1'

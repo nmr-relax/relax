@@ -16,7 +16,6 @@ import sys
 from re import match
 
 from common_ops import common_operations
-from discrepancies import kl
 
 
 class cv(common_operations):
@@ -24,7 +23,6 @@ class cv(common_operations):
 		"Model-free analysis based on cross-validation model selection methods."
 
 		self.mf = mf
-		self.kl = kl()
 
 		print "Model-free analysis based on cross-validation model selection."
 		self.initialize()
@@ -114,7 +112,7 @@ class cv(common_operations):
 						back_calc = self.mf.calc_relax_data.calc(tm, model, types, [ data[cv_model][res]['s2f'], data[cv_model][res]['s2s'], data[cv_model][res]['te'] ])
 
 					chi2 = self.mf.calc_chi2.relax_data(real, err, back_calc)
-					cv_crit = self.kl.calc(1.0, chi2, err)
+					cv_crit = chi2 / (2.0 * 1.0)
 					sum_cv_crit = sum_cv_crit + cv_crit
 
 					if self.mf.debug == 1:

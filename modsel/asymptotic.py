@@ -19,7 +19,6 @@ from math import log, pi
 from re import match
 
 from common_ops import common_operations
-from discrepancies import kl
 
 
 class asymptotic(common_operations):
@@ -27,7 +26,6 @@ class asymptotic(common_operations):
 		"Model-free analysis based on asymptotic model selection methods."
 
 		self.mf = mf
-		self.kl = kl()
 
 		print "Model-free analysis based on " + self.mf.data.usr_param.method + " model selection."
 		self.initialize()
@@ -57,7 +55,7 @@ class asymptotic(common_operations):
 
 			for model in self.mf.data.runs:
 				chi2 = data[model][res]['chi2']
-				crit = self.kl.calc(n, chi2, err)
+				crit = chi2 / (2.0 * n)
 
 				if match('m1', model):
 					k = 1.0

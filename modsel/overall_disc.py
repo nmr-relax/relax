@@ -25,7 +25,6 @@ import sys
 from math import log, pi
 
 from common_ops import common_operations
-from discrepancies import kl
 
 
 class overall_disc(common_operations):
@@ -33,7 +32,6 @@ class overall_disc(common_operations):
 		"Calculation of the theoretical overall discrepency."
 
 		self.mf = mf
-		self.kl = kl()
 
 		print "Modelfree analysis based on the overall discrepency for model selection."
 		self.initialize()
@@ -84,7 +82,7 @@ class overall_disc(common_operations):
 					self.mf.log.write("\nError: " + `err`)
 					self.mf.log.write("\nBack calc: " + `back_calc`)
 
-				data[model][res]['crit'] = self.kl.calc(n, chi2, err)
+				data[model][res]['crit'] = chi2 / (2.0 * n)
 
 			# Select model.
 			min = 'm1'
