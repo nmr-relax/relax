@@ -257,9 +257,9 @@ class RelaxParentThread:
             for i in xrange(self.num_threads):
                 num_alive = num_alive + self.threads[i].isAlive()
 
-            # Exit once all have terminated.
+            # Break once all have terminated.
             if num_alive == 0:
-                sys.exit()
+                break
 
 
     def thread_clean_up(self):
@@ -690,19 +690,15 @@ class RelaxHostThread(RelaxThread):
     def test_ssh(self):
         """Function for testing the SSH connection and public key authentication."""
 
-        # Initialise flag.
-        ssh_ok = 0
-
         # Test command.
-        cmd = "ssh -o PasswordAuthentication=no %s echo 'relax> ssh ok'" % self.login
+        cmd = "ssh -o PasswordAuthentication=no %s \"echo 'relax> ssh ok'\"" % self.login
         self.start_child(cmd=cmd, remote_exe=0, close=0)
 
         # Test if the string 'relax, ssh ok' is in self.child.fromchild.
         out = self.child.fromchild.readlines()
         for line in out:
             if search('relax> ssh ok', line):
-                ssh_ok = 1
-        self.child.fromchild.close()
+                return 1
 
         # Read the errors.
         err = self.child.childerr.readlines()
