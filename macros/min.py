@@ -260,7 +260,7 @@ class min:
 
 				# Rex.
 				elif match('Rex', self.relax.data.param_types[self.model][i]):
-					self.min_options.append([self.inc[i], 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
+					self.min_options.append([self.inc[i], 0.0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
 				# Bond length.
 				elif match('Bond length', self.relax.data.param_types[self.model][i]):
@@ -296,7 +296,7 @@ class min:
 
 				# Rex.
 				elif match('Rex', self.relax.data.param_types[self.model][i]):
-					self.min_options.append([self.inc[i], 0.0, 30.0 / (1e-8 * self.relax.data.frq[0])**2])
+					self.min_options.append([self.inc[i], 0.0, 30.0 / (2.0 * pi * self.relax.data.frq[0])**2])
 
 				# Bond length.
 				elif match('Bond length', self.relax.data.param_types[self.model][i]):

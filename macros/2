@@ -1,3 +1,4 @@
+from math import pi
 from Numeric import Float64, ones, zeros
 from re import match
 
@@ -190,7 +191,7 @@ class mf_model(generic_functions):
 			if match('t', self.types[i]):
 				self.scale_vect[i] = 1e-10
 			elif self.types[i] == 'Rex':
-				self.scale_vect[i] = 1e-30
+				self.scale_vect[i] = 1.0 / (2.0 * pi * self.relax.data.frq[0]) ** 2
 			elif self.types[i] == 'Bond length':
 				self.scale_vect[i] = 1e-10
 			elif self.types[i] == 'CSA':
