@@ -24,14 +24,14 @@ from Numeric import dot
 from math import cos, sin
 
 
-def calc_geom_axial(data):
+def calc_geom_axial(data, diff_data):
     """Function for calculating the dot product XH . Dpar.
     
     Delta is the dot product between the unit bond vector and the unit vector along Dpar.
     """
 
-    data.dpar_unit_vector[0] = cos(data.diff_params[2]) * sin(data.diff_params[3])
-    data.dpar_unit_vector[1] = sin(data.diff_params[2]) * sin(data.diff_params[3])
-    data.dpar_unit_vector[2] = cos(data.diff_params[3])
+    diff_data.dpar_unit_vector[0] = cos(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar_unit_vector[1] = sin(diff_data.params[2]) * sin(diff_data.params[3])
+    diff_data.dpar_unit_vector[2] = cos(diff_data.params[3])
 
-    data.delta = dot(data.xh_unit_vector[data.i], data.dpar_unit_vector)
+    data.delta = dot(data.xh_unit_vector, diff_data.dpar_unit_vector)

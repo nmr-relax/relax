@@ -26,16 +26,16 @@ from Numeric import Float64, array
 # Diffusional correlation times for the generic model-free formulae.
 ####################################################################
 
-def calc_ti_iso(data):
+def calc_ti_iso(data, diff_data):
     """Diffusional correlation times for isotropic diffusion.
 
     t0 = tm
     """
 
-    data.ti[data.i][0] = data.diff_params[0]
+    data.ti[0] = diff_data.params[0]
 
 
-def calc_ti_axial(data):
+def calc_ti_axial(data, diff_data):
     """Diffusional correlation times for axially symmetric diffusion.
 
     The equations are:
@@ -55,6 +55,6 @@ def calc_ti_axial(data):
     The diffusion parameter set in data.diff_params is {Dper, Dpar, theta, phi}.
     """
 
-    data.ti[data.i][0] = 1.0 / (6.0 * data.diff_params[0])
-    data.ti[data.i][1] = 1.0 / (data.diff_params[1] + 5.0 * data.diff_params[0])
-    data.ti[data.i][2] = 1.0 / (2.0 * data.diff_params[0] + 4.0 * data.diff_params[1])
+    data.ti[0] = 1.0 / (6.0 * diff_data.params[0])
+    data.ti[1] = 1.0 / (diff_data.params[1] + 5.0 * diff_data.params[0])
+    data.ti[2] = 1.0 / (2.0 * diff_data.params[0] + 4.0 * diff_data.params[1])

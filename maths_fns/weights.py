@@ -29,7 +29,7 @@ def calc_ci_iso(data):
     c0 = 1
     """
 
-    data.ci[data.i][0] = 1.0
+    data.ci[0] = 1.0
 
 
 def calc_ci_axial(data):
@@ -44,6 +44,6 @@ def calc_ci_axial(data):
     where delta is the dot product of the unit bond vector and the unit vector along Dpar.
     """
 
-    data.ci[data.i][0] = 0.25 * (3.0 * data.delta**2 - 1.0)**2
-    data.ci[data.i][1] = 3.0 * data.delta**2 * (1.0 - data.delta**2)
-    data.ci[data.i][2] = 0.75 * (1.0 - data.delta**2)**2
+    data.ci[0] = 0.25 * (3.0 * data.delta**2 - 1.0)**2
+    data.ci[1] = 3.0 * data.delta**2 * (1.0 - data.delta**2)
+    data.ci[2] = 0.75 * (1.0 - data.delta**2)**2

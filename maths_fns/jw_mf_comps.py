@@ -33,7 +33,7 @@ from Numeric import Float64, zeros
 # Original {tm} and {tm, S2}.
 #############################
 
-def calc_tm_jw_comps(data):
+def calc_tm_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the original model-free formula with
@@ -53,15 +53,15 @@ def calc_tm_jw_comps(data):
         fact_ti = 1 / (1 + (w.ti)^2)
     """
 
-    data.w_ti_sqrd[data.i] = data.frq_sqrd_list[data.i] * data.ti[data.i] ** 2
-    data.fact_ti[data.i] = 1.0 / (1.0 + data.w_ti_sqrd[data.i])
+    data.w_ti_sqrd = data.frq_sqrd_list * data.ti ** 2
+    data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
 
 
 
 # Original {S2, te}.
 ####################
 
-def calc_S2_te_jw_comps(data):
+def calc_S2_te_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the original model-free formula with
@@ -94,20 +94,20 @@ def calc_S2_te_jw_comps(data):
         inv_te_denom = 1 / ((te + ti)^2 + (w.te.ti)^2)
     """
 
-    data.one_s2 = 1.0 - data.params[data.s2_index[data.i]]
+    data.one_s2 = 1.0 - params[data.s2_index]
 
-    data.te_ti = data.params[data.te_index[data.i]] + data.ti[data.i]
-    data.te_ti_te = data.te_ti * data.params[data.te_index[data.i]]
+    data.te_ti = params[data.te_index] + data.ti
+    data.te_ti_te = data.te_ti * params[data.te_index]
     data.te_ti_sqrd = data.te_ti ** 2
-    data.w_te_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.te_index[data.i]] ** 2
-    data.inv_te_denom[data.i] = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd[data.i])
+    data.w_te_ti_sqrd = data.w_ti_sqrd * params[data.te_index] ** 2
+    data.inv_te_denom = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd)
 
 
 
 # Original {tm, S2, te}.
 ########################
 
-def calc_tm_S2_te_jw_comps(data):
+def calc_tm_S2_te_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the original model-free formula with
@@ -140,23 +140,23 @@ def calc_tm_S2_te_jw_comps(data):
         inv_te_denom = 1 / ((te + ti)^2 + (w.te.ti)^2)
     """
 
-    data.w_ti_sqrd[data.i] = data.frq_sqrd_list[data.i] * data.ti[data.i] ** 2
-    data.fact_ti[data.i] = 1.0 / (1.0 + data.w_ti_sqrd[data.i])
+    data.w_ti_sqrd = data.frq_sqrd_list * data.ti ** 2
+    data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
 
-    data.one_s2 = 1.0 - data.params[data.s2_index[data.i]]
+    data.one_s2 = 1.0 - params[data.s2_index]
 
-    data.te_ti = data.params[data.te_index[data.i]] + data.ti[data.i]
-    data.te_ti_te = data.te_ti * data.params[data.te_index[data.i]]
+    data.te_ti = params[data.te_index] + data.ti
+    data.te_ti_te = data.te_ti * params[data.te_index]
     data.te_ti_sqrd = data.te_ti ** 2
-    data.w_te_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.te_index[data.i]] ** 2
-    data.inv_te_denom[data.i] = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd[data.i])
+    data.w_te_ti_sqrd = data.w_ti_sqrd * params[data.te_index] ** 2
+    data.inv_te_denom = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd)
 
 
 
 # Extended {S2f, S2, ts}.
 #########################
 
-def calc_S2f_S2_ts_jw_comps(data):
+def calc_S2f_S2_ts_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the extended model-free formula with
@@ -189,20 +189,20 @@ def calc_S2f_S2_ts_jw_comps(data):
         inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
     """
 
-    data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
+    data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
 
-    data.ts_ti = data.params[data.ts_index[data.i]] + data.ti[data.i]
-    data.ts_ti_ts = data.ts_ti * data.params[data.ts_index[data.i]]
+    data.ts_ti = params[data.ts_index] + data.ti
+    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
     data.ts_ti_sqrd = data.ts_ti ** 2
-    data.w_ts_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.ts_index[data.i]] ** 2
-    data.inv_ts_denom[data.i] = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd[data.i])
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index] ** 2
+    data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
 
 
 
 # Extended {tm, S2f, S2, ts}.
 #############################
 
-def calc_tm_S2f_S2_ts_jw_comps(data):
+def calc_tm_S2f_S2_ts_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the extended model-free formula with
@@ -235,23 +235,23 @@ def calc_tm_S2f_S2_ts_jw_comps(data):
         inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
     """
 
-    data.w_ti_sqrd[data.i] = data.frq_sqrd_list[data.i] * data.ti[data.i] ** 2
-    data.fact_ti[data.i] = 1.0 / (1.0 + data.w_ti_sqrd[data.i])
+    data.w_ti_sqrd = data.frq_sqrd_list * data.ti ** 2
+    data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
 
-    data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
+    data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
 
-    data.ts_ti = data.params[data.ts_index[data.i]] + data.ti[data.i]
-    data.ts_ti_ts = data.ts_ti * data.params[data.ts_index[data.i]]
+    data.ts_ti = params[data.ts_index] + data.ti
+    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
     data.ts_ti_sqrd = data.ts_ti ** 2
-    data.w_ts_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.ts_index[data.i]] ** 2
-    data.inv_ts_denom[data.i] = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index] ** 2
+    data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
 
 
 
 # Extended 2 {S2f, S2s, ts}.
 ############################
 
-def calc_S2f_S2s_ts_jw_comps(data):
+def calc_S2f_S2s_ts_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the extended model-free formula with
@@ -284,20 +284,20 @@ def calc_S2f_S2s_ts_jw_comps(data):
         inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
     """
 
-    data.one_s2s = 1.0 - data.params[data.s2s_index[data.i]]
+    data.one_s2s = 1.0 - params[data.s2s_index]
 
-    data.ts_ti = data.params[data.ts_index[data.i]] + data.ti[data.i]
-    data.ts_ti_ts = data.ts_ti * data.params[data.ts_index[data.i]]
+    data.ts_ti = params[data.ts_index] + data.ti
+    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
     data.ts_ti_sqrd = data.ts_ti ** 2
-    data.w_ts_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.ts_index[data.i]] ** 2
-    data.inv_ts_denom[data.i] = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd[data.i])
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index] ** 2
+    data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
 
 
 
 # Extended {S2f, tf, S2, ts}.
 #############################
 
-def calc_S2f_tf_S2_ts_jw_comps(data):
+def calc_S2f_tf_S2_ts_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the extended model-free formula with
@@ -336,26 +336,26 @@ def calc_S2f_tf_S2_ts_jw_comps(data):
         inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
     """
 
-    data.one_s2f = 1.0 - data.params[data.s2f_index[data.i]]
-    data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
+    data.one_s2f = 1.0 - params[data.s2f_index]
+    data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
 
-    data.tf_ti = data.params[data.tf_index[data.i]] + data.ti[data.i]
-    data.ts_ti = data.params[data.ts_index[data.i]] + data.ti[data.i]
-    data.tf_ti_tf = data.tf_ti * data.params[data.tf_index[data.i]]
-    data.ts_ti_ts = data.ts_ti * data.params[data.ts_index[data.i]]
+    data.tf_ti = params[data.tf_index] + data.ti
+    data.ts_ti = params[data.ts_index] + data.ti
+    data.tf_ti_tf = data.tf_ti * params[data.tf_index]
+    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
     data.tf_ti_sqrd = data.tf_ti ** 2
     data.ts_ti_sqrd = data.ts_ti ** 2
-    data.w_tf_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.tf_index[data.i]] ** 2
-    data.w_ts_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.ts_index[data.i]] ** 2
-    data.inv_tf_denom[data.i] = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd[data.i])
-    data.inv_ts_denom[data.i] = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd[data.i])
+    data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_index] ** 2
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index] ** 2
+    data.inv_tf_denom = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd)
+    data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
 
 
 
 # Extended {tm, S2f, tf, S2, ts}.
 #################################
 
-def calc_tm_S2f_tf_S2_ts_jw_comps(data):
+def calc_tm_S2f_tf_S2_ts_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the extended model-free formula with
@@ -394,29 +394,29 @@ def calc_tm_S2f_tf_S2_ts_jw_comps(data):
         inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
     """
 
-    data.w_ti_sqrd[data.i] = data.frq_sqrd_list[data.i] * data.ti[data.i] ** 2
-    data.fact_ti[data.i] = 1.0 / (1.0 + data.w_ti_sqrd[data.i])
+    data.w_ti_sqrd = data.frq_sqrd_list * data.ti ** 2
+    data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
 
-    data.one_s2f = 1.0 - data.params[data.s2f_index[data.i]]
-    data.s2f_s2 = data.params[data.s2f_index[data.i]] - data.params[data.s2_index[data.i]]
+    data.one_s2f = 1.0 - params[data.s2f_index]
+    data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
 
-    data.tf_ti = data.params[data.tf_index[data.i]] + data.ti[data.i]
-    data.ts_ti = data.params[data.ts_index[data.i]] + data.ti[data.i]
-    data.tf_ti_tf = data.tf_ti * data.params[data.tf_index[data.i]]
-    data.ts_ti_ts = data.ts_ti * data.params[data.ts_index[data.i]]
+    data.tf_ti = params[data.tf_index] + data.ti
+    data.ts_ti = params[data.ts_index] + data.ti
+    data.tf_ti_tf = data.tf_ti * params[data.tf_index]
+    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
     data.tf_ti_sqrd = data.tf_ti ** 2
     data.ts_ti_sqrd = data.ts_ti ** 2
-    data.w_tf_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.tf_index[data.i]] ** 2
-    data.w_ts_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.ts_index[data.i]] ** 2
-    data.inv_tf_denom[data.i] = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd[data.i])
-    data.inv_ts_denom[data.i] = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd[data.i])
+    data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_index] ** 2
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index] ** 2
+    data.inv_tf_denom = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd)
+    data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
 
 
 
 # Extended 2 {S2f, tf, S2s, ts}.
 ################################
 
-def calc_S2f_tf_S2s_ts_jw_comps(data):
+def calc_S2f_tf_S2s_ts_jw_comps(data, params):
     """Spectral density component function.
 
     Calculate the components of the spectral density value for the extended model-free formula with
@@ -456,20 +456,20 @@ def calc_S2f_tf_S2s_ts_jw_comps(data):
         inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
     """
 
-    data.one_s2s = 1.0 - data.params[data.s2s_index[data.i]]
-    data.one_s2f = 1.0 - data.params[data.s2f_index[data.i]]
-    data.s2f_s2 = data.params[data.s2f_index[data.i]] * data.one_s2s
+    data.one_s2s = 1.0 - params[data.s2s_index]
+    data.one_s2f = 1.0 - params[data.s2f_index]
+    data.s2f_s2 = params[data.s2f_index] * data.one_s2s
 
-    data.tf_ti = data.params[data.tf_index[data.i]] + data.ti[data.i]
-    data.ts_ti = data.params[data.ts_index[data.i]] + data.ti[data.i]
-    data.tf_ti_tf = data.tf_ti * data.params[data.tf_index[data.i]]
-    data.ts_ti_ts = data.ts_ti * data.params[data.ts_index[data.i]]
+    data.tf_ti = params[data.tf_index] + data.ti
+    data.ts_ti = params[data.ts_index] + data.ti
+    data.tf_ti_tf = data.tf_ti * params[data.tf_index]
+    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
     data.tf_ti_sqrd = data.tf_ti ** 2
     data.ts_ti_sqrd = data.ts_ti ** 2
-    data.w_tf_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.tf_index[data.i]] ** 2
-    data.w_ts_ti_sqrd[data.i] = data.w_ti_sqrd[data.i] * data.params[data.ts_index[data.i]] ** 2
-    data.inv_tf_denom[data.i] = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd[data.i])
-    data.inv_ts_denom[data.i] = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd[data.i])
+    data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_index] ** 2
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index] ** 2
+    data.inv_tf_denom = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd)
+    data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
 
 
 
@@ -482,7 +482,7 @@ def calc_S2f_tf_S2s_ts_jw_comps(data):
 # Original {tm} and {tm, S2}.
 #############################
 
-def calc_tm_djw_comps(data):
+def calc_tm_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the original model-free formula
@@ -495,14 +495,14 @@ def calc_tm_djw_comps(data):
                          (1 + (w.ti)^2)^2
     """
 
-    data.fact_djw_dti[data.i] = (1.0 - data.w_ti_sqrd[data.i]) * data.fact_ti[data.i]**2
+    data.fact_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
 
 
 
 # Original {S2, te}.
 ####################
 
-def calc_S2_te_djw_comps(data):
+def calc_S2_te_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the original model-free formula
@@ -515,14 +515,14 @@ def calc_S2_te_djw_comps(data):
                               ((te + ti)^2 + (w.te.ti)^2)^2
     """
 
-    data.fact_djw_dte[data.i] = data.ti[data.i] ** 2 * (data.te_ti_sqrd - data.w_te_ti_sqrd[data.i]) * data.inv_te_denom[data.i] ** 2
+    data.fact_djw_dte = data.ti ** 2 * (data.te_ti_sqrd - data.w_te_ti_sqrd) * data.inv_te_denom ** 2
 
 
 
 # Original {tm, S2, te}.
 ########################
 
-def calc_tm_S2_te_djw_comps(data):
+def calc_tm_S2_te_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the original model-free formula
@@ -548,11 +548,11 @@ def calc_tm_S2_te_djw_comps(data):
     """
 
     # tm.
-    data.fact1_djw_dtm = (1.0 - data.w_ti_sqrd[data.i]) * data.fact_ti[data.i]**2
+    data.fact1_djw_dtm = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
 
     # te.
-    data.fact_djw = (data.te_tm_sqrd - data.w_te_tm_sqrd) * data.inv_te_denom[data.i] ** 2
-    data.fact2_djw_dtm = data.params[data.te_index[data.i]]**2 * data.fact_djw
+    data.fact_djw = (data.te_tm_sqrd - data.w_te_tm_sqrd) * data.inv_te_denom ** 2
+    data.fact2_djw_dtm = params[data.te_index]**2 * data.fact_djw
     data.fact_djw_dte = data.two_fifths_tm_sqrd * data.fact_djw
 
 
@@ -560,7 +560,7 @@ def calc_tm_S2_te_djw_comps(data):
 # Extended {S2f, S2, ts}.
 #########################
 
-def calc_S2f_S2_ts_djw_comps(data):
+def calc_S2f_S2_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
@@ -574,14 +574,14 @@ def calc_S2f_S2_ts_djw_comps(data):
                          5      ((ts + tm)^2 + (w.ts.tm)^2)^2
     """
 
-    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd[data.i]) * data.inv_ts_denom[data.i] ** 2
+    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
 
 
 
 # Extended {tm, S2f, S2, ts}.
 #############################
 
-def calc_tm_S2f_S2_ts_djw_comps(data):
+def calc_tm_S2f_S2_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
@@ -610,11 +610,11 @@ def calc_tm_S2f_S2_ts_djw_comps(data):
     """
 
     # tm.
-    data.fact1_djw_dtm = (1.0 - data.w_ti_sqrd[data.i]) * data.fact_ti[data.i]**2
+    data.fact1_djw_dtm = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
 
     # ts.
-    data.fact_djw = (data.ts_tm_sqrd - data.w_ts_ti_sqrd[data.i]) * data.inv_ts_denom[data.i] ** 2
-    data.fact2_djw_dtm = data.params[data.ts_index[data.i]]**2 * data.fact_djw
+    data.fact_djw = (data.ts_tm_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
+    data.fact2_djw_dtm = params[data.ts_index]**2 * data.fact_djw
     data.fact_djw_dts = data.two_fifths_tm_sqrd * data.fact_djw
 
 
@@ -622,7 +622,7 @@ def calc_tm_S2f_S2_ts_djw_comps(data):
 # Extended {S2f, tf, S2, ts}.
 #############################
 
-def calc_S2f_tf_S2_ts_djw_comps(data):
+def calc_S2f_tf_S2_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
@@ -640,15 +640,15 @@ def calc_S2f_tf_S2_ts_djw_comps(data):
                          5      ((ts + tm)^2 + (w.ts.tm)^2)^2
     """
 
-    data.fact_djw_dtf = data.two_fifths_tm_sqrd * (data.tf_tm_sqrd - data.w_tf_ti_sqrd[data.i]) * data.inv_tf_denom[data.i] ** 2
-    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd[data.i]) * data.inv_ts_denom[data.i] ** 2
+    data.fact_djw_dtf = data.two_fifths_tm_sqrd * (data.tf_tm_sqrd - data.w_tf_ti_sqrd) * data.inv_tf_denom ** 2
+    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
 
 
 
 # Extended {tm, S2f, tf, S2, ts}.
 #################################
 
-def calc_tm_S2f_tf_S2_ts_djw_comps(data):
+def calc_tm_S2f_tf_S2_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
@@ -692,16 +692,16 @@ def calc_tm_S2f_tf_S2_ts_djw_comps(data):
     """
 
     # tm.
-    data.fact1_djw_dtm = (1.0 - data.w_ti_sqrd[data.i]) * data.fact_ti[data.i]**2
+    data.fact1_djw_dtm = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
 
     # tf.
-    data.fact2_djw = (data.tf_tm_sqrd - data.w_tf_ti_sqrd[data.i]) * data.inv_tf_denom[data.i] ** 2
-    data.fact2_djw_dtm = data.params[data.tf_index[data.i]]**2 * data.fact2_djw
+    data.fact2_djw = (data.tf_tm_sqrd - data.w_tf_ti_sqrd) * data.inv_tf_denom ** 2
+    data.fact2_djw_dtm = params[data.tf_index]**2 * data.fact2_djw
     data.fact_djw_dtf = data.two_fifths_tm_sqrd * data.fact2_djw
 
     # ts.
-    data.fact3_djw = (data.ts_tm_sqrd - data.w_ts_ti_sqrd[data.i]) * data.inv_ts_denom[data.i] ** 2
-    data.fact3_djw_dtm = data.params[data.ts_index[data.i]]**2 * data.fact3_djw
+    data.fact3_djw = (data.ts_tm_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
+    data.fact3_djw_dtm = params[data.ts_index]**2 * data.fact3_djw
     data.fact_djw_dts = data.two_fifths_tm_sqrd * data.fact3_djw
 
 
@@ -709,7 +709,7 @@ def calc_tm_S2f_tf_S2_ts_djw_comps(data):
 # Extended 2 {S2f, S2s, ts}.
 ############################
 
-def calc_S2f_S2s_ts_djw_comps(data):
+def calc_S2f_S2s_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
@@ -727,15 +727,15 @@ def calc_S2f_S2s_ts_djw_comps(data):
                           5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd[data.i]) * data.inv_ts_denom[data.i] ** 2
-    data.fact_djw_ds2s = data.two_fifths_tm * (data.fact_ti[data.i] - data.ts_tm_ts * data.inv_ts_denom[data.i])
+    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
+    data.fact_djw_ds2s = data.two_fifths_tm * (data.fact_ti - data.ts_tm_ts * data.inv_ts_denom)
 
 
 
 # Extended 2 {S2f, tf, S2s, ts}.
 ################################
 
-def calc_S2f_tf_S2s_ts_djw_comps(data):
+def calc_S2f_tf_S2s_ts_djw_comps(data, params):
     """Spectral density gradient component function.
 
     Calculate the components of the spectral density gradient for the extended model-free formula
@@ -758,6 +758,6 @@ def calc_S2f_tf_S2s_ts_djw_comps(data):
                           5    \ 1 + (w.tm)^2     (ts + tm)^2 + (w.ts.tm)^2 /
     """
 
-    data.fact_djw_dtf = data.two_fifths_tm_sqrd * (data.tf_tm_sqrd - data.w_tf_ti_sqrd[data.i]) * data.inv_tf_denom[data.i] ** 2
-    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd[data.i]) * data.inv_ts_denom[data.i] ** 2
-    data.fact_djw_ds2s = data.two_fifths_tm * (data.fact_ti[data.i] - data.ts_tm_ts * data.inv_ts_denom[data.i])
+    data.fact_djw_dtf = data.two_fifths_tm_sqrd * (data.tf_tm_sqrd - data.w_tf_ti_sqrd) * data.inv_tf_denom ** 2
+    data.fact_djw_dts = data.two_fifths_tm_sqrd * (data.ts_tm_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom ** 2
+    data.fact_djw_ds2s = data.two_fifths_tm * (data.fact_ti - data.ts_tm_ts * data.inv_ts_denom)

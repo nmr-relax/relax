@@ -154,10 +154,6 @@ class Model_free:
         # Convert to a Numeric array.
         self.param_vector = array(self.param_vector, Float64)
 
-        # Debug.
-        if Debug:
-            print "Param vector: " + `self.param_vector`
-
 
     def assemble_scaling_matrix(self, index=None):
         """Function for creating the scaling matrix."""
@@ -247,10 +243,6 @@ class Model_free:
 
                     # Increment i.
                     i = i + 1
-
-        # Debug.
-        if Debug:
-            print "Scaling matrix:\n" + `self.scaling_matrix`
 
 
     def calculate(self, run, print_flag):
@@ -760,10 +752,6 @@ class Model_free:
                     if upper[j] != None:
                         min_options[j][2] = upper[j]
 
-            # Debug.
-            if Debug:
-                print "Minimisation options:\n" + `min_options`
-
             # Minimisation.
             self.minimise(run=self.run, min_algor='grid', min_options=min_options, constraints=constraints, print_flag=self.print_flag)
 
@@ -932,8 +920,7 @@ class Model_free:
                     A.append(zero_array * 0.0)
                     A[j][i-2] = 1.0
                     A[j][i-1] = -1.0
-                    # Possible future bug, self.scaling_matrix[i, i].
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(0.0)
                     j = j + 1
 
                 # Prolate diffusion, Dper <= Dpar.
@@ -941,29 +928,8 @@ class Model_free:
                     A.append(zero_array * 0.0)
                     A[j][i-2] = -1.0
                     A[j][i-1] = 1.0
-                    # Possible future bug, self.scaling_matrix[i, i].
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(0.0)
                     j = j + 1
-
-                # 0 <= theta <= 2*pi.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-2.0 * pi / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
-
-                # 0 <= phi <= 2*pi.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-2.0 * pi / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
 
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
@@ -987,36 +953,6 @@ class Model_free:
                 b.append(0.0 / self.scaling_matrix[i, i])
                 i = i + 1
                 j = j + 1
-
-                # 0 <= alpha <= 2*pi.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-2.0 * pi / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
-
-                # 0 <= beta <= 2*pi.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-2.0 * pi / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
-
-                # 0 <= gamma <= 2*pi.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-2.0 * pi / self.scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
 
         # Model-free parameters.
         if self.param_set == 'mf' or self.param_set == 'all':
@@ -1053,8 +989,7 @@ class Model_free:
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
                                     A[j][old_i+m] = 1.0
-                                    # Possible future bug, self.scaling_matrix[i, i].
-                                    b.append(0.0 / self.scaling_matrix[i, i])
+                                    b.append(0.0)
                                     j = j + 1
 
                     # Correlation times {tm, te, tf, ts}.
@@ -1113,11 +1048,6 @@ class Model_free:
         # Convert to Numeric data structures.
         A = array(A, Float64)
         b = array(b, Float64)
-
-        # Debug.
-        if Debug:
-            print "Linear constraints, A:\n" + `A`
-            print "Linear constraints, b:\n" + `b`
 
         return A, b
 
@@ -1280,16 +1210,27 @@ class Model_free:
             elif self.param_set == 'all':
                 print "The diffusion tensor parameters together with the model-free parameters for all residues will be used."
 
-        # The number of minimisation instances and number of data sets.
+        # The total number of residues.
+        num_res = 0
+        for i in xrange(len(self.relax.data.res)):
+            # Skip unselected residues.
+            if not self.relax.data.res[i].select:
+                continue
+
+            # Increment the number of residues.
+            num_res = num_res + 1
+
+        # The number of residues, minimisation instances, and data sets for each parameter set type.
         if self.param_set == 'mf':
-            num_instances = len(self.relax.data.res)
+            num_instances = num_res
             num_data_sets = 1
+            num_res = 1
         elif self.param_set == 'diff':
             num_instances = 1
-            num_data_sets = len(self.relax.data.res)
+            num_data_sets = num_res
         elif self.param_set == 'all':
             num_instances = 1
-            num_data_sets = len(self.relax.data.res)
+            num_data_sets = num_res
 
         # Loop over the minimisation instances.
         for i in xrange(num_instances):
@@ -1395,21 +1336,11 @@ class Model_free:
                 # Vectors.
                 if not self.relax.data.diff[self.run].type == 'iso':
                     xh_unit_vectors.append(self.relax.data.res[index].xh_unit)
+                else:
+                    xh_unit_vectors.append(None)
 
                 # Count the number of model-free parameters for the residue index.
                 num_params.append(len(self.relax.data.res[index].params[self.run]))
-
-            # Convert to Numeric arrays.
-            relax_data = array(relax_data, Float64)
-            relax_error = array(relax_error, Float64)
-            r = array(r, Float64)
-            csa = array(csa, Float64)
-            frq = array(frq, Float64)
-
-            # Debug.
-            if Debug:
-                print "Relax data: " + `relax_data`
-                print "Relax error: " + `relax_error`
 
             # Package the diffusion tensor parameters.
             diff_params = None
@@ -1444,7 +1375,7 @@ class Model_free:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(param_set=self.param_set, num_data_sets=num_data_sets, equations=equations, param_types=param_types, total_num_params=len(self.param_vector), relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, diff_type=self.relax.data.diff[self.run].type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(total_num_params=len(self.param_vector), param_set=self.param_set, diff_type=self.relax.data.diff[self.run].type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -2168,10 +2099,6 @@ class Model_free:
 
             # Convert the values to Numeric array.
             min_options = array(min_options, Float64)
-
-            # Debug.
-            if Debug:
-                print "Min options: " + `min_options`
 
             # Minimisation.
             self.minimise(run=self.run, min_algor='set', min_options=min_options, print_flag=print_flag)
