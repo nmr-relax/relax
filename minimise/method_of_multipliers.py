@@ -119,7 +119,7 @@ def method_of_multipliers(func=None, dfunc=None, d2func=None, args=(), x0=None, 
     function d2c is the constraint Hessian function which should return the 3D matrix of constraint
     Hessians.
 
-    
+
     Initial values
     ~~~~~~~~~~~~~~
 

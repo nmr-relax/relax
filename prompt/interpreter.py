@@ -49,6 +49,7 @@ from map import Map
 from minimise import Minimise
 from model_selection import Modsel
 from pdb import PDB
+from view import View
 from write import Write
 
 # Macro classes.
@@ -95,6 +96,7 @@ class Interpreter:
         self._OpenDX = OpenDX(relax)
         self._PDB = PDB(relax)
         self._system = system
+        self._View = View(relax)
         self._Write = Write(relax)
 
         # Place the classes into the interpreter class namespace.
@@ -141,6 +143,7 @@ class Interpreter:
         minimise = self._Minimise.minimise
         model_selection = self._Modsel.model_selection
         pdb = self._PDB.pdb
+        view = self._View.view
         write = self._Write.write
 
         # Place the classes in the local namespace.

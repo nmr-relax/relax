@@ -72,6 +72,25 @@ class RelaxErrors:
             self.text = "The dependency " + `name` + " has not been installed."
 
 
+    # PDB errors.
+    #############
+
+    # No PDB loaded.
+    class RelaxPdbError(BaseError):
+        def __init__(self):
+            self.text = "No PDB file has been loaded."
+
+    # Loading error.
+    class RelaxPdbLoadError(BaseError):
+        def __init__(self, name):
+            self.text = "The PDB file " + `name` + " could not be loaded properly, no proteins could be extracted."
+
+    # PDBVIEWER environmental variable not set.
+    class RelaxPdbviewerError(BaseError):
+        def __init__(self, name):
+            self.text = "The environmental variable 'PDBVIEWER' has not been set, see the file 'docs/INSTALL' for details."
+
+
     # Type errors.
     ##############
 

@@ -20,6 +20,7 @@ The following packages need to be installed before using relax:
 Older versions of these packages may work but no guarantees can be made.
 
 
+
 Installation
 ============
 
@@ -39,10 +40,10 @@ Then either make a link in usr/local/bin to the file relax/relax using the comma
 or make an alias to the file by adding the following lines for the bash or csh/tcsh shells.
 
 Bash (global /etc/bashrc, local ~/.bashrc):
-alias relax="/usr/local/relax/relax"
+    alias relax="/usr/local/relax/relax"
 
 Csh / Tcsh (global /etc/csh.cshrc, local ~/.csh or ~/.tcsh):
-alias relax "/usr/local/relax/relax"
+    alias relax "/usr/local/relax/relax"
 
 
 
@@ -51,3 +52,34 @@ Post install
 
 For faster loading of the program, run the program once as root so that all the '.pyc' files are
 created.  Simply typing 'relax' in a shell and then exiting is sufficient.
+
+
+
+Optional programs
+=================
+
+The following is a list of programs which can be used by relax, although they are not essential for
+normal use.
+
+
+OpenDX:
+-------
+
+Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping macro, and
+is executed by passing the command 'dx' to the command line with various options.
+
+
+VMD:
+----
+
+Version 1.8 or higher.  VMD is used for viewing the collection of molecules extracted from a PDB
+file.  It is executed through the MMTK function 'view()' which requires the environmental variable
+'PDBVIEWER' to be set to 'vmd'.
+
+For Bash, add the following line to either the global '/etc/profile' or local '~/.bash_profile'
+files:
+    export PDBVIEWER='vmd'
+
+For Csh / Tcsh, add the following line to either the global '/etc/csh.cshrc' or local '~/.csh' or
+'~/.tcsh' files:
+    setenv PDBVIEWER 'vmd'
