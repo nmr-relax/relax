@@ -72,6 +72,14 @@ class RelaxErrors:
             self.text = "The dependency " + `name` + " has not been installed."
 
 
+    # Program errors.
+    #################
+
+    class RelaxProgError(BaseError):
+        def __init__(self, name):
+            self.text = "The program " + `name` + " cannot be found."
+
+
     # PDB errors.
     #############
 
