@@ -432,7 +432,7 @@ class Model_free:
 
             # {te, tf, ts}.
             elif match('t', params[i]):
-                min_options.append([inc_vector[i], 0.0, 10000.0 * 1e-12])
+                min_options.append([inc_vector[i], 0.0, 5000.0 * 1e-12])
 
             # Rex.
             elif params[i] == 'Rex':
