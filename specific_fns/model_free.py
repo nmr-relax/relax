@@ -4294,10 +4294,6 @@ class Model_free(Common_functions):
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             self.relax.data.res[self.run][i].select = 0
 
-        # All residues.
-        else:
-            self.relax.data.select[self.run] = 0
-
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""

@@ -144,6 +144,15 @@ class PDB:
         if not self.load_seq and not len(self.relax.data.res[self.run]):
             raise RelaxNoSequenceError, self.run
 
+        # Test if the file exists.
+        if not access(self.file_path, F_OK):
+            if fail:
+                raise RelaxFileError, ('PDB', self.file_path)
+            else:
+                if self.print_flag:
+                    print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
+                return
+
         # The file path.
         self.file_path = self.relax.IO.file_path(self.file, self.dir)
 
@@ -168,16 +177,6 @@ class PDB:
         # Load the structures.
         ######################
 
-        # Test if the file exists.
-        if not access(self.file_path, F_OK):
-            if fail:
-                raise RelaxFileError, ('PDB', self.file_path)
-            else:
-                if self.print_flag:
-                    print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
-                return
-
-        # Load the structures.
         self.load_structures()
 
 

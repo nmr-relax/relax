@@ -79,14 +79,22 @@ class Base_Map:
             self.step_size[i] = (self.bounds[i, 1] - self.bounds[i, 0]) / self.inc
 
         # Create the OpenDX .net program file.
+        print "Creating the OpenDX '.net' program file.\n"
         self.program()
 
+        # Create the OpenDX .cfg program configuration file.
+        print "Creating the OpenDX '.cfg' program configuration file.\n"
+        self.config()
+
         # Create the OpenDX .general file.
+        print "Creating the OpenDX '.general' file.\n"
         self.general()
 
         # Create the OpenDX .general and data files for the given point.
         if self.num_points == 1:
+            print "Creating the OpenDX '.general' and data files for the given point.\n"
             self.create_point()
 
         # Generate the map.
+        print "Creating the map.\n"
         self.create_map()

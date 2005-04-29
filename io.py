@@ -246,7 +246,7 @@ class IO:
         """Function for opening a file for writing and creating directories if necessary."""
 
         # Create the directories.
-        self.makedirs(dir, print_flag=0)
+        self.mkdir(dir, print_flag=0)
 
         # File path.
         file_path = self.file_path(file_name, dir)

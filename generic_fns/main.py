@@ -21,7 +21,6 @@
 ###############################################################################
 
 from angles import Angles
-from delete import Delete
 from dx.opendx import OpenDX
 from diffusion_tensor import Diffusion_tensor
 from eliminate import Eliminate
@@ -53,7 +52,6 @@ class Generic:
 
         # Set up all the classes.
         self.angles = Angles(self.relax)
-        self.delete = Delete(self.relax)
         self.diffusion_tensor = Diffusion_tensor(self.relax)
         self.eliminate = Eliminate(self.relax)
         self.fix = Fix(self.relax)
