@@ -7,14 +7,14 @@ nuclei('N')
 runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Loop over the run names.
-for run in runs:
-    print "\n\n# " + run + " #"
+for name in runs:
+    print "\n\n# " + name + " #"
 
     # Create the run.
-    run.create(run, 'mf')
+    run.create(name, 'mf')
 
     # Reload precalculated results from the file 'm1/results', etc.
-    results.read(run=run, file='results', dir=run)
+    results.read(run=name, file='results', dir=name)
 
 # Model selection.
 eliminate()

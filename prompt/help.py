@@ -38,10 +38,11 @@ period at the end of class name and hit the tab key, or type 'dir(class_name)'.
 
 class _Helper:
     text = """\
-For assistance in using a function, simply type 'help(function)'.  In addition to functions, if
-'help(object)' is typed, the help for the python object is returned.  This system is similar to the
-help function built into the python interpreter, which has been renamed to help_python, with the
-interactive component removed.  For the interactive python help system, type 'help_python()'.
+For assistance in using a function, simply type 'help(function)'.  All functions can be viewed by
+hitting the [TAB] key.  In addition to functions, if 'help(object)' is typed, the help for the
+python object is returned.  This system is similar to the help function built into the python
+interpreter, which has been renamed to help_python, with the interactive component removed.  For the
+interactive python help system, type 'help_python()'.
     """
 
     def __repr__(self):
