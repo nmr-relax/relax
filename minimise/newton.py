@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2005 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -122,7 +122,7 @@ class Newton(Hessian_mods, Line_search, Min):
 
         # Default line search algorithm.
         if self.line_search_algor == None:
-            self.line_search_algor = 'More Thuente'
+            self.line_search_algor = 'Back'
 
         # Default Hessian modification.
         if self.hessian_mod == None:

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -209,7 +209,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
 
 
     Line search algorithms.  These are used in the line search methods and the conjugate gradient
-    methods.  The default is the More and Thuente line search.
+    methods.  The default is the Backtracking line search.
     ___________________________________________________________________________________________
     |                                   |                                                     |
     | Line search algorithm             | Patterns                                            |
