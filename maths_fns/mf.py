@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -311,9 +311,8 @@ class Mf:
             self.diff_data.calc_ti(self.data[i], self.diff_data)
 
             # ti spectral density components.
-            if self.param_set == 'mf':
-                self.data[i].w_ti_sqrd = self.data[i].frq_sqrd_list_ext * self.data[i].ti ** 2
-                self.data[i].fact_ti = 1.0 / (1.0 + self.data[i].w_ti_sqrd)
+            self.data[i].w_ti_sqrd = self.data[i].frq_sqrd_list_ext * self.data[i].ti ** 2
+            self.data[i].fact_ti = 1.0 / (1.0 + self.data[i].w_ti_sqrd)
 
             # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
             missing_r1 = 0

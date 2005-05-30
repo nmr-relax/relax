@@ -872,8 +872,9 @@ class Model_free(Common_functions):
         mf_all_fixed = 1
         for i in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
-                continue
+            # This code causes a bug after model elimination if the model has been eliminated (select = 0).
+            #if not self.relax.data.res[self.run][i].select:
+            #    continue
 
             # Test the fixed flag.
             if not hasattr(self.relax.data.res[self.run][i], 'fixed'):
@@ -1669,6 +1670,9 @@ class Model_free(Common_functions):
 
         """
 
+        # Upper limit flag for correlation times.
+        upper_time_limit = 0
+
         # Initialisation (0..j..m).
         A = []
         b = []
@@ -1763,14 +1767,21 @@ class Model_free(Common_functions):
                 for l in xrange(len(self.relax.data.res[self.run][k].params)):
                     # Local tm.
                     if self.relax.data.res[self.run][k].params[l] == 'tm':
-                        # 0 <= tm <= 200 ns.
-                        A.append(zero_array * 0.0)
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        A[j+1][i] = -1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
-                        b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
-                        j = j + 2
+                        if upper_time_limit:
+                            # 0 <= tm <= 200 ns.
+                            A.append(zero_array * 0.0)
+                            A.append(zero_array * 0.0)
+                            A[j][i] = 1.0
+                            A[j+1][i] = -1.0
+                            b.append(0.0 / self.scaling_matrix[i, i])
+                            b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                            j = j + 2
+                        else:
+                            # 0 <= tm.
+                            A.append(zero_array * 0.0)
+                            A[j][i] = 1.0
+                            b.append(0.0 / self.scaling_matrix[i, i])
+                            j = j + 1
 
                     # Order parameters {S2, S2f, S2s}.
                     elif match('S2', self.relax.data.res[self.run][k].params[l]):
@@ -1812,18 +1823,19 @@ class Model_free(Common_functions):
                                     j = j + 1
 
                         # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
-                        if not self.relax.data.res[self.run][k].params[l] == 'tf':
-                            if self.param_set == 'mf':
-                                A.append(zero_array * 0.0)
-                                A[j][i] = -1.0
-                                b.append(-2.0 * self.relax.data.diff[self.run].tm / self.scaling_matrix[i, i])
-                            else:
-                                A.append(zero_array * 0.0)
-                                A[j][0] = 2.0
-                                A[j][i] = -1.0
-                                b.append(0.0)
+                        if upper_time_limit:
+                            if not self.relax.data.res[self.run][k].params[l] == 'tf':
+                                if self.param_set == 'mf':
+                                    A.append(zero_array * 0.0)
+                                    A[j][i] = -1.0
+                                    b.append(-2.0 * self.relax.data.diff[self.run].tm / self.scaling_matrix[i, i])
+                                else:
+                                    A.append(zero_array * 0.0)
+                                    A[j][0] = 2.0
+                                    A[j][i] = -1.0
+                                    b.append(0.0)
 
-                            j = j + 1
+                                j = j + 1
 
                     # Rex.
                     elif self.relax.data.res[self.run][k].params[l] == 'Rex':
@@ -2311,6 +2323,10 @@ class Model_free(Common_functions):
                 # Anisotropic diffusion.
                 elif diff_type == 'aniso':
                     diff_params = [data.tm, data.Da, data.Dr, data.alpha, data.beta, data.gamma]
+            elif min_algor == 'back_calc' and self.param_set == 'local_tm':
+                # Isotropic diffusion.
+                diff_params = [self.relax.data.res[self.run][index].tm]
+
 
 
             # Initialise the function to minimise.
@@ -4080,6 +4096,10 @@ class Model_free(Common_functions):
             for j in xrange(self.relax.data.sim_number[self.run]):
                 # Get the object.
                 object = getattr(self.relax.data, object_name)
+
+                # Test if the object has the key self.run.
+                if not object.has_key(self.relax):
+                    continue
 
                 # Copy and append the data.
                 sim_object[self.run].append(deepcopy(object[self.run]))

@@ -48,7 +48,7 @@ class Minimise:
         calculate = self.relax.specific_setup.setup('calculate', function_type)
 
         # Monte Carlo simulation calculation.
-        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
+        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
             # Loop over the simulations.
             for i in xrange(self.relax.data.sim_number[run]):
                 if print_flag:
@@ -74,7 +74,7 @@ class Minimise:
         grid_search = self.relax.specific_setup.setup('grid_search', function_type)
 
         # Monte Carlo simulation grid search.
-        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
+        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
             # Loop over the simulations.
             for i in xrange(self.relax.data.sim_number[run]):
                 if print_flag:
@@ -104,7 +104,7 @@ class Minimise:
             minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag, sim_index=sim_index)
 
         # Monte Carlo simulation minimisation.
-        elif hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[run] == 1:
+        elif hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
             # Threaded minimisation of simulations.
             if self.relax.thread_data.status:
                 # Print out.

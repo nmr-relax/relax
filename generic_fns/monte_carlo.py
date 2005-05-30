@@ -95,6 +95,7 @@ class Monte_carlo:
                     # Gaussian randomisation.
                     random[j].append(gauss(data[k], error[k]))
 
+            print "data: " + `data`
             # Pack the simulation data.
             pack_sim_data(run, i, random)
 

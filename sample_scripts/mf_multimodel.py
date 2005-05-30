@@ -1,6 +1,7 @@
 # Script for model-free analysis.
 
 # Set the run names (also the names of preset model-free models).
+#runs = ['tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
 runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Nuclei type
