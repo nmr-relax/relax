@@ -85,7 +85,7 @@ class Model_free:
             raise RelaxStrError, ('run2', run2)
 
         # The sim argument.
-        if type(sim) != int:
+        if sim != None and type(sim) != int:
             raise RelaxIntError, ('sim', sim)
 
         # Execute the functional code.

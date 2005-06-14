@@ -417,8 +417,13 @@ class Model_free(Common_functions):
         if not run2 in self.relax.data.run_names:
             raise RelaxNoRunError, run2
 
-        # Test if the run type is set to 'mf'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        # Test if the run type of run1 is set to 'mf'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
+        if function_type != 'mf':
+            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+
+        # Test if the run type of run2 is set to 'mf'.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run2)]
         if function_type != 'mf':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 

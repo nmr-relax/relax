@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -385,7 +385,7 @@ class Palmer:
         """Create the script 'run.sh' for the execution of Modelfree4."""
 
         file.write("#! /bin/sh\n")
-        file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out\n")
+        file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
         if self.relax.data.diff[self.run].type != 'iso':
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
             system('cp ' + self.relax.data.pdb[self.run].file_name + ' ' + self.dir)
@@ -399,6 +399,9 @@ class Palmer:
         BUG:  Control-C during execution causes the cwd to stay as dir.
         """
 
+        # The current directory.
+        orig_dir = getcwd()
+
         # The directory.
         if dir == None:
             dir = run
@@ -408,46 +411,56 @@ class Palmer:
         # Change to this directory.
         chdir(dir)
 
-        # Test if the 'mfin' input file exists.
-        if not access('mfin', F_OK):
-            raise RelaxFileError, ('mfin input', 'mfin')
+        # Catch failures and return to the correct directory.
+        try:
+            # Test if the 'mfin' input file exists.
+            if not access('mfin', F_OK):
+                raise RelaxFileError, ('mfin input', 'mfin')
 
-        # Test if the 'mfdata' input file exists.
-        if not access('mfdata', F_OK):
-            raise RelaxFileError, ('mfdata input', 'mfdata')
+            # Test if the 'mfdata' input file exists.
+            if not access('mfdata', F_OK):
+                raise RelaxFileError, ('mfdata input', 'mfdata')
 
-        # Test if the 'mfmodel' input file exists.
-        if not access('mfmodel', F_OK):
-            raise RelaxFileError, ('mfmodel input', 'mfmodel')
+            # Test if the 'mfmodel' input file exists.
+            if not access('mfmodel', F_OK):
+                raise RelaxFileError, ('mfmodel input', 'mfmodel')
 
-        # Test if the 'mfpar' input file exists.
-        if not access('mfpar', F_OK):
-            raise RelaxFileError, ('mfpar input', 'mfpar')
+            # Test if the 'mfpar' input file exists.
+            if not access('mfpar', F_OK):
+                raise RelaxFileError, ('mfpar input', 'mfpar')
 
-        # Test if the 'PDB' input file exists.
-        if self.relax.data.diff[run].type != 'iso':
-            pdb = self.relax.data.pdb[self.run].file_name.split('/')[-1]
-            if not access(pdb, F_OK):
-                raise RelaxFileError, ('PDB', pdb)
-        else:
-            pdb = None
+            # Test if the 'PDB' input file exists.
+            if self.relax.data.diff[run].type != 'iso':
+                pdb = self.relax.data.pdb[self.run].file_name.split('/')[-1]
+                if not access(pdb, F_OK):
+                    raise RelaxFileError, ('PDB', pdb)
+            else:
+                pdb = None
 
-        # Remove the file 'mfout' and '*.out' if the force flag is set.
-        if force:
-            for file in listdir(getcwd()):
-                if search('out$', file) or search('rotate$', file):
-                    remove(file)
+            # Remove the file 'mfout' and '*.out' if the force flag is set.
+            if force:
+                for file in listdir(getcwd()):
+                    if search('out$', file) or search('rotate$', file):
+                        remove(file)
 
-        # Execute Modelfree4.
-        if pdb:
-            spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
-        else:
-            test = spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
-            if test:
-                raise RelaxProgFailError, 'Modelfree4'
+            # Execute Modelfree4.
+            if pdb:
+                spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
+            else:
+                test = spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
+                if test:
+                    raise RelaxProgFailError, 'Modelfree4'
+
+        # Failure.
+        except:
+            # Change back to the original directory.
+            chdir(orig_dir)
+
+            # Reraise the error.
+            raise
 
         # Change back to the original directory.
-        chdir('..')
+        chdir(orig_dir)
 
 
     def extract(self, run, dir):
