@@ -1671,7 +1671,7 @@ class Model_free(Common_functions):
         """
 
         # Upper limit flag for correlation times.
-        upper_time_limit = 0
+        upper_time_limit = 1
 
         # Initialisation (0..j..m).
         A = []
