@@ -80,7 +80,7 @@ class Rx_data:
         # Relaxation data.
         if not sim:
             # Initialise the relaxation data structures (if needed).
-            self.initialise_relax_data(data)
+            self.data_init(data)
 
             # Relaxation data and errors.
             data.relax_data = values
