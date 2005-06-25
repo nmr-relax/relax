@@ -18,38 +18,38 @@ def exec_stage_1(runs):
     """
 
     # Loop over the runs.
-    for run in runs:
+    for name in runs:
         # Create the run.
-        print "\n\n# " + run + " #"
-        run.create(run, 'mf')
+        print "\n\n# " + name + " #"
+        run.create(name, 'mf')
 
         # Load the sequence.
-        sequence.read(run, 'noe.500.out')
+        sequence.read(name, 'noe.500.out')
 
         # PDB.
-        #pdb(run, 'Ap4Aase_new_3.pdb')
+        #pdb(name, 'Ap4Aase_new_3.pdb')
 
         # Load the relaxation data.
-        relax_data.read(run, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
-        relax_data.read(run, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
-        relax_data.read(run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
-        relax_data.read(run, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
-        relax_data.read(run, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
-        relax_data.read(run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
+        relax_data.read(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
+        relax_data.read(name, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
+        relax_data.read(name, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
+        relax_data.read(name, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
+        relax_data.read(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
+        relax_data.read(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
         # Setup other values.
-        diffusion_tensor.set(run, 1e-8)
-        value.set(run, 1.02 * 1e-10, 'bond_length')
-        value.set(run, -170 * 1e-6, 'csa')
+        diffusion_tensor.set(name, 1e-8)
+        value.set(name, 1.02 * 1e-10, 'bond_length')
+        value.set(name, -170 * 1e-6, 'csa')
 
         # Select the model-free model.
-        model_free.select_model(run=run, model=run)
+        model_free.select_model(run=name, model=name)
 
         # Create the Modelfree4 files.
-        palmer.create(run=run, force=0, sims=0)
+        palmer.create(run=name, force=0, sims=0)
 
         # Run Modelfree4.
-        palmer.execute(run=run, force=1)
+        palmer.execute(run=name, force=1)
 
     # Save the program state.
     state.save('stage1.save', force=1)
@@ -68,21 +68,21 @@ def exec_stage_2(runs):
     print "\n\nLoading all the Modelfree 4 data."
 
     # Extract the Modelfree4 data from the 'mfout' files.
-    for run in runs:
-        palmer.extract(run=run)
+    for name in runs:
+        palmer.extract(run=name)
 
     # Print out.
     print "\n\nModel selection."
 
     # Create the model selection run.
-    run = 'aic'
-    run.create(run, 'mf')
+    name = 'aic'
+    run.create(name, 'mf')
 
     # Model selection.
-    model_selection(method='AIC', modsel_run=run)
+    model_selection(method='AIC', modsel_run=name)
 
     # Write the results.
-    results.write(run=run, file='results', force=1)
+    results.write(run=name, file='results', force=1)
 
     # Save the program state.
     state.save('stage2.save', force=1)
@@ -98,19 +98,19 @@ def exec_stage_3():
     state.load('stage2.save')
 
     # Set the run name.
-    run = 'aic'
+    name = 'aic'
 
     # Let the diffusion tensor parameters be optimised.
-    fix(run, 'diff', 0)
+    fix(name, 'diff', 0)
 
     # Create the Modelfree4 files (change sims as needed, see below).
-    palmer.create(run=run, dir='final', force=1, sims=0)
+    palmer.create(run=name, dir='final', force=1, sims=0)
 
     # Run Modelfree4.
-    palmer.execute(run=run, dir='final', force=1)
+    palmer.execute(run=name, dir='final', force=1)
 
     # Extract the Modelfree4 data from the 'mfout' file.
-    palmer.extract(run=run, dir='final')
+    palmer.extract(run=name, dir='final')
 
     # Save the program state.
     state.save('stage3.save', force=1)

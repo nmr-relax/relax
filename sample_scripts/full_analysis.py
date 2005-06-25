@@ -158,37 +158,37 @@ class Main:
                 self.base_dir = self.diff_model + '/init/'
 
                 # Run name.
-                run = self.diff_model
+                name = self.diff_model
 
                 # Create the run.
-                run.create(run, 'mf')
+                run.create(name, 'mf')
 
                 # Load the local tm diffusion model MI results.
-                results.read(run=run, file='results', dir='local_tm/aic')
+                results.read(run=name, file='results', dir='local_tm/aic')
 
                 # Remove the tm parameter.
-                model_free.remove_tm(run=run)
+                model_free.remove_tm(run=name)
 
                 # Load the PDB file.
-                pdb(run, '1F3Y.pdb')
+                pdb(name, '1F3Y.pdb')
 
                 # Add an arbitrary diffusion tensor which will be optimised.
                 if self.diff_model == 'iso':
-                    diffusion_tensor.set(run, 10e-9, fixed=0)
+                    diffusion_tensor.set(name, 10e-9, fixed=0)
                 elif self.diff_model == 'prolate':
-                    diffusion_tensor.set(run, (10e-9, 0, 0, 0), axial_type='prolate', fixed=0)
+                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), axial_type='prolate', fixed=0)
                 elif self.diff_model == 'oblate':
-                    diffusion_tensor.set(run, (10e-9, 0, 0, 0), axial_type='oblate', fixed=0)
+                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), axial_type='oblate', fixed=0)
                 elif self.diff_model == 'aniso':
-                    diffusion_tensor.set(run, (8.6e-09, -8e6, 0, 360, 90, 360), fixed=0)
+                    diffusion_tensor.set(name, (8.6e-09, -8e6, 0, 360, 90, 360), fixed=0)
 
                 # Minimise just the diffusion tensor.
-                fix(run, 'all_res')
-                grid_search(run, inc=11)
-                minimise('newton', run=run)
+                fix(name, 'all_res')
+                grid_search(name, inc=11)
+                minimise('newton', run=name)
 
                 # Write the results.
-                results.write(run=run, file='results', dir=self.base_dir, force=1)
+                results.write(run=name, file='results', dir=self.base_dir, force=1)
 
 
             # Normal round of optimisation for diffusion models MII to MV.
@@ -206,21 +206,21 @@ class Main:
                 run.delete('tensor')
 
                 # Create the final run (for model selection and final optimisation).
-                run = 'final'
-                run.create(run, 'mf')
+                name = 'final'
+                run.create(name, 'mf')
 
                 # Model selection.
-                self.model_selection(run=run, dir=self.base_dir + 'aic')
+                self.model_selection(run=name, dir=self.base_dir + 'aic')
 
                 # Final optimisation of all diffusion and model-free parameters.
-                fix(run, 'all', fixed=0)
+                fix(name, 'all', fixed=0)
 
                 # Minimise all parameters.
-                minimise('newton', run=run)
+                minimise('newton', run=name)
 
                 # Write the results.
                 dir = self.base_dir + 'opt'
-                results.write(run=run, file='results', dir=dir, force=1)
+                results.write(run=name, file='results', dir=dir, force=1)
 
 
         # Final run.
@@ -332,18 +332,18 @@ class Main:
             results.read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, run=None, dir=None, write_flag=1):
+    def model_selection(self, name=None, dir=None, write_flag=1):
         """Model selection function."""
 
         # Model elimination.
         eliminate()
 
         # Model selection.
-        model_selection('AIC', run)
+        model_selection('AIC', name)
 
         # Write the results.
         if write_flag:
-            results.write(run=run, file='results', dir=dir, force=1)
+            results.write(run=name, file='results', dir=dir, force=1)
 
 
     def multi_model(self, local_tm=0):
@@ -358,47 +358,47 @@ class Main:
         # Nuclei type
         nuclei('N')
 
-        for run in runs:
+        for name in runs:
             # Create the run.
-            run.create(run, 'mf')
+            run.create(name, 'mf')
 
             # Load the sequence.
-            sequence.read(run, 'noe.600.out')
+            sequence.read(name, 'noe.600.out')
 
             # Load the PDB file.
             if not local_tm:
-                pdb(run, '1F3Y.pdb')
+                pdb(name, '1F3Y.pdb')
 
             # Load the relaxation data.
-            relax_data.read(run, 'R1', '600', 599.719 * 1e6, 'r1.600.out')
-            relax_data.read(run, 'R2', '600', 599.719 * 1e6, 'r2.600.out')
-            relax_data.read(run, 'NOE', '600', 599.719 * 1e6, 'noe.600.out')
-            relax_data.read(run, 'R1', '500', 500.208 * 1e6, 'r1.500.out')
-            relax_data.read(run, 'R2', '500', 500.208 * 1e6, 'r2.500.out')
-            relax_data.read(run, 'NOE', '500', 500.208 * 1e6, 'noe.500.out')
+            relax_data.read(name, 'R1', '600', 599.719 * 1e6, 'r1.600.out')
+            relax_data.read(name, 'R2', '600', 599.719 * 1e6, 'r2.600.out')
+            relax_data.read(name, 'NOE', '600', 599.719 * 1e6, 'noe.600.out')
+            relax_data.read(name, 'R1', '500', 500.208 * 1e6, 'r1.500.out')
+            relax_data.read(name, 'R2', '500', 500.208 * 1e6, 'r2.500.out')
+            relax_data.read(name, 'NOE', '500', 500.208 * 1e6, 'noe.500.out')
 
             # Unselect unresolved residues.
-            unselect.read(run, file='unresolved')
+            unselect.read(name, file='unresolved')
 
             # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
             if not local_tm:
-                diffusion_tensor.copy('tensor', run)
-                fix(run, 'diff')
+                diffusion_tensor.copy('tensor', name)
+                fix(name, 'diff')
 
             # Set the bond length and CSA values.
-            value.set(run, 1.02 * 1e-10, 'bond_length')
-            value.set(run, -170 * 1e-6, 'csa')
+            value.set(name, 1.02 * 1e-10, 'bond_length')
+            value.set(name, -170 * 1e-6, 'csa')
 
             # Select the model-free model.
-            model_free.select_model(run=run, model=run)
+            model_free.select_model(run=name, model=name)
 
             # Minimise.
-            grid_search(run, inc=11)
-            minimise('newton', run=run)
+            grid_search(name, inc=11)
+            minimise('newton', run=name)
 
             # Write the results.
-            dir = self.base_dir + run
-            results.write(run=run, file='results', dir=dir, force=1)
+            dir = self.base_dir + name
+            results.write(run=name, file='results', dir=dir, force=1)
 
 
 # The main class.
