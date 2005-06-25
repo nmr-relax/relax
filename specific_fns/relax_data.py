@@ -36,6 +36,10 @@ class Rx_data:
 
         # Arguments.
         self.run = run
+        self.ri_labels = ri_labels
+        self.remap_table = remap_table
+        self.frq_labels = frq_labels
+        self.frq = frq
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -49,27 +53,26 @@ class Rx_data:
         # Global (non-residue specific) data.
         #####################################
 
-        # Initialise dictionaries.
-        if not hasattr(self.relax.data, 'ri_labels'):
-            self.relax.data.ri_labels = {}
-            self.relax.data.remap_table = {}
-            self.relax.data.frq_labels = {}
-            self.relax.data.frq = {}
-            self.relax.data.num_ri = {}
-            self.relax.data.num_frq = {}
+        # Global data flag.
+        self.global_flag = 1
+
+        # Initialise the global data if necessary.
+        self.data_init(self.relax.data)
 
         # Add the data structures.
-        if not self.relax.data.ri_labels.has_key(self.run):
-            self.relax.data.ri_labels[self.run] = ri_labels
-            self.relax.data.remap_table[self.run] = remap_table
-            self.relax.data.frq_labels[self.run] = frq_labels
-            self.relax.data.frq[self.run] = frq
-            self.relax.data.num_ri[self.run] = len(ri_labels)
-            self.relax.data.num_frq[self.run] = len(frq)
+        self.relax.data.ri_labels[self.run] = ri_labels
+        self.relax.data.remap_table[self.run] = remap_table
+        self.relax.data.frq_labels[self.run] = frq_labels
+        self.relax.data.frq[self.run] = frq
+        self.relax.data.num_ri[self.run] = len(ri_labels)
+        self.relax.data.num_frq[self.run] = len(frq)
 
 
         # Residue specific data.
         ########################
+
+        # Global data flag.
+        self.global_flag = 0
 
         # Remap the data structure 'self.relax.data.res[self.run][res_index]'.
         data = self.relax.data.res[self.run][res_index]
@@ -140,6 +143,26 @@ class Rx_data:
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
         if self.test_labels(run):
             raise RelaxRiError, (self.ri_label, self.frq_label)
+
+
+        # Global (non-residue specific) data.
+        #####################################
+
+        # Global data flag.
+        self.global_flag = 1
+
+        # Initialise the global data if necessary.
+        self.data_init(self.relax.data)
+
+        # Update the global data.
+        self.update_global_data_structures()
+
+
+        # Residue specific data.
+        ########################
+
+        # Global data flag.
+        self.global_flag = 0
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
@@ -245,24 +268,61 @@ class Rx_data:
                 self.update_data_structures(data2, value, error)
 
 
-    def data_init(self, name):
-        """Function for returning an initial data structure corresponding to 'name'."""
+    def data_init(self, data):
+        """Function for initialising the data structures."""
 
-        # Empty arrays.
-        list_data = [ 'relax_data',
-                      'relax_error',
-                      'ri_labels',
-                      'remap_table',
-                      'noe_r1_table',
-                      'frq_labels',
-                      'frq' ]
-        if name in list_data:
-            return []
+        # Get the data names.
+        data_names = self.data_names()
 
-        # Zero.
-        zero_data = [ 'num_ri', 'num_frq' ]
-        if name in zero_data:
-            return 0
+        # Loop over the data structure names.
+        for name in data_names:
+            # Global data.
+            if self.global_flag == 1:
+                # Add the global data structure if it does not exist.
+                if not hasattr(data, name):
+                    setattr(data, name, {})
+
+            # Data structures which are initially empty arrays.
+            list_data = [ 'relax_data',
+                          'relax_error',
+                          'ri_labels',
+                          'remap_table',
+                          'noe_r1_table',
+                          'frq_labels',
+                          'frq' ]
+            if name in list_data:
+                # Global data.
+                if self.global_flag == 1:
+                    # Get the object.
+                    object = getattr(data, name)
+
+                    # Add the data if the key is missing.
+                    if not object.has_key(self.run):
+                        object[self.run] = []
+
+                # Residue specific data.
+                else:
+                    # If the name is not in 'data', add it.
+                    if not hasattr(data, name):
+                        setattr(data, name, [])
+
+            # Data structures which are initially zero.
+            zero_data = [ 'num_ri', 'num_frq' ]
+            if name in zero_data:
+                # Global data.
+                if self.global_flag == 1:
+                    # Get the object.
+                    object = getattr(data, name)
+
+                    # Add the data if the key is missing.
+                    if not object.has_key(self.run):
+                        object[self.run] = 0
+
+                # Residue specific data.
+                else:
+                    # If the name is not in 'data', add it.
+                    if not hasattr(data, name):
+                        setattr(data, name, 0)
 
 
     def data_names(self):
@@ -296,15 +356,27 @@ class Rx_data:
         frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
         """
 
-        names = [ 'relax_data',
-                  'relax_error',
-                  'num_ri',
-                  'num_frq',
-                  'ri_labels',
-                  'remap_table',
-                  'noe_r1_table',
-                  'frq_labels',
-                  'frq' ]
+        # Global data names.
+        if self.global_flag == 1:
+            names = [ 'num_ri',
+                      'num_frq',
+                      'ri_labels',
+                      'remap_table',
+                      'noe_r1_table',
+                      'frq_labels',
+                      'frq' ]
+
+        # Residue specific data names.
+        else:
+            names = [ 'relax_data',
+                      'relax_error',
+                      'num_ri',
+                      'num_frq',
+                      'ri_labels',
+                      'remap_table',
+                      'noe_r1_table',
+                      'frq_labels',
+                      'frq' ]
 
         return names
 
@@ -404,33 +476,28 @@ class Rx_data:
         """Function for finding the index corresponding to self.ri_label and self.frq_label."""
 
         # No data.num_ri data structure.
-        if not hasattr(data, 'num_ri'):
-            return None
+        if self.global_flag == 1:
+            if not data.num_ri.has_key(self.relax):
+                return None
+        else:
+            if not hasattr(data, 'num_ri'):
+                return None
+
+        # Initialise.
+        index = None
 
         # Find the index.
-        index = None
-        for j in xrange(data.num_ri):
-            if self.ri_label == data.ri_labels[j] and self.frq_label == data.frq_labels[data.remap_table[j]]:
-                index = j
+        if self.global_flag == 1:
+            for j in xrange(data.num_ri[self.run]):
+                if self.ri_label == data.ri_labels[self.run][j] and self.frq_label == data.frq_labels[self.run][data.remap_table[self.run][j]]:
+                    index = j
+        else:
+            for j in xrange(data.num_ri):
+                if self.ri_label == data.ri_labels[j] and self.frq_label == data.frq_labels[data.remap_table[j]]:
+                    index = j
 
         # Return the index.
         return index
-
-
-    def initialise_relax_data(self, data):
-        """Function for initialisation of relaxation data structures.
-
-        Only data structures which do not exist are created.
-        """
-
-        # Get the data names.
-        data_names = self.data_names()
-
-        # Loop over the names.
-        for name in data_names:
-            # If the name is not in 'data', add it.
-            if not hasattr(data, name):
-                setattr(data, name, self.data_init(name))
 
 
     def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
@@ -488,58 +555,21 @@ class Rx_data:
         # Global (non-residue specific) data.
         #####################################
 
-        # Initialise dictionaries.
-        if not hasattr(self.relax.data, 'ri_labels'):
-            self.relax.data.ri_labels = {}
-            self.relax.data.remap_table = {}
-            self.relax.data.frq_labels = {}
-            self.relax.data.frq = {}
-            self.relax.data.num_ri = {}
-            self.relax.data.num_frq = {}
+        # Global data flag.
+        self.global_flag = 1
 
-        # Initialise empty data structures.
-        if not self.relax.data.ri_labels.has_key(self.run):
-            self.relax.data.ri_labels[self.run] = []
-            self.relax.data.remap_table[self.run] = []
-            self.relax.data.frq_labels[self.run] = []
-            self.relax.data.frq[self.run] = []
-            self.relax.data.num_ri[self.run] = 0
-            self.relax.data.num_frq[self.run] = 0
+        # Initialise the global data if necessary.
+        self.data_init(self.relax.data)
 
-        # The index.
-        i = len(self.relax.data.ri_labels[self.run]) - 1
-
-        # Update the number of relaxation data points.
-        self.relax.data.num_ri[self.run] = self.relax.data.num_ri[self.run] + 1
-
-        # Add ri_label to the data types.
-        self.relax.data.ri_labels[self.run].append(self.ri_label)
-
-        # Find if the frequency self.frq has already been loaded.
-        remap = len(self.relax.data.frq[self.run])
-        flag = 0
-        for j in xrange(len(self.relax.data.frq[self.run])):
-            if self.frq == self.relax.data.frq[self.run][j]:
-                remap = j
-                flag = 1
-
-        # Update the remap table.
-        self.relax.data.remap_table[self.run].append(remap)
-
-        # Update the data structures which have a length equal to the number of field strengths.
-        if not flag:
-            # Update the number of frequencies.
-            self.relax.data.num_frq[self.run] = self.relax.data.num_frq[self.run] + 1
-
-            # Update the frequency labels.
-            self.relax.data.frq_labels[self.run].append(self.frq_label)
-
-            # Update the frequency array.
-            self.relax.data.frq[self.run].append(self.frq)
+        # Update the global data.
+        self.update_global_data_structures()
 
 
         # Residue specific data.
         ########################
+
+        # Global data flag.
+        self.global_flag = 0
 
         # Store the indecies for which relaxation data has been added.
         index_list = []
@@ -643,7 +673,7 @@ class Rx_data:
         """Function for updating all relaxation data structures."""
 
         # Initialise the relaxation data structures (if needed).
-        self.initialise_relax_data(data)
+        self.data_init(data)
 
         # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
         index = self.find_index(data)
@@ -709,6 +739,60 @@ class Rx_data:
             for j in xrange(data.num_ri):
                 if data.ri_labels[j] == 'NOE' and self.frq_label == data.frq_labels[data.remap_table[j]]:
                     data.noe_r1_table[j] = data.num_ri - 1
+
+
+    def update_global_data_structures(self):
+        """Function for updating all relaxation data structures."""
+
+        # Initialise the relaxation data structures (if needed).
+        self.data_init(self.relax.data)
+
+        # The index.
+        i = len(self.relax.data.ri_labels[self.run]) - 1
+
+        # Update the number of relaxation data points.
+        self.relax.data.num_ri[self.run] = self.relax.data.num_ri[self.run] + 1
+
+        # Add ri_label to the data types.
+        self.relax.data.ri_labels[self.run].append(self.ri_label)
+
+        # Find if the frequency self.frq has already been loaded.
+        remap = len(self.relax.data.frq[self.run])
+        flag = 0
+        for j in xrange(len(self.relax.data.frq[self.run])):
+            if self.frq == self.relax.data.frq[self.run][j]:
+                remap = j
+                flag = 1
+
+        # Update the remap table.
+        self.relax.data.remap_table[self.run].append(remap)
+
+        # Update the data structures which have a length equal to the number of field strengths.
+        if not flag:
+            # Update the number of frequencies.
+            self.relax.data.num_frq[self.run] = self.relax.data.num_frq[self.run] + 1
+
+            # Update the frequency labels.
+            self.relax.data.frq_labels[self.run].append(self.frq_label)
+
+            # Update the frequency array.
+            self.relax.data.frq[self.run].append(self.frq)
+
+        # Update the NOE R1 translation table.
+        self.relax.data.noe_r1_table[self.run].append(None)
+
+        # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
+        if self.ri_label == 'NOE':
+            for j in xrange(self.relax.data.num_ri[self.run]):
+                if self.relax.data.ri_labels[self.run][j] == 'R1' and self.frq_label == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][j]]:
+                    self.relax.data.noe_r1_table[self.run][self.relax.data.num_ri[self.run] - 1] = j
+
+        # Update the NOE R1 translation table.
+        # If the data corresponds to 'R1', try to find if the corresponding NOE data.
+        if self.ri_label == 'R1':
+            for j in xrange(self.relax.data.num_ri[self.run]):
+                if self.relax.data.ri_labels[self.run][j] == 'NOE' and self.frq_label == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][j]]:
+                    self.relax.data.noe_r1_table[self.run][j] = self.relax.data.num_ri[self.run] - 1
 
 
     def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):

@@ -26,43 +26,6 @@ class Common_functions:
         """Base class containing functions common to the specific functions."""
 
 
-    def initialise_data(self, data, run, sim=0, err=0):
-        """Function for the initialisation of data structures.
-
-        Only data structures which do not exist are created.
-        """
-
-        # Get the data names.
-        data_names = self.data_names()
-
-        # Standard data structures.
-        if not sim and not err:
-            for name in data_names:
-                # If the name is not in 'data', add it.
-                if not hasattr(data, name):
-                    setattr(data, name, self.data_init(name))
-
-        # Simulation data structures.
-        if sim:
-            for name in data_names:
-                # Add '_sim' to the names.
-                name = name + '_sim'
-
-                # If the name is not in 'data', add it.
-                if not hasattr(data, name):
-                    setattr(data, name, self.data_init(name))
-
-        # Error data structures.
-        if err:
-            for name in data_names:
-                # Add '_sim' to the names.
-                name = name + '_sim'
-
-                # If the name is not in 'data', add it.
-                if not hasattr(data, name):
-                    setattr(data, name, self.data_init(name))
-
-
     def return_data(self, run, i):
         """Function for returning the Ri data structure."""
 

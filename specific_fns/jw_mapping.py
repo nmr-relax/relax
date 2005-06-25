@@ -134,7 +134,7 @@ class Jw_mapping(Common_functions):
             # Monte Carlo simulated reduced spectral density values.
             else:
                 # Initialise the simulation data structures.
-                self.initialise_data(data, self.run, sim=1)
+                self.data_init(data, sim=1)
                 if data.j0_sim == None:
                     data.j0_sim = []
                     data.jwx_sim = []
@@ -146,10 +146,23 @@ class Jw_mapping(Common_functions):
                 data.jwh_sim.append(jwh)
 
 
-    def data_init(self, name):
-        """Function for returning an initial data structure corresponding to 'name'."""
+    def data_init(self, data, sim=0):
+        """Function for initialising the data structures."""
 
-        return None
+        # Get the data names.
+        data_names = self.data_names()
+
+        # Loop over the data structure names.
+        for name in data_names:
+            # Simulation data structures.
+            if sim:
+                # Add '_sim' to the names.
+                name = name + '_sim'
+
+            # If the name is not in 'data', add it.
+            if not hasattr(data, name):
+                # Set the attribute.
+                setattr(data, name, None)
 
 
     def data_names(self):
@@ -310,7 +323,7 @@ class Jw_mapping(Common_functions):
 
             # Initilise data.
             if not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'csa'):
-                self.initialise_data(self.relax.data.res[self.run][index], self.run)
+                self.data_init(self.relax.data.res[self.run][index])
 
             # CSA and Bond length.
             setattr(self.relax.data.res[self.run][index], 'csa', float(value[0]))
@@ -328,7 +341,7 @@ class Jw_mapping(Common_functions):
 
             # Initialise all data if it doesn't exist.
             if not hasattr(self.relax.data.res[self.run][index], object_name):
-                self.initialise_data(self.relax.data.res[self.run][index], self.run)
+                self.data_init(self.relax.data.res[self.run][index])
 
             # Default value.
             if value == None:

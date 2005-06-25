@@ -631,35 +631,44 @@ class Model_free(Common_functions):
         self.model_setup(run, model, equation, params, res_num)
 
 
-    def data_init(self, name):
-        """Function for returning an initial data structure corresponding to 'name'."""
+    def data_init(self, data):
+        """Function for initialising the data structures."""
 
-        # Empty arrays.
-        list_data = [ 'params' ]
-        if name in list_data:
-            return []
+        # Get the data names.
+        data_names = self.data_names()
 
-        # None.
-        none_data = [ 'equation',
-                      'model',
-                      's2',
-                      's2f',
-                      's2s',
-                      'tm',
-                      'te',
-                      'tf',
-                      'ts',
-                      'rex',
-                      'r',
-                      'csa',
-                      'chi2',
-                      'iter',
-                      'f_count',
-                      'g_count',
-                      'h_count',
-                      'warning' ]
-        if name in none_data:
-            return None
+        # Loop over the data structure names.
+        for name in data_names:
+            # Data structures which are initially empty arrays.
+            list_data = [ 'params' ]
+            if name in list_data:
+                # If the name is not in 'data', add it.
+                if not hasattr(data, name):
+                    setattr(data, name, [])
+
+            # Data structures which are initially None.
+            none_data = [ 'equation',
+                          'model',
+                          's2',
+                          's2f',
+                          's2s',
+                          'tm',
+                          'te',
+                          'tf',
+                          'ts',
+                          'rex',
+                          'r',
+                          'csa',
+                          'chi2',
+                          'iter',
+                          'f_count',
+                          'g_count',
+                          'h_count',
+                          'warning' ]
+            if name in none_data:
+                # If the name is not in 'data', add it.
+                if not hasattr(data, name):
+                    setattr(data, name, None)
 
 
     def data_names(self, set='all'):
@@ -2515,7 +2524,7 @@ class Model_free(Common_functions):
                 continue
 
             # Initialise the data structures (if needed).
-            self.initialise_data(self.relax.data.res[run][i], run)
+            self.data_init(self.relax.data.res[run][i])
 
             # Model-free model, equation, and parameter types.
             self.relax.data.res[run][i].model = model
@@ -3880,7 +3889,7 @@ class Model_free(Common_functions):
 
                 # Initialise all data if it doesn't exist.
                 if not hasattr(self.relax.data.res[self.run][index], object_name):
-                    self.initialise_data(self.relax.data.res[self.run][index], self.run)
+                    self.data_init(self.relax.data.res[self.run][index])
 
                 # Set the value.
                 setattr(self.relax.data.res[self.run][index], object_name, float(value[i]))
@@ -3897,7 +3906,7 @@ class Model_free(Common_functions):
 
             # Initialise all data if it doesn't exist.
             if not hasattr(self.relax.data.res[self.run][index], object_name):
-                self.initialise_data(self.relax.data.res[self.run][index], self.run)
+                self.data_init(self.relax.data.res[self.run][index])
 
             # Default value.
             if value == None:
