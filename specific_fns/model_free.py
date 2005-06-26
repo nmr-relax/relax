@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -3518,32 +3518,54 @@ class Model_free(Common_functions):
         self.relax.data.warning[self.run] = None
 
 
-    def return_value(self, run, i, data_type):
-        """Function for returning the value and error corresponding to 'data_type'."""
+    def return_value(self, run, i, data_type, sim=None):
+        """Function for returning the value and error corresponding to 'data_type'.
+        
+        If sim is set to an integer, return the value of the simulation and None.
+        """
 
         # Arguments.
         self.run = run
 
-        # Get the object.
+        # Get the object name.
         object_name = self.get_data_name(data_type)
+
+        # The data type does not exist.
         if not object_name:
             raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
-        object_error = object_name + "_err"
 
-        # Get the value.
-        if hasattr(self.relax.data.res[self.run][i], object_name):
-            value = getattr(self.relax.data.res[self.run][i], object_name)
+        # The error and simulation names.
+        object_error = object_name + '_err'
+        object_sim = object_name + '_sim'
+
+        # Value and error.
+        if sim == None:
+            # Get the value.
+            if hasattr(self.relax.data.res[self.run][i], object_name):
+                value = getattr(self.relax.data.res[self.run][i], object_name)
+            else:
+                value = None
+
+            # Get the error.
+            if hasattr(self.relax.data.res[self.run][i], object_error):
+                error = getattr(self.relax.data.res[self.run][i], object_error)
+            else:
+                error = None
+
+            # Return the data.
+            return value, error
+
+        # Simulation value.
         else:
-            value = None
+            # Get the value.
+            if hasattr(self.relax.data.res[self.run][i], object_sim):
+                object = getattr(self.relax.data.res[self.run][i], object_sim)
+                value = object[sim]
+            else:
+                value = None
 
-        # Get the error.
-        if hasattr(self.relax.data.res[self.run][i], object_error):
-            error = getattr(self.relax.data.res[self.run][i], object_error)
-        else:
-            error = None
-
-        # Return the data.
-        return value, error
+            # Return the data.
+            return value, None
 
 
     def select_model(self, run=None, model=None, res_num=None):

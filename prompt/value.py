@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,7 @@
 
 import sys
 
+from doc_string import regexp_doc
 import help
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
@@ -505,52 +506,27 @@ class Value:
     # Docstring modification.
     #########################
 
-    __re_doc__ = """
-
-        Regular expression
-        ~~~~~~~~~~~~~~~~~~
-
-        The python function 'match', which uses regular expression, is used to determine which data
-        type to set values to, therefore various data_type strings can be used to select the same
-        data type.  Patterns used for matching for specific data types are listed below.  Regular
-        expression is also used in residue name and number selections, except this time the user
-        supplies the regular expression string.
-
-        This is a short description of python regular expression, for more information, see the
-        regular expression syntax section of the Python Library Reference.  Some of the regular
-        expression syntax used in this function is:
-
-            [] - A sequence or set of characters to match to a single character.  For example,
-            '[Ss]2' will match both 'S2' and 's2'.
-
-            ^ - Match the start of the string.
-
-            $ - Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
-            or 's2s'.
-
-    """
-
     # Copy function.
-    copy.__doc__ = copy.__doc__ + "\n\n" + __re_doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + "\n\n" + regexp_doc() + "\n"
     copy.__doc__ = copy.__doc__ + Model_free.get_data_name.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Model_free.set.__doc__ + "\n\n"
     copy.__doc__ = copy.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Jw_mapping.set.__doc__ + "\n"
 
     # Display function.
-    display.__doc__ = display.__doc__ + "\n\n" + __re_doc__ + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + regexp_doc() + "\n"
     display.__doc__ = display.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
     display.__doc__ = display.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
 
     # Read function.
-    read.__doc__ = read.__doc__ + "\n\n" + __re_doc__ + "\n"
+    read.__doc__ = read.__doc__ + "\n\n" + regexp_doc() + "\n"
     read.__doc__ = read.__doc__ + Model_free.get_data_name.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Model_free.set.__doc__ + "\n\n"
     read.__doc__ = read.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Jw_mapping.set.__doc__ + "\n"
 
     # Set function.
-    set.__doc__ = set.__doc__ + "\n\n" + __re_doc__ + "\n"
+    set.__doc__ = set.__doc__ + "\n\n" + regexp_doc() + "\n"
     set.__doc__ = set.__doc__ + Model_free.get_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.set.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
@@ -559,7 +535,7 @@ class Value:
     set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + __re_doc__ + "\n"
+    write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
     write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Noe.get_data_name.__doc__ + "\n"

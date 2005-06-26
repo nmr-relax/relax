@@ -403,7 +403,7 @@ class RelaxErrors:
     # Value already exists.
     class RelaxValueError(BaseError):
         def __init__(self, data_type, run):
-            self.text = "The data type " + `data_type` + " already exists for " + `run` +"."
+            self.text = "The data type " + `data_type` + " already exists for " + `run` + "."
 
     # No data value.
     class RelaxNoValueError(BaseError):
@@ -414,3 +414,13 @@ class RelaxErrors:
     class RelaxUnknownParamCombError(BaseError):
         def __init__(self, name, data):
             self.text = "The " + `name` + " argument " + `data` + " represents an unknown parameter combination."
+
+
+    # Simulation errors.
+    ####################
+
+    # No simulations.
+    class RelaxNoSimError(BaseError):
+        def __init__(self, run):
+            self.text = "Simulations for the run " + `run` + " have not been setup."
+
