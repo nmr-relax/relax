@@ -143,6 +143,17 @@ class Grace:
                 if res_data[0] == None or res_data[2] == None:
                     continue
 
+                # X-axis conversion factors.
+                if self.x_data_type != 'res':
+                    res_data[0] = res_data[0] / self.return_conversion_factor(self.x_data_type)
+                    if res_data[1]:
+                        res_data[1] = res_data[1] / self.return_conversion_factor(self.x_data_type)
+
+                # Y-axis conversion factors.
+                res_data[2] = res_data[2] / self.return_conversion_factor(self.y_data_type)
+                if res_data[3]:
+                    res_data[3] = res_data[3] / self.return_conversion_factor(self.y_data_type)
+
                 # Append the array to the full data structure.
                 self.data.append(res_data)
 
@@ -204,8 +215,10 @@ class Grace:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Specific value and error returning function.
+        # Specific value and error, conversion factor, and units returning functions.
         self.return_value = self.relax.specific_setup.setup('return_value', function_type)
+        self.return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', function_type)
+        self.return_units = self.relax.specific_setup.setup('return_units', function_type)
 
         # Get the data.
         self.get_data()
@@ -276,6 +289,19 @@ class Grace:
             self.file.write("@    world xmin " + `self.relax.data.res[self.run][0].num - 1` + "\n")
             self.file.write("@    world xmax " + `self.relax.data.res[self.run][-1].num + 1` + "\n")
 
+        # X-axis label.
+        if self.x_data_type == 'res':
+            self.file.write("@    xaxis  label \"Residue number\"")
+        else:
+            # Get the units.
+            units = self.return_units(self.x_data_type)
+
+            # Label.
+            if units:
+                self.file.write("@    xaxis  label \"" + self.x_data_type + " (" + units + ")\"\n")
+            else:
+                self.file.write("@    xaxis  label \"" + self.x_data_type + "\"\n")
+
         # X-axis specific ticks.
         self.file.write("@    xaxis  tick major 10\n")
         self.file.write("@    xaxis  tick major size 0.48\n")
@@ -283,6 +309,13 @@ class Grace:
         self.file.write("@    xaxis  tick minor linewidth 0.5\n")
         self.file.write("@    xaxis  tick minor size 0.24\n")
         self.file.write("@    xaxis  ticklabel char size 0.79\n")
+
+        # Y-axis label.
+        units = self.return_units(self.y_data_type)
+        if units:
+            self.file.write("@    yaxis  label \"" + self.y_data_type + " (" + units + ")\"\n")
+        else:
+            self.file.write("@    yaxis  label \"" + self.y_data_type + "\"\n")
 
         # Y-axis specific ticks.
         self.file.write("@    yaxis  tick major size 0.48\n")
