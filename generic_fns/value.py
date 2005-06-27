@@ -328,35 +328,7 @@ class Value:
                     set(run=run, value=val, error=None, data_type=data_type[j], index=i)
 
             # Reset the minimisation statistics.
-            self.reset_min_stats(run, i)
-
-
-    def reset_min_stats(self, run, i):
-        """Reset the minimisation statistics."""
-
-        # Chi-squared.
-        if hasattr(self.relax.data.res[run][i], 'chi2'):
-            self.relax.data.res[run][i].chi2 = None
-
-        # Iteration count.
-        if hasattr(self.relax.data.res[run][i], 'iter'):
-            self.relax.data.res[run][i].iter = None
-
-        # Function count.
-        if hasattr(self.relax.data.res[run][i], 'f_count'):
-            self.relax.data.res[run][i].f_count = None
-
-        # Gradient count.
-        if hasattr(self.relax.data.res[run][i], 'g_count'):
-            self.relax.data.res[run][i].g_count = None
-
-        # Hessian count.
-        if hasattr(self.relax.data.res[run][i], 'h_count'):
-            self.relax.data.res[run][i].h_count = None
-
-        # Warning.
-        if hasattr(self.relax.data.res[run][i], 'warning'):
-            self.relax.data.res[run][i].warning = None
+            self.generic.minimise.reset_min_stats(run, i)
 
 
     def write(self, run=None, data_type=None, file=None, dir=None, force=0):

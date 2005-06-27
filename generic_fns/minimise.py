@@ -125,6 +125,62 @@ class Minimise:
             minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
 
 
+    def reset_min_stats(self, run, index=None):
+        """Function for resetting the minimisation statistics."""
+
+        # Global minimisation statistics.
+        if index == None:
+            # Chi-squared.
+            if hasattr(self.relax.data, 'chi2') and self.relax.data.chi2.has_key(run):
+                self.relax.data.chi2[run] = None
+
+            # Iteration count.
+            if hasattr(self.relax.data, 'iter') and self.relax.data.iter.has_key(run):
+                self.relax.data.iter[run] = None
+
+            # Function count.
+            if hasattr(self.relax.data, 'f_count') and self.relax.data.f_count.has_key(run):
+                self.relax.data.f_count[run] = None
+
+            # Gradient count.
+            if hasattr(self.relax.data, 'g_count') and self.relax.data.g_count.has_key(run):
+                self.relax.data.g_count[run] = None
+
+            # Hessian count.
+            if hasattr(self.relax.data, 'h_count') and self.relax.data.h_count.has_key(run):
+                self.relax.data.h_count[run] = None
+
+            # Warning.
+            if hasattr(self.relax.data, 'warning') and self.relax.data.warning.has_key(run):
+                self.relax.data.warning[run] = None
+
+        # Sequence specific minimisation statistics.
+        else:
+            # Chi-squared.
+            if hasattr(self.relax.data.res[run][index], 'chi2'):
+                self.relax.data.res[run][index].chi2 = None
+
+            # Iteration count.
+            if hasattr(self.relax.data.res[run][index], 'iter'):
+                self.relax.data.res[run][index].iter = None
+
+            # Function count.
+            if hasattr(self.relax.data.res[run][index], 'f_count'):
+                self.relax.data.res[run][index].f_count = None
+
+            # Gradient count.
+            if hasattr(self.relax.data.res[run][index], 'g_count'):
+                self.relax.data.res[run][index].g_count = None
+
+            # Hessian count.
+            if hasattr(self.relax.data.res[run][index], 'h_count'):
+                self.relax.data.res[run][index].h_count = None
+
+            # Warning.
+            if hasattr(self.relax.data.res[run][index], 'warning'):
+                self.relax.data.res[run][index].warning = None
+
+
 
 
 # Main threading loop for the minimisation of Monte Carlo simulations. 
