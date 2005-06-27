@@ -762,13 +762,7 @@ class Model_free(Common_functions):
         | Data type                             | Object name  | Value                        |
         |_______________________________________|______________|______________________________|
         |                                       |              |                              |
-        | Bond length                           | r            | 1.02 * 1e-10                 |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | CSA                                   | csa          | -170 * 1e-6                  |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Chemical exchange relaxation          | rex          | 0.0                          |
+        | Local tm                              | tm           | 10 * 1e-9                    |
         |_______________________________________|______________|______________________________|
         |                                       |              |                              |
         | Order parameters S2, S2f, and S2s     | s2, s2f, s2s | 0.8                          |
@@ -783,37 +777,51 @@ class Model_free(Common_functions):
         | Correlation time ts                   | ts           | 1000 * 1e-12                 |
         |_______________________________________|______________|______________________________|
         |                                       |              |                              |
-        | Local tm                              | tm           | 10 * 1e-9                    |
+        | Chemical exchange relaxation          | rex          | 0.0                          |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | Bond length                           | r            | 1.02 * 1e-10                 |
+        |_______________________________________|______________|______________________________|
+        |                                       |              |                              |
+        | CSA                                   | csa          | -170 * 1e-6                  |
         |_______________________________________|______________|______________________________|
 
         """
 
-        # Bond length.
-        if param == 'r':
-            return 1.02 * 1e-10
-
-        # CSA.
-        if param == 'CSA':
-            return -170 * 1e-6
-
-        # Rex.
-        if param == 'Rex':
-            return 0.0
+        # tm.
+        if param == 'tm':
+            value = 10.0 * 1e-9
 
         # {S2, S2f, S2s}.
-        if match('S2', param):
-            return 0.8
+        elif match('S2', param):
+            value = 0.8
 
-        # {te, tf, ts}.
-        elif match('t', param):
-            if param == 'tf':
-                return 10.0 * 1e-12
-            elif param == 'ts':
-                return 1000.0 * 1e-12
-            elif param == 'tm':
-                return 10.0 * 1e-9
-            else:
-                return 100.0 * 1e-12
+        # te.
+        elif param == 'te':
+            value = 100.0 * 1e-12
+
+        # tf.
+        elif param == 'tf':
+            value = 10.0 * 1e-12
+
+        # ts.
+        elif param == 'ts':
+            value = 1000.0 * 1e-12
+
+        # Rex.
+        elif param == 'Rex':
+            value = 0.0
+
+        # Bond length.
+        elif param == 'r':
+            value = 1.02 * 1e-10
+
+        # CSA.
+        elif param == 'CSA':
+            value = -170 * 1e-6
+
+        # Return the value.
+        return value
 
 
     def delete(self, run):
@@ -1293,13 +1301,7 @@ class Model_free(Common_functions):
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Chemical exchange      | rex          | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
+        | Local tm               | tm           | '^tm$'                                           |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
         | Order parameter S2     | s2           | '^[Ss]2$'                                        |
@@ -1320,22 +1322,20 @@ class Model_free(Common_functions):
         | Correlation time ts    | ts           | '^ts$'                                           |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Local tm               | tm           | '^tm$'                                           |
+        | Chemical exchange      | rex          | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
         |________________________|______________|__________________________________________________|
 
         """
 
-        # Bond length.
-        if match('^r$', name) or match('[Bb]ond[ -_][Ll]ength', name):
-            return 'r'
-
-        # CSA.
-        if match('^[Cc][Ss][Aa]$', name):
-            return 'csa'
-
-        # Rex
-        if match('^[Rr]ex$', name) or match('[Cc]emical[ -_][Ee]xchange', name):
-            return 'rex'
+        # Local tm.
+        if match('^tm$', name):
+            return 'tm'
 
         # Order parameter S2.
         if match('^[Ss]2$', name):
@@ -1361,9 +1361,17 @@ class Model_free(Common_functions):
         if match('^ts$', name):
             return 'ts'
 
-        # Local tm.
-        if match('^tm$', name):
-            return 'tm'
+        # Rex
+        if match('^[Rr]ex$', name) or match('[Cc]emical[ -_][Ee]xchange', name):
+            return 'rex'
+
+        # Bond length.
+        if match('^r$', name) or match('[Bb]ond[ -_][Ll]ength', name):
+            return 'r'
+
+        # CSA.
+        if match('^[Cc][Ss][Aa]$', name):
+            return 'csa'
 
 
     def get_param_names(self, run, i):
@@ -1943,59 +1951,21 @@ class Model_free(Common_functions):
 
         # Increment over the model parameters.
         for i in xrange(n):
-            # Local tm.
-            if params[swap[i]] == 'tm':
-                # Labels.
-                labels = labels + "\"" + params[swap[i]] + " (ns)\""
+            # Parameter conversion factors.
+            factor = self.return_conversion_factor(params[swap[i]])
 
-                # Tick values.
-                vals = bounds[swap[i], 0] * 1e9
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e9
+            # Parameter units.
+            units = self.return_units(params[swap[i]])
 
-            # {S2, S2f, S2s}.
-            elif match('S2', params[swap[i]]):
-                # Labels.
+            # Labels.
+            if units:
+                labels = labels + "\"" + params[swap[i]] + " (" + units + ")\""
+            else:
                 labels = labels + "\"" + params[swap[i]] + "\""
 
-                # Tick values.
-                vals = bounds[swap[i], 0] * 1.0
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1.0
-
-            # {te, tf, and ts}.
-            elif match('t', params[swap[i]]):
-                # Labels.
-                labels = labels + "\"" + params[swap[i]] + " (ps)\""
-
-                # Tick values.
-                vals = bounds[swap[i], 0] * 1e12
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e12
-
-            # Rex.
-            elif params[swap[i]] == 'Rex':
-                # Labels.
-                labels = labels + "\"Rex (" + self.relax.data.res[run][index].frq_labels[0] + " MHz)\""
-
-                # Tick values.
-                vals = bounds[swap[i], 0] * (2.0 * pi * self.relax.data.res[run][index].frq[0])**2
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * (2.0 * pi * self.relax.data.res[run][index].frq[0])**2
-
-            # Bond length.
-            elif params[swap[i]] == 'r':
-                # Labels.
-                labels = labels + "\"" + params[swap[i]] + " (A)\""
-
-                # Tick values.
-                vals = bounds[swap[i], 0] * 1e-10
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-10
-
-            # CSA.
-            elif params[swap[i]] == 'CSA':
-                # Labels.
-                labels = labels + "\"" + params[swap[i]] + " (ppm)\""
-
-                # Tick values.
-                vals = bounds[swap[i], 0] * 1e-6
-                val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / axis_incs * 1e-6
+            # Tick values.
+            vals = bounds[swap[i], 0] / factor
+            val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / (axis_incs * factor)
 
             if i < n - 1:
                 labels = labels + " "
@@ -2670,19 +2640,19 @@ class Model_free(Common_functions):
                 self.col['s2f'] = i
             elif header[i] == 'S2s':
                 self.col['s2s'] = i
-            elif header[i] == 'Local_tm_(ns)':
+            elif search('^Local_tm', header[i]):
                 self.col['local_tm'] = i
-            elif header[i] == 'te_(ps)':
+            elif search('^te', header[i]):
                 self.col['te'] = i
-            elif header[i] == 'tf_(ps)':
+            elif search('^tf', header[i]):
                 self.col['tf'] = i
-            elif header[i] == 'ts_(ps)':
+            elif search('^ts', header[i]):
                 self.col['ts'] = i
-            elif header[i] == 'Rex_(1st_field)':
+            elif search('^Rex', header[i]):
                 self.col['rex'] = i
-            elif header[i] == 'Bond_length_(A)':
+            elif search('^Bond_length', header[i]):
                 self.col['r'] = i
-            elif header[i] == 'CSA_(ppm)':
+            elif search('^CSA', header[i]):
                 self.col['csa'] = i
 
             # Minimisation info.
@@ -2937,61 +2907,61 @@ class Model_free(Common_functions):
         if self.data_set == 'value':
             # S2.
             try:
-                data.s2 = float(self.file_line[self.col['s2']])
+                data.s2 = float(self.file_line[self.col['s2']]) * self.return_conversion_factor('s2')
             except ValueError:
                 data.s2 = None
 
             # S2f.
             try:
-                data.s2f = float(self.file_line[self.col['s2f']])
+                data.s2f = float(self.file_line[self.col['s2f']]) * self.return_conversion_factor('s2f')
             except ValueError:
                 data.s2f = None
 
             # S2s.
             try:
-                data.s2s = float(self.file_line[self.col['s2s']])
+                data.s2s = float(self.file_line[self.col['s2s']]) * self.return_conversion_factor('s2s')
             except ValueError:
                 data.s2s = None
 
             # Local tm.
             try:
-                data.tm = float(self.file_line[self.col['local_tm']]) * 1e-9
+                data.tm = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('tm')
             except ValueError:
                 data.tm = None
 
             # te.
             try:
-                data.te = float(self.file_line[self.col['te']]) * 1e-12
+                data.te = float(self.file_line[self.col['te']]) * self.return_conversion_factor('te')
             except ValueError:
                 data.te = None
 
             # tf.
             try:
-                data.tf = float(self.file_line[self.col['tf']]) * 1e-12
+                data.tf = float(self.file_line[self.col['tf']]) * self.return_conversion_factor('tf')
             except ValueError:
                 data.tf = None
 
             # ts.
             try:
-                data.ts = float(self.file_line[self.col['ts']]) * 1e-12
+                data.ts = float(self.file_line[self.col['ts']]) * self.return_conversion_factor('ts')
             except ValueError:
                 data.ts = None
 
             # Rex.
             try:
-                data.rex = float(self.file_line[self.col['rex']]) / (2.0 * pi * data.frq[0])**2
+                data.rex = float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex')
             except:
                 data.rex = None
 
             # Bond length.
             try:
-                data.r = float(self.file_line[self.col['r']]) * 1e-10
+                data.r = float(self.file_line[self.col['r']]) * self.return_conversion_factor('r')
             except ValueError:
                 data.r = None
 
             # CSA.
             try:
-                data.csa = float(self.file_line[self.col['csa']]) * 1e-6
+                data.csa = float(self.file_line[self.col['csa']]) * self.return_conversion_factor('csa')
             except ValueError:
                 data.csa = None
 
@@ -3023,61 +2993,61 @@ class Model_free(Common_functions):
         if self.data_set == 'error':
             # S2.
             try:
-                data.s2_err = float(self.file_line[self.col['s2']])
+                data.s2_err = float(self.file_line[self.col['s2']]) * self.return_conversion_factor('s2')
             except ValueError:
                 data.s2_err = None
 
             # S2f.
             try:
-                data.s2f_err = float(self.file_line[self.col['s2f']])
+                data.s2f_err = float(self.file_line[self.col['s2f']]) * self.return_conversion_factor('s2f')
             except ValueError:
                 data.s2f_err = None
 
             # S2s.
             try:
-                data.s2s_err = float(self.file_line[self.col['s2s']])
+                data.s2s_err = float(self.file_line[self.col['s2s']]) * self.return_conversion_factor('s2s')
             except ValueError:
                 data.s2s_err = None
 
             # Local tm.
             try:
-                data.tm_err = float(self.file_line[self.col['local_tm']]) * 1e-9
+                data.tm_err = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('tm')
             except ValueError:
                 data.tm_err = None
 
             # te.
             try:
-                data.te_err = float(self.file_line[self.col['te']]) * 1e-12
+                data.te_err = float(self.file_line[self.col['te']]) * self.return_conversion_factor('te')
             except ValueError:
                 data.te_err = None
 
             # tf.
             try:
-                data.tf_err = float(self.file_line[self.col['tf']]) * 1e-12
+                data.tf_err = float(self.file_line[self.col['tf']]) * self.return_conversion_factor('tf')
             except ValueError:
                 data.tf_err = None
 
             # ts.
             try:
-                data.ts_err = float(self.file_line[self.col['ts']]) * 1e-12
+                data.ts_err = float(self.file_line[self.col['ts']]) * self.return_conversion_factor('ts')
             except ValueError:
                 data.ts_err = None
 
             # Rex.
             try:
-                data.rex_err = float(self.file_line[self.col['rex']]) / (2.0 * pi * data.frq[0])**2
+                data.rex_err = float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex')
             except:
                 data.rex_err = None
 
             # Bond length.
             try:
-                data.r_err = float(self.file_line[self.col['r']]) * 1e-10
+                data.r_err = float(self.file_line[self.col['r']]) * self.return_conversion_factor('r')
             except ValueError:
                 data.r_err = None
 
             # CSA.
             try:
-                data.csa_err = float(self.file_line[self.col['csa']]) * 1e-6
+                data.csa_err = float(self.file_line[self.col['csa']]) * self.return_conversion_factor('csa')
             except ValueError:
                 data.csa_err = None
 
@@ -3115,61 +3085,61 @@ class Model_free(Common_functions):
         if self.data_set != 'value' and self.data_set != 'error':
             # S2.
             try:
-                data.s2_sim.append(float(self.file_line[self.col['s2']]))
+                data.s2_sim.append(float(self.file_line[self.col['s2']]) * self.return_conversion_factor('s2'))
             except ValueError:
                 data.s2_sim.append(None)
 
             # S2f.
             try:
-                data.s2f_sim.append(float(self.file_line[self.col['s2f']]))
+                data.s2f_sim.append(float(self.file_line[self.col['s2f']]) * self.return_conversion_factor('s2f'))
             except ValueError:
                 data.s2f_sim.append(None)
 
             # S2s.
             try:
-                data.s2s_sim.append(float(self.file_line[self.col['s2s']]))
+                data.s2s_sim.append(float(self.file_line[self.col['s2s']]) * self.return_conversion_factor('s2s'))
             except ValueError:
                 data.s2s_sim.append(None)
 
             # Local tm.
             try:
-                data.tm_sim.append(float(self.file_line[self.col['local_tm']]) * 1e-9)
+                data.tm_sim.append(float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('tm'))
             except ValueError:
                 data.tm_sim.append(None)
 
             # te.
             try:
-                data.te_sim.append(float(self.file_line[self.col['te']]) * 1e-12)
+                data.te_sim.append(float(self.file_line[self.col['te']]) * self.return_conversion_factor('te'))
             except ValueError:
                 data.te_sim.append(None)
 
             # tf.
             try:
-                data.tf_sim.append(float(self.file_line[self.col['tf']]) * 1e-12)
+                data.tf_sim.append(float(self.file_line[self.col['tf']]) * self.return_conversion_factor('tf'))
             except ValueError:
                 data.tf_sim.append(None)
 
             # ts.
             try:
-                data.ts_sim.append(float(self.file_line[self.col['ts']]) * 1e-12)
+                data.ts_sim.append(float(self.file_line[self.col['ts']]) * self.return_conversion_factor('ts'))
             except ValueError:
                 data.ts_sim.append(None)
 
             # Rex.
             try:
-                data.rex_sim.append(float(self.file_line[self.col['rex']]) / (2.0 * pi * data.frq[0])**2)
+                data.rex_sim.append(float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex'))
             except:
                 data.rex_sim.append(None)
 
             # Bond length.
             try:
-                data.r_sim.append(float(self.file_line[self.col['r']]) * 1e-10)
+                data.r_sim.append(float(self.file_line[self.col['r']]) * self.return_conversion_factor('r'))
             except ValueError:
                 data.r_sim.append(None)
 
             # CSA.
             try:
-                data.csa_sim.append(float(self.file_line[self.col['csa']]) * 1e-6)
+                data.csa_sim.append(float(self.file_line[self.col['csa']]) * self.return_conversion_factor('csa'))
             except ValueError:
                 data.csa_sim.append(None)
 
@@ -3516,6 +3486,81 @@ class Model_free(Common_functions):
         self.relax.data.g_count[self.run] = None
         self.relax.data.h_count[self.run] = None
         self.relax.data.warning[self.run] = None
+
+
+    def return_conversion_factor(self, data_type):
+        """Function for returning the factor of conversion between different parameter units.
+        
+        For example, the internal representation of te is in seconds, whereas the external
+        representation is in picoseconds, therefore this function will return 1e-12 for te.
+        """
+
+        # Get the object name.
+        object_name = self.get_data_name(data_type)
+
+        # Initialise so the is no conversion factor.
+        factor = 1.0
+
+        # tm (nanoseconds).
+        if object_name == 'tm':
+            factor = 1e-9
+
+        # te, tf, and ts (picoseconds).
+        elif object_name in ['te', 'tf', 'ts']:
+            factor = 1e-12
+
+        # Rex (value at 1st field strength).
+        elif object_name == 'rex':
+            factor = 1.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2
+
+        # Bond length (Angstrom).
+        elif object_name == 'r':
+            factor = 1e-10
+
+        # CSA (ppm).
+        elif object_name == 'csa':
+            factor = 1e-6
+
+        # Return the conversion factor.
+        return factor
+
+
+    def return_units(self, data_type):
+        """Function for returning a string representing the parameters units.
+        
+        For example, the internal representation of te is in seconds, whereas the external
+        representation is in picoseconds, therefore this function will return the string
+        'picoseconds' for te.
+        """
+
+        # Get the object name.
+        object_name = self.get_data_name(data_type)
+
+        # Initialise to no units.
+        units = None
+
+        # tm (nanoseconds).
+        if object_name == 'tm':
+            units = 'nanoseconds'
+
+        # te, tf, and ts (picoseconds).
+        elif object_name in ['te', 'tf', 'ts']:
+            units = 'picoseconds'
+
+        # Rex (value at 1st field strength).
+        elif object_name == 'rex':
+            units = self.relax.data.frq_labels[self.run][0] + ' MHz'
+
+        # Bond length (Angstrom).
+        elif object_name == 'r':
+            units = 'Angstrom'
+
+        # CSA (ppm).
+        elif object_name == 'csa':
+            units = 'ppm'
+
+        # Return the units string.
+        return units
 
 
     def return_value(self, run, i, data_type, sim=None):
@@ -4466,7 +4511,7 @@ class Model_free(Common_functions):
                 ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(ns)', te='te_(ps)', tf='tf_(ps)', ts='ts_(ps)', rex='Rex_(1st_field)', r='Bond_length_(A)', csa='CSA_(ppm)', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(' + self.return_units('tm') + ')', te='te_(' + self.return_units('te') + ')', tf='tf_(' + self.return_units('tf') + ')', ts='ts_(' + self.return_units('ts') + ')', rex='Rex_(' + replace(self.return_units('rex'), ' ', '_') + ')', r='Bond_length_(' + self.return_units('r') + ')', csa='CSA_(' + self.return_units('csa') + ')', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -4545,52 +4590,52 @@ class Model_free(Common_functions):
             # S2.
             s2 = None
             if hasattr(data, 's2'):
-                s2 = data.s2
+                s2 = data.s2 / self.return_conversion_factor('s2')
 
             # S2f.
             s2f = None
             if hasattr(data, 's2f'):
-                s2f = data.s2f
+                s2f = data.s2f / self.return_conversion_factor('s2f')
 
             # S2s.
             s2s = None
             if hasattr(data, 's2s'):
-                s2s = data.s2s
+                s2s = data.s2s / self.return_conversion_factor('s2s')
 
             # tm.
             local_tm = None
             if hasattr(data, 'tm') and data.tm != None:
-                local_tm = data.tm / 1e-9
+                local_tm = data.tm / self.return_conversion_factor('tm')
 
             # te.
             te = None
             if hasattr(data, 'te') and data.te != None:
-                te = data.te / 1e-12
+                te = data.te / self.return_conversion_factor('te')
 
             # tf.
             tf = None
             if hasattr(data, 'tf') and data.tf != None:
-                tf = data.tf / 1e-12
+                tf = data.tf / self.return_conversion_factor('tf')
 
             # ts.
             ts = None
             if hasattr(data, 'ts') and data.ts != None:
-                ts = data.ts / 1e-12
+                ts = data.ts / self.return_conversion_factor('ts')
 
             # Rex.
             rex = None
             if hasattr(data, 'rex') and data.rex != None:
-                rex = data.rex * (2.0 * pi * data.frq[0])**2
+                rex = data.rex / self.return_conversion_factor('rex')
 
             # Bond length.
             r = None
             if hasattr(data, 'r') and data.r != None:
-                r = data.r / 1e-10
+                r = data.r / self.return_conversion_factor('r')
 
             # CSA.
             csa = None
             if hasattr(data, 'csa') and data.csa != None:
-                csa = data.csa / 1e-6
+                csa = data.csa / self.return_conversion_factor('csa')
 
             # Minimisation details.
             try:
@@ -4721,52 +4766,52 @@ class Model_free(Common_functions):
             # S2.
             s2 = None
             if hasattr(data, 's2_err'):
-                s2 = data.s2_err
+                s2 = data.s2_err / self.return_conversion_factor('s2')
 
             # S2f.
             s2f = None
             if hasattr(data, 's2f_err'):
-                s2f = data.s2f_err
+                s2f = data.s2f_err / self.return_conversion_factor('s2f')
 
             # S2s.
             s2s = None
             if hasattr(data, 's2s_err'):
-                s2s = data.s2s_err
+                s2s = data.s2s_err / self.return_conversion_factor('s2s')
 
             # tm.
             local_tm = None
             if hasattr(data, 'tm_err') and data.tm_err != None:
-                local_tm = data.tm_err / 1e-9
+                local_tm = data.tm_err / self.return_conversion_factor('tm')
 
             # te.
             te = None
             if hasattr(data, 'te_err') and data.te_err != None:
-                te = data.te_err / 1e-12
+                te = data.te_err / self.return_conversion_factor('te')
 
             # tf.
             tf = None
             if hasattr(data, 'tf_err') and data.tf_err != None:
-                tf = data.tf_err / 1e-12
+                tf = data.tf_err / self.return_conversion_factor('tf')
 
             # ts.
             ts = None
             if hasattr(data, 'ts_err') and data.ts_err != None:
-                ts = data.ts_err / 1e-12
+                ts = data.ts_err / self.return_conversion_factor('ts')
 
             # Rex.
             rex = None
             if hasattr(data, 'rex_err') and data.rex_err != None:
-                rex = data.rex_err * (2.0 * pi * data.frq[0])**2
+                rex = data.rex_err / self.return_conversion_factor('rex')
 
             # Bond length.
             r = None
             if hasattr(data, 'r_err') and data.r_err != None:
-                r = data.r_err / 1e-10
+                r = data.r_err / self.return_conversion_factor('r')
 
             # CSA.
             csa = None
             if hasattr(data, 'csa_err') and data.csa_err != None:
-                csa = data.csa_err / 1e-6
+                csa = data.csa_err / self.return_conversion_factor('csa')
 
             # Relaxation data and errors.
             ri = []
@@ -4846,52 +4891,52 @@ class Model_free(Common_functions):
                 # S2.
                 s2 = None
                 if hasattr(data, 's2_sim'):
-                    s2 = data.s2_sim[i]
+                    s2 = data.s2_sim[i] / self.return_conversion_factor('s2')
 
                 # S2f.
                 s2f = None
                 if hasattr(data, 's2f_sim'):
-                    s2f = data.s2f_sim[i]
+                    s2f = data.s2f_sim[i] / self.return_conversion_factor('s2f')
 
                 # S2s.
                 s2s = None
                 if hasattr(data, 's2s_sim'):
-                    s2s = data.s2s_sim[i]
+                    s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
 
                 # tm.
                 local_tm = None
                 if hasattr(data, 'tm_sim') and data.tm_sim[i] != None:
-                    local_tm = data.tm_sim[i] / 1e-9
+                    local_tm = data.tm_sim[i] / self.return_conversion_factor('tm')
 
                 # te.
                 te = None
                 if hasattr(data, 'te_sim') and data.te_sim[i] != None:
-                    te = data.te_sim[i] / 1e-12
+                    te = data.te_sim[i] / self.return_conversion_factor('te')
 
                 # tf.
                 tf = None
                 if hasattr(data, 'tf_sim') and data.tf_sim[i] != None:
-                    tf = data.tf_sim[i] / 1e-12
+                    tf = data.tf_sim[i] / self.return_conversion_factor('tf')
 
                 # ts.
                 ts = None
                 if hasattr(data, 'ts_sim') and data.ts_sim[i] != None:
-                    ts = data.ts_sim[i] / 1e-12
+                    ts = data.ts_sim[i] / self.return_conversion_factor('ts')
 
                 # Rex.
                 rex = None
                 if hasattr(data, 'rex_sim') and data.rex_sim[i] != None:
-                    rex = data.rex_sim[i] * (2.0 * pi * data.frq[0])**2
+                    rex = data.rex_sim[i] / self.return_conversion_factor('rex')
 
                 # Bond length.
                 r = None
                 if hasattr(data, 'r_sim') and data.r_sim[i] != None:
-                    r = data.r_sim[i] / 1e-10
+                    r = data.r_sim[i] / self.return_conversion_factor('r')
 
                 # CSA.
                 csa = None
                 if hasattr(data, 'csa_sim') and data.csa_sim[i] != None:
-                    csa = data.csa_sim[i] / 1e-6
+                    csa = data.csa_sim[i] / self.return_conversion_factor('csa')
 
                 # Minimisation details.
                 try:

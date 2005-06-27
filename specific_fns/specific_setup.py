@@ -228,6 +228,14 @@ class Specific_setup:
         if self.eqi == 'return_error':
             return self.relax.specific.model_free.return_error
 
+        # Factor of conversion between different parameter units returning function.
+        if self.eqi == 'return_unit_conversion':
+            return self.relax.specific.model_free.return_unit_conversion
+
+        # String of the external parameter units returning function.
+        if self.eqi == 'return_units':
+            return self.relax.specific.model_free.return_units
+
         # Value and error returning function.
         if self.eqi == 'return_value':
             return self.relax.specific.model_free.return_value
