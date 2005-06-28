@@ -30,26 +30,6 @@ class Relax_fit:
         self.relax = relax
 
 
-    def get_data_name(self, name):
-        """
-        Relaxation curve fitting data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | rate                   | rate         | '^[Rr]ate$'                                      |
-        |________________________|______________|__________________________________________________|
-
-        """
-
-        # Rate.
-        if match('^[Rr]ate$', name):
-            return 'rate'
-
-
     def read(self, run=None, file=None, dir=None, relax_time=0.0, fit_type=None, format=None, heteronuc=None, proton=None, int_col=None):
         """Function for reading peak intensity data."""
 
@@ -193,6 +173,26 @@ class Relax_fit:
                 data.noe_err = None
 
 
+    def return_data_name(self, name):
+        """
+        Relaxation curve fitting data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | rate                   | rate         | '^[Rr]ate$'                                      |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Rate.
+        if match('^[Rr]ate$', name):
+            return 'rate'
+
+
     def return_value(self, run, i, data_type='noe'):
         """Function for returning the NOE value and error."""
 
@@ -203,7 +203,7 @@ class Relax_fit:
         data = self.relax.data.res[run][i]
 
         # Get the object.
-        object_name = self.get_data_name(data_type)
+        object_name = self.return_data_name(data_type)
         if not object_name:
             raise RelaxError, "The NOE calculation data type " + `data_type` + " does not exist."
         object_error = object_name + "_err"

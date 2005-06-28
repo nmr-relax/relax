@@ -61,54 +61,6 @@ class Minimise:
             calculate(run=run, print_flag=print_flag)
 
 
-    def get_data_name(self, name):
-        """
-        Minimisation statistic data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Chi-squared statistic  | chi2         | '^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'           |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Iteration count        | iter         | '^[Ii]ter'                                       |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Function call count    | f_count      | '^[Ff].*[ -_][Cc]ount'                           |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Gradient call count    | g_count      | '^[Gg].*[ -_][Cc]ount'                           |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Hessian call count     | h_count      | '^[Hh].*[ -_][Cc]ount'                           |
-        |________________________|______________|__________________________________________________|
-
-        """
-
-        # Chi-squared.
-        if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
-            return 'chi2'
-
-        # Iteration count.
-        if search('^[Ii]ter', name):
-            return 'iter'
-
-        # Function call count.
-        if search('^[Ff].*[ -_][Cc]ount', name):
-            return 'f_count'
-
-        # Function call count.
-        if search('^[Gg].*[ -_][Cc]ount', name):
-            return 'g_count'
-
-        # Function call count.
-        if search('^[Hh].*[ -_][Cc]ount', name):
-            return 'h_count'
-
-
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):
         """The grid search function."""
 
@@ -239,6 +191,54 @@ class Minimise:
         return 1.0
 
 
+    def return_data_name(self, name):
+        """
+        Minimisation statistic data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Chi-squared statistic  | chi2         | '^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Iteration count        | iter         | '^[Ii]ter'                                       |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Function call count    | f_count      | '^[Ff].*[ -_][Cc]ount'                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Gradient call count    | g_count      | '^[Gg].*[ -_][Cc]ount'                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Hessian call count     | h_count      | '^[Hh].*[ -_][Cc]ount'                           |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Chi-squared.
+        if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
+            return 'chi2'
+
+        # Iteration count.
+        if search('^[Ii]ter', name):
+            return 'iter'
+
+        # Function call count.
+        if search('^[Ff].*[ -_][Cc]ount', name):
+            return 'f_count'
+
+        # Function call count.
+        if search('^[Gg].*[ -_][Cc]ount', name):
+            return 'g_count'
+
+        # Function call count.
+        if search('^[Hh].*[ -_][Cc]ount', name):
+            return 'h_count'
+
+
     def return_units(self, stat_type):
         """Dummy function which returns None as the stats have no units."""
 
@@ -252,7 +252,7 @@ class Minimise:
         self.run = run
 
         # Get the object name.
-        object_name = self.get_data_name(stat_type)
+        object_name = self.return_data_name(stat_type)
 
         # The statistic type does not exist.
         if not object_name:

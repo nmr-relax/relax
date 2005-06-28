@@ -221,13 +221,13 @@ class Grace:
         self.x_return_units =             self.y_return_units =             self.relax.specific_setup.setup('return_units', function_type)
 
         # Test if the X-axis data type is a minimisation statistic.
-        if self.x_data_type != 'res' and self.relax.generic.minimise.get_data_name(self.x_data_type):
+        if self.x_data_type != 'res' and self.relax.generic.minimise.return_data_name(self.x_data_type):
             self.x_return_value = self.relax.generic.minimise.return_value
             self.x_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
             self.x_return_units = self.relax.generic.minimise.return_units
 
         # Test if the Y-axis data type is a minimisation statistic.
-        if self.relax.generic.minimise.get_data_name(self.y_data_type):
+        if self.relax.generic.minimise.return_data_name(self.y_data_type):
             self.y_return_value = self.relax.generic.minimise.return_value
             self.y_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
             self.y_return_units = self.relax.generic.minimise.return_units

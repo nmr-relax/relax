@@ -82,40 +82,6 @@ class Noe:
             data.noe_err = sqrt((data.sat_err * data.ref)**2 + (data.ref_err * data.sat)**2) / data.ref**2
 
 
-    def get_data_name(self, name):
-        """
-        NOE calculation data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Reference intensity    | ref          | '^[Rr]ef$' or '[Rr]ef[ -_][Ii]nt'                |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Saturated intensity    | sat          | '^[Ss]at$' or '[Ss]at[ -_][Ii]nt'                |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | NOE                    | noe          | '^[Nn][Oo][Ee]$'                                 |
-        |________________________|______________|__________________________________________________|
-
-        """
-
-        # Reference intensity.
-        if match('^[Rr]ef$', name) or match('[Rr]ef[ -_][Ii]nt', name):
-            return 'ref'
-
-        # Saturated intensity.
-        if match('^[Ss]at$', name) or match('[Ss]at[ -_][Ii]nt', name):
-            return 'sat'
-
-        # NOE.
-        if match('^[Nn][Oo][Ee]$', name):
-            return 'noe'
-
-
     def read(self, run=None, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
         """Function for reading peak intensity data."""
 
@@ -254,6 +220,40 @@ class Noe:
                 data.noe_err = None
 
 
+    def return_data_name(self, name):
+        """
+        NOE calculation data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Reference intensity    | ref          | '^[Rr]ef$' or '[Rr]ef[ -_][Ii]nt'                |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Saturated intensity    | sat          | '^[Ss]at$' or '[Ss]at[ -_][Ii]nt'                |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | NOE                    | noe          | '^[Nn][Oo][Ee]$'                                 |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Reference intensity.
+        if match('^[Rr]ef$', name) or match('[Rr]ef[ -_][Ii]nt', name):
+            return 'ref'
+
+        # Saturated intensity.
+        if match('^[Ss]at$', name) or match('[Ss]at[ -_][Ii]nt', name):
+            return 'sat'
+
+        # NOE.
+        if match('^[Nn][Oo][Ee]$', name):
+            return 'noe'
+
+
     def return_value(self, run, i, data_type='noe'):
         """Function for returning the NOE value and error."""
 
@@ -264,7 +264,7 @@ class Noe:
         data = self.relax.data.res[run][i]
 
         # Get the object.
-        object_name = self.get_data_name(data_type)
+        object_name = self.return_data_name(data_type)
         if not object_name:
             raise RelaxError, "The NOE calculation data type " + `data_type` + " does not exist."
         object_error = object_name + "_err"

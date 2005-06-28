@@ -224,7 +224,16 @@ class Jw_mapping(Common_functions):
             return -170 * 1e-6
 
 
-    def get_data_name(self, name):
+    def num_instances(self, run=None):
+        """Function for returning the number of instances."""
+
+        # Arguments.
+        self.run = run
+
+        return len(self.relax.data.res[self.run])
+
+
+    def return_data_name(self, name):
         """
         Reduced spectral density mapping data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,15 +260,6 @@ class Jw_mapping(Common_functions):
             return 'csa'
 
 
-    def num_instances(self, run=None):
-        """Function for returning the number of instances."""
-
-        # Arguments.
-        self.run = run
-
-        return len(self.relax.data.res[self.run])
-
-
     def return_value(self, run, i, data_type):
         """Function for returning the value and error corresponding to 'data_type'."""
 
@@ -270,7 +270,7 @@ class Jw_mapping(Common_functions):
         data = self.relax.data.res[run][i]
 
         # Get the object.
-        object_name = self.get_data_name(data_type)
+        object_name = self.return_data_name(data_type)
         if not object_name:
             raise RelaxError, "The reduced spectral density mapping data type " + `data_type` + " does not exist."
         object_error = object_name + "_err"
@@ -335,7 +335,7 @@ class Jw_mapping(Common_functions):
 
         else:
             # Get the object.
-            object_name = self.get_data_name(data_type)
+            object_name = self.return_data_name(data_type)
             if not object_name:
                 raise RelaxError, "The reduced spectral density mapping data type " + `data_type` + " does not exist."
 

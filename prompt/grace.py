@@ -238,7 +238,7 @@ class Grace:
 
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
-    write.__doc__ = write.__doc__ + Minimise.get_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Model_free.get_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.get_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Noe.get_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + Minimise.return_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"

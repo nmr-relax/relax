@@ -1291,89 +1291,6 @@ class Model_free(Common_functions):
         return 0
 
 
-    def get_data_name(self, name):
-        """
-        Model-free data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Local tm               | tm           | '^tm$'                                           |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Order parameter S2     | s2           | '^[Ss]2$'                                        |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Order parameter S2f    | s2f          | '^[Ss]2f$'                                       |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Order parameter S2s    | s2s          | '^[Ss]2s$'                                       |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Correlation time te    | te           | '^te$'                                           |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Correlation time tf    | tf           | '^tf$'                                           |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Correlation time ts    | ts           | '^ts$'                                           |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Chemical exchange      | rex          | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
-        |________________________|______________|__________________________________________________|
-
-        """
-
-        # Local tm.
-        if search('^tm$', name):
-            return 'tm'
-
-        # Order parameter S2.
-        if search('^[Ss]2$', name):
-            return 's2'
-
-        # Order parameter S2f.
-        if search('^[Ss]2f$', name):
-            return 's2f'
-
-        # Order parameter S2s.
-        if search('^[Ss]2s$', name):
-            return 's2s'
-
-        # Correlation time te.
-        if search('^te$', name):
-            return 'te'
-
-        # Correlation time tf.
-        if search('^tf$', name):
-            return 'tf'
-
-        # Correlation time ts.
-        if search('^ts$', name):
-            return 'ts'
-
-        # Rex
-        if search('^[Rr]ex$', name) or search('[Cc]emical[ -_][Ee]xchange', name):
-            return 'rex'
-
-        # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
-            return 'r'
-
-        # CSA.
-        if search('^[Cc][Ss][Aa]$', name):
-            return 'csa'
-
-
     def get_param_names(self, run, i):
         """Function for returning a vector of parameter names."""
 
@@ -3496,7 +3413,7 @@ class Model_free(Common_functions):
         """
 
         # Get the object name.
-        object_name = self.get_data_name(data_type)
+        object_name = self.return_data_name(data_type)
 
         # Initialise so the is no conversion factor.
         factor = 1.0
@@ -3525,6 +3442,89 @@ class Model_free(Common_functions):
         return factor
 
 
+    def return_data_name(self, name):
+        """
+        Model-free data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Local tm               | tm           | '^tm$'                                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Order parameter S2     | s2           | '^[Ss]2$'                                        |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Order parameter S2f    | s2f          | '^[Ss]2f$'                                       |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Order parameter S2s    | s2s          | '^[Ss]2s$'                                       |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Correlation time te    | te           | '^te$'                                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Correlation time tf    | tf           | '^tf$'                                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Correlation time ts    | ts           | '^ts$'                                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Chemical exchange      | rex          | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Local tm.
+        if search('^tm$', name):
+            return 'tm'
+
+        # Order parameter S2.
+        if search('^[Ss]2$', name):
+            return 's2'
+
+        # Order parameter S2f.
+        if search('^[Ss]2f$', name):
+            return 's2f'
+
+        # Order parameter S2s.
+        if search('^[Ss]2s$', name):
+            return 's2s'
+
+        # Correlation time te.
+        if search('^te$', name):
+            return 'te'
+
+        # Correlation time tf.
+        if search('^tf$', name):
+            return 'tf'
+
+        # Correlation time ts.
+        if search('^ts$', name):
+            return 'ts'
+
+        # Rex
+        if search('^[Rr]ex$', name) or search('[Cc]emical[ -_][Ee]xchange', name):
+            return 'rex'
+
+        # Bond length.
+        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
+            return 'r'
+
+        # CSA.
+        if search('^[Cc][Ss][Aa]$', name):
+            return 'csa'
+
+
     def return_units(self, data_type):
         """Function for returning a string representing the parameters units.
         
@@ -3534,7 +3534,7 @@ class Model_free(Common_functions):
         """
 
         # Get the object name.
-        object_name = self.get_data_name(data_type)
+        object_name = self.return_data_name(data_type)
 
         # Initialise to no units.
         units = None
@@ -3573,7 +3573,7 @@ class Model_free(Common_functions):
         self.run = run
 
         # Get the object name.
-        object_name = self.get_data_name(data_type)
+        object_name = self.return_data_name(data_type)
 
         # The data type does not exist.
         if not object_name:
@@ -3950,7 +3950,7 @@ class Model_free(Common_functions):
             # Loop over the model-free parameters.
             for i in xrange(len(self.relax.data.res[self.run][index].params)):
                 # Get the object.
-                object_name = self.get_data_name(self.relax.data.res[self.run][index].params[i])
+                object_name = self.return_data_name(self.relax.data.res[self.run][index].params[i])
                 if not object_name:
                     raise RelaxError, "The model-free data type " + `self.relax.data.res[self.run][index].params[i]` + " does not exist."
 
@@ -3967,7 +3967,7 @@ class Model_free(Common_functions):
 
         else:
             # Get the object.
-            object_name = self.get_data_name(data_type)
+            object_name = self.return_data_name(data_type)
             if not object_name:
                 raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
 
