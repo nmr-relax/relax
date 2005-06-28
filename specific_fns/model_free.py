@@ -3512,7 +3512,7 @@ class Model_free(Common_functions):
         if search('^ts$', name):
             return 'ts'
 
-        # Rex
+        # Rex.
         if search('^[Rr]ex$', name) or search('[Cc]emical[ -_][Ee]xchange', name):
             return 'rex'
 
@@ -3523,6 +3523,56 @@ class Model_free(Common_functions):
         # CSA.
         if search('^[Cc][Ss][Aa]$', name):
             return 'csa'
+
+
+    def return_grace_string(self, data_type):
+        """Function for returning the Grace string representing the data type for axis labelling."""
+
+        # Get the object name.
+        object_name = self.return_data_name(data_type)
+
+        # Local tm.
+        if object_name == 'tm':
+            grace_string = '\\xt\\f{}\\sm'
+
+        # Order parameter S2.
+        elif object_name == 's2':
+            grace_string = '\\qS\\v{0.4}\\z{0.71}2\\Q'
+
+        # Order parameter S2f.
+        elif object_name == 's2f':
+            grace_string = '\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
+
+        # Order parameter S2s.
+        elif object_name == 's2s':
+            grace_string = '\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
+
+        # Correlation time te.
+        elif object_name == 'te':
+            grace_string = '\\xt\\f{}\\se'
+
+        # Correlation time tf.
+        elif object_name == 'tf':
+            grace_string = '\\xt\\f{}\\sf'
+
+        # Correlation time ts.
+        elif object_name == 'ts':
+            grace_string = '\\xt\\f{}\\ss'
+
+        # Rex.
+        elif object_name == 'rex':
+            grace_string = '\\qR\\sex\\Q'
+
+        # Bond length.
+        elif object_name == 'r':
+            grace_string = 'Bond length'
+
+        # CSA.
+        elif object_name == 'csa':
+            grace_string = '\\qCSA\\Q'
+
+        # Return the Grace string.
+        return grace_string
 
 
     def return_units(self, data_type):

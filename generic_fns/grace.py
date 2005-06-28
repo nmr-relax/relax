@@ -219,18 +219,21 @@ class Grace:
         self.x_return_value =             self.y_return_value =             self.relax.specific_setup.setup('return_value', function_type)
         self.x_return_conversion_factor = self.y_return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', function_type)
         self.x_return_units =             self.y_return_units =             self.relax.specific_setup.setup('return_units', function_type)
+        self.x_return_grace_string =      self.y_return_grace_string =      self.relax.specific_setup.setup('return_grace_string', function_type)
 
         # Test if the X-axis data type is a minimisation statistic.
         if self.x_data_type != 'res' and self.relax.generic.minimise.return_data_name(self.x_data_type):
             self.x_return_value = self.relax.generic.minimise.return_value
             self.x_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
             self.x_return_units = self.relax.generic.minimise.return_units
+            self.x_return_grace_string = self.relax.generic.minimise.return_grace_string
 
         # Test if the Y-axis data type is a minimisation statistic.
         if self.relax.generic.minimise.return_data_name(self.y_data_type):
             self.y_return_value = self.relax.generic.minimise.return_value
             self.y_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
             self.y_return_units = self.relax.generic.minimise.return_units
+            self.y_return_grace_string = self.relax.generic.minimise.return_grace_string
 
         # Get the data.
         self.get_data()
@@ -307,9 +310,9 @@ class Grace:
 
             # Label.
             if units:
-                self.file.write("@    xaxis  label \"" + self.x_data_type + " (" + units + ")\"\n")
+                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\\N (" + units + ")\"\n")
             else:
-                self.file.write("@    xaxis  label \"" + self.x_data_type + "\"\n")
+                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\"\n")
 
         # X-axis specific settings.
         self.file.write("@    xaxis  label char size 1.48\n")
@@ -322,9 +325,9 @@ class Grace:
         # Y-axis label.
         units = self.y_return_units(self.y_data_type)
         if units:
-            self.file.write("@    yaxis  label \"" + self.y_data_type + " (" + units + ")\"\n")
+            self.file.write("@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type) + "\\N (" + units + ")\"\n")
         else:
-            self.file.write("@    yaxis  label \"" + self.y_data_type + "\"\n")
+            self.file.write("@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type) + "\"\n")
 
         # Y-axis specific settings.
         self.file.write("@    yaxis  label char size 1.48\n")

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2004, 2005 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-from re import match
+from re import search
 from string import replace
 
 from base_class import Common_functions
@@ -243,6 +243,15 @@ class Jw_mapping(Common_functions):
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
+        | J(0)                   | j0           | '^[Jj]0$' or '[Jj](0)'                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | J(wX)                  | jwx          | '^[Jj]w[Xx]$' or '[Jj](w[Xx])'                   |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | J(wH)                  | jwh          | '^[Jj]w[Hh]$' or '[Jj](w[Hh])'                   |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
         | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
@@ -251,13 +260,55 @@ class Jw_mapping(Common_functions):
 
         """
 
+        # J(0).
+        if search('^[Jj]0$', name) or search('[Jj](0)', name):
+            return 'j0'
+
+        # J(wX).
+        if search('^[Jj]w[Xx]$', name) or search('[Jj](w[Xx])', name):
+            return 'jwx'
+
+        # J(wH).
+        if search('^[Jj]w[Hh]$', name) or search('[Jj](w[Hh])', name):
+            return 'jwh'
+
         # Bond length.
-        if match('^r$', name) or match('[Bb]ond[ -_][Ll]ength', name):
+        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
             return 'r'
 
         # CSA.
-        if match('^[Cc][Ss][Aa]$', name):
+        if search('^[Cc][Ss][Aa]$', name):
             return 'csa'
+
+
+    def return_grace_string(self, data_type):
+        """Function for returning the Grace string representing the data type for axis labelling."""
+
+        # Get the object name.
+        object_name = self.return_data_name(data_type)
+
+        # J(0).
+        if object_name == 'j0':
+            grace_string = '\\qJ(0)\\Q'
+
+        # J(wX).
+        elif object_name == 'jwx':
+            grace_string = '\\qJ(\\xw\\f{}\\sX\\N)\\Q'
+
+        # J(wH).
+        elif object_name == 'jwh':
+            grace_string = '\\qJ(\\xw\\f{}\\sH\\N)\\Q'
+
+        # Bond length.
+        elif object_name == 'r':
+            grace_string = 'Bond length'
+
+        # CSA.
+        elif object_name == 'csa':
+            grace_string = '\\qCSA\\Q'
+
+        # Return the Grace string.
+        return grace_string
 
 
     def return_value(self, run, i, data_type):

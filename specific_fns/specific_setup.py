@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -124,9 +124,17 @@ class Specific_setup:
         if self.eqi == 'return_error':
             return self.relax.specific.jw_mapping.return_error
 
+        # Grace string returning function.
+        if self.eqi == 'return_grace_string':
+            return self.relax.specific.model_free.return_grace_string
+
         # Simulation parameter array returning function.
         if self.eqi == 'return_sim_param':
             return self.relax.specific.jw_mapping.sim_return_param
+
+        # String of the external parameter units returning function.
+        if self.eqi == 'return_units':
+            return self.relax.specific.model_free.return_units
 
         # Value and error returning function.
         if self.eqi == 'return_value':
@@ -232,13 +240,9 @@ class Specific_setup:
         if self.eqi == 'return_conversion_factor':
             return self.relax.specific.model_free.return_conversion_factor
 
-        # String of the external parameter units returning function.
-        if self.eqi == 'return_units':
-            return self.relax.specific.model_free.return_units
-
-        # Value and error returning function.
-        if self.eqi == 'return_value':
-            return self.relax.specific.model_free.return_value
+        # Grace string returning function.
+        if self.eqi == 'return_grace_string':
+            return self.relax.specific.model_free.return_grace_string
 
         # Simulation chi-squared array returning function.
         if self.eqi == 'return_sim_chi2':
@@ -247,6 +251,14 @@ class Specific_setup:
         # Simulation parameter array returning function.
         if self.eqi == 'return_sim_param':
             return self.relax.specific.model_free.sim_return_param
+
+        # String of the external parameter units returning function.
+        if self.eqi == 'return_units':
+            return self.relax.specific.model_free.return_units
+
+        # Value and error returning function.
+        if self.eqi == 'return_value':
+            return self.relax.specific.model_free.return_value
 
         # Set function.
         if self.eqi == 'set':

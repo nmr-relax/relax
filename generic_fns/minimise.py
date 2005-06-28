@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -230,13 +230,43 @@ class Minimise:
         if search('^[Ff].*[ -_][Cc]ount', name):
             return 'f_count'
 
-        # Function call count.
+        # Gradient call count.
         if search('^[Gg].*[ -_][Cc]ount', name):
             return 'g_count'
 
-        # Function call count.
+        # Hessian call count.
         if search('^[Hh].*[ -_][Cc]ount', name):
             return 'h_count'
+
+
+    def return_grace_string(self, stat_type):
+        """Function for returning the Grace string representing the data type for axis labelling."""
+
+        # Get the object name.
+        object_name = self.return_data_name(stat_type)
+
+        # Chi-squared.
+        if object_name == 'chi2':
+            grace_string = '\\xc\\S2'
+
+        # Iteration count.
+        elif object_name == 'iter':
+            grace_string = 'Iteration count'
+
+        # Function call count.
+        elif object_name == 'f_count':
+            grace_string = 'Function call count'
+
+        # Gradient call count.
+        elif object_name == 'g_count':
+            grace_string = 'Gradient call count'
+
+        # Hessian call count.
+        elif object_name == 'h_count':
+            grace_string = 'Hessian call count'
+
+        # Return the Grace string.
+        return grace_string
 
 
     def return_units(self, stat_type):
