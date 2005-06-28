@@ -290,9 +290,6 @@ class Grace:
     def write_header(self):
         """Write the grace header."""
 
-        # Grace version number (presumably for grace to interpret the header info).
-        #self.file.write("@version 50114\n")
-
         # Graph G0.
         self.file.write("@with g0\n")
 
@@ -314,13 +311,13 @@ class Grace:
             else:
                 self.file.write("@    xaxis  label \"" + self.x_data_type + "\"\n")
 
-        # X-axis specific ticks.
-        self.file.write("@    xaxis  tick major 10\n")
-        self.file.write("@    xaxis  tick major size 0.48\n")
+        # X-axis specific settings.
+        self.file.write("@    xaxis  label char size 1.48\n")
+        self.file.write("@    xaxis  tick major size 0.75\n")
         self.file.write("@    xaxis  tick major linewidth 0.5\n")
         self.file.write("@    xaxis  tick minor linewidth 0.5\n")
-        self.file.write("@    xaxis  tick minor size 0.24\n")
-        self.file.write("@    xaxis  ticklabel char size 0.79\n")
+        self.file.write("@    xaxis  tick minor size 0.45\n")
+        self.file.write("@    xaxis  ticklabel char size 1.00\n")
 
         # Y-axis label.
         units = self.y_return_units(self.y_data_type)
@@ -329,19 +326,20 @@ class Grace:
         else:
             self.file.write("@    yaxis  label \"" + self.y_data_type + "\"\n")
 
-        # Y-axis specific ticks.
-        self.file.write("@    yaxis  tick major size 0.48\n")
+        # Y-axis specific settings.
+        self.file.write("@    yaxis  label char size 1.48\n")
+        self.file.write("@    yaxis  tick major size 0.75\n")
         self.file.write("@    yaxis  tick major linewidth 0.5\n")
         self.file.write("@    yaxis  tick minor linewidth 0.5\n")
-        self.file.write("@    yaxis  tick minor size 0.24\n")
-        self.file.write("@    yaxis  ticklabel char size 0.79\n")
+        self.file.write("@    yaxis  tick minor size 0.45\n")
+        self.file.write("@    yaxis  ticklabel char size 1.00\n")
 
         # Frame.
         self.file.write("@    frame linewidth 0.5\n")
 
         # Symbols.
-        self.file.write("@    s0 symbol 1\n")
-        self.file.write("@    s0 symbol size 0.35\n")
+        self.file.write("@    s0 symbol 9\n")
+        self.file.write("@    s0 symbol size 1.00\n")
         self.file.write("@    s0 symbol fill pattern 1\n")
         self.file.write("@    s0 symbol linewidth 0.5\n")
         self.file.write("@    s0 line linestyle 0\n")
