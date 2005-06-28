@@ -129,15 +129,15 @@ class Grace:
                 else:
                     # Get the x-axis values and errors.
                     if self.plot_data == 'sim':
-                        res_data[0], res_data[1] = self.return_value(self.run, i, self.x_data_type, sim=j)
+                        res_data[0], res_data[1] = self.x_return_value(self.run, i, self.x_data_type, sim=j)
                     else:
-                        res_data[0], res_data[1] = self.return_value(self.run, i, self.x_data_type)
+                        res_data[0], res_data[1] = self.x_return_value(self.run, i, self.x_data_type)
 
                 # Get the y-axis values and errors.
                 if self.plot_data == 'sim':
-                    res_data[2], res_data[3] = self.return_value(self.run, i, self.y_data_type, sim=j)
+                    res_data[2], res_data[3] = self.y_return_value(self.run, i, self.y_data_type, sim=j)
                 else:
-                    res_data[2], res_data[3] = self.return_value(self.run, i, self.y_data_type)
+                    res_data[2], res_data[3] = self.y_return_value(self.run, i, self.y_data_type)
 
                 # Go to the next residue if there is missing data.
                 if res_data[0] == None or res_data[2] == None:
@@ -145,14 +145,14 @@ class Grace:
 
                 # X-axis conversion factors.
                 if self.x_data_type != 'res':
-                    res_data[0] = res_data[0] / self.return_conversion_factor(self.x_data_type)
+                    res_data[0] = res_data[0] / self.x_return_conversion_factor(self.x_data_type)
                     if res_data[1]:
-                        res_data[1] = res_data[1] / self.return_conversion_factor(self.x_data_type)
+                        res_data[1] = res_data[1] / self.x_return_conversion_factor(self.x_data_type)
 
                 # Y-axis conversion factors.
-                res_data[2] = res_data[2] / self.return_conversion_factor(self.y_data_type)
+                res_data[2] = res_data[2] / self.y_return_conversion_factor(self.y_data_type)
                 if res_data[3]:
-                    res_data[3] = res_data[3] / self.return_conversion_factor(self.y_data_type)
+                    res_data[3] = res_data[3] / self.y_return_conversion_factor(self.y_data_type)
 
                 # Append the array to the full data structure.
                 self.data.append(res_data)
@@ -216,9 +216,21 @@ class Grace:
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific value and error, conversion factor, and units returning functions.
-        self.return_value = self.relax.specific_setup.setup('return_value', function_type)
-        self.return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', function_type)
-        self.return_units = self.relax.specific_setup.setup('return_units', function_type)
+        self.x_return_value =             self.y_return_value =             self.relax.specific_setup.setup('return_value', function_type)
+        self.x_return_conversion_factor = self.y_return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', function_type)
+        self.x_return_units =             self.y_return_units =             self.relax.specific_setup.setup('return_units', function_type)
+
+        # Test if the X-axis data type is a minimisation statistic.
+        if self.x_data_type != 'res' and self.relax.generic.minimise.get_data_name(self.x_data_type):
+            self.x_return_value = self.relax.generic.minimise.return_value
+            self.x_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
+            self.x_return_units = self.relax.generic.minimise.return_units
+
+        # Test if the Y-axis data type is a minimisation statistic.
+        if self.relax.generic.minimise.get_data_name(self.y_data_type):
+            self.y_return_value = self.relax.generic.minimise.return_value
+            self.y_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
+            self.y_return_units = self.relax.generic.minimise.return_units
 
         # Get the data.
         self.get_data()
@@ -294,7 +306,7 @@ class Grace:
             self.file.write("@    xaxis  label \"Residue number\"")
         else:
             # Get the units.
-            units = self.return_units(self.x_data_type)
+            units = self.x_return_units(self.x_data_type)
 
             # Label.
             if units:
@@ -311,7 +323,7 @@ class Grace:
         self.file.write("@    xaxis  ticklabel char size 0.79\n")
 
         # Y-axis label.
-        units = self.return_units(self.y_data_type)
+        units = self.y_return_units(self.y_data_type)
         if units:
             self.file.write("@    yaxis  label \"" + self.y_data_type + " (" + units + ")\"\n")
         else:

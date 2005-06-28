@@ -22,6 +22,7 @@
 
 
 from Queue import Queue
+from re import search
 
 from processes import RelaxPopen3
 from thread_classes import RelaxParentThread, RelaxThread
@@ -232,6 +233,18 @@ class Minimise:
                 self.relax.data.res[self.run][index].warning = None
 
 
+    def return_conversion_factor(self, stat_type):
+        """Dummy function for returning 1.0."""
+
+        return 1.0
+
+
+    def return_units(self, stat_type):
+        """Dummy function which returns None as the stats have no units."""
+
+        return None
+
+
     def return_value(self, run, index=None, stat_type=None, sim=None):
         """Function for returning the minimisation statistic corresponding to 'stat_type'."""
 
@@ -239,30 +252,49 @@ class Minimise:
         self.run = run
 
         # Get the object name.
-        object_name = self.get_data_name(data_type)
+        object_name = self.get_data_name(stat_type)
 
         # The statistic type does not exist.
         if not object_name:
             raise RelaxError, "The statistic type " + `stat_type` + " does not exist."
 
+        # The simulation object name.
+        object_sim = object_name + '_sim'
+
         # Get the global statistic.
         if index == None:
-            # Get the statistic
-            if hasattr(self.relax.data, object_name) and getattr(self.relax.data.res[self.run][i], object_name).has_key(self.run):
-                stat = getattr(self.relax.data, object_name)[self.run]
+            # Get the statistic.
+            if sim == None:
+                if hasattr(self.relax.data, object_name) and getattr(self.relax.data.res[self.run][index], object_name).has_key(self.run):
+                    stat = getattr(self.relax.data, object_name)[self.run]
+                else:
+                    stat = None
+
+            # Get the simulation statistic.
             else:
-                stat = None
+                if hasattr(self.relax.data, object_sim) and getattr(self.relax.data.res[self.run][index], object_sim).has_key(self.run):
+                    stat = getattr(self.relax.data, object_sim)[self.run][sim]
+                else:
+                    stat = None
 
         # Residue specific statistic.
         else:
-            # Get the statistic
-            if hasattr(self.relax.data.res[self.run][i], object_name):
-                stat = getattr(self.relax.data.res[self.run][i], object_name)
-            else:
-                stat = None
+            # Get the statistic.
+            if sim == None:
+                if hasattr(self.relax.data.res[self.run][index], object_name):
+                    stat = getattr(self.relax.data.res[self.run][index], object_name)
+                else:
+                    stat = None
 
-        # Return the statistic.
-        return stat
+            # Get the simulation statistic.
+            else:
+                if hasattr(self.relax.data.res[self.run][index], object_sim):
+                    stat = getattr(self.relax.data.res[self.run][index], object_sim)[sim]
+                else:
+                    stat = None
+
+        # Return the statistic (together with None to indicate that there are no errors associated with the statistic).
+        return stat, None
 
 
 # Main threading loop for the minimisation of Monte Carlo simulations.
