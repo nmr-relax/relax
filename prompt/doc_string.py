@@ -45,6 +45,13 @@ def regexp_doc():
             $ - Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
             or 's2s'.
 
+            . - Match any character.
+
+            x* - Match the character x any number of times, for example 'x' will match, as will
+            'xxxxx'
+
+            .* - Match any sequence of characters of any length.
+
         Importantly, do not supply a string for the data type containing regular expression.  The
         regular expression is implemented so that various strings can be supplied which all match
         the same data type.

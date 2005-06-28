@@ -60,6 +60,54 @@ class Minimise:
             calculate(run=run, print_flag=print_flag)
 
 
+    def get_data_name(self, name):
+        """
+        Minimisation statistic data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Chi-squared statistic  | chi2         | '^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Iteration count        | iter         | '^[Ii]ter'                                       |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Function call count    | f_count      | '^[Ff].*[ -_][Cc]ount'                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Gradient call count    | g_count      | '^[Gg].*[ -_][Cc]ount'                           |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Hessian call count     | h_count      | '^[Hh].*[ -_][Cc]ount'                           |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Chi-squared.
+        if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
+            return 'chi2'
+
+        # Iteration count.
+        if search('^[Ii]ter', name):
+            return 'iter'
+
+        # Function call count.
+        if search('^[Ff].*[ -_][Cc]ount', name):
+            return 'f_count'
+
+        # Function call count.
+        if search('^[Gg].*[ -_][Cc]ount', name):
+            return 'g_count'
+
+        # Function call count.
+        if search('^[Hh].*[ -_][Cc]ount', name):
+            return 'h_count'
+
+
     def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):
         """The grid search function."""
 
@@ -128,62 +176,96 @@ class Minimise:
     def reset_min_stats(self, run, index=None):
         """Function for resetting the minimisation statistics."""
 
+        # Arguments.
+        self.run = run
+
         # Global minimisation statistics.
         if index == None:
             # Chi-squared.
-            if hasattr(self.relax.data, 'chi2') and self.relax.data.chi2.has_key(run):
-                self.relax.data.chi2[run] = None
+            if hasattr(self.relax.data, 'chi2') and self.relax.data.chi2.has_key(self.run):
+                self.relax.data.chi2[self.run] = None
 
             # Iteration count.
-            if hasattr(self.relax.data, 'iter') and self.relax.data.iter.has_key(run):
-                self.relax.data.iter[run] = None
+            if hasattr(self.relax.data, 'iter') and self.relax.data.iter.has_key(self.run):
+                self.relax.data.iter[self.run] = None
 
             # Function count.
-            if hasattr(self.relax.data, 'f_count') and self.relax.data.f_count.has_key(run):
-                self.relax.data.f_count[run] = None
+            if hasattr(self.relax.data, 'f_count') and self.relax.data.f_count.has_key(self.run):
+                self.relax.data.f_count[self.run] = None
 
             # Gradient count.
-            if hasattr(self.relax.data, 'g_count') and self.relax.data.g_count.has_key(run):
-                self.relax.data.g_count[run] = None
+            if hasattr(self.relax.data, 'g_count') and self.relax.data.g_count.has_key(self.run):
+                self.relax.data.g_count[self.run] = None
 
             # Hessian count.
-            if hasattr(self.relax.data, 'h_count') and self.relax.data.h_count.has_key(run):
-                self.relax.data.h_count[run] = None
+            if hasattr(self.relax.data, 'h_count') and self.relax.data.h_count.has_key(self.run):
+                self.relax.data.h_count[self.run] = None
 
             # Warning.
-            if hasattr(self.relax.data, 'warning') and self.relax.data.warning.has_key(run):
-                self.relax.data.warning[run] = None
+            if hasattr(self.relax.data, 'warning') and self.relax.data.warning.has_key(self.run):
+                self.relax.data.warning[self.run] = None
 
         # Sequence specific minimisation statistics.
         else:
             # Chi-squared.
-            if hasattr(self.relax.data.res[run][index], 'chi2'):
-                self.relax.data.res[run][index].chi2 = None
+            if hasattr(self.relax.data.res[self.run][index], 'chi2'):
+                self.relax.data.res[self.run][index].chi2 = None
 
             # Iteration count.
-            if hasattr(self.relax.data.res[run][index], 'iter'):
-                self.relax.data.res[run][index].iter = None
+            if hasattr(self.relax.data.res[self.run][index], 'iter'):
+                self.relax.data.res[self.run][index].iter = None
 
             # Function count.
-            if hasattr(self.relax.data.res[run][index], 'f_count'):
-                self.relax.data.res[run][index].f_count = None
+            if hasattr(self.relax.data.res[self.run][index], 'f_count'):
+                self.relax.data.res[self.run][index].f_count = None
 
             # Gradient count.
-            if hasattr(self.relax.data.res[run][index], 'g_count'):
-                self.relax.data.res[run][index].g_count = None
+            if hasattr(self.relax.data.res[self.run][index], 'g_count'):
+                self.relax.data.res[self.run][index].g_count = None
 
             # Hessian count.
-            if hasattr(self.relax.data.res[run][index], 'h_count'):
-                self.relax.data.res[run][index].h_count = None
+            if hasattr(self.relax.data.res[self.run][index], 'h_count'):
+                self.relax.data.res[self.run][index].h_count = None
 
             # Warning.
-            if hasattr(self.relax.data.res[run][index], 'warning'):
-                self.relax.data.res[run][index].warning = None
+            if hasattr(self.relax.data.res[self.run][index], 'warning'):
+                self.relax.data.res[self.run][index].warning = None
 
 
+    def return_value(self, run, index=None, stat_type=None, sim=None):
+        """Function for returning the minimisation statistic corresponding to 'stat_type'."""
+
+        # Arguments.
+        self.run = run
+
+        # Get the object name.
+        object_name = self.get_data_name(data_type)
+
+        # The statistic type does not exist.
+        if not object_name:
+            raise RelaxError, "The statistic type " + `stat_type` + " does not exist."
+
+        # Get the global statistic.
+        if index == None:
+            # Get the statistic
+            if hasattr(self.relax.data, object_name) and getattr(self.relax.data.res[self.run][i], object_name).has_key(self.run):
+                stat = getattr(self.relax.data, object_name)[self.run]
+            else:
+                stat = None
+
+        # Residue specific statistic.
+        else:
+            # Get the statistic
+            if hasattr(self.relax.data.res[self.run][i], object_name):
+                stat = getattr(self.relax.data.res[self.run][i], object_name)
+            else:
+                stat = None
+
+        # Return the statistic.
+        return stat
 
 
-# Main threading loop for the minimisation of Monte Carlo simulations. 
+# Main threading loop for the minimisation of Monte Carlo simulations.
 ######################################################################
 
 class RelaxMinParentThread(RelaxParentThread):

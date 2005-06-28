@@ -1334,43 +1334,43 @@ class Model_free(Common_functions):
         """
 
         # Local tm.
-        if match('^tm$', name):
+        if search('^tm$', name):
             return 'tm'
 
         # Order parameter S2.
-        if match('^[Ss]2$', name):
+        if search('^[Ss]2$', name):
             return 's2'
 
         # Order parameter S2f.
-        if match('^[Ss]2f$', name):
+        if search('^[Ss]2f$', name):
             return 's2f'
 
         # Order parameter S2s.
-        if match('^[Ss]2s$', name):
+        if search('^[Ss]2s$', name):
             return 's2s'
 
         # Correlation time te.
-        if match('^te$', name):
+        if search('^te$', name):
             return 'te'
 
         # Correlation time tf.
-        if match('^tf$', name):
+        if search('^tf$', name):
             return 'tf'
 
         # Correlation time ts.
-        if match('^ts$', name):
+        if search('^ts$', name):
             return 'ts'
 
         # Rex
-        if match('^[Rr]ex$', name) or match('[Cc]emical[ -_][Ee]xchange', name):
+        if search('^[Rr]ex$', name) or search('[Cc]emical[ -_][Ee]xchange', name):
             return 'rex'
 
         # Bond length.
-        if match('^r$', name) or match('[Bb]ond[ -_][Ll]ength', name):
+        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
             return 'r'
 
         # CSA.
-        if match('^[Cc][Ss][Aa]$', name):
+        if search('^[Cc][Ss][Aa]$', name):
             return 'csa'
 
 
