@@ -173,6 +173,12 @@ class Relax_fit:
                 data.noe_err = None
 
 
+    def return_conversion_factor(self, stat_type):
+        """Dummy function for returning 1.0."""
+
+        return 1.0
+
+
     def return_data_name(self, name):
         """
         Relaxation curve fitting data type string matching patterns
@@ -191,6 +197,26 @@ class Relax_fit:
         # Rate.
         if match('^[Rr]ate$', name):
             return 'rate'
+
+
+    def return_grace_string(self, data_type):
+        """Function for returning the Grace string representing the data type for axis labelling."""
+
+        # Get the object name.
+        object_name = self.return_data_name(data_type)
+
+        # Rate.
+        if object_name == 'rate':
+            grace_string = 'Rate'
+
+        # Return the Grace string.
+        return grace_string
+
+
+    def return_units(self, stat_type):
+        """Dummy function which returns None as the stats have no units."""
+
+        return None
 
 
     def return_value(self, run, i, data_type='noe'):

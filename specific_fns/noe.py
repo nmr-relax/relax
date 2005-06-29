@@ -220,6 +220,12 @@ class Noe:
                 data.noe_err = None
 
 
+    def return_conversion_factor(self, stat_type):
+        """Dummy function for returning 1.0."""
+
+        return 1.0
+
+
     def return_data_name(self, name):
         """
         NOE calculation data type string matching patterns
@@ -252,6 +258,34 @@ class Noe:
         # NOE.
         if match('^[Nn][Oo][Ee]$', name):
             return 'noe'
+
+
+    def return_grace_string(self, data_type):
+        """Function for returning the Grace string representing the data type for axis labelling."""
+
+        # Get the object name.
+        object_name = self.return_data_name(data_type)
+
+        # Reference intensity.
+        if object_name == 'ref':
+            grace_string = 'Reference intensity'
+
+        # Saturated intensity.
+        if object_name == 'sat':
+            grace_string = 'Saturated intensity'
+
+        # NOE.
+        if object_name == 'noe':
+            grace_string = '\\qNOE\\Q'
+
+        # Return the Grace string.
+        return grace_string
+
+
+    def return_units(self, stat_type):
+        """Dummy function which returns None as the stats have no units."""
+
+        return None
 
 
     def return_value(self, run, i, data_type='noe'):

@@ -233,6 +233,12 @@ class Jw_mapping(Common_functions):
         return len(self.relax.data.res[self.run])
 
 
+    def return_conversion_factor(self, stat_type):
+        """Dummy function for returning 1.0."""
+
+        return 1.0
+
+
     def return_data_name(self, name):
         """
         Reduced spectral density mapping data type string matching patterns
@@ -309,6 +315,32 @@ class Jw_mapping(Common_functions):
 
         # Return the Grace string.
         return grace_string
+
+
+    def return_units(self, data_type):
+        """Function for returning a string representing the parameters units.
+        
+        For example, the internal representation of te is in seconds, whereas the external
+        representation is in picoseconds, therefore this function will return the string
+        'picoseconds' for te.
+        """
+
+        # Get the object name.
+        object_name = self.return_data_name(data_type)
+
+        # Initialise to no units.
+        units = None
+
+        # Bond length (Angstrom).
+        elif object_name == 'r':
+            units = 'Angstrom'
+
+        # CSA (ppm).
+        elif object_name == 'csa':
+            units = 'ppm'
+
+        # Return the units string.
+        return units
 
 
     def return_value(self, run, i, data_type):
