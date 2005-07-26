@@ -332,7 +332,7 @@ class Jw_mapping(Common_functions):
         units = None
 
         # Bond length (Angstrom).
-        elif object_name == 'r':
+        if object_name == 'r':
             units = 'Angstrom'
 
         # CSA (ppm).
