@@ -328,7 +328,7 @@ class Value:
                     set(run=run, value=val, error=None, data_type=data_type[j], index=i)
 
             # Reset the minimisation statistics.
-            self.generic.minimise.reset_min_stats(run, i)
+            self.relax.generic.minimise.reset_min_stats(run, i)
 
 
     def write(self, run=None, data_type=None, file=None, dir=None, force=0):

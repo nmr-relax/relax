@@ -4639,17 +4639,17 @@ class Model_free(Common_functions):
 
             # S2.
             s2 = None
-            if hasattr(data, 's2'):
+            if hasattr(data, 's2') and data.s2 != None:
                 s2 = data.s2 / self.return_conversion_factor('s2')
 
             # S2f.
             s2f = None
-            if hasattr(data, 's2f'):
+            if hasattr(data, 's2f') and data.s2f != None:
                 s2f = data.s2f / self.return_conversion_factor('s2f')
 
             # S2s.
             s2s = None
-            if hasattr(data, 's2s'):
+            if hasattr(data, 's2s') and data.s2s != None:
                 s2s = data.s2s / self.return_conversion_factor('s2s')
 
             # tm.
@@ -4815,17 +4815,17 @@ class Model_free(Common_functions):
 
             # S2.
             s2 = None
-            if hasattr(data, 's2_err'):
+            if hasattr(data, 's2_err') and data.s2_err != None:
                 s2 = data.s2_err / self.return_conversion_factor('s2')
 
             # S2f.
             s2f = None
-            if hasattr(data, 's2f_err'):
+            if hasattr(data, 's2f_err') and data.s2f_err != None:
                 s2f = data.s2f_err / self.return_conversion_factor('s2f')
 
             # S2s.
             s2s = None
-            if hasattr(data, 's2s_err'):
+            if hasattr(data, 's2s_err') and data.s2s_err != None:
                 s2s = data.s2s_err / self.return_conversion_factor('s2s')
 
             # tm.
@@ -4940,17 +4940,17 @@ class Model_free(Common_functions):
 
                 # S2.
                 s2 = None
-                if hasattr(data, 's2_sim'):
+                if hasattr(data, 's2_sim') and data.s2_sim != None:
                     s2 = data.s2_sim[i] / self.return_conversion_factor('s2')
 
                 # S2f.
                 s2f = None
-                if hasattr(data, 's2f_sim'):
+                if hasattr(data, 's2f_sim') and data.s2f_sim != None:
                     s2f = data.s2f_sim[i] / self.return_conversion_factor('s2f')
 
                 # S2s.
                 s2s = None
-                if hasattr(data, 's2s_sim'):
+                if hasattr(data, 's2s_sim') and data.s2s_sim != None:
                     s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
 
                 # tm.
