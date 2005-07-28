@@ -4940,17 +4940,17 @@ class Model_free(Common_functions):
 
                 # S2.
                 s2 = None
-                if hasattr(data, 's2_sim') and data.s2_sim != None:
+                if hasattr(data, 's2_sim') and data.s2_sim[i] != None:
                     s2 = data.s2_sim[i] / self.return_conversion_factor('s2')
 
                 # S2f.
                 s2f = None
-                if hasattr(data, 's2f_sim') and data.s2f_sim != None:
+                if hasattr(data, 's2f_sim') and data.s2f_sim[i] != None:
                     s2f = data.s2f_sim[i] / self.return_conversion_factor('s2f')
 
                 # S2s.
                 s2s = None
-                if hasattr(data, 's2s_sim') and data.s2s_sim != None:
+                if hasattr(data, 's2s_sim') and data.s2s_sim[i] != None:
                     s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
 
                 # tm.
