@@ -54,7 +54,7 @@ class Monte_carlo:
 
         The method argument can either be set to 'back_calc' or 'direct', the choice of which
         determines the simulation type.  If the values or parameters of a run are calculated rather
-        than minimised, this option will have no effect, hence 'back_calc' and 'direct' are
+        than minimised, this option will have no effect, hence, 'back_calc' and 'direct' are
         identical.
 
         For error analysis, the method argument should be set to 'back_calc' which will result in
@@ -91,7 +91,7 @@ class Monte_carlo:
         self.__relax__.generic.monte_carlo.create_data(run=run, method=method)
 
 
-    def error_analysis(self, run=None, prune=0):
+    def error_analysis(self, run=None, prune=0.0):
         """Function for calculating parameter errors from the Monte Carlo simulations.
 
         Keyword Arguments
@@ -99,7 +99,7 @@ class Monte_carlo:
 
         run:  The name of the run.
 
-        prune:  The proportion of the simulations to prune for the calculation of parameter errors.
+        prune:  Legacy argument corresponding to 'trim' in Art Palmer's Modelfree program.
 
 
         Description
@@ -110,10 +110,17 @@ class Monte_carlo:
         and the simulation data are generated using the method 'direct'.  The reason is because only
         true Monte Carlo simulations can give the true parameter errors.
 
+        The prune argument is legacy code which corresponds to the 'trim' option in Art Palmer's
+        Modelfree program.  To remove failed simulations, the eliminate function should be used
+        prior to this function.  Eliminating the simulations specifically identifies and removes the
+        failed simulations whereas the prune argment will only, in a few cases, positively identify
+        failed simulations but only if severe parameter limits have been imposed.  Most failed
+        models will pass through the prunning process and hence cause a catastropic increase in the
+        parameter errors.  If the argument must be used, the following must be taken into account.
         If the values or parameters of a run are calculated rather than minimised, the prune
         argument must be set to zero.  The value of this argument is proportional to the number of
-        simulations removed prior to error calculation.  If prune is set to 0, all simulations are
-        used for calculating errors, whereas a value of 1 excludes all data.  In almost all cases
+        simulations removed prior to error calculation.  If prune is set to 0.0, all simulations are
+        used for calculating errors, whereas a value of 1.0 excludes all data.  In almost all cases
         prune must be set to zero, any value greater than zero will result in an underestimation of
         the error values.  If a value is supplied, the lower and upper tails of the distribution of
         chi-squared values will be excluded from the error calculation.
@@ -297,7 +304,9 @@ class Monte_carlo:
         6.  Each simulation requires minimisation or calculation.  The same techniques as used in
         step 2, excluding the grid search when minimising, should be used for the simulations.
 
-        7.  The model parameter errors are calculated from the distribution of simulation
+        7.  Failed simulations are removed using the techniques of model elimination.
+
+        8.  The model parameter errors are calculated from the distribution of simulation
         parameters.
 
 
@@ -319,7 +328,8 @@ class Monte_carlo:
         relax> monte_carlo.create_data('m1', method='back_calc')         # Step 4.
         relax> monte_carlo.initial_values('m1')                          # Step 5.
         relax> minimise('newton', run='m1')                              # Step 6.
-        relax> monte_carlo.error_analysis('m1')                          # Step 7.
+        relax> eliminate('m1')                                           # Step 7.
+        relax> monte_carlo.error_analysis('m1')                          # Step 8.
 
         An example for reduced spectral density mapping is:
 
@@ -327,7 +337,7 @@ class Monte_carlo:
         relax> monte_carlo.setup('600MHz', number=500)                   # Step 3.
         relax> monte_carlo.create_data('600MHz', method='back_calc')     # Step 4.
         relax> calc('600MHz')                                            # Step 6.
-        relax> monte_carlo.error_analysis('600MHz')                      # Step 7.
+        relax> monte_carlo.error_analysis('600MHz')                      # Step 8.
     """
 
     create_data.__doc__ = create_data.__doc__ + "\n\n" + __description__

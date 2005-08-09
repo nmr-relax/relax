@@ -244,6 +244,10 @@ class Specific_setup:
         if self.eqi == 'return_grace_string':
             return self.relax.specific.model_free.return_grace_string
 
+        # Selected simulation array returning function.
+        if self.eqi == 'return_selected_sim':
+            return self.relax.specific.model_free.sim_return_selected
+
         # Simulation chi-squared array returning function.
         if self.eqi == 'return_sim_chi2':
             return self.relax.specific.model_free.sim_return_chi2
@@ -267,6 +271,10 @@ class Specific_setup:
         # Set error function.
         if self.eqi == 'set_error':
             return self.relax.specific.model_free.set_error
+
+        # Set the selected simulations array.
+        if self.eqi == 'set_selected_sim':
+            return self.relax.specific.model_free.sim_set_selected
 
         # Skip function.
         if self.eqi == 'skip_function':

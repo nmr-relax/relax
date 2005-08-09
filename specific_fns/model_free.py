@@ -1327,7 +1327,7 @@ class Model_free(Common_functions):
         return self.param_names
 
 
-    def get_param_values(self, run, i):
+    def get_param_values(self, run, i, sim_index=None):
         """Function for returning a vector of parameter values."""
 
         # Arguments
@@ -1357,7 +1357,7 @@ class Model_free(Common_functions):
             index = None
 
         # Assemble the parameter values.
-        self.param_vector = self.assemble_param_vector(index=index)
+        self.param_vector = self.assemble_param_vector(index=index, sim_index=sim_index)
 
         # Return the parameter names.
         return self.param_vector
@@ -4410,6 +4410,42 @@ class Model_free(Common_functions):
                 inc = inc + 1
 
 
+    def sim_return_selected(self, run, instance):
+        """Function for returning the array of selected simulation flags."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Single instance.
+        if self.param_set == 'all' or self.param_set == 'diff':
+            return self.relax.data.select_sim[self.run]
+
+        # Multiple instances.
+        else:
+            return self.relax.data.res[self.run][instance].select_sim
+
+
+    def sim_set_selected(self, run, instance, select_sim):
+        """Function for returning the array of selected simulation flags."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Single instance.
+        if self.param_set == 'all' or self.param_set == 'diff':
+            self.relax.data.select_sim = select_sim
+
+        # Multiple instances.
+        else:
+            self.relax.data.res[self.run][instance].select_sim = select_sim
+
+
     def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):
         """Function for skiping certain data."""
 
@@ -4432,8 +4468,8 @@ class Model_free(Common_functions):
         return 0
 
 
-    def unselect(self, run, i):
-        """Function for unselecting models."""
+    def unselect(self, run, i, sim_index=None):
+        """Function for unselecting models or simulations."""
 
         # Arguments.
         self.run = run
@@ -4441,19 +4477,39 @@ class Model_free(Common_functions):
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
-        # Single residue.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
-            self.relax.data.res[self.run][i].select = 0
+        # Simulation unselect.
+        if sim_index != None:
+            # Single instance.
+            if self.param_set == 'mf' or self.param_set == 'local_tm':
+                self.relax.data.res[self.run][i].select_sim[sim_index] = 0
+
+            # Multiple instances.
+            else:
+                self.relax.data.select_sim[sim_index] = 0
+
+        # Residue unselect.
+        else:
+            # Single residue.
+            if self.param_set == 'mf' or self.param_set == 'local_tm':
+                self.relax.data.res[self.run][i].select = 0
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, select_sim=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
         file.write("%-4s %-5s " % (num, name))
 
-        # Selected flag and data set.
-        file.write("%-9s %-9s " % (select, data_set))
+        # Selected flag.
+        if select_sim != None:
+            file.write("%-9s " % select_sim)
+        else:
+            file.write("%-9s " % select)
+
+        # Data set.
+        file.write("%-9s " % data_set)
+
+        # Skip the rest of the line if the residue is not selected.
         if not select:
             file.write("\n")
             return
@@ -4938,6 +4994,12 @@ class Model_free(Common_functions):
                 if hasattr(data, 'params'):
                     params = replace(`data.params`, ' ', '')
 
+                # Selected simulation.
+                if self.param_set == 'diff' or self.param_set == 'all':
+                    select_sim = self.relax.data.select_sim[i]
+                else:
+                    select_sim = data.select_sim[i]
+
                 # S2.
                 s2 = None
                 if hasattr(data, 's2_sim') and data.s2_sim[i] != None:
@@ -5047,4 +5109,4 @@ class Model_free(Common_functions):
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

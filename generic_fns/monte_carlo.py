@@ -38,25 +38,28 @@ class Monte_carlo:
         It is assumed that all data types are residue specific.
         """
 
+        # Arguments.
+        self.run = run
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(self.relax.data, 'sim_state'):
-            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+            raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
 
         # Test the method argument.
         valid_methods = ['back_calc', 'direct']
         if method not in valid_methods:
-            raise RelaxError, "The method " + `method` + " is not valid."
+            raise RelaxError, "The simulation creation method " + `method` + " is not valid."
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
         # Specific Monte Carlo data creation, data return, and error return function setup.
         create_mc_data = self.relax.specific_setup.setup('create_mc_data', function_type)
@@ -65,25 +68,25 @@ class Monte_carlo:
         pack_sim_data = self.relax.specific_setup.setup('pack_sim_data', function_type)
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[run])):
+        for i in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[run][i].select:
+            if not self.relax.data.res[self.run][i].select:
                 continue
 
             # Create the Monte Carlo data.
             if method == 'back_calc':
-                data = create_mc_data(run, i)
+                data = create_mc_data(self.run, i)
 
             # Get the original data.
             else:
-                data = return_data(run, i)
+                data = return_data(self.run, i)
 
             # Get the errors.
-            error = return_error(run, i)
+            error = return_error(self.run, i)
 
             # Loop over the Monte Carlo simulations.
             random = []
-            for j in xrange(self.relax.data.sim_number[run]):
+            for j in xrange(self.relax.data.sim_number[self.run]):
                 # Randomise the data.
                 random.append([])
                 for k in xrange(len(data)):
@@ -96,10 +99,10 @@ class Monte_carlo:
                     random[j].append(gauss(data[k], error[k]))
 
             # Pack the simulation data.
-            pack_sim_data(run, i, random)
+            pack_sim_data(self.run, i, random)
 
 
-    def error_analysis(self, run=None, prune=0):
+    def error_analysis(self, run=None, prune=0.0):
         """Function for calculating errors from the Monte Carlo simulations.
 
         The standard deviation formula used to calculate the errors is the square root of the
@@ -116,36 +119,43 @@ class Monte_carlo:
             Xav is the mean parameter value for all simulations.
         """
 
+        # Arguments.
+        self.run = run
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(self.relax.data, 'sim_state'):
-            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+            raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
-        # Specific number of instances, return simulation chi2 array, return simulation parameter array, and set error functions.
+        # Specific number of instances, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
         count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
         if prune > 0.0:
             return_sim_chi2 = self.relax.specific_setup.setup('return_sim_chi2', function_type)
+        return_selected_sim = self.relax.specific_setup.setup('return_selected_sim', function_type)
         return_sim_param = self.relax.specific_setup.setup('return_sim_param', function_type)
         set_error = self.relax.specific_setup.setup('set_error', function_type)
 
         # Count the number of instances.
-        num_instances = count_num_instances(run)
+        num_instances = count_num_instances(self.run)
 
         # Loop over the instances.
         for instance in xrange(num_instances):
-            # Initialise an array of indecies to prune.
+            # Get the selected simulation array.
+            select_sim = return_selected_sim(self.run, instance)
+
+            # Initialise an array of indecies to prune (an empty array means no prunning).
             indecies_to_skip = []
 
             # Pruning.
             if prune > 0.0:
                 # Get the array of simulation chi-squared values.
-                chi2_array = return_sim_chi2(run, instance)
+                chi2_array = return_sim_chi2(self.run, instance)
 
                 # The total number of simulations.
                 n = len(chi2_array)
@@ -169,7 +179,7 @@ class Monte_carlo:
             index = 0
             while 1:
                 # Get the array of simulation parameters for the index.
-                param_array = return_sim_param(run, instance, index)
+                param_array = return_sim_param(self.run, instance, index)
 
                 # Break (no more parameters).
                 if param_array == None:
@@ -178,22 +188,43 @@ class Monte_carlo:
                 # Simulation parameters with values (ie not None).
                 if param_array[0] != None:
                     # The total number of simulations.
-                    n = len(param_array)
+                    n = 0
+                    for i in xrange(len(param_array)):
+                        # Skip unselected simulations.
+                        if not select_sim[i]:
+                            continue
 
-                    # Calculate the mean parameter value for all simulations.
-                    Xav = 0.0
-                    for i in xrange(n):
+                        # Prune.
+                        if i in indecies_to_skip:
+                            continue
+
+                        # Increment n.
+                        n = n + 1
+
+                    # Calculate the sum of the parameter value for all simulations.
+                    Xsum = 0.0
+                    for i in xrange(len(param_array)):
+                        # Skip unselected simulations.
+                        if not select_sim[i]:
+                            continue
+
                         # Prune.
                         if i in indecies_to_skip:
                             continue
 
                         # Sum.
-                        Xav = Xav + param_array[i]
-                    Xav = Xav / (float(n) - float(len(indecies_to_skip)))
+                        Xsum = Xsum + param_array[i]
+
+                    # Calculate the mean parameter value for all simulations.
+                    Xav = Xsum / float(n)
 
                     # Calculate the sum part of the standard deviation.
                     sd = 0.0
-                    for i in xrange(n):
+                    for i in xrange(len(param_array)):
+                        # Skip unselected simulations.
+                        if not select_sim[i]:
+                            continue
+
                         # Prune.
                         if i in indecies_to_skip:
                             continue
@@ -202,14 +233,14 @@ class Monte_carlo:
                         sd = sd + (param_array[i] - Xav)**2
 
                     # Calculate the standard deviation.
-                    sd = sqrt(sd / (float(n) - float(len(indecies_to_skip)) - 1.0))
+                    sd = sqrt(sd / (float(n) - 1.0))
 
                 # Simulation parameters with the value None.
                 else:
                     sd = None
 
                 # Set the parameter error.
-                set_error(run, instance, index, sd)
+                set_error(self.run, instance, index, sd)
 
                 # Increment the parameter index.
                 index = index + 1
@@ -218,75 +249,114 @@ class Monte_carlo:
     def initial_values(self, run=None):
         """Function for setting the initial simulation parameter values."""
 
+        # Arguments.
+        self.run = run
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(self.relax.data, 'sim_state'):
-            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+            raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
         # Specific initial Monte Carlo parameter value function setup.
         init_sim_values = self.relax.specific_setup.setup('init_sim_values', function_type)
 
         # Set the initial parameter values.
-        init_sim_values(run)
+        init_sim_values(self.run)
 
 
     def off(self, run=None):
         """Function for turning simulations off."""
 
+        # Arguments.
+        self.run = run
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(self.relax.data, 'sim_state'):
-            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+            raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Turn simulations off.
-        self.relax.data.sim_state[run] = 0
+        self.relax.data.sim_state[self.run] = 0
 
 
     def on(self, run=None):
         """Function for turning simulations on."""
 
+        # Arguments.
+        self.run = run
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(self.relax.data, 'sim_state'):
-            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have not been set up."
+            raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Turn simulations on.
-        self.relax.data.sim_state[run] = 1
+        self.relax.data.sim_state[self.run] = 1
+
+
+    def select_all_sims(self, number=None):
+        """Function for setting the select flag of all simulations of all instances to one."""
+
+        # Function type.
+        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+
+        # Specific number of instances and set the selected simulation array functions.
+        count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
+        set_selected_sim = self.relax.specific_setup.setup('set_selected_sim', function_type)
+
+        # Count the number of instances.
+        num_instances = count_num_instances(self.run)
+
+        # Create the selected simulation array with all simulations selected.
+        select_sim = []
+        for i in xrange(number):
+            select_sim.append(1)
+
+        # Loop over the instances.
+        for instance in xrange(num_instances):
+            # Set the selected simulation array.
+            set_selected_sim(self.run, instance, select_sim)
 
 
     def setup(self, run=None, number=0):
         """Function for setting up Monte Carlo simulations."""
 
+        # Arguments.
+        self.run = run
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if Monte Carlo simulations have already been set up for the given run.
-        if hasattr(self.relax.data, 'sim_number') and self.relax.data.sim_number.has_key(run):
-            raise RelaxError, "Monte Carlo simulations for the run " + `run` + " have already been set up."
+        if hasattr(self.relax.data, 'sim_number') and self.relax.data.sim_number.has_key(self.run):
+            raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have already been set up."
 
         # Create the data structure 'sim_number' if it doesn't exist.
         if not hasattr(self.relax.data, 'sim_number'):
             self.relax.data.sim_number = {}
 
         # Add the simulation number.
-        self.relax.data.sim_number[run] = number
+        self.relax.data.sim_number[self.run] = number
 
         # Create the data structure 'sim_state'.
         if not hasattr(self.relax.data, 'sim_state'):
             self.relax.data.sim_state = {}
 
         # Turn simulations on.
-        self.relax.data.sim_state[run] = 1
+        self.relax.data.sim_state[self.run] = 1
+
+        # Select all simulations.
+        self.select_all_sims(number=number)

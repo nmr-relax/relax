@@ -54,25 +54,66 @@ class Eliminate:
 
             # Get the number of instances and loop over them.
             for i in xrange(num_instances(self.run)):
-                # Get the parameter names and values.
-                names = param_names(self.run, i)
-                values = param_values(self.run, i)
+                # Determine if simulations are active for the run.
+                if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(self.run) and self.relax.data.sim_state[self.run] == 1:
+                    sim_state = 1
+                else:
+                    sim_state = 0
 
-                # No data.
-                if names == None or values == None:
-                    continue
 
-                # Test that the names and values vectors are of equal length.
-                if len(names) != len(values):
-                    raise RelaxError, "The names vector " + `names` + " is of a different length to the values vector " + `values` + "."
+                # Model elimination.
+                ####################
 
-                # Loop over the parameters.
-                flag = 0
-                for j in xrange(len(names)):
-                    # Eliminate function.
-                    if eliminate(names[j], values[j], self.run, i, args):
-                        flag = 1
+                if sim_state == 0:
+                    # Get the parameter names and values.
+                    names = param_names(self.run, i)
+                    values = param_values(self.run, i)
 
-                # Unselect.
-                if flag:
-                    unselect(self.run, i)
+                    # No data.
+                    if names == None or values == None:
+                        continue
+
+                    # Test that the names and values vectors are of equal length.
+                    if len(names) != len(values):
+                        raise RelaxError, "The names vector " + `names` + " is of a different length to the values vector " + `values` + "."
+
+                    # Loop over the parameters.
+                    flag = 0
+                    for j in xrange(len(names)):
+                        # Eliminate function.
+                        if eliminate(names[j], values[j], self.run, i, args):
+                            flag = 1
+
+                    # Unselect.
+                    if flag:
+                        unselect(self.run, i)
+
+
+                # Simulation elimination.
+                #########################
+
+                else:
+                    # Loop over the simulations.
+                    for j in xrange(self.relax.data.sim_number[self.run]):
+                        # Get the parameter names and values.
+                        names = param_names(self.run, i)
+                        values = param_values(self.run, i, sim_index=j)
+
+                        # No data.
+                        if names == None or values == None:
+                            continue
+
+                        # Test that the names and values vectors are of equal length.
+                        if len(names) != len(values):
+                            raise RelaxError, "The names vector " + `names` + " is of a different length to the values vector " + `values` + "."
+
+                        # Loop over the parameters.
+                        flag = 0
+                        for k in xrange(len(names)):
+                            # Eliminate function.
+                            if eliminate(names[k], values[k], self.run, i, args):
+                                flag = 1
+
+                        # Unselect.
+                        if flag:
+                            unselect(self.run, i, sim_index=j)
