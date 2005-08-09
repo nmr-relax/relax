@@ -306,7 +306,7 @@ class Monte_carlo:
         self.relax.data.sim_state[self.run] = 1
 
 
-    def select_all_sims(self, number=None):
+    def select_all_sims(self, number=None, select_sim=None):
         """Function for setting the select flag of all simulations of all instances to one."""
 
         # Function type.
@@ -320,9 +320,10 @@ class Monte_carlo:
         num_instances = count_num_instances(self.run)
 
         # Create the selected simulation array with all simulations selected.
-        select_sim = []
-        for i in xrange(number):
-            select_sim.append(1)
+        if select_sim == None:
+            select_sim = []
+            for i in xrange(number):
+                select_sim.append(1)
 
         # Loop over the instances.
         for instance in xrange(num_instances):
@@ -330,7 +331,7 @@ class Monte_carlo:
             set_selected_sim(self.run, instance, select_sim)
 
 
-    def setup(self, run=None, number=0):
+    def setup(self, run=None, number=None, select_sim=None):
         """Function for setting up Monte Carlo simulations."""
 
         # Arguments.
@@ -359,4 +360,4 @@ class Monte_carlo:
         self.relax.data.sim_state[self.run] = 1
 
         # Select all simulations.
-        self.select_all_sims(number=number)
+        self.select_all_sims(number=number, select_sim=select_sim)
