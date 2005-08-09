@@ -350,7 +350,10 @@ class Monte_carlo:
             self.relax.data.sim_number = {}
 
         # Add the simulation number.
-        self.relax.data.sim_number[self.run] = number
+        if select_sim:
+            self.relax.data.sim_number[self.run] = len(select_sim)
+        else:
+            self.relax.data.sim_number[self.run] = number
 
         # Create the data structure 'sim_state'.
         if not hasattr(self.relax.data, 'sim_state'):
