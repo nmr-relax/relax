@@ -1,0 +1,313 @@
+\contentsline {chapter}{\numberline {1}Alphabetical listing of user functions}{5}
+\contentsline {section}{\numberline {1.1}The help system}{5}
+\contentsline {section}{\numberline {1.2}The list of functions}{5}
+\contentsline {subsection}{\numberline {1.2.1}Synopsis}{5}
+\contentsline {subsection}{\numberline {1.2.2}Default argments}{5}
+\contentsline {subsection}{\numberline {1.2.3}angles}{7}
+\contentsline {subsubsection}{Synopsis:}{7}
+\contentsline {subsubsection}{Default arguments:}{7}
+\contentsline {subsubsection}{Docstring:}{7}
+\contentsline {subsection}{\numberline {1.2.4}calc}{8}
+\contentsline {subsubsection}{Synopsis:}{8}
+\contentsline {subsubsection}{Default arguments:}{8}
+\contentsline {subsubsection}{Docstring:}{8}
+\contentsline {subsection}{\numberline {1.2.5}diffusion\_tensor.copy}{9}
+\contentsline {subsubsection}{Synopsis:}{9}
+\contentsline {subsubsection}{Default arguments:}{9}
+\contentsline {subsubsection}{Docstring:}{9}
+\contentsline {subsection}{\numberline {1.2.6}diffusion\_tensor.delete}{10}
+\contentsline {subsubsection}{Synopsis:}{10}
+\contentsline {subsubsection}{Default arguments:}{10}
+\contentsline {subsubsection}{Docstring:}{10}
+\contentsline {subsection}{\numberline {1.2.7}diffusion\_tensor.display}{11}
+\contentsline {subsubsection}{Synopsis:}{11}
+\contentsline {subsubsection}{Default arguments:}{11}
+\contentsline {subsubsection}{Docstring:}{11}
+\contentsline {subsection}{\numberline {1.2.8}diffusion\_tensor.set}{12}
+\contentsline {subsubsection}{Synopsis:}{12}
+\contentsline {subsubsection}{Default arguments:}{12}
+\contentsline {subsubsection}{Docstring:}{12}
+\contentsline {subsection}{\numberline {1.2.9}dx.execute}{15}
+\contentsline {subsubsection}{Synopsis:}{15}
+\contentsline {subsubsection}{Default arguments:}{15}
+\contentsline {subsubsection}{Docstring:}{15}
+\contentsline {subsection}{\numberline {1.2.10}dx.map}{16}
+\contentsline {subsubsection}{Synopsis:}{16}
+\contentsline {subsubsection}{Default arguments:}{16}
+\contentsline {subsubsection}{Docstring:}{16}
+\contentsline {subsection}{\numberline {1.2.11}eliminate}{18}
+\contentsline {subsubsection}{Synopsis:}{18}
+\contentsline {subsubsection}{Default arguments:}{18}
+\contentsline {subsubsection}{Docstring:}{18}
+\contentsline {subsection}{\numberline {1.2.12}fix}{20}
+\contentsline {subsubsection}{Synopsis:}{20}
+\contentsline {subsubsection}{Default arguments:}{20}
+\contentsline {subsubsection}{Docstring:}{20}
+\contentsline {subsection}{\numberline {1.2.13}grace.view}{21}
+\contentsline {subsubsection}{Synopsis:}{21}
+\contentsline {subsubsection}{Default arguments:}{21}
+\contentsline {subsubsection}{Docstring:}{21}
+\contentsline {subsection}{\numberline {1.2.14}grace.write}{22}
+\contentsline {subsubsection}{Synopsis:}{22}
+\contentsline {subsubsection}{Default arguments:}{22}
+\contentsline {subsubsection}{Docstring:}{22}
+\contentsline {subsection}{\numberline {1.2.15}grid\_search}{26}
+\contentsline {subsubsection}{Synopsis:}{26}
+\contentsline {subsubsection}{Default arguments:}{26}
+\contentsline {subsubsection}{Docstring:}{26}
+\contentsline {subsection}{\numberline {1.2.16}init\_data}{27}
+\contentsline {subsubsection}{Synopsis:}{27}
+\contentsline {subsubsection}{Default arguments:}{27}
+\contentsline {subsubsection}{Docstring:}{27}
+\contentsline {subsection}{\numberline {1.2.17}intro\_off}{28}
+\contentsline {subsubsection}{Synopsis:}{28}
+\contentsline {subsubsection}{Default arguments:}{28}
+\contentsline {subsubsection}{Docstring:}{28}
+\contentsline {subsection}{\numberline {1.2.18}intro\_on}{29}
+\contentsline {subsubsection}{Synopsis:}{29}
+\contentsline {subsubsection}{Default arguments:}{29}
+\contentsline {subsubsection}{Docstring:}{29}
+\contentsline {subsection}{\numberline {1.2.19}jw\_mapping.set\_frq}{30}
+\contentsline {subsubsection}{Synopsis:}{30}
+\contentsline {subsubsection}{Default arguments:}{30}
+\contentsline {subsubsection}{Docstring:}{30}
+\contentsline {subsection}{\numberline {1.2.20}minimise}{31}
+\contentsline {subsubsection}{Synopsis:}{31}
+\contentsline {subsubsection}{Default arguments:}{31}
+\contentsline {subsubsection}{Docstring:}{31}
+\contentsline {subsection}{\numberline {1.2.21}model\_free.copy}{36}
+\contentsline {subsubsection}{Synopsis:}{36}
+\contentsline {subsubsection}{Default arguments:}{36}
+\contentsline {subsubsection}{Docstring:}{36}
+\contentsline {subsection}{\numberline {1.2.22}model\_free.create\_model}{37}
+\contentsline {subsubsection}{Synopsis:}{37}
+\contentsline {subsubsection}{Default arguments:}{37}
+\contentsline {subsubsection}{Docstring:}{37}
+\contentsline {subsection}{\numberline {1.2.23}model\_free.delete}{39}
+\contentsline {subsubsection}{Synopsis:}{39}
+\contentsline {subsubsection}{Default arguments:}{39}
+\contentsline {subsubsection}{Docstring:}{39}
+\contentsline {subsection}{\numberline {1.2.24}model\_free.remove\_tm}{40}
+\contentsline {subsubsection}{Synopsis:}{40}
+\contentsline {subsubsection}{Default arguments:}{40}
+\contentsline {subsubsection}{Docstring:}{40}
+\contentsline {subsection}{\numberline {1.2.25}model\_free.select\_model}{41}
+\contentsline {subsubsection}{Synopsis:}{41}
+\contentsline {subsubsection}{Default arguments:}{41}
+\contentsline {subsubsection}{Docstring:}{41}
+\contentsline {subsection}{\numberline {1.2.26}model\_selection}{43}
+\contentsline {subsubsection}{Synopsis:}{43}
+\contentsline {subsubsection}{Default arguments:}{43}
+\contentsline {subsubsection}{Docstring:}{43}
+\contentsline {subsection}{\numberline {1.2.27}molmol.clear\_history}{44}
+\contentsline {subsubsection}{Synopsis:}{44}
+\contentsline {subsubsection}{Default arguments:}{44}
+\contentsline {subsubsection}{Docstring:}{44}
+\contentsline {subsection}{\numberline {1.2.28}molmol.command}{45}
+\contentsline {subsubsection}{Synopsis:}{45}
+\contentsline {subsubsection}{Default arguments:}{45}
+\contentsline {subsubsection}{Docstring:}{45}
+\contentsline {subsection}{\numberline {1.2.29}molmol.view}{46}
+\contentsline {subsubsection}{Synopsis:}{46}
+\contentsline {subsubsection}{Default arguments:}{46}
+\contentsline {subsubsection}{Docstring:}{46}
+\contentsline {subsection}{\numberline {1.2.30}monte\_carlo.create\_data}{47}
+\contentsline {subsubsection}{Synopsis:}{47}
+\contentsline {subsubsection}{Default arguments:}{47}
+\contentsline {subsubsection}{Docstring:}{47}
+\contentsline {subsection}{\numberline {1.2.31}monte\_carlo.error\_analysis}{49}
+\contentsline {subsubsection}{Synopsis:}{49}
+\contentsline {subsubsection}{Default arguments:}{49}
+\contentsline {subsubsection}{Docstring:}{49}
+\contentsline {subsection}{\numberline {1.2.32}monte\_carlo.initial\_values}{51}
+\contentsline {subsubsection}{Synopsis:}{51}
+\contentsline {subsubsection}{Default arguments:}{51}
+\contentsline {subsubsection}{Docstring:}{51}
+\contentsline {subsection}{\numberline {1.2.33}monte\_carlo.off}{53}
+\contentsline {subsubsection}{Synopsis:}{53}
+\contentsline {subsubsection}{Default arguments:}{53}
+\contentsline {subsubsection}{Docstring:}{53}
+\contentsline {subsection}{\numberline {1.2.34}monte\_carlo.on}{55}
+\contentsline {subsubsection}{Synopsis:}{55}
+\contentsline {subsubsection}{Default arguments:}{55}
+\contentsline {subsubsection}{Docstring:}{55}
+\contentsline {subsection}{\numberline {1.2.35}monte\_carlo.setup}{57}
+\contentsline {subsubsection}{Synopsis:}{57}
+\contentsline {subsubsection}{Default arguments:}{57}
+\contentsline {subsubsection}{Docstring:}{57}
+\contentsline {subsection}{\numberline {1.2.36}noe.error}{59}
+\contentsline {subsubsection}{Synopsis:}{59}
+\contentsline {subsubsection}{Default arguments:}{59}
+\contentsline {subsubsection}{Docstring:}{59}
+\contentsline {subsection}{\numberline {1.2.37}noe.read}{60}
+\contentsline {subsubsection}{Synopsis:}{60}
+\contentsline {subsubsection}{Default arguments:}{60}
+\contentsline {subsubsection}{Docstring:}{60}
+\contentsline {subsection}{\numberline {1.2.38}nuclei}{62}
+\contentsline {subsubsection}{Synopsis:}{62}
+\contentsline {subsubsection}{Default arguments:}{62}
+\contentsline {subsubsection}{Docstring:}{62}
+\contentsline {subsection}{\numberline {1.2.39}palmer.create}{63}
+\contentsline {subsubsection}{Synopsis:}{63}
+\contentsline {subsubsection}{Default arguments:}{63}
+\contentsline {subsubsection}{Docstring:}{63}
+\contentsline {subsection}{\numberline {1.2.40}palmer.execute}{64}
+\contentsline {subsubsection}{Synopsis:}{64}
+\contentsline {subsubsection}{Default arguments:}{64}
+\contentsline {subsubsection}{Docstring:}{64}
+\contentsline {subsection}{\numberline {1.2.41}palmer.extract}{65}
+\contentsline {subsubsection}{Synopsis:}{65}
+\contentsline {subsubsection}{Default arguments:}{65}
+\contentsline {subsubsection}{Docstring:}{65}
+\contentsline {subsection}{\numberline {1.2.42}pdb}{66}
+\contentsline {subsubsection}{Synopsis:}{66}
+\contentsline {subsubsection}{Default arguments:}{66}
+\contentsline {subsubsection}{Docstring:}{66}
+\contentsline {subsection}{\numberline {1.2.43}relax\_data.back\_calc}{67}
+\contentsline {subsubsection}{Synopsis:}{67}
+\contentsline {subsubsection}{Default arguments:}{67}
+\contentsline {subsubsection}{Docstring:}{67}
+\contentsline {subsection}{\numberline {1.2.44}relax\_data.copy}{68}
+\contentsline {subsubsection}{Synopsis:}{68}
+\contentsline {subsubsection}{Default arguments:}{68}
+\contentsline {subsubsection}{Docstring:}{68}
+\contentsline {subsection}{\numberline {1.2.45}relax\_data.delete}{69}
+\contentsline {subsubsection}{Synopsis:}{69}
+\contentsline {subsubsection}{Default arguments:}{69}
+\contentsline {subsubsection}{Docstring:}{69}
+\contentsline {subsection}{\numberline {1.2.46}relax\_data.display}{70}
+\contentsline {subsubsection}{Synopsis:}{70}
+\contentsline {subsubsection}{Default arguments:}{70}
+\contentsline {subsubsection}{Docstring:}{70}
+\contentsline {subsection}{\numberline {1.2.47}relax\_data.read}{71}
+\contentsline {subsubsection}{Synopsis:}{71}
+\contentsline {subsubsection}{Default arguments:}{71}
+\contentsline {subsubsection}{Docstring:}{71}
+\contentsline {subsection}{\numberline {1.2.48}relax\_data.write}{73}
+\contentsline {subsubsection}{Synopsis:}{73}
+\contentsline {subsubsection}{Default arguments:}{73}
+\contentsline {subsubsection}{Docstring:}{73}
+\contentsline {subsection}{\numberline {1.2.49}relax\_fit.read}{74}
+\contentsline {subsubsection}{Synopsis:}{74}
+\contentsline {subsubsection}{Default arguments:}{74}
+\contentsline {subsubsection}{Docstring:}{74}
+\contentsline {subsection}{\numberline {1.2.50}results.display}{76}
+\contentsline {subsubsection}{Synopsis:}{76}
+\contentsline {subsubsection}{Default arguments:}{76}
+\contentsline {subsubsection}{Docstring:}{76}
+\contentsline {subsection}{\numberline {1.2.51}results.read}{77}
+\contentsline {subsubsection}{Synopsis:}{77}
+\contentsline {subsubsection}{Default arguments:}{77}
+\contentsline {subsubsection}{Docstring:}{77}
+\contentsline {subsection}{\numberline {1.2.52}results.write}{78}
+\contentsline {subsubsection}{Synopsis:}{78}
+\contentsline {subsubsection}{Default arguments:}{78}
+\contentsline {subsubsection}{Docstring:}{78}
+\contentsline {subsection}{\numberline {1.2.53}run.create}{79}
+\contentsline {subsubsection}{Synopsis:}{79}
+\contentsline {subsubsection}{Default arguments:}{79}
+\contentsline {subsubsection}{Docstring:}{79}
+\contentsline {subsection}{\numberline {1.2.54}run.delete}{80}
+\contentsline {subsubsection}{Synopsis:}{80}
+\contentsline {subsubsection}{Default arguments:}{80}
+\contentsline {subsubsection}{Docstring:}{80}
+\contentsline {subsection}{\numberline {1.2.55}select.all}{81}
+\contentsline {subsubsection}{Synopsis:}{81}
+\contentsline {subsubsection}{Default arguments:}{81}
+\contentsline {subsubsection}{Docstring:}{81}
+\contentsline {subsection}{\numberline {1.2.56}select.read}{82}
+\contentsline {subsubsection}{Synopsis:}{82}
+\contentsline {subsubsection}{Default arguments:}{82}
+\contentsline {subsubsection}{Docstring:}{82}
+\contentsline {subsection}{\numberline {1.2.57}select.res}{83}
+\contentsline {subsubsection}{Synopsis:}{83}
+\contentsline {subsubsection}{Default arguments:}{83}
+\contentsline {subsubsection}{Docstring:}{83}
+\contentsline {subsection}{\numberline {1.2.58}select.reverse}{84}
+\contentsline {subsubsection}{Synopsis:}{84}
+\contentsline {subsubsection}{Default arguments:}{84}
+\contentsline {subsubsection}{Docstring:}{84}
+\contentsline {subsection}{\numberline {1.2.59}sequence.add}{85}
+\contentsline {subsubsection}{Synopsis:}{85}
+\contentsline {subsubsection}{Default arguments:}{85}
+\contentsline {subsubsection}{Docstring:}{85}
+\contentsline {subsection}{\numberline {1.2.60}sequence.copy}{86}
+\contentsline {subsubsection}{Synopsis:}{86}
+\contentsline {subsubsection}{Default arguments:}{86}
+\contentsline {subsubsection}{Docstring:}{86}
+\contentsline {subsection}{\numberline {1.2.61}sequence.delete}{87}
+\contentsline {subsubsection}{Synopsis:}{87}
+\contentsline {subsubsection}{Default arguments:}{87}
+\contentsline {subsubsection}{Docstring:}{87}
+\contentsline {subsection}{\numberline {1.2.62}sequence.display}{88}
+\contentsline {subsubsection}{Synopsis:}{88}
+\contentsline {subsubsection}{Default arguments:}{88}
+\contentsline {subsubsection}{Docstring:}{88}
+\contentsline {subsection}{\numberline {1.2.63}sequence.read}{89}
+\contentsline {subsubsection}{Synopsis:}{89}
+\contentsline {subsubsection}{Default arguments:}{89}
+\contentsline {subsubsection}{Docstring:}{89}
+\contentsline {subsection}{\numberline {1.2.64}sequence.sort}{90}
+\contentsline {subsubsection}{Synopsis:}{90}
+\contentsline {subsubsection}{Default arguments:}{90}
+\contentsline {subsubsection}{Docstring:}{90}
+\contentsline {subsection}{\numberline {1.2.65}sequence.write}{91}
+\contentsline {subsubsection}{Synopsis:}{91}
+\contentsline {subsubsection}{Default arguments:}{91}
+\contentsline {subsubsection}{Docstring:}{91}
+\contentsline {subsection}{\numberline {1.2.66}state.load}{92}
+\contentsline {subsubsection}{Synopsis:}{92}
+\contentsline {subsubsection}{Default arguments:}{92}
+\contentsline {subsubsection}{Docstring:}{92}
+\contentsline {subsection}{\numberline {1.2.67}state.save}{93}
+\contentsline {subsubsection}{Synopsis:}{93}
+\contentsline {subsubsection}{Default arguments:}{93}
+\contentsline {subsubsection}{Docstring:}{93}
+\contentsline {subsection}{\numberline {1.2.68}system}{94}
+\contentsline {subsubsection}{Synopsis:}{94}
+\contentsline {subsubsection}{Default arguments:}{94}
+\contentsline {subsubsection}{Docstring:}{94}
+\contentsline {subsection}{\numberline {1.2.69}thread.read}{95}
+\contentsline {subsubsection}{Synopsis:}{95}
+\contentsline {subsubsection}{Default arguments:}{95}
+\contentsline {subsubsection}{Docstring:}{95}
+\contentsline {subsection}{\numberline {1.2.70}unselect.all}{97}
+\contentsline {subsubsection}{Synopsis:}{97}
+\contentsline {subsubsection}{Default arguments:}{97}
+\contentsline {subsubsection}{Docstring:}{97}
+\contentsline {subsection}{\numberline {1.2.71}unselect.read}{98}
+\contentsline {subsubsection}{Synopsis:}{98}
+\contentsline {subsubsection}{Default arguments:}{98}
+\contentsline {subsubsection}{Docstring:}{98}
+\contentsline {subsection}{\numberline {1.2.72}unselect.res}{99}
+\contentsline {subsubsection}{Synopsis:}{99}
+\contentsline {subsubsection}{Default arguments:}{99}
+\contentsline {subsubsection}{Docstring:}{99}
+\contentsline {subsection}{\numberline {1.2.73}unselect.reverse}{100}
+\contentsline {subsubsection}{Synopsis:}{100}
+\contentsline {subsubsection}{Default arguments:}{100}
+\contentsline {subsubsection}{Docstring:}{100}
+\contentsline {subsection}{\numberline {1.2.74}value.copy}{101}
+\contentsline {subsubsection}{Synopsis:}{101}
+\contentsline {subsubsection}{Default arguments:}{101}
+\contentsline {subsubsection}{Docstring:}{101}
+\contentsline {subsection}{\numberline {1.2.75}value.display}{104}
+\contentsline {subsubsection}{Synopsis:}{104}
+\contentsline {subsubsection}{Default arguments:}{104}
+\contentsline {subsubsection}{Docstring:}{104}
+\contentsline {subsection}{\numberline {1.2.76}value.read}{106}
+\contentsline {subsubsection}{Synopsis:}{106}
+\contentsline {subsubsection}{Default arguments:}{106}
+\contentsline {subsubsection}{Docstring:}{106}
+\contentsline {subsection}{\numberline {1.2.77}value.set}{109}
+\contentsline {subsubsection}{Synopsis:}{109}
+\contentsline {subsubsection}{Default arguments:}{109}
+\contentsline {subsubsection}{Docstring:}{109}
+\contentsline {subsection}{\numberline {1.2.78}value.write}{114}
+\contentsline {subsubsection}{Synopsis:}{114}
+\contentsline {subsubsection}{Default arguments:}{114}
+\contentsline {subsubsection}{Docstring:}{114}
+\contentsline {subsection}{\numberline {1.2.79}vmd.view}{117}
+\contentsline {subsubsection}{Synopsis:}{117}
+\contentsline {subsubsection}{Default arguments:}{117}
+\contentsline {subsubsection}{Docstring:}{117}

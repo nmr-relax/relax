@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  14 OCT 2005 00:02
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  14 OCT 2005 02:48
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -6,8 +6,8 @@ Babel <v3.8c> and hyphenation patterns for american, french, german, ngerman, b
 asque, italian, portuges, russian, spanish, nohyphenation, loaded.
 (/usr/share/texmf/tex/latex/base/book.cls
 Document Class: book 2004/02/16 v1.4f Standard LaTeX document class
-(/usr/share/texmf/tex/latex/base/bk12.clo
-File: bk12.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
+(/usr/share/texmf/tex/latex/base/bk11.clo
+File: bk11.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@chapter=\count80
@@ -101,32 +101,181 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
 LaTeX Font Info:    ... okay on input line 20.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
 LaTeX Font Info:    ... okay on input line 20.
+ [1
 
+
+] [2
+
+] (./relax.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 2.
+ [3])
+\tf@toc=\write3
+\openout3 = `relax.toc'.
+
+ [4]
 Chapter 1.
-(./docstring.tex [1
+[5
 
+] (./docstring.tex [6] [7] [8] [9] [10] [11]
+Overfull \hbox (32.97922pt too wide) in paragraph at lines 195--196
+\OT1/cmss/bx/n/10.95 diffusion[]tensor.set\OT1/cmss/m/n/10.95 (self, run=None, 
+params=None, time[]scale=1.0, d[]scale=1.0, an-gle[]units=`deg',
+ []
 
-] [2] [3] [4]
+[12]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [5]
+ [13]
+[14] [15]
+Overfull \hbox (12.06596pt too wide) in paragraph at lines 422--423
+\OT1/cmss/bx/n/10.95 dx.map\OT1/cmss/m/n/10.95 (self, run=None, res[]num=None, 
+map[]type=`Iso3D', inc=20, lower=None, up-per=None,
+ []
+
+
+Overfull \hbox (4.048pt too wide) in paragraph at lines 422--423
+\OT1/cmss/m/n/10.95 swap=None, file=`map', dir=`dx', point=None, point[]file=`p
+oint', remap=None, la-bels=None)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--423
+
+ []
+
+[16] [17] [18] [19] [20] [21]
+Overfull \hbox (33.41545pt too wide) in paragraph at lines 739--740
+\OT1/cmss/bx/n/10.95 grace.write\OT1/cmss/m/n/10.95 (self, run=None, x[]data[]t
+ype=`res', y[]data[]type=None, res[]num=None, res[]name=None,
+ []
+
+[22]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [6]
+ [23]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [7]
+ [24]
+[25]
+Underfull \hbox (badness 10000) in paragraph at lines 984--985
+
+ []
+
+[26] [27] [28] [29] [30] [31]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [8]
-[9] [10]) [11] (./relax.aux) ) 
+ [32]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [33]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [34]
+[35] [36]
+Overfull \hbox (59.69937pt too wide) in paragraph at lines 1556--1557
+\OT1/cmss/bx/n/10.95 model[]free.create[]model\OT1/cmss/m/n/10.95 (self, run=No
+ne, model=None, equa-tion=None, params=None, res[]num=None)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1556--1557
+
+ []
+
+[37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48] [49] [50] [51]
+[52] [53] [54] [55] [56] [57] [58]
+Overfull \hbox (1.1494pt too wide) in paragraph at lines 2717--2718
+\OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
+spec-trum[]type=None, res[]num=None, res[]name=None)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2717--2718
+
+ []
+
+[59] [60] [61] [62]
+Overfull \hbox (14.84903pt too wide) in paragraph at lines 2900--2901
+\OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
+, force=0, diff[]search=`none', sims=0, sim[]type=`pred',
+ []
+
+[63] [64] [65]
+Overfull \hbox (22.32854pt too wide) in paragraph at lines 3043--3044
+\OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
+e, model=None, het-eronuc=`N', pro-ton=`H', load[]seq=1)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3043--3044
+
+ []
+
+[66] [67] [68] [69] [70]
+Overfull \hbox (20.64546pt too wide) in paragraph at lines 3296--3297
+\OT1/cmss/bx/n/10.95 relax[]data.read\OT1/cmss/m/n/10.95 (self, run=None, ri[]l
+abel=None, frq[]label=None, frq=None, file=None, dir=None,
+ []
+
+[71] [72]
+Overfull \hbox (16.31102pt too wide) in paragraph at lines 3380--3381
+\OT1/cmss/bx/n/10.95 relax[]data.write\OT1/cmss/m/n/10.95 (self, run=None, ri[]
+label=None, frq[]label=None, file=None, dir=None, force=0)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3380--3381
+
+ []
+
+[73]
+Overfull \hbox (35.54948pt too wide) in paragraph at lines 3427--3428
+\OT1/cmss/bx/n/10.95 relax[]fit.read\OT1/cmss/m/n/10.95 (self, run=None, file=N
+one, dir=None, re-lax[]time=0.0, fit[]type=`exp', for-mat=`sparky',
+ []
+
+[74] [75] [76] [77] [78] [79] [80] [81] [82] [83] [84] [85] [86] [87] [88]
+[89] [90] [91] [92] [93] [94] [95] [96] [97] [98] [99] [100] [101]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [102]
+[103] [104] [105]
+Overfull \hbox (6.01906pt too wide) in paragraph at lines 5055--5056
+\OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
+None, file=None, num[]col=0, name[]col=1, data[]col=2,
+ []
+
+[106]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [107]
+[108] [109]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [110]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [111]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [112]
+[113] [114]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [115]
+[116]) [117] (./relax.aux) ) 
 Here is how much of TeX's memory you used:
- 953 strings out of 95756
- 10919 string characters out of 1190795
- 78801 words of memory out of 1000001
- 3975 multiletter control sequences out of 10000+50000
- 5969 words of font info for 22 fonts, out of 500000 for 1000
+ 983 strings out of 95756
+ 11285 string characters out of 1190795
+ 80908 words of memory out of 1000001
+ 3993 multiletter control sequences out of 10000+50000
+ 10397 words of font info for 37 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
- 32i,5n,21p,257b,338s stack positions out of 3000i,1500n,5000p,200000b,15000s
+ 32i,5n,21p,1020b,362s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (11 pages, 30716 bytes).
+Output written on relax.dvi (117 pages, 238148 bytes).

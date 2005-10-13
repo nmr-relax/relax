@@ -1,111 +1,547 @@
-\section{Function name: `intro\_on'}
 
-Function for turning the function introductions on.
-\scriptsize
+
+\newpage
+
+\subsection{angles}
+
+
+\subsubsection{Synopsis:}
+
+Function for calculating the angles between the XH bond vector and the diffusion tensor.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{angles}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
-
-\end{verbatim}
-
-\normalsize
-\section{Function name: `init\_data'}
-
-Function for reinitialising self.relax.data
-\scriptsize
-\begin{verbatim}
-
-\end{verbatim}
-
-\normalsize
-\section{Function name: `fix'}
-
-Function for either fixing or allowing parameter values to change.
-\scriptsize
-\begin{verbatim}
-
 
 Keyword Arguments
 ~~~~~~~~~~~~~~~~~
 
 run:  The name of the run.
 
-element:  Which element to fix.
 
-fixed:  A flag specifying if the parameters should be fixed or allowed to change.
+Description
+~~~~~~~~~~~
+
+If the diffusion tensor is isotropic for the run, then nothing will be done.
+
+If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for
+each XH bond vector.
+
+If the diffusion tensor is fully anisotropic, then the three angles will be calculated.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{calc}
+
+
+\subsubsection{Synopsis:}
+
+Function for calculating the function value.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{calc}(self, run=None, print\_flag=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{diffusion\_tensor.copy}
+
+
+\subsubsection{Synopsis:}
+
+Function for copying diffusion tensor data from run1 to run2.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{diffusion\_tensor.copy}(self, run1=None, run2=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run1:  The name of the run to copy the sequence from.
+
+run2:  The name of the run to copy the sequence to.
 
 
 Description
 ~~~~~~~~~~~
 
-The keyword argument 'element' can be any of the following:
-
-'diff' - the diffusion tensor parameters.  This will allow all diffusion tensor parameters
-to be toggled.
-
-an integer - if an integer number is given, then all parameters for the residue
-corresponding to that number will be toggled.
-
-'all_res' - using this keyword, all parameters from all residues will be toggled.
-
-'all' - all parameter will be toggled.  This is equivalent to combining both 'diff' and
-'all_res'.
+This function will copy the diffusion tensor data from `run1' to `run2'.  `run2' must not
+contain any diffusion tensor data.
 
 
-The flag 'fixed', if set to 1, will fix parameters, while a value of 0 will allow parameters
-to vary.
+Examples
+~~~~~~~~
 
+To copy the diffusion tensor from run `m1' to run `m2', type:
 
-Only parameters corresponding to the given run will be affected.
-
+relax> diffusion_tensor.copy(`m1', `m2')
 \end{verbatim}
+}
 
-\normalsize
-\section{Function name: `system'}
 
-Function which executes the user supplied shell command.
-\scriptsize
+
+\newpage
+
+\subsection{diffusion\_tensor.delete}
+
+
+\subsubsection{Synopsis:}
+
+Function for deleting diffusion tensor data.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{diffusion\_tensor.delete}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
-
-\end{verbatim}
-
-\normalsize
-\section{Function name: `grid\_search'}
-
-The grid search function.
-\scriptsize
-\begin{verbatim}
-
 
 Keyword Arguments
 ~~~~~~~~~~~~~~~~~
 
-run:  The name of the run to apply the grid search to.
+run:  The name of the run.
 
-lower:  An array of the lower bound parameter values for the grid search.  The length of the
-array should be equal to the number of parameters in the model.
 
-upper:  An array of the upper bound parameter values for the grid search.  The length of the
-array should be equal to the number of parameters in the model.
 
-inc:  The number of increments to search over.  If a single integer is given then the number
-of increments will be equal in all dimensions.  Different numbers of increments in each
-direction can be set if 'inc' is set to an array of integers of length equal to the number
-of parameters.
+Description
+~~~~~~~~~~~
 
-constraints:  A flag specifying whether the parameters should be constrained.  The default
-is to turn constraints on (constraints=1).
-
-print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
-output while higher values increase the amount of output.  The default value is 1.
-
+This function will delete all diffusion tensor data for the given run.
 \end{verbatim}
+}
 
-\normalsize
-\section{Function name: `eliminate'}
 
-Function for model elimination.
-\scriptsize
+
+\newpage
+
+\subsection{diffusion\_tensor.display}
+
+
+\subsubsection{Synopsis:}
+
+Function for displaying the diffusion tensor.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{diffusion\_tensor.display}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
 
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{diffusion\_tensor.set}
+
+
+\subsubsection{Synopsis:}
+
+Function for setting up the diffusion tensor.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{diffusion\_tensor.set}(self, run=None, params=None, time\_scale=1.0, d\_scale=1.0, angle\_units=`deg', param\_types=0, axial\_type=None, fixed=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run to assign the data to.
+
+params:  The diffusion tensor data.
+
+time_scale:  The correlation time scaling value.
+
+d_scale:  The diffusion tensor eigenvalue scaling value.
+
+angle_units:  The units for the angle parameters.
+
+param_types:  A flag to select different parameter combinations.
+
+axial_type:  A string, which if supplied with axially symmetric parameters, will restrict
+the tensor to either being `oblate' or `prolate'.
+
+fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
+
+
+Description
+~~~~~~~~~~~
+
+Isotropic diffusion.
+
+To select isotropic diffusion, the parameters argument should be a single floating point
+number.  The number is the value of the isotropic global correlation time in seconds.  To
+specify the time in nanoseconds, set the `time_scale' argument to 1e-9.  Alternative
+parameters can be used by changing the `param_types' flag to the following integers:
+
+    0 - tm   (Default)
+    1 - Diso
+
+where:
+    tm = 1 / 6Diso
+
+
+Axially symmetric diffusion.
+
+To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
+of floating point numbers of length four.  A tuple is a type of data structure enclosed in
+round brackets, the elements of which are separated by commas.  Alternative sets of
+parameters, `param_types', are:
+
+    0 - (tm, Da, theta, phi)   (Default)
+    1 - (tm, Dratio, theta, phi)
+    2 - (Dpar, Dper, theta, phi)
+    3 - (Diso, Da, theta, phi)
+    4 - (Diso, Dratio, theta, phi)
+
+where:
+    tm = 1 / 6Diso
+    Diso = 1/3 (Dpar + 2Dper)
+    Da = 1/3 (Dpar - Dper)
+    Dratio = Dpar / Dper
+
+The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
+vector with respect to the diffusion frame while the spherical angles {theta, phi} describe
+the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and phi is the
+azimuthal angle defined between:
+    0 <= theta <= pi
+    0 <= phi <= 2pi
+The angle alpha is defined between:
+    0 <= alpha <= 2pi
+
+The `axial_type' argument should be `oblate', `prolate', or None.  The argument will be
+ignored if the diffusion tensor is not axially symmetric.  If `oblate' is given, then the
+constraint Dper >= Dpar is used.  If `prolate' is given, then the constraint Dper <= Dpar is
+used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
+prevent minimisation of diffusion tensor parameters in a space with two minima, it is
+recommended to specify which tensor to be minimised, thereby partitioning the two minima
+into the two subspaces (the partition is where Da equals 0).
+
+
+Anisotropic diffusion.
+
+To select fully anisotropic diffusion, the parameters argument should be a tuple of length
+six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
+are separated by commas.  Alternative sets of parameters, `param_types', are:
+
+    0 - (tm, Da, Dr, alpha, beta, gamma)   (Default)
+    1 - (Diso, Da, Dr, alpha, beta, gamma)
+    2 - (Dx, Dy, Dz, alpha, beta, gamma)
+
+where:
+    tm = 1 / 6Diso
+    Diso = 1/3 (Dx + Dy + Dz)
+    Da = 1/3 (Dz - (Dx + Dy)/2)
+    Dr = (Dx - Dy)/2
+
+The angles alpha, beta, and gamma are the Euler angles describing the diffusion tensor
+within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where
+alpha is the initial rotation angle around the z-axis, beta is the rotation angle around the
+y-axis, and gamma is the final rotation around the z-axis again.  The angles are defined
+between:
+    0 <= alpha <= 2pi
+    0 <= beta <= pi
+    0 <= gamma <= 2pi
+Within the PDB frame, the bond vector is described using the spherical angels theta and phi
+where theta is the polar angle and phi is the azimuthal angle defined between:
+    0 <= theta <= pi
+    0 <= phi <= 2pi
+
+
+Units.
+
+The `time_scale' argument should be a floating point number.  Parameters affected by this
+value are:  tm.
+
+The `d_scale' argument should also be a floating point number.  Parameters affected by this
+value are:  Diso; Dpar; Dper; Da; Dr; Dx; Dy; Dz.
+
+The `angle_units' argument should either be the string `deg' or `rad'.  Parameters affected
+are:  theta; phi; alpha; beta; gamma.
+
+
+
+Examples
+~~~~~~~~
+
+To set an isotropic diffusion tensor with a correlation time of 10ns, assigning it to the
+run `m1', type:
+
+relax> diffusion_tensor(`m1', 10e-9)
+relax> diffusion_tensor(run=`m1', params=10e-9)
+relax> diffusion_tensor(`m1', 10.0, 1e-9)
+relax> diffusion_tensor(run=`m1', params=10.0, time_scale=1e-9, fixed=1)
+
+
+To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, theta value
+of 20 degrees, and phi value of 20 degrees, and assign it to the run `m8', type:
+
+relax> diffusion_tensor(`m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
+
+
+To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
+1.417e7, theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to
+the run `axial', type one of:
+
+relax> diffusion_tensor(`axial', (1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
+relax> diffusion_tensor(run=`axial', params=(1.698e7, 1.417e7, 67.174, -83.718),
+                        param_types=1)
+relax> diffusion_tensor(`axial', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
+                        d_scale=1e8)
+relax> diffusion_tensor(run=`axial', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
+                        param_types=1, d_scale=1e8)
+relax> diffusion_tensor(`axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
+                        d_scale=1e8, angle_units=`rad')
+relax> diffusion_tensor(run=`axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
+                        param_types=1, d_scale=1e8, angle_units=`rad', fixed=1)
+
+
+To select fully anisotropic diffusion, type:
+
+relax> diffusion_tensor(`m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
+                        param_types=2)
+
+
+To select and minimise an isotropic diffusion tensor, type (followed by a minimisation
+command):
+
+relax> diffusion_tensor(`diff', 10e-9, fixed=0)
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{dx.execute}
+
+
+\subsubsection{Synopsis:}
+
+Function for running OpenDX.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{dx.execute}(self, file=`map', dir=`dx', dx\_exe=`dx', vp\_exec=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+file:  The file name prefix.  For example if file is set to `temp', then the OpenDX program
+temp.net will be loaded.
+
+dir:  The directory to change to for running OpenDX.  If this is set to `None', OpenDX will
+be run in the current directory.
+
+dx_exe:  The OpenDX executable file.
+
+vp_exec:  A flag specifying whether to execute the visual program automatically at
+start-up.  The default is 1 which turns execution on.  Setting the value to zero turns
+execution off.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{dx.map}
+
+
+\subsubsection{Synopsis:}
+
+Function for creating a map of the given space in OpenDX format.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{dx.map}(self, run=None, res\_num=None, map\_type=`Iso3D', inc=20, lower=None, upper=None, swap=None, file=`map', dir=`dx', point=None, point\_file=`point', remap=None, labels=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+res_num:  The residue number.
+
+map_type:  The type of map to create.  For example the default, a 3D isosurface, the type is
+"Iso3D".  See below for more details.
+
+inc:  The number of increments to map in each dimension.  This value controls the resolution
+of the map.
+
+lower:  The lower bounds of the space.  If you wish to change the lower bounds of the map
+then supply an array of length equal to the number of parameters in the model.  A lower
+bound for each parameter must be supplied.  If nothing is supplied then the defaults will
+be used.
+
+upper:  The upper bounds of the space.  If you wish to change the upper bounds of the map
+then supply an array of length equal to the number of parameters in the model.  A upper
+bound for each parameter must be supplied.  If nothing is supplied then the defaults will
+be used.
+
+swap:  An array used to swap the position of the axes.  The length of the array should be
+the same as the number of parameters in the model.  The values should be integers specifying
+which elements to interchange.  For example if swap equals [0, 1, 2] for a three parameter
+model then the axes are not interchanged whereas if swap equals [1, 0, 2] then the first and
+second dimensions are interchanged.
+
+file:  The file name.  All the output files are prefixed with this name.  The main file
+containing the data points will be called the value of `file'.  The OpenDX program will be
+called `file.net' and the OpenDX import file will be called `file.general'.
+
+dir:  The directory to output files to.  Set this to `None' if you do not want the files to
+be placed in subdirectory.  If the directory does not exist, it will be created.
+
+point:  An array of parameter values where a point in the map, shown as a red sphere, will
+be placed.  The length must be equal to the number of parameters.
+
+point_file:  The name of that the point output files will be prefixed with.
+
+remap:  A user supplied remapping function.  This function will receive the parameter array
+and must return an array of equal length.
+
+labels:  The axis labels.  If supplied this argument should be an array of strings of length
+equal to the number of parameters.
+
+
+Map type
+~~~~~~~~
+
+The map type can be changed by supplying the `map_type' keyword argument.  Here is a list of
+currently supported map types:
+_____________________________________________________________________________
+|                                           |                               |
+| Surface type                              | Pattern                       |
+|___________________________________________|_______________________________|
+|                                           |                               |
+| 3D isosurface                             | `^[Ii]so3[Dd]'                |
+|___________________________________________|_______________________________|
+
+Pattern syntax is simply regular expression syntax where square brackets [] means any
+character within the brackets, ^ means the start of the string, etc.
+
+
+Examples
+~~~~~~~~
+
+The following commands will generate a map of the extended model-free space defined as run
+`m5' which consists of the parameters {S2f, S2s, ts}.  Files will be output into the
+directory `dx' and will be prefixed by `map'.  The residue, in this case, is number 6.
+
+relax> map(`m5', 6)
+relax> map(`m5', 6, 20, "map", "dx")
+relax> map(`m5', res_num=6, file="map", dir="dx")
+relax> map(run=`m5', res_num=6, inc=20, file="map", dir="dx")
+relax> map(run=`m5', res_num=6, type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx")
+
+
+The following commands will swap the S2s and ts axes of this map.
+
+relax> map(`m5', res_num=6, swap=[0, 2, 1])
+relax> map(run=`m5', res_num=6, type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx")
+
+
+To map the model-free space `m4' defined by the parameters {S2, te, Rex}, name the results
+`test', and not place the files in a subdirectory, use the following commands (assuming
+residue 2).
+
+relax> map(`m4', res_num=2, file=`test', dir=None)
+relax> map(run=`m4', res_num=2, inc=100, file=`test', dir=None)
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{eliminate}
+
+
+\subsubsection{Synopsis:}
+
+Function for model elimination.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{eliminate}(self, run=None, function=None, args=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
 
 Keyword arguments
 ~~~~~~~~~~~~~~~~~
@@ -133,7 +569,7 @@ arguments.  If the model is rejected, the function should return 1, otherwise it
 return 0.  The function will be executed multiple times, once for each parameter of the
 model.
 
-The 'args' keyword argument should be a tuple, a list enclosed in round brackets, and will
+The `args' keyword argument should be a tuple, a list enclosed in round brackets, and will
 be passed to the user supplied function or the inbuilt function.  For a description of the
 arguments accepted by the inbuilt functions, see below.
 
@@ -161,7 +597,7 @@ Internal correlation times {te, tf, ts}.
 
 These parameters may experience the same problem as the local tm in that the model fails and
 the parameter value is stuck at the upper limit.  These parameters are constrained using the
-formula 'te, tf, ts <= 2.tm'.  These failed models are eliminated using the rule:
+formula `te, tf, ts <= 2.tm'.  These failed models are eliminated using the rule:
 
     te, tf, ts >= c.tm
 
@@ -173,82 +609,563 @@ element of the tuple.
 
 Arguments.
 
-The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For
+The `args' argument must be a tuple of length 2, the elements of which must be numbers.  For
 example, to eliminate models which have a local tm value greater than 25 ns and models with
-internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
-
-
+internal correlation times greater than 1.5 times tm, set `args' to (25 * 1e-9, 1.5).
 \end{verbatim}
+}
 
-\normalsize
-\section{Function name: `intro\_off'}
 
-Function for turning the function introductions off.
-\scriptsize
+
+\newpage
+
+\subsection{fix}
+
+
+\subsubsection{Synopsis:}
+
+Function for either fixing or allowing parameter values to change.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{fix}(self, run=None, element=None, fixed=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
-
-\end{verbatim}
-
-\normalsize
-\section{Function name: `calc'}
-
-Function for calculating the function value.
-\scriptsize
-\begin{verbatim}
-
 
 Keyword Arguments
 ~~~~~~~~~~~~~~~~~
 
 run:  The name of the run.
 
-\end{verbatim}
+element:  Which element to fix.
 
-\normalsize
-\section{Function name: `angles'}
-
-Function for calculating the angles between the XH bond vector and the diffusion tensor.
-\scriptsize
-\begin{verbatim}
-
-
-Keyword Arguments
-~~~~~~~~~~~~~~~~~
-
-run:  The name of the run.
+fixed:  A flag specifying if the parameters should be fixed or allowed to change.
 
 
 Description
 ~~~~~~~~~~~
 
-If the diffusion tensor is isotropic for the run, then nothing will be done.
+The keyword argument `element' can be any of the following:
 
-If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for
-each XH bond vector.
+`diff' - the diffusion tensor parameters.  This will allow all diffusion tensor parameters
+to be toggled.
 
-If the diffusion tensor is fully anisotropic, then the three angles will be calculated.
+an integer - if an integer number is given, then all parameters for the residue
+corresponding to that number will be toggled.
 
+`all_res' - using this keyword, all parameters from all residues will be toggled.
+
+`all' - all parameter will be toggled.  This is equivalent to combining both `diff' and
+`all_res'.
+
+
+The flag `fixed', if set to 1, will fix parameters, while a value of 0 will allow parameters
+to vary.
+
+
+Only parameters corresponding to the given run will be affected.
 \end{verbatim}
+}
 
-\normalsize
-\section{Function name: `minimise'}
 
-Minimisation function.
-\scriptsize
+
+\newpage
+
+\subsection{grace.view}
+
+
+\subsubsection{Synopsis:}
+
+Function for running Grace.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{grace.view}(self, file=None, dir=`grace', grace\_exe=`xmgrace')
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
 
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+file:  The name of the file.
+
+dir:  The directory name.
+
+grace_exe:  The Grace executable file.
+
+
+Description
+~~~~~~~~~~~
+
+This function can be used to execute Grace to view the specified file the Grace `.agr' file
+and the execute Grace. If the directory name is set to None, the file will be assumed to be
+in the current working directory.
+
+
+Examples
+~~~~~~~~
+
+To view the file `s2.agr' in the directory `grace', type:
+
+relax> grace.view(file=`s2.agr')
+relax> grace.view(file=`s2.agr', dir=`grace')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{grace.write}
+
+
+\subsubsection{Synopsis:}
+
+Function for creating a grace `.agr' file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{grace.write}(self, run=None, x\_data\_type=`res', y\_data\_type=None, res\_num=None, res\_name=None, plot\_data=`value', file=None, dir=`grace', force=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+x_data_type:  The data type for the X-axis (no regular expression is allowed).
+
+y_data_type:  The data type for the Y-axis (no regular expression is allowed).
+
+res_num:  The residue number (regular expression is allowed).
+
+res_name:  The residue name (regular expression is allowed).
+
+plot_data:  The data to use for the plot.
+
+file:  The name of the file.
+
+dir:  The directory name.
+
+force:  A flag which, if set to 1, will cause the file to be overwritten.
+
+
+Description
+~~~~~~~~~~~
+
+This function is designed to be as flexible as possible so that any combination of data can
+be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and
+xmgrace) which only supports two dimensional plots.  Three types of keyword arguments can
+be used to create various types of plot.  These include the X-axis and Y-axis data types,
+the residue number and name selection arguments, and an argument for selecting what to
+actually plot.
+
+The X-axis and Y-axis data type arguments should be plain strings, regular expression is not
+allowed.  If the X-axis data type argument is not given, the plot will default to having the
+residue number along the x-axis.  The two axes of the Grace plot can be absolutely any of
+the data types listed in the tables below.  The only limitation, currently anyway, is that
+the data must belong to the same run.
+
+The residue number and name arguments can be used to limit the residues used in the plot.
+The default is that all residues will be used, however, these arguments can be used to
+select a subset of all residues, or a single residue for plots of Monte Carlo simulations,
+etc.  Regular expression is allowed for both the residue number and name, and the number can
+either be an integer or a string.
+
+The property which is actually plotted can be controlled by the `plot_data' argument.  It
+can be one of the following:
+    `value' - Plot values (with errors if they exist).
+    `error' - Plot errors.
+    `sims'   - Plot the simulation values.
+
+
+Examples
+~~~~~~~~
+
+To write the NOE values for all residues from the run `noe' to the Grace file `noe.agr',
+type:
+
+relax> grace.write(`noe', `res', `noe', file=`noe.agr')
+relax> grace.write(`noe', y_data_type=`noe', file=`noe.agr')
+relax> grace.write(`noe', x_data_type=`res', y_data_type=`noe', file=`noe.agr')
+relax> grace.write(run=`noe', y_data_type=`noe', file=`noe.agr', force=1)
+
+
+To create a Grace file of `S2' vs. `te' for all residues, type:
+
+relax> grace.write(`m2', `S2', `te', file=`s2_te.agr')
+relax> grace.write(`m2', x_data_type=`S2', y_data_type=`te', file=`s2_te.agr')
+relax> grace.write(run=`m2', x_data_type=`S2', y_data_type=`te', file=`s2_te.agr', force=1)
+
+
+To create a Grace file of the Monte Carlo simulation values of `Rex' vs. `te' for residue
+123, type:
+
+relax> grace.write(`m4', `Rex', `te', res_num=123, plot_data=`sims', file=`s2_te.agr')
+relax> grace.write(run=`m4', x_data_type=`Rex', y_data_type=`te', res_num=123,
+                   plot_data=`sims', file=`s2_te.agr')
+
+
+
+
+Regular expression
+~~~~~~~~~~~~~~~~~~
+
+The python function `match', which uses regular expression, is used to determine which data
+type to set values to, therefore various data_type strings can be used to select the same
+data type.  Patterns used for matching for specific data types are listed below.
+
+This is a short description of python regular expression, for more information see the
+regular expression syntax section of the Python Library Reference.  Some of the regular
+expression syntax used in this function is:
+
+    [] - A sequence or set of characters to match to a single character.  For example,
+    `[Ss]2' will match both `S2' and `s2'.
+
+    ^ - Match the start of the string.
+
+    $ - Match the end of the string.  For example, `^[Ss]2$' will match `s2' but not `S2f'
+    or `s2s'.
+
+    . - Match any character.
+
+    x* - Match the character x any number of times, for example `x' will match, as will
+    `xxxxx'
+
+    .* - Match any sequence of characters of any length.
+
+Importantly, do not supply a string for the data type containing regular expression.  The
+regular expression is implemented so that various strings can be supplied which all match
+the same data type.
+
+
+Minimisation statistic data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Chi-squared statistic  | chi2         | `^[Cc]hi2$' or `^[Cc]hi[-_ ][Ss]quare'           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Iteration count        | iter         | `^[Ii]ter'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Function call count    | f_count      | `^[Ff].*[ -_][Cc]ount'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Gradient call count    | g_count      | `^[Gg].*[ -_][Cc]ount'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Hessian call count     | h_count      | `^[Hh].*[ -_][Cc]ount'                           |
+|________________________|______________|__________________________________________________|
+
+
+
+
+Model-free data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Local tm               | tm           | `^tm$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2     | s2           | `^[Ss]2$'                                        |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2f    | s2f          | `^[Ss]2f$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2s    | s2s          | `^[Ss]2s$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time te    | te           | `^te$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time tf    | tf           | `^tf$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time ts    | ts           | `^ts$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Chemical exchange      | rex          | `^[Rr]ex$' or `[Cc]emical[ -_][Ee]xchange'       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+
+Reduced spectral density mapping data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(0)                   | j0           | `^[Jj]0$' or `[Jj](0)'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wX)                  | jwx          | `^[Jj]w[Xx]$' or `[Jj](w[Xx])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wH)                  | jwh          | `^[Jj]w[Hh]$' or `[Jj](w[Hh])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+
+NOE calculation data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Reference intensity    | ref          | `^[Rr]ef$' or `[Rr]ef[ -_][Ii]nt'                |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Saturated intensity    | sat          | `^[Ss]at$' or `[Ss]at[ -_][Ii]nt'                |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| NOE                    | noe          | `^[Nn][Oo][Ee]$'                                 |
+|________________________|______________|__________________________________________________|
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{grid\_search}
+
+
+\subsubsection{Synopsis:}
+
+The grid search function.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{grid\_search}(self, run=None, lower=None, upper=None, inc=21, constraints=1, print\_flag=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run to apply the grid search to.
+
+lower:  An array of the lower bound parameter values for the grid search.  The length of the
+array should be equal to the number of parameters in the model.
+
+upper:  An array of the upper bound parameter values for the grid search.  The length of the
+array should be equal to the number of parameters in the model.
+
+inc:  The number of increments to search over.  If a single integer is given then the number
+of increments will be equal in all dimensions.  Different numbers of increments in each
+direction can be set if `inc' is set to an array of integers of length equal to the number
+of parameters.
+
+constraints:  A flag specifying whether the parameters should be constrained.  The default
+is to turn constraints on (constraints=1).
+
+print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+output while higher values increase the amount of output.  The default value is 1.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{init\_data}
+
+
+\subsubsection{Synopsis:}
+
+Function for reinitialising self.relax.data
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{init\_data}(self)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{intro\_off}
+
+
+\subsubsection{Synopsis:}
+
+Function for turning the function introductions off.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{intro\_off}(self)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{intro\_on}
+
+
+\subsubsection{Synopsis:}
+
+Function for turning the function introductions on.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{intro\_on}(self)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{jw\_mapping.set\_frq}
+
+
+\subsubsection{Synopsis:}
+
+Function for selecting which relaxation data to use in the J(w) mapping.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{jw\_mapping.set\_frq}(self, run=None, frq=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+frq:  The spectrometer frequency in Hz.
+
+
+Description
+~~~~~~~~~~~
+
+This function will select the relaxation data to use in the reduced spectral densiy mapping
+corresponding to the given frequency.
+
+
+Examples
+~~~~~~~~
+
+relax> jw_mapping.set_frq(`jw', 600.0 * 1e6)
+relax> jw_mapping.set_frq(run=`jw', frq=600.0 * 1e6)
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{minimise}
+
+
+\subsubsection{Synopsis:}
+
+Minimisation function.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{minimise}(self, *args, **keywords)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
 
 Arguments
 ~~~~~~~~~
 
 The arguments, which should all be strings, specify the minimiser as well as its options.  A
-minimum of one argument is required.  As this calls the function 'generic_minimise' the full
-list of allowed arguments is shown below in the reproduced 'generic_minimise' docstring.
+minimum of one argument is required.  As this calls the function `generic_minimise' the full
+list of allowed arguments is shown below in the reproduced `generic_minimise' docstring.
 Ignore all sections except those labelled as minimisation algorithms and minimisation
 options.  Also do not select the Method of Multipliers constraint algorithm as this is used
-in combination with the given minimisation algorithm if the keyword argument 'constraints'
+in combination with the given minimisation algorithm if the keyword argument `constraints'
 is set to 1.  The grid search algorithm should also not be selected as this is accessed
-using the 'grid' function instead.  The first argument passed will be set to the
+using the `grid' function instead.  The first argument passed will be set to the
 minimisation algorithm while all other arguments will be set to the minimisation options.
 
 Keyword arguments differ from normal arguments having the form "keyword = value".  All
@@ -302,27 +1219,27 @@ vector are multiplied.
 Examples
 ~~~~~~~~
 
-To minimise the model-free run 'm4' using Newton minimisation together with the GMW81
+To minimise the model-free run `m4' using Newton minimisation together with the GMW81
 Hessian modification algorithm, the More and Thuente line search algorithm, a function
 tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints
 turned on to limit parameter values, and have normal printout, type any combination of:
 
-relax> minimise('newton', run='m4')
-relax> minimise('Newton', run='m4')
-relax> minimise('newton', 'gmw', run='m4')
-relax> minimise('newton', 'mt', run='m4')
-relax> minimise('newton', 'gmw', 'mt', run='m4')
-relax> minimise('newton', 'mt', 'gmw', run='m4')
-relax> minimise('newton', run='m4', func_tol=1e-25)
-relax> minimise('newton', run='m4', func_tol=1e-25, grad_tol=None)
-relax> minimise('newton', run='m4', max_iter=1e7)
-relax> minimise('newton', run=name, constraints=1, max_iter=1e7)
-relax> minimise('newton', run='m4', print_flag=1)
+relax> minimise(`newton', run=`m4')
+relax> minimise(`Newton', run=`m4')
+relax> minimise(`newton', `gmw', run=`m4')
+relax> minimise(`newton', `mt', run=`m4')
+relax> minimise(`newton', `gmw', `mt', run=`m4')
+relax> minimise(`newton', `mt', `gmw', run=`m4')
+relax> minimise(`newton', run=`m4', func_tol=1e-25)
+relax> minimise(`newton', run=`m4', func_tol=1e-25, grad_tol=None)
+relax> minimise(`newton', run=`m4', max_iter=1e7)
+relax> minimise(`newton', run=name, constraints=1, max_iter=1e7)
+relax> minimise(`newton', run=`m4', print_flag=1)
 
-To minimise the model-free run 'm5' using constrained Simplex minimisation with a maximum of
+To minimise the model-free run `m5' using constrained Simplex minimisation with a maximum of
 5000 iterations, type:
 
-relax> minimise('simplex', run='m5', constraints=1, max_iter=5000)
+relax> minimise(`simplex', run=`m5', constraints=1, max_iter=5000)
 
 
 
@@ -403,7 +1320,7 @@ Minimisation algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 A minimisation function is selected if the minimisation algorithm argument, which should be a
-string, matches a certain pattern.  Because the python regular expression 'match' statement is
+string, matches a certain pattern.  Because the python regular expression `match' statement is
 used, various strings can be supplied to select the same minimisation algorithm.  Below is a
 list of the minimisation algorithms available together with the corresponding patterns.
 
@@ -412,11 +1329,11 @@ regular expression syntax section of the Python Library Reference.  Some of the 
 expression syntax used in this function is:
 
     [] - A sequence or set of characters to match to a single character.  For example,
-    '[Nn]ewton' will match both 'Newton' and 'newton'.
+    `[Nn]ewton' will match both `Newton' and `newton'.
 
     ^ - Match the start of the string.
 
-    $ - Match the end of the string.  For example, '^[Ll][Mm]$' will match 'lm' and 'LM' but
+    $ - Match the end of the string.  For example, `^[Ll][Mm]$' will match `lm' and `LM' but
     will not match if characters are placed either before or after these strings.
 
 To select a minimisation algorithm, set the argument to a string which matches the given
@@ -429,7 +1346,7 @@ ________________________________________________________________________________
 | Minimisation algorithm            | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Grid search                       | '^[Gg]rid'                                          |
+| Grid search                       | `^[Gg]rid'                                          |
 |___________________________________|_____________________________________________________|
 
 
@@ -439,11 +1356,11 @@ ________________________________________________________________________________
 | Minimisation algorithm            | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Back-and-forth coordinate descent | '^[Cc][Dd]$' or '^[Cc]oordinate[ _-][Dd]escent$'    |
-| Steepest descent                  | '^[Ss][Dd]$' or '^[Ss]teepest[ _-][Dd]escent$'      |
-| Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
-| Newton                            | '^[Nn]ewton$'                                       |
-| Newton-CG                         | '^[Nn]ewton[ _-][Cc][Gg]$' or '^[Nn][Cc][Gg]$'      |
+| Back-and-forth coordinate descent | `^[Cc][Dd]$' or `^[Cc]oordinate[ _-][Dd]escent$'    |
+| Steepest descent                  | `^[Ss][Dd]$' or `^[Ss]teepest[ _-][Dd]escent$'      |
+| Quasi-Newton BFGS                 | `^[Bb][Ff][Gg][Ss]$'                                |
+| Newton                            | `^[Nn]ewton$'                                       |
+| Newton-CG                         | `^[Nn]ewton[ _-][Cc][Gg]$' or `^[Nn][Cc][Gg]$'      |
 |___________________________________|_____________________________________________________|
 
 
@@ -453,10 +1370,10 @@ ________________________________________________________________________________
 | Minimisation algorithm            | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Cauchy point                      | '^[Cc]auchy'                                        |
-| Dogleg                            | '^[Dd]ogleg'                                        |
-| CG-Steihaug                       | '^[Cc][Gg][-_ ][Ss]teihaug' or '^[Ss]teihaug'       |
-| Exact trust region                | '^[Ee]xact'                                         |
+| Cauchy point                      | `^[Cc]auchy'                                        |
+| Dogleg                            | `^[Dd]ogleg'                                        |
+| CG-Steihaug                       | `^[Cc][Gg][-_ ][Ss]teihaug' or `^[Ss]teihaug'       |
+| Exact trust region                | `^[Ee]xact'                                         |
 |___________________________________|_____________________________________________________|
 
 
@@ -466,10 +1383,10 @@ ________________________________________________________________________________
 | Minimisation algorithm            | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Fletcher-Reeves                   | '^[Ff][Rr]$' or '^[Ff]letcher[-_ ][Rr]eeves$'       |
-| Polak-Ribiere                     | '^[Pp][Rr]$' or '^[Pp]olak[-_ ][Rr]ibiere$'         |
-| Polak-Ribiere +                   | '^[Pp][Rr]\+$' or '^[Pp]olak[-_ ][Rr]ibiere\+$'     |
-| Hestenes-Stiefel                  | '^[Hh][Ss]$' or '^[Hh]estenes[-_ ][Ss]tiefel$'      |
+| Fletcher-Reeves                   | `^[Ff][Rr]$' or `^[Ff]letcher[-_ ][Rr]eeves$'       |
+| Polak-Ribiere                     | `^[Pp][Rr]$' or `^[Pp]olak[-_ ][Rr]ibiere$'         |
+| Polak-Ribiere +                   | `^[Pp][Rr]\+$' or `^[Pp]olak[-_ ][Rr]ibiere\+$'     |
+| Hestenes-Stiefel                  | `^[Hh][Ss]$' or `^[Hh]estenes[-_ ][Ss]tiefel$'      |
 |___________________________________|_____________________________________________________|
 
 
@@ -479,8 +1396,8 @@ ________________________________________________________________________________
 | Minimisation algorithm            | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Simplex                           | '^[Ss]implex$'                                      |
-| Levenberg-Marquardt               | '^[Ll][Mm]$' or '^[Ll]evenburg-[Mm]arquardt$'       |
+| Simplex                           | `^[Ss]implex$'                                      |
+| Levenberg-Marquardt               | `^[Ll][Mm]$' or `^[Ll]evenburg-[Mm]arquardt$'       |
 |___________________________________|_____________________________________________________|
 
 
@@ -490,7 +1407,7 @@ ________________________________________________________________________________
 | Minimisation algorithm            | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Method of Multipliers             | '^[Mm][Oo][Mm]$' or '[Mm]ethod of [Mm]ultipliers$'  |
+| Method of Multipliers             | `^[Mm][Oo][Mm]$' or `[Mm]ethod of [Mm]ultipliers$'  |
 |___________________________________|_____________________________________________________|
 
 
@@ -508,21 +1425,21 @@ ________________________________________________________________________________
 | Line search algorithm             | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Backtracking line search          | '^[Bb]ack'                                          |
+| Backtracking line search          | `^[Bb]ack'                                          |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Nocedal and Wright interpolation  | '^[Nn][Ww][Ii]' or                                  |
-| based line search                 | '^[Nn]ocedal[ _][Ww]right[ _][Ii]nt'                |
+| Nocedal and Wright interpolation  | `^[Nn][Ww][Ii]' or                                  |
+| based line search                 | `^[Nn]ocedal[ _][Ww]right[ _][Ii]nt'                |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Nocedal and Wright line search    | '^[Nn][Ww][Ww]' or                                  |
-| for the Wolfe conditions          | '^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe'              |
+| Nocedal and Wright line search    | `^[Nn][Ww][Ww]' or                                  |
+| for the Wolfe conditions          | `^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe'              |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| More and Thuente line search      | '^[Mm][Tt]' or '^[Mm]ore[ _][Tt]huente$'            |
+| More and Thuente line search      | `^[Mm][Tt]' or `^[Mm]ore[ _][Tt]huente$'            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| No line search                    | '^[Nn]one$'                                         |
+| No line search                    | `^[Nn]one$'                                         |
 |___________________________________|_____________________________________________________|
 
 
@@ -533,21 +1450,21 @@ ________________________________________________________________________________
 | Hessian modification              | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Unmodified Hessian                | '[Nn]one'                                           |
+| Unmodified Hessian                | `[Nn]one'                                           |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Eigenvalue modification           | '^[Ee]igen'                                         |
+| Eigenvalue modification           | `^[Ee]igen'                                         |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Cholesky with added multiple of   | '^[Cc]hol'                                          |
+| Cholesky with added multiple of   | `^[Cc]hol'                                          |
 | the identity                      |                                                     |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| The Gill, Murray, and Wright      | '^[Gg][Mm][Ww]$'                                    |
+| The Gill, Murray, and Wright      | `^[Gg][Mm][Ww]$'                                    |
 | modified Cholesky algorithm       |                                                     |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| The Schnabel and Eskow 1999       | '^[Ss][Ee]99'                                       |
+| The Schnabel and Eskow 1999       | `^[Ss][Ee]99'                                       |
 | algorithm                         |                                                     |
 |___________________________________|_____________________________________________________|
 
@@ -562,24 +1479,1393 @@ ________________________________________________________________________________
 | Hessian type                      | Patterns                                            |
 |___________________________________|_____________________________________________________|
 |                                   |                                                     |
-| Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
-| Newton                            | '^[Nn]ewton$'                                       |
+| Quasi-Newton BFGS                 | `^[Bb][Ff][Gg][Ss]$'                                |
+| Newton                            | `^[Nn]ewton$'                                       |
 |___________________________________|_____________________________________________________|
 
 
 For Newton minimisation, the default line search algorithm is the More and Thuente line search,
 while the default Hessian modification is the GMW algorithm.
-
-
 \end{verbatim}
+}
 
-\normalsize
-\section{Function name: `nuclei'}
 
-Function for setting the gyromagnetic ratio of the heteronucleus.
-\scriptsize
+
+\newpage
+
+\subsection{model\_free.copy}
+
+
+\subsubsection{Synopsis:}
+
+Function for copying model-free data from run1 to run2.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{model\_free.copy}(self, run1=None, run2=None, sim=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
 
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run1:  The name of the run to copy the sequence from.
+
+run2:  The name of the run to copy the sequence to.
+
+sim:  The simulation number.
+
+
+Description
+~~~~~~~~~~~
+
+This function will copy all model-free data from `run1' to `run2'.  Any model-free data in
+`run2' will be overwritten.  If the argument `sim' is an integer, then only data from that
+simulation will be copied.
+
+
+Examples
+~~~~~~~~
+
+To copy all model-free data from the run `m1' to the run `m2', type:
+
+relax> model_free.copy(`m1', `m2')
+relax> model_free.copy(run1=`m1', run2=`m2')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{model\_free.create\_model}
+
+
+\subsubsection{Synopsis:}
+
+Function to create a model-free model.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{model\_free.create\_model}(self, run=None, model=None, equation=None, params=None, res\_num=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The run to assign the values to.
+
+model:  The name of the model-free model.
+
+equation:  The model-free equation.
+
+params:  The array of parameter names of the model.
+
+res_num:  The residue number.
+
+
+Description
+~~~~~~~~~~~
+
+Model-free equation.
+
+`mf_orig' selects the original model-free equations with parameters {S2, te}.
+`mf_ext' selects the extended model-free equations with parameters {S2f, tf, S2, ts}.
+`mf_ext2' selects the extended model-free equations with parameters {S2f, tf, S2s, ts}.
+
+
+Model-free parameters.
+
+The following parameters are accepted for the original model-free equation:
+    S2:     The square of the generalised order parameter.
+    te:     The effective correlation time.
+The following parameters are accepted for the extended model-free equation:
+    S2f:    The square of the generalised order parameter of the faster motion.
+    tf:     The effective correlation time of the faster motion.
+    S2:     The square of the generalised order parameter S2 = S2f*S2s.
+    ts:     The effective correlation time of the slower motion.
+The following parameters are accepted for the extended 2 model-free equation:
+    S2f:    The square of the generalised order parameter of the faster motion.
+    tf:     The effective correlation time of the faster motion.
+    S2s:    The square of the generalised order parameter of the slower motion.
+    ts:     The effective correlation time of the slower motion.
+The following parameters are accepted for all equations:
+    Rex:    The chemical exchange relaxation.
+    r:      The average bond length <r>.
+    CSA:    The chemical shift anisotropy.
+
+
+Residue number.
+
+If `res_num' is supplied as an integer then the model will only be created for that residue,
+otherwise the model will be created for all residues.
+
+
+Examples
+~~~~~~~~
+
+The following commands will create the model-free model `m1' which is based on the original
+model-free equation and contains the single parameter `S2'.
+
+relax> model_free.create_model(`m1', `m1', `mf_orig', [`S2'])
+relax> model_free.create_model(run=`m1', model=`m1', params=[`S2'], equation=`mf_orig')
+
+
+The following commands will create the model-free model `large_model' which is based on the
+extended model-free equation and contains the seven parameters `S2f', `tf', `S2', `ts',
+`Rex', `CSA', `r'.
+
+relax> model_free.create_model(`test', `large_model', `mf_ext', [`S2f', `tf', `S2', `ts',
+                               `Rex', `CSA', `r'])
+relax> model_free.create_model(run=`test', model=`large_model', params=[`S2f', `tf', `S2',
+                               `ts', `Rex', `CSA', `r'], equation=`mf_ext')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{model\_free.delete}
+
+
+\subsubsection{Synopsis:}
+
+Function for deleting all model-free data corresponding to the run.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{model\_free.delete}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+
+Examples
+~~~~~~~~
+
+To delete all model-free data corresponding to the run `m2', type:
+
+relax> model_free.delete(`m2')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{model\_free.remove\_tm}
+
+
+\subsubsection{Synopsis:}
+
+Function for removing the local tm parameter from a model.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{model\_free.remove\_tm}(self, run=None, res\_num=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The run to assign the values to.
+
+res_num:  The residue number.
+
+
+Description
+~~~~~~~~~~~
+
+This function will remove the local tm parameter from the model-free parameters of the given
+run.  Model-free parameters must already exist within the run yet, if there is no local tm,
+nothing will happen.
+
+If no residue number is given, then the function will apply to all residues.
+
+
+Examples
+~~~~~~~~
+
+The following commands will remove the parameter `tm' from the run `local_tm':
+
+relax> model_free.remove_tm(`local_tm')
+relax> model_free.remove_tm(run=`local_tm')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{model\_free.select\_model}
+
+
+\subsubsection{Synopsis:}
+
+Function for the selection of a preset model-free model.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{model\_free.select\_model}(self, run=None, model=None, res\_num=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The run to assign the values to.
+
+model:  The name of the preset model.
+
+
+Description
+~~~~~~~~~~~
+
+The preset model-free models are:
+    `m0'    => []
+    `m1'    => [S2]
+    `m2'    => [S2, te]
+    `m3'    => [S2, Rex]
+    `m4'    => [S2, te, Rex]
+    `m5'    => [S2f, S2, ts]
+    `m6'    => [S2f, tf, S2, ts]
+    `m7'    => [S2f, S2, ts, Rex]
+    `m8'    => [S2f, tf, S2, ts, Rex]
+    `m9'    => [Rex]
+
+    `m10'   => [CSA]
+    `m11'   => [CSA, S2]
+    `m12'   => [CSA, S2, te]
+    `m13'   => [CSA, S2, Rex]
+    `m14'   => [CSA, S2, te, Rex]
+    `m15'   => [CSA, S2f, S2, ts]
+    `m16'   => [CSA, S2f, tf, S2, ts]
+    `m17'   => [CSA, S2f, S2, ts, Rex]
+    `m18'   => [CSA, S2f, tf, S2, ts, Rex]
+    `m19'   => [CSA, Rex]
+
+    `m20'   => [r]
+    `m21'   => [r, S2]
+    `m22'   => [r, S2, te]
+    `m23'   => [r, S2, Rex]
+    `m24'   => [r, S2, te, Rex]
+    `m25'   => [r, S2f, S2, ts]
+    `m26'   => [r, S2f, tf, S2, ts]
+    `m27'   => [r, S2f, S2, ts, Rex]
+    `m28'   => [r, S2f, tf, S2, ts, Rex]
+    `m29'   => [r, CSA, Rex]
+
+    `m30'   => [r, CSA]
+    `m31'   => [r, CSA, S2]
+    `m32'   => [r, CSA, S2, te]
+    `m33'   => [r, CSA, S2, Rex]
+    `m34'   => [r, CSA, S2, te, Rex]
+    `m35'   => [r, CSA, S2f, S2, ts]
+    `m36'   => [r, CSA, S2f, tf, S2, ts]
+    `m37'   => [r, CSA, S2f, S2, ts, Rex]
+    `m38'   => [r, CSA, S2f, tf, S2, ts, Rex]
+    `m39'   => [r, CSA, Rex]
+
+Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
+relaxation data.  This is due to the extreme flexibly of these models where a change in the
+parameter `r' is compensated by a corresponding change in the parameter `CSA' and
+vice versa.
+
+
+Additional preset model-free models, which are simply extensions of the above models with
+the addition of a local tm parameter are:
+    `tm0'   => [tm]
+    `tm1'   => [tm, S2]
+    `tm2'   => [tm, S2, te]
+    `tm3'   => [tm, S2, Rex]
+    `tm4'   => [tm, S2, te, Rex]
+    `tm5'   => [tm, S2f, S2, ts]
+    `tm6'   => [tm, S2f, tf, S2, ts]
+    `tm7'   => [tm, S2f, S2, ts, Rex]
+    `tm8'   => [tm, S2f, tf, S2, ts, Rex]
+    `tm9'   => [tm, Rex]
+
+    `tm10'  => [tm, CSA]
+    `tm11'  => [tm, CSA, S2]
+    `tm12'  => [tm, CSA, S2, te]
+    `tm13'  => [tm, CSA, S2, Rex]
+    `tm14'  => [tm, CSA, S2, te, Rex]
+    `tm15'  => [tm, CSA, S2f, S2, ts]
+    `tm16'  => [tm, CSA, S2f, tf, S2, ts]
+    `tm17'  => [tm, CSA, S2f, S2, ts, Rex]
+    `tm18'  => [tm, CSA, S2f, tf, S2, ts, Rex]
+    `tm19'  => [tm, CSA, Rex]
+
+    `tm20'  => [tm, r]
+    `tm21'  => [tm, r, S2]
+    `tm22'  => [tm, r, S2, te]
+    `tm23'  => [tm, r, S2, Rex]
+    `tm24'  => [tm, r, S2, te, Rex]
+    `tm25'  => [tm, r, S2f, S2, ts]
+    `tm26'  => [tm, r, S2f, tf, S2, ts]
+    `tm27'  => [tm, r, S2f, S2, ts, Rex]
+    `tm28'  => [tm, r, S2f, tf, S2, ts, Rex]
+    `tm29'  => [tm, r, CSA, Rex]
+
+    `tm30'  => [tm, r, CSA]
+    `tm31'  => [tm, r, CSA, S2]
+    `tm32'  => [tm, r, CSA, S2, te]
+    `tm33'  => [tm, r, CSA, S2, Rex]
+    `tm34'  => [tm, r, CSA, S2, te, Rex]
+    `tm35'  => [tm, r, CSA, S2f, S2, ts]
+    `tm36'  => [tm, r, CSA, S2f, tf, S2, ts]
+    `tm37'  => [tm, r, CSA, S2f, S2, ts, Rex]
+    `tm38'  => [tm, r, CSA, S2f, tf, S2, ts, Rex]
+    `tm39'  => [tm, r, CSA, Rex]
+
+
+
+Residue number.
+
+If `res_num' is supplied as an integer then the model will only be selected for that
+residue, otherwise the model will be selected for all residues.
+
+
+
+Examples
+~~~~~~~~
+
+To pick model `m1' for all selected residues and assign it to the run `mixed', type:
+
+relax> model_free.select_model(`mixed', `m1')
+relax> model_free.select_model(run=`mixed', model=`m1')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{model\_selection}
+
+
+\subsubsection{Synopsis:}
+
+Function for model selection.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{model\_selection}(self, method=None, modsel\_run=None, runs=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword arguments
+~~~~~~~~~~~~~~~~~
+
+method:  The model selection technique (see below).
+
+modsel_run:  The run name to assign to the results of model selection.
+
+runs:  An array containing the names of all runs to include in model selection.
+
+
+Description
+~~~~~~~~~~~
+
+The following model selection methods are supported:
+
+AIC:  Akaike`s Information Criteria.
+
+AICc:  Small sample size corrected AIC.
+
+BIC:  Bayesian or Schwarz Information Criteria.
+
+Bootstrap:  Bootstrap model selection.
+
+CV:  Single-item-out cross-validation.
+
+Expect:  The expected overall discrepancy (the true values of the parameters are required).
+
+Farrow:  Old model-free method by Farrow et al., 1994.
+
+Palmer:  Old model-free method by Mandel et al., 1995.
+
+Overall:  The realised overall discrepancy (the true values of the parameters are required).
+
+For the methods `Bootstrap', `Expect', and `Overall', the function `monte_carlo' should have
+previously been run with the type argument set to the appropriate value to modify its
+behaviour.
+
+If the runs argument is not supplied then all runs currently set or loaded will be used for
+model selection, although this could cause problems.
+
+
+Example
+~~~~~~~
+
+For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the
+program, the following commands will carry out AIC model selection and assign the results
+to the run name `mixed':
+
+relax> model_selection(`AIC', `mixed')
+relax> model_selection(method=`AIC', modsel_run=`mixed')
+relax> model_selection(`AIC', `mixed', [`m1', `m2', `m3', `m4', `m5'])
+relax> model_selection(method=`AIC', modsel_run=`mixed', runs=[`m1', `m2', `m3', `m4', `m5'])
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{molmol.clear\_history}
+
+
+\subsubsection{Synopsis:}
+
+Function for clearing the Molmol command history.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{molmol.clear\_history}(self)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{molmol.command}
+
+
+\subsubsection{Synopsis:}
+
+Function for executing a user supplied Molmol command.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{molmol.command}(self, command)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Example
+~~~~~~~
+
+relax> molmol.command("InitAll yes")
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{molmol.view}
+
+
+\subsubsection{Synopsis:}
+
+Function for viewing the collection of molecules extracted from the PDB file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{molmol.view}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run which the PDB belongs to.
+
+
+Example
+~~~~~~~
+
+relax> molmol.view(`m1')
+relax> molmol.view(run=`pdb')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{monte\_carlo.create\_data}
+
+
+\subsubsection{Synopsis:}
+
+Function for creating simulation data.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{monte\_carlo.create\_data}(self, run=None, method=`back\_calc')
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+method:  The simulation method.
+
+
+Description
+~~~~~~~~~~~
+
+The method argument can either be set to `back_calc' or `direct', the choice of which
+determines the simulation type.  If the values or parameters of a run are calculated rather
+than minimised, this option will have no effect, hence, `back_calc' and `direct' are
+identical.
+
+For error analysis, the method argument should be set to `back_calc' which will result in
+proper Monte Carlo simulations.  The data used for each simulation is back calculated from
+the minimised model parameters and is randomised using Gaussian noise where the standard
+deviation is from the original error set.  When the method is set to `back_calc', this
+function should only be called after the model or run is fully minimised.
+
+The simulation type can be changed by setting the method argument to `direct'.  This will
+result in simulations which cannot be used in error analysis and which are no longer Monte
+Carlo simulations.  However, these simulations are required for certain model selection
+techniques (see the documentation for the model selection function for details), and can be
+used for other purposes.  Rather than the data being back calculated from the fitted model
+parameters, the data is generated by taking the original data and randomising using Gaussian
+noise with the standard deviations set to the original error set.
+
+
+
+Monte Carlo Simulation Overview
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+required for running the various simulation components.  The steps necessary for
+implementing Monte Carlo simulations are:
+
+1.  The measured data set together with the corresponding error set should be loaded into
+relax.
+
+2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+calculation is run.
+
+3.  To initialise and turn on Monte Carlo simulations, the number of simulations, n, needs
+to be set.
+
+4.  The simulation data needs to be created either by back calculation from the fully
+minimised model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised.  The error set is used to randomise each simulation data set by
+assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
+simulation.
+
+5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised model parameters.  An alternative is to use
+a grid search for each simulation to generate initial estimates, however this is extremely
+computationally expensive.  For the case where values are calculated rather than minimised,
+this step should be skipped (although the results will be unaffected if this is accidently
+run).
+
+6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+step 2, excluding the grid search when minimising, should be used for the simulations.
+
+7.  Failed simulations are removed using the techniques of model elimination.
+
+8.  The model parameter errors are calculated from the distribution of simulation
+parameters.
+
+
+Monte Carlo simulations can be turned on or off using functions within this class.  Once the
+function for setting up simulations has been called, simulations will be turned on.  The
+effect of having simulations turned on is that the functions used for minimisation (grid
+search, minimise, etc) or calculation will only affect the simulation parameters and not the
+model parameters.  By subsequently turning simulations off using the appropriate function,
+the functions used in minimisation will affect the model parameters and not the simulation
+parameters.
+
+
+An example, for model-free analysis, which includes only the functions required for
+implementing the above steps is:
+
+relax> grid_search(`m1', inc=11)                                 # Step 2.
+relax> minimise(`newton', run=`m1')                              # Step 2.
+relax> monte_carlo.setup(`m1', number=500)                       # Step 3.
+relax> monte_carlo.create_data(`m1', method=`back_calc')         # Step 4.
+relax> monte_carlo.initial_values(`m1')                          # Step 5.
+relax> minimise(`newton', run=`m1')                              # Step 6.
+relax> eliminate(`m1')                                           # Step 7.
+relax> monte_carlo.error_analysis(`m1')                          # Step 8.
+
+An example for reduced spectral density mapping is:
+
+relax> calc(`600MHz')                                            # Step 2.
+relax> monte_carlo.setup(`600MHz', number=500)                   # Step 3.
+relax> monte_carlo.create_data(`600MHz', method=`back_calc')     # Step 4.
+relax> calc(`600MHz')                                            # Step 6.
+relax> monte_carlo.error_analysis(`600MHz')                      # Step 8.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{monte\_carlo.error\_analysis}
+
+
+\subsubsection{Synopsis:}
+
+Function for calculating parameter errors from the Monte Carlo simulations.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{monte\_carlo.error\_analysis}(self, run=None, prune=0.0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+prune:  Legacy argument corresponding to `trim' in Art Palmer`s Modelfree program.
+
+
+Description
+~~~~~~~~~~~
+
+Parameter errors are calculated as the standard deviation of the distribution of parameter
+values.  This function should never be used if parameter values are obtained by minimisation
+and the simulation data are generated using the method `direct'.  The reason is because only
+true Monte Carlo simulations can give the true parameter errors.
+
+The prune argument is legacy code which corresponds to the `trim' option in Art Palmer`s
+Modelfree program.  To remove failed simulations, the eliminate function should be used
+prior to this function.  Eliminating the simulations specifically identifies and removes the
+failed simulations whereas the prune argment will only, in a few cases, positively identify
+failed simulations but only if severe parameter limits have been imposed.  Most failed
+models will pass through the prunning process and hence cause a catastropic increase in the
+parameter errors.  If the argument must be used, the following must be taken into account.
+If the values or parameters of a run are calculated rather than minimised, the prune
+argument must be set to zero.  The value of this argument is proportional to the number of
+simulations removed prior to error calculation.  If prune is set to 0.0, all simulations are
+used for calculating errors, whereas a value of 1.0 excludes all data.  In almost all cases
+prune must be set to zero, any value greater than zero will result in an underestimation of
+the error values.  If a value is supplied, the lower and upper tails of the distribution of
+chi-squared values will be excluded from the error calculation.
+
+
+
+Monte Carlo Simulation Overview
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+required for running the various simulation components.  The steps necessary for
+implementing Monte Carlo simulations are:
+
+1.  The measured data set together with the corresponding error set should be loaded into
+relax.
+
+2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+calculation is run.
+
+3.  To initialise and turn on Monte Carlo simulations, the number of simulations, n, needs
+to be set.
+
+4.  The simulation data needs to be created either by back calculation from the fully
+minimised model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised.  The error set is used to randomise each simulation data set by
+assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
+simulation.
+
+5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised model parameters.  An alternative is to use
+a grid search for each simulation to generate initial estimates, however this is extremely
+computationally expensive.  For the case where values are calculated rather than minimised,
+this step should be skipped (although the results will be unaffected if this is accidently
+run).
+
+6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+step 2, excluding the grid search when minimising, should be used for the simulations.
+
+7.  Failed simulations are removed using the techniques of model elimination.
+
+8.  The model parameter errors are calculated from the distribution of simulation
+parameters.
+
+
+Monte Carlo simulations can be turned on or off using functions within this class.  Once the
+function for setting up simulations has been called, simulations will be turned on.  The
+effect of having simulations turned on is that the functions used for minimisation (grid
+search, minimise, etc) or calculation will only affect the simulation parameters and not the
+model parameters.  By subsequently turning simulations off using the appropriate function,
+the functions used in minimisation will affect the model parameters and not the simulation
+parameters.
+
+
+An example, for model-free analysis, which includes only the functions required for
+implementing the above steps is:
+
+relax> grid_search(`m1', inc=11)                                 # Step 2.
+relax> minimise(`newton', run=`m1')                              # Step 2.
+relax> monte_carlo.setup(`m1', number=500)                       # Step 3.
+relax> monte_carlo.create_data(`m1', method=`back_calc')         # Step 4.
+relax> monte_carlo.initial_values(`m1')                          # Step 5.
+relax> minimise(`newton', run=`m1')                              # Step 6.
+relax> eliminate(`m1')                                           # Step 7.
+relax> monte_carlo.error_analysis(`m1')                          # Step 8.
+
+An example for reduced spectral density mapping is:
+
+relax> calc(`600MHz')                                            # Step 2.
+relax> monte_carlo.setup(`600MHz', number=500)                   # Step 3.
+relax> monte_carlo.create_data(`600MHz', method=`back_calc')     # Step 4.
+relax> calc(`600MHz')                                            # Step 6.
+relax> monte_carlo.error_analysis(`600MHz')                      # Step 8.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{monte\_carlo.initial\_values}
+
+
+\subsubsection{Synopsis:}
+
+Function for setting the initial simulation parameter values.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{monte\_carlo.initial\_values}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+
+Description
+~~~~~~~~~~~
+
+This function only effects runs where minimisation occurs and can therefore be skipped if
+the values or parameters of a run are calculated rather than minimised.  However, if
+accidently run in this case, the results will be unaffected.  It should only be called after
+the model or run is fully minimised.  Once called, the functions `grid_search' and
+`minimise' will only effect the simulations and not the model parameters.
+
+The initial values of the parameters for each simulation is set to the minimised parameters
+of the model.  A grid search can be undertaken for each simulation instead, although this
+is computationally expensive and unnecessary.  The minimisation function should be executed
+for a second time after running this function.
+
+
+
+Monte Carlo Simulation Overview
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+required for running the various simulation components.  The steps necessary for
+implementing Monte Carlo simulations are:
+
+1.  The measured data set together with the corresponding error set should be loaded into
+relax.
+
+2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+calculation is run.
+
+3.  To initialise and turn on Monte Carlo simulations, the number of simulations, n, needs
+to be set.
+
+4.  The simulation data needs to be created either by back calculation from the fully
+minimised model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised.  The error set is used to randomise each simulation data set by
+assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
+simulation.
+
+5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised model parameters.  An alternative is to use
+a grid search for each simulation to generate initial estimates, however this is extremely
+computationally expensive.  For the case where values are calculated rather than minimised,
+this step should be skipped (although the results will be unaffected if this is accidently
+run).
+
+6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+step 2, excluding the grid search when minimising, should be used for the simulations.
+
+7.  Failed simulations are removed using the techniques of model elimination.
+
+8.  The model parameter errors are calculated from the distribution of simulation
+parameters.
+
+
+Monte Carlo simulations can be turned on or off using functions within this class.  Once the
+function for setting up simulations has been called, simulations will be turned on.  The
+effect of having simulations turned on is that the functions used for minimisation (grid
+search, minimise, etc) or calculation will only affect the simulation parameters and not the
+model parameters.  By subsequently turning simulations off using the appropriate function,
+the functions used in minimisation will affect the model parameters and not the simulation
+parameters.
+
+
+An example, for model-free analysis, which includes only the functions required for
+implementing the above steps is:
+
+relax> grid_search(`m1', inc=11)                                 # Step 2.
+relax> minimise(`newton', run=`m1')                              # Step 2.
+relax> monte_carlo.setup(`m1', number=500)                       # Step 3.
+relax> monte_carlo.create_data(`m1', method=`back_calc')         # Step 4.
+relax> monte_carlo.initial_values(`m1')                          # Step 5.
+relax> minimise(`newton', run=`m1')                              # Step 6.
+relax> eliminate(`m1')                                           # Step 7.
+relax> monte_carlo.error_analysis(`m1')                          # Step 8.
+
+An example for reduced spectral density mapping is:
+
+relax> calc(`600MHz')                                            # Step 2.
+relax> monte_carlo.setup(`600MHz', number=500)                   # Step 3.
+relax> monte_carlo.create_data(`600MHz', method=`back_calc')     # Step 4.
+relax> calc(`600MHz')                                            # Step 6.
+relax> monte_carlo.error_analysis(`600MHz')                      # Step 8.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{monte\_carlo.off}
+
+
+\subsubsection{Synopsis:}
+
+Function for turning simulations off.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{monte\_carlo.off}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+
+
+Monte Carlo Simulation Overview
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+required for running the various simulation components.  The steps necessary for
+implementing Monte Carlo simulations are:
+
+1.  The measured data set together with the corresponding error set should be loaded into
+relax.
+
+2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+calculation is run.
+
+3.  To initialise and turn on Monte Carlo simulations, the number of simulations, n, needs
+to be set.
+
+4.  The simulation data needs to be created either by back calculation from the fully
+minimised model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised.  The error set is used to randomise each simulation data set by
+assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
+simulation.
+
+5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised model parameters.  An alternative is to use
+a grid search for each simulation to generate initial estimates, however this is extremely
+computationally expensive.  For the case where values are calculated rather than minimised,
+this step should be skipped (although the results will be unaffected if this is accidently
+run).
+
+6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+step 2, excluding the grid search when minimising, should be used for the simulations.
+
+7.  Failed simulations are removed using the techniques of model elimination.
+
+8.  The model parameter errors are calculated from the distribution of simulation
+parameters.
+
+
+Monte Carlo simulations can be turned on or off using functions within this class.  Once the
+function for setting up simulations has been called, simulations will be turned on.  The
+effect of having simulations turned on is that the functions used for minimisation (grid
+search, minimise, etc) or calculation will only affect the simulation parameters and not the
+model parameters.  By subsequently turning simulations off using the appropriate function,
+the functions used in minimisation will affect the model parameters and not the simulation
+parameters.
+
+
+An example, for model-free analysis, which includes only the functions required for
+implementing the above steps is:
+
+relax> grid_search(`m1', inc=11)                                 # Step 2.
+relax> minimise(`newton', run=`m1')                              # Step 2.
+relax> monte_carlo.setup(`m1', number=500)                       # Step 3.
+relax> monte_carlo.create_data(`m1', method=`back_calc')         # Step 4.
+relax> monte_carlo.initial_values(`m1')                          # Step 5.
+relax> minimise(`newton', run=`m1')                              # Step 6.
+relax> eliminate(`m1')                                           # Step 7.
+relax> monte_carlo.error_analysis(`m1')                          # Step 8.
+
+An example for reduced spectral density mapping is:
+
+relax> calc(`600MHz')                                            # Step 2.
+relax> monte_carlo.setup(`600MHz', number=500)                   # Step 3.
+relax> monte_carlo.create_data(`600MHz', method=`back_calc')     # Step 4.
+relax> calc(`600MHz')                                            # Step 6.
+relax> monte_carlo.error_analysis(`600MHz')                      # Step 8.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{monte\_carlo.on}
+
+
+\subsubsection{Synopsis:}
+
+Function for turning simulations on.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{monte\_carlo.on}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+
+
+Monte Carlo Simulation Overview
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+required for running the various simulation components.  The steps necessary for
+implementing Monte Carlo simulations are:
+
+1.  The measured data set together with the corresponding error set should be loaded into
+relax.
+
+2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+calculation is run.
+
+3.  To initialise and turn on Monte Carlo simulations, the number of simulations, n, needs
+to be set.
+
+4.  The simulation data needs to be created either by back calculation from the fully
+minimised model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised.  The error set is used to randomise each simulation data set by
+assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
+simulation.
+
+5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised model parameters.  An alternative is to use
+a grid search for each simulation to generate initial estimates, however this is extremely
+computationally expensive.  For the case where values are calculated rather than minimised,
+this step should be skipped (although the results will be unaffected if this is accidently
+run).
+
+6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+step 2, excluding the grid search when minimising, should be used for the simulations.
+
+7.  Failed simulations are removed using the techniques of model elimination.
+
+8.  The model parameter errors are calculated from the distribution of simulation
+parameters.
+
+
+Monte Carlo simulations can be turned on or off using functions within this class.  Once the
+function for setting up simulations has been called, simulations will be turned on.  The
+effect of having simulations turned on is that the functions used for minimisation (grid
+search, minimise, etc) or calculation will only affect the simulation parameters and not the
+model parameters.  By subsequently turning simulations off using the appropriate function,
+the functions used in minimisation will affect the model parameters and not the simulation
+parameters.
+
+
+An example, for model-free analysis, which includes only the functions required for
+implementing the above steps is:
+
+relax> grid_search(`m1', inc=11)                                 # Step 2.
+relax> minimise(`newton', run=`m1')                              # Step 2.
+relax> monte_carlo.setup(`m1', number=500)                       # Step 3.
+relax> monte_carlo.create_data(`m1', method=`back_calc')         # Step 4.
+relax> monte_carlo.initial_values(`m1')                          # Step 5.
+relax> minimise(`newton', run=`m1')                              # Step 6.
+relax> eliminate(`m1')                                           # Step 7.
+relax> monte_carlo.error_analysis(`m1')                          # Step 8.
+
+An example for reduced spectral density mapping is:
+
+relax> calc(`600MHz')                                            # Step 2.
+relax> monte_carlo.setup(`600MHz', number=500)                   # Step 3.
+relax> monte_carlo.create_data(`600MHz', method=`back_calc')     # Step 4.
+relax> calc(`600MHz')                                            # Step 6.
+relax> monte_carlo.error_analysis(`600MHz')                      # Step 8.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{monte\_carlo.setup}
+
+
+\subsubsection{Synopsis:}
+
+Function for setting up Monte Carlo simulations.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{monte\_carlo.setup}(self, run=None, number=500)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+number:  The number of Monte Carlo simulations.
+
+
+Description
+~~~~~~~~~~~
+
+This function must be called prior to any of the other Monte Carlo functions.  The effect is
+that the number of simulations for the given run will be set and that simulations will be
+turned on.
+
+
+
+Monte Carlo Simulation Overview
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+required for running the various simulation components.  The steps necessary for
+implementing Monte Carlo simulations are:
+
+1.  The measured data set together with the corresponding error set should be loaded into
+relax.
+
+2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+calculation is run.
+
+3.  To initialise and turn on Monte Carlo simulations, the number of simulations, n, needs
+to be set.
+
+4.  The simulation data needs to be created either by back calculation from the fully
+minimised model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised.  The error set is used to randomise each simulation data set by
+assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
+simulation.
+
+5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised model parameters.  An alternative is to use
+a grid search for each simulation to generate initial estimates, however this is extremely
+computationally expensive.  For the case where values are calculated rather than minimised,
+this step should be skipped (although the results will be unaffected if this is accidently
+run).
+
+6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+step 2, excluding the grid search when minimising, should be used for the simulations.
+
+7.  Failed simulations are removed using the techniques of model elimination.
+
+8.  The model parameter errors are calculated from the distribution of simulation
+parameters.
+
+
+Monte Carlo simulations can be turned on or off using functions within this class.  Once the
+function for setting up simulations has been called, simulations will be turned on.  The
+effect of having simulations turned on is that the functions used for minimisation (grid
+search, minimise, etc) or calculation will only affect the simulation parameters and not the
+model parameters.  By subsequently turning simulations off using the appropriate function,
+the functions used in minimisation will affect the model parameters and not the simulation
+parameters.
+
+
+An example, for model-free analysis, which includes only the functions required for
+implementing the above steps is:
+
+relax> grid_search(`m1', inc=11)                                 # Step 2.
+relax> minimise(`newton', run=`m1')                              # Step 2.
+relax> monte_carlo.setup(`m1', number=500)                       # Step 3.
+relax> monte_carlo.create_data(`m1', method=`back_calc')         # Step 4.
+relax> monte_carlo.initial_values(`m1')                          # Step 5.
+relax> minimise(`newton', run=`m1')                              # Step 6.
+relax> eliminate(`m1')                                           # Step 7.
+relax> monte_carlo.error_analysis(`m1')                          # Step 8.
+
+An example for reduced spectral density mapping is:
+
+relax> calc(`600MHz')                                            # Step 2.
+relax> monte_carlo.setup(`600MHz', number=500)                   # Step 3.
+relax> monte_carlo.create_data(`600MHz', method=`back_calc')     # Step 4.
+relax> calc(`600MHz')                                            # Step 6.
+relax> monte_carlo.error_analysis(`600MHz')                      # Step 8.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{noe.error}
+
+
+\subsubsection{Synopsis:}
+
+Function for setting the errors in the reference or saturated NOE spectra.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{noe.error}(self, run=None, error=0.0, spectrum\_type=None, res\_num=None, res\_name=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+error:  The error.
+
+spectrum_type:  The type of spectrum.
+
+res_num:  The residue number.
+
+res_name:  The residue name.
+
+
+Description
+~~~~~~~~~~~
+
+The spectrum_type argument can have the following values:
+    `ref' - The NOE reference spectrum.
+    `sat' - The NOE spectrum with proton saturation turned on.
+
+If the `res_num' and `res_name' arguments are left as the defaults of None, then the error
+value for all residues will be set to the supplied value.  Otherwise the residue number can
+be set to either an integer for selecting a single residue or a python regular expression
+string for selecting multiple residues.  The residue name argument must be a string and can
+use regular expression as well.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{noe.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for reading peak intensities from a file for NOE calculations.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{noe.read}(self, run=None, file=None, dir=None, spectrum\_type=None, format=`sparky', heteronuc=`N', proton=`HN', int\_col=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+file:  The name of the file containing the sequence data.
+
+dir:  The directory where the file is located.
+
+spectrum_type:  The type of spectrum.
+
+format:  The type of file containing peak intensities.
+
+heteronuc:  The name of the heteronucleus as specified in the peak intensity file.
+
+proton:  The name of the proton as specified in the peak intensity file.
+
+int_col:  The column containing the peak intensity data (for a non-standard formatted file).
+
+
+Description
+~~~~~~~~~~~
+
+The peak intensity can either be from peak heights or peak volumes.
+
+
+The spectrum_type argument can have the following values:
+    `ref' - The NOE reference spectrum.
+    `sat' - The NOE spectrum with proton saturation turned on.
+
+
+The format argument can currently be set to:
+    `sparky'
+    `xeasy'
+
+If the format argument is set to `sparky', the file should be a Sparky peak list saved after
+typing the command `lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
+3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
+The frequency data w1 and w2 are ignored while the peak intensity data can either be the
+peak height or volume displayed by changing the window options.  If the peak intensity data
+is not within column 3, set the argument int_col to the appropriate value (column numbering
+starts from 0 rather than 1).
+
+If the format argument is set to `xeasy', the file should be the saved XEasy text window
+output of the list peak entries command, `tw' followed by `le'.  As the columns are fixed,
+the peak intensity column is hardwired to number 10 (the 11th column) which contains either
+the peak height or peak volume data.  Because the columns are fixed, the int_col argument
+will be ignored.
+
+
+The heteronuc and proton arguments should be set respectively to the name of the
+heteronucleus and proton in the file.  Only those lines which match these labels will be
+used.
+
+
+Examples
+~~~~~~~~
+
+To read the reference and saturated spectra peak heights from the Sparky formatted files
+`ref.list' and `sat.list' to the run `noe', type:
+
+relax> noe.read(`noe', file=`ref.list', spectrum_type=`ref')
+relax> noe.read(`noe', file=`sat.list', spectrum_type=`sat')
+
+To read the reference and saturated spectra peak heights from the XEasy formatted files
+`ref.text' and `sat.text' to the run `noe', type:
+
+relax> noe.read(`noe', file=`ref.text', spectrum_type=`ref', format=`xeasy')
+relax> noe.read(`noe', file=`sat.text', spectrum_type=`sat', format=`xeasy')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{nuclei}
+
+
+\subsubsection{Synopsis:}
+
+Function for setting the gyromagnetic ratio of the heteronucleus.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{nuclei}(self, heteronuc=`N')
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
 
 Keyword arguments
 ~~~~~~~~~~~~~~~~~
@@ -594,16 +2880,173 @@ The heteronuc argument can be set to the following strings:
 
     N - Nitrogen, -2.7126e7
     C - Carbon, 2.2e7
-
 \end{verbatim}
+}
 
-\normalsize
-\section{Function name: `pdb'}
 
-The pdb loading function.
-\scriptsize
+
+\newpage
+
+\subsection{palmer.create}
+
+
+\subsubsection{Synopsis:}
+
+Function for creating the Modelfree4 input files.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{palmer.create}(self, run=None, dir=None, force=0, diff\_search=`none', sims=0, sim\_type=`pred', trim=0, steps=20, constraints=1, nucleus=`15N', atom1=`N', atom2=`H')
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
 
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+dir:  The directory to place the files.  The default is the value of `run'.
+
+force:  A flag which if set to 1 will cause the results file to be overwritten if it already
+exists.
+
+diff_search:  See the Modelfree4 manual for `diffusion_search'.
+
+sims:  The number of Monte Carlo simulations.
+
+sim_type:  See the Modelfree4 manual.
+
+trim:  See the Modelfree4 manual.
+
+steps:  See the Modelfree4 manual.
+
+constraints:  A flag specifying whether the parameters should be constrained.  The default
+is to turn constraints on (constraints=1).
+
+nucleus:  A three letter string describing the nucleus type, ie 15N, 13C, etc.
+
+atom1:  The symbol of the X nucleus in the pdb file.
+
+atom2:  The symbol of the H nucleus in the pdb file.
+
+
+Description
+~~~~~~~~~~~
+
+The following files are created:
+    dir/mfin
+    dir/mfdata
+    dir/mfpar
+    dir/mfmodel
+    dir/run.sh
+
+The file `run/run.sh' contains the single command:
+    modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out
+This can be used to execute modelfree4.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{palmer.execute}
+
+
+\subsubsection{Synopsis:}
+
+Function for executing Modelfree4.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{palmer.execute}(self, run=None, dir=None, force=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+dir:  The directory to place the files.  The default is the value of `run'.
+
+force:  A flag which if set to 1 will cause the results file to be overwritten if it already
+exists.
+
+
+Description
+~~~~~~~~~~~
+
+Modelfree 4 will be executed as:
+    modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out
+
+If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be
+placed on the command line as `-s pdb_file_name'.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{palmer.extract}
+
+
+\subsubsection{Synopsis:}
+
+Function for extracting data from the Modelfree4 `mfout' star formatted file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{palmer.extract}(self, run=None, dir=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+dir:  The directory where the file `mfout' is found.  The default is the value of `run'.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{pdb}
+
+
+\subsubsection{Synopsis:}
+
+The pdb loading function.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{pdb}(self, run=None, file=None, dir=None, model=None, heteronuc=`N', proton=`H', load\_seq=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
 
 Keyword Arguments
 ~~~~~~~~~~~~~~~~~
@@ -627,10 +3070,10 @@ Description
 ~~~~~~~~~~~
 
 To load a specific model from the PDB file, set the model flag to an integer i.  The
-structure beginning with the line 'MODEL i' in the PDB file will be loaded.  Otherwise all
+structure beginning with the line `MODEL i' in the PDB file will be loaded.  Otherwise all
 structures will be loaded starting from the model number 1.
 
-To load the sequence from the PDB file, set the 'load_seq' flag to 1.  If the sequence has
+To load the sequence from the PDB file, set the `load_seq' flag to 1.  If the sequence has
 previously been loaded, then this flag will be ignored.
 
 Once the PDB structures are loaded, unit XH bond vectors will be calculated.  The vectors
@@ -642,83 +3085,2695 @@ each model will be calculated and the final unit XH vector will be taken as the 
 Example
 ~~~~~~~
 
-To load all structures from the PDB file 'test.pdb' in the directory '~/pdb' for use in the
-model-free analysis run 'm8' where the heteronucleus in the PDB file is 'N' and the proton
-is 'H', type:
+To load all structures from the PDB file `test.pdb' in the directory `~/pdb' for use in the
+model-free analysis run `m8' where the heteronucleus in the PDB file is `N' and the proton
+is `H', type:
 
-relax> pdb('m8', 'test.pdb', '~/pdb', 1, 'N', 'H')
-relax> pdb(run='m8', file='test.pdb', dir='pdb', model=1, heteronuc='N', proton='H')
-
-
-To load the 10th model from the file 'test.pdb', use:
-
-relax> pdb('m1', 'test.pdb', model=10)
-relax> pdb(run='m1', file='test.pdb', model=10)
+relax> pdb(`m8', `test.pdb', `~/pdb', 1, `N', `H')
+relax> pdb(run=`m8', file=`test.pdb', dir=`pdb', model=1, heteronuc=`N', proton=`H')
 
 
+To load the 10th model from the file `test.pdb', use:
+
+relax> pdb(`m1', `test.pdb', model=10)
+relax> pdb(run=`m1', file=`test.pdb', model=10)
 \end{verbatim}
+}
 
-\normalsize
-\section{Function name: `model\_selection'}
 
-Function for model selection.
-\scriptsize
+
+\newpage
+
+\subsection{relax\_data.back\_calc}
+
+
+\subsubsection{Synopsis:}
+
+Function for back calculating relaxation data.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{relax\_data.back\_calc}(self, run=None, ri\_label=None, frq\_label=None, frq=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
 \begin{verbatim}
 
-
-Keyword arguments
+Keyword Arguments
 ~~~~~~~~~~~~~~~~~
 
-method:  The model selection technique (see below).
+run:  The name of the run.
 
-modsel_run:  The run name to assign to the results of model selection.
+ri_label:  The relaxation data type, ie `R1', `R2', or `NOE'.
 
-runs:  An array containing the names of all runs to include in model selection.
+frq_label:  The field strength label.
+
+frq:  The spectrometer frequency in Hz.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{relax\_data.copy}
+
+
+\subsubsection{Synopsis:}
+
+Function for copying relaxation data from run1 to run2.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{relax\_data.copy}(self, run1=None, run2=None, ri\_label=None, frq\_label=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run1:  The name of the run to copy the sequence from.
+
+run2:  The name of the run to copy the sequence to.
+
+ri_label:  The relaxation data type, ie `R1', `R2', or `NOE'.
+
+frq_label:  The field strength label.
 
 
 Description
 ~~~~~~~~~~~
 
-The following model selection methods are supported:
+This function will copy relaxation data from `run1' to `run2'.  If ri_label and frq_label
+are not given then all relaxation data will be copied, otherwise only a specific data set
+will be copied.
 
-AIC:  Akaike's Information Criteria.
 
-AICc:  Small sample size corrected AIC.
+Examples
+~~~~~~~~
 
-BIC:  Bayesian or Schwarz Information Criteria.
+To copy all relaxation data from run `m1' to run `m9', type one of:
 
-Bootstrap:  Bootstrap model selection.
+relax> relax_data.copy(`m1', `m9')
+relax> relax_data.copy(run1=`m1', run2=`m9')
+relax> relax_data.copy(`m1', `m9', None, None)
+relax> relax_data.copy(run1=`m1', run2=`m9', ri_label=None, frq_label=None)
 
-CV:  Single-item-out cross-validation.
+To copy only the NOE relaxation data with the frq_label of `800' from `m3' to `m6', type one
+of:
 
-Expect:  The expected overall discrepancy (the true values of the parameters are required).
+relax> relax_data.copy(`m3', `m6', `NOE', `800')
+relax> relax_data.copy(run1=`m3', run2=`m6', ri_label=`NOE', frq_label=`800')
+\end{verbatim}
+}
 
-Farrow:  Old model-free method by Farrow et al., 1994.
 
-Palmer:  Old model-free method by Mandel et al., 1995.
 
-Overall:  The realised overall discrepancy (the true values of the parameters are required).
+\newpage
 
-For the methods 'Bootstrap', 'Expect', and 'Overall', the function 'monte_carlo' should have
-previously been run with the type argument set to the appropriate value to modify its
-behaviour.
+\subsection{relax\_data.delete}
 
-If the runs argument is not supplied then all runs currently set or loaded will be used for
-model selection, although this could cause problems.
+
+\subsubsection{Synopsis:}
+
+Function for deleting the relaxation data corresponding to ri\_label and frq\_label.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{relax\_data.delete}(self, run=None, ri\_label=None, frq\_label=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+ri_label:  The relaxation data type, ie `R1', `R2', or `NOE'.
+
+frq_label:  The field strength label.
+
+
+Examples
+~~~~~~~~
+
+To delete the relaxation data corresponding to ri_label=`NOE', frq_label=`600', and the run
+`m4', type:
+
+relax> relax_data.delete(`m4', `NOE', `600')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{relax\_data.display}
+
+
+\subsubsection{Synopsis:}
+
+Function for displaying the relaxation data corresponding to ri\_label and frq\_label.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{relax\_data.display}(self, run=None, ri\_label=None, frq\_label=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+ri_label:  The relaxation data type, ie `R1', `R2', or `NOE'.
+
+frq_label:  The field strength label.
+
+
+Examples
+~~~~~~~~
+
+To show the relaxation data corresponding to ri_label=`NOE', frq_label=`600', and the run
+`m4', type:
+
+relax> relax_data.display(`m4', `NOE', `600')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{relax\_data.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for reading R1, R2, or NOE relaxation data from a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{relax\_data.read}(self, run=None, ri\_label=None, frq\_label=None, frq=None, file=None, dir=None, num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+ri_label:  The relaxation data type, ie `R1', `R2', or `NOE'.
+
+frq_label:  The field strength label.
+
+frq:  The spectrometer frequency in Hz.
+
+file:  The name of the file containing the relaxation data.
+
+dir:  The directory where the file is located.
+
+num_col:  The residue number column (the default is 0, ie the first column).
+
+name_col:  The residue name column (the default is 1).
+
+data_col:  The relaxation data column (the default is 2).
+
+error_col:  The experimental error column (the default is 3).
+
+sep:  The column separator (the default is white space).
+
+
+Description
+~~~~~~~~~~~
+
+The frequency label argument can be anything as long as data collected at the same field
+strength have the same label.
+
+
+Examples
+~~~~~~~~
+
+The following commands will read the NOE relaxation data collected at 600 MHz out of a file
+called `noe.600.out' where the residue numbers, residue names, data, errors are in the
+first, second, third, and forth columns respectively.
+
+relax> relax_data.read(`m1', `NOE', `600', 599.7 * 1e6, `noe.600.out')
+relax> relax_data.read(`m1', ri_label=`NOE', frq_label=`600', frq=600.0 * 1e6,
+                       file=`noe.600.out')
+
+
+The following commands will read the R2 data out of the file `r2.out' where the residue
+numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
+respectively.  The columns are separated by commas.
+
+relax> relax_data.read(`m1', `R2', `800 MHz', 8.0 * 1e8, `r2.out', 1, 2, 4, 5, `,')
+relax> relax_data.read(`m1', ri_label=`R2', frq_label=`800 MHz', frq=8.0*1e8,
+                       file=`r2.out', num_col=1, name_col=2, data_col=4, error_col=5,
+                       sep=`,')
+
+
+The following commands will read the R1 data out of the file `r1.out' where the columns are
+separated by the symbol `%'
+
+relax> relax_data.read(`m1', `R1', `300', 300.1 * 1e6, `r1.out', sep=`%')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{relax\_data.write}
+
+
+\subsubsection{Synopsis:}
+
+Function for writing R1, R2, or NOE relaxation data to a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{relax\_data.write}(self, run=None, ri\_label=None, frq\_label=None, file=None, dir=None, force=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+ri_label:  The relaxation data type, ie `R1', `R2', or `NOE'.
+
+frq_label:  The field strength label.
+
+file:  The name of the file.
+
+dir:  The directory name.
+
+force:  A flag which, if set to 1, will cause the file to be overwritten.
+
+
+Description
+~~~~~~~~~~~
+
+If no directory name is given, the file will be placed in the current working directory.
+The `ri_label' and `frq_label' arguments are required for selecting which relaxation data
+to write to file.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{relax\_fit.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for reading peak intensities from a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{relax\_fit.read}(self, run=None, file=None, dir=None, relax\_time=0.0, fit\_type=`exp', format=`sparky', heteronuc=`N', proton=`HN', int\_col=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+file:  The name of the file containing the sequence data.
+
+dir:  The directory where the file is located.
+
+relax_time:  The time, in seconds, of the relaxation period.
+
+fit_type:  The type of relaxation curve to fit.
+
+format:  The type of file containing peak intensities.
+
+heteronuc:  The name of the heteronucleus as specified in the peak intensity file.
+
+proton:  The name of the proton as specified in the peak intensity file.
+
+int_col:  The column containing the peak intensity data (for a non-standard formatted file).
+
+
+Description
+~~~~~~~~~~~
+
+The peak intensity can either be from peak heights or peak volumes.
+
+
+The supported relaxation experiments include the default two parameter exponential fit,
+selected by setting the `fit_type' argument to `exp', and the three parameter inversion
+recovery experiment in which the peak intensity limit is a non-zero value, selected by
+setting the argument to `inv'.
+
+
+The format argument can currently be set to:
+    `sparky'
+    `xeasy'
+
+If the format argument is set to `sparky', the file should be a Sparky peak list saved after
+typing the command `lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
+3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
+The frequency data w1 and w2 are ignored while the peak intensity data can either be the
+peak height or volume displayed by changing the window options.  If the peak intensity data
+is not within column 3, set the argument int_col to the appropriate value (column numbering
+starts from 0 rather than 1).
+
+If the format argument is set to `xeasy', the file should be the saved XEasy text window
+output of the list peak entries command, `tw' followed by `le'.  As the columns are fixed,
+the peak intensity column is hardwired to number 10 (the 11th column) which contains either
+the peak height or peak volume data.  Because the columns are fixed, the int_col argument
+will be ignored.
+
+
+The heteronuc and proton arguments should be set respectively to the name of the
+heteronucleus and proton in the file.  Only those lines which match these labels will be
+used.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{results.display}
+
+
+\subsubsection{Synopsis:}
+
+Function for displaying the results of the run.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{results.display}(self, run=None, format=`columnar')
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+format:  The format of the output.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{results.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for reading results from a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{results.read}(self, run=None, file=`results', dir=`run', format=`columnar')
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+file:  The name of the file to read results from.
+
+dir:  The directory where the file is located.
+
+
+Description
+~~~~~~~~~~~
+
+If no directory name is given, the results file will be searched for in a directory named
+after the run name.  To search for the results file in the current working directory, set
+dir to None.
+
+This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
+files automatically.  The full file name including extension can be supplied, however, if
+the file cannot be found, this function will search for the file name with `.bz2' appended
+followed by the file name with `.gz' appended.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{results.write}
+
+
+\subsubsection{Synopsis:}
+
+Function for writing results of the run to a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{results.write}(self, run=None, file=`results', dir=`run', force=0, format=`columnar', compress\_type=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+file:  The name of the file to output results to.  The default is `results'.
+
+dir:  The directory name.
+
+force:  A flag which, if set to 1, will cause the results file to be overwritten.
+
+format:  The format of the output.
+
+compress_type:  The type of compression to use when creating the file.
+
+
+Description
+~~~~~~~~~~~
+
+If no directory name is given, the results file will be placed in a directory named after
+the run name.  To place the results file in the current working directory, set dir to None.
+
+The default behaviour of this function is to compress the file using bzip2 compression.  If
+the extension `.bz2' is not included in the file name, it will be added.  The compression
+can, however, be changed to either no compression or gzip compression.  This is controlled
+by the compress_type argument which can be set to:
+    0 - No compression (no file extension).
+    1 - bzip2 compression (`.bz2' file extension).
+    2 - gzip compression (`.gz' file extension).
+The complementary read function will automatically handle the compressed files.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{run.create}
+
+
+\subsubsection{Synopsis:}
+
+Function for setting up a run type.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{run.create}(self, run=None, run\_type=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+type:  The type of run.
+
+
+Description
+~~~~~~~~~~~
+
+The run name can be any string however the run type can only be one of the following:
+
+    `jw' - Reduced spectral density mapping.
+    `mf' - Model-free analysis.
+    `noe' - Steady state NOE calculation.
+    `relax_fit' - Relaxation curve fitting.
+    `srls' - SRLS analysis.
+
+
+Examples
+~~~~~~~~
+
+To set up a model-free analysis run with the name `m5', type:
+
+relax> run.create(`m5', `mf')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{run.delete}
+
+
+\subsubsection{Synopsis:}
+
+Function for deleting a run.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{run.delete}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+
+Description
+~~~~~~~~~~~
+
+This function will destroy all data corresponding to the given run.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{select.all}
+
+
+\subsubsection{Synopsis:}
+
+Function for selecting all residues.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{select.all}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+
+Examples
+~~~~~~~~
+
+To select all residues for all runs type:
+
+relax> select.all()
+
+
+To select all residues for the run `srls_m1', type:
+
+relax> select.all(`srls_m1')
+relax> select.all(run=`srls_m1')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{select.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for selecting the residues contained in a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{select.read}(self, run=None, file=None, dir=None, change\_all=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+file:  The name of the file containing the list of residues to select.
+
+dir:  The directory where the file is located.
+
+change_all:  A flag specifying if all other residues should be changed.
+
+
+Description
+~~~~~~~~~~~
+
+The file must contain one residue number per line.  The number is taken as the first column
+of the file and all other columns are ignored.  Empty lines and lines beginning with a hash
+are ignored.
+
+The `change_all' flag argument default is zero meaning that all residues currently either
+selected or unselected will remain that way.  Setting the argument to 1 will cause all
+residues not specified in the file to be unselected.
+
+
+Examples
+~~~~~~~~
+
+To select all residues in the file `isolated_peaks', type:
+
+relax> select.read(`noe', `isolated_peaks')
+relax> select.read(run=`noe', file=`isolated_peaks')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{select.res}
+
+
+\subsubsection{Synopsis:}
+
+Function for selecting specific residues.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{select.res}(self, run=None, num=None, name=None, change\_all=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+num:  The residue number.
+
+name:  The residue name.
+
+change_all:  A flag specifying if all other residues should be changed.
+
+
+Description
+~~~~~~~~~~~
+
+The residue number can be either an integer for selecting a single residue or a python
+regular expression, in string form, for selecting multiple residues.  For details about
+using regular expression, see the python documentation for the module `re'.
+
+The residue name argument must be a string.  Regular expression is also allowed.
+
+The `change_all' flag argument default is zero meaning that all residues currently either
+selected or unselected will remain that way.  Setting the argument to 1 will cause all
+residues not specified by `num' or `name' to become unselected.
+
+
+Examples
+~~~~~~~~
+
+To select only glycines and alanines for the run `m3', assuming they have been loaded with
+the names GLY and ALA, type:
+
+relax> select.res(run=`m3', name=`GLY|ALA', change_all=1)
+relax> select.res(run=`m3', name=`[GA]L[YA]', change_all=1)
+
+To select residue 5 CYS in addition to the currently selected residues, type:
+
+relax> select.res(`m3', 5)
+relax> select.res(`m3', 5, `CYS')
+relax> select.res(`m3', `5')
+relax> select.res(`m3', `5', `CYS')
+relax> select.res(run=`m3', num=`5', name=`CYS')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{select.reverse}
+
+
+\subsubsection{Synopsis:}
+
+Function for the reversal of the residue selection.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{select.reverse}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+
+Examples
+~~~~~~~~
+
+To unselect all currently selected residues and select those which are unselected type:
+
+relax> select.reverse()
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{sequence.add}
+
+
+\subsubsection{Synopsis:}
+
+Function for adding a residue onto the sequence.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{sequence.add}(self, run=None, res\_num=None, res\_name=None, select=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+res_num:  The residue number.
+
+res_name:  The name of the residue.
+
+select:  A flag specifying if the residue should be selected.
+
+
+Description
+~~~~~~~~~~~
+
+Using this function a new sequence can be generated without having to load the sequence from
+a file.  However if the sequence already exists, the new residue will be added to the end.
+The same residue number cannot be used more than once.
+
+
+Examples
+~~~~~~~~
+
+The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS and assign
+it to the run `m3':
+
+relax> run = `m3'
+relax> sequence.add(run, 1, `ALA')
+relax> sequence.add(run, 2, `GLY')
+relax> sequence.add(run, 3, `LYS')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{sequence.copy}
+
+
+\subsubsection{Synopsis:}
+
+Function for copying the sequence from run1 to run2.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{sequence.copy}(self, run1=None, run2=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run1:  The name of the run to copy the sequence from.
+
+run2:  The name of the run to copy the sequence to.
+
+
+Description
+~~~~~~~~~~~
+
+This function will copy the sequence from `run1' to `run2'.  `run1' must contain sequence
+information, while `run2' must have no sequence loaded.
+
+
+Examples
+~~~~~~~~
+
+To copy the sequence from the run `m1' to the run `m2', type:
+
+relax> sequence.copy(`m1', `m2')
+relax> sequence.copy(run1=`m1', run2=`m2')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{sequence.delete}
+
+
+\subsubsection{Synopsis:}
+
+Function for deleting the sequence.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{sequence.delete}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+
+Description
+~~~~~~~~~~~
+
+This function has the same effect as using the `delete' function to delete all residue
+specific data.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{sequence.display}
+
+
+\subsubsection{Synopsis:}
+
+Function for displaying the sequence.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{sequence.display}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{sequence.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for reading sequence data.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{sequence.read}(self, run=None, file=None, dir=None, num\_col=0, name\_col=1, sep=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+file:  The name of the file containing the sequence data.
+
+dir:  The directory where the file is located.
+
+num_col:  The residue number column (the default is 0, ie the first column).
+
+name_col:  The residue name column (the default is 1).
+
+sep:  The column separator (the default is white space).
+
+
+Description
+~~~~~~~~~~~
+
+If no directory is given, the file will be assumed to be in the current working directory.
+
+
+Examples
+~~~~~~~~
+
+The following commands will read the sequence data out of a file called `seq' where the
+residue numbers and names are in the first and second columns respectively and assign it to
+the run `m1'.
+
+relax> sequence.read(`m1', `seq')
+relax> sequence.read(`m1', `seq', num_col=0, name_col=1)
+relax> sequence.read(run=`m1', file=`seq', num_col=0, name_col=1, sep=None)
+
+
+The following commands will read the sequence out of the file `noe.out' which also contains
+the NOE values.
+
+relax> sequence.read(`m1', `noe.out')
+relax> sequence.read(`m1', `noe.out', num_col=0, name_col=1)
+relax> sequence.read(run=`m1', file=`noe.out', num_col=0, name_col=1)
+
+
+The following commands will read the sequence out of the file `noe.600.out' where the
+residue numbers are in the second column, the names are in the sixth column and the columns
+are separated by commas and assign it to the run `m5'.
+
+relax> sequence.read(`m5', `noe.600.out', num_col=1, name_col=5, sep=`,')
+relax> sequence.read(run=`m5', file=`noe.600.out', num_col=1, name_col=5, sep=`,')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{sequence.sort}
+
+
+\subsubsection{Synopsis:}
+
+Function for numerically sorting the sequence by residue number.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{sequence.sort}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{sequence.write}
+
+
+\subsubsection{Synopsis:}
+
+Function for writing the sequence to a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{sequence.write}(self, run=None, file=None, dir=None, force=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+file:  The name of the file.
+
+dir:  The directory name.
+
+force:  A flag which, if set to 1, will cause the file to be overwritten.
+
+
+Description
+~~~~~~~~~~~
+
+If no directory name is given, the file will be placed in the current working directory.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{state.load}
+
+
+\subsubsection{Synopsis:}
+
+Function for loading a saved program state.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{state.load}(self, file=None, dir=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+file:  The file name, which must be a string, of a saved program state.
+
+dir:  Directory which the file is found in.
+
+
+Description
+~~~~~~~~~~~
+
+This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
+files automatically.  The full file name including extension can be supplied, however, if
+the file cannot be found, this function will search for the file name with `.bz2' appended
+followed by the file name with `.gz' appended.
+
+
+Examples
+~~~~~~~~
+
+The following commands will load the state saved in the file `save'.
+
+relax> state.load(`save')
+relax> state.load(file=`save')
+
+
+The following commands will load the state saved in the bzip2 compressed file `save.bz2'.
+
+relax> state.load(`save')
+relax> state.load(file=`save')
+relax> state.load(`save.bz2')
+relax> state.load(file=`save.bz2')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{state.save}
+
+
+\subsubsection{Synopsis:}
+
+Function for saving the program state.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{state.save}(self, file=None, dir=None, force=0, compress\_type=1)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+file:  The file name, which must be a string, to save the current program state in.
+
+dir:  The directory to place the file in.
+
+force:  A flag which if set to 1 will cause the file to be overwritten.
+
+
+Description
+~~~~~~~~~~~
+
+The default behaviour of this function is to compress the file using bzip2 compression.  If
+the extension `.bz2' is not included in the file name, it will be added.  The compression
+can, however, be changed to either no compression or gzip compression.  This is controlled
+by the compress_type argument which can be set to:
+    0 - No compression (no file extension).
+    1 - bzip2 compression (`.bz2' file extension).
+    2 - gzip compression (`.gz' file extension).
+
+
+Examples
+~~~~~~~~
+
+The following commands will save the current program state into the file `save':
+
+relax> state.save(`save', compress_type=0)
+relax> state.save(file=`save', compress_type=0)
+
+
+The following commands will save the current program state into the bzip2 compressed file
+`save.bz2':
+
+relax> state.save(`save')
+relax> state.save(file=`save')
+relax> state.save(`save.bz2')
+relax> state.save(file=`save.bz2')
+
+
+If the file `save' already exists, the following commands will save the current program
+state by overwriting the file.
+
+relax> state.save(`save', 1)
+relax> state.save(file=`save', force=1)
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{system}
+
+
+\subsubsection{Synopsis:}
+
+Function which executes the user supplied shell command.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{system}(command)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{thread.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for reading a file containing entries for each computer to run calculations on.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{thread.read}(self, file=`hosts', dir=`~/.relax')
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+file:  The name of the file containing the host entries.
+
+dir:  The directory where the hosts file is located.
+
+
+Description
+~~~~~~~~~~~
+
+Certain functions within relax are coded to handle threading.  This is achieved by running
+multiple instances of relax on different processes or computers for each thread.  The
+default behaviour is that the parent instance of relax will execute all the code, however if
+a hosts file is read or a hosts entry manually entered, then the threaded code will run on
+the specified hosts.  This function is for reading a hosts file which should contain an
+an entry for each computer on which to run calculations.
+
+For remote computers, a SSH connection will be attempted.  Public key authentication must be
+enabled to run calculations on remote machines so that thread can be created without asking
+for a password.  Details on how to do this are given below.
+
+
+The format of the hosts file is as follows.  Default values are specified by placing the
+character `-' in the corresponding column.  Columns can be separated by any whitespace
+character, and all columns must contain an entry.  Any lines beginning with a hash will be
+ignored.
+
+Column 1:  The host name or IP address of the computer on which to run a thread.
+
+Column 2:  The login name of the user on the remote machine.  The default is to use the same
+name as the current user.
+
+Column 3:  The full program path.  The default is to run `relax'.  This only works if relax
+can be found in the environmental variable $PATH, as alias are not recognised.
+
+Column 4:  The working directory where thread specific files are stored.  The default is
+`~/.relax' where the tilde `~' symbol represents the user`s home directory on the remote
+machine.
+
+Column 5:  The priority value for running the program.  The default is 15.  The remote
+instances of relax will be niced to this value.
+
+Column 6:  The number of CPU or CPU cores on the machine.  The default is 1.  A thread is
+started for each CPU.
+
+An example is:
+
+-------------------------------------------------------------------------------------------
+# Host          User name       Program path            Working directory    Priority  CPUs
+localhost       -               -                       -                    0         2
+192.168.0.10    dauvergne       /usr/local/bin/relax    -                    -         -
+192.168.0.11    edward          -                       -                    -         -
+-------------------------------------------------------------------------------------------
+
+In this case, two threads will be run on the parent computer which would be either a dual
+CPU system or a dual core `Hyper threaded' Pentium processor.  These threads will have the
+highest level user priority of 0.  The other two machines will have single threads running
+with a low priority of 15.
+
+Once threading is enabled, to allow calculations to run on the parent machine a `localhost'
+entry should be included.
+
+
+If the keyword argument `dir' is set to None, the hosts file will be assumed to be in the
+current working directory.
+
+
+SSH Public Key Authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To enable SSH Public Key Authentication for the use of ssh, sftp, and scp without having to
+type a password, use the following steps.  This is essential for running a thread on a
+remote machine.
+
+If the files `id_rsa' and `id_rsa.pub' do not exist in the directory `~/.ssh', type:
+
+$ ssh-keygen -t rsa
+
+Press enter three times when asked for input.  This will generate the two identification
+files.  Then, to copy the public key into the authorized_keys file on the remote machine,
+type:
+
+$ ssh zucchini "echo $(cat ~/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys"
+
+Make sure you replace `zucchini' with the name or IP address of the remote machine.  To use
+DSA rather than RSA authentication, replace `rsa' with `dsa' in the above commands.
+Normally the sshd keyword StrictModes, which is found in the file `/etc/ssh/sshd_config', is
+set to `yes' or, if unspecified, defaults to `yes'.  In this case, public key authentication
+may fail as the permissions of the remote file `~/.ssh/authorized_keys' may be too
+permissive.  The file should only be read/write for the user, ie 600.  To remotely change
+the permissions, type:
+
+$ ssh zucchini "chmod 600 ~/.ssh/authorized_keys"
+
+One last keyword may need to be changed in the file `/etc/ssh/sshd_config'.  If the keyword
+PubkeyAuthentication is set to `no', change this to `yes'.  The default is yes, so if the
+keyword is missing or is commented out, nothing needs to be done.
+
+Public key authentication should now work.  To test, type:
+
+$ ssh zucchini
+
+This should securely login into the remote machine without asking for a password.  If a
+password prompt appears, check all the permissions on the directory `~/.ssh' and all files
+within or set the sshd_config keyword StrictModes to `no'.
+
+$ ssh zucchini "chmod 700 ~/.ssh/"
+$ ssh zucchini "chmod 600 ~/.ssh/*"
+$ ssh zucchini "chmod 644 ~/.ssh/*.pub"
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{unselect.all}
+
+
+\subsubsection{Synopsis:}
+
+Function for unselecting all residues.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{unselect.all}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+
+Examples
+~~~~~~~~
+
+To unselect all residues type:
+
+relax> unselect.all()
+
+
+To unselect all residues for the run `srls_m1', type:
+
+relax> select.all(`srls_m1')
+relax> select.all(run=`srls_m1')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{unselect.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for unselecting the residues contained in a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{unselect.read}(self, run=None, file=None, dir=None, change\_all=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+file:  The name of the file containing the list of residues to unselect.
+
+dir:  The directory where the file is located.
+
+change_all:  A flag specifying if all other residues should be changed.
+
+
+Description
+~~~~~~~~~~~
+
+The file must contain one residue number per line.  The number is taken as the first column
+of the file and all other columns are ignored.  Empty lines and lines beginning with a hash
+are ignored.
+
+The `change_all' flag argument default is zero meaning that all residues currently either
+selected or unselected will remain that way.  Setting the argument to 1 will cause all
+residues not specified in the file to be selected.
+
+
+Examples
+~~~~~~~~
+
+To unselect all overlapped residues in the file `unresolved', type:
+
+relax> unselect.read(`noe', `unresolved')
+relax> unselect.read(run=`noe', file=`unresolved')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{unselect.res}
+
+
+\subsubsection{Synopsis:}
+
+Function for unselecting specific residues.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{unselect.res}(self, run=None, num=None, name=None, change\_all=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+num:  The residue number.
+
+name:  The residue name.
+
+change_all:  A flag specifying if all other residues should be changed.
+
+
+Description
+~~~~~~~~~~~
+
+The residue number can be either an integer for unselecting a single residue or a python
+regular expression, in string form, for unselecting multiple residues.  For details about
+using regular expression, see the python documentation for the module `re'.
+
+The residue name argument must be a string.  Regular expression is also allowed.
+
+The `change_all' flag argument default is zero meaning that all residues currently either
+selected or unselected will remain that way.  Setting the argument to 1 will cause all
+residues not specified by `num' or `name' to become selected.
+
+
+Examples
+~~~~~~~~
+
+To unselect all glycines for the run `m5', type:
+
+relax> unselect.res(run=`m5', name=`GLY|ALA')
+relax> unselect.res(run=`m5', name=`[GA]L[YA]')
+
+To unselect residue 12 MET type:
+
+relax> unselect.res(`m5', 12)
+relax> unselect.res(`m5', 12, `MET')
+relax> unselect.res(`m5', `12')
+relax> unselect.res(`m5', `12', `MET')
+relax> unselect.res(run=`m5', num=`12', name=`MET')
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{unselect.reverse}
+
+
+\subsubsection{Synopsis:}
+
+Function for the reversal of the residue selection.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{unselect.reverse}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
+single run, multiple runs, or all runs will be selected respectively.
+
+
+Examples
+~~~~~~~~
+
+To unselect all currently selected residues and select those which are unselected type:
+
+relax> unselect.reverse()
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{value.copy}
+
+
+\subsubsection{Synopsis:}
+
+Function for copying residue specific data values from run1 to run2.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{value.copy}(self, run1=None, run2=None, data\_type=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run1:  The name of the run to copy from.
+
+run2:  The name of the run to copy to.
+
+data_type:  The data type.
+
+
+Description
+~~~~~~~~~~~
+
+Only one data type may be selected, therefore the data type argument should be a string.
+
+If this function is used to change values of previously minimised runs, then the
+minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+and Hessian count) will be reset to None.
+
+
+Examples
+~~~~~~~~
+
+To copy the CSA values from the run `m1' to `m2', type:
+
+relax> value.copy(`m1', `m2', `CSA')
+
+
+
+
+Regular expression
+~~~~~~~~~~~~~~~~~~
+
+The python function `match', which uses regular expression, is used to determine which data
+type to set values to, therefore various data_type strings can be used to select the same
+data type.  Patterns used for matching for specific data types are listed below.
+
+This is a short description of python regular expression, for more information see the
+regular expression syntax section of the Python Library Reference.  Some of the regular
+expression syntax used in this function is:
+
+    [] - A sequence or set of characters to match to a single character.  For example,
+    `[Ss]2' will match both `S2' and `s2'.
+
+    ^ - Match the start of the string.
+
+    $ - Match the end of the string.  For example, `^[Ss]2$' will match `s2' but not `S2f'
+    or `s2s'.
+
+    . - Match any character.
+
+    x* - Match the character x any number of times, for example `x' will match, as will
+    `xxxxx'
+
+    .* - Match any sequence of characters of any length.
+
+Importantly, do not supply a string for the data type containing regular expression.  The
+regular expression is implemented so that various strings can be supplied which all match
+the same data type.
+
+
+Model-free data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Local tm               | tm           | `^tm$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2     | s2           | `^[Ss]2$'                                        |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2f    | s2f          | `^[Ss]2f$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2s    | s2s          | `^[Ss]2s$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time te    | te           | `^te$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time tf    | tf           | `^tf$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time ts    | ts           | `^ts$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Chemical exchange      | rex          | `^[Rr]ex$' or `[Cc]emical[ -_][Ee]xchange'       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+Model-free set details
+~~~~~~~~~~~~~~~~~~~~~~
+
+Setting a parameter value may have no effect depending on which model-free model is chosen,
+for example if S2f values and S2s values are set but the run corresponds to model-free model
+`m4' then, because these data values are not parameters of the model, they will have no
+effect.
+
+Note that the Rex values are scaled quadratically with field strength and should be supplied
+as a field strength independent value.  Use the following formula to get the correct value:
+
+    value = Rex / (2.0 * pi * frequency) ** 2
+
+where:
+    Rex is the chemical exchange value for the current frequency.
+    pi is in the namespace of relax, ie just type `pi'.
+    frequency is the proton frequency corresponding to the data.
+
+
+
+Reduced spectral density mapping data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(0)                   | j0           | `^[Jj]0$' or `[Jj](0)'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wX)                  | jwx          | `^[Jj]w[Xx]$' or `[Jj](w[Xx])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wH)                  | jwh          | `^[Jj]w[Hh]$' or `[Jj](w[Hh])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+Reduced spectral density mapping set details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In reduced spectral density mapping, only two values can be set, the bond length and CSA
+value.  These must be set prior to the calculation of spectral density values.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{value.display}
+
+
+\subsubsection{Synopsis:}
+
+Function for displaying residue specific data values.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{value.display}(self, run=None, data\_type=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+data_type:  The data type.
+
+
+Description
+~~~~~~~~~~~
+
+Only one data type may be selected, therefore the data type argument should be a string.
+
+
+Examples
+~~~~~~~~
+
+To show all CSA values for the run `m1', type:
+
+relax> value.display(`m1', `CSA')
+
+
+
+
+Regular expression
+~~~~~~~~~~~~~~~~~~
+
+The python function `match', which uses regular expression, is used to determine which data
+type to set values to, therefore various data_type strings can be used to select the same
+data type.  Patterns used for matching for specific data types are listed below.
+
+This is a short description of python regular expression, for more information see the
+regular expression syntax section of the Python Library Reference.  Some of the regular
+expression syntax used in this function is:
+
+    [] - A sequence or set of characters to match to a single character.  For example,
+    `[Ss]2' will match both `S2' and `s2'.
+
+    ^ - Match the start of the string.
+
+    $ - Match the end of the string.  For example, `^[Ss]2$' will match `s2' but not `S2f'
+    or `s2s'.
+
+    . - Match any character.
+
+    x* - Match the character x any number of times, for example `x' will match, as will
+    `xxxxx'
+
+    .* - Match any sequence of characters of any length.
+
+Importantly, do not supply a string for the data type containing regular expression.  The
+regular expression is implemented so that various strings can be supplied which all match
+the same data type.
+
+
+Model-free data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Local tm               | tm           | `^tm$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2     | s2           | `^[Ss]2$'                                        |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2f    | s2f          | `^[Ss]2f$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2s    | s2s          | `^[Ss]2s$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time te    | te           | `^te$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time tf    | tf           | `^tf$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time ts    | ts           | `^ts$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Chemical exchange      | rex          | `^[Rr]ex$' or `[Cc]emical[ -_][Ee]xchange'       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+
+Reduced spectral density mapping data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(0)                   | j0           | `^[Jj]0$' or `[Jj](0)'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wX)                  | jwx          | `^[Jj]w[Xx]$' or `[Jj](w[Xx])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wH)                  | jwh          | `^[Jj]w[Hh]$' or `[Jj](w[Hh])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{value.read}
+
+
+\subsubsection{Synopsis:}
+
+Function for reading residue specific data values from a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{value.read}(self, run=None, data\_type=None, file=None, num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+data_type:  The data type.
+
+frq:  The spectrometer frequency in Hz.
+
+file:  The name of the file containing the relaxation data.
+
+num_col:  The residue number column (the default is 0, ie the first column).
+
+name_col:  The residue name column (the default is 1).
+
+data_col:  The relaxation data column (the default is 2).
+
+error_col:  The experimental error column (the default is 3).
+
+sep:  The column separator (the default is white space).
+
+
+Description
+~~~~~~~~~~~
+
+Only one data type may be selected, therefore the data type argument should be a string.  If
+the file only contains values and no errors, set the error column argument to None.
+
+If this function is used to change values of previously minimised runs, then the
+minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+and Hessian count) will be reset to None.
+
+
+Examples
+~~~~~~~~
+
+To load CSA values for the run `m1' from the file `csa_values' in the directory `data', type
+any of the following:
+
+relax> value.read(`m1', `CSA', `data/csa_value')
+relax> value.read(`m1', `CSA', `data/csa_value', 0, 1, 2, 3, None, 1)
+relax> value.read(run=`m1', data_type=`CSA', file=`data/csa_value', num_col=0, name_col=1,
+                  data_col=2, error_col=3, sep=None)
+
+
+
+
+Regular expression
+~~~~~~~~~~~~~~~~~~
+
+The python function `match', which uses regular expression, is used to determine which data
+type to set values to, therefore various data_type strings can be used to select the same
+data type.  Patterns used for matching for specific data types are listed below.
+
+This is a short description of python regular expression, for more information see the
+regular expression syntax section of the Python Library Reference.  Some of the regular
+expression syntax used in this function is:
+
+    [] - A sequence or set of characters to match to a single character.  For example,
+    `[Ss]2' will match both `S2' and `s2'.
+
+    ^ - Match the start of the string.
+
+    $ - Match the end of the string.  For example, `^[Ss]2$' will match `s2' but not `S2f'
+    or `s2s'.
+
+    . - Match any character.
+
+    x* - Match the character x any number of times, for example `x' will match, as will
+    `xxxxx'
+
+    .* - Match any sequence of characters of any length.
+
+Importantly, do not supply a string for the data type containing regular expression.  The
+regular expression is implemented so that various strings can be supplied which all match
+the same data type.
+
+
+Model-free data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Local tm               | tm           | `^tm$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2     | s2           | `^[Ss]2$'                                        |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2f    | s2f          | `^[Ss]2f$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2s    | s2s          | `^[Ss]2s$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time te    | te           | `^te$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time tf    | tf           | `^tf$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time ts    | ts           | `^ts$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Chemical exchange      | rex          | `^[Rr]ex$' or `[Cc]emical[ -_][Ee]xchange'       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+Model-free set details
+~~~~~~~~~~~~~~~~~~~~~~
+
+Setting a parameter value may have no effect depending on which model-free model is chosen,
+for example if S2f values and S2s values are set but the run corresponds to model-free model
+`m4' then, because these data values are not parameters of the model, they will have no
+effect.
+
+Note that the Rex values are scaled quadratically with field strength and should be supplied
+as a field strength independent value.  Use the following formula to get the correct value:
+
+    value = Rex / (2.0 * pi * frequency) ** 2
+
+where:
+    Rex is the chemical exchange value for the current frequency.
+    pi is in the namespace of relax, ie just type `pi'.
+    frequency is the proton frequency corresponding to the data.
+
+
+
+Reduced spectral density mapping data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(0)                   | j0           | `^[Jj]0$' or `[Jj](0)'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wX)                  | jwx          | `^[Jj]w[Xx]$' or `[Jj](w[Xx])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wH)                  | jwh          | `^[Jj]w[Hh]$' or `[Jj](w[Hh])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+Reduced spectral density mapping set details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In reduced spectral density mapping, only two values can be set, the bond length and CSA
+value.  These must be set prior to the calculation of spectral density values.
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{value.set}
+
+
+\subsubsection{Synopsis:}
+
+Function for setting residue specific data values.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{value.set}(self, run=None, value=None, data\_type=None, res\_num=None, res\_name=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The run to assign the values to.
+
+value:  The value(s).
+
+data_type:  The data type(s).
+
+res_num:  The residue number.
+
+res_name:  The residue name.
+
+
+Description
+~~~~~~~~~~~
+
+If this function is used to change values of previously minimised runs, then the
+minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+and Hessian count) will be reset to None.
+
+
+The value argument can be None, a single value, or an array of values while the data type
+argument can be None, a string, or array of strings.  The choice of which combination
+determines the behaviour of this function.  The following table describes what occurs in
+each instance.  The Value column refers to the `value' argument while the Type column refers
+to the `data_type' argument.  In these columns, `None' corresponds to None, `1' corresponds
+to either a single value or single string, and `n' corresponds to either an array of values
+or an array of strings.
+
+____________________________________________________________________________________________
+|       |       |                                                                          |
+| Value | Type  | Description                                                              |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+| None  | None  | This case is used to set the model parameters prior to minimisation or   |
+|       |       | calculation.  The model parameters are set to the default values.        |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+|   1   | None  | Invalid combination.                                                     |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+|   n   | None  | This case is used to set the model parameters prior to minimisation or   |
+|       |       | calculation.  The length of the value array must be equal to the number  |
+|       |       | of model parameters for an individual residue.  The parameters will be   |
+|       |       | set to the corresponding number.                                         |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+| None  |   1   | The data type matching the string will be set to the default value.      |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+|   1   |   1   | The data type matching the string will be set to the supplied number.    |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+|   n   |   1   | Invalid combination.                                                     |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+| None  |   n   | Each data type matching the strings will be set to the default values.   |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+|   1   |   n   | Each data type matching the strings will be set to the supplied number.  |
+|_______|_______|__________________________________________________________________________|
+|       |       |                                                                          |
+|   n   |   n   | Each data type matching the strings will be set to the corresponding     |
+|       |       | number.  Both arrays must be of equal length.                            |
+|_______|_______|__________________________________________________________________________|
+
+
+Residue number and name argument.
+
+If the `res_num' and `res_name' arguments are left as the defaults of None, then the
+function will be applied to all residues.  Otherwise the residue number can be set to either
+an integer for selecting a single residue or a python regular expression string for
+selecting multiple residues.  The residue name argument must be a string and can use regular
+expression as well.
+
+
+Examples
+~~~~~~~~
+
+To set the parameter values for the run `test' to the default values, for all residues,
+type:
+
+relax> value.set(`test')
+
+
+To set the parameter values of residue 10, which is the model-free run `m4' and has the
+parameters {S2, te, Rex}, the following can be used.  Rex term is the value for the first
+given field strength.
+
+relax> value.set(`m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
+relax> value.set(`m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
+
+
+To set the CSA value for the model-free run `tm3' to the default value, type:
+
+relax> value.set(`tm3', data_type=`csa')
+
+
+To set the CSA value of all residues in the reduced spectral density mapping run `600MHz' to
+-170 ppm, type:
+
+relax> value.set(`600MHz', -170 * 1e-6, `csa')
+relax> value.set(`600MHz', value=-170 * 1e-6, data_type=`csa')
+
+
+To set the NH bond length of all residues in the model-free run `m5' to 1.02 Angstroms,
+type:
+
+relax> value.set(`m5', 1.02 * 1e-10, `bond_length')
+relax> value.set(`m5', value=1.02 * 1e-10, data_type=`r')
+
+
+To set both the bond length and the CSA value for the run `new' to the default values, type:
+
+relax> value.set(`new', data_type=[`bond length', `csa'])
+
+
+To set both tf and ts in the model-free run `m6' to 100 ps, type:
+
+relax> value.set(`m6', 100e-12, [`tf', `ts'])
+relax> value.set(`m6', value=100e-12, data_type=[`tf', `ts'])
+
+
+To set the S2 and te parameter values for model-free run `m4' which has the parameters
+{S2, te, Rex} to 0.56 and 13 ps, type:
+
+relax> value.set(`m4', [0.56, 13e-12], [`S2', `te'], 10)
+relax> value.set(`m4', value=[0.56, 13e-12], data_type=[`S2', `te'], res_num=10)
+relax> value.set(run=`m4', value=[0.56, 13e-12], data_type=[`S2', `te'], res_num=10)
+
+
+
+
+Regular expression
+~~~~~~~~~~~~~~~~~~
+
+The python function `match', which uses regular expression, is used to determine which data
+type to set values to, therefore various data_type strings can be used to select the same
+data type.  Patterns used for matching for specific data types are listed below.
+
+This is a short description of python regular expression, for more information see the
+regular expression syntax section of the Python Library Reference.  Some of the regular
+expression syntax used in this function is:
+
+    [] - A sequence or set of characters to match to a single character.  For example,
+    `[Ss]2' will match both `S2' and `s2'.
+
+    ^ - Match the start of the string.
+
+    $ - Match the end of the string.  For example, `^[Ss]2$' will match `s2' but not `S2f'
+    or `s2s'.
+
+    . - Match any character.
+
+    x* - Match the character x any number of times, for example `x' will match, as will
+    `xxxxx'
+
+    .* - Match any sequence of characters of any length.
+
+Importantly, do not supply a string for the data type containing regular expression.  The
+regular expression is implemented so that various strings can be supplied which all match
+the same data type.
+
+
+Model-free data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Local tm               | tm           | `^tm$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2     | s2           | `^[Ss]2$'                                        |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2f    | s2f          | `^[Ss]2f$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2s    | s2s          | `^[Ss]2s$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time te    | te           | `^te$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time tf    | tf           | `^tf$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time ts    | ts           | `^ts$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Chemical exchange      | rex          | `^[Rr]ex$' or `[Cc]emical[ -_][Ee]xchange'       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+Model-free set details
+~~~~~~~~~~~~~~~~~~~~~~
+
+Setting a parameter value may have no effect depending on which model-free model is chosen,
+for example if S2f values and S2s values are set but the run corresponds to model-free model
+`m4' then, because these data values are not parameters of the model, they will have no
+effect.
+
+Note that the Rex values are scaled quadratically with field strength and should be supplied
+as a field strength independent value.  Use the following formula to get the correct value:
+
+    value = Rex / (2.0 * pi * frequency) ** 2
+
+where:
+    Rex is the chemical exchange value for the current frequency.
+    pi is in the namespace of relax, ie just type `pi'.
+    frequency is the proton frequency corresponding to the data.
+
+
+Model-free default values
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+_______________________________________________________________________________________
+|                                       |              |                              |
+| Data type                             | Object name  | Value                        |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Local tm                              | tm           | 10 * 1e-9                    |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Order parameters S2, S2f, and S2s     | s2, s2f, s2s | 0.8                          |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Correlation time te                   | te           | 100 * 1e-12                  |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Correlation time tf                   | tf           | 10 * 1e-12                   |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Correlation time ts                   | ts           | 1000 * 1e-12                 |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Chemical exchange relaxation          | rex          | 0.0                          |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Bond length                           | r            | 1.02 * 1e-10                 |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| CSA                                   | csa          | -170 * 1e-6                  |
+|_______________________________________|______________|______________________________|
+
+
+
+
+Reduced spectral density mapping data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(0)                   | j0           | `^[Jj]0$' or `[Jj](0)'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wX)                  | jwx          | `^[Jj]w[Xx]$' or `[Jj](w[Xx])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wH)                  | jwh          | `^[Jj]w[Hh]$' or `[Jj](w[Hh])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+Reduced spectral density mapping set details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In reduced spectral density mapping, only two values can be set, the bond length and CSA
+value.  These must be set prior to the calculation of spectral density values.
+
+
+
+Reduced spectral density mapping default values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+_______________________________________________________________________________________
+|                                       |              |                              |
+| Data type                             | Object name  | Value                        |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| Bond length                           | r            | 1.02 * 1e-10                 |
+|_______________________________________|______________|______________________________|
+|                                       |              |                              |
+| CSA                                   | csa          | -170 * 1e-6                  |
+|_______________________________________|______________|______________________________|
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{value.write}
+
+
+\subsubsection{Synopsis:}
+
+Function for writing residue specific data values to a file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{value.write}(self, run=None, data\_type=None, file=None, dir=None, force=0)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run.
+
+data_type:  The data type.
+
+file:  The name of the file.
+
+dir:  The directory name.
+
+force:  A flag which, if set to 1, will cause the file to be overwritten.
+
+
+Description
+~~~~~~~~~~~
+
+If no directory name is given, the file will be placed in the current working directory.
+
+The data type argument should be a string.
+
+
+Examples
+~~~~~~~~
+
+To write the CSA values for the run `m1' to the file `csa.txt', type:
+
+relax> value.write(`m1', `CSA', `csa.txt')
+relax> value.write(run=`m1', data_type=`CSA', file=`csa.txt')
+
+
+To write the NOE values from the run `noe' to the file `noe', type:
+
+relax> value.write(`noe', `noe', `noe.out')
+relax> value.write(`noe', data_type=`noe', file=`noe.out')
+relax> value.write(run=`noe', data_type=`noe', file=`noe.out')
+relax> value.write(run=`noe', data_type=`noe', file=`noe.out', force=1)
+
+
+
+
+Regular expression
+~~~~~~~~~~~~~~~~~~
+
+The python function `match', which uses regular expression, is used to determine which data
+type to set values to, therefore various data_type strings can be used to select the same
+data type.  Patterns used for matching for specific data types are listed below.
+
+This is a short description of python regular expression, for more information see the
+regular expression syntax section of the Python Library Reference.  Some of the regular
+expression syntax used in this function is:
+
+    [] - A sequence or set of characters to match to a single character.  For example,
+    `[Ss]2' will match both `S2' and `s2'.
+
+    ^ - Match the start of the string.
+
+    $ - Match the end of the string.  For example, `^[Ss]2$' will match `s2' but not `S2f'
+    or `s2s'.
+
+    . - Match any character.
+
+    x* - Match the character x any number of times, for example `x' will match, as will
+    `xxxxx'
+
+    .* - Match any sequence of characters of any length.
+
+Importantly, do not supply a string for the data type containing regular expression.  The
+regular expression is implemented so that various strings can be supplied which all match
+the same data type.
+
+
+Model-free data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Local tm               | tm           | `^tm$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2     | s2           | `^[Ss]2$'                                        |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2f    | s2f          | `^[Ss]2f$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Order parameter S2s    | s2s          | `^[Ss]2s$'                                       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time te    | te           | `^te$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time tf    | tf           | `^tf$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Correlation time ts    | ts           | `^ts$'                                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Chemical exchange      | rex          | `^[Rr]ex$' or `[Cc]emical[ -_][Ee]xchange'       |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+
+Reduced spectral density mapping data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(0)                   | j0           | `^[Jj]0$' or `[Jj](0)'                           |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wX)                  | jwx          | `^[Jj]w[Xx]$' or `[Jj](w[Xx])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| J(wH)                  | jwh          | `^[Jj]w[Hh]$' or `[Jj](w[Hh])'                   |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Bond length            | r            | `^r$' or `[Bb]ond[ -_][Ll]ength'                 |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| CSA                    | csa          | `^[Cc][Ss][Aa]$'                                 |
+|________________________|______________|__________________________________________________|
+
+
+
+
+NOE calculation data type string matching patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____________________________________________________________________________________________
+|                        |              |                                                  |
+| Data type              | Object name  | Patterns                                         |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Reference intensity    | ref          | `^[Rr]ef$' or `[Rr]ef[ -_][Ii]nt'                |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| Saturated intensity    | sat          | `^[Ss]at$' or `[Ss]at[ -_][Ii]nt'                |
+|________________________|______________|__________________________________________________|
+|                        |              |                                                  |
+| NOE                    | noe          | `^[Nn][Oo][Ee]$'                                 |
+|________________________|______________|__________________________________________________|
+\end{verbatim}
+}
+
+
+
+\newpage
+
+\subsection{vmd.view}
+
+
+\subsubsection{Synopsis:}
+
+Function for viewing the collection of molecules extracted from the PDB file.
+
+\subsubsection{Default arguments:}
+
+\textsf{\textbf{vmd.view}(self, run=None)
+}
+
+
+\subsubsection{Docstring:}
+
+{\scriptsize
+\begin{verbatim}
+
+Keyword Arguments
+~~~~~~~~~~~~~~~~~
+
+run:  The name of the run which the PDB belongs to.
 
 
 Example
 ~~~~~~~
 
-For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the
-program, the following commands will carry out AIC model selection and assign the results
-to the run name 'mixed':
-
-relax> model_selection('AIC', 'mixed')
-relax> model_selection(method='AIC', modsel_run='mixed')
-relax> model_selection('AIC', 'mixed', ['m1', 'm2', 'm3', 'm4', 'm5'])
-relax> model_selection(method='AIC', modsel_run='mixed', runs=['m1', 'm2', 'm3', 'm4', 'm5'])
-
+relax> vmd.view(`m1')
+relax> vmd.view(run=`pdb')
 \end{verbatim}
+}
 
-\normalsize

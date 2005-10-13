@@ -1,5 +1,7 @@
 #! /usr/bin/python
 
+from inspect import formatargspec, getargspec, getdoc
+from re import search
 import sys
 from string import split
 
@@ -30,8 +32,14 @@ class Fetch_docstrings:
         # Open the LaTeX file.
         self.file = open('docstring.tex', 'w')
 
+        # Get the names of the data structures.
+        names = self.local.keys()
+
+        # Alphabetically sort the names of the data structures.
+        names.sort()
+
         # Loop over the data structures.
-        for name in self.local:
+        for name in names:
             # Skip the name if it is in the blacklist.
             if name in self.blacklist:
                 continue
@@ -49,19 +57,41 @@ class Fetch_docstrings:
                 continue
 
             # Print the docstring.
-            self.print_docstring(name, object.__doc__)
+            self.print_docstring(name, object)
 
         # Close the LaTeX file.
         self.file.close()
 
 
-    def doc_user_class(self, name, object):
+    def doc_user_class(self, parent_name, parent_object):
         """Document the user class."""
+
+        # Get the names of the data structures.
+        names = dir(parent_object)
+
+        # Alphabetically sort the names of the data structures.
+        names.sort()
+
+        # Loop over the data structures.
+        for name in names:
+            # Skip names begining with an underscore.
+            if search('^_', name):
+                continue
+
+            # Get the object.
+            object = getattr(parent_object, name)
+
+            # Skip the object if there is no docstring.
+            if not hasattr(object, '__doc__') or not object.__doc__:
+                continue
+
+            # Print the docstring.
+            self.print_docstring(parent_name + '.' + name, object)
 
 
     def get_blacklist(self):
         """Maintained list of objects in the interpreter namespace which should not be documented."""
-        
+
         # Initialise the list.
         self.blacklist = []
 
@@ -71,45 +101,140 @@ class Fetch_docstrings:
         self.blacklist.append('script')
 
 
-    def print_docstring(self, function, docstring):
+    def latex_quotes(self, string):
+        """Function for changing the quotes for LaTeX processing."""
+
+        # Initialise.
+        new_string = ''
+        in_quote = 0
+
+        # Loop over the characters.
+        for i in xrange(len(string)):
+            # Find the quote marks.
+            if search('\'', string[i]):
+                # Swap the opening ' with `.
+                if not in_quote:
+                    new_string = new_string + '`'
+                    in_quote = 1
+                    continue
+
+                # Just exited the quote
+                else:
+                    in_quote = 0
+
+            # Append the character.
+            new_string = new_string + string[i]
+
+        return new_string
+
+
+    def print_docstring(self, function, object):
         """Function for creating the LaTeX file."""
 
-        # Comment out underscores in the function name.
-        names = split(function, '_')
-        function_name = names[0]
-        for i in range(len(names)-1):
-            function_name = function_name + '\_' + names[i+1]
+        # Initialise.
+        #############
 
-        # Write the function name.
-        self.file.write('\section{Function name: `' + function_name + '\'}\n\n')
+        # Comment out underscores in the function name.
+        function_name = self.underscore_fix(function)
+
+        # Get the docstring.
+        docstring = getdoc(object)
 
         # Split the docstring by newline characters.
         lines = split(docstring, '\n')
 
-        # Write the first line.
-        self.file.write(lines[0] + '\n')
+
+        # Subsection.
+        #############
+
+        # Start a new page.
+        self.file.write('\n\n\\newpage')
+
+        # Write the function name.
+        self.file.write('\n\n\subsection{' + function_name + '}\n\n')
+
+
+        # Synopsis.
+        ###########
+
+        # Heading.
+        self.file.write('\n\\subsubsection{Synopsis:}\n\n')
+
+        # Write the synopsis.
+        self.file.write(self.latex_quotes(self.underscore_fix(lines[0])) + '\n')
+
+
+        # Arguments.
+        ############
+
+        # Heading.
+        self.file.write('\n\\subsubsection{Default arguments:}\n\n')
+
+        # Typewriter font.
+        self.file.write('\\textsf{')
+
+        # Function name.
+        self.file.write('\\textbf{' + function_name + '}')
+
+        # Get the arguments.
+        args, varargs, varkw, defaults = getargspec(object)
+
+        # Argument string.
+        arguments = formatargspec(args, varargs, varkw, defaults)
+
+        # Change the format for LaTeX.
+        tex_arguments = self.latex_quotes(arguments)
+
+        # Write the synopsis.
+        self.file.write(self.underscore_fix(tex_arguments) + '\n')
+
+        # End typewriter font.
+        self.file.write('}\n\n')
+
+
+        # Docstring.
+        ############
+
+        # Heading.
+        self.file.write('\n\\subsubsection{Docstring:}\n\n')
 
         # Script sized font.
-        self.file.write('\\scriptsize\n')
+        self.file.write('{\\scriptsize\n')
 
         # Start a verbatim environment.
         self.file.write('\\begin{verbatim}\n\n')
 
         # Loop over the lines.
         for i in xrange(len(lines)):
-            # Skip the first line.
-            if i == 0:
+            # Skip the first line (synopsis) and the second line (blank).
+            if i == 0 or i == 1:
                 continue
 
-            # Strip the first 8 characters of spaces, then write the line.
-            else:
-                self.file.write(lines[i][8:] + '\n')
+            # Write the line.
+            self.file.write(self.latex_quotes(lines[i]) + '\n')
 
         # End the verbatim environment.
-        self.file.write('\\end{verbatim}\n\n')
+        self.file.write('\\end{verbatim}\n')
 
         # Return to normal font.
-        self.file.write('\\normalsize\n')
+        self.file.write('}\n\n')
+
+
+    def underscore_fix(self, string):
+        """Function for commenting out underscrores in a piece of text."""
+
+        # Split by underscore.
+        row = split(string, '_')
+
+        # Initialise the text.
+        text = row[0]
+
+        # Loop over the sections of text separated by underscores.
+        for i in range(len(row)-1):
+            text = text + '\_' + row[i+1]
+
+        # Return the new text.
+        return text
 
 
 if __name__ == '__main__':
