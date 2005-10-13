@@ -83,14 +83,27 @@ class Fetch_docstrings:
         # Write the function name.
         self.file.write('\section{Function name: `' + function_name + '\'}\n\n')
 
+        # Split the docstring by newline characters.
+        lines = split(docstring, '\n')
+
+        # Write the first line.
+        self.file.write(lines[0] + '\n')
+
         # Script sized font.
         self.file.write('\\scriptsize\n')
 
         # Start a verbatim environment.
         self.file.write('\\begin{verbatim}\n\n')
 
-        # Write the docstring.
-        self.file.write(docstring + '\n')
+        # Loop over the lines.
+        for i in xrange(len(lines)):
+            # Skip the first line.
+            if i == 0:
+                continue
+
+            # Strip the first 8 characters of spaces, then write the line.
+            else:
+                self.file.write(lines[i][8:] + '\n')
 
         # End the verbatim environment.
         self.file.write('\\end{verbatim}\n\n')

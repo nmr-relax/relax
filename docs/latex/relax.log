@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  13 OCT 2005 23:52
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  14 OCT 2005 00:02
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -106,108 +106,27 @@ Chapter 1.
 (./docstring.tex [1
 
 
-] [2]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [3]
-[4]
+] [2] [3] [4]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [5]
-Overfull \hbox (6.07469pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 function arguments.  These are the function tolerance
- value for convergence tests, the maximum[] 
- []
-
-
-Overfull \hbox (6.07469pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 func_tol:  The function tolerance value.  Once the fu
-nction value between iterations decreases[] 
- []
-
-
-Overfull \hbox (10.32475pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 full_output:  A flag specifying which data structures
- should be returned.  The following values[] 
- []
-
-
-Overfull \hbox (10.32475pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 print_flag:  A flag specifying how much information s
-hould be printed to standard output during[] 
- []
-
-
-Overfull \hbox (14.57481pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 minimisation.  0 means no output, 1 means minimal out
-put, and values above 1 increase the amount[] 
- []
-
-
-Overfull \hbox (1.82463pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 A minimisation function is selected if the minimisati
-on algorithm argument, which should be a[] 
- []
-
-
-Overfull \hbox (6.07469pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 string, matches a certain pattern.  Because the pytho
-n regular expression 'match' statement is[] 
- []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [6]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [7]
-Overfull \hbox (1.82463pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 Line search algorithms.  These are used in the line s
-earch methods and the conjugate gradient[] 
- []
-
-
-Overfull \hbox (14.57481pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 Hessian modifications.  These are used in the Newton,
- Dogleg, and Exact trust region algorithms.[] 
- []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [8]
-Overfull \hbox (14.57481pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 Hessian type, these are used in a few of the trust re
-gion methods including the Dogleg and Exact[] 
- []
-
-
-Overfull \hbox (14.57481pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 modification can also be supplied as above.  The defa
-ult Hessian type is Newton, and the default[] 
- []
-
-
-Overfull \hbox (10.32475pt too wide) in paragraph at lines 574--574
-[]        \OT1/cmtt/m/n/8 For Newton minimisation, the default line search algo
-rithm is the More and Thuente line search,[] 
- []
-
-[9] [10]
-Overfull \hbox (1.82463pt too wide) in paragraph at lines 722--722
-[]        \OT1/cmtt/m/n/8 relax> model_selection(method='AIC', modsel_run='mixe
-d', runs=['m1', 'm2', 'm3', 'm4', 'm5'])[] 
- []
-
-) [11] (./relax.aux) ) 
+[9] [10]) [11] (./relax.aux) ) 
 Here is how much of TeX's memory you used:
  953 strings out of 95756
  10919 string characters out of 1190795
- 83741 words of memory out of 1000001
+ 78801 words of memory out of 1000001
  3975 multiletter control sequences out of 10000+50000
  5969 words of font info for 22 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
- 32i,5n,21p,257b,340s stack positions out of 3000i,1500n,5000p,200000b,15000s
+ 32i,5n,21p,257b,338s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (11 pages, 30568 bytes).
+Output written on relax.dvi (11 pages, 30716 bytes).
