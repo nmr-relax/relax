@@ -1,0 +1,103 @@
+#! /usr/bin/python
+
+import sys
+from string import split
+
+# Add the path to the relax base directory.
+sys.path.append(sys.path[0])
+sys.path[0] = '../..'
+
+# Import the program relax.
+from prompt.interpreter import Interpreter
+
+
+class Fetch_docstrings:
+    def __init__(self):
+        """Fetch all the docstrings of the user functions and format them LaTeX style."""
+
+        # Some dummy data structures.
+        self.script_file = None
+        self.intro_string = ''
+        self.dummy_mode = 1
+
+        # Start the interpreter!
+        self.interpreter = Interpreter(self)
+        self.interpreter.run()
+
+        # Get the blacklisted objects.
+        self.get_blacklist()
+
+        # Open the LaTeX file.
+        self.file = open('docstring.tex', 'w')
+
+        # Loop over the data structures.
+        for name in self.local:
+            # Skip the name if it is in the blacklist.
+            if name in self.blacklist:
+                continue
+
+            # Get the object.
+            object = self.local[name]
+
+            # Determine if the structure is user function containing class.
+            if hasattr(object, '__relax_help__'):
+                # Document the user class.
+                self.doc_user_class(name, object)
+
+            # Skip the object if there is no docstring.
+            if not hasattr(object, '__doc__') or not object.__doc__:
+                continue
+
+            # Print the docstring.
+            self.print_docstring(name, object.__doc__)
+
+        # Close the LaTeX file.
+        self.file.close()
+
+
+    def doc_user_class(self, name, object):
+        """Document the user class."""
+
+
+    def get_blacklist(self):
+        """Maintained list of objects in the interpreter namespace which should not be documented."""
+        
+        # Initialise the list.
+        self.blacklist = []
+
+        # Skip these.
+        self.blacklist.append('Numeric')
+        self.blacklist.append('pi')
+        self.blacklist.append('script')
+
+
+    def print_docstring(self, function, docstring):
+        """Function for creating the LaTeX file."""
+
+        # Comment out underscores in the function name.
+        names = split(function, '_')
+        function_name = names[0]
+        for i in range(len(names)-1):
+            function_name = function_name + '\_' + names[i+1]
+
+        # Write the function name.
+        self.file.write('\section{Function name: `' + function_name + '\'}\n\n')
+
+        # Script sized font.
+        self.file.write('\\scriptsize\n')
+
+        # Start a verbatim environment.
+        self.file.write('\\begin{verbatim}\n\n')
+
+        # Write the docstring.
+        self.file.write(docstring + '\n')
+
+        # End the verbatim environment.
+        self.file.write('\\end{verbatim}\n\n')
+
+        # Return to normal font.
+        self.file.write('\\normalsize\n')
+
+
+if __name__ == '__main__':
+    Fetch_docstrings()

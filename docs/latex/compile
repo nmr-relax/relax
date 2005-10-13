@@ -3,6 +3,9 @@
 echo -e "\n\n\n <<< Clean >>>\n\n\n"
 rm -f relax.aux relax.dvi relax.log relax.pdf relax.ps
 
+echo -e "\n\n\n <<< Fetching the docstrings >>>\n\n\n"
+./fetch_docstrings
+
 echo -e "\n\n\n <<< Latex (first round) >>>\n\n\n"
 latex relax.tex
 

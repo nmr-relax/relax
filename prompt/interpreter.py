@@ -209,6 +209,12 @@ class Interpreter:
             # Run the script.
             run_script(intro=self.relax.intro_string, local=self.local, script_file=self.relax.script_file, quit=1)
 
+        # Test for the dummy mode for generating documentation (then exit).
+        elif hasattr(self.relax, 'dummy_mode'):
+            # Place the namespace into self.relax
+            self.relax.local = self.local
+            return
+
         # Go to the prompt.
         else:
             prompt(intro=self.relax.intro_string, local=self.local)

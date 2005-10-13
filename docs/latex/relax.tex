@@ -1,5 +1,33 @@
-\documentclass{book}
+\documentclass[a4paper, 12pt, twoside]{book}
+
+% Natural Sciences Citations and References.
+\usepackage{natbib}
+
+% Good looking tables.
+\usepackage{booktabs}
+
+% Inline EPS.
+\usepackage{epsfig}
+
+% Obliterate those painful LaTeX margins!
+\usepackage{vmargin}
+
+
+
+% Start the document.
+%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-Hello
+
+
+% Program functions chapter.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\chapter{Program functions}
+
+The following is an alphabetical list of the functions availible within the relax prompt and scripting environments.  These are simply an alphabetical list of the docstrings which can normally be viewed in prompt mode by typing `help(function)'.
+
+\input{docstring}
+
+
 \end{document}
