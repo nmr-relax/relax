@@ -4616,13 +4616,15 @@ If the files
 \quoteenv{`\~{}/.ssh'}
 , type:
 
-\$ ssh-keygen -t rsa
+\example{\$ ssh-keygen -t rsa }
+
 
 Press enter three times when asked for input.  This will generate the two identification
 files.  Then, to copy the public key into the authorized\_keys file on the remote machine,
 type:
 
-\$ ssh zucchini "echo \$(cat \~{}/.ssh/id\_rsa.pub) $>>$ \~{}/.ssh/authorized\_keys"
+\example{\$ ssh zucchini "echo \$(cat \~{}/.ssh/id\_rsa.pub) >> \~{}/.ssh/authorized\_keys" }
+
 
 Make sure you replace 
 \quoteenv{`zucchini'}
@@ -4646,7 +4648,8 @@ may fail as the permissions of the remote file
 permissive.  The file should only be read/write for the user, ie 600.  To remotely change
 the permissions, type:
 
-\$ ssh zucchini "chmod 600 \~{}/.ssh/authorized\_keys"
+\example{\$ ssh zucchini "chmod 600 \~{}/.ssh/authorized\_keys" }
+
 
 One last keyword may need to be changed in the file 
 \quoteenv{`/etc/ssh/sshd\_config'}
@@ -4660,7 +4663,8 @@ keyword is missing or is commented out, nothing needs to be done.
 
 Public key authentication should now work.  To test, type:
 
-\$ ssh zucchini
+\example{\$ ssh zucchini }
+
 
 This should securely login into the remote machine without asking for a password.  If a
 password prompt appears, check all the permissions on the directory 
@@ -4670,9 +4674,12 @@ within or set the sshd\_config keyword StrictModes to
 \quoteenv{`no'}
 .
 
-\$ ssh zucchini "chmod 700 \~{}/.ssh/"
-\$ ssh zucchini "chmod 600 \~{}/.ssh/*"
-\$ ssh zucchini "chmod 644 \~{}/.ssh/*.pub"
+\example{\$ ssh zucchini "chmod 700 \~{}/.ssh/" }
+
+\example{\$ ssh zucchini "chmod 600 \~{}/.ssh/*" }
+
+\example{\$ ssh zucchini "chmod 644 \~{}/.ssh/*.pub" }
+
 
 
 \newpage
