@@ -39,6 +39,7 @@ class Fetch_docstrings:
         names.sort()
 
         # Loop over the data structures.
+        #for name in ['diffusion_tensor']:
         for name in names:
             # Skip the name if it is in the blacklist.
             if name in self.blacklist:
@@ -558,10 +559,10 @@ class Fetch_docstrings:
             for i in xrange(len(line)):
                 # Find the start of the quote (when not already inside a quote).
                 if search('`', line[i]) and not in_quote:
-                    if new_string == '':
-                        new_string = '\quoteenv{'
-                    else:
-                        new_string = new_string + '\n\quoteenv{'
+                    if not new_string == '':
+                        new_lines.append(new_string)
+                        new_string = ''
+                    new_string = '\quoteenv{'
                     in_quote = 1
 
                 # Find the end of the quote.

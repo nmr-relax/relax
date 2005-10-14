@@ -230,7 +230,7 @@ The
 ignored if the diffusion tensor is not axially symmetric.  If 
 \quoteenv{`oblate'}
  is given, then the
-constraint Dper >= Dpar is used.  If 
+constraint $\Diff_\Per$ $\ge$ $\Diff_\Par$ is used.  If 
 \quoteenv{`prolate'}
  is given, then the constraint $\Diff_\Per$ $\le$ $\Diff_\Par$ is
 used.  If nothing is supplied, then $\Diff_\Per$ and $\Diff_\Par$ will be allowed to have any values.  To
@@ -312,7 +312,7 @@ run
 
 
 To select axially symmetric diffusion with a $\tau_m$ value of 8.5$n$s, $\Diff_{ratio}$ of 1.1, $\theta$ value
-of 20 degrees, and phi value of 20 degrees, and assign it to the run 
+of 20 degrees, and $\phi$ value of 20 degrees, and assign it to the run 
 \quoteenv{`m8'}
 , type:
 
@@ -583,7 +583,7 @@ The
 \quoteenv{`args'}
  argument must be a tuple of length 2, the elements of which must be numbers.  For
 example, to eliminate models which have a local $\tau_m$ value greater than 25 ns and models with
-internal correlation times greater than 1.5 times tm, set 
+internal correlation times greater than 1.5 times $\tau_m$, set 
 \quoteenv{`args'}
  to (25 * 1e-9, 1.5).
 
@@ -839,7 +839,7 @@ expression syntax used in this function is:
 
     . - Match any character.
 
-    x* - Match the character x any number of times, for example 
+    $x$* - Match the character $x$ any number of times, for example 
 \quoteenv{`x'}
  will match, as will
     
@@ -903,39 +903,39 @@ Chi-squared statistic & chi2 &
 \toprule
 Data type & Object name & Patterns \\
 \midrule
-Local tm & tm & 
+Local $\tau_m$ & $\tau_m$ & 
 \quoteenv{`\^{}tm\$'}
  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | 
+| Order parameter $S^2$     | s2           | 
 \quoteenv{`\^{}[Ss]2\$'}
                                         |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | 
+| Order parameter $S^2_f$    | s2f          | 
 \quoteenv{`\^{}[Ss]2f\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | 
+| Order parameter $S^2_s$    | s2s          | 
 \quoteenv{`\^{}[Ss]2s\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | 
+| Correlation time $\tau_e$    | $\tau_e$           | 
 \quoteenv{`\^{}te\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | 
+| Correlation time $\tau_f$    | $\tau_f$           | 
 \quoteenv{`\^{}tf\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | 
+| Correlation time $\tau_s$    | $\tau_s$           | 
 \quoteenv{`\^{}ts\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -947,14 +947,14 @@ Local tm & tm &
        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -994,14 +994,14 @@ J(0) & j0 &
                    |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -3356,7 +3356,7 @@ is
 
 
 
-To load the 10th model from the file 
+To load the 10$^\mathrm{th}$ model from the file 
 \quoteenv{`test.pdb'}
 , use:
 
@@ -4896,7 +4896,7 @@ and Hessian count) will be reset to None.
 
 \subsubsection{Examples}
 
-To copy the CSA values from the run 
+To copy the $CSA$ values from the run 
 \quoteenv{`m1'}
  to 
 \quoteenv{`m2'}
@@ -4944,7 +4944,7 @@ expression syntax used in this function is:
 
     . - Match any character.
 
-    x* - Match the character x any number of times, for example 
+    $x$* - Match the character $x$ any number of times, for example 
 \quoteenv{`x'}
  will match, as will
     
@@ -4967,39 +4967,39 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
-Local tm & tm & 
+Local $\tau_m$ & $\tau_m$ & 
 \quoteenv{`\^{}tm\$'}
  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | 
+| Order parameter $S^2$     | s2           | 
 \quoteenv{`\^{}[Ss]2\$'}
                                         |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | 
+| Order parameter $S^2_f$    | s2f          | 
 \quoteenv{`\^{}[Ss]2f\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | 
+| Order parameter $S^2_s$    | s2s          | 
 \quoteenv{`\^{}[Ss]2s\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | 
+| Correlation time $\tau_e$    | $\tau_e$           | 
 \quoteenv{`\^{}te\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | 
+| Correlation time $\tau_f$    | $\tau_f$           | 
 \quoteenv{`\^{}tf\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | 
+| Correlation time $\tau_s$    | $\tau_s$           | 
 \quoteenv{`\^{}ts\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5011,14 +5011,14 @@ Local tm & tm &
        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5040,7 +5040,7 @@ as a field strength independent value.  Use the following formula to get the cor
 
 where:
     $R_{ex}$ is the chemical exchange value for the current frequency.
-    pi is in the namespace of relax, ie just type 
+    $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
     frequency is the proton frequency corresponding to the data.
@@ -5079,14 +5079,14 @@ J(0) & j0 &
                    |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5126,7 +5126,7 @@ Only one data type may be selected, therefore the data type argument should be a
 
 \subsubsection{Examples}
 
-To show all CSA values for the run 
+To show all $CSA$ values for the run 
 \quoteenv{`m1'}
 , type:
 
@@ -5172,7 +5172,7 @@ expression syntax used in this function is:
 
     . - Match any character.
 
-    x* - Match the character x any number of times, for example 
+    $x$* - Match the character $x$ any number of times, for example 
 \quoteenv{`x'}
  will match, as will
     
@@ -5195,39 +5195,39 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
-Local tm & tm & 
+Local $\tau_m$ & $\tau_m$ & 
 \quoteenv{`\^{}tm\$'}
  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | 
+| Order parameter $S^2$     | s2           | 
 \quoteenv{`\^{}[Ss]2\$'}
                                         |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | 
+| Order parameter $S^2_f$    | s2f          | 
 \quoteenv{`\^{}[Ss]2f\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | 
+| Order parameter $S^2_s$    | s2s          | 
 \quoteenv{`\^{}[Ss]2s\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | 
+| Correlation time $\tau_e$    | $\tau_e$           | 
 \quoteenv{`\^{}te\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | 
+| Correlation time $\tau_f$    | $\tau_f$           | 
 \quoteenv{`\^{}tf\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | 
+| Correlation time $\tau_s$    | $\tau_s$           | 
 \quoteenv{`\^{}ts\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5239,14 +5239,14 @@ Local tm & tm &
        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5286,14 +5286,14 @@ J(0) & j0 &
                    |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5342,7 +5342,7 @@ and Hessian count) will be reset to None.
 
 \subsubsection{Examples}
 
-To load CSA values for the run 
+To load $CSA$ values for the run 
 \quoteenv{`m1'}
  from the file 
 \quoteenv{`csa\_values'}
@@ -5397,7 +5397,7 @@ expression syntax used in this function is:
 
     . - Match any character.
 
-    x* - Match the character x any number of times, for example 
+    $x$* - Match the character $x$ any number of times, for example 
 \quoteenv{`x'}
  will match, as will
     
@@ -5420,39 +5420,39 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
-Local tm & tm & 
+Local $\tau_m$ & $\tau_m$ & 
 \quoteenv{`\^{}tm\$'}
  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | 
+| Order parameter $S^2$     | s2           | 
 \quoteenv{`\^{}[Ss]2\$'}
                                         |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | 
+| Order parameter $S^2_f$    | s2f          | 
 \quoteenv{`\^{}[Ss]2f\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | 
+| Order parameter $S^2_s$    | s2s          | 
 \quoteenv{`\^{}[Ss]2s\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | 
+| Correlation time $\tau_e$    | $\tau_e$           | 
 \quoteenv{`\^{}te\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | 
+| Correlation time $\tau_f$    | $\tau_f$           | 
 \quoteenv{`\^{}tf\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | 
+| Correlation time $\tau_s$    | $\tau_s$           | 
 \quoteenv{`\^{}ts\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5464,14 +5464,14 @@ Local tm & tm &
        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5493,7 +5493,7 @@ as a field strength independent value.  Use the following formula to get the cor
 
 where:
     $R_{ex}$ is the chemical exchange value for the current frequency.
-    pi is in the namespace of relax, ie just type 
+    $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
     frequency is the proton frequency corresponding to the data.
@@ -5532,14 +5532,14 @@ J(0) & j0 &
                    |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5680,7 +5680,7 @@ given field strength.
 
 
 
-To set the CSA value for the model-free run 
+To set the $CSA$ value for the model-free run 
 \quoteenv{`tm3'}
  to the default value, type:
 
@@ -5688,7 +5688,7 @@ To set the CSA value for the model-free run
 
 
 
-To set the CSA value of all residues in the reduced spectral density mapping run 
+To set the $CSA$ value of all residues in the reduced spectral density mapping run 
 \quoteenv{`600MHz'}
  to
 -170 ppm, type:
@@ -5710,7 +5710,7 @@ type:
 
 
 
-To set both the bond length and the CSA value for the run 
+To set both the bond length and the $CSA$ value for the run 
 \quoteenv{`new'}
  to the default values, type:
 
@@ -5718,7 +5718,7 @@ To set both the bond length and the CSA value for the run
 
 
 
-To set both tf and ts in the model-free run 
+To set both $\tau_f$ and $\tau_s$ in the model-free run 
 \quoteenv{`m6'}
  to 100 ps, type:
 
@@ -5728,7 +5728,7 @@ To set both tf and ts in the model-free run
 
 
 
-To set the S2 and te parameter values for model-free run 
+To set the $S^2$ and $\tau_e$ parameter values for model-free run 
 \quoteenv{`m4'}
  which has the parameters
 \{$S^2$, $\tau_e$, $R_{ex}$\} to 0.56 and 13 ps, type:
@@ -5779,7 +5779,7 @@ expression syntax used in this function is:
 
     . - Match any character.
 
-    x* - Match the character x any number of times, for example 
+    $x$* - Match the character $x$ any number of times, for example 
 \quoteenv{`x'}
  will match, as will
     
@@ -5802,39 +5802,39 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
-Local tm & tm & 
+Local $\tau_m$ & $\tau_m$ & 
 \quoteenv{`\^{}tm\$'}
  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | 
+| Order parameter $S^2$     | s2           | 
 \quoteenv{`\^{}[Ss]2\$'}
                                         |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | 
+| Order parameter $S^2_f$    | s2f          | 
 \quoteenv{`\^{}[Ss]2f\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | 
+| Order parameter $S^2_s$    | s2s          | 
 \quoteenv{`\^{}[Ss]2s\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | 
+| Correlation time $\tau_e$    | $\tau_e$           | 
 \quoteenv{`\^{}te\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | 
+| Correlation time $\tau_f$    | $\tau_f$           | 
 \quoteenv{`\^{}tf\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | 
+| Correlation time $\tau_s$    | $\tau_s$           | 
 \quoteenv{`\^{}ts\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5846,14 +5846,14 @@ Local tm & tm &
        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -5875,7 +5875,7 @@ as a field strength independent value.  Use the following formula to get the cor
 
 where:
     $R_{ex}$ is the chemical exchange value for the current frequency.
-    pi is in the namespace of relax, ie just type 
+    $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
     frequency is the proton frequency corresponding to the data.
@@ -5951,14 +5951,14 @@ J(0) & j0 &
                    |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -6024,7 +6024,7 @@ The data type argument should be a string.
 
 \subsubsection{Examples}
 
-To write the CSA values for the run 
+To write the $CSA$ values for the run 
 \quoteenv{`m1'}
  to the file 
 \quoteenv{`csa.txt'}
@@ -6090,7 +6090,7 @@ expression syntax used in this function is:
 
     . - Match any character.
 
-    x* - Match the character x any number of times, for example 
+    $x$* - Match the character $x$ any number of times, for example 
 \quoteenv{`x'}
  will match, as will
     
@@ -6113,39 +6113,39 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
-Local tm & tm & 
+Local $\tau_m$ & $\tau_m$ & 
 \quoteenv{`\^{}tm\$'}
  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | 
+| Order parameter $S^2$     | s2           | 
 \quoteenv{`\^{}[Ss]2\$'}
                                         |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | 
+| Order parameter $S^2_f$    | s2f          | 
 \quoteenv{`\^{}[Ss]2f\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | 
+| Order parameter $S^2_s$    | s2s          | 
 \quoteenv{`\^{}[Ss]2s\$'}
                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | 
+| Correlation time $\tau_e$    | $\tau_e$           | 
 \quoteenv{`\^{}te\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | 
+| Correlation time $\tau_f$    | $\tau_f$           | 
 \quoteenv{`\^{}tf\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | 
+| Correlation time $\tau_s$    | $\tau_s$           | 
 \quoteenv{`\^{}ts\$'}
                                            |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -6157,14 +6157,14 @@ Local tm & tm &
        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -6204,14 +6204,14 @@ J(0) & j0 &
                    |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | 
+| Bond length            | $r$            | 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | 
+| $CSA$                    | csa          | 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
                                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
