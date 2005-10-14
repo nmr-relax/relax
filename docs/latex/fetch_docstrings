@@ -3,7 +3,7 @@
 from inspect import formatargspec, getargspec, getdoc
 from re import search
 import sys
-from string import split
+from string import lstrip, replace, rstrip, split
 
 # Add the path to the relax base directory.
 sys.path.append(sys.path[0])
@@ -89,6 +89,66 @@ class Fetch_docstrings:
             self.print_docstring(parent_name + '.' + name, object)
 
 
+    def format_keywords(self, lines):
+        """Change the keyword label to bold sans serif font."""
+
+        # Initialise.
+        new_lines = []
+
+        # Loop over the lines to find the examples.
+        i = 0
+        while 1:
+            # No more lines!
+            if len(lines) <= i:
+                break
+
+            # Start of the example.
+            if search(':', lines[i]):
+                # Split the line.
+                line_elements = split(lines[i], ':')
+                if len(line_elements) > 2:
+                    sys.write("Keyword failure in: " + `lines[i]` + "\n")
+                    sys.exit()
+
+                # Initialise the new keyword line.
+                example_line = "\\keyword{" + line_elements[0] + ":}" + line_elements[1]
+
+                # Shift to the next line.
+                i = i + 1
+
+                # Find the end of the example.
+                while 1:
+                    # No more lines!
+                    if len(lines) <= i:
+                        # Increment the line counter then break.
+                        i = i + 1
+                        break
+
+                    # Find the next blank line.
+                    if len(lines[i]) == 0:
+                        # Increment the line counter then break.
+                        i = i + 1
+                        break
+
+                    # Add the line.
+                    example_line = example_line + " " + lstrip(lines[i])
+
+                    # Increment the line counter.
+                    i = i + 1
+
+                # Append the example line to the new lines.
+                new_lines.append(example_line)
+
+            else:
+                new_lines.append(lines[i])
+
+            # Increment the line counter.
+            i = i + 1
+
+        # Return the lines.
+        return new_lines
+
+
     def get_blacklist(self):
         """Maintained list of objects in the interpreter namespace which should not be documented."""
 
@@ -99,6 +159,38 @@ class Fetch_docstrings:
         self.blacklist.append('Numeric')
         self.blacklist.append('pi')
         self.blacklist.append('script')
+
+
+    def latex_maths(self, string):
+        """Function for handling LaTeX maths environments."""
+
+        # Skip precreated environments.
+        if search("^\\\\", string):
+            return string
+
+        # List of characters.
+        maths_chars = "<>"
+
+        # Loop over the characters.
+        for char in maths_chars:
+            # Prefix a backslash.
+            string = replace(string, char, '$'+char+'$')
+
+        # Return the new text.
+        return string
+
+
+    def latex_pipeline(self, string):
+        """This will process the given string and return a new string properly formatted for LaTeX."""
+
+        # Translate to LaTeX quotation marks.
+        string = self.latex_quotes(string)
+
+        # Prefix the backslash to the special LaTeX characters.
+        string = self.latex_special_chars(string)
+
+        # Return the LaTeX string.
+        return string
 
 
     def latex_quotes(self, string):
@@ -128,6 +220,29 @@ class Fetch_docstrings:
         return new_string
 
 
+    def latex_special_chars(self, string):
+        """Function for handling LaTeX special characters."""
+
+        # List of special characters (backslash first so that the prefixed backslash doesn't get backslashed itself).
+        latex_special_chars = "\\#$%&_{}"
+
+        # Doubly special characters.
+        latex_really_special_chars = "^~"
+
+        # Loop over the characters.
+        for char in latex_special_chars:
+            # Prefix a backslash.
+            string = replace(string, char, '\\'+char)
+
+        # Loop over the very special characters.
+        for char in latex_really_special_chars:
+            # Prefix a backslash.
+            string = replace(string, char, '\\'+char+'{}')
+
+        # Return the new text.
+        return string
+
+
     def print_docstring(self, function, object):
         """Function for creating the LaTeX file."""
 
@@ -135,46 +250,50 @@ class Fetch_docstrings:
         #############
 
         # Comment out underscores in the function name.
-        function_name = self.underscore_fix(function)
+        function_name = self.latex_pipeline(function)
 
         # Get the docstring.
         docstring = getdoc(object)
 
         # Split the docstring by newline characters.
-        lines = split(docstring, '\n')
+        self.docstring_lines = split(docstring, "\n")
+
+        # Strip any whitespace from the end of the line.
+        for i in xrange(len(self.docstring_lines)):
+            self.docstring_lines[i] = rstrip(self.docstring_lines[i])
 
 
         # Subsection.
         #############
 
         # Start a new page.
-        self.file.write('\n\n\\newpage')
+        self.file.write("\n\n\\newpage")
 
         # Write the function name.
-        self.file.write('\n\n\subsection{' + function_name + '}\n\n')
+        self.file.write("\n\n\subsection{" + function_name + "}\n\n")
 
 
         # Synopsis.
         ###########
 
         # Heading.
-        self.file.write('\n\\subsubsection{Synopsis:}\n\n')
+        self.file.write("\n\\subsubsection{Synopsis}\n\n")
 
         # Write the synopsis.
-        self.file.write(self.latex_quotes(self.underscore_fix(lines[0])) + '\n')
+        self.file.write(self.latex_pipeline(self.docstring_lines[0]) + "\n")
 
 
         # Arguments.
         ############
 
         # Heading.
-        self.file.write('\n\\subsubsection{Default arguments:}\n\n')
+        self.file.write("\n\\subsubsection{Default arguments}\n\n")
 
         # Typewriter font.
-        self.file.write('\\textsf{')
+        self.file.write("\\textsf{")
 
         # Function name.
-        self.file.write('\\textbf{' + function_name + '}')
+        self.file.write("\\textbf{" + function_name + "}")
 
         # Get the arguments.
         args, varargs, varkw, defaults = getargspec(object)
@@ -182,59 +301,238 @@ class Fetch_docstrings:
         # Argument string.
         arguments = formatargspec(args, varargs, varkw, defaults)
 
-        # Change the format for LaTeX.
-        tex_arguments = self.latex_quotes(arguments)
-
         # Write the synopsis.
-        self.file.write(self.underscore_fix(tex_arguments) + '\n')
+        self.file.write(self.latex_pipeline(arguments))
 
         # End typewriter font.
-        self.file.write('}\n\n')
+        self.file.write("}\n\n")
 
 
-        # Docstring.
-        ############
+        # Docstring processing.
+        #######################
 
-        # Heading.
-        self.file.write('\n\\subsubsection{Docstring:}\n\n')
+        # Find the section positions.
+        self.section_positions()
 
-        # Script sized font.
-        self.file.write('{\\scriptsize\n')
+        # Loop over the docstring sections.
+        for i in xrange(len(self.section_start)):
+            # Title.
+            self.section_title = self.docstring_lines[self.section_start[i]]
 
-        # Start a verbatim environment.
-        self.file.write('\\begin{verbatim}\n\n')
+            # Subsubsectioning.
+            self.file.write("\n\\subsubsection{" + self.section_title + "}\n\n")
 
-        # Loop over the lines.
-        for i in xrange(len(lines)):
-            # Skip the first line (synopsis) and the second line (blank).
-            if i == 0 or i == 1:
-                continue
+            # Pull out the section lines (skip the title line, tilde line, and first blank line).
+            lines = self.docstring_lines[self.section_start[i]+3:self.section_end[i]]
 
-            # Write the line.
-            self.file.write(self.latex_quotes(lines[i]) + '\n')
+            # Loop over the section line by line and translate to LaTeX text.
+            for j in xrange(len(lines)):
+                lines[j] = self.latex_pipeline(lines[j])
 
-        # End the verbatim environment.
-        self.file.write('\\end{verbatim}\n')
+            # Format the 'Keyword Arguements' section.
+            if search('^Keyword ', self.section_title):
+                lines = self.format_keywords(lines)
 
-        # Return to normal font.
-        self.file.write('}\n\n')
+            # All other sections.
+            else:
+                # Tables.
+                lines = self.tables(lines)
+
+                # relax> example lines.
+                lines = self.relax_examples(lines)
+
+            # Maths (must be dead last).
+            for j in xrange(len(lines)):
+                lines[j] = self.latex_maths(lines[j])
+
+            # Loop over the section line by line and write them.
+            for line in lines:
+                self.file.write(line + "\n")
 
 
-    def underscore_fix(self, string):
-        """Function for commenting out underscrores in a piece of text."""
+    def relax_examples(self, lines):
+        """Use typewriter font for relax examples."""
 
-        # Split by underscore.
-        row = split(string, '_')
+        # Initialise.
+        new_lines = []
 
-        # Initialise the text.
-        text = row[0]
+        # Loop over the lines to find the examples.
+        i = 0
+        while 1:
+            # No more lines!
+            if len(lines) <= i:
+                break
 
-        # Loop over the sections of text separated by underscores.
-        for i in range(len(row)-1):
-            text = text + '\_' + row[i+1]
+            # Start of the example.
+            if search('^relax>', lines[i]):
+                # Initialise the new example line.
+                example_line = "\\example{" + lines[i]
 
-        # Return the new text.
-        return text
+                # Shift to the next line.
+                i = i + 1
+
+                # Find the end of the example.
+                while 1:
+                    # No more lines!
+                    if len(lines) <= i:
+                        # Increment the line counter then break.
+                        i = i + 1
+                        break
+
+                    # Find the next example or blank line.
+                    if search('^relax>', lines[i]) or len(lines[i]) == 0:
+                        # Increment the line counter then break.
+                        i = i + 1
+                        break
+
+                    # Add the line.
+                    example_line = example_line + " " + lstrip(lines[i])
+
+                    # Increment the line counter.
+                    i = i + 1
+
+                # Terminate the example line.
+                example_line = example_line + "}\n"
+
+                # Append the example line to the new lines.
+                new_lines.append(example_line)
+
+            else:
+                new_lines.append(lines[i])
+
+            # Increment the line counter.
+            i = i + 1
+
+        # Return the lines.
+        return new_lines
+
+
+    def section_positions(self):
+        """Find the positions of the docstring titles."""
+
+        # Initialise.
+        self.section_start = []
+        self.section_end = []
+
+        # Find the start of the sections.
+        for i in xrange(len(self.docstring_lines)):
+            # Find the tilde lines.
+            if search('^~.*~$', self.docstring_lines[i]):
+                # The title position is the previous line.
+                self.section_start.append(i-1)
+
+        # Loop over the sections.
+        for i in xrange(len(self.section_start)):
+            # Find the end of the section.
+            try:
+                # One line before the next section.
+                self.section_end.append(self.section_start[i+1]-1)
+            except:
+                # End of the docstring.
+                self.section_end.append(len(self.docstring_lines))
+
+            # Strip the empty lines at the end away (walking backwards).
+            for j in range(self.section_end[i], self.section_start[i]):
+                # If the last line is blank, decrease the section end position by one.
+                if len(self.docstring_lines[j]) == 0:
+                    self.section_end[i] = self.section_end[i] - 1
+
+
+    def tables(self, lines):
+        """Function for creating LaTeX tables."""
+
+        # Initialise.
+        new_lines = []
+
+        # Loop over the lines to find the examples.
+        i = -1
+        while 1:
+            # Increment the line counter.
+            i = i + 1
+
+            # No more lines!
+            if len(lines) <= i:
+                break
+
+            # Start of the table.
+            if search('^\\\\_.*\\\\_$', lines[i]):
+                # Shift to the next line.
+                i = i + 1
+
+                # Count the number of columns.
+                num_col = len(split(lines[i], '|'))
+
+                # Not really a table!
+                if num_col == 1:
+                    new_lines.append(lines[i])
+                    continue
+
+                # Add an empty line.
+                new_lines.append('\n')
+
+                # Start the table.
+                new_lines.append("\\begin{tabular}{" + (num_col-2)*"c" + "}")
+
+                # Shift to the next line.
+                i = i + 1
+
+                # Get the headings.
+                headings = split(lines[i], '|')
+                headings = headings[1:-1]
+                for j in xrange(len(headings)):
+                    headings[j] = lstrip(rstrip(headings[j]))
+
+                # Generate the LaTeX headings.
+                string = headings[0]
+                for j in range(1, len(headings)):
+                    string = string + " & " + headings[j]
+                new_lines.append(string + " \\\\")
+
+                # Skip three lines.
+                i = i + 3
+
+                # Go through the table.
+                while 1:
+                    # No more lines!
+                    if len(lines) <= i:
+                        # Increment the line counter then break.
+                        i = i + 1
+                        break
+
+                    # Find the end of the table.
+                    if search('^|_*_|$', lines[i]):
+                        print "End of table: " + `lines[i]`
+                        # Increment the line counter then break.
+                        i = i + 1
+                        break
+
+                    # Split the columns.
+                    columns = split(lines[i], '|')
+
+                    # Create the formatted tabular line.
+                    if len(columns) > 1:
+                        string = columns[1]
+                        for j in range(2, len(columns)-1):
+                            string = string + " & " + columns[j]
+                        string = string + " \\\\"
+                    else:
+                        string = columns[0] + " \\\\"
+
+                    # Add the line.
+                    new_lines.append(string)
+
+                    # Increment the line counter.
+                    i = i + 1
+
+                # Terminate the tabular environment.
+                new_lines.append("\\end{tabular}")
+
+            else:
+                new_lines.append(lines[i])
+
+        # Return the lines.
+        return new_lines
+
 
 
 if __name__ == '__main__':
