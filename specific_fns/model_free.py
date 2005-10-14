@@ -1248,7 +1248,7 @@ class Model_free(Common_functions):
 
         These parameters may experience the same problem as the local tm in that the model fails and
         the parameter value is stuck at the upper limit.  These parameters are constrained using the
-        formula 'te, tf, ts <= 2tm'.  These failed models are eliminated using the rule:
+        formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:
 
             te, tf, ts >= c.tm
 

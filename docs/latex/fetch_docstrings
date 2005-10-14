@@ -111,7 +111,8 @@ class Fetch_docstrings:
                     sys.exit()
 
                 # Initialise the new keyword line.
-                example_line = "\\keyword{" + line_elements[0] + ":}" + line_elements[1]
+                new_lines.append("\\keyword{" + line_elements[0] + ":}")
+                example_line = line_elements[1]
 
                 # Shift to the next line.
                 i = i + 1
@@ -185,8 +186,21 @@ class Fetch_docstrings:
         # Much greater than.
         string = replace(string, ' >> ', ' $>>$ ')
 
-        # A specific example.
-        string = replace(string, '<r>', '$<$r$>$')
+        # 1st, 2nd, etc.
+        string = replace(string, '1st', '1$^\mathrm{st}$')
+        string = replace(string, '2nd', '2$^\mathrm{nd}$')
+        string = replace(string, '3rd', '3$^\mathrm{rd}$')
+        string = replace(string, '4th', '4$^\mathrm{th}$')
+        string = replace(string, '5th', '5$^\mathrm{th}$')
+        string = replace(string, '6th', '6$^\mathrm{th}$')
+        string = replace(string, '7th', '7$^\mathrm{th}$')
+        string = replace(string, '8th', '8$^\mathrm{th}$')
+        string = replace(string, '9th', '9$^\mathrm{th}$')
+        string = replace(string, '0th', '0$^\mathrm{th}$')
+        string = replace(string, '1th', '1$^\mathrm{th}$')
+        string = replace(string, '2th', '2$^\mathrm{th}$')
+        string = replace(string, '3th', '3$^\mathrm{th}$')
+
 
         # Return the new text.
         return string
@@ -219,6 +233,10 @@ class Fetch_docstrings:
         if search('keyword{', string):
             return string
 
+        # The Quote environment.
+        if search('quoteenv{', string):
+            return string
+
 
         # LaTeX maths.
         string = self.latex_maths(string)
@@ -242,7 +260,7 @@ class Fetch_docstrings:
             # Find the quote marks.
             if search('\'', string[i]):
                 # Swap the opening ' with `.
-                if not in_quote:
+                if not in_quote and (i == 0 or not search('[a-z]', string[i-1])):
                     new_string = new_string + '`'
                     in_quote = 1
                     continue
@@ -313,6 +331,7 @@ class Fetch_docstrings:
 
         # r.
         string = self.safe_replacement(string, 'r', '$r$')
+        string = self.safe_replacement(string, '<r>', '$<$$r$$>$')
 
 
         # Diffusion tensor parameters.
@@ -359,6 +378,37 @@ class Fetch_docstrings:
 
         # phi.
         string = self.safe_replacement(string, 'phi', '$\\phi$')
+
+
+        # Indecies.
+        ###########
+
+        # i.
+        string = self.safe_replacement(string, 'i', '$i$')
+
+        # j.
+        string = self.safe_replacement(string, 'j', '$j$')
+
+        # k.
+        string = self.safe_replacement(string, 'k', '$k$')
+
+        # l.
+        string = self.safe_replacement(string, 'l', '$l$')
+
+        # m.
+        string = self.safe_replacement(string, 'm', '$m$')
+
+        # n.
+        string = self.safe_replacement(string, 'n', '$n$')
+
+        # x.
+        string = self.safe_replacement(string, 'x', '$x$')
+
+        # y.
+        string = self.safe_replacement(string, 'y', '$y$')
+
+        # z.
+        string = self.safe_replacement(string, 'z', '$z$')
 
 
         # Return the new text.
@@ -465,8 +515,8 @@ class Fetch_docstrings:
                 # relax> example lines.
                 lines = self.relax_examples(lines)
 
-                # 
-                #lines = self.relax_examples(lines)
+            # Place quotes in the \quoteenv environment.
+            lines = self.quote_environ(lines)
 
             # Final LaTeX conversion pipeline.
             for j in xrange(len(lines)):
@@ -477,6 +527,66 @@ class Fetch_docstrings:
                 self.file.write(line + "\n")
 
 
+    def quote_environ(self, lines):
+        """Function for placing quotes within the quote environment."""
+
+        # Initialise.
+        new_lines = []
+
+        # Loop over the lines.
+        for line in lines:
+            # Skip the newly created environments.
+            ######################################
+
+            # The example environment.
+            if search('example{', line):
+                new_lines.append(line)
+                continue
+
+            # The keyword environment.
+            if search('keyword{', line):
+                new_lines.append(line)
+                continue
+
+
+            # Initialise.
+            new_string = ''
+            in_quote = 0
+            just_exited = 0
+
+            # Loop over the characters.
+            for i in xrange(len(line)):
+                # Find the start of the quote (when not already inside a quote).
+                if search('`', line[i]) and not in_quote:
+                    if new_string == '':
+                        new_string = '\quoteenv{'
+                    else:
+                        new_string = new_string + '\n\quoteenv{'
+                    in_quote = 1
+
+                # Find the end of the quote.
+                elif search('\'', line[i]) and in_quote:
+                    # Just exited the quote
+                    just_exited = 1
+                    in_quote = 0
+
+                # Append the character.
+                new_string = new_string + line[i]
+
+                # Close the quote environent and start a new string.
+                if just_exited:
+                    new_string = new_string + '}'
+                    new_lines.append(new_string)
+                    new_string = ''
+                    just_exited = 0
+
+            # Append the new string.
+            new_lines.append(new_string)
+
+        # Return the lines
+        return new_lines
+
+
     def relax_examples(self, lines):
         """Use typewriter font for relax examples."""
 
@@ -484,8 +594,11 @@ class Fetch_docstrings:
         new_lines = []
 
         # Loop over the lines to find the examples.
-        i = 0
+        i = -1
         while 1:
+            # Increment the line counter.
+            i = i + 1
+
             # No more lines!
             if len(lines) <= i:
                 break
@@ -493,29 +606,22 @@ class Fetch_docstrings:
             # Start of the example.
             if search('^relax>', lines[i]):
                 # Initialise the new example line.
-                example_line = "\\example{" + lines[i]
-
-                # Shift to the next line.
-                i = i + 1
+                example_line = "\\example{"
 
                 # Find the end of the example.
                 while 1:
+                    # Add the line.
+                    example_line = example_line + lstrip(lines[i]) + " "
+
                     # No more lines!
-                    if len(lines) <= i:
-                        # Increment the line counter then break.
-                        i = i + 1
+                    if len(lines) <= i+1:
                         break
 
                     # Find the next example or blank line.
-                    if search('^relax>', lines[i]) or len(lines[i]) == 0:
-                        # Increment the line counter then break.
-                        i = i + 1
+                    if search('^relax>', lines[i+1]) or len(lines[i+1]) == 0:
                         break
 
-                    # Add the line.
-                    example_line = example_line + " " + lstrip(lines[i])
-
-                    # Increment the line counter.
+                    # Shift to the next line.
                     i = i + 1
 
                 # Terminate the example line.
@@ -526,9 +632,6 @@ class Fetch_docstrings:
 
             else:
                 new_lines.append(lines[i])
-
-            # Increment the line counter.
-            i = i + 1
 
         # Return the lines.
         return new_lines
@@ -556,6 +659,7 @@ class Fetch_docstrings:
         string = replace(string,    ' '+text+'.',       ' '+latex+'.')
         string = replace(string,    ' '+text+' ',       ' '+latex+' ')
         string = replace(string,    ' '+text+';',       ' '+latex+';')
+        string = replace(string,    ' '+text+':',       ' '+latex+':')
 
         # In lists [].
         string = replace(string,    '['+text+']',       '['+latex+']')
@@ -594,6 +698,11 @@ class Fetch_docstrings:
 
         string = replace(string,    ' '+text+'\n',      ' '+latex+'\n')
         string = replace(string,    '.'+text+'\n',      '.'+latex+'\n')
+
+        # In equation.
+        string = replace(string,    '*'+text,           '*'+latex)
+        string = replace(string,    text+'*',           latex+'*')
+
 
         # Return the string.
         return string
@@ -709,9 +818,9 @@ class Fetch_docstrings:
 
                     # Create the formatted tabular line.
                     if len(columns) > 1:
-                        string = columns[1]
+                        string = lstrip(rstrip(columns[1]))
                         for j in range(2, len(columns)-1):
-                            string = string + " & " + columns[j]
+                            string = string + " & " + lstrip(rstrip(columns[j]))
                         string = string + " \\\\"
                     else:
                         string = columns[0] + " \\\\"
