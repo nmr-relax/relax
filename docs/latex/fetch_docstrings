@@ -39,7 +39,7 @@ class Fetch_docstrings:
         names.sort()
 
         # Loop over the data structures.
-        #for name in ['diffusion_tensor']:
+        #for name in ['grace']:
         for name in names:
             # Skip the name if it is in the blacklist.
             if name in self.blacklist:
@@ -777,7 +777,7 @@ class Fetch_docstrings:
                 new_lines.append("\\begin{tabular}{" + (num_col-2)*"l" + "}")
 
                 # Add the toprule.
-                new_lines.append("\\toprule")
+                new_lines.append("\\toprule\n")
 
                 # Shift to the next line.
                 i = i + 1
@@ -792,10 +792,10 @@ class Fetch_docstrings:
                 string = headings[0]
                 for j in range(1, len(headings)):
                     string = string + " & " + headings[j]
-                new_lines.append(string + " \\\\")
+                new_lines.append(string + " \\\\\n")
 
                 # Add the midrule.
-                new_lines.append("\\midrule")
+                new_lines.append("\\midrule\n")
 
                 # Skip three lines.
                 i = i + 3
@@ -822,9 +822,9 @@ class Fetch_docstrings:
                         string = lstrip(rstrip(columns[1]))
                         for j in range(2, len(columns)-1):
                             string = string + " & " + lstrip(rstrip(columns[j]))
-                        string = string + " \\\\"
+                        string = string + " \\\\\n"
                     else:
-                        string = columns[0] + " \\\\"
+                        string = columns[0] + " \\\\\n"
 
                     # Add the line.
                     new_lines.append(string)
@@ -833,7 +833,7 @@ class Fetch_docstrings:
                     i = i + 1
 
                 # Add the bottomrule.
-                new_lines.append("\\bottomrule")
+                new_lines.append("\\bottomrule\n")
 
                 # Terminate the tabular and center environment.
                 new_lines.append("\\end{tabular}")

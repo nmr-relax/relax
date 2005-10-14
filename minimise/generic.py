@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -147,9 +147,13 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Back-and-forth coordinate descent | '^[Cc][Dd]$' or '^[Cc]oordinate[ _-][Dd]escent$'    |
+    |                                   |                                                     |
     | Steepest descent                  | '^[Ss][Dd]$' or '^[Ss]teepest[ _-][Dd]escent$'      |
+    |                                   |                                                     |
     | Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
+    |                                   |                                                     |
     | Newton                            | '^[Nn]ewton$'                                       |
+    |                                   |                                                     |
     | Newton-CG                         | '^[Nn]ewton[ _-][Cc][Gg]$' or '^[Nn][Cc][Gg]$'      |
     |___________________________________|_____________________________________________________|
 
@@ -161,8 +165,11 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Cauchy point                      | '^[Cc]auchy'                                        |
+    |                                   |                                                     |
     | Dogleg                            | '^[Dd]ogleg'                                        |
+    |                                   |                                                     |
     | CG-Steihaug                       | '^[Cc][Gg][-_ ][Ss]teihaug' or '^[Ss]teihaug'       |
+    |                                   |                                                     |
     | Exact trust region                | '^[Ee]xact'                                         |
     |___________________________________|_____________________________________________________|
 
@@ -174,8 +181,11 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Fletcher-Reeves                   | '^[Ff][Rr]$' or '^[Ff]letcher[-_ ][Rr]eeves$'       |
+    |                                   |                                                     |
     | Polak-Ribiere                     | '^[Pp][Rr]$' or '^[Pp]olak[-_ ][Rr]ibiere$'         |
+    |                                   |                                                     |
     | Polak-Ribiere +                   | '^[Pp][Rr]\+$' or '^[Pp]olak[-_ ][Rr]ibiere\+$'     |
+    |                                   |                                                     |
     | Hestenes-Stiefel                  | '^[Hh][Ss]$' or '^[Hh]estenes[-_ ][Ss]tiefel$'      |
     |___________________________________|_____________________________________________________|
 
@@ -187,6 +197,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Simplex                           | '^[Ss]implex$'                                      |
+    |                                   |                                                     |
     | Levenberg-Marquardt               | '^[Ll][Mm]$' or '^[Ll]evenburg-[Mm]arquardt$'       |
     |___________________________________|_____________________________________________________|
 
@@ -216,18 +227,14 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Backtracking line search          | '^[Bb]ack'                                          |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Nocedal and Wright interpolation  | '^[Nn][Ww][Ii]' or                                  |
     | based line search                 | '^[Nn]ocedal[ _][Ww]right[ _][Ii]nt'                |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Nocedal and Wright line search    | '^[Nn][Ww][Ww]' or                                  |
     | for the Wolfe conditions          | '^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe'              |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | More and Thuente line search      | '^[Mm][Tt]' or '^[Mm]ore[ _][Tt]huente$'            |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | No line search                    | '^[Nn]one$'                                         |
     |___________________________________|_____________________________________________________|
@@ -241,18 +248,14 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Unmodified Hessian                | '[Nn]one'                                           |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Eigenvalue modification           | '^[Ee]igen'                                         |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Cholesky with added multiple of   | '^[Cc]hol'                                          |
     | the identity                      |                                                     |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | The Gill, Murray, and Wright      | '^[Gg][Mm][Ww]$'                                    |
     | modified Cholesky algorithm       |                                                     |
-    |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | The Schnabel and Eskow 1999       | '^[Ss][Ee]99'                                       |
     | algorithm                         |                                                     |
@@ -270,6 +273,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
     | Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
+    |                                   |                                                     |
     | Newton                            | '^[Nn]ewton$'                                       |
     |___________________________________|_____________________________________________________|
 

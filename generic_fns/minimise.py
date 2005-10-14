@@ -201,19 +201,15 @@ class Minimise:
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Chi-squared statistic  | chi2         | '^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'           |
-        |________________________|______________|__________________________________________________|
+        | Chi-squared statistic  | 'chi2'       | '^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'           |
         |                        |              |                                                  |
-        | Iteration count        | iter         | '^[Ii]ter'                                       |
-        |________________________|______________|__________________________________________________|
+        | Iteration count        | 'iter'       | '^[Ii]ter'                                       |
         |                        |              |                                                  |
-        | Function call count    | f_count      | '^[Ff].*[ -_][Cc]ount'                           |
-        |________________________|______________|__________________________________________________|
+        | Function call count    | 'f_count'    | '^[Ff].*[ -_][Cc]ount'                           |
         |                        |              |                                                  |
-        | Gradient call count    | g_count      | '^[Gg].*[ -_][Cc]ount'                           |
-        |________________________|______________|__________________________________________________|
+        | Gradient call count    | 'g_count'    | '^[Gg].*[ -_][Cc]ount'                           |
         |                        |              |                                                  |
-        | Hessian call count     | h_count      | '^[Hh].*[ -_][Cc]ount'                           |
+        | Hessian call count     | 'h_count'    | '^[Hh].*[ -_][Cc]ount'                           |
         |________________________|______________|__________________________________________________|
 
         """

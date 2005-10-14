@@ -278,31 +278,23 @@ class Value:
         |       |       |                                                                          |
         | None  | None  | This case is used to set the model parameters prior to minimisation or   |
         |       |       | calculation.  The model parameters are set to the default values.        |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   1   | None  | Invalid combination.                                                     |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   n   | None  | This case is used to set the model parameters prior to minimisation or   |
         |       |       | calculation.  The length of the value array must be equal to the number  |
         |       |       | of model parameters for an individual residue.  The parameters will be   |
         |       |       | set to the corresponding number.                                         |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         | None  |   1   | The data type matching the string will be set to the default value.      |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   1   |   1   | The data type matching the string will be set to the supplied number.    |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   n   |   1   | Invalid combination.                                                     |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         | None  |   n   | Each data type matching the strings will be set to the default values.   |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   1   |   n   | Each data type matching the strings will be set to the supplied number.  |
-        |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         |   n   |   n   | Each data type matching the strings will be set to the corresponding     |
         |       |       | number.  Both arrays must be of equal length.                            |

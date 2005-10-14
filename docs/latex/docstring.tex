@@ -445,12 +445,17 @@ currently supported map types:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Surface type & Pattern \\
+
 \midrule
+
 3D isosurface & 
 \quoteenv{`\^{}[Ii]so3[Dd]'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -860,36 +865,55 @@ the same data type.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Chi-squared statistic & chi2 & 
+
+Chi-squared statistic & 
+\quoteenv{`chi2'}
+ & 
 \quoteenv{`\^{}[Cc]hi2\$'}
  or 
 \quoteenv{`\^{}[Cc]hi[-\_ ][Ss]quare'}
  \\
+
+ &  &  \\
+
+Iteration count & 
+\quoteenv{`iter'}
+ & 
+\quoteenv{`\^{}[Ii]ter'}
+ \\
+
+ &  &  \\
+
+Function call count & 
+\quoteenv{`f\_count'}
+ & 
+\quoteenv{`\^{}[Ff].*[ -\_][Cc]ount'}
+ \\
+
+ &  &  \\
+
+Gradient call count & 
+\quoteenv{`g\_count'}
+ & 
+\quoteenv{`\^{}[Gg].*[ -\_][Cc]ount'}
+ \\
+
+ &  &  \\
+
+Hessian call count & 
+\quoteenv{`h\_count'}
+ & 
+\quoteenv{`\^{}[Hh].*[ -\_][Cc]ount'}
+ \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
-
-| Iteration count        | iter         | 
-\quoteenv{`\^{}[Ii]ter'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Function call count    | f\_count      | 
-\quoteenv{`\^{}[Ff].*[ -\_][Cc]ount'}
-                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Gradient call count    | g\_count      | 
-\quoteenv{`\^{}[Gg].*[ -\_][Cc]ount'}
-                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Hessian call count     | h\_count      | 
-\quoteenv{`\^{}[Hh].*[ -\_][Cc]ount'}
-                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 
@@ -901,63 +925,97 @@ Chi-squared statistic & chi2 &
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Local $\tau_m$ & $\tau_m$ & 
+
+Local $\tau_m$ & 
+\quoteenv{`tm'}
+ & 
 \quoteenv{`\^{}tm\$'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Order parameter $S^2$     | s2           | 
+ &  &  \\
+
+Order parameter $S^2$ & 
+\quoteenv{`s2'}
+ & 
 \quoteenv{`\^{}[Ss]2\$'}
-                                        |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_f$    | s2f          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_f$ & 
+\quoteenv{`s2f'}
+ & 
 \quoteenv{`\^{}[Ss]2f\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_s$    | s2s          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_s$ & 
+\quoteenv{`s2s'}
+ & 
 \quoteenv{`\^{}[Ss]2s\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_e$    | $\tau_e$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_e$ & 
+\quoteenv{`te'}
+ & 
 \quoteenv{`\^{}te\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_f$    | $\tau_f$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_f$ & 
+\quoteenv{`tf'}
+ & 
 \quoteenv{`\^{}tf\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_s$    | $\tau_s$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_s$ & 
+\quoteenv{`ts'}
+ & 
 \quoteenv{`\^{}ts\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Chemical exchange      | rex          | 
+ \\
+
+ &  &  \\
+
+Chemical exchange & 
+\quoteenv{`rex'}
+ & 
 \quoteenv{`\^{}[Rr]ex\$'}
  or 
 \quoteenv{`[Cc]emical[ -\_][Ee]xchange'}
-       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -969,42 +1027,61 @@ Local $\tau_m$ & $\tau_m$ &
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-J(0) & j0 & 
+
+J(0) & 
+\quoteenv{`j0'}
+ & 
 \quoteenv{`\^{}[Jj]0\$'}
  or 
 \quoteenv{`[Jj](0)'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| J(wX)                  | jwx          | 
+ &  &  \\
+
+J(wX) & 
+\quoteenv{`jwx'}
+ & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
  or 
 \quoteenv{`[Jj](w[Xx])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| J(wH)                  | jwh          | 
+ \\
+
+ &  &  \\
+
+J(wH) & 
+\quoteenv{`jwh'}
+ & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
  or 
 \quoteenv{`[Jj](w[Hh])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -1016,28 +1093,42 @@ J(0) & j0 &
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Reference intensity & ref & 
+
+Reference intensity & 
+\quoteenv{`ref'}
+ & 
 \quoteenv{`\^{}[Rr]ef\$'}
  or 
 \quoteenv{`[Rr]ef[ -\_][Ii]nt'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Saturated intensity    | sat          | 
+ &  &  \\
+
+Saturated intensity & 
+\quoteenv{`sat'}
+ & 
 \quoteenv{`\^{}[Ss]at\$'}
  or 
 \quoteenv{`[Ss]at[ -\_][Ii]nt'}
-                |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| NOE                    | noe          | 
+ \\
+
+ &  &  \\
+
+NOE & 
+\quoteenv{`noe'}
+ & 
 \quoteenv{`\^{}[Nn][Oo][Ee]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
+
 
 
 \newpage
@@ -1361,12 +1452,17 @@ Parameter initialisation methods:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Minimisation algorithm & Patterns \\
+
 \midrule
+
 Grid search & 
 \quoteenv{`\^{}[Gg]rid'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -1377,30 +1473,47 @@ Unconstrained line search methods:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Minimisation algorithm & Patterns \\
+
 \midrule
+
 Back-and-forth coordinate descent & 
 \quoteenv{`\^{}[Cc][Dd]\$'}
  or 
 \quoteenv{`\^{}[Cc]oordinate[ \_-][Dd]escent\$'}
  \\
+
+ &  \\
+
 Steepest descent & 
 \quoteenv{`\^{}[Ss][Dd]\$'}
  or 
 \quoteenv{`\^{}[Ss]teepest[ \_-][Dd]escent\$'}
  \\
+
+ &  \\
+
 Quasi-Newton BFGS & 
 \quoteenv{`\^{}[Bb][Ff][Gg][Ss]\$'}
  \\
+
+ &  \\
+
 Newton & 
 \quoteenv{`\^{}[Nn]ewton\$'}
  \\
+
+ &  \\
+
 Newton-CG & 
 \quoteenv{`\^{}[Nn]ewton[ \_-][Cc][Gg]\$'}
  or 
 \quoteenv{`\^{}[Nn][Cc][Gg]\$'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -1411,23 +1524,37 @@ Unconstrained trust-region methods:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Minimisation algorithm & Patterns \\
+
 \midrule
+
 Cauchy point & 
 \quoteenv{`\^{}[Cc]auchy'}
  \\
+
+ &  \\
+
 Dogleg & 
 \quoteenv{`\^{}[Dd]ogleg'}
  \\
+
+ &  \\
+
 CG-Steihaug & 
 \quoteenv{`\^{}[Cc][Gg][-\_ ][Ss]teihaug'}
  or 
 \quoteenv{`\^{}[Ss]teihaug'}
  \\
+
+ &  \\
+
 Exact trust region & 
 \quoteenv{`\^{}[Ee]xact'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -1438,29 +1565,43 @@ Unconstrained conjugate gradient methods:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Minimisation algorithm & Patterns \\
+
 \midrule
+
 Fletcher-Reeves & 
 \quoteenv{`\^{}[Ff][Rr]\$'}
  or 
 \quoteenv{`\^{}[Ff]letcher[-\_ ][Rr]eeves\$'}
  \\
+
+ &  \\
+
 Polak-Ribiere & 
 \quoteenv{`\^{}[Pp][Rr]\$'}
  or 
 \quoteenv{`\^{}[Pp]olak[-\_ ][Rr]ibiere\$'}
  \\
+
+ &  \\
+
 Polak-Ribiere + & 
 \quoteenv{`\^{}[Pp][Rr]$\backslash$+\$'}
  or 
 \quoteenv{`\^{}[Pp]olak[-\_ ][Rr]ibiere$\backslash$+\$'}
  \\
+
+ &  \\
+
 Hestenes-Stiefel & 
 \quoteenv{`\^{}[Hh][Ss]\$'}
  or 
 \quoteenv{`\^{}[Hh]estenes[-\_ ][Ss]tiefel\$'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -1471,17 +1612,25 @@ Miscellaneous unconstrained methods:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Minimisation algorithm & Patterns \\
+
 \midrule
+
 Simplex & 
 \quoteenv{`\^{}[Ss]implex\$'}
  \\
+
+ &  \\
+
 Levenberg-Marquardt & 
 \quoteenv{`\^{}[Ll][Mm]\$'}
  or 
 \quoteenv{`\^{}[Ll]evenburg-[Mm]arquardt\$'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -1492,14 +1641,19 @@ Constrained methods:
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Minimisation algorithm & Patterns \\
+
 \midrule
+
 Method of Multipliers & 
 \quoteenv{`\^{}[Mm][Oo][Mm]\$'}
  or 
 \quoteenv{`[Mm]ethod of [Mm]ultipliers\$'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -1517,42 +1671,53 @@ methods.  The default is the Backtracking line search.
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Line search algorithm & Patterns \\
+
 \midrule
+
 Backtracking line search & 
 \quoteenv{`\^{}[Bb]ack'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Nocedal and Wright interpolation  | 
+ &  \\
+
+Nocedal and Wright interpolation & 
 \quoteenv{`\^{}[Nn][Ww][Ii]'}
- or                                  |
-| based line search                 | 
+ or \\
+
+based line search & 
 \quoteenv{`\^{}[Nn]ocedal[ \_][Ww]right[ \_][Ii]nt'}
-                |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                   |                                                     |
-| Nocedal and Wright line search    | 
+ \\
+
+ &  \\
+
+Nocedal and Wright line search & 
 \quoteenv{`\^{}[Nn][Ww][Ww]'}
- or                                  |
-| for the Wolfe conditions          | 
+ or \\
+
+for the Wolfe conditions & 
 \quoteenv{`\^{}[Nn]ocedal[ \_][Ww]right[ \_][Ww]olfe'}
-              |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                   |                                                     |
-| More and Thuente line search      | 
+ \\
+
+ &  \\
+
+More and Thuente line search & 
 \quoteenv{`\^{}[Mm][Tt]'}
  or 
 \quoteenv{`\^{}[Mm]ore[ \_][Tt]huente\$'}
-            |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                   |                                                     |
-| No line search                    | 
+ \\
+
+ &  \\
+
+No line search & 
 \quoteenv{`\^{}[Nn]one\$'}
-                                         |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -1562,37 +1727,49 @@ Hessian modifications.  These are used in the Newton, Dogleg, and Exact trust re
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Hessian modification & Patterns \\
+
 \midrule
+
 Unmodified Hessian & 
 \quoteenv{`[Nn]one'}
  \\
+
+ &  \\
+
+Eigenvalue modification & 
+\quoteenv{`\^{}[Ee]igen'}
+ \\
+
+ &  \\
+
+Cholesky with added multiple of & 
+\quoteenv{`\^{}[Cc]hol'}
+ \\
+
+the identity &  \\
+
+ &  \\
+
+The Gill, Murray, and Wright & 
+\quoteenv{`\^{}[Gg][Mm][Ww]\$'}
+ \\
+
+modified Cholesky algorithm &  \\
+
+ &  \\
+
+The Schnabel and Eskow 1999 & 
+\quoteenv{`\^{}[Ss][Ee]99'}
+ \\
+
+algorithm &  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
-
-| Eigenvalue modification           | 
-\quoteenv{`\^{}[Ee]igen'}
-                                         |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                   |                                                     |
-| Cholesky with added multiple of   | 
-\quoteenv{`\^{}[Cc]hol'}
-                                          |
-| the identity                      |                                                     |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                   |                                                     |
-| The Gill, Murray, and Wright      | 
-\quoteenv{`\^{}[Gg][Mm][Ww]\$'}
-                                    |
-| modified Cholesky algorithm       |                                                     |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                   |                                                     |
-| The Schnabel and Eskow 1999       | 
-\quoteenv{`\^{}[Ss][Ee]99'}
-                                       |
-| algorithm                         |                                                     |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 
@@ -1605,15 +1782,23 @@ Hessian modification when Newton is selected is the GMW algorithm.
 \begin{center}
 \begin{tabular}{ll}
 \toprule
+
 Hessian type & Patterns \\
+
 \midrule
+
 Quasi-Newton BFGS & 
 \quoteenv{`\^{}[Bb][Ff][Gg][Ss]\$'}
  \\
+
+ &  \\
+
 Newton & 
 \quoteenv{`\^{}[Nn]ewton\$'}
  \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
@@ -4965,63 +5150,97 @@ the same data type.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Local $\tau_m$ & $\tau_m$ & 
+
+Local $\tau_m$ & 
+\quoteenv{`tm'}
+ & 
 \quoteenv{`\^{}tm\$'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Order parameter $S^2$     | s2           | 
+ &  &  \\
+
+Order parameter $S^2$ & 
+\quoteenv{`s2'}
+ & 
 \quoteenv{`\^{}[Ss]2\$'}
-                                        |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_f$    | s2f          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_f$ & 
+\quoteenv{`s2f'}
+ & 
 \quoteenv{`\^{}[Ss]2f\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_s$    | s2s          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_s$ & 
+\quoteenv{`s2s'}
+ & 
 \quoteenv{`\^{}[Ss]2s\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_e$    | $\tau_e$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_e$ & 
+\quoteenv{`te'}
+ & 
 \quoteenv{`\^{}te\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_f$    | $\tau_f$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_f$ & 
+\quoteenv{`tf'}
+ & 
 \quoteenv{`\^{}tf\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_s$    | $\tau_s$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_s$ & 
+\quoteenv{`ts'}
+ & 
 \quoteenv{`\^{}ts\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Chemical exchange      | rex          | 
+ \\
+
+ &  &  \\
+
+Chemical exchange & 
+\quoteenv{`rex'}
+ & 
 \quoteenv{`\^{}[Rr]ex\$'}
  or 
 \quoteenv{`[Cc]emical[ -\_][Ee]xchange'}
-       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -5054,42 +5273,61 @@ where:
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-J(0) & j0 & 
+
+J(0) & 
+\quoteenv{`j0'}
+ & 
 \quoteenv{`\^{}[Jj]0\$'}
  or 
 \quoteenv{`[Jj](0)'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| J(wX)                  | jwx          | 
+ &  &  \\
+
+J(wX) & 
+\quoteenv{`jwx'}
+ & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
  or 
 \quoteenv{`[Jj](w[Xx])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| J(wH)                  | jwh          | 
+ \\
+
+ &  &  \\
+
+J(wH) & 
+\quoteenv{`jwh'}
+ & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
  or 
 \quoteenv{`[Jj](w[Hh])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -5193,63 +5431,97 @@ the same data type.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Local $\tau_m$ & $\tau_m$ & 
+
+Local $\tau_m$ & 
+\quoteenv{`tm'}
+ & 
 \quoteenv{`\^{}tm\$'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Order parameter $S^2$     | s2           | 
+ &  &  \\
+
+Order parameter $S^2$ & 
+\quoteenv{`s2'}
+ & 
 \quoteenv{`\^{}[Ss]2\$'}
-                                        |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_f$    | s2f          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_f$ & 
+\quoteenv{`s2f'}
+ & 
 \quoteenv{`\^{}[Ss]2f\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_s$    | s2s          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_s$ & 
+\quoteenv{`s2s'}
+ & 
 \quoteenv{`\^{}[Ss]2s\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_e$    | $\tau_e$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_e$ & 
+\quoteenv{`te'}
+ & 
 \quoteenv{`\^{}te\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_f$    | $\tau_f$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_f$ & 
+\quoteenv{`tf'}
+ & 
 \quoteenv{`\^{}tf\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_s$    | $\tau_s$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_s$ & 
+\quoteenv{`ts'}
+ & 
 \quoteenv{`\^{}ts\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Chemical exchange      | rex          | 
+ \\
+
+ &  &  \\
+
+Chemical exchange & 
+\quoteenv{`rex'}
+ & 
 \quoteenv{`\^{}[Rr]ex\$'}
  or 
 \quoteenv{`[Cc]emical[ -\_][Ee]xchange'}
-       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -5261,42 +5533,62 @@ Local $\tau_m$ & $\tau_m$ &
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-J(0) & j0 & 
+
+J(0) & 
+\quoteenv{`j0'}
+ & 
 \quoteenv{`\^{}[Jj]0\$'}
  or 
 \quoteenv{`[Jj](0)'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| J(wX)                  | jwx          | 
+ &  &  \\
+
+J(wX) & 
+\quoteenv{`jwx'}
+ & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
  or 
 \quoteenv{`[Jj](w[Xx])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| J(wH)                  | jwh          | 
+ \\
+
+ &  &  \\
+
+J(wH) & 
+\quoteenv{`jwh'}
+ & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
  or 
 \quoteenv{`[Jj](w[Hh])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
+
 
 
 \newpage
@@ -5418,63 +5710,97 @@ the same data type.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Local $\tau_m$ & $\tau_m$ & 
+
+Local $\tau_m$ & 
+\quoteenv{`tm'}
+ & 
 \quoteenv{`\^{}tm\$'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Order parameter $S^2$     | s2           | 
+ &  &  \\
+
+Order parameter $S^2$ & 
+\quoteenv{`s2'}
+ & 
 \quoteenv{`\^{}[Ss]2\$'}
-                                        |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_f$    | s2f          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_f$ & 
+\quoteenv{`s2f'}
+ & 
 \quoteenv{`\^{}[Ss]2f\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_s$    | s2s          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_s$ & 
+\quoteenv{`s2s'}
+ & 
 \quoteenv{`\^{}[Ss]2s\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_e$    | $\tau_e$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_e$ & 
+\quoteenv{`te'}
+ & 
 \quoteenv{`\^{}te\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_f$    | $\tau_f$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_f$ & 
+\quoteenv{`tf'}
+ & 
 \quoteenv{`\^{}tf\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_s$    | $\tau_s$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_s$ & 
+\quoteenv{`ts'}
+ & 
 \quoteenv{`\^{}ts\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Chemical exchange      | rex          | 
+ \\
+
+ &  &  \\
+
+Chemical exchange & 
+\quoteenv{`rex'}
+ & 
 \quoteenv{`\^{}[Rr]ex\$'}
  or 
 \quoteenv{`[Cc]emical[ -\_][Ee]xchange'}
-       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -5507,42 +5833,61 @@ where:
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-J(0) & j0 & 
+
+J(0) & 
+\quoteenv{`j0'}
+ & 
 \quoteenv{`\^{}[Jj]0\$'}
  or 
 \quoteenv{`[Jj](0)'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| J(wX)                  | jwx          | 
+ &  &  \\
+
+J(wX) & 
+\quoteenv{`jwx'}
+ & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
  or 
 \quoteenv{`[Jj](w[Xx])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| J(wH)                  | jwh          | 
+ \\
+
+ &  &  \\
+
+J(wH) & 
+\quoteenv{`jwh'}
+ & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
  or 
 \quoteenv{`[Jj](w[Hh])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -5607,41 +5952,59 @@ or an array of strings.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Value & Type & Description \\
+
 \midrule
+
 None & None & This case is used to set the model parameters prior to minimisation or \\
+
  &  & calculation.  The model parameters are set to the default values. \\
+
+ &  &  \\
+
+1 & None & Invalid combination. \\
+
+ &  &  \\
+
+n & None & This case is used to set the model parameters prior to minimisation or \\
+
+ &  & calculation.  The length of the value array must be equal to the number \\
+
+ &  & of model parameters for an individual residue.  The parameters will be \\
+
+ &  & set to the corresponding number. \\
+
+ &  &  \\
+
+None & 1 & The data type matching the string will be set to the default value. \\
+
+ &  &  \\
+
+1 & 1 & The data type matching the string will be set to the supplied number. \\
+
+ &  &  \\
+
+n & 1 & Invalid combination. \\
+
+ &  &  \\
+
+None & $n$ & Each data type matching the strings will be set to the default values. \\
+
+ &  &  \\
+
+1 & $n$ & Each data type matching the strings will be set to the supplied number. \\
+
+ &  &  \\
+
+n & $n$ & Each data type matching the strings will be set to the corresponding \\
+
+ &  & number.  Both arrays must be of equal length. \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
-
-|   1   | None  | Invalid combination.                                                     |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
-|   $n$   | None  | This case is used to set the model parameters prior to minimisation or   |
-|       |       | calculation.  The length of the value array must be equal to the number  |
-|       |       | of model parameters for an individual residue.  The parameters will be   |
-|       |       | set to the corresponding number.                                         |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
-| None  |   1   | The data type matching the string will be set to the default value.      |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
-|   1   |   1   | The data type matching the string will be set to the supplied number.    |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
-|   $n$   |   1   | Invalid combination.                                                     |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
-| None  |   $n$   | Each data type matching the strings will be set to the default values.   |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
-|   1   |   $n$   | Each data type matching the strings will be set to the supplied number.  |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
-|   $n$   |   $n$   | Each data type matching the strings will be set to the corresponding     |
-|       |       | number.  Both arrays must be of equal length.                            |
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 Residue number and name argument.
@@ -5800,63 +6163,97 @@ the same data type.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Local $\tau_m$ & $\tau_m$ & 
+
+Local $\tau_m$ & 
+\quoteenv{`tm'}
+ & 
 \quoteenv{`\^{}tm\$'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Order parameter $S^2$     | s2           | 
+ &  &  \\
+
+Order parameter $S^2$ & 
+\quoteenv{`s2'}
+ & 
 \quoteenv{`\^{}[Ss]2\$'}
-                                        |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_f$    | s2f          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_f$ & 
+\quoteenv{`s2f'}
+ & 
 \quoteenv{`\^{}[Ss]2f\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_s$    | s2s          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_s$ & 
+\quoteenv{`s2s'}
+ & 
 \quoteenv{`\^{}[Ss]2s\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_e$    | $\tau_e$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_e$ & 
+\quoteenv{`te'}
+ & 
 \quoteenv{`\^{}te\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_f$    | $\tau_f$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_f$ & 
+\quoteenv{`tf'}
+ & 
 \quoteenv{`\^{}tf\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_s$    | $\tau_s$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_s$ & 
+\quoteenv{`ts'}
+ & 
 \quoteenv{`\^{}ts\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Chemical exchange      | rex          | 
+ \\
+
+ &  &  \\
+
+Chemical exchange & 
+\quoteenv{`rex'}
+ & 
 \quoteenv{`\^{}[Rr]ex\$'}
  or 
 \quoteenv{`[Cc]emical[ -\_][Ee]xchange'}
-       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -5888,33 +6285,65 @@ where:
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Value \\
+
 \midrule
-Local $\tau_m$ & $\tau_m$ & 10 * 1e-9 \\
+
+Local $\tau_m$ & 
+\quoteenv{`tm'}
+ & 10 * 1e-9 \\
+
+ &  &  \\
+
+Order parameters $S^2$, $S^2_f$, and $S^2_s$ & 
+\quoteenv{`s2'}
+, 
+\quoteenv{`s2f'}
+, 
+\quoteenv{`s2s'}
+ & 0.8 \\
+
+ &  &  \\
+
+Correlation time $\tau_e$ & 
+\quoteenv{`te'}
+ & 100 * 1e-12 \\
+
+ &  &  \\
+
+Correlation time $\tau_f$ & 
+\quoteenv{`tf'}
+ & 10 * 1e-12 \\
+
+ &  &  \\
+
+Correlation time $\tau_s$ & 
+\quoteenv{`ts'}
+ & 1000 * 1e-12 \\
+
+ &  &  \\
+
+Chemical exchange relaxation & 
+\quoteenv{`rex'}
+ & 0.0 \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 1.02 * 1e-10 \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & -170 * 1e-6 \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
-
-| Order parameters $S^2$, $S^2_f$, and $S^2_s$     | s2, s2f, s2s | 0.8                          |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                       |              |                              |
-| Correlation time $\tau_e$                   | $\tau_e$           | 100 * 1e-12                  |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                       |              |                              |
-| Correlation time $\tau_f$                   | $\tau_f$           | 10 * 1e-12                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                       |              |                              |
-| Correlation time $\tau_s$                   | $\tau_s$           | 1000 * 1e-12                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                       |              |                              |
-| Chemical exchange relaxation          | rex          | 0.0                          |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                       |              |                              |
-| Bond length                           | $r$            | 1.02 * 1e-10                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                                       |              |                              |
-| $CSA$                                   | csa          | -170 * 1e-6                  |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 
@@ -5926,42 +6355,61 @@ Local $\tau_m$ & $\tau_m$ & 10 * 1e-9 \\
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-J(0) & j0 & 
+
+J(0) & 
+\quoteenv{`j0'}
+ & 
 \quoteenv{`\^{}[Jj]0\$'}
  or 
 \quoteenv{`[Jj](0)'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| J(wX)                  | jwx          | 
+ &  &  \\
+
+J(wX) & 
+\quoteenv{`jwx'}
+ & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
  or 
 \quoteenv{`[Jj](w[Xx])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| J(wH)                  | jwh          | 
+ \\
+
+ &  &  \\
+
+J(wH) & 
+\quoteenv{`jwh'}
+ & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
  or 
 \quoteenv{`[Jj](w[Hh])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -5979,15 +6427,26 @@ value.  These must be set prior to the calculation of spectral density values.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Value \\
+
 \midrule
-Bond length & $r$ & 1.02 * 1e-10 \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 1.02 * 1e-10 \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & -170 * 1e-6 \\
+
 \bottomrule
+
 \end{tabular}
 \end{center}
 
-| $CSA$                                   | csa          | -170 * 1e-6                  |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 \newpage
@@ -6111,63 +6570,97 @@ the same data type.
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Local $\tau_m$ & $\tau_m$ & 
+
+Local $\tau_m$ & 
+\quoteenv{`tm'}
+ & 
 \quoteenv{`\^{}tm\$'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Order parameter $S^2$     | s2           | 
+ &  &  \\
+
+Order parameter $S^2$ & 
+\quoteenv{`s2'}
+ & 
 \quoteenv{`\^{}[Ss]2\$'}
-                                        |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_f$    | s2f          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_f$ & 
+\quoteenv{`s2f'}
+ & 
 \quoteenv{`\^{}[Ss]2f\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Order parameter $S^2_s$    | s2s          | 
+ \\
+
+ &  &  \\
+
+Order parameter $S^2_s$ & 
+\quoteenv{`s2s'}
+ & 
 \quoteenv{`\^{}[Ss]2s\$'}
-                                       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_e$    | $\tau_e$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_e$ & 
+\quoteenv{`te'}
+ & 
 \quoteenv{`\^{}te\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_f$    | $\tau_f$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_f$ & 
+\quoteenv{`tf'}
+ & 
 \quoteenv{`\^{}tf\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Correlation time $\tau_s$    | $\tau_s$           | 
+ \\
+
+ &  &  \\
+
+Correlation time $\tau_s$ & 
+\quoteenv{`ts'}
+ & 
 \quoteenv{`\^{}ts\$'}
-                                           |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Chemical exchange      | rex          | 
+ \\
+
+ &  &  \\
+
+Chemical exchange & 
+\quoteenv{`rex'}
+ & 
 \quoteenv{`\^{}[Rr]ex\$'}
  or 
 \quoteenv{`[Cc]emical[ -\_][Ee]xchange'}
-       |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -6179,42 +6672,61 @@ Local $\tau_m$ & $\tau_m$ &
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-J(0) & j0 & 
+
+J(0) & 
+\quoteenv{`j0'}
+ & 
 \quoteenv{`\^{}[Jj]0\$'}
  or 
 \quoteenv{`[Jj](0)'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| J(wX)                  | jwx          | 
+ &  &  \\
+
+J(wX) & 
+\quoteenv{`jwx'}
+ & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
  or 
 \quoteenv{`[Jj](w[Xx])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| J(wH)                  | jwh          | 
+ \\
+
+ &  &  \\
+
+J(wH) & 
+\quoteenv{`jwh'}
+ & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
  or 
 \quoteenv{`[Jj](w[Hh])'}
-                   |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| Bond length            | $r$            | 
+ \\
+
+ &  &  \\
+
+Bond length & 
+\quoteenv{`r'}
+ & 
 \quoteenv{`\^{}r\$'}
  or 
 \quoteenv{`[Bb]ond[ -\_][Ll]ength'}
-                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| $CSA$                    | csa          | 
+ \\
+
+ &  &  \\
+
+CSA & 
+\quoteenv{`csa'}
+ & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
 
 
 
@@ -6226,28 +6738,42 @@ J(0) & j0 &
 \begin{center}
 \begin{tabular}{lll}
 \toprule
+
 Data type & Object name & Patterns \\
+
 \midrule
-Reference intensity & ref & 
+
+Reference intensity & 
+\quoteenv{`ref'}
+ & 
 \quoteenv{`\^{}[Rr]ef\$'}
  or 
 \quoteenv{`[Rr]ef[ -\_][Ii]nt'}
  \\
-\bottomrule
-\end{tabular}
-\end{center}
 
-| Saturated intensity    | sat          | 
+ &  &  \\
+
+Saturated intensity & 
+\quoteenv{`sat'}
+ & 
 \quoteenv{`\^{}[Ss]at\$'}
  or 
 \quoteenv{`[Ss]at[ -\_][Ii]nt'}
-                |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|                        |              |                                                  |
-| NOE                    | noe          | 
+ \\
+
+ &  &  \\
+
+NOE & 
+\quoteenv{`noe'}
+ & 
 \quoteenv{`\^{}[Nn][Oo][Ee]\$'}
-                                 |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+ \\
+
+\bottomrule
+
+\end{tabular}
+\end{center}
+
 
 
 \newpage

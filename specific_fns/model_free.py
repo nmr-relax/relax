@@ -758,33 +758,26 @@ class Model_free(Common_functions):
         ~~~~~~~~~~~~~~~~~~~~~~~~~
 
         _______________________________________________________________________________________
-        |                                       |              |                              |
-        | Data type                             | Object name  | Value                        |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Local tm                              | tm           | 10 * 1e-9                    |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Order parameters S2, S2f, and S2s     | s2, s2f, s2s | 0.8                          |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Correlation time te                   | te           | 100 * 1e-12                  |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Correlation time tf                   | tf           | 10 * 1e-12                   |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Correlation time ts                   | ts           | 1000 * 1e-12                 |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Chemical exchange relaxation          | rex          | 0.0                          |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Bond length                           | r            | 1.02 * 1e-10                 |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | CSA                                   | csa          | -170 * 1e-6                  |
-        |_______________________________________|______________|______________________________|
+        |                                       |                    |                        |
+        | Data type                             | Object name        | Value                  |
+        |_______________________________________|____________________|________________________|
+        |                                       |                    |                        |
+        | Local tm                              | 'tm'               | 10 * 1e-9              |
+        |                                       |                    |                        |
+        | Order parameters S2, S2f, and S2s     | 's2', 's2f', 's2s' | 0.8                    |
+        |                                       |                    |                        |
+        | Correlation time te                   | 'te'               | 100 * 1e-12            |
+        |                                       |                    |                        |
+        | Correlation time tf                   | 'tf'               | 10 * 1e-12             |
+        |                                       |                    |                        |
+        | Correlation time ts                   | 'ts'               | 1000 * 1e-12           |
+        |                                       |                    |                        |
+        | Chemical exchange relaxation          | 'rex'              | 0.0                    |
+        |                                       |                    |                        |
+        | Bond length                           | 'r'                | 1.02 * 1e-10           |
+        |                                       |                    |                        |
+        | CSA                                   | 'csa'              | -170 * 1e-6            |
+        |_______________________________________|____________________|________________________|
 
         """
 
@@ -2785,7 +2778,7 @@ class Model_free(Common_functions):
 
     def read_columnar_find_index(self):
         """Function for generating the sequence and or returning the residue index."""
-            
+
         # Residue number and name.
         try:
             self.res_num = int(self.file_line[self.col['num']])
@@ -3317,7 +3310,7 @@ class Model_free(Common_functions):
 
     def read_columnar_sequence(self):
         """Function for generating the sequence."""
-            
+
         # Residue number and name.
         try:
             res_num = int(self.file_line[self.col['num']])
@@ -3410,7 +3403,7 @@ class Model_free(Common_functions):
 
     def return_conversion_factor(self, data_type):
         """Function for returning the factor of conversion between different parameter units.
-        
+
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return 1e-12 for te.
         """
@@ -3455,34 +3448,25 @@ class Model_free(Common_functions):
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Local tm               | tm           | '^tm$'                                           |
-        |________________________|______________|__________________________________________________|
+        | Local tm               | 'tm'         | '^tm$'                                           |
         |                        |              |                                                  |
-        | Order parameter S2     | s2           | '^[Ss]2$'                                        |
-        |________________________|______________|__________________________________________________|
+        | Order parameter S2     | 's2'         | '^[Ss]2$'                                        |
         |                        |              |                                                  |
-        | Order parameter S2f    | s2f          | '^[Ss]2f$'                                       |
-        |________________________|______________|__________________________________________________|
+        | Order parameter S2f    | 's2f'        | '^[Ss]2f$'                                       |
         |                        |              |                                                  |
-        | Order parameter S2s    | s2s          | '^[Ss]2s$'                                       |
-        |________________________|______________|__________________________________________________|
+        | Order parameter S2s    | 's2s'        | '^[Ss]2s$'                                       |
         |                        |              |                                                  |
-        | Correlation time te    | te           | '^te$'                                           |
-        |________________________|______________|__________________________________________________|
+        | Correlation time te    | 'te'         | '^te$'                                           |
         |                        |              |                                                  |
-        | Correlation time tf    | tf           | '^tf$'                                           |
-        |________________________|______________|__________________________________________________|
+        | Correlation time tf    | 'tf'         | '^tf$'                                           |
         |                        |              |                                                  |
-        | Correlation time ts    | ts           | '^ts$'                                           |
-        |________________________|______________|__________________________________________________|
+        | Correlation time ts    | 'ts'         | '^ts$'                                           |
         |                        |              |                                                  |
-        | Chemical exchange      | rex          | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
-        |________________________|______________|__________________________________________________|
+        | Chemical exchange      | 'rex'        | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
         |                        |              |                                                  |
-        | Bond length            | r            | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |________________________|______________|__________________________________________________|
+        | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
         |                        |              |                                                  |
-        | CSA                    | csa          | '^[Cc][Ss][Aa]$'                                 |
+        | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
         |________________________|______________|__________________________________________________|
 
         """
@@ -3580,7 +3564,7 @@ class Model_free(Common_functions):
 
     def return_units(self, data_type):
         """Function for returning a string representing the parameters units.
-        
+
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return the string
         'picoseconds' for te.
@@ -3618,7 +3602,7 @@ class Model_free(Common_functions):
 
     def return_value(self, run, i, data_type, sim=None):
         """Function for returning the value and error corresponding to 'data_type'.
-        
+
         If sim is set to an integer, return the value of the simulation and None.
         """
 
