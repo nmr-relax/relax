@@ -164,17 +164,26 @@ class Fetch_docstrings:
     def latex_maths(self, string):
         """Function for handling LaTeX maths environments."""
 
-        # Skip precreated environments.
-        if search("^\\\\", string):
-            return string
+        # Less than.
+        string = replace(string, ' < ', ' $<$ ')
 
-        # List of characters.
-        maths_chars = "<>"
+        # Less than or equal.
+        string = replace(string, ' <= ', ' $<=$ ')
 
-        # Loop over the characters.
-        for char in maths_chars:
-            # Prefix a backslash.
-            string = replace(string, char, '$'+char+'$')
+        # Much less than.
+        string = replace(string, ' << ', ' $<<$ ')
+
+        # Greater than.
+        string = replace(string, ' > ', ' $>$ ')
+
+        # Greater than or equal.
+        string = replace(string, ' >= ', ' $>=$ ')
+
+        # Much greater than.
+        string = replace(string, ' >> ', ' $>>$ ')
+
+        # A specific example.
+        string = replace(string, '<r>', '$<$r$>$')
 
         # Return the new text.
         return string
@@ -223,21 +232,19 @@ class Fetch_docstrings:
     def latex_special_chars(self, string):
         """Function for handling LaTeX special characters."""
 
-        # List of special characters (backslash first so that the prefixed backslash doesn't get backslashed itself).
-        latex_special_chars = "\\#$%&_{}"
+        # Damned backslashes.
+        string = replace(string, '\\', 'This is a backslash to be replaced at the end of this functioN')
 
-        # Doubly special characters.
-        latex_really_special_chars = "^~"
-
-        # Loop over the characters.
-        for char in latex_special_chars:
-            # Prefix a backslash.
+        # List of special characters (prefix a backslash).
+        for char in "#$%&_{}":
             string = replace(string, char, '\\'+char)
 
-        # Loop over the very special characters.
-        for char in latex_really_special_chars:
-            # Prefix a backslash.
+        # Doubly special characters (prefix a backslash and postfix '{}').
+        for char in "^~":
             string = replace(string, char, '\\'+char+'{}')
+
+        # Damned backslashes!
+        string = replace(string, 'This is a backslash to be replaced at the end of this functioN', '$\\backslash$')
 
         # Return the new text.
         return string
@@ -470,8 +477,12 @@ class Fetch_docstrings:
                 # Add an empty line.
                 new_lines.append('\n')
 
-                # Start the table.
-                new_lines.append("\\begin{tabular}{" + (num_col-2)*"c" + "}")
+                # Start the table and center it.
+                new_lines.append("\\begin{center}")
+                new_lines.append("\\begin{tabular}{" + (num_col-2)*"l" + "}")
+
+                # Add the toprule.
+                new_lines.append("\\toprule")
 
                 # Shift to the next line.
                 i = i + 1
@@ -488,6 +499,9 @@ class Fetch_docstrings:
                     string = string + " & " + headings[j]
                 new_lines.append(string + " \\\\")
 
+                # Add the midrule.
+                new_lines.append("\\midrule")
+
                 # Skip three lines.
                 i = i + 3
 
@@ -500,8 +514,7 @@ class Fetch_docstrings:
                         break
 
                     # Find the end of the table.
-                    if search('^|_*_|$', lines[i]):
-                        print "End of table: " + `lines[i]`
+                    if search('^\\|\\\\_', lines[i]):
                         # Increment the line counter then break.
                         i = i + 1
                         break
@@ -524,8 +537,12 @@ class Fetch_docstrings:
                     # Increment the line counter.
                     i = i + 1
 
-                # Terminate the tabular environment.
+                # Add the bottomrule.
+                new_lines.append("\\bottomrule")
+
+                # Terminate the tabular and center environment.
                 new_lines.append("\\end{tabular}")
+                new_lines.append("\\end{center}\n")
 
             else:
                 new_lines.append(lines[i])

@@ -186,14 +186,14 @@ The diffusion tensor is defined by the vector Dpar.  The angle alpha describes t
 vector with respect to the diffusion frame while the spherical angles \{theta, phi\} describe
 the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and phi is the
 azimuthal angle defined between:
-    0 $<$= theta $<$= pi
-    0 $<$= phi $<$= 2pi
+    0 $<=$ theta $<=$ pi
+    0 $<=$ phi $<=$ 2pi
 The angle alpha is defined between:
-    0 $<$= alpha $<$= 2pi
+    0 $<=$ alpha $<=$ 2pi
 
 The `axial\_type' argument should be `oblate', `prolate', or None.  The argument will be
 ignored if the diffusion tensor is not axially symmetric.  If `oblate' is given, then the
-constraint Dper $>$= Dpar is used.  If `prolate' is given, then the constraint Dper $<$= Dpar is
+constraint Dper $>=$ Dpar is used.  If `prolate' is given, then the constraint Dper $<=$ Dpar is
 used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
 prevent minimisation of diffusion tensor parameters in a space with two minima, it is
 recommended to specify which tensor to be minimised, thereby partitioning the two minima
@@ -221,13 +221,13 @@ within the PDB frame.  These angles are defined using the z-y-z axis rotation no
 alpha is the initial rotation angle around the z-axis, beta is the rotation angle around the
 y-axis, and gamma is the final rotation around the z-axis again.  The angles are defined
 between:
-    0 $<$= alpha $<$= 2pi
-    0 $<$= beta $<$= pi
-    0 $<$= gamma $<$= 2pi
+    0 $<=$ alpha $<=$ 2pi
+    0 $<=$ beta $<=$ pi
+    0 $<=$ gamma $<=$ 2pi
 Within the PDB frame, the bond vector is described using the spherical angels theta and phi
 where theta is the polar angle and phi is the azimuthal angle defined between:
-    0 $<$= theta $<$= pi
-    0 $<$= phi $<$= 2pi
+    0 $<=$ theta $<=$ pi
+    0 $<=$ phi $<=$ 2pi
 
 
 Units.
@@ -348,9 +348,15 @@ The map type can be changed by supplying the `map\_type' keyword argument.  Here
 currently supported map types:
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Surface type & Pattern \\
+\midrule
+ 3D isosurface                              &  `\^{}[Ii]so3[Dd]'                 \\
+\bottomrule
 \end{tabular}
+\end{center}
 
 Pattern syntax is simply regular expression syntax where square brackets [] means any
 character within the brackets, \^{} means the start of the string, etc.
@@ -431,7 +437,7 @@ The local tm, in some cases, may exceed the value expected for a global correlat
 Generally the tm value will be stuck at the upper limit defined for the parameter.  These
 models are eliminated using the rule:
 
-    tm $>$= c
+    tm $>=$ c
 
 The default value of c is 50 ns, although this can be overriden by supplying the value (in
 seconds) as the first element of the args tuple.
@@ -441,9 +447,9 @@ Internal correlation times \{te, tf, ts\}.
 
 These parameters may experience the same problem as the local tm in that the model fails and
 the parameter value is stuck at the upper limit.  These parameters are constrained using the
-formula `te, tf, ts $<$= 2.tm'.  These failed models are eliminated using the rule:
+formula `te, tf, ts $<=$ 2.tm'.  These failed models are eliminated using the rule:
 
-    te, tf, ts $>$= c.tm
+    te, tf, ts $>=$ c.tm
 
 The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
 setting c to 2 will result in no models being eliminated as the minimised parameters will
@@ -648,10 +654,16 @@ the same data type.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Chi-squared statistic   &  chi2          &  `\^{}[Cc]hi2\$' or `\^{}[Cc]hi[-\_ ][Ss]quare'            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Iteration count        | iter         | `\^{}[Ii]ter'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -671,10 +683,16 @@ Data type & Object name & Patterns \\
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Local tm                &  tm            &  `\^{}tm\$'                                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -709,10 +727,16 @@ Data type & Object name & Patterns \\
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ J(0)                    &  j0            &  `\^{}[Jj]0\$' or `[Jj](0)'                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | J(wX)                  | jwx          | `\^{}[Jj]w[Xx]\$' or `[Jj](w[Xx])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -732,10 +756,16 @@ Data type & Object name & Patterns \\
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Reference intensity     &  ref           &  `\^{}[Rr]ef\$' or `[Rr]ef[ -\_][Ii]nt'                 \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Saturated intensity    | sat          | `\^{}[Ss]at\$' or `[Ss]at[ -\_][Ii]nt'                |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -958,9 +988,9 @@ below this value, minimisation is terminated.
 
 \keyword{grad\_tol:}  The gradient tolerance value.
 
-\keyword{A:}  Linear constraint matrix m*n (A.x >= b).
+\keyword{A:}  Linear constraint matrix m*n (A.x $>=$ b).
 
-\keyword{l:}  Lower bound constraint vector (l <= x <= u).
+\keyword{l:}  Lower bound constraint vector (l $<=$ x $<=$ u).
 
 \keyword{c:}  User supplied constraint function.
 
@@ -996,60 +1026,96 @@ pattern.
 Parameter initialisation methods:
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Minimisation algorithm & Patterns \\
+\midrule
+ Grid search                        &  `\^{}[Gg]rid'                                           \\
+\bottomrule
 \end{tabular}
+\end{center}
 
 
 Unconstrained line search methods:
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Minimisation algorithm & Patterns \\
+\midrule
+ Back-and-forth coordinate descent  &  `\^{}[Cc][Dd]\$' or `\^{}[Cc]oordinate[ \_-][Dd]escent\$'     \\
+ Steepest descent                   &  `\^{}[Ss][Dd]\$' or `\^{}[Ss]teepest[ \_-][Dd]escent\$'       \\
+ Quasi-Newton BFGS                  &  `\^{}[Bb][Ff][Gg][Ss]\$'                                 \\
+ Newton                             &  `\^{}[Nn]ewton\$'                                        \\
+ Newton-CG                          &  `\^{}[Nn]ewton[ \_-][Cc][Gg]\$' or `\^{}[Nn][Cc][Gg]\$'       \\
+\bottomrule
 \end{tabular}
-| Quasi-Newton BFGS                 | `\^{}[Bb][Ff][Gg][Ss]\$'                                |
-| Newton                            | `\^{}[Nn]ewton\$'                                       |
-| Newton-CG                         | `\^{}[Nn]ewton[ \_-][Cc][Gg]\$' or `\^{}[Nn][Cc][Gg]\$'      |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+\end{center}
 
 
 Unconstrained trust-region methods:
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Minimisation algorithm & Patterns \\
+\midrule
+ Cauchy point                       &  `\^{}[Cc]auchy'                                         \\
+ Dogleg                             &  `\^{}[Dd]ogleg'                                         \\
+ CG-Steihaug                        &  `\^{}[Cc][Gg][-\_ ][Ss]teihaug' or `\^{}[Ss]teihaug'        \\
+ Exact trust region                 &  `\^{}[Ee]xact'                                          \\
+\bottomrule
 \end{tabular}
-| CG-Steihaug                       | `\^{}[Cc][Gg][-\_ ][Ss]teihaug' or `\^{}[Ss]teihaug'       |
-| Exact trust region                | `\^{}[Ee]xact'                                         |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+\end{center}
 
 
 Unconstrained conjugate gradient methods:
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Minimisation algorithm & Patterns \\
+\midrule
+ Fletcher-Reeves                    &  `\^{}[Ff][Rr]\$' or `\^{}[Ff]letcher[-\_ ][Rr]eeves\$'        \\
+ Polak-Ribiere                      &  `\^{}[Pp][Rr]\$' or `\^{}[Pp]olak[-\_ ][Rr]ibiere\$'          \\
+ Polak-Ribiere +                    &  `\^{}[Pp][Rr]$\backslash$+\$' or `\^{}[Pp]olak[-\_ ][Rr]ibiere$\backslash$+\$'      \\
+ Hestenes-Stiefel                   &  `\^{}[Hh][Ss]\$' or `\^{}[Hh]estenes[-\_ ][Ss]tiefel\$'       \\
+\bottomrule
 \end{tabular}
-| Polak-Ribiere +                   | `\^{}[Pp][Rr]\\+\$' or `\^{}[Pp]olak[-\_ ][Rr]ibiere\\+\$'     |
-| Hestenes-Stiefel                  | `\^{}[Hh][Ss]\$' or `\^{}[Hh]estenes[-\_ ][Ss]tiefel\$'      |
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+\end{center}
 
 
 Miscellaneous unconstrained methods:
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Minimisation algorithm & Patterns \\
+\midrule
+ Simplex                            &  `\^{}[Ss]implex\$'                                       \\
+ Levenberg-Marquardt                &  `\^{}[Ll][Mm]\$' or `\^{}[Ll]evenburg-[Mm]arquardt\$'        \\
+\bottomrule
 \end{tabular}
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+\end{center}
 
 
 Constrained methods:
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Minimisation algorithm & Patterns \\
+\midrule
+ Method of Multipliers              &  `\^{}[Mm][Oo][Mm]\$' or `[Mm]ethod of [Mm]ultipliers\$'   \\
+\bottomrule
 \end{tabular}
+\end{center}
 
 
 
@@ -1062,10 +1128,16 @@ Line search algorithms.  These are used in the line search methods and the conju
 methods.  The default is the Backtracking line search.
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Line search algorithm & Patterns \\
+\midrule
+ Backtracking line search           &  `\^{}[Bb]ack'                                           \\
+\bottomrule
 \end{tabular}
-|                                   |                                                     |
+\end{center}
+
 | Nocedal and Wright interpolation  | `\^{}[Nn][Ww][Ii]' or                                  |
 | based line search                 | `\^{}[Nn]ocedal[ \_][Ww]right[ \_][Ii]nt'                |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
@@ -1085,10 +1157,16 @@ Line search algorithm & Patterns \\
 Hessian modifications.  These are used in the Newton, Dogleg, and Exact trust region algorithms.
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Hessian modification & Patterns \\
+\midrule
+ Unmodified Hessian                 &  `[Nn]one'                                            \\
+\bottomrule
 \end{tabular}
-|                                   |                                                     |
+\end{center}
+
 | Eigenvalue modification           | `\^{}[Ee]igen'                                         |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                   |                                                     |
@@ -1112,10 +1190,16 @@ modification can also be supplied as above.  The default Hessian type is Newton,
 Hessian modification when Newton is selected is the GMW algorithm.
 
 
-\begin{tabular}{cc}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
 Hessian type & Patterns \\
+\midrule
+ Quasi-Newton BFGS                  &  `\^{}[Bb][Ff][Gg][Ss]\$'                                 \\
+ Newton                             &  `\^{}[Nn]ewton\$'                                        \\
+\bottomrule
 \end{tabular}
-|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
+\end{center}
 
 
 For Newton minimisation, the default line search algorithm is the More and Thuente line search,
@@ -1315,49 +1399,49 @@ Function for the selection of a preset model-free model.
 \subsubsection{Description}
 
 The preset model-free models are:
-    `m0'    =$>$ []
-    `m1'    =$>$ [S2]
-    `m2'    =$>$ [S2, te]
-    `m3'    =$>$ [S2, Rex]
-    `m4'    =$>$ [S2, te, Rex]
-    `m5'    =$>$ [S2f, S2, ts]
-    `m6'    =$>$ [S2f, tf, S2, ts]
-    `m7'    =$>$ [S2f, S2, ts, Rex]
-    `m8'    =$>$ [S2f, tf, S2, ts, Rex]
-    `m9'    =$>$ [Rex]
+    `m0'    => []
+    `m1'    => [S2]
+    `m2'    => [S2, te]
+    `m3'    => [S2, Rex]
+    `m4'    => [S2, te, Rex]
+    `m5'    => [S2f, S2, ts]
+    `m6'    => [S2f, tf, S2, ts]
+    `m7'    => [S2f, S2, ts, Rex]
+    `m8'    => [S2f, tf, S2, ts, Rex]
+    `m9'    => [Rex]
 
-    `m10'   =$>$ [CSA]
-    `m11'   =$>$ [CSA, S2]
-    `m12'   =$>$ [CSA, S2, te]
-    `m13'   =$>$ [CSA, S2, Rex]
-    `m14'   =$>$ [CSA, S2, te, Rex]
-    `m15'   =$>$ [CSA, S2f, S2, ts]
-    `m16'   =$>$ [CSA, S2f, tf, S2, ts]
-    `m17'   =$>$ [CSA, S2f, S2, ts, Rex]
-    `m18'   =$>$ [CSA, S2f, tf, S2, ts, Rex]
-    `m19'   =$>$ [CSA, Rex]
+    `m10'   => [CSA]
+    `m11'   => [CSA, S2]
+    `m12'   => [CSA, S2, te]
+    `m13'   => [CSA, S2, Rex]
+    `m14'   => [CSA, S2, te, Rex]
+    `m15'   => [CSA, S2f, S2, ts]
+    `m16'   => [CSA, S2f, tf, S2, ts]
+    `m17'   => [CSA, S2f, S2, ts, Rex]
+    `m18'   => [CSA, S2f, tf, S2, ts, Rex]
+    `m19'   => [CSA, Rex]
 
-    `m20'   =$>$ [r]
-    `m21'   =$>$ [r, S2]
-    `m22'   =$>$ [r, S2, te]
-    `m23'   =$>$ [r, S2, Rex]
-    `m24'   =$>$ [r, S2, te, Rex]
-    `m25'   =$>$ [r, S2f, S2, ts]
-    `m26'   =$>$ [r, S2f, tf, S2, ts]
-    `m27'   =$>$ [r, S2f, S2, ts, Rex]
-    `m28'   =$>$ [r, S2f, tf, S2, ts, Rex]
-    `m29'   =$>$ [r, CSA, Rex]
+    `m20'   => [r]
+    `m21'   => [r, S2]
+    `m22'   => [r, S2, te]
+    `m23'   => [r, S2, Rex]
+    `m24'   => [r, S2, te, Rex]
+    `m25'   => [r, S2f, S2, ts]
+    `m26'   => [r, S2f, tf, S2, ts]
+    `m27'   => [r, S2f, S2, ts, Rex]
+    `m28'   => [r, S2f, tf, S2, ts, Rex]
+    `m29'   => [r, CSA, Rex]
 
-    `m30'   =$>$ [r, CSA]
-    `m31'   =$>$ [r, CSA, S2]
-    `m32'   =$>$ [r, CSA, S2, te]
-    `m33'   =$>$ [r, CSA, S2, Rex]
-    `m34'   =$>$ [r, CSA, S2, te, Rex]
-    `m35'   =$>$ [r, CSA, S2f, S2, ts]
-    `m36'   =$>$ [r, CSA, S2f, tf, S2, ts]
-    `m37'   =$>$ [r, CSA, S2f, S2, ts, Rex]
-    `m38'   =$>$ [r, CSA, S2f, tf, S2, ts, Rex]
-    `m39'   =$>$ [r, CSA, Rex]
+    `m30'   => [r, CSA]
+    `m31'   => [r, CSA, S2]
+    `m32'   => [r, CSA, S2, te]
+    `m33'   => [r, CSA, S2, Rex]
+    `m34'   => [r, CSA, S2, te, Rex]
+    `m35'   => [r, CSA, S2f, S2, ts]
+    `m36'   => [r, CSA, S2f, tf, S2, ts]
+    `m37'   => [r, CSA, S2f, S2, ts, Rex]
+    `m38'   => [r, CSA, S2f, tf, S2, ts, Rex]
+    `m39'   => [r, CSA, Rex]
 
 Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
 relaxation data.  This is due to the extreme flexibly of these models where a change in the
@@ -1367,49 +1451,49 @@ vice versa.
 
 Additional preset model-free models, which are simply extensions of the above models with
 the addition of a local tm parameter are:
-    `tm0'   =$>$ [tm]
-    `tm1'   =$>$ [tm, S2]
-    `tm2'   =$>$ [tm, S2, te]
-    `tm3'   =$>$ [tm, S2, Rex]
-    `tm4'   =$>$ [tm, S2, te, Rex]
-    `tm5'   =$>$ [tm, S2f, S2, ts]
-    `tm6'   =$>$ [tm, S2f, tf, S2, ts]
-    `tm7'   =$>$ [tm, S2f, S2, ts, Rex]
-    `tm8'   =$>$ [tm, S2f, tf, S2, ts, Rex]
-    `tm9'   =$>$ [tm, Rex]
+    `tm0'   => [tm]
+    `tm1'   => [tm, S2]
+    `tm2'   => [tm, S2, te]
+    `tm3'   => [tm, S2, Rex]
+    `tm4'   => [tm, S2, te, Rex]
+    `tm5'   => [tm, S2f, S2, ts]
+    `tm6'   => [tm, S2f, tf, S2, ts]
+    `tm7'   => [tm, S2f, S2, ts, Rex]
+    `tm8'   => [tm, S2f, tf, S2, ts, Rex]
+    `tm9'   => [tm, Rex]
 
-    `tm10'  =$>$ [tm, CSA]
-    `tm11'  =$>$ [tm, CSA, S2]
-    `tm12'  =$>$ [tm, CSA, S2, te]
-    `tm13'  =$>$ [tm, CSA, S2, Rex]
-    `tm14'  =$>$ [tm, CSA, S2, te, Rex]
-    `tm15'  =$>$ [tm, CSA, S2f, S2, ts]
-    `tm16'  =$>$ [tm, CSA, S2f, tf, S2, ts]
-    `tm17'  =$>$ [tm, CSA, S2f, S2, ts, Rex]
-    `tm18'  =$>$ [tm, CSA, S2f, tf, S2, ts, Rex]
-    `tm19'  =$>$ [tm, CSA, Rex]
+    `tm10'  => [tm, CSA]
+    `tm11'  => [tm, CSA, S2]
+    `tm12'  => [tm, CSA, S2, te]
+    `tm13'  => [tm, CSA, S2, Rex]
+    `tm14'  => [tm, CSA, S2, te, Rex]
+    `tm15'  => [tm, CSA, S2f, S2, ts]
+    `tm16'  => [tm, CSA, S2f, tf, S2, ts]
+    `tm17'  => [tm, CSA, S2f, S2, ts, Rex]
+    `tm18'  => [tm, CSA, S2f, tf, S2, ts, Rex]
+    `tm19'  => [tm, CSA, Rex]
 
-    `tm20'  =$>$ [tm, r]
-    `tm21'  =$>$ [tm, r, S2]
-    `tm22'  =$>$ [tm, r, S2, te]
-    `tm23'  =$>$ [tm, r, S2, Rex]
-    `tm24'  =$>$ [tm, r, S2, te, Rex]
-    `tm25'  =$>$ [tm, r, S2f, S2, ts]
-    `tm26'  =$>$ [tm, r, S2f, tf, S2, ts]
-    `tm27'  =$>$ [tm, r, S2f, S2, ts, Rex]
-    `tm28'  =$>$ [tm, r, S2f, tf, S2, ts, Rex]
-    `tm29'  =$>$ [tm, r, CSA, Rex]
+    `tm20'  => [tm, r]
+    `tm21'  => [tm, r, S2]
+    `tm22'  => [tm, r, S2, te]
+    `tm23'  => [tm, r, S2, Rex]
+    `tm24'  => [tm, r, S2, te, Rex]
+    `tm25'  => [tm, r, S2f, S2, ts]
+    `tm26'  => [tm, r, S2f, tf, S2, ts]
+    `tm27'  => [tm, r, S2f, S2, ts, Rex]
+    `tm28'  => [tm, r, S2f, tf, S2, ts, Rex]
+    `tm29'  => [tm, r, CSA, Rex]
 
-    `tm30'  =$>$ [tm, r, CSA]
-    `tm31'  =$>$ [tm, r, CSA, S2]
-    `tm32'  =$>$ [tm, r, CSA, S2, te]
-    `tm33'  =$>$ [tm, r, CSA, S2, Rex]
-    `tm34'  =$>$ [tm, r, CSA, S2, te, Rex]
-    `tm35'  =$>$ [tm, r, CSA, S2f, S2, ts]
-    `tm36'  =$>$ [tm, r, CSA, S2f, tf, S2, ts]
-    `tm37'  =$>$ [tm, r, CSA, S2f, S2, ts, Rex]
-    `tm38'  =$>$ [tm, r, CSA, S2f, tf, S2, ts, Rex]
-    `tm39'  =$>$ [tm, r, CSA, Rex]
+    `tm30'  => [tm, r, CSA]
+    `tm31'  => [tm, r, CSA, S2]
+    `tm32'  => [tm, r, CSA, S2, te]
+    `tm33'  => [tm, r, CSA, S2, Rex]
+    `tm34'  => [tm, r, CSA, S2, te, Rex]
+    `tm35'  => [tm, r, CSA, S2f, S2, ts]
+    `tm36'  => [tm, r, CSA, S2f, tf, S2, ts]
+    `tm37'  => [tm, r, CSA, S2f, S2, ts, Rex]
+    `tm38'  => [tm, r, CSA, S2f, tf, S2, ts, Rex]
+    `tm39'  => [tm, r, CSA, Rex]
 
 
 
@@ -3368,7 +3452,7 @@ Press enter three times when asked for input.  This will generate the two identi
 files.  Then, to copy the public key into the authorized\_keys file on the remote machine,
 type:
 
-\$ ssh zucchini "echo \$(cat \~{}/.ssh/id\_rsa.pub) >> \~{}/.ssh/authorized\_keys"
+\$ ssh zucchini "echo \$(cat \~{}/.ssh/id\_rsa.pub) $>>$ \~{}/.ssh/authorized\_keys"
 
 Make sure you replace `zucchini' with the name or IP address of the remote machine.  To use
 DSA rather than RSA authentication, replace `rsa' with `dsa' in the above commands.
@@ -3612,10 +3696,16 @@ the same data type.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Local tm                &  tm            &  `\^{}tm\$'                                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -3668,10 +3758,16 @@ where:
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ J(0)                    &  j0            &  `\^{}[Jj]0\$' or `[Jj](0)'                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | J(wX)                  | jwx          | `\^{}[Jj]w[Xx]\$' or `[Jj](w[Xx])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -3758,10 +3854,16 @@ the same data type.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Local tm                &  tm            &  `\^{}tm\$'                                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -3796,10 +3898,16 @@ Data type & Object name & Patterns \\
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ J(0)                    &  j0            &  `\^{}[Jj]0\$' or `[Jj](0)'                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | J(wX)                  | jwx          | `\^{}[Jj]w[Xx]\$' or `[Jj](w[Xx])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -3895,10 +4003,16 @@ the same data type.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Local tm                &  tm            &  `\^{}tm\$'                                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -3951,10 +4065,16 @@ where:
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ J(0)                    &  j0            &  `\^{}[Jj]0\$' or `[Jj](0)'                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | J(wX)                  | jwx          | `\^{}[Jj]w[Xx]\$' or `[Jj](w[Xx])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -4014,11 +4134,17 @@ or an array of strings.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Value & Type & Description \\
+\midrule
+ None   &  None   &  This case is used to set the model parameters prior to minimisation or    \\
+        &         &  calculation.  The model parameters are set to the default values.         \\
+\bottomrule
 \end{tabular}
-|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
-|       |       |                                                                          |
+\end{center}
+
 |   1   | None  | Invalid combination.                                                     |
 |\_\_\_\_\_\_\_|\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |       |       |                                                                          |
@@ -4139,10 +4265,16 @@ the same data type.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Local tm                &  tm            &  `\^{}tm\$'                                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -4194,10 +4326,16 @@ where:
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Value \\
+\midrule
+ Local tm                               &  tm            &  10 * 1e-9                     \\
+\bottomrule
 \end{tabular}
-|                                       |              |                              |
+\end{center}
+
 | Order parameters S2, S2f, and S2s     | s2, s2f, s2s | 0.8                          |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                       |              |                              |
@@ -4226,10 +4364,16 @@ Data type & Object name & Value \\
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ J(0)                    &  j0            &  `\^{}[Jj]0\$' or `[Jj](0)'                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | J(wX)                  | jwx          | `\^{}[Jj]w[Xx]\$' or `[Jj](w[Xx])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -4255,10 +4399,16 @@ value.  These must be set prior to the calculation of spectral density values.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Value \\
+\midrule
+ Bond length                            &  r             &  1.02 * 1e-10                  \\
+\bottomrule
 \end{tabular}
-|                                       |              |                              |
+\end{center}
+
 | CSA                                   | csa          | -170 * 1e-6                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
@@ -4341,10 +4491,16 @@ the same data type.
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Local tm                &  tm            &  `\^{}tm\$'                                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -4379,10 +4535,16 @@ Data type & Object name & Patterns \\
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ J(0)                    &  j0            &  `\^{}[Jj]0\$' or `[Jj](0)'                            \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | J(wX)                  | jwx          | `\^{}[Jj]w[Xx]\$' or `[Jj](w[Xx])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
@@ -4402,10 +4564,16 @@ Data type & Object name & Patterns \\
 
 
 
-\begin{tabular}{ccc}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
 Data type & Object name & Patterns \\
+\midrule
+ Reference intensity     &  ref           &  `\^{}[Rr]ef\$' or `[Rr]ef[ -\_][Ii]nt'                 \\
+\bottomrule
 \end{tabular}
-|                        |              |                                                  |
+\end{center}
+
 | Saturated intensity    | sat          | `\^{}[Ss]at\$' or `[Ss]at[ -\_][Ii]nt'                |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |

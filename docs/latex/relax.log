@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  14 OCT 2005 20:08
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  14 OCT 2005 21:08
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -50,57 +50,27 @@ Package: booktabs 2000/08/16 v1.61 publication quality tables
 \@lastruleclass=\count92
 \@thisrulewidth=\dimen116
 )
-(/usr/share/texmf/tex/latex/graphics/epsfig.sty
-Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
-
-(/usr/share/texmf/tex/latex/graphics/graphicx.sty
-Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
-
-(/usr/share/texmf/tex/latex/graphics/keyval.sty
-Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
-\KV@toks@=\toks14
-)
-(/usr/share/texmf/tex/latex/graphics/graphics.sty
-Package: graphics 2001/07/07 v1.0n Standard LaTeX Graphics (DPC,SPQR)
-
-(/usr/share/texmf/tex/latex/graphics/trig.sty
-Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
-)
-(/usr/share/texmf/tex/latex/config/graphics.cfg
-File: graphics.cfg 2001/08/31 v1.1 graphics configuration of teTeX/TeXLive
-)
-Package graphics Info: Driver file: dvips.def on input line 80.
-
-(/usr/share/texmf/tex/latex/graphics/dvips.def
-File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
-))
-\Gin@req@height=\dimen117
-\Gin@req@width=\dimen118
-)
-\epsfxsize=\dimen119
-\epsfysize=\dimen120
-)
 (/usr/share/texmf/tex/latex/misc/vmargin.sty
 Package: vmargin 2000/08/01
 
 Package: vmargin 2000/08/01 V2.3 (VK) set document margins
-\PaperWidth=\dimen121
-\PaperHeight=\dimen122
+\PaperWidth=\dimen117
+\PaperHeight=\dimen118
 ) (./relax.aux)
 \openout1 = `relax.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
+LaTeX Font Info:    ... okay on input line 19.
  [1
 
 
@@ -153,1187 +123,1115 @@ Underfull \hbox (badness 10000) in paragraph at lines 274--275
  []
 
 [14] [15] [16] [17] [18] [19] [20] [21]
-Underfull \hbox (badness 10000) in paragraph at lines 550--551
+Underfull \hbox (badness 10000) in paragraph at lines 556--557
 \OT1/cmss/bx/n/10.95 grace.write\OT1/cmss/m/n/10.95 (self, run=None, x[]data[]t
 ype=`res', y[]data[]type=None, res[]num=None,
  []
 
 [22]
-Underfull \hbox (badness 10000) in paragraph at lines 651--666
-\OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][]
-[][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][]|
+Overfull \hbox (149.20206pt too wide) in paragraph at lines 667--678
+[]\OT1/cmr/m/n/10.95 | It-er-a-tion count | iter | `^[Ii]ter' | |[][][][][][][]
+[][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][][
+][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+[][][]|
  []
 
 
-Underfull \hbox (badness 4120) in paragraph at lines 651--666
+Underfull \hbox (badness 4120) in paragraph at lines 667--678
 \OT1/cmr/m/n/10.95 | | | | | Func-tion call count | f[]count | `^[Ff].*[ -[]][C
 c]ount' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 651--666
+Underfull \hbox (badness 10000) in paragraph at lines 667--678
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 3396) in paragraph at lines 651--666
+Underfull \hbox (badness 3396) in paragraph at lines 667--678
 \OT1/cmr/m/n/10.95 | | | | | Gra-di-ent call count | g[]count | `^[Gg].*[ -[]][
 Cc]ount' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 651--666
+Underfull \hbox (badness 10000) in paragraph at lines 667--678
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 4132) in paragraph at lines 651--666
+Underfull \hbox (badness 4132) in paragraph at lines 667--678
 \OT1/cmr/m/n/10.95 | | | | | Hes-sian call count | h[]count | `^[Hh].*[ -[]][Cc
 ]ount' |
  []
 
 [23]
-Overfull \hbox (18.0756pt too wide) in paragraph at lines 674--704
-\OT1/cmr/m/n/10.95 `^[Ss]2$' | |[][][][][][][][][][][][][][][][][][][][][][][][
-]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][]|
+Overfull \hbox (166.08334pt too wide) in paragraph at lines 696--722
+[]\OT1/cmr/m/n/10.95 | Or-der pa-ram-e-ter S2 | s2 | `^[Ss]2$' | |[][][][][][][
+][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2f | s2f | `^[Ss]2f$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2s | s2s | `^[Ss]2s$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time te | te | `^te$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time tf | tf | `^tf$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time ts | ts | `^ts$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][]
 [][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 674--704
+Underfull \hbox (badness 5652) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 674--704
+Underfull \hbox (badness 10000) in paragraph at lines 696--722
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 712--727
-[] \OT1/cmr/m/n/10.95 | | | | |
+Underfull \hbox (badness 10000) in paragraph at lines 740--751
+[]\OT1/cmr/m/n/10.95 | J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 712--727
-\OT1/cmr/m/n/10.95 J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 712--727
+Underfull \hbox (badness 10000) in paragraph at lines 740--751
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 712--727
+Underfull \hbox (badness 10000) in paragraph at lines 740--751
 \OT1/cmr/m/n/10.95 | | | | | J(wH) | jwh | `^[Jj]w[Hh]$' or `[Jj](w[Hh])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 712--727
+Underfull \hbox (badness 10000) in paragraph at lines 740--751
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 712--727
+Underfull \hbox (badness 5652) in paragraph at lines 740--751
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 712--727
+Underfull \hbox (badness 10000) in paragraph at lines 740--751
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 712--727
+Underfull \hbox (badness 10000) in paragraph at lines 740--751
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 735--744
-[] \OT1/cmr/m/n/10.95 | | | | | Sat-u-
+[24]
+Underfull \hbox (badness 10000) in paragraph at lines 769--774
+[]\OT1/cmr/m/n/10.95 | Sat-u-rated in-ten-sity | sat | `^[Ss]at$' or `[Ss]at[ -
+[]][Ii]nt' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 735--744
-\OT1/cmr/m/n/10.95 rated in-ten-sity | sat | `^[Ss]at$' or `[Ss]at[ -[]][Ii]nt'
+Underfull \hbox (badness 10000) in paragraph at lines 769--774
+\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
+[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+[][][][][][][][][][][][][][][][][][][][]|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 769--774
+\OT1/cmr/m/n/10.95 | | | | | NOE | noe | `^[Nn][Oo][Ee]$' |
+ []
+
+[25] [26] [27] [28] [29] [30] [31] [32] [33]
+Underfull \hbox (badness 10000) in paragraph at lines 1141--1154
+[]\OT1/cmr/m/n/10.95 | No-cedal and Wright in-ter-po-la-tion | `^[Nn][Ww][Ii]' 
+or |
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1141--1154
+\OT1/cmr/m/n/10.95 | based line search | `^[Nn]ocedal[ []][Ww]right[ []][Ii]nt'
  |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 735--744
-\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
-[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][]|
+Underfull \hbox (badness 10000) in paragraph at lines 1141--1154
+\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 735--744
-\OT1/cmr/m/n/10.95 | | | | | NOE | noe | `^[Nn][Oo][Ee]$' |
- []
-
-[24] [25] [26] [27] [28] [29] [30] [31]
-Underfull \hbox (badness 10000) in paragraph at lines 1007--1014
-[][] \OT1/cmr/m/n/10.95 | Quasi-Newton BFGS |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1007--1014
-\OT1/cmr/m/n/10.95 `^[Bb][Ff][Gg][Ss]$' | | New-ton | `^[Nn]ewton$' | |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1007--1014
-\OT1/cmr/m/n/10.95 Newton-CG | `^[Nn]ewton[ []-][Cc][Gg]$' or `^[Nn][Cc][Gg]$' 
-|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1019--1025
-[][] \OT1/cmr/m/n/10.95 | CG-Steihaug | `^[Cc][Gg][-[]
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1019--1025
-\OT1/cmr/m/n/10.95 ][Ss]teihaug' or `^[Ss]teihaug' | | Ex-act trust re-gion | `
-^[Ee]xact' |
- []
-
-[32]
-Underfull \hbox (badness 7907) in paragraph at lines 1030--1036
-\OT1/cmr/m/n/10.95 +$' | | Hestenes-Stiefel | `^[Hh][Ss]$' or `^[Hh]estenes[-[]
- ][Ss]tiefel$' |
- []
-
-
-Overfull \hbox (132.3828pt too wide) in paragraph at lines 1041--1045
-[][] \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][]| 
- []
-
-
-Underfull \hbox (badness 1389) in paragraph at lines 1065--1082
-[][] \OT1/cmr/m/n/10.95 | | | | No-cedal and Wright in-ter-po-la-tion
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1065--1082
-\OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][
-][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
-][][][][][][][][][][][][][][][][][][][][]|
- []
-
-
-Underfull \hbox (badness 6910) in paragraph at lines 1065--1082
+Underfull \hbox (badness 6910) in paragraph at lines 1141--1154
 \OT1/cmr/m/n/10.95 | | | | No-cedal and Wright line search | `^[Nn][Ww][Ww]' or
  |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1065--1082
+Underfull \hbox (badness 10000) in paragraph at lines 1141--1154
 \OT1/cmr/m/n/10.95 | for the Wolfe con-di-tions | `^[Nn]ocedal[ []][Ww]right[ [
 ]][Ww]olfe' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1065--1082
+Underfull \hbox (badness 10000) in paragraph at lines 1141--1154
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][]| | |
  []
 
 
-Overfull \hbox (116.35196pt too wide) in paragraph at lines 1065--1082
+Overfull \hbox (116.35196pt too wide) in paragraph at lines 1141--1154
 \OT1/cmr/m/n/10.95 | No line search | `^[Nn]one$' | |[][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]| 
  []
 
-
-Underfull \hbox (badness 1389) in paragraph at lines 1088--1106
-\OT1/cmr/m/n/10.95 | | Cholesky with added mul-ti-ple of | `^[Cc]hol' | | the i
-den-tity | |
+[34]
+Overfull \hbox (159.75662pt too wide) in paragraph at lines 1170--1184
+[]\OT1/cmr/m/n/10.95 | Eigen-value mod-i-fi-ca-tion | `^[Ee]igen' | |[][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][]|
  []
 
-[33]
-Overfull \hbox (80.4006pt too wide) in paragraph at lines 1115--1119
-[][] \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][]| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1170--1184
+\OT1/cmr/m/n/10.95 | | |[][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][][][][]|
  []
 
-[34] [35] [36]
-Underfull \hbox (badness 10000) in paragraph at lines 1230--1231
+[35] [36] [37]
+Underfull \hbox (badness 10000) in paragraph at lines 1314--1315
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(`test', `large[]model', `mf[
 ]ext', [`S2f', `tf', `S2', `ts',
  []
 
-[37] [38] [39] [40] [41] [42]
-Underfull \hbox (badness 10000) in paragraph at lines 1489--1490
+[38] [39] [40] [41] [42] [43]
+Underfull \hbox (badness 10000) in paragraph at lines 1573--1574
 []\OT1/cmtt/m/n/9 relax> model[]selection(method=`AIC', modsel[]run=`mixed', ru
 ns=[`m1', `m2', `m3', `m4',
  []
 
-[43] [44] [45] [46] [47] [48] [49] [50] [51] [52] [53] [54] [55] [56] [57]
-[58]
-Underfull \hbox (badness 10000) in paragraph at lines 2122--2123
+[44] [45] [46] [47] [48] [49] [50] [51] [52] [53] [54] [55] [56] [57] [58]
+[59]
+Underfull \hbox (badness 10000) in paragraph at lines 2206--2207
 \OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
 spec-trum[]type=None, res[]num=None,
  []
 
-[59] [60] [61] [62]
-Underfull \hbox (badness 10000) in paragraph at lines 2256--2257
+[60] [61] [62] [63]
+Underfull \hbox (badness 10000) in paragraph at lines 2340--2341
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
-[63] [64] [65]
-Underfull \hbox (badness 1158) in paragraph at lines 2347--2348
+[64] [65] [66]
+Underfull \hbox (badness 1158) in paragraph at lines 2431--2432
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
-[66] [67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79] [80]
-[81] [82] [83] [84] [85] [86] [87] [88] [89] [90] [91] [92] [93] [94] [95]
-[96] [97] [98] [99] [100]
-Overfull \hbox (18.0756pt too wide) in paragraph at lines 3615--3645
-\OT1/cmr/m/n/10.95 `^[Ss]2$' | |[][][][][][][][][][][][][][][][][][][][][][][][
-]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][]|
+[67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81]
+[82] [83] [84] [85] [86] [87] [88] [89] [90] [91] [92] [93] [94] [95] [96]
+[97] [98] [99] [100] [101]
+Overfull \hbox (166.08334pt too wide) in paragraph at lines 3709--3735
+[]\OT1/cmr/m/n/10.95 | Or-der pa-ram-e-ter S2 | s2 | `^[Ss]2$' | |[][][][][][][
+][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2f | s2f | `^[Ss]2f$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2s | s2s | `^[Ss]2s$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time te | te | `^te$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time tf | tf | `^tf$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time ts | ts | `^ts$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][]
 [][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 3615--3645
+Underfull \hbox (badness 5652) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3645
+Underfull \hbox (badness 10000) in paragraph at lines 3709--3735
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3686
-[] \OT1/cmr/m/n/10.95 | | | | |
+[102]
+Underfull \hbox (badness 10000) in paragraph at lines 3771--3782
+[]\OT1/cmr/m/n/10.95 | J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3686
-\OT1/cmr/m/n/10.95 J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3686
+Underfull \hbox (badness 10000) in paragraph at lines 3771--3782
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3686
+Underfull \hbox (badness 10000) in paragraph at lines 3771--3782
 \OT1/cmr/m/n/10.95 | | | | | J(wH) | jwh | `^[Jj]w[Hh]$' or `[Jj](w[Hh])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3686
+Underfull \hbox (badness 10000) in paragraph at lines 3771--3782
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 3671--3686
+Underfull \hbox (badness 5652) in paragraph at lines 3771--3782
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3686
+Underfull \hbox (badness 10000) in paragraph at lines 3771--3782
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3686
+Underfull \hbox (badness 10000) in paragraph at lines 3771--3782
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
-[101] [102] [103]
-Overfull \hbox (18.0756pt too wide) in paragraph at lines 3761--3791
-\OT1/cmr/m/n/10.95 `^[Ss]2$' | |[][][][][][][][][][][][][][][][][][][][][][][][
-]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][]|
+[103] [104]
+Overfull \hbox (166.08334pt too wide) in paragraph at lines 3867--3893
+[]\OT1/cmr/m/n/10.95 | Or-der pa-ram-e-ter S2 | s2 | `^[Ss]2$' | |[][][][][][][
+][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2f | s2f | `^[Ss]2f$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2s | s2s | `^[Ss]2s$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time te | te | `^te$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time tf | tf | `^tf$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time ts | ts | `^ts$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][]
 [][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 3761--3791
+Underfull \hbox (badness 5652) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3761--3791
+Underfull \hbox (badness 10000) in paragraph at lines 3867--3893
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3799--3814
-[] \OT1/cmr/m/n/10.95 | | | | |
+Underfull \hbox (badness 10000) in paragraph at lines 3911--3922
+[]\OT1/cmr/m/n/10.95 | J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3799--3814
-\OT1/cmr/m/n/10.95 J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3799--3814
+Underfull \hbox (badness 10000) in paragraph at lines 3911--3922
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3799--3814
+Underfull \hbox (badness 10000) in paragraph at lines 3911--3922
 \OT1/cmr/m/n/10.95 | | | | | J(wH) | jwh | `^[Jj]w[Hh]$' or `[Jj](w[Hh])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3799--3814
+Underfull \hbox (badness 10000) in paragraph at lines 3911--3922
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 3799--3814
+Underfull \hbox (badness 5652) in paragraph at lines 3911--3922
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3799--3814
+Underfull \hbox (badness 10000) in paragraph at lines 3911--3922
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3799--3814
+Underfull \hbox (badness 10000) in paragraph at lines 3911--3922
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
-[104]
-Underfull \hbox (badness 6493) in paragraph at lines 3827--3828
+[105]
+Underfull \hbox (badness 6493) in paragraph at lines 3935--3936
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
  []
 
-[105]
-Overfull \hbox (18.0756pt too wide) in paragraph at lines 3898--3928
-\OT1/cmr/m/n/10.95 `^[Ss]2$' | |[][][][][][][][][][][][][][][][][][][][][][][][
-]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][]|
+[106]
+Overfull \hbox (166.08334pt too wide) in paragraph at lines 4016--4042
+[]\OT1/cmr/m/n/10.95 | Or-der pa-ram-e-ter S2 | s2 | `^[Ss]2$' | |[][][][][][][
+][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2f | s2f | `^[Ss]2f$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2s | s2s | `^[Ss]2s$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time te | te | `^te$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time tf | tf | `^tf$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time ts | ts | `^ts$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][]
 [][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 3898--3928
+Underfull \hbox (badness 5652) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3898--3928
-\OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
- []
-
-[106]
-Underfull \hbox (badness 10000) in paragraph at lines 3954--3969
-[] \OT1/cmr/m/n/10.95 | | | | |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3954--3969
-\OT1/cmr/m/n/10.95 J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3954--3969
-\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
-[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][]|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3954--3969
-\OT1/cmr/m/n/10.95 | | | | | J(wH) | jwh | `^[Jj]w[Hh]$' or `[Jj](w[Hh])' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3954--3969
-\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
-[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][]|
- []
-
-
-Underfull \hbox (badness 5652) in paragraph at lines 3954--3969
-\OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
-' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3954--3969
-\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
-[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][]|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3954--3969
+Underfull \hbox (badness 10000) in paragraph at lines 4016--4042
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
 [107]
-Overfull \hbox (107.79147pt too wide) in paragraph at lines 4017--4049
-[][] \OT1/cmr/m/n/10.95 |[][][][][][][]|[][][][][][][]|[][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
-][][][][][][][][][][][][][][][][][][][][][][]|
+Underfull \hbox (badness 10000) in paragraph at lines 4078--4089
+[]\OT1/cmr/m/n/10.95 | J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4017--4049
-\OT1/cmr/m/n/10.95 | | | | | 1 | None | In-valid com-bi-na-tion. |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 4017--4049
-\OT1/cmr/m/n/10.95 |[][][][][][][]|[][][][][][][]|[][][][][][][][][][][][][][][
-][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+Underfull \hbox (badness 10000) in paragraph at lines 4078--4089
+\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
+[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 1052) in paragraph at lines 4017--4049
+Underfull \hbox (badness 10000) in paragraph at lines 4078--4089
+\OT1/cmr/m/n/10.95 | | | | | J(wH) | jwh | `^[Jj]w[Hh]$' or `[Jj](w[Hh])' |
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 4078--4089
+\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
+[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+[][][][][][][][][][][][][][][][][][][][]|
+ []
+
+
+Underfull \hbox (badness 5652) in paragraph at lines 4078--4089
+\OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
+' |
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 4078--4089
+\OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
+[][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+[][][][][][][][][][][][][][][][][][][][]|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 4078--4089
+\OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
+ []
+
+[108]
+Overfull \hbox (152.96356pt too wide) in paragraph at lines 4148--4175
+[]\OT1/cmr/m/n/10.95 | 1 | None | In-valid com-bi-na-tion. | |[][][][][][][]|[]
+[][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][]|
+ []
+
+
+Underfull \hbox (badness 1052) in paragraph at lines 4148--4175
 \OT1/cmr/m/n/10.95 | | | | | n | None | This case is used to set the model pa-r
 am-e-ters
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4017--4049
+Underfull \hbox (badness 10000) in paragraph at lines 4148--4175
 \OT1/cmr/m/n/10.95 | |[][][][][][][]|[][][][][][][]|[][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4017--4049
+Underfull \hbox (badness 10000) in paragraph at lines 4148--4175
 \OT1/cmr/m/n/10.95 | | | | | n | 1 | In-valid com-bi-na-tion. |
  []
 
-[108] [109]
-Overfull \hbox (18.0756pt too wide) in paragraph at lines 4142--4172
-\OT1/cmr/m/n/10.95 `^[Ss]2$' | |[][][][][][][][][][][][][][][][][][][][][][][][
-]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][]|
+[109] [110]
+Overfull \hbox (166.08334pt too wide) in paragraph at lines 4278--4304
+[]\OT1/cmr/m/n/10.95 | Or-der pa-ram-e-ter S2 | s2 | `^[Ss]2$' | |[][][][][][][
+][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2f | s2f | `^[Ss]2f$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2s | s2s | `^[Ss]2s$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time te | te | `^te$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time tf | tf | `^tf$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time ts | ts | `^ts$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][]
 [][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 4142--4172
+Underfull \hbox (badness 5652) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4142--4172
+Underfull \hbox (badness 10000) in paragraph at lines 4278--4304
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
-[110]
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
-[] \OT1/cmr/m/n/10.95 | | | | | Or-der pa-
+[111]
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
+[]\OT1/cmr/m/n/10.95 | Or-der pa-ram-e-ters S2, S2f, and S2s | s2, s2f, s2s | 0
+.8 |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
-\OT1/cmr/m/n/10.95 ram-e-ters S2, S2f, and S2s | s2, s2f, s2s | 0.8 |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time te | te | 100 * 1e-12 |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time tf | tf | 10 * 1e-12 |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time ts | ts | 1000 * 1e-12 |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 | | | | | Chem-i-cal ex-change re-lax-ation | rex | 0.0 |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | 1.02 * 1e-10 |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4197--4221
+Underfull \hbox (badness 10000) in paragraph at lines 4339--4359
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | -170 * 1e-6 |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4229--4244
-[] \OT1/cmr/m/n/10.95 | | | | |
+Underfull \hbox (badness 10000) in paragraph at lines 4377--4388
+[]\OT1/cmr/m/n/10.95 | J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4229--4244
-\OT1/cmr/m/n/10.95 J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 4229--4244
+Underfull \hbox (badness 10000) in paragraph at lines 4377--4388
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4229--4244
+Underfull \hbox (badness 10000) in paragraph at lines 4377--4388
 \OT1/cmr/m/n/10.95 | | | | | J(wH) | jwh | `^[Jj]w[Hh]$' or `[Jj](w[Hh])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4229--4244
+Underfull \hbox (badness 10000) in paragraph at lines 4377--4388
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 4229--4244
+Underfull \hbox (badness 5652) in paragraph at lines 4377--4388
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4229--4244
+Underfull \hbox (badness 10000) in paragraph at lines 4377--4388
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4229--4244
+Underfull \hbox (badness 10000) in paragraph at lines 4377--4388
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
-[111] [112] [113]
-Overfull \hbox (18.0756pt too wide) in paragraph at lines 4344--4374
-\OT1/cmr/m/n/10.95 `^[Ss]2$' | |[][][][][][][][][][][][][][][][][][][][][][][][
-]|[][][][][][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][]|
+[112]
+Overfull \hbox (91.13533pt too wide) in paragraph at lines 4412--4414
+[]\OT1/cmr/m/n/10.95 | CSA | csa | -170 * 1e-6 | |[][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]| 
+ []
+
+[113] [114]
+Overfull \hbox (166.08334pt too wide) in paragraph at lines 4504--4530
+[]\OT1/cmr/m/n/10.95 | Or-der pa-ram-e-ter S2 | s2 | `^[Ss]2$' | |[][][][][][][
+][][][][][][][][][][][][][][][][][]|[][][][][][][][][][][][][][]|[][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2f | s2f | `^[Ss]2f$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | | | | | Or-der pa-ram-e-ter S2s | s2s | `^[Ss]2s$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time te | te | `^te$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time tf | tf | `^tf$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | | | | | Cor-re-la-tion time ts | ts | `^ts$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]| |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][]
 [][][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 4344--4374
+Underfull \hbox (badness 5652) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4344--4374
+Underfull \hbox (badness 10000) in paragraph at lines 4504--4530
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4382--4397
-[] \OT1/cmr/m/n/10.95 | | | | |
+Underfull \hbox (badness 10000) in paragraph at lines 4548--4559
+[]\OT1/cmr/m/n/10.95 | J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4382--4397
-\OT1/cmr/m/n/10.95 J(wX) | jwx | `^[Jj]w[Xx]$' or `[Jj](w[Xx])' |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 4382--4397
+Underfull \hbox (badness 10000) in paragraph at lines 4548--4559
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4382--4397
+Underfull \hbox (badness 10000) in paragraph at lines 4548--4559
 \OT1/cmr/m/n/10.95 | | | | | J(wH) | jwh | `^[Jj]w[Hh]$' or `[Jj](w[Hh])' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4382--4397
+Underfull \hbox (badness 10000) in paragraph at lines 4548--4559
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 4382--4397
+Underfull \hbox (badness 5652) in paragraph at lines 4548--4559
 \OT1/cmr/m/n/10.95 | | | | | Bond length | r | `^r$' or `[Bb]ond[ -[]][Ll]ength
 ' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4382--4397
+Underfull \hbox (badness 10000) in paragraph at lines 4548--4559
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4382--4397
+Underfull \hbox (badness 10000) in paragraph at lines 4548--4559
 \OT1/cmr/m/n/10.95 | | | | | CSA | csa | `^[Cc][Ss][Aa]$' |
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 4405--4414
-[] \OT1/cmr/m/n/10.95 | | | | | Sat-u-
+[115]
+Underfull \hbox (badness 10000) in paragraph at lines 4577--4582
+[]\OT1/cmr/m/n/10.95 | Sat-u-rated in-ten-sity | sat | `^[Ss]at$' or `[Ss]at[ -
+[]][Ii]nt' |
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4405--4414
-\OT1/cmr/m/n/10.95 rated in-ten-sity | sat | `^[Ss]at$' or `[Ss]at[ -[]][Ii]nt'
- |
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 4405--4414
+Underfull \hbox (badness 10000) in paragraph at lines 4577--4582
 \OT1/cmr/m/n/10.95 |[][][][][][][][][][][][][][][][][][][][][][][][]|[][][][][]
 [][][][][][][][][]|[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][]|
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4405--4414
+Underfull \hbox (badness 10000) in paragraph at lines 4577--4582
 \OT1/cmr/m/n/10.95 | | | | | NOE | noe | `^[Nn][Oo][Ee]$' |
  []
 
-[114] [115]) [116] (./relax.aux) ) 
+[116]) [117] (./relax.aux) ) 
 Here is how much of TeX's memory you used:
- 1006 strings out of 95756
- 11620 string characters out of 1190795
- 82410 words of memory out of 1000001
- 4012 multiletter control sequences out of 10000+50000
+ 671 strings out of 95756
+ 7467 string characters out of 1190795
+ 77781 words of memory out of 1000001
+ 3699 multiletter control sequences out of 10000+50000
  10695 words of font info for 38 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
- 32i,6n,21p,1020b,229s stack positions out of 3000i,1500n,5000p,200000b,15000s
+ 23i,7n,19p,1020b,257s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (116 pages, 362208 bytes).
+Output written on relax.dvi (117 pages, 357400 bytes).
