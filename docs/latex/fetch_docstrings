@@ -3,7 +3,7 @@
 from inspect import formatargspec, getargspec, getdoc
 from re import match, search
 import sys
-from string import lstrip, replace, rstrip, split
+from string import lstrip, punctuation, replace, rstrip, split, whitespace
 
 # Add the path to the relax base directory.
 sys.path.append(sys.path[0])
@@ -703,6 +703,19 @@ class Fetch_docstrings:
         # In equation.
         string = replace(string,    '*'+text,           '*'+latex)
         string = replace(string,    text+'*',           latex+'*')
+
+        # At the start of the line.
+        if search('^'+text+'['+punctuation+']', string) or search('^'+text+'['+whitespace+']', string):
+            string = replace(string,    text+' ',           latex+' ')
+            string = replace(string,    text+',',           latex+',')
+            string = replace(string,    text+'.',           latex+'.')
+            string = replace(string,    text+':',           latex+':')
+            string = replace(string,    text+';',           latex+';')
+            string = replace(string,    text+']',           latex+']')
+            string = replace(string,    text+')',           latex+')')
+            string = replace(string,    text+'\\',          latex+'\\')
+            string = replace(string,    text+'\'',          latex+'\'')
+            string = replace(string,    text+'\n',          latex+'\n')
 
 
         # Return the string.
