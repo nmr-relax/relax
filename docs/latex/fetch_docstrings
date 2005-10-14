@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 from inspect import formatargspec, getargspec, getdoc
-from re import search
+from re import match, search
 import sys
 from string import lstrip, replace, rstrip, split
 
@@ -164,11 +164,14 @@ class Fetch_docstrings:
     def latex_maths(self, string):
         """Function for handling LaTeX maths environments."""
 
+        # Pi.
+        string = self.safe_replacement(string, 'pi', '$\pi$')
+
         # Less than.
         string = replace(string, ' < ', ' $<$ ')
 
         # Less than or equal.
-        string = replace(string, ' <= ', ' $<=$ ')
+        string = replace(string, ' <= ', ' $\le$ ')
 
         # Much less than.
         string = replace(string, ' << ', ' $<<$ ')
@@ -177,7 +180,7 @@ class Fetch_docstrings:
         string = replace(string, ' > ', ' $>$ ')
 
         # Greater than or equal.
-        string = replace(string, ' >= ', ' $>=$ ')
+        string = replace(string, ' >= ', ' $\ge$ ')
 
         # Much greater than.
         string = replace(string, ' >> ', ' $>>$ ')
@@ -189,14 +192,39 @@ class Fetch_docstrings:
         return string
 
 
-    def latex_pipeline(self, string):
-        """This will process the given string and return a new string properly formatted for LaTeX."""
+    def latex_pipeline_initial(self, string):
+        """Initial LaTeX conversion pipeline."""
 
         # Translate to LaTeX quotation marks.
         string = self.latex_quotes(string)
 
         # Prefix the backslash to the special LaTeX characters.
         string = self.latex_special_chars(string)
+
+        # Return the LaTeX string.
+        return string
+
+
+    def latex_pipeline_final(self, string):
+        """Final LaTeX conversion pipeline."""
+
+        # Skip the newly created environments.
+        ######################################
+
+        # The example environment.
+        if search('example{', string):
+            return string
+
+        # The keyword environment.
+        if search('keyword{', string):
+            return string
+
+
+        # LaTeX maths.
+        string = self.latex_maths(string)
+
+        # Model-free parameters.
+        string = self.parameter_replement(string)
 
         # Return the LaTeX string.
         return string
@@ -250,6 +278,93 @@ class Fetch_docstrings:
         return string
 
 
+    def parameter_replement(self, string):
+        """Function for LaTeXing special parameter names."""
+
+        # Model-free parameters.
+        ########################
+
+        # S2f.
+        string = self.safe_replacement(string, 'S2f', '$S^2_f$')
+
+        # S2s.
+        string = self.safe_replacement(string, 'S2s', '$S^2_s$')
+
+        # S2.
+        string = self.safe_replacement(string, 'S2', '$S^2$')
+
+        # te.
+        string = self.safe_replacement(string, 'te', '$\\tau_e$')
+
+        # ts.
+        string = self.safe_replacement(string, 'ts', '$\\tau_s$')
+
+        # tf.
+        string = self.safe_replacement(string, 'tf', '$\\tau_f$')
+
+        # tm.
+        string = self.safe_replacement(string, 'tm', '$\\tau_m$')
+
+        # Rex.
+        string = self.safe_replacement(string, 'Rex', '$R_{ex}$')
+
+        # CSA.
+        string = self.safe_replacement(string, 'CSA', '$CSA$')
+
+        # r.
+        string = self.safe_replacement(string, 'r', '$r$')
+
+
+        # Diffusion tensor parameters.
+        ##############################
+
+        # Diso.
+        string = self.safe_replacement(string, 'Diso', '$\Diff_{iso}$')
+
+        # Da.
+        string = self.safe_replacement(string, 'Da', '$\Diff_a$')
+
+        # Dr.
+        string = self.safe_replacement(string, 'Dr', '$\Diff_r$')
+
+        # Dx.
+        string = self.safe_replacement(string, 'Dx', '$\Diff_x$')
+
+        # Dy.
+        string = self.safe_replacement(string, 'Dy', '$\Diff_y$')
+
+        # Dz.
+        string = self.safe_replacement(string, 'Dz', '$\Diff_z$')
+
+        # Dpar.
+        string = self.safe_replacement(string, 'Dpar', '$\Diff_\Par$')
+
+        # Dper.
+        string = self.safe_replacement(string, 'Dper', '$\Diff_\Per$')
+
+        # Dratio.
+        string = self.safe_replacement(string, 'Dratio', '$\Diff_{ratio}$')
+
+        # alpha.
+        string = self.safe_replacement(string, 'alpha', '$\\alpha$')
+
+        # beta.
+        string = self.safe_replacement(string, 'beta', '$\\beta$')
+
+        # gamma.
+        string = self.safe_replacement(string, 'gamma', '$\\gamma$')
+
+        # theta.
+        string = self.safe_replacement(string, 'theta', '$\\theta$')
+
+        # phi.
+        string = self.safe_replacement(string, 'phi', '$\\phi$')
+
+
+        # Return the new text.
+        return string
+
+
     def print_docstring(self, function, object):
         """Function for creating the LaTeX file."""
 
@@ -257,7 +372,7 @@ class Fetch_docstrings:
         #############
 
         # Comment out underscores in the function name.
-        function_name = self.latex_pipeline(function)
+        function_name = self.latex_pipeline_initial(function)
 
         # Get the docstring.
         docstring = getdoc(object)
@@ -287,7 +402,9 @@ class Fetch_docstrings:
         self.file.write("\n\\subsubsection{Synopsis}\n\n")
 
         # Write the synopsis.
-        self.file.write(self.latex_pipeline(self.docstring_lines[0]) + "\n")
+        synopsis = self.latex_pipeline_initial(self.docstring_lines[0])
+        synopsis = self.latex_pipeline_final(synopsis)
+        self.file.write(synopsis + "\n")
 
 
         # Arguments.
@@ -309,7 +426,7 @@ class Fetch_docstrings:
         arguments = formatargspec(args, varargs, varkw, defaults)
 
         # Write the synopsis.
-        self.file.write(self.latex_pipeline(arguments))
+        self.file.write(self.latex_pipeline_initial(arguments))
 
         # End typewriter font.
         self.file.write("}\n\n")
@@ -332,9 +449,9 @@ class Fetch_docstrings:
             # Pull out the section lines (skip the title line, tilde line, and first blank line).
             lines = self.docstring_lines[self.section_start[i]+3:self.section_end[i]]
 
-            # Loop over the section line by line and translate to LaTeX text.
+            # Initial LaTeX conversion pipeline.
             for j in xrange(len(lines)):
-                lines[j] = self.latex_pipeline(lines[j])
+                lines[j] = self.latex_pipeline_initial(lines[j])
 
             # Format the 'Keyword Arguements' section.
             if search('^Keyword ', self.section_title):
@@ -348,9 +465,12 @@ class Fetch_docstrings:
                 # relax> example lines.
                 lines = self.relax_examples(lines)
 
-            # Maths (must be dead last).
+                # 
+                #lines = self.relax_examples(lines)
+
+            # Final LaTeX conversion pipeline.
             for j in xrange(len(lines)):
-                lines[j] = self.latex_maths(lines[j])
+                lines[j] = self.latex_pipeline_final(lines[j])
 
             # Loop over the section line by line and write them.
             for line in lines:
@@ -412,6 +532,71 @@ class Fetch_docstrings:
 
         # Return the lines.
         return new_lines
+
+
+    def safe_replacement(self, string, text, latex):
+        """Only replace in safe places within the text."""
+
+        # Combos (if only RE could be used!)
+
+        # A number out the front.
+        string = replace(string,    '0'+text,           '0'+latex)
+        string = replace(string,    '1'+text,           '1'+latex)
+        string = replace(string,    '2'+text,           '2'+latex)
+        string = replace(string,    '3'+text,           '3'+latex)
+        string = replace(string,    '4'+text,           '4'+latex)
+        string = replace(string,    '5'+text,           '5'+latex)
+        string = replace(string,    '6'+text,           '6'+latex)
+        string = replace(string,    '7'+text,           '7'+latex)
+        string = replace(string,    '8'+text,           '8'+latex)
+        string = replace(string,    '9'+text,           '9'+latex)
+
+        # In a sentence.
+        string = replace(string,    ' '+text+',',       ' '+latex+',')
+        string = replace(string,    ' '+text+'.',       ' '+latex+'.')
+        string = replace(string,    ' '+text+' ',       ' '+latex+' ')
+        string = replace(string,    ' '+text+';',       ' '+latex+';')
+
+        # In lists [].
+        string = replace(string,    '['+text+']',       '['+latex+']')
+        string = replace(string,    '['+text+' ',       '['+latex+' ')
+        string = replace(string,    '['+text+',',       '['+latex+',')
+        string = replace(string,    '['+text+';',       '['+latex+';')
+        string = replace(string,    ' '+text+']',       ' '+latex+']')
+
+        # In lists ().
+        string = replace(string,    '('+text+')',       '('+latex+')')
+        string = replace(string,    '('+text+' ',       '('+latex+' ')
+        string = replace(string,    '('+text+',',       '('+latex+',')
+        string = replace(string,    '('+text+';',       '('+latex+';')
+        string = replace(string,    ' '+text+')',       ' '+latex+')')
+
+        # In lists {}.
+        string = replace(string,    '{'+text+' ',       '{'+latex+' ')
+        string = replace(string,    '{'+text+',',       '{'+latex+',')
+        string = replace(string,    '{'+text+';',       '{'+latex+';')
+        string = replace(string,    ' '+text+'\\',      ' '+latex+'\\')
+
+        # Quoted.
+        string = replace(string,    '`'+text+'\'',      '`'+latex+'\'')
+        string = replace(string,    '`'+text+' ',       '`'+latex+' ')
+        string = replace(string,    '`'+text+',',       '`'+latex+',')
+        string = replace(string,    '`'+text+'.',       '`'+latex+'.')
+        string = replace(string,    '`'+text+';',       '`'+latex+';')
+        string = replace(string,    ' '+text+'\'',      ' '+latex+'\'')
+
+        # End of the line.
+        substring = replace(string[-len(text)-1:],    ' '+text,      ' '+latex)
+        string = string[0:-len(text)-1] + substring
+
+        substring = replace(string[-len(text)-1:],    '.'+text,      '.'+latex)
+        string = string[0:-len(text)-1] + substring
+
+        string = replace(string,    ' '+text+'\n',      ' '+latex+'\n')
+        string = replace(string,    '.'+text+'\n',      '.'+latex+'\n')
+
+        # Return the string.
+        return string
 
 
     def section_positions(self):

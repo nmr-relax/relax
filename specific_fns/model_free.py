@@ -1248,13 +1248,13 @@ class Model_free(Common_functions):
 
         These parameters may experience the same problem as the local tm in that the model fails and
         the parameter value is stuck at the upper limit.  These parameters are constrained using the
-        formula 'te, tf, ts <= 2.tm'.  These failed models are eliminated using the rule:
+        formula 'te, tf, ts <= 2tm'.  These failed models are eliminated using the rule:
 
             te, tf, ts >= c.tm
 
         The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
         setting c to 2 will result in no models being eliminated as the minimised parameters will
-        always be less than 2.tm.  The value can be changed by supplying the value as the second
+        always be less than 2tm.  The value can be changed by supplying the value as the second
         element of the tuple.
 
 

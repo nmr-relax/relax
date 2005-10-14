@@ -22,7 +22,7 @@ Function for calculating the angles between the XH bond vector and the diffusion
 
 If the diffusion tensor is isotropic for the run, then nothing will be done.
 
-If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for
+If the diffusion tensor is axially symmetric, then the angle $\alpha$ will be calculated for
 each XH bond vector.
 
 If the diffusion tensor is fully anisotropic, then the three angles will be calculated.
@@ -156,11 +156,11 @@ number.  The number is the value of the isotropic global correlation time in sec
 specify the time in nanoseconds, set the `time\_scale' argument to 1e-9.  Alternative
 parameters can be used by changing the `param\_types' flag to the following integers:
 
-    0 - tm   (Default)
-    1 - Diso
+    0 - $\tau_m$   (Default)
+    1 - $\Diff_{iso}$
 
 where:
-    tm = 1 / 6Diso
+    $\tau_m$ = 1 / 6$\Diff_{iso}$
 
 
 Axially symmetric diffusion.
@@ -170,34 +170,34 @@ of floating point numbers of length four.  A tuple is a type of data structure e
 round brackets, the elements of which are separated by commas.  Alternative sets of
 parameters, `param\_types', are:
 
-    0 - (tm, Da, theta, phi)   (Default)
-    1 - (tm, Dratio, theta, phi)
-    2 - (Dpar, Dper, theta, phi)
-    3 - (Diso, Da, theta, phi)
-    4 - (Diso, Dratio, theta, phi)
+    0 - ($\tau_m$, $\Diff_a$, $\theta$, $\phi$)   (Default)
+    1 - ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$)
+    2 - ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$)
+    3 - ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$)
+    4 - ($\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$)
 
 where:
-    tm = 1 / 6Diso
-    Diso = 1/3 (Dpar + 2Dper)
-    Da = 1/3 (Dpar - Dper)
-    Dratio = Dpar / Dper
+    $\tau_m$ = 1 / 6$\Diff_{iso}$
+    $\Diff_{iso}$ = 1/3 ($\Diff_\Par$ + 2$\Diff_\Per$)
+    $\Diff_a$ = 1/3 ($\Diff_\Par$ - $\Diff_\Per$)
+    $\Diff_{ratio}$ = $\Diff_\Par$ / $\Diff_\Per$
 
-The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
-vector with respect to the diffusion frame while the spherical angles \{theta, phi\} describe
-the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and phi is the
+The diffusion tensor is defined by the vector $\Diff_\Par$.  The angle $\alpha$ describes the bond
+vector with respect to the diffusion frame while the spherical angles \{$\theta$, $\phi$\} describe
+the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and $\phi$ is the
 azimuthal angle defined between:
-    0 $<=$ theta $<=$ pi
-    0 $<=$ phi $<=$ 2pi
-The angle alpha is defined between:
-    0 $<=$ alpha $<=$ 2pi
+    0 $\le$ $\theta$ $\le$ $\pi$
+    0 $\le$ $\phi$ $\le$ 2$\pi$
+The angle $\alpha$ is defined between:
+    0 $\le$ $\alpha$ $\le$ 2$\pi$
 
 The `axial\_type' argument should be `oblate', `prolate', or None.  The argument will be
 ignored if the diffusion tensor is not axially symmetric.  If `oblate' is given, then the
-constraint Dper $>=$ Dpar is used.  If `prolate' is given, then the constraint Dper $<=$ Dpar is
-used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
+constraint $\Diff_\Per$ $\ge$ $\Diff_\Par$ is used.  If `prolate' is given, then the constraint $\Diff_\Per$ $\le$ $\Diff_\Par$ is
+used.  If nothing is supplied, then $\Diff_\Per$ and $\Diff_\Par$ will be allowed to have any values.  To
 prevent minimisation of diffusion tensor parameters in a space with two minima, it is
 recommended to specify which tensor to be minimised, thereby partitioning the two minima
-into the two subspaces (the partition is where Da equals 0).
+into the two subspaces (the partition is where $\Diff_a$ equals 0).
 
 
 Anisotropic diffusion.
@@ -206,40 +206,40 @@ To select fully anisotropic diffusion, the parameters argument should be a tuple
 six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
 are separated by commas.  Alternative sets of parameters, `param\_types', are:
 
-    0 - (tm, Da, Dr, alpha, beta, gamma)   (Default)
-    1 - (Diso, Da, Dr, alpha, beta, gamma)
-    2 - (Dx, Dy, Dz, alpha, beta, gamma)
+    0 - ($\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)   (Default)
+    1 - ($\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)
+    2 - ($\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$)
 
 where:
-    tm = 1 / 6Diso
-    Diso = 1/3 (Dx + Dy + Dz)
-    Da = 1/3 (Dz - (Dx + Dy)/2)
-    Dr = (Dx - Dy)/2
+    $\tau_m$ = 1 / 6$\Diff_{iso}$
+    $\Diff_{iso}$ = 1/3 ($\Diff_x$ + $\Diff_y$ + $\Diff_z$)
+    $\Diff_a$ = 1/3 ($\Diff_z$ - ($\Diff_x$ + $\Diff_y$)/2)
+    $\Diff_r$ = ($\Diff_x$ - $\Diff_y$)/2
 
-The angles alpha, beta, and gamma are the Euler angles describing the diffusion tensor
+The angles $\alpha$, $\beta$, and $\gamma$ are the Euler angles describing the diffusion tensor
 within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where
-alpha is the initial rotation angle around the z-axis, beta is the rotation angle around the
-y-axis, and gamma is the final rotation around the z-axis again.  The angles are defined
+alpha is the initial rotation angle around the z-axis, $\beta$ is the rotation angle around the
+y-axis, and $\gamma$ is the final rotation around the z-axis again.  The angles are defined
 between:
-    0 $<=$ alpha $<=$ 2pi
-    0 $<=$ beta $<=$ pi
-    0 $<=$ gamma $<=$ 2pi
-Within the PDB frame, the bond vector is described using the spherical angels theta and phi
-where theta is the polar angle and phi is the azimuthal angle defined between:
-    0 $<=$ theta $<=$ pi
-    0 $<=$ phi $<=$ 2pi
+    0 $\le$ $\alpha$ $\le$ 2$\pi$
+    0 $\le$ $\beta$ $\le$ $\pi$
+    0 $\le$ $\gamma$ $\le$ 2$\pi$
+Within the PDB frame, the bond vector is described using the spherical angels $\theta$ and $\phi$
+where $\theta$ is the polar angle and $\phi$ is the azimuthal angle defined between:
+    0 $\le$ $\theta$ $\le$ $\pi$
+    0 $\le$ $\phi$ $\le$ 2$\pi$
 
 
 Units.
 
 The `time\_scale' argument should be a floating point number.  Parameters affected by this
-value are:  tm.
+value are:  $\tau_m$.
 
 The `d\_scale' argument should also be a floating point number.  Parameters affected by this
-value are:  Diso; Dpar; Dper; Da; Dr; Dx; Dy; Dz.
+value are:  $\Diff_{iso}$; $\Diff_\Par$; $\Diff_\Per$; $\Diff_a$; $\Diff_r$; $\Diff_x$; $\Diff_y$; $\Diff_z$.
 
 The `angle\_units' argument should either be the string `deg' or `rad'.  Parameters affected
-are:  theta; phi; alpha; beta; gamma.
+are:  $\theta$; $\phi$; $\alpha$; $\beta$; $\gamma$.
 
 
 
@@ -252,13 +252,13 @@ run `m1', type:
 
 \example{relax> diffusion\_tensor(run=`m1', params=10.0, time\_scale=1e-9, fixed=1)}
 
-To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, theta value
-of 20 degrees, and phi value of 20 degrees, and assign it to the run `m8', type:
+To select axially symmetric diffusion with a $\tau_m$ value of 8.5ns, $\Diff_{ratio}$ of 1.1, $\theta$ value
+of 20 degrees, and $\phi$ value of 20 degrees, and assign it to the run `m8', type:
 
 \example{relax> diffusion\_tensor(`m8', (8.5e-9, 1.1, 20.0, 20.0), param\_types=1)}
 
-To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
-1.417e7, theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to
+To select an axially symmetric diffusion tensor with a $\Diff_\Par$ value of 1.698e7, $\Diff_\Per$ value of
+1.417e7, $\theta$ value of 67.174 degrees, and $\phi$ value of -83.718 degrees, and assign it to
 the run `axial', type one of:
 
 \example{relax> diffusion\_tensor(`axial', (1.698e7, 1.417e7, 67.174, -83.718), param\_types=1)}
@@ -365,7 +365,7 @@ character within the brackets, \^{} means the start of the string, etc.
 \subsubsection{Examples}
 
 The following commands will generate a map of the extended model-free space defined as run
-`m5' which consists of the parameters \{S2f, S2s, ts\}.  Files will be output into the
+`m5' which consists of the parameters \{$S^2_f$, $S^2_s$, $\tau_s$\}.  Files will be output into the
 directory `dx' and will be prefixed by `map'.  The residue, in this case, is number 6.
 
 \example{relax> map(`m5', 6)}
@@ -373,12 +373,12 @@ directory `dx' and will be prefixed by `map'.  The residue, in this case, is num
 \example{relax> map(run=`m5', res\_num=6, inc=20, file="map", dir="dx")}
 
 
-The following commands will swap the S2s and ts axes of this map.
+The following commands will swap the $S^2_s$ and $\tau_s$ axes of this map.
 
 \example{relax> map(`m5', res\_num=6, swap=[0, 2, 1])}
 
 
-To map the model-free space `m4' defined by the parameters \{S2, te, Rex\}, name the results
+To map the model-free space `m4' defined by the parameters \{$S^2$, $\tau_e$, $R_{ex}$\}, name the results
 `test', and not place the files in a subdirectory, use the following commands (assuming
 residue 2).
 
@@ -431,37 +431,37 @@ that model selection, or any other function, will then skip the model.
 
 \subsubsection{Model-free model elimination rules}
 
-Local tm.
+Local $\tau_m$.
 
-The local tm, in some cases, may exceed the value expected for a global correlation time.
-Generally the tm value will be stuck at the upper limit defined for the parameter.  These
+The local $\tau_m$, in some cases, may exceed the value expected for a global correlation time.
+Generally the $\tau_m$ value will be stuck at the upper limit defined for the parameter.  These
 models are eliminated using the rule:
 
-    tm $>=$ c
+    $\tau_m$ $\ge$ c
 
 The default value of c is 50 ns, although this can be overriden by supplying the value (in
 seconds) as the first element of the args tuple.
 
 
-Internal correlation times \{te, tf, ts\}.
+Internal correlation times \{$\tau_e$, $\tau_f$, $\tau_s$\}.
 
-These parameters may experience the same problem as the local tm in that the model fails and
+These parameters may experience the same problem as the local $\tau_m$ in that the model fails and
 the parameter value is stuck at the upper limit.  These parameters are constrained using the
-formula `te, tf, ts $<=$ 2.tm'.  These failed models are eliminated using the rule:
+formula `$\tau_e$, $\tau_f$, $\tau_s$ $\le$ 2$\tau_m$'.  These failed models are eliminated using the rule:
 
-    te, tf, ts $>=$ c.tm
+    $\tau_e$, $\tau_f$, $\tau_s$ $\ge$ c.$\tau_m$
 
 The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
 setting c to 2 will result in no models being eliminated as the minimised parameters will
-always be less than 2.tm.  The value can be changed by supplying the value as the second
+always be less than 2$\tau_m$.  The value can be changed by supplying the value as the second
 element of the tuple.
 
 
 Arguments.
 
 The `args' argument must be a tuple of length 2, the elements of which must be numbers.  For
-example, to eliminate models which have a local tm value greater than 25 ns and models with
-internal correlation times greater than 1.5 times tm, set `args' to (25 * 1e-9, 1.5).
+example, to eliminate models which have a local $\tau_m$ value greater than 25 ns and models with
+internal correlation times greater than 1.5 times $\tau_m$, set `args' to (25 * 1e-9, 1.5).
 
 
 \newpage
@@ -605,13 +605,13 @@ type:
 
 \example{relax> grace.write(run=`noe', y\_data\_type=`noe', file=`noe.agr', force=1)}
 
-To create a Grace file of `S2' vs. `te' for all residues, type:
+To create a Grace file of `$S^2$' vs. `$\tau_e$' for all residues, type:
 
 \example{relax> grace.write(`m2', `S2', `te', file=`s2\_te.agr')}
 
 
 
-To create a Grace file of the Monte Carlo simulation values of `Rex' vs. `te' for residue
+To create a Grace file of the Monte Carlo simulation values of `$R_{ex}$' vs. `$\tau_e$' for residue
 123, type:
 
 \example{relax> grace.write(`m4', `Rex', `te', res\_num=123, plot\_data=`sims', file=`s2\_te.agr')}
@@ -631,11 +631,11 @@ regular expression syntax section of the Python Library Reference.  Some of the 
 expression syntax used in this function is:
 
     [] - A sequence or set of characters to match to a single character.  For example,
-    `[Ss]2' will match both `S2' and `s2'.
+    `[Ss]2' will match both `$S^2$' and `s2'.
 
     \^{} - Match the start of the string.
 
-    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `S2f'
+    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `$S^2_f$'
     or `s2s'.
 
     . - Match any character.
@@ -688,36 +688,36 @@ Data type & Object name & Patterns \\
 \toprule
 Data type & Object name & Patterns \\
 \midrule
- Local tm                &  tm            &  `\^{}tm\$'                                            \\
+ Local $\tau_m$                &  $\tau_m$            &  `\^{}tm\$'                                            \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
+| Order parameter $S^2$     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | `\^{}[Ss]2f\$'                                       |
+| Order parameter $S^2_f$    | s2f          | `\^{}[Ss]2f\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | `\^{}[Ss]2s\$'                                       |
+| Order parameter $S^2_s$    | s2s          | `\^{}[Ss]2s\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | `\^{}te\$'                                           |
+| Correlation time $\tau_e$    | $\tau_e$           | `\^{}te\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | `\^{}tf\$'                                           |
+| Correlation time $\tau_f$    | $\tau_f$           | `\^{}tf\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | `\^{}ts\$'                                           |
+| Correlation time $\tau_s$    | $\tau_s$           | `\^{}ts\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
 | Chemical exchange      | rex          | `\^{}[Rr]ex\$' or `[Cc]emical[ -\_][Ee]xchange'       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -743,10 +743,10 @@ Data type & Object name & Patterns \\
 | J(wH)                  | jwh          | `\^{}[Jj]w[Hh]\$' or `[Jj](w[Hh])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -930,8 +930,8 @@ methods, perform extemely poorly with badly scaled problems.  In addition, metho
 insensitive to scaling such as Newton minimisation may still benefit due to the minimisation
 of round off errors.
 
-In Model-free analysis for example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz,
-the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  Rex is divided by
+In Model-free analysis for example, if $S^2$ = 0.5, $\tau_e$ = 200 ps, and $R_{ex}$ = 15 1/s at 600 MHz,
+the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  $R_{ex}$ is divided by
 (2*pi*600,000,000)**2 to make it field strength independent.  The scaling vector for this
 model may be something like [1.0, 1e-9, 1/(2*pi*6*1e8)**2].  By dividing the unscaled
 parameter vector by the scaling vector the scaled parameter vector is [0.5, 0.2, 15.0].  To
@@ -988,9 +988,9 @@ below this value, minimisation is terminated.
 
 \keyword{grad\_tol:}  The gradient tolerance value.
 
-\keyword{A:}  Linear constraint matrix m*n (A.x $>=$ b).
+\keyword{A:}  Linear constraint matrix m*n (A.x >= b).
 
-\keyword{l:}  Lower bound constraint vector (l $<=$ x $<=$ u).
+\keyword{l:}  Lower bound constraint vector (l <= x <= u).
 
 \keyword{c:}  User supplied constraint function.
 
@@ -1267,9 +1267,9 @@ Function to create a model-free model.
 
 Model-free equation.
 
-`mf\_orig' selects the original model-free equations with parameters \{S2, te\}.
-`mf\_ext' selects the extended model-free equations with parameters \{S2f, tf, S2, ts\}.
-`mf\_ext2' selects the extended model-free equations with parameters \{S2f, tf, S2s, ts\}.
+`mf\_orig' selects the original model-free equations with parameters \{$S^2$, $\tau_e$\}.
+`mf\_ext' selects the extended model-free equations with parameters \{$S^2_f$, $\tau_f$, $S^2$, $\tau_s$\}.
+`mf\_ext2' selects the extended model-free equations with parameters \{$S^2_f$, $\tau_f$, $S^2_s$, $\tau_s$\}.
 
 
 Model-free parameters.
@@ -1280,7 +1280,7 @@ The following parameters are accepted for the original model-free equation:
 The following parameters are accepted for the extended model-free equation:
     S2f:    The square of the generalised order parameter of the faster motion.
     tf:     The effective correlation time of the faster motion.
-    S2:     The square of the generalised order parameter S2 = S2f*S2s.
+    S2:     The square of the generalised order parameter $S^2$ = S2f*S2s.
     ts:     The effective correlation time of the slower motion.
 The following parameters are accepted for the extended 2 model-free equation:
     S2f:    The square of the generalised order parameter of the faster motion.
@@ -1302,14 +1302,14 @@ otherwise the model will be created for all residues.
 \subsubsection{Examples}
 
 The following commands will create the model-free model `m1' which is based on the original
-model-free equation and contains the single parameter `S2'.
+model-free equation and contains the single parameter `$S^2$'.
 
 \example{relax> model\_free.create\_model(`m1', `m1', `mf\_orig', [`S2'])}
 
 
 The following commands will create the model-free model `large\_model' which is based on the
-extended model-free equation and contains the seven parameters `S2f', `tf', `S2', `ts',
-`Rex', `CSA', `r'.
+extended model-free equation and contains the seven parameters `$S^2_f$', `$\tau_f$', `$S^2$', `$\tau_s$',
+`$R_{ex}$', `$CSA$', `$r$'.
 
 \example{relax> model\_free.create\_model(`test', `large\_model', `mf\_ext', [`S2f', `tf', `S2', `ts', `Rex', `CSA', `r'])}
 
@@ -1348,7 +1348,7 @@ To delete all model-free data corresponding to the run `m2', type:
 
 \subsubsection{Synopsis}
 
-Function for removing the local tm parameter from a model.
+Function for removing the local $\tau_m$ parameter from a model.
 
 \subsubsection{Default arguments}
 
@@ -1362,8 +1362,8 @@ Function for removing the local tm parameter from a model.
 
 \subsubsection{Description}
 
-This function will remove the local tm parameter from the model-free parameters of the given
-run.  Model-free parameters must already exist within the run yet, if there is no local tm,
+This function will remove the local $\tau_m$ parameter from the model-free parameters of the given
+run.  Model-free parameters must already exist within the run yet, if there is no local $\tau_m$,
 nothing will happen.
 
 If no residue number is given, then the function will apply to all residues.
@@ -1371,7 +1371,7 @@ If no residue number is given, then the function will apply to all residues.
 
 \subsubsection{Examples}
 
-The following commands will remove the parameter `tm' from the run `local\_tm':
+The following commands will remove the parameter `$\tau_m$' from the run `local\_tm':
 
 \example{relax> model\_free.remove\_tm(`local\_tm')}
 
@@ -1400,100 +1400,100 @@ Function for the selection of a preset model-free model.
 
 The preset model-free models are:
     `m0'    => []
-    `m1'    => [S2]
-    `m2'    => [S2, te]
-    `m3'    => [S2, Rex]
-    `m4'    => [S2, te, Rex]
-    `m5'    => [S2f, S2, ts]
-    `m6'    => [S2f, tf, S2, ts]
-    `m7'    => [S2f, S2, ts, Rex]
-    `m8'    => [S2f, tf, S2, ts, Rex]
-    `m9'    => [Rex]
+    `m1'    => [$S^2$]
+    `m2'    => [$S^2$, $\tau_e$]
+    `m3'    => [$S^2$, $R_{ex}$]
+    `m4'    => [$S^2$, $\tau_e$, $R_{ex}$]
+    `m5'    => [$S^2_f$, $S^2$, $\tau_s$]
+    `m6'    => [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `m7'    => [$S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m8'    => [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m9'    => [$R_{ex}$]
 
-    `m10'   => [CSA]
-    `m11'   => [CSA, S2]
-    `m12'   => [CSA, S2, te]
-    `m13'   => [CSA, S2, Rex]
-    `m14'   => [CSA, S2, te, Rex]
-    `m15'   => [CSA, S2f, S2, ts]
-    `m16'   => [CSA, S2f, tf, S2, ts]
-    `m17'   => [CSA, S2f, S2, ts, Rex]
-    `m18'   => [CSA, S2f, tf, S2, ts, Rex]
-    `m19'   => [CSA, Rex]
+    `m10'   => [$CSA$]
+    `m11'   => [$CSA$, $S^2$]
+    `m12'   => [$CSA$, $S^2$, $\tau_e$]
+    `m13'   => [$CSA$, $S^2$, $R_{ex}$]
+    `m14'   => [$CSA$, $S^2$, $\tau_e$, $R_{ex}$]
+    `m15'   => [$CSA$, $S^2_f$, $S^2$, $\tau_s$]
+    `m16'   => [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `m17'   => [$CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m18'   => [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m19'   => [$CSA$, $R_{ex}$]
 
-    `m20'   => [r]
-    `m21'   => [r, S2]
-    `m22'   => [r, S2, te]
-    `m23'   => [r, S2, Rex]
-    `m24'   => [r, S2, te, Rex]
-    `m25'   => [r, S2f, S2, ts]
-    `m26'   => [r, S2f, tf, S2, ts]
-    `m27'   => [r, S2f, S2, ts, Rex]
-    `m28'   => [r, S2f, tf, S2, ts, Rex]
-    `m29'   => [r, CSA, Rex]
+    `m20'   => [$r$]
+    `m21'   => [$r$, $S^2$]
+    `m22'   => [$r$, $S^2$, $\tau_e$]
+    `m23'   => [$r$, $S^2$, $R_{ex}$]
+    `m24'   => [$r$, $S^2$, $\tau_e$, $R_{ex}$]
+    `m25'   => [$r$, $S^2_f$, $S^2$, $\tau_s$]
+    `m26'   => [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `m27'   => [$r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m28'   => [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m29'   => [$r$, $CSA$, $R_{ex}$]
 
-    `m30'   => [r, CSA]
-    `m31'   => [r, CSA, S2]
-    `m32'   => [r, CSA, S2, te]
-    `m33'   => [r, CSA, S2, Rex]
-    `m34'   => [r, CSA, S2, te, Rex]
-    `m35'   => [r, CSA, S2f, S2, ts]
-    `m36'   => [r, CSA, S2f, tf, S2, ts]
-    `m37'   => [r, CSA, S2f, S2, ts, Rex]
-    `m38'   => [r, CSA, S2f, tf, S2, ts, Rex]
-    `m39'   => [r, CSA, Rex]
+    `m30'   => [$r$, $CSA$]
+    `m31'   => [$r$, $CSA$, $S^2$]
+    `m32'   => [$r$, $CSA$, $S^2$, $\tau_e$]
+    `m33'   => [$r$, $CSA$, $S^2$, $R_{ex}$]
+    `m34'   => [$r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$]
+    `m35'   => [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$]
+    `m36'   => [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `m37'   => [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m38'   => [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `m39'   => [$r$, $CSA$, $R_{ex}$]
 
 Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
 relaxation data.  This is due to the extreme flexibly of these models where a change in the
-parameter `r' is compensated by a corresponding change in the parameter `CSA' and
+parameter `$r$' is compensated by a corresponding change in the parameter `$CSA$' and
 vice versa.
 
 
 Additional preset model-free models, which are simply extensions of the above models with
-the addition of a local tm parameter are:
-    `tm0'   => [tm]
-    `tm1'   => [tm, S2]
-    `tm2'   => [tm, S2, te]
-    `tm3'   => [tm, S2, Rex]
-    `tm4'   => [tm, S2, te, Rex]
-    `tm5'   => [tm, S2f, S2, ts]
-    `tm6'   => [tm, S2f, tf, S2, ts]
-    `tm7'   => [tm, S2f, S2, ts, Rex]
-    `tm8'   => [tm, S2f, tf, S2, ts, Rex]
-    `tm9'   => [tm, Rex]
+the addition of a local $\tau_m$ parameter are:
+    `tm0'   => [$\tau_m$]
+    `tm1'   => [$\tau_m$, $S^2$]
+    `tm2'   => [$\tau_m$, $S^2$, $\tau_e$]
+    `tm3'   => [$\tau_m$, $S^2$, $R_{ex}$]
+    `tm4'   => [$\tau_m$, $S^2$, $\tau_e$, $R_{ex}$]
+    `tm5'   => [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$]
+    `tm6'   => [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `tm7'   => [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm8'   => [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm9'   => [$\tau_m$, $R_{ex}$]
 
-    `tm10'  => [tm, CSA]
-    `tm11'  => [tm, CSA, S2]
-    `tm12'  => [tm, CSA, S2, te]
-    `tm13'  => [tm, CSA, S2, Rex]
-    `tm14'  => [tm, CSA, S2, te, Rex]
-    `tm15'  => [tm, CSA, S2f, S2, ts]
-    `tm16'  => [tm, CSA, S2f, tf, S2, ts]
-    `tm17'  => [tm, CSA, S2f, S2, ts, Rex]
-    `tm18'  => [tm, CSA, S2f, tf, S2, ts, Rex]
-    `tm19'  => [tm, CSA, Rex]
+    `tm10'  => [$\tau_m$, $CSA$]
+    `tm11'  => [$\tau_m$, $CSA$, $S^2$]
+    `tm12'  => [$\tau_m$, $CSA$, $S^2$, $\tau_e$]
+    `tm13'  => [$\tau_m$, $CSA$, $S^2$, $R_{ex}$]
+    `tm14'  => [$\tau_m$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$]
+    `tm15'  => [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$]
+    `tm16'  => [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `tm17'  => [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm18'  => [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm19'  => [$\tau_m$, $CSA$, $R_{ex}$]
 
-    `tm20'  => [tm, r]
-    `tm21'  => [tm, r, S2]
-    `tm22'  => [tm, r, S2, te]
-    `tm23'  => [tm, r, S2, Rex]
-    `tm24'  => [tm, r, S2, te, Rex]
-    `tm25'  => [tm, r, S2f, S2, ts]
-    `tm26'  => [tm, r, S2f, tf, S2, ts]
-    `tm27'  => [tm, r, S2f, S2, ts, Rex]
-    `tm28'  => [tm, r, S2f, tf, S2, ts, Rex]
-    `tm29'  => [tm, r, CSA, Rex]
+    `tm20'  => [$\tau_m$, $r$]
+    `tm21'  => [$\tau_m$, $r$, $S^2$]
+    `tm22'  => [$\tau_m$, $r$, $S^2$, $\tau_e$]
+    `tm23'  => [$\tau_m$, $r$, $S^2$, $R_{ex}$]
+    `tm24'  => [$\tau_m$, $r$, $S^2$, $\tau_e$, $R_{ex}$]
+    `tm25'  => [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$]
+    `tm26'  => [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `tm27'  => [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm28'  => [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm29'  => [$\tau_m$, $r$, $CSA$, $R_{ex}$]
 
-    `tm30'  => [tm, r, CSA]
-    `tm31'  => [tm, r, CSA, S2]
-    `tm32'  => [tm, r, CSA, S2, te]
-    `tm33'  => [tm, r, CSA, S2, Rex]
-    `tm34'  => [tm, r, CSA, S2, te, Rex]
-    `tm35'  => [tm, r, CSA, S2f, S2, ts]
-    `tm36'  => [tm, r, CSA, S2f, tf, S2, ts]
-    `tm37'  => [tm, r, CSA, S2f, S2, ts, Rex]
-    `tm38'  => [tm, r, CSA, S2f, tf, S2, ts, Rex]
-    `tm39'  => [tm, r, CSA, Rex]
+    `tm30'  => [$\tau_m$, $r$, $CSA$]
+    `tm31'  => [$\tau_m$, $r$, $CSA$, $S^2$]
+    `tm32'  => [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$]
+    `tm33'  => [$\tau_m$, $r$, $CSA$, $S^2$, $R_{ex}$]
+    `tm34'  => [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$]
+    `tm35'  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$]
+    `tm36'  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
+    `tm37'  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm38'  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
+    `tm39'  => [$\tau_m$, $r$, $CSA$, $R_{ex}$]
 
 
 
@@ -2268,7 +2268,7 @@ The format argument can currently be set to:
 
 If the format argument is set to `sparky', the file should be a Sparky peak list saved after
 typing the command `lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
-3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
+3$r$d, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
 The frequency data w1 and w2 are ignored while the peak intensity data can either be the
 peak height or volume displayed by changing the window options.  If the peak intensity data
 is not within column 3, set the argument int\_col to the appropriate value (column numbering
@@ -2725,7 +2725,7 @@ The format argument can currently be set to:
 
 If the format argument is set to `sparky', the file should be a Sparky peak list saved after
 typing the command `lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
-3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
+3$r$d, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
 The frequency data w1 and w2 are ignored while the peak intensity data can either be the
 peak height or volume displayed by changing the window options.  If the peak intensity data
 is not within column 3, set the argument int\_col to the appropriate value (column numbering
@@ -3656,7 +3656,7 @@ and Hessian count) will be reset to None.
 
 \subsubsection{Examples}
 
-To copy the CSA values from the run `m1' to `m2', type:
+To copy the $CSA$ values from the run `m1' to `m2', type:
 
 \example{relax> value.copy(`m1', `m2', `CSA')}
 
@@ -3673,11 +3673,11 @@ regular expression syntax section of the Python Library Reference.  Some of the 
 expression syntax used in this function is:
 
     [] - A sequence or set of characters to match to a single character.  For example,
-    `[Ss]2' will match both `S2' and `s2'.
+    `[Ss]2' will match both `$S^2$' and `s2'.
 
     \^{} - Match the start of the string.
 
-    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `S2f'
+    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `$S^2_f$'
     or `s2s'.
 
     . - Match any character.
@@ -3701,36 +3701,36 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
- Local tm                &  tm            &  `\^{}tm\$'                                            \\
+ Local $\tau_m$                &  $\tau_m$            &  `\^{}tm\$'                                            \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
+| Order parameter $S^2$     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | `\^{}[Ss]2f\$'                                       |
+| Order parameter $S^2_f$    | s2f          | `\^{}[Ss]2f\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | `\^{}[Ss]2s\$'                                       |
+| Order parameter $S^2_s$    | s2s          | `\^{}[Ss]2s\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | `\^{}te\$'                                           |
+| Correlation time $\tau_e$    | $\tau_e$           | `\^{}te\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | `\^{}tf\$'                                           |
+| Correlation time $\tau_f$    | $\tau_f$           | `\^{}tf\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | `\^{}ts\$'                                           |
+| Correlation time $\tau_s$    | $\tau_s$           | `\^{}ts\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
 | Chemical exchange      | rex          | `\^{}[Rr]ex\$' or `[Cc]emical[ -\_][Ee]xchange'       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -3738,18 +3738,18 @@ Data type & Object name & Patterns \\
 \subsubsection{Model-free set details}
 
 Setting a parameter value may have no effect depending on which model-free model is chosen,
-for example if S2f values and S2s values are set but the run corresponds to model-free model
+for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model
 `m4' then, because these data values are not parameters of the model, they will have no
 effect.
 
-Note that the Rex values are scaled quadratically with field strength and should be supplied
+Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied
 as a field strength independent value.  Use the following formula to get the correct value:
 
-    value = Rex / (2.0 * pi * frequency) ** 2
+    value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
 
 where:
-    Rex is the chemical exchange value for the current frequency.
-    pi is in the namespace of relax, ie just type `pi'.
+    $R_{ex}$ is the chemical exchange value for the current frequency.
+    $\pi$ is in the namespace of relax, ie just type `$\pi$'.
     frequency is the proton frequency corresponding to the data.
 
 
@@ -3774,17 +3774,17 @@ Data type & Object name & Patterns \\
 | J(wH)                  | jwh          | `\^{}[Jj]w[Hh]\$' or `[Jj](w[Hh])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and CSA
+In reduced spectral density mapping, only two values can be set, the bond length and $CSA$
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -3814,7 +3814,7 @@ Only one data type may be selected, therefore the data type argument should be a
 
 \subsubsection{Examples}
 
-To show all CSA values for the run `m1', type:
+To show all $CSA$ values for the run `m1', type:
 
 \example{relax> value.display(`m1', `CSA')}
 
@@ -3831,11 +3831,11 @@ regular expression syntax section of the Python Library Reference.  Some of the 
 expression syntax used in this function is:
 
     [] - A sequence or set of characters to match to a single character.  For example,
-    `[Ss]2' will match both `S2' and `s2'.
+    `[Ss]2' will match both `$S^2$' and `s2'.
 
     \^{} - Match the start of the string.
 
-    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `S2f'
+    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `$S^2_f$'
     or `s2s'.
 
     . - Match any character.
@@ -3859,36 +3859,36 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
- Local tm                &  tm            &  `\^{}tm\$'                                            \\
+ Local $\tau_m$                &  $\tau_m$            &  `\^{}tm\$'                                            \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
+| Order parameter $S^2$     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | `\^{}[Ss]2f\$'                                       |
+| Order parameter $S^2_f$    | s2f          | `\^{}[Ss]2f\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | `\^{}[Ss]2s\$'                                       |
+| Order parameter $S^2_s$    | s2s          | `\^{}[Ss]2s\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | `\^{}te\$'                                           |
+| Correlation time $\tau_e$    | $\tau_e$           | `\^{}te\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | `\^{}tf\$'                                           |
+| Correlation time $\tau_f$    | $\tau_f$           | `\^{}tf\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | `\^{}ts\$'                                           |
+| Correlation time $\tau_s$    | $\tau_s$           | `\^{}ts\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
 | Chemical exchange      | rex          | `\^{}[Rr]ex\$' or `[Cc]emical[ -\_][Ee]xchange'       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -3914,10 +3914,10 @@ Data type & Object name & Patterns \\
 | J(wH)                  | jwh          | `\^{}[Jj]w[Hh]\$' or `[Jj](w[Hh])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -3959,7 +3959,7 @@ and Hessian count) will be reset to None.
 
 \subsubsection{Examples}
 
-To load CSA values for the run `m1' from the file `csa\_values' in the directory `data', type
+To load $CSA$ values for the run `m1' from the file `csa\_values' in the directory `data', type
 any of the following:
 
 \example{relax> value.read(`m1', `CSA', `data/csa\_value')}
@@ -3980,11 +3980,11 @@ regular expression syntax section of the Python Library Reference.  Some of the 
 expression syntax used in this function is:
 
     [] - A sequence or set of characters to match to a single character.  For example,
-    `[Ss]2' will match both `S2' and `s2'.
+    `[Ss]2' will match both `$S^2$' and `s2'.
 
     \^{} - Match the start of the string.
 
-    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `S2f'
+    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `$S^2_f$'
     or `s2s'.
 
     . - Match any character.
@@ -4008,36 +4008,36 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
- Local tm                &  tm            &  `\^{}tm\$'                                            \\
+ Local $\tau_m$                &  $\tau_m$            &  `\^{}tm\$'                                            \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
+| Order parameter $S^2$     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | `\^{}[Ss]2f\$'                                       |
+| Order parameter $S^2_f$    | s2f          | `\^{}[Ss]2f\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | `\^{}[Ss]2s\$'                                       |
+| Order parameter $S^2_s$    | s2s          | `\^{}[Ss]2s\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | `\^{}te\$'                                           |
+| Correlation time $\tau_e$    | $\tau_e$           | `\^{}te\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | `\^{}tf\$'                                           |
+| Correlation time $\tau_f$    | $\tau_f$           | `\^{}tf\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | `\^{}ts\$'                                           |
+| Correlation time $\tau_s$    | $\tau_s$           | `\^{}ts\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
 | Chemical exchange      | rex          | `\^{}[Rr]ex\$' or `[Cc]emical[ -\_][Ee]xchange'       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -4045,18 +4045,18 @@ Data type & Object name & Patterns \\
 \subsubsection{Model-free set details}
 
 Setting a parameter value may have no effect depending on which model-free model is chosen,
-for example if S2f values and S2s values are set but the run corresponds to model-free model
+for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model
 `m4' then, because these data values are not parameters of the model, they will have no
 effect.
 
-Note that the Rex values are scaled quadratically with field strength and should be supplied
+Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied
 as a field strength independent value.  Use the following formula to get the correct value:
 
-    value = Rex / (2.0 * pi * frequency) ** 2
+    value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
 
 where:
-    Rex is the chemical exchange value for the current frequency.
-    pi is in the namespace of relax, ie just type `pi'.
+    $R_{ex}$ is the chemical exchange value for the current frequency.
+    $\pi$ is in the namespace of relax, ie just type `$\pi$'.
     frequency is the proton frequency corresponding to the data.
 
 
@@ -4081,17 +4081,17 @@ Data type & Object name & Patterns \\
 | J(wH)                  | jwh          | `\^{}[Jj]w[Hh]\$' or `[Jj](w[Hh])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and CSA
+In reduced spectral density mapping, only two values can be set, the bond length and $CSA$
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -4191,17 +4191,17 @@ type:
 \example{relax> value.set(`test')}
 
 To set the parameter values of residue 10, which is the model-free run `m4' and has the
-parameters \{S2, te, Rex\}, the following can be used.  Rex term is the value for the first
+parameters \{$S^2$, $\tau_e$, $R_{ex}$\}, the following can be used.  $R_{ex}$ term is the value for the first
 given field strength.
 
 \example{relax> value.set(`m4', [0.97, 2.048*1e-9, 0.149], res\_num=10)}
 
 
-To set the CSA value for the model-free run `tm3' to the default value, type:
+To set the $CSA$ value for the model-free run `tm3' to the default value, type:
 
 \example{relax> value.set(`tm3', data\_type=`csa')}
 
-To set the CSA value of all residues in the reduced spectral density mapping run `600MHz' to
+To set the $CSA$ value of all residues in the reduced spectral density mapping run `600MHz' to
 -170 ppm, type:
 
 \example{relax> value.set(`600MHz', -170 * 1e-6, `csa')}
@@ -4213,17 +4213,17 @@ type:
 \example{relax> value.set(`m5', 1.02 * 1e-10, `bond\_length')}
 
 
-To set both the bond length and the CSA value for the run `new' to the default values, type:
+To set both the bond length and the $CSA$ value for the run `new' to the default values, type:
 
 \example{relax> value.set(`new', data\_type=[`bond length', `csa'])}
 
-To set both tf and ts in the model-free run `m6' to 100 ps, type:
+To set both $\tau_f$ and $\tau_s$ in the model-free run `m6' to 100 ps, type:
 
 \example{relax> value.set(`m6', 100e-12, [`tf', `ts'])}
 
 
-To set the S2 and te parameter values for model-free run `m4' which has the parameters
-\{S2, te, Rex\} to 0.56 and 13 ps, type:
+To set the $S^2$ and $\tau_e$ parameter values for model-free run `m4' which has the parameters
+\{$S^2$, $\tau_e$, $R_{ex}$\} to 0.56 and 13 ps, type:
 
 \example{relax> value.set(`m4', [0.56, 13e-12], [`S2', `te'], 10)}
 
@@ -4242,11 +4242,11 @@ regular expression syntax section of the Python Library Reference.  Some of the 
 expression syntax used in this function is:
 
     [] - A sequence or set of characters to match to a single character.  For example,
-    `[Ss]2' will match both `S2' and `s2'.
+    `[Ss]2' will match both `$S^2$' and `s2'.
 
     \^{} - Match the start of the string.
 
-    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `S2f'
+    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `$S^2_f$'
     or `s2s'.
 
     . - Match any character.
@@ -4270,36 +4270,36 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
- Local tm                &  tm            &  `\^{}tm\$'                                            \\
+ Local $\tau_m$                &  $\tau_m$            &  `\^{}tm\$'                                            \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
+| Order parameter $S^2$     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | `\^{}[Ss]2f\$'                                       |
+| Order parameter $S^2_f$    | s2f          | `\^{}[Ss]2f\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | `\^{}[Ss]2s\$'                                       |
+| Order parameter $S^2_s$    | s2s          | `\^{}[Ss]2s\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | `\^{}te\$'                                           |
+| Correlation time $\tau_e$    | $\tau_e$           | `\^{}te\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | `\^{}tf\$'                                           |
+| Correlation time $\tau_f$    | $\tau_f$           | `\^{}tf\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | `\^{}ts\$'                                           |
+| Correlation time $\tau_s$    | $\tau_s$           | `\^{}ts\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
 | Chemical exchange      | rex          | `\^{}[Rr]ex\$' or `[Cc]emical[ -\_][Ee]xchange'       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -4307,18 +4307,18 @@ Data type & Object name & Patterns \\
 \subsubsection{Model-free set details}
 
 Setting a parameter value may have no effect depending on which model-free model is chosen,
-for example if S2f values and S2s values are set but the run corresponds to model-free model
+for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model
 `m4' then, because these data values are not parameters of the model, they will have no
 effect.
 
-Note that the Rex values are scaled quadratically with field strength and should be supplied
+Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied
 as a field strength independent value.  Use the following formula to get the correct value:
 
-    value = Rex / (2.0 * pi * frequency) ** 2
+    value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
 
 where:
-    Rex is the chemical exchange value for the current frequency.
-    pi is in the namespace of relax, ie just type `pi'.
+    $R_{ex}$ is the chemical exchange value for the current frequency.
+    $\pi$ is in the namespace of relax, ie just type `$\pi$'.
     frequency is the proton frequency corresponding to the data.
 
 
@@ -4331,30 +4331,30 @@ where:
 \toprule
 Data type & Object name & Value \\
 \midrule
- Local tm                               &  tm            &  10 * 1e-9                     \\
+ Local $\tau_m$                               &  $\tau_m$            &  10 * 1e-9                     \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameters S2, S2f, and S2s     | s2, s2f, s2s | 0.8                          |
+| Order parameters $S^2$, $S^2_f$, and $S^2_s$     | s2, s2f, s2s | 0.8                          |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                       |              |                              |
-| Correlation time te                   | te           | 100 * 1e-12                  |
+| Correlation time $\tau_e$                   | $\tau_e$           | 100 * 1e-12                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                       |              |                              |
-| Correlation time tf                   | tf           | 10 * 1e-12                   |
+| Correlation time $\tau_f$                   | $\tau_f$           | 10 * 1e-12                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                       |              |                              |
-| Correlation time ts                   | ts           | 1000 * 1e-12                 |
+| Correlation time $\tau_s$                   | $\tau_s$           | 1000 * 1e-12                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                       |              |                              |
 | Chemical exchange relaxation          | rex          | 0.0                          |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                       |              |                              |
-| Bond length                           | r            | 1.02 * 1e-10                 |
+| Bond length                           | $r$            | 1.02 * 1e-10                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                                       |              |                              |
-| CSA                                   | csa          | -170 * 1e-6                  |
+| $CSA$                                   | csa          | -170 * 1e-6                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -4380,17 +4380,17 @@ Data type & Object name & Patterns \\
 | J(wH)                  | jwh          | `\^{}[Jj]w[Hh]\$' or `[Jj](w[Hh])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and CSA
+In reduced spectral density mapping, only two values can be set, the bond length and $CSA$
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -4404,12 +4404,12 @@ value.  These must be set prior to the calculation of spectral density values.
 \toprule
 Data type & Object name & Value \\
 \midrule
- Bond length                            &  r             &  1.02 * 1e-10                  \\
+ Bond length                            &  $r$             &  1.02 * 1e-10                  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| CSA                                   | csa          | -170 * 1e-6                  |
+| $CSA$                                   | csa          | -170 * 1e-6                  |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -4444,7 +4444,7 @@ The data type argument should be a string.
 
 \subsubsection{Examples}
 
-To write the CSA values for the run `m1' to the file `csa.txt', type:
+To write the $CSA$ values for the run `m1' to the file `csa.txt', type:
 
 \example{relax> value.write(`m1', `CSA', `csa.txt')}
 
@@ -4468,11 +4468,11 @@ regular expression syntax section of the Python Library Reference.  Some of the 
 expression syntax used in this function is:
 
     [] - A sequence or set of characters to match to a single character.  For example,
-    `[Ss]2' will match both `S2' and `s2'.
+    `[Ss]2' will match both `$S^2$' and `s2'.
 
     \^{} - Match the start of the string.
 
-    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `S2f'
+    \$ - Match the end of the string.  For example, `\^{}[Ss]2\$' will match `s2' but not `$S^2_f$'
     or `s2s'.
 
     . - Match any character.
@@ -4496,36 +4496,36 @@ the same data type.
 \toprule
 Data type & Object name & Patterns \\
 \midrule
- Local tm                &  tm            &  `\^{}tm\$'                                            \\
+ Local $\tau_m$                &  $\tau_m$            &  `\^{}tm\$'                                            \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-| Order parameter S2     | s2           | `\^{}[Ss]2\$'                                        |
+| Order parameter $S^2$     | s2           | `\^{}[Ss]2\$'                                        |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2f    | s2f          | `\^{}[Ss]2f\$'                                       |
+| Order parameter $S^2_f$    | s2f          | `\^{}[Ss]2f\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Order parameter S2s    | s2s          | `\^{}[Ss]2s\$'                                       |
+| Order parameter $S^2_s$    | s2s          | `\^{}[Ss]2s\$'                                       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time te    | te           | `\^{}te\$'                                           |
+| Correlation time $\tau_e$    | $\tau_e$           | `\^{}te\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time tf    | tf           | `\^{}tf\$'                                           |
+| Correlation time $\tau_f$    | $\tau_f$           | `\^{}tf\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Correlation time ts    | ts           | `\^{}ts\$'                                           |
+| Correlation time $\tau_s$    | $\tau_s$           | `\^{}ts\$'                                           |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
 | Chemical exchange      | rex          | `\^{}[Rr]ex\$' or `[Cc]emical[ -\_][Ee]xchange'       |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
@@ -4551,10 +4551,10 @@ Data type & Object name & Patterns \\
 | J(wH)                  | jwh          | `\^{}[Jj]w[Hh]\$' or `[Jj](w[Hh])'                   |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| Bond length            | r            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
+| Bond length            | $r$            | `\^{}r\$' or `[Bb]ond[ -\_][Ll]ength'                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 |                        |              |                                                  |
-| CSA                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
+| $CSA$                    | csa          | `\^{}[Cc][Ss][Aa]\$'                                 |
 |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|
 
 
