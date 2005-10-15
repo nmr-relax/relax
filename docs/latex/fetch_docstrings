@@ -137,7 +137,7 @@ class Fetch_docstrings:
                     sys.exit()
 
                 # Initialise the new keyword line.
-                new_lines.append("\\keyword{" + line_elements[0] + ":}")
+                new_lines.append("\n\\keyword{" + line_elements[0] + ":}")
                 example_line = line_elements[1]
 
                 # Shift to the next line.
@@ -147,14 +147,10 @@ class Fetch_docstrings:
                 while 1:
                     # No more lines!
                     if len(lines) <= i:
-                        # Increment the line counter then break.
-                        i = i + 1
                         break
 
                     # Find the next blank line.
                     if len(lines[i]) == 0:
-                        # Increment the line counter then break.
-                        i = i + 1
                         break
 
                     # Add the line.

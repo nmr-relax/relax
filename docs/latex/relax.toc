@@ -42,7 +42,7 @@
 \contentsline {subsubsection}{Synopsis}{16}
 \contentsline {subsubsection}{Default arguments}{16}
 \contentsline {subsubsection}{Keyword Arguments}{16}
-\contentsline {subsubsection}{Map type}{16}
+\contentsline {subsubsection}{Map type}{17}
 \contentsline {subsubsection}{Examples}{17}
 \contentsline {subsection}{\numberline {1.3.11}eliminate}{18}
 \contentsline {subsubsection}{Synopsis}{18}
@@ -96,10 +96,10 @@
 \contentsline {subsubsection}{Default arguments}{31}
 \contentsline {subsubsection}{Arguments}{31}
 \contentsline {subsubsection}{Keyword Arguments}{31}
-\contentsline {subsubsection}{Description}{31}
+\contentsline {subsubsection}{Description}{32}
 \contentsline {subsubsection}{Examples}{32}
 \contentsline {subsubsection}{Keyword Arguments}{33}
-\contentsline {subsubsection}{Minimisation algorithms}{33}
+\contentsline {subsubsection}{Minimisation algorithms}{34}
 \contentsline {subsubsection}{Minimisation options}{35}
 \contentsline {subsection}{\numberline {1.3.21}model\_free.copy}{37}
 \contentsline {subsubsection}{Synopsis}{37}
@@ -203,195 +203,184 @@
 \contentsline {subsubsection}{Default arguments}{69}
 \contentsline {subsubsection}{Keyword Arguments}{69}
 \contentsline {subsubsection}{Description}{69}
-\contentsline {subsection}{\numberline {1.3.40}palmer.execute}{70}
-\contentsline {subsubsection}{Synopsis}{70}
-\contentsline {subsubsection}{Default arguments}{70}
-\contentsline {subsubsection}{Keyword Arguments}{70}
-\contentsline {subsubsection}{Description}{70}
-\contentsline {subsection}{\numberline {1.3.41}palmer.extract}{71}
+\contentsline {subsection}{\numberline {1.3.40}palmer.execute}{71}
 \contentsline {subsubsection}{Synopsis}{71}
 \contentsline {subsubsection}{Default arguments}{71}
 \contentsline {subsubsection}{Keyword Arguments}{71}
-\contentsline {subsection}{\numberline {1.3.42}pdb}{72}
+\contentsline {subsubsection}{Description}{71}
+\contentsline {subsection}{\numberline {1.3.41}palmer.extract}{72}
 \contentsline {subsubsection}{Synopsis}{72}
 \contentsline {subsubsection}{Default arguments}{72}
 \contentsline {subsubsection}{Keyword Arguments}{72}
-\contentsline {subsubsection}{Description}{72}
-\contentsline {subsubsection}{Example}{72}
-\contentsline {subsection}{\numberline {1.3.43}relax\_data.back\_calc}{73}
+\contentsline {subsection}{\numberline {1.3.42}pdb}{73}
 \contentsline {subsubsection}{Synopsis}{73}
 \contentsline {subsubsection}{Default arguments}{73}
 \contentsline {subsubsection}{Keyword Arguments}{73}
-\contentsline {subsection}{\numberline {1.3.44}relax\_data.copy}{74}
-\contentsline {subsubsection}{Synopsis}{74}
-\contentsline {subsubsection}{Default arguments}{74}
-\contentsline {subsubsection}{Keyword Arguments}{74}
-\contentsline {subsubsection}{Description}{74}
-\contentsline {subsubsection}{Examples}{74}
-\contentsline {subsection}{\numberline {1.3.45}relax\_data.delete}{75}
+\contentsline {subsubsection}{Description}{73}
+\contentsline {subsubsection}{Example}{73}
+\contentsline {subsection}{\numberline {1.3.43}relax\_data.back\_calc}{75}
 \contentsline {subsubsection}{Synopsis}{75}
 \contentsline {subsubsection}{Default arguments}{75}
 \contentsline {subsubsection}{Keyword Arguments}{75}
-\contentsline {subsubsection}{Examples}{75}
-\contentsline {subsection}{\numberline {1.3.46}relax\_data.display}{76}
+\contentsline {subsection}{\numberline {1.3.44}relax\_data.copy}{76}
 \contentsline {subsubsection}{Synopsis}{76}
 \contentsline {subsubsection}{Default arguments}{76}
 \contentsline {subsubsection}{Keyword Arguments}{76}
+\contentsline {subsubsection}{Description}{76}
 \contentsline {subsubsection}{Examples}{76}
-\contentsline {subsection}{\numberline {1.3.47}relax\_data.read}{77}
+\contentsline {subsection}{\numberline {1.3.45}relax\_data.delete}{77}
 \contentsline {subsubsection}{Synopsis}{77}
 \contentsline {subsubsection}{Default arguments}{77}
 \contentsline {subsubsection}{Keyword Arguments}{77}
-\contentsline {subsubsection}{Description}{77}
 \contentsline {subsubsection}{Examples}{77}
-\contentsline {subsection}{\numberline {1.3.48}relax\_data.write}{79}
+\contentsline {subsection}{\numberline {1.3.46}relax\_data.display}{78}
+\contentsline {subsubsection}{Synopsis}{78}
+\contentsline {subsubsection}{Default arguments}{78}
+\contentsline {subsubsection}{Keyword Arguments}{78}
+\contentsline {subsubsection}{Examples}{78}
+\contentsline {subsection}{\numberline {1.3.47}relax\_data.read}{79}
 \contentsline {subsubsection}{Synopsis}{79}
 \contentsline {subsubsection}{Default arguments}{79}
 \contentsline {subsubsection}{Keyword Arguments}{79}
 \contentsline {subsubsection}{Description}{79}
-\contentsline {subsection}{\numberline {1.3.49}relax\_fit.read}{80}
-\contentsline {subsubsection}{Synopsis}{80}
-\contentsline {subsubsection}{Default arguments}{80}
-\contentsline {subsubsection}{Keyword Arguments}{80}
-\contentsline {subsubsection}{Description}{80}
-\contentsline {subsection}{\numberline {1.3.50}results.display}{82}
+\contentsline {subsubsection}{Examples}{79}
+\contentsline {subsection}{\numberline {1.3.48}relax\_data.write}{81}
+\contentsline {subsubsection}{Synopsis}{81}
+\contentsline {subsubsection}{Default arguments}{81}
+\contentsline {subsubsection}{Keyword Arguments}{81}
+\contentsline {subsubsection}{Description}{81}
+\contentsline {subsection}{\numberline {1.3.49}relax\_fit.read}{82}
 \contentsline {subsubsection}{Synopsis}{82}
 \contentsline {subsubsection}{Default arguments}{82}
 \contentsline {subsubsection}{Keyword Arguments}{82}
-\contentsline {subsection}{\numberline {1.3.51}results.read}{83}
-\contentsline {subsubsection}{Synopsis}{83}
-\contentsline {subsubsection}{Default arguments}{83}
-\contentsline {subsubsection}{Keyword Arguments}{83}
-\contentsline {subsubsection}{Description}{83}
-\contentsline {subsection}{\numberline {1.3.52}results.write}{84}
+\contentsline {subsubsection}{Description}{82}
+\contentsline {subsection}{\numberline {1.3.50}results.display}{84}
 \contentsline {subsubsection}{Synopsis}{84}
 \contentsline {subsubsection}{Default arguments}{84}
 \contentsline {subsubsection}{Keyword Arguments}{84}
-\contentsline {subsubsection}{Description}{84}
-\contentsline {subsection}{\numberline {1.3.53}run.create}{85}
+\contentsline {subsection}{\numberline {1.3.51}results.read}{85}
 \contentsline {subsubsection}{Synopsis}{85}
 \contentsline {subsubsection}{Default arguments}{85}
 \contentsline {subsubsection}{Keyword Arguments}{85}
 \contentsline {subsubsection}{Description}{85}
-\contentsline {subsubsection}{Examples}{85}
-\contentsline {subsection}{\numberline {1.3.54}run.delete}{86}
+\contentsline {subsection}{\numberline {1.3.52}results.write}{86}
 \contentsline {subsubsection}{Synopsis}{86}
 \contentsline {subsubsection}{Default arguments}{86}
 \contentsline {subsubsection}{Keyword Arguments}{86}
 \contentsline {subsubsection}{Description}{86}
-\contentsline {subsection}{\numberline {1.3.55}select.all}{87}
+\contentsline {subsection}{\numberline {1.3.53}run.create}{87}
 \contentsline {subsubsection}{Synopsis}{87}
 \contentsline {subsubsection}{Default arguments}{87}
 \contentsline {subsubsection}{Keyword Arguments}{87}
+\contentsline {subsubsection}{Description}{87}
 \contentsline {subsubsection}{Examples}{87}
-\contentsline {subsection}{\numberline {1.3.56}select.read}{88}
+\contentsline {subsection}{\numberline {1.3.54}run.delete}{88}
 \contentsline {subsubsection}{Synopsis}{88}
 \contentsline {subsubsection}{Default arguments}{88}
 \contentsline {subsubsection}{Keyword Arguments}{88}
 \contentsline {subsubsection}{Description}{88}
-\contentsline {subsubsection}{Examples}{88}
-\contentsline {subsection}{\numberline {1.3.57}select.res}{89}
+\contentsline {subsection}{\numberline {1.3.55}select.all}{89}
 \contentsline {subsubsection}{Synopsis}{89}
 \contentsline {subsubsection}{Default arguments}{89}
 \contentsline {subsubsection}{Keyword Arguments}{89}
-\contentsline {subsubsection}{Description}{89}
 \contentsline {subsubsection}{Examples}{89}
-\contentsline {subsection}{\numberline {1.3.58}select.reverse}{90}
+\contentsline {subsection}{\numberline {1.3.56}select.read}{90}
 \contentsline {subsubsection}{Synopsis}{90}
 \contentsline {subsubsection}{Default arguments}{90}
 \contentsline {subsubsection}{Keyword Arguments}{90}
+\contentsline {subsubsection}{Description}{90}
 \contentsline {subsubsection}{Examples}{90}
-\contentsline {subsection}{\numberline {1.3.59}sequence.add}{91}
+\contentsline {subsection}{\numberline {1.3.57}select.res}{91}
 \contentsline {subsubsection}{Synopsis}{91}
 \contentsline {subsubsection}{Default arguments}{91}
 \contentsline {subsubsection}{Keyword Arguments}{91}
 \contentsline {subsubsection}{Description}{91}
 \contentsline {subsubsection}{Examples}{91}
-\contentsline {subsection}{\numberline {1.3.60}sequence.copy}{92}
+\contentsline {subsection}{\numberline {1.3.58}select.reverse}{92}
 \contentsline {subsubsection}{Synopsis}{92}
 \contentsline {subsubsection}{Default arguments}{92}
 \contentsline {subsubsection}{Keyword Arguments}{92}
-\contentsline {subsubsection}{Description}{92}
 \contentsline {subsubsection}{Examples}{92}
-\contentsline {subsection}{\numberline {1.3.61}sequence.delete}{93}
+\contentsline {subsection}{\numberline {1.3.59}sequence.add}{93}
 \contentsline {subsubsection}{Synopsis}{93}
 \contentsline {subsubsection}{Default arguments}{93}
 \contentsline {subsubsection}{Keyword Arguments}{93}
 \contentsline {subsubsection}{Description}{93}
-\contentsline {subsection}{\numberline {1.3.62}sequence.display}{94}
+\contentsline {subsubsection}{Examples}{93}
+\contentsline {subsection}{\numberline {1.3.60}sequence.copy}{94}
 \contentsline {subsubsection}{Synopsis}{94}
 \contentsline {subsubsection}{Default arguments}{94}
 \contentsline {subsubsection}{Keyword Arguments}{94}
-\contentsline {subsection}{\numberline {1.3.63}sequence.read}{95}
+\contentsline {subsubsection}{Description}{94}
+\contentsline {subsubsection}{Examples}{94}
+\contentsline {subsection}{\numberline {1.3.61}sequence.delete}{95}
 \contentsline {subsubsection}{Synopsis}{95}
 \contentsline {subsubsection}{Default arguments}{95}
 \contentsline {subsubsection}{Keyword Arguments}{95}
 \contentsline {subsubsection}{Description}{95}
-\contentsline {subsubsection}{Examples}{95}
-\contentsline {subsection}{\numberline {1.3.64}sequence.sort}{96}
+\contentsline {subsection}{\numberline {1.3.62}sequence.display}{96}
 \contentsline {subsubsection}{Synopsis}{96}
 \contentsline {subsubsection}{Default arguments}{96}
 \contentsline {subsubsection}{Keyword Arguments}{96}
-\contentsline {subsection}{\numberline {1.3.65}sequence.write}{97}
+\contentsline {subsection}{\numberline {1.3.63}sequence.read}{97}
 \contentsline {subsubsection}{Synopsis}{97}
 \contentsline {subsubsection}{Default arguments}{97}
 \contentsline {subsubsection}{Keyword Arguments}{97}
 \contentsline {subsubsection}{Description}{97}
-\contentsline {subsection}{\numberline {1.3.66}state.load}{98}
-\contentsline {subsubsection}{Synopsis}{98}
-\contentsline {subsubsection}{Default arguments}{98}
-\contentsline {subsubsection}{Keyword Arguments}{98}
-\contentsline {subsubsection}{Description}{98}
-\contentsline {subsubsection}{Examples}{98}
-\contentsline {subsection}{\numberline {1.3.67}state.save}{99}
+\contentsline {subsubsection}{Examples}{97}
+\contentsline {subsection}{\numberline {1.3.64}sequence.sort}{99}
 \contentsline {subsubsection}{Synopsis}{99}
 \contentsline {subsubsection}{Default arguments}{99}
 \contentsline {subsubsection}{Keyword Arguments}{99}
-\contentsline {subsubsection}{Description}{99}
-\contentsline {subsubsection}{Examples}{99}
-\contentsline {subsection}{\numberline {1.3.68}system}{100}
+\contentsline {subsection}{\numberline {1.3.65}sequence.write}{100}
 \contentsline {subsubsection}{Synopsis}{100}
 \contentsline {subsubsection}{Default arguments}{100}
-\contentsline {subsection}{\numberline {1.3.69}thread.read}{101}
+\contentsline {subsubsection}{Keyword Arguments}{100}
+\contentsline {subsubsection}{Description}{100}
+\contentsline {subsection}{\numberline {1.3.66}state.load}{101}
 \contentsline {subsubsection}{Synopsis}{101}
 \contentsline {subsubsection}{Default arguments}{101}
 \contentsline {subsubsection}{Keyword Arguments}{101}
 \contentsline {subsubsection}{Description}{101}
-\contentsline {subsubsection}{SSH Public Key Authentication}{102}
-\contentsline {subsection}{\numberline {1.3.70}unselect.all}{104}
+\contentsline {subsubsection}{Examples}{101}
+\contentsline {subsection}{\numberline {1.3.67}state.save}{102}
+\contentsline {subsubsection}{Synopsis}{102}
+\contentsline {subsubsection}{Default arguments}{102}
+\contentsline {subsubsection}{Keyword Arguments}{102}
+\contentsline {subsubsection}{Description}{102}
+\contentsline {subsubsection}{Examples}{102}
+\contentsline {subsection}{\numberline {1.3.68}system}{103}
+\contentsline {subsubsection}{Synopsis}{103}
+\contentsline {subsubsection}{Default arguments}{103}
+\contentsline {subsection}{\numberline {1.3.69}thread.read}{104}
 \contentsline {subsubsection}{Synopsis}{104}
 \contentsline {subsubsection}{Default arguments}{104}
 \contentsline {subsubsection}{Keyword Arguments}{104}
-\contentsline {subsubsection}{Examples}{104}
-\contentsline {subsection}{\numberline {1.3.71}unselect.read}{105}
-\contentsline {subsubsection}{Synopsis}{105}
-\contentsline {subsubsection}{Default arguments}{105}
-\contentsline {subsubsection}{Keyword Arguments}{105}
-\contentsline {subsubsection}{Description}{105}
-\contentsline {subsubsection}{Examples}{105}
-\contentsline {subsection}{\numberline {1.3.72}unselect.res}{106}
-\contentsline {subsubsection}{Synopsis}{106}
-\contentsline {subsubsection}{Default arguments}{106}
-\contentsline {subsubsection}{Keyword Arguments}{106}
-\contentsline {subsubsection}{Description}{106}
-\contentsline {subsubsection}{Examples}{106}
-\contentsline {subsection}{\numberline {1.3.73}unselect.reverse}{107}
+\contentsline {subsubsection}{Description}{104}
+\contentsline {subsubsection}{SSH Public Key Authentication}{105}
+\contentsline {subsection}{\numberline {1.3.70}unselect.all}{107}
 \contentsline {subsubsection}{Synopsis}{107}
 \contentsline {subsubsection}{Default arguments}{107}
 \contentsline {subsubsection}{Keyword Arguments}{107}
 \contentsline {subsubsection}{Examples}{107}
-\contentsline {subsection}{\numberline {1.3.74}value.copy}{108}
+\contentsline {subsection}{\numberline {1.3.71}unselect.read}{108}
 \contentsline {subsubsection}{Synopsis}{108}
 \contentsline {subsubsection}{Default arguments}{108}
 \contentsline {subsubsection}{Keyword Arguments}{108}
 \contentsline {subsubsection}{Description}{108}
 \contentsline {subsubsection}{Examples}{108}
-\contentsline {subsubsection}{Regular expression}{108}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{109}
-\contentsline {subsubsection}{Model-free set details}{109}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{110}
-\contentsline {subsubsection}{Reduced spectral density mapping set details}{110}
-\contentsline {subsection}{\numberline {1.3.75}value.display}{111}
+\contentsline {subsection}{\numberline {1.3.72}unselect.res}{109}
+\contentsline {subsubsection}{Synopsis}{109}
+\contentsline {subsubsection}{Default arguments}{109}
+\contentsline {subsubsection}{Keyword Arguments}{109}
+\contentsline {subsubsection}{Description}{109}
+\contentsline {subsubsection}{Examples}{109}
+\contentsline {subsection}{\numberline {1.3.73}unselect.reverse}{110}
+\contentsline {subsubsection}{Synopsis}{110}
+\contentsline {subsubsection}{Default arguments}{110}
+\contentsline {subsubsection}{Keyword Arguments}{110}
+\contentsline {subsubsection}{Examples}{110}
+\contentsline {subsection}{\numberline {1.3.74}value.copy}{111}
 \contentsline {subsubsection}{Synopsis}{111}
 \contentsline {subsubsection}{Default arguments}{111}
 \contentsline {subsubsection}{Keyword Arguments}{111}
@@ -399,43 +388,54 @@
 \contentsline {subsubsection}{Examples}{111}
 \contentsline {subsubsection}{Regular expression}{111}
 \contentsline {subsubsection}{Model-free data type string matching patterns}{112}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{112}
-\contentsline {subsection}{\numberline {1.3.76}value.read}{113}
-\contentsline {subsubsection}{Synopsis}{113}
-\contentsline {subsubsection}{Default arguments}{113}
-\contentsline {subsubsection}{Keyword Arguments}{113}
-\contentsline {subsubsection}{Description}{113}
-\contentsline {subsubsection}{Examples}{113}
+\contentsline {subsubsection}{Model-free set details}{112}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{113}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{113}
+\contentsline {subsection}{\numberline {1.3.75}value.display}{114}
+\contentsline {subsubsection}{Synopsis}{114}
+\contentsline {subsubsection}{Default arguments}{114}
+\contentsline {subsubsection}{Keyword Arguments}{114}
+\contentsline {subsubsection}{Description}{114}
+\contentsline {subsubsection}{Examples}{114}
 \contentsline {subsubsection}{Regular expression}{114}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{114}
-\contentsline {subsubsection}{Model-free set details}{115}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{116}
-\contentsline {subsubsection}{Reduced spectral density mapping set details}{116}
-\contentsline {subsection}{\numberline {1.3.77}value.set}{117}
-\contentsline {subsubsection}{Synopsis}{117}
-\contentsline {subsubsection}{Default arguments}{117}
-\contentsline {subsubsection}{Keyword arguments}{117}
-\contentsline {subsubsection}{Description}{117}
-\contentsline {subsubsection}{Examples}{118}
-\contentsline {subsubsection}{Regular expression}{119}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{120}
-\contentsline {subsubsection}{Model-free set details}{120}
-\contentsline {subsubsection}{Model-free default values}{121}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{121}
-\contentsline {subsubsection}{Reduced spectral density mapping set details}{121}
-\contentsline {subsubsection}{Reduced spectral density mapping default values}{121}
-\contentsline {subsection}{\numberline {1.3.78}value.write}{122}
-\contentsline {subsubsection}{Synopsis}{122}
-\contentsline {subsubsection}{Default arguments}{122}
-\contentsline {subsubsection}{Keyword Arguments}{122}
-\contentsline {subsubsection}{Description}{122}
-\contentsline {subsubsection}{Examples}{122}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{115}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{115}
+\contentsline {subsection}{\numberline {1.3.76}value.read}{116}
+\contentsline {subsubsection}{Synopsis}{116}
+\contentsline {subsubsection}{Default arguments}{116}
+\contentsline {subsubsection}{Keyword Arguments}{116}
+\contentsline {subsubsection}{Description}{116}
+\contentsline {subsubsection}{Examples}{116}
+\contentsline {subsubsection}{Regular expression}{117}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{117}
+\contentsline {subsubsection}{Model-free set details}{118}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{119}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{119}
+\contentsline {subsection}{\numberline {1.3.77}value.set}{120}
+\contentsline {subsubsection}{Synopsis}{120}
+\contentsline {subsubsection}{Default arguments}{120}
+\contentsline {subsubsection}{Keyword arguments}{120}
+\contentsline {subsubsection}{Description}{120}
+\contentsline {subsubsection}{Examples}{121}
 \contentsline {subsubsection}{Regular expression}{122}
 \contentsline {subsubsection}{Model-free data type string matching patterns}{123}
+\contentsline {subsubsection}{Model-free set details}{123}
+\contentsline {subsubsection}{Model-free default values}{124}
 \contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{124}
-\contentsline {subsubsection}{NOE calculation data type string matching patterns}{124}
-\contentsline {subsection}{\numberline {1.3.79}vmd.view}{125}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{124}
+\contentsline {subsubsection}{Reduced spectral density mapping default values}{124}
+\contentsline {subsection}{\numberline {1.3.78}value.write}{125}
 \contentsline {subsubsection}{Synopsis}{125}
 \contentsline {subsubsection}{Default arguments}{125}
 \contentsline {subsubsection}{Keyword Arguments}{125}
-\contentsline {subsubsection}{Example}{125}
+\contentsline {subsubsection}{Description}{125}
+\contentsline {subsubsection}{Examples}{125}
+\contentsline {subsubsection}{Regular expression}{126}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{126}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{127}
+\contentsline {subsubsection}{NOE calculation data type string matching patterns}{127}
+\contentsline {subsection}{\numberline {1.3.79}vmd.view}{128}
+\contentsline {subsubsection}{Synopsis}{128}
+\contentsline {subsubsection}{Default arguments}{128}
+\contentsline {subsubsection}{Keyword Arguments}{128}
+\contentsline {subsubsection}{Example}{128}
