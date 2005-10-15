@@ -160,7 +160,7 @@ class Minimisation:
         using the 'grid' function instead.  The first argument passed will be set to the
         minimisation algorithm while all other arguments will be set to the minimisation options.
 
-        Keyword arguments differ from normal arguments having the form "keyword = value".  All
+        Keyword arguments differ from normal arguments having the form 'keyword = value'.  All
         arguments must precede keyword arguments in python.  For more information see the examples
         section below or the python tutorial.
 

@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  15 OCT 2005 20:49
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  15 OCT 2005 21:01
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -202,37 +202,37 @@ Underfull \hbox (badness 10000) in paragraph at lines 345--346
  []
 
 [14] [15] [16]
-Underfull \hbox (badness 10000) in paragraph at lines 485--486
-[]\OT1/cmtt/m/n/9 relax> map(run=`m5', res[]num=6, type="Iso3D", inc=20, swap=[
-0, 1, 2], file="map",
+Underfull \hbox (badness 10000) in paragraph at lines 487--488
+[]\OT1/cmtt/m/n/9 relax> map(run=`m5', res[]num=6, type=`Iso3D', inc=20, swap=[
+0, 1, 2], file=`map',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 493--494
-[]\OT1/cmtt/m/n/9 relax> map(run=`m5', res[]num=6, type="Iso3D", inc=20, swap=[
-0, 2, 1], file="map",
+Underfull \hbox (badness 10000) in paragraph at lines 495--496
+[]\OT1/cmtt/m/n/9 relax> map(run=`m5', res[]num=6, type=`Iso3D', inc=20, swap=[
+0, 2, 1], file=`map',
  []
 
 [17] [18] [19] [20] [21]
-Underfull \hbox (badness 10000) in paragraph at lines 707--708
+Underfull \hbox (badness 10000) in paragraph at lines 709--710
 \OT1/cmss/bx/n/10.95 grace.write\OT1/cmss/m/n/10.95 (self, run=None, x[]data[]t
 ype=`res', y[]data[]type=None, res[]num=None,
  []
 
 [22]
-Underfull \hbox (badness 10000) in paragraph at lines 792--793
+Underfull \hbox (badness 10000) in paragraph at lines 794--795
 []\OT1/cmtt/m/n/9 relax> grace.write(run=`m2', x[]data[]type=`S2', y[]data[]typ
 e=`te', file=`s2[]te.agr',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 805--806
+Underfull \hbox (badness 10000) in paragraph at lines 807--808
 []\OT1/cmtt/m/n/9 relax> grace.write(run=`m4', x[]data[]type=`Rex', y[]data[]ty
 pe=`te', res[]num=123,
  []
 
 [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33]
-Overfull \hbox (29.4888pt too wide) in paragraph at lines 1474--1518
+Overfull \hbox (29.4888pt too wide) in paragraph at lines 1478--1522
  [] 
  []
 
@@ -241,50 +241,50 @@ Underfull \vbox (badness 3088) has occurred while \output is active []
 
  [35]
 [36] [37] [38]
-Underfull \hbox (badness 10000) in paragraph at lines 1960--1961
+Underfull \hbox (badness 10000) in paragraph at lines 1964--1965
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(`test', `large[]model', `mf[
 ]ext', [`S2f', `tf', `S2', `ts',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1962--1963
+Underfull \hbox (badness 10000) in paragraph at lines 1966--1967
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(run=`test', model=`large[]mo
 del', params=[`S2f', `tf', `S2',
  []
 
 [39] [40] [41] [42] [43] [44] [45] [46]
-Underfull \hbox (badness 10000) in paragraph at lines 2420--2421
+Underfull \hbox (badness 10000) in paragraph at lines 2424--2425
 []\OT1/cmtt/m/n/9 relax> model[]selection(method=`AIC', modsel[]run=`mixed', ru
 ns=[`m1', `m2', `m3', `m4',
  []
 
 [47] [48] [49] [50] [51] [52] [53] [54] [55] [56] [57] [58] [59] [60] [61]
 [62] [63] [64]
-Underfull \hbox (badness 10000) in paragraph at lines 3185--3186
+Underfull \hbox (badness 10000) in paragraph at lines 3189--3190
 \OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
 spec-trum[]type=None, res[]num=None,
  []
 
 [65] [66] [67] [68]
-Underfull \hbox (badness 10000) in paragraph at lines 3368--3369
+Underfull \hbox (badness 10000) in paragraph at lines 3372--3373
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
 [69] [70] [71]
-Underfull \hbox (badness 1158) in paragraph at lines 3486--3487
+Underfull \hbox (badness 1158) in paragraph at lines 3490--3491
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
 [72] [73] [74] [75] [76]
-Underfull \hbox (badness 10000) in paragraph at lines 3771--3772
+Underfull \hbox (badness 10000) in paragraph at lines 3775--3776
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`NOE', frq[]label=`60
 0', frq=600.0 * 1e6,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3783--3784
+Underfull \hbox (badness 10000) in paragraph at lines 3787--3788
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`R2', frq[]label=`800
  MHz', frq=8.0*1e8,
  []
@@ -292,13 +292,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 3783--3784
 [77] [78] [79] [80] [81] [82] [83] [84] [85] [86] [87] [88] [89] [90] [91]
 [92] [93] [94] [95] [96] [97] [98] [99] [100] [101] [102] [103] [104] [105]
 [106] [107] [108] [109] [110] [111] [112]
-Underfull \hbox (badness 6493) in paragraph at lines 5605--5606
+Underfull \hbox (badness 6493) in paragraph at lines 5609--5610
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5650--5651
+Underfull \hbox (badness 10000) in paragraph at lines 5654--5655
 []\OT1/cmtt/m/n/9 relax> value.read(run=`m1', data[]type=`CSA', file=`data/csa[
 ]value', num[]col=0, name[]col=1,
  []
@@ -311,7 +311,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [115]
 [116]
-Overfull \hbox (6.26677pt too wide) in paragraph at lines 5953--6007
+Overfull \hbox (6.26677pt too wide) in paragraph at lines 5957--6011
  [] 
  []
 

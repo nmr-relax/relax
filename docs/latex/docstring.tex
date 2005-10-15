@@ -401,7 +401,9 @@ Function for creating a map of the given space in OpenDX format.
   The name of the run.
 
 \keyword{map\_type:}
-  The type of map to create.  For example the default, a 3D isosurface, the type is "Iso3D".  See below for more details.
+  The type of map to create.  For example the default, a 3D isosurface, the type is 
+\quoteenv{`Iso3D'}
+.  See below for more details.
 of the map.
 
 \keyword{lower:}
@@ -476,13 +478,13 @@ directory
 
 \example{relax> map(`m5', 6) }
 
-\example{relax> map(`m5', 6, 20, "map", "dx") }
+\example{relax> map(`m5', 6, 20, `map', `dx') }
 
-\example{relax> map(`m5', res\_num=6, file="map", dir="dx") }
+\example{relax> map(`m5', res\_num=6, file=`map', dir=`dx') }
 
-\example{relax> map(run=`m5', res\_num=6, inc=20, file="map", dir="dx") }
+\example{relax> map(run=`m5', res\_num=6, inc=20, file=`map', dir=`dx') }
 
-\example{relax> map(run=`m5', res\_num=6, type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx") }
+\example{relax> map(run=`m5', res\_num=6, type=`Iso3D', inc=20, swap=[0, 1, 2], file=`map', dir=`dx') }
 
 
 
@@ -490,7 +492,7 @@ The following commands will swap the $S^2_s$ and $\tau_s$ axes of this map.
 
 \example{relax> map(`m5', res\_num=6, swap=[0, 2, 1]) }
 
-\example{relax> map(run=`m5', res\_num=6, type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx") }
+\example{relax> map(run=`m5', res\_num=6, type=`Iso3D', inc=20, swap=[0, 2, 1], file=`map', dir=`dx') }
 
 
 
@@ -1277,7 +1279,9 @@ using the
  function instead.  The first argument passed will be set to the
 minimisation algorithm while all other arguments will be set to the minimisation options.
 
-Keyword arguments differ from normal arguments having the form "keyword = value".  All
+Keyword arguments differ from normal arguments having the form 
+\quoteenv{`keyword = value'}
+.  All
 arguments must precede keyword arguments in python.  For more information see the examples
 section below or the python tutorial.
 

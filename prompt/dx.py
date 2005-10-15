@@ -100,7 +100,7 @@ class OpenDX:
         res_num:  The residue number.
 
         map_type:  The type of map to create.  For example the default, a 3D isosurface, the type is
-        "Iso3D".  See below for more details.
+        'Iso3D'.  See below for more details.
 
         inc:  The number of increments to map in each dimension.  This value controls the resolution
         of the map.
@@ -165,16 +165,16 @@ class OpenDX:
         directory 'dx' and will be prefixed by 'map'.  The residue, in this case, is number 6.
 
         relax> map('m5', 6)
-        relax> map('m5', 6, 20, "map", "dx")
-        relax> map('m5', res_num=6, file="map", dir="dx")
-        relax> map(run='m5', res_num=6, inc=20, file="map", dir="dx")
-        relax> map(run='m5', res_num=6, type="Iso3D", inc=20, swap=[0, 1, 2], file="map", dir="dx")
+        relax> map('m5', 6, 20, 'map', 'dx')
+        relax> map('m5', res_num=6, file='map', dir='dx')
+        relax> map(run='m5', res_num=6, inc=20, file='map', dir='dx')
+        relax> map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 1, 2], file='map', dir='dx')
 
 
         The following commands will swap the S2s and ts axes of this map.
 
         relax> map('m5', res_num=6, swap=[0, 2, 1])
-        relax> map(run='m5', res_num=6, type="Iso3D", inc=20, swap=[0, 2, 1], file="map", dir="dx")
+        relax> map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 2, 1], file='map', dir='dx')
 
 
         To map the model-free space 'm4' defined by the parameters {S2, te, Rex}, name the results
