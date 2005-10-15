@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 03:47
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 03:59
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -118,7 +118,7 @@ LaTeX Info: Redefining \] on input line 2667.
 Package: eufrak 2001/10/01 v2.2e Euler Fraktur fonts
 LaTeX Font Info:    Overwriting math alphabet `\EuFrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 61.
-) (./relax.aux (./howto.aux)
+) (./relax.aux (./intro.aux)
 (./functions.aux) (./licence.aux))
 \openout1 = `relax.aux'.
 
@@ -144,10 +144,10 @@ LaTeX Font Info:    ... okay on input line 35.
 \openout3 = `relax.toc'.
 
  [5]
-\openout2 = `howto.aux'.
+\openout2 = `intro.aux'.
 
 
-(./howto.tex [6
+(./intro.tex [6
 
 
 ]
@@ -420,7 +420,7 @@ Chapter 3.
 
 
 
-] [138] [139] [140] [141] [142]) [143] (./relax.aux (./howto.aux)
+] [138] [139] [140] [141] [142]) [143] (./relax.aux (./intro.aux)
 (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
  1333 strings out of 95756
@@ -431,4 +431,4 @@ Here is how much of TeX's memory you used:
  26 hyphenation exceptions out of 1000
  27i,7n,22p,1036b,407s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (143 pages, 281104 bytes).
+Output written on relax.dvi (143 pages, 281612 bytes).
