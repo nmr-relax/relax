@@ -483,7 +483,7 @@ class Fetch_docstrings:
         ############
 
         # Heading.
-        self.file.write("\n\\subsubsection{Default arguments}\n\n")
+        self.file.write("\n\\subsubsection{Defaults}\n\n")
 
         # Typewriter font.
         self.file.write("\\textsf{")

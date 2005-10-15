@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 03:38
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 03:47
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -227,11 +227,11 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  (./functions.tex
 Chapter 2.
-(./docstring.tex [13
+[13
 
 
 
-] [14] [15] [16] [17] [18] [19]
+] (./docstring.tex [14] [15] [16] [17] [18] [19]
 Underfull \hbox (badness 2027) in paragraph at lines 159--160
 \OT1/cmss/bx/n/10.95 diffusion[]tensor.set\OT1/cmss/m/n/10.95 (self, run=None, 
 params=None, time[]scale=1.0, d[]scale=1.0, an-
@@ -431,4 +431,4 @@ Here is how much of TeX's memory you used:
  26 hyphenation exceptions out of 1000
  27i,7n,22p,1036b,407s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (143 pages, 282180 bytes).
+Output written on relax.dvi (143 pages, 281104 bytes).

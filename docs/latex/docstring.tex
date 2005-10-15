@@ -9,7 +9,7 @@
 
 Function for calculating the angles between the XH bond vector and the diffusion tensor.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{angles}(self, run=None)}
 
@@ -39,7 +39,7 @@ If the diffusion tensor is fully anisotropic, then the three angles will be calc
 
 Function for calculating the function value.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{calc}(self, run=None, print\_flag=1)}
 
@@ -60,7 +60,7 @@ Function for calculating the function value.
 
 Function for copying diffusion tensor data from run1 to run2.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{diffusion\_tensor.copy}(self, run1=None, run2=None)}
 
@@ -107,7 +107,7 @@ To copy the diffusion tensor from run
 
 Function for deleting diffusion tensor data.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{diffusion\_tensor.delete}(self, run=None)}
 
@@ -133,7 +133,7 @@ This function will delete all diffusion tensor data for the given run.
 
 Function for displaying the diffusion tensor.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{diffusion\_tensor.display}(self, run=None)}
 
@@ -154,7 +154,7 @@ Function for displaying the diffusion tensor.
 
 Function for setting up the diffusion tensor.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{diffusion\_tensor.set}(self, run=None, params=None, time\_scale=1.0, d\_scale=1.0, angle\_units=`deg', param\_types=0, axial\_type=None, fixed=1)}
 
@@ -382,7 +382,7 @@ command):
 
 Function for running OpenDX.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{dx.execute}(self, file=`map', dir=`dx', dx\_exe=`dx', vp\_exec=1)}
 
@@ -416,7 +416,7 @@ Function for running OpenDX.
 
 Function for creating a map of the given space in OpenDX format.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{dx.map}(self, run=None, res\_num=None, map\_type=`Iso3D', inc=20, lower=None, upper=None, swap=None, file=`map', dir=`dx', point=None, point\_file=`point', remap=None, labels=None)}
 
@@ -555,7 +555,7 @@ residue 2).
 
 Function for model elimination.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{eliminate}(self, run=None, function=None, args=None)}
 
@@ -645,7 +645,7 @@ internal correlation times greater than 1.5 times $\tau_m$, set
 
 Function for either fixing or allowing parameter values to change.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{fix}(self, run=None, element=None, fixed=1)}
 
@@ -704,7 +704,7 @@ Only parameters corresponding to the given run will be affected.
 
 Function for running Grace.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{grace.view}(self, file=None, dir=`grace', grace\_exe=`xmgrace')}
 
@@ -753,7 +753,7 @@ To view the file
 
 Function for creating a grace `.agr' file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{grace.write}(self, run=None, x\_data\_type=`res', y\_data\_type=None, res\_num=None, res\_name=None, plot\_data=`value', file=None, dir=`grace', force=0)}
 
@@ -1204,7 +1204,7 @@ NOE &
 
 The grid search function.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{grid\_search}(self, run=None, lower=None, upper=None, inc=21, constraints=1, print\_flag=1)}
 
@@ -1242,7 +1242,7 @@ The grid search function.
 
 Function for reinitialising self.relax.data
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{init\_data}(self)}
 
@@ -1257,7 +1257,7 @@ Function for reinitialising self.relax.data
 
 Function for turning the function introductions off.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{intro\_off}(self)}
 
@@ -1272,7 +1272,7 @@ Function for turning the function introductions off.
 
 Function for turning the function introductions on.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{intro\_on}(self)}
 
@@ -1287,7 +1287,7 @@ Function for turning the function introductions on.
 
 Function for selecting which relaxation data to use in the J(w) mapping.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{jw\_mapping.set\_frq}(self, run=None, frq=None)}
 
@@ -1324,7 +1324,7 @@ corresponding to the given frequency.
 
 Minimisation function.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{minimise}(self, *args, **keywords)}
 
@@ -1924,7 +1924,7 @@ while the default Hessian modification is the GMW algorithm.
 
 Function for copying model-free data from run1 to run2.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{model\_free.copy}(self, run1=None, run2=None, sim=None)}
 
@@ -1978,7 +1978,7 @@ To copy all model-free data from the run
 
 Function to create a model-free model.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{model\_free.create\_model}(self, run=None, model=None, equation=None, params=None, res\_num=None)}
 
@@ -2091,7 +2091,7 @@ extended model-free equation and contains the seven parameters
 
 Function for deleting all model-free data corresponding to the run.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{model\_free.delete}(self, run=None)}
 
@@ -2121,7 +2121,7 @@ To delete all model-free data corresponding to the run
 
 Function for removing the local $\tau_m$ parameter from a model.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{model\_free.remove\_tm}(self, run=None, res\_num=None)}
 
@@ -2167,7 +2167,7 @@ The following commands will remove the parameter
 
 Function for the selection of a preset model-free model.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{model\_free.select\_model}(self, run=None, model=None, res\_num=None)}
 
@@ -2478,7 +2478,7 @@ To pick model
 
 Function for model selection.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{model\_selection}(self, method=None, modsel\_run=None, runs=None)}
 
@@ -2560,7 +2560,7 @@ to the run name
 
 Function for clearing the Molmol command history.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{molmol.clear\_history}(self)}
 
@@ -2575,7 +2575,7 @@ Function for clearing the Molmol command history.
 
 Function for executing a user supplied Molmol command.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{molmol.command}(self, command)}
 
@@ -2595,7 +2595,7 @@ Function for executing a user supplied Molmol command.
 
 Function for viewing the collection of molecules extracted from the PDB file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{molmol.view}(self, run=None)}
 
@@ -2623,7 +2623,7 @@ Function for viewing the collection of molecules extracted from the PDB file.
 
 Function for creating simulation data.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{monte\_carlo.create\_data}(self, run=None, method=`back\_calc')}
 
@@ -2763,7 +2763,7 @@ An example for reduced spectral density mapping is:
 
 Function for calculating parameter errors from the Monte Carlo simulations.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{monte\_carlo.error\_analysis}(self, run=None, prune=0.0)}
 
@@ -2896,7 +2896,7 @@ An example for reduced spectral density mapping is:
 
 Function for setting the initial simulation parameter values.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{monte\_carlo.initial\_values}(self, run=None)}
 
@@ -3014,7 +3014,7 @@ An example for reduced spectral density mapping is:
 
 Function for turning simulations off.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{monte\_carlo.off}(self, run=None)}
 
@@ -3115,7 +3115,7 @@ An example for reduced spectral density mapping is:
 
 Function for turning simulations on.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{monte\_carlo.on}(self, run=None)}
 
@@ -3216,7 +3216,7 @@ An example for reduced spectral density mapping is:
 
 Function for setting up Monte Carlo simulations.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{monte\_carlo.setup}(self, run=None, number=500)}
 
@@ -3327,7 +3327,7 @@ An example for reduced spectral density mapping is:
 
 Function for setting the errors in the reference or saturated NOE spectra.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{noe.error}(self, run=None, error=0.0, spectrum\_type=None, res\_num=None, res\_name=None)}
 
@@ -3380,7 +3380,7 @@ use regular expression as well.
 
 Function for reading peak intensities from a file for NOE calculations.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{noe.read}(self, run=None, file=None, dir=None, spectrum\_type=None, format=`sparky', heteronuc=`N', proton=`HN', int\_col=None)}
 
@@ -3502,7 +3502,7 @@ To read the reference and saturated spectra peak heights from the XEasy formatte
 
 Function for setting the gyromagnetic ratio of the heteronucleus.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{nuclei}(self, heteronuc=`N')}
 
@@ -3530,7 +3530,7 @@ The heteronuc argument can be set to the following strings:
 
 Function for creating the Modelfree4 input files.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{palmer.create}(self, run=None, dir=None, force=0, diff\_search=`none', sims=0, sim\_type=`pred', trim=0, steps=20, constraints=1, nucleus=`15N', atom1=`N', atom2=`H')}
 
@@ -3615,7 +3615,7 @@ This can be used to execute modelfree4.
 
 Function for executing Modelfree4.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{palmer.execute}(self, run=None, dir=None, force=0)}
 
@@ -3656,7 +3656,7 @@ placed on the command line as
 
 Function for extracting data from the Modelfree4 `mfout' star formatted file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{palmer.extract}(self, run=None, dir=None)}
 
@@ -3684,7 +3684,7 @@ Function for extracting data from the Modelfree4 `mfout' star formatted file.
 
 The pdb loading function.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{pdb}(self, run=None, file=None, dir=None, model=None, heteronuc=`N', proton=`H', load\_seq=1)}
 
@@ -3773,7 +3773,7 @@ To load the 10$^\mathrm{th}$ model from the file
 
 Function for back calculating relaxation data.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{relax\_data.back\_calc}(self, run=None, ri\_label=None, frq\_label=None, frq=None)}
 
@@ -3809,7 +3809,7 @@ Function for back calculating relaxation data.
 
 Function for copying relaxation data from run1 to run2.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{relax\_data.copy}(self, run1=None, run2=None, ri\_label=None, frq\_label=None)}
 
@@ -3887,7 +3887,7 @@ of:
 
 Function for deleting the relaxation data corresponding to ri\_label and frq\_label.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{relax\_data.delete}(self, run=None, ri\_label=None, frq\_label=None)}
 
@@ -3933,7 +3933,7 @@ To delete the relaxation data corresponding to ri\_label=
 
 Function for displaying the relaxation data corresponding to ri\_label and frq\_label.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{relax\_data.display}(self, run=None, ri\_label=None, frq\_label=None)}
 
@@ -3979,7 +3979,7 @@ To show the relaxation data corresponding to ri\_label=
 
 Function for reading R1, R2, or NOE relaxation data from a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{relax\_data.read}(self, run=None, ri\_label=None, frq\_label=None, frq=None, file=None, dir=None, num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)}
 
@@ -4078,7 +4078,7 @@ separated by the symbol
 
 Function for writing R1, R2, or NOE relaxation data to a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{relax\_data.write}(self, run=None, ri\_label=None, frq\_label=None, file=None, dir=None, force=0)}
 
@@ -4130,7 +4130,7 @@ to write to file.
 
 Function for reading peak intensities from a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{relax\_fit.read}(self, run=None, file=None, dir=None, relax\_time=0.0, fit\_type=`exp', format=`sparky', heteronuc=`N', proton=`HN', int\_col=None)}
 
@@ -4229,7 +4229,7 @@ used.
 
 Function for displaying the results of the run.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{results.display}(self, run=None, format=`columnar')}
 
@@ -4253,7 +4253,7 @@ Function for displaying the results of the run.
 
 Function for reading results from a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{results.read}(self, run=None, file=`results', dir=`run', format=`columnar')}
 
@@ -4295,7 +4295,7 @@ followed by the file name with
 
 Function for writing results of the run to a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{results.write}(self, run=None, file=`results', dir=`run', force=0, format=`columnar', compress\_type=1)}
 
@@ -4353,7 +4353,7 @@ The complementary read function will automatically handle the compressed files.
 
 Function for setting up a run type.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{run.create}(self, run=None, run\_type=None)}
 
@@ -4407,7 +4407,7 @@ To set up a model-free analysis run with the name
 
 Function for deleting a run.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{run.delete}(self, run=None)}
 
@@ -4432,7 +4432,7 @@ This function will destroy all data corresponding to the given run.
 
 Function for selecting all residues.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{select.all}(self, run=None)}
 
@@ -4470,7 +4470,7 @@ To select all residues for the run
 
 Function for selecting the residues contained in a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{select.read}(self, run=None, file=None, dir=None, change\_all=0)}
 
@@ -4524,7 +4524,7 @@ To select all residues in the file
 
 Function for selecting specific residues.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{select.res}(self, run=None, num=None, name=None, change\_all=0)}
 
@@ -4600,7 +4600,7 @@ To select residue 5 CYS in addition to the currently selected residues, type:
 
 Function for the reversal of the residue selection.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{select.reverse}(self, run=None)}
 
@@ -4628,7 +4628,7 @@ To unselect all currently selected residues and select those which are unselecte
 
 Function for adding a residue onto the sequence.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{sequence.add}(self, run=None, res\_num=None, res\_name=None, select=1)}
 
@@ -4681,7 +4681,7 @@ it to the run
 
 Function for copying the sequence from run1 to run2.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{sequence.copy}(self, run1=None, run2=None)}
 
@@ -4732,7 +4732,7 @@ To copy the sequence from the run
 
 Function for deleting the sequence.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{sequence.delete}(self, run=None)}
 
@@ -4760,7 +4760,7 @@ specific data.
 
 Function for displaying the sequence.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{sequence.display}(self, run=None)}
 
@@ -4781,7 +4781,7 @@ Function for displaying the sequence.
 
 Function for reading sequence data.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{sequence.read}(self, run=None, file=None, dir=None, num\_col=0, name\_col=1, sep=None)}
 
@@ -4866,7 +4866,7 @@ are separated by commas and assign it to the run
 
 Function for numerically sorting the sequence by residue number.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{sequence.sort}(self, run=None)}
 
@@ -4887,7 +4887,7 @@ Function for numerically sorting the sequence by residue number.
 
 Function for writing the sequence to a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{sequence.write}(self, run=None, file=None, dir=None, force=0)}
 
@@ -4921,7 +4921,7 @@ If no directory name is given, the file will be placed in the current working di
 
 Function for loading a saved program state.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{state.load}(self, file=None, dir=None)}
 
@@ -4982,7 +4982,7 @@ The following commands will load the state saved in the bzip2 compressed file
 
 Function for saving the program state.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{state.save}(self, file=None, dir=None, force=0, compress\_type=1)}
 
@@ -5062,7 +5062,7 @@ state by overwriting the file.
 
 Function which executes the user supplied shell command.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{system}(command)}
 
@@ -5077,7 +5077,7 @@ Function which executes the user supplied shell command.
 
 Function for reading a file containing entries for each computer to run calculations on.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{thread.read}(self, file=`hosts', dir=`\~{}/.relax')}
 
@@ -5252,7 +5252,7 @@ within or set the sshd\_config keyword StrictModes to
 
 Function for unselecting all residues.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{unselect.all}(self, run=None)}
 
@@ -5290,7 +5290,7 @@ To unselect all residues for the run
 
 Function for unselecting the residues contained in a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{unselect.read}(self, run=None, file=None, dir=None, change\_all=0)}
 
@@ -5344,7 +5344,7 @@ To unselect all overlapped residues in the file
 
 Function for unselecting specific residues.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{unselect.res}(self, run=None, num=None, name=None, change\_all=0)}
 
@@ -5419,7 +5419,7 @@ To unselect residue 12 MET type:
 
 Function for the reversal of the residue selection.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{unselect.reverse}(self, run=None)}
 
@@ -5447,7 +5447,7 @@ To unselect all currently selected residues and select those which are unselecte
 
 Function for copying residue specific data values from run1 to run2.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{value.copy}(self, run1=None, run2=None, data\_type=None)}
 
@@ -5740,7 +5740,7 @@ value.  These must be set prior to the calculation of spectral density values.
 
 Function for displaying residue specific data values.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{value.display}(self, run=None, data\_type=None)}
 
@@ -5997,7 +5997,7 @@ $CSA$ &
 
 Function for reading residue specific data values from a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{value.read}(self, run=None, data\_type=None, file=None, num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)}
 
@@ -6316,7 +6316,7 @@ value.  These must be set prior to the calculation of spectral density values.
 
 Function for setting residue specific data values.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{value.set}(self, run=None, value=None, data\_type=None, res\_num=None, res\_name=None)}
 
@@ -6875,7 +6875,7 @@ $CSA$ &
 
 Function for writing residue specific data values to a file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{value.write}(self, run=None, data\_type=None, file=None, dir=None, force=0)}
 
@@ -7209,7 +7209,7 @@ NOE &
 
 Function for viewing the collection of molecules extracted from the PDB file.
 
-\subsubsection{Default arguments}
+\subsubsection{Defaults}
 
 \textsf{\textbf{vmd.view}(self, run=None)}
 
