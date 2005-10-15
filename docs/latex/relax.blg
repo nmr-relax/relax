@@ -1,12 +1,13 @@
 This is BibTeX, Version 0.99c (Web2C 7.4.5)
 The top-level auxiliary file: relax.aux
+A level-1 auxiliary file: functions.aux
 A level-1 auxiliary file: licence.aux
 I found no \citation commands---while reading file relax.aux
 I found no \bibdata command---while reading file relax.aux
 I found no \bibstyle command---while reading file relax.aux
 You've used 0 entries,
             0 wiz_defined-function locations,
-            84 strings with 495 characters,
+            85 strings with 508 characters,
 and the built_in function-call counts, 0 in all, are:
 = -- 0
 > -- 0
