@@ -14,11 +14,12 @@
 \usepackage{eufrak}
 
 % New commands.
-\newcommand{\example}[1]{\vspace{-1ex}\sloppy{\footnotesize\texttt{#1}}}
+\newcommand{\example}[1]{\vspace{-1ex} \sloppy{\footnotesize \texttt{#1}}}
 \newcommand{\keyword}[1]{\textsf{#1}}
 \newcommand{\quoteenv}[1]{\texttt{#1}}
 
 % New environment.
+\newenvironment{exampleenv}{\vspace{-1ex} \footnotesize \begin{ttfamily} \sloppy}{\fussy \end{ttfamily}}
 \newenvironment{spacedpara}{\setlength{\parindent}{0pt} \setlength{\parskip}{2ex plus 0.5ex minus 0.2ex}}{}
 
 % Maths commands.
@@ -70,11 +71,25 @@
 
 
 
+
+%%%%%%%%%%%%%%
+% Main text. %
+%%%%%%%%%%%%%%
+
+\begin{spacedpara}
+
+
+
+% The how to use relax chapter.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{howto}
+
+
 % Program functions chapter.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \include{functions}
-
 
 
 
@@ -84,4 +99,5 @@
 \include{licence}
 
 
+\end{spacedpara}
 \end{document}
