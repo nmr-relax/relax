@@ -4,7 +4,7 @@
 #                                                                             #
 #                                    relax                                    #
 #                                                                             #
-#                   a program for relaxation data analysis                    #
+#                 A program for NMR relaxation data analysis                  #
 #                                                                             #
 #                             by Edward d'Auvergne                            #
 #                                                                             #
@@ -292,7 +292,7 @@ class Relax:
 
                                             relax
 
-                           a program for relaxation data analysis
+                         A program for NMR relaxation data analysis
 
                       Copyright (C) 2003, 2004, 2005 Edward d'Auvergne
 
