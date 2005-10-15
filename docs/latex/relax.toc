@@ -439,3 +439,6 @@
 \contentsline {subsubsection}{Default arguments}{128}
 \contentsline {subsubsection}{Keyword Arguments}{128}
 \contentsline {subsubsection}{Example}{128}
+\contentsline {chapter}{\numberline {2}Licence}{129}
+\contentsline {section}{\numberline {2.1}Copying, modification, sublicencing, and distribution of relax}{129}
+\contentsline {section}{\numberline {2.2}The GPL}{129}

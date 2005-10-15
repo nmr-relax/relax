@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  15 OCT 2005 21:08
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  15 OCT 2005 22:39
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -118,7 +118,7 @@ LaTeX Info: Redefining \] on input line 2667.
 Package: eufrak 2001/10/01 v2.2e Euler Fraktur fonts
 LaTeX Font Info:    Overwriting math alphabet `\EuFrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 61.
-) (./relax.aux)
+) (./relax.aux (./licence.aux))
 \openout1 = `relax.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
@@ -133,13 +133,13 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
 LaTeX Font Info:    ... okay on input line 31.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
 LaTeX Font Info:    ... okay on input line 31.
- [1
+
+[1
 
 
 ] [2
 
-]
-(./relax.toc [3])
+] (./relax.toc [3])
 \tf@toc=\write3
 \openout3 = `relax.toc'.
 
@@ -327,14 +327,22 @@ Underfull \vbox (badness 2343) has occurred while \output is active []
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [126]
-[127]) [128] (./relax.aux) ) 
-Here is how much of TeX's memory you used:
- 1302 strings out of 95756
- 14614 string characters out of 1190795
- 69446 words of memory out of 1000001
- 4302 multiletter control sequences out of 10000+50000
- 12077 words of font info for 44 fonts, out of 500000 for 1000
- 26 hyphenation exceptions out of 1000
- 27i,7n,22p,1020b,272s stack positions out of 3000i,1500n,5000p,200000b,15000s
+[127]) [128]
+\openout2 = `licence.aux'.
 
-Output written on relax.dvi (128 pages, 240596 bytes).
+ (./licence.tex
+Chapter 2.
+[129
+
+
+] [130] [131] [132] [133] [134]) [135] (./relax.aux (./licence.aux)) ) 
+Here is how much of TeX's memory you used:
+ 1312 strings out of 95756
+ 14727 string characters out of 1190795
+ 69466 words of memory out of 1000001
+ 4304 multiletter control sequences out of 10000+50000
+ 12423 words of font info for 45 fonts, out of 500000 for 1000
+ 26 hyphenation exceptions out of 1000
+ 27i,7n,22p,1020b,346s stack positions out of 3000i,1500n,5000p,200000b,15000s
+
+Output written on relax.dvi (135 pages, 265752 bytes).
