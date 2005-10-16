@@ -212,17 +212,18 @@ In the situation of a molecule diffusing as a sphere \index{diffusion!sphere (is
 %%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Minimisation concepts}
+\index{minimisation|textbf}
 
 % The function value.
 \subsection{The function value}
 
-At the simplest level, all minimisation \index{minimisation} techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data, this is given by equation~\eqref{eq: chi-squared}.  For certain algorithms, such a Simplex minimisation, this single value suffices.
+At the simplest level, all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data, this is given by equation~\eqref{eq: chi-squared}.  For certain algorithms, such a Simplex minimisation \index{minimisation techniques!simplex}, this single value suffices.
 
 
 % The gradient.
 \subsection{The gradient}
 
-The majority of minimisation \index{minimisation} algorithms, however, also require the gradient at the point of the given parameter values $\theta$.  The gradient is a vector of partial derivatives defined as
+The majority of minimisation algorithms, however, also require the gradient at the point of the given parameter values $\theta$.  The gradient is a vector of partial derivatives defined as
 \begin{equation}
  \nabla = \begin{pmatrix}
   \frac{\partial}{\partial \theta_1} \\
@@ -234,7 +235,7 @@ The majority of minimisation \index{minimisation} algorithms, however, also requ
 
 \noindent where $n$ is the total number of parameters in the model.
 
-An example of a powerful algorithm which requires both the value and gradient at given parameter values is BFGS quasi-Newton minimisation \index{minimisation}.
+An example of a powerful algorithm which requires both the value and gradient at given parameter values is BFGS quasi-Newton minimisation \index{minimisation techniques!BFGS}.
 
 
 % The Hessian.
@@ -250,7 +251,7 @@ A few algorithms, including the most powerful, require in addition the Hessian a
  \end{pmatrix}
 \end{equation}
 
-The most powerful minimisation \index{minimisation} algorithm, Newton minimisation, requires the value, gradient, and Hessian at the given parameter values.
+The most powerful minimisation algorithm, Newton minimisation \index{minimisation techniques!Newton}, requires the value, gradient, and Hessian at the given parameter values.
 
 
 

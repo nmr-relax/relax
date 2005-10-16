@@ -350,6 +350,10 @@ class Fetch_docstrings:
     def latex_maths(self, string):
         """Function for handling LaTeX maths environments."""
 
+        # Angstrom.
+        string = self.safe_replacement(string, 'Angstroms', '\AA')
+        string = self.safe_replacement(string, 'Angstrom', '\AA')
+
         # Pi.
         string = self.safe_replacement(string, 'pi', '$\pi$')
 

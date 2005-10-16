@@ -33,10 +33,10 @@
 \indexentry{diffusion!ellipsoid (asymmetric)|textbf}{15}
 \indexentry{diffusion!spheroid (axially symmetric)|textbf}{16}
 \indexentry{diffusion!sphere (isotropic)|textbf}{17}
-\indexentry{minimisation}{17}
-\indexentry{minimisation}{17}
-\indexentry{minimisation}{17}
-\indexentry{minimisation}{18}
+\indexentry{minimisation|textbf}{17}
+\indexentry{minimisation techniques!simplex}{17}
+\indexentry{minimisation techniques!BFGS}{17}
+\indexentry{minimisation techniques!Newton}{18}
 \indexentry{diffusion!ellipsoid (asymmetric)}{27}
 \indexentry{user functions}{29}
 \indexentry{help system}{29}
