@@ -44,15 +44,15 @@
 \contentsline {subsubsection}{Spectral density terms of the $\sigma _{\scriptscriptstyle \@mathrm {NOE}}$ dipolar component}{22}
 \contentsline {subsection}{\numberline {2.6.2}$\@mathrm {R}_i'(\theta )$ values}{23}
 \contentsline {subsection}{\numberline {2.6.3}$\@mathrm {R}_i'(\theta )$ gradients}{23}
-\contentsline {subsubsection}{Model-free parameter}{23}
+\contentsline {subsubsection}{Spectral density function parameter}{23}
 \contentsline {subsubsection}{Chemical exchange parameter}{23}
 \contentsline {subsubsection}{CSA parameter}{24}
 \contentsline {subsubsection}{Bond length parameter}{24}
 \contentsline {subsection}{\numberline {2.6.4}$\@mathrm {R}_i'(\theta )$ Hessians}{24}
-\contentsline {subsubsection}{Model-free parameter - Model-free parameter}{24}
-\contentsline {subsubsection}{Model-free parameter - Chemical exchange parameter}{25}
-\contentsline {subsubsection}{Model-free parameter - CSA parameter}{25}
-\contentsline {subsubsection}{Model-free parameter - Bond length parameter}{25}
+\contentsline {subsubsection}{Spectral density function parameter - Spectral density function parameter}{24}
+\contentsline {subsubsection}{Spectral density function parameter - Chemical exchange parameter}{25}
+\contentsline {subsubsection}{Spectral density function parameter - CSA parameter}{25}
+\contentsline {subsubsection}{Spectral density function parameter - Bond length parameter}{25}
 \contentsline {subsubsection}{Chemical exchange parameter - Chemical exchange parameter}{25}
 \contentsline {subsubsection}{Chemical exchange parameter - CSA parameter}{26}
 \contentsline {subsubsection}{Chemical exchange parameter - Bond length parameter}{26}

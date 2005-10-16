@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 15:52
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 16:12
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -146,18 +146,18 @@ LaTeX Font Info:    Overwriting math alphabet `\EuFrak' in version `bold'
 (./maths.aux) (./functions.aux) (./licence.aux))
 \openout1 = `relax.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
  [1
 
 
@@ -251,10 +251,6 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  (./maths.tex
 Chapter 2.
-
-Package natbib Warning: Citation `Abragam61' on page 13 undefined on input line
- 30.
-
 [13
 
 
@@ -266,20 +262,7 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 60.
-
-
-Package natbib Warning: Citation `LipariSzabo82a' on page 14 undefined on input
- line 66.
-
-
-Package natbib Warning: Citation `LipariSzabo82b' on page 14 undefined on input
- line 66.
-
-
-Package natbib Warning: Citation `Clore90' on page 14 undefined on input line 7
-4.
-
-[14]
+ [14]
 
 Package natbib Warning: Citation `dAuvergneGooley06b' on page 15 undefined on i
 nput line 90.
@@ -480,18 +463,22 @@ Chapter 4.
 
 
 
-] [154] [155] [156] [157] [158]) [159]
+] [154] [155] [156] [157] [158]) [159] (./relax.bbl [160
+
+
+])
 
 Package natbib Warning: There were undefined citations.
 
-(./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux)) ) 
+[161] (./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux
+)) ) 
 Here is how much of TeX's memory you used:
- 1784 strings out of 95756
- 21425 string characters out of 1190795
- 78381 words of memory out of 1000001
- 4731 multiletter control sequences out of 10000+50000
+ 1788 strings out of 95756
+ 21452 string characters out of 1190795
+ 78564 words of memory out of 1000001
+ 4732 multiletter control sequences out of 10000+50000
  15272 words of font info for 56 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
  27i,12n,22p,1036b,407s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (159 pages, 341244 bytes).
+Output written on relax.dvi (161 pages, 342772 bytes).

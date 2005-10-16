@@ -1,0 +1,38 @@
+\begin{thebibliography}{4}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{{\tt #1}}\fi
+
+\bibitem[Abragam(1961)]{Abragam61}
+Anatole Abragam.
+\newblock {\em The {P}rinciples of {N}uclear {M}agnetism}.
+\newblock Clarendon Press, Oxford, 1961.
+
+\bibitem[Clore et~al.(1990)Clore, Szabo, Bax, Kay, Driscoll, and
+  Gronenborn]{Clore90}
+G.M. Clore, A.~Szabo, A.~Bax, L.E. Kay, P.C. Driscoll, and A.M. Gronenborn.
+\newblock Deviations from the simple 2-parameter model-free approach to the
+  interpretation of {N}-15 nuclear magnetic-relaxation of proteins.
+\newblock {\em Journal of the American Chemical Society}, 112\penalty0
+  (12):\penalty0 4989 -- 4991, JUN 6 1990.
+\newblock ISSN 0002-7863.
+
+\bibitem[Lipari and Szabo(1982{\natexlab{a}})]{LipariSzabo82a}
+G.~Lipari and A.~Szabo.
+\newblock Model-free approach to the interpretation of nuclear
+  magnetic-resonance relaxation in macromolecules {I}. {T}heory and range of
+  validity.
+\newblock {\em Journal of the American Chemical Society}, 104\penalty0
+  (17):\penalty0 4546 -- 4559, 1982{\natexlab{a}}.
+\newblock ISSN 0002-7863.
+
+\bibitem[Lipari and Szabo(1982{\natexlab{b}})]{LipariSzabo82b}
+G.~Lipari and A.~Szabo.
+\newblock Model-free approach to the interpretation of nuclear
+  magnetic-resonance relaxation in macromolecules {II}. {A}nalysis of
+  experimental results.
+\newblock {\em Journal of the American Chemical Society}, 104\penalty0
+  (17):\penalty0 4559 -- 4570, 1982{\natexlab{b}}.
+\newblock ISSN 0002-7863.
+
+\end{thebibliography}
