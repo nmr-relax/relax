@@ -244,19 +244,6 @@ class Fetch_docstrings:
         return string
 
 
-    def latex_pipeline_initial(self, string):
-        """Initial LaTeX conversion pipeline."""
-
-        # Translate to LaTeX quotation marks.
-        string = self.latex_quotes(string)
-
-        # Prefix the backslash to the special LaTeX characters.
-        string = self.latex_special_chars(string)
-
-        # Return the LaTeX string.
-        return string
-
-
     def latex_pipeline_final(self, string):
         """Final LaTeX conversion pipeline."""
 
@@ -275,12 +262,24 @@ class Fetch_docstrings:
         if search('quoteenv{', string):
             return string
 
-
         # LaTeX maths.
         string = self.latex_maths(string)
 
         # Model-free parameters.
         string = self.parameter_replement(string)
+
+        # Return the LaTeX string.
+        return string
+
+
+    def latex_pipeline_initial(self, string):
+        """Initial LaTeX conversion pipeline."""
+
+        # Translate to LaTeX quotation marks.
+        string = self.latex_quotes(string)
+
+        # Prefix the backslash to the special LaTeX characters.
+        string = self.latex_special_chars(string)
 
         # Return the LaTeX string.
         return string
@@ -406,7 +405,7 @@ class Fetch_docstrings:
                             list_spacing.append(0)
 
                         break
-                
+
                 # Now within the list.
                 in_list = 1
 
@@ -551,12 +550,28 @@ class Fetch_docstrings:
         # Rex.
         string = self.safe_replacement(string, 'Rex', '$R_{ex}$')
 
-        # CSA.
-        string = self.safe_replacement(string, 'CSA', '$CSA$')
+        # CSA (shouldn't be changed?).
+        #string = self.safe_replacement(string, 'CSA', '$CSA$')
 
         # r.
         string = self.safe_replacement(string, 'r', '$r$')
         string = self.safe_replacement(string, '<r>', '$<$$r$$>$')
+
+
+        # Spectral densities.
+        #####################
+
+        # J(w).
+        string = replace(string, 'J(w)', '$J(\omega)$')
+
+        # J(0).
+        string = replace(string, 'J(0)', '$J(0)$')
+
+        # J(wX).
+        string = replace(string, 'J(wX)', '$J(\omega_X)$')
+
+        # J(wH).
+        string = replace(string, 'J(wH)', '$J(\omega_H)$')
 
 
         # Diffusion tensor parameters.
@@ -634,6 +649,16 @@ class Fetch_docstrings:
 
         # z.
         string = self.safe_replacement(string, 'z', '$z$')
+
+
+        # Relaxation data.
+        ##################
+
+        # R1.
+        string = self.safe_replacement(string, 'R1', 'R$_1$')
+
+        # R2.
+        string = self.safe_replacement(string, 'R2', 'R$_1$')
 
 
         # Return the new text.
@@ -727,9 +752,24 @@ class Fetch_docstrings:
             # Pull out the section lines (skip the title line, tilde line, and first blank line).
             lines = self.docstring_lines[self.section_start[i]+3:self.section_end[i]]
 
+            # Verbatim type sections.
+            lines = self.verbatim(lines)
+
             # Initial LaTeX conversion pipeline.
+            in_verbatim = 0
             for j in xrange(len(lines)):
-                lines[j] = self.latex_pipeline_initial(lines[j])
+                # Inside verbatim env.
+                if search('begin{verb', lines[j]):
+                    in_verbatim = 1
+
+                # Outside of verbatim env.
+                elif search('end{verb', lines[j]):
+                    in_verbatim = 0
+                    continue
+
+                # Skip the verbatim env. 
+                if not in_verbatim:
+                    lines[j] = self.latex_pipeline_initial(lines[j])
 
             # Format the 'Keyword Arguements' section.
             if search('^Keyword ', self.section_title):
@@ -750,8 +790,20 @@ class Fetch_docstrings:
             lines = self.quote_environ(lines)
 
             # Final LaTeX conversion pipeline.
+            in_verbatim = 0
             for j in xrange(len(lines)):
-                lines[j] = self.latex_pipeline_final(lines[j])
+                # Inside verbatim env.
+                if search('begin{verb', lines[j]):
+                    in_verbatim = 1
+
+                # Outside of verbatim env.
+                elif search('end{verb', lines[j]):
+                    in_verbatim = 0
+                    continue
+
+                # Skip the verbatim env. 
+                if not in_verbatim:
+                    lines[j] = self.latex_pipeline_final(lines[j])
 
             # Loop over the section line by line and write them.
             for line in lines:
@@ -1089,6 +1141,41 @@ class Fetch_docstrings:
 
             else:
                 new_lines.append(lines[i])
+
+        # Return the lines.
+        return new_lines
+
+
+    def verbatim(self, lines):
+        """Function for creating LaTeX tables."""
+
+        # Initialise.
+        new_lines = []
+        in_verbatim = 0
+
+        # Loop over the lines to find the examples.
+        for line in lines:
+            # Verbatim delimiter.
+            if search('---------', line):
+                # Start of verbatim.
+                if not in_verbatim:
+                    # Begin the verbatim environment.
+                    new_lines.append('{\\footnotesize \\begin{verbatim}')
+
+                    # Now in verbatim section.
+                    in_verbatim = 1
+
+                # End of verbatim.
+                else:
+                    # End the verbatim environment.
+                    new_lines.append('\\end{verbatim}}')
+
+                    # Now out of the verbatim section.
+                    in_verbatim = 0
+
+            # All other lines.
+            else:
+                new_lines.append(line)
 
         # Return the lines.
         return new_lines

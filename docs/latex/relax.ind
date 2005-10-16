@@ -1,19 +1,19 @@
 \begin{theindex}
 
-  \item Brownian diffusion, 15
+  \item Brownian diffusion, 13
 
   \indexspace
 
-  \item cross-relaxation rate, 13, 14
+  \item cross-relaxation rate, 11, 12
 
   \indexspace
 
-  \item ellipsoid, 15, 27
+  \item ellipsoid, 13, 25
 
   \indexspace
 
-  \item floating point number, 7
-  \item function class, 8--10
+  \item floating point number, 5
+  \item function class, 6--8
 
   \indexspace
 
@@ -21,31 +21,31 @@
 
   \indexspace
 
-  \item integer, 7
+  \item integer, 5
 
   \indexspace
 
-  \item list, 7
+  \item list, 5
 
   \indexspace
 
-  \item minimisation, 8, 13, 17, 18
+  \item minimisation, 6, 11, 15, 16
 
   \indexspace
 
-  \item Python, 7, 8, 11, 12
+  \item Python, 5, 6, 9, 10
 
   \indexspace
 
-  \item sample scripts, 12
-  \item sphere, 15, 17
-  \item spheroid, 15, 16
-  \item spin-latice relaxation rate, 13
-  \item spin-spin relaxation rate, 13
-  \item string, 7
+  \item sample scripts, 10
+  \item sphere, 13, 15
+  \item spheroid, 13, 14
+  \item spin-latice relaxation rate, 11
+  \item spin-spin relaxation rate, 11
+  \item string, 5
 
   \indexspace
 
-  \item user functions, 8--10, 29
+  \item user functions, 6--8, 27
 
 \end{theindex}

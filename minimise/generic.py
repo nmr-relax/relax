@@ -88,22 +88,30 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
 
     d2c:  User supplied constraint Hessian function.
 
-    full_output:  A flag specifying which data structures should be returned.  The following values
-    will return, in tuple form, the following data:
-        0 - xk
-        1 - (xk, fk, k, f_count, g_count, h_count, warning)
-    where the data names correspond to:
-        xk:      The array of minimised parameter values.
-        fk:      The minimised function value.
-        k:       The number of iterations.
-        f_count: The number of function calls.
-        g_count: The number of gradient calls.
-        h_count: The number of Hessian calls.
-        warning: The warning string.
+    full_output:  A flag specifying which data structures should be returned.
 
     print_flag:  A flag specifying how much information should be printed to standard output during
     minimisation.  0 means no output, 1 means minimal output, and values above 1 increase the amount
     of output printed.
+
+
+    Minimisation output
+    ~~~~~~~~~~~~~~~~~~~
+
+    The following values of the 'full_output' flag will return, in tuple form, the following data
+
+        0:  'xk',
+        1:  '(xk, fk, k, f_count, g_count, h_count, warning)',
+
+    where the data names correspond to
+
+        'xk':      The array of minimised parameter values,
+        'fk':      The minimised function value,
+        'k':       The number of iterations,
+        'f_count': The number of function calls,
+        'g_count': The number of gradient calls,
+        'h_count': The number of Hessian calls,
+        'warning': The warning string.
 
 
     Minimisation algorithms

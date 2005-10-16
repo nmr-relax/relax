@@ -846,17 +846,17 @@ The property which is actually plotted can be controlled by the
 \quoteenv{`plot\_data'}
  argument.  It
 can be one of the following:
-\begin{itemize}
-\item[]     
+\begin{description}
+\item[    
 \quoteenv{`value'}
- - Plot values (with errors if they exist).
-\item[]     
+:]   Plot values (with errors if they exist).
+\item[    
 \quoteenv{`error'}
- - Plot errors.
-\item[]     
+:]   Plot errors.
+\item[    
 \quoteenv{`sims'}
-   - Plot the simulation values.
-\end{itemize}
+:]    Plot the simulation values.
+\end{description}
 
 
 \subsubsection{Examples}
@@ -1112,7 +1112,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -1138,7 +1138,7 @@ Data type & Object name & Patterns \\
 
 \midrule
 
-J(0) & 
+$J(0)$ & 
 \quoteenv{`j0'}
  & 
 \quoteenv{`\^{}[Jj]0\$'}
@@ -1148,7 +1148,7 @@ J(0) &
 
  &  &  \\
 
-J(wX) & 
+$J(\omega_X)$ & 
 \quoteenv{`jwx'}
  & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
@@ -1158,7 +1158,7 @@ J(wX) &
 
  &  &  \\
 
-J(wH) & 
+$J(\omega_H)$ & 
 \quoteenv{`jwh'}
  & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
@@ -1178,7 +1178,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -1327,7 +1327,7 @@ Function for turning the function introductions on.
 
 \subsubsection{Synopsis}
 
-Function for selecting which relaxation data to use in the J(w) mapping.
+Function for selecting which relaxation data to use in the $J(\omega)$ mapping.
 
 \subsubsection{Defaults}
 
@@ -1483,11 +1483,19 @@ To minimise the model-free run
 
 
 
+\subsubsection{Note}
 
-Reproduction of the docstring of the generic\_minimise function.  Only take note of the
-minimisation algorithms and minimisation options sections, the other sections are not
-relevant for this function.  The Grid search and Method of Multipliers algorithms cannot be
-selected as minimisation algorithms for this function.
+{\footnotesize \begin{verbatim}
+
+All the text which follows is a reproduction of the docstring of the generic_minimise
+function.  Only take note of the minimisation algorithms and minimisation options sections,
+the other sections are not relevant for this function.  The Grid search and Method of
+Multipliers algorithms CANNOT be selected as minimisation algorithms for this function.
+
+The section entitled Keyword Arguments is also completely inaccessible therefore please
+ignore that text.
+
+\end{verbatim}}
 
 
 Generic minimisation function.
@@ -1553,10 +1561,52 @@ specifying the amount of detail to print to screen.
   User supplied constraint Hessian function.
 
 \keyword{full\_output:}
-  A flag specifying which data structures should be returned.  The following values will return, in tuple form, the following data: 0 - xk 1 - (xk, fk, $k$, f\_count, g\_count, h\_count, warning) where the data names correspond to: xk:      The array of minimised parameter values. fk:      The minimised function value. $k$:       The number of iterations. f\_count: The number of function calls. g\_count: The number of gradient calls. h\_count: The number of Hessian calls. warning: The warning string.
+  A flag specifying which data structures should be returned.
 
 \keyword{print\_flag:}
   A flag specifying how much information should be printed to standard output during minimisation.  0 means no output, 1 means minimal output, and values above 1 increase the amount of output printed.
+
+\subsubsection{Minimisation output}
+
+The following values of the 
+\quoteenv{`full\_output'}
+ flag will return, in tuple form, the following data
+
+\begin{description}
+\item[    0:]   
+\quoteenv{`xk'}
+,
+\item[    1:]   
+\quoteenv{`(xk, fk, k, f\_count, g\_count, h\_count, warning)'}
+,
+\end{description}
+
+where the data names correspond to
+
+\begin{description}
+\item[    
+\quoteenv{`xk'}
+:]       The array of minimised parameter values,
+\item[    
+\quoteenv{`fk'}
+:]       The minimised function value,
+\item[    
+\quoteenv{`k'}
+:]        The number of iterations,
+\item[    
+\quoteenv{`f\_count'}
+:]  The number of function calls,
+\item[    
+\quoteenv{`g\_count'}
+:]  The number of gradient calls,
+\item[    
+\quoteenv{`h\_count'}
+:]  The number of Hessian calls,
+\item[    
+\quoteenv{`warning'}
+:]  The warning string.
+\end{description}
+
 
 \subsubsection{Minimisation algorithms}
 
@@ -1571,23 +1621,29 @@ This is a short description of python regular expression, for more information, 
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-\begin{itemize}
-\item[]     [] - A sequence or set of characters to match to a single character.  For example, 
+\begin{description}
+\item[    
+\quoteenv{`[]'}
+:]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Nn]ewton'}
  will match both 
 \quoteenv{`Newton'}
  and 
 \quoteenv{`newton'}
 . 
-\item[]     \^{} - Match the start of the string. 
-\item[]     \$ - Match the end of the string.  For example, 
+\item[    
+\quoteenv{`\^{}'}
+:]   Match the start of the string. 
+\item[    
+\quoteenv{`\$'}
+:]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ll][Mm]\$'}
  will match 
 \quoteenv{`lm'}
  and 
 \quoteenv{`LM'}
  but will not match if characters are placed either before or after these strings. 
-\end{itemize}
+\end{description}
 To select a minimisation algorithm, set the argument to a string which matches the given
 pattern.
 
@@ -2076,7 +2132,7 @@ The following parameters are accepted for all equations:
 \begin{description}
 \item[    $R_{ex}$:]     The chemical exchange relaxation.
 \item[    $r$:]       The average bond length $<$$r$$>$.
-\item[    $CSA$:]     The chemical shift anisotropy.
+\item[    CSA:]     The chemical shift anisotropy.
 \end{description}
 
 
@@ -2263,38 +2319,38 @@ The standard preset model-free models are
 :]   [$R_{ex}$].
 \end{description}
 
-The preset model-free models with optimisation of the $CSA$ value are
+The preset model-free models with optimisation of the CSA value are
 \begin{description}
 \item[    
 \quoteenv{`m10'}
-:]   [$CSA$],
+:]   [CSA],
 \item[    
 \quoteenv{`m11'}
-:]   [$CSA$, $S^2$],
+:]   [CSA, $S^2$],
 \item[    
 \quoteenv{`m12'}
-:]   [$CSA$, $S^2$, $\tau_e$],
+:]   [CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`m13'}
-:]   [$CSA$, $S^2$, $R_{ex}$],
+:]   [CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`m14'}
-:]   [$CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+:]   [CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`m15'}
-:]   [$CSA$, $S^2_f$, $S^2$, $\tau_s$],
+:]   [CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m16'}
-:]   [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+:]   [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m17'}
-:]   [$CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m18'}
-:]   [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m19'}
-:]   [$CSA$, $R_{ex}$].
+:]   [CSA, $R_{ex}$].
 \end{description}
 
 The preset model-free models with optimisation of the bond length are
@@ -2328,44 +2384,44 @@ The preset model-free models with optimisation of the bond length are
 :]   [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m29'}
-:]   [$r$, $CSA$, $R_{ex}$].
+:]   [$r$, CSA, $R_{ex}$].
 \end{description}
 
-The preset model-free models with both optimisation of the bond length and $CSA$ are
+The preset model-free models with both optimisation of the bond length and CSA are
 \begin{description}
 \item[    
 \quoteenv{`m30'}
-:]   [$r$, $CSA$],
+:]   [$r$, CSA],
 \item[    
 \quoteenv{`m31'}
-:]   [$r$, $CSA$, $S^2$],
+:]   [$r$, CSA, $S^2$],
 \item[    
 \quoteenv{`m32'}
-:]   [$r$, $CSA$, $S^2$, $\tau_e$],
+:]   [$r$, CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`m33'}
-:]   [$r$, $CSA$, $S^2$, $R_{ex}$],
+:]   [$r$, CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`m34'}
-:]   [$r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+:]   [$r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`m35'}
-:]   [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$],
+:]   [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m36'}
-:]   [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+:]   [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m37'}
-:]   [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m38'}
-:]   [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m39'}
-:]   [$r$, $CSA$, $R_{ex}$].
+:]   [$r$, CSA, $R_{ex}$].
 \end{description}
 
-Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
+Warning:  The models in the thirties range fail when using standard R$_1$, R$_1$, and NOE
 relaxation data.  This is due to the extreme flexibly of these models where a change in the
 parameter 
 \quoteenv{`r'}
@@ -2410,38 +2466,38 @@ the addition of a local $\tau_m$ parameter are:
 :]   [$\tau_m$, $R_{ex}$].
 \end{description}
 
-The preset model-free models with optimisation of the $CSA$ value are
+The preset model-free models with optimisation of the CSA value are
 \begin{description}
 \item[    
 \quoteenv{`tm10'}
-:]   [$\tau_m$, $CSA$],
+:]   [$\tau_m$, CSA],
 \item[    
 \quoteenv{`tm11'}
-:]   [$\tau_m$, $CSA$, $S^2$],
+:]   [$\tau_m$, CSA, $S^2$],
 \item[    
 \quoteenv{`tm12'}
-:]   [$\tau_m$, $CSA$, $S^2$, $\tau_e$],
+:]   [$\tau_m$, CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`tm13'}
-:]   [$\tau_m$, $CSA$, $S^2$, $R_{ex}$],
+:]   [$\tau_m$, CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`tm14'}
-:]   [$\tau_m$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+:]   [$\tau_m$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`tm15'}
-:]   [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$],
+:]   [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm16'}
-:]   [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+:]   [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm17'}
-:]   [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm18'}
-:]   [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm19'}
-:]   [$\tau_m$, $CSA$, $R_{ex}$].
+:]   [$\tau_m$, CSA, $R_{ex}$].
 \end{description}
 
 The preset model-free models with optimisation of the bond length are
@@ -2475,41 +2531,41 @@ The preset model-free models with optimisation of the bond length are
 :]   [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm29'}
-:]   [$\tau_m$, $r$, $CSA$, $R_{ex}$].
+:]   [$\tau_m$, $r$, CSA, $R_{ex}$].
 \end{description}
 
-The preset model-free models with both optimisation of the bond length and $CSA$ are
+The preset model-free models with both optimisation of the bond length and CSA are
 \begin{description}
 \item[    
 \quoteenv{`tm30'}
-:]   [$\tau_m$, $r$, $CSA$],
+:]   [$\tau_m$, $r$, CSA],
 \item[    
 \quoteenv{`tm31'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2$],
+:]   [$\tau_m$, $r$, CSA, $S^2$],
 \item[    
 \quoteenv{`tm32'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$],
+:]   [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`tm33'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2$, $R_{ex}$],
+:]   [$\tau_m$, $r$, CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`tm34'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+:]   [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`tm35'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$],
+:]   [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm36'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+:]   [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm37'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm38'}
-:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+:]   [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm39'}
-:]   [$\tau_m$, $r$, $CSA$, $R_{ex}$].
+:]   [$\tau_m$, $r$, CSA, $R_{ex}$].
 \end{description}
 
 
@@ -3421,14 +3477,14 @@ Function for setting the errors in the reference or saturated NOE spectra.
 \subsubsection{Description}
 
 The spectrum\_type argument can have the following values:
-\begin{itemize}
-\item[]     
+\begin{description}
+\item[    
 \quoteenv{`ref'}
- - The NOE reference spectrum.
-\item[]     
+:]   The NOE reference spectrum.
+\item[    
 \quoteenv{`sat'}
- - The NOE spectrum with proton saturation turned on.
-\end{itemize}
+:]   The NOE spectrum with proton saturation turned on.
+\end{description}
 
 If the 
 \quoteenv{`res\_num'}
@@ -3488,14 +3544,14 @@ The peak intensity can either be from peak heights or peak volumes.
 
 
 The spectrum\_type argument can have the following values:
-\begin{itemize}
-\item[]     
+\begin{description}
+\item[    
 \quoteenv{`ref'}
- - The NOE reference spectrum.
-\item[]     
+:]   The NOE reference spectrum.
+\item[    
 \quoteenv{`sat'}
- - The NOE spectrum with proton saturation turned on.
-\end{itemize}
+:]   The NOE spectrum with proton saturation turned on.
+\end{description}
 
 
 The format argument can currently be set to:
@@ -3589,10 +3645,10 @@ Function for setting the gyromagnetic ratio of the heteronucleus.
 
 The heteronuc argument can be set to the following strings:
 
-\begin{itemize}
-\item[]     N - Nitrogen, -2.7126e7
-\item[]     C - Carbon, 2.2e7
-\end{itemize}
+\begin{description}
+\item[    N:]   Nitrogen, -2.7126e7
+\item[    C:]   Carbon, 2.2e7
+\end{description}
 
 
 \newpage
@@ -3654,28 +3710,34 @@ Function for creating the Modelfree4 input files.
 
 \subsubsection{Description}
 
-The following files are created:
+The following files are created
+
 \begin{itemize}
 \item[]     
 \quoteenv{`dir/mfin'}
+,
 \item[]     
 \quoteenv{`dir/mfdata'}
+,
 \item[]     
 \quoteenv{`dir/mfpar'}
+,
 \item[]     
 \quoteenv{`dir/mfmodel'}
+,
 \item[]     
 \quoteenv{`dir/run.sh'}
+.
 \end{itemize}
 
 The file 
 \quoteenv{`run/run.sh'}
  contains the single command,
-\begin{itemize}
-\item[]     
+
 \quoteenv{`modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'}
-\end{itemize}
-This can be used to execute modelfree4.
+,
+
+which can be used to execute modelfree4.
 
 
 \newpage
@@ -3709,10 +3771,8 @@ Function for executing Modelfree4.
 \subsubsection{Description}
 
 Modelfree 4 will be executed as
-\begin{itemize}
-\item[]     
+
 \quoteenv{`modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'}
-\end{itemize}
 
 If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be
 placed on the command line as 
@@ -4031,13 +4091,9 @@ Function for displaying the relaxation data corresponding to ri\_label and frq\_
 
 \subsubsection{Examples}
 
-To show the relaxation data corresponding to ri\_label=
-\quoteenv{`NOE'}
-, frq\_label=
-\quoteenv{`600'}
-, and the run
+To display the NOE relaxation data at 600 MHz from the run 
 \quoteenv{`m4'}
-, type:
+, type
 
 \example{relax> relax\_data.display(`m4', `NOE', `600') }
 
@@ -4050,7 +4106,7 @@ To show the relaxation data corresponding to ri\_label=
 
 \subsubsection{Synopsis}
 
-Function for reading R1, R2, or NOE relaxation data from a file.
+Function for reading R$_1$, R$_1$, or NOE relaxation data from a file.
 
 \subsubsection{Defaults}
 
@@ -4119,7 +4175,7 @@ first, second, third, and forth columns respectively.
 
 
 
-The following commands will read the R2 data out of the file 
+The following commands will read the R$_1$ data out of the file 
 \quoteenv{`r2.out'}
  where the residue
 numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
@@ -4131,7 +4187,7 @@ respectively.  The columns are separated by commas.
 
 
 
-The following commands will read the R1 data out of the file 
+The following commands will read the R$_1$ data out of the file 
 \quoteenv{`r1.out'}
  where the columns are
 separated by the symbol 
@@ -4148,7 +4204,7 @@ separated by the symbol
 
 \subsubsection{Synopsis}
 
-Function for writing R1, R2, or NOE relaxation data to a file.
+Function for writing R$_1$, R$_1$, or NOE relaxation data to a file.
 
 \subsubsection{Defaults}
 
@@ -4405,16 +4461,18 @@ the extension
 \quoteenv{`.bz2'}
  is not included in the file name, it will be added.  The compression
 can, however, be changed to either no compression or gzip compression.  This is controlled
-by the compress\_type argument which can be set to:
-\begin{itemize}
-\item[]     0 - No compression (no file extension).
-\item[]     1 - bzip2 compression (
+by the compress\_type argument which can be set to
+
+\begin{description}
+\item[    0:]   No compression (no file extension),
+\item[    1:]   bzip2 compression (
 \quoteenv{`.bz2'}
- file extension).
-\item[]     2 - gzip compression (
+ file extension),
+\item[    2:]   gzip compression (
 \quoteenv{`.gz'}
  file extension).
-\end{itemize}
+\end{description}
+
 The complementary read function will automatically handle the compressed files.
 
 
@@ -4443,25 +4501,25 @@ Function for setting up a run type.
 
 \subsubsection{Description}
 
-The run name can be any string however the run type can only be one of the following:
+The run name can be any string however the run type can only be one of the following
 
-\begin{itemize}
-\item[]     
+\begin{description}
+\item[    
 \quoteenv{`jw'}
- - Reduced spectral density mapping.
-\item[]     
+:]   Reduced spectral density mapping,
+\item[    
 \quoteenv{`mf'}
- - Model-free analysis.
-\item[]     
+:]   Model-free analysis,
+\item[    
 \quoteenv{`noe'}
- - Steady state NOE calculation.
-\item[]     
+:]   Steady state NOE calculation,
+\item[    
 \quoteenv{`relax\_fit'}
- - Relaxation curve fitting.
-\item[]     
+:]   Relaxation curve fitting,
+\item[    
 \quoteenv{`srls'}
- - SRLS analysis.
-\end{itemize}
+:]   SRLS analysis.
+\end{description}
 
 
 \subsubsection{Examples}
@@ -5082,16 +5140,17 @@ the extension
 \quoteenv{`.bz2'}
  is not included in the file name, it will be added.  The compression
 can, however, be changed to either no compression or gzip compression.  This is controlled
-by the compress\_type argument which can be set to:
-\begin{itemize}
-\item[]     0 - No compression (no file extension).
-\item[]     1 - bzip2 compression (
+by the compress\_type argument which can be set to
+
+\begin{description}
+\item[    0:]   No compression (no file extension).
+\item[    1:]   bzip2 compression (
 \quoteenv{`.bz2'}
  file extension).
-\item[]     2 - gzip compression (
+\item[    2:]   gzip compression (
 \quoteenv{`.gz'}
  file extension).
-\end{itemize}
+\end{description}
 
 
 \subsubsection{Examples}
@@ -5215,12 +5274,12 @@ started for each CPU.
 
 An example is:
 
--------------------------------------------------------------------------------------------
-\# Host          User name       Program path            Working directory    Priority  CPUs
+{\footnotesize \begin{verbatim}
+# Host          User name       Program path            Working directory    Priority  CPUs
 localhost       -               -                       -                    0         2
 192.168.0.10    dauvergne       /usr/local/bin/relax    -                    -         -
 192.168.0.11    edward          -                       -                    -         -
--------------------------------------------------------------------------------------------
+\end{verbatim}}
 
 In this case, two threads will be run on the parent computer which would be either a dual
 CPU system or a dual core 
@@ -5552,7 +5611,7 @@ and Hessian count) will be reset to None.
 
 \subsubsection{Examples}
 
-To copy the $CSA$ values from the run 
+To copy the CSA values from the run 
 \quoteenv{`m1'}
  to 
 \quoteenv{`m2'}
@@ -5709,7 +5768,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -5760,7 +5819,7 @@ Data type & Object name & Patterns \\
 
 \midrule
 
-J(0) & 
+$J(0)$ & 
 \quoteenv{`j0'}
  & 
 \quoteenv{`\^{}[Jj]0\$'}
@@ -5770,7 +5829,7 @@ J(0) &
 
  &  &  \\
 
-J(wX) & 
+$J(\omega_X)$ & 
 \quoteenv{`jwx'}
  & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
@@ -5780,7 +5839,7 @@ J(wX) &
 
  &  &  \\
 
-J(wH) & 
+$J(\omega_H)$ & 
 \quoteenv{`jwh'}
  & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
@@ -5800,7 +5859,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -5815,7 +5874,7 @@ $CSA$ &
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and $CSA$
+In reduced spectral density mapping, only two values can be set, the bond length and CSA
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -5849,7 +5908,7 @@ Only one data type may be selected, therefore the data type argument should be a
 
 \subsubsection{Examples}
 
-To show all $CSA$ values for the run 
+To show all CSA values for the run 
 \quoteenv{`m1'}
 , type:
 
@@ -6004,7 +6063,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -6030,7 +6089,7 @@ Data type & Object name & Patterns \\
 
 \midrule
 
-J(0) & 
+$J(0)$ & 
 \quoteenv{`j0'}
  & 
 \quoteenv{`\^{}[Jj]0\$'}
@@ -6040,7 +6099,7 @@ J(0) &
 
  &  &  \\
 
-J(wX) & 
+$J(\omega_X)$ & 
 \quoteenv{`jwx'}
  & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
@@ -6050,7 +6109,7 @@ J(wX) &
 
  &  &  \\
 
-J(wH) & 
+$J(\omega_H)$ & 
 \quoteenv{`jwh'}
  & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
@@ -6070,7 +6129,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -6139,7 +6198,7 @@ and Hessian count) will be reset to None.
 
 \subsubsection{Examples}
 
-To load $CSA$ values for the run 
+To load CSA values for the run 
 \quoteenv{`m1'}
  from the file 
 \quoteenv{`csa\_values'}
@@ -6303,7 +6362,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -6354,7 +6413,7 @@ Data type & Object name & Patterns \\
 
 \midrule
 
-J(0) & 
+$J(0)$ & 
 \quoteenv{`j0'}
  & 
 \quoteenv{`\^{}[Jj]0\$'}
@@ -6364,7 +6423,7 @@ J(0) &
 
  &  &  \\
 
-J(wX) & 
+$J(\omega_X)$ & 
 \quoteenv{`jwx'}
  & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
@@ -6374,7 +6433,7 @@ J(wX) &
 
  &  &  \\
 
-J(wH) & 
+$J(\omega_H)$ & 
 \quoteenv{`jwh'}
  & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
@@ -6394,7 +6453,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -6409,7 +6468,7 @@ $CSA$ &
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and $CSA$
+In reduced spectral density mapping, only two values can be set, the bond length and CSA
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -6566,7 +6625,7 @@ given field strength.
 
 
 
-To set the $CSA$ value for the model-free run 
+To set the CSA value for the model-free run 
 \quoteenv{`tm3'}
  to the default value, type:
 
@@ -6574,7 +6633,7 @@ To set the $CSA$ value for the model-free run
 
 
 
-To set the $CSA$ value of all residues in the reduced spectral density mapping run 
+To set the CSA value of all residues in the reduced spectral density mapping run 
 \quoteenv{`600MHz'}
  to
 -170 ppm, type:
@@ -6596,7 +6655,7 @@ type:
 
 
 
-To set both the bond length and the $CSA$ value for the run 
+To set both the bond length and the CSA value for the run 
 \quoteenv{`new'}
  to the default values, type:
 
@@ -6774,7 +6833,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -6870,7 +6929,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & -170 * 1e-6 \\
 
@@ -6894,7 +6953,7 @@ Data type & Object name & Patterns \\
 
 \midrule
 
-J(0) & 
+$J(0)$ & 
 \quoteenv{`j0'}
  & 
 \quoteenv{`\^{}[Jj]0\$'}
@@ -6904,7 +6963,7 @@ J(0) &
 
  &  &  \\
 
-J(wX) & 
+$J(\omega_X)$ & 
 \quoteenv{`jwx'}
  & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
@@ -6914,7 +6973,7 @@ J(wX) &
 
  &  &  \\
 
-J(wH) & 
+$J(\omega_H)$ & 
 \quoteenv{`jwh'}
  & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
@@ -6934,7 +6993,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -6949,7 +7008,7 @@ $CSA$ &
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and $CSA$
+In reduced spectral density mapping, only two values can be set, the bond length and CSA
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -6972,7 +7031,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & -170 * 1e-6 \\
 
@@ -7024,7 +7083,7 @@ The data type argument should be a string.
 
 \subsubsection{Examples}
 
-To write the $CSA$ values for the run 
+To write the CSA values for the run 
 \quoteenv{`m1'}
  to the file 
 \quoteenv{`csa.txt'}
@@ -7199,7 +7258,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}
@@ -7225,7 +7284,7 @@ Data type & Object name & Patterns \\
 
 \midrule
 
-J(0) & 
+$J(0)$ & 
 \quoteenv{`j0'}
  & 
 \quoteenv{`\^{}[Jj]0\$'}
@@ -7235,7 +7294,7 @@ J(0) &
 
  &  &  \\
 
-J(wX) & 
+$J(\omega_X)$ & 
 \quoteenv{`jwx'}
  & 
 \quoteenv{`\^{}[Jj]w[Xx]\$'}
@@ -7245,7 +7304,7 @@ J(wX) &
 
  &  &  \\
 
-J(wH) & 
+$J(\omega_H)$ & 
 \quoteenv{`jwh'}
  & 
 \quoteenv{`\^{}[Jj]w[Hh]\$'}
@@ -7265,7 +7324,7 @@ Bond length &
 
  &  &  \\
 
-$CSA$ & 
+CSA & 
 \quoteenv{`csa'}
  & 
 \quoteenv{`\^{}[Cc][Ss][Aa]\$'}

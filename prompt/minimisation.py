@@ -235,13 +235,20 @@ class Minimisation:
 
 
 
-        ____________________________________________________________________________________________
+        Note
+        ~~~~
 
-        Reproduction of the docstring of the generic_minimise function.  Only take note of the
-        minimisation algorithms and minimisation options sections, the other sections are not
-        relevant for this function.  The Grid search and Method of Multipliers algorithms cannot be
-        selected as minimisation algorithms for this function.
-        ____________________________________________________________________________________________
+        --------------------------------------------------------------------------------------------
+
+        All the text which follows is a reproduction of the docstring of the generic_minimise
+        function.  Only take note of the minimisation algorithms and minimisation options sections,
+        the other sections are not relevant for this function.  The Grid search and Method of
+        Multipliers algorithms CANNOT be selected as minimisation algorithms for this function.
+
+        The section entitled Keyword Arguments is also completely inaccessible therefore please
+        ignore that text.
+
+        --------------------------------------------------------------------------------------------
 
         """
 
