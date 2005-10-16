@@ -314,7 +314,7 @@ class Jw_mapping(Common_functions):
 
     def return_units(self, data_type):
         """Function for returning a string representing the parameters units.
-        
+
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return the string
         'picoseconds' for te.

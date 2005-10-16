@@ -201,13 +201,18 @@ specify the time in nanoseconds, set the
  argument to 1e-9.  Alternative
 parameters can be used by changing the 
 \quoteenv{`param\_types'}
- flag to the following integers:
+ flag to the following integers
 
-    0 - $\tau_m$   (Default)
-    1 - $\Diff_{iso}$
+\begin{description}
+\item[    0:]   $\tau_m$   (Default),
+\item[    1:]   $\Diff_{iso}$,
+\end{description}
 
-where:
-    $\tau_m$ = 1 / 6$\Diff_{iso}$
+where
+
+\begin{itemize}
+\item[]     $\tau_m$ = 1 / 6$\Diff_{iso}$.
+\end{itemize}
 
 
 Axially symmetric diffusion.
@@ -217,28 +222,40 @@ of floating point numbers of length four.  A tuple is a type of data structure e
 round brackets, the elements of which are separated by commas.  Alternative sets of
 parameters, 
 \quoteenv{`param\_types'}
-, are:
+, are
 
-    0 - ($\tau_m$, $\Diff_a$, $\theta$, $\phi$)   (Default)
-    1 - ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$)
-    2 - ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$)
-    3 - ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$)
-    4 - ($\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$)
+\begin{description}
+\item[    0:]   ($\tau_m$, $\Diff_a$, $\theta$, $\phi$)   (Default),
+\item[    1:]   ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$),
+\item[    2:]   ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$),
+\item[    3:]   ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$),
+\item[    4:]   ($\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$),
+\end{description}
 
-where:
-    $\tau_m$ = 1 / 6$\Diff_{iso}$
-    $\Diff_{iso}$ = 1/3 ($\Diff_\Par$ + 2$\Diff_\Per$)
-    $\Diff_a$ = 1/3 ($\Diff_\Par$ - $\Diff_\Per$)
-    $\Diff_{ratio}$ = $\Diff_\Par$ / $\Diff_\Per$
+where
+
+\begin{itemize}
+\item[]     $\tau_m$ = 1 / 6$\Diff_{iso}$,
+\item[]     $\Diff_{iso}$ = 1/3 ($\Diff_\Par$ + 2$\Diff_\Per$),
+\item[]     $\Diff_a$ = 1/3 ($\Diff_\Par$ - $\Diff_\Per$),
+\item[]     $\Diff_{ratio}$ = $\Diff_\Par$ / $\Diff_\Per$.
+\end{itemize}
 
 The diffusion tensor is defined by the vector $\Diff_\Par$.  The angle $\alpha$ describes the bond
 vector with respect to the diffusion frame while the spherical angles \{$\theta$, $\phi$\} describe
 the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and $\phi$ is the
-azimuthal angle defined between:
-    0 $\le$ $\theta$ $\le$ $\pi$
-    0 $\le$ $\phi$ $\le$ 2$\pi$
-The angle $\alpha$ is defined between:
-    0 $\le$ $\alpha$ $\le$ 2$\pi$
+azimuthal angle defined between
+
+\begin{itemize}
+\item[]     0 $\le$ $\theta$ $\le$ $\pi$,
+\item[]     0 $\le$ $\phi$ $\le$ 2$\pi$.
+\end{itemize}
+
+The angle $\alpha$ is defined between
+
+\begin{itemize}
+\item[]     0 $\le$ $\alpha$ $\le$ 2$\pi$.
+\end{itemize}
 
 The 
 \quoteenv{`axial\_type'}
@@ -265,30 +282,42 @@ To select fully anisotropic diffusion, the parameters argument should be a tuple
 six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
 are separated by commas.  Alternative sets of parameters, 
 \quoteenv{`param\_types'}
-, are:
+, are
 
-    0 - ($\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)   (Default)
-    1 - ($\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)
-    2 - ($\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$)
+\begin{description}
+\item[    0:]   ($\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)   (Default),
+\item[    1:]   ($\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$),
+\item[    2:]   ($\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$),
+\end{description}
 
-where:
-    $\tau_m$ = 1 / 6$\Diff_{iso}$
-    $\Diff_{iso}$ = 1/3 ($\Diff_x$ + $\Diff_y$ + $\Diff_z$)
-    $\Diff_a$ = 1/3 ($\Diff_z$ - ($\Diff_x$ + $\Diff_y$)/2)
-    $\Diff_r$ = ($\Diff_x$ - $\Diff_y$)/2
+where
+
+\begin{itemize}
+\item[]     $\tau_m$ = 1 / 6$\Diff_{iso}$,
+\item[]     $\Diff_{iso}$ = 1/3 ($\Diff_x$ + $\Diff_y$ + $\Diff_z$),
+\item[]     $\Diff_a$ = 1/3 ($\Diff_z$ - ($\Diff_x$ + $\Diff_y$)/2),
+\item[]     $\Diff_r$ = ($\Diff_x$ - $\Diff_y$)/2.
+\end{itemize}
 
 The angles $\alpha$, $\beta$, and $\gamma$ are the Euler angles describing the diffusion tensor
 within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where
 $\alpha$ is the initial rotation angle around the z-axis, $\beta$ is the rotation angle around the
 y-axis, and $\gamma$ is the final rotation around the z-axis again.  The angles are defined
-between:
-    0 $\le$ $\alpha$ $\le$ 2$\pi$
-    0 $\le$ $\beta$ $\le$ $\pi$
-    0 $\le$ $\gamma$ $\le$ 2$\pi$
+between
+
+\begin{itemize}
+\item[]     0 $\le$ $\alpha$ $\le$ 2$\pi$,
+\item[]     0 $\le$ $\beta$ $\le$ $\pi$,
+\item[]     0 $\le$ $\gamma$ $\le$ 2$\pi$.
+\end{itemize}
+
 Within the PDB frame, the bond vector is described using the spherical angels $\theta$ and $\phi$
-where $\theta$ is the polar angle and $\phi$ is the azimuthal angle defined between:
-    0 $\le$ $\theta$ $\le$ $\pi$
-    0 $\le$ $\phi$ $\le$ 2$\pi$
+where $\theta$ is the polar angle and $\phi$ is the azimuthal angle defined between
+
+\begin{itemize}
+\item[]     0 $\le$ $\theta$ $\le$ $\pi$,
+\item[]     0 $\le$ $\phi$ $\le$ 2$\pi$.
+\end{itemize}
 
 
 Units.
@@ -316,7 +345,7 @@ are:  $\theta$; $\phi$; $\alpha$; $\beta$; $\gamma$.
 
 \subsubsection{Examples}
 
-To set an isotropic diffusion tensor with a correlation time of 10$n$s, assigning it to the
+To set an isotropic diffusion tensor with a correlation time of 10 ns, assigning it to the
 run 
 \quoteenv{`m1'}
 , type:
@@ -331,7 +360,7 @@ run
 
 
 
-To select axially symmetric diffusion with a $\tau_m$ value of 8.5$n$s, $\Diff_{ratio}$ of 1.1, $\theta$ value
+To select axially symmetric diffusion with a $\tau_m$ value of 8.5 ns, $\Diff_{ratio}$ of 1.1, $\theta$ value
 of 20 degrees, and $\phi$ value of 20 degrees, and assign it to the run 
 \quoteenv{`m8'}
 , type:
@@ -605,7 +634,9 @@ The local $\tau_m$, in some cases, may exceed the value expected for a global co
 Generally the $\tau_m$ value will be stuck at the upper limit defined for the parameter.  These
 models are eliminated using the rule:
 
-    $\tau_m$ $\ge$ c
+\begin{itemize}
+\item[]     $\tau_m$ $\ge$ c
+\end{itemize}
 
 The default value of c is 50 ns, although this can be overriden by supplying the value (in
 seconds) as the first element of the args tuple.
@@ -617,7 +648,9 @@ These parameters may experience the same problem as the local $\tau_m$ in that t
 the parameter value is stuck at the upper limit.  These parameters are constrained using the
 formula ($\tau_e$, $\tau_f$, $\tau_s$ $\le$ 2$\tau_m$).  These failed models are eliminated using the rule:
 
-    $\tau_e$, $\tau_f$, $\tau_s$ $\ge$ c.$\tau_m$
+\begin{itemize}
+\item[]     $\tau_e$, $\tau_f$, $\tau_s$ $\ge$ c.$\tau_m$
+\end{itemize}
 
 The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
 setting c to 2 will result in no models being eliminated as the minimised parameters will
@@ -813,15 +846,17 @@ The property which is actually plotted can be controlled by the
 \quoteenv{`plot\_data'}
  argument.  It
 can be one of the following:
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`value'}
  - Plot values (with errors if they exist).
-    
+\item[]     
 \quoteenv{`error'}
  - Plot errors.
-    
+\item[]     
 \quoteenv{`sims'}
    - Plot the simulation values.
+\end{itemize}
 
 
 \subsubsection{Examples}
@@ -884,39 +919,46 @@ This is a short description of python regular expression, for more information s
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-    [] - A sequence or set of characters to match to a single character.  For example,
-    
+\begin{description}
+\item[    
+\quoteenv{`[]'}
+:]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
  and 
 \quoteenv{`s2'}
-.
-
-    \^{} - Match the start of the string.
-
-    \$ - Match the end of the string.  For example, 
+. 
+\item[    
+\quoteenv{`\^{}'}
+:]   Match the start of the string. 
+\item[    
+\quoteenv{`\$'}
+:]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
  but not 
 \quoteenv{`S2f'}
-
-    or 
+ or 
 \quoteenv{`s2s'}
-.
-
-    . - Match any character.
-
-    $x$* - Match the character $x$ any number of times, for example 
+. 
+\item[    
+\quoteenv{`.'}
+:]   Match any character. 
+\item[    
+\quoteenv{`x*'}
+:]   Match the character 
 \quoteenv{`x'}
- will match, as will
-    
+ any number of times, for example 
+\quoteenv{`x'}
+ will match, as will 
 \quoteenv{`xxxxx'}
-
-
-    .* - Match any sequence of characters of any length.
-
+ 
+\item[    
+\quoteenv{`.*'}
+:]   Match any sequence of characters of any length. 
+\end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
 the same data type.
@@ -1530,26 +1572,23 @@ This is a short description of python regular expression, for more information, 
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-    [] - A sequence or set of characters to match to a single character.  For example,
-    
+\begin{itemize}
+\item[]     [] - A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Nn]ewton'}
  will match both 
 \quoteenv{`Newton'}
  and 
 \quoteenv{`newton'}
-.
-
-    \^{} - Match the start of the string.
-
-    \$ - Match the end of the string.  For example, 
+. 
+\item[]     \^{} - Match the start of the string. 
+\item[]     \$ - Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ll][Mm]\$'}
  will match 
 \quoteenv{`lm'}
  and 
 \quoteenv{`LM'}
- but
-    will not match if characters are placed either before or after these strings.
-
+ but will not match if characters are placed either before or after these strings. 
+\end{itemize}
 To select a minimisation algorithm, set the argument to a string which matches the given
 pattern.
 
@@ -2016,22 +2055,30 @@ Model-free equation.
 Model-free parameters.
 
 The following parameters are accepted for the original model-free equation:
-    $S^2$:     The square of the generalised order parameter.
-    $\tau_e$:     The effective correlation time.
+\begin{description}
+\item[    $S^2$:]      The square of the generalised order parameter.
+\item[    $\tau_e$:]      The effective correlation time.
+\end{description}
 The following parameters are accepted for the extended model-free equation:
-    $S^2_f$:    The square of the generalised order parameter of the faster motion.
-    $\tau_f$:     The effective correlation time of the faster motion.
-    $S^2$:     The square of the generalised order parameter $S^2$ = $S^2_f$*$S^2_s$.
-    $\tau_s$:     The effective correlation time of the slower motion.
+\begin{description}
+\item[    $S^2_f$:]     The square of the generalised order parameter of the faster motion.
+\item[    $\tau_f$:]      The effective correlation time of the faster motion.
+\item[    $S^2$:]      The square of the generalised order parameter $S^2$ = $S^2_f$*$S^2_s$.
+\item[    $\tau_s$:]      The effective correlation time of the slower motion.
+\end{description}
 The following parameters are accepted for the extended 2 model-free equation:
-    $S^2_f$:    The square of the generalised order parameter of the faster motion.
-    $\tau_f$:     The effective correlation time of the faster motion.
-    $S^2_s$:    The square of the generalised order parameter of the slower motion.
-    $\tau_s$:     The effective correlation time of the slower motion.
+\begin{description}
+\item[    $S^2_f$:]     The square of the generalised order parameter of the faster motion.
+\item[    $\tau_f$:]      The effective correlation time of the faster motion.
+\item[    $S^2_s$:]     The square of the generalised order parameter of the slower motion.
+\item[    $\tau_s$:]      The effective correlation time of the slower motion.
+\end{description}
 The following parameters are accepted for all equations:
-    $R_{ex}$:    The chemical exchange relaxation.
-    $r$:      The average bond length $<$$r$$>$.
-    $CSA$:    The chemical shift anisotropy.
+\begin{description}
+\item[    $R_{ex}$:]     The chemical exchange relaxation.
+\item[    $r$:]       The average bond length $<$$r$$>$.
+\item[    $CSA$:]     The chemical shift anisotropy.
+\end{description}
 
 
 Residue number.
@@ -2183,130 +2230,141 @@ Function for the selection of a preset model-free model.
 
 \subsubsection{Description}
 
-The preset model-free models are:
-    
+The standard preset model-free models are
+\begin{description}
+\item[    
 \quoteenv{`m0'}
-    => []
-    
+:]   [],
+\item[    
 \quoteenv{`m1'}
-    => [$S^2$]
-    
+:]   [$S^2$],
+\item[    
 \quoteenv{`m2'}
-    => [$S^2$, $\tau_e$]
-    
+:]   [$S^2$, $\tau_e$],
+\item[    
 \quoteenv{`m3'}
-    => [$S^2$, $R_{ex}$]
-    
+:]   [$S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`m4'}
-    => [$S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`m5'}
-    => [$S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m6'}
-    => [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m7'}
-    => [$S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m8'}
-    => [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m9'}
-    => [$R_{ex}$]
+:]   [$R_{ex}$].
+\end{description}
 
-    
+The preset model-free models with optimisation of the $CSA$ value are
+\begin{description}
+\item[    
 \quoteenv{`m10'}
-   => [$CSA$]
-    
+:]   [$CSA$],
+\item[    
 \quoteenv{`m11'}
-   => [$CSA$, $S^2$]
-    
+:]   [$CSA$, $S^2$],
+\item[    
 \quoteenv{`m12'}
-   => [$CSA$, $S^2$, $\tau_e$]
-    
+:]   [$CSA$, $S^2$, $\tau_e$],
+\item[    
 \quoteenv{`m13'}
-   => [$CSA$, $S^2$, $R_{ex}$]
-    
+:]   [$CSA$, $S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`m14'}
-   => [$CSA$, $S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`m15'}
-   => [$CSA$, $S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$CSA$, $S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m16'}
-   => [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m17'}
-   => [$CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m18'}
-   => [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m19'}
-   => [$CSA$, $R_{ex}$]
+:]   [$CSA$, $R_{ex}$].
+\end{description}
 
-    
+The preset model-free models with optimisation of the bond length are
+\begin{description}
+\item[    
 \quoteenv{`m20'}
-   => [$r$]
-    
+:]   [$r$],
+\item[    
 \quoteenv{`m21'}
-   => [$r$, $S^2$]
-    
+:]   [$r$, $S^2$],
+\item[    
 \quoteenv{`m22'}
-   => [$r$, $S^2$, $\tau_e$]
-    
+:]   [$r$, $S^2$, $\tau_e$],
+\item[    
 \quoteenv{`m23'}
-   => [$r$, $S^2$, $R_{ex}$]
-    
+:]   [$r$, $S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`m24'}
-   => [$r$, $S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$r$, $S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`m25'}
-   => [$r$, $S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$r$, $S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m26'}
-   => [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m27'}
-   => [$r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m28'}
-   => [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m29'}
-   => [$r$, $CSA$, $R_{ex}$]
+:]   [$r$, $CSA$, $R_{ex}$].
+\end{description}
 
-    
+The preset model-free models with both optimisation of the bond length and $CSA$ are
+\begin{description}
+\item[    
 \quoteenv{`m30'}
-   => [$r$, $CSA$]
-    
+:]   [$r$, $CSA$],
+\item[    
 \quoteenv{`m31'}
-   => [$r$, $CSA$, $S^2$]
-    
+:]   [$r$, $CSA$, $S^2$],
+\item[    
 \quoteenv{`m32'}
-   => [$r$, $CSA$, $S^2$, $\tau_e$]
-    
+:]   [$r$, $CSA$, $S^2$, $\tau_e$],
+\item[    
 \quoteenv{`m33'}
-   => [$r$, $CSA$, $S^2$, $R_{ex}$]
-    
+:]   [$r$, $CSA$, $S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`m34'}
-   => [$r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`m35'}
-   => [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m36'}
-   => [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`m37'}
-   => [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m38'}
-   => [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`m39'}
-   => [$r$, $CSA$, $R_{ex}$]
+:]   [$r$, $CSA$, $R_{ex}$].
+\end{description}
 
 Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
 relaxation data.  This is due to the extreme flexibly of these models where a change in the
@@ -2320,129 +2378,140 @@ vice versa.
 
 Additional preset model-free models, which are simply extensions of the above models with
 the addition of a local $\tau_m$ parameter are:
-    
+\begin{description}
+\item[    
 \quoteenv{`tm0'}
-   => [$\tau_m$]
-    
+:]   [$\tau_m$],
+\item[    
 \quoteenv{`tm1'}
-   => [$\tau_m$, $S^2$]
-    
+:]   [$\tau_m$, $S^2$],
+\item[    
 \quoteenv{`tm2'}
-   => [$\tau_m$, $S^2$, $\tau_e$]
-    
+:]   [$\tau_m$, $S^2$, $\tau_e$],
+\item[    
 \quoteenv{`tm3'}
-   => [$\tau_m$, $S^2$, $R_{ex}$]
-    
+:]   [$\tau_m$, $S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`tm4'}
-   => [$\tau_m$, $S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$\tau_m$, $S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`tm5'}
-   => [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm6'}
-   => [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm7'}
-   => [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm8'}
-   => [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm9'}
-   => [$\tau_m$, $R_{ex}$]
+:]   [$\tau_m$, $R_{ex}$].
+\end{description}
 
-    
+The preset model-free models with optimisation of the $CSA$ value are
+\begin{description}
+\item[    
 \quoteenv{`tm10'}
-  => [$\tau_m$, $CSA$]
-    
+:]   [$\tau_m$, $CSA$],
+\item[    
 \quoteenv{`tm11'}
-  => [$\tau_m$, $CSA$, $S^2$]
-    
+:]   [$\tau_m$, $CSA$, $S^2$],
+\item[    
 \quoteenv{`tm12'}
-  => [$\tau_m$, $CSA$, $S^2$, $\tau_e$]
-    
+:]   [$\tau_m$, $CSA$, $S^2$, $\tau_e$],
+\item[    
 \quoteenv{`tm13'}
-  => [$\tau_m$, $CSA$, $S^2$, $R_{ex}$]
-    
+:]   [$\tau_m$, $CSA$, $S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`tm14'}
-  => [$\tau_m$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$\tau_m$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`tm15'}
-  => [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm16'}
-  => [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm17'}
-  => [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm18'}
-  => [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm19'}
-  => [$\tau_m$, $CSA$, $R_{ex}$]
+:]   [$\tau_m$, $CSA$, $R_{ex}$].
+\end{description}
 
-    
+The preset model-free models with optimisation of the bond length are
+\begin{description}
+\item[    
 \quoteenv{`tm20'}
-  => [$\tau_m$, $r$]
-    
+:]   [$\tau_m$, $r$],
+\item[    
 \quoteenv{`tm21'}
-  => [$\tau_m$, $r$, $S^2$]
-    
+:]   [$\tau_m$, $r$, $S^2$],
+\item[    
 \quoteenv{`tm22'}
-  => [$\tau_m$, $r$, $S^2$, $\tau_e$]
-    
+:]   [$\tau_m$, $r$, $S^2$, $\tau_e$],
+\item[    
 \quoteenv{`tm23'}
-  => [$\tau_m$, $r$, $S^2$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`tm24'}
-  => [$\tau_m$, $r$, $S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`tm25'}
-  => [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm26'}
-  => [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm27'}
-  => [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm28'}
-  => [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm29'}
-  => [$\tau_m$, $r$, $CSA$, $R_{ex}$]
+:]   [$\tau_m$, $r$, $CSA$, $R_{ex}$].
+\end{description}
 
-    
+The preset model-free models with both optimisation of the bond length and $CSA$ are
+\begin{description}
+\item[    
 \quoteenv{`tm30'}
-  => [$\tau_m$, $r$, $CSA$]
-    
+:]   [$\tau_m$, $r$, $CSA$],
+\item[    
 \quoteenv{`tm31'}
-  => [$\tau_m$, $r$, $CSA$, $S^2$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2$],
+\item[    
 \quoteenv{`tm32'}
-  => [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$],
+\item[    
 \quoteenv{`tm33'}
-  => [$\tau_m$, $r$, $CSA$, $S^2$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2$, $R_{ex}$],
+\item[    
 \quoteenv{`tm34'}
-  => [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2$, $\tau_e$, $R_{ex}$],
+\item[    
 \quoteenv{`tm35'}
-  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm36'}
-  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+\item[    
 \quoteenv{`tm37'}
-  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm38'}
-  => [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$]
-    
+:]   [$\tau_m$, $r$, $CSA$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+\item[    
 \quoteenv{`tm39'}
-  => [$\tau_m$, $r$, $CSA$, $R_{ex}$]
+:]   [$\tau_m$, $r$, $CSA$, $R_{ex}$].
+\end{description}
 
 
 
@@ -3353,12 +3422,14 @@ Function for setting the errors in the reference or saturated NOE spectra.
 \subsubsection{Description}
 
 The spectrum\_type argument can have the following values:
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`ref'}
  - The NOE reference spectrum.
-    
+\item[]     
 \quoteenv{`sat'}
  - The NOE spectrum with proton saturation turned on.
+\end{itemize}
 
 If the 
 \quoteenv{`res\_num'}
@@ -3418,21 +3489,25 @@ The peak intensity can either be from peak heights or peak volumes.
 
 
 The spectrum\_type argument can have the following values:
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`ref'}
  - The NOE reference spectrum.
-    
+\item[]     
 \quoteenv{`sat'}
  - The NOE spectrum with proton saturation turned on.
+\end{itemize}
 
 
 The format argument can currently be set to:
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`sparky'}
 
-    
+\item[]     
 \quoteenv{`xeasy'}
 
+\end{itemize}
 
 If the format argument is set to 
 \quoteenv{`sparky'}
@@ -3517,8 +3592,10 @@ Function for setting the gyromagnetic ratio of the heteronucleus.
 
 The heteronuc argument can be set to the following strings:
 
-    N - Nitrogen, -2.7126e7
-    C - Carbon, 2.2e7
+\begin{itemize}
+\item[]     N - Nitrogen, -2.7126e7
+\item[]     C - Carbon, 2.2e7
+\end{itemize}
 
 
 \newpage
@@ -3581,28 +3658,32 @@ Function for creating the Modelfree4 input files.
 \subsubsection{Description}
 
 The following files are created:
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`dir/mfin'}
 
-    
+\item[]     
 \quoteenv{`dir/mfdata'}
 
-    
+\item[]     
 \quoteenv{`dir/mfpar'}
 
-    
+\item[]     
 \quoteenv{`dir/mfmodel'}
 
-    
+\item[]     
 \quoteenv{`dir/run.sh'}
 
+\end{itemize}
 
 The file 
 \quoteenv{`run/run.sh'}
  contains the single command,
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'}
 
+\end{itemize}
 This can be used to execute modelfree4.
 
 
@@ -3637,9 +3718,11 @@ Function for executing Modelfree4.
 \subsubsection{Description}
 
 Modelfree 4 will be executed as
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'}
 
+\end{itemize}
 
 If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be
 placed on the command line as 
@@ -4183,12 +4266,14 @@ setting the argument to
 
 
 The format argument can currently be set to:
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`sparky'}
 
-    
+\item[]     
 \quoteenv{`xeasy'}
 
+\end{itemize}
 
 If the format argument is set to 
 \quoteenv{`sparky'}
@@ -4334,13 +4419,15 @@ the extension
  is not included in the file name, it will be added.  The compression
 can, however, be changed to either no compression or gzip compression.  This is controlled
 by the compress\_type argument which can be set to:
-    0 - No compression (no file extension).
-    1 - bzip2 compression (
+\begin{itemize}
+\item[]     0 - No compression (no file extension).
+\item[]     1 - bzip2 compression (
 \quoteenv{`.bz2'}
  file extension).
-    2 - gzip compression (
+\item[]     2 - gzip compression (
 \quoteenv{`.gz'}
  file extension).
+\end{itemize}
 The complementary read function will automatically handle the compressed files.
 
 
@@ -4371,21 +4458,23 @@ Function for setting up a run type.
 
 The run name can be any string however the run type can only be one of the following:
 
-    
+\begin{itemize}
+\item[]     
 \quoteenv{`jw'}
  - Reduced spectral density mapping.
-    
+\item[]     
 \quoteenv{`mf'}
  - Model-free analysis.
-    
+\item[]     
 \quoteenv{`noe'}
  - Steady state NOE calculation.
-    
+\item[]     
 \quoteenv{`relax\_fit'}
  - Relaxation curve fitting.
-    
+\item[]     
 \quoteenv{`srls'}
  - SRLS analysis.
+\end{itemize}
 
 
 \subsubsection{Examples}
@@ -5007,13 +5096,15 @@ the extension
  is not included in the file name, it will be added.  The compression
 can, however, be changed to either no compression or gzip compression.  This is controlled
 by the compress\_type argument which can be set to:
-    0 - No compression (no file extension).
-    1 - bzip2 compression (
+\begin{itemize}
+\item[]     0 - No compression (no file extension).
+\item[]     1 - bzip2 compression (
 \quoteenv{`.bz2'}
  file extension).
-    2 - gzip compression (
+\item[]     2 - gzip compression (
 \quoteenv{`.gz'}
  file extension).
+\end{itemize}
 
 
 \subsubsection{Examples}
@@ -5499,39 +5590,46 @@ This is a short description of python regular expression, for more information s
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-    [] - A sequence or set of characters to match to a single character.  For example,
-    
+\begin{description}
+\item[    
+\quoteenv{`[]'}
+:]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
  and 
 \quoteenv{`s2'}
-.
-
-    \^{} - Match the start of the string.
-
-    \$ - Match the end of the string.  For example, 
+. 
+\item[    
+\quoteenv{`\^{}'}
+:]   Match the start of the string. 
+\item[    
+\quoteenv{`\$'}
+:]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
  but not 
 \quoteenv{`S2f'}
-
-    or 
+ or 
 \quoteenv{`s2s'}
-.
-
-    . - Match any character.
-
-    $x$* - Match the character $x$ any number of times, for example 
+. 
+\item[    
+\quoteenv{`.'}
+:]   Match any character. 
+\item[    
+\quoteenv{`x*'}
+:]   Match the character 
 \quoteenv{`x'}
- will match, as will
-    
+ any number of times, for example 
+\quoteenv{`x'}
+ will match, as will 
 \quoteenv{`xxxxx'}
-
-
-    .* - Match any sequence of characters of any length.
-
+ 
+\item[    
+\quoteenv{`.*'}
+:]   Match any sequence of characters of any length. 
+\end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
 the same data type.
@@ -5649,14 +5747,18 @@ effect.
 Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied
 as a field strength independent value.  Use the following formula to get the correct value:
 
-    value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
+\begin{itemize}
+\item[]     value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
+\end{itemize}
 
 where:
-    $R_{ex}$ is the chemical exchange value for the current frequency.
-    $\pi$ is in the namespace of relax, ie just type 
+\begin{itemize}
+\item[]     $R_{ex}$ is the chemical exchange value for the current frequency.
+\item[]     $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
-    frequency is the proton frequency corresponding to the data.
+\item[]     frequency is the proton frequency corresponding to the data.
+\end{itemize}
 
 
 
@@ -5783,39 +5885,46 @@ This is a short description of python regular expression, for more information s
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-    [] - A sequence or set of characters to match to a single character.  For example,
-    
+\begin{description}
+\item[    
+\quoteenv{`[]'}
+:]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
  and 
 \quoteenv{`s2'}
-.
-
-    \^{} - Match the start of the string.
-
-    \$ - Match the end of the string.  For example, 
+. 
+\item[    
+\quoteenv{`\^{}'}
+:]   Match the start of the string. 
+\item[    
+\quoteenv{`\$'}
+:]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
  but not 
 \quoteenv{`S2f'}
-
-    or 
+ or 
 \quoteenv{`s2s'}
-.
-
-    . - Match any character.
-
-    $x$* - Match the character $x$ any number of times, for example 
+. 
+\item[    
+\quoteenv{`.'}
+:]   Match any character. 
+\item[    
+\quoteenv{`x*'}
+:]   Match the character 
 \quoteenv{`x'}
- will match, as will
-    
+ any number of times, for example 
+\quoteenv{`x'}
+ will match, as will 
 \quoteenv{`xxxxx'}
-
-
-    .* - Match any sequence of characters of any length.
-
+ 
+\item[    
+\quoteenv{`.*'}
+:]   Match any sequence of characters of any length. 
+\end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
 the same data type.
@@ -6075,39 +6184,46 @@ This is a short description of python regular expression, for more information s
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-    [] - A sequence or set of characters to match to a single character.  For example,
-    
+\begin{description}
+\item[    
+\quoteenv{`[]'}
+:]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
  and 
 \quoteenv{`s2'}
-.
-
-    \^{} - Match the start of the string.
-
-    \$ - Match the end of the string.  For example, 
+. 
+\item[    
+\quoteenv{`\^{}'}
+:]   Match the start of the string. 
+\item[    
+\quoteenv{`\$'}
+:]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
  but not 
 \quoteenv{`S2f'}
-
-    or 
+ or 
 \quoteenv{`s2s'}
-.
-
-    . - Match any character.
-
-    $x$* - Match the character $x$ any number of times, for example 
+. 
+\item[    
+\quoteenv{`.'}
+:]   Match any character. 
+\item[    
+\quoteenv{`x*'}
+:]   Match the character 
 \quoteenv{`x'}
- will match, as will
-    
+ any number of times, for example 
+\quoteenv{`x'}
+ will match, as will 
 \quoteenv{`xxxxx'}
-
-
-    .* - Match any sequence of characters of any length.
-
+ 
+\item[    
+\quoteenv{`.*'}
+:]   Match any sequence of characters of any length. 
+\end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
 the same data type.
@@ -6225,14 +6341,18 @@ effect.
 Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied
 as a field strength independent value.  Use the following formula to get the correct value:
 
-    value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
+\begin{itemize}
+\item[]     value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
+\end{itemize}
 
 where:
-    $R_{ex}$ is the chemical exchange value for the current frequency.
-    $\pi$ is in the namespace of relax, ie just type 
+\begin{itemize}
+\item[]     $R_{ex}$ is the chemical exchange value for the current frequency.
+\item[]     $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
-    frequency is the proton frequency corresponding to the data.
+\item[]     frequency is the proton frequency corresponding to the data.
+\end{itemize}
 
 
 
@@ -6535,39 +6655,46 @@ This is a short description of python regular expression, for more information s
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-    [] - A sequence or set of characters to match to a single character.  For example,
-    
+\begin{description}
+\item[    
+\quoteenv{`[]'}
+:]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
  and 
 \quoteenv{`s2'}
-.
-
-    \^{} - Match the start of the string.
-
-    \$ - Match the end of the string.  For example, 
+. 
+\item[    
+\quoteenv{`\^{}'}
+:]   Match the start of the string. 
+\item[    
+\quoteenv{`\$'}
+:]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
  but not 
 \quoteenv{`S2f'}
-
-    or 
+ or 
 \quoteenv{`s2s'}
-.
-
-    . - Match any character.
-
-    $x$* - Match the character $x$ any number of times, for example 
+. 
+\item[    
+\quoteenv{`.'}
+:]   Match any character. 
+\item[    
+\quoteenv{`x*'}
+:]   Match the character 
 \quoteenv{`x'}
- will match, as will
-    
+ any number of times, for example 
+\quoteenv{`x'}
+ will match, as will 
 \quoteenv{`xxxxx'}
-
-
-    .* - Match any sequence of characters of any length.
-
+ 
+\item[    
+\quoteenv{`.*'}
+:]   Match any sequence of characters of any length. 
+\end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
 the same data type.
@@ -6685,14 +6812,18 @@ effect.
 Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied
 as a field strength independent value.  Use the following formula to get the correct value:
 
-    value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
+\begin{itemize}
+\item[]     value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2
+\end{itemize}
 
 where:
-    $R_{ex}$ is the chemical exchange value for the current frequency.
-    $\pi$ is in the namespace of relax, ie just type 
+\begin{itemize}
+\item[]     $R_{ex}$ is the chemical exchange value for the current frequency.
+\item[]     $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
-    frequency is the proton frequency corresponding to the data.
+\item[]     frequency is the proton frequency corresponding to the data.
+\end{itemize}
 
 
 \subsubsection{Model-free default values}
@@ -6949,39 +7080,46 @@ This is a short description of python regular expression, for more information s
 regular expression syntax section of the Python Library Reference.  Some of the regular
 expression syntax used in this function is:
 
-    [] - A sequence or set of characters to match to a single character.  For example,
-    
+\begin{description}
+\item[    
+\quoteenv{`[]'}
+:]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
  and 
 \quoteenv{`s2'}
-.
-
-    \^{} - Match the start of the string.
-
-    \$ - Match the end of the string.  For example, 
+. 
+\item[    
+\quoteenv{`\^{}'}
+:]   Match the start of the string. 
+\item[    
+\quoteenv{`\$'}
+:]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
  but not 
 \quoteenv{`S2f'}
-
-    or 
+ or 
 \quoteenv{`s2s'}
-.
-
-    . - Match any character.
-
-    $x$* - Match the character $x$ any number of times, for example 
+. 
+\item[    
+\quoteenv{`.'}
+:]   Match any character. 
+\item[    
+\quoteenv{`x*'}
+:]   Match the character 
 \quoteenv{`x'}
- will match, as will
-    
+ any number of times, for example 
+\quoteenv{`x'}
+ will match, as will 
 \quoteenv{`xxxxx'}
-
-
-    .* - Match any sequence of characters of any length.
-
+ 
+\item[    
+\quoteenv{`.*'}
+:]   Match any sequence of characters of any length. 
+\end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
 the same data type.

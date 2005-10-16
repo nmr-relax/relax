@@ -44,7 +44,7 @@ from sys import stdin, stdout, stderr
 class IO:
     def __init__(self, relax):
         """Class containing the file operations.
-        
+
         IO streams
         ~~~~~~~~~~
 
@@ -165,7 +165,7 @@ class IO:
         self.log_stderr.split(self.python_stderr, self.log_file)
 
         # IO stream redirection.
-        sys.stdin  = self.log_stdin 
+        sys.stdin  = self.log_stdin
         sys.stdout = self.log_stdout
         sys.stderr = self.log_stderr
 
@@ -180,7 +180,7 @@ class IO:
             print "Redirecting the sys.stderr IO stream to the python stderr IO stream."
 
         # IO stream redirection.
-        sys.stdin  = self.python_stdin 
+        sys.stdin  = self.python_stdin
         sys.stdout = self.python_stdout
         sys.stderr = self.python_stderr
 
@@ -331,7 +331,7 @@ class IO:
         self.tee_stderr.split(self.python_stderr, self.tee_file)
 
         # IO stream redirection.
-        sys.stdin  = self.tee_stdin 
+        sys.stdin  = self.tee_stdin
         sys.stdout = self.tee_stdout
         sys.stderr = self.tee_stderr
 

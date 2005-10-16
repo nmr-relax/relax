@@ -68,15 +68,15 @@ class Threading:
         character '-' in the corresponding column.  Columns can be separated by any whitespace
         character, and all columns must contain an entry.  Any lines beginning with a hash will be
         ignored.
-        
+
         Column 1:  The host name or IP address of the computer on which to run a thread.
 
         Column 2:  The login name of the user on the remote machine.  The default is to use the same
         name as the current user.
-        
+
         Column 3:  The full program path.  The default is to run 'relax'.  This only works if relax
         can be found in the environmental variable $PATH, as alias are not recognised.
-        
+
         Column 4:  The working directory where thread specific files are stored.  The default is
         '~/.relax' where the tilde '~' symbol represents the user's home directory on the remote
         machine.
@@ -119,7 +119,7 @@ class Threading:
         If the files 'id_rsa' and 'id_rsa.pub' do not exist in the directory '~/.ssh', type:
 
         $ ssh-keygen -t rsa
-        
+
         Press enter three times when asked for input.  This will generate the two identification
         files.  Then, to copy the public key into the authorized_keys file on the remote machine,
         type:
@@ -141,9 +141,9 @@ class Threading:
         keyword is missing or is commented out, nothing needs to be done.
 
         Public key authentication should now work.  To test, type:
-        
+
         $ ssh zucchini
-        
+
         This should securely login into the remote machine without asking for a password.  If a
         password prompt appears, check all the permissions on the directory '~/.ssh' and all files
         within or set the sshd_config keyword StrictModes to 'no'.

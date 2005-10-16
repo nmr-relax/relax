@@ -64,7 +64,7 @@ class Fetch_docstrings:
         names.sort()
 
         # Loop over the data structures.
-        #for name in ['grace']:
+        #for name in ['nuclei']:
         for name in names:
             # Skip the name if it is in the blacklist.
             if name in self.blacklist:
@@ -334,6 +334,193 @@ class Fetch_docstrings:
         return string
 
 
+    def lists(self, lines):
+        """Function for creating LaTeX lists."""
+
+        # Find the start, end, type, and element spacing of each list.
+        ##############################################################
+
+        # Initialise.
+        list_start = []
+        list_end = []
+        list_type = []
+        list_spacing = []
+        in_list = 0
+        in_table = 0
+
+        # Walk over the lines.
+        for i in xrange(len(lines)):
+            # Inside a table.
+            if search('begin{tabular}', lines[i]):
+                in_table = 1
+
+            # Out of the table.
+            if search('end{tabular}', lines[i]):
+                in_table = 0
+
+            # Match to the start of a list (not within a table).
+            if not in_list and search('^ ', lines[i]) and not in_table:
+                # Start of the list.
+                list_start.append(i)
+
+                # Determine the type of list.
+                elements = split(lines[i], ':')
+
+                # Badly formatted list.
+                if len(elements) > 2:
+                    sys.stdout.write("Error: Badly formatted list element.\n")
+                    sys.stdout.write("The element is: " + `lines[i]` + "\n")
+                    sys.exit()
+
+                # Plain list.
+                if len(elements) == 1:
+                    list_type.append(0)
+
+                # Formatted list.
+                else:
+                    list_type.append(1)
+
+                # Determine the element spacing.
+                j = i
+                while 1:
+                    # Walk to the next line.
+                    j = j + 1
+
+                    # No more lines.
+                    if len(lines) <= j:
+                        list_spacing.append(0)
+                        break
+
+                    # Find the empty line.
+                    if len(lines[j]) == 0:
+                        # No more lines.
+                        if len(lines) <= j+1:
+                            list_spacing.append(0)
+
+                        # Determine if the next line is an element of the list.
+                        elif search('^ ', lines[j+1]):
+                            list_spacing.append(1)
+
+                        # or not.
+                        else:
+                            list_spacing.append(0)
+
+                        break
+                
+                # Now within the list.
+                in_list = 1
+
+            # Match to the end of a list.
+            if in_list and len(lines[i]) == 0 and list_spacing[-1] == 0:
+                # End of the list.
+                list_end.append(i)
+
+                # Now out of the list.
+                in_list = 0
+
+            # Match to the end of a list.
+            if in_list and (search('^[A-Z]', lines[i]) or search('^[a-z]', lines[i])):
+                # End of the list.
+                list_end.append(i)
+
+                # Now out of the list.
+                in_list = 0
+
+        # The list terminates on the last line.
+        if len(list_start) != len(list_end):
+            list_end.append(len(lines))
+
+
+        # LaTeX list formatting.
+        ########################
+
+        # Initialise.
+        new_lines = []
+        in_list = 0
+        num = None
+
+        # Walk over the lines.
+        for i in xrange(len(lines)):
+            # Start of the list.
+            if i in list_start:
+                # Inside the list.
+                in_list = 1
+
+                # The list number.
+                num = list_start.index(i)
+
+                # Start the list.
+                if list_type[num] == 1:
+                    new_lines.append("\\begin{description}")
+                else:
+                    new_lines.append("\\begin{itemize}")
+
+            # End of the list.
+            if in_list and i == list_end[num]:
+                # Out of the list.
+                in_list = 0
+
+                # End of the list.
+                if list_type[num] == 1:
+                    new_lines.append("\\end{description}")
+                else:
+                    new_lines.append("\\end{itemize}")
+
+            # List items.
+            if in_list:
+                # Spaced lists.
+                if list_spacing[num]:
+                    # Determine if the current line is the start of a list element.
+                    if len(lines[i-1]) == 0:
+                        # Plain list.
+                        if list_type[num] == 0:
+                            new_lines.append("\\item[] " + lines[i])
+
+                        # Description.
+                        else:
+                            # Get the description.
+                            elements = split(lines[i], ':')
+
+                            # Format the element.
+                            new_lines.append("\\item[" + elements[0] + ":] " + elements[1])
+
+                    # Otherwise add it to the last line.
+                    else:
+                        new_lines[-1] = new_lines[-1] + " " + lstrip(lines[i])
+
+                # Non-spaced lists.
+                else:
+                    # Plain list.
+                    if list_type[num] == 0:
+                        new_lines.append("\\item[] " + lines[i])
+
+                    # Description.
+                    else:
+                        # Get the description.
+                        elements = split(lines[i], ':')
+
+                        # Format the element.
+                        new_lines.append("\\item[" + elements[0] + ":] " + elements[1])
+
+
+            # Non-list lines.
+            else:
+                new_lines.append(lines[i])
+
+        # The list terminates on the last line.
+        if len(list_end) and list_end[-1] == len(lines):
+            # End of the list.
+            if list_type[num] == 1:
+                new_lines.append("\\end{description}")
+            else:
+                new_lines.append("\\end{itemize}")
+
+
+        # Return the formatted lines.
+        return new_lines
+
+
+
     def parameter_replement(self, string):
         """Function for LaTeXing special parameter names."""
 
@@ -459,6 +646,9 @@ class Fetch_docstrings:
         # Initialise.
         #############
 
+        # Print the function name to sys.stdout
+        sys.stdout.write("Function: " + `function` + "\n")
+
         # Comment out underscores in the function name.
         function_name = self.latex_pipeline_initial(function)
 
@@ -552,6 +742,9 @@ class Fetch_docstrings:
 
                 # relax> or '$ ...' example lines.
                 lines = self.relax_examples(lines)
+
+                # Lists.
+                lines = self.lists(lines)
 
             # Place quotes in the \quoteenv environment.
             lines = self.quote_environ(lines)

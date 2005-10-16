@@ -37,20 +37,20 @@ def regexp_doc():
         regular expression syntax section of the Python Library Reference.  Some of the regular
         expression syntax used in this function is:
 
-            [] - A sequence or set of characters to match to a single character.  For example,
+            '[]':  A sequence or set of characters to match to a single character.  For example,
             '[Ss]2' will match both 'S2' and 's2'.
 
-            ^ - Match the start of the string.
+            '^':  Match the start of the string.
 
-            $ - Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
+            '$':  Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
             or 's2s'.
 
-            . - Match any character.
+            '.':  Match any character.
 
-            x* - Match the character x any number of times, for example 'x' will match, as will
+            'x*':  Match the character 'x' any number of times, for example 'x' will match, as will
             'xxxxx'
 
-            .* - Match any sequence of characters of any length.
+            '.*':  Match any sequence of characters of any length.
 
         Importantly, do not supply a string for the data type containing regular expression.  The
         regular expression is implemented so that various strings can be supplied which all match

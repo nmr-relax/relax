@@ -168,13 +168,14 @@ class Diffusion_tensor:
         To select isotropic diffusion, the parameters argument should be a single floating point
         number.  The number is the value of the isotropic global correlation time in seconds.  To
         specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
-        parameters can be used by changing the 'param_types' flag to the following integers:
+        parameters can be used by changing the 'param_types' flag to the following integers
 
-            0 - tm   (Default)
-            1 - Diso
+            0:  tm   (Default),
+            1:  Diso,
 
-        where:
-            tm = 1 / 6Diso
+        where
+
+            tm = 1 / 6Diso.
 
 
         Axially symmetric diffusion.
@@ -182,28 +183,32 @@ class Diffusion_tensor:
         To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
         round brackets, the elements of which are separated by commas.  Alternative sets of
-        parameters, 'param_types', are:
+        parameters, 'param_types', are
 
-            0 - (tm, Da, theta, phi)   (Default)
-            1 - (tm, Dratio, theta, phi)
-            2 - (Dpar, Dper, theta, phi)
-            3 - (Diso, Da, theta, phi)
-            4 - (Diso, Dratio, theta, phi)
+            0:  (tm, Da, theta, phi)   (Default),
+            1:  (tm, Dratio, theta, phi),
+            2:  (Dpar, Dper, theta, phi),
+            3:  (Diso, Da, theta, phi),
+            4:  (Diso, Dratio, theta, phi),
 
-        where:
-            tm = 1 / 6Diso
-            Diso = 1/3 (Dpar + 2Dper)
-            Da = 1/3 (Dpar - Dper)
-            Dratio = Dpar / Dper
+        where
+
+            tm = 1 / 6Diso,
+            Diso = 1/3 (Dpar + 2Dper),
+            Da = 1/3 (Dpar - Dper),
+            Dratio = Dpar / Dper.
 
         The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
         vector with respect to the diffusion frame while the spherical angles {theta, phi} describe
         the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and phi is the
-        azimuthal angle defined between:
-            0 <= theta <= pi
-            0 <= phi <= 2pi
-        The angle alpha is defined between:
-            0 <= alpha <= 2pi
+        azimuthal angle defined between
+
+            0 <= theta <= pi,
+            0 <= phi <= 2pi.
+
+        The angle alpha is defined between
+
+            0 <= alpha <= 2pi.
 
         The 'axial_type' argument should be 'oblate', 'prolate', or None.  The argument will be
         ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the
@@ -218,30 +223,34 @@ class Diffusion_tensor:
 
         To select fully anisotropic diffusion, the parameters argument should be a tuple of length
         six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
-        are separated by commas.  Alternative sets of parameters, 'param_types', are:
+        are separated by commas.  Alternative sets of parameters, 'param_types', are
 
-            0 - (tm, Da, Dr, alpha, beta, gamma)   (Default)
-            1 - (Diso, Da, Dr, alpha, beta, gamma)
-            2 - (Dx, Dy, Dz, alpha, beta, gamma)
+            0:  (tm, Da, Dr, alpha, beta, gamma)   (Default),
+            1:  (Diso, Da, Dr, alpha, beta, gamma),
+            2:  (Dx, Dy, Dz, alpha, beta, gamma),
 
-        where:
-            tm = 1 / 6Diso
-            Diso = 1/3 (Dx + Dy + Dz)
-            Da = 1/3 (Dz - (Dx + Dy)/2)
-            Dr = (Dx - Dy)/2
+        where
+
+            tm = 1 / 6Diso,
+            Diso = 1/3 (Dx + Dy + Dz),
+            Da = 1/3 (Dz - (Dx + Dy)/2),
+            Dr = (Dx - Dy)/2.
 
         The angles alpha, beta, and gamma are the Euler angles describing the diffusion tensor
         within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where
         alpha is the initial rotation angle around the z-axis, beta is the rotation angle around the
         y-axis, and gamma is the final rotation around the z-axis again.  The angles are defined
-        between:
-            0 <= alpha <= 2pi
-            0 <= beta <= pi
-            0 <= gamma <= 2pi
+        between
+
+            0 <= alpha <= 2pi,
+            0 <= beta <= pi,
+            0 <= gamma <= 2pi.
+
         Within the PDB frame, the bond vector is described using the spherical angels theta and phi
-        where theta is the polar angle and phi is the azimuthal angle defined between:
-            0 <= theta <= pi
-            0 <= phi <= 2pi
+        where theta is the polar angle and phi is the azimuthal angle defined between
+
+            0 <= theta <= pi,
+            0 <= phi <= 2pi.
 
 
         Units.
@@ -260,7 +269,7 @@ class Diffusion_tensor:
         Examples
         ~~~~~~~~
 
-        To set an isotropic diffusion tensor with a correlation time of 10ns, assigning it to the
+        To set an isotropic diffusion tensor with a correlation time of 10 ns, assigning it to the
         run 'm1', type:
 
         relax> diffusion_tensor('m1', 10e-9)
@@ -269,7 +278,7 @@ class Diffusion_tensor:
         relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9, fixed=1)
 
 
-        To select axially symmetric diffusion with a tm value of 8.5ns, Dratio of 1.1, theta value
+        To select axially symmetric diffusion with a tm value of 8.5 ns, Dratio of 1.1, theta value
         of 20 degrees, and phi value of 20 degrees, and assign it to the run 'm8', type:
 
         relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
