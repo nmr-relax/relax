@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 12:57
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 15:52
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -146,18 +146,18 @@ LaTeX Font Info:    Overwriting math alphabet `\EuFrak' in version `bold'
 (./maths.aux) (./functions.aux) (./licence.aux))
 \openout1 = `relax.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
  [1
 
 
@@ -251,41 +251,65 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  (./maths.tex
 Chapter 2.
+
+Package natbib Warning: Citation `Abragam61' on page 13 undefined on input line
+ 30.
+
 [13
 
 
 
-] [14] [15] [16] [17] [18] [19] [20]
+]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 60.
+ (/usr/share/texmf/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 60.
+
+
+Package natbib Warning: Citation `LipariSzabo82a' on page 14 undefined on input
+ line 66.
+
+
+Package natbib Warning: Citation `LipariSzabo82b' on page 14 undefined on input
+ line 66.
+
+
+Package natbib Warning: Citation `Clore90' on page 14 undefined on input line 7
+4.
+
+[14]
+
+Package natbib Warning: Citation `dAuvergneGooley06b' on page 15 undefined on i
+nput line 90.
+
+LaTeX Font Info:    Try loading font information for U+euf on input line 100.
+(/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
+File: ueuf.fd 2002/01/19 v2.2g AMS font definitions
+) [15] [16] [17]
 File: images/dependencies/dependencies.eps Graphic file (type eps)
- <images/dependencies/dependencies.eps>
-[21]) [22]
+
+<images/dependencies/dependencies.eps> [18] [19] [20] [21] [22]
+Underfull \vbox (badness 1540) has occurred while \output is active []
+
+ [23]
+[24] [25] [26]) [27]
 \openout2 = `functions.aux'.
 
- (./functions.tex
+ (./functions.tex [28
+
+
+
+]
 Chapter 3.
-[23
-
-
-
-] (./docstring.tex [24] [25] [26] [27] [28] [29]
+[29] (./docstring.tex [30] [31] [32] [33] [34] [35]
 Underfull \hbox (badness 2027) in paragraph at lines 159--160
 \OT1/cmss/bx/n/10.95 diffusion[]tensor.set\OT1/cmss/m/n/10.95 (self, run=None, 
 params=None, time[]scale=1.0, d[]scale=1.0, an-
  []
 
-LaTeX Font Info:    Try loading font information for U+euf on input line 207.
-(/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
-File: ueuf.fd 2002/01/19 v2.2g AMS font definitions
-) [30]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 235.
-
-
-(/usr/share/texmf/tex/latex/base/omscmr.fd
-File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 235.
- [31]
+[36] [37]
 Underfull \hbox (badness 10000) in paragraph at lines 351--352
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e7, 1.417e
 7, 67.174, -83.718),
@@ -321,7 +345,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 365--366
 2.027, -80.573, 65.568),
  []
 
-[32] [33] [34]
+[38] [39] [40]
 Underfull \hbox (badness 10000) in paragraph at lines 524--525
 []\OT1/cmtt/m/n/9 relax> map(run=`m5', res[]num=6, type=`Iso3D', inc=20, swap=[
 0, 1, 2], file=`map',
@@ -333,13 +357,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 532--533
 0, 2, 1], file=`map',
  []
 
-[35] [36] [37] [38] [39]
+[41] [42] [43] [44] [45]
 Underfull \hbox (badness 10000) in paragraph at lines 758--759
 \OT1/cmss/bx/n/10.95 grace.write\OT1/cmss/m/n/10.95 (self, run=None, x[]data[]t
 ype=`res', y[]data[]type=None, res[]num=None,
  []
 
-[40]
+[46]
 Underfull \hbox (badness 10000) in paragraph at lines 856--857
 []\OT1/cmtt/m/n/9 relax> grace.write(run=`m2', x[]data[]type=`S2', y[]data[]typ
 e=`te', file=`s2[]te.agr',
@@ -351,16 +375,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 869--870
 pe=`te', res[]num=123,
  []
 
-[41]
+[47]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [42]
-[43] [44] [45] [46] [47] [48] [49] [50] [51]
+ [48]
+[49] [50] [51] [52] [53] [54] [55] [56] [57]
 Overfull \hbox (29.4888pt too wide) in paragraph at lines 1582--1626
  [] 
  []
 
-[52] [53] [54] [55] [56]
+[58] [59] [60] [61] [62]
 Underfull \hbox (badness 10000) in paragraph at lines 2079--2080
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(`test', `large[]model', `mf[
 ]ext', [`S2f', `tf', `S2', `ts',
@@ -372,46 +396,46 @@ Underfull \hbox (badness 10000) in paragraph at lines 2081--2082
 del', params=[`S2f', `tf', `S2',
  []
 
-[57] [58] [59] [60] [61] [62] [63] [64]
+[63] [64] [65] [66] [67] [68] [69] [70]
 Underfull \hbox (badness 10000) in paragraph at lines 2550--2551
 []\OT1/cmtt/m/n/9 relax> model[]selection(method=`AIC', modsel[]run=`mixed', ru
 ns=[`m1', `m2', `m3', `m4',
  []
 
-[65] [66] [67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79]
-[80] [81] [82]
+[71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81] [82] [83] [84] [85]
+[86] [87] [88]
 Underfull \hbox (badness 10000) in paragraph at lines 3332--3333
 \OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
 spec-trum[]type=None, res[]num=None,
  []
 
-[83] [84] [85] [86]
+[89] [90] [91] [92]
 Underfull \hbox (badness 10000) in paragraph at lines 3535--3536
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
-[87] [88] [89] [90]
+[93] [94] [95] [96]
 Underfull \hbox (badness 1158) in paragraph at lines 3689--3690
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
-[91] [92] [93] [94] [95] [96]
+[97] [98] [99] [100] [101] [102]
 Underfull \hbox (badness 10000) in paragraph at lines 4045--4046
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`NOE', frq[]label=`60
 0', frq=600.0 * 1e6,
  []
 
-[97]
+[103]
 Underfull \hbox (badness 10000) in paragraph at lines 4057--4058
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`R2', frq[]label=`800
  MHz', frq=8.0*1e8,
  []
 
-[98] [99] [100] [101] [102] [103] [104] [105] [106] [107] [108] [109] [110]
-[111] [112] [113] [114] [115] [116] [117] [118] [119] [120] [121] [122]
-[123] [124] [125] [126] [127] [128] [129] [130] [131] [132] [133]
+[104] [105] [106] [107] [108] [109] [110] [111] [112] [113] [114] [115]
+[116] [117] [118] [119] [120] [121] [122] [123] [124] [125] [126] [127]
+[128] [129] [130] [131] [132] [133] [134] [135] [136] [137] [138] [139]
 Underfull \hbox (badness 6493) in paragraph at lines 6002--6003
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
@@ -423,14 +447,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 6060--6061
 ]value', num[]col=0, name[]col=1,
  []
 
-[134]
+[140]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [135]
+ [141]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [136]
-[137]
+ [142]
+[143]
 Overfull \hbox (6.26677pt too wide) in paragraph at lines 6370--6424
  [] 
  []
@@ -438,33 +462,36 @@ Overfull \hbox (6.26677pt too wide) in paragraph at lines 6370--6424
 
 Underfull \vbox (badness 1448) has occurred while \output is active []
 
- [138]
-[139] [140]
+ [144]
+[145] [146]
 Underfull \vbox (badness 2343) has occurred while \output is active []
 
- [141]
-[142] [143]
+ [147]
+[148] [149]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [144]
-[145])) [146]
+ [150]
+[151])) [152]
 \openout2 = `licence.aux'.
 
  (./licence.tex
 Chapter 4.
-[147
+[153
 
 
 
-] [148] [149] [150] [151] [152]) [153] (./relax.aux (./intro.aux)
-(./maths.aux) (./functions.aux) (./licence.aux)) ) 
+] [154] [155] [156] [157] [158]) [159]
+
+Package natbib Warning: There were undefined citations.
+
+(./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
- 1735 strings out of 95756
- 20668 string characters out of 1190795
- 76897 words of memory out of 1000001
- 4683 multiletter control sequences out of 10000+50000
- 14328 words of font info for 52 fonts, out of 500000 for 1000
+ 1784 strings out of 95756
+ 21425 string characters out of 1190795
+ 78381 words of memory out of 1000001
+ 4731 multiletter control sequences out of 10000+50000
+ 15272 words of font info for 56 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
  27i,12n,22p,1036b,407s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (153 pages, 315408 bytes).
+Output written on relax.dvi (159 pages, 341244 bytes).
