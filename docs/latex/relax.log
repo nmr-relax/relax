@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 03:59
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 12:12
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -22,6 +22,30 @@ File: bk11.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
+(/usr/share/texmf/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/share/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 2001/07/07 v1.0n Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/share/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2001/08/31 v1.1 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: dvips.def on input line 80.
+
+(/usr/share/texmf/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
 (/usr/share/texmf/tex/latex/natbib/natbib.sty
 Package: natbib 2000/07/24 7.0a (PWD)
 \bibhang=\skip43
@@ -31,31 +55,31 @@ LaTeX Info: Redefining \cite on input line 508.
 )
 (/usr/share/texmf/tex/latex/misc/booktabs.sty
 Package: booktabs 2000/08/16 v1.61 publication quality tables
-\heavyrulewidth=\dimen103
-\lightrulewidth=\dimen104
-\cmidrulewidth=\dimen105
-\belowrulesep=\dimen106
-\belowbottomsep=\dimen107
-\aboverulesep=\dimen108
-\abovetopsep=\dimen109
-\cmidrulesep=\dimen110
-\cmidrulekern=\dimen111
-\defaultaddspace=\dimen112
-\@cmidrulewidth=\dimen113
+\heavyrulewidth=\dimen105
+\lightrulewidth=\dimen106
+\cmidrulewidth=\dimen107
+\belowrulesep=\dimen108
+\belowbottomsep=\dimen109
+\aboverulesep=\dimen110
+\abovetopsep=\dimen111
+\cmidrulesep=\dimen112
+\cmidrulekern=\dimen113
+\defaultaddspace=\dimen114
+\@cmidrulewidth=\dimen115
 \@cmidla=\count89
 \@cmidlb=\count90
-\@aboverulesep=\dimen114
-\@belowrulesep=\dimen115
+\@aboverulesep=\dimen116
+\@belowrulesep=\dimen117
 \@thisruleclass=\count91
 \@lastruleclass=\count92
-\@thisrulewidth=\dimen116
+\@thisrulewidth=\dimen118
 )
 (/usr/share/texmf/tex/latex/misc/vmargin.sty
 Package: vmargin 2000/08/01
 
 Package: vmargin 2000/08/01 V2.3 (VK) set document margins
-\PaperWidth=\dimen117
-\PaperHeight=\dimen118
+\PaperWidth=\dimen119
+\PaperHeight=\dimen120
 ) (/usr/share/texmf/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2000/07/18 v2.13 AMS math features
 \@mathmargin=\skip45
@@ -66,12 +90,12 @@ Package: amstext 2000/06/29 v2.01
 
 (/usr/share/texmf/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks14
-\ex@=\dimen119
+\@emptytoks=\toks15
+\ex@=\dimen121
 ))
 (/usr/share/texmf/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
-\pmbraise@=\dimen120
+\pmbraise@=\dimen122
 )
 (/usr/share/texmf/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
@@ -88,7 +112,7 @@ LaTeX Info: Redefining \dots on input line 382.
 LaTeX Info: Redefining \cdots on input line 467.
 \Mathstrutbox@=\box26
 \strutbox@=\box27
-\big@size=\dimen121
+\big@size=\dimen123
 LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \macc@depth=\count98
@@ -96,21 +120,21 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \dotsspace@=\muskip10
 \c@parentequation=\count100
 \dspbrk@lvl=\count101
-\tag@help=\toks15
+\tag@help=\toks16
 \row@=\count102
 \column@=\count103
 \maxfields@=\count104
-\andhelp@=\toks16
-\eqnshift@=\dimen122
-\alignsep@=\dimen123
-\tagshift@=\dimen124
-\tagwidth@=\dimen125
-\totwidth@=\dimen126
-\lineht@=\dimen127
-\@envbody=\toks17
+\andhelp@=\toks17
+\eqnshift@=\dimen124
+\alignsep@=\dimen125
+\tagshift@=\dimen126
+\tagwidth@=\dimen127
+\totwidth@=\dimen128
+\lineht@=\dimen129
+\@envbody=\toks18
 \multlinegap=\skip46
 \multlinetaggap=\skip47
-\mathdisplay@stack=\toks18
+\mathdisplay@stack=\toks19
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
 )
@@ -119,35 +143,35 @@ Package: eufrak 2001/10/01 v2.2e Euler Fraktur fonts
 LaTeX Font Info:    Overwriting math alphabet `\EuFrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 61.
 ) (./relax.aux (./intro.aux)
-(./functions.aux) (./licence.aux))
+(./maths.aux) (./functions.aux) (./licence.aux))
 \openout1 = `relax.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
  [1
 
 
 ] [2
 
-] (./relax.toc [3] [4])
+] (./relax.toc [3]
+[4])
 \tf@toc=\write3
 \openout3 = `relax.toc'.
 
  [5]
 \openout2 = `intro.aux'.
 
-
-(./intro.tex [6
+ (./intro.tex [6
 
 
 ]
@@ -223,15 +247,32 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [11])
 [12]
-\openout2 = `functions.aux'.
+\openout2 = `maths.aux'.
 
- (./functions.tex
+ (./maths.tex
 Chapter 2.
 [13
 
 
 
-] (./docstring.tex [14] [15] [16] [17] [18] [19]
+] [14] [15]
+Overfull \hbox (21.0689pt too wide) in alignment at lines 179--186
+ [][][] []
+ []
+
+[16] [17] [18] [19] [20] [21]
+File: images/dependencies/dependencies.eps Graphic file (type eps)
+ <images/dependencies/dependencies.eps> [22])
+[23]
+\openout2 = `functions.aux'.
+
+ (./functions.tex [24
+
+
+
+]
+Chapter 3.
+[25] (./docstring.tex [26] [27] [28] [29] [30] [31]
 Underfull \hbox (badness 2027) in paragraph at lines 159--160
 \OT1/cmss/bx/n/10.95 diffusion[]tensor.set\OT1/cmss/m/n/10.95 (self, run=None, 
 params=None, time[]scale=1.0, d[]scale=1.0, an-
@@ -240,7 +281,7 @@ params=None, time[]scale=1.0, d[]scale=1.0, an-
 LaTeX Font Info:    Try loading font information for U+euf on input line 207.
 (/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2002/01/19 v2.2g AMS font definitions
-) [20]
+) [32]
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 235.
 
 
@@ -249,7 +290,7 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 235.
- [21]
+ [33]
 Underfull \hbox (badness 10000) in paragraph at lines 351--352
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e7, 1.417e
 7, 67.174, -83.718),
@@ -285,7 +326,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 365--366
 2.027, -80.573, 65.568),
  []
 
-[22] [23] [24]
+[34] [35] [36]
 Underfull \hbox (badness 10000) in paragraph at lines 524--525
 []\OT1/cmtt/m/n/9 relax> map(run=`m5', res[]num=6, type=`Iso3D', inc=20, swap=[
 0, 1, 2], file=`map',
@@ -297,13 +338,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 532--533
 0, 2, 1], file=`map',
  []
 
-[25] [26] [27] [28] [29]
+[37] [38] [39] [40] [41]
 Underfull \hbox (badness 10000) in paragraph at lines 758--759
 \OT1/cmss/bx/n/10.95 grace.write\OT1/cmss/m/n/10.95 (self, run=None, x[]data[]t
 ype=`res', y[]data[]type=None, res[]num=None,
  []
 
-[30]
+[42]
 Underfull \hbox (badness 10000) in paragraph at lines 856--857
 []\OT1/cmtt/m/n/9 relax> grace.write(run=`m2', x[]data[]type=`S2', y[]data[]typ
 e=`te', file=`s2[]te.agr',
@@ -315,16 +356,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 869--870
 pe=`te', res[]num=123,
  []
 
-[31]
+[43]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [32]
-[33] [34] [35] [36] [37] [38] [39] [40] [41]
+ [44]
+[45] [46] [47] [48] [49] [50] [51] [52] [53]
 Overfull \hbox (29.4888pt too wide) in paragraph at lines 1582--1626
  [] 
  []
 
-[42] [43] [44] [45] [46]
+[54] [55] [56] [57] [58]
 Underfull \hbox (badness 10000) in paragraph at lines 2079--2080
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(`test', `large[]model', `mf[
 ]ext', [`S2f', `tf', `S2', `ts',
@@ -336,46 +377,46 @@ Underfull \hbox (badness 10000) in paragraph at lines 2081--2082
 del', params=[`S2f', `tf', `S2',
  []
 
-[47] [48] [49] [50] [51] [52] [53] [54]
+[59] [60] [61] [62] [63] [64] [65] [66]
 Underfull \hbox (badness 10000) in paragraph at lines 2550--2551
 []\OT1/cmtt/m/n/9 relax> model[]selection(method=`AIC', modsel[]run=`mixed', ru
 ns=[`m1', `m2', `m3', `m4',
  []
 
-[55] [56] [57] [58] [59] [60] [61] [62] [63] [64] [65] [66] [67] [68] [69]
-[70] [71] [72]
+[67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81]
+[82] [83] [84]
 Underfull \hbox (badness 10000) in paragraph at lines 3332--3333
 \OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
 spec-trum[]type=None, res[]num=None,
  []
 
-[73] [74] [75] [76]
+[85] [86] [87] [88]
 Underfull \hbox (badness 10000) in paragraph at lines 3535--3536
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
-[77] [78] [79] [80]
+[89] [90] [91] [92]
 Underfull \hbox (badness 1158) in paragraph at lines 3689--3690
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
-[81] [82] [83] [84] [85] [86]
+[93] [94] [95] [96] [97] [98]
 Underfull \hbox (badness 10000) in paragraph at lines 4045--4046
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`NOE', frq[]label=`60
 0', frq=600.0 * 1e6,
  []
 
-[87]
+[99]
 Underfull \hbox (badness 10000) in paragraph at lines 4057--4058
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`R2', frq[]label=`800
  MHz', frq=8.0*1e8,
  []
 
-[88] [89] [90] [91] [92] [93] [94] [95] [96] [97] [98] [99] [100] [101]
-[102] [103] [104] [105] [106] [107] [108] [109] [110] [111] [112] [113]
-[114] [115] [116] [117] [118] [119] [120] [121] [122] [123]
+[100] [101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111]
+[112] [113] [114] [115] [116] [117] [118] [119] [120] [121] [122] [123]
+[124] [125] [126] [127] [128] [129] [130] [131] [132] [133] [134] [135]
 Underfull \hbox (badness 6493) in paragraph at lines 6002--6003
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
@@ -387,14 +428,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 6060--6061
 ]value', num[]col=0, name[]col=1,
  []
 
-[124]
+[136]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [125]
+ [137]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [126]
-[127]
+ [138]
+[139]
 Overfull \hbox (6.26677pt too wide) in paragraph at lines 6370--6424
  [] 
  []
@@ -402,33 +443,33 @@ Overfull \hbox (6.26677pt too wide) in paragraph at lines 6370--6424
 
 Underfull \vbox (badness 1448) has occurred while \output is active []
 
- [128]
-[129] [130]
+ [140]
+[141] [142]
 Underfull \vbox (badness 2343) has occurred while \output is active []
 
- [131]
-[132] [133]
+ [143]
+[144] [145]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [134]
-[135])) [136]
+ [146]
+[147])) [148]
 \openout2 = `licence.aux'.
 
  (./licence.tex
-Chapter 3.
-[137
+Chapter 4.
+[149
 
 
 
-] [138] [139] [140] [141] [142]) [143] (./relax.aux (./intro.aux)
-(./functions.aux) (./licence.aux)) ) 
+] [150] [151] [152] [153] [154]) [155] (./relax.aux (./intro.aux)
+(./maths.aux) (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
- 1333 strings out of 95756
- 14962 string characters out of 1190795
- 70571 words of memory out of 1000001
- 4311 multiletter control sequences out of 10000+50000
- 12423 words of font info for 45 fonts, out of 500000 for 1000
+ 1734 strings out of 95756
+ 20660 string characters out of 1190795
+ 76895 words of memory out of 1000001
+ 4682 multiletter control sequences out of 10000+50000
+ 14328 words of font info for 52 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
- 27i,7n,22p,1036b,407s stack positions out of 3000i,1500n,5000p,200000b,15000s
+ 27i,10n,22p,1036b,407s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (143 pages, 281612 bytes).
+Output written on relax.dvi (155 pages, 315888 bytes).
