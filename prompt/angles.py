@@ -47,7 +47,7 @@ class Angles:
         If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for
         each XH bond vector.
 
-        If the diffusion tensor is fully anisotropic, then the three angles will be calculated.
+        If the diffusion tensor is asymmetric, then the three angles will be calculated.
         """
 
         # Function intro text.

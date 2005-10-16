@@ -1,23 +1,56 @@
 \begin{theindex}
 
-  \item Brownian diffusion, 15
+  \item angles, 31, 36--39
 
   \indexspace
 
-  \item cross-relaxation rate, 13, 14
+  \item bond length, 50, 65, 69--71, 139, 140, 142, 145, 146, 149--151, 
+		154
 
   \indexspace
 
-  \item ellipsoid, 15, 27
+  \item chemical exchange, 50, 65, 139, 140, 142, 145, 150, 151, 154
+  \item chi-squared, 49, 80
+  \item compression, 112, 128
+    \subitem bzip2, 111, 112, 127, 128
+    \subitem gzip, 111, 112, 127, 128
+    \subitem uncompressed, 111, 127
+  \item constraint, 37, 44, 51, 56--58, 95
+  \item copy, 33, 63, 102, 120, 132, 138
+  \item correlation time, 36, 39, 43, 44, 50, 64, 65, 139, 142, 145, 
+		150, 151, 154
 
   \indexspace
 
-  \item floating point number, 7
+  \item delete, 34, 66, 103, 121
+  \item diffusion, 15
+    \subitem anisotropic, 37, 39
+    \subitem Brownian, \textbf{15}
+    \subitem ellipsoid (asymmetric), \textbf{15}, 27, 31
+    \subitem sphere (isotropic), \textbf{17}, 31, 36, 39, 41
+    \subitem spheroid (axially symmetric), \textbf{16}, 31, 36, 37, 39
+    \subitem tensor, 31, 33, 34, 36--39, 45
+  \item display, 93, 104, 109
+
+  \indexspace
+
+  \item eigenvalues, 36, 62
+  \item Euler angles, 38
+
+  \indexspace
+
+  \item floating point number, 7, 36--38
   \item function class, 8--10
 
   \indexspace
 
-  \item GPL, 157
+  \item GPL, \textbf{157}
+  \item Grace, the program, 46--48
+  \item GUI, 12
+
+  \indexspace
+
+  \item help system, 8, \textbf{9}, 29
 
   \indexspace
 
@@ -29,23 +62,80 @@
 
   \indexspace
 
-  \item minimisation, 8, 13, 17, 18
+  \item map, 41, 42, 55, 78, 81, 84, 86, 88, 90, 113, 140, 146, 148, 
+		151
+  \item minimisation, 8, 13, 17, 18, 37, 39, 43, 44, 56--62, 73, 77, 78, 
+		80, 81, 83--90, 138, 143, 147, 148
+  \item minimisation techniques
+    \subitem BFGS, 60, 62
+    \subitem Cauchy point, 60
+    \subitem CG-Steihaug, 60
+    \subitem conjugate gradient, 60, 61
+    \subitem dogleg, 60--62
+    \subitem exact trust region, 60, 61
+    \subitem Fletcher-Reeves, 60
+    \subitem Hestenes-Stiefel, 60
+    \subitem Levenberg-Marquardt, 61
+    \subitem Method of Multipliers, 56, 61
+    \subitem Newton, 57, 60--62
+    \subitem Newton conjugate gradient, 60
+    \subitem Polak-Ribi\`ere, 60
+    \subitem Polak-Ribi\`ere +, 60
+    \subitem simplex, 57, 61
+    \subitem steepest descent, 60
+  \item model elimination, 43, 78, 81, 84, 85, 87, 90
+  \item modelling, 43
+  \item Molmol, the program, 75, 76
 
   \indexspace
 
-  \item Python, 7, 8, 11, 12
+  \item OpenDX, the program, 40, 41
+  \item optimise, 36, 78, 81, 83--85, 87, 89
+  \item order parameter, 50, 64, 65, 139, 142, 145, 150, 151, 154
 
   \indexspace
 
-  \item sample scripts, 12
-  \item sphere, 15, 17
-  \item spheroid, 15, 16
-  \item spin-latice relaxation rate, 13
-  \item spin-spin relaxation rate, 13
+  \item parameter
+    \subitem bounds, 41, 51, 58
+    \subitem limit, 43, 44, 47, 57, 80, 108
+  \item PDB, 37, 38, 76, 97, 99, 155
+  \item plot, 47, 48
+  \item Python, 7, \textbf{7, 8}, 11, 12, 48, 56, 59, 91, 117, 136, 138, 
+		141, 144, 148, 149, 153
+
+  \indexspace
+
+  \item read, 93, 105, 106, 111, 112, 123, 131, 132
+  \item regular expression, 42, 47--49, 59, 91, 117, 136, 138, 139, 
+		141, 142, 144, 148, 149, 153
+  \item relaxation, 55, 65, 70, 101--105, 107, 108, 113, 143, 151
+  \item relaxation rate
+    \subitem cross-relaxation, \textbf{14}
+    \subitem spin-latice, 13
+    \subitem spin-spin, 13
+  \item rotation, 38
+  \item run, \textbf{10}
+
+  \indexspace
+
+  \item scripting, \textbf{10}
+    \subitem sample scripts, 12
+  \item sequence, 33, 48, 49, 59, 63, 77, 80, 83, 85, 87, 89, 92, 99, 
+		102, 108, 119, 120, 123, 124, 138, 139, 141, 142, 144, 
+		149, 153
+  \item Sparky, the program, 93, 109
   \item string, 7
 
   \indexspace
 
-  \item user functions, 8--10, 29
+  \item tab completion, \textbf{9}
+
+  \indexspace
+
+  \item user functions, \textbf{8}, 9, 10, 29
+
+  \indexspace
+
+  \item write, 48, 107, 152
 
 \end{theindex}

@@ -22,12 +22,12 @@ Function for calculating the angles between the XH bond vector and the diffusion
 
 \subsubsection{Description}
 
-If the diffusion tensor is isotropic for the run, then nothing will be done.
+If the diffusion tensor \index{diffusion!tensor} is isotropic \index{diffusion!sphere (isotropic)} for the run, then nothing will be done.
 
-If the diffusion tensor is axially symmetric, then the angle $\alpha$ will be calculated for
+If the diffusion tensor \index{diffusion!tensor} is axially symmetric, \index{diffusion!spheroid (axially symmetric)} then the angle \index{angles} $\alpha$ will be calculated for
 each XH bond vector.
 
-If the diffusion tensor is fully anisotropic, then the three angles will be calculated.
+If the diffusion tensor \index{diffusion!tensor} is asymmetric, \index{diffusion!ellipsoid (asymmetric)} then the three angles \index{angles} will be calculated.
 
 
 \newpage
@@ -69,26 +69,26 @@ Function for copying diffusion tensor data from run1 to run2.
 
 
 \keyword{run1:}
-  The name of the run to copy the sequence from.
+  The name of the run to copy \index{copy} the sequence \index{sequence} from.
 
 \keyword{run2:}
-  The name of the run to copy the sequence to.
+  The name of the run to copy \index{copy} the sequence \index{sequence} to.
 
 \subsubsection{Description}
 
-This function will copy the diffusion tensor data from 
+This function will copy \index{copy} the diffusion tensor \index{diffusion!tensor} data from 
 \quoteenv{`run1'}
  to 
 \quoteenv{`run2'}
 .  
 \quoteenv{`run2'}
  must not
-contain any diffusion tensor data.
+contain any diffusion tensor \index{diffusion!tensor} data.
 
 
 \subsubsection{Examples}
 
-To copy the diffusion tensor from run 
+To copy \index{copy} the diffusion tensor \index{diffusion!tensor} from run 
 \quoteenv{`m1'}
  to run 
 \quoteenv{`m2'}
@@ -121,7 +121,7 @@ Function for deleting diffusion tensor data.
 
 \subsubsection{Description}
 
-This function will delete all diffusion tensor data for the given run.
+This function will delete \index{delete} all diffusion tensor \index{diffusion!tensor} data for the given run.
 
 
 \newpage
@@ -166,36 +166,36 @@ Function for setting up the diffusion tensor.
   The name of the run to assign the data to.
 
 \keyword{params:}
-  The diffusion tensor data.
+  The diffusion tensor \index{diffusion!tensor} data.
 
 \keyword{time\_scale:}
-  The correlation time scaling value.
+  The correlation time \index{correlation time} scaling value.
 
 \keyword{d\_scale:}
-  The diffusion tensor eigenvalue scaling value.
+  The diffusion tensor \index{diffusion!tensor} eigenvalue \index{eigenvalues} scaling value.
 
 \keyword{angle\_units:}
-  The units for the angle parameters.
+  The units for the angle \index{angles} parameters.
 
 \keyword{param\_types:}
   A flag to select different parameter combinations.
 
 \keyword{axial\_type:}
-  A string, which if supplied with axially symmetric parameters, will restrict the tensor to either being 
+  A string, which if supplied with axially symmetric \index{diffusion!spheroid (axially symmetric)} parameters, will restrict the tensor to either being 
 \quoteenv{`oblate'}
  or 
 \quoteenv{`prolate'}
 .
 
 \keyword{fixed:}
-  A flag specifying whether the diffusion tensor is fixed or can be optimised.
+  A flag specifying whether the diffusion tensor \index{diffusion!tensor} is fixed or can be optimised. \index{optimise}
 
 \subsubsection{Description}
 
-Isotropic diffusion.
+Isotropic \index{diffusion!sphere (isotropic)} diffusion.
 
-To select isotropic diffusion, the parameters argument should be a single floating point
-number.  The number is the value of the isotropic global correlation time in seconds.  To
+To select isotropic \index{diffusion!sphere (isotropic)} diffusion, the parameters argument should be a single floating point \index{floating point number}
+number.  The number is the value of the isotropic \index{diffusion!sphere (isotropic)} global correlation time \index{correlation time} in seconds.  To
 specify the time in nanoseconds, set the 
 \quoteenv{`time\_scale'}
  argument to 1e-9.  Alternative
@@ -215,10 +215,10 @@ where
 \end{itemize}
 
 
-Axially symmetric diffusion.
+Axially symmetric \index{diffusion!spheroid (axially symmetric)} diffusion.
 
-To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
-of floating point numbers of length four.  A tuple is a type of data structure enclosed in
+To select axially symmetric \index{diffusion!spheroid (axially symmetric)} anisotropic \index{diffusion!anisotropic} diffusion, the parameters argument should be a tuple
+of floating point \index{floating point number} numbers of length four.  A tuple is a type of data structure enclosed in
 round brackets, the elements of which are separated by commas.  Alternative sets of
 parameters, 
 \quoteenv{`param\_types'}
@@ -241,17 +241,17 @@ where
 \item[]     $\Diff_{ratio}$ = $\Diff_\Par$ / $\Diff_\Per$.
 \end{itemize}
 
-The diffusion tensor is defined by the vector $\Diff_\Par$.  The angle $\alpha$ describes the bond
-vector with respect to the diffusion frame while the spherical angles \{$\theta$, $\phi$\} describe
-the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and $\phi$ is the
-azimuthal angle defined between
+The diffusion tensor \index{diffusion!tensor} is defined by the vector $\Diff_\Par$.  The angle \index{angles} $\alpha$ describes the bond
+vector with respect to the diffusion frame while the spherical angles \index{angles} \{$\theta$, $\phi$\} describe
+the diffusion tensor \index{diffusion!tensor} with respect to the PDB \index{PDB} frame.  $\theta$ is the polar angle \index{angles} and $\phi$ is the
+azimuthal angle \index{angles} defined between
 
 \begin{itemize}
 \item[]     0 $\le$ $\theta$ $\le$ $\pi$,
 \item[]     0 $\le$ $\phi$ $\le$ 2$\pi$.
 \end{itemize}
 
-The angle $\alpha$ is defined between
+The angle \index{angles} $\alpha$ is defined between
 
 \begin{itemize}
 \item[]     0 $\le$ $\alpha$ $\le$ 2$\pi$.
@@ -264,21 +264,21 @@ The
 , 
 \quoteenv{`prolate'}
 , or None.  The argument will be
-ignored if the diffusion tensor is not axially symmetric.  If 
+ignored if the diffusion tensor \index{diffusion!tensor} is not axially symmetric. \index{diffusion!spheroid (axially symmetric)}  If 
 \quoteenv{`oblate'}
  is given, then the
-constraint $\Diff_\Per$ $\ge$ $\Diff_\Par$ is used.  If 
+constraint \index{constraint} $\Diff_\Per$ $\ge$ $\Diff_\Par$ is used.  If 
 \quoteenv{`prolate'}
- is given, then the constraint $\Diff_\Per$ $\le$ $\Diff_\Par$ is
+ is given, then the constraint \index{constraint} $\Diff_\Per$ $\le$ $\Diff_\Par$ is
 used.  If nothing is supplied, then $\Diff_\Per$ and $\Diff_\Par$ will be allowed to have any values.  To
-prevent minimisation of diffusion tensor parameters in a space with two minima, it is
-recommended to specify which tensor to be minimised, thereby partitioning the two minima
+prevent minimisation \index{minimisation} of diffusion tensor \index{diffusion!tensor} parameters in a space with two minima, it is
+recommended to specify which tensor to be minimised, \index{minimisation} thereby partitioning the two minima
 into the two subspaces (the partition is where $\Diff_a$ equals 0).
 
 
-Anisotropic diffusion.
+Anisotropic \index{diffusion!anisotropic} diffusion.
 
-To select fully anisotropic diffusion, the parameters argument should be a tuple of length
+To select fully anisotropic \index{diffusion!anisotropic} diffusion, the parameters argument should be a tuple of length
 six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
 are separated by commas.  Alternative sets of parameters, 
 \quoteenv{`param\_types'}
@@ -299,10 +299,10 @@ where
 \item[]     $\Diff_r$ = ($\Diff_x$ - $\Diff_y$)/2.
 \end{itemize}
 
-The angles $\alpha$, $\beta$, and $\gamma$ are the Euler angles describing the diffusion tensor
-within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where
-$\alpha$ is the initial rotation angle around the z-axis, $\beta$ is the rotation angle around the
-y-axis, and $\gamma$ is the final rotation around the z-axis again.  The angles are defined
+The angles \index{angles} $\alpha$, $\beta$, and $\gamma$ are the Euler angles \index{angles} \index{Euler angles} describing the diffusion tensor \index{diffusion!tensor}
+within the PDB \index{PDB} frame.  These angles \index{angles} are defined using the z-y-z axis rotation \index{rotation} notation where
+$\alpha$ is the initial rotation \index{rotation} angle \index{angles} around the z-axis, $\beta$ is the rotation \index{rotation} angle \index{angles} around the
+y-axis, and $\gamma$ is the final rotation \index{rotation} around the z-axis again.  The angles \index{angles} are defined
 between
 
 \begin{itemize}
@@ -311,8 +311,8 @@ between
 \item[]     0 $\le$ $\gamma$ $\le$ 2$\pi$.
 \end{itemize}
 
-Within the PDB frame, the bond vector is described using the spherical angels $\theta$ and $\phi$
-where $\theta$ is the polar angle and $\phi$ is the azimuthal angle defined between
+Within the PDB \index{PDB} frame, the bond vector is described using the spherical angels $\theta$ and $\phi$
+where $\theta$ is the polar angle \index{angles} and $\phi$ is the azimuthal angle \index{angles} defined between
 
 \begin{itemize}
 \item[]     0 $\le$ $\theta$ $\le$ $\pi$,
@@ -324,12 +324,12 @@ Units.
 
 The 
 \quoteenv{`time\_scale'}
- argument should be a floating point number.  Parameters affected by this
+ argument should be a floating point \index{floating point number} number.  Parameters affected by this
 value are:  $\tau_m$.
 
 The 
 \quoteenv{`d\_scale'}
- argument should also be a floating point number.  Parameters affected by this
+ argument should also be a floating point \index{floating point number} number.  Parameters affected by this
 value are:  $\Diff_{iso}$; $\Diff_\Par$; $\Diff_\Per$; $\Diff_a$; $\Diff_r$; $\Diff_x$; $\Diff_y$; $\Diff_z$.
 
 The 
@@ -345,7 +345,7 @@ are:  $\theta$; $\phi$; $\alpha$; $\beta$; $\gamma$.
 
 \subsubsection{Examples}
 
-To set an isotropic diffusion tensor with a correlation time of 10 ns, assigning it to the
+To set an isotropic \index{diffusion!sphere (isotropic)} diffusion tensor \index{diffusion!tensor} with a correlation time \index{correlation time} of 10 ns, assigning it to the
 run 
 \quoteenv{`m1'}
 , type:
@@ -360,7 +360,7 @@ run
 
 
 
-To select axially symmetric diffusion with a $\tau_m$ value of 8.5 ns, $\Diff_{ratio}$ of 1.1, $\theta$ value
+To select axially symmetric \index{diffusion!spheroid (axially symmetric)} diffusion with a $\tau_m$ value of 8.5 ns, $\Diff_{ratio}$ of 1.1, $\theta$ value
 of 20 degrees, and $\phi$ value of 20 degrees, and assign it to the run 
 \quoteenv{`m8'}
 , type:
@@ -369,7 +369,7 @@ of 20 degrees, and $\phi$ value of 20 degrees, and assign it to the run
 
 
 
-To select an axially symmetric diffusion tensor with a $\Diff_\Par$ value of 1.698e7, $\Diff_\Per$ value of
+To select an axially symmetric \index{diffusion!spheroid (axially symmetric)} diffusion tensor \index{diffusion!tensor} with a $\Diff_\Par$ value of 1.698e7, $\Diff_\Per$ value of
 1.417e7, $\theta$ value of 67.174 degrees, and $\phi$ value of -83.718 degrees, and assign it to
 the run 
 \quoteenv{`axial'}
@@ -383,19 +383,19 @@ the run
 
 \example{relax> diffusion\_tensor(run=`axial', params=(1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=1, d\_scale=1e8) }
 
-\example{relax> diffusion\_tensor(`axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad') }
+\example{relax> diffusion\_tensor(`axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad') \index{angles} }
 
-\example{relax> diffusion\_tensor(run=`axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad', fixed=1) }
+\example{relax> diffusion\_tensor(run=`axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad', \index{angles} fixed=1) }
 
 
 
-To select fully anisotropic diffusion, type:
+To select fully anisotropic \index{diffusion!anisotropic} diffusion, type:
 
 \example{relax> diffusion\_tensor(`m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568), param\_types=2) }
 
 
 
-To select and minimise an isotropic diffusion tensor, type (followed by a minimisation
+To select and minimise \index{minimisation} an isotropic \index{diffusion!sphere (isotropic)} diffusion tensor, \index{diffusion!tensor} type (followed by a minimisation \index{minimisation}
 command):
 
 \example{relax> diffusion\_tensor(`diff', 10e-9, fixed=0) }
@@ -422,15 +422,15 @@ Function for running OpenDX.
 \keyword{file:}
   The file name prefix.  For example if file is set to 
 \quoteenv{`temp'}
-, then the OpenDX program temp.net will be loaded.
+, then the OpenDX \index{OpenDX, the program} program temp.net will be loaded.
 
 \keyword{dir:}
-  The directory to change to for running OpenDX.  If this is set to 
+  The directory to change to for running OpenDX. \index{OpenDX, the program}  If this is set to 
 \quoteenv{`None'}
-, OpenDX will be run in the current directory.
+, OpenDX \index{OpenDX, the program} will be run in the current directory.
 
 \keyword{dx\_exe:}
-  The OpenDX executable file.
+  The OpenDX \index{OpenDX, the program} executable file.
 
 \keyword{vp\_exec:}
   A flag specifying whether to execute the visual program automatically at start-up.  The default is 1 which turns execution on.  Setting the value to zero turns execution off.
@@ -460,18 +460,18 @@ Function for creating a map of the given space in OpenDX format.
   The residue number.
 
 \keyword{map\_type:}
-  The type of map to create.  For example the default, a 3D isosurface, the type is 
+  The type of map \index{map} to create.  For example the default, a 3D isosurface, the type is 
 \quoteenv{`Iso3D'}
 .  See below for more details.
 
 \keyword{inc:}
-  The number of increments to map in each dimension.  This value controls the resolution of the map.
+  The number of increments to map \index{map} in each dimension.  This value controls the resolution of the map. \index{map}
 
 \keyword{lower:}
-  The lower bounds of the space.  If you wish to change the lower bounds of the map then supply an array of length equal to the number of parameters in the model.  A lower bound for each parameter must be supplied.  If nothing is supplied then the defaults will be used.
+  The lower bounds \index{parameter!bounds} of the space.  If you wish to change the lower bounds \index{parameter!bounds} of the map \index{map} then supply an array of length equal to the number of parameters in the model.  A lower bound \index{parameter!bounds} for each parameter must be supplied.  If nothing is supplied then the defaults will be used.
 
 \keyword{upper:}
-  The upper bounds of the space.  If you wish to change the upper bounds of the map then supply an array of length equal to the number of parameters in the model.  A upper bound for each parameter must be supplied.  If nothing is supplied then the defaults will be used.
+  The upper bounds \index{parameter!bounds} of the space.  If you wish to change the upper bounds \index{parameter!bounds} of the map \index{map} then supply an array of length equal to the number of parameters in the model.  A upper bound \index{parameter!bounds} for each parameter must be supplied.  If nothing is supplied then the defaults will be used.
 
 \keyword{swap:}
   An array used to swap the position of the axes.  The length of the array should be the same as the number of parameters in the model.  The values should be integers specifying which elements to interchange.  For example if swap equals [0, 1, 2] for a three parameter model then the axes are not interchanged whereas if swap equals [1, 0, 2] then the first and second dimensions are interchanged.
@@ -479,9 +479,9 @@ Function for creating a map of the given space in OpenDX format.
 \keyword{file:}
   The file name.  All the output files are prefixed with this name.  The main file containing the data points will be called the value of 
 \quoteenv{`file'}
-.  The OpenDX program will be called 
+.  The OpenDX \index{OpenDX, the program} program will be called 
 \quoteenv{`file.net'}
- and the OpenDX import file will be called 
+ and the OpenDX \index{OpenDX, the program} import file will be called 
 \quoteenv{`file.general'}
 .
 
@@ -491,7 +491,7 @@ Function for creating a map of the given space in OpenDX format.
  if you do not want the files to be placed in subdirectory.  If the directory does not exist, it will be created.
 
 \keyword{point:}
-  An array of parameter values where a point in the map, shown as a red sphere, will be placed.  The length must be equal to the number of parameters.
+  An array of parameter values where a point in the map, \index{map} shown as a red sphere, \index{diffusion!sphere (isotropic)} will be placed.  The length must be equal to the number of parameters.
 
 \keyword{point\_file:}
   The name of that the point output files will be prefixed with.
@@ -504,10 +504,10 @@ Function for creating a map of the given space in OpenDX format.
 
 \subsubsection{Map type}
 
-The map type can be changed by supplying the 
+The map \index{map} type can be changed by supplying the 
 \quoteenv{`map\_type'}
  keyword argument.  Here is a list of
-currently supported map types:
+currently supported map \index{map} types:
 
 
 \begin{center}
@@ -527,13 +527,17 @@ Surface type & Pattern \\
 \end{tabular}
 \end{center}
 
-Pattern syntax is simply regular expression syntax where square brackets [] means any
-character within the brackets, \^{} means the start of the string, etc.
+Pattern syntax is simply regular expression \index{regular expression} syntax where square brackets 
+\quoteenv{`[]'}
+ means any
+character within the brackets, 
+\quoteenv{`\^{}'}
+ means the start of the string, etc.
 
 
 \subsubsection{Examples}
 
-The following commands will generate a map of the extended model-free space defined as run
+The following commands will generate a map \index{map} of the extended model-free space defined as run
 \quoteenv{`m5'}
  which consists of the parameters \{$S^2_f$, $S^2_s$, $\tau_s$\}.  Files will be output into the
 directory 
@@ -542,36 +546,36 @@ directory
 \quoteenv{`map'}
 .  The residue, in this case, is number 6.
 
-\example{relax> map(`m5', 6) }
+\example{relax> map(`m5', \index{map} 6) }
 
-\example{relax> map(`m5', 6, 20, `map', `dx') }
+\example{relax> map(`m5', \index{map} 6, 20, `map', `dx') }
 
-\example{relax> map(`m5', res\_num=6, file=`map', dir=`dx') }
+\example{relax> map(`m5', \index{map} res\_num=6, file=`map', dir=`dx') }
 
-\example{relax> map(run=`m5', res\_num=6, inc=20, file=`map', dir=`dx') }
+\example{relax> map(run=`m5', \index{map} res\_num=6, inc=20, file=`map', dir=`dx') }
 
-\example{relax> map(run=`m5', res\_num=6, type=`Iso3D', inc=20, swap=[0, 1, 2], file=`map', dir=`dx') }
-
-
-
-The following commands will swap the $S^2_s$ and $\tau_s$ axes of this map.
-
-\example{relax> map(`m5', res\_num=6, swap=[0, 2, 1]) }
-
-\example{relax> map(run=`m5', res\_num=6, type=`Iso3D', inc=20, swap=[0, 2, 1], file=`map', dir=`dx') }
+\example{relax> map(run=`m5', \index{map} res\_num=6, type=`Iso3D', inc=20, swap=[0, 1, 2], file=`map', dir=`dx') }
 
 
 
-To map the model-free space 
+The following commands will swap the $S^2_s$ and $\tau_s$ axes of this map. \index{map}
+
+\example{relax> map(`m5', \index{map} res\_num=6, swap=[0, 2, 1]) }
+
+\example{relax> map(run=`m5', \index{map} res\_num=6, type=`Iso3D', inc=20, swap=[0, 2, 1], file=`map', dir=`dx') }
+
+
+
+To map \index{map} the model-free space 
 \quoteenv{`m4'}
  defined by the parameters \{$S^2$, $\tau_e$, $R_{ex}$\}, name the results
 \quoteenv{`test'}
 , and not place the files in a subdirectory, use the following commands (assuming
 residue 2).
 
-\example{relax> map(`m4', res\_num=2, file=`test', dir=None) }
+\example{relax> map(`m4', \index{map} res\_num=2, file=`test', dir=None) }
 
-\example{relax> map(run=`m4', res\_num=2, inc=100, file=`test', dir=None) }
+\example{relax> map(run=`m4', \index{map} res\_num=2, inc=100, file=`test', dir=None) }
 
 
 
@@ -596,20 +600,20 @@ Function for model elimination.
   The name of the run(s).  By supplying a single string, array of strings, or None, a single run, multiple runs, or all runs will be selected respectively.
 
 \keyword{function:}
-  A user supplied function for model elimination.
+  A user supplied function for model elimination. \index{model elimination} \index{model elimination}
 
 \keyword{args:}
-  A tuple of arguments for model elimination.
+  A tuple of arguments for model elimination. \index{model elimination} \index{model elimination}
 
 \subsubsection{Description}
 
 This function is used for model validation to eliminate or reject models prior to model
-selection.  Model validation is a part of mathematical modelling whereby models are either
+selection.  Model validation is a part of mathematical modelling \index{modelling} whereby models are either
 accepted or rejected.
 
 Empirical rules are used for model rejection and are listed below.  However these can be
 overridden by supplying a function.  The function should accept five arguments, a string
-defining a certain parameter, the value of the parameter, the run name, the minimisation
+defining a certain parameter, the value of the parameter, the run name, the minimisation \index{minimisation}
 instance (ie the residue index if the model is residue specific), and the function
 arguments.  If the model is rejected, the function should return 1, otherwise it should
 return 0.  The function will be executed multiple times, once for each parameter of the
@@ -630,8 +634,8 @@ that model selection, or any other function, will then skip the model.
 
 Local $\tau_m$.
 
-The local $\tau_m$, in some cases, may exceed the value expected for a global correlation time.
-Generally the $\tau_m$ value will be stuck at the upper limit defined for the parameter.  These
+The local $\tau_m$, in some cases, may exceed the value expected for a global correlation time. \index{correlation time}
+Generally the $\tau_m$ value will be stuck at the upper limit \index{parameter!limit} defined for the parameter.  These
 models are eliminated using the rule:
 
 \begin{itemize}
@@ -642,18 +646,18 @@ The default value of c is 50 ns, although this can be overriden by supplying the
 seconds) as the first element of the args tuple.
 
 
-Internal correlation times \{$\tau_e$, $\tau_f$, $\tau_s$\}.
+Internal correlation times \index{correlation time} \{$\tau_e$, $\tau_f$, $\tau_s$\}.
 
 These parameters may experience the same problem as the local $\tau_m$ in that the model fails and
-the parameter value is stuck at the upper limit.  These parameters are constrained using the
+the parameter value is stuck at the upper limit. \index{parameter!limit}  These parameters are constrained using the
 formula ($\tau_e$, $\tau_f$, $\tau_s$ $\le$ 2$\tau_m$).  These failed models are eliminated using the rule:
 
 \begin{itemize}
 \item[]     $\tau_e$, $\tau_f$, $\tau_s$ $\ge$ c.$\tau_m$
 \end{itemize}
 
-The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
-setting c to 2 will result in no models being eliminated as the minimised parameters will
+The default value of c is 1.5.  Because of round-off errors and the constraint \index{constraint} algorithm,
+setting c to 2 will result in no models being eliminated as the minimised \index{minimisation} parameters will
 always be less than 2$\tau_m$.  The value can be changed by supplying the value as the second
 element of the tuple.
 
@@ -664,7 +668,7 @@ The
 \quoteenv{`args'}
  argument must be a tuple of length 2, the elements of which must be numbers.  For
 example, to eliminate models which have a local $\tau_m$ value greater than 25 ns and models with
-internal correlation times greater than 1.5 times $\tau_m$, set 
+internal correlation times \index{correlation time} greater than 1.5 times $\tau_m$, set 
 \quoteenv{`args'}
  to (25 * 1e-9, 1.5).
 
@@ -702,7 +706,7 @@ The keyword argument
  can be any of the following:
 
 \quoteenv{`diff'}
- - the diffusion tensor parameters.  This will allow all diffusion tensor parameters
+ - the diffusion tensor \index{diffusion!tensor} parameters.  This will allow all diffusion tensor \index{diffusion!tensor} parameters
 to be toggled.
 
 an integer - if an integer number is given, then all parameters for the residue
@@ -752,14 +756,14 @@ Function for running Grace.
   The directory name.
 
 \keyword{grace\_exe:}
-  The Grace executable file.
+  The Grace \index{Grace, the program} executable file.
 
 \subsubsection{Description}
 
-This function can be used to execute Grace to view the specified file the Grace 
+This function can be used to execute Grace \index{Grace, the program} to view the specified file the Grace \index{Grace, the program} 
 \quoteenv{`.agr'}
  file
-and the execute Grace. If the directory name is set to None, the file will be assumed to be
+and the execute Grace. \index{Grace, the program} If the directory name is set to None, the file will be assumed to be
 in the current working directory.
 
 
@@ -771,9 +775,9 @@ To view the file
 \quoteenv{`grace'}
 , type:
 
-\example{relax> grace.view(file=`s2.agr') }
+\example{relax> grace.view(file=`s2.agr') \index{Grace, the program} }
 
-\example{relax> grace.view(file=`s2.agr', dir=`grace') }
+\example{relax> grace.view(file=`s2.agr', \index{Grace, the program} dir=`grace') }
 
 
 
@@ -798,10 +802,10 @@ Function for creating a grace `.agr' file.
   The name of the run.
 
 \keyword{x\_data\_type:}
-  The data type for the X-axis (no regular expression is allowed).
+  The data type for the X-axis (no regular expression \index{regular expression} is allowed).
 
 \keyword{y\_data\_type:}
-  The data type for the Y-axis (no regular expression is allowed).
+  The data type for the Y-axis (no regular expression \index{regular expression} is allowed).
 
 \keyword{res\_num:}
   The residue number (regular expression is allowed).
@@ -810,7 +814,7 @@ Function for creating a grace `.agr' file.
   The residue name (regular expression is allowed).
 
 \keyword{plot\_data:}
-  The data to use for the plot.
+  The data to use for the plot. \index{plot}
 
 \keyword{file:}
   The name of the file.
@@ -824,84 +828,84 @@ Function for creating a grace `.agr' file.
 \subsubsection{Description}
 
 This function is designed to be as flexible as possible so that any combination of data can
-be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and
-xmgrace) which only supports two dimensional plots.  Three types of keyword arguments can
-be used to create various types of plot.  These include the X-axis and Y-axis data types,
+be plotted. \index{plot}  The output is in the format of a Grace \index{Grace, the program} plot \index{plot} (also known as ACE/gr, Xmgr, and
+xmgrace) which only supports two dimensional plots. \index{plot}  Three types of keyword arguments can
+be used to create various types of plot. \index{plot}  These include the X-axis and Y-axis data types,
 the residue number and name selection arguments, and an argument for selecting what to
-actually plot.
+actually plot. \index{plot}
 
-The X-axis and Y-axis data type arguments should be plain strings, regular expression is not
-allowed.  If the X-axis data type argument is not given, the plot will default to having the
-residue number along the x-axis.  The two axes of the Grace plot can be absolutely any of
-the data types listed in the tables below.  The only limitation, currently anyway, is that
+The X-axis and Y-axis data type arguments should be plain strings, regular expression \index{regular expression} is not
+allowed.  If the X-axis data type argument is not given, the plot \index{plot} will default to having the
+residue number along the x-axis.  The two axes of the Grace \index{Grace, the program} plot \index{plot} can be absolutely any of
+the data types listed in the tables below.  The only limitation, \index{parameter!limit} currently anyway, is that
 the data must belong to the same run.
 
-The residue number and name arguments can be used to limit the residues used in the plot.
+The residue number and name arguments can be used to limit \index{parameter!limit} the residues used in the plot. \index{plot}
 The default is that all residues will be used, however, these arguments can be used to
-select a subset of all residues, or a single residue for plots of Monte Carlo simulations,
-etc.  Regular expression is allowed for both the residue number and name, and the number can
+select a subset of all residues, or a single residue for plots \index{plot} of Monte Carlo simulations,
+etc.  Regular expression \index{regular expression} is allowed for both the residue number and name, and the number can
 either be an integer or a string.
 
-The property which is actually plotted can be controlled by the 
+The property which is actually plotted \index{plot} can be controlled by the 
 \quoteenv{`plot\_data'}
  argument.  It
 can be one of the following:
 \begin{description}
 \item[    
 \quoteenv{`value'}
- --]   Plot values (with errors if they exist).
+ --]   Plot \index{plot} values (with errors if they exist).
 \item[    
 \quoteenv{`error'}
- --]   Plot errors.
+ --]   Plot \index{plot} errors.
 \item[    
 \quoteenv{`sims'}
- --]    Plot the simulation values.
+ --]    Plot \index{plot} the simulation values.
 \end{description}
 
 
 \subsubsection{Examples}
 
-To write the NOE values for all residues from the run 
+To write \index{write} the NOE values for all residues from the run 
 \quoteenv{`noe'}
- to the Grace file 
+ to the Grace \index{Grace, the program} file 
 \quoteenv{`noe.agr'}
 ,
 type:
 
-\example{relax> grace.write(`noe', `res', `noe', file=`noe.agr') }
+\example{relax> grace.write(`noe', \index{Grace, the program} `res', `noe', file=`noe.agr') }
 
-\example{relax> grace.write(`noe', y\_data\_type=`noe', file=`noe.agr') }
+\example{relax> grace.write(`noe', \index{Grace, the program} y\_data\_type=`noe', file=`noe.agr') }
 
-\example{relax> grace.write(`noe', x\_data\_type=`res', y\_data\_type=`noe', file=`noe.agr') }
+\example{relax> grace.write(`noe', \index{Grace, the program} x\_data\_type=`res', y\_data\_type=`noe', file=`noe.agr') }
 
-\example{relax> grace.write(run=`noe', y\_data\_type=`noe', file=`noe.agr', force=1) }
+\example{relax> grace.write(run=`noe', \index{Grace, the program} y\_data\_type=`noe', file=`noe.agr', force=1) }
 
 
 
-To create a Grace file of 
+To create a Grace \index{Grace, the program} file of 
 \quoteenv{`S2'}
  vs. 
 \quoteenv{`te'}
  for all residues, type:
 
-\example{relax> grace.write(`m2', `S2', `te', file=`s2\_te.agr') }
+\example{relax> grace.write(`m2', \index{Grace, the program} `S2', `te', file=`s2\_te.agr') }
 
-\example{relax> grace.write(`m2', x\_data\_type=`S2', y\_data\_type=`te', file=`s2\_te.agr') }
+\example{relax> grace.write(`m2', \index{Grace, the program} x\_data\_type=`S2', y\_data\_type=`te', file=`s2\_te.agr') }
 
-\example{relax> grace.write(run=`m2', x\_data\_type=`S2', y\_data\_type=`te', file=`s2\_te.agr', force=1) }
+\example{relax> grace.write(run=`m2', \index{Grace, the program} x\_data\_type=`S2', y\_data\_type=`te', file=`s2\_te.agr', force=1) }
 
 
 
-To create a Grace file of the Monte Carlo simulation values of 
+To create a Grace \index{Grace, the program} file of the Monte Carlo simulation values of 
 \quoteenv{`Rex'}
  vs. 
 \quoteenv{`te'}
  for residue
 123, type:
 
-\example{relax> grace.write(`m4', `Rex', `te', res\_num=123, plot\_data=`sims', file=`s2\_te.agr') }
+\example{relax> grace.write(`m4', \index{Grace, the program} `Rex', `te', res\_num=123, plot\_data=`sims', \index{plot} file=`s2\_te.agr') }
 
-\example{relax> grace.write(run=`m4', x\_data\_type=`Rex', y\_data\_type=`te', res\_num=123, plot\_data=`sims', file=`s2\_te.agr') }
+\example{relax> grace.write(run=`m4', \index{Grace, the program} x\_data\_type=`Rex', y\_data\_type=`te', res\_num=123, plot\_data=`sims', \index{plot} file=`s2\_te.agr') }
 
 
 
@@ -909,20 +913,20 @@ To create a Grace file of the Monte Carlo simulation values of
 
 \subsubsection{Regular expression}
 
-The python function 
+The python \index{Python} function 
 \quoteenv{`match'}
-, which uses regular expression, is used to determine which data
+, which uses regular expression, \index{regular expression} is used to determine which data
 type to set values to, therefore various data\_type strings can be used to select the same
 data type.  Patterns used for matching for specific data types are listed below.
 
-This is a short description of python regular expression, for more information see the
-regular expression syntax section of the Python Library Reference.  Some of the regular
+This is a short description of python \index{Python} regular expression, \index{regular expression} for more information see the
+regular expression \index{regular expression} syntax section of the Python \index{Python} Library Reference.  Some of the regular
 expression syntax used in this function is:
 
 \begin{description}
 \item[    
 \quoteenv{`[]'}
- --]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence \index{sequence} or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -957,10 +961,10 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
- --]   Match any sequence of characters of any length. 
+ --]   Match any sequence \index{sequence} of characters of any length. 
 \end{description}
-Importantly, do not supply a string for the data type containing regular expression.  The
-regular expression is implemented so that various strings can be supplied which all match
+Importantly, do not supply a string for the data type containing regular expression. \index{regular expression}  The
+regular expression \index{regular expression} is implemented so that various strings can be supplied which all match
 the same data type.
 
 
@@ -976,7 +980,7 @@ Data type & Object name & Patterns \\
 
 \midrule
 
-Chi-squared statistic & 
+Chi-squared \index{chi-squared} statistic & 
 \quoteenv{`chi2'}
  & 
 \quoteenv{`\^{}[Cc]hi2\$'}
@@ -1044,7 +1048,7 @@ Local $\tau_m$ &
 
  &  &  \\
 
-Order parameter $S^2$ & 
+Order parameter \index{order parameter} $S^2$ & 
 \quoteenv{`s2'}
  & 
 \quoteenv{`\^{}[Ss]2\$'}
@@ -1052,7 +1056,7 @@ Order parameter $S^2$ &
 
  &  &  \\
 
-Order parameter $S^2_f$ & 
+Order parameter \index{order parameter} $S^2_f$ & 
 \quoteenv{`s2f'}
  & 
 \quoteenv{`\^{}[Ss]2f\$'}
@@ -1060,7 +1064,7 @@ Order parameter $S^2_f$ &
 
  &  &  \\
 
-Order parameter $S^2_s$ & 
+Order parameter \index{order parameter} $S^2_s$ & 
 \quoteenv{`s2s'}
  & 
 \quoteenv{`\^{}[Ss]2s\$'}
@@ -1068,7 +1072,7 @@ Order parameter $S^2_s$ &
 
  &  &  \\
 
-Correlation time $\tau_e$ & 
+Correlation time \index{correlation time} $\tau_e$ & 
 \quoteenv{`te'}
  & 
 \quoteenv{`\^{}te\$'}
@@ -1076,7 +1080,7 @@ Correlation time $\tau_e$ &
 
  &  &  \\
 
-Correlation time $\tau_f$ & 
+Correlation time \index{correlation time} $\tau_f$ & 
 \quoteenv{`tf'}
  & 
 \quoteenv{`\^{}tf\$'}
@@ -1084,7 +1088,7 @@ Correlation time $\tau_f$ &
 
  &  &  \\
 
-Correlation time $\tau_s$ & 
+Correlation time \index{correlation time} $\tau_s$ & 
 \quoteenv{`ts'}
  & 
 \quoteenv{`\^{}ts\$'}
@@ -1092,7 +1096,7 @@ Correlation time $\tau_s$ &
 
  &  &  \\
 
-Chemical exchange & 
+Chemical exchange \index{chemical exchange} & 
 \quoteenv{`rex'}
  & 
 \quoteenv{`\^{}[Rr]ex\$'}
@@ -1102,7 +1106,7 @@ Chemical exchange &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -1168,7 +1172,7 @@ $J(\omega_H)$ &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -1258,10 +1262,10 @@ The grid search function.
   The name of the run to apply the grid search to.
 
 \keyword{lower:}
-  An array of the lower bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.
+  An array of the lower bound \index{parameter!bounds} parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.
 
 \keyword{upper:}
-  An array of the upper bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.
+  An array of the upper bound \index{parameter!bounds} parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.
 
 \keyword{inc:}
   The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 
@@ -1269,7 +1273,7 @@ The grid search function.
  is set to an array of integers of length equal to the number of parameters.
 
 \keyword{constraints:}
-  A flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=1).
+  A flag specifying whether the parameters should be constrained.  The default is to turn constraints \index{constraint} on (constraints=1).
 
 \keyword{print\_flag:}
   The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
@@ -1345,7 +1349,7 @@ Function for selecting which relaxation data to use in the $J(\omega)$ mapping.
 
 \subsubsection{Description}
 
-This function will select the relaxation data to use in the reduced spectral densiy mapping
+This function will select the relaxation \index{relaxation} data to use in the reduced spectral densiy mapping \index{map}
 corresponding to the given frequency.
 
 
@@ -1373,28 +1377,28 @@ Minimisation function.
 
 \subsubsection{Arguments}
 
-The arguments, which should all be strings, specify the minimiser as well as its options.  A
+The arguments, which should all be strings, specify the minimiser \index{minimisation} as well as its options.  A
 minimum of one argument is required.  As this calls the function 
 \quoteenv{`generic\_minimise'}
  the full
 list of allowed arguments is shown below in the reproduced 
 \quoteenv{`generic\_minimise'}
  docstring.
-Ignore all sections except those labelled as minimisation algorithms and minimisation
-options.  Also do not select the Method of Multipliers constraint algorithm as this is used
-in combination with the given minimisation algorithm if the keyword argument 
+Ignore all sections except those labelled as minimisation \index{minimisation} algorithms and minimisation \index{minimisation}
+options.  Also do not select the Method of Multipliers \index{minimisation techniques!Method of Multipliers} constraint \index{constraint} algorithm as this is used
+in combination with the given minimisation \index{minimisation} algorithm if the keyword argument 
 \quoteenv{`constraints'}
 is set to 1.  The grid search algorithm should also not be selected as this is accessed
 using the 
 \quoteenv{`grid'}
  function instead.  The first argument passed will be set to the
-minimisation algorithm while all other arguments will be set to the minimisation options.
+minimisation \index{minimisation} algorithm while all other arguments will be set to the minimisation \index{minimisation} options.
 
 Keyword arguments differ from normal arguments having the form 
 \quoteenv{`keyword = value'}
 .  All
-arguments must precede keyword arguments in python.  For more information see the examples
-section below or the python tutorial.
+arguments must precede keyword arguments in python. \index{Python}  For more information see the examples
+section below or the python \index{Python} tutorial.
 
 
 \subsubsection{Keyword Arguments}
@@ -1404,16 +1408,16 @@ section below or the python tutorial.
   The name of the run.
 
 \keyword{func\_tol:}
-  The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.  The default value is 1e-25.
+  The function tolerance.  This is used to terminate minimisation \index{minimisation} once the function value between iterations is less than the tolerance.  The default value is 1e-25.
 
 \keyword{grad\_tol:}
-  The gradient tolerance.  Minimisation is terminated if the current gradient value is less than the tolerance.  The default value is None.
+  The gradient tolerance.  Minimisation \index{minimisation} is terminated if the current gradient value is less than the tolerance.  The default value is None.
 
 \keyword{max\_iterations:}
   The maximum number of iterations.  The default value is 1e7.
 
 \keyword{constraints:}
-  A flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=1).
+  A flag specifying whether the parameters should be constrained.  The default is to turn constraints \index{constraint} on (constraints=1).
 
 \keyword{scaling:}
   The diagonal scaling flag.  The default that scaling is on (scaling=1).
@@ -1427,9 +1431,9 @@ section below or the python tutorial.
 Diagonal scaling.
 
 Diagonal scaling is the transformation of parameter values such that each value has a
-similar order of magnitude.  Certain minimisation techniques, for example the trust region
+similar order of magnitude.  Certain minimisation \index{minimisation} techniques, for example the trust region
 methods, perform extemely poorly with badly scaled problems.  In addition, methods which are
-insensitive to scaling such as Newton minimisation may still benefit due to the minimisation
+insensitive to scaling such as Newton \index{minimisation techniques!Newton} minimisation \index{minimisation} may still benefit due to the minimisation \index{minimisation}
 of round off errors.
 
 In Model-free analysis for example, if $S^2$ = 0.5, $\tau_e$ = 200 ps, and $R_{ex}$ = 15 1/s at 600 MHz,
@@ -1443,42 +1447,42 @@ vector are multiplied.
 
 \subsubsection{Examples}
 
-To minimise the model-free run 
+To minimise \index{minimisation} the model-free run 
 \quoteenv{`m4'}
- using Newton minimisation together with the GMW81
+ using Newton \index{minimisation techniques!Newton} minimisation \index{minimisation} together with the GMW81
 Hessian modification algorithm, the More and Thuente line search algorithm, a function
-tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints
-turned on to limit parameter values, and have normal printout, type any combination of:
+tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints \index{constraint}
+turned on to limit \index{parameter!limit} parameter values, and have normal printout, type any combination of:
 
-\example{relax> minimise(`newton', run=`m4') }
+\example{relax> minimise(`newton', \index{minimisation} run=`m4') }
 
-\example{relax> minimise(`Newton', run=`m4') }
+\example{relax> minimise(`Newton', \index{minimisation} run=`m4') }
 
-\example{relax> minimise(`newton', `gmw', run=`m4') }
+\example{relax> minimise(`newton', \index{minimisation} `gmw', run=`m4') }
 
-\example{relax> minimise(`newton', `mt', run=`m4') }
+\example{relax> minimise(`newton', \index{minimisation} `mt', run=`m4') }
 
-\example{relax> minimise(`newton', `gmw', `mt', run=`m4') }
+\example{relax> minimise(`newton', \index{minimisation} `gmw', `mt', run=`m4') }
 
-\example{relax> minimise(`newton', `mt', `gmw', run=`m4') }
+\example{relax> minimise(`newton', \index{minimisation} `mt', `gmw', run=`m4') }
 
-\example{relax> minimise(`newton', run=`m4', func\_tol=1e-25) }
+\example{relax> minimise(`newton', \index{minimisation} run=`m4', func\_tol=1e-25) }
 
-\example{relax> minimise(`newton', run=`m4', func\_tol=1e-25, grad\_tol=None) }
+\example{relax> minimise(`newton', \index{minimisation} run=`m4', func\_tol=1e-25, grad\_tol=None) }
 
-\example{relax> minimise(`newton', run=`m4', max\_iter=1e7) }
+\example{relax> minimise(`newton', \index{minimisation} run=`m4', max\_iter=1e7) }
 
-\example{relax> minimise(`newton', run=name, constraints=1, max\_iter=1e7) }
+\example{relax> minimise(`newton', \index{minimisation} run=name, constraints=1, \index{constraint} max\_iter=1e7) }
 
-\example{relax> minimise(`newton', run=`m4', print\_flag=1) }
+\example{relax> minimise(`newton', \index{minimisation} run=`m4', print\_flag=1) }
 
 
-To minimise the model-free run 
+To minimise \index{minimisation} the model-free run 
 \quoteenv{`m5'}
- using constrained Simplex minimisation with a maximum of
+ using constrained Simplex \index{minimisation techniques!simplex} minimisation \index{minimisation} with a maximum of
 5000 iterations, type:
 
-\example{relax> minimise(`simplex', run=`m5', constraints=1, max\_iter=5000) }
+\example{relax> minimise(`simplex', \index{minimisation} run=`m5', constraints=1, \index{constraint} max\_iter=5000) }
 
 
 
@@ -1488,9 +1492,9 @@ To minimise the model-free run
 {\footnotesize \begin{verbatim}
 
 All the text which follows is a reproduction of the docstring of the generic_minimise
-function.  Only take note of the minimisation algorithms and minimisation options sections,
+function.  Only take note of the minimisation \index{minimisation} algorithms and minimisation \index{minimisation} options sections,
 the other sections are not relevant for this function.  The Grid search and Method of
-Multipliers algorithms CANNOT be selected as minimisation algorithms for this function.
+Multipliers algorithms CANNOT be selected as minimisation \index{minimisation} algorithms for this function.
 
 The section entitled Keyword Arguments is also completely inaccessible therefore please
 ignore that text.
@@ -1498,9 +1502,9 @@ ignore that text.
 \end{verbatim}}
 
 
-Generic minimisation function.
+Generic minimisation \index{minimisation} function.
 
-This is a generic function which can be used to access all minimisers using the same set of
+This is a generic function which can be used to access all minimisers \index{minimisation} using the same set of
 function arguments.  These are the function tolerance value for convergence tests, the maximum
 number of iterations, a flag specifying which data structures should be returned, and a flag
 specifying the amount of detail to print to screen.
@@ -1525,13 +1529,13 @@ specifying the amount of detail to print to screen.
   The vector of initial parameter value estimates (as an array).
 
 \keyword{min\_algor:}
-  A string specifying which minimisation technique to use.
+  A string specifying which minimisation \index{minimisation} technique to use.
 
 \keyword{min\_options:}
-  A tuple to pass to the minimisation function as the min\_options keyword.
+  A tuple to pass to the minimisation \index{minimisation} function as the min\_options keyword.
 
 \keyword{func\_tol:}
-  The function tolerance value.  Once the function value between iterations decreases below this value, minimisation is terminated.
+  The function tolerance value.  Once the function value between iterations decreases below this value, minimisation \index{minimisation} is terminated.
 
 \keyword{grad\_tol:}
   The gradient tolerance value.
@@ -1540,31 +1544,31 @@ specifying the amount of detail to print to screen.
   The maximum number of iterations.
 
 \keyword{A:}
-  Linear constraint matrix $m$*$n$ (A.x $\ge$ b).
+  Linear constraint \index{constraint} matrix $m$*$n$ (A.x $\ge$ b).
 
 \keyword{b:}
-  Linear constraint scalar vector (A.x $\ge$ b).
+  Linear constraint \index{constraint} scalar vector (A.x $\ge$ b).
 
 \keyword{l:}
-  Lower bound constraint vector ($l$ $\le$ $x$ $\le$ u).
+  Lower bound \index{parameter!bounds} constraint \index{constraint} vector ($l$ $\le$ $x$ $\le$ u).
 
 \keyword{u:}
-  Upper bound constraint vector ($l$ $\le$ $x$ $\le$ u).
+  Upper bound \index{parameter!bounds} constraint \index{constraint} vector ($l$ $\le$ $x$ $\le$ u).
 
 \keyword{c:}
-  User supplied constraint function.
+  User supplied constraint \index{constraint} function.
 
 \keyword{dc:}
-  User supplied constraint gradient function.
+  User supplied constraint \index{constraint} gradient function.
 
 \keyword{d2c:}
-  User supplied constraint Hessian function.
+  User supplied constraint \index{constraint} Hessian function.
 
 \keyword{full\_output:}
   A flag specifying which data structures should be returned.
 
 \keyword{print\_flag:}
-  A flag specifying how much information should be printed to standard output during minimisation.  0 means no output, 1 means minimal output, and values above 1 increase the amount of output printed.
+  A flag specifying how much information should be printed to standard output during minimisation. \index{minimisation}  0 means no output, 1 means minimal output, and values above 1 increase the amount of output printed.
 
 \subsubsection{Minimisation output}
 
@@ -1586,10 +1590,10 @@ where the data names correspond to
 \begin{description}
 \item[    
 \quoteenv{`xk'}
- --]       The array of minimised parameter values,
+ --]       The array of minimised \index{minimisation} parameter values,
 \item[    
 \quoteenv{`fk'}
- --]       The minimised function value,
+ --]       The minimised \index{minimisation} function value,
 \item[    
 \quoteenv{`k'}
  --]        The number of iterations,
@@ -1610,21 +1614,21 @@ where the data names correspond to
 
 \subsubsection{Minimisation algorithms}
 
-A minimisation function is selected if the minimisation algorithm argument, which should be a
-string, matches a certain pattern.  Because the python regular expression 
+A minimisation \index{minimisation} function is selected if the minimisation \index{minimisation} algorithm argument, which should be a
+string, matches a certain pattern.  Because the python \index{Python} regular expression \index{regular expression} 
 \quoteenv{`match'}
  statement is
-used, various strings can be supplied to select the same minimisation algorithm.  Below is a
-list of the minimisation algorithms available together with the corresponding patterns.
+used, various strings can be supplied to select the same minimisation \index{minimisation} algorithm.  Below is a
+list of the minimisation \index{minimisation} algorithms available together with the corresponding patterns.
 
-This is a short description of python regular expression, for more information, see the
-regular expression syntax section of the Python Library Reference.  Some of the regular
+This is a short description of python \index{Python} regular expression, \index{regular expression} for more information, see the
+regular expression \index{regular expression} syntax section of the Python \index{Python} Library Reference.  Some of the regular
 expression syntax used in this function is:
 
 \begin{description}
 \item[    
 \quoteenv{`[]'}
- --]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence \index{sequence} or set of characters to match to a single character.  For example, 
 \quoteenv{`[Nn]ewton'}
  will match both 
 \quoteenv{`Newton'}
@@ -1644,7 +1648,7 @@ expression syntax used in this function is:
 \quoteenv{`LM'}
  but will not match if characters are placed either before or after these strings. 
 \end{description}
-To select a minimisation algorithm, set the argument to a string which matches the given
+To select a minimisation \index{minimisation} algorithm, set the argument to a string which matches the given
 pattern.
 
 
@@ -1655,7 +1659,7 @@ Parameter initialisation methods:
 \begin{tabular}{ll}
 \toprule
 
-Minimisation algorithm & Patterns \\
+Minimisation \index{minimisation} algorithm & Patterns \\
 
 \midrule
 
@@ -1676,7 +1680,7 @@ Unconstrained line search methods:
 \begin{tabular}{ll}
 \toprule
 
-Minimisation algorithm & Patterns \\
+Minimisation \index{minimisation} algorithm & Patterns \\
 
 \midrule
 
@@ -1688,7 +1692,7 @@ Back-and-forth coordinate descent &
 
  &  \\
 
-Steepest descent & 
+Steepest descent \index{minimisation techniques!steepest descent} & 
 \quoteenv{`\^{}[Ss][Dd]\$'}
  or 
 \quoteenv{`\^{}[Ss]teepest[ \_-][Dd]escent\$'}
@@ -1696,19 +1700,19 @@ Steepest descent &
 
  &  \\
 
-Quasi-Newton BFGS & 
+Quasi-Newton BFGS \index{minimisation techniques!BFGS} & 
 \quoteenv{`\^{}[Bb][Ff][Gg][Ss]\$'}
  \\
 
  &  \\
 
-Newton & 
+Newton \index{minimisation techniques!Newton} & 
 \quoteenv{`\^{}[Nn]ewton\$'}
  \\
 
  &  \\
 
-Newton-CG & 
+Newton-CG \index{minimisation techniques!Newton} \index{minimisation techniques!Newton conjugate gradient} & 
 \quoteenv{`\^{}[Nn]ewton[ \_-][Cc][Gg]\$'}
  or 
 \quoteenv{`\^{}[Nn][Cc][Gg]\$'}
@@ -1727,23 +1731,23 @@ Unconstrained trust-region methods:
 \begin{tabular}{ll}
 \toprule
 
-Minimisation algorithm & Patterns \\
+Minimisation \index{minimisation} algorithm & Patterns \\
 
 \midrule
 
-Cauchy point & 
+Cauchy \index{minimisation techniques!Cauchy point} point & 
 \quoteenv{`\^{}[Cc]auchy'}
  \\
 
  &  \\
 
-Dogleg & 
+Dogleg \index{minimisation techniques!dogleg} & 
 \quoteenv{`\^{}[Dd]ogleg'}
  \\
 
  &  \\
 
-CG-Steihaug & 
+CG-Steihaug \index{minimisation techniques!CG-Steihaug} & 
 \quoteenv{`\^{}[Cc][Gg][-\_ ][Ss]teihaug'}
  or 
 \quoteenv{`\^{}[Ss]teihaug'}
@@ -1751,7 +1755,7 @@ CG-Steihaug &
 
  &  \\
 
-Exact trust region & 
+Exact trust region \index{minimisation techniques!exact trust region} & 
 \quoteenv{`\^{}[Ee]xact'}
  \\
 
@@ -1761,18 +1765,18 @@ Exact trust region &
 \end{center}
 
 
-Unconstrained conjugate gradient methods:
+Unconstrained conjugate gradient \index{minimisation techniques!conjugate gradient} methods:
 
 
 \begin{center}
 \begin{tabular}{ll}
 \toprule
 
-Minimisation algorithm & Patterns \\
+Minimisation \index{minimisation} algorithm & Patterns \\
 
 \midrule
 
-Fletcher-Reeves & 
+Fletcher-Reeves \index{minimisation techniques!Fletcher-Reeves} & 
 \quoteenv{`\^{}[Ff][Rr]\$'}
  or 
 \quoteenv{`\^{}[Ff]letcher[-\_ ][Rr]eeves\$'}
@@ -1780,7 +1784,7 @@ Fletcher-Reeves &
 
  &  \\
 
-Polak-Ribiere & 
+Polak-Ribi\`ere \index{minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere} & \index{minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere +} 
 \quoteenv{`\^{}[Pp][Rr]\$'}
  or 
 \quoteenv{`\^{}[Pp]olak[-\_ ][Rr]ibiere\$'}
@@ -1788,7 +1792,7 @@ Polak-Ribiere &
 
  &  \\
 
-Polak-Ribiere + & 
+Polak-Ribi\`ere \index{minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere} + \index{minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere +} & 
 \quoteenv{`\^{}[Pp][Rr]$\backslash$+\$'}
  or 
 \quoteenv{`\^{}[Pp]olak[-\_ ][Rr]ibiere$\backslash$+\$'}
@@ -1796,7 +1800,7 @@ Polak-Ribiere + &
 
  &  \\
 
-Hestenes-Stiefel & 
+Hestenes-Stiefel \index{minimisation techniques!Hestenes-Stiefel} & 
 \quoteenv{`\^{}[Hh][Ss]\$'}
  or 
 \quoteenv{`\^{}[Hh]estenes[-\_ ][Ss]tiefel\$'}
@@ -1815,17 +1819,17 @@ Miscellaneous unconstrained methods:
 \begin{tabular}{ll}
 \toprule
 
-Minimisation algorithm & Patterns \\
+Minimisation \index{minimisation} algorithm & Patterns \\
 
 \midrule
 
-Simplex & 
+Simplex \index{minimisation techniques!simplex} & 
 \quoteenv{`\^{}[Ss]implex\$'}
  \\
 
  &  \\
 
-Levenberg-Marquardt & 
+Levenberg-Marquardt \index{minimisation techniques!Levenberg-Marquardt} & 
 \quoteenv{`\^{}[Ll][Mm]\$'}
  or 
 \quoteenv{`\^{}[Ll]evenburg-[Mm]arquardt\$'}
@@ -1844,11 +1848,11 @@ Constrained methods:
 \begin{tabular}{ll}
 \toprule
 
-Minimisation algorithm & Patterns \\
+Minimisation \index{minimisation} algorithm & Patterns \\
 
 \midrule
 
-Method of Multipliers & 
+Method of Multipliers \index{minimisation techniques!Method of Multipliers} & 
 \quoteenv{`\^{}[Mm][Oo][Mm]\$'}
  or 
 \quoteenv{`[Mm]ethod of [Mm]ultipliers\$'}
@@ -1863,10 +1867,10 @@ Method of Multipliers &
 
 \subsubsection{Minimisation options}
 
-The minimisation options can be given in any order.
+The minimisation \index{minimisation} options can be given in any order.
 
 
-Line search algorithms.  These are used in the line search methods and the conjugate gradient
+Line search algorithms.  These are used in the line search methods and the conjugate gradient \index{minimisation techniques!conjugate gradient}
 methods.  The default is the Backtracking line search.
 
 
@@ -1923,7 +1927,7 @@ No line search &
 
 
 
-Hessian modifications.  These are used in the Newton, Dogleg, and Exact trust region algorithms.
+Hessian modifications.  These are used in the Newton, \index{minimisation techniques!Newton} Dogleg, \index{minimisation techniques!dogleg} and Exact trust region \index{minimisation techniques!exact trust region} algorithms.
 
 
 \begin{center}
@@ -1940,7 +1944,7 @@ Unmodified Hessian &
 
  &  \\
 
-Eigenvalue modification & 
+Eigenvalue \index{eigenvalues} modification & 
 \quoteenv{`\^{}[Ee]igen'}
  \\
 
@@ -1975,10 +1979,10 @@ algorithm &  \\
 
 
 
-Hessian type, these are used in a few of the trust region methods including the Dogleg and Exact
-trust region algorithms.  In these cases, when the Hessian type is set to Newton, a Hessian
-modification can also be supplied as above.  The default Hessian type is Newton, and the default
-Hessian modification when Newton is selected is the GMW algorithm.
+Hessian type, these are used in a few of the trust region methods including the Dogleg \index{minimisation techniques!dogleg} and Exact
+trust region algorithms.  In these cases, when the Hessian type is set to Newton, \index{minimisation techniques!Newton} a Hessian
+modification can also be supplied as above.  The default Hessian type is Newton, \index{minimisation techniques!Newton} and the default
+Hessian modification when Newton \index{minimisation techniques!Newton} is selected is the GMW algorithm.
 
 
 \begin{center}
@@ -1989,13 +1993,13 @@ Hessian type & Patterns \\
 
 \midrule
 
-Quasi-Newton BFGS & 
+Quasi-Newton BFGS \index{minimisation techniques!BFGS} & 
 \quoteenv{`\^{}[Bb][Ff][Gg][Ss]\$'}
  \\
 
  &  \\
 
-Newton & 
+Newton \index{minimisation techniques!Newton} & 
 \quoteenv{`\^{}[Nn]ewton\$'}
  \\
 
@@ -2005,7 +2009,7 @@ Newton &
 \end{center}
 
 
-For Newton minimisation, the default line search algorithm is the More and Thuente line search,
+For Newton \index{minimisation techniques!Newton} minimisation, \index{minimisation} the default line search algorithm is the More and Thuente line search,
 while the default Hessian modification is the GMW algorithm.
 
 
@@ -2027,17 +2031,17 @@ Function for copying model-free data from run1 to run2.
 
 
 \keyword{run1:}
-  The name of the run to copy the sequence from.
+  The name of the run to copy \index{copy} the sequence \index{sequence} from.
 
 \keyword{run2:}
-  The name of the run to copy the sequence to.
+  The name of the run to copy \index{copy} the sequence \index{sequence} to.
 
 \keyword{sim:}
   The simulation number.
 
 \subsubsection{Description}
 
-This function will copy all model-free data from 
+This function will copy \index{copy} all model-free data from 
 \quoteenv{`run1'}
  to 
 \quoteenv{`run2'}
@@ -2051,7 +2055,7 @@ simulation will be copied.
 
 \subsubsection{Examples}
 
-To copy all model-free data from the run 
+To copy \index{copy} all model-free data from the run 
 \quoteenv{`m1'}
  to the run 
 \quoteenv{`m2'}
@@ -2111,27 +2115,27 @@ Model-free parameters.
 
 The following parameters are accepted for the original model-free equation:
 \begin{description}
-\item[    $S^2$ --]      The square of the generalised order parameter.
-\item[    $\tau_e$ --]      The effective correlation time.
+\item[    $S^2$ --]      The square of the generalised order parameter. \index{order parameter}
+\item[    $\tau_e$ --]      The effective correlation time. \index{correlation time}
 \end{description}
 The following parameters are accepted for the extended model-free equation:
 \begin{description}
-\item[    $S^2_f$ --]     The square of the generalised order parameter of the faster motion.
-\item[    $\tau_f$ --]      The effective correlation time of the faster motion.
-\item[    $S^2$ --]      The square of the generalised order parameter $S^2$ = $S^2_f$*$S^2_s$.
-\item[    $\tau_s$ --]      The effective correlation time of the slower motion.
+\item[    $S^2_f$ --]     The square of the generalised order parameter \index{order parameter} of the faster motion.
+\item[    $\tau_f$ --]      The effective correlation time \index{correlation time} of the faster motion.
+\item[    $S^2$ --]      The square of the generalised order parameter \index{order parameter} $S^2$ = $S^2_f$*$S^2_s$.
+\item[    $\tau_s$ --]      The effective correlation time \index{correlation time} of the slower motion.
 \end{description}
 The following parameters are accepted for the extended 2 model-free equation:
 \begin{description}
-\item[    $S^2_f$ --]     The square of the generalised order parameter of the faster motion.
-\item[    $\tau_f$ --]      The effective correlation time of the faster motion.
-\item[    $S^2_s$ --]     The square of the generalised order parameter of the slower motion.
-\item[    $\tau_s$ --]      The effective correlation time of the slower motion.
+\item[    $S^2_f$ --]     The square of the generalised order parameter \index{order parameter} of the faster motion.
+\item[    $\tau_f$ --]      The effective correlation time \index{correlation time} of the faster motion.
+\item[    $S^2_s$ --]     The square of the generalised order parameter \index{order parameter} of the slower motion.
+\item[    $\tau_s$ --]      The effective correlation time \index{correlation time} of the slower motion.
 \end{description}
 The following parameters are accepted for all equations:
 \begin{description}
-\item[    $R_{ex}$ --]     The chemical exchange relaxation.
-\item[    $r$ --]       The average bond length $<$$r$$>$.
+\item[    $R_{ex}$ --]     The chemical exchange \index{chemical exchange} relaxation. \index{relaxation}
+\item[    $r$ --]       The average bond length \index{bond length} $<$$r$$>$.
 \item[    CSA --]     The chemical shift anisotropy.
 \end{description}
 
@@ -2206,7 +2210,7 @@ Function for deleting all model-free data corresponding to the run.
 
 \subsubsection{Examples}
 
-To delete all model-free data corresponding to the run 
+To delete \index{delete} all model-free data corresponding to the run 
 \quoteenv{`m2'}
 , type:
 
@@ -2353,7 +2357,7 @@ The preset model-free models with optimisation of the CSA value are
  --]   [CSA, $R_{ex}$].
 \end{description}
 
-The preset model-free models with optimisation of the bond length are
+The preset model-free models with optimisation of the bond length \index{bond length} are
 \begin{description}
 \item[    
 \quoteenv{`m20'}
@@ -2387,7 +2391,7 @@ The preset model-free models with optimisation of the bond length are
  --]   [$r$, CSA, $R_{ex}$].
 \end{description}
 
-The preset model-free models with both optimisation of the bond length and CSA are
+The preset model-free models with both optimisation of the bond length \index{bond length} and CSA are
 \begin{description}
 \item[    
 \quoteenv{`m30'}
@@ -2422,7 +2426,7 @@ The preset model-free models with both optimisation of the bond length and CSA a
 \end{description}
 
 Warning:  The models in the thirties range fail when using standard R$_1$, R$_1$, and NOE
-relaxation data.  This is due to the extreme flexibly of these models where a change in the
+relaxation \index{relaxation} data.  This is due to the extreme flexibly of these models where a change in the
 parameter 
 \quoteenv{`r'}
  is compensated by a corresponding change in the parameter 
@@ -2500,7 +2504,7 @@ The preset model-free models with optimisation of the CSA value are
  --]   [$\tau_m$, CSA, $R_{ex}$].
 \end{description}
 
-The preset model-free models with optimisation of the bond length are
+The preset model-free models with optimisation of the bond length \index{bond length} are
 \begin{description}
 \item[    
 \quoteenv{`tm20'}
@@ -2534,7 +2538,7 @@ The preset model-free models with optimisation of the bond length are
  --]   [$\tau_m$, $r$, CSA, $R_{ex}$].
 \end{description}
 
-The preset model-free models with both optimisation of the bond length and CSA are
+The preset model-free models with both optimisation of the bond length \index{bond length} and CSA are
 \begin{description}
 \item[    
 \quoteenv{`tm30'}
@@ -2659,7 +2663,7 @@ model selection, although this could cause problems.
 
 \subsubsection{Example}
 
-For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the
+For model-free analysis, if the preset models 1 to 5 are minimised \index{minimisation} and loaded into the
 program, the following commands will carry out AIC model selection and assign the results
 to the run name 
 \quoteenv{`mixed'}
@@ -2706,7 +2710,7 @@ Function for executing a user supplied Molmol command.
 
 \subsubsection{Example}
 
-\example{relax> molmol.command("InitAll yes") }
+\example{relax> molmol.command("InitAll \index{Molmol, the program} yes") }
 
 
 
@@ -2728,13 +2732,13 @@ Function for viewing the collection of molecules extracted from the PDB file.
 
 
 \keyword{run:}
-  The name of the run which the PDB belongs to.
+  The name of the run which the PDB \index{PDB} belongs to.
 
 \subsubsection{Example}
 
-\example{relax> molmol.view(`m1') }
+\example{relax> molmol.view(`m1') \index{Molmol, the program} }
 
-\example{relax> molmol.view(run=`pdb') }
+\example{relax> molmol.view(run=`pdb') \index{Molmol, the program} }
 
 
 
@@ -2769,7 +2773,7 @@ The method argument can either be set to
 \quoteenv{`direct'}
 , the choice of which
 determines the simulation type.  If the values or parameters of a run are calculated rather
-than minimised, this option will have no effect, hence, 
+than minimised, \index{minimisation} this option will have no effect, hence, 
 \quoteenv{`back\_calc'}
  and 
 \quoteenv{`direct'}
@@ -2780,11 +2784,11 @@ For error analysis, the method argument should be set to
 \quoteenv{`back\_calc'}
  which will result in
 proper Monte Carlo simulations.  The data used for each simulation is back calculated from
-the minimised model parameters and is randomised using Gaussian noise where the standard
+the minimised \index{minimisation} model parameters and is randomised using Gaussian noise where the standard
 deviation is from the original error set.  When the method is set to 
 \quoteenv{`back\_calc'}
 , this
-function should only be called after the model or run is fully minimised.
+function should only be called after the model or run is fully minimised. \index{minimisation}
 
 The simulation type can be changed by setting the method argument to 
 \quoteenv{`direct'}
@@ -2800,36 +2804,36 @@ noise with the standard deviations set to the original error set.
 
 \subsubsection{Monte Carlo Simulation Overview}
 
-For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+For proper error analysis using Monte Carlo simulations, a sequence \index{sequence} of function calls is
 required for running the various simulation components.  The steps necessary for
 implementing Monte Carlo simulations are:
 
 1.  The measured data set together with the corresponding error set should be loaded into
 relax.
 
-2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+2.  Either minimisation \index{minimisation} is used to optimise \index{optimise} the parameters of the chosen model, or a
 calculation is run.
 
 3.  To initialise and turn on Monte Carlo simulations, the number of simulations, $n$, needs
 to be set.
 
 4.  The simulation data needs to be created either by back calculation from the fully
-minimised model parameters from step 2 or by direct calculation when values are calculated
-rather than minimised.  The error set is used to randomise each simulation data set by
+minimised \index{minimisation} model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised. \index{minimisation}  The error set is used to randomise each simulation data set by
 assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
 simulation.
 
-5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
-are required.  These are taken as the optimised model parameters.  An alternative is to use
+5.  Prior to minimisation \index{minimisation} of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
-computationally expensive.  For the case where values are calculated rather than minimised,
+computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
 this step should be skipped (although the results will be unaffected if this is accidently
 run).
 
-6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
 step 2, excluding the grid search when minimising, should be used for the simulations.
 
-7.  Failed simulations are removed using the techniques of model elimination.
+7.  Failed simulations are removed using the techniques of model elimination. \index{model elimination} \index{model elimination}
 
 8.  The model parameter errors are calculated from the distribution of simulation
 parameters.
@@ -2837,10 +2841,10 @@ parameters.
 
 Monte Carlo simulations can be turned on or off using functions within this class.  Once the
 function for setting up simulations has been called, simulations will be turned on.  The
-effect of having simulations turned on is that the functions used for minimisation (grid
-search, minimise, etc) or calculation will only affect the simulation parameters and not the
+effect of having simulations turned on is that the functions used for minimisation \index{minimisation} (grid
+search, minimise, \index{minimisation} etc) or calculation will only affect the simulation parameters and not the
 model parameters.  By subsequently turning simulations off using the appropriate function,
-the functions used in minimisation will affect the model parameters and not the simulation
+the functions used in minimisation \index{minimisation} will affect the model parameters and not the simulation
 parameters.
 
 
@@ -2849,7 +2853,7 @@ implementing the above steps is:
 
 \example{relax> grid\_search(`m1', inc=11)                                 \# Step 2. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 2. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 2. }
 
 \example{relax> monte\_carlo.setup(`m1', number=500)                       \# Step 3. }
 
@@ -2857,14 +2861,14 @@ implementing the above steps is:
 
 \example{relax> monte\_carlo.initial\_values(`m1')                          \# Step 5. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 6. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 6. }
 
 \example{relax> eliminate(`m1')                                           \# Step 7. }
 
 \example{relax> monte\_carlo.error\_analysis(`m1')                          \# Step 8. }
 
 
-An example for reduced spectral density mapping is:
+An example for reduced spectral density mapping \index{map} is:
 
 \example{relax> calc(`600MHz')                                            \# Step 2. }
 
@@ -2906,7 +2910,7 @@ Function for calculating parameter errors from the Monte Carlo simulations.
 \subsubsection{Description}
 
 Parameter errors are calculated as the standard deviation of the distribution of parameter
-values.  This function should never be used if parameter values are obtained by minimisation
+values.  This function should never be used if parameter values are obtained by minimisation \index{minimisation}
 and the simulation data are generated using the method 
 \quoteenv{`direct'}
 .  The reason is because only
@@ -2918,51 +2922,51 @@ The prune argument is legacy code which corresponds to the
 Modelfree program.  To remove failed simulations, the eliminate function should be used
 prior to this function.  Eliminating the simulations specifically identifies and removes the
 failed simulations whereas the prune argment will only, in a few cases, positively identify
-failed simulations but only if severe parameter limits have been imposed.  Most failed
+failed simulations but only if severe parameter limits \index{parameter!limit} have been imposed.  Most failed
 models will pass through the prunning process and hence cause a catastropic increase in the
 parameter errors.  If the argument must be used, the following must be taken into account.
-If the values or parameters of a run are calculated rather than minimised, the prune
+If the values or parameters of a run are calculated rather than minimised, \index{minimisation} the prune
 argument must be set to zero.  The value of this argument is proportional to the number of
 simulations removed prior to error calculation.  If prune is set to 0.0, all simulations are
 used for calculating errors, whereas a value of 1.0 excludes all data.  In almost all cases
 prune must be set to zero, any value greater than zero will result in an underestimation of
 the error values.  If a value is supplied, the lower and upper tails of the distribution of
-chi-squared values will be excluded from the error calculation.
+chi-squared \index{chi-squared} values will be excluded from the error calculation.
 
 
 
 \subsubsection{Monte Carlo Simulation Overview}
 
-For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+For proper error analysis using Monte Carlo simulations, a sequence \index{sequence} of function calls is
 required for running the various simulation components.  The steps necessary for
 implementing Monte Carlo simulations are:
 
 1.  The measured data set together with the corresponding error set should be loaded into
 relax.
 
-2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+2.  Either minimisation \index{minimisation} is used to optimise \index{optimise} the parameters of the chosen model, or a
 calculation is run.
 
 3.  To initialise and turn on Monte Carlo simulations, the number of simulations, $n$, needs
 to be set.
 
 4.  The simulation data needs to be created either by back calculation from the fully
-minimised model parameters from step 2 or by direct calculation when values are calculated
-rather than minimised.  The error set is used to randomise each simulation data set by
+minimised \index{minimisation} model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised. \index{minimisation}  The error set is used to randomise each simulation data set by
 assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
 simulation.
 
-5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
-are required.  These are taken as the optimised model parameters.  An alternative is to use
+5.  Prior to minimisation \index{minimisation} of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
-computationally expensive.  For the case where values are calculated rather than minimised,
+computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
 this step should be skipped (although the results will be unaffected if this is accidently
 run).
 
-6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
 step 2, excluding the grid search when minimising, should be used for the simulations.
 
-7.  Failed simulations are removed using the techniques of model elimination.
+7.  Failed simulations are removed using the techniques of model elimination. \index{model elimination} \index{model elimination}
 
 8.  The model parameter errors are calculated from the distribution of simulation
 parameters.
@@ -2970,10 +2974,10 @@ parameters.
 
 Monte Carlo simulations can be turned on or off using functions within this class.  Once the
 function for setting up simulations has been called, simulations will be turned on.  The
-effect of having simulations turned on is that the functions used for minimisation (grid
-search, minimise, etc) or calculation will only affect the simulation parameters and not the
+effect of having simulations turned on is that the functions used for minimisation \index{minimisation} (grid
+search, minimise, \index{minimisation} etc) or calculation will only affect the simulation parameters and not the
 model parameters.  By subsequently turning simulations off using the appropriate function,
-the functions used in minimisation will affect the model parameters and not the simulation
+the functions used in minimisation \index{minimisation} will affect the model parameters and not the simulation
 parameters.
 
 
@@ -2982,7 +2986,7 @@ implementing the above steps is:
 
 \example{relax> grid\_search(`m1', inc=11)                                 \# Step 2. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 2. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 2. }
 
 \example{relax> monte\_carlo.setup(`m1', number=500)                       \# Step 3. }
 
@@ -2990,14 +2994,14 @@ implementing the above steps is:
 
 \example{relax> monte\_carlo.initial\_values(`m1')                          \# Step 5. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 6. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 6. }
 
 \example{relax> eliminate(`m1')                                           \# Step 7. }
 
 \example{relax> monte\_carlo.error\_analysis(`m1')                          \# Step 8. }
 
 
-An example for reduced spectral density mapping is:
+An example for reduced spectral density mapping \index{map} is:
 
 \example{relax> calc(`600MHz')                                            \# Step 2. }
 
@@ -3033,54 +3037,54 @@ Function for setting the initial simulation parameter values.
 
 \subsubsection{Description}
 
-This function only effects runs where minimisation occurs and can therefore be skipped if
-the values or parameters of a run are calculated rather than minimised.  However, if
+This function only effects runs where minimisation \index{minimisation} occurs and can therefore be skipped if
+the values or parameters of a run are calculated rather than minimised. \index{minimisation}  However, if
 accidently run in this case, the results will be unaffected.  It should only be called after
-the model or run is fully minimised.  Once called, the functions 
+the model or run is fully minimised. \index{minimisation}  Once called, the functions 
 \quoteenv{`grid\_search'}
  and
 \quoteenv{`minimise'}
  will only effect the simulations and not the model parameters.
 
-The initial values of the parameters for each simulation is set to the minimised parameters
+The initial values of the parameters for each simulation is set to the minimised \index{minimisation} parameters
 of the model.  A grid search can be undertaken for each simulation instead, although this
-is computationally expensive and unnecessary.  The minimisation function should be executed
+is computationally expensive and unnecessary.  The minimisation \index{minimisation} function should be executed
 for a second time after running this function.
 
 
 
 \subsubsection{Monte Carlo Simulation Overview}
 
-For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+For proper error analysis using Monte Carlo simulations, a sequence \index{sequence} of function calls is
 required for running the various simulation components.  The steps necessary for
 implementing Monte Carlo simulations are:
 
 1.  The measured data set together with the corresponding error set should be loaded into
 relax.
 
-2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+2.  Either minimisation \index{minimisation} is used to optimise \index{optimise} the parameters of the chosen model, or a
 calculation is run.
 
 3.  To initialise and turn on Monte Carlo simulations, the number of simulations, $n$, needs
 to be set.
 
 4.  The simulation data needs to be created either by back calculation from the fully
-minimised model parameters from step 2 or by direct calculation when values are calculated
-rather than minimised.  The error set is used to randomise each simulation data set by
+minimised \index{minimisation} model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised. \index{minimisation}  The error set is used to randomise each simulation data set by
 assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
 simulation.
 
-5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
-are required.  These are taken as the optimised model parameters.  An alternative is to use
+5.  Prior to minimisation \index{minimisation} of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
-computationally expensive.  For the case where values are calculated rather than minimised,
+computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
 this step should be skipped (although the results will be unaffected if this is accidently
 run).
 
-6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
 step 2, excluding the grid search when minimising, should be used for the simulations.
 
-7.  Failed simulations are removed using the techniques of model elimination.
+7.  Failed simulations are removed using the techniques of model elimination. \index{model elimination} \index{model elimination}
 
 8.  The model parameter errors are calculated from the distribution of simulation
 parameters.
@@ -3088,10 +3092,10 @@ parameters.
 
 Monte Carlo simulations can be turned on or off using functions within this class.  Once the
 function for setting up simulations has been called, simulations will be turned on.  The
-effect of having simulations turned on is that the functions used for minimisation (grid
-search, minimise, etc) or calculation will only affect the simulation parameters and not the
+effect of having simulations turned on is that the functions used for minimisation \index{minimisation} (grid
+search, minimise, \index{minimisation} etc) or calculation will only affect the simulation parameters and not the
 model parameters.  By subsequently turning simulations off using the appropriate function,
-the functions used in minimisation will affect the model parameters and not the simulation
+the functions used in minimisation \index{minimisation} will affect the model parameters and not the simulation
 parameters.
 
 
@@ -3100,7 +3104,7 @@ implementing the above steps is:
 
 \example{relax> grid\_search(`m1', inc=11)                                 \# Step 2. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 2. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 2. }
 
 \example{relax> monte\_carlo.setup(`m1', number=500)                       \# Step 3. }
 
@@ -3108,14 +3112,14 @@ implementing the above steps is:
 
 \example{relax> monte\_carlo.initial\_values(`m1')                          \# Step 5. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 6. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 6. }
 
 \example{relax> eliminate(`m1')                                           \# Step 7. }
 
 \example{relax> monte\_carlo.error\_analysis(`m1')                          \# Step 8. }
 
 
-An example for reduced spectral density mapping is:
+An example for reduced spectral density mapping \index{map} is:
 
 \example{relax> calc(`600MHz')                                            \# Step 2. }
 
@@ -3152,36 +3156,36 @@ Function for turning simulations off.
 
 \subsubsection{Monte Carlo Simulation Overview}
 
-For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+For proper error analysis using Monte Carlo simulations, a sequence \index{sequence} of function calls is
 required for running the various simulation components.  The steps necessary for
 implementing Monte Carlo simulations are:
 
 1.  The measured data set together with the corresponding error set should be loaded into
 relax.
 
-2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+2.  Either minimisation \index{minimisation} is used to optimise \index{optimise} the parameters of the chosen model, or a
 calculation is run.
 
 3.  To initialise and turn on Monte Carlo simulations, the number of simulations, $n$, needs
 to be set.
 
 4.  The simulation data needs to be created either by back calculation from the fully
-minimised model parameters from step 2 or by direct calculation when values are calculated
-rather than minimised.  The error set is used to randomise each simulation data set by
+minimised \index{minimisation} model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised. \index{minimisation}  The error set is used to randomise each simulation data set by
 assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
 simulation.
 
-5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
-are required.  These are taken as the optimised model parameters.  An alternative is to use
+5.  Prior to minimisation \index{minimisation} of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
-computationally expensive.  For the case where values are calculated rather than minimised,
+computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
 this step should be skipped (although the results will be unaffected if this is accidently
 run).
 
-6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
 step 2, excluding the grid search when minimising, should be used for the simulations.
 
-7.  Failed simulations are removed using the techniques of model elimination.
+7.  Failed simulations are removed using the techniques of model elimination. \index{model elimination} \index{model elimination}
 
 8.  The model parameter errors are calculated from the distribution of simulation
 parameters.
@@ -3189,10 +3193,10 @@ parameters.
 
 Monte Carlo simulations can be turned on or off using functions within this class.  Once the
 function for setting up simulations has been called, simulations will be turned on.  The
-effect of having simulations turned on is that the functions used for minimisation (grid
-search, minimise, etc) or calculation will only affect the simulation parameters and not the
+effect of having simulations turned on is that the functions used for minimisation \index{minimisation} (grid
+search, minimise, \index{minimisation} etc) or calculation will only affect the simulation parameters and not the
 model parameters.  By subsequently turning simulations off using the appropriate function,
-the functions used in minimisation will affect the model parameters and not the simulation
+the functions used in minimisation \index{minimisation} will affect the model parameters and not the simulation
 parameters.
 
 
@@ -3201,7 +3205,7 @@ implementing the above steps is:
 
 \example{relax> grid\_search(`m1', inc=11)                                 \# Step 2. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 2. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 2. }
 
 \example{relax> monte\_carlo.setup(`m1', number=500)                       \# Step 3. }
 
@@ -3209,14 +3213,14 @@ implementing the above steps is:
 
 \example{relax> monte\_carlo.initial\_values(`m1')                          \# Step 5. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 6. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 6. }
 
 \example{relax> eliminate(`m1')                                           \# Step 7. }
 
 \example{relax> monte\_carlo.error\_analysis(`m1')                          \# Step 8. }
 
 
-An example for reduced spectral density mapping is:
+An example for reduced spectral density mapping \index{map} is:
 
 \example{relax> calc(`600MHz')                                            \# Step 2. }
 
@@ -3253,36 +3257,36 @@ Function for turning simulations on.
 
 \subsubsection{Monte Carlo Simulation Overview}
 
-For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+For proper error analysis using Monte Carlo simulations, a sequence \index{sequence} of function calls is
 required for running the various simulation components.  The steps necessary for
 implementing Monte Carlo simulations are:
 
 1.  The measured data set together with the corresponding error set should be loaded into
 relax.
 
-2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+2.  Either minimisation \index{minimisation} is used to optimise \index{optimise} the parameters of the chosen model, or a
 calculation is run.
 
 3.  To initialise and turn on Monte Carlo simulations, the number of simulations, $n$, needs
 to be set.
 
 4.  The simulation data needs to be created either by back calculation from the fully
-minimised model parameters from step 2 or by direct calculation when values are calculated
-rather than minimised.  The error set is used to randomise each simulation data set by
+minimised \index{minimisation} model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised. \index{minimisation}  The error set is used to randomise each simulation data set by
 assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
 simulation.
 
-5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
-are required.  These are taken as the optimised model parameters.  An alternative is to use
+5.  Prior to minimisation \index{minimisation} of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
-computationally expensive.  For the case where values are calculated rather than minimised,
+computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
 this step should be skipped (although the results will be unaffected if this is accidently
 run).
 
-6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
 step 2, excluding the grid search when minimising, should be used for the simulations.
 
-7.  Failed simulations are removed using the techniques of model elimination.
+7.  Failed simulations are removed using the techniques of model elimination. \index{model elimination} \index{model elimination}
 
 8.  The model parameter errors are calculated from the distribution of simulation
 parameters.
@@ -3290,10 +3294,10 @@ parameters.
 
 Monte Carlo simulations can be turned on or off using functions within this class.  Once the
 function for setting up simulations has been called, simulations will be turned on.  The
-effect of having simulations turned on is that the functions used for minimisation (grid
-search, minimise, etc) or calculation will only affect the simulation parameters and not the
+effect of having simulations turned on is that the functions used for minimisation \index{minimisation} (grid
+search, minimise, \index{minimisation} etc) or calculation will only affect the simulation parameters and not the
 model parameters.  By subsequently turning simulations off using the appropriate function,
-the functions used in minimisation will affect the model parameters and not the simulation
+the functions used in minimisation \index{minimisation} will affect the model parameters and not the simulation
 parameters.
 
 
@@ -3302,7 +3306,7 @@ implementing the above steps is:
 
 \example{relax> grid\_search(`m1', inc=11)                                 \# Step 2. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 2. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 2. }
 
 \example{relax> monte\_carlo.setup(`m1', number=500)                       \# Step 3. }
 
@@ -3310,14 +3314,14 @@ implementing the above steps is:
 
 \example{relax> monte\_carlo.initial\_values(`m1')                          \# Step 5. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 6. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 6. }
 
 \example{relax> eliminate(`m1')                                           \# Step 7. }
 
 \example{relax> monte\_carlo.error\_analysis(`m1')                          \# Step 8. }
 
 
-An example for reduced spectral density mapping is:
+An example for reduced spectral density mapping \index{map} is:
 
 \example{relax> calc(`600MHz')                                            \# Step 2. }
 
@@ -3364,36 +3368,36 @@ turned on.
 
 \subsubsection{Monte Carlo Simulation Overview}
 
-For proper error analysis using Monte Carlo simulations, a sequence of function calls is
+For proper error analysis using Monte Carlo simulations, a sequence \index{sequence} of function calls is
 required for running the various simulation components.  The steps necessary for
 implementing Monte Carlo simulations are:
 
 1.  The measured data set together with the corresponding error set should be loaded into
 relax.
 
-2.  Either minimisation is used to optimise the parameters of the chosen model, or a
+2.  Either minimisation \index{minimisation} is used to optimise \index{optimise} the parameters of the chosen model, or a
 calculation is run.
 
 3.  To initialise and turn on Monte Carlo simulations, the number of simulations, $n$, needs
 to be set.
 
 4.  The simulation data needs to be created either by back calculation from the fully
-minimised model parameters from step 2 or by direct calculation when values are calculated
-rather than minimised.  The error set is used to randomise each simulation data set by
+minimised \index{minimisation} model parameters from step 2 or by direct calculation when values are calculated
+rather than minimised. \index{minimisation}  The error set is used to randomise each simulation data set by
 assuming Gaussian errors.  This creates a synthetic data set for each Monte Carlo
 simulation.
 
-5.  Prior to minimisation of the parameters of each simulation, initial parameter estimates
-are required.  These are taken as the optimised model parameters.  An alternative is to use
+5.  Prior to minimisation \index{minimisation} of the parameters of each simulation, initial parameter estimates
+are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
-computationally expensive.  For the case where values are calculated rather than minimised,
+computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
 this step should be skipped (although the results will be unaffected if this is accidently
 run).
 
-6.  Each simulation requires minimisation or calculation.  The same techniques as used in
+6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
 step 2, excluding the grid search when minimising, should be used for the simulations.
 
-7.  Failed simulations are removed using the techniques of model elimination.
+7.  Failed simulations are removed using the techniques of model elimination. \index{model elimination} \index{model elimination}
 
 8.  The model parameter errors are calculated from the distribution of simulation
 parameters.
@@ -3401,10 +3405,10 @@ parameters.
 
 Monte Carlo simulations can be turned on or off using functions within this class.  Once the
 function for setting up simulations has been called, simulations will be turned on.  The
-effect of having simulations turned on is that the functions used for minimisation (grid
-search, minimise, etc) or calculation will only affect the simulation parameters and not the
+effect of having simulations turned on is that the functions used for minimisation \index{minimisation} (grid
+search, minimise, \index{minimisation} etc) or calculation will only affect the simulation parameters and not the
 model parameters.  By subsequently turning simulations off using the appropriate function,
-the functions used in minimisation will affect the model parameters and not the simulation
+the functions used in minimisation \index{minimisation} will affect the model parameters and not the simulation
 parameters.
 
 
@@ -3413,7 +3417,7 @@ implementing the above steps is:
 
 \example{relax> grid\_search(`m1', inc=11)                                 \# Step 2. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 2. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 2. }
 
 \example{relax> monte\_carlo.setup(`m1', number=500)                       \# Step 3. }
 
@@ -3421,14 +3425,14 @@ implementing the above steps is:
 
 \example{relax> monte\_carlo.initial\_values(`m1')                          \# Step 5. }
 
-\example{relax> minimise(`newton', run=`m1')                              \# Step 6. }
+\example{relax> minimise(`newton', \index{minimisation} run=`m1')                              \# Step 6. }
 
 \example{relax> eliminate(`m1')                                           \# Step 7. }
 
 \example{relax> monte\_carlo.error\_analysis(`m1')                          \# Step 8. }
 
 
-An example for reduced spectral density mapping is:
+An example for reduced spectral density mapping \index{map} is:
 
 \example{relax> calc(`600MHz')                                            \# Step 2. }
 
@@ -3492,9 +3496,9 @@ If the
 \quoteenv{`res\_name'}
  arguments are left as the defaults of None, then the error
 value for all residues will be set to the supplied value.  Otherwise the residue number can
-be set to either an integer for selecting a single residue or a python regular expression
+be set to either an integer for selecting a single residue or a python \index{Python} regular expression \index{regular expression}
 string for selecting multiple residues.  The residue name argument must be a string and can
-use regular expression as well.
+use regular expression \index{regular expression} as well.
 
 
 \newpage
@@ -3518,7 +3522,7 @@ Function for reading peak intensities from a file for NOE calculations.
   The name of the run.
 
 \keyword{file:}
-  The name of the file containing the sequence data.
+  The name of the file containing the sequence \index{sequence} data.
 
 \keyword{dir:}
   The directory where the file is located.
@@ -3564,13 +3568,13 @@ The format argument can currently be set to:
 
 If the format argument is set to 
 \quoteenv{`sparky'}
-, the file should be a Sparky peak list saved after
+, the file should be a Sparky \index{Sparky, the program} peak list saved after
 typing the command 
 \quoteenv{`lt'}
 .  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$, 2$^\mathrm{nd}$,
-3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
+3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky \index{Sparky, the program} assignment, w1, w2, and peak intensity data respectively.
 The frequency data w1 and w2 are ignored while the peak intensity data can either be the
-peak height or volume displayed by changing the window options.  If the peak intensity data
+peak height or volume displayed \index{display} by changing the window options.  If the peak intensity data
 is not within column 3, set the argument int\_col to the appropriate value (column numbering
 starts from 0 rather than 1).
 
@@ -3594,7 +3598,7 @@ used.
 
 \subsubsection{Examples}
 
-To read the reference and saturated spectra peak heights from the Sparky formatted files
+To read \index{read} the reference and saturated spectra peak heights from the Sparky \index{Sparky, the program} formatted files
 \quoteenv{`ref.list'}
  and 
 \quoteenv{`sat.list'}
@@ -3607,7 +3611,7 @@ To read the reference and saturated spectra peak heights from the Sparky formatt
 \example{relax> noe.read(`noe', file=`sat.list', spectrum\_type=`sat') }
 
 
-To read the reference and saturated spectra peak heights from the XEasy formatted files
+To read \index{read} the reference and saturated spectra peak heights from the XEasy formatted files
 \quoteenv{`ref.text'}
  and 
 \quoteenv{`sat.text'}
@@ -3697,7 +3701,7 @@ Function for creating the Modelfree4 input files.
   See the Modelfree4 manual.
 
 \keyword{constraints:}
-  A flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=1).
+  A flag specifying whether the parameters should be constrained.  The default is to turn constraints \index{constraint} on (constraints=1).
 
 \keyword{nucleus:}
   A three letter string describing the nucleus type, ie 15N, 13C, etc.
@@ -3774,7 +3778,7 @@ Modelfree 4 will be executed as
 
 \quoteenv{`modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'}
 
-If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be
+If a PDB \index{PDB} file is loaded and non-isotropic diffusion is selected, then the file name will be
 placed on the command line as 
 \quoteenv{`-s pdb\_file\_name'}
 .
@@ -3829,37 +3833,37 @@ The pdb loading function.
   The run to assign the structure to.
 
 \keyword{file:}
-  The name of the PDB file.
+  The name of the PDB \index{PDB} file.
 
 \keyword{dir:}
   The directory where the file is located.
 
 \keyword{model:}
-  The PDB model number.
+  The PDB \index{PDB} model number.
 
 \keyword{heteronuc:}
-  The name of the heteronucleus as specified in the PDB file.
+  The name of the heteronucleus as specified in the PDB \index{PDB} file.
 
 \keyword{proton:}
-  The name of the proton as specified in the PDB file.
+  The name of the proton as specified in the PDB \index{PDB} file.
 
 \keyword{load\_seq:}
-  A flag specifying whether the sequence should be loaded from the PDB file.
+  A flag specifying whether the sequence \index{sequence} should be loaded from the PDB \index{PDB} file.
 
 \subsubsection{Description}
 
-To load a specific model from the PDB file, set the model flag to an integer $i$.  The
+To load a specific model from the PDB \index{PDB} file, set the model flag to an integer $i$.  The
 structure beginning with the line 
 \quoteenv{`MODEL i'}
- in the PDB file will be loaded.  Otherwise all
+ in the PDB \index{PDB} file will be loaded.  Otherwise all
 structures will be loaded starting from the model number 1.
 
-To load the sequence from the PDB file, set the 
+To load the sequence \index{sequence} from the PDB \index{PDB} file, set the 
 \quoteenv{`load\_seq'}
- flag to 1.  If the sequence has
+ flag to 1.  If the sequence \index{sequence} has
 previously been loaded, then this flag will be ignored.
 
-Once the PDB structures are loaded, unit XH bond vectors will be calculated.  The vectors
+Once the PDB \index{PDB} structures are loaded, unit XH bond vectors will be calculated.  The vectors
 are calculated using the atomic coordinates of the atoms specified by the arguments
 heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for
 each model will be calculated and the final unit XH vector will be taken as the average.
@@ -3867,14 +3871,14 @@ each model will be calculated and the final unit XH vector will be taken as the 
 
 \subsubsection{Example}
 
-To load all structures from the PDB file 
+To load all structures from the PDB \index{PDB} file 
 \quoteenv{`test.pdb'}
  in the directory 
 \quoteenv{`\~{}/pdb'}
  for use in the
 model-free analysis run 
 \quoteenv{`m8'}
- where the heteronucleus in the PDB file is 
+ where the heteronucleus in the PDB \index{PDB} file is 
 \quoteenv{`N'}
  and the proton
 is 
@@ -3918,7 +3922,7 @@ Function for back calculating relaxation data.
   The name of the run.
 
 \keyword{ri\_label:}
-  The relaxation data type, ie 
+  The relaxation \index{relaxation} data type, ie 
 \quoteenv{`R1'}
 , 
 \quoteenv{`R2'}
@@ -3951,13 +3955,13 @@ Function for copying relaxation data from run1 to run2.
 
 
 \keyword{run1:}
-  The name of the run to copy the sequence from.
+  The name of the run to copy \index{copy} the sequence \index{sequence} from.
 
 \keyword{run2:}
-  The name of the run to copy the sequence to.
+  The name of the run to copy \index{copy} the sequence \index{sequence} to.
 
 \keyword{ri\_label:}
-  The relaxation data type, ie 
+  The relaxation \index{relaxation} data type, ie 
 \quoteenv{`R1'}
 , 
 \quoteenv{`R2'}
@@ -3970,18 +3974,18 @@ Function for copying relaxation data from run1 to run2.
 
 \subsubsection{Description}
 
-This function will copy relaxation data from 
+This function will copy \index{copy} relaxation \index{relaxation} data from 
 \quoteenv{`run1'}
  to 
 \quoteenv{`run2'}
 .  If ri\_label and frq\_label
-are not given then all relaxation data will be copied, otherwise only a specific data set
+are not given then all relaxation \index{relaxation} data will be copied, otherwise only a specific data set
 will be copied.
 
 
 \subsubsection{Examples}
 
-To copy all relaxation data from run 
+To copy \index{copy} all relaxation \index{relaxation} data from run 
 \quoteenv{`m1'}
  to run 
 \quoteenv{`m9'}
@@ -3996,7 +4000,7 @@ To copy all relaxation data from run
 \example{relax> relax\_data.copy(run1=`m1', run2=`m9', ri\_label=None, frq\_label=None) }
 
 
-To copy only the NOE relaxation data with the frq\_label of 
+To copy \index{copy} only the NOE relaxation \index{relaxation} data with the frq\_label of 
 \quoteenv{`800'}
  from 
 \quoteenv{`m3'}
@@ -4032,7 +4036,7 @@ Function for deleting the relaxation data corresponding to ri\_label and frq\_la
   The name of the run.
 
 \keyword{ri\_label:}
-  The relaxation data type, ie 
+  The relaxation \index{relaxation} data type, ie 
 \quoteenv{`R1'}
 , 
 \quoteenv{`R2'}
@@ -4045,7 +4049,7 @@ Function for deleting the relaxation data corresponding to ri\_label and frq\_la
 
 \subsubsection{Examples}
 
-To delete the relaxation data corresponding to ri\_label=
+To delete \index{delete} the relaxation \index{relaxation} data corresponding to ri\_label=
 \quoteenv{`NOE'}
 , frq\_label=
 \quoteenv{`600'}
@@ -4078,7 +4082,7 @@ Function for displaying the relaxation data corresponding to ri\_label and frq\_
   The name of the run.
 
 \keyword{ri\_label:}
-  The relaxation data type, ie 
+  The relaxation \index{relaxation} data type, ie 
 \quoteenv{`R1'}
 , 
 \quoteenv{`R2'}
@@ -4091,7 +4095,7 @@ Function for displaying the relaxation data corresponding to ri\_label and frq\_
 
 \subsubsection{Examples}
 
-To display the NOE relaxation data at 600 MHz from the run 
+To display \index{display} the NOE relaxation \index{relaxation} data at 600 MHz from the run 
 \quoteenv{`m4'}
 , type
 
@@ -4120,7 +4124,7 @@ Function for reading R$_1$, R$_1$, or NOE relaxation data from a file.
   The name of the run.
 
 \keyword{ri\_label:}
-  The relaxation data type, ie 
+  The relaxation \index{relaxation} data type, ie 
 \quoteenv{`R1'}
 , 
 \quoteenv{`R2'}
@@ -4135,7 +4139,7 @@ Function for reading R$_1$, R$_1$, or NOE relaxation data from a file.
   The spectrometer frequency in Hz.
 
 \keyword{file:}
-  The name of the file containing the relaxation data.
+  The name of the file containing the relaxation \index{relaxation} data.
 
 \keyword{dir:}
   The directory where the file is located.
@@ -4147,7 +4151,7 @@ Function for reading R$_1$, R$_1$, or NOE relaxation data from a file.
   The residue name column (the default is 1).
 
 \keyword{data\_col:}
-  The relaxation data column (the default is 2).
+  The relaxation \index{relaxation} data column (the default is 2).
 
 \keyword{error\_col:}
   The experimental error column (the default is 3).
@@ -4163,7 +4167,7 @@ strength have the same label.
 
 \subsubsection{Examples}
 
-The following commands will read the NOE relaxation data collected at 600 MHz out of a file
+The following commands will read \index{read} the NOE relaxation \index{relaxation} data collected at 600 MHz out of a file
 called 
 \quoteenv{`noe.600.out'}
  where the residue numbers, residue names, data, errors are in the
@@ -4175,7 +4179,7 @@ first, second, third, and forth columns respectively.
 
 
 
-The following commands will read the R$_1$ data out of the file 
+The following commands will read \index{read} the R$_1$ data out of the file 
 \quoteenv{`r2.out'}
  where the residue
 numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
@@ -4187,7 +4191,7 @@ respectively.  The columns are separated by commas.
 
 
 
-The following commands will read the R$_1$ data out of the file 
+The following commands will read \index{read} the R$_1$ data out of the file 
 \quoteenv{`r1.out'}
  where the columns are
 separated by the symbol 
@@ -4218,7 +4222,7 @@ Function for writing R$_1$, R$_1$, or NOE relaxation data to a file.
   The name of the run.
 
 \keyword{ri\_label:}
-  The relaxation data type, ie 
+  The relaxation \index{relaxation} data type, ie 
 \quoteenv{`R1'}
 , 
 \quoteenv{`R2'}
@@ -4245,8 +4249,8 @@ The
 \quoteenv{`ri\_label'}
  and 
 \quoteenv{`frq\_label'}
- arguments are required for selecting which relaxation data
-to write to file.
+ arguments are required for selecting which relaxation \index{relaxation} data
+to write \index{write} to file.
 
 
 \newpage
@@ -4270,16 +4274,16 @@ Function for reading peak intensities from a file.
   The name of the run.
 
 \keyword{file:}
-  The name of the file containing the sequence data.
+  The name of the file containing the sequence \index{sequence} data.
 
 \keyword{dir:}
   The directory where the file is located.
 
 \keyword{relax\_time:}
-  The time, in seconds, of the relaxation period.
+  The time, in seconds, of the relaxation \index{relaxation} period.
 
 \keyword{fit\_type:}
-  The type of relaxation curve to fit.
+  The type of relaxation \index{relaxation} curve to fit.
 
 \keyword{format:}
   The type of file containing peak intensities.
@@ -4298,13 +4302,13 @@ Function for reading peak intensities from a file.
 The peak intensity can either be from peak heights or peak volumes.
 
 
-The supported relaxation experiments include the default two parameter exponential fit,
+The supported relaxation \index{relaxation} experiments include the default two parameter exponential fit,
 selected by setting the 
 \quoteenv{`fit\_type'}
  argument to 
 \quoteenv{`exp'}
 , and the three parameter inversion
-recovery experiment in which the peak intensity limit is a non-zero value, selected by
+recovery experiment in which the peak intensity limit \index{parameter!limit} is a non-zero value, selected by
 setting the argument to 
 \quoteenv{`inv'}
 .
@@ -4320,13 +4324,13 @@ The format argument can currently be set to:
 
 If the format argument is set to 
 \quoteenv{`sparky'}
-, the file should be a Sparky peak list saved after
+, the file should be a Sparky \index{Sparky, the program} peak list saved after
 typing the command 
 \quoteenv{`lt'}
 .  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$, 2$^\mathrm{nd}$,
-3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
+3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky \index{Sparky, the program} assignment, w1, w2, and peak intensity data respectively.
 The frequency data w1 and w2 are ignored while the peak intensity data can either be the
-peak height or volume displayed by changing the window options.  If the peak intensity data
+peak height or volume displayed \index{display} by changing the window options.  If the peak intensity data
 is not within column 3, set the argument int\_col to the appropriate value (column numbering
 starts from 0 rather than 1).
 
@@ -4393,7 +4397,7 @@ Function for reading results from a file.
   The name of the run.
 
 \keyword{file:}
-  The name of the file to read results from.
+  The name of the file to read \index{read} results from.
 
 \keyword{dir:}
   The directory where the file is located.
@@ -4404,7 +4408,7 @@ If no directory name is given, the results file will be searched for in a direct
 after the run name.  To search for the results file in the current working directory, set
 dir to None.
 
-This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
+This function is able to handle uncompressed, \index{compression!uncompressed} bzip2 \index{compression!bzip2} compressed files, or gzip \index{compression!gzip} compressed
 files automatically.  The full file name including extension can be supplied, however, if
 the file cannot be found, this function will search for the file name with 
 \quoteenv{`.bz2'}
@@ -4449,31 +4453,31 @@ Function for writing results of the run to a file.
   The format of the output.
 
 \keyword{compress\_type:}
-  The type of compression to use when creating the file.
+  The type of compression \index{compression} to use when creating the file.
 
 \subsubsection{Description}
 
 If no directory name is given, the results file will be placed in a directory named after
 the run name.  To place the results file in the current working directory, set dir to None.
 
-The default behaviour of this function is to compress the file using bzip2 compression.  If
+The default behaviour of this function is to compress the file using bzip2 \index{compression!bzip2} compression. \index{compression}  If
 the extension 
 \quoteenv{`.bz2'}
- is not included in the file name, it will be added.  The compression
-can, however, be changed to either no compression or gzip compression.  This is controlled
+ is not included in the file name, it will be added.  The compression \index{compression}
+can, however, be changed to either no compression \index{compression} or gzip \index{compression!gzip} compression. \index{compression}  This is controlled
 by the compress\_type argument which can be set to
 
 \begin{description}
-\item[    0 --]   No compression (no file extension),
-\item[    1 --]   bzip2 compression (
+\item[    0 --]   No compression \index{compression} (no file extension),
+\item[    1 --]   bzip2 \index{compression!bzip2} compression \index{compression} (
 \quoteenv{`.bz2'}
  file extension),
-\item[    2 --]   gzip compression (
+\item[    2 --]   gzip \index{compression!gzip} compression \index{compression} (
 \quoteenv{`.gz'}
  file extension).
 \end{description}
 
-The complementary read function will automatically handle the compressed files.
+The complementary read \index{read} function will automatically handle the compressed files.
 
 
 \newpage
@@ -4506,7 +4510,7 @@ The run name can be any string however the run type can only be one of the follo
 \begin{description}
 \item[    
 \quoteenv{`jw'}
- --]   Reduced spectral density mapping,
+ --]   Reduced spectral density mapping, \index{map}
 \item[    
 \quoteenv{`mf'}
  --]   Model-free analysis,
@@ -4515,7 +4519,7 @@ The run name can be any string however the run type can only be one of the follo
  --]   Steady state NOE calculation,
 \item[    
 \quoteenv{`relax\_fit'}
- --]   Relaxation curve fitting,
+ --]   Relaxation \index{relaxation} curve fitting,
 \item[    
 \quoteenv{`srls'}
  --]   SRLS analysis.
@@ -4680,13 +4684,13 @@ Function for selecting specific residues.
 
 \subsubsection{Description}
 
-The residue number can be either an integer for selecting a single residue or a python
-regular expression, in string form, for selecting multiple residues.  For details about
-using regular expression, see the python documentation for the module 
+The residue number can be either an integer for selecting a single residue or a python \index{Python}
+regular expression, \index{regular expression} in string form, for selecting multiple residues.  For details about
+using regular expression, \index{regular expression} see the python \index{Python} documentation for the module 
 \quoteenv{`re'}
 .
 
-The residue name argument must be a string.  Regular expression is also allowed.
+The residue name argument must be a string.  Regular expression \index{regular expression} is also allowed.
 
 The 
 \quoteenv{`change\_all'}
@@ -4784,25 +4788,25 @@ Function for adding a residue onto the sequence.
 
 \subsubsection{Description}
 
-Using this function a new sequence can be generated without having to load the sequence from
-a file.  However if the sequence already exists, the new residue will be added to the end.
+Using this function a new sequence \index{sequence} can be generated without having to load the sequence \index{sequence} from
+a file.  However if the sequence \index{sequence} already exists, the new residue will be added to the end.
 The same residue number cannot be used more than once.
 
 
 \subsubsection{Examples}
 
-The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS and assign
+The following sequence \index{sequence} of commands will generate the sequence \index{sequence} 1 ALA, 2 GLY, 3 LYS and assign
 it to the run 
 \quoteenv{`m3'}
 :
 
 \example{relax> run = `m3' }
 
-\example{relax> sequence.add(run, 1, `ALA') }
+\example{relax> sequence.add(run, \index{sequence} 1, `ALA') }
 
-\example{relax> sequence.add(run, 2, `GLY') }
+\example{relax> sequence.add(run, \index{sequence} 2, `GLY') }
 
-\example{relax> sequence.add(run, 3, `LYS') }
+\example{relax> sequence.add(run, \index{sequence} 3, `LYS') }
 
 
 
@@ -4824,36 +4828,36 @@ Function for copying the sequence from run1 to run2.
 
 
 \keyword{run1:}
-  The name of the run to copy the sequence from.
+  The name of the run to copy \index{copy} the sequence \index{sequence} from.
 
 \keyword{run2:}
-  The name of the run to copy the sequence to.
+  The name of the run to copy \index{copy} the sequence \index{sequence} to.
 
 \subsubsection{Description}
 
-This function will copy the sequence from 
+This function will copy \index{copy} the sequence \index{sequence} from 
 \quoteenv{`run1'}
  to 
 \quoteenv{`run2'}
 .  
 \quoteenv{`run1'}
- must contain sequence
+ must contain sequence \index{sequence}
 information, while 
 \quoteenv{`run2'}
- must have no sequence loaded.
+ must have no sequence \index{sequence} loaded.
 
 
 \subsubsection{Examples}
 
-To copy the sequence from the run 
+To copy \index{copy} the sequence \index{sequence} from the run 
 \quoteenv{`m1'}
  to the run 
 \quoteenv{`m2'}
 , type:
 
-\example{relax> sequence.copy(`m1', `m2') }
+\example{relax> sequence.copy(`m1', \index{sequence} `m2') }
 
-\example{relax> sequence.copy(run1=`m1', run2=`m2') }
+\example{relax> sequence.copy(run1=`m1', \index{sequence} run2=`m2') }
 
 
 
@@ -4881,7 +4885,7 @@ Function for deleting the sequence.
 
 This function has the same effect as using the 
 \quoteenv{`delete'}
- function to delete all residue
+ function to delete \index{delete} all residue
 specific data.
 
 
@@ -4927,7 +4931,7 @@ Function for reading sequence data.
   The name of the run.
 
 \keyword{file:}
-  The name of the file containing the sequence data.
+  The name of the file containing the sequence \index{sequence} data.
 
 \keyword{dir:}
   The directory where the file is located.
@@ -4948,7 +4952,7 @@ If no directory is given, the file will be assumed to be in the current working 
 
 \subsubsection{Examples}
 
-The following commands will read the sequence data out of a file called 
+The following commands will read \index{read} the sequence \index{sequence} data out of a file called 
 \quoteenv{`seq'}
  where the
 residue numbers and names are in the first and second columns respectively and assign it to
@@ -4956,28 +4960,28 @@ the run
 \quoteenv{`m1'}
 .
 
-\example{relax> sequence.read(`m1', `seq') }
+\example{relax> sequence.read(`m1', \index{sequence} `seq') }
 
-\example{relax> sequence.read(`m1', `seq', num\_col=0, name\_col=1) }
+\example{relax> sequence.read(`m1', \index{sequence} `seq', num\_col=0, name\_col=1) }
 
-\example{relax> sequence.read(run=`m1', file=`seq', num\_col=0, name\_col=1, sep=None) }
+\example{relax> sequence.read(run=`m1', \index{sequence} file=`seq', num\_col=0, name\_col=1, sep=None) }
 
 
 
-The following commands will read the sequence out of the file 
+The following commands will read \index{read} the sequence \index{sequence} out of the file 
 \quoteenv{`noe.out'}
  which also contains
 the NOE values.
 
-\example{relax> sequence.read(`m1', `noe.out') }
+\example{relax> sequence.read(`m1', \index{sequence} `noe.out') }
 
-\example{relax> sequence.read(`m1', `noe.out', num\_col=0, name\_col=1) }
+\example{relax> sequence.read(`m1', \index{sequence} `noe.out', num\_col=0, name\_col=1) }
 
-\example{relax> sequence.read(run=`m1', file=`noe.out', num\_col=0, name\_col=1) }
+\example{relax> sequence.read(run=`m1', \index{sequence} file=`noe.out', num\_col=0, name\_col=1) }
 
 
 
-The following commands will read the sequence out of the file 
+The following commands will read \index{read} the sequence \index{sequence} out of the file 
 \quoteenv{`noe.600.out'}
  where the
 residue numbers are in the second column, the names are in the sixth column and the columns
@@ -4985,9 +4989,9 @@ are separated by commas and assign it to the run
 \quoteenv{`m5'}
 .
 
-\example{relax> sequence.read(`m5', `noe.600.out', num\_col=1, name\_col=5, sep=`,') }
+\example{relax> sequence.read(`m5', \index{sequence} `noe.600.out', num\_col=1, name\_col=5, sep=`,') }
 
-\example{relax> sequence.read(run=`m5', file=`noe.600.out', num\_col=1, name\_col=5, sep=`,') }
+\example{relax> sequence.read(run=`m5', \index{sequence} file=`noe.600.out', num\_col=1, name\_col=5, sep=`,') }
 
 
 
@@ -5071,7 +5075,7 @@ Function for loading a saved program state.
 
 \subsubsection{Description}
 
-This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
+This function is able to handle uncompressed, \index{compression!uncompressed} bzip2 \index{compression!bzip2} compressed files, or gzip \index{compression!gzip} compressed
 files automatically.  The full file name including extension can be supplied, however, if
 the file cannot be found, this function will search for the file name with 
 \quoteenv{`.bz2'}
@@ -5093,7 +5097,7 @@ The following commands will load the state saved in the file
 
 
 
-The following commands will load the state saved in the bzip2 compressed file 
+The following commands will load the state saved in the bzip2 \index{compression!bzip2} compressed file 
 \quoteenv{`save.bz2'}
 .
 
@@ -5135,19 +5139,19 @@ Function for saving the program state.
 
 \subsubsection{Description}
 
-The default behaviour of this function is to compress the file using bzip2 compression.  If
+The default behaviour of this function is to compress the file using bzip2 \index{compression!bzip2} compression. \index{compression}  If
 the extension 
 \quoteenv{`.bz2'}
- is not included in the file name, it will be added.  The compression
-can, however, be changed to either no compression or gzip compression.  This is controlled
+ is not included in the file name, it will be added.  The compression \index{compression}
+can, however, be changed to either no compression \index{compression} or gzip \index{compression!gzip} compression. \index{compression}  This is controlled
 by the compress\_type argument which can be set to
 
 \begin{description}
-\item[    0 --]   No compression (no file extension).
-\item[    1 --]   bzip2 compression (
+\item[    0 --]   No compression \index{compression} (no file extension).
+\item[    1 --]   bzip2 \index{compression!bzip2} compression \index{compression} (
 \quoteenv{`.bz2'}
  file extension).
-\item[    2 --]   gzip compression (
+\item[    2 --]   gzip \index{compression!gzip} compression \index{compression} (
 \quoteenv{`.gz'}
  file extension).
 \end{description}
@@ -5165,7 +5169,7 @@ The following commands will save the current program state into the file
 
 
 
-The following commands will save the current program state into the bzip2 compressed file
+The following commands will save the current program state into the bzip2 \index{compression!bzip2} compressed file
 \quoteenv{`save.bz2'}
 :
 
@@ -5233,8 +5237,8 @@ Function for reading a file containing entries for each computer to run calculat
 Certain functions within relax are coded to handle threading.  This is achieved by running
 multiple instances of relax on different processes or computers for each thread.  The
 default behaviour is that the parent instance of relax will execute all the code, however if
-a hosts file is read or a hosts entry manually entered, then the threaded code will run on
-the specified hosts.  This function is for reading a hosts file which should contain an
+a hosts file is read \index{read} or a hosts entry manually entered, then the threaded code will run on
+the specified hosts.  This function is for reading \index{read} a hosts file which should contain an
 an entry for each computer on which to run calculations.
 
 For remote computers, a SSH connection will be attempted.  Public key authentication must be
@@ -5317,7 +5321,7 @@ If the files
 
 
 Press enter three times when asked for input.  This will generate the two identification
-files.  Then, to copy the public key into the authorized\_keys file on the remote machine,
+files.  Then, to copy \index{copy} the public key into the authorized\_keys file on the remote machine,
 type:
 
 \example{\$ ssh zucchini "echo \$(cat \~{}/.ssh/id\_rsa.pub) >> \~{}/.ssh/authorized\_keys" }
@@ -5342,7 +5346,7 @@ set to
 may fail as the permissions of the remote file 
 \quoteenv{`\~{}/.ssh/authorized\_keys'}
  may be too
-permissive.  The file should only be read/write for the user, ie 600.  To remotely change
+permissive.  The file should only be read/write \index{read} for the user, ie 600.  To remotely change
 the permissions, type:
 
 \example{\$ ssh zucchini "chmod 600 \~{}/.ssh/authorized\_keys" }
@@ -5502,13 +5506,13 @@ Function for unselecting specific residues.
 
 \subsubsection{Description}
 
-The residue number can be either an integer for unselecting a single residue or a python
-regular expression, in string form, for unselecting multiple residues.  For details about
-using regular expression, see the python documentation for the module 
+The residue number can be either an integer for unselecting a single residue or a python \index{Python}
+regular expression, \index{regular expression} in string form, for unselecting multiple residues.  For details about
+using regular expression, \index{regular expression} see the python \index{Python} documentation for the module 
 \quoteenv{`re'}
 .
 
-The residue name argument must be a string.  Regular expression is also allowed.
+The residue name argument must be a string.  Regular expression \index{regular expression} is also allowed.
 
 The 
 \quoteenv{`change\_all'}
@@ -5592,10 +5596,10 @@ Function for copying residue specific data values from run1 to run2.
 
 
 \keyword{run1:}
-  The name of the run to copy from.
+  The name of the run to copy \index{copy} from.
 
 \keyword{run2:}
-  The name of the run to copy to.
+  The name of the run to copy \index{copy} to.
 
 \keyword{data\_type:}
   The data type.
@@ -5604,14 +5608,14 @@ Function for copying residue specific data values from run1 to run2.
 
 Only one data type may be selected, therefore the data type argument should be a string.
 
-If this function is used to change values of previously minimised runs, then the
-minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+If this function is used to change values of previously minimised \index{minimisation} runs, then the
+minimisation \index{minimisation} statistics (chi-squared value, iteration count, function count, gradient count,
 and Hessian count) will be reset to None.
 
 
 \subsubsection{Examples}
 
-To copy the CSA values from the run 
+To copy \index{copy} the CSA values from the run 
 \quoteenv{`m1'}
  to 
 \quoteenv{`m2'}
@@ -5625,20 +5629,20 @@ To copy the CSA values from the run
 
 \subsubsection{Regular expression}
 
-The python function 
+The python \index{Python} function 
 \quoteenv{`match'}
-, which uses regular expression, is used to determine which data
+, which uses regular expression, \index{regular expression} is used to determine which data
 type to set values to, therefore various data\_type strings can be used to select the same
 data type.  Patterns used for matching for specific data types are listed below.
 
-This is a short description of python regular expression, for more information see the
-regular expression syntax section of the Python Library Reference.  Some of the regular
+This is a short description of python \index{Python} regular expression, \index{regular expression} for more information see the
+regular expression \index{regular expression} syntax section of the Python \index{Python} Library Reference.  Some of the regular
 expression syntax used in this function is:
 
 \begin{description}
 \item[    
 \quoteenv{`[]'}
- --]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence \index{sequence} or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -5673,10 +5677,10 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
- --]   Match any sequence of characters of any length. 
+ --]   Match any sequence \index{sequence} of characters of any length. 
 \end{description}
-Importantly, do not supply a string for the data type containing regular expression.  The
-regular expression is implemented so that various strings can be supplied which all match
+Importantly, do not supply a string for the data type containing regular expression. \index{regular expression}  The
+regular expression \index{regular expression} is implemented so that various strings can be supplied which all match
 the same data type.
 
 
@@ -5700,7 +5704,7 @@ Local $\tau_m$ &
 
  &  &  \\
 
-Order parameter $S^2$ & 
+Order parameter \index{order parameter} $S^2$ & 
 \quoteenv{`s2'}
  & 
 \quoteenv{`\^{}[Ss]2\$'}
@@ -5708,7 +5712,7 @@ Order parameter $S^2$ &
 
  &  &  \\
 
-Order parameter $S^2_f$ & 
+Order parameter \index{order parameter} $S^2_f$ & 
 \quoteenv{`s2f'}
  & 
 \quoteenv{`\^{}[Ss]2f\$'}
@@ -5716,7 +5720,7 @@ Order parameter $S^2_f$ &
 
  &  &  \\
 
-Order parameter $S^2_s$ & 
+Order parameter \index{order parameter} $S^2_s$ & 
 \quoteenv{`s2s'}
  & 
 \quoteenv{`\^{}[Ss]2s\$'}
@@ -5724,7 +5728,7 @@ Order parameter $S^2_s$ &
 
  &  &  \\
 
-Correlation time $\tau_e$ & 
+Correlation time \index{correlation time} $\tau_e$ & 
 \quoteenv{`te'}
  & 
 \quoteenv{`\^{}te\$'}
@@ -5732,7 +5736,7 @@ Correlation time $\tau_e$ &
 
  &  &  \\
 
-Correlation time $\tau_f$ & 
+Correlation time \index{correlation time} $\tau_f$ & 
 \quoteenv{`tf'}
  & 
 \quoteenv{`\^{}tf\$'}
@@ -5740,7 +5744,7 @@ Correlation time $\tau_f$ &
 
  &  &  \\
 
-Correlation time $\tau_s$ & 
+Correlation time \index{correlation time} $\tau_s$ & 
 \quoteenv{`ts'}
  & 
 \quoteenv{`\^{}ts\$'}
@@ -5748,7 +5752,7 @@ Correlation time $\tau_s$ &
 
  &  &  \\
 
-Chemical exchange & 
+Chemical exchange \index{chemical exchange} & 
 \quoteenv{`rex'}
  & 
 \quoteenv{`\^{}[Rr]ex\$'}
@@ -5758,7 +5762,7 @@ Chemical exchange &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -5798,7 +5802,7 @@ as a field strength independent value.  Use the following formula to get the cor
 
 where:
 \begin{itemize}
-\item[]     $R_{ex}$ is the chemical exchange value for the current frequency.
+\item[]     $R_{ex}$ is the chemical exchange \index{chemical exchange} value for the current frequency.
 \item[]     $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
@@ -5849,7 +5853,7 @@ $J(\omega_H)$ &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -5874,7 +5878,7 @@ CSA &
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and CSA
+In reduced spectral density mapping, \index{map} only two values can be set, the bond length \index{bond length} and CSA
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -5920,20 +5924,20 @@ To show all CSA values for the run
 
 \subsubsection{Regular expression}
 
-The python function 
+The python \index{Python} function 
 \quoteenv{`match'}
-, which uses regular expression, is used to determine which data
+, which uses regular expression, \index{regular expression} is used to determine which data
 type to set values to, therefore various data\_type strings can be used to select the same
 data type.  Patterns used for matching for specific data types are listed below.
 
-This is a short description of python regular expression, for more information see the
-regular expression syntax section of the Python Library Reference.  Some of the regular
+This is a short description of python \index{Python} regular expression, \index{regular expression} for more information see the
+regular expression \index{regular expression} syntax section of the Python \index{Python} Library Reference.  Some of the regular
 expression syntax used in this function is:
 
 \begin{description}
 \item[    
 \quoteenv{`[]'}
- --]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence \index{sequence} or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -5968,10 +5972,10 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
- --]   Match any sequence of characters of any length. 
+ --]   Match any sequence \index{sequence} of characters of any length. 
 \end{description}
-Importantly, do not supply a string for the data type containing regular expression.  The
-regular expression is implemented so that various strings can be supplied which all match
+Importantly, do not supply a string for the data type containing regular expression. \index{regular expression}  The
+regular expression \index{regular expression} is implemented so that various strings can be supplied which all match
 the same data type.
 
 
@@ -5995,7 +5999,7 @@ Local $\tau_m$ &
 
  &  &  \\
 
-Order parameter $S^2$ & 
+Order parameter \index{order parameter} $S^2$ & 
 \quoteenv{`s2'}
  & 
 \quoteenv{`\^{}[Ss]2\$'}
@@ -6003,7 +6007,7 @@ Order parameter $S^2$ &
 
  &  &  \\
 
-Order parameter $S^2_f$ & 
+Order parameter \index{order parameter} $S^2_f$ & 
 \quoteenv{`s2f'}
  & 
 \quoteenv{`\^{}[Ss]2f\$'}
@@ -6011,7 +6015,7 @@ Order parameter $S^2_f$ &
 
  &  &  \\
 
-Order parameter $S^2_s$ & 
+Order parameter \index{order parameter} $S^2_s$ & 
 \quoteenv{`s2s'}
  & 
 \quoteenv{`\^{}[Ss]2s\$'}
@@ -6019,7 +6023,7 @@ Order parameter $S^2_s$ &
 
  &  &  \\
 
-Correlation time $\tau_e$ & 
+Correlation time \index{correlation time} $\tau_e$ & 
 \quoteenv{`te'}
  & 
 \quoteenv{`\^{}te\$'}
@@ -6027,7 +6031,7 @@ Correlation time $\tau_e$ &
 
  &  &  \\
 
-Correlation time $\tau_f$ & 
+Correlation time \index{correlation time} $\tau_f$ & 
 \quoteenv{`tf'}
  & 
 \quoteenv{`\^{}tf\$'}
@@ -6035,7 +6039,7 @@ Correlation time $\tau_f$ &
 
  &  &  \\
 
-Correlation time $\tau_s$ & 
+Correlation time \index{correlation time} $\tau_s$ & 
 \quoteenv{`ts'}
  & 
 \quoteenv{`\^{}ts\$'}
@@ -6043,7 +6047,7 @@ Correlation time $\tau_s$ &
 
  &  &  \\
 
-Chemical exchange & 
+Chemical exchange \index{chemical exchange} & 
 \quoteenv{`rex'}
  & 
 \quoteenv{`\^{}[Rr]ex\$'}
@@ -6053,7 +6057,7 @@ Chemical exchange &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -6119,7 +6123,7 @@ $J(\omega_H)$ &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -6169,7 +6173,7 @@ Function for reading residue specific data values from a file.
   The spectrometer frequency in Hz.
 
 \keyword{file:}
-  The name of the file containing the relaxation data.
+  The name of the file containing the relaxation \index{relaxation} data.
 
 \keyword{num\_col:}
   The residue number column (the default is 0, ie the first column).
@@ -6178,7 +6182,7 @@ Function for reading residue specific data values from a file.
   The residue name column (the default is 1).
 
 \keyword{data\_col:}
-  The relaxation data column (the default is 2).
+  The relaxation \index{relaxation} data column (the default is 2).
 
 \keyword{error\_col:}
   The experimental error column (the default is 3).
@@ -6191,8 +6195,8 @@ Function for reading residue specific data values from a file.
 Only one data type may be selected, therefore the data type argument should be a string.  If
 the file only contains values and no errors, set the error column argument to None.
 
-If this function is used to change values of previously minimised runs, then the
-minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+If this function is used to change values of previously minimised \index{minimisation} runs, then the
+minimisation \index{minimisation} statistics (chi-squared value, iteration count, function count, gradient count,
 and Hessian count) will be reset to None.
 
 
@@ -6219,20 +6223,20 @@ any of the following:
 
 \subsubsection{Regular expression}
 
-The python function 
+The python \index{Python} function 
 \quoteenv{`match'}
-, which uses regular expression, is used to determine which data
+, which uses regular expression, \index{regular expression} is used to determine which data
 type to set values to, therefore various data\_type strings can be used to select the same
 data type.  Patterns used for matching for specific data types are listed below.
 
-This is a short description of python regular expression, for more information see the
-regular expression syntax section of the Python Library Reference.  Some of the regular
+This is a short description of python \index{Python} regular expression, \index{regular expression} for more information see the
+regular expression \index{regular expression} syntax section of the Python \index{Python} Library Reference.  Some of the regular
 expression syntax used in this function is:
 
 \begin{description}
 \item[    
 \quoteenv{`[]'}
- --]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence \index{sequence} or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -6267,10 +6271,10 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
- --]   Match any sequence of characters of any length. 
+ --]   Match any sequence \index{sequence} of characters of any length. 
 \end{description}
-Importantly, do not supply a string for the data type containing regular expression.  The
-regular expression is implemented so that various strings can be supplied which all match
+Importantly, do not supply a string for the data type containing regular expression. \index{regular expression}  The
+regular expression \index{regular expression} is implemented so that various strings can be supplied which all match
 the same data type.
 
 
@@ -6294,7 +6298,7 @@ Local $\tau_m$ &
 
  &  &  \\
 
-Order parameter $S^2$ & 
+Order parameter \index{order parameter} $S^2$ & 
 \quoteenv{`s2'}
  & 
 \quoteenv{`\^{}[Ss]2\$'}
@@ -6302,7 +6306,7 @@ Order parameter $S^2$ &
 
  &  &  \\
 
-Order parameter $S^2_f$ & 
+Order parameter \index{order parameter} $S^2_f$ & 
 \quoteenv{`s2f'}
  & 
 \quoteenv{`\^{}[Ss]2f\$'}
@@ -6310,7 +6314,7 @@ Order parameter $S^2_f$ &
 
  &  &  \\
 
-Order parameter $S^2_s$ & 
+Order parameter \index{order parameter} $S^2_s$ & 
 \quoteenv{`s2s'}
  & 
 \quoteenv{`\^{}[Ss]2s\$'}
@@ -6318,7 +6322,7 @@ Order parameter $S^2_s$ &
 
  &  &  \\
 
-Correlation time $\tau_e$ & 
+Correlation time \index{correlation time} $\tau_e$ & 
 \quoteenv{`te'}
  & 
 \quoteenv{`\^{}te\$'}
@@ -6326,7 +6330,7 @@ Correlation time $\tau_e$ &
 
  &  &  \\
 
-Correlation time $\tau_f$ & 
+Correlation time \index{correlation time} $\tau_f$ & 
 \quoteenv{`tf'}
  & 
 \quoteenv{`\^{}tf\$'}
@@ -6334,7 +6338,7 @@ Correlation time $\tau_f$ &
 
  &  &  \\
 
-Correlation time $\tau_s$ & 
+Correlation time \index{correlation time} $\tau_s$ & 
 \quoteenv{`ts'}
  & 
 \quoteenv{`\^{}ts\$'}
@@ -6342,7 +6346,7 @@ Correlation time $\tau_s$ &
 
  &  &  \\
 
-Chemical exchange & 
+Chemical exchange \index{chemical exchange} & 
 \quoteenv{`rex'}
  & 
 \quoteenv{`\^{}[Rr]ex\$'}
@@ -6352,7 +6356,7 @@ Chemical exchange &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -6392,7 +6396,7 @@ as a field strength independent value.  Use the following formula to get the cor
 
 where:
 \begin{itemize}
-\item[]     $R_{ex}$ is the chemical exchange value for the current frequency.
+\item[]     $R_{ex}$ is the chemical exchange \index{chemical exchange} value for the current frequency.
 \item[]     $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
@@ -6443,7 +6447,7 @@ $J(\omega_H)$ &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -6468,7 +6472,7 @@ CSA &
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and CSA
+In reduced spectral density mapping, \index{map} only two values can be set, the bond length \index{bond length} and CSA
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -6506,8 +6510,8 @@ Function for setting residue specific data values.
 
 \subsubsection{Description}
 
-If this function is used to change values of previously minimised runs, then the
-minimisation statistics (chi-squared value, iteration count, function count, gradient count,
+If this function is used to change values of previously minimised \index{minimisation} runs, then the
+minimisation \index{minimisation} statistics (chi-squared value, iteration count, function count, gradient count,
 and Hessian count) will be reset to None.
 
 
@@ -6539,7 +6543,7 @@ Value & Type & Description \\
 
 \midrule
 
-None & None & This case is used to set the model parameters prior to minimisation or \\
+None & None & This case is used to set the model parameters prior to minimisation \index{minimisation} or \\
 
  &  & calculation.  The model parameters are set to the default values. \\
 
@@ -6597,7 +6601,7 @@ If the
 \quoteenv{`res\_name'}
  arguments are left as the defaults of None, then the
 function will be applied to all residues.  Otherwise the residue number can be set to either
-an integer for selecting a single residue or a python regular expression string for
+an integer for selecting a single residue or a python \index{Python} regular expression \index{regular expression} string for
 selecting multiple residues.  The residue name argument must be a string and can use regular
 expression as well.
 
@@ -6633,7 +6637,7 @@ To set the CSA value for the model-free run
 
 
 
-To set the CSA value of all residues in the reduced spectral density mapping run 
+To set the CSA value of all residues in the reduced spectral density mapping \index{map} run 
 \quoteenv{`600MHz'}
  to
 -170 ppm, type:
@@ -6644,7 +6648,7 @@ To set the CSA value of all residues in the reduced spectral density mapping run
 
 
 
-To set the NH bond length of all residues in the model-free run 
+To set the NH bond length \index{bond length} of all residues in the model-free run 
 \quoteenv{`m5'}
  to 1.02 Angstroms,
 type:
@@ -6655,7 +6659,7 @@ type:
 
 
 
-To set both the bond length and the CSA value for the run 
+To set both the bond length \index{bond length} and the CSA value for the run 
 \quoteenv{`new'}
  to the default values, type:
 
@@ -6690,20 +6694,20 @@ To set the $S^2$ and $\tau_e$ parameter values for model-free run
 
 \subsubsection{Regular expression}
 
-The python function 
+The python \index{Python} function 
 \quoteenv{`match'}
-, which uses regular expression, is used to determine which data
+, which uses regular expression, \index{regular expression} is used to determine which data
 type to set values to, therefore various data\_type strings can be used to select the same
 data type.  Patterns used for matching for specific data types are listed below.
 
-This is a short description of python regular expression, for more information see the
-regular expression syntax section of the Python Library Reference.  Some of the regular
+This is a short description of python \index{Python} regular expression, \index{regular expression} for more information see the
+regular expression \index{regular expression} syntax section of the Python \index{Python} Library Reference.  Some of the regular
 expression syntax used in this function is:
 
 \begin{description}
 \item[    
 \quoteenv{`[]'}
- --]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence \index{sequence} or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -6738,10 +6742,10 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
- --]   Match any sequence of characters of any length. 
+ --]   Match any sequence \index{sequence} of characters of any length. 
 \end{description}
-Importantly, do not supply a string for the data type containing regular expression.  The
-regular expression is implemented so that various strings can be supplied which all match
+Importantly, do not supply a string for the data type containing regular expression. \index{regular expression}  The
+regular expression \index{regular expression} is implemented so that various strings can be supplied which all match
 the same data type.
 
 
@@ -6765,7 +6769,7 @@ Local $\tau_m$ &
 
  &  &  \\
 
-Order parameter $S^2$ & 
+Order parameter \index{order parameter} $S^2$ & 
 \quoteenv{`s2'}
  & 
 \quoteenv{`\^{}[Ss]2\$'}
@@ -6773,7 +6777,7 @@ Order parameter $S^2$ &
 
  &  &  \\
 
-Order parameter $S^2_f$ & 
+Order parameter \index{order parameter} $S^2_f$ & 
 \quoteenv{`s2f'}
  & 
 \quoteenv{`\^{}[Ss]2f\$'}
@@ -6781,7 +6785,7 @@ Order parameter $S^2_f$ &
 
  &  &  \\
 
-Order parameter $S^2_s$ & 
+Order parameter \index{order parameter} $S^2_s$ & 
 \quoteenv{`s2s'}
  & 
 \quoteenv{`\^{}[Ss]2s\$'}
@@ -6789,7 +6793,7 @@ Order parameter $S^2_s$ &
 
  &  &  \\
 
-Correlation time $\tau_e$ & 
+Correlation time \index{correlation time} $\tau_e$ & 
 \quoteenv{`te'}
  & 
 \quoteenv{`\^{}te\$'}
@@ -6797,7 +6801,7 @@ Correlation time $\tau_e$ &
 
  &  &  \\
 
-Correlation time $\tau_f$ & 
+Correlation time \index{correlation time} $\tau_f$ & 
 \quoteenv{`tf'}
  & 
 \quoteenv{`\^{}tf\$'}
@@ -6805,7 +6809,7 @@ Correlation time $\tau_f$ &
 
  &  &  \\
 
-Correlation time $\tau_s$ & 
+Correlation time \index{correlation time} $\tau_s$ & 
 \quoteenv{`ts'}
  & 
 \quoteenv{`\^{}ts\$'}
@@ -6813,7 +6817,7 @@ Correlation time $\tau_s$ &
 
  &  &  \\
 
-Chemical exchange & 
+Chemical exchange \index{chemical exchange} & 
 \quoteenv{`rex'}
  & 
 \quoteenv{`\^{}[Rr]ex\$'}
@@ -6823,7 +6827,7 @@ Chemical exchange &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -6863,7 +6867,7 @@ as a field strength independent value.  Use the following formula to get the cor
 
 where:
 \begin{itemize}
-\item[]     $R_{ex}$ is the chemical exchange value for the current frequency.
+\item[]     $R_{ex}$ is the chemical exchange \index{chemical exchange} value for the current frequency.
 \item[]     $\pi$ is in the namespace of relax, ie just type 
 \quoteenv{`pi'}
 .
@@ -6889,7 +6893,7 @@ Local $\tau_m$ &
 
  &  &  \\
 
-Order parameters $S^2$, $S^2_f$, and $S^2_s$ & 
+Order parameters \index{order parameter} $S^2$, $S^2_f$, and $S^2_s$ & 
 \quoteenv{`s2'}
 , 
 \quoteenv{`s2f'}
@@ -6899,31 +6903,31 @@ Order parameters $S^2$, $S^2_f$, and $S^2_s$ &
 
  &  &  \\
 
-Correlation time $\tau_e$ & 
+Correlation time \index{correlation time} $\tau_e$ & 
 \quoteenv{`te'}
  & 100 * 1e-12 \\
 
  &  &  \\
 
-Correlation time $\tau_f$ & 
+Correlation time \index{correlation time} $\tau_f$ & 
 \quoteenv{`tf'}
  & 10 * 1e-12 \\
 
  &  &  \\
 
-Correlation time $\tau_s$ & 
+Correlation time \index{correlation time} $\tau_s$ & 
 \quoteenv{`ts'}
  & 1000 * 1e-12 \\
 
  &  &  \\
 
-Chemical exchange relaxation & 
+Chemical exchange \index{chemical exchange} relaxation \index{relaxation} & 
 \quoteenv{`rex'}
  & 0.0 \\
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 1.02 * 1e-10 \\
 
@@ -6983,7 +6987,7 @@ $J(\omega_H)$ &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -7008,7 +7012,7 @@ CSA &
 
 \subsubsection{Reduced spectral density mapping set details}
 
-In reduced spectral density mapping, only two values can be set, the bond length and CSA
+In reduced spectral density mapping, \index{map} only two values can be set, the bond length \index{bond length} and CSA
 value.  These must be set prior to the calculation of spectral density values.
 
 
@@ -7025,7 +7029,7 @@ Data type & Object name & Value \\
 
 \midrule
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 1.02 * 1e-10 \\
 
@@ -7083,7 +7087,7 @@ The data type argument should be a string.
 
 \subsubsection{Examples}
 
-To write the CSA values for the run 
+To write \index{write} the CSA values for the run 
 \quoteenv{`m1'}
  to the file 
 \quoteenv{`csa.txt'}
@@ -7095,7 +7099,7 @@ To write the CSA values for the run
 
 
 
-To write the NOE values from the run 
+To write \index{write} the NOE values from the run 
 \quoteenv{`noe'}
  to the file 
 \quoteenv{`noe'}
@@ -7115,20 +7119,20 @@ To write the NOE values from the run
 
 \subsubsection{Regular expression}
 
-The python function 
+The python \index{Python} function 
 \quoteenv{`match'}
-, which uses regular expression, is used to determine which data
+, which uses regular expression, \index{regular expression} is used to determine which data
 type to set values to, therefore various data\_type strings can be used to select the same
 data type.  Patterns used for matching for specific data types are listed below.
 
-This is a short description of python regular expression, for more information see the
-regular expression syntax section of the Python Library Reference.  Some of the regular
+This is a short description of python \index{Python} regular expression, \index{regular expression} for more information see the
+regular expression \index{regular expression} syntax section of the Python \index{Python} Library Reference.  Some of the regular
 expression syntax used in this function is:
 
 \begin{description}
 \item[    
 \quoteenv{`[]'}
- --]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence \index{sequence} or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -7163,10 +7167,10 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
- --]   Match any sequence of characters of any length. 
+ --]   Match any sequence \index{sequence} of characters of any length. 
 \end{description}
-Importantly, do not supply a string for the data type containing regular expression.  The
-regular expression is implemented so that various strings can be supplied which all match
+Importantly, do not supply a string for the data type containing regular expression. \index{regular expression}  The
+regular expression \index{regular expression} is implemented so that various strings can be supplied which all match
 the same data type.
 
 
@@ -7190,7 +7194,7 @@ Local $\tau_m$ &
 
  &  &  \\
 
-Order parameter $S^2$ & 
+Order parameter \index{order parameter} $S^2$ & 
 \quoteenv{`s2'}
  & 
 \quoteenv{`\^{}[Ss]2\$'}
@@ -7198,7 +7202,7 @@ Order parameter $S^2$ &
 
  &  &  \\
 
-Order parameter $S^2_f$ & 
+Order parameter \index{order parameter} $S^2_f$ & 
 \quoteenv{`s2f'}
  & 
 \quoteenv{`\^{}[Ss]2f\$'}
@@ -7206,7 +7210,7 @@ Order parameter $S^2_f$ &
 
  &  &  \\
 
-Order parameter $S^2_s$ & 
+Order parameter \index{order parameter} $S^2_s$ & 
 \quoteenv{`s2s'}
  & 
 \quoteenv{`\^{}[Ss]2s\$'}
@@ -7214,7 +7218,7 @@ Order parameter $S^2_s$ &
 
  &  &  \\
 
-Correlation time $\tau_e$ & 
+Correlation time \index{correlation time} $\tau_e$ & 
 \quoteenv{`te'}
  & 
 \quoteenv{`\^{}te\$'}
@@ -7222,7 +7226,7 @@ Correlation time $\tau_e$ &
 
  &  &  \\
 
-Correlation time $\tau_f$ & 
+Correlation time \index{correlation time} $\tau_f$ & 
 \quoteenv{`tf'}
  & 
 \quoteenv{`\^{}tf\$'}
@@ -7230,7 +7234,7 @@ Correlation time $\tau_f$ &
 
  &  &  \\
 
-Correlation time $\tau_s$ & 
+Correlation time \index{correlation time} $\tau_s$ & 
 \quoteenv{`ts'}
  & 
 \quoteenv{`\^{}ts\$'}
@@ -7238,7 +7242,7 @@ Correlation time $\tau_s$ &
 
  &  &  \\
 
-Chemical exchange & 
+Chemical exchange \index{chemical exchange} & 
 \quoteenv{`rex'}
  & 
 \quoteenv{`\^{}[Rr]ex\$'}
@@ -7248,7 +7252,7 @@ Chemical exchange &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -7314,7 +7318,7 @@ $J(\omega_H)$ &
 
  &  &  \\
 
-Bond length & 
+Bond length \index{bond length} & 
 \quoteenv{`r'}
  & 
 \quoteenv{`\^{}r\$'}
@@ -7401,7 +7405,7 @@ Function for viewing the collection of molecules extracted from the PDB file.
 
 
 \keyword{run:}
-  The name of the run which the PDB belongs to.
+  The name of the run which the PDB \index{PDB} belongs to.
 
 \subsubsection{Example}
 

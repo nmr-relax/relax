@@ -27,7 +27,7 @@ The significance of equation~\eqref{eq: chi-squared} is that the function return
 % Relaxation equations.
 \subsection{Relaxation equations -- $\Ri(\theta)$}
 
-The chi-squared equation is itself dependent on the relaxation equations throught the back calculated relaxation data R$(\theta)$.  These data are the spin-latice \index{spin-latice relaxation rate} , spin-spin \index{spin-spin relaxation rate}, and cross-relaxation \index{cross-relaxation rate} rates of \citet{Abragam61} and are respectively
+The chi-squared equation is itself dependent on the relaxation equations throught the back calculated relaxation data R$(\theta)$.  These data are the spin-latice \index{relaxation rate!spin-latice} , spin-spin \index{relaxation rate!spin-spin}, and cross-relaxation rates of \citet{Abragam61} and are respectively
 \begin{align}
  \Rone(\theta) &= d \Big( J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H + \omega_X) \Big) + cJ(\omega_X),   \\  \label{eq: R1}
  \Rtwo(\theta) &= \frac{d}{2} \Big( 4J(0) + J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H)                  \nonumber \\
@@ -41,7 +41,7 @@ The chi-squared equation is itself dependent on the relaxation equations through
  c = \frac{(\omega_H \Delta\sigma)^2}{3}, \label{eq: CSA constant}
 \end{gather}
 
-\noindent where $\mu_0$ is the permeability of free space, $\gH$ and $\gX$ are the gyromagnetic ratios of the $H$ and $X$ spins respectively, $\hbar$ is Plank's constant divided by $2\pi$, $r$ is the bond length, and $\Delta\sigma$ is the chemical shift anisotropy measured in ppm.  The cross-relaxation rate $\crossrate$ \index{cross-relaxation rate} is related to the steady state NOE by the equation
+\noindent where $\mu_0$ is the permeability of free space, $\gH$ and $\gX$ are the gyromagnetic ratios of the $H$ and $X$ spins respectively, $\hbar$ is Plank's constant divided by $2\pi$, $r$ is the bond length, and $\Delta\sigma$ is the chemical shift anisotropy measured in ppm.  The cross-relaxation rate $\crossrate$ \index{relaxation rate!cross-relaxation|textbf} is related to the steady state NOE by the equation
 \begin{equation} \label{eq: NOE}
  \mathrm{NOE}(\theta) = 1 + \frac{\gH}{\gX} \frac{\crossrate(\theta)}{\Rone(\theta)}.
 \end{equation}
@@ -50,7 +50,7 @@ The chi-squared equation is itself dependent on the relaxation equations through
 % Transformed relaxation equations.
 \subsection{Transformed relaxation equations -- $\Ri'(\theta)$}
 
-Letting the relaxation equations, $\Ri(\theta)$ be the $\Rone(\theta)$, $\Rtwo(\theta)$, and NOE$(\theta)$, an additional layer of abstraction can be used to simply the calculation of the gradients and Hessians.  This involved decomposing the NOE equation into the cross relaxation rate constant $\crossrate(\theta)$ \index{cross-relaxation rate} and tue auto relaxation rate $\Rone(\theta)$.  Taking equation~\eqref{eq: NOE}, the relaxation equations are
+Letting the relaxation equations, $\Ri(\theta)$ be the $\Rone(\theta)$, $\Rtwo(\theta)$, and NOE$(\theta)$, an additional layer of abstraction can be used to simply the calculation of the gradients and Hessians.  This involved decomposing the NOE equation into the cross relaxation rate constant $\crossrate(\theta)$ and tue auto relaxation rate $\Rone(\theta)$.  Taking equation~\eqref{eq: NOE}, the relaxation equations are
 \begin{align}
  \Rone'(\theta) &= \Rone(\theta) \\
  \Rtwo'(\theta) &= \Rtwo(\theta) \\
@@ -87,17 +87,19 @@ The relaxation equations are themselves dependent on the calculation of the spec
 % Brownian diffusion.
 \subsection{Brownian diffusion}
 
-In equations~\eqref{eq: J(w) model-free generic} and~\eqref{eq: J(w) model-free ext generic}, the generic Brownian diffusion \index{Brownian diffusion} NMR correlation function presented in \citet{dAuvergneGooley06b} has been used.  This function is
+\index{diffusion!Brownian|textbf}
+In equations~\eqref{eq: J(w) model-free generic} and~\eqref{eq: J(w) model-free ext generic}, the generic Brownian diffusion NMR correlation function presented in \citet{dAuvergneGooley06b} has been used.  This function is
 \begin{equation} \label{eq: C(tau) generic}
  C(\tau) = \frac{1}{5} \sum_{i=-k}^k c_i \cdot e^{-\tau/\tau_i},
 \end{equation}
 
-\noindent where the summation index $i$ ranges over the number of exponential terms within the correlation function.  This equation is generic in that it describes the diffusion of an ellipsoid \index{ellipsoid}, a spheroid \index{spheroid}, and a sphere \index{sphere}.
+\noindent where the summation index $i$ ranges over the number of exponential terms within the correlation function.  This equation is generic in that it describes the diffusion \index{diffusion} of an ellipsoid, a spheroid, and a sphere.
 
 
 % Ellipsoid.
 \subsubsection{Ellipsoid}
-For the ellipsoid \index{ellipsoid} defined by the parameter set \{$\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$\} the variable $k$ is equal to two, therefore the index $i \in \{-2, -1, 0, 1, 2\}$.  The geometric parameters \{$\Diff_{iso}$, $\Diff_a$, $\Diff_r$\} are defined as
+\index{diffusion!ellipsoid (asymmetric)|textbf}
+For the ellipsoid defined by the parameter set \{$\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$\} the variable $k$ is equal to two, therefore the index $i \in \{-2, -1, 0, 1, 2\}$.  The geometric parameters \{$\Diff_{iso}$, $\Diff_a$, $\Diff_r$\} are defined as
 \begin{subequations}
 \begin{align}
  & \Diff_{iso} = \tfrac{1}{3} (\Diff_x + \Diff_y + \Diff_z ),   \label{eq: Diso ellipsoid def} \\
@@ -156,7 +158,7 @@ The five correlation times $\tau_i$ are
 
 % Spheroid.
 \subsubsection{Spheroid}
-The variable $k$ is equal to one in the case of the spheroid \index{spheroid} defined by the parameter set \{$\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$\}, hence $i \in \{-1, 0, 1\}$.  The geometric parameters \{$\Diff_{iso}$, $\Diff_a$\} are defined as
+The variable $k$ is equal to one in the case of the spheroid \index{diffusion!spheroid (axially symmetric)|textbf} defined by the parameter set \{$\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$\}, hence $i \in \{-1, 0, 1\}$.  The geometric parameters \{$\Diff_{iso}$, $\Diff_a$\} are defined as
 \begin{subequations}
 \begin{align}
  & \Diff_{iso} = \tfrac{1}{3} (\Diff_\Par + 2\Diff_\Per),   \label{eq: Diso spheroid def} \\
@@ -196,7 +198,7 @@ The five correlation times $\tau_i$ are
 
 % Sphere.
 \subsubsection{Sphere}
-In the situation of a molecule diffusing as a sphere \index{sphere} either described by the single parameter $\tau_m$ or $\Diff_{iso}$, the variable $k$ is equal to zero.  Therefore $i \in \{0\}$.  The single weight $c_0$ is equal to one, while the single correlation time $\tau_0$ is equivalent to the global tumbling time $\tau_m$ given by
+In the situation of a molecule diffusing as a sphere \index{diffusion!sphere (isotropic)|textbf} either described by the single parameter $\tau_m$ or $\Diff_{iso}$, the variable $k$ is equal to zero.  Therefore $i \in \{0\}$.  The single weight $c_0$ is equal to one, while the single correlation time $\tau_0$ is equivalent to the global tumbling time $\tau_m$ given by
 \begin{equation} \label{eq: sphere tau0}
  1/\tau_m = 6\Diff_{iso}.
 \end{equation}
@@ -207,7 +209,7 @@ In the situation of a molecule diffusing as a sphere \index{sphere} either descr
 
 
 % Minimisation concepts.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Minimisation concepts}
 
@@ -713,7 +715,7 @@ The second partial derivatives of the relaxation equations with respect to the b
 
 \section{Ellipsoidal diffusion tensor}
 
-\index{ellipsoid}
+\index{diffusion!ellipsoid (asymmetric)}
 
 
 % Ellipsoid weight derivatives.

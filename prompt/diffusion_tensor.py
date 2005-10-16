@@ -200,7 +200,7 @@ class Diffusion_tensor:
 
         The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
         vector with respect to the diffusion frame while the spherical angles {theta, phi} describe
-        the diffusion tensor with respect to the PDB frame.  Theta is the polar angle and phi is the
+        the diffusion tensor with respect to the PDB frame.  theta is the polar angle and phi is the
         azimuthal angle defined between
 
             0 <= theta <= pi,

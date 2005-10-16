@@ -28,7 +28,7 @@
 from inspect import formatargspec, getargspec, getdoc
 from re import match, search
 import sys
-from string import lstrip, punctuation, replace, rstrip, split, whitespace
+from string import lowercase, lstrip, punctuation, replace, rstrip, split, upper, whitespace
 
 # Add the path to the relax base directory.
 sys.path.append(sys.path[0])
@@ -184,20 +184,167 @@ class Fetch_docstrings:
         self.blacklist.append('script')
 
 
+    def index(self, lines):
+        """Function of inserting index marks into the text."""
+
+        # Initialise.
+        new_lines = []
+
+        # Get the words to index.
+        entries = self.index_entries()
+
+        # Loop over the lines.
+        for i in xrange(len(lines)):
+            # Split the line.
+            words = split(lines[i], ' ')
+
+            # Empty line.
+            if not len(words):
+                new_lines.append(lines[i])
+                continue
+
+            # Recreate the line.
+            for j in xrange(len(words)):
+                # Add the word.
+                if j == 0:
+                    line = words[j]
+                else:
+                    line = line + ' ' + words[j]
+
+                # Loop over the indecies.
+                for k in xrange(len(entries)):
+                    # Find single word entries.
+                    if entries[k][2] == 1 and search(entries[k][0], words[j]):
+                        line = line + ' \\index{' + entries[k][1] + '}'
+
+                    # Find double word entries.
+                    if j != 0 and entries[k][2] == 2 and search(entries[k][0], words[j-1] + ' ' + words[j]):
+                        line = line + ' \\index{' + entries[k][1] + '}'
+
+                    # Find triple word entries.
+                    if j > 1 and entries[k][2] == 3 and search(entries[k][0], words[j-2] + ' ' + words[j-1] + ' ' + words[j]):
+                        line = line + ' \\index{' + entries[k][1] + '}'
+
+            # Append the new line.
+            new_lines.append(line)
+
+        # Return the lines.
+        return new_lines
+
+
     def index_entries(self):
         """Function for returning a data structure containing all words which should be indexed."""
 
         # Initialise.
-        index = []
+        entries = []
 
         # The index entries (where to index and the index name).
-        index.append('Brownian', 'Brownian diffusion')
-        index.append('ellipsoid', 'ellipsoid')
-        index.append('Newton', 'Newton minimisation')
-        index.append('python', 'Python')
+        ########################################################
 
-        # Return the index array.
-        return index
+        entries.append(['angle', 'angles'])
+        entries.append(['anisotropic', 'diffusion!anisotropic'])
+        entries.append(['asymmetric', 'diffusion!ellipsoid (asymmetric)'])
+        entries.append(['axially symmetric', 'diffusion!spheroid (axially symmetric)'])
+
+        entries.append(['BFGS', 'minimisation techniques!BFGS'])
+        entries.append(['bond length', 'bond length'])
+        entries.append(['bound', 'parameter!bounds'])
+        entries.append(['Brownian', 'diffusion!Brownian'])
+        entries.append(['bzip2', 'compression!bzip2'])
+
+        entries.append(['CG-Steihaug', 'minimisation techniques!CG-Steihaug'])
+        entries.append(['chemical exchange', 'chemical exchange'])
+        entries.append(['chi-squared', 'chi-squared'])
+        entries.append(['compression', 'compression'])
+        entries.append(['conjugate gradient', 'minimisation techniques!conjugate gradient'])
+        entries.append(['constraint', 'constraint'])
+        entries.append(['copy', 'copy'])
+        entries.append(['correlation time', 'correlation time'])
+        entries.append(['cauchy', 'minimisation techniques!Cauchy point'])
+
+        entries.append(['delete', 'delete'])
+        entries.append(['diffusion tensor', 'diffusion!tensor'])
+        entries.append(['display', 'display'])
+        entries.append(['dogleg', 'minimisation techniques!dogleg'])
+
+        entries.append(['eigenvalue', 'eigenvalues'])
+        entries.append(['elimination', 'model elimination'])
+        entries.append(['ellipsoid', 'diffusion!ellipsoid (asymmetric)'])
+        entries.append(['Euler angle', 'Euler angles'])
+        entries.append(['exact trust region', 'minimisation techniques!exact trust region'])
+
+        entries.append(['Fletcher-Reeves', 'minimisation techniques!Fletcher-Reeves'])
+        entries.append(['floating point', 'floating point number'])
+
+        entries.append(['grace', 'Grace, the program'])
+        entries.append(['gzip', 'compression!gzip'])
+
+        entries.append(['Hestenes-Stiefel', 'minimisation techniques!Hestenes-Stiefel'])
+
+        entries.append(['isotropic', 'diffusion!sphere (isotropic)'])
+
+        entries.append(['Levenberg-Marquardt', 'minimisation techniques!Levenberg-Marquardt'])
+        entries.append(['limit', 'parameter!limit'])
+
+        entries.append(['map', 'map'])
+        entries.append(['method of [Mm]ultipliers', 'minimisation techniques!Method of Multipliers'])
+        entries.append(['minimise', 'minimisation'])
+        entries.append(['minimisation', 'minimisation'])
+        entries.append(['model elimination', 'model elimination'])
+        entries.append(['modelling', 'modelling'])
+        entries.append(['molecule', 'molecule'])
+        entries.append(['molmol', 'Molmol, the program'])
+
+        entries.append(['OpenDX', 'OpenDX, the program'])
+        entries.append(['optimise', 'optimise'])
+        entries.append(['order parameter', 'order parameter'])
+
+        entries.append(['newton', 'minimisation techniques!Newton'])
+        entries.append(['newton-CG', 'minimisation techniques!Newton conjugate gradient'])
+        entries.append(['NMR', 'NMR'])
+
+        entries.append(['PDB', 'PDB'])
+        entries.append(['Polak-Ribi.*re', 'minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere'])
+        entries.append(['Polak-Ribi.*re +', 'minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere +'])
+        entries.append(['plot', 'plot'])
+        entries.append(['python', 'Python'])
+
+        entries.append(['read', 'read'])
+        entries.append(['regular expression', 'regular expression'])
+        entries.append(['relaxation', 'relaxation'])
+        entries.append(['rotation', 'rotation'])
+
+        entries.append(['sequence', 'sequence'])
+        entries.append(['script', 'scripting!script file'])
+        entries.append(['scripting', 'scripting'])
+        entries.append(['simplex', 'minimisation techniques!simplex'])
+        entries.append(['sphere', 'diffusion!sphere (isotropic)'])
+        entries.append(['spheroid', 'diffusion!spheroid (axially symmetric)'])
+        entries.append(['sparky', 'Sparky, the program'])
+        entries.append(['steepest descent', 'minimisation techniques!steepest descent'])
+
+        entries.append(['tar', 'tar'])
+
+        entries.append(['uncompressed', 'compression!uncompressed'])
+
+        entries.append(['write', 'write'])
+
+        entries.append(['xeasy', 'XEasy, the program'])
+
+        # Modifications.
+        for i in xrange(len(entries)):
+            # Count the number of words.
+            entries[i].append(len(split(entries[i][0], ' ')))
+
+            # Accept capitalisation.
+            if search(entries[i][0][0], lowercase):
+                entries[i][0] = '[' + upper(entries[i][0][0]) + entries[i][0][0] + ']' + entries[i][0][1:]
+
+            # Add a carrot to the start of the match string.
+            entries[i][0] = '^' + entries[i][0]
+
+        # Return the entries array.
+        return entries
 
 
     def latex_maths(self, string):
@@ -661,6 +808,13 @@ class Fetch_docstrings:
         string = self.safe_replacement(string, 'R2', 'R$_1$')
 
 
+        # Misc.
+        #######
+
+        # Polak-Ribi\`ere.
+        string = self.safe_replacement(string, 'Polak-Ribiere', 'Polak-Ribi\`ere')
+
+
         # Return the new text.
         return string
 
@@ -804,6 +958,9 @@ class Fetch_docstrings:
                 # Skip the verbatim env. 
                 if not in_verbatim:
                     lines[j] = self.latex_pipeline_final(lines[j])
+
+            # Insert the index marks.
+            lines = self.index(lines)
 
             # Loop over the section line by line and write them.
             for line in lines:

@@ -153,8 +153,8 @@ class OpenDX:
         | 3D isosurface                             | '^[Ii]so3[Dd]'                |
         |___________________________________________|_______________________________|
 
-        Pattern syntax is simply regular expression syntax where square brackets [] means any
-        character within the brackets, ^ means the start of the string, etc.
+        Pattern syntax is simply regular expression syntax where square brackets '[]' means any
+        character within the brackets, '^' means the start of the string, etc.
 
 
         Examples

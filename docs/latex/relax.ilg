@@ -1,6 +1,9 @@
 This is makeindex, version 2.14 [02-Oct-2002] (kpathsea + Thai support).
-Scanning input file relax.idx....done (50 entries accepted, 0 rejected).
-Sorting entries....done (288 comparisons).
-Generating output file relax.ind....done (51 lines written, 0 warnings).
+Scanning input file relax.idx....done (778 entries accepted, 0 rejected).
+Sorting entries.........done (8157 comparisons).
+Generating output file relax.ind....
+## Warning (input = relax.idx, line = 2; output = relax.ind, line = 103):
+   -- Conflicting entries: multiple encaps for the same page under same key.
+done (141 lines written, 1 warning).
 Output written in relax.ind.
 Transcript written in relax.ilg.
