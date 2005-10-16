@@ -74,16 +74,19 @@ class Palmer:
         Description
         ~~~~~~~~~~~
 
-        The following files are created:
-            'dir/mfin'
-            'dir/mfdata'
-            'dir/mfpar'
-            'dir/mfmodel'
-            'dir/run.sh'
+        The following files are created
+
+            'dir/mfin',
+            'dir/mfdata',
+            'dir/mfpar',
+            'dir/mfmodel',
+            'dir/run.sh'.
 
         The file 'run/run.sh' contains the single command,
-            'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
-        This can be used to execute modelfree4.
+
+        'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out',
+
+        which can be used to execute modelfree4.
         """
 
         # Function intro text.
@@ -174,7 +177,8 @@ class Palmer:
         ~~~~~~~~~~~
 
         Modelfree 4 will be executed as
-            'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
+
+        'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
 
         If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be
         placed on the command line as '-s pdb_file_name'.

@@ -150,10 +150,12 @@ class Results:
         The default behaviour of this function is to compress the file using bzip2 compression.  If
         the extension '.bz2' is not included in the file name, it will be added.  The compression
         can, however, be changed to either no compression or gzip compression.  This is controlled
-        by the compress_type argument which can be set to:
-            0 - No compression (no file extension).
-            1 - bzip2 compression ('.bz2' file extension).
-            2 - gzip compression ('.gz' file extension).
+        by the compress_type argument which can be set to
+
+            0:  No compression (no file extension),
+            1:  bzip2 compression ('.bz2' file extension),
+            2:  gzip compression ('.gz' file extension).
+
         The complementary read function will automatically handle the compressed files.
         """
 

@@ -214,8 +214,7 @@ class Relax_data:
         Examples
         ~~~~~~~~
 
-        To show the relaxation data corresponding to ri_label='NOE', frq_label='600', and the run
-        'm4', type:
+        To display the NOE relaxation data at 600 MHz from the run 'm4', type
 
         relax> relax_data.display('m4', 'NOE', '600')
         """

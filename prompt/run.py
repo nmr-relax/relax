@@ -52,13 +52,13 @@ class Run:
         Description
         ~~~~~~~~~~~
 
-        The run name can be any string however the run type can only be one of the following:
+        The run name can be any string however the run type can only be one of the following
 
-            'jw' - Reduced spectral density mapping.
-            'mf' - Model-free analysis.
-            'noe' - Steady state NOE calculation.
-            'relax_fit' - Relaxation curve fitting.
-            'srls' - SRLS analysis.
+            'jw':  Reduced spectral density mapping,
+            'mf':  Model-free analysis,
+            'noe':  Steady state NOE calculation,
+            'relax_fit':  Relaxation curve fitting,
+            'srls':  SRLS analysis.
 
 
         Examples

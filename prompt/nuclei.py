@@ -44,8 +44,8 @@ class Nuclei:
 
         The heteronuc argument can be set to the following strings:
 
-            N - Nitrogen, -2.7126e7
-            C - Carbon, 2.2e7
+            N:  Nitrogen, -2.7126e7
+            C:  Carbon, 2.2e7
         """
 
         # Function intro text.

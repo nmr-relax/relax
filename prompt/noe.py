@@ -59,8 +59,8 @@ class Noe:
         ~~~~~~~~~~~
 
         The spectrum_type argument can have the following values:
-            'ref' - The NOE reference spectrum.
-            'sat' - The NOE spectrum with proton saturation turned on.
+            'ref':  The NOE reference spectrum.
+            'sat':  The NOE spectrum with proton saturation turned on.
 
         If the 'res_num' and 'res_name' arguments are left as the defaults of None, then the error
         value for all residues will be set to the supplied value.  Otherwise the residue number can
@@ -133,8 +133,8 @@ class Noe:
 
 
         The spectrum_type argument can have the following values:
-            'ref' - The NOE reference spectrum.
-            'sat' - The NOE spectrum with proton saturation turned on.
+            'ref':  The NOE reference spectrum.
+            'sat':  The NOE spectrum with proton saturation turned on.
 
 
         The format argument can currently be set to:

@@ -118,12 +118,12 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     regular expression syntax section of the Python Library Reference.  Some of the regular
     expression syntax used in this function is:
 
-        [] - A sequence or set of characters to match to a single character.  For example,
+        '[]':  A sequence or set of characters to match to a single character.  For example,
         '[Nn]ewton' will match both 'Newton' and 'newton'.
 
-        ^ - Match the start of the string.
+        '^':  Match the start of the string.
 
-        $ - Match the end of the string.  For example, '^[Ll][Mm]$' will match 'lm' and 'LM' but
+        '$':  Match the end of the string.  For example, '^[Ll][Mm]$' will match 'lm' and 'LM' but
         will not match if characters are placed either before or after these strings.
 
     To select a minimisation algorithm, set the argument to a string which matches the given

@@ -146,9 +146,9 @@ class Grace:
 
         The property which is actually plotted can be controlled by the 'plot_data' argument.  It
         can be one of the following:
-            'value' - Plot values (with errors if they exist).
-            'error' - Plot errors.
-            'sims'   - Plot the simulation values.
+            'value':  Plot values (with errors if they exist).
+            'error':  Plot errors.
+            'sims':   Plot the simulation values.
 
 
         Examples
