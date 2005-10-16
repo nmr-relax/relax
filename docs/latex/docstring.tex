@@ -204,8 +204,8 @@ parameters can be used by changing the
  flag to the following integers
 
 \begin{description}
-\item[    0:]   $\tau_m$   (Default),
-\item[    1:]   $\Diff_{iso}$,
+\item[    0 --]   $\tau_m$   (Default),
+\item[    1 --]   $\Diff_{iso}$,
 \end{description}
 
 where
@@ -225,11 +225,11 @@ parameters,
 , are
 
 \begin{description}
-\item[    0:]   ($\tau_m$, $\Diff_a$, $\theta$, $\phi$)   (Default),
-\item[    1:]   ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$),
-\item[    2:]   ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$),
-\item[    3:]   ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$),
-\item[    4:]   ($\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$),
+\item[    0 --]   ($\tau_m$, $\Diff_a$, $\theta$, $\phi$)   (Default),
+\item[    1 --]   ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$),
+\item[    2 --]   ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$),
+\item[    3 --]   ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$),
+\item[    4 --]   ($\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$),
 \end{description}
 
 where
@@ -285,9 +285,9 @@ are separated by commas.  Alternative sets of parameters,
 , are
 
 \begin{description}
-\item[    0:]   ($\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)   (Default),
-\item[    1:]   ($\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$),
-\item[    2:]   ($\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$),
+\item[    0 --]   ($\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)   (Default),
+\item[    1 --]   ($\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$),
+\item[    2 --]   ($\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$),
 \end{description}
 
 where
@@ -849,13 +849,13 @@ can be one of the following:
 \begin{description}
 \item[    
 \quoteenv{`value'}
-:]   Plot values (with errors if they exist).
+ --]   Plot values (with errors if they exist).
 \item[    
 \quoteenv{`error'}
-:]   Plot errors.
+ --]   Plot errors.
 \item[    
 \quoteenv{`sims'}
-:]    Plot the simulation values.
+ --]    Plot the simulation values.
 \end{description}
 
 
@@ -922,7 +922,7 @@ expression syntax used in this function is:
 \begin{description}
 \item[    
 \quoteenv{`[]'}
-:]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -931,10 +931,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`\^{}'}
-:]   Match the start of the string. 
+ --]   Match the start of the string. 
 \item[    
 \quoteenv{`\$'}
-:]   Match the end of the string.  For example, 
+ --]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
@@ -945,10 +945,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`.'}
-:]   Match any character. 
+ --]   Match any character. 
 \item[    
 \quoteenv{`x*'}
-:]   Match the character 
+ --]   Match the character 
 \quoteenv{`x'}
  any number of times, for example 
 \quoteenv{`x'}
@@ -957,7 +957,7 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
-:]   Match any sequence of characters of any length. 
+ --]   Match any sequence of characters of any length. 
 \end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
@@ -1573,10 +1573,10 @@ The following values of the
  flag will return, in tuple form, the following data
 
 \begin{description}
-\item[    0:]   
+\item[    0 --]   
 \quoteenv{`xk'}
 ,
-\item[    1:]   
+\item[    1 --]   
 \quoteenv{`(xk, fk, k, f\_count, g\_count, h\_count, warning)'}
 ,
 \end{description}
@@ -1586,25 +1586,25 @@ where the data names correspond to
 \begin{description}
 \item[    
 \quoteenv{`xk'}
-:]       The array of minimised parameter values,
+ --]       The array of minimised parameter values,
 \item[    
 \quoteenv{`fk'}
-:]       The minimised function value,
+ --]       The minimised function value,
 \item[    
 \quoteenv{`k'}
-:]        The number of iterations,
+ --]        The number of iterations,
 \item[    
 \quoteenv{`f\_count'}
-:]  The number of function calls,
+ --]  The number of function calls,
 \item[    
 \quoteenv{`g\_count'}
-:]  The number of gradient calls,
+ --]  The number of gradient calls,
 \item[    
 \quoteenv{`h\_count'}
-:]  The number of Hessian calls,
+ --]  The number of Hessian calls,
 \item[    
 \quoteenv{`warning'}
-:]  The warning string.
+ --]  The warning string.
 \end{description}
 
 
@@ -1624,7 +1624,7 @@ expression syntax used in this function is:
 \begin{description}
 \item[    
 \quoteenv{`[]'}
-:]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Nn]ewton'}
  will match both 
 \quoteenv{`Newton'}
@@ -1633,10 +1633,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`\^{}'}
-:]   Match the start of the string. 
+ --]   Match the start of the string. 
 \item[    
 \quoteenv{`\$'}
-:]   Match the end of the string.  For example, 
+ --]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ll][Mm]\$'}
  will match 
 \quoteenv{`lm'}
@@ -2111,28 +2111,28 @@ Model-free parameters.
 
 The following parameters are accepted for the original model-free equation:
 \begin{description}
-\item[    $S^2$:]      The square of the generalised order parameter.
-\item[    $\tau_e$:]      The effective correlation time.
+\item[    $S^2$ --]      The square of the generalised order parameter.
+\item[    $\tau_e$ --]      The effective correlation time.
 \end{description}
 The following parameters are accepted for the extended model-free equation:
 \begin{description}
-\item[    $S^2_f$:]     The square of the generalised order parameter of the faster motion.
-\item[    $\tau_f$:]      The effective correlation time of the faster motion.
-\item[    $S^2$:]      The square of the generalised order parameter $S^2$ = $S^2_f$*$S^2_s$.
-\item[    $\tau_s$:]      The effective correlation time of the slower motion.
+\item[    $S^2_f$ --]     The square of the generalised order parameter of the faster motion.
+\item[    $\tau_f$ --]      The effective correlation time of the faster motion.
+\item[    $S^2$ --]      The square of the generalised order parameter $S^2$ = $S^2_f$*$S^2_s$.
+\item[    $\tau_s$ --]      The effective correlation time of the slower motion.
 \end{description}
 The following parameters are accepted for the extended 2 model-free equation:
 \begin{description}
-\item[    $S^2_f$:]     The square of the generalised order parameter of the faster motion.
-\item[    $\tau_f$:]      The effective correlation time of the faster motion.
-\item[    $S^2_s$:]     The square of the generalised order parameter of the slower motion.
-\item[    $\tau_s$:]      The effective correlation time of the slower motion.
+\item[    $S^2_f$ --]     The square of the generalised order parameter of the faster motion.
+\item[    $\tau_f$ --]      The effective correlation time of the faster motion.
+\item[    $S^2_s$ --]     The square of the generalised order parameter of the slower motion.
+\item[    $\tau_s$ --]      The effective correlation time of the slower motion.
 \end{description}
 The following parameters are accepted for all equations:
 \begin{description}
-\item[    $R_{ex}$:]     The chemical exchange relaxation.
-\item[    $r$:]       The average bond length $<$$r$$>$.
-\item[    CSA:]     The chemical shift anisotropy.
+\item[    $R_{ex}$ --]     The chemical exchange relaxation.
+\item[    $r$ --]       The average bond length $<$$r$$>$.
+\item[    CSA --]     The chemical shift anisotropy.
 \end{description}
 
 
@@ -2289,136 +2289,136 @@ The standard preset model-free models are
 \begin{description}
 \item[    
 \quoteenv{`m0'}
-:]   [],
+ --]   [],
 \item[    
 \quoteenv{`m1'}
-:]   [$S^2$],
+ --]   [$S^2$],
 \item[    
 \quoteenv{`m2'}
-:]   [$S^2$, $\tau_e$],
+ --]   [$S^2$, $\tau_e$],
 \item[    
 \quoteenv{`m3'}
-:]   [$S^2$, $R_{ex}$],
+ --]   [$S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`m4'}
-:]   [$S^2$, $\tau_e$, $R_{ex}$],
+ --]   [$S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`m5'}
-:]   [$S^2_f$, $S^2$, $\tau_s$],
+ --]   [$S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m6'}
-:]   [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m7'}
-:]   [$S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m8'}
-:]   [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m9'}
-:]   [$R_{ex}$].
+ --]   [$R_{ex}$].
 \end{description}
 
 The preset model-free models with optimisation of the CSA value are
 \begin{description}
 \item[    
 \quoteenv{`m10'}
-:]   [CSA],
+ --]   [CSA],
 \item[    
 \quoteenv{`m11'}
-:]   [CSA, $S^2$],
+ --]   [CSA, $S^2$],
 \item[    
 \quoteenv{`m12'}
-:]   [CSA, $S^2$, $\tau_e$],
+ --]   [CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`m13'}
-:]   [CSA, $S^2$, $R_{ex}$],
+ --]   [CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`m14'}
-:]   [CSA, $S^2$, $\tau_e$, $R_{ex}$],
+ --]   [CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`m15'}
-:]   [CSA, $S^2_f$, $S^2$, $\tau_s$],
+ --]   [CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m16'}
-:]   [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m17'}
-:]   [CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m18'}
-:]   [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m19'}
-:]   [CSA, $R_{ex}$].
+ --]   [CSA, $R_{ex}$].
 \end{description}
 
 The preset model-free models with optimisation of the bond length are
 \begin{description}
 \item[    
 \quoteenv{`m20'}
-:]   [$r$],
+ --]   [$r$],
 \item[    
 \quoteenv{`m21'}
-:]   [$r$, $S^2$],
+ --]   [$r$, $S^2$],
 \item[    
 \quoteenv{`m22'}
-:]   [$r$, $S^2$, $\tau_e$],
+ --]   [$r$, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`m23'}
-:]   [$r$, $S^2$, $R_{ex}$],
+ --]   [$r$, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`m24'}
-:]   [$r$, $S^2$, $\tau_e$, $R_{ex}$],
+ --]   [$r$, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`m25'}
-:]   [$r$, $S^2_f$, $S^2$, $\tau_s$],
+ --]   [$r$, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m26'}
-:]   [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m27'}
-:]   [$r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m28'}
-:]   [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m29'}
-:]   [$r$, CSA, $R_{ex}$].
+ --]   [$r$, CSA, $R_{ex}$].
 \end{description}
 
 The preset model-free models with both optimisation of the bond length and CSA are
 \begin{description}
 \item[    
 \quoteenv{`m30'}
-:]   [$r$, CSA],
+ --]   [$r$, CSA],
 \item[    
 \quoteenv{`m31'}
-:]   [$r$, CSA, $S^2$],
+ --]   [$r$, CSA, $S^2$],
 \item[    
 \quoteenv{`m32'}
-:]   [$r$, CSA, $S^2$, $\tau_e$],
+ --]   [$r$, CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`m33'}
-:]   [$r$, CSA, $S^2$, $R_{ex}$],
+ --]   [$r$, CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`m34'}
-:]   [$r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
+ --]   [$r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`m35'}
-:]   [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$],
+ --]   [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m36'}
-:]   [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`m37'}
-:]   [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m38'}
-:]   [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`m39'}
-:]   [$r$, CSA, $R_{ex}$].
+ --]   [$r$, CSA, $R_{ex}$].
 \end{description}
 
 Warning:  The models in the thirties range fail when using standard R$_1$, R$_1$, and NOE
@@ -2436,136 +2436,136 @@ the addition of a local $\tau_m$ parameter are:
 \begin{description}
 \item[    
 \quoteenv{`tm0'}
-:]   [$\tau_m$],
+ --]   [$\tau_m$],
 \item[    
 \quoteenv{`tm1'}
-:]   [$\tau_m$, $S^2$],
+ --]   [$\tau_m$, $S^2$],
 \item[    
 \quoteenv{`tm2'}
-:]   [$\tau_m$, $S^2$, $\tau_e$],
+ --]   [$\tau_m$, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`tm3'}
-:]   [$\tau_m$, $S^2$, $R_{ex}$],
+ --]   [$\tau_m$, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`tm4'}
-:]   [$\tau_m$, $S^2$, $\tau_e$, $R_{ex}$],
+ --]   [$\tau_m$, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`tm5'}
-:]   [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm6'}
-:]   [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm7'}
-:]   [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm8'}
-:]   [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm9'}
-:]   [$\tau_m$, $R_{ex}$].
+ --]   [$\tau_m$, $R_{ex}$].
 \end{description}
 
 The preset model-free models with optimisation of the CSA value are
 \begin{description}
 \item[    
 \quoteenv{`tm10'}
-:]   [$\tau_m$, CSA],
+ --]   [$\tau_m$, CSA],
 \item[    
 \quoteenv{`tm11'}
-:]   [$\tau_m$, CSA, $S^2$],
+ --]   [$\tau_m$, CSA, $S^2$],
 \item[    
 \quoteenv{`tm12'}
-:]   [$\tau_m$, CSA, $S^2$, $\tau_e$],
+ --]   [$\tau_m$, CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`tm13'}
-:]   [$\tau_m$, CSA, $S^2$, $R_{ex}$],
+ --]   [$\tau_m$, CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`tm14'}
-:]   [$\tau_m$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
+ --]   [$\tau_m$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`tm15'}
-:]   [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm16'}
-:]   [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm17'}
-:]   [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm18'}
-:]   [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm19'}
-:]   [$\tau_m$, CSA, $R_{ex}$].
+ --]   [$\tau_m$, CSA, $R_{ex}$].
 \end{description}
 
 The preset model-free models with optimisation of the bond length are
 \begin{description}
 \item[    
 \quoteenv{`tm20'}
-:]   [$\tau_m$, $r$],
+ --]   [$\tau_m$, $r$],
 \item[    
 \quoteenv{`tm21'}
-:]   [$\tau_m$, $r$, $S^2$],
+ --]   [$\tau_m$, $r$, $S^2$],
 \item[    
 \quoteenv{`tm22'}
-:]   [$\tau_m$, $r$, $S^2$, $\tau_e$],
+ --]   [$\tau_m$, $r$, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`tm23'}
-:]   [$\tau_m$, $r$, $S^2$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`tm24'}
-:]   [$\tau_m$, $r$, $S^2$, $\tau_e$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`tm25'}
-:]   [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm26'}
-:]   [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm27'}
-:]   [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm28'}
-:]   [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm29'}
-:]   [$\tau_m$, $r$, CSA, $R_{ex}$].
+ --]   [$\tau_m$, $r$, CSA, $R_{ex}$].
 \end{description}
 
 The preset model-free models with both optimisation of the bond length and CSA are
 \begin{description}
 \item[    
 \quoteenv{`tm30'}
-:]   [$\tau_m$, $r$, CSA],
+ --]   [$\tau_m$, $r$, CSA],
 \item[    
 \quoteenv{`tm31'}
-:]   [$\tau_m$, $r$, CSA, $S^2$],
+ --]   [$\tau_m$, $r$, CSA, $S^2$],
 \item[    
 \quoteenv{`tm32'}
-:]   [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$],
+ --]   [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$],
 \item[    
 \quoteenv{`tm33'}
-:]   [$\tau_m$, $r$, CSA, $S^2$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, CSA, $S^2$, $R_{ex}$],
 \item[    
 \quoteenv{`tm34'}
-:]   [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],
 \item[    
 \quoteenv{`tm35'}
-:]   [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm36'}
-:]   [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
+ --]   [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],
 \item[    
 \quoteenv{`tm37'}
-:]   [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm38'}
-:]   [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
+ --]   [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],
 \item[    
 \quoteenv{`tm39'}
-:]   [$\tau_m$, $r$, CSA, $R_{ex}$].
+ --]   [$\tau_m$, $r$, CSA, $R_{ex}$].
 \end{description}
 
 
@@ -3480,10 +3480,10 @@ The spectrum\_type argument can have the following values:
 \begin{description}
 \item[    
 \quoteenv{`ref'}
-:]   The NOE reference spectrum.
+ --]   The NOE reference spectrum.
 \item[    
 \quoteenv{`sat'}
-:]   The NOE spectrum with proton saturation turned on.
+ --]   The NOE spectrum with proton saturation turned on.
 \end{description}
 
 If the 
@@ -3547,10 +3547,10 @@ The spectrum\_type argument can have the following values:
 \begin{description}
 \item[    
 \quoteenv{`ref'}
-:]   The NOE reference spectrum.
+ --]   The NOE reference spectrum.
 \item[    
 \quoteenv{`sat'}
-:]   The NOE spectrum with proton saturation turned on.
+ --]   The NOE spectrum with proton saturation turned on.
 \end{description}
 
 
@@ -3646,8 +3646,8 @@ Function for setting the gyromagnetic ratio of the heteronucleus.
 The heteronuc argument can be set to the following strings:
 
 \begin{description}
-\item[    N:]   Nitrogen, -2.7126e7
-\item[    C:]   Carbon, 2.2e7
+\item[    N --]   Nitrogen, -2.7126e7
+\item[    C --]   Carbon, 2.2e7
 \end{description}
 
 
@@ -4464,11 +4464,11 @@ can, however, be changed to either no compression or gzip compression.  This is 
 by the compress\_type argument which can be set to
 
 \begin{description}
-\item[    0:]   No compression (no file extension),
-\item[    1:]   bzip2 compression (
+\item[    0 --]   No compression (no file extension),
+\item[    1 --]   bzip2 compression (
 \quoteenv{`.bz2'}
  file extension),
-\item[    2:]   gzip compression (
+\item[    2 --]   gzip compression (
 \quoteenv{`.gz'}
  file extension).
 \end{description}
@@ -4506,19 +4506,19 @@ The run name can be any string however the run type can only be one of the follo
 \begin{description}
 \item[    
 \quoteenv{`jw'}
-:]   Reduced spectral density mapping,
+ --]   Reduced spectral density mapping,
 \item[    
 \quoteenv{`mf'}
-:]   Model-free analysis,
+ --]   Model-free analysis,
 \item[    
 \quoteenv{`noe'}
-:]   Steady state NOE calculation,
+ --]   Steady state NOE calculation,
 \item[    
 \quoteenv{`relax\_fit'}
-:]   Relaxation curve fitting,
+ --]   Relaxation curve fitting,
 \item[    
 \quoteenv{`srls'}
-:]   SRLS analysis.
+ --]   SRLS analysis.
 \end{description}
 
 
@@ -5143,11 +5143,11 @@ can, however, be changed to either no compression or gzip compression.  This is 
 by the compress\_type argument which can be set to
 
 \begin{description}
-\item[    0:]   No compression (no file extension).
-\item[    1:]   bzip2 compression (
+\item[    0 --]   No compression (no file extension).
+\item[    1 --]   bzip2 compression (
 \quoteenv{`.bz2'}
  file extension).
-\item[    2:]   gzip compression (
+\item[    2 --]   gzip compression (
 \quoteenv{`.gz'}
  file extension).
 \end{description}
@@ -5638,7 +5638,7 @@ expression syntax used in this function is:
 \begin{description}
 \item[    
 \quoteenv{`[]'}
-:]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -5647,10 +5647,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`\^{}'}
-:]   Match the start of the string. 
+ --]   Match the start of the string. 
 \item[    
 \quoteenv{`\$'}
-:]   Match the end of the string.  For example, 
+ --]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
@@ -5661,10 +5661,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`.'}
-:]   Match any character. 
+ --]   Match any character. 
 \item[    
 \quoteenv{`x*'}
-:]   Match the character 
+ --]   Match the character 
 \quoteenv{`x'}
  any number of times, for example 
 \quoteenv{`x'}
@@ -5673,7 +5673,7 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
-:]   Match any sequence of characters of any length. 
+ --]   Match any sequence of characters of any length. 
 \end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
@@ -5933,7 +5933,7 @@ expression syntax used in this function is:
 \begin{description}
 \item[    
 \quoteenv{`[]'}
-:]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -5942,10 +5942,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`\^{}'}
-:]   Match the start of the string. 
+ --]   Match the start of the string. 
 \item[    
 \quoteenv{`\$'}
-:]   Match the end of the string.  For example, 
+ --]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
@@ -5956,10 +5956,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`.'}
-:]   Match any character. 
+ --]   Match any character. 
 \item[    
 \quoteenv{`x*'}
-:]   Match the character 
+ --]   Match the character 
 \quoteenv{`x'}
  any number of times, for example 
 \quoteenv{`x'}
@@ -5968,7 +5968,7 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
-:]   Match any sequence of characters of any length. 
+ --]   Match any sequence of characters of any length. 
 \end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
@@ -6232,7 +6232,7 @@ expression syntax used in this function is:
 \begin{description}
 \item[    
 \quoteenv{`[]'}
-:]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -6241,10 +6241,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`\^{}'}
-:]   Match the start of the string. 
+ --]   Match the start of the string. 
 \item[    
 \quoteenv{`\$'}
-:]   Match the end of the string.  For example, 
+ --]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
@@ -6255,10 +6255,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`.'}
-:]   Match any character. 
+ --]   Match any character. 
 \item[    
 \quoteenv{`x*'}
-:]   Match the character 
+ --]   Match the character 
 \quoteenv{`x'}
  any number of times, for example 
 \quoteenv{`x'}
@@ -6267,7 +6267,7 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
-:]   Match any sequence of characters of any length. 
+ --]   Match any sequence of characters of any length. 
 \end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
@@ -6703,7 +6703,7 @@ expression syntax used in this function is:
 \begin{description}
 \item[    
 \quoteenv{`[]'}
-:]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -6712,10 +6712,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`\^{}'}
-:]   Match the start of the string. 
+ --]   Match the start of the string. 
 \item[    
 \quoteenv{`\$'}
-:]   Match the end of the string.  For example, 
+ --]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
@@ -6726,10 +6726,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`.'}
-:]   Match any character. 
+ --]   Match any character. 
 \item[    
 \quoteenv{`x*'}
-:]   Match the character 
+ --]   Match the character 
 \quoteenv{`x'}
  any number of times, for example 
 \quoteenv{`x'}
@@ -6738,7 +6738,7 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
-:]   Match any sequence of characters of any length. 
+ --]   Match any sequence of characters of any length. 
 \end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match
@@ -7128,7 +7128,7 @@ expression syntax used in this function is:
 \begin{description}
 \item[    
 \quoteenv{`[]'}
-:]   A sequence or set of characters to match to a single character.  For example, 
+ --]   A sequence or set of characters to match to a single character.  For example, 
 \quoteenv{`[Ss]2'}
  will match both 
 \quoteenv{`S2'}
@@ -7137,10 +7137,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`\^{}'}
-:]   Match the start of the string. 
+ --]   Match the start of the string. 
 \item[    
 \quoteenv{`\$'}
-:]   Match the end of the string.  For example, 
+ --]   Match the end of the string.  For example, 
 \quoteenv{`\^{}[Ss]2\$'}
  will match 
 \quoteenv{`s2'}
@@ -7151,10 +7151,10 @@ expression syntax used in this function is:
 . 
 \item[    
 \quoteenv{`.'}
-:]   Match any character. 
+ --]   Match any character. 
 \item[    
 \quoteenv{`x*'}
-:]   Match the character 
+ --]   Match the character 
 \quoteenv{`x'}
  any number of times, for example 
 \quoteenv{`x'}
@@ -7163,7 +7163,7 @@ expression syntax used in this function is:
  
 \item[    
 \quoteenv{`.*'}
-:]   Match any sequence of characters of any length. 
+ --]   Match any sequence of characters of any length. 
 \end{description}
 Importantly, do not supply a string for the data type containing regular expression.  The
 regular expression is implemented so that various strings can be supplied which all match

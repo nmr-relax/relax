@@ -481,7 +481,7 @@ class Fetch_docstrings:
                             elements = split(lines[i], ':')
 
                             # Format the element.
-                            new_lines.append("\\item[" + elements[0] + ":] " + elements[1])
+                            new_lines.append("\\item[" + elements[0] + " --] " + elements[1])
 
                     # Otherwise add it to the last line.
                     else:
@@ -499,7 +499,7 @@ class Fetch_docstrings:
                         elements = split(lines[i], ':')
 
                         # Format the element.
-                        new_lines.append("\\item[" + elements[0] + ":] " + elements[1])
+                        new_lines.append("\\item[" + elements[0] + " --] " + elements[1])
 
 
             # Non-list lines.
