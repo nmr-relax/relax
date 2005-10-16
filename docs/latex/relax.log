@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 19:21
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 21:30
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -373,55 +373,55 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [49]
 [50] [51] [52] [53] [54] [55] [56] [57] [58]
-Overfull \hbox (29.4888pt too wide) in paragraph at lines 1621--1665
+Overfull \hbox (29.4888pt too wide) in paragraph at lines 1620--1664
  [] 
  []
 
 [59] [60] [61] [62] [63]
-Underfull \hbox (badness 10000) in paragraph at lines 2126--2127
+Underfull \hbox (badness 10000) in paragraph at lines 2125--2126
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(`test', `large[]model', `mf[
 ]ext', [`S2f', `tf', `S2', `ts',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2128--2129
+Underfull \hbox (badness 10000) in paragraph at lines 2127--2128
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(run=`test', model=`large[]mo
 del', params=[`S2f', `tf', `S2',
  []
 
 [64] [65] [66] [67] [68] [69] [70] [71]
-Underfull \hbox (badness 10000) in paragraph at lines 2619--2620
+Underfull \hbox (badness 10000) in paragraph at lines 2618--2619
 []\OT1/cmtt/m/n/9 relax> model[]selection(method=`AIC', modsel[]run=`mixed', ru
 ns=[`m1', `m2', `m3', `m4',
  []
 
 [72] [73] [74] [75] [76] [77] [78] [79] [80] [81] [82] [83] [84] [85] [86]
 [87] [88] [89]
-Underfull \hbox (badness 10000) in paragraph at lines 3401--3402
+Underfull \hbox (badness 10000) in paragraph at lines 3400--3401
 \OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
 spec-trum[]type=None, res[]num=None,
  []
 
 [90] [91] [92] [93]
-Underfull \hbox (badness 10000) in paragraph at lines 3612--3613
+Underfull \hbox (badness 10000) in paragraph at lines 3609--3610
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
 [94] [95] [96] [97]
-Underfull \hbox (badness 1158) in paragraph at lines 3772--3773
+Underfull \hbox (badness 1158) in paragraph at lines 3762--3763
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
 [98] [99] [100] [101] [102] [103]
-Underfull \hbox (badness 10000) in paragraph at lines 4128--4129
+Underfull \hbox (badness 10000) in paragraph at lines 4118--4119
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`NOE', frq[]label=`60
 0', frq=600.0 * 1e6,
  []
 
 [104]
-Underfull \hbox (badness 10000) in paragraph at lines 4140--4141
+Underfull \hbox (badness 10000) in paragraph at lines 4130--4131
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`R2', frq[]label=`800
  MHz', frq=8.0*1e8,
  []
@@ -430,13 +430,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 4140--4141
 [117] [118] [119] [120] [121] [122] [123] [124] [125] [126] [127] [128]
 [129] [130] [131] [132] [133] [134] [135] [136] [137] [138] [139] [140]
 [141]
-Underfull \hbox (badness 6493) in paragraph at lines 6111--6112
+Underfull \hbox (badness 6493) in paragraph at lines 6097--6098
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6169--6170
+Underfull \hbox (badness 10000) in paragraph at lines 6155--6156
 []\OT1/cmtt/m/n/9 relax> value.read(run=`m1', data[]type=`CSA', file=`data/csa[
 ]value', num[]col=0, name[]col=1,
  []
@@ -449,7 +449,7 @@ Underfull \vbox (badness 1584) has occurred while \output is active []
 
  [144]
 [145]
-Overfull \hbox (6.26677pt too wide) in paragraph at lines 6490--6544
+Overfull \hbox (6.26677pt too wide) in paragraph at lines 6476--6530
  [] 
  []
 
@@ -491,4 +491,4 @@ Here is how much of TeX's memory you used:
  26 hyphenation exceptions out of 1000
  27i,12n,22p,1051b,411s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (164 pages, 346324 bytes).
+Output written on relax.dvi (164 pages, 346312 bytes).
