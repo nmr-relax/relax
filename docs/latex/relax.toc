@@ -19,7 +19,7 @@
 \contentsline {subsection}{\numberline {2.1.5}Brownian diffusion}{15}
 \contentsline {subsubsection}{Ellipsoid}{15}
 \contentsline {subsubsection}{Spheroid}{16}
-\contentsline {subsubsection}{Spheroid}{17}
+\contentsline {subsubsection}{Sphere}{17}
 \contentsline {section}{\numberline {2.2}Minimisation concepts}{17}
 \contentsline {subsection}{\numberline {2.2.1}The function value}{17}
 \contentsline {subsection}{\numberline {2.2.2}The gradient}{17}

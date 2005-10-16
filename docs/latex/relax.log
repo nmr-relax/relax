@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 16:12
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  16 OCT 2005 16:56
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -52,6 +52,9 @@ Package: natbib 2000/07/24 7.0a (PWD)
 \bibsep=\skip44
 LaTeX Info: Redefining \cite on input line 508.
 \c@NAT@ctr=\count88
+)
+(/usr/share/texmf/tex/latex/base/makeidx.sty
+Package: makeidx 2000/03/29 v1.0m Standard LaTeX package
 )
 (/usr/share/texmf/tex/latex/misc/booktabs.sty
 Package: booktabs 2000/08/16 v1.61 publication quality tables
@@ -142,31 +145,36 @@ LaTeX Info: Redefining \] on input line 2667.
 Package: eufrak 2001/10/01 v2.2e Euler Fraktur fonts
 LaTeX Font Info:    Overwriting math alphabet `\EuFrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 61.
-) (./relax.aux (./intro.aux)
-(./maths.aux) (./functions.aux) (./licence.aux))
+)
+\@indexfile=\write3
+\openout3 = `relax.idx'.
+
+
+Writing index file relax.idx
+(./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux))
 \openout1 = `relax.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
- [1
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+
+[1
 
 
 ] [2
 
-] (./relax.toc [3]
-[4])
-\tf@toc=\write3
-\openout3 = `relax.toc'.
+] (./relax.toc [3] [4])
+\tf@toc=\write4
+\openout4 = `relax.toc'.
 
  [5]
 \openout2 = `intro.aux'.
@@ -466,19 +474,22 @@ Chapter 4.
 ] [154] [155] [156] [157] [158]) [159] (./relax.bbl [160
 
 
+]) (./relax.ind
+[161] [162
+
+
 ])
 
 Package natbib Warning: There were undefined citations.
 
-[161] (./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux
-)) ) 
+(./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
- 1788 strings out of 95756
- 21452 string characters out of 1190795
- 78564 words of memory out of 1000001
- 4732 multiletter control sequences out of 10000+50000
+ 1803 strings out of 95756
+ 21654 string characters out of 1190795
+ 78660 words of memory out of 1000001
+ 4740 multiletter control sequences out of 10000+50000
  15272 words of font info for 56 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
- 27i,12n,22p,1036b,407s stack positions out of 3000i,1500n,5000p,200000b,15000s
+ 27i,12n,22p,1051b,411s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (161 pages, 342772 bytes).
+Output written on relax.dvi (162 pages, 343416 bytes).

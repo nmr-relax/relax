@@ -12,6 +12,9 @@ latex relax.tex
 echo -e "\n\n\n <<< Bibtex >>>\n\n\n"
 bibtex relax.aux
 
+echo -e "\n\n\n <<< Makeindex >>>\n\n\n"
+makeindex relax.idx
+
 echo -e "\n\n\n <<< Latex (second round) >>>\n\n\n"
 latex relax.tex
 

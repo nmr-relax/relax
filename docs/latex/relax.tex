@@ -6,6 +6,9 @@
 % Natural Sciences Citations and References.
 \usepackage{natbib}
 
+% The index.
+\usepackage{makeidx}
+
 % Good looking tables.
 \usepackage{booktabs}
 
@@ -40,6 +43,8 @@
 % Natbib Citation format.
 \bibpunct{(}{)}{;}{a}{,}{,}
 
+% Make the index.
+\makeindex
 
 
 % Start the document.
@@ -131,5 +136,13 @@
 
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
+
+
+
+% Index.
+%%%%%%%%
+
+\printindex
+
 
 \end{document}

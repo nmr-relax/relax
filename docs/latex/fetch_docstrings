@@ -184,6 +184,22 @@ class Fetch_docstrings:
         self.blacklist.append('script')
 
 
+    def index_entries(self):
+        """Function for returning a data structure containing all words which should be indexed."""
+
+        # Initialise.
+        index = []
+
+        # The index entries (where to index and the index name).
+        index.append('Brownian', 'Brownian diffusion')
+        index.append('ellipsoid', 'ellipsoid')
+        index.append('Newton', 'Newton minimisation')
+        index.append('python', 'Python')
+
+        # Return the index array.
+        return index
+
+
     def latex_maths(self, string):
         """Function for handling LaTeX maths environments."""
 
