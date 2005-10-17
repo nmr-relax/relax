@@ -111,7 +111,7 @@
   \item relaxation, 49, 59, 64, 95--99, 101, 102, 107, 137, 145
   \item relaxation rate
     \subitem cross-relaxation, \textbf{8}
-    \subitem spin-latice, 7
+    \subitem spin-lattice, 7
     \subitem spin-spin, 7
   \item rotation, 32
   \item run, \textbf{4}

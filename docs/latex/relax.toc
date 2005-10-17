@@ -28,11 +28,11 @@
 \contentsline {section}{\numberline {2.4}$\chi ^2$ values, gradients, and Hessians}{12}
 \contentsline {subsection}{\numberline {2.4.1}$\chi ^2$ values}{12}
 \contentsline {subsection}{\numberline {2.4.2}$\chi ^2$ gradients}{13}
-\contentsline {subsection}{\numberline {2.4.3}$\chi ^2$ hessians}{13}
+\contentsline {subsection}{\numberline {2.4.3}$\chi ^2$ Hessians}{13}
 \contentsline {section}{\numberline {2.5}$\@mathrm {R}_i(\theta )$ values, gradients, and Hessians}{13}
 \contentsline {subsection}{\numberline {2.5.1}$\@mathrm {R}_i(\theta )$ values}{13}
 \contentsline {subsection}{\numberline {2.5.2}$\@mathrm {R}_i(\theta )$ gradients}{13}
-\contentsline {subsection}{\numberline {2.5.3}$\@mathrm {R}_i(\theta )$ hessians}{13}
+\contentsline {subsection}{\numberline {2.5.3}$\@mathrm {R}_i(\theta )$ Hessians}{13}
 \contentsline {section}{\numberline {2.6}$\@mathrm {R}_i'(\theta )$ values, gradients, and Hessians}{14}
 \contentsline {subsection}{\numberline {2.6.1}Components of the $\@mathrm {R}_i'(\theta )$ equations}{14}
 \contentsline {subsubsection}{Dipolar constant}{14}

@@ -27,7 +27,7 @@ The significance of equation~\eqref{eq: chi-squared} is that the function return
 % Relaxation equations.
 \subsection{Relaxation equations -- $\Ri(\theta)$}
 
-The chi-squared equation is itself dependent on the relaxation equations throught the back calculated relaxation data R$(\theta)$.  These data are the spin-latice \index{relaxation rate!spin-latice} , spin-spin \index{relaxation rate!spin-spin}, and cross-relaxation rates of \citet{Abragam61} and are respectively
+The chi-squared equation is itself dependent on the relaxation equations through the back calculated relaxation data R$(\theta)$.  These data are the spin-lattice \index{relaxation rate!spin-lattice} , spin-spin \index{relaxation rate!spin-spin}, and cross-relaxation rates of \citet{Abragam61} and are respectively
 \begin{align}
  \Rone(\theta) &= d \Big( J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H + \omega_X) \Big) + cJ(\omega_X),   \\  \label{eq: R1}
  \Rtwo(\theta) &= \frac{d}{2} \Big( 4J(0) + J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H)                  \nonumber \\
@@ -50,7 +50,7 @@ The chi-squared equation is itself dependent on the relaxation equations through
 % Transformed relaxation equations.
 \subsection{Transformed relaxation equations -- $\Ri'(\theta)$}
 
-Letting the relaxation equations, $\Ri(\theta)$ be the $\Rone(\theta)$, $\Rtwo(\theta)$, and NOE$(\theta)$, an additional layer of abstraction can be used to simply the calculation of the gradients and Hessians.  This involved decomposing the NOE equation into the cross relaxation rate constant $\crossrate(\theta)$ and tue auto relaxation rate $\Rone(\theta)$.  Taking equation~\eqref{eq: NOE}, the relaxation equations are
+Letting the relaxation equations, $\Ri(\theta)$ be the $\Rone(\theta)$, $\Rtwo(\theta)$, and NOE$(\theta)$, an additional layer of abstraction can be used to simply the calculation of the gradients and Hessians.  This involved decomposing the NOE equation into the cross relaxation rate constant $\crossrate(\theta)$ and the auto relaxation rate $\Rone(\theta)$.  Taking equation~\eqref{eq: NOE}, the relaxation equations are
 \begin{align}
  \Rone'(\theta) &= \Rone(\theta) \\
  \Rtwo'(\theta) &= \Rtwo(\theta) \\
@@ -265,7 +265,7 @@ The dependency chain outlined in the introduction to this chapter, that the chi-
 % Dependency figure.
 \begin{figure}[!h]
 \centerline{\includegraphics[width=0.8\textwidth]{images/dependencies/dependencies.eps}}
-\caption{Dependencies between the $\chi^2$, transformed relaxation, relaxation, and spectral density equations, gradients, and Hessians.}\label{fig: dependencies}
+\caption[$\chi^2$ dependencies of the values, gradients, and Hessians]{Dependencies between the $\chi^2$, transformed relaxation, relaxation, and spectral density equations, gradients, and Hessians.}\label{fig: dependencies}
 \end{figure}
 
 
@@ -296,7 +296,7 @@ The $\chi^2$ gradient is
 
 
 % Chi-squared Hessians.
-\subsection{$\chi^2$ hessians}
+\subsection{$\chi^2$ Hessians}
 
 The $\chi^2$ Hessian is
 \begin{equation}
@@ -336,7 +336,7 @@ The $\Ri(\theta)$ gradients are
 
 
 % Ri Hessians.
-\subsection{$\Ri(\theta)$ hessians}
+\subsection{$\Ri(\theta)$ Hessians}
 
 The $\Ri(\theta)$ Hessians are
 \begin{align}
