@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  17 OCT 2005 02:11
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  17 OCT 2005 22:27
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -170,19 +170,30 @@ LaTeX Font Info:    ... okay on input line 53.
 [1
 
 
+
 ] [2
 
-] (./relax.toc [3] [4])
+] [3] [4
+
+] (./relax.toc [5] [6])
 \tf@toc=\write4
 \openout4 = `relax.toc'.
 
- [5]
-\openout2 = `intro.aux'.
+ [7] [8
 
- (./intro.tex [6
+] (./relax.lof)
+\tf@lof=\write5
+\openout5 = `relax.lof'.
 
+ [9] [10
+
+] [11]
+[12
 
 ]
+\openout2 = `intro.aux'.
+
+ (./intro.tex
 Chapter 1.
 
 Underfull \hbox (badness 10000) in paragraph at lines 23--27
@@ -194,12 +205,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 31--35
 
  []
 
-[7] [8]
+[1
+
+
+] [2]
 Underfull \hbox (badness 10000) in paragraph at lines 122--136
 
  []
 
-[9] [10]
+[3] [4]
 Underfull \hbox (badness 10000) in paragraph at lines 192--228
 
  []
@@ -253,13 +267,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 192--228
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [11])
-[12]
+ [5])
+[6]
 \openout2 = `maths.aux'.
 
  (./maths.tex
 Chapter 2.
-[13
+[7
 
 
 
@@ -270,37 +284,37 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 60.
- [14]
+ [8]
 
-Package natbib Warning: Citation `dAuvergneGooley06b' on page 15 undefined on i
-nput line 91.
+Package natbib Warning: Citation `dAuvergneGooley06b' on page 9 undefined on in
+put line 91.
 
 LaTeX Font Info:    Try loading font information for U+euf on input line 102.
 (/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2002/01/19 v2.2g AMS font definitions
-) [15] [16] [17]
+) [9] [10] [11]
 File: images/dependencies/dependencies.eps Graphic file (type eps)
 
-<images/dependencies/dependencies.eps> [18] [19] [20] [21] [22]
+<images/dependencies/dependencies.eps> [12] [13] [14] [15] [16]
 Underfull \vbox (badness 1540) has occurred while \output is active []
 
- [23]
-[24] [25] [26]) [27]
+ [17]
+[18] [19] [20]) [21]
 \openout2 = `functions.aux'.
 
- (./functions.tex [28
+ (./functions.tex [22
 
 
 
 ]
 Chapter 3.
-[29] (./docstring.tex [30] [31] [32] [33] [34] [35]
+[23] (./docstring.tex [24] [25] [26] [27] [28] [29]
 Underfull \hbox (badness 2027) in paragraph at lines 159--160
 \OT1/cmss/bx/n/10.95 diffusion[]tensor.set\OT1/cmss/m/n/10.95 (self, run=None, 
 params=None, time[]scale=1.0, d[]scale=1.0, an-
  []
 
-[36] [37] [38]
+[30] [31] [32]
 Underfull \hbox (badness 10000) in paragraph at lines 380--381
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e7, 1.417e
 7, 67.174, -83.718),
@@ -336,7 +350,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 394--395
 2.027, -80.573, 65.568),
  []
 
-[39] [40] [41]
+[33] [34] [35]
 Underfull \hbox (badness 10000) in paragraph at lines 557--558
 []\OT1/cmtt/m/n/9 relax> map(run=`m5', []res[]num=6, type=`Iso3D', inc=20, swap
 =[0, 1, 2], file=`map',
@@ -348,13 +362,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 565--566
 =[0, 2, 1], file=`map',
  []
 
-[42] [43] [44] [45] [46]
+[36] [37] [38] [39] [40]
 Underfull \hbox (badness 10000) in paragraph at lines 795--796
 \OT1/cmss/bx/n/10.95 grace.write\OT1/cmss/m/n/10.95 (self, run=None, x[]data[]t
 ype=`res', y[]data[]type=None, res[]num=None,
  []
 
-[47]
+[41]
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 856.
 
@@ -369,32 +383,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 908--909
 type=`te', res[]num=123,
  []
 
-[48]
+[42]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [49]
-[50] [51] [52] [53] [54] [55] [56]
+ [43]
+[44] [45] [46] [47] [48] [49] [50]
 Overfull \hbox (200.98616pt too wide) in paragraph at lines 1502--1502
 []\OT1/cmtt/m/n/9 function.  Only take note of the minimisation \index{minimisa
 tion} algorithms and minimisation \index{minimisation} options sections,[] 
  []
 
-[57]
+[51]
 Overfull \hbox (82.86253pt too wide) in paragraph at lines 1502--1502
 []\OT1/cmtt/m/n/9 Multipliers algorithms CANNOT be selected as minimisation \in
 dex{minimisation} algorithms for this function.[] 
  []
 
-[58] [59]
+[52] [53]
 Overfull \hbox (29.4888pt too wide) in paragraph at lines 1680--1724
  [] 
  []
 
-[60]
+[54]
 Underfull \vbox (badness 3088) has occurred while \output is active []
 
- [61]
-[62] [63] [64]
+ [55]
+[56] [57] [58]
 Underfull \hbox (badness 10000) in paragraph at lines 2185--2186
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(`test', `large[]model', `mf[
 ]ext', [`S2f', `tf', `S2', `ts',
@@ -406,52 +420,52 @@ Underfull \hbox (badness 10000) in paragraph at lines 2187--2188
 del', params=[`S2f', `tf', `S2',
  []
 
-[65] [66] [67] [68] [69] [70] [71] [72]
+[59] [60] [61] [62] [63] [64] [65] [66]
 Underfull \hbox (badness 10000) in paragraph at lines 2678--2679
 []\OT1/cmtt/m/n/9 relax> model[]selection(method=`AIC', modsel[]run=`mixed', ru
 ns=[`m1', `m2', `m3', `m4',
  []
 
-[73] [74] [75] [76] [77] [78] [79] [80] [81] [82] [83] [84] [85] [86] [87]
-[88] [89] [90]
+[67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81]
+[82] [83] [84]
 Underfull \hbox (badness 10000) in paragraph at lines 3460--3461
 \OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
 spec-trum[]type=None, res[]num=None,
  []
 
-[91] [92] [93] [94]
+[85] [86] [87] [88]
 Underfull \hbox (badness 10000) in paragraph at lines 3669--3670
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
-[95] [96] [97] [98]
+[89] [90] [91] [92]
 Underfull \hbox (badness 1158) in paragraph at lines 3826--3827
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
-[99] [100] [101] [102] [103] [104]
+[93] [94] [95] [96] [97] [98]
 Underfull \hbox (badness 10000) in paragraph at lines 4178--4179
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`NOE', frq[]label=`60
 0', frq=600.0 * 1e6,
  []
 
-[105]
+[99]
 Underfull \hbox (badness 10000) in paragraph at lines 4190--4191
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`R2', frq[]label=`800
  MHz', frq=8.0*1e8,
  []
 
-[106] [107] [108] [109] [110] [111] [112] [113] [114] [115] [116] [117]
-[118] [119] [120] [121] [122] [123] [124] [125] [126] [127] [128] [129]
-[130] [131]
+[100] [101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111]
+[112] [113] [114] [115] [116] [117] [118] [119] [120] [121] [122] [123]
+[124] [125]
 Overfull \hbox (2.53847pt too wide) in paragraph at lines 5286--5286
 []\OT1/cmtt/m/n/9 # Host          User name       Program path            Worki
 ng directory    Priority  CPUs[] 
  []
 
-[132] [133] [134] [135] [136] [137] [138] [139] [140] [141] [142]
+[126] [127] [128] [129] [130] [131] [132] [133] [134] [135] [136]
 Underfull \hbox (badness 6493) in paragraph at lines 6160--6161
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
@@ -463,14 +477,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 6218--6219
 ]value', num[]col=0, name[]col=1,
  []
 
-[143]
+[137]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [144]
+ [138]
 Underfull \vbox (badness 1584) has occurred while \output is active []
 
- [145]
-[146]
+ [139]
+[140]
 Overfull \hbox (6.26677pt too wide) in paragraph at lines 6539--6593
  [] 
  []
@@ -478,33 +492,33 @@ Overfull \hbox (6.26677pt too wide) in paragraph at lines 6539--6593
 
 Underfull \vbox (badness 1448) has occurred while \output is active []
 
- [147]
-[148] [149] [150] [151] [152]
+ [141]
+[142] [143] [144] [145] [146]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [153]
-[154])) [155]
+ [147]
+[148])) [149]
 \openout2 = `licence.aux'.
 
- (./licence.tex [156
+ (./licence.tex [150
 
 
 
 ]
 Chapter 4.
-[157] [158] [159] [160] [161] [162]) [163] (./relax.bbl [164
+[151] [152] [153] [154] [155] [156]) [157] (./relax.bbl [158
 
 
 ]) (./relax.ind
-[165]
+[159]
 Overfull \hbox (0.90193pt too wide) in paragraph at lines 31--32
-[]| \OT1/cmr/m/n/10.95 spheroid (ax-i-ally sym-met-ric), \OT1/cmr/bx/n/10.95 16
-\OT1/cmr/m/n/10.95 , 31, 36,
+[]| \OT1/cmr/m/n/10.95 spheroid (ax-i-ally sym-met-ric), \OT1/cmr/bx/n/10.95 10
+\OT1/cmr/m/n/10.95 , 25, 30,
  []
 
-[166
+[160
 
-] [167
+] [161
 
 ])
 
@@ -512,12 +526,12 @@ Package natbib Warning: There were undefined citations.
 
 (./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
- 1805 strings out of 95756
- 21681 string characters out of 1190795
- 78660 words of memory out of 1000001
+ 1808 strings out of 95756
+ 21705 string characters out of 1190795
+ 78643 words of memory out of 1000001
  4742 multiletter control sequences out of 10000+50000
  15272 words of font info for 56 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
  27i,12n,22p,1058b,450s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (167 pages, 350008 bytes).
+Output written on relax.dvi (173 pages, 352604 bytes).
