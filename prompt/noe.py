@@ -132,31 +132,31 @@ class Noe:
         The peak intensity can either be from peak heights or peak volumes.
 
 
-        The spectrum_type argument can have the following values:
+        The 'spectrum_type' argument can have the following values:
             'ref':  The NOE reference spectrum.
             'sat':  The NOE spectrum with proton saturation turned on.
 
 
-        The format argument can currently be set to:
+        The 'format' argument can currently be set to:
             'sparky'
             'xeasy'
 
-        If the format argument is set to 'sparky', the file should be a Sparky peak list saved after
-        typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
-        3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
-        The frequency data w1 and w2 are ignored while the peak intensity data can either be the
-        peak height or volume displayed by changing the window options.  If the peak intensity data
-        is not within column 3, set the argument int_col to the appropriate value (column numbering
-        starts from 0 rather than 1).
+        If the 'format' argument is set to 'sparky', the file should be a Sparky peak list saved
+        after typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st,
+        2nd, 3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data
+        respectively.  The frequency data w1 and w2 are ignored while the peak intensity data can
+        either be the peak height or volume displayed by changing the window options.  If the peak
+        intensity data is not within column 3, set the argument 'int_col' to the appropriate value
+        (column numbering starts from 0 rather than 1).
 
-        If the format argument is set to 'xeasy', the file should be the saved XEasy text window
+        If the 'format' argument is set to 'xeasy', the file should be the saved XEasy text window
         output of the list peak entries command, 'tw' followed by 'le'.  As the columns are fixed,
         the peak intensity column is hardwired to number 10 (the 11th column) which contains either
-        the peak height or peak volume data.  Because the columns are fixed, the int_col argument
+        the peak height or peak volume data.  Because the columns are fixed, the 'int_col' argument
         will be ignored.
 
 
-        The heteronuc and proton arguments should be set respectively to the name of the
+        The 'heteronuc' and 'proton' arguments should be set respectively to the name of the
         heteronucleus and proton in the file.  Only those lines which match these labels will be
         used.
 

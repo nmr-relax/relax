@@ -195,9 +195,9 @@ class Minimisation:
 
         Diagonal scaling is the transformation of parameter values such that each value has a
         similar order of magnitude.  Certain minimisation techniques, for example the trust region
-        methods, perform extemely poorly with badly scaled problems.  In addition, methods which are
-        insensitive to scaling such as Newton minimisation may still benefit due to the minimisation
-        of round off errors.
+        methods, perform extremely poorly with badly scaled problems.  In addition, methods which
+        are insensitive to scaling such as Newton minimisation may still benefit due to the
+        minimisation of round off errors.
 
         In Model-free analysis for example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz,
         the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  Rex is divided by

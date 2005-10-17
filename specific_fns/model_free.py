@@ -1233,7 +1233,7 @@ class Model_free(Common_functions):
 
             tm >= c
 
-        The default value of c is 50 ns, although this can be overriden by supplying the value (in
+        The default value of c is 50 ns, although this can be overridden by supplying the value (in
         seconds) as the first element of the args tuple.
 
 

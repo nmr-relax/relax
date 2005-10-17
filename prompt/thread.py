@@ -121,7 +121,7 @@ class Threading:
         $ ssh-keygen -t rsa
 
         Press enter three times when asked for input.  This will generate the two identification
-        files.  Then, to copy the public key into the authorized_keys file on the remote machine,
+        files.  Then, to copy the public key into the 'authorized_keys' file on the remote machine,
         type:
 
         $ ssh zucchini "echo $(cat ~/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys"

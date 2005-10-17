@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  17 OCT 2005 23:02
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  17 OCT 2005 23:20
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -434,25 +434,25 @@ spec-trum[]type=None, res[]num=None,
  []
 
 [85] [86] [87] [88]
-Underfull \hbox (badness 10000) in paragraph at lines 3669--3670
+Underfull \hbox (badness 10000) in paragraph at lines 3685--3686
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
 [89] [90] [91] [92]
-Underfull \hbox (badness 1158) in paragraph at lines 3826--3827
+Underfull \hbox (badness 1158) in paragraph at lines 3842--3843
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
 [93] [94] [95] [96] [97] [98]
-Underfull \hbox (badness 10000) in paragraph at lines 4178--4179
+Underfull \hbox (badness 10000) in paragraph at lines 4194--4195
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`NOE', frq[]label=`60
 0', frq=600.0 * 1e6,
  []
 
 [99]
-Underfull \hbox (badness 10000) in paragraph at lines 4190--4191
+Underfull \hbox (badness 10000) in paragraph at lines 4206--4207
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`R2', frq[]label=`800
  MHz', frq=8.0*1e8,
  []
@@ -460,19 +460,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 4190--4191
 [100] [101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111]
 [112] [113] [114] [115] [116] [117] [118] [119] [120] [121] [122] [123]
 [124] [125]
-Overfull \hbox (2.53847pt too wide) in paragraph at lines 5286--5286
+Overfull \hbox (2.53847pt too wide) in paragraph at lines 5302--5302
 []\OT1/cmtt/m/n/9 # Host          User name       Program path            Worki
 ng directory    Priority  CPUs[] 
  []
 
 [126] [127] [128] [129] [130] [131] [132] [133] [134] [135] [136]
-Underfull \hbox (badness 6493) in paragraph at lines 6160--6161
+Underfull \hbox (badness 6493) in paragraph at lines 6178--6179
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6218--6219
+Underfull \hbox (badness 10000) in paragraph at lines 6236--6237
 []\OT1/cmtt/m/n/9 relax> value.read(run=`m1', data[]type=`CSA', file=`data/csa[
 ]value', num[]col=0, name[]col=1,
  []
@@ -485,7 +485,7 @@ Underfull \vbox (badness 1584) has occurred while \output is active []
 
  [139]
 [140]
-Overfull \hbox (6.26677pt too wide) in paragraph at lines 6539--6593
+Overfull \hbox (6.26677pt too wide) in paragraph at lines 6557--6611
  [] 
  []
 
@@ -534,4 +534,4 @@ Here is how much of TeX's memory you used:
  26 hyphenation exceptions out of 1000
  27i,12n,22p,1058b,450s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (173 pages, 352460 bytes).
+Output written on relax.dvi (173 pages, 352512 bytes).

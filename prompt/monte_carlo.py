@@ -113,9 +113,9 @@ class Monte_carlo:
         The prune argument is legacy code which corresponds to the 'trim' option in Art Palmer's
         Modelfree program.  To remove failed simulations, the eliminate function should be used
         prior to this function.  Eliminating the simulations specifically identifies and removes the
-        failed simulations whereas the prune argment will only, in a few cases, positively identify
+        failed simulations whereas the prune argument will only, in a few cases, positively identify
         failed simulations but only if severe parameter limits have been imposed.  Most failed
-        models will pass through the prunning process and hence cause a catastropic increase in the
+        models will pass through the pruning process and hence cause a catastrophic increase in the
         parameter errors.  If the argument must be used, the following must be taken into account.
         If the values or parameters of a run are calculated rather than minimised, the prune
         argument must be set to zero.  The value of this argument is proportional to the number of
@@ -159,8 +159,8 @@ class Monte_carlo:
 
         This function only effects runs where minimisation occurs and can therefore be skipped if
         the values or parameters of a run are calculated rather than minimised.  However, if
-        accidently run in this case, the results will be unaffected.  It should only be called after
-        the model or run is fully minimised.  Once called, the functions 'grid_search' and
+        accidentally run in this case, the results will be unaffected.  It should only be called
+        after the model or run is fully minimised.  Once called, the functions 'grid_search' and
         'minimise' will only effect the simulations and not the model parameters.
 
         The initial values of the parameters for each simulation is set to the minimised parameters
@@ -298,7 +298,7 @@ class Monte_carlo:
         are required.  These are taken as the optimised model parameters.  An alternative is to use
         a grid search for each simulation to generate initial estimates, however this is extremely
         computationally expensive.  For the case where values are calculated rather than minimised,
-        this step should be skipped (although the results will be unaffected if this is accidently
+        this step should be skipped (although the results will be unaffected if this is accidentally
         run).
 
         6.  Each simulation requires minimisation or calculation.  The same techniques as used in

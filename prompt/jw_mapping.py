@@ -52,7 +52,7 @@ class Jw_mapping:
         Description
         ~~~~~~~~~~~
 
-        This function will select the relaxation data to use in the reduced spectral densiy mapping
+        This function will select the relaxation data to use in the reduced spectral density mapping
         corresponding to the given frequency.
 
 

@@ -642,7 +642,7 @@ models are eliminated using the rule:
 \item[]     $\tau_m$ $\ge$ c
 \end{itemize}
 
-The default value of c is 50 ns, although this can be overriden by supplying the value (in
+The default value of c is 50 ns, although this can be overridden by supplying the value (in
 seconds) as the first element of the args tuple.
 
 
@@ -1349,7 +1349,7 @@ Function for selecting which relaxation data to use in the $J(\omega)$ mapping.
 
 \subsubsection{Description}
 
-This function will select the relaxation \index{relaxation} data to use in the reduced spectral densiy mapping \index{map}
+This function will select the relaxation \index{relaxation} data to use in the reduced spectral density mapping \index{map}
 corresponding to the given frequency.
 
 
@@ -1432,9 +1432,9 @@ Diagonal scaling.
 
 Diagonal scaling is the transformation of parameter values such that each value has a
 similar order of magnitude.  Certain minimisation \index{minimisation} techniques, for example the trust region
-methods, perform extemely poorly with badly scaled problems.  In addition, methods which are
-insensitive to scaling such as Newton \index{minimisation techniques!Newton} minimisation \index{minimisation} may still benefit due to the minimisation \index{minimisation}
-of round off errors.
+methods, perform extremely poorly with badly scaled problems.  In addition, methods which
+are insensitive to scaling such as Newton \index{minimisation techniques!Newton} minimisation \index{minimisation} may still benefit due to the
+minimisation \index{minimisation} of round off errors.
 
 In Model-free analysis for example, if $S^2$ = 0.5, $\tau_e$ = 200 ps, and $R_{ex}$ = 15 1/s at 600 MHz,
 the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  $R_{ex}$ is divided by
@@ -2827,7 +2827,7 @@ simulation.
 are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
 computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
-this step should be skipped (although the results will be unaffected if this is accidently
+this step should be skipped (although the results will be unaffected if this is accidentally
 run).
 
 6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
@@ -2921,9 +2921,9 @@ The prune argument is legacy code which corresponds to the
  option in Art Palmer's
 Modelfree program.  To remove failed simulations, the eliminate function should be used
 prior to this function.  Eliminating the simulations specifically identifies and removes the
-failed simulations whereas the prune argment will only, in a few cases, positively identify
+failed simulations whereas the prune argument will only, in a few cases, positively identify
 failed simulations but only if severe parameter limits \index{parameter!limit} have been imposed.  Most failed
-models will pass through the prunning process and hence cause a catastropic increase in the
+models will pass through the pruning process and hence cause a catastrophic increase in the
 parameter errors.  If the argument must be used, the following must be taken into account.
 If the values or parameters of a run are calculated rather than minimised, \index{minimisation} the prune
 argument must be set to zero.  The value of this argument is proportional to the number of
@@ -2960,7 +2960,7 @@ simulation.
 are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
 computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
-this step should be skipped (although the results will be unaffected if this is accidently
+this step should be skipped (although the results will be unaffected if this is accidentally
 run).
 
 6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
@@ -3039,8 +3039,8 @@ Function for setting the initial simulation parameter values.
 
 This function only effects runs where minimisation \index{minimisation} occurs and can therefore be skipped if
 the values or parameters of a run are calculated rather than minimised. \index{minimisation}  However, if
-accidently run in this case, the results will be unaffected.  It should only be called after
-the model or run is fully minimised. \index{minimisation}  Once called, the functions 
+accidentally run in this case, the results will be unaffected.  It should only be called
+after the model or run is fully minimised. \index{minimisation}  Once called, the functions 
 \quoteenv{`grid\_search'}
  and
 \quoteenv{`minimise'}
@@ -3078,7 +3078,7 @@ simulation.
 are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
 computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
-this step should be skipped (although the results will be unaffected if this is accidently
+this step should be skipped (although the results will be unaffected if this is accidentally
 run).
 
 6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
@@ -3179,7 +3179,7 @@ simulation.
 are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
 computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
-this step should be skipped (although the results will be unaffected if this is accidently
+this step should be skipped (although the results will be unaffected if this is accidentally
 run).
 
 6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
@@ -3280,7 +3280,7 @@ simulation.
 are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
 computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
-this step should be skipped (although the results will be unaffected if this is accidently
+this step should be skipped (although the results will be unaffected if this is accidentally
 run).
 
 6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
@@ -3391,7 +3391,7 @@ simulation.
 are required.  These are taken as the optimised \index{optimise} model parameters.  An alternative is to use
 a grid search for each simulation to generate initial estimates, however this is extremely
 computationally expensive.  For the case where values are calculated rather than minimised, \index{minimisation}
-this step should be skipped (although the results will be unaffected if this is accidently
+this step should be skipped (although the results will be unaffected if this is accidentally
 run).
 
 6.  Each simulation requires minimisation \index{minimisation} or calculation.  The same techniques as used in
@@ -3547,7 +3547,9 @@ Function for reading peak intensities from a file for NOE calculations.
 The peak intensity can either be from peak heights or peak volumes.
 
 
-The spectrum\_type argument can have the following values:
+The 
+\quoteenv{`spectrum\_type'}
+ argument can have the following values:
 \begin{description}
 \item[    
 \quoteenv{`ref'}
@@ -3558,7 +3560,9 @@ The spectrum\_type argument can have the following values:
 \end{description}
 
 
-The format argument can currently be set to:
+The 
+\quoteenv{`format'}
+ argument can currently be set to:
 \begin{itemize}
 \item[]     
 \quoteenv{`sparky'}
@@ -3566,19 +3570,25 @@ The format argument can currently be set to:
 \quoteenv{`xeasy'}
 \end{itemize}
 
-If the format argument is set to 
+If the 
+\quoteenv{`format'}
+ argument is set to 
 \quoteenv{`sparky'}
-, the file should be a Sparky \index{Sparky, the program} peak list saved after
-typing the command 
+, the file should be a Sparky \index{Sparky, the program} peak list saved
+after typing the command 
 \quoteenv{`lt'}
-.  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$, 2$^\mathrm{nd}$,
-3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky \index{Sparky, the program} assignment, w1, w2, and peak intensity data respectively.
-The frequency data w1 and w2 are ignored while the peak intensity data can either be the
-peak height or volume displayed \index{display} by changing the window options.  If the peak intensity data
-is not within column 3, set the argument int\_col to the appropriate value (column numbering
-starts from 0 rather than 1).
+.  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$,
+2$^\mathrm{nd}$, 3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky \index{Sparky, the program} assignment, w1, w2, and peak intensity data
+respectively.  The frequency data w1 and w2 are ignored while the peak intensity data can
+either be the peak height or volume displayed \index{display} by changing the window options.  If the peak
+intensity data is not within column 3, set the argument 
+\quoteenv{`int\_col'}
+ to the appropriate value
+(column numbering starts from 0 rather than 1).
 
-If the format argument is set to 
+If the 
+\quoteenv{`format'}
+ argument is set to 
 \quoteenv{`xeasy'}
 , the file should be the saved XEasy text window
 output of the list peak entries command, 
@@ -3587,11 +3597,17 @@ output of the list peak entries command,
 \quoteenv{`le'}
 .  As the columns are fixed,
 the peak intensity column is hardwired to number 10 (the 11$^\mathrm{th}$ column) which contains either
-the peak height or peak volume data.  Because the columns are fixed, the int\_col argument
+the peak height or peak volume data.  Because the columns are fixed, the 
+\quoteenv{`int\_col'}
+ argument
 will be ignored.
 
 
-The heteronuc and proton arguments should be set respectively to the name of the
+The 
+\quoteenv{`heteronuc'}
+ and 
+\quoteenv{`proton'}
+ arguments should be set respectively to the name of the
 heteronucleus and proton in the file.  Only those lines which match these labels will be
 used.
 
@@ -5321,7 +5337,9 @@ If the files
 
 
 Press enter three times when asked for input.  This will generate the two identification
-files.  Then, to copy \index{copy} the public key into the authorized\_keys file on the remote machine,
+files.  Then, to copy \index{copy} the public key into the 
+\quoteenv{`authorized\_keys'}
+ file on the remote machine,
 type:
 
 \example{\$ ssh zucchini "echo \$(cat \~{}/.ssh/id\_rsa.pub) >> \~{}/.ssh/authorized\_keys" }
