@@ -254,13 +254,17 @@ class Main:
             # Create the run for model selection (which will be a copy of the selected diffusion model or run).
             run.create('final', 'mf')
 
-            # Model selection.
+            # Model selection between MI to MV.
             self.model_selection(run='final', write_flag=0)
 
 
             # Monte Carlo simulations.
             ##########################
 
+            # Fix the diffusion tensor.
+            fix(name, 'diff')
+
+            # Simulations.
             monte_carlo.setup('final', number=200)
             monte_carlo.create_data('final')
             monte_carlo.initial_values('final')
