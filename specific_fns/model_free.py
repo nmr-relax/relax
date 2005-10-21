@@ -311,12 +311,15 @@ class Model_free(Common_functions):
         if not scaling:
             return
 
+        # tm, te, tf, and ts (must all be the same for diagonal scaling!).
+        ti_scaling = 1e-12
+
         # Diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Isotropic diffusion.
             if self.relax.data.diff[self.run].type == 'iso':
                 # tm.
-                self.scaling_matrix[i, i] = 1e-9
+                self.scaling_matrix[i, i] = ti_scaling
 
                 # Increment i.
                 i = i + 1
@@ -324,7 +327,7 @@ class Model_free(Common_functions):
             # Axially symmetric diffusion.
             elif self.relax.data.diff[self.run].type == 'axial':
                 # tm, Da, theta, phi
-                self.scaling_matrix[i, i] = 1e-9
+                self.scaling_matrix[i, i] = ti_scaling
                 self.scaling_matrix[i+1, i+1] = 1e7
                 self.scaling_matrix[i+2, i+2] = 1.0
                 self.scaling_matrix[i+3, i+3] = 1.0
@@ -335,7 +338,7 @@ class Model_free(Common_functions):
             # Anisotropic diffusion.
             elif self.relax.data.diff[self.run].type == 'aniso':
                 # tm, Da, Dr, alpha, beta, gamma.
-                self.scaling_matrix[i, i] = 1e-9
+                self.scaling_matrix[i, i] = ti_scaling
                 self.scaling_matrix[i+1, i+1] = 1e7
                 self.scaling_matrix[i+2, i+2] = 1e7
                 self.scaling_matrix[i+3, i+3] = 1.0
@@ -359,13 +362,9 @@ class Model_free(Common_functions):
 
                 # Loop over the model-free parameters.
                 for k in xrange(len(self.relax.data.res[self.run][j].params)):
-                    # tm.
-                    if self.relax.data.res[self.run][j].params[k] == 'tm':
-                        self.scaling_matrix[i, i] = 1e-9
-
-                    # te, tf, and ts.
-                    elif search('^t', self.relax.data.res[self.run][j].params[k]):
-                        self.scaling_matrix[i, i] = 1e-12
+                    # tm, te, tf, and ts (must all be the same for diagonal scaling!).
+                    if search('^t', self.relax.data.res[self.run][j].params[k]):
+                        self.scaling_matrix[i, i] = ti_scaling
 
                     # Rex.
                     elif self.relax.data.res[self.run][j].params[k] == 'Rex':
