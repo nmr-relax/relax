@@ -376,7 +376,7 @@ class Line_search:
 
         # Default line search algorithm.
         if self.line_search_algor == None:
-            self.line_search_algor = 'More Thuente'
+            self.line_search_algor = 'Back'
 
 
     def mt(self):
