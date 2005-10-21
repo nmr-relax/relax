@@ -364,8 +364,8 @@ class Model_free(Common_functions):
                         self.scaling_matrix[i, i] = 1e-9
 
                     # te, tf, and ts.
-                    elif match('t', self.relax.data.res[self.run][j].params[k]):
-                        self.scaling_matrix[i, i] = 1e-9
+                    elif search('^t', self.relax.data.res[self.run][j].params[k]):
+                        self.scaling_matrix[i, i] = 1e-12
 
                     # Rex.
                     elif self.relax.data.res[self.run][j].params[k] == 'Rex':
@@ -2020,6 +2020,10 @@ class Model_free(Common_functions):
                 index = min_options[0]
             else:
                 index = i
+
+            # The residue index for the global models.
+            if self.param_set == 'diff' or self.param_set == 'all':
+                index = None
 
             # Individual residue stuff.
             if (self.param_set == 'mf' or self.param_set == 'local_tm') and not min_algor == 'back_calc':
