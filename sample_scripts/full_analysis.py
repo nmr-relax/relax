@@ -141,7 +141,7 @@ class Main:
             run.create('aic', 'mf')
 
             # Model selection.
-            self.model_selection(name='aic', dir=self.base_dir + 'aic')
+            self.model_selection(run='aic', dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
@@ -332,18 +332,18 @@ class Main:
             results.read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, name=None, dir=None, write_flag=1):
+    def model_selection(self, run=None, dir=None, write_flag=1):
         """Model selection function."""
 
         # Model elimination.
         eliminate()
 
         # Model selection.
-        model_selection('AIC', name)
+        model_selection('AIC', run)
 
         # Write the results.
         if write_flag:
-            results.write(run=name, file='results', dir=dir, force=1)
+            results.write(run=run, file='results', dir=dir, force=1)
 
 
     def multi_model(self, local_tm=0):
