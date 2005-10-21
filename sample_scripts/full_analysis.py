@@ -123,7 +123,7 @@ class Main:
         The final black-box model-free results will be placed in the file 'final/results'.
         """
 
-        # The diffusion model.
+        # The diffusion model (this is the variable which should be changed).
         self.diff_model = 'final'
 
 
