@@ -104,13 +104,13 @@ class Rx_data:
                 if data.ri_labels[i] == 'NOE':
                     for j in xrange(data.num_ri):
                         if data.ri_labels[j] == 'R1' and data.frq_labels[data.remap_table[i]] == data.frq_labels[data.remap_table[j]]:
-                            data.noe_r1_table[data.num_ri - 1] = j
+                            data.noe_r1_table[i] = j
 
                 # If the data corresponds to 'R1', try to find if the corresponding NOE data.
                 if data.ri_labels[i] == 'R1':
                     for j in xrange(data.num_ri):
                         if data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[i]] == data.frq_labels[data.remap_table[j]]:
-                            data.noe_r1_table[j] = data.num_ri - 1
+                            data.noe_r1_table[j] = i
 
 
         # Simulation data.
