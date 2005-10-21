@@ -141,7 +141,7 @@ class Main:
             run.create('aic', 'mf')
 
             # Model selection.
-            self.model_selection(run='aic', dir=self.base_dir + 'aic')
+            self.model_selection(name='aic', dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
