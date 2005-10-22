@@ -262,7 +262,7 @@ class Main:
             ##########################
 
             # Fix the diffusion tensor.
-            fix(name, 'diff')
+            fix('final', 'diff')
 
             # Simulations.
             monte_carlo.setup('final', number=200)
