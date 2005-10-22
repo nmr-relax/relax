@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  18 OCT 2005 23:54
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  22 OCT 2005 21:10
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -154,20 +154,21 @@ Writing index file relax.idx
 (./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux))
 \openout1 = `relax.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+File: images/ulysses.eps.gz Graphic file (type eps)
 
-[1
+<images/ulysses.eps.gz> [1
 
 
 
@@ -181,14 +182,14 @@ LaTeX Font Info:    ... okay on input line 53.
 
  [7] [8
 
-] (./relax.lof)
+]
+(./relax.lof)
 \tf@lof=\write5
 \openout5 = `relax.lof'.
 
  [9] [10
 
-] [11]
-[12
+] [11] [12
 
 ]
 \openout2 = `intro.aux'.
@@ -526,12 +527,12 @@ Package natbib Warning: There were undefined citations.
 
 (./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
- 1808 strings out of 95756
- 21705 string characters out of 1190795
+ 1812 strings out of 95756
+ 21751 string characters out of 1190795
  78643 words of memory out of 1000001
- 4742 multiletter control sequences out of 10000+50000
+ 4743 multiletter control sequences out of 10000+50000
  15272 words of font info for 56 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
  27i,12n,22p,1058b,450s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (173 pages, 352504 bytes).
+Output written on relax.dvi (173 pages, 352588 bytes).
