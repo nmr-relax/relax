@@ -43,9 +43,6 @@
 % Natbib Citation format.
 \bibpunct{(}{)}{;}{a}{,}{,}
 
-% Handle gzipped eps files.
-%\DeclareGraphicsRule{.eps.gz}{eps}{}{`zcat #1}
-
 % Make the index.
 \makeindex
 
@@ -68,17 +65,21 @@
 
 % Title.
 {\Huge \textbf{relax}}
-\vspace{\stretch{1}}
-
-% Subtitle.
-{\huge \textbf{A program for NMR relaxation\\data analysis}}
 \vspace{\stretch{2}}
 
-\centerline{\includegraphics[width=\textwidth, bb=14 14 793 342]{images/ulysses.eps.gz}}
+% Subtitle.
+{\LARGE \textbf{A program for}}
+\vspace{\stretch{0.5}}
+
+{\LARGE \textbf{NMR relaxation data analysis}}
+\vspace{\stretch{2}}
+
+\centerline{\includegraphics[width=1.2\textwidth, bb=14 14 793 342]{images/ulysses.eps.gz}}
 \vspace{\stretch{2}}
 
 % Author.
 {\Large Edward d'Auvergne}
+\vspace{\stretch{0.5}}
 
 % Date.
 {\large \today}
