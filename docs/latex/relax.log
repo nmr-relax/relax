@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  22 OCT 2005 21:51
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  25 OCT 2005 14:56
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -527,12 +527,12 @@ Package natbib Warning: There were undefined citations.
 
 (./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
- 1812 strings out of 95756
- 21756 string characters out of 1190795
+ 1810 strings out of 95756
+ 21721 string characters out of 1190795
  78643 words of memory out of 1000001
- 4745 multiletter control sequences out of 10000+50000
- 15878 words of font info for 58 fonts, out of 500000 for 1000
+ 4743 multiletter control sequences out of 10000+50000
+ 15272 words of font info for 56 fonts, out of 500000 for 1000
  26 hyphenation exceptions out of 1000
  27i,12n,22p,1058b,450s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (173 pages, 352620 bytes).
+Output written on relax.dvi (173 pages, 352580 bytes).
