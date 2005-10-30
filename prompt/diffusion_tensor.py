@@ -160,14 +160,25 @@ class Diffusion_tensor:
         fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
 
 
-        Description
-        ~~~~~~~~~~~
+        The sphere (isotropic diffusion)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        Isotropic diffusion.
+        When the molecule diffuses as a sphere, all three eigenvalues of the diffusion tensor are
+        equal, Dx = Dy = Dz.  In this case, the orientation of the XH bond vector within the
+        diffusion frame is inconsequential to relaxation, hence, the spherical or Euler angles are
+        undefined.  Therefore solely a single geometric parameter, either tm or Diso, can fully and
+        sufficiently parameterise the diffusion tensor.  The correlation function for the global
+        rotational diffusion is
+
+        -----
+                     1   - tau / tm
+            C(tau) = - e            ,
+                     5
+        -----
 
         To select isotropic diffusion, the parameters argument should be a single floating point
-        number.  The number is the value of the isotropic global correlation time in seconds.  To
-        specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
+        number.  The number is the value of the isotropic global correlation time, tm, in seconds.
+        To specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
         parameters can be used by changing the 'param_types' flag to the following integers
 
             0:  tm   (Default),
@@ -178,7 +189,8 @@ class Diffusion_tensor:
             tm = 1 / 6Diso.
 
 
-        Axially symmetric diffusion.
+        The spheroid (axially symmetric diffusion)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
@@ -186,9 +198,9 @@ class Diffusion_tensor:
         parameters, 'param_types', are
 
             0:  (tm, Da, theta, phi)   (Default),
-            1:  (tm, Dratio, theta, phi),
-            2:  (Dpar, Dper, theta, phi),
-            3:  (Diso, Da, theta, phi),
+            1:  (Diso, Da, theta, phi),
+            2:  (tm, Dratio, theta, phi),
+            3:  (Dpar, Dper, theta, phi),
             4:  (Diso, Dratio, theta, phi),
 
         where
@@ -219,7 +231,8 @@ class Diffusion_tensor:
         into the two subspaces (the partition is where Da equals 0).
 
 
-        Anisotropic diffusion.
+        The ellipsoid (rhombic diffusion)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         To select fully anisotropic diffusion, the parameters argument should be a tuple of length
         six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
@@ -253,7 +266,8 @@ class Diffusion_tensor:
             0 <= phi <= 2pi.
 
 
-        Units.
+        Units
+        ~~~~~
 
         The 'time_scale' argument should be a floating point number.  Parameters affected by this
         value are:  tm.

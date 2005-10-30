@@ -1,4 +1,4 @@
-\contentsline {chapter}{\numberline {1}How to relax}{1}
+\contentsline {chapter}{\numberline {1}How to use relax}{1}
 \contentsline {section}{\numberline {1.1}The prompt}{1}
 \contentsline {section}{\numberline {1.2}Python}{1}
 \contentsline {section}{\numberline {1.3}User functions}{2}
@@ -95,7 +95,10 @@
 \contentsline {subsubsection}{Synopsis}{30}
 \contentsline {subsubsection}{Defaults}{30}
 \contentsline {subsubsection}{Keyword Arguments}{30}
-\contentsline {subsubsection}{Description}{30}
+\contentsline {subsubsection}{The sphere (isotropic diffusion)}{30}
+\contentsline {subsubsection}{The spheroid (axially symmetric diffusion)}{31}
+\contentsline {subsubsection}{The ellipsoid (rhombic diffusion)}{32}
+\contentsline {subsubsection}{Units}{33}
 \contentsline {subsubsection}{Examples}{33}
 \contentsline {subsection}{\numberline {3.2.10}dx.execute}{34}
 \contentsline {subsubsection}{Synopsis}{34}
@@ -112,7 +115,9 @@
 \contentsline {subsubsection}{Defaults}{37}
 \contentsline {subsubsection}{Keyword arguments}{37}
 \contentsline {subsubsection}{Description}{37}
-\contentsline {subsubsection}{Model-free model elimination rules}{37}
+\contentsline {subsubsection}{Local $\tau _m$ model elimination rule}{37}
+\contentsline {subsubsection}{Internal correlation times \{$\tau _e$, $\tau _f$, $\tau _s$\} model elimination rules}{38}
+\contentsline {subsubsection}{Arguments}{38}
 \contentsline {subsection}{\numberline {3.2.13}fix}{39}
 \contentsline {subsubsection}{Synopsis}{39}
 \contentsline {subsubsection}{Defaults}{39}
@@ -132,7 +137,7 @@
 \contentsline {subsubsection}{Examples}{42}
 \contentsline {subsubsection}{Regular expression}{42}
 \contentsline {subsubsection}{Minimisation statistic data type string matching patterns}{43}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{43}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{44}
 \contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{44}
 \contentsline {subsubsection}{NOE calculation data type string matching patterns}{44}
 \contentsline {subsection}{\numberline {3.2.16}grid\_search}{45}
@@ -159,9 +164,9 @@
 \contentsline {subsubsection}{Defaults}{50}
 \contentsline {subsubsection}{Arguments}{50}
 \contentsline {subsubsection}{Keyword Arguments}{50}
-\contentsline {subsubsection}{Description}{51}
+\contentsline {subsubsection}{Diagonal scaling}{51}
 \contentsline {subsubsection}{Examples}{51}
-\contentsline {subsubsection}{Note}{52}
+\contentsline {subsubsection}{Note}{51}
 \contentsline {subsubsection}{Keyword Arguments}{52}
 \contentsline {subsubsection}{Minimisation output}{53}
 \contentsline {subsubsection}{Minimisation algorithms}{53}
@@ -176,7 +181,9 @@
 \contentsline {subsubsection}{Synopsis}{58}
 \contentsline {subsubsection}{Defaults}{58}
 \contentsline {subsubsection}{Keyword Arguments}{58}
-\contentsline {subsubsection}{Description}{58}
+\contentsline {subsubsection}{Model-free equation}{58}
+\contentsline {subsubsection}{Model-free parameters}{58}
+\contentsline {subsubsection}{Residue number}{59}
 \contentsline {subsubsection}{Examples}{59}
 \contentsline {subsection}{\numberline {3.2.24}model\_free.delete}{60}
 \contentsline {subsubsection}{Synopsis}{60}
@@ -193,7 +200,8 @@
 \contentsline {subsubsection}{Synopsis}{62}
 \contentsline {subsubsection}{Defaults}{62}
 \contentsline {subsubsection}{Keyword Arguments}{62}
-\contentsline {subsubsection}{Description}{62}
+\contentsline {subsubsection}{The preset models}{62}
+\contentsline {subsubsection}{Residue number}{65}
 \contentsline {subsubsection}{Examples}{65}
 \contentsline {subsection}{\numberline {3.2.27}model\_selection}{66}
 \contentsline {subsubsection}{Synopsis}{66}
@@ -472,7 +480,7 @@
 \contentsline {subsubsection}{Description}{137}
 \contentsline {subsubsection}{Examples}{137}
 \contentsline {subsubsection}{Regular expression}{138}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{138}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{139}
 \contentsline {subsubsection}{Model-free set details}{139}
 \contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{140}
 \contentsline {subsubsection}{Reduced spectral density mapping set details}{140}
@@ -496,7 +504,7 @@
 \contentsline {subsubsection}{Description}{146}
 \contentsline {subsubsection}{Examples}{146}
 \contentsline {subsubsection}{Regular expression}{147}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{147}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{148}
 \contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{148}
 \contentsline {subsubsection}{NOE calculation data type string matching patterns}{148}
 \contentsline {subsection}{\numberline {3.2.80}vmd.view}{149}

@@ -109,38 +109,45 @@ class Model_free:
         res_num:  The residue number.
 
 
-        Description
-        ~~~~~~~~~~~
-
-        Model-free equation.
+        Model-free equation
+        ~~~~~~~~~~~~~~~~~~~
 
         'mf_orig' selects the original model-free equations with parameters {S2, te}.
         'mf_ext' selects the extended model-free equations with parameters {S2f, tf, S2, ts}.
         'mf_ext2' selects the extended model-free equations with parameters {S2f, tf, S2s, ts}.
 
 
-        Model-free parameters.
+        Model-free parameters
+        ~~~~~~~~~~~~~~~~~~~~~
 
         The following parameters are accepted for the original model-free equation:
-            S2:     The square of the generalised order parameter.
-            te:     The effective correlation time.
+
+            'S2':   The square of the generalised order parameter.
+            'te':   The effective correlation time.
+
         The following parameters are accepted for the extended model-free equation:
-            S2f:    The square of the generalised order parameter of the faster motion.
-            tf:     The effective correlation time of the faster motion.
-            S2:     The square of the generalised order parameter S2 = S2f*S2s.
-            ts:     The effective correlation time of the slower motion.
+
+            'S2f':  The square of the generalised order parameter of the faster motion.
+            'tf':   The effective correlation time of the faster motion.
+            'S2':   The square of the generalised order parameter S2 = S2f * S2s.
+            'ts':   The effective correlation time of the slower motion.
+
         The following parameters are accepted for the extended 2 model-free equation:
-            S2f:    The square of the generalised order parameter of the faster motion.
-            tf:     The effective correlation time of the faster motion.
-            S2s:    The square of the generalised order parameter of the slower motion.
-            ts:     The effective correlation time of the slower motion.
+
+            'S2f':  The square of the generalised order parameter of the faster motion.
+            'tf':   The effective correlation time of the faster motion.
+            'S2s':  The square of the generalised order parameter of the slower motion.
+            'ts':   The effective correlation time of the slower motion.
+
         The following parameters are accepted for all equations:
-            Rex:    The chemical exchange relaxation.
-            r:      The average bond length <r>.
-            CSA:    The chemical shift anisotropy.
+
+            'Rex':  The chemical exchange relaxation.
+            'r':    The average bond length <r>.
+            'CSA':  The chemical shift anisotropy.
 
 
-        Residue number.
+        Residue number
+        ~~~~~~~~~~~~~~
 
         If 'res_num' is supplied as an integer then the model will only be created for that residue,
         otherwise the model will be created for all residues.
@@ -294,8 +301,8 @@ class Model_free:
         model:  The name of the preset model.
 
 
-        Description
-        ~~~~~~~~~~~
+        The preset models
+        ~~~~~~~~~~~~~~~~~
 
         The standard preset model-free models are
             'm0':  [],
@@ -402,7 +409,8 @@ class Model_free:
 
 
 
-        Residue number.
+        Residue number
+        ~~~~~~~~~~~~~~
 
         If 'res_num' is supplied as an integer then the model will only be selected for that
         residue, otherwise the model will be selected for all residues.

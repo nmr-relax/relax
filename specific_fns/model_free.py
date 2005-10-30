@@ -1221,10 +1221,8 @@ class Model_free(Common_functions):
 
     def eliminate(self, name, value, run, i, args):
         """
-        Model-free model elimination rules
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        Local tm.
+        Local tm model elimination rule
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         The local tm, in some cases, may exceed the value expected for a global correlation time.
         Generally the tm value will be stuck at the upper limit defined for the parameter.  These
@@ -1236,13 +1234,14 @@ class Model_free(Common_functions):
         seconds) as the first element of the args tuple.
 
 
-        Internal correlation times {te, tf, ts}.
+        Internal correlation times {te, tf, ts} model elimination rules
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         These parameters may experience the same problem as the local tm in that the model fails and
         the parameter value is stuck at the upper limit.  These parameters are constrained using the
         formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:
 
-            te, tf, ts >= c.tm
+            te, tf, ts >= c . tm
 
         The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
         setting c to 2 will result in no models being eliminated as the minimised parameters will
@@ -1250,7 +1249,8 @@ class Model_free(Common_functions):
         element of the tuple.
 
 
-        Arguments.
+        Arguments
+        ~~~~~~~~~
 
         The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For
         example, to eliminate models which have a local tm value greater than 25 ns and models with

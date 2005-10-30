@@ -188,10 +188,8 @@ class Minimisation:
         output while higher values increase the amount of output.  The default value is 1.
 
 
-        Description
-        ~~~~~~~~~~~
-
-        Diagonal scaling.
+        Diagonal scaling
+        ~~~~~~~~~~~~~~~~
 
         Diagonal scaling is the transformation of parameter values such that each value has a
         similar order of magnitude.  Certain minimisation techniques, for example the trust region
@@ -201,8 +199,8 @@ class Minimisation:
 
         In Model-free analysis for example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz,
         the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  Rex is divided by
-        (2*pi*600,000,000)**2 to make it field strength independent.  The scaling vector for this
-        model may be something like [1.0, 1e-9, 1/(2*pi*6*1e8)**2].  By dividing the unscaled
+        (2 * pi * 600,000,000)**2 to make it field strength independent.  The scaling vector for
+        this model may be something like [1.0, 1e-9, 1/(2 * pi * 6e8)**2].  By dividing the unscaled
         parameter vector by the scaling vector the scaled parameter vector is [0.5, 0.2, 15.0].  To
         revert to the original unscaled parameter vector, the scaled parameter vector and scaling
         vector are multiplied.

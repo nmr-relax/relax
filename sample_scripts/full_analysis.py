@@ -3,7 +3,7 @@
 # This script is designed for those who appreciate black-boxes, although it will need to be
 # heavily tailored to the protein in question, or those who appreciate complex code.  For a
 # description of object-oriented coding in python using classes, functions/methods, self, etc,
-# look at the python tutorial.
+# see the python tutorial.
 
 
 # Import functions from the python modules 'os' and 're'.
@@ -21,7 +21,7 @@ class Main:
             Model I   (MI)   - Local tm.
             Model II  (MII)  - Isotropic diffusion tensor.
             Model III (MIII) - Prolate axially symmetrical anisotropic diffusion tensor.
-            Model IV  (MIV)  - Oblate axiallty symmetrical anisotropic diffusion tensor.
+            Model IV  (MIV)  - Oblate axially symmetrical anisotropic diffusion tensor.
             Model V   (MV)   - Fully anisotropic diffusion tensor.
 
         Model I must be optimised prior to any of the other diffusion models, while the Models II to
@@ -45,7 +45,7 @@ class Main:
         Model I - Local tm
         ~~~~~~~~~~~~~~~~~~
 
-        This will optimise the diffusion model where all residues of the protein have a local tm
+        This will optimise the diffusion model whereby all residues of the protein have a local tm
         value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to
         optimising any of the other diffusion models.  Each residue is fitted to the multiple model-
         free models separately, where the parameter tm is included in each model.
