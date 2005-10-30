@@ -1,51 +1,52 @@
 \begin{theindex}
 
-  \item angles, 25, \textbf{25}, 30--32
+  \item angles, 25, \textbf{25}, 30--32, 34
 
   \indexspace
 
-  \item bond length, 59, 63--65, 134, 140, 143, 145
+  \item bond length, 61, 65--67, 136, 142, 145, 147
 
   \indexspace
 
-  \item chemical exchange, 59, 134, 139, 144
-  \item chi-squared, 74
-  \item compression, 106, 122
-    \subitem bzip2, 105, 106, 121, 122
-    \subitem gzip, 105, 106, 121, 122
-    \subitem uncompressed, 105, 121
-  \item constraint, 32, 38, 45, 50--52, 89
-  \item copy, 27, 57, 96, 114, 126, 132
-  \item correlation time, 30, 33, 37, 38, \textbf{38}, 58, 59
+  \item chemical exchange, 61, 136, 141, 146
+  \item chi-squared, 76
+  \item compression, 108, 124
+    \subitem bzip2, 107, 108, 123, 124
+    \subitem gzip, 107, 108, 123, 124
+    \subitem uncompressed, 107, 123
+  \item constraint, 32, 40, 47, 52--54, 91
+  \item copy, 27, 59, 98, 116, 128, 134
+  \item correlation time, 30, 33, 35, 39, 40, \textbf{40}, 60, 61
 
   \indexspace
 
-  \item delete, 28, 60, 97, 115
+  \item delete, 28, 62, 99, 117
   \item diffusion, 9
-    \subitem anisotropic, 31--33
+    \subitem anisotropic, 31--33, 35
     \subitem Brownian, \textbf{9}
-    \subitem ellipsoid (asymmetric), \textbf{9}, 21, 25, \textbf{32}
-    \subitem sphere (isotropic), \textbf{11}, 25, 30, \textbf{30}, 33, 
-		35
+    \subitem ellipsoid (asymmetric), \textbf{9}, 21, 25, 32, 
+		\textbf{32}
+    \subitem sphere (isotropic), \textbf{11}, 25, 30, \textbf{30}, 32, 
+		35, 37
     \subitem spheroid (axially symmetric), \textbf{10}, 25, 30, 31, 
-		\textbf{31}, 32, 33
-    \subitem tensor, 25, 27--33, 39
-  \item display, 29, 87, 98, 103, 104, 116, 135
+		\textbf{31}, 32, 35
+    \subitem tensor, 25, 27--32, 34, 35, 41
+  \item display, 29, 89, 100, 105, 106, 118, 137
 
   \indexspace
 
-  \item eigenvalues, 30
-  \item Euler angles, 30, 32
+  \item eigenvalues, 30--32
+  \item Euler angles, 30, 32, 34
 
   \indexspace
 
-  \item floating point number, 1, 30, 31, 33
+  \item floating point number, 1, 30, 31, 34
   \item function class, 2--4
 
   \indexspace
 
-  \item GPL, \textbf{151}
-  \item Grace, the program, 40, \textbf{40}, 41, \textbf{41}, 42
+  \item GPL, \textbf{153}
+  \item Grace, the program, 42, \textbf{42}, 43, \textbf{43}, 44
   \item GUI, 6
 
   \indexspace
@@ -62,66 +63,66 @@
 
   \indexspace
 
-  \item map, 35, 36, \textbf{36}, \textbf{44}, 49, 72, 75, 78, 80, 82, 
-		84, 107, 134, \textbf{134}, \textbf{136}, 140, 
-		\textbf{140}, 142, 145, \textbf{145}, \textbf{148}
-  \item minimisation, 2, 7, \textbf{11}, 32, 33, 37, 38, \textbf{43}, 
-		50, \textbf{50}, 51--53, \textbf{53}, 55, \textbf{55}, 
-		56, 67, 71, 72, 74, 75, 77--84, 132, 137, 141
+  \item map, 37, 38, \textbf{38}, \textbf{46}, 51, 74, 77, 80, 82, 84, 
+		86, 109, 136, \textbf{136}, \textbf{138}, 142, 
+		\textbf{142}, 144, 147, \textbf{147}, \textbf{150}
+  \item minimisation, 2, 7, \textbf{11}, 32, 35, 39, 40, \textbf{45}, 
+		52, \textbf{52}, 53--55, \textbf{55}, 57, \textbf{57}, 
+		58, 69, 73, 74, 76, 77, 79--86, 134, 139, 143
   \item minimisation techniques
-    \subitem BFGS, 11, 54, 56
-    \subitem conjugate gradient, 54, 55
-    \subitem dogleg, 55
-    \subitem exact trust region, 55
-    \subitem Method of Multipliers, 50
-    \subitem Newton, 12, 51, 55, 56
-    \subitem simplex, 11, 51
-  \item model elimination, 37, \textbf{37, 38}, 72, 75, 78, 79, 81, 84
-  \item modelling, 37
-  \item molecule, 30, 70, 149
-  \item Molmol, the program, 68, \textbf{68}, 69, \textbf{69, 70}
+    \subitem BFGS, 11, 56, 58
+    \subitem conjugate gradient, 56, 57
+    \subitem dogleg, 57
+    \subitem exact trust region, 57
+    \subitem Method of Multipliers, 52
+    \subitem Newton, 12, 53, 57, 58
+    \subitem simplex, 11, 53
+  \item model elimination, 39, \textbf{39, 40}, 74, 77, 80, 81, 83, 86
+  \item modelling, 39
+  \item molecule, 30--32, 72, 151
+  \item Molmol, the program, 70, \textbf{70}, 71, \textbf{71, 72}
 
   \indexspace
 
-  \item OpenDX, the program, 34, 35
-  \item optimise, 30, 72, 75, 77--79, 81, 83
-  \item order parameter, 58, 59
+  \item OpenDX, the program, 36, 37
+  \item optimise, 30, 74, 77, 79--81, 83, 85
+  \item order parameter, 60, 61
 
   \indexspace
 
   \item parameter
-    \subitem bounds, 35, 45, 52
-    \subitem limit, 37, 38, 41, 51, 74, 102
-  \item PDB, 31, 32, 70, 91, 93, 149
-  \item plot, 41, 42
-  \item Python, 1, \textbf{1, 2}, 5, 6, 42, 50, 53, 85, 111, 130, 132, 
-		135, 138, 142, 143, 147
+    \subitem bounds, 32, 37, 47, 54
+    \subitem limit, 39, 40, 43, 53, 76, 104
+  \item PDB, 32, 34, 72, 93, 95, 151
+  \item plot, 43, 44
+  \item Python, 1, \textbf{1, 2}, 5, 6, 44, 52, 55, 87, 113, 132, 134, 
+		137, 140, 144, 145, 149
 
   \indexspace
 
-  \item read, 86, 87, 99, 100, 102, 105, 106, 117, 125, 126, 137
-  \item regular expression, 36, 41, 42, \textbf{42}, 43, 53, 85, 111, 
-		130, 132, \textbf{132}, 133, 135, \textbf{135}, 136, 
-		138, \textbf{138}, 142, 143, \textbf{143}, 147, 
-		\textbf{147}
-  \item relaxation, 30, 49, 59, 64, 95--99, 101, 102, 107, 137, 145
+  \item read, 88, 89, 101, 102, 104, 107, 108, 119, 127, 128, 139
+  \item regular expression, 38, 43, 44, \textbf{44}, 45, 55, 87, 113, 
+		132, 134, \textbf{134}, 135, 137, \textbf{137}, 138, 
+		140, \textbf{140}, 144, 145, \textbf{145}, 149, 
+		\textbf{149}
+  \item relaxation, 30, 51, 61, 66, 97--101, 103, 104, 109, 139, 147
   \item relaxation rate
     \subitem cross-relaxation, \textbf{8}
     \subitem spin-lattice, 7
     \subitem spin-spin, 7
-  \item rotation, 30, 32
+  \item rotation, 30, 34
   \item run, \textbf{4}
 
   \indexspace
 
   \item scripting, \textbf{4}
     \subitem sample scripts, 6
-  \item sequence, 27, 42, 43, 53, 57, 71, 74, 77, 79, 81, 83, 86, 93, 
-		96, 102, 113, \textbf{113}, 114, \textbf{114}, 115, 
-		\textbf{115}, 116, \textbf{116}, 117, \textbf{117}, 
-		119, \textbf{119}, 120, \textbf{120}, 132, 133, 
-		135, 136, 138, 143, 147
-  \item Sparky, the program, 87, 103
+  \item sequence, 27, 44, 45, 55, 59, 73, 76, 79, 81, 83, 85, 88, 95, 
+		98, 104, 115, \textbf{115}, 116, \textbf{116}, 117, 
+		\textbf{117}, 118, \textbf{118}, 119, \textbf{119}, 
+		121, \textbf{121}, 122, \textbf{122}, 134, 135, 
+		137, 138, 140, 145, 149
+  \item Sparky, the program, 89, 105
   \item string, 1
 
   \indexspace
@@ -134,6 +135,6 @@
 
   \indexspace
 
-  \item write, 42, 101, 146
+  \item write, 44, 103, 148
 
 \end{theindex}

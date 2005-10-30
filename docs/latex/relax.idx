@@ -94,17 +94,22 @@
 \indexentry{diffusion!sphere (isotropic)}{30}
 \indexentry{correlation time}{30}
 \indexentry{diffusion!spheroid (axially symmetric)|textbf}{31}
+\indexentry{eigenvalues}{31}
+\indexentry{diffusion!tensor}{31}
+\indexentry{molecule}{31}
+\indexentry{diffusion!spheroid (axially symmetric)}{31}
+\indexentry{angles}{31}
+\indexentry{angles}{31}
+\indexentry{angles}{31}
+\indexentry{diffusion!tensor}{31}
 \indexentry{diffusion!spheroid (axially symmetric)}{31}
 \indexentry{diffusion!anisotropic}{31}
 \indexentry{floating point number}{31}
-\indexentry{diffusion!tensor}{31}
-\indexentry{angles}{31}
-\indexentry{angles}{31}
-\indexentry{diffusion!tensor}{31}
-\indexentry{PDB}{31}
-\indexentry{angles}{31}
-\indexentry{angles}{31}
-\indexentry{angles}{31}
+\indexentry{angles}{32}
+\indexentry{diffusion!tensor}{32}
+\indexentry{PDB}{32}
+\indexentry{angles}{32}
+\indexentry{angles}{32}
 \indexentry{diffusion!tensor}{32}
 \indexentry{diffusion!spheroid (axially symmetric)}{32}
 \indexentry{constraint}{32}
@@ -112,320 +117,319 @@
 \indexentry{minimisation}{32}
 \indexentry{diffusion!tensor}{32}
 \indexentry{minimisation}{32}
+\indexentry{parameter!bounds}{32}
 \indexentry{diffusion!ellipsoid (asymmetric)|textbf}{32}
+\indexentry{eigenvalues}{32}
+\indexentry{diffusion!tensor}{32}
+\indexentry{molecule}{32}
+\indexentry{diffusion!ellipsoid (asymmetric)}{32}
+\indexentry{diffusion!anisotropic}{32}
+\indexentry{diffusion!ellipsoid (asymmetric)}{32}
+\indexentry{diffusion!sphere (isotropic)}{32}
 \indexentry{diffusion!anisotropic}{32}
 \indexentry{angles}{32}
-\indexentry{angles}{32}
 \indexentry{Euler angles}{32}
-\indexentry{diffusion!tensor}{32}
 \indexentry{PDB}{32}
-\indexentry{angles}{32}
-\indexentry{rotation}{32}
-\indexentry{rotation}{32}
-\indexentry{angles}{32}
-\indexentry{rotation}{32}
-\indexentry{angles}{32}
-\indexentry{rotation}{32}
-\indexentry{angles}{32}
-\indexentry{PDB}{32}
-\indexentry{angles}{32}
-\indexentry{angles}{32}
-\indexentry{floating point number}{33}
-\indexentry{floating point number}{33}
-\indexentry{diffusion!sphere (isotropic)}{33}
-\indexentry{diffusion!tensor}{33}
 \indexentry{correlation time}{33}
-\indexentry{diffusion!spheroid (axially symmetric)}{33}
-\indexentry{diffusion!spheroid (axially symmetric)}{33}
-\indexentry{diffusion!tensor}{33}
 \indexentry{diffusion!anisotropic}{33}
-\indexentry{minimisation}{33}
-\indexentry{diffusion!sphere (isotropic)}{33}
-\indexentry{diffusion!tensor}{33}
-\indexentry{minimisation}{33}
-\indexentry{OpenDX, the program}{34}
-\indexentry{OpenDX, the program}{34}
-\indexentry{OpenDX, the program}{34}
-\indexentry{OpenDX, the program}{34}
-\indexentry{OpenDX, the program}{34}
-\indexentry{map}{35}
-\indexentry{OpenDX, the program}{35}
-\indexentry{map}{35}
-\indexentry{map}{35}
-\indexentry{map}{35}
-\indexentry{parameter!bounds}{35}
-\indexentry{parameter!bounds}{35}
-\indexentry{map}{35}
-\indexentry{parameter!bounds}{35}
-\indexentry{parameter!bounds}{35}
-\indexentry{parameter!bounds}{35}
-\indexentry{map}{35}
-\indexentry{parameter!bounds}{35}
-\indexentry{OpenDX, the program}{35}
-\indexentry{OpenDX, the program}{35}
-\indexentry{map}{35}
+\indexentry{angles}{34}
+\indexentry{angles}{34}
+\indexentry{Euler angles}{34}
+\indexentry{diffusion!tensor}{34}
+\indexentry{PDB}{34}
+\indexentry{angles}{34}
+\indexentry{rotation}{34}
+\indexentry{rotation}{34}
+\indexentry{angles}{34}
+\indexentry{rotation}{34}
+\indexentry{angles}{34}
+\indexentry{rotation}{34}
+\indexentry{angles}{34}
+\indexentry{PDB}{34}
+\indexentry{angles}{34}
+\indexentry{angles}{34}
+\indexentry{angles}{34}
+\indexentry{floating point number}{34}
+\indexentry{floating point number}{34}
 \indexentry{diffusion!sphere (isotropic)}{35}
-\indexentry{map|textbf}{36}
-\indexentry{map}{36}
-\indexentry{map}{36}
-\indexentry{regular expression}{36}
-\indexentry{map}{36}
-\indexentry{map}{36}
-\indexentry{map}{36}
-\indexentry{model elimination}{37}
-\indexentry{model elimination}{37}
-\indexentry{model elimination}{37}
-\indexentry{model elimination}{37}
-\indexentry{model elimination}{37}
-\indexentry{model elimination}{37}
-\indexentry{modelling}{37}
-\indexentry{minimisation}{37}
-\indexentry{model elimination|textbf}{37}
-\indexentry{model elimination|textbf}{37}
-\indexentry{correlation time}{37}
-\indexentry{parameter!limit}{37}
-\indexentry{correlation time|textbf}{38}
-\indexentry{model elimination|textbf}{38}
-\indexentry{model elimination|textbf}{38}
-\indexentry{parameter!limit}{38}
-\indexentry{constraint}{38}
-\indexentry{minimisation}{38}
-\indexentry{correlation time}{38}
-\indexentry{diffusion!tensor}{39}
-\indexentry{diffusion!tensor}{39}
-\indexentry{Grace, the program|textbf}{40}
-\indexentry{Grace, the program}{40}
-\indexentry{Grace, the program}{40}
-\indexentry{Grace, the program}{40}
-\indexentry{Grace, the program}{40}
-\indexentry{Grace, the program}{40}
-\indexentry{Grace, the program|textbf}{41}
-\indexentry{Grace, the program}{41}
-\indexentry{regular expression}{41}
-\indexentry{regular expression}{41}
-\indexentry{plot}{41}
-\indexentry{plot}{41}
-\indexentry{Grace, the program}{41}
-\indexentry{plot}{41}
-\indexentry{plot}{41}
-\indexentry{plot}{41}
-\indexentry{plot}{41}
-\indexentry{regular expression}{41}
-\indexentry{plot}{41}
-\indexentry{Grace, the program}{41}
-\indexentry{plot}{41}
-\indexentry{parameter!limit}{41}
-\indexentry{parameter!limit}{41}
-\indexentry{plot}{41}
-\indexentry{plot}{41}
-\indexentry{regular expression}{42}
-\indexentry{plot}{42}
-\indexentry{plot}{42}
-\indexentry{plot}{42}
-\indexentry{plot}{42}
-\indexentry{write}{42}
+\indexentry{diffusion!tensor}{35}
+\indexentry{correlation time}{35}
+\indexentry{diffusion!spheroid (axially symmetric)}{35}
+\indexentry{diffusion!spheroid (axially symmetric)}{35}
+\indexentry{diffusion!tensor}{35}
+\indexentry{diffusion!anisotropic}{35}
+\indexentry{minimisation}{35}
+\indexentry{diffusion!sphere (isotropic)}{35}
+\indexentry{diffusion!tensor}{35}
+\indexentry{minimisation}{35}
+\indexentry{OpenDX, the program}{36}
+\indexentry{OpenDX, the program}{36}
+\indexentry{OpenDX, the program}{36}
+\indexentry{OpenDX, the program}{36}
+\indexentry{OpenDX, the program}{36}
+\indexentry{map}{37}
+\indexentry{OpenDX, the program}{37}
+\indexentry{map}{37}
+\indexentry{map}{37}
+\indexentry{map}{37}
+\indexentry{parameter!bounds}{37}
+\indexentry{parameter!bounds}{37}
+\indexentry{map}{37}
+\indexentry{parameter!bounds}{37}
+\indexentry{parameter!bounds}{37}
+\indexentry{parameter!bounds}{37}
+\indexentry{map}{37}
+\indexentry{parameter!bounds}{37}
+\indexentry{OpenDX, the program}{37}
+\indexentry{OpenDX, the program}{37}
+\indexentry{map}{37}
+\indexentry{diffusion!sphere (isotropic)}{37}
+\indexentry{map|textbf}{38}
+\indexentry{map}{38}
+\indexentry{map}{38}
+\indexentry{regular expression}{38}
+\indexentry{map}{38}
+\indexentry{map}{38}
+\indexentry{map}{38}
+\indexentry{model elimination}{39}
+\indexentry{model elimination}{39}
+\indexentry{model elimination}{39}
+\indexentry{model elimination}{39}
+\indexentry{model elimination}{39}
+\indexentry{model elimination}{39}
+\indexentry{modelling}{39}
+\indexentry{minimisation}{39}
+\indexentry{model elimination|textbf}{39}
+\indexentry{model elimination|textbf}{39}
+\indexentry{correlation time}{39}
+\indexentry{parameter!limit}{39}
+\indexentry{correlation time|textbf}{40}
+\indexentry{model elimination|textbf}{40}
+\indexentry{model elimination|textbf}{40}
+\indexentry{parameter!limit}{40}
+\indexentry{constraint}{40}
+\indexentry{minimisation}{40}
+\indexentry{correlation time}{40}
+\indexentry{diffusion!tensor}{41}
+\indexentry{diffusion!tensor}{41}
+\indexentry{Grace, the program|textbf}{42}
 \indexentry{Grace, the program}{42}
 \indexentry{Grace, the program}{42}
 \indexentry{Grace, the program}{42}
-\indexentry{regular expression|textbf}{42}
-\indexentry{Python}{42}
-\indexentry{regular expression}{42}
-\indexentry{Python}{42}
-\indexentry{regular expression}{42}
-\indexentry{regular expression}{42}
-\indexentry{Python}{42}
-\indexentry{regular expression}{42}
-\indexentry{sequence}{42}
-\indexentry{sequence}{43}
+\indexentry{Grace, the program}{42}
+\indexentry{Grace, the program}{42}
+\indexentry{Grace, the program|textbf}{43}
+\indexentry{Grace, the program}{43}
 \indexentry{regular expression}{43}
 \indexentry{regular expression}{43}
-\indexentry{minimisation|textbf}{43}
-\indexentry{map|textbf}{44}
-\indexentry{parameter!bounds}{45}
-\indexentry{parameter!bounds}{45}
-\indexentry{constraint}{45}
-\indexentry{relaxation}{49}
-\indexentry{map}{49}
-\indexentry{relaxation}{49}
-\indexentry{map}{49}
-\indexentry{minimisation|textbf}{50}
-\indexentry{minimisation}{50}
-\indexentry{minimisation}{50}
-\indexentry{minimisation}{50}
-\indexentry{minimisation}{50}
-\indexentry{minimisation techniques!Method of Multipliers}{50}
-\indexentry{constraint}{50}
-\indexentry{minimisation}{50}
-\indexentry{minimisation}{50}
-\indexentry{minimisation}{50}
-\indexentry{Python}{50}
-\indexentry{Python}{50}
-\indexentry{minimisation}{50}
-\indexentry{minimisation}{50}
-\indexentry{constraint}{50}
-\indexentry{minimisation}{51}
-\indexentry{minimisation techniques!Newton}{51}
-\indexentry{minimisation}{51}
-\indexentry{minimisation}{51}
-\indexentry{minimisation}{51}
-\indexentry{minimisation techniques!Newton}{51}
-\indexentry{minimisation}{51}
-\indexentry{constraint}{51}
-\indexentry{parameter!limit}{51}
-\indexentry{minimisation}{51}
-\indexentry{minimisation techniques!simplex}{51}
-\indexentry{minimisation}{51}
+\indexentry{plot}{43}
+\indexentry{plot}{43}
+\indexentry{Grace, the program}{43}
+\indexentry{plot}{43}
+\indexentry{plot}{43}
+\indexentry{plot}{43}
+\indexentry{plot}{43}
+\indexentry{regular expression}{43}
+\indexentry{plot}{43}
+\indexentry{Grace, the program}{43}
+\indexentry{plot}{43}
+\indexentry{parameter!limit}{43}
+\indexentry{parameter!limit}{43}
+\indexentry{plot}{43}
+\indexentry{plot}{43}
+\indexentry{regular expression}{44}
+\indexentry{plot}{44}
+\indexentry{plot}{44}
+\indexentry{plot}{44}
+\indexentry{plot}{44}
+\indexentry{write}{44}
+\indexentry{Grace, the program}{44}
+\indexentry{Grace, the program}{44}
+\indexentry{Grace, the program}{44}
+\indexentry{regular expression|textbf}{44}
+\indexentry{Python}{44}
+\indexentry{regular expression}{44}
+\indexentry{Python}{44}
+\indexentry{regular expression}{44}
+\indexentry{regular expression}{44}
+\indexentry{Python}{44}
+\indexentry{regular expression}{44}
+\indexentry{sequence}{44}
+\indexentry{sequence}{45}
+\indexentry{regular expression}{45}
+\indexentry{regular expression}{45}
+\indexentry{minimisation|textbf}{45}
+\indexentry{map|textbf}{46}
+\indexentry{parameter!bounds}{47}
+\indexentry{parameter!bounds}{47}
+\indexentry{constraint}{47}
+\indexentry{relaxation}{51}
+\indexentry{map}{51}
+\indexentry{relaxation}{51}
+\indexentry{map}{51}
+\indexentry{minimisation|textbf}{52}
 \indexentry{minimisation}{52}
 \indexentry{minimisation}{52}
 \indexentry{minimisation}{52}
 \indexentry{minimisation}{52}
-\indexentry{minimisation}{52}
-\indexentry{constraint}{52}
-\indexentry{constraint}{52}
-\indexentry{parameter!bounds}{52}
-\indexentry{constraint}{52}
-\indexentry{parameter!bounds}{52}
-\indexentry{constraint}{52}
-\indexentry{constraint}{52}
-\indexentry{constraint}{52}
+\indexentry{minimisation techniques!Method of Multipliers}{52}
 \indexentry{constraint}{52}
 \indexentry{minimisation}{52}
-\indexentry{minimisation|textbf}{53}
+\indexentry{minimisation}{52}
+\indexentry{minimisation}{52}
+\indexentry{Python}{52}
+\indexentry{Python}{52}
+\indexentry{minimisation}{52}
+\indexentry{minimisation}{52}
+\indexentry{constraint}{52}
+\indexentry{minimisation}{53}
+\indexentry{minimisation techniques!Newton}{53}
 \indexentry{minimisation}{53}
 \indexentry{minimisation}{53}
-\indexentry{minimisation|textbf}{53}
 \indexentry{minimisation}{53}
+\indexentry{minimisation techniques!Newton}{53}
 \indexentry{minimisation}{53}
-\indexentry{Python}{53}
-\indexentry{regular expression}{53}
+\indexentry{constraint}{53}
+\indexentry{parameter!limit}{53}
 \indexentry{minimisation}{53}
+\indexentry{minimisation techniques!simplex}{53}
 \indexentry{minimisation}{53}
-\indexentry{Python}{53}
-\indexentry{regular expression}{53}
-\indexentry{regular expression}{53}
-\indexentry{Python}{53}
-\indexentry{regular expression}{53}
-\indexentry{sequence}{53}
-\indexentry{minimisation}{53}
-\indexentry{minimisation techniques!BFGS}{54}
-\indexentry{minimisation techniques!conjugate gradient}{54}
+\indexentry{minimisation}{54}
+\indexentry{minimisation}{54}
+\indexentry{minimisation}{54}
+\indexentry{minimisation}{54}
+\indexentry{minimisation}{54}
+\indexentry{constraint}{54}
+\indexentry{constraint}{54}
+\indexentry{parameter!bounds}{54}
+\indexentry{constraint}{54}
+\indexentry{parameter!bounds}{54}
+\indexentry{constraint}{54}
+\indexentry{constraint}{54}
+\indexentry{constraint}{54}
+\indexentry{constraint}{54}
+\indexentry{minimisation}{54}
 \indexentry{minimisation|textbf}{55}
 \indexentry{minimisation}{55}
-\indexentry{minimisation techniques!conjugate gradient}{55}
-\indexentry{minimisation techniques!Newton}{55}
-\indexentry{minimisation techniques!dogleg}{55}
-\indexentry{minimisation techniques!exact trust region}{55}
-\indexentry{minimisation techniques!dogleg}{55}
-\indexentry{minimisation techniques!exact trust region}{55}
-\indexentry{minimisation techniques!Newton}{55}
-\indexentry{minimisation techniques!Newton}{55}
-\indexentry{minimisation techniques!Newton}{55}
+\indexentry{minimisation}{55}
+\indexentry{minimisation|textbf}{55}
+\indexentry{minimisation}{55}
+\indexentry{minimisation}{55}
+\indexentry{Python}{55}
+\indexentry{regular expression}{55}
+\indexentry{minimisation}{55}
+\indexentry{minimisation}{55}
+\indexentry{Python}{55}
+\indexentry{regular expression}{55}
+\indexentry{regular expression}{55}
+\indexentry{Python}{55}
+\indexentry{regular expression}{55}
+\indexentry{sequence}{55}
+\indexentry{minimisation}{55}
 \indexentry{minimisation techniques!BFGS}{56}
-\indexentry{minimisation techniques!Newton}{56}
-\indexentry{minimisation}{56}
-\indexentry{copy}{57}
-\indexentry{copy}{57}
-\indexentry{sequence}{57}
-\indexentry{copy}{57}
-\indexentry{sequence}{57}
-\indexentry{copy}{57}
-\indexentry{copy}{57}
-\indexentry{order parameter}{58}
-\indexentry{correlation time}{58}
-\indexentry{order parameter}{58}
-\indexentry{correlation time}{58}
-\indexentry{order parameter}{58}
-\indexentry{correlation time}{58}
-\indexentry{order parameter}{59}
-\indexentry{correlation time}{59}
-\indexentry{order parameter}{59}
-\indexentry{correlation time}{59}
-\indexentry{chemical exchange}{59}
-\indexentry{relaxation}{59}
-\indexentry{bond length}{59}
-\indexentry{delete}{60}
-\indexentry{bond length}{63}
-\indexentry{bond length}{63}
-\indexentry{relaxation}{64}
-\indexentry{bond length}{64}
+\indexentry{minimisation techniques!conjugate gradient}{56}
+\indexentry{minimisation|textbf}{57}
+\indexentry{minimisation}{57}
+\indexentry{minimisation techniques!conjugate gradient}{57}
+\indexentry{minimisation techniques!Newton}{57}
+\indexentry{minimisation techniques!dogleg}{57}
+\indexentry{minimisation techniques!exact trust region}{57}
+\indexentry{minimisation techniques!dogleg}{57}
+\indexentry{minimisation techniques!exact trust region}{57}
+\indexentry{minimisation techniques!Newton}{57}
+\indexentry{minimisation techniques!Newton}{57}
+\indexentry{minimisation techniques!Newton}{57}
+\indexentry{minimisation techniques!BFGS}{58}
+\indexentry{minimisation techniques!Newton}{58}
+\indexentry{minimisation}{58}
+\indexentry{copy}{59}
+\indexentry{copy}{59}
+\indexentry{sequence}{59}
+\indexentry{copy}{59}
+\indexentry{sequence}{59}
+\indexentry{copy}{59}
+\indexentry{copy}{59}
+\indexentry{order parameter}{60}
+\indexentry{correlation time}{60}
+\indexentry{order parameter}{60}
+\indexentry{correlation time}{60}
+\indexentry{order parameter}{60}
+\indexentry{correlation time}{60}
+\indexentry{order parameter}{61}
+\indexentry{correlation time}{61}
+\indexentry{order parameter}{61}
+\indexentry{correlation time}{61}
+\indexentry{chemical exchange}{61}
+\indexentry{relaxation}{61}
+\indexentry{bond length}{61}
+\indexentry{delete}{62}
 \indexentry{bond length}{65}
-\indexentry{minimisation}{67}
-\indexentry{Molmol, the program|textbf}{68}
-\indexentry{Molmol, the program}{68}
-\indexentry{Molmol, the program|textbf}{69}
-\indexentry{Molmol, the program}{69}
+\indexentry{bond length}{65}
+\indexentry{relaxation}{66}
+\indexentry{bond length}{66}
+\indexentry{bond length}{67}
+\indexentry{minimisation}{69}
 \indexentry{Molmol, the program|textbf}{70}
-\indexentry{molecule}{70}
-\indexentry{PDB}{70}
-\indexentry{PDB}{70}
-\indexentry{minimisation}{71}
-\indexentry{minimisation}{71}
-\indexentry{minimisation}{71}
-\indexentry{sequence}{71}
-\indexentry{minimisation}{72}
-\indexentry{optimise}{72}
-\indexentry{minimisation}{72}
-\indexentry{minimisation}{72}
-\indexentry{minimisation}{72}
-\indexentry{optimise}{72}
-\indexentry{minimisation}{72}
-\indexentry{minimisation}{72}
-\indexentry{model elimination}{72}
-\indexentry{model elimination}{72}
-\indexentry{minimisation}{72}
-\indexentry{minimisation}{72}
-\indexentry{minimisation}{72}
-\indexentry{map}{72}
+\indexentry{Molmol, the program}{70}
+\indexentry{Molmol, the program|textbf}{71}
+\indexentry{Molmol, the program}{71}
+\indexentry{Molmol, the program|textbf}{72}
+\indexentry{molecule}{72}
+\indexentry{PDB}{72}
+\indexentry{PDB}{72}
+\indexentry{minimisation}{73}
+\indexentry{minimisation}{73}
+\indexentry{minimisation}{73}
+\indexentry{sequence}{73}
 \indexentry{minimisation}{74}
-\indexentry{parameter!limit}{74}
+\indexentry{optimise}{74}
 \indexentry{minimisation}{74}
-\indexentry{chi-squared}{74}
-\indexentry{sequence}{74}
-\indexentry{minimisation}{75}
-\indexentry{optimise}{75}
-\indexentry{minimisation}{75}
-\indexentry{minimisation}{75}
-\indexentry{minimisation}{75}
-\indexentry{optimise}{75}
-\indexentry{minimisation}{75}
-\indexentry{minimisation}{75}
-\indexentry{model elimination}{75}
-\indexentry{model elimination}{75}
-\indexentry{minimisation}{75}
-\indexentry{minimisation}{75}
-\indexentry{minimisation}{75}
-\indexentry{map}{75}
-\indexentry{minimisation}{77}
-\indexentry{minimisation}{77}
-\indexentry{minimisation}{77}
-\indexentry{minimisation}{77}
-\indexentry{minimisation}{77}
-\indexentry{sequence}{77}
+\indexentry{minimisation}{74}
+\indexentry{minimisation}{74}
+\indexentry{optimise}{74}
+\indexentry{minimisation}{74}
+\indexentry{minimisation}{74}
+\indexentry{model elimination}{74}
+\indexentry{model elimination}{74}
+\indexentry{minimisation}{74}
+\indexentry{minimisation}{74}
+\indexentry{minimisation}{74}
+\indexentry{map}{74}
+\indexentry{minimisation}{76}
+\indexentry{parameter!limit}{76}
+\indexentry{minimisation}{76}
+\indexentry{chi-squared}{76}
+\indexentry{sequence}{76}
 \indexentry{minimisation}{77}
 \indexentry{optimise}{77}
 \indexentry{minimisation}{77}
 \indexentry{minimisation}{77}
-\indexentry{minimisation}{78}
-\indexentry{optimise}{78}
-\indexentry{minimisation}{78}
-\indexentry{minimisation}{78}
-\indexentry{model elimination}{78}
-\indexentry{model elimination}{78}
-\indexentry{minimisation}{78}
-\indexentry{minimisation}{78}
-\indexentry{minimisation}{78}
-\indexentry{map}{78}
+\indexentry{minimisation}{77}
+\indexentry{optimise}{77}
+\indexentry{minimisation}{77}
+\indexentry{minimisation}{77}
+\indexentry{model elimination}{77}
+\indexentry{model elimination}{77}
+\indexentry{minimisation}{77}
+\indexentry{minimisation}{77}
+\indexentry{minimisation}{77}
+\indexentry{map}{77}
+\indexentry{minimisation}{79}
+\indexentry{minimisation}{79}
+\indexentry{minimisation}{79}
+\indexentry{minimisation}{79}
+\indexentry{minimisation}{79}
 \indexentry{sequence}{79}
 \indexentry{minimisation}{79}
 \indexentry{optimise}{79}
 \indexentry{minimisation}{79}
 \indexentry{minimisation}{79}
-\indexentry{minimisation}{79}
-\indexentry{optimise}{79}
-\indexentry{minimisation}{79}
-\indexentry{minimisation}{79}
-\indexentry{model elimination}{79}
-\indexentry{model elimination}{79}
+\indexentry{minimisation}{80}
+\indexentry{optimise}{80}
+\indexentry{minimisation}{80}
+\indexentry{minimisation}{80}
+\indexentry{model elimination}{80}
+\indexentry{model elimination}{80}
 \indexentry{minimisation}{80}
 \indexentry{minimisation}{80}
 \indexentry{minimisation}{80}
@@ -452,282 +456,297 @@
 \indexentry{minimisation}{83}
 \indexentry{minimisation}{83}
 \indexentry{optimise}{83}
-\indexentry{minimisation}{84}
-\indexentry{minimisation}{84}
-\indexentry{model elimination}{84}
-\indexentry{model elimination}{84}
+\indexentry{minimisation}{83}
+\indexentry{minimisation}{83}
+\indexentry{model elimination}{83}
+\indexentry{model elimination}{83}
 \indexentry{minimisation}{84}
 \indexentry{minimisation}{84}
 \indexentry{minimisation}{84}
 \indexentry{map}{84}
-\indexentry{Python}{85}
-\indexentry{regular expression}{85}
-\indexentry{regular expression}{85}
-\indexentry{read}{86}
-\indexentry{sequence}{86}
-\indexentry{Sparky, the program}{87}
-\indexentry{Sparky, the program}{87}
-\indexentry{display}{87}
-\indexentry{read}{87}
-\indexentry{Sparky, the program}{87}
-\indexentry{read}{87}
-\indexentry{constraint}{89}
-\indexentry{PDB}{91}
+\indexentry{sequence}{85}
+\indexentry{minimisation}{85}
+\indexentry{optimise}{85}
+\indexentry{minimisation}{85}
+\indexentry{minimisation}{85}
+\indexentry{minimisation}{85}
+\indexentry{optimise}{85}
+\indexentry{minimisation}{86}
+\indexentry{minimisation}{86}
+\indexentry{model elimination}{86}
+\indexentry{model elimination}{86}
+\indexentry{minimisation}{86}
+\indexentry{minimisation}{86}
+\indexentry{minimisation}{86}
+\indexentry{map}{86}
+\indexentry{Python}{87}
+\indexentry{regular expression}{87}
+\indexentry{regular expression}{87}
+\indexentry{read}{88}
+\indexentry{sequence}{88}
+\indexentry{Sparky, the program}{89}
+\indexentry{Sparky, the program}{89}
+\indexentry{display}{89}
+\indexentry{read}{89}
+\indexentry{Sparky, the program}{89}
+\indexentry{read}{89}
+\indexentry{constraint}{91}
 \indexentry{PDB}{93}
-\indexentry{PDB}{93}
-\indexentry{PDB}{93}
-\indexentry{PDB}{93}
-\indexentry{sequence}{93}
-\indexentry{PDB}{93}
-\indexentry{PDB}{93}
-\indexentry{PDB}{93}
-\indexentry{sequence}{93}
-\indexentry{PDB}{93}
-\indexentry{sequence}{93}
-\indexentry{PDB}{93}
-\indexentry{PDB}{93}
-\indexentry{PDB}{93}
-\indexentry{relaxation}{95}
-\indexentry{relaxation}{95}
-\indexentry{copy}{96}
-\indexentry{relaxation}{96}
-\indexentry{copy}{96}
-\indexentry{sequence}{96}
-\indexentry{copy}{96}
-\indexentry{sequence}{96}
-\indexentry{relaxation}{96}
-\indexentry{copy}{96}
-\indexentry{relaxation}{96}
-\indexentry{relaxation}{96}
-\indexentry{copy}{96}
-\indexentry{relaxation}{96}
-\indexentry{copy}{96}
-\indexentry{relaxation}{96}
+\indexentry{PDB}{95}
+\indexentry{PDB}{95}
+\indexentry{PDB}{95}
+\indexentry{PDB}{95}
+\indexentry{sequence}{95}
+\indexentry{PDB}{95}
+\indexentry{PDB}{95}
+\indexentry{PDB}{95}
+\indexentry{sequence}{95}
+\indexentry{PDB}{95}
+\indexentry{sequence}{95}
+\indexentry{PDB}{95}
+\indexentry{PDB}{95}
+\indexentry{PDB}{95}
 \indexentry{relaxation}{97}
 \indexentry{relaxation}{97}
-\indexentry{delete}{97}
-\indexentry{relaxation}{97}
-\indexentry{display}{98}
+\indexentry{copy}{98}
+\indexentry{relaxation}{98}
+\indexentry{copy}{98}
+\indexentry{sequence}{98}
+\indexentry{copy}{98}
+\indexentry{sequence}{98}
+\indexentry{relaxation}{98}
+\indexentry{copy}{98}
 \indexentry{relaxation}{98}
 \indexentry{relaxation}{98}
-\indexentry{display}{98}
+\indexentry{copy}{98}
 \indexentry{relaxation}{98}
-\indexentry{read}{99}
+\indexentry{copy}{98}
+\indexentry{relaxation}{98}
 \indexentry{relaxation}{99}
 \indexentry{relaxation}{99}
+\indexentry{delete}{99}
 \indexentry{relaxation}{99}
-\indexentry{relaxation}{99}
-\indexentry{read}{99}
-\indexentry{relaxation}{99}
-\indexentry{read}{100}
-\indexentry{read}{100}
+\indexentry{display}{100}
+\indexentry{relaxation}{100}
+\indexentry{relaxation}{100}
+\indexentry{display}{100}
+\indexentry{relaxation}{100}
+\indexentry{read}{101}
 \indexentry{relaxation}{101}
 \indexentry{relaxation}{101}
 \indexentry{relaxation}{101}
-\indexentry{write}{101}
+\indexentry{relaxation}{101}
+\indexentry{read}{101}
+\indexentry{relaxation}{101}
 \indexentry{read}{102}
-\indexentry{sequence}{102}
-\indexentry{relaxation}{102}
-\indexentry{relaxation}{102}
-\indexentry{relaxation}{102}
-\indexentry{parameter!limit}{102}
-\indexentry{Sparky, the program}{103}
-\indexentry{Sparky, the program}{103}
-\indexentry{display}{103}
-\indexentry{display}{104}
-\indexentry{read}{105}
-\indexentry{read}{105}
-\indexentry{compression!uncompressed}{105}
-\indexentry{compression!bzip2}{105}
-\indexentry{compression!gzip}{105}
-\indexentry{compression}{106}
-\indexentry{compression!bzip2}{106}
-\indexentry{compression}{106}
-\indexentry{compression}{106}
-\indexentry{compression}{106}
-\indexentry{compression!gzip}{106}
-\indexentry{compression}{106}
-\indexentry{compression}{106}
-\indexentry{compression!bzip2}{106}
-\indexentry{compression}{106}
-\indexentry{compression!gzip}{106}
-\indexentry{compression}{106}
-\indexentry{read}{106}
-\indexentry{map}{107}
-\indexentry{relaxation}{107}
-\indexentry{Python}{111}
-\indexentry{regular expression}{111}
-\indexentry{regular expression}{111}
-\indexentry{Python}{111}
-\indexentry{regular expression}{111}
-\indexentry{sequence|textbf}{113}
-\indexentry{sequence}{113}
-\indexentry{sequence}{113}
-\indexentry{sequence}{113}
-\indexentry{sequence}{113}
-\indexentry{sequence}{113}
-\indexentry{sequence}{113}
-\indexentry{sequence|textbf}{114}
-\indexentry{copy}{114}
-\indexentry{sequence}{114}
-\indexentry{copy}{114}
-\indexentry{sequence}{114}
-\indexentry{copy}{114}
-\indexentry{sequence}{114}
-\indexentry{copy}{114}
-\indexentry{sequence}{114}
-\indexentry{sequence}{114}
-\indexentry{sequence}{114}
-\indexentry{copy}{114}
-\indexentry{sequence}{114}
+\indexentry{read}{102}
+\indexentry{relaxation}{103}
+\indexentry{relaxation}{103}
+\indexentry{relaxation}{103}
+\indexentry{write}{103}
+\indexentry{read}{104}
+\indexentry{sequence}{104}
+\indexentry{relaxation}{104}
+\indexentry{relaxation}{104}
+\indexentry{relaxation}{104}
+\indexentry{parameter!limit}{104}
+\indexentry{Sparky, the program}{105}
+\indexentry{Sparky, the program}{105}
+\indexentry{display}{105}
+\indexentry{display}{106}
+\indexentry{read}{107}
+\indexentry{read}{107}
+\indexentry{compression!uncompressed}{107}
+\indexentry{compression!bzip2}{107}
+\indexentry{compression!gzip}{107}
+\indexentry{compression}{108}
+\indexentry{compression!bzip2}{108}
+\indexentry{compression}{108}
+\indexentry{compression}{108}
+\indexentry{compression}{108}
+\indexentry{compression!gzip}{108}
+\indexentry{compression}{108}
+\indexentry{compression}{108}
+\indexentry{compression!bzip2}{108}
+\indexentry{compression}{108}
+\indexentry{compression!gzip}{108}
+\indexentry{compression}{108}
+\indexentry{read}{108}
+\indexentry{map}{109}
+\indexentry{relaxation}{109}
+\indexentry{Python}{113}
+\indexentry{regular expression}{113}
+\indexentry{regular expression}{113}
+\indexentry{Python}{113}
+\indexentry{regular expression}{113}
 \indexentry{sequence|textbf}{115}
 \indexentry{sequence}{115}
-\indexentry{delete}{115}
+\indexentry{sequence}{115}
+\indexentry{sequence}{115}
+\indexentry{sequence}{115}
+\indexentry{sequence}{115}
+\indexentry{sequence}{115}
 \indexentry{sequence|textbf}{116}
-\indexentry{display}{116}
+\indexentry{copy}{116}
+\indexentry{sequence}{116}
+\indexentry{copy}{116}
+\indexentry{sequence}{116}
+\indexentry{copy}{116}
+\indexentry{sequence}{116}
+\indexentry{copy}{116}
+\indexentry{sequence}{116}
+\indexentry{sequence}{116}
+\indexentry{sequence}{116}
+\indexentry{copy}{116}
 \indexentry{sequence}{116}
 \indexentry{sequence|textbf}{117}
-\indexentry{read}{117}
 \indexentry{sequence}{117}
-\indexentry{sequence}{117}
-\indexentry{read}{117}
-\indexentry{sequence}{117}
-\indexentry{read}{117}
-\indexentry{sequence}{117}
-\indexentry{read}{117}
-\indexentry{sequence}{117}
+\indexentry{delete}{117}
+\indexentry{sequence|textbf}{118}
+\indexentry{display}{118}
+\indexentry{sequence}{118}
 \indexentry{sequence|textbf}{119}
+\indexentry{read}{119}
 \indexentry{sequence}{119}
-\indexentry{sequence|textbf}{120}
-\indexentry{sequence}{120}
-\indexentry{compression!uncompressed}{121}
-\indexentry{compression!bzip2}{121}
-\indexentry{compression!gzip}{121}
-\indexentry{compression!bzip2}{121}
-\indexentry{compression!bzip2}{122}
-\indexentry{compression}{122}
-\indexentry{compression}{122}
-\indexentry{compression}{122}
-\indexentry{compression!gzip}{122}
-\indexentry{compression}{122}
-\indexentry{compression}{122}
-\indexentry{compression!bzip2}{122}
-\indexentry{compression}{122}
-\indexentry{compression!gzip}{122}
-\indexentry{compression}{122}
-\indexentry{compression!bzip2}{122}
-\indexentry{read}{125}
-\indexentry{read}{125}
-\indexentry{read}{125}
-\indexentry{copy}{126}
-\indexentry{read}{126}
-\indexentry{Python}{130}
-\indexentry{regular expression}{130}
-\indexentry{regular expression}{130}
-\indexentry{Python}{130}
-\indexentry{regular expression}{130}
-\indexentry{copy}{132}
-\indexentry{copy}{132}
-\indexentry{copy}{132}
-\indexentry{minimisation}{132}
-\indexentry{minimisation}{132}
-\indexentry{copy}{132}
-\indexentry{regular expression|textbf}{132}
-\indexentry{Python}{132}
-\indexentry{regular expression}{132}
+\indexentry{sequence}{119}
+\indexentry{read}{119}
+\indexentry{sequence}{119}
+\indexentry{read}{119}
+\indexentry{sequence}{119}
+\indexentry{read}{119}
+\indexentry{sequence}{119}
+\indexentry{sequence|textbf}{121}
+\indexentry{sequence}{121}
+\indexentry{sequence|textbf}{122}
+\indexentry{sequence}{122}
+\indexentry{compression!uncompressed}{123}
+\indexentry{compression!bzip2}{123}
+\indexentry{compression!gzip}{123}
+\indexentry{compression!bzip2}{123}
+\indexentry{compression!bzip2}{124}
+\indexentry{compression}{124}
+\indexentry{compression}{124}
+\indexentry{compression}{124}
+\indexentry{compression!gzip}{124}
+\indexentry{compression}{124}
+\indexentry{compression}{124}
+\indexentry{compression!bzip2}{124}
+\indexentry{compression}{124}
+\indexentry{compression!gzip}{124}
+\indexentry{compression}{124}
+\indexentry{compression!bzip2}{124}
+\indexentry{read}{127}
+\indexentry{read}{127}
+\indexentry{read}{127}
+\indexentry{copy}{128}
+\indexentry{read}{128}
 \indexentry{Python}{132}
 \indexentry{regular expression}{132}
 \indexentry{regular expression}{132}
 \indexentry{Python}{132}
 \indexentry{regular expression}{132}
-\indexentry{sequence}{132}
-\indexentry{sequence}{133}
-\indexentry{regular expression}{133}
-\indexentry{regular expression}{133}
-\indexentry{chemical exchange}{134}
-\indexentry{map|textbf}{134}
-\indexentry{map|textbf}{134}
-\indexentry{map}{134}
-\indexentry{bond length}{134}
-\indexentry{display}{135}
-\indexentry{regular expression|textbf}{135}
-\indexentry{Python}{135}
-\indexentry{regular expression}{135}
-\indexentry{Python}{135}
-\indexentry{regular expression}{135}
-\indexentry{regular expression}{135}
-\indexentry{Python}{135}
-\indexentry{regular expression}{135}
+\indexentry{copy}{134}
+\indexentry{copy}{134}
+\indexentry{copy}{134}
+\indexentry{minimisation}{134}
+\indexentry{minimisation}{134}
+\indexentry{copy}{134}
+\indexentry{regular expression|textbf}{134}
+\indexentry{Python}{134}
+\indexentry{regular expression}{134}
+\indexentry{Python}{134}
+\indexentry{regular expression}{134}
+\indexentry{regular expression}{134}
+\indexentry{Python}{134}
+\indexentry{regular expression}{134}
+\indexentry{sequence}{134}
 \indexentry{sequence}{135}
-\indexentry{sequence}{136}
-\indexentry{regular expression}{136}
-\indexentry{regular expression}{136}
+\indexentry{regular expression}{135}
+\indexentry{regular expression}{135}
+\indexentry{chemical exchange}{136}
 \indexentry{map|textbf}{136}
-\indexentry{read}{137}
-\indexentry{relaxation}{137}
-\indexentry{relaxation}{137}
-\indexentry{minimisation}{137}
-\indexentry{minimisation}{137}
-\indexentry{regular expression|textbf}{138}
-\indexentry{Python}{138}
-\indexentry{regular expression}{138}
-\indexentry{Python}{138}
-\indexentry{regular expression}{138}
-\indexentry{regular expression}{138}
-\indexentry{Python}{138}
-\indexentry{regular expression}{138}
+\indexentry{map|textbf}{136}
+\indexentry{map}{136}
+\indexentry{bond length}{136}
+\indexentry{display}{137}
+\indexentry{regular expression|textbf}{137}
+\indexentry{Python}{137}
+\indexentry{regular expression}{137}
+\indexentry{Python}{137}
+\indexentry{regular expression}{137}
+\indexentry{regular expression}{137}
+\indexentry{Python}{137}
+\indexentry{regular expression}{137}
+\indexentry{sequence}{137}
 \indexentry{sequence}{138}
-\indexentry{sequence}{138}
 \indexentry{regular expression}{138}
 \indexentry{regular expression}{138}
-\indexentry{chemical exchange}{139}
-\indexentry{map|textbf}{140}
-\indexentry{map|textbf}{140}
-\indexentry{map}{140}
-\indexentry{bond length}{140}
-\indexentry{minimisation}{141}
-\indexentry{minimisation}{141}
-\indexentry{Python}{142}
-\indexentry{regular expression}{142}
-\indexentry{regular expression}{142}
+\indexentry{map|textbf}{138}
+\indexentry{read}{139}
+\indexentry{relaxation}{139}
+\indexentry{relaxation}{139}
+\indexentry{minimisation}{139}
+\indexentry{minimisation}{139}
+\indexentry{regular expression|textbf}{140}
+\indexentry{Python}{140}
+\indexentry{regular expression}{140}
+\indexentry{Python}{140}
+\indexentry{regular expression}{140}
+\indexentry{regular expression}{140}
+\indexentry{Python}{140}
+\indexentry{regular expression}{140}
+\indexentry{sequence}{140}
+\indexentry{sequence}{140}
+\indexentry{regular expression}{140}
+\indexentry{regular expression}{140}
+\indexentry{chemical exchange}{141}
+\indexentry{map|textbf}{142}
+\indexentry{map|textbf}{142}
 \indexentry{map}{142}
-\indexentry{bond length}{143}
-\indexentry{bond length}{143}
-\indexentry{regular expression|textbf}{143}
-\indexentry{Python}{143}
-\indexentry{regular expression}{143}
-\indexentry{Python}{143}
-\indexentry{regular expression}{143}
-\indexentry{regular expression}{143}
-\indexentry{Python}{143}
-\indexentry{regular expression}{143}
-\indexentry{sequence}{143}
-\indexentry{sequence}{143}
-\indexentry{regular expression}{143}
-\indexentry{regular expression}{143}
-\indexentry{chemical exchange}{144}
-\indexentry{relaxation}{145}
-\indexentry{map|textbf}{145}
-\indexentry{map|textbf}{145}
-\indexentry{map}{145}
+\indexentry{bond length}{142}
+\indexentry{minimisation}{143}
+\indexentry{minimisation}{143}
+\indexentry{Python}{144}
+\indexentry{regular expression}{144}
+\indexentry{regular expression}{144}
+\indexentry{map}{144}
 \indexentry{bond length}{145}
-\indexentry{map|textbf}{145}
-\indexentry{write}{146}
-\indexentry{write}{146}
-\indexentry{regular expression|textbf}{147}
-\indexentry{Python}{147}
-\indexentry{regular expression}{147}
-\indexentry{Python}{147}
-\indexentry{regular expression}{147}
-\indexentry{regular expression}{147}
-\indexentry{Python}{147}
-\indexentry{regular expression}{147}
-\indexentry{sequence}{147}
-\indexentry{sequence}{147}
-\indexentry{regular expression}{147}
-\indexentry{regular expression}{147}
-\indexentry{map|textbf}{148}
-\indexentry{molecule}{149}
-\indexentry{PDB}{149}
-\indexentry{PDB}{149}
-\indexentry{GPL|textbf}{151}
+\indexentry{bond length}{145}
+\indexentry{regular expression|textbf}{145}
+\indexentry{Python}{145}
+\indexentry{regular expression}{145}
+\indexentry{Python}{145}
+\indexentry{regular expression}{145}
+\indexentry{regular expression}{145}
+\indexentry{Python}{145}
+\indexentry{regular expression}{145}
+\indexentry{sequence}{145}
+\indexentry{sequence}{145}
+\indexentry{regular expression}{145}
+\indexentry{regular expression}{145}
+\indexentry{chemical exchange}{146}
+\indexentry{relaxation}{147}
+\indexentry{map|textbf}{147}
+\indexentry{map|textbf}{147}
+\indexentry{map}{147}
+\indexentry{bond length}{147}
+\indexentry{map|textbf}{147}
+\indexentry{write}{148}
+\indexentry{write}{148}
+\indexentry{regular expression|textbf}{149}
+\indexentry{Python}{149}
+\indexentry{regular expression}{149}
+\indexentry{Python}{149}
+\indexentry{regular expression}{149}
+\indexentry{regular expression}{149}
+\indexentry{Python}{149}
+\indexentry{regular expression}{149}
+\indexentry{sequence}{149}
+\indexentry{sequence}{149}
+\indexentry{regular expression}{149}
+\indexentry{regular expression}{149}
+\indexentry{map|textbf}{150}
+\indexentry{molecule}{151}
+\indexentry{PDB}{151}
+\indexentry{PDB}{151}
+\indexentry{GPL|textbf}{153}

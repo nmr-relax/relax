@@ -46,7 +46,6 @@ class Diffusion_tensor:
             # Scaling.
             tm = tm * self.time_scale
             Da = Da * self.d_scale
-            Dr = Dr * self.d_scale
 
             # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
             self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
@@ -67,7 +66,6 @@ class Diffusion_tensor:
             # Scaling.
             Diso = Diso * self.d_scale
             Da = Da * self.d_scale
-            Dr = Dr * self.d_scale
 
             # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
             self.relax.data.diff[self.run].Diso = Diso

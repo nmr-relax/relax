@@ -341,6 +341,15 @@ class Fetch_docstrings:
         string = replace(string, '2th', '2$^\mathrm{th}$')
         string = replace(string, '3th', '3$^\mathrm{th}$')
 
+
+        # Relaxation data.
+        ##################
+
+        # R1 and R2.
+        string = self.safe_replacement(string, 'R1', 'R$_1$')
+        string = self.safe_replacement(string, 'R2', 'R$_1$')
+
+
         # Model-free parameters.
         ########################
 
@@ -374,6 +383,7 @@ class Fetch_docstrings:
         string = self.safe_replacement(string, 'Diso', '$\Diff_{iso}$')
         string = self.safe_replacement(string, 'Da', '$\Diff_a$')
         string = self.safe_replacement(string, 'Dr', '$\Diff_r$')
+        string = self.safe_replacement(string, 'R', '$\mathfrak{R}$')
         string = self.safe_replacement(string, 'Dx', '$\Diff_x$')
         string = self.safe_replacement(string, 'Dy', '$\Diff_y$')
         string = self.safe_replacement(string, 'Dz', '$\Diff_z$')
@@ -393,6 +403,15 @@ class Fetch_docstrings:
         string = self.safe_replacement(string, 'phi', '$\\phi$')
 
 
+        # Direction cosines.
+        ####################
+
+        # delta_x, delta_y, delta_z.
+        string = self.safe_replacement(string, 'dx', '$\\delta_x$')
+        string = self.safe_replacement(string, 'dy', '$\\delta_y$')
+        string = self.safe_replacement(string, 'dz', '$\\delta_z$')
+
+
         # Indecies.
         ###########
 
@@ -408,14 +427,6 @@ class Fetch_docstrings:
         string = self.safe_replacement(string, 'z', '$z$')
         string = self.safe_replacement(string, 'b', '$b$')
         string = self.safe_replacement(string, 'u', '$u$')
-
-
-        # Relaxation data.
-        ##################
-
-        # R1 and R2.
-        string = self.safe_replacement(string, 'R1', 'R$_1$')
-        string = self.safe_replacement(string, 'R2', 'R$_1$')
 
 
         # Misc.
@@ -734,7 +745,7 @@ class Fetch_docstrings:
                 self.section[i] = self.latex_special_chars(self.section[i])
 
             # LaTeX formatting.
-            if not st == 'arguments' and not st == 'verbatim' and not st == 'example':
+            if not st == 'arguments' and not st == 'verbatim' and not st == 'example' and not st == 'subsection':
                 self.section[i] = self.latex_formatting(self.section[i])
 
             # Word by word formatting.
@@ -1023,14 +1034,20 @@ class Fetch_docstrings:
         string = replace(string,    ' '+text+'\n',      ' '+latex+'\n')
         string = replace(string,    '.'+text+'\n',      '.'+latex+'\n')
 
+        # Maths
+        string = replace(string,    ' '+text+'\^',      ' '+latex+'\^')
+        string = replace(string,    '('+text+'\^',      '('+latex+'\^')
+        string = replace(string,    '\n'+text+'\^',     '\n'+latex+'\^')
+
         # At the start of the line.
-        if search('\n'+text+'['+punctuation+']', string) or search('\n'+text+'['+whitespace+']', string):
+        if search('^'+text+'['+punctuation+']', string) or search('^'+text+'['+whitespace+']', string) or search('\n'+text+'['+punctuation+']', string) or search('\n'+text+'['+whitespace+']', string):
             string = replace(string,    text+' ',           latex+' ')
             string = replace(string,    text+',',           latex+',')
             string = replace(string,    text+'.',           latex+'.')
             string = replace(string,    text+';',           latex+';')
             string = replace(string,    text+']',           latex+']')
             string = replace(string,    text+')',           latex+')')
+            string = replace(string,    text+'^',           latex+'^')
             string = replace(string,    text+'\\',          latex+'\\')
             string = replace(string,    text+'\'',          latex+'\'')
             string = replace(string,    text+'\n',          latex+'\n')

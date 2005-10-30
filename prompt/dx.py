@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -164,25 +164,27 @@ class OpenDX:
         'm5' which consists of the parameters {S2f, S2s, ts}.  Files will be output into the
         directory 'dx' and will be prefixed by 'map'.  The residue, in this case, is number 6.
 
-        relax> map('m5', 6)
-        relax> map('m5', 6, 20, 'map', 'dx')
-        relax> map('m5', res_num=6, file='map', dir='dx')
-        relax> map(run='m5', res_num=6, inc=20, file='map', dir='dx')
-        relax> map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 1, 2], file='map', dir='dx')
+        relax> dx.map('m5', 6)
+        relax> dx.map('m5', 6, 20, 'map', 'dx')
+        relax> dx.map('m5', res_num=6, file='map', dir='dx')
+        relax> dx.map(run='m5', res_num=6, inc=20, file='map', dir='dx')
+        relax> dx.map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 1, 2], file='map',
+                      dir='dx')
 
 
         The following commands will swap the S2s and ts axes of this map.
 
-        relax> map('m5', res_num=6, swap=[0, 2, 1])
-        relax> map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 2, 1], file='map', dir='dx')
+        relax> dx.map('m5', res_num=6, swap=[0, 2, 1])
+        relax> dx.map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 2, 1], file='map',
+                      dir='dx')
 
 
         To map the model-free space 'm4' defined by the parameters {S2, te, Rex}, name the results
         'test', and not place the files in a subdirectory, use the following commands (assuming
         residue 2).
 
-        relax> map('m4', res_num=2, file='test', dir=None)
-        relax> map(run='m4', res_num=2, inc=100, file='test', dir=None)
+        relax> dx.map('m4', res_num=2, file='test', dir=None)
+        relax> dx.map(run='m4', res_num=2, inc=100, file='test', dir=None)
         """
 
         # Function intro text.
