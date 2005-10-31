@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -46,6 +46,7 @@ class Diffusion_tensor:
             # Scaling.
             tm = tm * self.time_scale
             Da = Da * self.d_scale
+            Dr = Dr * self.d_scale
 
             # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
             self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
@@ -66,6 +67,7 @@ class Diffusion_tensor:
             # Scaling.
             Diso = Diso * self.d_scale
             Da = Da * self.d_scale
+            Dr = Dr * self.d_scale
 
             # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
             self.relax.data.diff[self.run].Diso = Diso
@@ -146,27 +148,8 @@ class Diffusion_tensor:
             # Global correlation time:  tm.
             self.relax.data.diff[self.run].tm = tm
 
-        # (Diso, Da, theta, phi).
-        elif self.param_types == 1:
-            # Unpack the tuple.
-            Diso, Da, theta, phi = self.params
-
-            # Scaling.
-            Diso = Diso * self.d_scale
-            Da = Da * self.d_scale
-
-            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = Diso
-            self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dpar = Diso + 2.0*Da
-            self.relax.data.diff[self.run].Dper = Diso - Da
-            self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
-
         # (tm, Dratio, theta, phi).
-        elif self.param_types == 2:
+        elif self.param_types == 1:
             # Unpack the tuple.
             tm, Dratio, theta, phi = self.params
 
@@ -184,7 +167,7 @@ class Diffusion_tensor:
             self.relax.data.diff[self.run].tm = tm
 
         # (Dpar, Dper, theta, phi).
-        elif self.param_types == 3:
+        elif self.param_types == 2:
             # Unpack the tuple.
             Dpar, Dper, theta, phi = self.params
 
@@ -198,6 +181,25 @@ class Diffusion_tensor:
             self.relax.data.diff[self.run].Diso = (Dpar + 2.0*Dper) / 3.0
             self.relax.data.diff[self.run].Da = (Dpar - Dper) / 3.0
             self.relax.data.diff[self.run].Dratio = Dpar / Dper
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
+
+        # (Diso, Da, theta, phi).
+        elif self.param_types == 3:
+            # Unpack the tuple.
+            Diso, Da, theta, phi = self.params
+
+            # Scaling.
+            Diso = Diso * self.d_scale
+            Da = Da * self.d_scale
+
+            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
+            self.relax.data.diff[self.run].Diso = Diso
+            self.relax.data.diff[self.run].Da = Da
+            self.relax.data.diff[self.run].Dpar = Diso + 2.0*Da
+            self.relax.data.diff[self.run].Dper = Diso - Da
+            self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
 
             # Global correlation time:  tm.
             self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
