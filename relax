@@ -14,7 +14,7 @@
 #                                                                             #
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
-# Copyright (C) 2003, 2004, 2005  Edward d'Auvergne                           #
+# Copyright (C) 2003-2005  Edward d'Auvergne                                  #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -294,7 +294,7 @@ class Relax:
 
                          A program for NMR relaxation data analysis
 
-                      Copyright (C) 2003, 2004, 2005 Edward d'Auvergne
+                         Copyright (C) 2003-2005 Edward d'Auvergne
 
 
 This is free software which you are welcome to modify and redistribute under the conditions of the
