@@ -30,7 +30,7 @@ from Numeric import outerproduct
 def calc_iso_ci(data, diff_data):
     """Weight equations for isotropic diffusion.
 
-    c0 = 1
+    c0 = 1.
     """
 
     data.ci[0] = 1.0
@@ -43,18 +43,20 @@ def calc_iso_ci(data, diff_data):
 def calc_axial_ci(data, diff_data):
     """Weight equations for axially symmetric diffusion.
 
-    The equations are:
+    The equations are
 
-        c0 = 1/4 (3delta**2 - 1)**2
-        c1 = 3delta**2 (1 - delta**2)
-        c2 = 3/4 (1 - delta**2)**2
+        c0 = 1/4 (3dz**2 - 1)**2,
+        c1 = 3dz**2 (1 - dz**2),
+        c2 = 3/4 (1 - dz**2)**2,
 
-    where delta is the dot product of the unit bond vector and the unit vector along Dpar.
+    where dz is the direction cosine of the unit bond vector along the z-axis of the diffusion
+    tensor which is calculated as the dot product of the unit bond vector with a unit vector along
+    Dpar.
     """
 
-    data.ci[0] = 0.25 * (3.0 * data.delta**2 - 1.0)**2
-    data.ci[1] = 3.0 * data.delta**2 * (1.0 - data.delta**2)
-    data.ci[2] = 0.75 * (1.0 - data.delta**2)**2
+    data.ci[0] = 0.25 * (3.0 * data.dz**2 - 1.0)**2
+    data.ci[1] = 3.0 * data.dz**2 * (1.0 - data.dz**2)
+    data.ci[2] = 0.75 * (1.0 - data.dz**2)**2
 
 
 
@@ -64,26 +66,26 @@ def calc_axial_ci(data, diff_data):
 def calc_axial_dci(data, diff_data):
     """Weight gradient for axially symmetric diffusion.
 
-    The equations are:
+    The equations are
 
-         dc0                             ddelta
-        -----  =  3delta (3delta**2 - 1) ------
-        dpsii                            dpsii
+        dc0                      ddz
+        ---  =  3dz (3dz**2 - 1) --- ,
+        dOi                      dOi
 
-         dc1                             ddelta
-        -----  =  6delta (1 - 2delta**2) ------
-        dpsii                            dpsii
+        dc1                      ddz
+        ---  =  6dz (1 - 2dz**2) --- ,
+        dOi                      dOi
 
-         dc2                            ddelta
-        -----  =  3delta (delta**2 - 1) ------
-        dpsii                           dpsii
+        dc2                     ddz
+        ---  =  3dz (dz**2 - 1) --- ,
+        dOi                     dOi
 
-    where psi = {theta, phi}
+    where the orientation parameter set O is {theta, phi}.
     """
 
-    data.dci[2:, 0] = 3.0 * data.delta * (3.0 * data.delta**2 - 1.0) * data.ddelta_dpsi
-    data.dci[2:, 1] = 6.0 * data.delta * (1.0 - 2.0 * data.delta**2) * data.ddelta_dpsi
-    data.dci[2:, 2] = 3.0 * data.delta * (data.delta**2 - 1.0) * data.ddelta_dpsi
+    data.dci[2:, 0] = 3.0 * data.dz * (3.0 * data.dz**2 - 1.0) * data.ddz_dO
+    data.dci[2:, 1] = 6.0 * data.dz * (1.0 - 2.0 * data.dz**2) * data.ddz_dO
+    data.dci[2:, 2] = 3.0 * data.dz * (data.dz**2 - 1.0) * data.ddz_dO
 
 
 
@@ -93,30 +95,30 @@ def calc_axial_dci(data, diff_data):
 def calc_axial_d2ci(data, diff_data):
     """Weight Hessian for axially symmetric diffusion.
 
-    The equations are:
+    The equations are
 
-           d2c0           /                ddelta   ddelta                             d2delta   \ 
-        -----------  =  3 |(9delta**2 - 1) ------ . ------  +  delta (3delta**2 - 1) ----------- |
-        dpsii.dpsij       \                dpsii    dpsij                            dpsii.dpsij /
+         d2c0         /             ddz   ddz                      d2dz   \ 
+        -------  =  3 |(9dz**2 - 1) --- . ---  +  dz (3dz**2 - 1) ------- | ,
+        dOi.dOj       \             dOi   dOj                     dOi.dOj /
 
-           d2c1           /                ddelta   ddelta                             d2delta   \ 
-        -----------  =  6 |(1 - 6delta**2) ------ . ------  +  delta (1 - 2delta**2) ----------- |
-        dpsii.dpsij       \                dpsii    dpsij                            dpsii.dpsij /
+         d2c1         /             ddz   ddz                      d2dz   \ 
+        -------  =  6 |(1 - 6dz**2) --- . ---  +  dz (1 - 2dz**2) ------- | ,
+        dOi.dOj       \             dOi   dOj                     dOi.dOj /
 
-           d2c2           /                ddelta   ddelta                            d2delta   \ 
-        -----------  =  3 |(3delta**2 - 1) ------ . ------  +  delta (delta**2 - 1) ----------- |
-        dpsii.dpsij       \                dpsii    dpsij                           dpsii.dpsij /
+         d2c2         /             ddz   ddz                     d2dz   \ 
+        -------  =  3 |(3dz**2 - 1) --- . ---  +  dz (dz**2 - 1) ------- | ,
+        dOi.dOj       \             dOi   dOj                    dOi.dOj /
 
-    where psi = {theta, phi}
+    where the orientation parameter set O is {theta, phi}.
     """
 
     # Outer product.
-    op = outerproduct(data.ddelta_dpsi, data.ddelta_dpsi)
+    op = outerproduct(data.ddz_dO, data.ddz_dO)
 
     # Hessian.
-    data.d2ci[2:, 2:, 0] = 3.0 * ((9.0 * data.delta**2 - 1.0) * op + data.delta * (3.0 * data.delta**2 - 1.0) * data.d2delta_dpsi2)
-    data.d2ci[2:, 2:, 1] = 6.0 * ((1.0 - 6.0 * data.delta**2) * op + data.delta * (1.0 - 2.0 * data.delta**2) * data.d2delta_dpsi2)
-    data.d2ci[2:, 2:, 2] = 3.0 * ((3.0 * data.delta**2 - 1.0) * op + data.delta * (data.delta**2 - 1.0) * data.d2delta_dpsi2)
+    data.d2ci[2:, 2:, 0] = 3.0 * ((9.0 * data.dz**2 - 1.0) * op + data.dz * (3.0 * data.dz**2 - 1.0) * data.d2dz_dO2)
+    data.d2ci[2:, 2:, 1] = 6.0 * ((1.0 - 6.0 * data.dz**2) * op + data.dz * (1.0 - 2.0 * data.dz**2) * data.d2dz_dO2)
+    data.d2ci[2:, 2:, 2] = 3.0 * ((3.0 * data.dz**2 - 1.0) * op + data.dz * (data.dz**2 - 1.0) * data.d2dz_dO2)
 
 
 
@@ -126,56 +128,35 @@ def calc_axial_d2ci(data, diff_data):
 def calc_aniso_ci(data, diff_data):
     """Weight equations for anisotropic diffusion.
 
-    In the following equations, the following short-hand notation will be used:
+    The equations are
 
-        da = delta_alpha
+        c-2 = 1/4 (d - e),
 
-        db = delta_beta
+        c-1 = 3dy**2.dz**2,
 
-        dg = delta_gamma
+        c0  = 3dx**2.dz**2,
 
+        c1  = 3dx**2.dy**2,
 
-    The equations are:
+        c2  = 1/4 (d + e),
 
-        c-2 = 3da**2.db**2
+    where
 
+        d  = 3(dx**4 + dy**4 + dz**4) - 1,
 
-        c-1 = 3da**2.dg**2
+        e  =  1/R [(1 + 3Dr)(dx**4 + 2dy**2.dz**2) + (1 - 3Dr)(dy**4 + 2dx**2.dz**2) - 2(dz**4 + 2dx**2.dy**2)],
 
+    and where the factor R is defined as
+             ________
+        R = V 1 + 3Dr.
 
-        c0  = 1/4 (3(da**4 + db**4 + dg**4) - 1 - e)
-
-
-        c1  = 3db**2.dg**2
-
-
-        c2  = 1/4 (3(da**4 + db**4 + dg**4) - 1 + e)
-
-
-              Da - Dr                          Da + Dr                          2Da
-        e  =  ------- (da**4 + 2db**2.dg**2) + ------- (db**4 + 2da**2.dg**2) - --- (dg**4 + 2da**2.db**2)
-                mu                               mu                             mu
-
-
-    where:
-              __________________
-        mu = V Da**2 + Dr**2 / 3
-
-        delta_alpha is the dot product of the unit bond vector and the unit vector along Dx.
-
-        delta_beta is the dot product of the unit bond vector and the unit vector along Dy.
-
-        delta_gamma is the dot product of the unit bond vector and the unit vector along Dz.
-
-        alpha (in delta_alpha) is the directional cosine along Dx.
-
-        beta (in delta_beta) is the directional cosine along Dy.
-
-        gamma (in delta_gamma) is the directional cosine along Dz.
+    dx, dy, and dz are the direction cosines of the XH bond vector along the x, y, and z-axes of the
+    diffusion tensor, calculated as the dot product of the unit bond vector and the unit vectors
+    along Dx, Dy, and Dz respectively.
     """
 
-    # Calculate mu.
-    data.mu = sqrt(diff_data.params[1]**2 + diff_data.params[2]**2 / 3.0)
+    # Calculate R.
+    data.R = sqrt(1 + diff_data.params[2])
 
     # Components.
     data.c_alpha = data.delta_alpha**4 + 2.0 * data.delta_beta**2  * data.delta_gamma**2
