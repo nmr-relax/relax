@@ -24,10 +24,10 @@ from Numeric import dot
 from math import cos, sin
 
 
-# Axially symmetric delta equation.
-###################################
+# Spheroid delta equation.
+##########################
 
-def calc_axial_geom(data, diff_data):
+def calc_spheroid_geom(data, diff_data):
     """Function for calculating the dot product XH . Dpar.
 
     Delta is the dot product between the unit bond vector and the unit vector along Dpar.  The
@@ -52,10 +52,10 @@ def calc_axial_geom(data, diff_data):
 
 
 
-# Axially symmetric delta gradient.
-###################################
+# Spheroid delta gradient.
+##########################
 
-def calc_axial_dgeom(data, diff_data):
+def calc_spheroid_dgeom(data, diff_data):
     """Function for calculating the partial derivatives of the dot product XH . Dpar.
 
     The theta partial derivative of the unit Dpar vector is:
@@ -89,10 +89,10 @@ def calc_axial_dgeom(data, diff_data):
 
 
 
-# Axially symmetric delta Hessian.
-##################################
+# Spheroid delta Hessian.
+#########################
 
-def calc_axial_d2geom(data, diff_data):
+def calc_spheroid_d2geom(data, diff_data):
     """Function for calculating the second partial derivatives of the dot product XH . Dpar.
 
     The theta-theta second partial derivative of the unit Dpar vector is:
@@ -138,10 +138,10 @@ def calc_axial_d2geom(data, diff_data):
 
 
 
-# Anisotropic delta equations.
-##############################
+# Ellipsoid delta equations.
+############################
 
-def calc_aniso_geom(data, diff_data):
+def calc_ellipsoid_geom(data, diff_data):
     """Function for calculating delta_alpha, delta_beta, and delta_gamma.
 
     Deltas
@@ -217,10 +217,10 @@ def calc_aniso_geom(data, diff_data):
 
 
 
-# Anisotropic delta gradient.
-#############################
+# Ellipsoid delta gradient.
+###########################
 
-def calc_aniso_dgeom(data, diff_data):
+def calc_ellipsoid_dgeom(data, diff_data):
     """Function for calculating the partial derivative of delta_alpha, delta_beta, and delta_gamma.
 
     Dx gradient
@@ -354,10 +354,10 @@ def calc_aniso_dgeom(data, diff_data):
 
 
 
-# Anisotropic delta Hessian.
-############################
+# Ellipsoid delta Hessian.
+##########################
 
-def calc_aniso_d2geom(data, diff_data):
+def calc_ellipsoid_d2geom(data, diff_data):
     """Function calculating the second partial derivatives of delta_alpha, delta_beta, delta_gamma.
 
     Dx Hessian

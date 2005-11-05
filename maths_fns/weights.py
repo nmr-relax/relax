@@ -37,11 +37,11 @@ def calc_iso_ci(data, diff_data):
 
 
 
-# Axially symmetric weight equation.
-####################################
+# Spheroid weight equation.
+###########################
 
-def calc_axial_ci(data, diff_data):
-    """Weight equations for axially symmetric diffusion.
+def calc_spheroid_ci(data, diff_data):
+    """Weight equations for spheroidal diffusion.
 
     The equations are
 
@@ -60,11 +60,11 @@ def calc_axial_ci(data, diff_data):
 
 
 
-# Axially symmetric weight gradient.
-####################################
+# Spheroid weight gradient.
+###########################
 
-def calc_axial_dci(data, diff_data):
-    """Weight gradient for axially symmetric diffusion.
+def calc_spheroid_dci(data, diff_data):
+    """Weight gradient for spheroidal diffusion.
 
     The equations are
 
@@ -89,11 +89,11 @@ def calc_axial_dci(data, diff_data):
 
 
 
-# Axially symmetric weight Hessian.
-###################################
+# Spheroid weight Hessian.
+##########################
 
-def calc_axial_d2ci(data, diff_data):
-    """Weight Hessian for axially symmetric diffusion.
+def calc_spheroid_d2ci(data, diff_data):
+    """Weight Hessian for spheroidal diffusion.
 
     The equations are
 
@@ -122,11 +122,11 @@ def calc_axial_d2ci(data, diff_data):
 
 
 
-# Anisotropic weight equation.
-##############################
+# Ellipsoid weight equation.
+############################
 
-def calc_aniso_ci(data, diff_data):
-    """Weight equations for anisotropic diffusion.
+def calc_ellipsoid_ci(data, diff_data):
+    """Weight equations for ellipsoidal diffusion.
 
     The equations are
 
@@ -194,11 +194,11 @@ def calc_aniso_ci(data, diff_data):
     data.ci[4] = 0.25 * (d + e)
 
 
-# Anisotropic weight gradient.
-##############################
+# Ellipsoid weight gradient.
+############################
 
-def calc_aniso_dci(data, diff_data):
-    """Weight gradient for anisotropic diffusion.
+def calc_ellipsoid_dci(data, diff_data):
+    """Weight gradient for ellipsoidal diffusion.
 
     psii partial derivatives
     ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -415,11 +415,11 @@ def calc_aniso_dci(data, diff_data):
     data.dci[2, 4] = 0.25 * de_dDr
 
 
-# Anisotropic weight Hessian.
-#############################
+# Ellipsoid weight Hessian.
+###########################
 
-def calc_aniso_d2ci(data, diff_data):
-    """Weight Hessian for anisotropic diffusion.
+def calc_ellipsoid_d2ci(data, diff_data):
+    """Weight Hessian for ellipsoidal diffusion.
 
     psii-psij partial derivatives
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
