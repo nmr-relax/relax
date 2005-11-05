@@ -1425,8 +1425,8 @@ class Model_free(Common_functions):
             # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
             elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
-                min_options.append([inc[1], -1e7, 1e7])
-                min_options.append([inc[2], -1e7, 1e7])
+                min_options.append([inc[1], 0.0, 1e7])
+                min_options.append([inc[2], 0.0, 1.0])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 min_options.append([inc[4], 0.0, pi])
                 min_options.append([inc[5], 0.0, 2 * pi])
