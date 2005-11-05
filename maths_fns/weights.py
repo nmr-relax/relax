@@ -779,7 +779,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
     d2d_dOidOj = 3.0 * (x3_comp + y3_comp + z3_comp)
 
     # Calculate d2e_dOidOj.
-    d2e_dOidOj = 1.0 / data.R (data.one_3Dr * (x3_comp + yz_comp) + data.one_m3Dr * (y3_comp + xz_comp) - 2.0 * (z3_comp + xy_comp)
+    d2e_dOidOj = 1.0 / data.R (data.one_3Dr * (x3_comp + yz_comp) + data.one_m3Dr * (y3_comp + xz_comp) - 2.0 * (z3_comp + xy_comp))
 
     # Weight c-2.
     data.d2ci[3:, 3:, 0] = d2d_dOidOj - d2e_dOidOj
