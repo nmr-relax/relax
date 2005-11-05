@@ -1286,11 +1286,12 @@ class Mf:
     def init_res_data(self, data, diff_data):
         """Function for the initialisation of the residue specific data."""
 
-        # Weights and global correlation time values.
+        # Correlation times.
         data.ci = zeros(diff_data.num_indecies, Float64)
-        data.ti = zeros(diff_data.num_indecies, Float64)
+        data.ci_comps = zeros(diff_data.num_indecies, Float64)
 
-        # Weight components.
+        # Weights.
+        data.ti = zeros(diff_data.num_indecies, Float64)
         data.tau_comps = zeros(diff_data.num_indecies, Float64)
         data.tau_comps_sqrd = zeros(diff_data.num_indecies, Float64)
         data.tau_comps_cubed = zeros(diff_data.num_indecies, Float64)
