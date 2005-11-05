@@ -33,7 +33,7 @@ from math import sqrt
 #########################
 
 def calc_sphere_ti(data, diff_data):
-    """Diffusional correlation times for isotropic diffusion.
+    """Diffusional correlation times.
 
     The correlation time is
     

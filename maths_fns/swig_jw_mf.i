@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2003 Edward d'Auvergne
+Copyright (C) 2003-2005 Edward d'Auvergne
 
 This file is part of the program relax.
 
@@ -23,5 +23,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 %module swig_jw_mf
 
 extern double jw;
-extern double c_calc_iso_s2_jw(double s2_tm, double omega_tm_sqrd);
-extern double c_calc_iso_s2f_s2s_ts_jw(double s2f, double s2s_tm, double omega_tm_sqrd, double s2s, double ts_prime, double omega_ts_prime_sqrd);
+extern double c_calc_sphere_s2_jw(double s2_tm, double omega_tm_sqrd);
+extern double c_calc_sphere_s2f_s2s_ts_jw(double s2f, double s2s_tm, double omega_tm_sqrd, double s2s, double ts_prime, double omega_ts_prime_sqrd);

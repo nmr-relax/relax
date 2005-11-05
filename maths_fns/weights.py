@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,11 +24,11 @@ from math import sqrt
 from Numeric import outerproduct
 
 
-# Isotropic weight equation.
-############################
+# Sphere weight equation.
+#########################
 
-def calc_iso_ci(data, diff_data):
-    """Weight equations for isotropic diffusion.
+def calc_sphere_ci(data, diff_data):
+    """Weight equations for spherical diffusion.
 
     c0 = 1.
     """
