@@ -442,7 +442,7 @@ class Diffusion_tensor:
         if type(param_types) != int:
             raise RelaxIntError, ('parameter types', param_types)
 
-        # Axial type argument.
+        # Spheroid type argument.
         if spheroid_type != None and type(spheroid_type) != str:
             raise RelaxNoneStrError, ('spheroid type', spheroid_type)
 
