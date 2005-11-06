@@ -101,19 +101,19 @@ class Model_free(Common_functions):
 
         # Diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 self.param_names.append('tm')
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 self.param_names.append('tm')
                 self.param_names.append('Da')
                 self.param_names.append('theta')
                 self.param_names.append('phi')
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 self.param_names.append('tm')
                 self.param_names.append('Da')
                 self.param_names.append('Dr')
@@ -147,19 +147,19 @@ class Model_free(Common_functions):
 
         # Monte Carlo diffusion tensor parameters.
         if sim_index != None and (param_set == 'diff' or param_set == 'all'):
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].Da_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].theta_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].phi_sim[sim_index])
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].Da_sim[sim_index])
                 param_vector.append(self.relax.data.diff[self.run].Dr_sim[sim_index])
@@ -169,19 +169,19 @@ class Model_free(Common_functions):
 
         # Diffusion tensor parameters.
         elif param_set == 'diff' or param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 param_vector.append(self.relax.data.diff[self.run].tm)
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 param_vector.append(self.relax.data.diff[self.run].tm)
                 param_vector.append(self.relax.data.diff[self.run].Da)
                 param_vector.append(self.relax.data.diff[self.run].theta)
                 param_vector.append(self.relax.data.diff[self.run].phi)
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 param_vector.append(self.relax.data.diff[self.run].tm)
                 param_vector.append(self.relax.data.diff[self.run].Da)
                 param_vector.append(self.relax.data.diff[self.run].Dr)
@@ -316,16 +316,16 @@ class Model_free(Common_functions):
 
         # Diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 # tm.
                 self.scaling_matrix[i, i] = ti_scaling
 
                 # Increment i.
                 i = i + 1
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 # tm, Da, theta, phi
                 self.scaling_matrix[i, i] = ti_scaling
                 self.scaling_matrix[i+1, i+1] = 1e7
@@ -335,12 +335,12 @@ class Model_free(Common_functions):
                 # Increment i.
                 i = i + 4
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 # tm, Da, Dr, alpha, beta, gamma.
                 self.scaling_matrix[i, i] = ti_scaling
                 self.scaling_matrix[i+1, i+1] = 1e7
-                self.scaling_matrix[i+2, i+2] = 1e7
+                self.scaling_matrix[i+2, i+2] = 1.0
                 self.scaling_matrix[i+3, i+3] = 1.0
                 self.scaling_matrix[i+4, i+4] = 1.0
                 self.scaling_matrix[i+5, i+5] = 1.0
@@ -931,16 +931,16 @@ class Model_free(Common_functions):
 
         # Diffusion tensor parameters of the Monte Carlo simulations.
         if sim_index != None and (self.param_set == 'diff' or self.param_set == 'all'):
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 # Sim values.
                 self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
 
                 # Parameter index.
                 param_index = param_index + 1
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 # Minimised value of theta and phi (to wrap the angles in a window around these angles).
                 theta = self.relax.data.diff[self.run].theta
                 phi = self.relax.data.diff[self.run].phi
@@ -954,8 +954,8 @@ class Model_free(Common_functions):
                 # Parameter index.
                 param_index = param_index + 4
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 # Minimised value of alpha, beta, and gamma (to wrap the angles in a window around these angles).
                 alpha = self.relax.data.diff[self.run].alpha
                 beta = self.relax.data.diff[self.run].beta
@@ -974,16 +974,16 @@ class Model_free(Common_functions):
 
         # Diffusion tensor parameters.
         elif self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 # Values.
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
 
                 # Parameter index.
                 param_index = param_index + 1
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 # Values.
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
                 self.relax.data.diff[self.run].Da = self.param_vector[1]
@@ -993,8 +993,8 @@ class Model_free(Common_functions):
                 # Parameter index.
                 param_index = param_index + 4
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 # Values.
                 self.relax.data.diff[self.run].tm = self.param_vector[0]
                 self.relax.data.diff[self.run].Da = self.param_vector[1]
@@ -1404,17 +1404,17 @@ class Model_free(Common_functions):
 
         # Minimisation options for diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion {tm}.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion {tm}.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
                 m = m + 1
 
-            # Axially symmetric diffusion {tm, Da, theta, phi}.
-            if self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion {tm, Da, theta, phi}.
+            if self.relax.data.diff[self.run].type == 'spheroid':
                 min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
-                if self.relax.data.diff[self.run].axial_type == 'prolate':
+                if self.relax.data.diff[self.run].spheroid_type == 'prolate':
                     min_options.append([inc[1], 0.0, 1e7])
-                elif self.relax.data.diff[self.run].axial_type == 'oblate':
+                elif self.relax.data.diff[self.run].spheroid_type == 'oblate':
                     min_options.append([inc[1], -1e7, 0.0])
                 else:
                     min_options.append([inc[1], -1e7, 1e7])
@@ -1422,11 +1422,11 @@ class Model_free(Common_functions):
                 min_options.append([inc[3], 0.0, 2 * pi])
                 m = m + 4
 
-            # Anisotropic diffusion {tm, Da, Dr, alpha, beta, gamma}.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
-                min_options.append([inc[1], -1e7, 1e7])
-                min_options.append([inc[2], -1e7, 1e7])
+                min_options.append([inc[1], 0.0, 1e7])
+                min_options.append([inc[2], 0.0, 1.0])
                 min_options.append([inc[3], 0.0, 2 * pi])
                 min_options.append([inc[4], 0.0, pi])
                 min_options.append([inc[5], 0.0, 2 * pi])
@@ -1614,8 +1614,8 @@ class Model_free(Common_functions):
 
         # Diffusion tensor parameters.
         if self.param_set != 'mf' and self.relax.data.diff.has_key(self.run):
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -1626,8 +1626,8 @@ class Model_free(Common_functions):
                 i = i + 1
                 j = j + 2
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -1639,7 +1639,7 @@ class Model_free(Common_functions):
                 j = j + 2
 
                 # Prolate diffusion, Da >= 0.
-                if self.relax.data.diff[self.run].axial_type == 'prolate':
+                if self.relax.data.diff[self.run].spheroid_type == 'prolate':
                     A.append(zero_array * 0.0)
                     A[j][i] = 1.0
                     b.append(0.0 / self.scaling_matrix[i, i])
@@ -1650,7 +1650,7 @@ class Model_free(Common_functions):
                     i = i + 2
 
                 # Oblate diffusion, Da <= 0.
-                elif self.relax.data.diff[self.run].axial_type == 'oblate':
+                elif self.relax.data.diff[self.run].spheroid_type == 'oblate':
                     A.append(zero_array * 0.0)
                     A[j][i] = -1.0
                     b.append(0.0 / self.scaling_matrix[i, i])
@@ -1664,8 +1664,8 @@ class Model_free(Common_functions):
                     # Add three to i for the Da, theta and phi parameters.
                     i = i + 3
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -1676,8 +1676,25 @@ class Model_free(Common_functions):
                 i = i + 1
                 j = j + 2
 
-                # Add five to i for the Da, Dr, alpha, beta, and gamma parameters.
-                i = i + 5
+                # Da >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # 0 <= Dr <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-1.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+                # Add three to i for the alpha, beta, and gamma parameters.
+                i = i + 3
 
         # Model-free parameters.
         if self.param_set != 'diff':
@@ -1937,7 +1954,7 @@ class Model_free(Common_functions):
             raise RelaxNoTensorError, self.run
 
         # Tests for the PDB file and unit vectors.
-        if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
+        if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
             # Test if the PDB file has been loaded.
             if not self.relax.data.pdb.has_key(self.run):
                 raise RelaxNoPdbError, self.run
@@ -2120,7 +2137,7 @@ class Model_free(Common_functions):
                 remap_table = [[0]]
                 noe_r1_table = [[None]]
                 ri_labels = [[min_options[1]]]
-                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
+                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
                     xh_unit_vectors = [self.relax.data.res[self.run][index].xh_vect]
                 else:
                     xh_unit_vectors = [None]
@@ -2180,7 +2197,7 @@ class Model_free(Common_functions):
                     pass
 
                 # Vectors.
-                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'iso':
+                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
                     xh_unit_vectors.append(data.xh_vect)
                 else:
                     xh_unit_vectors.append(None)
@@ -2199,7 +2216,7 @@ class Model_free(Common_functions):
 
             # Diffusion tensor type.
             if self.param_set == 'local_tm':
-                diff_type = 'iso'
+                diff_type = 'sphere'
             else:
                 diff_type = self.relax.data.diff[self.run].type
 
@@ -2209,19 +2226,19 @@ class Model_free(Common_functions):
                 # Alias.
                 data = self.relax.data.diff[self.run]
 
-                # Isotropic diffusion.
-                if diff_type == 'iso':
+                # Spherical diffusion.
+                if diff_type == 'sphere':
                     diff_params = [data.tm]
 
-                # Axially symmetric diffusion.
-                elif diff_type == 'axial':
+                # Spheroidal diffusion.
+                elif diff_type == 'spheroid':
                     diff_params = [data.tm, data.Da, data.theta, data.phi]
 
-                # Anisotropic diffusion.
-                elif diff_type == 'aniso':
+                # Ellipsoidal diffusion.
+                elif diff_type == 'ellipsoid':
                     diff_params = [data.tm, data.Da, data.Dr, data.alpha, data.beta, data.gamma]
             elif min_algor == 'back_calc' and self.param_set == 'local_tm':
-                # Isotropic diffusion.
+                # Spherical diffusion.
                 diff_params = [self.relax.data.res[self.run][index].tm]
 
 
@@ -2635,8 +2652,8 @@ class Model_free(Common_functions):
         if diff_type == 'None':
             diff_type = None
 
-        # Isotropic.
-        if diff_type == 'iso':
+        # Sphere.
+        if diff_type == 'sphere':
             # Convert the parameters to floating point numbers.
             try:
                 tm = float(self.file_line[self.col['tm']])
@@ -2666,8 +2683,8 @@ class Model_free(Common_functions):
                 self.relax.data.diff[self.run].tm_sim.append(tm)
 
 
-        # Axial symmetery.
-        elif diff_type == 'axial' or diff_type == 'oblate' or diff_type == 'prolate':
+        # Spheroid.
+        elif diff_type == 'spheroid' or diff_type == 'oblate' or diff_type == 'prolate':
             # Convert the parameters to floating point numbers.
             try:
                 tm = float(self.file_line[self.col['tm']])
@@ -2712,8 +2729,8 @@ class Model_free(Common_functions):
                 self.relax.data.diff[self.run].phi_sim.append(phi)
 
 
-        # Anisotropic.
-        elif diff_type == 'aniso':
+        # Ellipsoid.
+        elif diff_type == 'ellipsoid':
             # Convert the parameters to floating point numbers.
             try:
                 tm = float(self.file_line[self.col['tm']])
@@ -2770,13 +2787,13 @@ class Model_free(Common_functions):
 
         # Set the diffusion tensor.
         if self.data_set == 'value' and diff_type:
-            # Sort out the axial type.
-            axial_type = None
+            # Sort out the spheroid type.
+            spheroid_type = None
             if diff_type == 'oblate' or diff_type == 'prolate':
-                axial_type = diff_type
+                spheroid_type = diff_type
 
             # Set the diffusion tensor.
-            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, angle_units='rad', axial_type=axial_type)
+            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
     def read_columnar_find_index(self):
@@ -4044,8 +4061,8 @@ class Model_free(Common_functions):
         ####################################
 
         if self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
                     self.relax.data.diff[self.run].tm_err = error
@@ -4053,8 +4070,8 @@ class Model_free(Common_functions):
                 # Increment.
                 inc = inc + 1
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
                     self.relax.data.diff[self.run].tm_err = error
@@ -4068,8 +4085,8 @@ class Model_free(Common_functions):
                 # Increment.
                 inc = inc + 4
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
                     self.relax.data.diff[self.run].tm_err = error
@@ -4143,16 +4160,16 @@ class Model_free(Common_functions):
 
         # List of diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 diff_params = ['tm']
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 diff_params = ['tm', 'Da', 'theta', 'phi']
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
 
 
@@ -4318,8 +4335,8 @@ class Model_free(Common_functions):
         ##############################
 
         if self.param_set == 'diff' or self.param_set == 'all':
-            # Isotropic diffusion.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Spherical diffusion.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
                     return self.relax.data.diff[self.run].tm_sim
@@ -4327,8 +4344,8 @@ class Model_free(Common_functions):
                 # Increment.
                 inc = inc + 1
 
-            # Axially symmetric diffusion.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
                     return self.relax.data.diff[self.run].tm_sim
@@ -4342,8 +4359,8 @@ class Model_free(Common_functions):
                 # Increment.
                 inc = inc + 4
 
-            # Anisotropic diffusion.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoidal diffusion.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
                     return self.relax.data.diff[self.run].tm_sim
@@ -4586,16 +4603,16 @@ class Model_free(Common_functions):
         # Diffusion parameters.
         diff_params = None
         if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
-            # Isotropic.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Sphere.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 diff_params = ['tm_(s)']
 
-            # Axially symmetric.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroid.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 diff_params = ['tm_(s)', 'Da_(1/s)', 'theta_(deg)', 'phi_(deg)']
 
-            # Anisotropic.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoid.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 diff_params = ['tm_(s)', 'Da_(1/s)', 'Dr_(1/s)', 'alpha_(deg)', 'beta_(deg)', 'gamma_(deg)']
 
         # Relaxation data and errors.
@@ -4620,21 +4637,21 @@ class Model_free(Common_functions):
         diff_type = None
         diff_params = None
         if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
-            # Isotropic.
-            if self.relax.data.diff[self.run].type == 'iso':
-                diff_type = 'iso'
+            # Sphere.
+            if self.relax.data.diff[self.run].type == 'sphere':
+                diff_type = 'sphere'
                 diff_params = [`self.relax.data.diff[self.run].tm`]
 
-            # Axially symmetric.
-            elif self.relax.data.diff[self.run].type == 'axial':
-                diff_type = self.relax.data.diff[self.run].axial_type
+            # Spheroid.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
+                diff_type = self.relax.data.diff[self.run].spheroid_type
                 if diff_type == None:
-                    diff_type = 'axial'
+                    diff_type = 'spheroid'
                 diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].theta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi * 360 / (2.0 * pi)`]
 
-            # Anisotropic.
-            elif self.relax.data.diff[self.run].type == 'aniso':
-                diff_type = 'aniso'
+            # Ellipsoid.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                diff_type = 'ellipsoid'
                 diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma * 360 / (2.0 * pi)`]
 
         # PDB.
@@ -4810,30 +4827,30 @@ class Model_free(Common_functions):
         # Diffusion parameters.
         diff_params = None
         if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
-            # Isotropic.
-            if self.relax.data.diff[self.run].type == 'iso':
+            # Sphere.
+            if self.relax.data.diff[self.run].type == 'sphere':
                 diff_params = [None]
 
-            # Axially symmetric.
-            elif self.relax.data.diff[self.run].type == 'axial':
+            # Spheroid.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
                 diff_params = [None, None, None, None]
 
-            # Anisotropic.
-            elif self.relax.data.diff[self.run].type == 'aniso':
+            # Ellipsoid.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
                 diff_params = [None, None, None, None, None, None]
 
             # Diffusion parameter errors.
             if self.param_set == 'diff' or self.param_set == 'all':
-                # Isotropic.
-                if self.relax.data.diff[self.run].type == 'iso' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
+                # Sphere.
+                if self.relax.data.diff[self.run].type == 'sphere' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
                     diff_params = [`self.relax.data.diff[self.run].tm_err`]
 
-                # Axially symmetric.
-                elif self.relax.data.diff[self.run].type == 'axial' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
+                # Spheroid.
+                elif self.relax.data.diff[self.run].type == 'spheroid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
                     diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_err * 360 / (2.0 * pi)`]
 
-                # Anisotropic.
-                elif self.relax.data.diff[self.run].type == 'aniso' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
+                # Ellipsoid.
+                elif self.relax.data.diff[self.run].type == 'ellipsoid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
                     diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].Dr_err`, `self.relax.data.diff[self.run].alpha_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_err * 360 / (2.0 * pi)`]
 
         # Loop over the sequence.
@@ -4935,30 +4952,30 @@ class Model_free(Common_functions):
             if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
                 # Diffusion parameter simulation values.
                 if self.param_set == 'diff' or self.param_set == 'all':
-                    # Isotropic.
-                    if self.relax.data.diff[self.run].type == 'iso':
+                    # Sphere.
+                    if self.relax.data.diff[self.run].type == 'sphere':
                         diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`]
 
-                    # Axially symmetric.
-                    elif self.relax.data.diff[self.run].type == 'axial':
+                    # Spheroid.
+                    elif self.relax.data.diff[self.run].type == 'spheroid':
                         diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_sim[i] * 360 / (2.0 * pi)`]
 
-                    # Anisotropic.
-                    elif self.relax.data.diff[self.run].type == 'aniso':
+                    # Ellipsoid.
+                    elif self.relax.data.diff[self.run].type == 'ellipsoid':
                         diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].Dr_sim[i]`, `self.relax.data.diff[self.run].alpha_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_sim[i] * 360 / (2.0 * pi)`]
 
                 # No simulation values.
                 else:
-                    # Isotropic.
-                    if self.relax.data.diff[self.run].type == 'iso':
+                    # Sphere.
+                    if self.relax.data.diff[self.run].type == 'sphere':
                         diff_params = [None]
 
-                    # Axially symmetric.
-                    elif self.relax.data.diff[self.run].type == 'axial':
+                    # Spheroid.
+                    elif self.relax.data.diff[self.run].type == 'spheroid':
                         diff_params = [None, None, None, None]
 
-                    # Anisotropic.
-                    elif self.relax.data.diff[self.run].type == 'aniso':
+                    # Ellipsoid.
+                    elif self.relax.data.diff[self.run].type == 'ellipsoid':
                         diff_params = [None, None, None, None, None, None]
 
             # Loop over the sequence.

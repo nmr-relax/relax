@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  31 OCT 2005 22:40
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  31 OCT 2005 02:44
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -315,195 +315,195 @@ Underfull \hbox (badness 2027) in paragraph at lines 170--171
 params=None, time[]scale=1.0, d[]scale=1.0, an-
  []
 
-[30] [31] [32]
-Underfull \hbox (badness 10000) in paragraph at lines 341--342
+[30] [31] [32] [33] [34]
+Underfull \hbox (badness 10000) in paragraph at lines 436--437
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e7, 1.417e
 7, 67.174, -83.718),
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 343--344
+Underfull \hbox (badness 10000) in paragraph at lines 438--439
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(`axial', (1.698e-1, 1.417e-1, 67.174
 , -83.718), param[]types=1,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 345--346
+Underfull \hbox (badness 10000) in paragraph at lines 440--441
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e-1, 1.417
 e-1, 67.174, -83.718),
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 347--348
+Underfull \hbox (badness 10000) in paragraph at lines 442--443
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(`axial', (1.698e-1, 1.417e-1, 1.1724
 , -1.4612), param[]types=1,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 349--350
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e-1, 1.417
 e-1, 1.1724, -1.4612),
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 354--355
+Underfull \hbox (badness 10000) in paragraph at lines 449--450
 []\OT1/cmtt/m/n/9 relax> diffusion[]tensor(`m5', (1.340e7, 1.516e7, 1.691e7, -8
 2.027, -80.573, 65.568),
  []
 
-[33] [34] [35]
-Underfull \hbox (badness 10000) in paragraph at lines 473--474
+[35] [36] [37]
+Underfull \hbox (badness 10000) in paragraph at lines 568--569
 []\OT1/cmtt/m/n/9 relax> dx.map(run=`m5', res[]num=6, type=`Iso3D', inc=20, swa
 p=[0, 1, 2], file=`map',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 480--481
+Underfull \hbox (badness 10000) in paragraph at lines 575--576
 []\OT1/cmtt/m/n/9 relax> dx.map(run=`m5', res[]num=6, type=`Iso3D', inc=20, swa
 p=[0, 2, 1], file=`map',
  []
 
-[36] [37]
+[38] [39]
 LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 547.
- [38] [39] [40]
-Underfull \hbox (badness 10000) in paragraph at lines 677--678
+(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 642.
+ [40] [41] [42]
+Underfull \hbox (badness 10000) in paragraph at lines 772--773
 \OT1/cmss/bx/n/10.95 grace.write\OT1/cmss/m/n/10.95 (self, run=None, x[]data[]t
 ype=`res', y[]data[]type=None, res[]num=None,
  []
 
-[41]
+[43]
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 718.
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 813.
 
-Underfull \hbox (badness 10000) in paragraph at lines 752--753
+Underfull \hbox (badness 10000) in paragraph at lines 847--848
 []\OT1/cmtt/m/n/9 relax> grace.write(run=`m4', x[]data[]type=`Rex', y[]data[]ty
 pe=`te', res[]num=123,
  []
 
-[42]
+[44]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [43]
-[44] [45] [46] [47] [48] [49] [50]
-Overfull \hbox (2.53847pt too wide) in paragraph at lines 1096--1096
+ [45]
+[46] [47] [48] [49] [50] [51] [52]
+Overfull \hbox (2.53847pt too wide) in paragraph at lines 1191--1191
 []\OT1/cmtt/m/n/9 function.  Only take note of the minimisation algorithms and 
 minimisation options sections,[] 
  []
 
-[51] [52] [53]
-Overfull \hbox (18.66074pt too wide) in paragraph at lines 1210--1225
+[53] [54] [55]
+Overfull \hbox (18.66074pt too wide) in paragraph at lines 1305--1320
  [] 
  []
 
-[54] [55] [56] [57] [58]
-Underfull \hbox (badness 10000) in paragraph at lines 1517--1518
+[56] [57] [58] [59] [60]
+Underfull \hbox (badness 10000) in paragraph at lines 1612--1613
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(`test', `large[]model', `mf[
 ]ext', [`S2f', `tf', `S2', `ts',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1519--1520
+Underfull \hbox (badness 10000) in paragraph at lines 1614--1615
 []\OT1/cmtt/m/n/9 relax> model[]free.create[]model(run=`test', model=`large[]mo
 del', params=[`S2f', `tf', `S2',
  []
 
-[59] [60] [61] [62] [63] [64] [65] [66]
-Underfull \hbox (badness 10000) in paragraph at lines 1861--1862
+[61] [62] [63] [64] [65] [66] [67] [68]
+Underfull \hbox (badness 10000) in paragraph at lines 1956--1957
 []\OT1/cmtt/m/n/9 relax> model[]selection(method=`AIC', modsel[]run=`mixed', ru
 ns=[`m1', `m2', `m3', `m4',
  []
 
-[67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81]
-[82] [83] [84]
-Underfull \hbox (badness 10000) in paragraph at lines 2524--2525
+[69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81] [82] [83]
+[84] [85] [86]
+Underfull \hbox (badness 10000) in paragraph at lines 2619--2620
 \OT1/cmss/bx/n/10.95 noe.error\OT1/cmss/m/n/10.95 (self, run=None, er-ror=0.0, 
 spec-trum[]type=None, res[]num=None,
  []
 
-[85] [86] [87] [88]
-Underfull \hbox (badness 10000) in paragraph at lines 2695--2696
+[87] [88] [89] [90]
+Underfull \hbox (badness 10000) in paragraph at lines 2790--2791
 \OT1/cmss/bx/n/10.95 palmer.create\OT1/cmss/m/n/10.95 (self, run=None, dir=None
 , force=0, diff[]search=`none', sims=0,
  []
 
-[89] [90] [91] [92]
-Underfull \hbox (badness 1158) in paragraph at lines 2831--2832
+[91] [92] [93] [94]
+Underfull \hbox (badness 1158) in paragraph at lines 2926--2927
 \OT1/cmss/bx/n/10.95 pdb\OT1/cmss/m/n/10.95 (self, run=None, file=None, dir=Non
 e, model=None, het-eronuc=`N', pro-ton=`H',
  []
 
-[93] [94] [95] [96] [97] [98]
-Underfull \hbox (badness 10000) in paragraph at lines 3098--3099
+[95] [96] [97] [98] [99] [100]
+Underfull \hbox (badness 10000) in paragraph at lines 3193--3194
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`NOE', frq[]label=`60
 0', frq=600.0 * 1e6,
  []
 
-[99]
-Underfull \hbox (badness 10000) in paragraph at lines 3105--3106
+[101]
+Underfull \hbox (badness 10000) in paragraph at lines 3200--3201
 []\OT1/cmtt/m/n/9 relax> relax[]data.read(`m1', ri[]label=`R2', frq[]label=`800
  MHz', frq=8.0*1e8,
  []
 
-[100] [101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111]
-[112] [113] [114] [115] [116] [117] [118] [119] [120] [121] [122] [123]
-[124] [125]
-Overfull \hbox (2.53847pt too wide) in paragraph at lines 4076--4076
+[102] [103] [104] [105] [106] [107] [108] [109] [110] [111] [112] [113]
+[114] [115] [116] [117] [118] [119] [120] [121] [122] [123] [124] [125]
+[126] [127]
+Overfull \hbox (2.53847pt too wide) in paragraph at lines 4171--4171
 []\OT1/cmtt/m/n/9 # Host          User name       Program path            Worki
 ng directory    Priority  CPUs[] 
  []
 
-[126] [127] [128] [129] [130] [131] [132] [133] [134] [135] [136]
-Underfull \hbox (badness 6493) in paragraph at lines 4592--4593
+[128] [129] [130] [131] [132] [133] [134] [135] [136] [137] [138]
+Underfull \hbox (badness 6493) in paragraph at lines 4687--4688
 \OT1/cmss/bx/n/10.95 value.read\OT1/cmss/m/n/10.95 (self, run=None, data[]type=
 None, file=None, num[]col=0, name[]col=1,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4636--4637
+Underfull \hbox (badness 10000) in paragraph at lines 4731--4732
 []\OT1/cmtt/m/n/9 relax> value.read(run=`m1', data[]type=`CSA', file=`data/csa[
 ]value', num[]col=0, name[]col=1,
  []
 
-[137]
+[139]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [138]
-[139] [140]
-Overfull \hbox (6.26677pt too wide) in paragraph at lines 4786--4814
+ [140]
+[141] [142]
+Overfull \hbox (6.26677pt too wide) in paragraph at lines 4881--4909
  [] 
  []
 
 
 Underfull \vbox (badness 1448) has occurred while \output is active []
 
- [141]
-[142] [143] [144] [145] [146]
+ [143]
+[144] [145] [146] [147] [148]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [147]
-[148])) [149]
+ [149]
+[150])) [151]
 \openout2 = `licence.aux'.
 
- (./licence.tex [150
+ (./licence.tex [152
 
 
 
 ]
 Chapter 4.
-[151] [152] [153] [154] [155] [156]) [157] (./relax.bbl [158
+[153] [154] [155] [156] [157] [158]) [159] (./relax.bbl [160
 
 
 ]) (./relax.ind
-[159]
-Overfull \hbox (0.90193pt too wide) in paragraph at lines 29--30
+[161]
+Overfull \hbox (0.90193pt too wide) in paragraph at lines 31--33
 []| \OT1/cmr/m/n/10.95 spheroid (ax-i-ally sym-met-ric), \OT1/cmr/bx/n/10.95 10
 \OT1/cmr/m/n/10.95 , 25, 30,
  []
 
-[160
+[162
 
-] [161
+] [163
 
 ])
 
@@ -519,4 +519,4 @@ Here is how much of TeX's memory you used:
  26 hyphenation exceptions out of 1000
  27i,12n,24p,1381b,450s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (173 pages, 352532 bytes).
+Output written on relax.dvi (175 pages, 356860 bytes).

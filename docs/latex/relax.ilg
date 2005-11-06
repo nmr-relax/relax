@@ -1,90 +1,99 @@
 This is makeindex, version 2.14 [02-Oct-2002] (kpathsea + Thai support).
-Scanning input file relax.idx....done (724 entries accepted, 0 rejected).
-Sorting entries........done (7449 comparisons).
+Scanning input file relax.idx....done (752 entries accepted, 0 rejected).
+Sorting entries.........done (8044 comparisons).
 Generating output file relax.ind....
 ## Warning (input = relax.idx, line = 46; output = relax.ind, line = 3):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 178; output = relax.ind, line = 19):
+## Warning (input = relax.idx, line = 206; output = relax.ind, line = 19):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 187; output = relax.ind, line = 46):
+## Warning (input = relax.idx, line = 121; output = relax.ind, line = 27):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 193; output = relax.ind, line = 46):
+## Warning (input = relax.idx, line = 82; output = relax.ind, line = 29):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 159; output = relax.ind, line = 63):
+## Warning (input = relax.idx, line = 96; output = relax.ind, line = 31):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 639; output = relax.ind, line = 64):
+## Warning (input = relax.idx, line = 215; output = relax.ind, line = 49):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 676; output = relax.ind, line = 64):
+## Warning (input = relax.idx, line = 221; output = relax.ind, line = 49):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 705; output = relax.ind, line = 65):
+## Warning (input = relax.idx, line = 187; output = relax.ind, line = 66):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 242; output = relax.ind, line = 67):
+## Warning (input = relax.idx, line = 667; output = relax.ind, line = 67):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 284; output = relax.ind, line = 67):
+## Warning (input = relax.idx, line = 703; output = relax.ind, line = 67):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 303; output = relax.ind, line = 67):
+## Warning (input = relax.idx, line = 730; output = relax.ind, line = 68):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 175; output = relax.ind, line = 77):
+## Warning (input = relax.idx, line = 270; output = relax.ind, line = 70):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 344; output = relax.ind, line = 80):
+## Warning (input = relax.idx, line = 315; output = relax.ind, line = 70):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 346; output = relax.ind, line = 80):
+## Warning (input = relax.idx, line = 331; output = relax.ind, line = 70):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 2; output = relax.ind, line = 95):
+## Warning (input = relax.idx, line = 203; output = relax.ind, line = 80):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 221; output = relax.ind, line = 101):
+## Warning (input = relax.idx, line = 372; output = relax.ind, line = 83):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 626; output = relax.ind, line = 102):
+## Warning (input = relax.idx, line = 374; output = relax.ind, line = 83):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 644; output = relax.ind, line = 102):
+## Warning (input = relax.idx, line = 2; output = relax.ind, line = 98):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 662; output = relax.ind, line = 103):
+## Warning (input = relax.idx, line = 249; output = relax.ind, line = 104):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 687; output = relax.ind, line = 103):
+## Warning (input = relax.idx, line = 654; output = relax.ind, line = 105):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 708; output = relax.ind, line = 103):
+## Warning (input = relax.idx, line = 672; output = relax.ind, line = 105):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 554; output = relax.ind, line = 118):
+## Warning (input = relax.idx, line = 690; output = relax.ind, line = 106):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 561; output = relax.ind, line = 118):
+## Warning (input = relax.idx, line = 715; output = relax.ind, line = 106):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 574; output = relax.ind, line = 118):
+## Warning (input = relax.idx, line = 736; output = relax.ind, line = 106):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 577; output = relax.ind, line = 119):
+## Warning (input = relax.idx, line = 582; output = relax.ind, line = 121):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 580; output = relax.ind, line = 119):
+## Warning (input = relax.idx, line = 589; output = relax.ind, line = 121):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 590; output = relax.ind, line = 120):
+## Warning (input = relax.idx, line = 602; output = relax.ind, line = 121):
    -- Conflicting entries: multiple encaps for the same page under same key.
 
-## Warning (input = relax.idx, line = 592; output = relax.ind, line = 120):
+## Warning (input = relax.idx, line = 605; output = relax.ind, line = 122):
    -- Conflicting entries: multiple encaps for the same page under same key.
-done (137 lines written, 28 warnings).
+
+## Warning (input = relax.idx, line = 608; output = relax.ind, line = 122):
+   -- Conflicting entries: multiple encaps for the same page under same key.
+
+## Warning (input = relax.idx, line = 618; output = relax.ind, line = 123):
+   -- Conflicting entries: multiple encaps for the same page under same key.
+
+## Warning (input = relax.idx, line = 620; output = relax.ind, line = 123):
+   -- Conflicting entries: multiple encaps for the same page under same key.
+done (140 lines written, 31 warnings).
 Output written in relax.ind.
 Transcript written in relax.ilg.

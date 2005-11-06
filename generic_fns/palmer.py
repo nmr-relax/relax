@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2005 Edward d'Auvergne                            #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -52,8 +52,8 @@ class Palmer:
         if not self.relax.data.res.has_key(run):
             raise RelaxNoSequenceError, run
 
-        # Test if the PDB file is loaded (axially symmetric and anisotropic diffusion).
-        if not self.relax.data.diff[run].type == 'iso' and not self.relax.data.pdb.has_key(run):
+        # Test if the PDB file is loaded (for the spheroid and ellipsoid).
+        if not self.relax.data.diff[run].type == 'sphere' and not self.relax.data.pdb.has_key(run):
             raise RelaxNoPdbError, run
 
         # Test if the nucleus type has been set.
@@ -189,21 +189,21 @@ class Palmer:
         """Create the Modelfree4 input file 'mfin'."""
 
         # Set the diffusion tensor specific values.
-        if self.relax.data.diff[self.run].type == 'iso':
+        if self.relax.data.diff[self.run].type == 'sphere':
             diff = 'isotropic'
             algorithm = 'brent'
             tm = self.relax.data.diff[self.run].tm / 1e-9
             dratio = 1
             theta = 0
             phi = 0
-        elif self.relax.data.diff[self.run].type == 'axial':
+        elif self.relax.data.diff[self.run].type == 'spheroid':
             diff = 'axial'
             algorithm = 'powell'
             tm = self.relax.data.diff[self.run].tm / 1e-9
             dratio = self.relax.data.diff[self.run].Dratio
             theta = self.relax.data.diff[self.run].theta * 360.0 / (2.0 * pi)
             phi = self.relax.data.diff[self.run].phi * 360.0 / (2.0 * pi)
-        elif self.relax.data.diff[self.run].type == 'aniso':
+        elif self.relax.data.diff[self.run].type == 'ellipsoid':
             diff = 'anisotropic'
             algorithm = 'powell'
             tm = self.relax.data.diff[self.run].tm / 1e-9
@@ -386,7 +386,7 @@ class Palmer:
 
         file.write("#! /bin/sh\n")
         file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
-        if self.relax.data.diff[self.run].type != 'iso':
+        if self.relax.data.diff[self.run].type != 'sphere':
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
             system('cp ' + self.relax.data.pdb[self.run].file_name + ' ' + self.dir)
             file.write(" -s " + self.relax.data.pdb[self.run].file_name.split('/')[-1])
@@ -430,7 +430,7 @@ class Palmer:
                 raise RelaxFileError, ('mfpar input', 'mfpar')
 
             # Test if the 'PDB' input file exists.
-            if self.relax.data.diff[run].type != 'iso':
+            if self.relax.data.diff[run].type != 'sphere':
                 pdb = self.relax.data.pdb[self.run].file_name.split('/')[-1]
                 if not access(pdb, F_OK):
                     raise RelaxFileError, ('PDB', pdb)

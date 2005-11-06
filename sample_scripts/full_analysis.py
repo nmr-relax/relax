@@ -1,4 +1,4 @@
-# Script for isotropic model-free analysis.
+# Script for complete model-free analysis.
 #
 # This script is designed for those who appreciate black-boxes, although it will need to be
 # heavily tailored to the protein in question, or those who appreciate complex code.  For a
@@ -19,20 +19,20 @@ class Main:
         five diffusion models used in this script are:
 
             Model I   (MI)   - Local tm.
-            Model II  (MII)  - Isotropic diffusion tensor.
-            Model III (MIII) - Prolate axially symmetrical anisotropic diffusion tensor.
-            Model IV  (MIV)  - Oblate axially symmetrical anisotropic diffusion tensor.
-            Model V   (MV)   - Fully anisotropic diffusion tensor.
+            Model II  (MII)  - Sphere.
+            Model III (MIII) - Prolate spheroid.
+            Model IV  (MIV)  - Oblate spheroid.
+            Model V   (MV)   - Ellipsoid.
 
         Model I must be optimised prior to any of the other diffusion models, while the Models II to
         V can be optimised in any order.  To select the various models, set the variable
         self.diff_model to the following strings:
 
             MI   - 'local_tm'
-            MII  - 'iso'
+            MII  - 'sphere'
             MIII - 'prolate'
             MIV  - 'oblate'
-            MV   - 'aniso'
+            MV   - 'ellipsoid'
 
         This approach has the advantage of eliminating the need for an initial estimate of a global
         diffusion tensor and removing all the problems associated with the initial estimate.
@@ -53,13 +53,13 @@ class Main:
         AIC model selection is used to select the models for each residue.
 
 
-        Model II - Isotropic diffusion
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Model II - Sphere
+        ~~~~~~~~~~~~~~~~~
 
         This will optimise the isotropic diffusion model.  Multiple steps are required, an initial
         optimisation of the diffusion tensor, followed by a repetitive optimisation until
         convergence of the diffusion tensor.  Each of these steps requires this script to be rerun.
-        For the initial optimisation, which will be placed in the directory './iso/init/', the
+        For the initial optimisation, which will be placed in the directory './sphere/init/', the
         following steps are used:
 
         The model-free models and parameter values for each residue are set to those of diffusion
@@ -67,12 +67,12 @@ class Main:
 
         The local tm parameter is removed from the models.
 
-        The model-free parameters are fixed and a global isotropic diffusion tensor is minimised.
+        The model-free parameters are fixed and a global spherical diffusion tensor is minimised.
 
 
         For the repetitive optimisation, each minimisation is named from 'round_1' onwards.  The
         initial 'round_1' optimisation will extract the diffusion tensor from the results file in
-        './iso/init/', and the results will be placed in the directory './iso/round_1/'.  Each
+        './sphere/init/', and the results will be placed in the directory './sphere/round_1/'.  Each
         successive round will take the diffusion tensor from the previous round.  The following
         steps are used:
 
@@ -85,27 +85,28 @@ class Main:
         parameters is carried out.
 
 
-        Model III - Prolate axially symmetrical anisotropic diffusion
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Model III - Prolate spheroid
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         The methods used are identical to those of diffusion model MII, except that an axially
-        symmetric diffusion tensor with Dpar >= Dper is used.  The base directory containing all the
+        symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the
         results is './prolate/'.
 
 
-        Model IV - Oblate axially symmetrical anisotropic diffusion
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Model IV - Oblate spheroid
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         The methods used are identical to those of diffusion model MII, except that an axially
-        symmetric diffusion tensor with Dpar <= Dper is used.  The base directory containing all the
+        symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the
         results is './oblate/'.
 
 
-        Model V - Fully anisotropic diffusion
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Model V - Ellipsoid
+        ~~~~~~~~~~~~~~~~~~~
 
         The methods used are identical to those of diffusion model MII, except that a fully
-        anisotropic diffusion tenosr is used.  The base directory is './aniso/'.
+        anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The
+        base directory is './ellipsoid/'.
 
 
 
@@ -147,7 +148,7 @@ class Main:
         # Diffusion models MII to MV.
         #############################
 
-        elif self.diff_model == 'iso' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'aniso':
+        elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
             # Determine which round of optimisation to do (init, round_1, round_2, etc).
             self.round = self.determine_rnd(model=self.diff_model)
 
@@ -173,13 +174,13 @@ class Main:
                 pdb(name, '1F3Y.pdb')
 
                 # Add an arbitrary diffusion tensor which will be optimised.
-                if self.diff_model == 'iso':
+                if self.diff_model == 'sphere':
                     diffusion_tensor.set(name, 10e-9, fixed=0)
                 elif self.diff_model == 'prolate':
-                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), axial_type='prolate', fixed=0)
+                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
                 elif self.diff_model == 'oblate':
-                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), axial_type='oblate', fixed=0)
-                elif self.diff_model == 'aniso':
+                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
+                elif self.diff_model == 'ellipsoid':
                     diffusion_tensor.set(name, (8.6e-09, -8e6, 0, 360, 90, 360), fixed=0)
 
                 # Minimise just the diffusion tensor.
@@ -237,7 +238,7 @@ class Main:
             results.read(run='local_tm', file='results', dir='local_tm/aic')
 
             # Loop over models MII to MV.
-            for model in ['iso', 'prolate', 'oblate', 'aniso']:
+            for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
                 # Determine which was the last round of optimisation for each of the models.
                 self.round = self.determine_rnd(model=model) - 1
 

@@ -191,12 +191,18 @@ Function for setting up the diffusion tensor.\index{diffusion!tensor}
 
 
 
-\subsubsection{Description}
+\subsubsection{The sphere\index{diffusion!sphere (isotropic)|textbf} (isotropic diffusion)}
 
-Isotropic\index{diffusion!sphere (isotropic)} diffusion.
+When the molecule\index{molecule} diffuses as a sphere,\index{diffusion!sphere (isotropic)} all three eigenvalues\index{eigenvalues} of the diffusion tensor\index{diffusion!tensor} are equal, $\Diff_x$ = $\Diff_y$ = $\Diff_z$.  In this case, the orientation of the XH bond vector within the diffusion frame is inconsequential to relaxation,\index{relaxation} hence, the spherical or Euler angles\index{angles}\index{Euler angles} are undefined.  Therefore solely a single geometric parameter, either $\tau_m$ or $\Diff_{iso}$, can fully and sufficiently parameterise the diffusion tensor.\index{diffusion!tensor}  The correlation function for the global rotational\index{rotation} diffusion is
 
 
-To select isotropic\index{diffusion!sphere (isotropic)} diffusion, the parameters argument should be a single floating point\index{floating point number} number.  The number is the value of the isotropic\index{diffusion!sphere (isotropic)} global correlation time\index{correlation time} in seconds.  To specify the time in nanoseconds, set the \quotecmd{time\_scale} argument to 1e-9.  Alternative parameters can be used by changing the \quotecmd{param\_types} flag to the following integers
+{\footnotesize \begin{verbatim}
+             1   - tau / tm
+    C(tau) = - e            ,
+             5
+\end{verbatim}}
+
+To select isotropic\index{diffusion!sphere (isotropic)} diffusion, the parameters argument should be a single floating point\index{floating point number} number.  The number is the value of the isotropic\index{diffusion!sphere (isotropic)} global correlation time,\index{correlation time} $\tau_m$, in seconds. To specify the time in nanoseconds, set the \quotecmd{time\_scale} argument to 1e-9.  Alternative parameters can be used by changing the \quotecmd{param\_types} flag to the following integers
 
 
 \begin{description}
@@ -209,11 +215,45 @@ where
 
 
 \begin{itemize}
-\item[] $\tau_m$ = 1 / 6$\Diff_{iso}$. 
+\item[] 1 / $\tau_m$ = 6$\Diff_{iso}$. 
 \end{itemize}
 
 
-Axially symmetric\index{diffusion!spheroid (axially symmetric)} diffusion.
+
+\subsubsection{The spheroid\index{diffusion!spheroid (axially symmetric)|textbf} (axially symmetric diffusion)}
+
+When two of the three eigenvalues\index{eigenvalues} of the diffusion tensor\index{diffusion!tensor} are equal, the molecule\index{molecule} diffuses as a spheroid.\index{diffusion!spheroid (axially symmetric)}  Four pieces of information are required to specify this tensor, the two geometric parameters, $\Diff_{iso}$ and $\Diff_a$, and the two orientational parameters, the polar angle\index{angles} $\theta$ and the azimuthal angle\index{angles} $\phi$ describing the orientation of the axis of symmetry.  The correlation function of the global diffusion is
+
+
+{\footnotesize \begin{verbatim}
+               _1_
+             1 \          - tau / tau_i
+    C(tau) = -  >  ci . e              ,
+             5 /__
+               i=-1
+\end{verbatim}}
+
+where
+
+
+\begin{itemize}
+\item[] c-1 = 1/4 (3 $\delta_z$\^{}2 - 1)\^{}2, 
+\item[] c0  = 3 $\delta_z$\^{}2 (1 - $\delta_z$\^{}2), 
+\item[] c1  = 3/4 ($\delta_z$\^{}2 - 1)\^{}2, 
+\end{itemize}
+
+
+and
+
+
+\begin{itemize}
+\item[] 1 / $\tau$ -1 = 6$\Diff_{iso}$ - 2$\Diff_a$, 
+\item[] 1 / $\tau$ 0  = 6$\Diff_{iso}$ - $\Diff_a$, 
+\item[] 1 / $\tau$ 1  = 6$\Diff_{iso}$ + 2$\Diff_a$. 
+\end{itemize}
+
+
+The direction cosine $\delta_z$ is defined as the cosine of the angle\index{angles} $\alpha$ between the XH bond vector and the unique axis of the diffusion tensor.\index{diffusion!tensor}
 
 
 To select axially symmetric\index{diffusion!spheroid (axially symmetric)} anisotropic\index{diffusion!anisotropic} diffusion, the parameters argument should be a tuple of floating point\index{floating point number} numbers of length four.  A tuple is a type of data structure enclosed in round brackets, the elements of which are separated by commas.  Alternative sets of parameters, \quotecmd{param\_types}, are
@@ -221,9 +261,9 @@ To select axially symmetric\index{diffusion!spheroid (axially symmetric)} anisot
 
 \begin{description}
 \item[0 --]  ($\tau_m$, $\Diff_a$, $\theta$, $\phi$)   (Default), 
-\item[1 --]  ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$), 
-\item[2 --]  ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$), 
-\item[3 --]  ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$), 
+\item[1 --]  ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$), 
+\item[2 --]  ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$), 
+\item[3 --]  ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$), 
 \item[4 --]  ($\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$), 
 \end{description}
 
@@ -234,21 +274,21 @@ where
 \begin{itemize}
 \item[] $\tau_m$ = 1 / 6$\Diff_{iso}$, 
 \item[] $\Diff_{iso}$ = 1/3 ($\Diff_\Par$ + 2$\Diff_\Per$), 
-\item[] $\Diff_a$ = 1/3 ($\Diff_\Par$ - $\Diff_\Per$), 
+\item[] $\Diff_a$ = $\Diff_\Par$ - $\Diff_\Per$, 
 \item[] $\Diff_{ratio}$ = $\Diff_\Par$ / $\Diff_\Per$. 
 \end{itemize}
 
 
-The diffusion tensor\index{diffusion!tensor} is defined by the vector $\Diff_\Par$.  The angle\index{angles} $\alpha$ describes the bond vector with respect to the diffusion frame while the spherical angles\index{angles} \{$\theta$, $\phi$\} describe the diffusion tensor\index{diffusion!tensor} with respect to the PDB\index{PDB} frame.  $\theta$ is the polar angle\index{angles} and $\phi$ is the azimuthal angle\index{angles} defined between
+The spherical angles\index{angles} \{$\theta$, $\phi$\} orienting the unique axis of the diffusion tensor\index{diffusion!tensor} within the PDB\index{PDB} frame are defined between
 
 
 \begin{itemize}
 \item[] 0 $\le$ $\theta$ $\le$ $\pi$, 
-\item[] 0 $\le$ $\phi$ $\le$ 2$\pi$. 
+\item[] 0 $\le$ $\phi$ $\le$ 2$\pi$, 
 \end{itemize}
 
 
-The angle\index{angles} $\alpha$ is defined between
+while the angle\index{angles} $\alpha$ which is the angle\index{angles} between this axis and the given XH bond vector is defined between
 
 
 \begin{itemize}
@@ -256,10 +296,65 @@ The angle\index{angles} $\alpha$ is defined between
 \end{itemize}
 
 
-The \quotecmd{axial\_type} argument should be \quotecmd{oblate}, \quotecmd{prolate}, or None.  The argument will be ignored if the diffusion tensor\index{diffusion!tensor} is not axially symmetric.\index{diffusion!spheroid (axially symmetric)}  If \quotecmd{oblate} is given, then the constraint\index{constraint} $\Diff_\Per$ $\ge$ $\Diff_\Par$ is used.  If \quotecmd{prolate} is given, then the constraint\index{constraint} $\Diff_\Per$ $\le$ $\Diff_\Par$ is used.  If nothing is supplied, then $\Diff_\Per$ and $\Diff_\Par$ will be allowed to have any values.  To prevent minimisation\index{minimisation} of diffusion tensor\index{diffusion!tensor} parameters in a space with two minima, it is recommended to specify which tensor to be minimised,\index{minimisation} thereby partitioning the two minima into the two subspaces (the partition is where $\Diff_a$ equals 0).
+The \quotecmd{axial\_type} argument should be \quotecmd{oblate}, \quotecmd{prolate}, or None.  The argument will be ignored if the diffusion tensor\index{diffusion!tensor} is not axially symmetric.\index{diffusion!spheroid (axially symmetric)}  If \quotecmd{oblate} is given, then the constraint\index{constraint} $\Diff_a$ $\le$ 0 is used while if \quotecmd{prolate} is given, then the constraint\index{constraint} $\Diff_a$ $\ge$ 0 is used.  If nothing is supplied, then $\Diff_a$ will be allowed to have any values.  To prevent minimisation\index{minimisation} of diffusion tensor\index{diffusion!tensor} parameters in a space with two minima, it is recommended to specify which tensor is to be minimised,\index{minimisation} thereby partitioning the two minima into the two subspaces along the boundry\index{parameter!bounds} $\Diff_a$ = 0.
 
 
-Anisotropic\index{diffusion!anisotropic} diffusion.
+
+\subsubsection{The ellipsoid\index{diffusion!ellipsoid (asymmetric)|textbf} (rhombic diffusion)}
+
+When all three eigenvalues\index{eigenvalues} of the diffusion tensor\index{diffusion!tensor} are different, the molecule\index{molecule} diffuses as an ellipsoid.\index{diffusion!ellipsoid (asymmetric)}  This diffusion is also known as fully anisotropic,\index{diffusion!anisotropic} asymmetric,\index{diffusion!ellipsoid (asymmetric)} or rhombic. The full tensor is specified by six pieces of information, the three geometric parameters $\Diff_{iso}$, $\Diff_a$, and $\Diff_r$ representing the isotropic,\index{diffusion!sphere (isotropic)} anisotropic,\index{diffusion!anisotropic} and rhombic components of the tensor, and the three Euler angles\index{angles}\index{Euler angles} $\alpha$, $\beta$, and $\gamma$ orienting the tensor within the PDB\index{PDB} frame.  The correlation function is
+
+
+{\footnotesize \begin{verbatim}
+               _2_
+             1 \          - tau / tau_i
+    C(tau) = -  >  ci . e              ,
+             5 /__
+               i=-2
+\end{verbatim}}
+
+where the weights on the exponentials are
+
+
+\begin{itemize}
+\item[] c-2 = 1/4 (d + e), 
+\item[] c-1 = 3 $\delta_y$\^{}2 $\delta_z$\^{}2, 
+\item[] c0  = 3 $\delta_x$\^{}2 $\delta_z$\^{}2, 
+\item[] c1  = 3 $\delta_x$\^{}2 $\delta_y$\^{}2, 
+\item[] c2  = 1/4 (d + e). 
+\end{itemize}
+
+
+Let
+
+
+\begin{itemize}
+\item[] $\mathfrak{R}$ = sqrt(1 + 3$\Diff_r$), 
+\end{itemize}
+
+
+then
+
+
+\begin{itemize}
+\item[] d = 3 ($\delta_x$\^{}4 + $\delta_y$\^{}4 + $\delta_z$\^{}4) - 1, 
+\item[] e = - 1 / $\mathfrak{R}$ ((1 + 3$\Diff_r$)($\delta_x$\^{}4 + 2$\delta_y$\^{}2 $\delta_z$\^{}2) + (1 - 3$\Diff_r$)($\delta_y$\^{}4 + 2$\delta_x$\^{}2 $\delta_z$\^{}2) - 2($\delta_z$\^{}4 + 2$\delta_x$\^{}2 $\delta_y$\^{}2)). 
+\end{itemize}
+
+
+The correlation times\index{correlation time} are
+
+
+\begin{itemize}
+\item[] 1 / $\tau$ -2 = 6$\Diff_{iso}$ - 2$\Diff_a$ . $\mathfrak{R}$, 
+\item[] 1 / $\tau$ -1 = 6$\Diff_{iso}$ - $\Diff_a$ (1 + 3$\Diff_r$), 
+\item[] 1 / $\tau$ 0  = 6$\Diff_{iso}$ - $\Diff_a$ (1 - 3$\Diff_r$), 
+\item[] 1 / $\tau$ 1  = 6$\Diff_{iso}$ + 2$\Diff_a$, 
+\item[] 1 / $\tau$ 1  = 6$\Diff_{iso}$ + 2$\Diff_a$ . $\mathfrak{R}$. 
+\end{itemize}
+
+
+The three direction cosines $\delta_x$, $\delta_y$, and $\delta_z$ are the coordinates of a unit vector parallel to the XH bond vector.  Hence the unit vector is [$\delta_x$, $\delta_y$, $\delta_z$].
 
 
 To select fully anisotropic\index{diffusion!anisotropic} diffusion, the parameters argument should be a tuple of length six.  A tuple is a type of data structure enclosed in round brackets, the elements of which are separated by commas.  Alternative sets of parameters, \quotecmd{param\_types}, are
@@ -278,8 +373,8 @@ where
 \begin{itemize}
 \item[] $\tau_m$ = 1 / 6$\Diff_{iso}$, 
 \item[] $\Diff_{iso}$ = 1/3 ($\Diff_x$ + $\Diff_y$ + $\Diff_z$), 
-\item[] $\Diff_a$ = 1/3 ($\Diff_z$ - ($\Diff_x$ + $\Diff_y$)/2), 
-\item[] $\Diff_r$ = ($\Diff_x$ - $\Diff_y$)/2. 
+\item[] $\Diff_a$ = $\Diff_z$ - ($\Diff_x$ + $\Diff_y$)/2, 
+\item[] $\Diff_r$ = ($\Diff_y$ - $\Diff_x$)/2$\Diff_a$. 
 \end{itemize}
 
 
@@ -293,7 +388,7 @@ The angles\index{angles} $\alpha$, $\beta$, and $\gamma$ are the Euler angles\in
 \end{itemize}
 
 
-Within the PDB\index{PDB} frame, the bond vector is described using the spherical angels $\theta$ and $\phi$ where $\theta$ is the polar angle\index{angles} and $\phi$ is the azimuthal angle\index{angles} defined between
+Within the PDB\index{PDB} frame, the XH bond vector is described using the spherical angles\index{angles} $\theta$ and $\phi$ where $\theta$ is the polar angle\index{angles} and $\phi$ is the azimuthal angle\index{angles} defined between
 
 
 \begin{itemize}
@@ -302,16 +397,16 @@ Within the PDB\index{PDB} frame, the bond vector is described using the spherica
 \end{itemize}
 
 
-Units.
+
+\subsubsection{Units}
+
+The \quotecmd{time\_scale} argument should be a floating point\index{floating point number} number.  The only parameter affected by this value is $\tau_m$.
 
 
-The \quotecmd{time\_scale} argument should be a floating point\index{floating point number} number.  Parameters affected by this value are:  $\tau_m$.
+The \quotecmd{d\_scale} argument should also be a floating point\index{floating point number} number.  Parameters affected by this value are $\Diff_{iso}$, $\Diff_\Par$, $\Diff_\Per$, $\Diff_a$, $\Diff_x$, $\Diff_y$, and $\Diff_z$.  Significantly, $\Diff_r$ is not affected.
 
 
-The \quotecmd{d\_scale} argument should also be a floating point\index{floating point number} number.  Parameters affected by this value are:  $\Diff_{iso}$; $\Diff_\Par$; $\Diff_\Per$; $\Diff_a$; $\Diff_r$; $\Diff_x$; $\Diff_y$; $\Diff_z$.
-
-
-The \quotecmd{angle\_units} argument should either be the string \quotecmd{deg} or \quotecmd{rad}.  Parameters affected are:  $\theta$; $\phi$; $\alpha$; $\beta$; $\gamma$.
+The \quotecmd{angle\_units} argument should either be the string \quotecmd{deg} or \quotecmd{rad}.  Parameters affected are $\theta$, $\phi$, $\alpha$, $\beta$, and $\gamma$.
 
 
 

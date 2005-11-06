@@ -23,7 +23,7 @@ relax_data.read(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
 diffusion_tensor.set(name, 10e-9, fixed=0)
-#diffusion_tensor.set(name, (2e-8, 1.3, 60, 290), param_types=1, axial_type='prolate', fixed=1)
+#diffusion_tensor.set(name, (2e-8, 1.3, 60, 290), param_types=1, spheroid_type='prolate', fixed=1)
 #diffusion_tensor.set(name, (9e-8, 0.5, 0.3, 60, 290, 100), fixed=0)
 value.set(name, 1.02 * 1e-10, 'bond_length')
 value.set(name, -160 * 1e-6, 'csa')

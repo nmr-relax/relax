@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -136,7 +136,7 @@ class Diffusion_tensor:
         self.__relax__.generic.diffusion_tensor.display(run=run)
 
 
-    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, axial_type=None, fixed=1):
+    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
         """Function for setting up the diffusion tensor.
 
         Keyword Arguments
@@ -154,20 +154,31 @@ class Diffusion_tensor:
 
         param_types:  A flag to select different parameter combinations.
 
-        axial_type:  A string, which if supplied with axially symmetric parameters, will restrict
+        spheroid_type:  A string which, if supplied together with spheroid parameters, will restrict
         the tensor to either being 'oblate' or 'prolate'.
 
         fixed:  A flag specifying whether the diffusion tensor is fixed or can be optimised.
 
 
-        Description
-        ~~~~~~~~~~~
+        The sphere (isotropic diffusion)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        Isotropic diffusion.
+        When the molecule diffuses as a sphere, all three eigenvalues of the diffusion tensor are
+        equal, Dx = Dy = Dz.  In this case, the orientation of the XH bond vector within the
+        diffusion frame is inconsequential to relaxation, hence, the spherical or Euler angles are
+        undefined.  Therefore solely a single geometric parameter, either tm or Diso, can fully and
+        sufficiently parameterise the diffusion tensor.  The correlation function for the global
+        rotational diffusion is
+
+        -----
+                     1   - tau / tm
+            C(tau) = - e            ,
+                     5
+        -----
 
         To select isotropic diffusion, the parameters argument should be a single floating point
-        number.  The number is the value of the isotropic global correlation time in seconds.  To
-        specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
+        number.  The number is the value of the isotropic global correlation time, tm, in seconds.
+        To specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
         parameters can be used by changing the 'param_types' flag to the following integers
 
             0:  tm   (Default),
@@ -175,10 +186,40 @@ class Diffusion_tensor:
 
         where
 
-            tm = 1 / 6Diso.
+            1 / tm = 6Diso.
 
 
-        Axially symmetric diffusion.
+        The spheroid (axially symmetric diffusion)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        When two of the three eigenvalues of the diffusion tensor are equal, the molecule diffuses
+        as a spheroid.  Four pieces of information are required to specify this tensor, the two
+        geometric parameters, Diso and Da, and the two orientational parameters, the polar angle
+        theta and the azimuthal angle phi describing the orientation of the axis of symmetry.  The
+        correlation function of the global diffusion is
+
+        -----
+                       _1_
+                     1 \          - tau / tau_i
+            C(tau) = -  >  ci . e              ,
+                     5 /__
+                       i=-1
+        -----
+
+        where
+
+            c-1 = 1/4 (3 dz^2 - 1)^2,
+            c0  = 3 dz^2 (1 - dz^2),
+            c1  = 3/4 (dz^2 - 1)^2,
+
+        and
+
+            1 / tau -1 = 6Diso - 2Da,
+            1 / tau 0  = 6Diso - Da,
+            1 / tau 1  = 6Diso + 2Da.
+
+        The direction cosine dz is defined as the cosine of the angle alpha between the XH bond
+        vector and the unique axis of the diffusion tensor.
 
         To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple
         of floating point numbers of length four.  A tuple is a type of data structure enclosed in
@@ -186,40 +227,84 @@ class Diffusion_tensor:
         parameters, 'param_types', are
 
             0:  (tm, Da, theta, phi)   (Default),
-            1:  (tm, Dratio, theta, phi),
-            2:  (Dpar, Dper, theta, phi),
-            3:  (Diso, Da, theta, phi),
+            1:  (Diso, Da, theta, phi),
+            2:  (tm, Dratio, theta, phi),
+            3:  (Dpar, Dper, theta, phi),
             4:  (Diso, Dratio, theta, phi),
 
         where
 
             tm = 1 / 6Diso,
             Diso = 1/3 (Dpar + 2Dper),
-            Da = 1/3 (Dpar - Dper),
+            Da = Dpar - Dper,
             Dratio = Dpar / Dper.
 
-        The diffusion tensor is defined by the vector Dpar.  The angle alpha describes the bond
-        vector with respect to the diffusion frame while the spherical angles {theta, phi} describe
-        the diffusion tensor with respect to the PDB frame.  theta is the polar angle and phi is the
-        azimuthal angle defined between
+        The spherical angles {theta, phi} orienting the unique axis of the diffusion tensor within
+        the PDB frame are defined between
 
             0 <= theta <= pi,
-            0 <= phi <= 2pi.
+            0 <= phi <= 2pi,
 
-        The angle alpha is defined between
+        while the angle alpha which is the angle between this axis and the given XH bond vector is
+        defined between
 
             0 <= alpha <= 2pi.
 
-        The 'axial_type' argument should be 'oblate', 'prolate', or None.  The argument will be
+        The 'spheroid_type' argument should be 'oblate', 'prolate', or None.  The argument will be
         ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the
-        constraint Dper >= Dpar is used.  If 'prolate' is given, then the constraint Dper <= Dpar is
-        used.  If nothing is supplied, then Dper and Dpar will be allowed to have any values.  To
-        prevent minimisation of diffusion tensor parameters in a space with two minima, it is
-        recommended to specify which tensor to be minimised, thereby partitioning the two minima
-        into the two subspaces (the partition is where Da equals 0).
+        constraint Da <= 0 is used while if 'prolate' is given, then the constraint Da >= 0 is
+        used.  If nothing is supplied, then Da will be allowed to have any values.  To prevent
+        minimisation of diffusion tensor parameters in a space with two minima, it is recommended
+        to specify which tensor is to be minimised, thereby partitioning the two minima into the two
+        subspaces along the boundry Da = 0.
 
 
-        Anisotropic diffusion.
+        The ellipsoid (rhombic diffusion)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        When all three eigenvalues of the diffusion tensor are different, the molecule diffuses as
+        an ellipsoid.  This diffusion is also known as fully anisotropic, asymmetric, or rhombic.
+        The full tensor is specified by six pieces of information, the three geometric parameters
+        Diso, Da, and Dr representing the isotropic, anisotropic, and rhombic components of the
+        tensor, and the three Euler angles alpha, beta, and gamma orienting the tensor within the
+        PDB frame.  The correlation function is
+
+
+        -----
+                       _2_
+                     1 \          - tau / tau_i
+            C(tau) = -  >  ci . e              ,
+                     5 /__
+                       i=-2
+        -----
+
+        where the weights on the exponentials are
+
+            c-2 = 1/4 (d + e),
+            c-1 = 3 dy^2 dz^2,
+            c0  = 3 dx^2 dz^2,
+            c1  = 3 dx^2 dy^2,
+            c2  = 1/4 (d + e).
+
+        Let
+
+            R = sqrt(1 + 3Dr),
+
+        then
+
+            d = 3 (dx^4 + dy^4 + dz^4) - 1,
+            e = - 1 / R ((1 + 3Dr)(dx^4 + 2dy^2 dz^2) + (1 - 3Dr)(dy^4 + 2dx^2 dz^2) - 2(dz^4 + 2dx^2 dy^2)).
+
+        The correlation times are
+
+            1 / tau -2 = 6Diso - 2Da . R,
+            1 / tau -1 = 6Diso - Da (1 + 3Dr),
+            1 / tau 0  = 6Diso - Da (1 - 3Dr),
+            1 / tau 1  = 6Diso + 2Da,
+            1 / tau 1  = 6Diso + 2Da . R.
+
+        The three direction cosines dx, dy, and dz are the coordinates of a unit vector parallel to
+        the XH bond vector.  Hence the unit vector is [dx, dy, dz].
 
         To select fully anisotropic diffusion, the parameters argument should be a tuple of length
         six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
@@ -233,8 +318,8 @@ class Diffusion_tensor:
 
             tm = 1 / 6Diso,
             Diso = 1/3 (Dx + Dy + Dz),
-            Da = 1/3 (Dz - (Dx + Dy)/2),
-            Dr = (Dx - Dy)/2.
+            Da = Dz - (Dx + Dy)/2,
+            Dr = (Dy - Dx)/2Da.
 
         The angles alpha, beta, and gamma are the Euler angles describing the diffusion tensor
         within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where
@@ -246,23 +331,24 @@ class Diffusion_tensor:
             0 <= beta <= pi,
             0 <= gamma <= 2pi.
 
-        Within the PDB frame, the bond vector is described using the spherical angels theta and phi
-        where theta is the polar angle and phi is the azimuthal angle defined between
+        Within the PDB frame, the XH bond vector is described using the spherical angles theta and
+        phi where theta is the polar angle and phi is the azimuthal angle defined between
 
             0 <= theta <= pi,
             0 <= phi <= 2pi.
 
 
-        Units.
+        Units
+        ~~~~~
 
-        The 'time_scale' argument should be a floating point number.  Parameters affected by this
-        value are:  tm.
+        The 'time_scale' argument should be a floating point number.  The only parameter affected by
+        this value is tm.
 
         The 'd_scale' argument should also be a floating point number.  Parameters affected by this
-        value are:  Diso; Dpar; Dper; Da; Dr; Dx; Dy; Dz.
+        value are Diso, Dpar, Dper, Da, Dx, Dy, and Dz.  Significantly, Dr is not affected.
 
         The 'angle_units' argument should either be the string 'deg' or 'rad'.  Parameters affected
-        are:  theta; phi; alpha; beta; gamma.
+        are theta, phi, alpha, beta, and gamma.
 
 
 
@@ -284,30 +370,30 @@ class Diffusion_tensor:
         relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
 
 
-        To select an axially symmetric diffusion tensor with a Dpar value of 1.698e7, Dper value of
-        1.417e7, theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to
-        the run 'axial', type one of:
+        To select a spheroid diffusion tensor with a Dpar value of 1.698e7, Dper value of 1.417e7,
+        theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to the run
+        'spheroid', type one of:
 
-        relax> diffusion_tensor('axial', (1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
-        relax> diffusion_tensor(run='axial', params=(1.698e7, 1.417e7, 67.174, -83.718),
+        relax> diffusion_tensor('spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
+        relax> diffusion_tensor(run='spheroid', params=(1.698e7, 1.417e7, 67.174, -83.718),
                                 param_types=1)
-        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
+        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
                                 d_scale=1e8)
-        relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
+        relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
                                 param_types=1, d_scale=1e8)
-        relax> diffusion_tensor('axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
+        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
                                 d_scale=1e8, angle_units='rad')
-        relax> diffusion_tensor(run='axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
+        relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
                                 param_types=1, d_scale=1e8, angle_units='rad', fixed=1)
 
 
-        To select fully anisotropic diffusion, type:
+        To select ellipsoidal diffusion, type:
 
         relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
                                 param_types=2)
 
 
-        To select and minimise an isotropic diffusion tensor, type (followed by a minimisation
+        To select and minimise a spherical diffusion tensor, type (followed by a minimisation
         command):
 
         relax> diffusion_tensor('diff', 10e-9, fixed=0)
@@ -322,7 +408,7 @@ class Diffusion_tensor:
             text = text + ", d_scale=" + `d_scale`
             text = text + ", angle_units=" + `angle_units`
             text = text + ", param_types=" + `param_types`
-            text = text + ", axial_type=" + `axial_type`
+            text = text + ", spheroid_type=" + `spheroid_type`
             text = text + ", fixed=" + `fixed` + ")"
             print text
 
@@ -356,13 +442,13 @@ class Diffusion_tensor:
         if type(param_types) != int:
             raise RelaxIntError, ('parameter types', param_types)
 
-        # Axial type argument.
-        if axial_type != None and type(axial_type) != str:
-            raise RelaxNoneStrError, ('axial type', axial_type)
+        # Spheroid type argument.
+        if spheroid_type != None and type(spheroid_type) != str:
+            raise RelaxNoneStrError, ('spheroid type', spheroid_type)
 
         # The fixed flag.
         if type(fixed) != int or (fixed != 0 and fixed != 1):
             raise RelaxBinError, ('fixed flag', fixed)
 
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, axial_type=axial_type, fixed=fixed)
+        self.__relax__.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)

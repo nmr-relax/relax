@@ -53,16 +53,16 @@ class Angles:
         # Arguments.
         self.run = run
 
-        # Isotropic diffusion.
-        if self.relax.data.diff[self.run].type == 'iso':
+        # Sphere.
+        if self.relax.data.diff[self.run].type == 'sphere':
             return
 
-        # Axially symmetric diffusion.
-        elif self.relax.data.diff[self.run].type == 'axial':
+        # Spheroid.
+        elif self.relax.data.diff[self.run].type == 'spheroid':
             self.axial()
 
-        # Fully anisotropic diffusion.
-        elif self.relax.data.diff[self.run].type == 'aniso':
+        # Ellipsoid.
+        elif self.relax.data.diff[self.run].type == 'ellipsoid':
             raise RelaxError, "No coded yet."
 
 
