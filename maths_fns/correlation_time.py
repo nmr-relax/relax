@@ -119,10 +119,6 @@ def calc_spheroid_ti(data, diff_data):
 
     # Correlation times.
     data.ti = 1 * data.tau_comps
-    print "data.ti:\n" + `data.ti`
-    import sys
-    sys.exit()
-
 
 
 
