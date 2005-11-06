@@ -25,7 +25,7 @@ from Numeric import Float64, matrixmultiply, ones, sum, transpose, zeros
 from math import pi
 import sys
 
-from geometry import *
+from direction_cosine import *
 from weights import *
 from correlation_time import *
 from jw_mf_comps import *
@@ -1168,7 +1168,7 @@ class Mf:
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 1
 
-            # Geometry function, gradient, and Hessian.
+            # Direction cosine function, gradient, and Hessian.
             diff_data.calc_di = None
             diff_data.calc_ddi = None
             diff_data.calc_d2di = None
@@ -1192,7 +1192,7 @@ class Mf:
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 3
 
-            # Geometry function, gradient, and Hessian.
+            # Direction cosine function, gradient, and Hessian.
             diff_data.calc_di = calc_spheroid_di
             diff_data.calc_ddi = calc_spheroid_ddi
             diff_data.calc_d2di = calc_spheroid_d2di
@@ -1227,7 +1227,7 @@ class Mf:
             # Number of indecies in the generic equations.
             diff_data.num_indecies = 5
 
-            # Geometry function, gradient, and Hessian.
+            # Direction cosine function, gradient, and Hessian.
             diff_data.calc_di = calc_ellipsoid_di
             diff_data.calc_ddi = calc_ellipsoid_ddi
             diff_data.calc_d2di = calc_ellipsoid_d2di
