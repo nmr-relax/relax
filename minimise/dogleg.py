@@ -123,12 +123,12 @@ class Dogleg(Hessian_mods, Trust_region, Min, Bfgs, Newton):
         self.setup_conv_tests()
 
         # Type specific functions.
-        if match('[Bb][Ff][Gg][Ss]', self.hessian_type):
+        if self.hessian_type and match('[Bb][Ff][Gg][Ss]', self.hessian_type):
             self.setup_bfgs()
             self.specific_update = self.update_bfgs
             self.hessian_update = self.hessian_update_bfgs
             self.d2fk = inverse(self.Hk)
-        elif match('[Nn]ewton', self.hessian_type):
+        elif self.hessian_type and match('[Nn]ewton', self.hessian_type):
             self.setup_newton()
             self.specific_update = self.update_newton
             self.hessian_update = self.hessian_update_newton
