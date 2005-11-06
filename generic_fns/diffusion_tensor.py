@@ -51,8 +51,8 @@ class Diffusion_tensor:
             self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
             self.relax.data.diff[self.run].Da = Da
             self.relax.data.diff[self.run].Dr = Dr
-            self.relax.data.diff[self.run].Dx = self.relax.data.diff[self.run].Diso - Da + Dr
-            self.relax.data.diff[self.run].Dy = self.relax.data.diff[self.run].Diso - Da - Dr
+            self.relax.data.diff[self.run].Dx = self.relax.data.diff[self.run].Diso - Da*(Dr + 1)
+            self.relax.data.diff[self.run].Dy = self.relax.data.diff[self.run].Diso + Da*(Dr - 1)
             self.relax.data.diff[self.run].Dz = self.relax.data.diff[self.run].Diso + 2.0*Da
 
             # Global correlation time:  tm.
@@ -71,8 +71,8 @@ class Diffusion_tensor:
             self.relax.data.diff[self.run].Diso = Diso
             self.relax.data.diff[self.run].Da = Da
             self.relax.data.diff[self.run].Dr = Dr
-            self.relax.data.diff[self.run].Dx = Diso - Da + Dr
-            self.relax.data.diff[self.run].Dy = Diso - Da - Dr
+            self.relax.data.diff[self.run].Dx = Diso - Da*(Dr + 1)
+            self.relax.data.diff[self.run].Dy = Diso + Da*(Dr - 1)
             self.relax.data.diff[self.run].Dz = Diso + 2.0*Da
 
             # Global correlation time:  tm.
@@ -93,8 +93,8 @@ class Diffusion_tensor:
             self.relax.data.diff[self.run].Dy = Dy
             self.relax.data.diff[self.run].Dz = Dz
             self.relax.data.diff[self.run].Diso = (Dx + Dy + Dz) / 3.0
-            self.relax.data.diff[self.run].Da = (Dz - (Dx + Dy)/2.0) / 3.0
-            self.relax.data.diff[self.run].Dr = (Dx - Dy) / 2.0
+            self.relax.data.diff[self.run].Da = Dz - (Dx + Dy)/2.0
+            self.relax.data.diff[self.run].Dr = (Dy - Dx) / (2.0*self.relax.data.diff[self.run].Da)
 
             # Global correlation time:  tm.
             self.relax.data.diff[self.run].tm = 1.0 / (6.0*self.relax.data.diff[self.run].Diso)
@@ -369,8 +369,8 @@ class Diffusion_tensor:
             # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
             self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
             self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dpar = self.relax.data.diff[self.run].Diso + 2.0*Da
-            self.relax.data.diff[self.run].Dper = self.relax.data.diff[self.run].Diso - Da
+            self.relax.data.diff[self.run].Dpar = self.relax.data.diff[self.run].Diso + 2.0/3.0 * Da
+            self.relax.data.diff[self.run].Dper = self.relax.data.diff[self.run].Diso - 1.0/3.0 * Da
             self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
 
             # Global correlation time:  tm.
@@ -388,8 +388,8 @@ class Diffusion_tensor:
             # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
             self.relax.data.diff[self.run].Diso = Diso
             self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dpar = Diso + 2.0*Da
-            self.relax.data.diff[self.run].Dper = Diso - Da
+            self.relax.data.diff[self.run].Dpar = Diso + 2.0/3.0 * Da
+            self.relax.data.diff[self.run].Dper = Diso - 1.0/3.0 * Da
             self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
 
             # Global correlation time:  tm.
@@ -406,9 +406,9 @@ class Diffusion_tensor:
             # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
             self.relax.data.diff[self.run].Diso = 1.0 / (6.0 * tm)
             self.relax.data.diff[self.run].Dratio = Dratio
-            self.relax.data.diff[self.run].Da = self.relax.data.diff[self.run].Diso * (Dratio - 1.0) / (Dratio + 2.0)
             self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * Dratio / (Dratio + 2.0)
             self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (Dratio + 2.0)
+            self.relax.data.diff[self.run].Da = self.relax.data.diff[self.run].Dpar - self.relax.data.diff[self.run].Dper
 
             # Global correlation time:  tm.
             self.relax.data.diff[self.run].tm = tm
@@ -426,7 +426,7 @@ class Diffusion_tensor:
             self.relax.data.diff[self.run].Dpar = Dpar
             self.relax.data.diff[self.run].Dper = Dper
             self.relax.data.diff[self.run].Diso = (Dpar + 2.0*Dper) / 3.0
-            self.relax.data.diff[self.run].Da = (Dpar - Dper) / 3.0
+            self.relax.data.diff[self.run].Da = Dpar - Dper
             self.relax.data.diff[self.run].Dratio = Dpar / Dper
 
             # Global correlation time:  tm.
@@ -443,9 +443,9 @@ class Diffusion_tensor:
             # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
             self.relax.data.diff[self.run].Diso = Diso
             self.relax.data.diff[self.run].Dratio = Dratio
-            self.relax.data.diff[self.run].Da = Diso * (Dratio - 1.0) / (Dratio + 2.0)
             self.relax.data.diff[self.run].Dpar = 3.0 * Diso * Dratio / (Dratio + 2.0)
             self.relax.data.diff[self.run].Dper = 3.0 * Diso / (Dratio + 2.0)
+            self.relax.data.diff[self.run].Da = self.relax.data.diff[self.run].Dpar - self.relax.data.diff[self.run].Dper
 
             # Global correlation time:  tm.
             self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
