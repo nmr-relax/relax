@@ -167,7 +167,7 @@ Function for setting up the diffusion tensor.\index{diffusion!tensor}
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{diffusion\_tensor.set}(self, run=None, params=None, time\_scale=1.0, d\_scale=1.0, angle\_units=`deg', param\_types=0, axial\_type=None, fixed=1)}
+\textsf{\textbf{diffusion\_tensor.set}(self, run=None, params=None, time\_scale=1.0, d\_scale=1.0, angle\_units=`deg', param\_types=0, spheroid\_type=None, fixed=1)}
 
 
 \subsubsection{Keyword Arguments}
@@ -184,7 +184,7 @@ Function for setting up the diffusion tensor.\index{diffusion!tensor}
 
 \keyword{param\_types:}  A flag to select different parameter combinations. 
 
-\keyword{axial\_type:}  A string, which if supplied with axially symmetric\index{diffusion!spheroid (axially symmetric)} parameters, will restrict the tensor to either being \quotecmd{oblate} or \quotecmd{prolate}. 
+\keyword{spheroid\_type:}  A string which, if supplied together with spheroid\index{diffusion!spheroid (axially symmetric)} parameters, will restrict the tensor to either being \quotecmd{oblate} or \quotecmd{prolate}. 
 
 \keyword{fixed:}  A flag specifying whether the diffusion tensor\index{diffusion!tensor} is fixed or can be optimised.\index{optimise} 
 
@@ -296,7 +296,7 @@ while the angle\index{angles} $\alpha$ which is the angle\index{angles} between 
 \end{itemize}
 
 
-The \quotecmd{axial\_type} argument should be \quotecmd{oblate}, \quotecmd{prolate}, or None.  The argument will be ignored if the diffusion tensor\index{diffusion!tensor} is not axially symmetric.\index{diffusion!spheroid (axially symmetric)}  If \quotecmd{oblate} is given, then the constraint\index{constraint} $\Diff_a$ $\le$ 0 is used while if \quotecmd{prolate} is given, then the constraint\index{constraint} $\Diff_a$ $\ge$ 0 is used.  If nothing is supplied, then $\Diff_a$ will be allowed to have any values.  To prevent minimisation\index{minimisation} of diffusion tensor\index{diffusion!tensor} parameters in a space with two minima, it is recommended to specify which tensor is to be minimised,\index{minimisation} thereby partitioning the two minima into the two subspaces along the boundry\index{parameter!bounds} $\Diff_a$ = 0.
+The \quotecmd{spheroid\_type} argument should be \quotecmd{oblate}, \quotecmd{prolate}, or None.  The argument will be ignored if the diffusion tensor\index{diffusion!tensor} is not axially symmetric.\index{diffusion!spheroid (axially symmetric)}  If \quotecmd{oblate} is given, then the constraint\index{constraint} $\Diff_a$ $\le$ 0 is used while if \quotecmd{prolate} is given, then the constraint\index{constraint} $\Diff_a$ $\ge$ 0 is used.  If nothing is supplied, then $\Diff_a$ will be allowed to have any values.  To prevent minimisation\index{minimisation} of diffusion tensor\index{diffusion!tensor} parameters in a space with two minima, it is recommended to specify which tensor is to be minimised,\index{minimisation} thereby partitioning the two minima into the two subspaces along the boundry\index{parameter!bounds} $\Diff_a$ = 0.
 
 
 
@@ -428,27 +428,27 @@ To select axially symmetric\index{diffusion!spheroid (axially symmetric)} diffus
 
 \example{relax> diffusion\_tensor(`m8', (8.5e-9, 1.1, 20.0, 20.0), param\_types=1)}
 
-To select an axially symmetric\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} with a $\Diff_\Par$ value of 1.698e7, $\Diff_\Per$ value of 1.417e7, $\theta$ value of 67.174 degrees, and $\phi$ value of -83.718 degrees, and assign it to the run \quotecmd{axial}, type one of:
+To select a spheroid\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} with a $\Diff_\Par$ value of 1.698e7, $\Diff_\Per$ value of 1.417e7, $\theta$ value of 67.174 degrees, and $\phi$ value of -83.718 degrees, and assign it to the run \quotecmd{spheroid}, type one of:
 
 
-\example{relax> diffusion\_tensor(`axial', (1.698e7, 1.417e7, 67.174, -83.718), param\_types=1)}
+\example{relax> diffusion\_tensor(`spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param\_types=1)}
 
-\example{relax> diffusion\_tensor(run=`axial', params=(1.698e7, 1.417e7, 67.174, -83.718), param\_types=1)}
+\example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e7, 1.417e7, 67.174, -83.718), param\_types=1)}
 
-\example{relax> diffusion\_tensor(`axial', (1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=1, d\_scale=1e8)}
+\example{relax> diffusion\_tensor(`spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=1, d\_scale=1e8)}
 
-\example{relax> diffusion\_tensor(run=`axial', params=(1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=1, d\_scale=1e8)}
+\example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=1, d\_scale=1e8)}
 
-\example{relax> diffusion\_tensor(`axial', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad')}
+\example{relax> diffusion\_tensor(`spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad')}
 
-\example{relax> diffusion\_tensor(run=`axial', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad', fixed=1)}
+\example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad', fixed=1)}
 
-To select fully anisotropic\index{diffusion!anisotropic} diffusion, type:
+To select ellipsoidal\index{diffusion!ellipsoid (asymmetric)} diffusion, type:
 
 
 \example{relax> diffusion\_tensor(`m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568), param\_types=2)}
 
-To select and minimise\index{minimisation} an isotropic\index{diffusion!sphere (isotropic)} diffusion tensor,\index{diffusion!tensor} type (followed by a minimisation\index{minimisation} command):
+To select and minimise\index{minimisation} a spherical diffusion tensor,\index{diffusion!tensor} type (followed by a minimisation\index{minimisation} command):
 
 
 \example{relax> diffusion\_tensor(`diff', 10e-9, fixed=0)}

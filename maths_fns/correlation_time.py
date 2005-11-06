@@ -97,7 +97,7 @@ def calc_spheroid_ti(data, diff_data):
     data.tau_scale[2] = 2.0
 
     # Components.
-    data.tau_comps  = data.inv_tm + data.tau_scale * diff_data.params[1]
+    data.tau_comps = data.inv_tm + data.tau_scale * diff_data.params[1]
 
     # t-1 component.
     if data.tau_comps[0] == 0.0:
@@ -118,7 +118,7 @@ def calc_spheroid_ti(data, diff_data):
         data.tau_comps[2] = 1.0 / data.tau_comps[2]
 
     # Correlation times.
-    data.ti = 1 * data.tau_comps
+    data.ti = 1.0 * data.tau_comps
 
 
 

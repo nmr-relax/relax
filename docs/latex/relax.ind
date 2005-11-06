@@ -22,10 +22,10 @@
 
   \item delete, 28, 62, 99, 117
   \item diffusion, 9
-    \subitem anisotropic, 31--33, 35
+    \subitem anisotropic, 31--33
     \subitem Brownian, \textbf{9}
     \subitem ellipsoid (asymmetric), \textbf{9}, 21, 25, 32, 
-		\textbf{32}
+		\textbf{32}, 35
     \subitem sphere (isotropic), \textbf{11}, 25, 30, \textbf{30}, 32, 
 		35, 37
     \subitem spheroid (axially symmetric), \textbf{10}, 25, 30, 31, 

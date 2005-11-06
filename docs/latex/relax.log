@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  31 OCT 2005 02:44
+This is TeX, Version 3.14159 (Web2C 7.4.5) (format=latex 2005.1.21)  6 NOV 2005 22:29
 **relax.tex
 (./relax.tex
 LaTeX2e <2003/12/01>
@@ -189,9 +189,12 @@ File: images/ulysses.eps.gz Graphic file (type eps)
 
  [9] [10
 
-] [11] [12
-
 ]
+LaTeX Font Info:    Try loading font information for U+euf on input line 136.
+ (/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
+File: ueuf.fd 2002/01/19 v2.2g AMS font definitions
+) [11]
+[12]
 \openout2 = `intro.aux'.
 
  (./intro.tex
@@ -207,6 +210,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 31--35
  []
 
 [1
+
 
 
 ] [2]
@@ -290,13 +294,9 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 Package natbib Warning: Citation `dAuvergneGooley06b' on page 9 undefined on in
 put line 91.
 
-LaTeX Font Info:    Try loading font information for U+euf on input line 102.
-(/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
-File: ueuf.fd 2002/01/19 v2.2g AMS font definitions
-) [9] [10] [11]
+[9] [10] [11]
 File: images/dependencies.eps.gz Graphic file (type eps)
-
-<images/dependencies.eps.gz> [12] [13] [14] [15] [16]
+ <images/dependencies.eps.gz> [12] [13] [14] [15] [16]
 Underfull \vbox (badness 1540) has occurred while \output is active []
 
  [17]
@@ -317,32 +317,32 @@ params=None, time[]scale=1.0, d[]scale=1.0, an-
 
 [30] [31] [32] [33] [34]
 Underfull \hbox (badness 10000) in paragraph at lines 436--437
-[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e7, 1.417e
-7, 67.174, -83.718),
+[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`spheroid', params=(1.698e7, 1.4
+17e7, 67.174, -83.718),
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 438--439
-[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(`axial', (1.698e-1, 1.417e-1, 67.174
-, -83.718), param[]types=1,
+[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(`spheroid', (1.698e-1, 1.417e-1, 67.
+174, -83.718), param[]types=1,
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 440--441
-[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e-1, 1.417
-e-1, 67.174, -83.718),
+[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`spheroid', params=(1.698e-1, 1.
+417e-1, 67.174, -83.718),
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 442--443
-[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(`axial', (1.698e-1, 1.417e-1, 1.1724
-, -1.4612), param[]types=1,
+[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(`spheroid', (1.698e-1, 1.417e-1, 1.1
+724, -1.4612), param[]types=1,
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 444--445
-[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`axial', params=(1.698e-1, 1.417
-e-1, 1.1724, -1.4612),
+[]\OT1/cmtt/m/n/9 relax> diffusion[]tensor(run=`spheroid', params=(1.698e-1, 1.
+417e-1, 1.1724, -1.4612),
  []
 
 
@@ -519,4 +519,4 @@ Here is how much of TeX's memory you used:
  26 hyphenation exceptions out of 1000
  27i,12n,24p,1381b,450s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (175 pages, 356860 bytes).
+Output written on relax.dvi (175 pages, 358940 bytes).
