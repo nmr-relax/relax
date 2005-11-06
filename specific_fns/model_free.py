@@ -340,7 +340,7 @@ class Model_free(Common_functions):
                 # tm, Da, Dr, alpha, beta, gamma.
                 self.scaling_matrix[i, i] = ti_scaling
                 self.scaling_matrix[i+1, i+1] = 1e7
-                self.scaling_matrix[i+2, i+2] = 1e7
+                self.scaling_matrix[i+2, i+2] = 1.0
                 self.scaling_matrix[i+3, i+3] = 1.0
                 self.scaling_matrix[i+4, i+4] = 1.0
                 self.scaling_matrix[i+5, i+5] = 1.0

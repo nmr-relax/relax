@@ -189,7 +189,7 @@ def calc_ellipsoid_ci(data, diff_data):
     d = 3.0 * (data.dx_quar + data.dy_quar + data.dz_quar) - 1.0
 
     # Calculate e.
-    e = 1.0 / data.R (data.one_3Dr * data.ex  +  data.one_m3Dr * data.ey  -  2.0 * data.ez)
+    e = 1.0 / data.R * (data.one_3Dr * data.ex  +  data.one_m3Dr * data.ey  -  2.0 * data.ez)
 
     # Weight c-2.
     data.ci[0] = 0.25 * (d - e)
@@ -368,7 +368,7 @@ def calc_ellipsoid_dci(data, diff_data):
     dd_dOi = 3.0 * (data.ci_x + data.ci_y + data.ci_z)
 
     # Calculate de_dOi.
-    de_dOi = 1/data.R (data.one_3Dr * data.ci_X  +  data.one_m3Dr * data.ci_Y  -  2.0 * data.ci_Z)
+    de_dOi = 1.0/data.R * (data.one_3Dr * data.ci_X  +  data.one_m3Dr * data.ci_Y  -  2.0 * data.ci_Z)
 
     # Weight c-2.
     data.dci[3:, 0] = dd_dOi - de_dOi
@@ -390,7 +390,7 @@ def calc_ellipsoid_dci(data, diff_data):
     ########################
 
     # Calculate de_dDr.
-    de_dDr = 1/data.R_cubed (data.one_mDr * data.ex  -  data.one_Dr * data.ey  +  2.0 * diff_data.params[2] * data.ez)
+    de_dDr = data.R_cubed**-1 * (data.one_mDr * data.ex  -  data.one_Dr * data.ey  +  2.0 * diff_data.params[2] * data.ez)
 
     # Weight c-2.
     data.dci[2, 0] = -0.75 * de_dDr
@@ -758,15 +758,15 @@ def calc_ellipsoid_d2ci(data, diff_data):
     y3_comp = data.dy_sqrd * (data.dy * data.d2dy_dO2 + 3.0 * op_yy)
     z3_comp = data.dz_sqrd * (data.dz * data.d2dz_dO2 + 3.0 * op_zz)
 
-    xy_comp = data.dx_sqrd * y_comp  +  2.0 * data.dx * data.dy * (op_x_y + op_y_x)  +  data.dy_sqrd * x_comp
-    xz_comp = data.dx_sqrd * z_comp  +  2.0 * data.dx * data.dz * (op_x_z + op_z_x)  +  data.dz_sqrd * x_comp
-    yz_comp = data.dy_sqrd * z_comp  +  2.0 * data.dy * data.dz * (op_y_z + op_z_y)  +  data.dz_sqrd * y_comp
+    xy_comp = data.dx_sqrd * y_comp  +  2.0 * data.dx * data.dy * (op_xy + op_yx)  +  data.dy_sqrd * x_comp
+    xz_comp = data.dx_sqrd * z_comp  +  2.0 * data.dx * data.dz * (op_xz + op_zx)  +  data.dz_sqrd * x_comp
+    yz_comp = data.dy_sqrd * z_comp  +  2.0 * data.dy * data.dz * (op_yz + op_zy)  +  data.dz_sqrd * y_comp
 
     # Calculate d2d_dOidOj.
     d2d_dOidOj = 3.0 * (x3_comp + y3_comp + z3_comp)
 
     # Calculate d2e_dOidOj.
-    d2e_dOidOj = 1.0 / data.R (data.one_3Dr * (x3_comp + yz_comp) + data.one_m3Dr * (y3_comp + xz_comp) - 2.0 * (z3_comp + xy_comp))
+    d2e_dOidOj = 1.0 / data.R * (data.one_3Dr * (x3_comp + yz_comp) + data.one_m3Dr * (y3_comp + xz_comp) - 2.0 * (z3_comp + xy_comp))
 
     # Weight c-2.
     data.d2ci[3:, 3:, 0] = d2d_dOidOj - d2e_dOidOj
@@ -806,7 +806,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
     d2e3_dDr2 = 6.0 * diff_data.params[2]**2  -  1.0
 
     # Calculate d2e_dDr2.
-    d2e_dDr2 = 1.0 / data.R**5 (d2e1_dDr2 * data.ex  +  d2e2_dDr2 * data.ey  -  2.0 * d2e3_dDr2 * data.ez)
+    d2e_dDr2 = 1.0 / data.R**5 * (d2e1_dDr2 * data.ex  +  d2e2_dDr2 * data.ey  -  2.0 * d2e3_dDr2 * data.ez)
 
     # Weight c0.
     data.d2ci[2, 2, 0] = -0.75 * d2e_dDr2

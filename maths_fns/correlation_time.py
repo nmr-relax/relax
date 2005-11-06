@@ -431,7 +431,7 @@ def calc_ellipsoid_ti(data, diff_data):
         data.tau_comps[4] = 1.0 / data.tau_comps[4]
 
     # Correlation times.
-    data.ti = 1 * data.tau_comps
+    data.ti = 1.0 * data.tau_comps
 
 
 
@@ -579,7 +579,7 @@ def calc_ellipsoid_dti(data, diff_data):
     data.tau_scale[3] = 0.0
     data.tau_scale[4] = -data.sixDaDrR
 
-    data.dti[1] = data.tau_scale * data.tau_comps_sqrd
+    data.dti[2] = data.tau_scale * data.tau_comps_sqrd
 
 
 
