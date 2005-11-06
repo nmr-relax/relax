@@ -177,7 +177,7 @@ class Diffusion_tensor:
             raise RelaxNoTensorError, run
 
         # Spherical diffusion.
-        if self.relax.data.diff[run].type == 'iso':
+        if self.relax.data.diff[run].type == 'sphere':
             # Tensor type.
             print "Type:  Spherical diffusion"
 
