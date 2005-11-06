@@ -30,11 +30,11 @@ from math import cos, sin
 ############
 
 
-# Spheroid delta equation.
-##########################
+# Spheroid direction cosine equation.
+#####################################
 
-def calc_spheroid_geom(data, diff_data):
-    """Function for calculating the dot product XH . Dpar.
+def calc_spheroid_di(data, diff_data):
+    """Function for calculating the direction cosine dz.
 
     dz is the dot product between the unit bond vector and the unit vector along Dpar and is given
     by
@@ -64,11 +64,11 @@ def calc_spheroid_geom(data, diff_data):
 
 
 
-# Spheroid delta gradient.
-##########################
+# Spheroid direction cosine gradient.
+#####################################
 
-def calc_spheroid_dgeom(data, diff_data):
-    """Function for calculating the partial derivatives of the dot product XH . Dpar.
+def calc_spheroid_ddi(data, diff_data):
+    """Function for calculating the partial derivatives of the direction cosine dz.
 
     The theta partial derivative of the unit Dpar vector is
 
@@ -101,11 +101,11 @@ def calc_spheroid_dgeom(data, diff_data):
 
 
 
-# Spheroid delta Hessian.
-#########################
+# Spheroid direction cosine Hessian.
+####################################
 
-def calc_spheroid_d2geom(data, diff_data):
-    """Function for calculating the second partial derivatives of the dot product XH . Dpar.
+def calc_spheroid_d2di(data, diff_data):
+    """Function for calculating the second partial derivatives of the direction cosine dz.
 
     The theta-theta second partial derivative of the unit Dpar vector is
 
@@ -156,10 +156,10 @@ def calc_spheroid_d2geom(data, diff_data):
 #############
 
 
-# Ellipsoid delta equations.
-############################
+# Ellipsoid direction cosine equations.
+#######################################
 
-def calc_ellipsoid_geom(data, diff_data):
+def calc_ellipsoid_di(data, diff_data):
     """Function for calculating the direction cosines dx, dy, and dz.
 
     Direction cosines
@@ -235,11 +235,11 @@ def calc_ellipsoid_geom(data, diff_data):
 
 
 
-# Ellipsoid delta gradient.
-###########################
+# Ellipsoid direction cosine gradient.
+######################################
 
-def calc_ellipsoid_dgeom(data, diff_data):
-    """Function for calculating the partial derivative of dx, dy, and dz.
+def calc_ellipsoid_ddi(data, diff_data):
+    """Function for calculating the partial derivatives of the direction cosines dx, dy, and dz.
 
     Dx gradient
     ~~~~~~~~~~~
@@ -356,8 +356,8 @@ def calc_ellipsoid_dgeom(data, diff_data):
     diff_data.ddz_dgamma[1] = data.sin_b * data.cos_g
 
 
-    # Delta gradients
-    #################
+    # Direction cosine gradients
+    ############################
 
     data.ddx_dO[0] = dot(data.xh_unit_vector, diff_data.ddx_dalpha)
     data.ddx_dO[1] = dot(data.xh_unit_vector, diff_data.ddx_dbeta)
@@ -372,11 +372,11 @@ def calc_ellipsoid_dgeom(data, diff_data):
 
 
 
-# Ellipsoid delta Hessian.
-##########################
+# Ellipsoid direction cosine Hessian.
+#####################################
 
-def calc_ellipsoid_d2geom(data, diff_data):
-    """Function calculating the second partial derivatives of dx, dy, dz.
+def calc_ellipsoid_d2di(data, diff_data):
+    """Function for calculating the second partial derivatives of the direction cosines dx, dy, dz.
 
     Dx Hessian
     ~~~~~~~~~~
@@ -577,23 +577,23 @@ def calc_ellipsoid_d2geom(data, diff_data):
     diff_data.d2dz_dgamma2[1] = -data.sin_b * data.sin_g
 
 
-    # Delta Hessians
-    ################
+    # Direction cosine Hessians
+    ###########################
 
-    data.d2dx_dO2[0, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha2)
+    data.d2dx_dO2[0, 0] =                       dot(data.xh_unit_vector, diff_data.d2dx_dalpha2)
     data.d2dx_dO2[0, 1] = data.d2dx_dO2[1, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha_dbeta)
     data.d2dx_dO2[0, 2] = data.d2dx_dO2[2, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha_dgamma)
-    data.d2dx_dO2[1, 1] = dot(data.xh_unit_vector, diff_data.d2dx_dbeta2)
+    data.d2dx_dO2[1, 1] =                       dot(data.xh_unit_vector, diff_data.d2dx_dbeta2)
     data.d2dx_dO2[1, 2] = data.d2dx_dO2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dx_dbeta_dgamma)
-    data.d2dx_dO2[2, 2] = dot(data.xh_unit_vector, diff_data.d2dx_dgamma2)
+    data.d2dx_dO2[2, 2] =                       dot(data.xh_unit_vector, diff_data.d2dx_dgamma2)
 
-    data.d2dy_dO2[0, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha2)
+    data.d2dy_dO2[0, 0] =                       dot(data.xh_unit_vector, diff_data.d2dy_dalpha2)
     data.d2dy_dO2[0, 1] = data.d2dy_dO2[1, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha_dbeta)
     data.d2dy_dO2[0, 2] = data.d2dy_dO2[2, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha_dgamma)
-    data.d2dy_dO2[1, 1] = dot(data.xh_unit_vector, diff_data.d2dy_dbeta2)
+    data.d2dy_dO2[1, 1] =                       dot(data.xh_unit_vector, diff_data.d2dy_dbeta2)
     data.d2dy_dO2[1, 2] = data.d2dy_dO2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dy_dbeta_dgamma)
-    data.d2dy_dO2[2, 2] = dot(data.xh_unit_vector, diff_data.d2dy_dgamma2)
+    data.d2dy_dO2[2, 2] =                       dot(data.xh_unit_vector, diff_data.d2dy_dgamma2)
 
-    data.d2dz_dO2[1, 1] = dot(data.xh_unit_vector, diff_data.d2dz_dbeta2)
+    data.d2dz_dO2[1, 1] =                       dot(data.xh_unit_vector, diff_data.d2dz_dbeta2)
     data.d2dz_dO2[1, 2] = data.d2dz_dO2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dz_dbeta_dgamma)
-    data.d2dz_dO2[2, 2] = dot(data.xh_unit_vector, diff_data.d2dz_dgamma2)
+    data.d2dz_dO2[2, 2] =                       dot(data.xh_unit_vector, diff_data.d2dz_dgamma2)

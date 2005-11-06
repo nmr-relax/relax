@@ -381,9 +381,9 @@ class Mf:
         if self.scaling_flag:
             params = matrixmultiply(params, self.scaling_matrix)
 
-        # Diffusion tensor geometry calculations.
-        if self.diff_data.calc_geom:
-            self.diff_data.calc_geom(data, self.diff_data)
+        # Direction cosine calculations.
+        if self.diff_data.calc_di:
+            self.diff_data.calc_di(data, self.diff_data)
 
         # Diffusion tensor weight calculations.
         self.diff_data.calc_ci(data, self.diff_data)
@@ -495,9 +495,9 @@ class Mf:
             # Set self.data[i] to data.
             data = self.data[i]
 
-            # Diffusion tensor geometry calculations.
-            if self.diff_data.calc_geom:
-                self.diff_data.calc_geom(data, self.diff_data)
+            # Direction cosine calculations.
+            if self.diff_data.calc_di:
+                self.diff_data.calc_di(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
             self.diff_data.calc_ci(data, self.diff_data)
@@ -562,9 +562,9 @@ class Mf:
             # Set self.data[i] to data.
             data = self.data[i]
 
-            # Diffusion tensor geometry calculations.
-            if self.diff_data.calc_geom:
-                self.diff_data.calc_geom(data, self.diff_data)
+            # Direction cosine calculations.
+            if self.diff_data.calc_di:
+                self.diff_data.calc_di(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
             self.diff_data.calc_ci(data, self.diff_data)
@@ -750,9 +750,9 @@ class Mf:
             # Set self.data[i] to data.
             data = self.data[i]
 
-            # Diffusion tensor geometry calculations.
-            if self.diff_data.calc_dgeom:
-                self.diff_data.calc_dgeom(data, self.diff_data)
+            # Direction cosine calculations.
+            if self.diff_data.calc_ddi:
+                self.diff_data.calc_ddi(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_dci:
@@ -831,9 +831,9 @@ class Mf:
             # Set self.data[i] to data.
             data = self.data[i]
 
-            # Diffusion tensor geometry calculations.
-            if self.diff_data.calc_dgeom:
-                self.diff_data.calc_dgeom(data, self.diff_data)
+            # Direction cosine calculations.
+            if self.diff_data.calc_ddi:
+                self.diff_data.calc_ddi(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_dci:
@@ -1015,9 +1015,9 @@ class Mf:
             # Set self.data[i] to data.
             data = self.data[i]
 
-            # Diffusion tensor geometry calculations.
-            if self.diff_data.calc_d2geom:
-               self.diff_data.calc_d2geom(data, self.diff_data)
+            # Direction cosine calculations.
+            if self.diff_data.calc_d2di:
+               self.diff_data.calc_d2di(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_d2ci:
@@ -1089,9 +1089,9 @@ class Mf:
             # Set self.data[i] to data.
             data = self.data[i]
 
-            # Diffusion tensor geometry calculations.
-            if self.diff_data.calc_d2geom:
-               self.diff_data.calc_d2geom(data, self.diff_data)
+            # Direction cosine calculations.
+            if self.diff_data.calc_d2di:
+               self.diff_data.calc_d2di(data, self.diff_data)
 
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_d2ci:
@@ -1169,9 +1169,9 @@ class Mf:
             diff_data.num_indecies = 1
 
             # Geometry function, gradient, and Hessian.
-            diff_data.calc_geom = None
-            diff_data.calc_dgeom = None
-            diff_data.calc_d2geom = None
+            diff_data.calc_di = None
+            diff_data.calc_ddi = None
+            diff_data.calc_d2di = None
 
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_sphere_ci
@@ -1193,9 +1193,9 @@ class Mf:
             diff_data.num_indecies = 3
 
             # Geometry function, gradient, and Hessian.
-            diff_data.calc_geom = calc_spheroid_geom
-            diff_data.calc_dgeom = calc_spheroid_dgeom
-            diff_data.calc_d2geom = calc_spheroid_d2geom
+            diff_data.calc_di = calc_spheroid_di
+            diff_data.calc_ddi = calc_spheroid_ddi
+            diff_data.calc_d2di = calc_spheroid_d2di
 
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_spheroid_ci
@@ -1228,9 +1228,9 @@ class Mf:
             diff_data.num_indecies = 5
 
             # Geometry function, gradient, and Hessian.
-            diff_data.calc_geom = calc_ellipsoid_geom
-            diff_data.calc_dgeom = calc_ellipsoid_dgeom
-            diff_data.calc_d2geom = calc_ellipsoid_d2geom
+            diff_data.calc_di = calc_ellipsoid_di
+            diff_data.calc_ddi = calc_ellipsoid_ddi
+            diff_data.calc_d2di = calc_ellipsoid_d2di
 
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_ellipsoid_ci
