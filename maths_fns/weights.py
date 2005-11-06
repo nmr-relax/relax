@@ -91,11 +91,9 @@ def calc_spheroid_dci(data, diff_data):
     """
 
     # Components.
-    data.ci_comps[0] = data.three_dz2_one
-    data.ci_comps[1] = 2.0 * data.one_two_dz2
-    data.ci_comps[2] = data.dz2_one
-
-    data.dci[2:] = 3.0 * data.dz * data.ci_comps * data.ddz_dO
+    data.dci[2:, 0] = 3.0 * data.dz * data.three_dz2_one * data.ddz_dO
+    data.dci[2:, 1] = 6.0 * data.dz * data.one_two_dz2 * data.ddz_dO
+    data.dci[2:, 2] = 3.0 * data.dz * data.dz2_one * data.ddz_dO
 
 
 
@@ -122,24 +120,13 @@ def calc_spheroid_d2ci(data, diff_data):
     where the orientation parameter set O is {theta, phi}.
     """
 
-    # Components.
-    data.ci_comps[0] = 9.0 * data.dz**2 - 1.0
-    data.ci_comps[1] = 1.0 - 6.0*data.dz**2
-    data.ci_comps[2] = data.three_dz2_one
-
     # Outer product.
     op = outerproduct(data.ddz_dO, data.ddz_dO)
 
     # Hessian.
-    data.d2ci[2:, 2:] = data.ci_comps * op
-
-    # Components.
-    data.ci_comps[0] = data.three_dz2_one
-    data.ci_comps[1] = data.one_two_dz2
-    data.ci_comps[2] = data.dz2_one
-
-    # Hessian.
-    data.d2ci[2:, 2:] = 3.0 * (data.d2ci[2:, 2:]  +  data.dz * data.ci_comps * data.d2dz_dO2)
+    data.d2ci[2:, 2:, 0] = 3.0 * ((9.0 * data.dz**2 - 1.0) * op  +  data.dz * data.three_dz2_one * data.d2dz_dO2)
+    data.d2ci[2:, 2:, 1] = 6.0 * ((1.0 - 6.0*data.dz**2) * op  +  data.dz * data.one_two_dz2 * data.d2dz_dO2)
+    data.d2ci[2:, 2:, 2] = 3.0 * ((data.three_dz2_one) * op  +  data.dz * data.dz2_one * data.d2dz_dO2)
 
 
 
