@@ -514,7 +514,6 @@ def calc_ellipsoid_d2geom(data, diff_data):
     # The alpha-gamma second partial derivative of the unit Dx vector.
     diff_data.d2dx_dalpha_dgamma[0] = -data.cos_a * data.cos_g + data.sin_a * data.cos_b * data.sin_g
     diff_data.d2dx_dalpha_dgamma[1] =  data.cos_a * data.sin_g + data.sin_a * data.cos_b * data.cos_g
-    diff_data.d2dx_dalpha_dgamma[2] = -data.sin_a * data.cos_b
 
     # The beta-beta second partial derivative of the unit Dx vector.
     diff_data.d2dx_dbeta2[0] = -data.cos_a * data.cos_b * data.cos_g
