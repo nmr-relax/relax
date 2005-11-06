@@ -1676,8 +1676,25 @@ class Model_free(Common_functions):
                 i = i + 1
                 j = j + 2
 
-                # Add five to i for the Da, Dr, alpha, beta, and gamma parameters.
-                i = i + 5
+                # Da >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # 0 <= Dr <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(-1.0 / self.scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+                # Add three to i for the alpha, beta, and gamma parameters.
+                i = i + 3
 
         # Model-free parameters.
         if self.param_set != 'diff':
