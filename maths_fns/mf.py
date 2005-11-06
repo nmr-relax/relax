@@ -1314,13 +1314,13 @@ class Mf:
             data.d2ti = zeros((2, 2, diff_data.num_indecies), Float64)
 
             # Dot product.
-            data.delta = 0
+            data.dz = 0
 
             # Dot product gradient.
-            data.ddelta_dpsi = zeros(2, Float64)
+            data.ddz_dO = zeros(2, Float64)
 
             # Dot product Hessian.
-            data.d2delta_dpsi2 = zeros((2, 2), Float64)
+            data.d2dz_dO2 = zeros((2, 2), Float64)
 
         # Diffusion as an ellipsoid.
         elif self.diff_data.type == 'ellipsoid':
@@ -1333,19 +1333,19 @@ class Mf:
             data.d2ti = zeros((3, 3, diff_data.num_indecies), Float64)
 
             # Dot products.
-            data.delta_alpha = 0.0
-            data.delta_beta  = 0.0
-            data.delta_gamma = 0.0
+            data.dx = 0.0
+            data.dy = 0.0
+            data.dz = 0.0
 
             # Dot product gradients.
-            data.ddelta_alpha_dpsi = zeros(3, Float64)
-            data.ddelta_beta_dpsi = zeros(3, Float64)
-            data.ddelta_gamma_dpsi = zeros(3, Float64)
+            data.ddx_dO = zeros(3, Float64)
+            data.ddy_dO = zeros(3, Float64)
+            data.ddz_dO = zeros(3, Float64)
 
             # Dot product Hessians.
-            data.d2delta_alpha_dpsi2 = zeros((3, 3), Float64)
-            data.d2delta_beta_dpsi2 = zeros((3, 3), Float64)
-            data.d2delta_gamma_dpsi2 = zeros((3, 3), Float64)
+            data.d2dx_dO2 = zeros((3, 3), Float64)
+            data.d2dy_dO2 = zeros((3, 3), Float64)
+            data.d2dz_dO2 = zeros((3, 3), Float64)
 
         # Empty spectral density components.
         data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
