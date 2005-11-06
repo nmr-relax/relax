@@ -24,6 +24,11 @@ from math import sqrt
 from Numeric import outerproduct
 
 
+##########
+# Sphere #
+##########
+
+
 # Sphere weight.
 ################
 
@@ -37,6 +42,12 @@ def calc_sphere_ci(data, diff_data):
 
 
 
+
+############
+# Spheroid #
+############
+
+
 # Spheroid weights.
 ###################
 
@@ -46,8 +57,10 @@ def calc_spheroid_ci(data, diff_data):
     The equations are
 
         c-1 = 1/4 (3dz**2 - 1)**2,
+
         c0  = 3dz**2 (1 - dz**2),
-        c1  = 3/4 (1 - dz**2)**2,
+
+        c1  = 3/4 (dz**2 - 1)**2,
 
     where dz is the direction cosine of the unit bond vector along the z-axis of the diffusion
     tensor which is calculated as the dot product of the unit bond vector with a unit vector along
@@ -63,7 +76,7 @@ def calc_spheroid_ci(data, diff_data):
     # Weights.
     data.ci[0] = 0.25 * data.three_dz2_one**2
     data.ci[1] = 3.0 * data.dz**2 * data.one_dz2
-    data.ci[2] = 0.75 * data.one_dz2**2
+    data.ci[2] = 0.75 * data.dz2_one**2
 
 
 
@@ -126,8 +139,14 @@ def calc_spheroid_d2ci(data, diff_data):
     # Hessian.
     data.d2ci[2:, 2:, 0] = 3.0 * ((9.0 * data.dz**2 - 1.0) * op  +  data.dz * data.three_dz2_one * data.d2dz_dO2)
     data.d2ci[2:, 2:, 1] = 6.0 * ((1.0 - 6.0*data.dz**2) * op  +  data.dz * data.one_two_dz2 * data.d2dz_dO2)
-    data.d2ci[2:, 2:, 2] = 3.0 * ((data.three_dz2_one) * op  +  data.dz * data.dz2_one * data.d2dz_dO2)
+    data.d2ci[2:, 2:, 2] = 3.0 * (data.three_dz2_one * op  +  data.dz * data.dz2_one * data.d2dz_dO2)
 
+
+
+
+#############
+# Ellipsoid #
+#############
 
 
 # Ellipsoid weights.
@@ -166,6 +185,7 @@ def calc_ellipsoid_ci(data, diff_data):
 
     # Calculate R.
     data.R = sqrt(1 + 3.0*diff_data.params[2]**2)
+    data.inv_R = 1.0 / data.R
 
     # Factors.
     data.one_3Dr = 1.0 + 3.0 * diff_data.params[2]
@@ -189,7 +209,7 @@ def calc_ellipsoid_ci(data, diff_data):
     d = 3.0 * (data.dx_quar + data.dy_quar + data.dz_quar) - 1.0
 
     # Calculate e.
-    e = 1.0 / data.R * (data.one_3Dr * data.ex  +  data.one_m3Dr * data.ey  -  2.0 * data.ez)
+    e = data.inv_R * (data.one_3Dr * data.ex  +  data.one_m3Dr * data.ey  -  2.0 * data.ez)
 
     # Weight c-2.
     data.ci[0] = 0.25 * (d - e)
@@ -205,6 +225,7 @@ def calc_ellipsoid_ci(data, diff_data):
 
     # Weight c2.
     data.ci[4] = 0.25 * (d + e)
+
 
 
 # Ellipsoid weight gradient.
@@ -343,7 +364,7 @@ def calc_ellipsoid_dci(data, diff_data):
     """
 
     # Factors.
-    data.R_cubed = data.R ** 3
+    data.inv_R_cubed = data.inv_R ** 3
     data.one_Dr = 1.0 + diff_data.params[2]
     data.one_mDr = 1.0 - diff_data.params[2]
 
@@ -356,9 +377,9 @@ def calc_ellipsoid_dci(data, diff_data):
     data.ci_xz = data.dx * data.dz * (data.dx * data.ddz_dO  +  data.dz * data.ddx_dO)
     data.ci_yz = data.dy * data.dz * (data.dy * data.ddz_dO  +  data.dz * data.ddy_dO)
 
-    data.ci_x = data.dx**3 * data.ddx_dO
-    data.ci_y = data.dy**3 * data.ddy_dO
-    data.ci_z = data.dz**3 * data.ddz_dO
+    data.ci_x = data.dx_cubed * data.ddx_dO
+    data.ci_y = data.dy_cubed * data.ddy_dO
+    data.ci_z = data.dz_cubed * data.ddz_dO
 
     data.ci_X = data.ci_x + data.ci_yz
     data.ci_Y = data.ci_y + data.ci_xz
@@ -368,7 +389,7 @@ def calc_ellipsoid_dci(data, diff_data):
     dd_dOi = 3.0 * (data.ci_x + data.ci_y + data.ci_z)
 
     # Calculate de_dOi.
-    de_dOi = 1.0/data.R * (data.one_3Dr * data.ci_X  +  data.one_m3Dr * data.ci_Y  -  2.0 * data.ci_Z)
+    de_dOi = data.inv_R * (data.one_3Dr * data.ci_X  +  data.one_m3Dr * data.ci_Y  -  2.0 * data.ci_Z)
 
     # Weight c-2.
     data.dci[3:, 0] = dd_dOi - de_dOi
@@ -390,7 +411,7 @@ def calc_ellipsoid_dci(data, diff_data):
     ########################
 
     # Calculate de_dDr.
-    de_dDr = data.R_cubed**-1 * (data.one_mDr * data.ex  -  data.one_Dr * data.ey  +  2.0 * diff_data.params[2] * data.ez)
+    de_dDr = data.inv_R_cubed * (data.one_mDr * data.ex  -  data.one_Dr * data.ey  +  2.0 * diff_data.params[2] * data.ez)
 
     # Weight c-2.
     data.dci[2, 0] = -0.75 * de_dDr
