@@ -784,11 +784,11 @@ def calc_ellipsoid_d2ti(data, diff_data):
         dDa.dDr
 
          d2t-1
-        -------  =  6Da (6Diso - Da(1 + 3Dr))**-3  +  3(6Diso - Da(1 + 3Dr))**-2,
+        -------  =  6Da (1 + 3Dr)(6Diso - Da(1 + 3Dr))**-3  +  3(6Diso - Da(1 + 3Dr))**-2,
         dDa.dDr
 
          d2t0
-        -------   =  -6Da (6Diso - Da(1 - 3Dr))**-3  -  3(6Diso - Da(1 - 3Dr))**-2,
+        -------   =  -6Da (1 - 3Dr)(6Diso - Da(1 - 3Dr))**-3  -  3(6Diso - Da(1 - 3Dr))**-2,
         dDa.dDr
 
          d2t1
@@ -902,13 +902,13 @@ def calc_ellipsoid_d2ti(data, diff_data):
     ###########################
 
     # Scaling factors.
-    data.tau_scale[0] = data.sixDaDrR**2
-    data.tau_scale[1] = 9.0 * diff_data.params[1]**2
-    data.tau_scale[2] = 9.0 * diff_data.params[1]**2
+    data.tau_scale[0] = data.sixDaDrR
+    data.tau_scale[1] = 3.0 * diff_data.params[1]
+    data.tau_scale[2] = 3.0 * diff_data.params[1]
     data.tau_scale[3] = 0.0
-    data.tau_scale[4] = data.sixDaDrR**2
+    data.tau_scale[4] = data.sixDaDrR
 
-    data.d2ti[2, 2] = 2.0 * data.tau_scale * data.tau_comps_cubed
+    data.d2ti[2, 2] = 2.0 * data.tau_scale**2 * data.tau_comps_cubed
 
     # Scaling factors.
     data.tau_scale[0] = 1.0
