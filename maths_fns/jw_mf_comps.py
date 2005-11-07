@@ -71,14 +71,14 @@ def calc_S2_te_jw_comps(data, params):
     """
 
     # Order parameter factors.
-    data.one_s2 = 1.0 - params[data.s2_index]
+    data.one_s2 = 1.0 - params[data.s2_i]
 
     # Internal correlation time, te, factors.
-    data.te_ti =        params[data.te_index] + data.ti
-    data.te_ti_te =     data.te_ti * params[data.te_index]
+    data.te_ti =        params[data.te_i] + data.ti
+    data.te_ti_te =     data.te_ti * params[data.te_i]
     data.te_ti_sqrd =   data.te_ti**2
 
-    data.w_te_ti_sqrd = data.w_ti_sqrd * params[data.te_index]**2
+    data.w_te_ti_sqrd = data.w_ti_sqrd * params[data.te_i]**2
     data.inv_te_denom = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd)
     data.fact_te =      data.te_ti_te * data.inv_te_denom
 
@@ -126,14 +126,14 @@ def calc_S2f_S2_ts_jw_comps(data, params):
     """
 
     # Order parameter factors.
-    data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
+    data.s2f_s2 = params[data.s2f_i] - params[data.s2_i]
 
     # Internal correlation time, ts, factors.
-    data.ts_ti =        params[data.ts_index] + data.ti
-    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti =        params[data.ts_i] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_i]
     data.ts_ti_sqrd =   data.ts_ti**2
 
-    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_i]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
     data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
@@ -181,14 +181,14 @@ def calc_S2f_S2s_ts_jw_comps(data, params):
     """
 
     # Order parameter factors.
-    data.one_s2s = 1.0 - params[data.s2s_index]
+    data.one_s2s = 1.0 - params[data.s2s_i]
 
     # Internal correlation time, ts, factors.
-    data.ts_ti =        params[data.ts_index] + data.ti
-    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti =        params[data.ts_i] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_i]
     data.ts_ti_sqrd =   data.ts_ti**2
 
-    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_i]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
     data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
@@ -251,24 +251,24 @@ def calc_S2f_tf_S2_ts_jw_comps(data, params):
     """
 
     # Order parameter factors.
-    data.one_s2f = 1.0 - params[data.s2f_index]
-    data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
+    data.one_s2f = 1.0 - params[data.s2f_i]
+    data.s2f_s2 = params[data.s2f_i] - params[data.s2_i]
 
     # Internal correlation time, tf, factors.
-    data.tf_ti =        params[data.tf_index] + data.ti
-    data.tf_ti_tf =     data.tf_ti * params[data.tf_index]
+    data.tf_ti =        params[data.tf_i] + data.ti
+    data.tf_ti_tf =     data.tf_ti * params[data.tf_i]
     data.tf_ti_sqrd =   data.tf_ti**2
 
-    data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_index]**2
+    data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_i]**2
     data.inv_tf_denom = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd)
     data.fact_tf =      data.tf_ti_tf * data.inv_tf_denom
 
     # Internal correlation time, ts, factors.
-    data.ts_ti =        params[data.ts_index] + data.ti
-    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti =        params[data.ts_i] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_i]
     data.ts_ti_sqrd =   data.ts_ti**2
 
-    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_i]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
     data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
@@ -332,25 +332,25 @@ def calc_S2f_tf_S2s_ts_jw_comps(data, params):
     """
 
     # Order parameter factors.
-    data.one_s2s = 1.0 - params[data.s2s_index]
-    data.one_s2f = 1.0 - params[data.s2f_index]
-    data.s2f_s2 = params[data.s2f_index] * data.one_s2s
+    data.one_s2s = 1.0 - params[data.s2s_i]
+    data.one_s2f = 1.0 - params[data.s2f_i]
+    data.s2f_s2 = params[data.s2f_i] * data.one_s2s
 
     # Internal correlation time, tf, factors.
-    data.tf_ti =        params[data.tf_index] + data.ti
-    data.tf_ti_tf =     data.tf_ti * params[data.tf_index]
+    data.tf_ti =        params[data.tf_i] + data.ti
+    data.tf_ti_tf =     data.tf_ti * params[data.tf_i]
     data.tf_ti_sqrd =   data.tf_ti**2
 
-    data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_index]**2
+    data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_i]**2
     data.inv_tf_denom = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd)
     data.fact_tf =      data.tf_ti_tf * data.inv_tf_denom
 
     # Internal correlation time, ts, factors.
-    data.ts_ti =        params[data.ts_index] + data.ti
-    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti =        params[data.ts_i] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_i]
     data.ts_ti_sqrd =   data.ts_ti**2
 
-    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_i]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
     data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
@@ -435,7 +435,7 @@ def calc_diff_S2_te_djw_comps(data, params):
 
     fact_djw = (data.te_ti_sqrd - data.w_te_ti_sqrd) * data.inv_te_denom**2
     data.fact_ti_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
-    data.fact_te_djw_dti = params[data.te_index]**2 * fact_djw
+    data.fact_te_djw_dti = params[data.te_i]**2 * fact_djw
     data.fact_djw_dte = data.ti**2 * fact_djw
 
 
@@ -495,7 +495,7 @@ def calc_diff_S2f_S2_ts_djw_comps(data, params):
 
     fact_djw = (data.ts_ti_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom**2
     data.fact_ti_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
-    data.fact_ts_djw_dti = params[data.ts_index]**2 * fact_djw
+    data.fact_ts_djw_dti = params[data.ts_i]**2 * fact_djw
     data.fact_djw_dts = data.ti**2 * fact_djw
 
 
@@ -577,12 +577,12 @@ def calc_diff_S2f_tf_S2_ts_djw_comps(data, params):
 
     # tf.
     fact_tf_djw = (data.tf_ti_sqrd - data.w_tf_ti_sqrd) * data.inv_tf_denom**2
-    data.fact_tf_djw_dti = params[data.tf_index]**2 * fact_tf_djw
+    data.fact_tf_djw_dti = params[data.tf_i]**2 * fact_tf_djw
     data.fact_djw_dtf = data.ti**2 * fact_tf_djw
 
     # ts.
     fact_ts_djw = (data.ts_ti_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom**2
-    data.fact_ts_djw_dti = params[data.ts_index]**2 * fact_ts_djw
+    data.fact_ts_djw_dti = params[data.ts_i]**2 * fact_ts_djw
     data.fact_djw_dts = data.ti**2 * fact_ts_djw
 
 
@@ -640,7 +640,7 @@ def calc_diff_S2f_S2s_ts_djw_comps(data, params):
 
     fact_djw = (data.ts_ti_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom**2
     data.fact_ti_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
-    data.fact_ts_djw_dti = params[data.ts_index]**2 * fact_djw
+    data.fact_ts_djw_dti = params[data.ts_i]**2 * fact_djw
     data.fact_djw_dts = data.ti**2 * fact_djw
 
 
@@ -722,10 +722,10 @@ def calc_diff_S2f_tf_S2s_ts_djw_comps(data, params):
 
     # tf.
     fact_tf_djw = (data.tf_ti_sqrd - data.w_tf_ti_sqrd) * data.inv_tf_denom**2
-    data.fact_tf_djw_dti = params[data.tf_index]**2 * fact_tf_djw
+    data.fact_tf_djw_dti = params[data.tf_i]**2 * fact_tf_djw
     data.fact_djw_dtf = data.ti**2 * fact_tf_djw
 
     # ts.
     fact_ts_djw = (data.ts_ti_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom**2
-    data.fact_ts_djw_dti = params[data.ts_index]**2 * fact_ts_djw
+    data.fact_ts_djw_dti = params[data.ts_i]**2 * fact_ts_djw
     data.fact_djw_dts = data.ti**2 * fact_ts_djw

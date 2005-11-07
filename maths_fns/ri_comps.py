@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -303,7 +303,7 @@ def ri_comps_rex(data, params):
 
         # Rex components
         if data.create_rex_func[i]:
-            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_i], data.frq[data.remap_table[i]])
 
 
 # Ri (Bond length).
@@ -320,7 +320,7 @@ def ri_comps_r(data, params):
     """
 
     # Dipolar constant function value.
-    comp_dip_const_func(data, params[data.r_index])
+    comp_dip_const_func(data, params[data.r_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -351,7 +351,7 @@ def ri_comps_csa(data, params):
     """
 
     # CSA constant function value.
-    comp_csa_const_func(data, params[data.csa_index])
+    comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -381,10 +381,10 @@ def ri_comps_r_csa(data, params):
     """
 
     # Dipolar constant function value.
-    comp_dip_const_func(data, params[data.r_index])
+    comp_dip_const_func(data, params[data.r_i])
 
     # CSA constant function value.
-    comp_csa_const_func(data, params[data.csa_index])
+    comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -419,7 +419,7 @@ def ri_comps_r_rex(data, params):
     """
 
     # Dipolar constant function value.
-    comp_dip_const_func(data, params[data.r_index])
+    comp_dip_const_func(data, params[data.r_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -437,7 +437,7 @@ def ri_comps_r_rex(data, params):
 
         # Rex components
         if data.create_rex_func[i]:
-            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_i], data.frq[data.remap_table[i]])
 
 
 # Ri (CSA, Rex).
@@ -454,7 +454,7 @@ def ri_comps_csa_rex(data, params):
     """
 
     # CSA constant function value.
-    comp_csa_const_func(data, params[data.csa_index])
+    comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -471,7 +471,7 @@ def ri_comps_csa_rex(data, params):
 
         # Rex components
         if data.create_rex_func[i]:
-            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_i], data.frq[data.remap_table[i]])
 
 
 # Ri (Bond length, CSA, Rex).
@@ -489,10 +489,10 @@ def ri_comps_r_csa_rex(data, params):
     """
 
     # Dipolar constant function value.
-    comp_dip_const_func(data, params[data.r_index])
+    comp_dip_const_func(data, params[data.r_i])
 
     # CSA constant function value.
-    comp_csa_const_func(data, params[data.csa_index])
+    comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -514,7 +514,7 @@ def ri_comps_r_csa_rex(data, params):
 
         # Rex components
         if data.create_rex_func[i]:
-            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_index], data.frq[data.remap_table[i]])
+            data.rex_comps_func[i] = data.create_rex_func[i](params[data.rex_i], data.frq[data.remap_table[i]])
 
 
 # R1 comps.
@@ -522,12 +522,12 @@ def r1_comps(data, i, params):
     """Calculate the r1 function components."""
 
     # Dipolar constant function value.
-    if data.r_index:
-        comp_dip_const_func(data, params[data.r_index])
+    if data.r_i:
+        comp_dip_const_func(data, params[data.r_i])
 
     # CSA constant function value.
-    if data.csa_index:
-        comp_csa_const_func(data, params[data.csa_index])
+    if data.csa_i:
+        comp_csa_const_func(data, params[data.csa_i])
 
     # Dipolar constant components.
     data.dip_comps_func[i] = data.dip_const_func
@@ -614,7 +614,7 @@ def dri_comps_r(data, params):
     """
 
     # Dipolar constant gradient value.
-    comp_dip_const_grad(data, params[data.r_index])
+    comp_dip_const_grad(data, params[data.r_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -645,7 +645,7 @@ def dri_comps_csa(data, params):
     """
 
     # CSA constant gradient value.
-    comp_csa_const_grad(data, params[data.csa_index])
+    comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -675,10 +675,10 @@ def dri_comps_r_csa(data, params):
     """
 
     # Dipolar constant gradient value.
-    comp_dip_const_grad(data, params[data.r_index])
+    comp_dip_const_grad(data, params[data.r_i])
 
     # CSA constant gradient value.
-    comp_csa_const_grad(data, params[data.csa_index])
+    comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -713,7 +713,7 @@ def dri_comps_r_rex(data, params):
     """
 
     # Dipolar constant gradient value.
-    comp_dip_const_grad(data, params[data.r_index])
+    comp_dip_const_grad(data, params[data.r_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -748,7 +748,7 @@ def dri_comps_csa_rex(data, params):
     """
 
     # CSA constant gradient value.
-    comp_csa_const_grad(data, params[data.csa_index])
+    comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -783,10 +783,10 @@ def dri_comps_r_csa_rex(data, params):
     """
 
     # Dipolar constant gradient value.
-    comp_dip_const_grad(data, params[data.r_index])
+    comp_dip_const_grad(data, params[data.r_i])
 
     # CSA constant gradient value.
-    comp_csa_const_grad(data, params[data.csa_index])
+    comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -816,12 +816,12 @@ def dr1_comps(data, i, params):
     """Calculate the dr1 gradient components."""
 
     # Dipolar constant gradient value.
-    if data.r_index:
-        comp_dip_const_grad(data, params[data.r_index])
+    if data.r_i:
+        comp_dip_const_grad(data, params[data.r_i])
 
     # CSA constant gradient value.
-    if data.csa_index:
-        comp_csa_const_grad(data, params[data.csa_index])
+    if data.csa_i:
+        comp_csa_const_grad(data, params[data.csa_i])
 
     # Dipolar constant components.
     data.dip_comps_grad[i] = data.dip_const_grad
@@ -880,7 +880,7 @@ def d2ri_comps_r(data, params):
     """
 
     # Dipolar constant Hessian value.
-    comp_dip_const_hess(data, params[data.r_index])
+    comp_dip_const_hess(data, params[data.r_i])
 
     # Loop over the relaxation values.
     for i in xrange(data.num_ri):
@@ -941,7 +941,7 @@ def d2ri_comps_r_csa(data, params):
     """
 
     # Dipolar constant Hessian value.
-    comp_dip_const_hess(data, params[data.r_index])
+    comp_dip_const_hess(data, params[data.r_i])
 
     # CSA constant Hessian value.
     comp_csa_const_hess(data, params)
@@ -970,11 +970,11 @@ def d2r1_comps(data, i, params):
     """Calculate the d2ri Hessian components."""
 
     # Dipolar constant gradient value.
-    if data.r_index:
-        comp_dip_const_hess(data, params[data.r_index])
+    if data.r_i:
+        comp_dip_const_hess(data, params[data.r_i])
 
     # CSA constant gradient value.
-    if data.csa_index:
+    if data.csa_i:
         comp_csa_const_hess(data, params)
 
     # Dipolar constant components.
