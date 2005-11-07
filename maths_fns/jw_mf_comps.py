@@ -626,7 +626,7 @@ def calc_diff_S2f_S2s_ts_djw_comps(data, params):
 
 
                                    (ts + ti)^2 - (w.ts.ti)^2
-        fact_te_djw_dti  =  ts^2 -----------------------------,
+        fact_ts_djw_dti  =  ts^2 -----------------------------,
                                  ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
@@ -637,7 +637,7 @@ def calc_diff_S2f_S2s_ts_djw_comps(data, params):
 
     fact_djw = (data.ts_ti_sqrd - data.w_ts_ti_sqrd) * data.inv_ts_denom**2
     data.fact_ti_djw_dti = (1.0 - data.w_ti_sqrd) * data.fact_ti**2
-    data.fact_te_djw_dti = params[data.ts_index]**2 * fact_djw
+    data.fact_ts_djw_dti = params[data.ts_index]**2 * fact_djw
     data.fact_djw_dts = data.ti**2 * fact_djw
 
 
