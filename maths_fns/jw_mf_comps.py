@@ -413,17 +413,20 @@ def calc_diff_S2_te_djw_comps(data, params):
 
     Replicated calculations are
 
-                       (te + ti)^2 - (w.te.ti)^2
-        fact_djw  =  -----------------------------,
-                     ((te + ti)^2 + (w.te.ti)^2)^2
-
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
 
+
+                       (te + ti)^2 - (w.te.ti)^2
+        fact_djw  =  -----------------------------,
+                     ((te + ti)^2 + (w.te.ti)^2)^2
+
+
                                    (te + ti)^2 - (w.te.ti)^2
         fact_te_djw_dti  =  te^2 -----------------------------,
                                  ((te + ti)^2 + (w.te.ti)^2)^2
+
 
                                 (te + ti)^2 - (w.te.ti)^2
         fact_djw_dte  =  ti^2 -----------------------------.
@@ -469,14 +472,14 @@ def calc_diff_S2f_S2_ts_djw_comps(data, params):
 
     Replicated calculations are
 
-                       (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw  =  -----------------------------,
-                     ((ts + ti)^2 + (w.ts.ti)^2)^2
-
-
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
+
+
+                       (ts + ti)^2 - (w.ts.ti)^2
+        fact_djw  =  -----------------------------,
+                     ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                                    (ts + ti)^2 - (w.ts.ti)^2
@@ -534,6 +537,11 @@ def calc_diff_S2f_tf_S2_ts_djw_comps(data, params):
 
     Replicated calculations are
 
+                              1 - (w.ti)^2
+        fact_ti_djw_dti  =  ----------------,
+                            (1 + (w.ti)^2)^2
+
+
                           (tf + ti)^2 - (w.tf.ti)^2
         fact_tf_djw  =  -----------------------------,
                         ((tf + ti)^2 + (w.tf.ti)^2)^2
@@ -542,11 +550,6 @@ def calc_diff_S2f_tf_S2_ts_djw_comps(data, params):
                           (ts + ti)^2 - (w.ts.ti)^2
         fact_ts_djw  =  -----------------------------,
                         ((ts + ti)^2 + (w.ts.ti)^2)^2
-
-
-                              1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------,
-                            (1 + (w.ti)^2)^2
 
 
                                    (tf + ti)^2 - (w.tf.ti)^2
@@ -615,14 +618,14 @@ def calc_diff_S2f_S2s_ts_djw_comps(data, params):
 
     Replicated calculations are
 
-                       (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw  =  -----------------------------,
-                     ((ts + ti)^2 + (w.ts.ti)^2)^2
-
-
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
+
+
+                       (ts + ti)^2 - (w.ts.ti)^2
+        fact_djw  =  -----------------------------,
+                     ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                                    (ts + ti)^2 - (w.ts.ti)^2
@@ -679,6 +682,11 @@ def calc_diff_S2f_tf_S2s_ts_djw_comps(data, params):
 
     Replicated calculations are
 
+                              1 - (w.ti)^2
+        fact_ti_djw_dti  =  ----------------,
+                            (1 + (w.ti)^2)^2
+
+
                           (tf + ti)^2 - (w.tf.ti)^2
         fact_tf_djw  =  -----------------------------,
                         ((tf + ti)^2 + (w.tf.ti)^2)^2
@@ -687,11 +695,6 @@ def calc_diff_S2f_tf_S2s_ts_djw_comps(data, params):
                           (ts + ti)^2 - (w.ts.ti)^2
         fact_ts_djw  =  -----------------------------,
                         ((ts + ti)^2 + (w.ts.ti)^2)^2
-
-
-                              1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------,
-                            (1 + (w.ti)^2)^2
 
 
                                    (tf + ti)^2 - (w.tf.ti)^2
