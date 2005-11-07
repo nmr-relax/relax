@@ -265,9 +265,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
     ~~~~~~~~
 
                      _n_
-        dJ(w)     2  \   /      dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-        -----  =  -   >  | ci . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-         dDj      5  /__ \      dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+        dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+        -----  =  -   >  | ci . ---  | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |
+         dDj      5  /__ \      dDj  \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
                      i=m
 
                               dci      /      S2             (1 - S2)(te + ti)te    \ \ 
@@ -276,9 +276,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
                      _n_
-        dJ(w)     2  \    dci       /      S2             (1 - S2)(te + ti)te    \ 
-        -----  =  -   >  ----- . ti | ------------  +  ------------------------- |,
-        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+        dJ(w)     2  \   dci      /      S2             (1 - S2)(te + ti)te    \ 
+        -----  =  -   >  --- . ti | ------------  +  ------------------------- |,
+         dOj      5  /__ dOj      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
                      i=m
 
 
@@ -290,9 +290,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
                              _n_
-        dJ(w)     2          \                 (te + ti)^2 - (w.te.ti)^2
-        -----  =  - (1 - S2)  >  ci . ti^2 . -----------------------------,
-         dte      5          /__             ((te + ti)^2 + (w.te.ti)^2)^2
+        dJ(w)     2          \               (te + ti)^2 - (w.te.ti)^2
+        -----  =  - (1 - S2)  >  ci . ti^2 -----------------------------,
+         dte      5          /__           ((te + ti)^2 + (w.te.ti)^2)^2
                              i=m
 
 
@@ -315,9 +315,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
     ~~~~~~~~
 
                      _n_
-        dJ(w)     2  \   /      dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  | ci . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
-         dDj      5  /__ \      dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  | ci . ---  | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |
+         dDj      5  /__ \      dDj  \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
 
                               dci      /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
@@ -326,9 +326,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
                      _n_
-        dJ(w)     2  \    dci       /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
-        -----  =  -   >  ----- . ti | ------------  +  -------------------------  +  ------------------------- |,
-        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+        dJ(w)     2  \   dci      /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
+        -----  =  -   >  --- . ti | ------------  +  -------------------------  +  ------------------------- |,
+         dOj      5  /__ dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                      i=m
 
 
@@ -379,9 +379,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
     ~~~~~~~~~~
 
                      _n_
-        dJ(w)     2  \   /      dti  /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  | ci . ---  | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |
-         dDj      5  /__ \      dDj  \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \   /      dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  | ci . ---  | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------  +  S2f(1 - S2s)ts^2 ----------------------------- |
+         dDj      5  /__ \      dDj  \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
 
                               dci      /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
@@ -390,9 +390,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
                      _n_
-        dJ(w)     2  \    dci       /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
-        -----  =  -   >  ----- . ti | ------------  +  -------------------------  +  ------------------------- |,
-        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+        dJ(w)     2  \   dci      /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
+        -----  =  -   >  --- . ti | ------------  +  -------------------------  +  ------------------------- |,
+         dOj      5  /__ dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                      i=m
 
 
@@ -531,9 +531,9 @@ def calc_diff_S2_te_djw_dDj(data, params, j):
     The model-free gradient is
 
                      _n_
-        dJ(w)     2  \        dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-        -----  =  -   >  ci . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |.
-         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+        dJ(w)     2  \        dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |.
+         dDj      5  /__      dDj  \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
                      i=m
     """
 
@@ -549,9 +549,9 @@ def calc_ellipsoid_S2_te_djw_dDj(data, params, j):
     The model-free gradient is
 
                      _n_
-        dJ(w)     2  \   /      dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-        -----  =  -   >  | ci . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-         dDj      5  /__ \      dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+        dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+        -----  =  -   >  | ci . ---  | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |
+         dDj      5  /__ \      dDj  \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
                      i=m
 
                               dci      /      S2             (1 - S2)(te + ti)te    \ \ 
@@ -563,23 +563,23 @@ def calc_ellipsoid_S2_te_djw_dDj(data, params, j):
 
 
 
-# Original Psij partial derivative.
+# Original Oj partial derivative.
 ###################################
 
 # {} with diffusion parameters.
 
-def calc_diff_djw_dPsij(data, params, j):
+def calc_diff_djw_dOj(data, params, j):
     """Spectral density gradient.
 
-    Calculate the spectral desity values for the Psi partial derivative of the original model-free
+    Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with no parameters {} together with diffusion tensor parameters.
 
     The model-free gradient is
 
                     _n_
-        dJ(w)     2 \    dci            1
-        -----  =  -  >  ----- . ti ------------.
-        dPsij     5 /__ dPsij      1 + (w.ti)^2
+        dJ(w)     2 \   dci           1
+        -----  =  -  >  --- . ti ------------.
+         dOj      5 /__ dOj      1 + (w.ti)^2
                     i=m
     """
 
@@ -588,18 +588,18 @@ def calc_diff_djw_dPsij(data, params, j):
 
 # {S2} with diffusion parameters.
 
-def calc_diff_S2_djw_dPsij(data, params, j):
+def calc_diff_S2_djw_dOj(data, params, j):
     """Spectral density gradient.
 
-    Calculate the spectral desity values for the Psi partial derivative of the original model-free
+    Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with the parameter {S2} together with diffusion tensor parameters.
 
     The model-free gradient is
 
                        _n_
-        dJ(w)     2    \    dci            1
-        -----  =  - S2  >  ----- . ti ------------.
-        dPsij     5    /__ dPsij      1 + (w.ti)^2
+        dJ(w)     2    \   dci           1
+        -----  =  - S2  >  --- . ti ------------.
+         dOj      5    /__ dOj      1 + (w.ti)^2
                        i=m
     """
 
@@ -608,18 +608,18 @@ def calc_diff_S2_djw_dPsij(data, params, j):
 
 # {S2, te} with diffusion parameters.
 
-def calc_diff_S2_te_djw_dPsij(data, params, j):
+def calc_diff_S2_te_djw_dOj(data, params, j):
     """Spectral density gradient.
 
-    Calculate the spectral desity values for the Psi partial derivative of the original model-free
+    Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with the parameters {S2, te} together with diffusion tensor parameters.
 
     The model-free gradient is
 
                      _n_
-        dJ(w)     2  \    dci       /      S2             (1 - S2)(te + ti)te    \ 
-        -----  =  -   >  ----- . ti | ------------  +  ------------------------- |.
-        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+        dJ(w)     2  \   dci      /      S2             (1 - S2)(te + ti)te    \ 
+        -----  =  -   >  --- . ti | ------------  +  ------------------------- |.
+         dOj      5  /__ dOj      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
                      i=m
     """
 
@@ -685,9 +685,9 @@ def calc_S2_te_djw_dte(data, params, j):
     The model-free gradient is
 
                              _n_
-        dJ(w)     2          \                 (te + ti)^2 - (w.te.ti)^2
-        -----  =  - (1 - S2)  >  ci . ti^2 . -----------------------------.
-         dte      5          /__             ((te + ti)^2 + (w.te.ti)^2)^2
+        dJ(w)     2          \               (te + ti)^2 - (w.te.ti)^2
+        -----  =  - (1 - S2)  >  ci . ti^2 -----------------------------.
+         dte      5          /__           ((te + ti)^2 + (w.te.ti)^2)^2
                              i=m
     """
 
@@ -709,9 +709,9 @@ def calc_diff_S2f_S2_ts_djw_dDj(data, params, j):
     The formula is
 
                      _n_
-        dJ(w)     2  \        dti  /        1 - (w.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  ci . ---  | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |.
-         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \        dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 ----------------  +  (S2f - S2)ts^2 ----------------------------- |.
+         dDj      5  /__      dDj  \    (1 + (w.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
     """
 
@@ -727,9 +727,9 @@ def calc_ellipsoid_S2f_S2_ts_djw_dDj(data, params, j):
     The formula is
 
                      _n_
-        dJ(w)     2  \   /      dti  /        1 - (w.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  | ci . ---  | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |
-         dDj      5  /__ \      dDj  \      (1 + (w.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  | ci . ---  | S2 ----------------  +  (S2f - S2)ts^2 ----------------------------- |
+         dDj      5  /__ \      dDj  \    (1 + (w.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
 
                               dci      /      S2            (S2f - S2)(ts + ti)ts   \ \ 
@@ -751,9 +751,9 @@ def calc_diff_S2f_tf_S2_ts_djw_dDj(data, params, j):
     The formula is
 
                      _n_
-        dJ(w)     2  \        dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  ci . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |.
-         dDj      5  /__      dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \        dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |.
+         dDj      5  /__      dDj  \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
     """
 
@@ -769,9 +769,9 @@ def calc_ellipsoid_S2f_tf_S2_ts_djw_dDj(data, params, j):
     The formula is
 
                      _n_
-        dJ(w)     2  \   /      dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  | ci . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
-         dDj      5  /__ \      dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  | ci . ---  | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |
+         dDj      5  /__ \      dDj  \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
 
                               dci      /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
@@ -783,23 +783,23 @@ def calc_ellipsoid_S2f_tf_S2_ts_djw_dDj(data, params, j):
 
 
 
-# Extended Psij partial derivative.
+# Extended Oj partial derivative.
 ###################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2_ts_djw_dPsij(data, params, j):
+def calc_diff_S2f_S2_ts_djw_dOj(data, params, j):
     """Spectral density gradient.
 
-    Calculate the spectral desity values for the Psi partial derivative of the extended model-free
+    Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
     The formula is
 
                      _n_
-        dJ(w)     2  \    dci       /      S2            (S2f - S2)(ts + ti)ts   \ 
-        -----  =  -   >  ----- . ti | ------------  +  ------------------------- |.
-        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+        dJ(w)     2  \   dci      /      S2            (S2f - S2)(ts + ti)ts   \ 
+        -----  =  -   >  --- . ti | ------------  +  ------------------------- |.
+         dOj      5  /__ dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                      i=m
     """
 
@@ -808,18 +808,18 @@ def calc_diff_S2f_S2_ts_djw_dPsij(data, params, j):
 
 # {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2_ts_djw_dPsij(data, params, j):
+def calc_diff_S2f_tf_S2_ts_djw_dOj(data, params, j):
     """Spectral density gradient.
 
-    Calculate the spectral desity values for the Psi partial derivative of the extended model-free
+    Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
     The formula is
 
                      _n_
-        dJ(w)     2  \    dci       /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
-        -----  =  -   >  ----- . ti | ------------  +  -------------------------  +  ------------------------- |.
-        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+        dJ(w)     2  \   dci      /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
+        -----  =  -   >  --- . ti | ------------  +  -------------------------  +  ------------------------- |.
+         dOj      5  /__ dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                      i=m
     """
 
@@ -959,9 +959,9 @@ def calc_diff_S2f_S2s_ts_djw_dDj(data, params, j):
     The formula is
 
                         _n_
-        dJ(w)     2     \        dti  /         1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  - S2f  >  ci . ---  | S2s . ----------------  +  (1 - S2s) . ts^2 ----------------------------- |.
-         dDj      5     /__      dDj  \       (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2     \        dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  - S2f  >  ci . ---  | S2s ----------------  +  (1 - S2s)ts^2 ----------------------------- |.
+         dDj      5     /__      dDj  \     (1 + (w.ti)^2)^2                   ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                         i=m
     """
 
@@ -977,9 +977,9 @@ def calc_ellipsoid_S2f_S2s_ts_djw_dDj(data, params, j):
     The formula is
 
                         _n_
-        dJ(w)     2     \   /      dti  /         1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  - S2f  >  | ci . ---  | S2s . ----------------  +  (1 - S2s) . ts^2 ----------------------------- |
-         dDj      5     /__ \      dDj  \       (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2     \   /      dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  - S2f  >  | ci . ---  | S2s ----------------  +  (1 - S2s)ts^2 ----------------------------- |
+         dDj      5     /__ \      dDj  \     (1 + (w.ti)^2)^2                   ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                         i=m
 
                                  dci      /     S2s             (1 - S2s)(ts + ti)ts   \ \ 
@@ -1001,9 +1001,9 @@ def calc_diff_S2f_tf_S2s_ts_djw_dDj(data, params, j):
     The formula is
 
                      _n_
-        dJ(w)     2  \        dti  /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  ci . ---  | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |
-         dDj      5  /__      dDj  \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \        dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  ci . ---  | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------  +  S2f(1 - S2s)ts^2 ----------------------------- |
+         dDj      5  /__      dDj  \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
     """
 
@@ -1019,9 +1019,9 @@ def calc_ellipsoid_S2f_tf_S2s_ts_djw_dDj(data, params, j):
     The formula is
 
                      _n_
-        dJ(w)     2  \   /      dti  /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        -----  =  -   >  | ci . ---  | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |
-         dDj      5  /__ \      dDj  \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+        dJ(w)     2  \   /      dti  /           1 - (w.ti)^2                        (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -----  =  -   >  | ci . ---  | S2f.S2s ----------------  +  (1 - S2f).tf^2 -----------------------------  +  S2f(1 - S2s).ts^2 ----------------------------- |
+         dDj      5  /__ \      dDj  \         (1 + (w.ti)^2)^2                    ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                      i=m
 
                               dci      /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
@@ -1033,23 +1033,23 @@ def calc_ellipsoid_S2f_tf_S2s_ts_djw_dDj(data, params, j):
 
 
 
-# Extended 2 Psij partial derivative.
+# Extended 2 Oj partial derivative.
 #####################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2s_ts_djw_dPsij(data, params, j):
+def calc_diff_S2f_S2s_ts_djw_dOj(data, params, j):
     """Spectral density gradient.
 
-    Calculate the spectral desity values for the Psi partial derivative of the extended model-free
+    Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
     The formula is
 
                         _n_
-        dJ(w)     2     \    dci       /     S2s             (1 - S2s)(ts + ti)ts   \ 
-        -----  =  - S2f  >  ----- . ti | ------------  +  ------------------------- |.
-        dPsij     5     /__ dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+        dJ(w)     2     \   dci      /     S2s             (1 - S2s)(ts + ti)ts   \ 
+        -----  =  - S2f  >  --- . ti | ------------  +  ------------------------- |.
+         dOj      5     /__ dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                         i=m
     """
 
@@ -1058,18 +1058,18 @@ def calc_diff_S2f_S2s_ts_djw_dPsij(data, params, j):
 
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2s_ts_djw_dPsij(data, params, j):
+def calc_diff_S2f_tf_S2s_ts_djw_dOj(data, params, j):
     """Spectral density gradient.
 
-    Calculate the spectral desity values for the Psi partial derivative of the extended model-free
+    Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor parameters.
 
     The formula is
 
                      _n_
-        dJ(w)     2  \    dci       /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
-        -----  =  -   >  ----- . ti | ------------  +  -------------------------  +  ------------------------- |.
-        dPsij     5  /__ dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+        dJ(w)     2  \   dci      /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
+        -----  =  -   >  --- . ti | ------------  +  -------------------------  +  ------------------------- |.
+         dOj      5  /__ dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                      i=m
     """
 
@@ -1219,14 +1219,14 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                       (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
-        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2) . te^2 ---------------------------------------------------- |
-        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                               ((te + ti)^2 + (w.te.ti)^2)^3              /
+         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                    (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
+        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2)te^2 ---------------------------------------------------- |
+        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                            ((te + ti)^2 + (w.te.ti)^2)^3              /
                        i=m
 
-                                / dti   dci     dti   dci         d2ti   \ /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+                                / dti   dci     dti   dci         d2ti   \ /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
 
 
                                  d2ci      /      S2             (1 - S2)(te + ti)te    \ \ 
@@ -1234,15 +1234,15 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
                                 dDj.dDk    \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 / /
 
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
+                       i=m
 
-                                    d2ci       /      S2             (1 - S2)(te + ti)te    \ \ 
-                               +  --------- ti | ------------  +  ------------------------- | |,
-                                  dDj.dPsij    \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 / /
+                                   d2ci      /      S2             (1 - S2)(te + ti)te    \ \ 
+                               +  ------- ti | ------------  +  ------------------------- | |,
+                                  dDj.dOj    \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 / /
 
 
                        _n_
@@ -1257,31 +1257,31 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
                               _n_
-         d2J(w)     2         \   /       dti                        (te + ti)^2 - 3(w.te.ti)^2       dci            (te + ti)^2 - (w.te.ti)^2   \ 
-        -------  =  - (1 - S2) >  | 2ci . --- . te . ti . (te + ti) -----------------------------  +  --- . ti^2 . ----------------------------- |,
-        dDj.dte     5         /__ \       dDj                       ((te + ti)^2 + (w.te.ti)^2)^3     dDj          ((te + ti)^2 + (w.te.ti)^2)^2 /
+         d2J(w)     2         \   /       dti                        (te + ti)^2 - 3(w.te.ti)^2       dci          (te + ti)^2 - (w.te.ti)^2   \ 
+        -------  =  - (1 - S2) >  | 2ci . --- . te . ti . (te + ti) -----------------------------  +  --- . ti^2 ----------------------------- |,
+        dDj.dte     5         /__ \       dDj                       ((te + ti)^2 + (w.te.ti)^2)^3     dDj        ((te + ti)^2 + (w.te.ti)^2)^2 /
                               i=m
 
 
-                           _n_
-           d2J(w)       2  \       d2ci         /      S2             (1 - S2)(te + ti)te    \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  ------------------------- |,
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci        /      S2             (1 - S2)(te + ti)te    \ 
+        -------  =  -   >  ------- . ti | ------------  +  ------------------------- |,
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                       i=m
 
 
-                         _n_
-          d2J(w)      2  \    dci       /      1                 (te + ti)te         \ 
-        ---------  =  -   >  ----- . ti | ------------  -  ------------------------- |,
-        dPsij.dS2     5  /__ dPsij      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci      /      1                 (te + ti)te         \ 
+        -------  =  -   >  --- . ti | ------------  -  ------------------------- |,
+        dOj.dS2     5  /__ dOj      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                       i=m
 
 
-                                 _n_
-          d2J(w)      2          \    dci             (te + ti)^2 - (w.te.ti)^2
-        ---------  =  - (1 - S2)  >  ----- . ti^2 . -----------------------------,
-        dPsij.dte     5          /__ dPsij          ((te + ti)^2 + (w.te.ti)^2)^2
-                                 i=m
+                               _n_
+         d2J(w)     2          \   dci          (te + ti)^2 - (w.te.ti)^2
+        -------  =  - (1 - S2)  >  --- . ti^2 -----------------------------,
+        dOj.dte     5          /__ dOj        ((te + ti)^2 + (w.te.ti)^2)^2
+                               i=m
 
 
         d2J(w)
@@ -1335,24 +1335,24 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                        (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
-        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2f) . tf^2 ----------------------------------------------------
-        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                                ((tf + ti)^2 + (w.tf.ti)^2)^3
+         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
+        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2f)tf^2 ----------------------------------------------------
+        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                             ((tf + ti)^2 + (w.tf.ti)^2)^3
                        i=m
 
-                                                                    (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-                                               +  (S2f - S2) . ts^2 ---------------------------------------------------- |
-                                                                              ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+                                                                 (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+                                               +  (S2f - S2)ts^2 ---------------------------------------------------- |
+                                                                           ((ts + ti)^2 + (w.ts.ti)^2)^3              /
 
 
-                                / dti   dci     dti   dci         d2ti   \ /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                / dti   dci     dti   dci         d2ti   \ /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
-                                                                                                    (ts + ti)^2 - (w.ts.ti)^2   \ 
-                                                                             +  (S2f - S2) . ts^2 ----------------------------- |
-                                                                                                  ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                                                                                 (ts + ti)^2 - (w.ts.ti)^2   \ 
+                                                                             +  (S2f - S2)ts^2 ----------------------------- |
+                                                                                               ((ts + ti)^2 + (w.ts.ti)^2)^2 /
 
 
                                  d2ci        /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
@@ -1360,15 +1360,15 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
                                 dDj.dDk      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
 
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
 
-                                    d2ci         /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
-                               +  --------- . ti | ------------  +  -------------------------  +  ------------------------- | |,
-                                  dDj.dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
+                                   d2ci        /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
+                               +  ------- . ti | ------------  +  -------------------------  +  ------------------------- | |,
+                                  dDj.dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
 
 
                        _n_
@@ -1407,39 +1407,39 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
                                  i=m
 
 
-                           _n_
-           d2J(w)       2  \       d2ci         /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  -------------------------  +  ------------------------- |,
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci        /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
+        -------  =  -   >  ------- . ti | ------------  +  -------------------------  +  ------------------------- |,
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
 
 
-                         _n_
-          d2J(w)      2  \    dci       /      1                 (ts + ti)ts         \ 
-        ---------  =  -   >  ----- . ti | ------------  -  ------------------------- |,
-        dPsij.dS2     5  /__ dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci      /      1                 (ts + ti)ts         \ 
+        -------  =  -   >  --- . ti | ------------  -  ------------------------- |,
+        dOj.dS2     5  /__ dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
 
 
-                            _n_
-          d2J(w)         2  \    dci       /       (tf + ti)tf                   (ts + ti)ts         \ 
-        ----------  =  - -   >  ----- . ti | -------------------------  -  ------------------------- |,
-        dPsij.dS2f       5  /__ dPsij      \ (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                            i=m
+                          _n_
+         d2J(w)        2  \   dci      /       (tf + ti)tf                   (ts + ti)ts         \ 
+        --------  =  - -   >  --- . ti | -------------------------  -  ------------------------- |,
+        dOj.dS2f       5  /__ dOj      \ (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                          i=m
 
 
-                                  _n_
-          d2J(w)      2           \    dci           (tf + ti)^2 - (w.tf.ti)^2
-        ---------  =  - (1 - S2f)  >  ----- . ti^2 -----------------------------,
-        dPsij.dtf     5           /__ dPsij        ((tf + ti)^2 + (w.tf.ti)^2)^2
-                                  i=m
+                                _n_
+         d2J(w)     2           \   dci          (tf + ti)^2 - (w.tf.ti)^2
+        -------  =  - (1 - S2f)  >  --- . ti^2 -----------------------------,
+        dOj.dtf     5           /__ dOj        ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                i=m
 
 
-                                   _n_
-          d2J(w)      2            \    dci           (ts + ti)^2 - (w.ts.ti)^2
-        ---------  =  - (S2f - S2)  >  ----- . ti^2 -----------------------------,
-        dPsij.dts     5            /__ dPsij        ((ts + ti)^2 + (w.ts.ti)^2)^2
-                                   i=m
+                                 _n_
+         d2J(w)     2            \   dci          (ts + ti)^2 - (w.ts.ti)^2
+        -------  =  - (S2f - S2)  >  --- . ti^2 -----------------------------,
+        dOj.dts     5            /__ dOj        ((ts + ti)^2 + (w.ts.ti)^2)^2
+                                 i=m
 
 
         d2J(w)              d2J(w)               d2J(w)
@@ -1534,24 +1534,24 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                        (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
-        -------  =  -   >  | -2ci --- . ---  | S2f.S2s.w^2.ti ----------------  +  (1 - S2f) . tf^2 ----------------------------------------------------
-        dDj.dDk     5  /__ \      dDj   dDk  \                (1 + (w.ti)^2)^3                                ((tf + ti)^2 + (w.tf.ti)^2)^3
+         d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
+        -------  =  -   >  | -2ci --- . ---  | S2f.S2s.w^2.ti ----------------  +  (1 - S2f)tf^2 ----------------------------------------------------
+        dDj.dDk     5  /__ \      dDj   dDk  \                (1 + (w.ti)^2)^3                             ((tf + ti)^2 + (w.tf.ti)^2)^3
                        i=m
 
-                                                                      (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-                                               +  S2f(1 - S2s) . ts^2 ---------------------------------------------------- |
-                                                                                ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+                                                                   (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+                                               +  S2f(1 - S2s)ts^2 ---------------------------------------------------- |
+                                                                             ((ts + ti)^2 + (w.ts.ti)^2)^3              /
 
 
-                                / dti   dci     dti   dci         d2ti   \ /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                / dti   dci     dti   dci         d2ti   \ /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
-                                                                                                      (ts + ti)^2 - (w.ts.ti)^2   \ 
-                                                                             +  S2f(1 - S2s) . ts^2 ----------------------------- |
-                                                                                                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                                                                                   (ts + ti)^2 - (w.ts.ti)^2   \ 
+                                                                             +  S2f(1 - S2s)ts^2 ----------------------------- |
+                                                                                                 ((ts + ti)^2 + (w.ts.ti)^2)^2 /
 
 
                                  d2ci        /   S2f.S2s          (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
@@ -1559,21 +1559,21 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
                                 dDj.dDk      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
 
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------  +  S2f(1 - S2s)ts^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
 
-                                    d2ci         /   S2f.S2s          (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
-                               +  --------- . ti | ------------  +  -------------------------  +  ------------------------- | |,
-                                  dDj.dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
+                                   d2ci        /   S2f.S2s          (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
+                               +  ------- . ti | ------------  +  -------------------------  +  ------------------------- | |,
+                                  dDj.dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
 
 
                         _n_
-         d2J(w)      2  \   /      dti  /         1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
-        --------  =  -   >  | ci . ---  | S2s . ----------------  -  tf^2 -----------------------------  +  (1 - S2s) . ts^2 ----------------------------- |
-        dDj.dS2f     5  /__ \      dDj  \       (1 + (w.ti)^2)^2          ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+         d2J(w)      2  \   /      dti  /       1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
+        --------  =  -   >  | ci . ---  | S2s ----------------  -  tf^2 -----------------------------  +  (1 - S2s)ts^2 ----------------------------- |
+        dDj.dS2f     5  /__ \      dDj  \     (1 + (w.ti)^2)^2          ((tf + ti)^2 + (w.tf.ti)^2)^2                   ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                         i=m
 
                                  dci      /     S2s                (tf + ti)tf               (1 - S2s)(ts + ti)ts    \ \ 
@@ -1606,39 +1606,39 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
                                    i=m
 
 
+                       _n_
+         d2J(w)     2  \    d2ci        /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
+        -------  =  -   >  ------- . ti | ------------  +  -------------------------  +  ------------------------- |,
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
+
+
+                        _n_
+         d2J(w)      2  \   dci      /     S2s                (tf + ti)tf               (1 - S2s)(ts + ti)ts    \ 
+        --------  =  -   >  --- . ti | ------------  -  -------------------------  +  ------------------------- |,
+        dOj.dS2f     5  /__ dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                        i=m
+
+
                            _n_
-           d2J(w)       2  \       d2ci         /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  -------------------------  +  ------------------------- |,
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+         d2J(w)      2     \   dci      /      1                 (ts + ti)ts         \ 
+        --------  =  - S2f  >  --- . ti | ------------  -  ------------------------- |,
+        dOj.dS2s     5     /__ dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                            i=m
 
 
-                          _n_
-          d2J(w)       2  \    dci       /     S2s                (tf + ti)tf               (1 - S2s)(ts + ti)ts    \ 
-        ----------  =  -   >  ----- . ti | ------------  -  -------------------------  +  ------------------------- |,
-        dPsij.dS2f     5  /__ dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                          i=m
+                                _n_
+         d2J(w)     2           \   dci          (tf + ti)^2 - (w.tf.ti)^2
+        -------  =  - (1 - S2f)  >  --- . ti^2 -----------------------------,
+        dOj.dtf     5           /__ dOj        ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                i=m
 
 
-                             _n_
-          d2J(w)       2     \    dci       /      1                 (ts + ti)ts         \ 
-        ----------  =  - S2f  >  ----- . ti | ------------  -  ------------------------- |,
-        dPsij.dS2s     5     /__ dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                             i=m
-
-
-                                  _n_
-          d2J(w)      2           \    dci           (tf + ti)^2 - (w.tf.ti)^2
-        ---------  =  - (1 - S2f)  >  ----- . ti^2 -----------------------------,
-        dPsij.dtf     5           /__ dPsij        ((tf + ti)^2 + (w.tf.ti)^2)^2
-                                  i=m
-
-
-                                     _n_
-          d2J(w)      2              \    dci           (ts + ti)^2 - (w.ts.ti)^2
-        ---------  =  - S2f(1 - S2s)  >  ----- . ti^2 -----------------------------,
-        dPsij.dts     5              /__ dPsij        ((ts + ti)^2 + (w.ts.ti)^2)^2
-                                     i=m
+                                   _n_
+         d2J(w)     2              \   dci          (ts + ti)^2 - (w.ts.ti)^2
+        -------  =  - S2f(1 - S2s)  >  --- . ti^2 -----------------------------,
+        dOj.dts     5              /__ dOj        ((ts + ti)^2 + (w.ts.ti)^2)^2
+                                   i=m
 
 
          d2J(w)
@@ -1828,14 +1828,14 @@ def calc_diff_S2_te_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                       (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
-        -------  =  -   >  ci | -2 --- . ---  | S2.w^2.ti ----------------  +  (1 - S2) . te^2 ---------------------------------------------------- |
-        dDj.dDk     5  /__    \    dDj   dDk  \           (1 + (w.ti)^2)^3                               ((te + ti)^2 + (w.te.ti)^2)^3              /
+         d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                    (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
+        -------  =  -   >  ci | -2 --- . ---  | S2.w^2.ti ----------------  +  (1 - S2)te^2 ---------------------------------------------------- |
+        dDj.dDk     5  /__    \    dDj   dDk  \           (1 + (w.ti)^2)^3                            ((te + ti)^2 + (w.te.ti)^2)^3              /
                        i=m
 
-                                 d2ti   /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ \ 
-                             +  ------- | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- | |.
-                                dDj.dDk \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 / /
+                                 d2ti   /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ \ 
+                             +  ------- | S2 ----------------  +  (1 - S2)te^2 ----------------------------- | |.
+                                dDj.dDk \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 / /
     """
 
     # First component.
@@ -1856,14 +1856,14 @@ def calc_ellipsoid_S2_te_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                       (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
-        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2) . te^2 ---------------------------------------------------- |
-        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                               ((te + ti)^2 + (w.te.ti)^2)^3              /
+         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                    (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
+        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2)te^2 ---------------------------------------------------- |
+        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                            ((te + ti)^2 + (w.te.ti)^2)^3              /
                        i=m
 
-                                / dti   dci     dti   dci         d2ti   \ /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
+                                / dti   dci     dti   dci         d2ti   \ /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
 
 
                                  d2ci      /      S2             (1 - S2)(te + ti)te    \ \ 
@@ -1884,43 +1884,43 @@ def calc_ellipsoid_S2_te_d2jw_dDjdDk(data, params, j, k):
 
 
 
-# Original Dj - Psij partial derivative.
+# Original Dj - Oj partial derivative.
 ########################################
 
 
 # {} with diffusion parameters.
 
-def calc_diff_d2jw_dDjdPsij(data, params, j, k):
+def calc_diff_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the original
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci    dti     1 - (w.ti)^2
-        ---------  =  -   >  ----- . --- . ----------------.
-        dDj.dPsij     5  /__ dPsij   dDj   (1 + (w.ti)^2)^2
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci   dti     1 - (w.ti)^2
+        -------  =  -   >  --- . --- . ----------------.
+        dDj.dOj     5  /__ dOj   dDj   (1 + (w.ti)^2)^2
+                       i=m
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * data.fact_ti_djw_dti, axis=2)
 
 
-def calc_ellipsoid_d2jw_dDjdPsij(data, params, j, k):
+def calc_ellipsoid_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the original
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti     1 - (w.ti)^2         d2ci            1       \ 
-        ---------  =  -   >  | ----- . --- . ----------------  +  --------- ti ------------ |.
-        dDj.dPsij     5  /__ \ dPsij   dDj   (1 + (w.ti)^2)^2     dDj.dPsij    1 + (w.ti)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti     1 - (w.ti)^2        d2ci           1       \ 
+        -------  =  -   >  | --- . --- . ----------------  +  ------- ti ------------ |.
+        dDj.dOj     5  /__ \ dOj   dDj   (1 + (w.ti)^2)^2     dDj.dOj    1 + (w.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * data.fact_ti_djw_dti  +  data.d2ci[k, j] * data.ti * data.fact_ti, axis=2)
@@ -1928,37 +1928,37 @@ def calc_ellipsoid_d2jw_dDjdPsij(data, params, j, k):
 
 # {S2} with diffusion parameters.
 
-def calc_diff_S2_d2jw_dDjdPsij(data, params, j, k):
+def calc_diff_S2_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the original
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                           _n_
-          d2J(w)      2    \    dci    dti     1 - (w.ti)^2
-        ---------  =  - S2  >  ----- . --- . ----------------.
-        dDj.dPsij     5    /__ dPsij   dDj   (1 + (w.ti)^2)^2
-                           i=m
+                         _n_
+         d2J(w)     2    \   dci    dti     1 - (w.ti)^2
+        -------  =  - S2  >  --- . --- . ----------------.
+        dDj.dOj     5    /__ dOj   dDj   (1 + (w.ti)^2)^2
+                         i=m
     """
 
     return 0.4 * params[data.s2_index] * sum(data.dci[j] * data.dti[k] * data.fact_ti_djw_dti, axis=2)
 
 
-def calc_ellipsoid_S2_d2jw_dDjdPsij(data, params, j, k):
+def calc_ellipsoid_S2_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the original
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                           _n_
-          d2J(w)      2    \   /  dci    dti     1 - (w.ti)^2         d2ci            1       \ 
-        ---------  =  - S2  >  | ----- . --- . ----------------  +  --------- ti ------------ |.
-        dDj.dPsij     5    /__ \ dPsij   dDj   (1 + (w.ti)^2)^2     dDj.dPsij    1 + (w.ti)^2 /
-                           i=m
+                         _n_
+         d2J(w)     2    \   / dci   dti     1 - (w.ti)^2        d2ci           1       \ 
+        -------  =  - S2  >  | --- . --- . ----------------  +  ------- ti ------------ |.
+        dDj.dOj     5    /__ \ dOj   dDj   (1 + (w.ti)^2)^2     dDj.dOj    1 + (w.ti)^2 /
+                         i=m
     """
 
     return 0.4 * params[data.s2_index] * sum(data.dci[j] * data.dti[k] * data.fact_ti_djw_dti  +  data.d2ci[k, j] * data.ti * data.fact_ti, axis=2)
@@ -1966,41 +1966,41 @@ def calc_ellipsoid_S2_d2jw_dDjdPsij(data, params, j, k):
 
 # {S2, te} with diffusion parameters.
 
-def calc_diff_S2_te_d2jw_dDjdPsij(data, params, j, k):
+def calc_diff_S2_te_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the original
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci    dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-        ---------  =  -   >  ----- . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |.
-        dDj.dPsij     5  /__ dPsij   dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci   dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+        -------  =  -   >  --- . ---  | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |.
+        dDj.dOj     5  /__ dOj   dDj  \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2_index] * data.fact_ti_djw_dti + data.one_s2 * data.fact_te_djw_dti), axis=2)
 
 
-def calc_ellipsoid_S2_te_d2jw_dDjdPsij(data, params, j, k):
+def calc_ellipsoid_S2_te_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the original
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /        1 - (w.ti)^2                         (te + ti)^2 - (w.te.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2 . ----------------  +  (1 - S2) . te^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \      (1 + (w.ti)^2)^2                     ((te + ti)^2 + (w.te.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2 ----------------  +  (1 - S2)te^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \    (1 + (w.ti)^2)^2                  ((te + ti)^2 + (w.te.ti)^2)^2 /
+                       i=m
 
-                                    d2ci       /      S2             (1 - S2)(te + ti)te    \ \ 
-                               +  --------- ti | ------------  +  ------------------------- | |.
-                                  dDj.dPsij    \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 / /
+                                   d2ci      /      S2             (1 - S2)(te + ti)te    \ \ 
+                               +  ------- ti | ------------  +  ------------------------- | |.
+                                  dDj.dOj    \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 / /
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2_index] * data.fact_ti_djw_dti + data.one_s2 * data.fact_te_djw_dti)  +  data.d2ci[k, j] * data.ti * (params[data.s2_index] * data.fact_ti + data.one_s2 * data.fact_te), axis=2)
@@ -2123,9 +2123,9 @@ def calc_ellipsoid_S2_te_d2jw_dDjdte(data, params, j, k):
     The model-free Hessian is
 
                               _n_
-         d2J(w)     2         \   /       dti                        (te + ti)^2 - 3(w.te.ti)^2       dci            (te + ti)^2 - (w.te.ti)^2   \ 
-        -------  =  - (1 - S2) >  | 2ci . --- . te . ti . (te + ti) -----------------------------  +  --- . ti^2 . ----------------------------- |.
-        dDj.dte     5         /__ \       dDj                       ((te + ti)^2 + (w.te.ti)^2)^3     dDj          ((te + ti)^2 + (w.te.ti)^2)^2 /
+         d2J(w)     2         \   /       dti                        (te + ti)^2 - 3(w.te.ti)^2       dci          (te + ti)^2 - (w.te.ti)^2   \ 
+        -------  =  - (1 - S2) >  | 2ci . --- . te . ti . (te + ti) -----------------------------  +  --- . ti^2 ----------------------------- |.
+        dDj.dte     5         /__ \       dDj                       ((te + ti)^2 + (w.te.ti)^2)^3     dDj        ((te + ti)^2 + (w.te.ti)^2)^2 /
                               i=m
     """
 
@@ -2133,24 +2133,24 @@ def calc_ellipsoid_S2_te_d2jw_dDjdte(data, params, j, k):
 
 
 
-# Original Psij - Psik partial derivative.
+# Original Oj - Ok partial derivative.
 ##########################################
 
 # {} with diffusion parameters.
 
-def calc_diff_d2jw_dPsijdPsik(data, params, j, k):
+def calc_diff_d2jw_dOjdOk(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - Psik double partial derivative of the
+    Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with no parameters {} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                           _n_
-           d2J(w)       2  \       d2ci           ti
-        -----------  =  -   >  ----------- . ------------.
-        dPsij.dPsik     5  /__ dPsij.dPsik   1 + (w.ti)^2
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci          ti
+        -------  =  -   >  ------- . ------------.
+        dOj.dOk     5  /__ dOj.dOk   1 + (w.ti)^2
+                       i=m
     """
 
     return 0.4 * sum(data.d2ci[j, k] * data.ti * data.fact_ti, axis=2)
@@ -2158,19 +2158,19 @@ def calc_diff_d2jw_dPsijdPsik(data, params, j, k):
 
 # {S2} with diffusion parameters.
 
-def calc_diff_S2_d2jw_dPsijdPsik(data, params, j, k):
+def calc_diff_S2_d2jw_dOjdOk(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - Psik double partial derivative of the
+    Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                             _n_
-           d2J(w)       2    \       d2ci           ti
-        -----------  =  - S2  >  ----------- . ------------.
-        dPsij.dPsik     5    /__ dPsij.dPsik   1 + (w.ti)^2
-                             i=m
+                         _n_
+         d2J(w)     2    \    d2ci          ti
+        -------  =  - S2  >  ------- . ------------.
+        dOj.dOk     5    /__ dOj.dOk   1 + (w.ti)^2
+                         i=m
     """
 
     return 0.4 * params[data.s2_index] * sum(data.d2ci[j, k] * data.ti * data.fact_ti, axis=2)
@@ -2178,44 +2178,44 @@ def calc_diff_S2_d2jw_dPsijdPsik(data, params, j, k):
 
 # {S2, te} with diffusion parameters.
 
-def calc_diff_S2_te_d2jw_dPsijdPsik(data, params, j, k):
+def calc_diff_S2_te_d2jw_dOjdOk(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - Psik double partial derivative of the
+    Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with the parameters {S2, te} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                           _n_
-           d2J(w)       2  \       d2ci         /      S2             (1 - S2)(te + ti)te    \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  ------------------------- |.
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci        /      S2             (1 - S2)(te + ti)te    \ 
+        -------  =  -   >  ------- . ti | ------------  +  ------------------------- |.
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.d2ci[j, k] * data.ti * (params[data.s2_index] * data.fact_ti + data.one_s2 * data.fact_te), axis=2)
 
 
 
-# Original Psij - S2 partial derivative.
+# Original Oj - S2 partial derivative.
 ########################################
 
 # {S2} with diffusion parameters.
 
-def calc_diff_S2_d2jw_dPsijdS2(data, params, j, k):
+def calc_diff_S2_d2jw_dOjdS2(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2 double partial derivative of the original
+    Calculate the spectral desity values for the Oj - S2 double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci            1
-        ---------  =  -   >  ----- . ti ------------.
-        dPsij.dS2     5  /__ dPsij      1 + (w.ti)^2
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci            1
+        -------  =  -   >  --- . ti ------------.
+        dOj.dS2     5  /__ dOj      1 + (w.ti)^2
+                       i=m
     """
 
     return 0.4 * sum(data.dci[k] * data.ti * data.fact_ti, axis=2)
@@ -2223,43 +2223,43 @@ def calc_diff_S2_d2jw_dPsijdS2(data, params, j, k):
 
 # {S2, te} with diffusion parameters.
 
-def calc_diff_S2_te_d2jw_dPsijdS2(data, params, j, k):
+def calc_diff_S2_te_d2jw_dOjdS2(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2 double partial derivative of the original
+    Calculate the spectral desity values for the Oj - S2 double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci       /      1                 (te + ti)te         \ 
-        ---------  =  -   >  ----- . ti | ------------  -  ------------------------- |.
-        dPsij.dS2     5  /__ dPsij      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci      /      1                 (te + ti)te         \ 
+        -------  =  -   >  --- . ti | ------------  -  ------------------------- |.
+        dOj.dS2     5  /__ dOj      \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[k] * data.ti * (data.fact_ti - data.fact_te), axis=2)
 
 
 
-# Original Psij - te partial derivative.
+# Original Oj - te partial derivative.
 ########################################
 
 # {S2, te} with diffusion parameters.
 
-def calc_diff_S2_te_d2jw_dPsijdte(data, params, j, k):
+def calc_diff_S2_te_d2jw_dOjdte(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - te double partial derivative of the original
+    Calculate the spectral desity values for the Oj - te double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                                 _n_
-          d2J(w)      2          \    dci             (te + ti)^2 - (w.te.ti)^2
-        ---------  =  - (1 - S2)  >  ----- . ti^2 . -----------------------------.
-        dPsij.dte     5          /__ dPsij          ((te + ti)^2 + (w.te.ti)^2)^2
-                                 i=m
+                               _n_
+         d2J(w)     2          \   dci          (te + ti)^2 - (w.te.ti)^2
+        -------  =  - (1 - S2)  >  --- . ti^2 -----------------------------.
+        dOj.dte     5          /__ dOj        ((te + ti)^2 + (w.te.ti)^2)^2
+                               i=m
     """
 
     return 0.4 * data.one_s2 * sum(data.dci[k] * data.fact_djw_dte, axis=2)
@@ -2328,14 +2328,14 @@ def calc_diff_S2f_S2_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                         (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-        -------  =  -   >  ci | -2 --- . ---  | S2.w^2.ti ----------------  +  (S2f - S2) . ts^2 ---------------------------------------------------- |
-        dDj.dDk     5  /__    \    dDj   dDk  \           (1 + (w.ti)^2)^3                                 ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+         d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                      (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+        -------  =  -   >  ci | -2 --- . ---  | S2.w^2.ti ----------------  +  (S2f - S2)ts^2 ---------------------------------------------------- |
+        dDj.dDk     5  /__    \    dDj   dDk  \           (1 + (w.ti)^2)^3                              ((ts + ti)^2 + (w.ts.ti)^2)^3              /
                        i=m
 
-                                 d2ti   /        1 - (w.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ \ 
-                             +  ------- | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- | |.
-                                dDj.dDk \      (1 + (w.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 / /
+                                 d2ti   /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ \ 
+                             +  ------- | S2 ----------------  +  (S2f - S2)ts^2 ----------------------------- | |.
+                                dDj.dDk \    (1 + (w.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 / /
     """
 
     # First component.
@@ -2356,14 +2356,14 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                         (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (S2f - S2) . ts^2 ---------------------------------------------------- |
-        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                                 ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                      (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (S2f - S2)ts^2 ---------------------------------------------------- |
+        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                              ((ts + ti)^2 + (w.ts.ti)^2)^3              /
                        i=m
 
-                                / dti   dci     dti   dci         d2ti   \ /        1 - (w.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \      (1 + (w.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                / dti   dci     dti   dci         d2ti   \ /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 ----------------  +  (S2f - S2)ts^2 ----------------------------- |
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \    (1 + (w.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
 
 
                                  d2ci        /      S2            (S2f - S2)(ts + ti)ts   \ \ 
@@ -2396,19 +2396,19 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                        (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
-        -------  =  -   >  ci | -2 --- . ---  | S2.w^2.ti ----------------  +  (1 - S2f) . tf^2 ----------------------------------------------------
-        dDj.dDk     5  /__    \    dDj   dDk  \           (1 + (w.ti)^2)^3                                ((tf + ti)^2 + (w.tf.ti)^2)^3
+         d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
+        -------  =  -   >  ci | -2 --- . ---  | S2.w^2.ti ----------------  +  (1 - S2f)tf^2 ----------------------------------------------------
+        dDj.dDk     5  /__    \    dDj   dDk  \           (1 + (w.ti)^2)^3                             ((tf + ti)^2 + (w.tf.ti)^2)^3
                        i=m
 
-                                                                    (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-                                               +  (S2f - S2) . ts^2 ---------------------------------------------------- |
-                                                                              ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+                                                                 (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+                                               +  (S2f - S2)ts^2 ---------------------------------------------------- |
+                                                                           ((ts + ti)^2 + (w.ts.ti)^2)^3              /
 
 
-                                 d2ti   /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-                             +  ------- | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |.
-                                dDj.dDk \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                 d2ti   /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+                             +  ------- | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |.
+                                dDj.dDk \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
     """
 
     # First component.
@@ -2430,24 +2430,24 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                        (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
-        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2f) . tf^2 ----------------------------------------------------
-        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                                ((tf + ti)^2 + (w.tf.ti)^2)^3
+         d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
+        -------  =  -   >  | -2ci --- . ---  | S2.w^2.ti ----------------  +  (1 - S2f)tf^2 ----------------------------------------------------
+        dDj.dDk     5  /__ \      dDj   dDk  \           (1 + (w.ti)^2)^3                             ((tf + ti)^2 + (w.tf.ti)^2)^3
                        i=m
 
-                                                                    (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-                                               +  (S2f - S2) . ts^2 ---------------------------------------------------- |
-                                                                              ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+                                                                 (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+                                               +  (S2f - S2)ts^2 ---------------------------------------------------- |
+                                                                           ((ts + ti)^2 + (w.ts.ti)^2)^3              /
 
 
-                                / dti   dci     dti   dci         d2ti   \ /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                / dti   dci     dti   dci         d2ti   \ /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
-                                                                                                    (ts + ti)^2 - (w.ts.ti)^2   \ 
-                                                                             +  (S2f - S2) . ts^2 ----------------------------- |
-                                                                                                  ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                                                                                 (ts + ti)^2 - (w.ts.ti)^2   \ 
+                                                                             +  (S2f - S2)ts^2 ----------------------------- |
+                                                                                               ((ts + ti)^2 + (w.ts.ti)^2)^2 /
 
 
                                  d2ci        /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
@@ -2468,46 +2468,46 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk(data, params, j, k):
 
 
 
-# Extended Dj - Psij partial derivative.
+# Extended Dj - Oj partial derivative.
 ########################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_diff_S2f_S2_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci    dti  /        1 - (w.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  ----- . ---  | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |.
-        dDj.dPsij     5  /__ dPsij   dDj  \      (1 + (w.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci   dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  --- . ---  | S2 ----------------  +  (S2f - S2)ts^2 ----------------------------- |.
+        dDj.dOj     5  /__ dOj   dDj  \    (1 + (w.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2_index] * data.fact_ti_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti), axis=2)
 
 
-def calc_ellipsoid_S2f_S2_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /        1 - (w.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2 . ----------------  +  (S2f - S2) . ts^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \      (1 + (w.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2 ----------------  +  (S2f - S2)ts^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \    (1 + (w.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
 
-                                    d2ci         /      S2            (S2f - S2)(ts + ti)ts   \ \ 
-                               +  --------- . ti | ------------  +  ------------------------- | |.
-                                  dDj.dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
+                                   d2ci        /      S2            (S2f - S2)(ts + ti)ts   \ \ 
+                               +  ------- . ti | ------------  +  ------------------------- | |.
+                                  dDj.dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2_index] * data.fact_ti_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti)  +  data.d2ci[k, j] * data.ti * (params[data.s2_index] * data.fact_ti + data.s2f_s2 * data.fact_ts), axis=2)
@@ -2515,43 +2515,43 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dDjdPsij(data, params, j, k):
 
 # {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_diff_S2f_tf_S2_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci    dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  ----- . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |.
-        dDj.dPsij     5  /__ dPsij   dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci   dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  --- . ---  | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |.
+        dDj.dOj     5  /__ dOj   dDj  \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2_index] * data.fact_ti_djw_dti + data.one_s2f * data.fact_tf_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti), axis=2)
 
 
-def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /        1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2 . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  (S2f - S2) . ts^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \      (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                       ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
 
-                                    d2ci         /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
-                               +  --------- . ti | ------------  +  -------------------------  +  ------------------------- | |.
-                                  dDj.dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
+                                   d2ci        /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ \ 
+                               +  ------- . ti | ------------  +  -------------------------  +  ------------------------- | |.
+                                  dDj.dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2_index] * data.fact_ti_djw_dti + data.one_s2f * data.fact_tf_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti)  +  data.d2ci[k, j] * data.ti * (params[data.s2_index] * data.fact_ti + data.one_s2f * data.fact_tf + data.s2f_s2 * data.fact_ts), axis=2)
@@ -2780,25 +2780,25 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts(data, params, j, k):
 
 
 
-# Extended Psij - Psik partial derivative.
+# Extended Oj - Ok partial derivative.
 ##########################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2_ts_d2jw_dPsijdPsik(data, params, j, k):
+def calc_diff_S2f_S2_ts_d2jw_dOjdOk(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - Psik double partial derivative of the
+    Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                           _n_
-           d2J(w)       2  \       d2ci         /      S2            (S2f - S2)(ts + ti)ts   \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  ------------------------- |.
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci        /      S2            (S2f - S2)(ts + ti)ts   \ 
+        -------  =  -   >  ------- . ti | ------------  +  ------------------------- |.
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.d2ci[j, k] * data.ti * (params[data.s2_index] * data.fact_ti + data.s2f_s2 * data.fact_ts), axis=2)
@@ -2806,70 +2806,70 @@ def calc_diff_S2f_S2_ts_d2jw_dPsijdPsik(data, params, j, k):
 
 # {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdPsik(data, params, j, k):
+def calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - Psik double partial derivative of the
+    Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                           _n_
-           d2J(w)       2  \       d2ci         /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  -------------------------  +  ------------------------- |.
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci        /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
+        -------  =  -   >  ------- . ti | ------------  +  -------------------------  +  ------------------------- |.
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.d2ci[j, k] * data.ti * (params[data.s2_index] * data.fact_ti + data.one_s2f * data.fact_tf + data.s2f_s2 * data.fact_ts), axis=2)
 
 
 
-# Extended Psij - S2 partial derivative.
+# Extended Oj - S2 partial derivative.
 ########################################
 
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2_ts_d2jw_dPsijdS2(data, params, j, k):
+def calc_diff_S2f_S2_ts_d2jw_dOjdS2(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2 double partial derivative of the extended
+    Calculate the spectral desity values for the Oj - S2 double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} and {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci       /      1                 (ts + ti)ts         \ 
-        ---------  =  -   >  ----- . ti | ------------  -  ------------------------- |.
-        dPsij.dS2     5  /__ dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci      /      1                 (ts + ti)ts         \ 
+        -------  =  -   >  --- . ti | ------------  -  ------------------------- |.
+        dOj.dS2     5  /__ dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[k] * data.ti * (data.fact_ti - data.fact_ts), axis=2)
 
 
 
-# Extended Psij - S2f partial derivative.
+# Extended Oj - S2f partial derivative.
 #########################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2_ts_d2jw_dPsijdS2f(data, params, j, k):
+def calc_diff_S2f_S2_ts_d2jw_dOjdS2f(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2f double partial derivative of the
+    Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                          _n_
-          d2J(w)       2  \    dci             (ts + ti)ts
-        ----------  =  -   >  ----- . ti -------------------------.
-        dPsij.dS2f     5  /__ dPsij      (ts + ti)^2 + (w.ts.ti)^2
-                          i=m
+                        _n_
+         d2J(w)      2  \   dci             (ts + ti)ts
+        --------  =  -   >  --- . ti -------------------------.
+        dOj.dS2f     5  /__ dOj      (ts + ti)^2 + (w.ts.ti)^2
+                        i=m
     """
 
     return 0.4 * sum(data.dci[k] * data.ti * data.fact_ts, axis=2)
@@ -2877,70 +2877,70 @@ def calc_diff_S2f_S2_ts_d2jw_dPsijdS2f(data, params, j, k):
 
 # {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdS2f(data, params, j, k):
+def calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2f double partial derivative of the
+    Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                            _n_
-          d2J(w)         2  \    dci       /       (tf + ti)tf                   (ts + ti)ts         \ 
-        ----------  =  - -   >  ----- . ti | -------------------------  -  ------------------------- |.
-        dPsij.dS2f       5  /__ dPsij      \ (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                            i=m
+                          _n_
+         d2J(w)        2  \   dci      /       (tf + ti)tf                   (ts + ti)ts         \ 
+        --------  =  - -   >  --- . ti | -------------------------  -  ------------------------- |.
+        dOj.dS2f       5  /__ dOj      \ (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                          i=m
     """
 
     return -0.4 * sum(data.dci[k] * data.ti * (data.fact_tf - data.fact_ts), axis=2)
 
 
 
-# Extended Psij - tf partial derivative.
+# Extended Oj - tf partial derivative.
 ########################################
 
 # {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2_ts_d2jw_dPsijdtf(data, params, j, k):
+def calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - tf double partial derivative of the extended
+    Calculate the spectral desity values for the Oj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                                  _n_
-          d2J(w)      2           \    dci           (tf + ti)^2 - (w.tf.ti)^2
-        ---------  =  - (1 - S2f)  >  ----- . ti^2 -----------------------------.
-        dPsij.dtf     5           /__ dPsij        ((tf + ti)^2 + (w.tf.ti)^2)^2
-                                  i=m
+                                _n_
+         d2J(w)     2           \   dci          (tf + ti)^2 - (w.tf.ti)^2
+        -------  =  - (1 - S2f)  >  --- . ti^2 -----------------------------.
+        dOj.dtf     5           /__ dOj        ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                i=m
     """
 
     return 0.4 * data.one_s2f * sum(data.dci[k] * data.fact_djw_dtf, axis=2)
 
 
 
-# Extended Psij - ts partial derivative.
+# Extended Oj - ts partial derivative.
 ########################################
 
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2_ts_d2jw_dPsijdts(data, params, j, k):
+def calc_diff_S2f_S2_ts_d2jw_dOjdts(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - ts double partial derivative of the extended
+    Calculate the spectral desity values for the Oj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
     The model-free Hessian is
 
-                                   _n_
-          d2J(w)      2            \    dci           (ts + ti)^2 - (w.ts.ti)^2
-        ---------  =  - (S2f - S2)  >  ----- . ti^2 -----------------------------.
-        dPsij.dts     5            /__ dPsij        ((ts + ti)^2 + (w.ts.ti)^2)^2
-                                   i=m
+                                 _n_
+         d2J(w)     2            \   dci          (ts + ti)^2 - (w.ts.ti)^2
+        -------  =  - (S2f - S2)  >  --- . ti^2 -----------------------------.
+        dOj.dts     5            /__ dOj        ((ts + ti)^2 + (w.ts.ti)^2)^2
+                                 i=m
     """
 
     return 0.4 * data.s2f_s2 * sum(data.dci[k] * data.fact_djw_dts, axis=2)
@@ -3086,14 +3086,14 @@ def calc_diff_S2f_S2s_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \      /    dti   dti  /                  3 - (w.ti)^2                           (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-        -------  =  -   >  ci | -2 --- . ---  | S2f.S2s.w^2.ti ----------------  +  S2f(1 - S2s) . ts^2 ---------------------------------------------------- |
-        dDj.dDk     5  /__    \    dDj   dDk  \                (1 + (w.ti)^2)^3                                   ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+         d2J(w)     2  \      /    dti   dti  /                  3 - (w.ti)^2                        (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+        -------  =  -   >  ci | -2 --- . ---  | S2f.S2s.w^2.ti ----------------  +  S2f(1 - S2s)ts^2 ---------------------------------------------------- |
+        dDj.dDk     5  /__    \    dDj   dDk  \                (1 + (w.ti)^2)^3                                ((ts + ti)^2 + (w.ts.ti)^2)^3              /
                        i=m
 
-                                 d2ti   /               1 - (w.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ \ 
-                             +  ------- | S2f . S2s . ----------------  +  S2f(1 - S2s) . ts^2 ----------------------------- | |.
-                                dDj.dDk \             (1 + (w.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 / /
+                                 d2ti   /           1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ \ 
+                             +  ------- | S2f.S2s ----------------  +  S2f(1 - S2s)ts^2 ----------------------------- | |.
+                                dDj.dDk \         (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 / /
     """
 
     # First component.
@@ -3114,14 +3114,14 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                           (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-        -------  =  -   >  | -2ci --- . ---  | S2f.S2s.w^2.ti ----------------  +  S2f(1 - S2s) . ts^2 ---------------------------------------------------- |
-        dDj.dDk     5  /__ \      dDj   dDk  \                (1 + (w.ti)^2)^3                                   ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+         d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                        (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+        -------  =  -   >  | -2ci --- . ---  | S2f.S2s.w^2.ti ----------------  +  S2f(1 - S2s)ts^2 ---------------------------------------------------- |
+        dDj.dDk     5  /__ \      dDj   dDk  \                (1 + (w.ti)^2)^3                                ((ts + ti)^2 + (w.ts.ti)^2)^3              /
                        i=m
 
-                                / dti   dci     dti   dci         d2ti   \ /               1 - (w.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2f . S2s . ----------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \             (1 + (w.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                / dti   dci     dti   dci         d2ti   \ /           1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2f.S2s ----------------  +  S2f(1 - S2s)ts^2 ----------------------------- |
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \         (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
 
 
                                  d2ci        /   S2f.S2s         S2f(1 - S2s)(ts + ti)ts  \ \ 
@@ -3153,19 +3153,19 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \      /    dti   dti  /                  3 - (w.ti)^2                        (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
-        -------  =  -   >  ci | -2 --- . ---  | S2f.S2s.w^2.ti ----------------  +  (1 - S2f) . tf^2 ----------------------------------------------------
-        dDj.dDk     5  /__    \    dDj   dDk  \                (1 + (w.ti)^2)^3                                ((tf + ti)^2 + (w.tf.ti)^2)^3
+         d2J(w)     2  \      /    dti   dti  /                  3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
+        -------  =  -   >  ci | -2 --- . ---  | S2f.S2s.w^2.ti ----------------  +  (1 - S2f)tf^2 ----------------------------------------------------
+        dDj.dDk     5  /__    \    dDj   dDk  \                (1 + (w.ti)^2)^3                             ((tf + ti)^2 + (w.tf.ti)^2)^3
                        i=m
 
-                                                                      (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-                                               +  S2f(1 - S2s) . ts^2 ---------------------------------------------------- |
-                                                                                ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+                                                                   (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+                                               +  S2f(1 - S2s)ts^2 ---------------------------------------------------- |
+                                                                             ((ts + ti)^2 + (w.ts.ti)^2)^3              /
 
 
-                        d2ti   /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-                    +  ------- | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |.
-                       dDj.dDk \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                        d2ti   /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+                    +  ------- | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------  +  S2f(1 - S2s)ts^2 ----------------------------- |.
+                       dDj.dDk \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
     """
 
     # First component.
@@ -3187,24 +3187,24 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk(data, params, j, k):
     The model-free Hessian is
 
                        _n_
-         d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                        (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
-        -------  =  -   >  | -2ci --- . ---  | S2f.S2s.w^2.ti ----------------  +  (1 - S2f) . tf^2 ----------------------------------------------------
-        dDj.dDk     5  /__ \      dDj   dDk  \                (1 + (w.ti)^2)^3                                ((tf + ti)^2 + (w.tf.ti)^2)^3
+         d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
+        -------  =  -   >  | -2ci --- . ---  | S2f.S2s.w^2.ti ----------------  +  (1 - S2f)tf^2 ----------------------------------------------------
+        dDj.dDk     5  /__ \      dDj   dDk  \                (1 + (w.ti)^2)^3                             ((tf + ti)^2 + (w.tf.ti)^2)^3
                        i=m
 
-                                                                      (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
-                                               +  S2f(1 - S2s) . ts^2 ---------------------------------------------------- |
-                                                                                ((ts + ti)^2 + (w.ts.ti)^2)^3              /
+                                                                   (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
+                                               +  S2f(1 - S2s)ts^2 ---------------------------------------------------- |
+                                                                             ((ts + ti)^2 + (w.ts.ti)^2)^3              /
 
 
-                                / dti   dci     dti   dci         d2ti   \ /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2
-                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------
-                                \ dDj   dDk     dDk   dDj        dDj.dDk / \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                / dti   dci     dti   dci         d2ti   \ /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2
+                             +  | --- . ---  +  --- . ---  +  ci ------- | | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------
+                                \ dDj   dDk     dDk   dDj        dDj.dDk / \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
-                                                                                                      (ts + ti)^2 - (w.ts.ti)^2   \ 
-                                                                             +  S2f(1 - S2s) . ts^2 ----------------------------- |
-                                                                                                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                                                                                   (ts + ti)^2 - (w.ts.ti)^2   \ 
+                                                                             +  S2f(1 - S2s)ts^2 ----------------------------- |
+                                                                                                 ((ts + ti)^2 + (w.ts.ti)^2)^2 /
 
 
                                  d2ci        /   S2f.S2s          (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
@@ -3225,46 +3225,46 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk(data, params, j, k):
 
 
 
-# Extended 2 Dj - Psij partial derivative.
+# Extended 2 Dj - Oj partial derivative.
 ##########################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2s_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_diff_S2f_S2s_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci    dti  /               1 - (w.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  ----- . ---  | S2f . S2s . ----------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |.
-        dDj.dPsij     5  /__ dPsij   dDj  \             (1 + (w.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci   dti  /           1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  --- . ---  | S2f.S2s ----------------  +  S2f(1 - S2s)ts^2 ----------------------------- |.
+        dDj.dOj     5  /__ dOj   dDj  \         (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti), axis=2)
 
 
-def calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /               1 - (w.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2f . S2s . ----------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \             (1 + (w.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /           1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2f.S2s ----------------  +  S2f(1 - S2s)ts^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \         (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
 
-                                    d2ci         /   S2f.S2s         S2f(1 - S2s)(ts + ti)ts  \ \ 
-                               +  --------- . ti | ------------  +  ------------------------- | |.
-                                  dDj.dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
+                                   d2ci        /   S2f.S2s         S2f(1 - S2s)(ts + ti)ts  \ \ 
+                               +  ------- . ti | ------------  +  ------------------------- | |.
+                                  dDj.dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti)  +  data.d2ci[k, j] * data.ti * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti + data.s2f_s2 * data.fact_ts), axis=2)
@@ -3272,43 +3272,43 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdPsij(data, params, j, k):
 
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2s_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_diff_S2f_tf_S2s_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \    dci    dti  /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  ----- . ---  | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |.
-        dDj.dPsij     5  /__ dPsij   dDj  \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   dci   dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  --- . ---  | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------  +  S2f(1 - S2s)ts^2 ----------------------------- |.
+        dDj.dOj     5  /__ dOj   dDj  \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti_djw_dti + data.one_s2f * data.fact_tf_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti), axis=2)
 
 
-def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdPsij(data, params, j, k):
+def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Dj - Psij double partial derivative of the extended
+    Calculate the spectral desity values for the Dj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                         _n_
-          d2J(w)      2  \   /  dci    dti  /               1 - (w.ti)^2                          (tf + ti)^2 - (w.tf.ti)^2                             (ts + ti)^2 - (w.ts.ti)^2   \ 
-        ---------  =  -   >  | ----- . ---  | S2f . S2s . ----------------  +  (1 - S2f) . tf^2 -----------------------------  +  S2f(1 - S2s) . ts^2 ----------------------------- |
-        dDj.dPsij     5  /__ \ dPsij   dDj  \             (1 + (w.ti)^2)^2                      ((tf + ti)^2 + (w.tf.ti)^2)^2                         ((ts + ti)^2 + (w.ts.ti)^2)^2 /
-                         i=m
+                       _n_
+         d2J(w)     2  \   / dci   dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
+        -------  =  -   >  | --- . ---  | S2f.S2s ----------------  +  (1 - S2f)tf^2 -----------------------------  +  S2f(1 - S2s)ts^2 ----------------------------- |
+        dDj.dOj     5  /__ \ dOj   dDj  \         (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                       i=m
 
-                                    d2ci         /   S2f.S2s          (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
-                               +  --------- . ti | ------------  +  -------------------------  +  ------------------------- | |.
-                                  dDj.dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
+                                   d2ci        /   S2f.S2s          (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ \ 
+                               +  ------- . ti | ------------  +  -------------------------  +  ------------------------- | |.
+                                  dDj.dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 / /
     """
 
     return 0.4 * sum(data.dci[j] * data.dti[k] * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti_djw_dti + data.one_s2f * data.fact_tf_djw_dti + data.s2f_s2 * data.fact_ts_djw_dti)  +  data.d2ci[k, j] * data.ti * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti + data.one_s2f * data.fact_tf + data.s2f_s2 * data.fact_ts), axis=2)
@@ -3329,9 +3329,9 @@ def calc_diff_S2f_S2s_ts_d2jw_dDjdS2f(data, params, j, k):
     The model-free Hessian is
 
                         _n_
-         d2J(w)      2  \        dti  /         1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
-        --------  =  -   >  ci . ---  | S2s . ----------------  +  (1 - S2s) . ts^2 ----------------------------- |.
-        dDj.dS2f     5  /__      dDj  \       (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+         d2J(w)      2  \        dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
+        --------  =  -   >  ci . ---  | S2s ----------------  +  (1 - S2s)ts^2 ----------------------------- |.
+        dDj.dS2f     5  /__      dDj  \     (1 + (w.ti)^2)^2                   ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                         i=m
     """
 
@@ -3347,9 +3347,9 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2f(data, params, j, k):
     The model-free Hessian is
 
                         _n_
-         d2J(w)      2  \   /      dti  /         1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
-        --------  =  -   >  | ci . ---  | S2s . ----------------  +  (1 - S2s) . ts^2 ----------------------------- |
-        dDj.dS2f     5  /__ \      dDj  \       (1 + (w.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+         d2J(w)      2  \   /      dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
+        --------  =  -   >  | ci . ---  | S2s ----------------  +  (1 - S2s)ts^2 ----------------------------- |
+        dDj.dS2f     5  /__ \      dDj  \     (1 + (w.ti)^2)^2                   ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                         i=m
 
                                 dci      /     S2s            (1 - S2s)(ts + ti)ts    \ \ 
@@ -3372,9 +3372,9 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f(data, params, j, k):
     The model-free Hessian is
 
                         _n_
-         d2J(w)      2  \        dti  /         1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
-        --------  =  -   >  ci . ---  | S2s . ----------------  -  tf^2 -----------------------------  +  (1 - S2s) . ts^2 ----------------------------- |.
-        dDj.dS2f     5  /__      dDj  \       (1 + (w.ti)^2)^2          ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+         d2J(w)      2  \        dti  /       1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
+        --------  =  -   >  ci . ---  | S2s ----------------  -  tf^2 -----------------------------  +  (1 - S2s)ts^2 ----------------------------- |.
+        dDj.dS2f     5  /__      dDj  \     (1 + (w.ti)^2)^2          ((tf + ti)^2 + (w.tf.ti)^2)^2                   ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                         i=m
     """
 
@@ -3391,9 +3391,9 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdS2f(data, params, j, k):
     The model-free Hessian is
 
                         _n_
-         d2J(w)      2  \   /      dti  /         1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
-        --------  =  -   >  | ci . ---  | S2s . ----------------  -  tf^2 -----------------------------  +  (1 - S2s) . ts^2 ----------------------------- |
-        dDj.dS2f     5  /__ \      dDj  \       (1 + (w.ti)^2)^2          ((tf + ti)^2 + (w.tf.ti)^2)^2                      ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+         d2J(w)      2  \   /      dti  /       1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
+        --------  =  -   >  | ci . ---  | S2s ----------------  -  tf^2 -----------------------------  +  (1 - S2s)ts^2 ----------------------------- |
+        dDj.dS2f     5  /__ \      dDj  \     (1 + (w.ti)^2)^2          ((tf + ti)^2 + (w.tf.ti)^2)^2                   ((ts + ti)^2 + (w.ts.ti)^2)^2 /
                         i=m
 
                                  dci      /     S2s                (tf + ti)tf               (1 - S2s)(ts + ti)ts    \ \ 
@@ -3541,25 +3541,25 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts(data, params, j, k):
 
 
 
-# Extended 2 Psij - Psik partial derivative.
+# Extended 2 Oj - Ok partial derivative.
 ############################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2s_ts_d2jw_dPsijdPsik(data, params, j, k):
+def calc_diff_S2f_S2s_ts_d2jw_dOjdOk(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - Psik double partial derivative of the
+    Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                           _n_
-           d2J(w)       2  \       d2ci         /  S2f . S2s        S2f(1 - S2s)(ts + ti)ts  \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  ------------------------- |.
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci        /  S2f . S2s        S2f(1 - S2s)(ts + ti)ts  \ 
+        -------  =  -   >  ------- . ti | ------------  +  ------------------------- |.
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.d2ci[j, k] * data.ti * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti + data.s2f_s2 * data.fact_ts), axis=2)
@@ -3567,45 +3567,45 @@ def calc_diff_S2f_S2s_ts_d2jw_dPsijdPsik(data, params, j, k):
 
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdPsik(data, params, j, k):
+def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - Psik double partial derivative of the
+    Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                           _n_
-           d2J(w)       2  \       d2ci         /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
-        -----------  =  -   >  ----------- . ti | ------------  +  -------------------------  +  ------------------------- |.
-        dPsij.dPsik     5  /__ dPsij.dPsik      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                           i=m
+                       _n_
+         d2J(w)     2  \    d2ci        /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
+        -------  =  -   >  ------- . ti | ------------  +  -------------------------  +  ------------------------- |.
+        dOj.dOk     5  /__ dOj.dOk      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                       i=m
     """
 
     return 0.4 * sum(data.d2ci[j, k] * data.ti * (params[data.s2f_index] * params[data.s2s_index] * data.fact_ti + data.one_s2f * data.fact_tf + data.s2f_s2 * data.fact_ts), axis=2)
 
 
 
-# Extended 2 Psij - S2f partial derivative.
+# Extended 2 Oj - S2f partial derivative.
 ###########################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2s_ts_d2jw_dPsijdS2f(data, params, j, k):
+def calc_diff_S2f_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2f double partial derivative of the
+    Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                          _n_
-          d2J(w)       2  \    dci       /      S2s           (1 - S2s)(ts + ti)ts    \ 
-        ----------  =  -   >  ----- . ti | ------------  +  ------------------------- |.
-        dPsij.dS2f     5  /__ dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                          i=m
+                        _n_
+         d2J(w)      2  \   dci      /      S2s           (1 - S2s)(ts + ti)ts    \ 
+        --------  =  -   >  --- . ti | ------------  +  ------------------------- |.
+        dOj.dS2f     5  /__ dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                        i=m
     """
 
     return 0.4 * sum(data.dci[k] * data.ti * (params[data.s2s_index] * data.fact_ti + data.one_s2s * data.fact_ts), axis=2)
@@ -3613,95 +3613,95 @@ def calc_diff_S2f_S2s_ts_d2jw_dPsijdS2f(data, params, j, k):
 
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdS2f(data, params, j, k):
+def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2f double partial derivative of the
+    Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                          _n_
-          d2J(w)       2  \    dci       /      S2s               (tf + ti)tf               (1 - S2s)(ts + ti)ts    \ 
-        ----------  =  -   >  ----- . ti | ------------  -  -------------------------  +  ------------------------- |.
-        dPsij.dS2f     5  /__ dPsij      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                          i=m
+                        _n_
+         d2J(w)      2  \   dci      /      S2s               (tf + ti)tf               (1 - S2s)(ts + ti)ts    \ 
+        --------  =  -   >  --- . ti | ------------  -  -------------------------  +  ------------------------- |.
+        dOj.dS2f     5  /__ dOj      \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                        i=m
     """
 
     return 0.4 * sum(data.dci[k] * data.ti * (params[data.s2s_index] * data.fact_ti - data.fact_tf + data.one_s2s * data.fact_ts), axis=2)
 
 
 
-# Extended 2 Psij - S2s partial derivative.
+# Extended 2 Oj - S2s partial derivative.
 ###########################################
 
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdS2s(data, params, j, k):
+def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2s(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - S2 double partial derivative of the extended
+    Calculate the spectral desity values for the Oj - S2 double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} and {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
     The model-free Hessian is
 
-                             _n_
-          d2J(w)       2     \    dci       /      1                 (ts + ti)ts         \ 
-        ----------  =  - S2f  >  ----- . ti | ------------  -  ------------------------- |.
-        dPsij.dS2s     5     /__ dPsij      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
-                             i=m
+                           _n_
+         d2J(w)      2     \   dci      /      1                 (ts + ti)ts         \ 
+        --------  =  - S2f  >  --- . ti | ------------  -  ------------------------- |.
+        dOj.dS2s     5     /__ dOj      \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                           i=m
     """
 
     return 0.4 * params[data.s2f_index] * sum(data.dci[k] * data.ti * (data.fact_ti - data.fact_ts), axis=2)
 
 
 
-# Extended 2 Psij - tf partial derivative.
+# Extended 2 Oj - tf partial derivative.
 ##########################################
 
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_tf_S2s_ts_d2jw_dPsijdtf(data, params, j, k):
+def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - tf double partial derivative of the extended
+    Calculate the spectral desity values for the Oj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
     The model-free Hessian is
 
-                                  _n_
-          d2J(w)      2           \    dci           (tf + ti)^2 - (w.tf.ti)^2
-        ---------  =  - (1 - S2f)  >  ----- . ti^2 -----------------------------.
-        dPsij.dtf     5           /__ dPsij        ((tf + ti)^2 + (w.tf.ti)^2)^2
-                                  i=m
+                                _n_
+         d2J(w)     2           \   dci          (tf + ti)^2 - (w.tf.ti)^2
+        -------  =  - (1 - S2f)  >  --- . ti^2 -----------------------------.
+        dOj.dtf     5           /__ dOj        ((tf + ti)^2 + (w.tf.ti)^2)^2
+                                i=m
     """
 
     return 0.4 * data.one_s2f * sum(data.dci[k] * data.fact_djw_dtf, axis=2)
 
 
 
-# Extended 2 Psij - ts partial derivative.
+# Extended 2 Oj - ts partial derivative.
 ##########################################
 
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with diffusion parameters.
 
-def calc_diff_S2f_S2s_ts_d2jw_dPsijdts(data, params, j, k):
+def calc_diff_S2f_S2s_ts_d2jw_dOjdts(data, params, j, k):
     """Spectral density Hessian.
 
-    Calculate the spectral desity values for the Psij - ts double partial derivative of the extended
+    Calculate the spectral desity values for the Oj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
     The model-free Hessian is
 
-                                     _n_
-          d2J(w)      2              \    dci           (ts + ti)^2 - (w.ts.ti)^2
-        ---------  =  - S2f(1 - S2s)  >  ----- . ti^2 -----------------------------.
-        dPsij.dts     5              /__ dPsij        ((ts + ti)^2 + (w.ts.ti)^2)^2
-                                     i=m
+                                   _n_
+         d2J(w)     2              \   dci          (ts + ti)^2 - (w.ts.ti)^2
+        -------  =  - S2f(1 - S2s)  >  --- . ti^2 -----------------------------.
+        dOj.dts     5              /__ dOj        ((ts + ti)^2 + (w.ts.ti)^2)^2
+                                   i=m
     """
 
     return 0.4 * data.s2f_s2 * sum(data.dci[k] * data.fact_djw_dts, axis=2)
