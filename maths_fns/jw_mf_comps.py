@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,45 +39,48 @@ def calc_S2_te_jw_comps(data, params):
     Calculate the components of the spectral density value for the original model-free formula with
     the parameters {S2, te}.
 
-    The model-free formula is:
+    The model-free formula is
 
                     _n_
                  2  \           /      S2             (1 - S2)(te + ti)te    \ 
-        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |
+        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |.
                  5  /__         \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
                     i=m
 
-    Replicated calculations are:
+    Replicated calculations are
 
-        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation)
+        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
-        te_ti = te + ti
-        te_ti_te = (te + ti).te
+        te_ti = te + ti,
+        te_ti_te = (te + ti).te.
 
 
-    Calculations which are replicated in the gradient equations are:
+    Calculations which are replicated in the gradient equations are
 
-        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation)
+        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
-        one_s2 = 1 - S2
+        one_s2 = 1 - S2,
 
-        te_ti_sqrd = (te + ti)^2
-        w_te_ti_sqrd = (w.te.ti)^2
+        te_ti_sqrd = (te + ti)^2,
+        w_te_ti_sqrd = (w.te.ti)^2,
 
                            (te + ti)te
-        fact_te  =  -------------------------
+        fact_te  =  -------------------------.
                     (te + ti)^2 + (w.te.ti)^2
 
     """
 
+    # Order parameter factors.
     data.one_s2 = 1.0 - params[data.s2_index]
 
-    data.te_ti = params[data.te_index] + data.ti
-    data.te_ti_te = data.te_ti * params[data.te_index]
-    data.te_ti_sqrd = data.te_ti**2
+    # Internal correlation time, te, factors.
+    data.te_ti =        params[data.te_index] + data.ti
+    data.te_ti_te =     data.te_ti * params[data.te_index]
+    data.te_ti_sqrd =   data.te_ti**2
+
     data.w_te_ti_sqrd = data.w_ti_sqrd * params[data.te_index]**2
     data.inv_te_denom = 1.0 / (data.te_ti_sqrd + data.w_te_ti_sqrd)
-    data.fact_te = data.te_ti_te * data.inv_te_denom
+    data.fact_te =      data.te_ti_te * data.inv_te_denom
 
 
 
@@ -90,46 +93,49 @@ def calc_S2f_S2_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, S2, ts}.
 
-    The model-free formula is:
+    The model-free formula is
 
                     _n_
                  2  \           /      S2            (S2f - S2)(ts + ti)ts   \ 
-        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |
+        J(w)  =  -   >  ci . ti | ------------  +  ------------------------- |.
                  5  /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                     i=m
 
-    Replicated calculations are:
+    Replicated calculations are
 
-        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation)
+        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
-        ts_ti = ts + ti
-        ts_ti_ts = (ts + ti).ts
+        ts_ti = ts + ti,
+        ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are:
+    Calculations which are replicated in the gradient equations are
 
-        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation)
+        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
-        s2f_s2 = S2f - S2
+        s2f_s2 = S2f - S2,
 
-        ts_ti_sqrd = (ts + ti)^2
-        w_ts_ti_sqrd = (w.ts.ti)^2
-        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
+        ts_ti_sqrd = (ts + ti)^2,
+        w_ts_ti_sqrd = (w.ts.ti)^2,
+        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2),
 
                            (ts + ti)ts
-        fact_ts  =  -------------------------
+        fact_ts  =  -------------------------.
                     (ts + ti)^2 + (w.ts.ti)^2
 
     """
 
+    # Order parameter factors.
     data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
 
-    data.ts_ti = params[data.ts_index] + data.ti
-    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
-    data.ts_ti_sqrd = data.ts_ti**2
+    # Internal correlation time, ts, factors.
+    data.ts_ti =        params[data.ts_index] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti_sqrd =   data.ts_ti**2
+
     data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
-    data.fact_ts = data.ts_ti_ts * data.inv_ts_denom
+    data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
 
 
@@ -142,46 +148,49 @@ def calc_S2f_S2s_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, S2s, ts}.
 
-    The model-free formula is:
+    The model-free formula is
 
                        _n_
                  2     \           /      S2s           (1 - S2s)(ts + ti)ts    \ 
-        J(w)  =  - S2f  >  ci . ti | ------------  +  ------------------------- |
+        J(w)  =  - S2f  >  ci . ti | ------------  +  ------------------------- |.
                  5     /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                        i=m
 
-    Replicated calculations are:
+    Replicated calculations are
 
-        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation)
+        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
-        ts_ti = ts + ti
-        ts_ti_ts = (ts + ti).ts
+        ts_ti = ts + ti,
+        ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are:
+    Calculations which are replicated in the gradient equations are
 
-        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation)
+        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
-        one_s2s = 1 - S2s
+        one_s2s = 1 - S2s,
 
-        ts_ti_sqrd = (ts + ti)^2
-        w_ts_ti_sqrd = (w.ts.ti)^2
-        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
+        ts_ti_sqrd = (ts + ti)^2,
+        w_ts_ti_sqrd = (w.ts.ti)^2,
+        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2),
 
                            (ts + ti)ts
-        fact_ts  =  -------------------------
+        fact_ts  =  -------------------------.
                     (ts + ti)^2 + (w.ts.ti)^2
 
     """
 
+    # Order parameter factors.
     data.one_s2s = 1.0 - params[data.s2s_index]
 
-    data.ts_ti = params[data.ts_index] + data.ti
-    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
-    data.ts_ti_sqrd = data.ts_ti**2
+    # Internal correlation time, ts, factors.
+    data.ts_ti =        params[data.ts_index] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti_sqrd =   data.ts_ti**2
+
     data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
-    data.fact_ts = data.ts_ti_ts * data.inv_ts_denom
+    data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
 
 
@@ -194,64 +203,74 @@ def calc_S2f_tf_S2_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, tf, S2, ts}.
 
-    The model-free formula is:
+    The model-free formula is
 
                     _n_
-                 2  \           /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
-        J(w)  =  -   >  ci . ti | ------------  +  -------------------------  +  ------------------------- |
-                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                 2  \           /      S2            (1 - S2f)(tf + ti)tf
+        J(w)  =  -   >  ci . ti | ------------  +  -------------------------
+                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2
                     i=m
 
-    Replicated calculations are:
+                                                     (S2f - S2)(ts + ti)ts   \ 
+                                                +  ------------------------- |.
+                                                   (ts + ti)^2 + (w.ts.ti)^2 /
 
-        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation)
+    Replicated calculations are
 
-        tf_ti = tf + ti
-        ts_ti = ts + ti
-        tf_ti_tf = (tf + ti).tf
-        ts_ti_ts = (ts + ti).ts
+        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
+
+        tf_ti = tf + ti,
+        ts_ti = ts + ti,
+        tf_ti_tf = (tf + ti).tf,
+        ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are:
+    Calculations which are replicated in the gradient equations are
 
-        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation)
+        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
-        one_s2f = 1 - S2f
-        s2f_s2 = S2f - S2
+        one_s2f = 1 - S2f,
+        s2f_s2 = S2f - S2,
 
-        tf_ti_sqrd = (tf + ti)^2
-        ts_ti_sqrd = (ts + ti)^2
-        w_tf_ti_sqrd = (w.tf.ti)^2
-        w_ts_ti_sqrd = (w.ts.ti)^2
-        inv_tf_denom = 1 / ((tf + ti)^2 + (w.tf.ti)^2)
-        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
+        tf_ti_sqrd = (tf + ti)^2,
+        ts_ti_sqrd = (ts + ti)^2,
+        w_tf_ti_sqrd = (w.tf.ti)^2,
+        w_ts_ti_sqrd = (w.ts.ti)^2,
+        inv_tf_denom = 1 / ((tf + ti)^2 + (w.tf.ti)^2),
+        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2),
 
                            (tf + ti)tf
-        fact_tf  =  -------------------------
+        fact_tf  =  -------------------------,
                     (tf + ti)^2 + (w.tf.ti)^2
 
 
                            (ts + ti)ts
-        fact_ts  =  -------------------------
+        fact_ts  =  -------------------------.
                     (ts + ti)^2 + (w.ts.ti)^2
 
     """
 
+    # Order parameter factors.
     data.one_s2f = 1.0 - params[data.s2f_index]
     data.s2f_s2 = params[data.s2f_index] - params[data.s2_index]
 
-    data.tf_ti = params[data.tf_index] + data.ti
-    data.ts_ti = params[data.ts_index] + data.ti
-    data.tf_ti_tf = data.tf_ti * params[data.tf_index]
-    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
-    data.tf_ti_sqrd = data.tf_ti**2
-    data.ts_ti_sqrd = data.ts_ti**2
+    # Internal correlation time, tf, factors.
+    data.tf_ti =        params[data.tf_index] + data.ti
+    data.tf_ti_tf =     data.tf_ti * params[data.tf_index]
+    data.tf_ti_sqrd =   data.tf_ti**2
+
     data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_index]**2
-    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
     data.inv_tf_denom = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd)
+    data.fact_tf =      data.tf_ti_tf * data.inv_tf_denom
+
+    # Internal correlation time, ts, factors.
+    data.ts_ti =        params[data.ts_index] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti_sqrd =   data.ts_ti**2
+
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
-    data.fact_tf = data.tf_ti_tf * data.inv_tf_denom
-    data.fact_ts = data.ts_ti_ts * data.inv_ts_denom
+    data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
 
 
@@ -264,66 +283,76 @@ def calc_S2f_tf_S2s_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, tf, S2s, ts}.
 
-    The model-free formula is:
+    The model-free formula is
 
                     _n_
-                 2  \           /   S2f . S2s        (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
-        J(w)  =  -   >  ci . ti | ------------  +  -------------------------  +  ------------------------- |
-                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
+                 2  \           /   S2f . S2s        (1 - S2f)(tf + ti)tf
+        J(w)  =  -   >  ci . ti | ------------  +  -------------------------
+                 5  /__         \ 1 + (w.ti)^2     (tf + ti)^2 + (w.tf.ti)^2
                     i=m
 
-    Replicated calculations are:
+                                                    S2f(1 - S2s)(ts + ti)ts  \ 
+                                                +  ------------------------- |.
+                                                   (ts + ti)^2 + (w.ts.ti)^2 /
 
-        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation)
+    Replicated calculations are
 
-        tf_ti = tf + ti
-        ts_ti = ts + ti
-        tf_ti_tf = (tf + ti).tf
-        ts_ti_ts = (ts + ti).ts
+        w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
+
+        tf_ti = tf + ti,
+        ts_ti = ts + ti,
+        tf_ti_tf = (tf + ti).tf,
+        ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are:
+    Calculations which are replicated in the gradient equations are
 
-        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation)
+        fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
-        one_s2s = 1 - S2s
-        one_s2f = 1 - S2f
-        s2f_s2 = S2f(1 - S2s) = S2f - S2
+        one_s2s = 1 - S2s,
+        one_s2f = 1 - S2f,
+        s2f_s2 = S2f(1 - S2s) = S2f - S2,
 
-        tf_ti_sqrd = (tf + ti)^2
-        ts_ti_sqrd = (ts + ti)^2
-        w_tf_ti_sqrd = (w.tf.ti)^2
-        w_ts_ti_sqrd = (w.ts.ti)^2
-        inv_tf_denom = 1 / ((tf + ti)^2 + (w.tf.ti)^2)
-        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2)
+        tf_ti_sqrd = (tf + ti)^2,
+        ts_ti_sqrd = (ts + ti)^2,
+        w_tf_ti_sqrd = (w.tf.ti)^2,
+        w_ts_ti_sqrd = (w.ts.ti)^2,
+        inv_tf_denom = 1 / ((tf + ti)^2 + (w.tf.ti)^2),
+        inv_ts_denom = 1 / ((ts + ti)^2 + (w.ts.ti)^2),
 
                            (tf + ti)tf
-        fact_tf  =  -------------------------
+        fact_tf  =  -------------------------,
                     (tf + ti)^2 + (w.tf.ti)^2
 
 
                            (ts + ti)ts
-        fact_ts  =  -------------------------
+        fact_ts  =  -------------------------.
                     (ts + ti)^2 + (w.ts.ti)^2
 
     """
 
+    # Order parameter factors.
     data.one_s2s = 1.0 - params[data.s2s_index]
     data.one_s2f = 1.0 - params[data.s2f_index]
     data.s2f_s2 = params[data.s2f_index] * data.one_s2s
 
-    data.tf_ti = params[data.tf_index] + data.ti
-    data.ts_ti = params[data.ts_index] + data.ti
-    data.tf_ti_tf = data.tf_ti * params[data.tf_index]
-    data.ts_ti_ts = data.ts_ti * params[data.ts_index]
-    data.tf_ti_sqrd = data.tf_ti**2
-    data.ts_ti_sqrd = data.ts_ti**2
+    # Internal correlation time, tf, factors.
+    data.tf_ti =        params[data.tf_index] + data.ti
+    data.tf_ti_tf =     data.tf_ti * params[data.tf_index]
+    data.tf_ti_sqrd =   data.tf_ti**2
+
     data.w_tf_ti_sqrd = data.w_ti_sqrd * params[data.tf_index]**2
-    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
     data.inv_tf_denom = 1.0 / (data.tf_ti_sqrd + data.w_tf_ti_sqrd)
+    data.fact_tf =      data.tf_ti_tf * data.inv_tf_denom
+
+    # Internal correlation time, ts, factors.
+    data.ts_ti =        params[data.ts_index] + data.ti
+    data.ts_ti_ts =     data.ts_ti * params[data.ts_index]
+    data.ts_ti_sqrd =   data.ts_ti**2
+
+    data.w_ts_ti_sqrd = data.w_ti_sqrd * params[data.ts_index]**2
     data.inv_ts_denom = 1.0 / (data.ts_ti_sqrd + data.w_ts_ti_sqrd)
-    data.fact_tf = data.tf_ti_tf * data.inv_tf_denom
-    data.fact_ts = data.ts_ti_ts * data.inv_ts_denom
+    data.fact_ts =      data.ts_ti_ts * data.inv_ts_denom
 
 
 
@@ -342,10 +371,10 @@ def calc_diff_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the original model-free formula
     with no parameters {} or the parameter {S2} together with diffusion tensor parameters.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                               1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------
+        fact_ti_djw_dti  =  ----------------.
                             (1 + (w.ti)^2)^2
     """
 
@@ -362,10 +391,10 @@ def calc_S2_te_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the original model-free formula
     with the parameters {S2, te}.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                                 (te + ti)^2 - (w.te.ti)^2
-        fact_djw_dte  =  ti^2 -----------------------------
+        fact_djw_dte  =  ti^2 -----------------------------.
                               ((te + ti)^2 + (w.te.ti)^2)^2
     """
 
@@ -382,22 +411,22 @@ def calc_diff_S2_te_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the original model-free formula
     with the parameters {S2, te} together with diffusion tensor parameters.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                        (te + ti)^2 - (w.te.ti)^2
-        fact_djw  =  -----------------------------
+        fact_djw  =  -----------------------------,
                      ((te + ti)^2 + (w.te.ti)^2)^2
 
                               1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------
+        fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
 
                                    (te + ti)^2 - (w.te.ti)^2
-        fact_te_djw_dti  =  te^2 -----------------------------
+        fact_te_djw_dti  =  te^2 -----------------------------,
                                  ((te + ti)^2 + (w.te.ti)^2)^2
 
                                 (te + ti)^2 - (w.te.ti)^2
-        fact_djw_dte  =  ti^2 -----------------------------
+        fact_djw_dte  =  ti^2 -----------------------------.
                               ((te + ti)^2 + (w.te.ti)^2)^2
     """
 
@@ -417,11 +446,11 @@ def calc_S2f_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2, ts}.
 
-    Replicated calculations are:
+    Replicated calculations are
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
@@ -438,25 +467,25 @@ def calc_diff_S2f_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                        (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw  =  -----------------------------
+        fact_djw  =  -----------------------------,
                      ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                               1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------
+        fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
 
 
                                    (ts + ti)^2 - (w.ts.ti)^2
-        fact_ts_djw_dti  =  ts^2 -----------------------------
+        fact_ts_djw_dti  =  ts^2 -----------------------------,
                                  ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
@@ -477,15 +506,15 @@ def calc_S2f_tf_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2, ts}.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                                 (tf + ti)^2 - (w.tf.ti)^2
-        fact_djw_dtf  =  ti^2 -----------------------------
+        fact_djw_dtf  =  ti^2 -----------------------------,
                               ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
@@ -503,40 +532,40 @@ def calc_diff_S2f_tf_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                           (tf + ti)^2 - (w.tf.ti)^2
-        fact_tf_djw  =  -----------------------------
+        fact_tf_djw  =  -----------------------------,
                         ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                           (ts + ti)^2 - (w.ts.ti)^2
-        fact_ts_djw  =  -----------------------------
+        fact_ts_djw  =  -----------------------------,
                         ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                               1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------
+        fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
 
 
                                    (tf + ti)^2 - (w.tf.ti)^2
-        fact_tf_djw_dti  =  tf^2 -----------------------------
+        fact_tf_djw_dti  =  tf^2 -----------------------------,
                                  ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                                    (ts + ti)^2 - (w.ts.ti)^2
-        fact_ts_djw_dti  =  ts^2 -----------------------------
+        fact_ts_djw_dti  =  ts^2 -----------------------------,
                                  ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                                 (tf + ti)^2 - (w.tf.ti)^2
-        fact_djw_dtf  =  ti^2 -----------------------------
+        fact_djw_dtf  =  ti^2 -----------------------------,
                               ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
@@ -564,10 +593,10 @@ def calc_S2f_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2s, ts}.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
@@ -584,25 +613,25 @@ def calc_diff_S2f_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                        (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw  =  -----------------------------
+        fact_djw  =  -----------------------------,
                      ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                               1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------
+        fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
 
 
                                    (ts + ti)^2 - (w.ts.ti)^2
-        fact_te_djw_dti  =  ts^2 -----------------------------
+        fact_te_djw_dti  =  ts^2 -----------------------------,
                                  ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
@@ -622,15 +651,15 @@ def calc_S2f_tf_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2s, ts}.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                                 (tf + ti)^2 - (w.tf.ti)^2
-        fact_djw_dtf  =  ti^2 -----------------------------
+        fact_djw_dtf  =  ti^2 -----------------------------,
                               ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
@@ -648,40 +677,40 @@ def calc_diff_S2f_tf_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are:
+    Replicated calculations are
 
                           (tf + ti)^2 - (w.tf.ti)^2
-        fact_tf_djw  =  -----------------------------
+        fact_tf_djw  =  -----------------------------,
                         ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                           (ts + ti)^2 - (w.ts.ti)^2
-        fact_ts_djw  =  -----------------------------
+        fact_ts_djw  =  -----------------------------,
                         ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                               1 - (w.ti)^2
-        fact_ti_djw_dti  =  ----------------
+        fact_ti_djw_dti  =  ----------------,
                             (1 + (w.ti)^2)^2
 
 
                                    (tf + ti)^2 - (w.tf.ti)^2
-        fact_tf_djw_dti  =  tf^2 -----------------------------
+        fact_tf_djw_dti  =  tf^2 -----------------------------,
                                  ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                                    (ts + ti)^2 - (w.ts.ti)^2
-        fact_ts_djw_dti  =  ts^2 -----------------------------
+        fact_ts_djw_dti  =  ts^2 -----------------------------,
                                  ((ts + ti)^2 + (w.ts.ti)^2)^2
 
 
                                 (tf + ti)^2 - (w.tf.ti)^2
-        fact_djw_dtf  =  ti^2 -----------------------------
+        fact_djw_dtf  =  ti^2 -----------------------------,
                               ((tf + ti)^2 + (w.tf.ti)^2)^2
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
-        fact_djw_dts  =  ti^2 -----------------------------
+        fact_djw_dts  =  ti^2 -----------------------------.
                               ((ts + ti)^2 + (w.ts.ti)^2)^2
     """
 
