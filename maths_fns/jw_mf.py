@@ -564,7 +564,7 @@ def calc_ellipsoid_S2_te_djw_dDj(data, params, j):
 
 
 # Original Oj partial derivative.
-###################################
+#################################
 
 # {} with diffusion parameters.
 
@@ -784,7 +784,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_djw_dDj(data, params, j):
 
 
 # Extended Oj partial derivative.
-###################################
+#################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
@@ -1034,7 +1034,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_djw_dDj(data, params, j):
 
 
 # Extended 2 Oj partial derivative.
-#####################################
+###################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
@@ -1885,7 +1885,7 @@ def calc_ellipsoid_S2_te_d2jw_dDjdDk(data, params, j, k):
 
 
 # Original Dj - Oj partial derivative.
-########################################
+######################################
 
 
 # {} with diffusion parameters.
@@ -1937,7 +1937,7 @@ def calc_diff_S2_d2jw_dDjdOj(data, params, j, k):
     The model-free Hessian is
 
                          _n_
-         d2J(w)     2    \   dci    dti     1 - (w.ti)^2
+         d2J(w)     2    \   dci   dti     1 - (w.ti)^2
         -------  =  - S2  >  --- . --- . ----------------.
         dDj.dOj     5    /__ dOj   dDj   (1 + (w.ti)^2)^2
                          i=m
@@ -2134,7 +2134,7 @@ def calc_ellipsoid_S2_te_d2jw_dDjdte(data, params, j, k):
 
 
 # Original Oj - Ok partial derivative.
-##########################################
+######################################
 
 # {} with diffusion parameters.
 
@@ -2199,7 +2199,7 @@ def calc_diff_S2_te_d2jw_dOjdOk(data, params, j, k):
 
 
 # Original Oj - S2 partial derivative.
-########################################
+######################################
 
 # {S2} with diffusion parameters.
 
@@ -2243,7 +2243,7 @@ def calc_diff_S2_te_d2jw_dOjdS2(data, params, j, k):
 
 
 # Original Oj - te partial derivative.
-########################################
+######################################
 
 # {S2, te} with diffusion parameters.
 
@@ -2406,9 +2406,9 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk(data, params, j, k):
                                                                            ((ts + ti)^2 + (w.ts.ti)^2)^3              /
 
 
-                                 d2ti   /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
-                             +  ------- | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- |.
-                                dDj.dDk \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 /
+                                 d2ti   /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ \ 
+                             +  ------- | S2 ----------------  +  (1 - S2f)tf^2 -----------------------------  +  (S2f - S2)ts^2 ----------------------------- | |.
+                                dDj.dDk \    (1 + (w.ti)^2)^2                   ((tf + ti)^2 + (w.tf.ti)^2)^2                    ((ts + ti)^2 + (w.ts.ti)^2)^2 / /
     """
 
     # First component.
@@ -2469,7 +2469,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk(data, params, j, k):
 
 
 # Extended Dj - Oj partial derivative.
-########################################
+######################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
@@ -2781,7 +2781,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts(data, params, j, k):
 
 
 # Extended Oj - Ok partial derivative.
-##########################################
+######################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
@@ -2827,7 +2827,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk(data, params, j, k):
 
 
 # Extended Oj - S2 partial derivative.
-########################################
+######################################
 
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with diffusion parameters.
 
@@ -2852,7 +2852,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdS2(data, params, j, k):
 
 
 # Extended Oj - S2f partial derivative.
-#########################################
+#######################################
 
 # {S2f, S2, ts} with diffusion parameters.
 
@@ -2898,7 +2898,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f(data, params, j, k):
 
 
 # Extended Oj - tf partial derivative.
-########################################
+######################################
 
 # {S2f, tf, S2, ts} with diffusion parameters.
 
@@ -2923,7 +2923,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf(data, params, j, k):
 
 
 # Extended Oj - ts partial derivative.
-########################################
+######################################
 
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with diffusion parameters.
 
@@ -3226,7 +3226,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk(data, params, j, k):
 
 
 # Extended 2 Dj - Oj partial derivative.
-##########################################
+########################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
@@ -3542,7 +3542,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts(data, params, j, k):
 
 
 # Extended 2 Oj - Ok partial derivative.
-############################################
+########################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
@@ -3588,7 +3588,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk(data, params, j, k):
 
 
 # Extended 2 Oj - S2f partial derivative.
-###########################################
+#########################################
 
 # {S2f, S2s, ts} with diffusion parameters.
 
@@ -3634,7 +3634,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
 
 
 # Extended 2 Oj - S2s partial derivative.
-###########################################
+#########################################
 
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with diffusion parameters.
 
@@ -3659,7 +3659,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2s(data, params, j, k):
 
 
 # Extended 2 Oj - tf partial derivative.
-##########################################
+########################################
 
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
@@ -3684,7 +3684,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf(data, params, j, k):
 
 
 # Extended 2 Oj - ts partial derivative.
-##########################################
+########################################
 
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with diffusion parameters.
 
