@@ -4217,6 +4217,18 @@ This should securely login into the remote machine without asking for a password
 
 \example{\$ ssh zucchini "chmod 644 \~{}/.ssh/*.pub"}
 
+Finally, if all else fails, make sure the three lines
+
+
+{\footnotesize \begin{verbatim}
+RSAAuthentication yes
+PubkeyAuthentication yes
+AuthorizedKeysFile      .ssh/authorized_keys
+\end{verbatim}}
+
+of the file \quotecmd{sshd\_config} found within the directory \quotecmd{/etc/ssh/} are uncommented and not set to \quotecmd{no} or the \quotecmd{AuthorizedKeysFile} set to another file name.
+
+
 
 
 \newpage

@@ -151,6 +151,17 @@ class Threading:
         $ ssh zucchini "chmod 700 ~/.ssh/"
         $ ssh zucchini "chmod 600 ~/.ssh/*"
         $ ssh zucchini "chmod 644 ~/.ssh/*.pub"
+
+        Finally, if all else fails, make sure the three lines
+        
+        -----
+        RSAAuthentication yes
+        PubkeyAuthentication yes
+        AuthorizedKeysFile      .ssh/authorized_keys
+        -----
+
+        of the file 'sshd_config' found within the directory '/etc/ssh/' are uncommented and not set
+        to 'no' or the 'AuthorizedKeysFile' set to another file name.
         """
 
         # Function intro text.
