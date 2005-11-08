@@ -1617,8 +1617,8 @@ class Mf:
                 # No model-free parameters {}.
                 if data.s2_i == None and data.te_i == None:
                     # Equation.
-                    data.calc_jw_comps = None
-                    data.calc_jw = calc_jw
+                    data.calc_jw_comps =    None
+                    data.calc_jw =          calc_jw
 
                     # Gradient.
                     data.calc_djw_comps = None
@@ -1626,18 +1626,18 @@ class Mf:
                 # Model-free parameters {S2}.
                 elif data.s2_i != None and data.te_i == None:
                     # Equation.
-                    data.calc_jw_comps = None
-                    data.calc_jw = calc_S2_jw
+                    data.calc_jw_comps =    None
+                    data.calc_jw =          calc_S2_jw
 
                     # Gradient.
-                    data.calc_djw_comps = None
+                    data.calc_djw_comps =       None
                     data.calc_djw[data.s2_li] = calc_S2_djw_dS2
 
                 # Model-free parameters {S2, te}.
                 elif data.s2_i != None and data.te_i != None:
                     # Equation.
-                    data.calc_jw_comps = calc_S2_te_jw_comps
-                    data.calc_jw = calc_S2_te_jw
+                    data.calc_jw_comps =    calc_S2_te_jw_comps
+                    data.calc_jw =          calc_S2_te_jw
 
                     # Gradient.
                     data.calc_djw_comps =       calc_S2_te_djw_comps
@@ -1658,8 +1658,8 @@ class Mf:
                 # Diffusion parameters and no model-free parameters {}.
                 if data.s2_i == None and data.te_i == None:
                     # Equation.
-                    data.calc_jw_comps = None
-                    data.calc_jw = calc_jw
+                    data.calc_jw_comps =    None
+                    data.calc_jw =          calc_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_djw_comps
@@ -1726,8 +1726,8 @@ class Mf:
                 # Diffusion parameters and model-free parameters {S2}.
                 elif data.s2_i != None and data.te_i == None:
                     # Equation.
-                    data.calc_jw_comps = None
-                    data.calc_jw = calc_S2_jw
+                    data.calc_jw_comps =    None
+                    data.calc_jw =          calc_S2_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_djw_comps
@@ -1815,8 +1815,8 @@ class Mf:
                 # Diffusion parameters and model-free parameters {S2, te}.
                 elif data.s2_i != None and data.te_i != None:
                     # Equation.
-                    data.calc_jw_comps = calc_S2_te_jw_comps
-                    data.calc_jw = calc_S2_te_jw
+                    data.calc_jw_comps =    calc_S2_te_jw_comps
+                    data.calc_jw =          calc_S2_te_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2_te_djw_comps
