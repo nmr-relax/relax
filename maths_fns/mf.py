@@ -2148,8 +2148,8 @@ class Mf:
                         # Hessian.
                         data.calc_d2jw[data.s2f_li][data.tf_li] = data.calc_d2jw[data.tf_li][data.s2f_li] = calc_S2f_tf_S2_ts_d2jw_dS2fdtf
                         data.calc_d2jw[data.s2f_li][data.ts_li] = data.calc_d2jw[data.ts_li][data.s2f_li] = calc_S2f_S2_ts_d2jw_dS2fdts
-                        data.calc_d2jw[data.tf_li][data.tf_li]  =                                           calc_S2f_tf_S2_ts_d2jw_dtf2
                         data.calc_d2jw[data.s2_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2_li]  = calc_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_d2jw[data.tf_li][data.tf_li]  =                                           calc_S2f_tf_S2_ts_d2jw_dtf2
                         data.calc_d2jw[data.ts_li][data.ts_li]  =                                           calc_S2f_S2_ts_d2jw_dts2
 
                     # Diffusion as a sphere.
