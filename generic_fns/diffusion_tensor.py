@@ -264,6 +264,120 @@ class Diffusion_tensor:
             print "\nFixed:  " + `self.relax.data.diff[run].fixed`
 
 
+    def return_data_name(self, name):
+        """
+        Diffusion tensor parameter string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                                                        |              |                  |
+        | Data type                                              | Object name  | Patterns         |
+        |________________________________________________________|______________|__________________|
+        |                                                        |              |                  |
+        | Global correlation time - tm                           | 'tm'         | 'tm'             |
+        |                                                        |              |                  |
+        | Isotropic component of the diffusion tensor - Diso     | 'Diso'       | '[Dd]iso'        |
+        |                                                        |              |                  |
+        | Anisotropic component of the diffusion tensor - Da     | 'Da'         | '[Dd]a'          |
+        |                                                        |              |                  |
+        | Rhombic component of the diffusion tensor - Dr         | 'Dr'         | '[Dd]r$'         |
+        |                                                        |              |                  |
+        | Eigenvalue associated with the x-axis of the diffusion | 'Dx'         | '[Dd]x'          |
+        | diffusion tensor - Dx                                  |              |                  |
+        |                                                        |              |                  |
+        | Eigenvalue associated with the y-axis of the diffusion | 'Dy'         | '[Dd]y'          |
+        | diffusion tensor - Dy                                  |              |                  |
+        |                                                        |              |                  |
+        | Eigenvalue associated with the z-axis of the diffusion | 'Dz'         | '[Dd]z'          |
+        | diffusion tensor - Dz                                  |              |                  |
+        |                                                        |              |                  |
+        | Diffusion coefficient parallel to the major axis of    | 'Dpar'       | '[Dd]par'        |
+        | the spheroid diffusion tensor - Dpar                   |              |                  |
+        |                                                        |              |                  |
+        | Diffusion coefficient perpendicular to the major axis  | 'Dper'       | '[Dd]per'        |
+        | of the spheroid diffusion tensor - Dper                |              |                  |
+        |                                                        |              |                  |
+        | Ratio of the parallel and perpendicular components of  | 'Dratio'     | '[Dd]ratio'      |
+        | the spheroid diffusion tensor - Dratio                 |              |                  |
+        |                                                        |              |                  |
+        | The first Euler angle of the ellipsoid diffusion       | 'alpha'      | '^a$' or 'alpha' |
+        | tensor - alpha                                         |              |                  |
+        |                                                        |              |                  |
+        | The second Euler angle of the ellipsoid diffusion      | 'beta'       | '^b$' or 'beta'  |
+        | tensor - beta                                          |              |                  |
+        |                                                        |              |                  |
+        | The third Euler angle of the ellipsoid diffusion       | 'gamma'      | '^g$' or 'gamma' |
+        | tensor - gamma                                         |              |                  |
+        |                                                        |              |                  |
+        | The polar angle defining the major axis of the         | 'theta'      | 'theta'          |
+        | spheroid diffusion tensor - theta                      |              |                  |
+        |                                                        |              |                  |
+        | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
+        | spheroid diffusion tensor - phi                        |              |                  |
+        |________________________________________________________|______________|__________________|
+        """
+
+        # Local tm.
+        if search('tm', name):
+            return 'tm'
+
+        # Diso.
+        if search('[Dd]iso', name):
+            return 'Diso'
+
+        # Da.
+        if search('[Dd]a', name):
+            return 'Da'
+
+        # Dr.
+        if search('[Dd]r$', name):
+            return 'Dr'
+
+        # Dx.
+        if search('[Dd]x', name):
+            return 'Dx'
+
+        # Dy.
+        if search('[Dd]y', name):
+            return 'Dy'
+
+        # Dz.
+        if search('[Dd]z', name):
+            return 'Dz'
+
+        # Dpar.
+        if search('[Dd]par', name):
+            return 'Dpar'
+
+        # Dper.
+        if search('[Dd]per', name):
+            return 'Dper'
+
+        # Dratio.
+        if search('[Dd]ratio', name):
+            return 'Dratio'
+
+        # alpha.
+        if search('^a$', name) or search('alpha', name):
+            return 'alpha'
+
+        # beta.
+        if search('^b$', name) or search('beta', name):
+            return 'beta'
+
+        # gamma.
+        if search('^g$', name) or search('gamma', name):
+            return 'gamma'
+
+        # theta.
+        if search('theta', name):
+            return 'theta'
+
+        # phi.
+        if search('phi', name):
+            return 'phi'
+
+
     def sphere(self):
         """Function for setting up spherical diffusion."""
 
