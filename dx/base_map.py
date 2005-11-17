@@ -22,6 +22,7 @@
 
 
 from Numeric import Float64, array, zeros
+from time import asctime, localtime
 
 
 class Base_Map:
@@ -36,7 +37,7 @@ class Base_Map:
         print "Creating the OpenDX .cfg program configuration file.\n"
 
         # Open the file.
-        config_file = self.relax.io.open_write_file(file_name=self.file+".cfg", dir=self.dir)
+        config_file = self.relax.IO.open_write_file(file_name=self.file+".cfg", dir=self.dir)
 
         # Get the text of the configuration file.
         text = self.config_text()
@@ -55,7 +56,7 @@ class Base_Map:
         print "Creating the OpenDX .general file.\n"
 
         # Open the file.
-        general_file = self.relax.io.open_write_file(file_name=self.file+".general", dir=self.dir)
+        general_file = self.relax.IO.open_write_file(file_name=self.file+".general", dir=self.dir)
 
         # Get the text of the configuration file.
         text = self.general_text()
@@ -74,7 +75,7 @@ class Base_Map:
         print "Creating the map.\n"
 
         # Open the file.
-        map_file = self.relax.io.open_write_file(file_name=self.file, dir=self.dir)
+        map_file = self.relax.IO.open_write_file(file_name=self.file, dir=self.dir)
 
         # Generate and write the text of the map.
         self.map_text(map_file)
@@ -105,8 +106,8 @@ class Base_Map:
         print "Creating the OpenDX .general and data files for the given point.\n"
 
         # Open the files.
-        point_file = self.relax.io.open_write_file(file_name=self.point_file, dir=self.dir)
-        point_file_general = self.relax.io.open_write_file(file_name=self.point_file+".general", dir=self.dir)
+        point_file = self.relax.IO.open_write_file(file_name=self.point_file, dir=self.dir)
+        point_file_general = self.relax.IO.open_write_file(file_name=self.point_file+".general", dir=self.dir)
 
         # Calculate the coordinate values.
         coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
@@ -132,7 +133,7 @@ class Base_Map:
         print "Creating the OpenDX .net program file.\n"
 
         # Open the file.
-        program_file = self.relax.io.open_write_file(file_name=self.file+".net", dir=self.dir)
+        program_file = self.relax.IO.open_write_file(file_name=self.file+".net", dir=self.dir)
 
         # Get the parameter names.
         self.get_param_names()
@@ -204,16 +205,16 @@ class Base_Map:
         # Loop over the parameters
         for i in xrange(self.n):
             # Parameter conversion factors.
-            factor = self.return_conversion_factor(param[i])
+            factor = self.return_conversion_factor(self.params[i])
 
             # Parameter units.
-            units = self.return_units(param[i])
+            units = self.return_units(self.params[i])
 
             # Labels.
             if units:
-                self.labels = self.labels + "\"" + params[i] + " (" + units + ")\""
+                self.labels = self.labels + "\"" + self.params[i] + " (" + units + ")\""
             else:
-                self.labels = self.labels + "\"" + params[i] + "\""
+                self.labels = self.labels + "\"" + self.params[i] + "\""
 
             if i < self.n - 1:
                 self.labels = self.labels + " "
@@ -228,7 +229,7 @@ class Base_Map:
             for j in xrange(axis_incs + 1):
                 string = string + "\"" + "%.2f" % vals + "\" "
                 vals = vals + val_inc
-            tick_values.append("{" + string + "}")
+            self.tick_values.append("{" + string + "}")
 
             # Tick locations.
             string = ""
@@ -249,10 +250,12 @@ class Base_Map:
         self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific map bounds, map labels, and calculation functions.
-        self.map_bounds = self.relax.specific_setup.setup('map_bounds', self.function_type)
         self.calculate = self.relax.specific_setup.setup('calculate', self.function_type)
-        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
+        self.map_bounds = self.relax.specific_setup.setup('map_bounds', self.function_type)
         self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
+        self.return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', self.function_type)
+        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
+        self.return_units = self.relax.specific_setup.setup('return_units', self.function_type)
 
         # Function arguments.
         self.run = run

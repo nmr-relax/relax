@@ -52,11 +52,11 @@ class OpenDX:
 
         # Space type.
         if search("^[Ii]so3[Dd]", map_type):
-            if n != 3:
+            if len(params) != 3:
                 raise RelaxError, "The 3D isosurface map requires a 3 parameter model."
 
             # Create the map.
-            self.iso3d.map_space(run, params, index, inc, lower, upper, file, dir, point, point_file, remap)
+            self.iso3d.map_space(run, params, res_num, index, inc, lower, upper, file, dir, point, point_file, remap)
         else:
             raise RelaxError, "The map type '" + map_type + "' is not supported."
 

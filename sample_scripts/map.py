@@ -31,20 +31,21 @@ model_free.select_model(run=name, model=name)
 inc = 5
 from math import pi
 if name == 'm4':
+    params = ['S2', 'te', 'Rex']
     lower = [0, 0, 0]
     upper = [1.0, 1000e-12, 1.0 / (2.0 * pi * 600000000.0)**2]
-    swap = None
     point = None
     #point = [0.263, 526.32e-12, 1.053 / (2.0 * pi * 600000000.0)**2]
 elif name == 'm5':
+    params = ['S2', 'S2f', 'ts']
     lower = [0.5, 0.5, 0]
     upper = [1.0, 1.0, 300e-12]
-    swap = [0, 2, 1]
     point = [0.622, 0.555446, 281.74*1e-12]
 else:
+    params = None
     lower = None
     upper = None
-    swap = None
     point = None
-dx.map(name, res_num=1, inc=inc, lower=lower, upper=upper, swap=swap, point=point)
+dx.map(name, params=params, res_num=1, inc=inc, lower=lower, upper=upper, point=point)
+#dx.map(name, swap=None, res_num=1, inc=inc, lower=lower, upper=upper, point=point)
 dx.execute()

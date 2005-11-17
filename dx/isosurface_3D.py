@@ -22,7 +22,6 @@
 
 
 from Numeric import Float64, zeros
-from time import asctime, localtime
 
 from base_map import Base_Map
 
@@ -94,13 +93,13 @@ class Iso3D(Base_Map):
                 for k in xrange((self.inc + 1)):
                     # Set the parameter values.
                     for l in xrange(self.n):
-                        self.relax.generic.value.set(run=self.run, value=values[l], data_type=params[l], res_num=self.res_num, force=1)
+                        self.relax.generic.value.set(run=self.run, value=values[l], data_type=self.params[l], res_num=self.res_num, force=1)
 
                     # Calculate the function values.
                     self.calculate(run=self.run, res_num=self.res_num, print_flag=0)
 
                     # Get the minimisation statistics for the model.
-                    k, n, chi2 = self.model_stats(instance=self.index, min_instances=1)
+                    k, n, chi2 = self.model_stats(run=self.run, instance=self.index, min_instances=1)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if chi2 > 1e20:
