@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -211,12 +211,6 @@ class Iso3D(Base_Map):
     def program(self):
         """Function for creating the OpenDX program for a 3D map."""
 
-        # Open the file.
-        if self.dir:
-            program_file = open(self.dir + "/" + self.file + ".net", "w")
-        else:
-            program_file = open(self.file + ".net", "w")
-
         # Replacement strings
         #####################
 
@@ -227,13 +221,13 @@ class Iso3D(Base_Map):
 
             # Labels.
             if self.labels:
-                labels = "{\"" + self.labels[self.swap[0]] + "\" \""
-                labels = labels + self.labels[self.swap[1]] + "\" \""
-                labels = labels + self.labels[self.swap[2]] + "\"}"
+                labels = "{\"" + self.labels[0] + "\" \""
+                labels = labels + self.labels[1] + "\" \""
+                labels = labels + self.labels[2] + "\"}"
             else:
-                labels = "{\"" + self.relax.data.res[self.run][self.index].params[self.swap[0]] + "\" \""
-                labels = labels + self.relax.data.res[self.run][self.index].params[self.swap[1]] + "\" \""
-                labels = labels + self.relax.data.res[self.run][self.index].params[self.swap[2]] + "\"}"
+                labels = "{\"" + self.relax.data.res[self.run][self.index].params[0] + "\" \""
+                labels = labels + self.relax.data.res[self.run][self.index].params[1] + "\" \""
+                labels = labels + self.relax.data.res[self.run][self.index].params[2] + "\"}"
 
             # Tick locations.
             tick_locations = []

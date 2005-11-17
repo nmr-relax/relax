@@ -498,24 +498,24 @@ Function for creating a map\index{map} of the given space in OpenDX\index{OpenDX
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{dx.map}(self, run=None, res\_num=None, map\_type=`Iso3D', inc=20, lower=None, upper=None, swap=None, file=`map', dir=`dx', point=None, point\_file=`point', remap=None, labels=None)}
+\textsf{\textbf{dx.map}(self, run=None, params=None, map\_type=`Iso3D', res\_num=None, inc=20, lower=None, upper=None, file=`map', dir=`dx', point=None, point\_file=`point', remap=None)}
 
 
 \subsubsection{Keyword Arguments}
 
 \keyword{run:}  The name of the run. 
 
-\keyword{res\_num:}  The residue number. 
+\keyword{params:}  The parameters to be mapped.\index{map}  This argument should be an array of strings, values of which are described below. 
 
 \keyword{map\_type:}  The type of map\index{map} to create.  For example the default, a 3D isosurface, the type is \quotecmd{Iso3D}.  See below for more details. 
+
+\keyword{res\_num:}  The residue number. 
 
 \keyword{inc:}  The number of increments to map\index{map} in each dimension.  This value controls the resolution of the map.\index{map} 
 
 \keyword{lower:}  The lower bounds\index{parameter!bounds} of the space.  If you wish to change the lower bounds\index{parameter!bounds} of the map\index{map} then supply an array of length equal to the number of parameters in the model.  A lower bound\index{parameter!bounds} for each parameter must be supplied.  If nothing is supplied then the defaults will be used. 
 
 \keyword{upper:}  The upper bounds\index{parameter!bounds} of the space.  If you wish to change the upper bounds\index{parameter!bounds} of the map\index{map} then supply an array of length equal to the number of parameters in the model.  A upper bound\index{parameter!bounds} for each parameter must be supplied.  If nothing is supplied then the defaults will be used. 
-
-\keyword{swap:}  An array used to swap the position of the axes.  The length of the array should be the same as the number of parameters in the model.  The values should be integers specifying which elements to interchange.  For example if swap equals [0, 1, 2] for a three parameter model then the axes are not interchanged whereas if swap equals [1, 0, 2] then the first and second dimensions are interchanged. 
 
 \keyword{file:}  The file name.  All the output files are prefixed with this name.  The main file containing the data points will be called the value of \quotecmd{file}.  The OpenDX\index{OpenDX, the program} program will be called \quotecmd{file.net} and the OpenDX\index{OpenDX, the program} import file will be called \quotecmd{file.general}. 
 
@@ -526,8 +526,6 @@ Function for creating a map\index{map} of the given space in OpenDX\index{OpenDX
 \keyword{point\_file:}  The name of that the point output files will be prefixed with. 
 
 \keyword{remap:}  A user supplied remapping function.  This function will receive the parameter array and must return an array of equal length. 
-
-\keyword{labels:}  The axis labels.  If supplied this argument should be an array of strings of length equal to the number of parameters. 
 
 
 
@@ -554,32 +552,132 @@ Pattern syntax is simply regular expression\index{regular expression} syntax whe
 
 \subsubsection{Examples}
 
-The following commands will generate a map\index{map} of the extended model-free space defined as run \quotecmd{m5} which consists of the parameters \{$S^2_f$, $S^2_s$, $\tau_s$\}.  Files will be output into the directory \quotecmd{dx} and will be prefixed by \quotecmd{map}.  The residue, in this case, is number 6.
+The following commands will generate a map\index{map} of the extended model-free space defined as run \quotecmd{m5} which consists of the parameters \{$S^2$, $S^2_f$, $\tau_s$\}.  Files will be output into the directory \quotecmd{dx} and will be prefixed by \quotecmd{map}.  The residue, in this case, is number 6.
 
 
-\example{relax> dx.map(`m5', 6)}
+\example{relax> dx.map(`m5', [`S2', `S2f', `ts'], 6)}
 
-\example{relax> dx.map(`m5', 6, 20, `map', `dx')}
+\example{relax> dx.map(`m5', [`S2', `S2f', `ts'], 6, 20, `map', `dx')}
 
-\example{relax> dx.map(`m5', res\_num=6, file=`map', dir=`dx')}
+\example{relax> dx.map(`m5', [`S2', `S2f', `ts'], res\_num=6, file=`map', dir=`dx')}
 
-\example{relax> dx.map(run=`m5', res\_num=6, inc=20, file=`map', dir=`dx')}
+\example{relax> dx.map(run=`m5', params=[`S2', `S2f', `ts'], res\_num=6, inc=20, file=`map', dir=`dx')}
 
-\example{relax> dx.map(run=`m5', res\_num=6, type=`Iso3D', inc=20, swap=[0, 1, 2], file=`map', dir=`dx')}
-
-The following commands will swap the $S^2_s$ and $\tau_s$ axes of this map.\index{map}
-
-
-\example{relax> dx.map(`m5', res\_num=6, swap=[0, 2, 1])}
-
-\example{relax> dx.map(run=`m5', res\_num=6, type=`Iso3D', inc=20, swap=[0, 2, 1], file=`map', dir=`dx')}
+\example{relax> dx.map(run=`m5', params=[`S2', `S2f', `ts'], res\_num=6, type=`Iso3D', inc=20, swap=[0, 1, 2], file=`map', dir=`dx')}
 
 To map\index{map} the model-free space \quotecmd{m4} defined by the parameters \{$S^2$, $\tau_e$, $R_{ex}$\}, name the results \quotecmd{test}, and not place the files in a subdirectory, use the following commands (assuming residue 2).
 
 
-\example{relax> dx.map(`m4', res\_num=2, file=`test', dir=None)}
+\example{relax> dx.map(`m4', [`S2', `te', `Rex'], res\_num=2, file=`test', dir=None)}
 
-\example{relax> dx.map(run=`m4', res\_num=2, inc=100, file=`test', dir=None)}
+\example{relax> dx.map(run=`m4', params=[`S2', `te', `Rex'], res\_num=2, inc=100, file=`test', dir=None)}
+
+
+\subsubsection{Regular expression\index{regular expression|textbf}}
+
+The python\index{Python} function \quotecmd{match}, which uses regular expression,\index{regular expression} is used to determine which data type to set values to, therefore various data\_type strings can be used to select the same data type.  Patterns used for matching for specific data types are listed below.
+
+
+This is a short description of python\index{Python} regular expression,\index{regular expression} for more information see the regular expression\index{regular expression} syntax section of the Python\index{Python} Library Reference.  Some of the regular expression\index{regular expression} syntax used in this function is:
+
+
+\begin{description}
+\item[\quotecmd{[]} --]  A sequence\index{sequence} or set of characters to match to a single character.  For example, \quotecmd{[Ss]2} will match both \quotecmd{S2} and \quotecmd{s2}. 
+\item[\quotecmd{\^{}} --]  Match the start of the string. 
+\item[\quotecmd{\$} --]  Match the end of the string.  For example, \quotecmd{\^{}[Ss]2\$} will match \quotecmd{s2} but not \quotecmd{S2f} or \quotecmd{s2s}. 
+\item[\quotecmd{.} --]  Match any character. 
+\item[\quotecmd{x*} --]  Match the character \quotecmd{x} any number of times, for example \quotecmd{x} will match, as will \quotecmd{xxxxx} 
+\item[\quotecmd{.*} --]  Match any sequence\index{sequence} of characters of any length. 
+\end{description}
+
+
+Importantly, do not supply a string for the data type containing regular expression.\index{regular expression}  The regular expression\index{regular expression} is implemented so that various strings can be supplied which all match the same data type.
+
+
+
+\subsubsection{Diffusion tensor\index{diffusion!tensor|textbf} parameter string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Global correlation time\index{correlation time} - $\tau_m$ & \quotecmd{tm} & \quotecmd{tm} \\
+ &  &  \\
+Isotropic component of the diffusion tensor\index{diffusion!tensor} - $\Diff_{iso}$ & \quotecmd{Diso} & \quotecmd{[Dd]iso} \\
+ &  &  \\
+Anisotropic component of the diffusion tensor\index{diffusion!tensor} - $\Diff_a$ & \quotecmd{Da} & \quotecmd{[Dd]a} \\
+ &  &  \\
+Rhombic component of the diffusion tensor\index{diffusion!tensor} - $\Diff_r$ & \quotecmd{Dr} & \quotecmd{[Dd]r\$} \\
+ &  &  \\
+Eigenvalue associated with the x-axis of the diffusion & \quotecmd{Dx} & \quotecmd{[Dd]x} \\
+diffusion tensor - $\Diff_x$ &  &  \\
+ &  &  \\
+Eigenvalue associated with the y-axis of the diffusion & \quotecmd{Dy} & \quotecmd{[Dd]y} \\
+diffusion tensor - $\Diff_y$ &  &  \\
+ &  &  \\
+Eigenvalue associated with the z-axis of the diffusion & \quotecmd{Dz} & \quotecmd{[Dd]z} \\
+diffusion tensor - $\Diff_z$ &  &  \\
+ &  &  \\
+Diffusion coefficient parallel to the major axis of & \quotecmd{Dpar} & \quotecmd{[Dd]par} \\
+the spheroid\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} - $\Diff_\Par$ &  &  \\
+ &  &  \\
+Diffusion coefficient perpendicular to the major axis & \quotecmd{Dper} & \quotecmd{[Dd]per} \\
+of the spheroid\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} - $\Diff_\Per$ &  &  \\
+ &  &  \\
+Ratio of the parallel and perpendicular components of & \quotecmd{Dratio} & \quotecmd{[Dd]ratio} \\
+the spheroid\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} - $\Diff_{ratio}$ &  &  \\
+ &  &  \\
+The first Euler angle\index{angles}\index{Euler angles} of the ellipsoid\index{diffusion!ellipsoid (asymmetric)} diffusion & \quotecmd{alpha} & \quotecmd{\^{}a\$} or \quotecmd{alpha} \\
+tensor - $\alpha$ &  &  \\
+ &  &  \\
+The second Euler angle\index{angles}\index{Euler angles} of the ellipsoid\index{diffusion!ellipsoid (asymmetric)} diffusion & \quotecmd{beta} & \quotecmd{\^{}b\$} or \quotecmd{beta} \\
+tensor - $\beta$ &  &  \\
+ &  &  \\
+The third Euler angle\index{angles}\index{Euler angles} of the ellipsoid\index{diffusion!ellipsoid (asymmetric)} diffusion & \quotecmd{gamma} & \quotecmd{\^{}g\$} or \quotecmd{gamma} \\
+tensor - $\gamma$ &  &  \\
+ &  &  \\
+The polar angle\index{angles} defining the major axis of the & \quotecmd{theta} & \quotecmd{theta} \\
+spheroid diffusion tensor\index{diffusion!tensor} - $\theta$ &  &  \\
+ &  &  \\
+The azimuthal angle\index{angles} defining the major axis of the & \quotecmd{phi} & \quotecmd{phi} \\
+spheroid diffusion tensor\index{diffusion!tensor} - $\phi$ &  &  \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+\subsubsection{Model-free data type string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} \\
+ &  &  \\
+Order parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$} \\
+ &  &  \\
+Order parameter $S^2_f$ & \quotecmd{s2f} & \quotecmd{\^{}[Ss]2f\$} \\
+ &  &  \\
+Order parameter $S^2_s$ & \quotecmd{s2s} & \quotecmd{\^{}[Ss]2s\$} \\
+ &  &  \\
+Correlation time $\tau_e$ & \quotecmd{te} & \quotecmd{\^{}te\$} \\
+ &  &  \\
+Correlation time $\tau_f$ & \quotecmd{tf} & \quotecmd{\^{}tf\$} \\
+ &  &  \\
+Correlation time $\tau_s$ & \quotecmd{ts} & \quotecmd{\^{}ts\$} \\
+ &  &  \\
+Chemical exchange & \quotecmd{rex} & \quotecmd{\^{}[Rr]ex\$} or \quotecmd{[Cc]emical[ -\_][Ee]xchange} \\
+ &  &  \\
+Bond length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength} \\
+ &  &  \\
+CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 
 
 

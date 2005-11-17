@@ -264,14 +264,14 @@ class Diffusion_tensor:
             print "\nFixed:  " + `self.relax.data.diff[run].fixed`
 
 
-    def map_bounds(self, run, param, index=None):
+    def map_bounds(self, run, param):
         """The function for creating bounds for the mapping function."""
 
         # Arguments.
         self.run = run
 
         # tm.
-        elif param == 'tm':
+        if param == 'tm':
             bounds = [0, 10.0 * 1e-9]
 
         # {Diso, Dx, Dy, Dz, Dpar, Dper}.

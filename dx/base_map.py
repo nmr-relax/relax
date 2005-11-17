@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,32 +29,79 @@ class Base_Map:
         """The space mapping base class."""
 
 
-    def map_space(self, run, index, n, inc, lower, upper, swap, file, dir, point, point_file, remap, labels):
+    def create_program(self):
+        """Function for creating the OpenDX .net program file."""
+
+        # Print out.
+        print "Creating the OpenDX '.net' program file.\n"
+
+        # Open the file.
+        if self.dir:
+            self.program_file = open(self.dir + "/" + self.file + ".net", "w")
+        else:
+            self.program_file = open(self.file + ".net", "w")
+
+        self.program()
+
+
+    def map_labels(self, param, bounds, inc):
+        """Function for creating labels, tick locations, and tick values for an OpenDX map."""
+
+        # Initialise.
+        axis_incs = 5
+        loc_inc = inc / axis_incs
+
+        # Parameter conversion factors.
+        factor = self.return_conversion_factor(param)
+
+        # Parameter units.
+        units = self.return_units(param)
+
+        # Tick values.
+        vals = bounds[0] / factor
+        val_inc = (bounds[1] - bounds[0]) / (axis_incs * factor)
+
+        # Tick locations.
+        tick_locations = "{"
+        val = 0.0
+        for j in xrange(axis_incs + 1):
+            tick_locations = tick_locations + " " + `val`
+            val = val + loc_inc
+        tick_locations = tick_locations + " }"
+
+        # Tick values.
+        tick_values = "{"
+        for j in xrange(axis_incs + 1):
+            tick_values = tick_values + "\"" + "%.2f" % vals + "\" "
+            vals = vals + val_inc
+        tick_values = tick_values + "}"
+
+        return units, tick_locations, tick_values
+
+
+    def map_space(self, run, params, index, inc, lower, upper, file, dir, point, point_file, remap):
         """Generic function for mapping a space."""
+
+        # Initialise.
+        #############
 
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific map bounds, map labels, and calculation functions.
         self.map_bounds = self.relax.specific_setup.setup('map_bounds', function_type)
-        self.map_labels = self.relax.specific_setup.setup('map_labels', function_type, raise_error=0)
         self.calculate = self.relax.specific_setup.setup('calculate', function_type)
 
         # Function arguments.
         self.run = run
+        self.params = params
         self.index = index
-        self.n = n
+        self.n = len(params)
         self.inc = inc
-        self.swap = swap
         self.file = file
         self.dir = dir
         self.point_file = point_file
         self.remap = remap
-        self.labels = labels
-
-        # Axis swapping.
-        if self.swap == None:
-            self.swap = range(self.n)
 
         # Points.
         if point != None:
@@ -66,21 +113,30 @@ class Base_Map:
         # The OpenDX directory.
         self.relax.IO.mkdir(self.dir, print_flag=0)
 
-        # Get the map bounds.
-        self.bounds = self.map_bounds(self.run, self.index)
+        # Get the default map bounds.
+        self.bounds = zeros((self.n, 2), Float64)
+        for i in xrange(self.n):
+            self.bounds[i] = self.map_bounds(self.run, self.params[i])
+
+        # Lower bounds.
         if lower != None:
             self.bounds[:, 0] = array(lower, Float64)
+
+        # Upper bounds.
         if upper != None:
             self.bounds[:, 1] = array(upper, Float64)
 
         # Setup the step sizes.
         self.step_size = zeros(self.n, Float64)
-        for i in xrange(self.n):
-            self.step_size[i] = (self.bounds[i, 1] - self.bounds[i, 0]) / self.inc
+        self.step_size = (self.bounds[:, 1] - self.bounds[:, 0]) / self.inc
+
+
+        # Get the parameter names.
+        self.get_param_names()
+
 
         # Create the OpenDX .net program file.
-        print "Creating the OpenDX '.net' program file.\n"
-        self.program()
+        self.create_program()
 
         # Create the OpenDX .cfg program configuration file.
         print "Creating the OpenDX '.cfg' program configuration file.\n"

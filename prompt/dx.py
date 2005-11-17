@@ -23,7 +23,10 @@
 import sys
 from types import FunctionType
 
+from doc_string import regexp_doc
 import help
+from generic_fns.diffusion_tensor import Diffusion_tensor
+from specific_fns.model_free import Model_free
 
 
 class OpenDX:
@@ -89,7 +92,7 @@ class OpenDX:
         self.__relax__.generic.opendx.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
 
 
-    def map(self, run=None, res_num=None, map_type="Iso3D", inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
+    def map(self, run=None, params=None, map_type="Iso3D", res_num=None, inc=20, lower=None, upper=None, file="map", dir="dx", point=None, point_file="point", remap=None):
         """Function for creating a map of the given space in OpenDX format.
 
         Keyword Arguments
@@ -97,10 +100,13 @@ class OpenDX:
 
         run:  The name of the run.
 
-        res_num:  The residue number.
+        params:  The parameters to be mapped.  This argument should be an array of strings, values
+        of which are described below.
 
         map_type:  The type of map to create.  For example the default, a 3D isosurface, the type is
         'Iso3D'.  See below for more details.
+
+        res_num:  The residue number.
 
         inc:  The number of increments to map in each dimension.  This value controls the resolution
         of the map.
@@ -114,12 +120,6 @@ class OpenDX:
         then supply an array of length equal to the number of parameters in the model.  A upper
         bound for each parameter must be supplied.  If nothing is supplied then the defaults will
         be used.
-
-        swap:  An array used to swap the position of the axes.  The length of the array should be
-        the same as the number of parameters in the model.  The values should be integers specifying
-        which elements to interchange.  For example if swap equals [0, 1, 2] for a three parameter
-        model then the axes are not interchanged whereas if swap equals [1, 0, 2] then the first and
-        second dimensions are interchanged.
 
         file:  The file name.  All the output files are prefixed with this name.  The main file
         containing the data points will be called the value of 'file'.  The OpenDX program will be
@@ -135,9 +135,6 @@ class OpenDX:
 
         remap:  A user supplied remapping function.  This function will receive the parameter array
         and must return an array of equal length.
-
-        labels:  The axis labels.  If supplied this argument should be an array of strings of length
-        equal to the number of parameters.
 
 
         Map type
@@ -161,53 +158,58 @@ class OpenDX:
         ~~~~~~~~
 
         The following commands will generate a map of the extended model-free space defined as run
-        'm5' which consists of the parameters {S2f, S2s, ts}.  Files will be output into the
+        'm5' which consists of the parameters {S2, S2f, ts}.  Files will be output into the
         directory 'dx' and will be prefixed by 'map'.  The residue, in this case, is number 6.
 
-        relax> dx.map('m5', 6)
-        relax> dx.map('m5', 6, 20, 'map', 'dx')
-        relax> dx.map('m5', res_num=6, file='map', dir='dx')
-        relax> dx.map(run='m5', res_num=6, inc=20, file='map', dir='dx')
-        relax> dx.map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 1, 2], file='map',
-                      dir='dx')
-
-
-        The following commands will swap the S2s and ts axes of this map.
-
-        relax> dx.map('m5', res_num=6, swap=[0, 2, 1])
-        relax> dx.map(run='m5', res_num=6, type='Iso3D', inc=20, swap=[0, 2, 1], file='map',
-                      dir='dx')
+        relax> dx.map('m5', ['S2', 'S2f', 'ts'], 6)
+        relax> dx.map('m5', ['S2', 'S2f', 'ts'], 6, 20, 'map', 'dx')
+        relax> dx.map('m5', ['S2', 'S2f', 'ts'], res_num=6, file='map', dir='dx')
+        relax> dx.map(run='m5', params=['S2', 'S2f', 'ts'], res_num=6, inc=20, file='map', dir='dx')
+        relax> dx.map(run='m5', params=['S2', 'S2f', 'ts'], res_num=6, type='Iso3D', inc=20,
+                      swap=[0, 1, 2], file='map', dir='dx')
 
 
         To map the model-free space 'm4' defined by the parameters {S2, te, Rex}, name the results
         'test', and not place the files in a subdirectory, use the following commands (assuming
         residue 2).
 
-        relax> dx.map('m4', res_num=2, file='test', dir=None)
-        relax> dx.map(run='m4', res_num=2, inc=100, file='test', dir=None)
+        relax> dx.map('m4', ['S2', 'te', 'Rex'], res_num=2, file='test', dir=None)
+        relax> dx.map(run='m4', params=['S2', 'te', 'Rex'], res_num=2, inc=100, file='test',
+                      dir=None)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "map("
             text = text + "run=" + `run`
-            text = text + ", res_num=" + `res_num`
+            text = text + ", params=" + `params`
             text = text + ", map_type=" + `map_type`
+            text = text + ", res_num=" + `res_num`
             text = text + ", inc=" + `inc`
             text = text + ", lower=" + `lower`
             text = text + ", upper=" + `upper`
-            text = text + ", swap=" + `swap`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", point=" + `point`
             text = text + ", point_file=" + `point_file`
-            text = text + ", remap=" + `remap`
-            text = text + ", labels=" + `labels` + ")"
+            text = text + ", remap=" + `remap` + ")"
             print text
 
         # The run argument.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
+
+        # The parameters to map.
+        if type(params) != list:
+            raise RelaxListError, ('parameters', params)
+        num_params = len(params)
+        for i in xrange(num_params):
+            if type(params[i]) != str:
+                raise RelaxListStrError, ('parameters', params)
+
+        # Space type.
+        if type(map_type) != str:
+            raise RelaxStrError, ('map type', map_type)
 
         # The residue number.
         if type(res_num) != int:
@@ -223,6 +225,8 @@ class OpenDX:
         if lower != None:
             if type(lower) != list:
                 raise RelaxListError, ('lower bounds', lower)
+            if len(lower) != num_params:
+                raise RelaxLenError, ('lower bounds', num_params)
             for i in xrange(len(lower)):
                 if type(lower[i]) != int and type(lower[i]) != float:
                     raise RelaxListNumError, ('lower bounds', lower)
@@ -231,17 +235,11 @@ class OpenDX:
         if upper != None:
             if type(upper) != list:
                 raise RelaxListError, ('upper bounds', upper)
+            if len(upper) != num_params:
+                raise RelaxLenError, ('upper bounds', num_params)
             for i in xrange(len(upper)):
                 if type(upper[i]) != int and type(upper[i]) != float:
                     raise RelaxListNumError, ('upper bounds', upper)
-
-        # Axes swapping.
-        if swap != None:
-            if type(swap) != list:
-                raise RelaxListError, ('axes swapping', swap)
-            for i in xrange(len(swap)):
-                if type(swap[i]) != int:
-                    raise RelaxListIntError, ('axes swapping', swap)
 
         # File name.
         if type(file) != str:
@@ -255,6 +253,8 @@ class OpenDX:
         if point != None:
             if type(point) != list:
                 raise RelaxListError, ('point', point)
+            if len(point) != num_params:
+                raise RelaxLenError, ('point', point)
             if type(point_file) != str:
                 raise RelaxStrError, ('point file name', point_file)
             for i in xrange(len(point)):
@@ -265,17 +265,14 @@ class OpenDX:
         if remap != None and type(remap) is not FunctionType:
             raise RelaxFunctionError, ('remap function', remap)
 
-        # Axis labels.
-        if labels != None:
-            if type(labels) != list:
-                raise RelaxListError, ('axis labels', labels)
-            for i in xrange(len(labels)):
-                if type(labels[i]) != str:
-                    raise RelaxListStrError, ('axis labels', labels)
-
-        # Space type.
-        if type(map_type) != str:
-            raise RelaxStrError, ('map type', map_type)
-
         # Execute the functional code.
-        self.__relax__.generic.opendx.map(run=run, res_num=res_num, map_type=map_type, inc=inc, lower=lower, upper=upper, swap=swap, file=file, dir=dir, point=point, point_file=point_file, remap=remap, labels=labels)
+        self.__relax__.generic.opendx.map(run=run, params=params, map_type=map_type, res_num=res_num, inc=inc, lower=lower, upper=upper, file=file, dir=dir, point=point, point_file=point_file, remap=remap)
+
+
+    # Docstring modification.
+    #########################
+
+    # Write function.
+    map.__doc__ = map.__doc__ + "\n\n" + regexp_doc() + "\n"
+    map.__doc__ = map.__doc__ + Diffusion_tensor.return_data_name.__doc__ + "\n\n"
+    map.__doc__ = map.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"

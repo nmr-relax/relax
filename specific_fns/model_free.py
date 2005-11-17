@@ -1824,7 +1824,7 @@ class Model_free(Common_functions):
         return A, b
 
 
-    def map_bounds(self, run, param, index=None):
+    def map_bounds(self, run, param):
         """The function for creating bounds for the mapping function."""
 
         # Arguments.
@@ -1851,60 +1851,6 @@ class Model_free(Common_functions):
             bounds = [-100 * 1e-6, -300 * 1e-6]
 
         return bounds
-
-
-    def map_labels(self, run, index, params, bounds, swap, inc):
-        """Function for creating labels, tick locations, and tick values for an OpenDX map."""
-
-        # Initialise.
-        labels = "{"
-        tick_locations = []
-        tick_values = []
-        n = len(params)
-        axis_incs = 5
-        loc_inc = inc / axis_incs
-
-        # Increment over the model parameters.
-        for i in xrange(n):
-            # Parameter conversion factors.
-            factor = self.return_conversion_factor(params[swap[i]])
-
-            # Parameter units.
-            units = self.return_units(params[swap[i]])
-
-            # Labels.
-            if units:
-                labels = labels + "\"" + params[swap[i]] + " (" + units + ")\""
-            else:
-                labels = labels + "\"" + params[swap[i]] + "\""
-
-            # Tick values.
-            vals = bounds[swap[i], 0] / factor
-            val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / (axis_incs * factor)
-
-            if i < n - 1:
-                labels = labels + " "
-            else:
-                labels = labels + "}"
-
-            # Tick locations.
-            string = "{"
-            val = 0.0
-            for j in xrange(axis_incs + 1):
-                string = string + " " + `val`
-                val = val + loc_inc
-            string = string + " }"
-            tick_locations.append(string)
-
-            # Tick values.
-            string = "{"
-            for j in xrange(axis_incs + 1):
-                string = string + "\"" + "%.2f" % vals + "\" "
-                vals = vals + val_inc
-            string = string + "}"
-            tick_values.append(string)
-
-        return labels, tick_locations, tick_values
 
 
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
@@ -3587,11 +3533,11 @@ class Model_free(Common_functions):
 
         # tm (nanoseconds).
         if object_name == 'tm':
-            units = 'nanoseconds'
+            units = 'ns'
 
         # te, tf, and ts (picoseconds).
         elif object_name in ['te', 'tf', 'ts']:
-            units = 'picoseconds'
+            units = 'ps'
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':

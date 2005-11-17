@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-from Numeric import zeros
 from os import system
-from re import match
+from re import search
 
 from isosurface_3D import Iso3D
 
@@ -38,63 +37,26 @@ class OpenDX:
         self.iso3d = Iso3D(relax)
 
 
-    def map(self, run=None, res_num=None, map_type='Iso3D', inc=20, lower=None, upper=None, swap=None, file="map", dir="dx", point=None, point_file="point", remap=None, labels=None):
+    def map(self, run=None, params=None, map_type='Iso3D', res_num=None, inc=20, lower=None, upper=None, file="map", dir="dx", point=None, point_file="point", remap=None):
         """Function for mapping the given space and creating OpenDX files."""
 
         # Residue index.
         index = None
-        for i in xrange(len(self.relax.data.res[run])):
-            if self.relax.data.res[run][i].num == res_num:
-                index = i
-                break
-        if index == None:
-            raise RelaxNoResError, res_num
-
-        # The number of parameters.
-        n = len(self.relax.data.res[run][index].params)
-
-        # Lower bounds.
-        if lower != None:
-            if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
-
-        # Upper bounds.
-        if upper != None:
-            if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
-
-        # Axes swapping.
-        if swap != None:
-            if len(swap) != n:
-                raise RelaxLenError, ('axes swapping', n)
-            test = zeros(n)
-            for i in xrange(n):
-                if swap[i] >= n:
-                    raise RelaxError, "The integer " + `swap[i]` + " is greater than the final array element."
-                elif swap[i] < 0:
-                    raise RelaxError, "All integers of the swap argument must be positive."
-                test[swap[i]] = 1
-            for i in xrange(n):
-                if test[i] != 1:
-                    raise RelaxError, "The swap argument is invalid (possibly duplicated integer values)."
-
-        # Point.
-        if point != None:
-            if len(point) != n:
-                raise RelaxLenError, ('point', n)
-
-        # Axis labels.
-        if labels != None:
-            if len(labels) != n:
-                raise RelaxLenError, ('axis labels', n)
+        if res_num:
+            for i in xrange(len(self.relax.data.res[run])):
+                if self.relax.data.res[run][i].num == res_num:
+                    index = i
+                    break
+            if index == None:
+                raise RelaxNoResError, res_num
 
         # Space type.
-        if match("^[Ii]so3[Dd]", map_type):
+        if search("^[Ii]so3[Dd]", map_type):
             if n != 3:
                 raise RelaxError, "The 3D isosurface map requires a 3 parameter model."
 
             # Create the map.
-            self.iso3d.map_space(run, index, n, inc, lower, upper, swap, file, dir, point, point_file, remap, labels)
+            self.iso3d.map_space(run, params, index, inc, lower, upper, file, dir, point, point_file, remap)
         else:
             raise RelaxError, "The map type '" + map_type + "' is not supported."
 
