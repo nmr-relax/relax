@@ -264,6 +264,107 @@ class Diffusion_tensor:
             print "\nFixed:  " + `self.relax.data.diff[run].fixed`
 
 
+    def map_bounds(self, run, param, index=None):
+        """The function for creating bounds for the mapping function."""
+
+        # Arguments.
+        self.run = run
+
+        # tm.
+        elif param == 'tm':
+            bounds = [0, 10.0 * 1e-9]
+
+        # {Diso, Dx, Dy, Dz, Dpar, Dper}.
+        if param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
+            bounds = [1e6, 1e7]
+
+        # Da.
+        if param == 'Da':
+            bounds = [-3.0/2.0 * 1e7, 3.0 * 1e7]
+
+        # Dr.
+        elif param == 'Dr':
+            bounds = [0, 1]
+
+        # Dratio.
+        elif param == 'Dratio':
+            bounds = [1.0/3.0, 3.0]
+
+        # theta.
+        elif param == 'theta':
+            bounds = [0, pi]
+
+        # phi.
+        elif param == 'phi':
+            bounds = [0, 2*pi]
+
+        # alpha.
+        elif param == 'alpha':
+            bounds = [0, 2*pi]
+
+        # beta.
+        elif param == 'beta':
+            bounds = [0, pi]
+
+        # gamma.
+        elif param == 'gamma':
+            bounds = [0, 2*pi]
+
+
+    def map_labels(self, run, index, params, bounds, swap, inc):
+        """Function for creating labels, tick locations, and tick values for an OpenDX map."""
+
+        # Initialise.
+        labels = "{"
+        tick_locations = []
+        tick_values = []
+        n = len(params)
+        axis_incs = 5
+        loc_inc = inc / axis_incs
+
+        # Increment over the model parameters.
+        for i in xrange(n):
+            # Parameter conversion factors.
+            factor = self.return_conversion_factor(params[swap[i]])
+
+            # Parameter units.
+            units = self.return_units(params[swap[i]])
+
+            # Labels.
+            if units:
+                labels = labels + "\"" + params[swap[i]] + " (" + units + ")\""
+            else:
+                labels = labels + "\"" + params[swap[i]] + "\""
+
+            # Tick values.
+            vals = bounds[swap[i], 0] / factor
+            val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / (axis_incs * factor)
+
+            if i < n - 1:
+                labels = labels + " "
+            else:
+                labels = labels + "}"
+
+            # Tick locations.
+            string = "{"
+            val = 0.0
+            for j in xrange(axis_incs + 1):
+                string = string + " " + `val`
+                val = val + loc_inc
+            string = string + " }"
+            tick_locations.append(string)
+
+            # Tick values.
+            string = "{"
+            for j in xrange(axis_incs + 1):
+                string = string + "\"" + "%.2f" % vals + "\" "
+                vals = vals + val_inc
+            string = string + "}"
+            tick_values.append(string)
+
+        return labels, tick_locations, tick_values
+
+
     def return_data_name(self, name):
         """
         Diffusion tensor parameter string matching patterns

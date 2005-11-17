@@ -1824,42 +1824,31 @@ class Model_free(Common_functions):
         return A, b
 
 
-    def map_bounds(self, run, index):
+    def map_bounds(self, run, param, index=None):
         """The function for creating bounds for the mapping function."""
 
         # Arguments.
         self.run = run
 
-        # Determine the parameter set type.
-        #self.param_set = self.determine_param_set_type()
+        # {S2, S2f, S2s}.
+        if search('^S2', param):
+            bounds = [0, 1]
 
-        # Parameter array.
-        params = self.relax.data.res[run][index].params
+        # {tm, te, tf, ts}.
+        elif search('^t', param):
+            bounds = [0, 1e-8]
 
-        # Bounds array.
-        bounds = zeros((len(params), 2), Float64)
+        # Rex.
+        elif param == 'Rex':
+            bounds = [0, 30.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2]
 
-        # Loop over the parameters.
-        for i in xrange(len(params)):
-            # {S2, S2f, S2s}.
-            if match('S2', params[i]):
-                bounds[i] = [0, 1]
+        # Bond length.
+        elif param == 'r':
+            bounds = [1.0 * 1e-10, 1.1 * 1e-10]
 
-            # {tm, te, tf, ts}.
-            elif match('t', params[i]):
-                bounds[i] = [0, 1e-8]
-
-            # Rex.
-            elif params[i] == 'Rex':
-                bounds[i] = [0, 30.0 / (2.0 * pi * self.relax.data.res[run][index].frq[0])**2]
-
-            # Bond length.
-            elif params[i] == 'r':
-                bounds[i] = [1.0 * 1e-10, 1.1 * 1e-10]
-
-            # CSA.
-            elif params[i] == 'CSA':
-                bounds[i] = [-100 * 1e-6, -300 * 1e-6]
+        # CSA.
+        elif param == 'CSA':
+            bounds = [-100 * 1e-6, -300 * 1e-6]
 
         return bounds
 
