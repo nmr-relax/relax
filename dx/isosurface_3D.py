@@ -34,23 +34,13 @@ class Iso3D(Base_Map):
         self.relax = relax
 
 
-    def config(self):
-        """Function for creating the OpenDX program configuration file."""
-
-        # Open the file.
-        if self.dir:
-            config_file = open(self.dir + "/" + self.file + ".cfg", "w")
-        else:
-            config_file = open(self.file + ".cfg", "w")
-
-        # Get the date.
-        date = self.get_date()
+    def config_text(self):
+        """Function for creating the text of the OpenDX program configuration file."""
 
         # Generate the text.
-        ####################
         text = """//
 //
-// time: """ + date + """
+// time: """ + self.date + """
 //
 // version: 3.2.0 (format), 4.3.2 (DX)
 //
@@ -74,208 +64,117 @@ class Iso3D(Base_Map):
 // window: position = (0.0000,0.0400), size = 0.9929x0.9276
 """
 
-        config_file.write(text)
-
-        # Close the file.
-        config_file.close()
+        # Return the text.
+        return text
 
 
-    def create_map(self):
-        """Function for creating a 3D map."""
-
-        # Map file.
-        if self.dir:
-            map_file = open(self.dir + "/" + self.file, "w")
-        else:
-            map_file = open(self.file, "w")
+    def map_text(self, map_file):
+        """Function for creating the text of a 3D map."""
 
         # Initialise.
         values = zeros(3, Float64)
-        self.percent = 0.0
-        self.percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
-        print "%-10s%8.3f%-1s" % ("Progress:", self.percent, "%")
+        percent = 0.0
+        percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
+        print "%-10s%8.3f%-1s" % ("Progress:", percent, "%")
 
-        # Create the map.
-        values[self.swap[0]] = self.bounds[self.swap[0], 0]
+        # Initial value of the first parameter.
+        values[0] = self.bounds[0, 0]
+
+        # Loop over the first parameter.
         for i in xrange((self.inc + 1)):
-            values[self.swap[1]] = self.bounds[self.swap[1], 0]
-            for j in xrange((self.inc + 1)):
-                values[self.swap[2]] = self.bounds[self.swap[2], 0]
-                for k in xrange((self.inc + 1)):
-                    # Remap function.
-                    if self.remap:
-                        values = self.remap(values)
+            # Initial value of the second parameter.
+            values[1] = self.bounds[1, 0]
 
+            # Loop over the second parameter.
+            for j in xrange((self.inc + 1)):
+                # Initial value of the third parameter.
+                values[2] = self.bounds[2, 0]
+
+                # Loop over the third parameter.
+                for k in xrange((self.inc + 1)):
                     # Set the parameter values.
                     for l in xrange(self.n):
-                        self.relax.generic.value.set(run=self.run, value=values[l], data_type=self.relax.data.res[self.run][self.index].params[l], res_num=self.relax.data.res[self.run][self.index].num, force=1)
+                        self.relax.generic.value.set(run=self.run, value=values[l], data_type=params[l], res_num=self.res_num, force=1)
 
                     # Calculate the function values.
-                    self.calculate(run=self.run, res_num=self.relax.data.res[self.run][self.index].num, print_flag=0)
+                    self.calculate(run=self.run, res_num=self.res_num, print_flag=0)
+
+                    # Get the minimisation statistics for the model.
+                    k, n, chi2 = self.model_stats(instance=self.index, min_instances=1)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
-                    if self.relax.data.res[self.run][self.index].chi2 > 1e20:
+                    if chi2 > 1e20:
                         map_file.write("%30f\n" % 1e20)
                     else:
-                        map_file.write("%30f\n" % self.relax.data.res[self.run][self.index].chi2)
+                        map_file.write("%30f\n" % chi2)
 
-                    values[self.swap[2]] = values[self.swap[2]] + self.step_size[self.swap[2]]
-                self.percent = self.percent + self.percent_inc
-                print "%-10s%8.3f%-8s%-8g" % ("Progress:", self.percent, "%,  " + `values` + ",  f(x): ", self.relax.data.res[self.run][self.index].chi2)
-                values[self.swap[1]] = values[self.swap[1]] + self.step_size[self.swap[1]]
-            values[self.swap[0]] = values[self.swap[0]] + self.step_size[self.swap[0]]
+                    # Increment the value of the third parameter.
+                    values[2] = values[2] + self.step_size[2]
 
-        # Close the file.
-        map_file.close()
+                # Progress incrementation and print out.
+                percent = percent + percent_inc
+                print "%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + `values` + ",  f(x): ", chi2)
 
+                # Increment the value of the second parameter.
+                values[1] = values[1] + self.step_size[1]
 
-    def create_point(self):
-        """Function for creating a sphere at a given position within the 3D map.
-
-        The formula used to calculate the coordinate position is:
-
-                            V - L
-            coord =   Inc * -----
-                            U - L
-
-        where:
-            V is the coordinate or parameter value.
-            L is the lower bound value.
-            U is the upper bound value.
-            Inc is the number of increments.
-
-        Both a data file and .general file will be created.
-        """
-
-        # Open the data and .general files.
-        if self.dir:
-            point_file = open(self.dir + "/" + self.point_file, "w")
-            general_file = open(self.dir + "/" + self.point_file + ".general", "w")
-        else:
-            point_file = open(self.point_file, "w")
-            general_file = open(self.point_file + ".general", "w")
-
-        # Calculate the coordinate values.
-        coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
-        for i in xrange(self.n):
-            point_file.write("%-15.5g" % coords[self.swap[i]])
-        point_file.write("1\n")
-
-        # Generate the import text.
-        general_file.write("file = " + self.point_file + "\n")
-        general_file.write("points = 1\n")
-        general_file.write("format = ascii\n")
-        general_file.write("interleaving = field\n")
-        general_file.write("field = locations, field0\n")
-        general_file.write("structure = 3-vector, scalar\n")
-        general_file.write("type = float, float\n\n")
-        general_file.write("end\n")
-
-        # Close the data and .general files.
-        point_file.close()
-        general_file.close()
+            # Increment the value of the first parameter.
+            values[0] = values[0] + self.step_size[0]
 
 
-    def general(self):
-        """Function for creating the OpenDX .general file for a 3D map."""
-
-        # Open the file.
-        if self.dir:
-            general_file = open(self.dir + "/" + self.file + ".general", "w")
-        else:
-            general_file = open(self.file + ".general", "w")
+    def general_text(self):
+        """Function for creating the text of the OpenDX .general file for a 3D map."""
 
         # Generate the text.
-        general_file.write("file = " + self.file + "\n")
-        general_file.write("grid = " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + "\n")
-        general_file.write("format = ascii\n")
-        general_file.write("interleaving = field\n")
-        general_file.write("majority = row\n")
-        general_file.write("field = data\n")
-        general_file.write("structure = scalar\n")
-        general_file.write("type = float\n")
-        general_file.write("dependency = positions\n")
-        general_file.write("positions = regular, regular, regular, 0, 1, 0, 1, 0, 1\n\n")
-        general_file.write("end\n")
+        text = ""
+        text = text + "file = " + self.file + "\n"
+        text = text + "grid = " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + "\n"
+        text = text + "format = ascii\n"
+        text = text + "interleaving = field\n"
+        text = text + "majority = row\n"
+        text = text + "field = data\n"
+        text = text + "structure = scalar\n"
+        text = text + "type = float\n"
+        text = text + "dependency = positions\n"
+        text = text + "positions = regular, regular, regular, 0, 1, 0, 1, 0, 1\n\n"
+        text = text + "end\n"
 
-        # Close the file.
-        general_file.close()
-
-
-    def get_date(self):
-        """Function for creating a date string."""
-
-        return asctime(localtime())
+        # Return the text.
+        return text
 
 
-    def program(self):
-        """Function for creating the OpenDX program for a 3D map."""
+    def point_text(self):
+        """Function for creating the text of the .general file for the point."""
 
-        # Replacement strings
-        #####################
+        # Generate the import text.
+        text = ""
+        text = text + "file = " + self.point_file + "\n"
+        text = text + "points = 1\n"
+        text = text + "format = ascii\n"
+        text = text + "interleaving = field\n"
+        text = text + "field = locations, field0\n"
+        text = text + "structure = 3-vector, scalar\n"
+        text = text + "type = float, float\n\n"
+        text = text + "end\n"
 
-        # Default labels.
-        if self.map_labels == None or self.labels != None:
-            # Axis increments.
-            axis_incs = 5
-
-            # Labels.
-            if self.labels:
-                labels = "{\"" + self.labels[0] + "\" \""
-                labels = labels + self.labels[1] + "\" \""
-                labels = labels + self.labels[2] + "\"}"
-            else:
-                labels = "{\"" + self.relax.data.res[self.run][self.index].params[0] + "\" \""
-                labels = labels + self.relax.data.res[self.run][self.index].params[1] + "\" \""
-                labels = labels + self.relax.data.res[self.run][self.index].params[2] + "\"}"
-
-            # Tick locations.
-            tick_locations = []
-            for i in xrange(3):
-                string = "{"
-                inc = self.inc / float(axis_incs)
-                val = 0.0
-                for i in xrange(axis_incs + 1):
-                    string = string + " " + `val`
-                    val = val + inc
-                string = string + " }"
-                tick_locations.append(string)
-
-            # Tick values.
-            tick_values = []
-            inc = (self.bounds[:, 1] - self.bounds[:, 0]) / float(axis_incs)
-            for i in xrange(3):
-                vals = self.bounds[self.swap[i], 0] * 1.0
-                string = "{"
-                for j in xrange(axis_incs + 1):
-                    string = string + "\"" + "%.2g" % vals + "\" "
-                    vals = vals + inc[self.swap[i]]
-                string = string + "}"
-                tick_values.append(string)
-
-        # Specific labels.
-        else:
-            labels, tick_locations, tick_values = self.map_labels(self.run, self.index, self.relax.data.res[self.run][self.index].params, self.bounds, self.swap, self.inc)
+        # Return the text.
+        return text
 
 
-        # Corners.
-        corners = "{[0 0 0] [" + `self.inc` + " "  + `self.inc` + " " + `self.inc` + "]}"
+    def program_text(self):
+        """Function for creating the text of the OpenDX program for a 3D map."""
 
         # Image setup.
         image_array1 = "[" + `0.6 * (self.inc + 1.0)` + " " + `0.3 * (self.inc + 1.0)` + " " + `0.6 * (self.inc + 1.0)` + "]"
         image_array2 = "[" + `0.6 * (self.inc + 1.0)` + " " + `0.3 * (self.inc + 1.0)` + " " + `6.0 * (self.inc + 1.0)` + "]"
         image_val = `3.0 * (self.inc + 1.0)`
 
-        # Sphere size.
-        sphere_size = `0.025 * (self.inc + 1.0)`
 
-        # Get the date.
-        date = self.get_date()
+        # Generate the text of the program.
+        ###################################
 
-        # Generate the text.
-        ####################
         text = """//
-// time: """ + date + """
+// time: """ + self.date + """
 //
 // version: 3.2.0 (format), 4.3.2 (DX)
 //
@@ -333,7 +232,7 @@ main_Import_4_out_1 =
     // node Glyph[2]: x = 201, y = 182, inputs = 7, label = Glyph
     // input[2]: defaulting = 0, visible = 1, type = 32, value = "sphere"
     // input[3]: defaulting = 1, visible = 1, type = 5, value = 10.0
-    // input[4]: defaulting = 0, visible = 1, type = 5, value = """ + sphere_size + """
+    // input[4]: defaulting = 0, visible = 1, type = 5, value = """ + self.sphere_size + """
     // input[5]: defaulting = 0, visible = 1, type = 5, value = 0.0
     // page group: Glyph
     //
@@ -647,9 +546,9 @@ main_AutoCamera_2_out_1 =
     ) [instance: 2, cache: 1];
     // 
     // node AutoAxes[2]: x = 175, y = 379, inputs = 19, label = AutoAxes
-    // input[3]: defaulting = 0, visible = 1, type = 16777248, value = """ + labels + """
+    // input[3]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.labels + """
     // input[4]: defaulting = 0, visible = 0, type = 1, value = 30
-    // input[5]: defaulting = 0, visible = 1, type = 16777224, value = """ + corners + """
+    // input[5]: defaulting = 0, visible = 1, type = 16777224, value = """ + self.corners + """
     // input[6]: defaulting = 0, visible = 1, type = 3, value = 1
     // input[7]: defaulting = 1, visible = 0, type = 3, value = 1
     // input[9]: defaulting = 0, visible = 1, type = 3, value = 1
@@ -657,12 +556,12 @@ main_AutoCamera_2_out_1 =
     // input[11]: defaulting = 0, visible = 1, type = 16777248, value = {"background" "grid" "labels" "ticks"}
     // input[12]: defaulting = 0, visible = 0, type = 5, value = 0.4
     // input[13]: defaulting = 0, visible = 0, type = 32, value = "area"
-    // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[0] + """
-    // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[1] + """
-    // input[16]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[2] + """
-    // input[17]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[0] + """
-    // input[18]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[1] + """
-    // input[19]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[2] + """
+    // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[0] + """
+    // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[1] + """
+    // input[16]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[2] + """
+    // input[17]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.tick_values[0] + """
+    // input[18]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.tick_values[1] + """
+    // input[19]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.tick_values[2] + """
     // page group: GreyScene
     //
 main_AutoAxes_2_out_1 = 
@@ -902,9 +801,9 @@ main_AutoCamera_4_out_1 =
     ) [instance: 4, cache: 1];
     // 
     // node AutoAxes[4]: x = 175, y = 379, inputs = 19, label = AutoAxes
-    // input[3]: defaulting = 0, visible = 1, type = 16777248, value = """ + labels + """
+    // input[3]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.labels + """
     // input[4]: defaulting = 0, visible = 0, type = 1, value = 30
-    // input[5]: defaulting = 0, visible = 1, type = 16777224, value = """ + corners + """
+    // input[5]: defaulting = 0, visible = 1, type = 16777224, value = """ + self.corners + """
     // input[6]: defaulting = 0, visible = 1, type = 3, value = 1
     // input[7]: defaulting = 1, visible = 0, type = 3, value = 1
     // input[9]: defaulting = 0, visible = 1, type = 3, value = 1
@@ -912,12 +811,12 @@ main_AutoCamera_4_out_1 =
     // input[11]: defaulting = 0, visible = 1, type = 16777248, value = {"background" "grid" "labels" "ticks"}
     // input[12]: defaulting = 0, visible = 0, type = 5, value = 0.4
     // input[13]: defaulting = 0, visible = 0, type = 32, value = "area"
-    // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[0] + """
-    // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[1] + """
-    // input[16]: defaulting = 0, visible = 1, type = 16777221, value = """ + tick_locations[2] + """
-    // input[17]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[0] + """
-    // input[18]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[1] + """
-    // input[19]: defaulting = 0, visible = 1, type = 16777248, value = """ + tick_values[2] + """
+    // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[0] + """
+    // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[1] + """
+    // input[16]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[2] + """
+    // input[17]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.tick_values[0] + """
+    // input[18]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.tick_values[1] + """
+    // input[19]: defaulting = 0, visible = 1, type = 16777248, value = """ + self.tick_values[2] + """
     // page group: ColourScene
     //
 main_AutoAxes_4_out_1 = 
@@ -1017,8 +916,8 @@ main_Switch_14_out_1 =
     // input[25]: defaulting = 0, visible = 0, type = 32, value = "iso"
     // input[26]: defaulting = 0, visible = 0, type = 32, value = "tiff"
     // input[29]: defaulting = 0, visible = 0, type = 3, value = 0
-    // input[30]: defaulting = 1, visible = 0, type = 16777248, value = """ + labels + """
-    // input[32]: defaulting = 1, visible = 0, type = 16777224, value = """ + corners + """
+    // input[30]: defaulting = 1, visible = 0, type = 16777248, value = """ + self.labels + """
+    // input[32]: defaulting = 1, visible = 0, type = 16777224, value = """ + self.corners + """
     // input[33]: defaulting = 0, visible = 0, type = 3, value = 1
     // input[34]: defaulting = 0, visible = 0, type = 3, value = 0
     // input[36]: defaulting = 0, visible = 0, type = 3, value = 1
@@ -1100,7 +999,7 @@ main_Import_4_in_6 = NULL;
 main_Import_4_out_1 = NULL;
 main_Glyph_2_in_2 = "sphere";
 main_Glyph_2_in_3 = NULL;
-main_Glyph_2_in_4 = """ + sphere_size + """;
+main_Glyph_2_in_4 = """ + self.sphere_size + """;
 main_Glyph_2_in_5 = 0.0;
 main_Glyph_2_in_6 = NULL;
 main_Glyph_2_in_7 = NULL;
@@ -1198,9 +1097,9 @@ main_AutoCamera_2_in_7 = 0;
 main_AutoCamera_2_in_8 = 30.0;
 main_AutoCamera_2_in_9 = "white";
 main_AutoCamera_2_out_1 = NULL;
-main_AutoAxes_2_in_3 = """ + labels + """;
+main_AutoAxes_2_in_3 = """ + self.labels + """;
 main_AutoAxes_2_in_4 = 30;
-main_AutoAxes_2_in_5 = """ + corners + """;
+main_AutoAxes_2_in_5 = """ + self.corners + """;
 main_AutoAxes_2_in_6 = 1;
 main_AutoAxes_2_in_7 = NULL;
 main_AutoAxes_2_in_8 = NULL;
@@ -1209,12 +1108,12 @@ main_AutoAxes_2_in_10 = {[1 1 1] [0.1 0.1 0.1] [0 0 0] [0 0 0]};
 main_AutoAxes_2_in_11 = {"background" "grid" "labels" "ticks"};
 main_AutoAxes_2_in_12 = 0.4;
 main_AutoAxes_2_in_13 = "area";
-main_AutoAxes_2_in_14 = """ + tick_locations[0] + """;
-main_AutoAxes_2_in_15 = """ + tick_locations[1] + """;
-main_AutoAxes_2_in_16 = """ + tick_locations[2] + """;
-main_AutoAxes_2_in_17 = """ + tick_values[0] + """;
-main_AutoAxes_2_in_18 = """ + tick_values[1] + """;
-main_AutoAxes_2_in_19 = """ + tick_values[2] + """;
+main_AutoAxes_2_in_14 = """ + self.tick_locations[0] + """;
+main_AutoAxes_2_in_15 = """ + self.tick_locations[1] + """;
+main_AutoAxes_2_in_16 = """ + self.tick_locations[2] + """;
+main_AutoAxes_2_in_17 = """ + self.tick_values[0] + """;
+main_AutoAxes_2_in_18 = """ + self.tick_values[1] + """;
+main_AutoAxes_2_in_19 = """ + self.tick_values[2] + """;
 main_AutoAxes_2_out_1 = NULL;"""
 
         # Include the sphere.
@@ -1278,9 +1177,9 @@ main_AutoCamera_4_in_7 = 0;
 main_AutoCamera_4_in_8 = 30.0;
 main_AutoCamera_4_in_9 = "black";
 main_AutoCamera_4_out_1 = NULL;
-main_AutoAxes_4_in_3 = """ + labels + """;
+main_AutoAxes_4_in_3 = """ + self.labels + """;
 main_AutoAxes_4_in_4 = 30;
-main_AutoAxes_4_in_5 = """ + corners + """;
+main_AutoAxes_4_in_5 = """ + self.corners + """;
 main_AutoAxes_4_in_6 = 1;
 main_AutoAxes_4_in_7 = NULL;
 main_AutoAxes_4_in_8 = NULL;
@@ -1289,12 +1188,12 @@ main_AutoAxes_4_in_10 = {[0.05 0.05 0.05] [0.3 0.3 0.3] [1 1 1] [1 1 0]};
 main_AutoAxes_4_in_11 = {"background" "grid" "labels" "ticks"};
 main_AutoAxes_4_in_12 = 0.4;
 main_AutoAxes_4_in_13 = "area";
-main_AutoAxes_4_in_14 = """ + tick_locations[0] + """;
-main_AutoAxes_4_in_15 = """ + tick_locations[1] + """;
-main_AutoAxes_4_in_16 = """ + tick_locations[2] + """;
-main_AutoAxes_4_in_17 = """ + tick_values[0] + """;
-main_AutoAxes_4_in_18 = """ + tick_values[1] + """;
-main_AutoAxes_4_in_19 = """ + tick_values[2] + """;
+main_AutoAxes_4_in_14 = """ + self.tick_locations[0] + """;
+main_AutoAxes_4_in_15 = """ + self.tick_locations[1] + """;
+main_AutoAxes_4_in_16 = """ + self.tick_locations[2] + """;
+main_AutoAxes_4_in_17 = """ + self.tick_values[0] + """;
+main_AutoAxes_4_in_18 = """ + self.tick_values[1] + """;
+main_AutoAxes_4_in_19 = """ + self.tick_values[2] + """;
 main_AutoAxes_4_out_1 = NULL;
 main_Selector_1_in_1 = "Selector_1";
 main_Selector_1_in_2 = "Colour" ;
@@ -1675,7 +1574,5 @@ $sync
 main();
 """
 
-        program_file.write(text)
-
-        # Close the file.
-        program_file.close()
+        # Return the text.
+        return text

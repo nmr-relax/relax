@@ -410,6 +410,11 @@ class RelaxErrors:
         def __init__(self, name):
             self.text = "The " + `name` + " value has not yet been set."
 
+    # Unknown parameter.
+    class RelaxUnknownParamError(BaseError):
+        def __init__(self, name):
+            self.text = "The parameter " + `name` + " is unknown."
+
     # Unknown parameter combination.
     class RelaxUnknownParamCombError(BaseError):
         def __init__(self, name, data):

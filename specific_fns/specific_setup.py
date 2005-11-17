@@ -188,10 +188,6 @@ class Specific_setup:
         if self.eqi == 'init_sim_values':
             return self.relax.specific.model_free.sim_init_values
 
-        # Map labels.
-        if self.eqi == 'map_labels':
-            return self.relax.specific.model_free.map_labels
-
         # Map bounds function.
         if self.eqi == 'map_bounds':
             return self.relax.specific.model_free.map_bounds
@@ -231,6 +227,10 @@ class Specific_setup:
         # Data returning function.
         if self.eqi == 'return_data':
             return self.relax.specific.model_free.return_data
+
+        # Data or parameter name returning function.
+        if self.eqi == 'return_data_name':
+            return self.relax.specific.model_free.return_data_name
 
         # Data error returning function.
         if self.eqi == 'return_error':
