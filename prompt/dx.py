@@ -212,8 +212,8 @@ class OpenDX:
             raise RelaxStrError, ('map type', map_type)
 
         # The residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
+        if type(res_num) != int and res_num != None:
+            raise RelaxNoneIntError, ('residue number', res_num)
 
         # Increment.
         if type(inc) != int:

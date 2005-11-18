@@ -1827,8 +1827,9 @@ class Model_free(Common_functions):
     def map_bounds(self, run, param):
         """The function for creating bounds for the mapping function."""
 
-        # Arguments.
+        # Initialise.
         self.run = run
+        bounds = None
 
         # {S2, S2f, S2s}.
         if search('^S2', param):

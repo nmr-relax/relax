@@ -268,8 +268,9 @@ class Diffusion_tensor:
     def map_bounds(self, run, param):
         """The function for creating bounds for the mapping function."""
 
-        # Arguments.
+        # Initialise.
         self.run = run
+        bounds = None
 
         # tm.
         if param == 'tm':
@@ -310,6 +311,9 @@ class Diffusion_tensor:
         # gamma.
         elif param == 'gamma':
             bounds = [0, 2*pi]
+
+        # Return the bounds.
+        return bounds
 
 
     def map_labels(self, run, index, params, bounds, swap, inc):

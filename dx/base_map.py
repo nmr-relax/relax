@@ -178,11 +178,15 @@ class Base_Map:
             name = self.return_data_name(self.params[i])
 
             # Diffusion tensor parameter.
-            if name == None and self.function_type == 'mf':
+            if not name and self.function_type == 'mf':
                 name = self.relax.generic.diffusion_tensor.return_data_name(self.params[i])
 
+                # Set the flag indicating if there are diffusion tensor parameters.
+                if name:
+                    self.diff_params[i] = 1
+
             # Bad parameter name.
-            if name == None:
+            if not name:
                 raise RelaxUnknownParamError, self.params[i]
 
             # Append the parameter name.
@@ -266,6 +270,9 @@ class Base_Map:
         self.point_file = point_file
         self.remap = remap
 
+        # Diffusion tensor parameter flag.
+        self.diff_params = zeros(self.n)
+
         # Get the parameter names.
         self.get_param_names()
 
@@ -282,7 +289,19 @@ class Base_Map:
         # Get the default map bounds.
         self.bounds = zeros((self.n, 2), Float64)
         for i in xrange(self.n):
-            self.bounds[i] = self.map_bounds(self.run, self.params[i])
+            # Get the bounds for the parameter i.
+            bounds = self.map_bounds(self.run, self.params[i])
+
+            # Diffusion parameter bounds.
+            if not bounds and self.diff_params[i]:
+                bounds = self.relax.generic.diffusion_tensor.map_bounds(self.run, self.params[i])
+
+            # No bounds found.
+            if not bounds:
+                raise RelaxError, "No bounds for the parameter " + `self.params[i]` + " could be determined."
+
+            # Assign the bounds to the global data structure.
+            self.bounds[i] = bounds
 
         # Lower bounds.
         if lower != None:
