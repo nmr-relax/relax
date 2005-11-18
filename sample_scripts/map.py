@@ -22,6 +22,7 @@ relax_data.read(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 diffusion_tensor.set(name, 1e-8)
 value.set(name, 1.02 * 1e-10, 'bond_length')
 value.set(name, -170 * 1e-6, 'csa')
+value.set(name, 2048.0e-12, 'te')
 
 # Select the model-free model.
 model_free.select_model(run=name, model=name)
@@ -33,9 +34,8 @@ from math import pi
 if name == 'm4':
     params = ['S2', 'te', 'Rex']
     lower = [0, 0, 0]
-    upper = [1.0, 1000e-12, 1.0 / (2.0 * pi * 600000000.0)**2]
-    point = None
-    #point = [0.263, 526.32e-12, 1.053 / (2.0 * pi * 600000000.0)**2]
+    upper = [1.0, 10000e-12, 2.0 / (2.0 * pi * 600000000.0)**2]
+    point = [0.970, 2048.0e-12, 0.149 / (2.0 * pi * 600000000.0)**2]
 elif name == 'm5':
     params = ['S2', 'S2f', 'ts']
     lower = [0.5, 0.5, 0]

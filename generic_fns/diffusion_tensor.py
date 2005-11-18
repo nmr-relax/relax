@@ -23,6 +23,7 @@
 from copy import deepcopy
 from math import cos, pi, sin
 from Numeric import Float64, array
+from re import search
 
 
 class Diffusion_tensor:

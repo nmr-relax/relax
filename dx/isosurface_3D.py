@@ -522,7 +522,7 @@ main_Scale_3_out_1 =
     // 
     // node AutoCamera[2]: x = 273, y = 264, inputs = 9, label = AutoCamera
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 -1 1]
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 500.0
+    // input[3]: defaulting = 1, visible = 1, type = 5, value = 500.0
     // input[4]: defaulting = 0, visible = 0, type = 1, value = 640
     // input[5]: defaulting = 0, visible = 0, type = 5, value = .75
     // input[6]: defaulting = 0, visible = 0, type = 8, value = [-1 1 0 ]
@@ -553,7 +553,7 @@ main_AutoCamera_2_out_1 =
     // input[9]: defaulting = 0, visible = 1, type = 3, value = 1
     // input[10]: defaulting = 0, visible = 1, type = 16777224, value = {[1 1 1] [0.1 0.1 0.1] [0 0 0] [0 0 0]}
     // input[11]: defaulting = 0, visible = 1, type = 16777248, value = {"background" "grid" "labels" "ticks"}
-    // input[12]: defaulting = 0, visible = 0, type = 5, value = 0.4
+    // input[12]: defaulting = 1, visible = 0, type = 5, value = 0.4
     // input[13]: defaulting = 0, visible = 0, type = 32, value = "area"
     // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[0] + """
     // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[1] + """
@@ -778,7 +778,7 @@ main_Scale_5_out_1 =
     // 
     // node AutoCamera[4]: x = 273, y = 264, inputs = 9, label = AutoCamera
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 -1 1]
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 500.0
+    // input[3]: defaulting = 1, visible = 1, type = 5, value = 500.0
     // input[5]: defaulting = 0, visible = 0, type = 5, value = .75
     // input[6]: defaulting = 0, visible = 0, type = 8, value = [-1 1 0 ]
     // input[7]: defaulting = 0, visible = 0, type = 3, value = 0
@@ -808,7 +808,7 @@ main_AutoCamera_4_out_1 =
     // input[9]: defaulting = 0, visible = 1, type = 3, value = 1
     // input[10]: defaulting = 0, visible = 1, type = 16777224, value = {[0.05 0.05 0.05] [0.3 0.3 0.3] [1 1 1] [1 1 0]}
     // input[11]: defaulting = 0, visible = 1, type = 16777248, value = {"background" "grid" "labels" "ticks"}
-    // input[12]: defaulting = 0, visible = 0, type = 5, value = 0.4
+    // input[12]: defaulting = 1, visible = 0, type = 5, value = 0.4
     // input[13]: defaulting = 0, visible = 0, type = 32, value = "area"
     // input[14]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[0] + """
     // input[15]: defaulting = 0, visible = 1, type = 16777221, value = """ + self.tick_locations[1] + """
@@ -1088,7 +1088,7 @@ main_Receiver_3_out_1 = NULL;
 main_Scale_3_in_2 = [1 1 1];
 main_Scale_3_out_1 = NULL;
 main_AutoCamera_2_in_2 = [1 -1 1];
-main_AutoCamera_2_in_3 = 500.0;
+main_AutoCamera_2_in_3 = NULL;
 main_AutoCamera_2_in_4 = 640;
 main_AutoCamera_2_in_5 = .75;
 main_AutoCamera_2_in_6 = [-1 1 0 ];
@@ -1105,7 +1105,7 @@ main_AutoAxes_2_in_8 = NULL;
 main_AutoAxes_2_in_9 = 1;
 main_AutoAxes_2_in_10 = {[1 1 1] [0.1 0.1 0.1] [0 0 0] [0 0 0]};
 main_AutoAxes_2_in_11 = {"background" "grid" "labels" "ticks"};
-main_AutoAxes_2_in_12 = 0.4;
+main_AutoAxes_2_in_12 = NULL;
 main_AutoAxes_2_in_13 = "area";
 main_AutoAxes_2_in_14 = """ + self.tick_locations[0] + """;
 main_AutoAxes_2_in_15 = """ + self.tick_locations[1] + """;
@@ -1168,7 +1168,7 @@ main_Receiver_4_out_1 = NULL;
 main_Scale_5_in_2 = [1 1 1];
 main_Scale_5_out_1 = NULL;
 main_AutoCamera_4_in_2 = [1 -1 1];
-main_AutoCamera_4_in_3 = 500.0;
+main_AutoCamera_4_in_3 = NULL;
 main_AutoCamera_4_in_4 = NULL;
 main_AutoCamera_4_in_5 = .75;
 main_AutoCamera_4_in_6 = [-1 1 0 ];
@@ -1185,7 +1185,7 @@ main_AutoAxes_4_in_8 = NULL;
 main_AutoAxes_4_in_9 = 1;
 main_AutoAxes_4_in_10 = {[0.05 0.05 0.05] [0.3 0.3 0.3] [1 1 1] [1 1 0]};
 main_AutoAxes_4_in_11 = {"background" "grid" "labels" "ticks"};
-main_AutoAxes_4_in_12 = 0.4;
+main_AutoAxes_4_in_12 = NULL;
 main_AutoAxes_4_in_13 = "area";
 main_AutoAxes_4_in_14 = """ + self.tick_locations[0] + """;
 main_AutoAxes_4_in_15 = """ + self.tick_locations[1] + """;

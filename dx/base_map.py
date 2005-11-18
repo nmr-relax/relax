@@ -34,10 +34,10 @@ class Base_Map:
         """Function for creating the OpenDX .cfg program configuration file."""
 
         # Print out.
-        print "Creating the OpenDX .cfg program configuration file.\n"
+        print "\nCreating the OpenDX .cfg program configuration file."
 
         # Open the file.
-        config_file = self.relax.IO.open_write_file(file_name=self.file+".cfg", dir=self.dir)
+        config_file = self.relax.IO.open_write_file(file_name=self.file+".cfg", dir=self.dir, force=1)
 
         # Get the text of the configuration file.
         text = self.config_text()
@@ -53,10 +53,10 @@ class Base_Map:
         """Function for creating the OpenDX .general file."""
 
         # Print out.
-        print "Creating the OpenDX .general file.\n"
+        print "\nCreating the OpenDX .general file."
 
         # Open the file.
-        general_file = self.relax.IO.open_write_file(file_name=self.file+".general", dir=self.dir)
+        general_file = self.relax.IO.open_write_file(file_name=self.file+".general", dir=self.dir, force=1)
 
         # Get the text of the configuration file.
         text = self.general_text()
@@ -72,10 +72,10 @@ class Base_Map:
         """Function for creating the map."""
 
         # Print out.
-        print "Creating the map.\n"
+        print "\nCreating the map."
 
         # Open the file.
-        map_file = self.relax.IO.open_write_file(file_name=self.file, dir=self.dir)
+        map_file = self.relax.IO.open_write_file(file_name=self.file, dir=self.dir, force=1)
 
         # Generate and write the text of the map.
         self.map_text(map_file)
@@ -103,11 +103,11 @@ class Base_Map:
         """
 
         # Print out.
-        print "Creating the OpenDX .general and data files for the given point.\n"
+        print "\nCreating the OpenDX .general and data files for the given point."
 
         # Open the files.
-        point_file = self.relax.IO.open_write_file(file_name=self.point_file, dir=self.dir)
-        point_file_general = self.relax.IO.open_write_file(file_name=self.point_file+".general", dir=self.dir)
+        point_file = self.relax.IO.open_write_file(file_name=self.point_file, dir=self.dir, force=1)
+        point_file_general = self.relax.IO.open_write_file(file_name=self.point_file+".general", dir=self.dir, force=1)
 
         # Calculate the coordinate values.
         coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
@@ -116,7 +116,7 @@ class Base_Map:
         point_file.write("1\n")
 
         # Get the text of the point .general file.
-        self.point_text()
+        text = self.point_text()
 
         # Write the text.
         point_file_general.write(text)
@@ -130,13 +130,10 @@ class Base_Map:
         """Function for creating the OpenDX .net program file."""
 
         # Print out.
-        print "Creating the OpenDX .net program file.\n"
+        print "\nCreating the OpenDX .net program file."
 
         # Open the file.
-        program_file = self.relax.IO.open_write_file(file_name=self.file+".net", dir=self.dir)
-
-        # Get the parameter names.
-        self.get_param_names()
+        program_file = self.relax.IO.open_write_file(file_name=self.file+".net", dir=self.dir, force=1)
 
         # Create the strings associated with the map axes.
         self.map_axes()
@@ -186,7 +183,7 @@ class Base_Map:
 
             # Bad parameter name.
             if name == None:
-                raise RelaxUnknownParamError, name
+                raise RelaxUnknownParamError, self.params[i]
 
             # Append the parameter name.
             self.param_names.append(name)
@@ -268,6 +265,9 @@ class Base_Map:
         self.dir = dir
         self.point_file = point_file
         self.remap = remap
+
+        # Get the parameter names.
+        self.get_param_names()
 
         # Points.
         if point != None:
