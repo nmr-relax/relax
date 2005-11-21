@@ -634,9 +634,9 @@ class Diffusion_tensor:
         supplied.
         """
 
-        print "Hello"
-        print value
-        print param
+        #print "Hello"
+        #print value
+        #print param
 
 
     def sphere(self):

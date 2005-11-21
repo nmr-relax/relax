@@ -252,7 +252,7 @@ class Value:
         # Residue specific parameters.
         ##############################
 
-        else:
+        if self.res_params:
             # Test if the sequence data is loaded.
             if not self.relax.data.res.has_key(run):
                 raise RelaxNoSequenceError, run
@@ -455,10 +455,6 @@ class Value:
                         self.res_values.append(value)
 
         # Debugging.
-        print "Diff params: " + `self.diff_params`
-        print "Diff values: " + `self.diff_values`
-        print "Res params: " + `self.res_params`
-        print "Res values: " + `self.res_values`
         if len(self.diff_params) != len(self.diff_values) or len(self.res_params) != len(self.res_values):
             print "Diff params: " + `self.diff_params`
             print "Diff values: " + `self.diff_values`
