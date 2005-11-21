@@ -56,13 +56,13 @@ class Value:
             raise RelaxNoSequenceError, run2
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
+        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
 
         # Specific value and error returning function.
-        return_value = self.relax.specific_setup.setup('return_value', function_type)
+        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
 
         # Specific set function.
-        set = self.relax.specific_setup.setup('set', function_type)
+        set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Test if the data exists for run2.
         for i in xrange(len(self.relax.data.res[run2])):
@@ -123,13 +123,13 @@ class Value:
             raise RelaxNoSequenceError, self.run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
         # Specific value and error returning function.
-        return_value = self.relax.specific_setup.setup('return_value', function_type)
+        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
 
         # Specific set function.
-        set = self.relax.specific_setup.setup('set', function_type)
+        set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Test data corresponding to param already exists.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -230,12 +230,12 @@ class Value:
             raise RelaxNoRunError, run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
         # Specific functions.
-        self.return_data_name = self.relax.specific_setup.setup('return_data_name', function_type)
-        return_value = self.relax.specific_setup.setup('return_value', function_type)
-        set = self.relax.specific_setup.setup('set', function_type)
+        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
+        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
+        set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Sort the parameters and their values.
         self.sort_params(value, param)
@@ -291,12 +291,13 @@ class Value:
 
                     # Loop over the parameters.
                     for param in self.res_params:
-                        # Get the value and error.
-                        temp_value, temp_error = return_value(run, i, param)
+                        if param:
+                            # Get the value and error.
+                            temp_value, temp_error = return_value(run, i, param)
 
-                        # Data exists.
-                        if temp_value != None or temp_error != None:
-                            raise RelaxValueError, (param, run)
+                            # Data exists.
+                            if temp_value != None or temp_error != None:
+                                raise RelaxValueError, (param, run)
 
             # Loop over the sequence.
             for i in xrange(len(self.relax.data.res[run])):
@@ -341,7 +342,7 @@ class Value:
         self.res_values = []
 
         # Separate the residue specific parameters from the diffusion tensor parameters.
-        if param and function_type == 'mf':
+        if param and self.function_type == 'mf':
             # Single parameter.
             if type(param) == str:
                 # Get the diffusion tensor parameter name.
@@ -493,10 +494,10 @@ class Value:
         # Get the value and error returning function if required.
         if not return_value:
             # Function type.
-            function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+            self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
             # Specific value and error returning function.
-            return_value = self.relax.specific_setup.setup('return_value', function_type)
+            return_value = self.relax.specific_setup.setup('return_value', self.function_type)
 
         # Write a header line.
         file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
