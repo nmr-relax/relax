@@ -398,11 +398,152 @@ class Model_free(Common_functions):
     def calculate(self, run=None, res_num=None, print_flag=1, sim_index=None):
         """Calculation of the model-free chi-squared value."""
 
-        # Run argument.
+        # Arguments.
         self.run = run
+        self.print_flag = print_flag
 
         # Go to the minimise function.
-        self.minimise(run=self.run, min_algor='calc', min_options=res_num, sim_index=sim_index)
+        #self.minimise(run=self.run, min_algor='calc', min_options=res_num, sim_index=sim_index)
+
+        # Test if the sequence data for self.run is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
+
+        # The residue index.
+        index = None
+        if res_num != None:
+            # Loop over the sequence.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Found the residue.
+                if self.relax.data.res[self.run][i].num == res_num:
+                    index = i
+                    break
+
+            # Can't find the residue.
+            if index == None:
+                raise RelaxNoResError, res_num
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Test if diffusion tensor data for the run exists.
+        if self.param_set != 'local_tm' and not self.relax.data.diff.has_key(self.run):
+            raise RelaxNoTensorError, self.run
+
+        # Test if the PDB file has been loaded.
+        if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere' and not self.relax.data.pdb.has_key(self.run):
+            raise RelaxNoPdbError, self.run
+
+        # Test if the nucleus type has been set.
+        if not hasattr(self.relax.data, 'gx'):
+            raise RelaxNucleusError
+
+        # Loop over the residues.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Alias the data structure.
+            data = self.relax.data.res[self.run][i]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
+            # Single residue.
+            if index != None and index != i:
+                continue
+
+            # Test if the model-free model has been setup.
+            if not data.model:
+                raise RelaxNoMfModelError, self.run
+
+            # Test if unit vectors exist.
+            if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere' and not hasattr(data, 'xh_vect'):
+                raise RelaxNoVectorsError, self.run
+
+            # Test if the model-free parameter values exist.
+            unset_param = self.are_mf_params_set(i)
+            if unset_param != None:
+                raise RelaxNoValueError, unset_param
+
+            # Test if the CSA value has been set.
+            if not hasattr(data, 'csa') or data.csa == None:
+                raise RelaxNoValueError, "CSA"
+
+            # Test if the bond length value has been set.
+            if not hasattr(data, 'r') or data.r == None:
+                raise RelaxNoValueError, "bond length"
+
+            # Skip residues where there is no data or errors.
+            if not hasattr(data, 'relax_data') or not hasattr(data, 'relax_error'):
+                continue
+
+            # Make sure that the errors are strictly positive numbers.
+            for j in xrange(len(data.relax_error)):
+                if data.relax_error[j] == 0.0:
+                    raise RelaxError, "Zero error for residue '" + `data.num` + " " + data.name + "', calculation not possible."
+                elif data.relax_error[j] < 0.0:
+                    raise RelaxError, "Negative error for residue '" + `data.num` + " " + data.name + "', calculation not possible."
+
+            # Create the initial parameter vector.
+            self.param_vector = self.assemble_param_vector(index=i, sim_index=sim_index)
+
+            # Repackage the data.
+            if sim_index == None:
+                relax_data = [data.relax_data]
+                r = [data.r]
+                csa = [data.csa]
+            else:
+                relax_data = [data.relax_sim_data[sim_index]]
+                r = [data.r_sim[sim_index]]
+                csa = [data.csa_sim[sim_index]]
+
+            # Vectors.
+            if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
+                xh_unit_vectors = [data.xh_vect]
+            else:
+                xh_unit_vectors = [None]
+
+            # Count the number of model-free parameters for the residue index.
+            num_params = [len(data.params)]
+
+            # Repackage the parameter values for minimising just the diffusion tensor parameters.
+            param_values = [self.assemble_param_vector(param_set='mf')]
+
+            # Convert to Numeric arrays.
+            relax_data = [array(data.relax_data, Float64)]
+            relax_error = [array(data.relax_error, Float64)]
+
+            # Package the diffusion tensor parameters.
+            if self.param_set == 'local_tm':
+                diff_params = [self.relax.data.res[self.run][i].tm]
+                diff_type = 'sphere'
+            else:
+                # Alias.
+                diff_data = self.relax.data.diff[self.run]
+
+                # Diff type.
+                diff_type = diff_data.type
+
+                # Spherical diffusion.
+                if diff_type == 'sphere':
+                    diff_params = [diff_data.tm]
+
+                # Spheroidal diffusion.
+                elif diff_type == 'spheroid':
+                    diff_params = [diff_data.tm, diff_data.Da, diff_data.theta, diff_data.phi]
+
+                # Ellipsoidal diffusion.
+                elif diff_type == 'ellipsoid':
+                    diff_params = [diff_data.tm, diff_data.Da, diff_data.Dr, diff_data.alpha, diff_data.beta, diff_data.gamma]
+
+            # Initialise the model-free function.
+            self.mf = Mf(init_params=self.param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[data.equation], param_types=[data.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[data.num_frq], frq=[data.frq], num_ri=[data.num_ri], remap_table=[data.remap_table], noe_r1_table=[data.noe_r1_table], ri_labels=[data.ri_labels], gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+
+            # Chi-squared calculation.
+            try:
+                self.relax.data.res[self.run][i].chi2 = self.mf.func(self.param_vector)
+            except OverflowError:
+                self.relax.data.res[self.run][i].chi2 = 1e200
+
 
 
     def copy(self, run1=None, run2=None, sim=None):
@@ -1949,10 +2090,6 @@ class Model_free(Common_functions):
             num_instances = 1
             num_data_sets = len(self.relax.data.res[self.run])
 
-        # Number of residues for the calculate function.
-        if min_algor == 'calc' and min_options != None:
-            num_res = 1
-
         # Number of residues, minimisation instances, and data sets for the back-calculate function.
         if min_algor == 'back_calc':
             num_instances = 1
@@ -1981,10 +2118,6 @@ class Model_free(Common_functions):
                 if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not hasattr(self.relax.data.res[self.run][i], 'relax_error'):
                     continue
 
-                # Single residue.
-                if min_algor == 'calc' and min_options != None and min_options != self.relax.data.res[self.run][i].num:
-                    continue
-
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
@@ -2010,7 +2143,7 @@ class Model_free(Common_functions):
                 min_options = matrixmultiply(inverse(self.scaling_matrix), min_options)
 
             # Linear constraints.
-            if constraints and min_algor != 'calc':
+            if constraints:
                 A, b = self.linear_constraints(index=index)
 
             # Print out.
@@ -2182,7 +2315,7 @@ class Model_free(Common_functions):
             # Setup the minimisation algorithm when constraints are present.
             ################################################################
 
-            if constraints and not match('^[Gg]rid', min_algor) and min_algor != 'calc':
+            if constraints and not match('^[Gg]rid', min_algor):
                 algor = min_options[0]
             else:
                 algor = min_algor
@@ -2205,20 +2338,6 @@ class Model_free(Common_functions):
                     index = index + len(relax_error[k])
 
                 min_options = min_options + (self.mf.lm_dri, lm_error)
-
-
-            # Chi-squared calculation.
-            ##########################
-
-            if min_algor == 'calc':
-                # Chi-squared.
-                try:
-                    self.relax.data.res[self.run][i].chi2 = self.mf.func(self.param_vector)
-                except OverflowError:
-                    self.relax.data.res[self.run][i].chi2 = 1e200
-
-                # Exit the function.
-                return
 
 
             # Back-calculation.
@@ -2373,16 +2492,20 @@ class Model_free(Common_functions):
         # Arguments.
         self.run = run
 
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
-
-        # Consolidate the instances to the minimum number.
-        consolidate = 0
+        # All residues.
+        combine = 0
         if min_instances == 1 and min_instances != num_instances:
-            consolidate = 1
+            combine = 1
 
-        # Sequence specific data.
-        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not consolidate:
+        # Determine if local or global statistics will be returned.
+        global_stats = 1
+        for i in xrange(len(self.relax.data.res[self.run])):
+            if hasattr(self.relax.data.res[self.run][i], 'chi2') and self.relax.data.res[self.run][i].chi2 != None:
+                global_stats = 0
+                break
+
+        # Statistics for a single residue.
+        if not global_stats and not combine:
             # Missing data sets.
             if not hasattr(self.relax.data.res[self.run][instance], 'relax_data'):
                 return None, None, None
@@ -2397,8 +2520,8 @@ class Model_free(Common_functions):
             # The chi2 value.
             chi2 = self.relax.data.res[self.run][instance].chi2
 
-        # Consolidated sequence specific data.
-        elif (self.param_set == 'mf' or self.param_set == 'local_tm') and consolidate:
+        # Statistics for all residues combined.
+        elif not global_stats and combine:
             # Initialise.
             k = 0
             n = 0
@@ -2421,7 +2544,7 @@ class Model_free(Common_functions):
                 chi2 = chi2 + self.relax.data.res[self.run][i].chi2
 
         # Other data.
-        elif self.param_set == 'diff' or self.param_set == 'all':
+        elif global_stats:
             # Count the number of parameters.
             self.param_vector = self.assemble_param_vector()
             k = len(self.param_vector)
@@ -2437,7 +2560,6 @@ class Model_free(Common_functions):
 
             # The chi2 value.
             chi2 = self.relax.data.chi2[self.run]
-
 
         # Return the data.
         return k, n, chi2
@@ -4381,13 +4503,13 @@ class Model_free(Common_functions):
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
-        # Consolidate the instances to the minimum number.
-        consolidate = 0
+        # All residues.
+        combine = 0
         if min_instances == 1 and min_instances != num_instances:
-            consolidate = 1
+            combine = 1
 
         # Sequence specific data.
-        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not consolidate and not self.relax.data.res[self.run][instance].select:
+        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not combine and not self.relax.data.res[self.run][instance].select:
             return 1
 
         # Don't skip.
