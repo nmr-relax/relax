@@ -2723,7 +2723,7 @@ class Model_free(Common_functions):
                 spheroid_type = diff_type
 
             # Set the diffusion tensor.
-            self.relax.generic.diffusion_tensor.set(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
+            self.relax.generic.diffusion_tensor.init(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
     def read_columnar_find_index(self):

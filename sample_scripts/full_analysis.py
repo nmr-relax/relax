@@ -175,13 +175,13 @@ class Main:
 
                 # Add an arbitrary diffusion tensor which will be optimised.
                 if self.diff_model == 'sphere':
-                    diffusion_tensor.set(name, 10e-9, fixed=0)
+                    diffusion_tensor.init(name, 10e-9, fixed=0)
                 elif self.diff_model == 'prolate':
-                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
+                    diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
                 elif self.diff_model == 'oblate':
-                    diffusion_tensor.set(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
+                    diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
                 elif self.diff_model == 'ellipsoid':
-                    diffusion_tensor.set(name, (8.6e-09, -8e6, 0, 360, 90, 360), fixed=0)
+                    diffusion_tensor.init(name, (8.6e-09, -8e6, 0, 360, 90, 360), fixed=0)
 
                 # Minimise just the diffusion tensor.
                 fix(name, 'all_res')

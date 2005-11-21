@@ -54,7 +54,7 @@ run.create(name, 'mf')
 nuclei('N')
 
 # Set the diffusion tensor to isotropic with tm set to 10 ns.
-diffusion_tensor.set(name, 10e-9)
+diffusion_tensor.init(name, 10e-9)
 
 # Generate the sequence from the PDB file.
 pdb(name, 'test.pdb')

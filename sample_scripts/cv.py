@@ -39,7 +39,7 @@ for i in xrange(len(runs)):
             relax_data.read(cv_runs[i][j], ri_labels[k], frq_labels[k], frqs[k], file_names[k])
 
         # Set up the global rotational correlation time.
-        diffusion_tensor.set(cv_runs[i][j], 1e-8)
+        diffusion_tensor.init(cv_runs[i][j], 1e-8)
 
         # Set the bond length and CSA values.
         value.set(cv_runs[i][j], 1.02 * 1e-10, 'bond_length')
