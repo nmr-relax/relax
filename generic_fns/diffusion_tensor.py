@@ -717,8 +717,8 @@ class Diffusion_tensor:
                 # The geometric parameter set {Diso, Da}.
                 elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
                     # The parameters.
-                    Diso = geo_values(geo_params.index('Diso'))
-                    Da = geo_values(geo_params.index('Da'))
+                    Diso = geo_values[geo_params.index('Diso')]
+                    Da = geo_values[geo_params.index('Da')]
 
                     # Set the internal parameter values.
                     self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
@@ -747,8 +747,8 @@ class Diffusion_tensor:
                 # The geometric parameter set {Diso, Dratio}.
                 elif geo_params.count('Diso') == 1 and geo_params.count('Dratio') == 1:
                     # The parameters.
-                    Diso = geo_values(geo_params.index('Diso'))
-                    Dratio = geo_values(geo_params.index('Dratio'))
+                    Diso = geo_values[geo_params.index('Diso')]
+                    Dratio = geo_values[geo_params.index('Dratio')]
 
                     # Set the internal parameter values.
                     self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
