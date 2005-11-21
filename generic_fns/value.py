@@ -348,27 +348,8 @@ class Value:
                 # Get the diffusion tensor parameter name.
                 diff_name = self.relax.generic.diffusion_tensor.return_data_name(param)
 
-                # The parameter is not a diffusion parameter.
-                if self.return_data_name(param):
-                    # List of values.
-                    if type(value) == list or type(value) == ArrayType:
-                        # Parameter name.
-                        for i in xrange(len(value)):
-                            self.res_params.append(param)
-
-                        # Parameter value.
-                        self.res_values = value
-
-                    # Single value.
-                    else:
-                        # Parameter name.
-                        self.res_params.append(param)
-
-                        # Parameter value.
-                        self.res_values.append(value)
-
                 # The parameter is a diffusion parameter.
-                elif diff_name:
+                if diff_name:
                     # List of values.
                     if type(value) == list or type(value) == ArrayType:
                         # Parameter name.
@@ -386,6 +367,25 @@ class Value:
                         # Parameter value.
                         self.diff_values.append(value)
 
+                # The parameter is not a diffusion parameter.
+                elif self.return_data_name(param):
+                    # List of values.
+                    if type(value) == list or type(value) == ArrayType:
+                        # Parameter name.
+                        for i in xrange(len(value)):
+                            self.res_params.append(param)
+
+                        # Parameter value.
+                        self.res_values = value
+
+                    # Single value.
+                    else:
+                        # Parameter name.
+                        self.res_params.append(param)
+
+                        # Parameter value.
+                        self.res_values.append(value)
+
                 # Unknown parameter
                 else:
                     raise RelaxUnknownParamError, param
@@ -397,8 +397,19 @@ class Value:
                     # Get the diffusion tensor parameter name.
                     diff_name = self.relax.generic.diffusion_tensor.return_data_name(param[i])
 
+                    # The parameter is a diffusion parameter.
+                    if diff_name:
+                        # Parameter name.
+                        self.diff_params.append(diff_name)
+
+                        # Parameter value.
+                        if type(value) == list or type(value) == ArrayType:
+                            self.diff_values.append(value[i])
+                        else:
+                            self.diff_values.append(value)
+
                     # The parameter is not a diffusion parameter.
-                    if self.return_data_name(param[i]):
+                    elif self.return_data_name(param[i]):
                         # Parameter name.
                         self.res_params.append(param[i])
 
@@ -408,16 +419,9 @@ class Value:
                         else:
                             self.res_values.append(value)
 
-                    # The parameter is a diffusion parameter.
-                    if not self.return_data_name(param[i]) and diff_name:
-                        # Parameter name.
-                        self.diff_params.append(diff_name)
-
-                        # Parameter value.
-                        if type(value) == list or type(value) == ArrayType:
-                            self.diff_values.append(value[i])
-                        else:
-                            self.diff_values.append(value)
+                    # Unknown parameter
+                    else:
+                        raise RelaxUnknownParamError, param[i]
 
 
         # All other parameters.

@@ -178,11 +178,15 @@ class Base_Map:
             name = self.return_data_name(self.params[i])
 
             # Diffusion tensor parameter.
-            if not name and self.function_type == 'mf':
-                name = self.relax.generic.diffusion_tensor.return_data_name(self.params[i])
+            if self.function_type == 'mf':
+                # The diffusion tensor parameter name.
+                diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.params[i])
 
-                # Set the flag indicating if there are diffusion tensor parameters.
-                if name:
+                # Replace the model-free parameter with the diffusion tensor parameter if it exists.
+                if diff_name:
+                    name = diff_name
+
+                    # Set the flag indicating if there are diffusion tensor parameters.
                     self.diff_params[i] = 1
 
             # Bad parameter name.
@@ -290,11 +294,11 @@ class Base_Map:
         self.bounds = zeros((self.n, 2), Float64)
         for i in xrange(self.n):
             # Get the bounds for the parameter i.
-            bounds = self.map_bounds(self.run, self.params[i])
+            bounds = self.map_bounds(self.run, self.param_names[i])
 
             # Diffusion parameter bounds.
-            if not bounds and self.diff_params[i]:
-                bounds = self.relax.generic.diffusion_tensor.map_bounds(self.run, self.params[i])
+            if self.diff_params[i]:
+                bounds = self.relax.generic.diffusion_tensor.map_bounds(self.run, self.param_names[i])
 
             # No bounds found.
             if not bounds:

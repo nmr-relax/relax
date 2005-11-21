@@ -253,16 +253,8 @@ class Diffusion_tensor:
             tm = tm * self.time_scale
             Da = Da * self.d_scale
 
-            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
-            self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
-            self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dr = Dr
-            self.relax.data.diff[self.run].Dx = self.relax.data.diff[self.run].Diso - Da*(Dr + 1)
-            self.relax.data.diff[self.run].Dy = self.relax.data.diff[self.run].Diso + Da*(Dr - 1)
-            self.relax.data.diff[self.run].Dz = self.relax.data.diff[self.run].Diso + 2.0*Da
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = tm
+            # Set the parameters.
+            self.set(run=self.run, value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
 
         # (Diso, Da, Dr, alpha, beta, gamma).
         elif self.param_types == 1:
@@ -273,16 +265,8 @@ class Diffusion_tensor:
             Diso = Diso * self.d_scale
             Da = Da * self.d_scale
 
-            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
-            self.relax.data.diff[self.run].Diso = Diso
-            self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dr = Dr
-            self.relax.data.diff[self.run].Dx = Diso - Da*(Dr + 1)
-            self.relax.data.diff[self.run].Dy = Diso + Da*(Dr - 1)
-            self.relax.data.diff[self.run].Dz = Diso + 2.0*Da
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0*Diso)
+            # Set the parameters.
+            self.set(run=self.run, value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
 
         # (Dx, Dy, Dz, alpha, beta, gamma).
         elif self.param_types == 2:
@@ -294,16 +278,8 @@ class Diffusion_tensor:
             Dy = Dy * self.d_scale
             Dz = Dz * self.d_scale
 
-            # Diffusion tensor eigenvalues: Dx, Dy, Dz.
-            self.relax.data.diff[self.run].Dx = Dx
-            self.relax.data.diff[self.run].Dy = Dy
-            self.relax.data.diff[self.run].Dz = Dz
-            self.relax.data.diff[self.run].Diso = (Dx + Dy + Dz) / 3.0
-            self.relax.data.diff[self.run].Da = Dz - (Dx + Dy)/2.0
-            self.relax.data.diff[self.run].Dr = (Dy - Dx) / (2.0*self.relax.data.diff[self.run].Da)
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0*self.relax.data.diff[self.run].Diso)
+            # Set the parameters.
+            self.set(run=self.run, value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
 
         # Unknown parameter combination.
         else:
@@ -315,10 +291,8 @@ class Diffusion_tensor:
             beta = (beta / 360.0) * 2.0 * pi
             gamma = (gamma / 360.0) * 2.0 * pi
 
-        # Make sure the angles are within their defined ranges.
-        self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-        self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
-        self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+        # Set the orientational parameters.
+        self.set(run=self.run, value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
 
 
     def init(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
@@ -634,9 +608,407 @@ class Diffusion_tensor:
         supplied.
         """
 
-        #print "Hello"
-        #print value
-        #print param
+        # Initialise.
+        geo_params = []
+        geo_values = []
+        orient_params = []
+        orient_values = []
+
+        # Loop over the parameters.
+        for i in xrange(len(param)):
+            # Get the object name.
+            param[i] = self.return_data_name(param[i])
+
+            # Unknown parameter.
+            if not param[i]:
+                raise RelaxUnknownParamError, ("diffusion tensor", param[i])
+
+            # Default value.
+            if value[i] == None:
+                value[i] = self.default_value(object_names[i])
+
+            # Geometric parameter.
+            if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr']:
+                geo_params.append(param[i])
+                geo_values.append(value[i])
+
+            # Orientational parameter.
+            if param[i] in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+                orient_params.append(param[i])
+                orient_values.append(value[i])
+
+
+        # Spherical diffusion.
+        ######################
+
+        if self.relax.data.diff[self.run].type == 'sphere':
+            # Geometric parameters.
+            #######################
+
+            # A single geometric parameter.
+            if len(geo_params) == 1:
+                # The single parameter tm.
+                if geo_params[0] == 'tm':
+                    self.relax.data.diff[self.run].tm = geo_values[0]
+
+                # The single parameter Diso.
+                elif geo_params[0] == 'Diso':
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
+
+                # Cannot set the single parameter.
+                else:
+                    raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+
+            # More than one geometric parameters.
+            elif len(geo_params) > 1:
+                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+
+            # Orientational parameters.
+            ###########################
+
+            # ???
+            if len(orient_params):
+                raise RelaxError, "For spherical diffusion, the orientation parameters " + `orient_params` + " should not exist."
+
+
+        # Spheroidal diffusion.
+        #######################
+
+        elif self.relax.data.diff[self.run].type == 'spheroid':
+            # Geometric parameters.
+            #######################
+
+            # A single geometric parameter.
+            if len(geo_params) == 1:
+                # The single parameter tm.
+                if geo_params[0] == 'tm':
+                    self.relax.data.diff[self.run].tm = geo_values[0]
+
+                # The single parameter Diso.
+                elif geo_params[0] == 'Diso':
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
+
+                # The single parameter Da.
+                elif geo_params[0] == 'Da':
+                    self.relax.data.diff[self.run].Da = geo_values[0]
+
+                # The single parameter Dratio.
+                elif geo_params[0] == 'Dratio':
+                    Dratio = geo_values[0]
+                    self.relax.data.diff[self.run].Da = (Dratio - 1.0) / (2.0 * self.relax.data.diff[self.run].tm * (Dratio + 2.0))
+
+                # Cannot set the single parameter.
+                else:
+                    raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+
+            # Two geometric parameters.
+            elif len(geo_params) == 2:
+                # The geometric parameter set {tm, Da}.
+                if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
+                    # The parameters.
+                    tm = geo_values[geo_params.index('tm')]
+                    Da = geo_values[geo_params.index('Da')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = tm
+                    self.relax.data.diff[self.run].Da = Da
+
+                # The geometric parameter set {Diso, Da}.
+                elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
+                    # The parameters.
+                    Diso = geo_values(geo_params.index('Diso'))
+                    Da = geo_values(geo_params.index('Da'))
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
+                    self.relax.data.diff[self.run].Da = Da
+
+                # The geometric parameter set {tm, Dratio}.
+                elif geo_params.count('tm') == 1 and geo_params.count('Dratio') == 1:
+                    # The parameters.
+                    tm = geo_values[geo_params.index('tm')]
+                    Dratio = geo_values[geo_params.index('Dratio')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = tm
+                    self.relax.data.diff[self.run].Da = (Dratio - 1.0) / (2.0 * tm * (Dratio + 2.0))
+
+                # The geometric parameter set {Dpar, Dper}.
+                elif geo_params.count('Dpar') == 1 and geo_params.count('Dpar') == 1:
+                    # The parameters.
+                    Dpar = geo_values[geo_params.index('Dpar')]
+                    Dper = geo_values[geo_params.index('Dper')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = 1.0 / (2.0 * (Dpar + 2.0*Dper))
+                    self.relax.data.diff[self.run].Da = Dpar - Dper
+
+                # The geometric parameter set {Diso, Dratio}.
+                elif geo_params.count('Diso') == 1 and geo_params.count('Dratio') == 1:
+                    # The parameters.
+                    Diso = geo_values(geo_params.index('Diso'))
+                    Dratio = geo_values(geo_params.index('Dratio'))
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
+                    self.relax.data.diff[self.run].Da = 3.0 * Diso * (Dratio - 1.0) / (Dratio + 2.0)
+
+                # Unknown parameter combination.
+                else:
+                    raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+            # More than two geometric parameters.
+            elif len(geo_params) > 2:
+                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+
+            # Orientational parameters.
+            ###########################
+
+            # A single orientational parameter.
+            if len(orient_params) == 1:
+                # The single parameter theta.
+                if orient_params[0] == 'theta':
+                    theta = orient_values[orient_params.index('theta')]
+                    self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
+
+                # The single parameter phi.
+                elif orient_params[0] == 'phi':
+                    phi = orient_values[orient_params.index('phi')]
+                    self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
+
+            # Two orientational parameters.
+            elif len(orient_params) == 2:
+                # The orientational parameter set {theta, phi}.
+                if orient_params.count('theta') == 1 and orient_params.count('phi') == 1:
+                    # The parameters.
+                    theta = orient_values[orient_params.index('theta')]
+                    phi = orient_values[orient_params.index('phi')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
+                    self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
+
+                # Unknown parameter combination.
+                else:
+                    raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+            # More than two orientational parameters.
+            elif len(orient_params) > 2:
+                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+
+        # Ellipsoidal diffusion.
+        ########################
+
+        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            # Geometric parameters.
+            #######################
+
+            # A single geometric parameter.
+            if len(geo_params) == 1:
+                # The single parameter tm.
+                if geo_params[0] == 'tm':
+                    self.relax.data.diff[self.run].tm = geo_values[0]
+
+                # The single parameter Diso.
+                elif geo_params[0] == 'Diso':
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
+
+                # The single parameter Da.
+                elif geo_params[0] == 'Da':
+                    self.relax.data.diff[self.run].Da = geo_values[0]
+
+                # The single parameter Dr.
+                elif geo_params[0] == 'Dr':
+                    self.relax.data.diff[self.run].Dr = geo_values[0]
+
+                # Cannot set the single parameter.
+                else:
+                    raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+
+            # Two geometric parameters.
+            elif len(geo_params) == 2:
+                # The geometric parameter set {tm, Da}.
+                if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
+                    # The parameters.
+                    tm = geo_values[geo_params.index('tm')]
+                    Da = geo_values[geo_params.index('Da')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = tm
+                    self.relax.data.diff[self.run].Da = Da
+
+                # The geometric parameter set {tm, Dr}.
+                elif geo_params.count('tm') == 1 and geo_params.count('Dr') == 1:
+                    # The parameters.
+                    tm = geo_values[geo_params.index('tm')]
+                    Dr = geo_values[geo_params.index('Dr')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = tm
+                    self.relax.data.diff[self.run].Dr = Dr
+
+                # The geometric parameter set {Diso, Da}.
+                elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
+                    # The parameters.
+                    Diso = geo_values[geo_params.index('Diso')]
+                    Da = geo_values[geo_params.index('Da')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
+                    self.relax.data.diff[self.run].Da = Da
+
+                # The geometric parameter set {Diso, Dr}.
+                elif geo_params.count('Diso') == 1 and geo_params.count('Dr') == 1:
+                    # The parameters.
+                    Diso = geo_values[geo_params.index('Diso')]
+                    Dr = geo_values[geo_params.index('Dr')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
+                    self.relax.data.diff[self.run].Dr = Dr
+
+                # The geometric parameter set {Da, Dr}.
+                elif geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
+                    # The parameters.
+                    Da = geo_values[geo_params.index('Da')]
+                    Dr = geo_values[geo_params.index('Dr')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].Da = Da
+                    self.relax.data.diff[self.run].Da = Dr
+
+                # Unknown parameter combination.
+                else:
+                    raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+            # Three geometric parameters.
+            elif len(geo_params) == 3:
+                # The geometric parameter set {tm, Da, Dr}.
+                if geo_params.count('tm') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
+                    # The parameters.
+                    tm = geo_values[geo_params.index('tm')]
+                    Da = geo_values[geo_params.index('Da')]
+                    Dr = geo_values[geo_params.index('Dr')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = tm
+                    self.relax.data.diff[self.run].Da = Da
+                    self.relax.data.diff[self.run].Dr = Dr
+
+                # The geometric parameter set {Diso, Da, Dr}.
+                elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
+                    # The parameters.
+                    Diso = geo_values[geo_params.index('Diso')]
+                    Da = geo_values[geo_params.index('Da')]
+                    Dr = geo_values[geo_params.index('Dr')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
+                    self.relax.data.diff[self.run].Da = Da
+                    self.relax.data.diff[self.run].Dr = Dr
+
+                # The geometric parameter set {Dx, Dy, Dz}.
+                elif geo_params.count('Dx') == 1 and geo_params.count('Dy') == 1 and geo_params.count('Dz') == 1:
+                    # The parameters.
+                    Dx = geo_values[geo_params.index('Dx')]
+                    Dy = geo_values[geo_params.index('Dy')]
+                    Dz = geo_values[geo_params.index('Dz')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].tm = 0.5 / (Dx + Dy + Dz)
+                    self.relax.data.diff[self.run].Da = Dz - 0.5*(Dx + Dy)
+                    self.relax.data.diff[self.run].Dr = (Dy - Dx) / (2.0*self.relax.data.diff[self.run].Da)
+
+                # Unknown parameter combination.
+                else:
+                    raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+
+            # More than three geometric parameters.
+            elif len(geo_params) > 3:
+                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+
+            # Orientational parameters.
+            ###########################
+
+            # A single orientational parameter.
+            if len(orient_params) == 1:
+                # The single parameter alpha.
+                if orient_params[0] == 'alpha':
+                    alpha = orient_values[orient_params.index('alpha')]
+                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+
+                # The single parameter beta.
+                elif orient_params[0] == 'beta':
+                    beta = orient_values[orient_params.index('beta')]
+                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+
+                # The single parameter gamma.
+                elif orient_params[0] == 'gamma':
+                    gamma = orient_values[orient_params.index('gamma')]
+                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+
+            # Two orientational parameters.
+            elif len(orient_params) == 2:
+                # The orientational parameter set {alpha, beta}.
+                if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
+                    # The parameters.
+                    alpha = orient_values[orient_params.index('alpha')]
+                    beta = orient_values[orient_params.index('beta')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+
+                # The orientational parameter set {alpha, gamma}.
+                if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
+                    # The parameters.
+                    alpha = orient_values[orient_params.index('alpha')]
+                    gamma = orient_values[orient_params.index('gamma')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+
+                # The orientational parameter set {beta, gamma}.
+                if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
+                    # The parameters.
+                    beta = orient_values[orient_params.index('beta')]
+                    gamma = orient_values[orient_params.index('gamma')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+
+                # Unknown parameter combination.
+                else:
+                    raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+            # Three orientational parameters.
+            elif len(orient_params) == 3:
+                # The orientational parameter set {alpha, beta, gamma}.
+                if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
+                    # The parameters.
+                    alpha = orient_values[orient_params.index('alpha')]
+                    beta = orient_values[orient_params.index('beta')]
+                    gamma = orient_values[orient_params.index('gamma')]
+
+                    # Set the internal parameter values.
+                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+
+                # Unknown parameter combination.
+                else:
+                    raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+            # More than three orientational parameters.
+            elif len(orient_params) > 3:
+                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
 
 
     def sphere(self):
@@ -687,15 +1059,8 @@ class Diffusion_tensor:
             tm = tm * self.time_scale
             Da = Da * self.d_scale
 
-            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
-            self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dpar = self.relax.data.diff[self.run].Diso + 2.0/3.0 * Da
-            self.relax.data.diff[self.run].Dper = self.relax.data.diff[self.run].Diso - 1.0/3.0 * Da
-            self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = tm
+            # Set the parameters.
+            self.set(run=self.run, value=[tm, Da], param=['tm', 'Da'])
 
         # (Diso, Da, theta, phi).
         elif self.param_types == 1:
@@ -706,15 +1071,8 @@ class Diffusion_tensor:
             Diso = Diso * self.d_scale
             Da = Da * self.d_scale
 
-            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = Diso
-            self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dpar = Diso + 2.0/3.0 * Da
-            self.relax.data.diff[self.run].Dper = Diso - 1.0/3.0 * Da
-            self.relax.data.diff[self.run].Dratio = self.relax.data.diff[self.run].Dpar / self.relax.data.diff[self.run].Dper
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
+            # Set the parameters.
+            self.set(run=self.run, value=[Diso, Da], param=['Diso', 'Da'])
 
         # (tm, Dratio, theta, phi).
         elif self.param_types == 2:
@@ -724,15 +1082,8 @@ class Diffusion_tensor:
             # Scaling.
             tm = tm * self.time_scale
 
-            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = 1.0 / (6.0 * tm)
-            self.relax.data.diff[self.run].Dratio = Dratio
-            self.relax.data.diff[self.run].Dpar = 3.0 * self.relax.data.diff[self.run].Diso * Dratio / (Dratio + 2.0)
-            self.relax.data.diff[self.run].Dper = 3.0 * self.relax.data.diff[self.run].Diso / (Dratio + 2.0)
-            self.relax.data.diff[self.run].Da = self.relax.data.diff[self.run].Dpar - self.relax.data.diff[self.run].Dper
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = tm
+            # Set the parameters.
+            self.set(run=self.run, value=[tm, Dratio], param=['tm', 'Dratio'])
 
         # (Dpar, Dper, theta, phi).
         elif self.param_types == 3:
@@ -743,15 +1094,8 @@ class Diffusion_tensor:
             Dpar = Dpar * self.d_scale
             Dper = Dper * self.d_scale
 
-            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Dpar = Dpar
-            self.relax.data.diff[self.run].Dper = Dper
-            self.relax.data.diff[self.run].Diso = (Dpar + 2.0*Dper) / 3.0
-            self.relax.data.diff[self.run].Da = Dpar - Dper
-            self.relax.data.diff[self.run].Dratio = Dpar / Dper
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
+            # Set the parameters.
+            self.set(run=self.run, value=[Dpar, Dper], param=['Dpar', 'Dper'])
 
         # (Diso, Dratio, theta, phi).
         elif self.param_types == 4:
@@ -761,15 +1105,8 @@ class Diffusion_tensor:
             # Scaling.
             Diso = Diso * self.d_scale
 
-            # Diffusion tensor eigenvalues: Dpar, Dper, Diso, Dratio.
-            self.relax.data.diff[self.run].Diso = Diso
-            self.relax.data.diff[self.run].Dratio = Dratio
-            self.relax.data.diff[self.run].Dpar = 3.0 * Diso * Dratio / (Dratio + 2.0)
-            self.relax.data.diff[self.run].Dper = 3.0 * Diso / (Dratio + 2.0)
-            self.relax.data.diff[self.run].Da = self.relax.data.diff[self.run].Dpar - self.relax.data.diff[self.run].Dper
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * Diso)
+            # Set the parameters.
+            self.set(run=self.run, value=[Diso, Dratio], param=['Diso', 'Dratio'])
 
         # Unknown parameter combination.
         else:
@@ -780,39 +1117,39 @@ class Diffusion_tensor:
             theta = (theta / 360.0) * 2.0 * pi
             phi = (phi / 360.0) * 2.0 * pi
 
-        # Make sure the angles are within their defined ranges.
-        self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
-        self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
-
-        # Unit symmetry axis vector.
-        #x = cos(self.relax.data.diff[self.run].theta) * sin(self.relax.data.diff[self.run].phi)
-        #y = sin(self.relax.data.diff[self.run].theta) * sin(self.relax.data.diff[self.run].phi)
-        #z = cos(self.relax.data.diff[self.run].phi)
-        #self.relax.data.diff[self.run].axis_unit = array([x, y, z], Float64)
-
-        # Full symmetry axis vector.
-        #self.relax.data.diff[self.run].axis_vect = self.relax.data.diff[self.run].Dpar * self.relax.data.diff[self.run].axis_unit
+        # Set the orientational parameters.
+        self.set(run=self.run, value=[theta, phi], param=['theta', 'phi'])
 
 
     def test_params(self, num_params):
         """Function for testing the validity of the input parameters."""
 
         # tm.
-        if self.relax.data.diff[self.run].tm <= 0.0 or self.relax.data.diff[self.run].tm > 1e-6:
-            raise RelaxError, "The tm value of " + `self.relax.data.diff[self.run].tm` + " should be between zero and one microsecond."
+        tm = self.relax.data.diff[self.run].tm
+        if tm <= 0.0 or tm > 1e-6:
+            raise RelaxError, "The tm value of " + `tm` + " should be between zero and one microsecond."
 
         # Spheroid.
         if num_params == 4:
+            # Parameters.
+            Diso = 1.0 / (6.0 * self.relax.data.diff[self.run].tm)
+            Da = self.relax.data.diff[self.run].Da
+
             # Da.
-            if self.relax.data.diff[self.run].Da < -1.5*self.relax.data.diff[self.run].Diso or self.relax.data.diff[self.run].Da > 3.0*self.relax.data.diff[self.run].Diso:
-                raise RelaxError, "The Da value of " + `self.relax.data.diff[self.run].Da` + " should be between -3/2 * Diso and 3Diso."
+            if Da < -1.5*Diso or Da > 3.0*Diso:
+                raise RelaxError, "The Da value of " + `Da` + " should be between -3/2 * Diso and 3Diso."
 
         # Ellipsoid.
         if num_params == 6:
+            # Parameters.
+            Diso = 1.0 / (6.0 * self.relax.data.diff[self.run].tm)
+            Da = self.relax.data.diff[self.run].Da
+            Dr = self.relax.data.diff[self.run].Dr
+
             # Da.
-            if self.relax.data.diff[self.run].Da < 0.0 or self.relax.data.diff[self.run].Da > 3.0*self.relax.data.diff[self.run].Diso:
-                raise RelaxError, "The Da value of " + `self.relax.data.diff[self.run].Da` + " should be between zero and 3Diso."
+            if Da < 0.0 or Da > 3.0*Diso:
+                raise RelaxError, "The Da value of " + `Da` + " should be between zero and 3Diso."
 
             # Dr.
-            if self.relax.data.diff[self.run].Dr < 0.0 or self.relax.data.diff[self.run].Dr > 1.0:
-                raise RelaxError, "The Dr value of " + `self.relax.data.diff[self.run].Dr` + " should be between zero and one."
+            if Dr < 0.0 or Dr > 1.0:
+                raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
