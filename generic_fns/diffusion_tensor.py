@@ -590,7 +590,7 @@ class Diffusion_tensor:
             return 'phi'
 
 
-    def set(self, run=None, params=None, data_type=None):
+    def set(self, run=None, value=None, param=None):
         """
         Diffusion tensor set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
