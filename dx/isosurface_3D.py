@@ -92,8 +92,7 @@ class Iso3D(Base_Map):
                 # Loop over the third parameter.
                 for k in xrange((self.inc + 1)):
                     # Set the parameter values.
-                    for l in xrange(self.n):
-                        self.relax.generic.value.set(run=self.run, value=values[l], param=self.params[l], res_num=self.res_num, force=1)
+                    self.relax.generic.value.set(run=self.run, value=values, param=self.params, res_num=self.res_num, force=1)
 
                     # Calculate the function values.
                     self.calculate(run=self.run, res_num=self.res_num, print_flag=0)

@@ -634,6 +634,10 @@ class Diffusion_tensor:
         supplied.
         """
 
+        print "Hello"
+        print value
+        print param
+
 
     def sphere(self):
         """Function for setting up spherical diffusion."""

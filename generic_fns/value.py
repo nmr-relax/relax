@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-from Numeric import zeros
+from Numeric import ArrayType, zeros
 from re import compile, match
 import sys
 
@@ -351,7 +351,7 @@ class Value:
                 # The parameter is not a diffusion parameter.
                 if self.return_data_name(param):
                     # List of values.
-                    if type(value) == list:
+                    if type(value) == list or type(value) == ArrayType:
                         # Parameter name.
                         for i in xrange(len(value)):
                             self.res_params.append(param)
@@ -370,7 +370,7 @@ class Value:
                 # The parameter is a diffusion parameter.
                 elif diff_name:
                     # List of values.
-                    if type(value) == list:
+                    if type(value) == list or type(value) == ArrayType:
                         # Parameter name.
                         for i in xrange(len(value)):
                             self.diff_params.append(diff_name)
@@ -403,7 +403,7 @@ class Value:
                         self.res_params.append(param[i])
 
                         # Parameter value.
-                        if type(value) == list:
+                        if type(value) == list or type(value) == ArrayType:
                             self.res_values.append(value[i])
                         else:
                             self.res_values.append(value)
@@ -414,7 +414,7 @@ class Value:
                         self.diff_params.append(diff_name)
 
                         # Parameter value.
-                        if type(value) == list:
+                        if type(value) == list or type(value) == ArrayType:
                             self.diff_values.append(value[i])
                         else:
                             self.diff_values.append(value)
@@ -425,7 +425,7 @@ class Value:
             # No parameter or a single parameter.
             if param == None or type(param) == str:
                 # List of values.
-                if type(value) == list:
+                if type(value) == list or type(value) == ArrayType:
                     # Parameter name.
                     for i in xrange(len(value)):
                         self.res_params.append(param)
@@ -449,12 +449,16 @@ class Value:
                     self.res_params.append(param[i])
 
                     # Parameter value.
-                    if type(value) == list:
+                    if type(value) == list or type(value) == ArrayType:
                         self.res_values.append(value[i])
                     else:
                         self.res_values.append(value)
 
         # Debugging.
+        print "Diff params: " + `self.diff_params`
+        print "Diff values: " + `self.diff_values`
+        print "Res params: " + `self.res_params`
+        print "Res values: " + `self.res_values`
         if len(self.diff_params) != len(self.diff_values) or len(self.res_params) != len(self.res_values):
             print "Diff params: " + `self.diff_params`
             print "Diff values: " + `self.diff_values`
