@@ -33,89 +33,6 @@ class Diffusion_tensor:
         self.relax = relax
 
 
-    def ellipsoid(self):
-        """Function for setting up ellipsoidal diffusion."""
-
-        # The diffusion type.
-        self.relax.data.diff[self.run].type = 'ellipsoid'
-
-        # (tm, Da, Dr, alpha, beta, gamma).
-        if self.param_types == 0:
-            # Unpack the tuple.
-            tm, Da, Dr, alpha, beta, gamma = self.params
-
-            # Scaling.
-            tm = tm * self.time_scale
-            Da = Da * self.d_scale
-
-            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
-            self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
-            self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dr = Dr
-            self.relax.data.diff[self.run].Dx = self.relax.data.diff[self.run].Diso - Da*(Dr + 1)
-            self.relax.data.diff[self.run].Dy = self.relax.data.diff[self.run].Diso + Da*(Dr - 1)
-            self.relax.data.diff[self.run].Dz = self.relax.data.diff[self.run].Diso + 2.0*Da
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = tm
-
-        # (Diso, Da, Dr, alpha, beta, gamma).
-        elif self.param_types == 1:
-            # Unpack the tuple.
-            Diso, Da, Dr, alpha, beta, gamma = self.params
-
-            # Scaling.
-            Diso = Diso * self.d_scale
-            Da = Da * self.d_scale
-
-            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
-            self.relax.data.diff[self.run].Diso = Diso
-            self.relax.data.diff[self.run].Da = Da
-            self.relax.data.diff[self.run].Dr = Dr
-            self.relax.data.diff[self.run].Dx = Diso - Da*(Dr + 1)
-            self.relax.data.diff[self.run].Dy = Diso + Da*(Dr - 1)
-            self.relax.data.diff[self.run].Dz = Diso + 2.0*Da
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0*Diso)
-
-        # (Dx, Dy, Dz, alpha, beta, gamma).
-        elif self.param_types == 2:
-            # Unpack the tuple.
-            Dx, Dy, Dz, alpha, beta, gamma = self.params
-
-            # Scaling.
-            Dx = Dx * self.d_scale
-            Dy = Dy * self.d_scale
-            Dz = Dz * self.d_scale
-
-            # Diffusion tensor eigenvalues: Dx, Dy, Dz.
-            self.relax.data.diff[self.run].Dx = Dx
-            self.relax.data.diff[self.run].Dy = Dy
-            self.relax.data.diff[self.run].Dz = Dz
-            self.relax.data.diff[self.run].Diso = (Dx + Dy + Dz) / 3.0
-            self.relax.data.diff[self.run].Da = Dz - (Dx + Dy)/2.0
-            self.relax.data.diff[self.run].Dr = (Dy - Dx) / (2.0*self.relax.data.diff[self.run].Da)
-
-            # Global correlation time:  tm.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0*self.relax.data.diff[self.run].Diso)
-
-        # Unknown parameter combination.
-        else:
-            raise RelaxUnknownParamCombError, ('param_types', self.param_types)
-
-        # Convert the angles to radians.
-        if self.angle_units == 'deg':
-            alpha = (alpha / 360.0) * 2.0 * pi
-            beta = (beta / 360.0) * 2.0 * pi
-            gamma = (gamma / 360.0) * 2.0 * pi
-
-        # Make sure the angles are within their defined ranges.
-        self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-        self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
-        self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
-
-
     def copy(self, run1=None, run2=None):
         """Function for copying diffusion tensor data from run1 to run2."""
 
@@ -146,6 +63,62 @@ class Diffusion_tensor:
                   'diff_params' ]
 
         return names
+
+
+    def default_value(self, param):
+        """
+        Diffusion tensor parameter default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ________________________________________________________________________
+        |                        |                    |                        |
+        | Data type              | Object name        | Value                  |
+        |________________________|____________________|________________________|
+        |                        |                    |                        |
+        | tm                     | 'tm'               | 10 * 1e-9              |
+        |                        |                    |                        |
+        | Diso                   | 'Diso'             | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Da                     | 'Da'               | 0.0                    |
+        |                        |                    |                        |
+        | Dr                     | 'Dr'               | 0.0                    |
+        |                        |                    |                        |
+        | Dx                     | 'Dx'               | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dy                     | 'Dy'               | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dz                     | 'Dz'               | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dper                   | 'Dper'             | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dratio                 | 'Dratio'           | 1.0                    |
+        |                        |                    |                        |
+        | alpha                  | 'alpha'            | 0.0                    |
+        |                        |                    |                        |
+        | beta                   | 'beta'             | 0.0                    |
+        |                        |                    |                        |
+        | gamma                  | 'gamma'            | 0.0                    |
+        |                        |                    |                        |
+        | theta                  | 'theta'            | 0.0                    |
+        |                        |                    |                        |
+        | phi                    | 'phi'              | 0.0                    |
+        |________________________|____________________|________________________|
+
+        """
+
+        # tm.
+        if param == 'tm':
+            return 10.0 * 1e-9
+
+        # Diso, Dx, Dy, Dz, Dpar, Dper.
+        elif param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
+            return 1.666 * 1e7
+
+        # Dratio.
+        elif param == 'Dratio':
+            return 1.0
 
 
     def delete(self, run=None):
@@ -265,55 +238,188 @@ class Diffusion_tensor:
             print "\nFixed:  " + `self.relax.data.diff[run].fixed`
 
 
+    def ellipsoid(self):
+        """Function for setting up ellipsoidal diffusion."""
+
+        # The diffusion type.
+        self.relax.data.diff[self.run].type = 'ellipsoid'
+
+        # (tm, Da, Dr, alpha, beta, gamma).
+        if self.param_types == 0:
+            # Unpack the tuple.
+            tm, Da, Dr, alpha, beta, gamma = self.params
+
+            # Scaling.
+            tm = tm * self.time_scale
+            Da = Da * self.d_scale
+
+            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
+            self.relax.data.diff[self.run].Diso = 1.0 / (6.0*tm)
+            self.relax.data.diff[self.run].Da = Da
+            self.relax.data.diff[self.run].Dr = Dr
+            self.relax.data.diff[self.run].Dx = self.relax.data.diff[self.run].Diso - Da*(Dr + 1)
+            self.relax.data.diff[self.run].Dy = self.relax.data.diff[self.run].Diso + Da*(Dr - 1)
+            self.relax.data.diff[self.run].Dz = self.relax.data.diff[self.run].Diso + 2.0*Da
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = tm
+
+        # (Diso, Da, Dr, alpha, beta, gamma).
+        elif self.param_types == 1:
+            # Unpack the tuple.
+            Diso, Da, Dr, alpha, beta, gamma = self.params
+
+            # Scaling.
+            Diso = Diso * self.d_scale
+            Da = Da * self.d_scale
+
+            # Diffusion tensor eigenvalues: Diso, Da, Dr, Dx, Dy, Dz.
+            self.relax.data.diff[self.run].Diso = Diso
+            self.relax.data.diff[self.run].Da = Da
+            self.relax.data.diff[self.run].Dr = Dr
+            self.relax.data.diff[self.run].Dx = Diso - Da*(Dr + 1)
+            self.relax.data.diff[self.run].Dy = Diso + Da*(Dr - 1)
+            self.relax.data.diff[self.run].Dz = Diso + 2.0*Da
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = 1.0 / (6.0*Diso)
+
+        # (Dx, Dy, Dz, alpha, beta, gamma).
+        elif self.param_types == 2:
+            # Unpack the tuple.
+            Dx, Dy, Dz, alpha, beta, gamma = self.params
+
+            # Scaling.
+            Dx = Dx * self.d_scale
+            Dy = Dy * self.d_scale
+            Dz = Dz * self.d_scale
+
+            # Diffusion tensor eigenvalues: Dx, Dy, Dz.
+            self.relax.data.diff[self.run].Dx = Dx
+            self.relax.data.diff[self.run].Dy = Dy
+            self.relax.data.diff[self.run].Dz = Dz
+            self.relax.data.diff[self.run].Diso = (Dx + Dy + Dz) / 3.0
+            self.relax.data.diff[self.run].Da = Dz - (Dx + Dy)/2.0
+            self.relax.data.diff[self.run].Dr = (Dy - Dx) / (2.0*self.relax.data.diff[self.run].Da)
+
+            # Global correlation time:  tm.
+            self.relax.data.diff[self.run].tm = 1.0 / (6.0*self.relax.data.diff[self.run].Diso)
+
+        # Unknown parameter combination.
+        else:
+            raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+
+        # Convert the angles to radians.
+        if self.angle_units == 'deg':
+            alpha = (alpha / 360.0) * 2.0 * pi
+            beta = (beta / 360.0) * 2.0 * pi
+            gamma = (gamma / 360.0) * 2.0 * pi
+
+        # Make sure the angles are within their defined ranges.
+        self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+        self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+        self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+
+
+    def init(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+        """Function for initialising the diffusion tensor."""
+
+        # Arguments.
+        self.run = run
+        self.params = params
+        self.time_scale = time_scale
+        self.d_scale = d_scale
+        self.angle_units = angle_units
+        self.param_types = param_types
+        self.spheroid_type = spheroid_type
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Test if diffusion tensor data corresponding to the run already exists.
+        if self.relax.data.diff.has_key(self.run):
+            raise RelaxTensorError, self.run
+
+        # Check the validity of the angle_units argument.
+        valid_types = ['deg', 'rad']
+        if not angle_units in valid_types:
+            raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+
+        # Add the run to the diffusion tensor data structure.
+        self.relax.data.diff.add_item(self.run)
+
+        # Set the fixed flag.
+        self.relax.data.diff[self.run].fixed = fixed
+
+        # Spherical diffusion.
+        if type(params) == float:
+            num_params = 1
+            self.sphere()
+
+        # Spheroidal diffusion.
+        elif (type(params) == tuple or type(params) == list) and len(params) == 4:
+            num_params = 4
+            self.spheroid()
+
+        # Ellipsoidal diffusion.
+        elif (type(params) == tuple or type(params) == list) and len(params) == 6:
+            num_params = 6
+            self.ellipsoid()
+
+        # Unknown.
+        else:
+            raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
+
+        # Test the validity of the parameters.
+        self.test_params(num_params)
+
+
     def map_bounds(self, run, param):
         """The function for creating bounds for the mapping function."""
 
         # Initialise.
         self.run = run
-        bounds = None
 
         # tm.
         if param == 'tm':
-            bounds = [0, 10.0 * 1e-9]
+            return [0, 10.0 * 1e-9]
 
         # {Diso, Dx, Dy, Dz, Dpar, Dper}.
         if param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
-            bounds = [1e6, 1e7]
+            return [1e6, 1e7]
 
         # Da.
         if param == 'Da':
-            bounds = [-3.0/2.0 * 1e7, 3.0 * 1e7]
+            return [-3.0/2.0 * 1e7, 3.0 * 1e7]
 
         # Dr.
         elif param == 'Dr':
-            bounds = [0, 1]
+            return [0, 1]
 
         # Dratio.
         elif param == 'Dratio':
-            bounds = [1.0/3.0, 3.0]
+            return [1.0/3.0, 3.0]
 
         # theta.
         elif param == 'theta':
-            bounds = [0, pi]
+            return [0, pi]
 
         # phi.
         elif param == 'phi':
-            bounds = [0, 2*pi]
+            return [0, 2*pi]
 
         # alpha.
         elif param == 'alpha':
-            bounds = [0, 2*pi]
+            return [0, 2*pi]
 
         # beta.
         elif param == 'beta':
-            bounds = [0, pi]
+            return [0, pi]
 
         # gamma.
         elif param == 'gamma':
-            bounds = [0, 2*pi]
-
-        # Return the bounds.
-        return bounds
+            return [0, 2*pi]
 
 
     def map_labels(self, run, index, params, bounds, swap, inc):
@@ -484,6 +590,51 @@ class Diffusion_tensor:
             return 'phi'
 
 
+    def set(self, run=None, params=None, data_type=None):
+        """
+        Diffusion tensor set details
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        If the diffusion tensor has not been setup, use the more powerful function
+        'diffusion_tensor.init' to initialise the tensor parameters.
+
+        The diffusion tensor parameters can only be set when the run corresponds to model-free
+        analysis.  The units of the parameters are:
+
+            Inverse seconds for tm.
+            Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+            Unitless for Dratio and Dr.
+            Radians for all angles (alpha, beta, gamma, theta, phi).
+
+
+        When setting a diffusion tensor parameter, the residue number has no effect.  As the
+        internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
+        theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
+        geometric parameters must be done in the following way.  If a single geometric parameter is
+        supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
+        Dy, and Dx, it is not possible to determine how to use the currently set values together
+        with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
+        when supplying multiple geometric parameters, the set must belong to one of
+
+            {tm, Da},
+            {Diso, Da},
+            {tm, Dratio},
+            {Dpar, Dper},
+            {Diso, Dratio},
+
+        where either theta, phi, or both orientational parameters can be additionally supplied.  For
+        ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
+        belong to one of
+
+            {tm, Da, Dr},
+            {Diso, Da, Dr},
+            {Dx, Dy, Dz},
+
+        where any number of the orientational parameters, alpha, beta, or gamma can be additionally
+        supplied.
+        """
+
+
     def sphere(self):
         """Function for setting up spherical diffusion."""
 
@@ -509,60 +660,6 @@ class Diffusion_tensor:
         # Unknown parameter combination.
         else:
             raise RelaxUnknownParamCombError, ('param_types', self.param_types)
-
-
-    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
-        """Function for setting up the diffusion tensor."""
-
-        # Arguments.
-        self.run = run
-        self.params = params
-        self.time_scale = time_scale
-        self.d_scale = d_scale
-        self.angle_units = angle_units
-        self.param_types = param_types
-        self.spheroid_type = spheroid_type
-
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Test if diffusion tensor data corresponding to the run already exists.
-        if self.relax.data.diff.has_key(self.run):
-            raise RelaxTensorError, self.run
-
-        # Check the validity of the angle_units argument.
-        valid_types = ['deg', 'rad']
-        if not angle_units in valid_types:
-            raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
-
-        # Add the run to the diffusion tensor data structure.
-        self.relax.data.diff.add_item(self.run)
-
-        # Set the fixed flag.
-        self.relax.data.diff[self.run].fixed = fixed
-
-        # Spherical diffusion.
-        if type(params) == float:
-            num_params = 1
-            self.sphere()
-
-        # Spheroidal diffusion.
-        elif (type(params) == tuple or type(params) == list) and len(params) == 4:
-            num_params = 4
-            self.spheroid()
-
-        # Ellipsoidal diffusion.
-        elif (type(params) == tuple or type(params) == list) and len(params) == 6:
-            num_params = 6
-            self.ellipsoid()
-
-        # Unknown.
-        else:
-            raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
-
-        # Test the validity of the parameters.
-        self.test_params(num_params)
 
 
     def spheroid(self):

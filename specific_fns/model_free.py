@@ -782,38 +782,35 @@ class Model_free(Common_functions):
 
         # tm.
         if param == 'tm':
-            value = 10.0 * 1e-9
+            return 10.0 * 1e-9
 
         # {S2, S2f, S2s}.
-        elif match('S2', param):
-            value = 0.8
+        elif search('^S2', param):
+            return 0.8
 
         # te.
         elif param == 'te':
-            value = 100.0 * 1e-12
+            return 100.0 * 1e-12
 
         # tf.
         elif param == 'tf':
-            value = 10.0 * 1e-12
+            return 10.0 * 1e-12
 
         # ts.
         elif param == 'ts':
-            value = 1000.0 * 1e-12
+            return 1000.0 * 1e-12
 
         # Rex.
         elif param == 'Rex':
-            value = 0.0
+            return 0.0
 
         # Bond length.
         elif param == 'r':
-            value = 1.02 * 1e-10
+            return 1.02 * 1e-10
 
         # CSA.
         elif param == 'CSA':
-            value = -170 * 1e-6
-
-        # Return the value.
-        return value
+            return -170 * 1e-6
 
 
     def delete(self, run):
@@ -1827,31 +1824,28 @@ class Model_free(Common_functions):
     def map_bounds(self, run, param):
         """The function for creating bounds for the mapping function."""
 
-        # Initialise.
+        # Arguments.
         self.run = run
-        bounds = None
 
         # {S2, S2f, S2s}.
         if search('^S2', param):
-            bounds = [0, 1]
+            return [0, 1]
 
         # {tm, te, tf, ts}.
         elif search('^t', param):
-            bounds = [0, 1e-8]
+            return [0, 1e-8]
 
         # Rex.
         elif param == 'Rex':
-            bounds = [0, 30.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2]
+            return [0, 30.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2]
 
         # Bond length.
         elif param == 'r':
-            bounds = [1.0 * 1e-10, 1.1 * 1e-10]
+            return [1.0 * 1e-10, 1.1 * 1e-10]
 
         # CSA.
         elif param == 'CSA':
-            bounds = [-100 * 1e-6, -300 * 1e-6]
-
-        return bounds
+            return [-100 * 1e-6, -300 * 1e-6]
 
 
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
@@ -3357,7 +3351,7 @@ class Model_free(Common_functions):
         self.relax.data.warning[self.run] = None
 
 
-    def return_conversion_factor(self, data_type):
+    def return_conversion_factor(self, param):
         """Function for returning the factor of conversion between different parameter units.
 
         For example, the internal representation of te is in seconds, whereas the external
@@ -3365,33 +3359,31 @@ class Model_free(Common_functions):
         """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
-
-        # Initialise so the is no conversion factor.
-        factor = 1.0
+        object_name = self.return_data_name(param)
 
         # tm (nanoseconds).
         if object_name == 'tm':
-            factor = 1e-9
+            return 1e-9
 
         # te, tf, and ts (picoseconds).
         elif object_name in ['te', 'tf', 'ts']:
-            factor = 1e-12
+            return 1e-12
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':
-            factor = 1.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2
+            return 1.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2
 
         # Bond length (Angstrom).
         elif object_name == 'r':
-            factor = 1e-10
+            return 1e-10
 
         # CSA (ppm).
         elif object_name == 'csa':
-            factor = 1e-6
+            return 1e-6
 
-        # Return the conversion factor.
-        return factor
+        # No conversion factor.
+        else:
+            return 1.0
 
 
     def return_data_name(self, name):
@@ -3468,57 +3460,54 @@ class Model_free(Common_functions):
             return 'csa'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_grace_string(self, param):
+        """Function for returning the Grace string representing the parameter for axis labelling."""
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Local tm.
         if object_name == 'tm':
-            grace_string = '\\xt\\f{}\\sm'
+            return '\\xt\\f{}\\sm'
 
         # Order parameter S2.
         elif object_name == 's2':
-            grace_string = '\\qS\\v{0.4}\\z{0.71}2\\Q'
+            return '\\qS\\v{0.4}\\z{0.71}2\\Q'
 
         # Order parameter S2f.
         elif object_name == 's2f':
-            grace_string = '\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
+            return '\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
 
         # Order parameter S2s.
         elif object_name == 's2s':
-            grace_string = '\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
+            return '\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
 
         # Correlation time te.
         elif object_name == 'te':
-            grace_string = '\\xt\\f{}\\se'
+            return '\\xt\\f{}\\se'
 
         # Correlation time tf.
         elif object_name == 'tf':
-            grace_string = '\\xt\\f{}\\sf'
+            return '\\xt\\f{}\\sf'
 
         # Correlation time ts.
         elif object_name == 'ts':
-            grace_string = '\\xt\\f{}\\ss'
+            return '\\xt\\f{}\\ss'
 
         # Rex.
         elif object_name == 'rex':
-            grace_string = '\\qR\\sex\\Q'
+            return '\\qR\\sex\\Q'
 
         # Bond length.
         elif object_name == 'r':
-            grace_string = 'Bond length'
+            return 'Bond length'
 
         # CSA.
         elif object_name == 'csa':
-            grace_string = '\\qCSA\\Q'
-
-        # Return the Grace string.
-        return grace_string
+            return '\\qCSA\\Q'
 
 
-    def return_units(self, data_type):
+    def return_units(self, param):
         """Function for returning a string representing the parameters units.
 
         For example, the internal representation of te is in seconds, whereas the external
@@ -3527,37 +3516,31 @@ class Model_free(Common_functions):
         """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
-
-        # Initialise to no units.
-        units = None
+        object_name = self.return_data_name(param)
 
         # tm (nanoseconds).
         if object_name == 'tm':
-            units = 'ns'
+            return 'ns'
 
         # te, tf, and ts (picoseconds).
         elif object_name in ['te', 'tf', 'ts']:
-            units = 'ps'
+            return 'ps'
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':
-            units = self.relax.data.frq_labels[self.run][0] + ' MHz'
+            return self.relax.data.frq_labels[self.run][0] + ' MHz'
 
         # Bond length (Angstrom).
         elif object_name == 'r':
-            units = 'Angstrom'
+            return 'Angstrom'
 
         # CSA (ppm).
         elif object_name == 'csa':
-            units = 'ppm'
-
-        # Return the units string.
-        return units
+            return 'ppm'
 
 
-    def return_value(self, run, i, data_type, sim=None):
-        """Function for returning the value and error corresponding to 'data_type'.
+    def return_value(self, run, i, param, sim=None):
+        """Function for returning the value and error corresponding to 'param'.
 
         If sim is set to an integer, return the value of the simulation and None.
         """
@@ -3566,11 +3549,11 @@ class Model_free(Common_functions):
         self.run = run
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # The data type does not exist.
         if not object_name:
-            raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
+            raise RelaxError, "The model-free parameter " + `param` + " does not exist."
 
         # The error and simulation names.
         object_error = object_name + '_err'
@@ -3897,7 +3880,7 @@ class Model_free(Common_functions):
         self.model_setup(self.run, model, equation, params, res_num)
 
 
-    def set(self, run=None, value=None, error=None, data_type=None, index=None):
+    def set(self, run=None, value=None, error=None, param=None, index=None):
         """
         Model-free set details
         ~~~~~~~~~~~~~~~~~~~~~~
@@ -3924,7 +3907,7 @@ class Model_free(Common_functions):
         # Setting the model parameters prior to minimisation.
         #####################################################
 
-        if data_type == None:
+        if param == None:
             # The values are supplied by the user:
             if value:
                 # Test if the length of the value array is equal to the length of the model-free parameter array.
@@ -3960,9 +3943,9 @@ class Model_free(Common_functions):
 
         else:
             # Get the object.
-            object_name = self.return_data_name(data_type)
+            object_name = self.return_data_name(param)
             if not object_name:
-                raise RelaxError, "The model-free data type " + `data_type` + " does not exist."
+                raise RelaxError, "The model-free data type " + `param` + " does not exist."
 
             # Initialise all data if it doesn't exist.
             if not hasattr(self.relax.data.res[self.run][index], object_name):

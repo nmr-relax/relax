@@ -412,8 +412,11 @@ class RelaxErrors:
 
     # Unknown parameter.
     class RelaxUnknownParamError(BaseError):
-        def __init__(self, name):
-            self.text = "The parameter " + `name` + " is unknown."
+        def __init__(self, name, param_type=None):
+            if param_type:
+                self.text = "The " + param_type + " parameter " + `name` + " is unknown."
+            else:
+                self.text = "The parameter " + `name` + " is unknown."
 
     # Unknown parameter combination.
     class RelaxUnknownParamCombError(BaseError):

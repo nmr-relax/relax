@@ -24,6 +24,7 @@ import sys
 
 from doc_string import regexp_doc
 import help
+from generic_fns.diffusion_tensor import Diffusion_tensor
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
@@ -42,7 +43,7 @@ class Value:
         self.__relax__ = relax
 
 
-    def copy(self, run1=None, run2=None, data_type=None):
+    def copy(self, run1=None, run2=None, param=None):
         """Function for copying residue specific data values from run1 to run2.
 
         Keyword Arguments
@@ -52,13 +53,13 @@ class Value:
 
         run2:  The name of the run to copy to.
 
-        data_type:  The data type.
+        param:  The parameter to copy.
 
 
         Description
         ~~~~~~~~~~~
 
-        Only one data type may be selected, therefore the data type argument should be a string.
+        Only one parameter may be selected, therefore the 'param' argument should be a string.
 
         If this function is used to change values of previously minimised runs, then the
         minimisation statistics (chi-squared value, iteration count, function count, gradient count,
@@ -78,7 +79,7 @@ class Value:
             text = sys.ps3 + "value.copy("
             text = text + "run1=" + `run1`
             text = text + ", run2=" + `run2`
-            text = text + ", data_type=" + `data_type` + ")"
+            text = text + ", param=" + `param` + ")"
             print text
 
         # The run1 argument.
@@ -89,15 +90,15 @@ class Value:
         if type(run2) != str:
             raise RelaxStrError, ('run2', run2)
 
-        # Relaxation data type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+        # The parameter.
+        if type(param) != str:
+            raise RelaxStrError, ('parameter', param)
 
         # Execute the functional code.
-        self.__relax__.generic.value.copy(run1=run1, run2=run2, data_type=data_type)
+        self.__relax__.generic.value.copy(run1=run1, run2=run2, param=param)
 
 
-    def display(self, run=None, data_type=None):
+    def display(self, run=None, param=None):
         """Function for displaying residue specific data values.
 
         Keyword Arguments
@@ -105,13 +106,13 @@ class Value:
 
         run:  The name of the run.
 
-        data_type:  The data type.
+        param:  The parameter to display.
 
 
         Description
         ~~~~~~~~~~~
 
-        Only one data type may be selected, therefore the data type argument should be a string.
+        Only one parameter may be selected, therefore the 'param' argument should be a string.
 
 
         Examples
@@ -126,22 +127,22 @@ class Value:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.display("
             text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type` + ")"
+            text = text + ", param=" + `param` + ")"
             print text
 
         # The run name.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # Data type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+        # The parameter.
+        if type(param) != str:
+            raise RelaxStrError, ('parameter', param)
 
         # Execute the functional code.
-        self.__relax__.generic.value.display(run=run, data_type=data_type)
+        self.__relax__.generic.value.display(run=run, param=param)
 
 
-    def read(self, run=None, data_type=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    def read(self, run=None, param=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Function for reading residue specific data values from a file.
 
         Keyword Arguments
@@ -149,7 +150,7 @@ class Value:
 
         run:  The name of the run.
 
-        data_type:  The data type.
+        param:  The parameter.
 
         frq:  The spectrometer frequency in Hz.
 
@@ -169,7 +170,7 @@ class Value:
         Description
         ~~~~~~~~~~~
 
-        Only one data type may be selected, therefore the data type argument should be a string.  If
+        Only one parameter may be selected, therefore the 'param' argument should be a string.  If
         the file only contains values and no errors, set the error column argument to None.
 
         If this function is used to change values of previously minimised runs, then the
@@ -185,7 +186,7 @@ class Value:
 
         relax> value.read('m1', 'CSA', 'data/csa_value')
         relax> value.read('m1', 'CSA', 'data/csa_value', 0, 1, 2, 3, None, 1)
-        relax> value.read(run='m1', data_type='CSA', file='data/csa_value', num_col=0, name_col=1,
+        relax> value.read(run='m1', param='CSA', file='data/csa_value', num_col=0, name_col=1,
                           data_col=2, error_col=3, sep=None)
         """
 
@@ -193,7 +194,7 @@ class Value:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.read("
             text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
+            text = text + ", param=" + `param`
             text = text + ", file=" + `file`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
@@ -206,9 +207,9 @@ class Value:
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # Data type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+        # The parameter.
+        if type(param) != str:
+            raise RelaxStrError, ('parameter', param)
 
         # The file name.
         if type(file) != str:
@@ -235,10 +236,10 @@ class Value:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(run=run, data_type=data_type, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
+        self.__relax__.generic.value.read(run=run, param=param, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
-    def set(self, run=None, value=None, data_type=None, res_num=None, res_name=None):
+    def set(self, run=None, value=None, param=None, res_num=None, res_name=None):
         """Function for setting residue specific data values.
 
         Keyword arguments
@@ -248,7 +249,7 @@ class Value:
 
         value:  The value(s).
 
-        data_type:  The data type(s).
+        param:  The parameter(s).
 
         res_num:  The residue number.
 
@@ -263,17 +264,17 @@ class Value:
         and Hessian count) will be reset to None.
 
 
-        The value argument can be None, a single value, or an array of values while the data type
+        The value argument can be None, a single value, or an array of values while the parameter
         argument can be None, a string, or array of strings.  The choice of which combination
         determines the behaviour of this function.  The following table describes what occurs in
-        each instance.  The Value column refers to the 'value' argument while the Type column refers
-        to the 'data_type' argument.  In these columns, 'None' corresponds to None, '1' corresponds
+        each instance.  The Value column refers to the 'value' argument while the Param column refers
+        to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds
         to either a single value or single string, and 'n' corresponds to either an array of values
         or an array of strings.
 
         ____________________________________________________________________________________________
         |       |       |                                                                          |
-        | Value | Type  | Description                                                              |
+        | Value | Param | Description                                                              |
         |_______|_______|__________________________________________________________________________|
         |       |       |                                                                          |
         | None  | None  | This case is used to set the model parameters prior to minimisation or   |
@@ -286,28 +287,31 @@ class Value:
         |       |       | of model parameters for an individual residue.  The parameters will be   |
         |       |       | set to the corresponding number.                                         |
         |       |       |                                                                          |
-        | None  |   1   | The data type matching the string will be set to the default value.      |
+        | None  |   1   | The parameter matching the string will be set to the default value.      |
         |       |       |                                                                          |
-        |   1   |   1   | The data type matching the string will be set to the supplied number.    |
+        |   1   |   1   | The parameter matching the string will be set to the supplied number.    |
         |       |       |                                                                          |
         |   n   |   1   | Invalid combination.                                                     |
         |       |       |                                                                          |
-        | None  |   n   | Each data type matching the strings will be set to the default values.   |
+        | None  |   n   | Each parameter matching the strings will be set to the default values.   |
         |       |       |                                                                          |
-        |   1   |   n   | Each data type matching the strings will be set to the supplied number.  |
+        |   1   |   n   | Each parameter matching the strings will be set to the supplied number.  |
         |       |       |                                                                          |
-        |   n   |   n   | Each data type matching the strings will be set to the corresponding     |
+        |   n   |   n   | Each parameter matching the strings will be set to the corresponding     |
         |       |       | number.  Both arrays must be of equal length.                            |
         |_______|_______|__________________________________________________________________________|
 
 
-        Residue number and name argument.
+        Residue number and name argument
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         If the 'res_num' and 'res_name' arguments are left as the defaults of None, then the
         function will be applied to all residues.  Otherwise the residue number can be set to either
         an integer for selecting a single residue or a python regular expression string for
         selecting multiple residues.  The residue name argument must be a string and can use regular
-        expression as well.
+        expression as well.  If the data is global non-residue specific data, such as diffusion
+        tensor parameters, supplying the residue number and name will terminate the program with an
+        error.
 
 
         Examples
@@ -329,40 +333,40 @@ class Value:
 
         To set the CSA value for the model-free run 'tm3' to the default value, type:
 
-        relax> value.set('tm3', data_type='csa')
+        relax> value.set('tm3', param='csa')
 
 
         To set the CSA value of all residues in the reduced spectral density mapping run '600MHz' to
         -170 ppm, type:
 
         relax> value.set('600MHz', -170 * 1e-6, 'csa')
-        relax> value.set('600MHz', value=-170 * 1e-6, data_type='csa')
+        relax> value.set('600MHz', value=-170 * 1e-6, param='csa')
 
 
         To set the NH bond length of all residues in the model-free run 'm5' to 1.02 Angstroms,
         type:
 
         relax> value.set('m5', 1.02 * 1e-10, 'bond_length')
-        relax> value.set('m5', value=1.02 * 1e-10, data_type='r')
+        relax> value.set('m5', value=1.02 * 1e-10, param='r')
 
 
         To set both the bond length and the CSA value for the run 'new' to the default values, type:
 
-        relax> value.set('new', data_type=['bond length', 'csa'])
+        relax> value.set('new', param=['bond length', 'csa'])
 
 
         To set both tf and ts in the model-free run 'm6' to 100 ps, type:
 
         relax> value.set('m6', 100e-12, ['tf', 'ts'])
-        relax> value.set('m6', value=100e-12, data_type=['tf', 'ts'])
+        relax> value.set('m6', value=100e-12, param=['tf', 'ts'])
 
 
         To set the S2 and te parameter values for model-free run 'm4' which has the parameters
         {S2, te, Rex} to 0.56 and 13 ps, type:
 
         relax> value.set('m4', [0.56, 13e-12], ['S2', 'te'], 10)
-        relax> value.set('m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
-        relax> value.set(run='m4', value=[0.56, 13e-12], data_type=['S2', 'te'], res_num=10)
+        relax> value.set('m4', value=[0.56, 13e-12], param=['S2', 'te'], res_num=10)
+        relax> value.set(run='m4', value=[0.56, 13e-12], param=['S2', 'te'], res_num=10)
         """
 
         # Function intro text.
@@ -370,7 +374,7 @@ class Value:
             text = sys.ps3 + "value.set("
             text = text + "run=" + `run`
             text = text + ", value=" + `value`
-            text = text + ", data_type=" + `data_type`
+            text = text + ", param=" + `param`
             text = text + ", res_num=" + `res_num`
             text = text + ", res_name=" + `res_name` + ")"
             print text
@@ -379,7 +383,7 @@ class Value:
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # Value.
+        # The value.
         if value != None and type(value) != float and type(value) != int and type(value) != list:
             raise RelaxNoneFloatListError, ('value', value)
         if type(value) == list:
@@ -387,25 +391,25 @@ class Value:
                 if type(value[i]) != float and type(value[i]) != int:
                     raise RelaxListFloatError, ('value', value)
 
-        # Data type.
-        if data_type != None and type(data_type) != str and type(data_type) != list:
-            raise RelaxNoneStrListError, ('data type', data_type)
-        if type(data_type) == list:
-            for i in xrange(len(data_type)):
-                if type(data_type[i]) != str:
-                    raise RelaxListStrError, ('data type', data_type)
+        # The parameter.
+        if param != None and type(param) != str and type(param) != list:
+            raise RelaxNoneStrListError, ('parameter', param)
+        if type(param) == list:
+            for i in xrange(len(param)):
+                if type(param[i]) != str:
+                    raise RelaxListStrError, ('parameter', param)
 
-        # The invalid combination of a single value and no data_type argument.
-        if (type(value) == float or type(value) == int) and data_type == None:
-            raise RelaxError, "Invalid value and data type argument combination, for details by type 'help(value.set)'"
+        # The invalid combination of a single value and no param argument.
+        if (type(value) == float or type(value) == int) and param == None:
+            raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
 
-        # The invalid combination of an array of values and a single data_type string.
-        if type(value) == list and type(data_type) == str:
-            raise RelaxError, "Invalid value and data type argument combination, for details by type 'help(value.set)'"
+        # The invalid combination of an array of values and a single param string.
+        if type(value) == list and type(param) == str:
+            raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
 
-        # Value array and data type array of equal length.
-        if type(value) == list and type(data_type) == list and len(value) != len(data_type):
-            raise RelaxError, "Both the value array and data type array must be of equal length."
+        # Value array and parameter array of equal length.
+        if type(value) == list and type(param) == list and len(value) != len(param):
+            raise RelaxError, "Both the value array and parameter array must be of equal length."
 
         # Residue number.
         if res_num != None and type(res_num) != int and type(res_num) != str:
@@ -416,10 +420,10 @@ class Value:
             raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
-        self.__relax__.generic.value.set(run=run, value=value, data_type=data_type, res_num=res_num, res_name=res_name)
+        self.__relax__.generic.value.set(run=run, value=value, param=param, res_num=res_num, res_name=res_name)
 
 
-    def write(self, run=None, data_type=None, file=None, dir=None, force=0):
+    def write(self, run=None, param=None, file=None, dir=None, force=0):
         """Function for writing residue specific data values to a file.
 
         Keyword Arguments
@@ -427,7 +431,7 @@ class Value:
 
         run:  The name of the run.
 
-        data_type:  The data type.
+        param:  The parameter.
 
         file:  The name of the file.
 
@@ -441,7 +445,7 @@ class Value:
 
         If no directory name is given, the file will be placed in the current working directory.
 
-        The data type argument should be a string.
+        The parameter argument should be a string.
 
 
         Examples
@@ -450,22 +454,22 @@ class Value:
         To write the CSA values for the run 'm1' to the file 'csa.txt', type:
 
         relax> value.write('m1', 'CSA', 'csa.txt')
-        relax> value.write(run='m1', data_type='CSA', file='csa.txt')
+        relax> value.write(run='m1', param='CSA', file='csa.txt')
 
 
         To write the NOE values from the run 'noe' to the file 'noe', type:
 
         relax> value.write('noe', 'noe', 'noe.out')
-        relax> value.write('noe', data_type='noe', file='noe.out')
-        relax> value.write(run='noe', data_type='noe', file='noe.out')
-        relax> value.write(run='noe', data_type='noe', file='noe.out', force=1)
+        relax> value.write('noe', param='noe', file='noe.out')
+        relax> value.write(run='noe', param='noe', file='noe.out')
+        relax> value.write(run='noe', param='noe', file='noe.out', force=1)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.write("
             text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
+            text = text + ", param=" + `param`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -475,9 +479,9 @@ class Value:
         if type(run) != str:
             raise RelaxStrError, ('run', run)
 
-        # Data type.
-        if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+        # The parameter.
+        if type(param) != str:
+            raise RelaxStrError, ('parameter', param)
 
         # File.
         if type(file) != str:
@@ -492,7 +496,7 @@ class Value:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.value.write(run=run, data_type=data_type, file=file, dir=dir, force=force)
+        self.__relax__.generic.value.write(run=run, param=param, file=file, dir=dir, force=force)
 
 
     # Docstring modification.
@@ -500,10 +504,10 @@ class Value:
 
     # Copy function.
     copy.__doc__ = copy.__doc__ + "\n\n" + regexp_doc() + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Model_free.set.__doc__ + "\n\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Jw_mapping.set.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
 
     # Display function.
     display.__doc__ = display.__doc__ + "\n\n" + regexp_doc() + "\n"
@@ -512,19 +516,22 @@ class Value:
 
     # Read function.
     read.__doc__ = read.__doc__ + "\n\n" + regexp_doc() + "\n"
-    read.__doc__ = read.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Model_free.set.__doc__ + "\n\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Jw_mapping.set.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
 
     # Set function.
     set.__doc__ = set.__doc__ + "\n\n" + regexp_doc() + "\n"
-    set.__doc__ = set.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Diffusion_tensor.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Diffusion_tensor.return_data_name.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Diffusion_tensor.default_value.__doc__ + "\n\n"
 
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"

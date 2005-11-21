@@ -290,26 +290,23 @@ class Jw_mapping(Common_functions):
 
         # J(0).
         if object_name == 'j0':
-            grace_string = '\\qJ(0)\\Q'
+            return '\\qJ(0)\\Q'
 
         # J(wX).
         elif object_name == 'jwx':
-            grace_string = '\\qJ(\\xw\\f{}\\sX\\N)\\Q'
+            return '\\qJ(\\xw\\f{}\\sX\\N)\\Q'
 
         # J(wH).
         elif object_name == 'jwh':
-            grace_string = '\\qJ(\\xw\\f{}\\sH\\N)\\Q'
+            return '\\qJ(\\xw\\f{}\\sH\\N)\\Q'
 
         # Bond length.
         elif object_name == 'r':
-            grace_string = 'Bond length'
+            return 'Bond length'
 
         # CSA.
         elif object_name == 'csa':
-            grace_string = '\\qCSA\\Q'
-
-        # Return the Grace string.
-        return grace_string
+            return '\\qCSA\\Q'
 
 
     def return_units(self, data_type):
@@ -323,19 +320,13 @@ class Jw_mapping(Common_functions):
         # Get the object name.
         object_name = self.return_data_name(data_type)
 
-        # Initialise to no units.
-        units = None
-
         # Bond length (Angstrom).
         if object_name == 'r':
-            units = 'Angstrom'
+            return 'Angstrom'
 
         # CSA (ppm).
         elif object_name == 'csa':
-            units = 'ppm'
-
-        # Return the units string.
-        return units
+            return 'ppm'
 
 
     def return_value(self, run, i, data_type):

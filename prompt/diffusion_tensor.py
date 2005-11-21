@@ -136,8 +136,8 @@ class Diffusion_tensor:
         self.__relax__.generic.diffusion_tensor.display(run=run)
 
 
-    def set(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
-        """Function for setting up the diffusion tensor.
+    def init(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+        """Function for initialising the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -401,7 +401,7 @@ class Diffusion_tensor:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.set("
+            text = sys.ps3 + "diffusion_tensor.init("
             text = text + "run=" + `run`
             text = text + ", params=" + `params`
             text = text + ", time_scale=" + `time_scale`
@@ -451,4 +451,4 @@ class Diffusion_tensor:
             raise RelaxBinError, ('fixed flag', fixed)
 
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.set(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)
+        self.__relax__.generic.diffusion_tensor.init(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)
