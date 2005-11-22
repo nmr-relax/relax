@@ -210,10 +210,10 @@ class Base_Map:
         # Loop over the parameters
         for i in xrange(self.n):
             # Parameter conversion factors.
-            factor = self.return_conversion_factor(self.params[i])
+            factor = self.return_conversion_factor[i](self.param_names[i])
 
             # Parameter units.
-            units = self.return_units(self.params[i])
+            units = self.return_units[i](self.param_names[i])
 
             # Labels.
             if units:
@@ -254,14 +254,6 @@ class Base_Map:
         # Function type.
         self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Specific map bounds, map labels, and calculation functions.
-        self.calculate = self.relax.specific_setup.setup('calculate', self.function_type)
-        self.map_bounds = self.relax.specific_setup.setup('map_bounds', self.function_type)
-        self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
-        self.return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', self.function_type)
-        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
-        self.return_units = self.relax.specific_setup.setup('return_units', self.function_type)
-
         # Function arguments.
         self.run = run
         self.params = params
@@ -274,11 +266,30 @@ class Base_Map:
         self.point_file = point_file
         self.remap = remap
 
+        # Specific function setup.
+        self.calculate = self.relax.specific_setup.setup('calculate', self.function_type)
+        self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
+        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
+        self.map_bounds = []
+        self.return_conversion_factor = []
+        self.return_units = []
+        for i in xrange(self.n):
+            self.map_bounds.append(self.relax.specific_setup.setup('map_bounds', self.function_type))
+            self.return_conversion_factor.append(self.relax.specific_setup.setup('return_conversion_factor', self.function_type))
+            self.return_units.append(self.relax.specific_setup.setup('return_units', self.function_type))
+
         # Diffusion tensor parameter flag.
         self.diff_params = zeros(self.n)
 
         # Get the parameter names.
         self.get_param_names()
+
+        # Specific function setup (for diffusion tensor parameters).
+        for i in xrange(self.n):
+            if self.diff_params[i]:
+                self.map_bounds[i] = self.relax.generic.diffusion_tensor.map_bounds
+                self.return_conversion_factor[i] = self.relax.generic.diffusion_tensor.return_conversion_factor
+                self.return_units[i] = self.relax.generic.diffusion_tensor.return_units
 
         # Points.
         if point != None:
@@ -294,11 +305,7 @@ class Base_Map:
         self.bounds = zeros((self.n, 2), Float64)
         for i in xrange(self.n):
             # Get the bounds for the parameter i.
-            bounds = self.map_bounds(self.run, self.param_names[i])
-
-            # Diffusion parameter bounds.
-            if self.diff_params[i]:
-                bounds = self.relax.generic.diffusion_tensor.map_bounds(self.run, self.param_names[i])
+            bounds = self.map_bounds[i](self.run, self.param_names[i])
 
             # No bounds found.
             if not bounds:

@@ -450,6 +450,33 @@ class Diffusion_tensor:
         return labels, tick_locations, tick_values
 
 
+    def return_conversion_factor(self, param):
+        """Function for returning the factor of conversion between different parameter units.
+
+        For example, the internal representation of tm is in seconds, whereas the external
+        representation is in nanoseconds, therefore this function will return 1e-9 for tm.
+        """
+
+        # Get the object name.
+        object_name = self.return_data_name(param)
+
+        # tm (nanoseconds).
+        if object_name == 'tm':
+            return 1e-9
+
+        # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+        elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
+            return 1e6
+
+        # Angles.
+        elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+            return (2.0*pi) / 360.0
+
+        # No conversion factor.
+        else:
+            return 1.0
+
+
     def return_data_name(self, name):
         """
         Diffusion tensor parameter string matching patterns
@@ -562,6 +589,30 @@ class Diffusion_tensor:
         # phi.
         if search('phi', name):
             return 'phi'
+
+
+    def return_units(self, param):
+        """Function for returning a string representing the parameters units.
+
+        For example, the internal representation of tm is in seconds, whereas the external
+        representation is in nanoseconds, therefore this function will return the string
+        'nanoseconds' for tm.
+        """
+
+        # Get the object name.
+        object_name = self.return_data_name(param)
+
+        # tm (nanoseconds).
+        if object_name == 'tm':
+            return 'ns'
+
+        # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+        elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
+            return '1e6 1/s'
+
+        # Angles.
+        elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+            return 'deg'
 
 
     def set(self, run=None, value=None, param=None):
