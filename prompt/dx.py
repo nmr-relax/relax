@@ -92,7 +92,7 @@ class OpenDX:
         self.__relax__.generic.opendx.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
 
 
-    def map(self, run=None, params=None, map_type="Iso3D", res_num=None, inc=20, lower=None, upper=None, file="map", dir="dx", point=None, point_file="point", remap=None):
+    def map(self, run=None, params=None, map_type="Iso3D", res_num=None, inc=20, lower=None, upper=None, axis_incs=10, file="map", dir="dx", point=None, point_file="point", remap=None):
         """Function for creating a map of the given space in OpenDX format.
 
         Keyword Arguments
@@ -120,6 +120,9 @@ class OpenDX:
         then supply an array of length equal to the number of parameters in the model.  A upper
         bound for each parameter must be supplied.  If nothing is supplied then the defaults will
         be used.
+
+        axis_incs:  The number of increments or ticks displaying parameter values along the axes of
+        the OpenDX plot.
 
         file:  The file name.  All the output files are prefixed with this name.  The main file
         containing the data points will be called the value of 'file'.  The OpenDX program will be
@@ -188,6 +191,7 @@ class OpenDX:
             text = text + ", inc=" + `inc`
             text = text + ", lower=" + `lower`
             text = text + ", upper=" + `upper`
+            text = text + ", axis_incs=" + `axis_incs`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", point=" + `point`
@@ -241,6 +245,12 @@ class OpenDX:
                 if type(upper[i]) != int and type(upper[i]) != float:
                     raise RelaxListNumError, ('upper bounds', upper)
 
+        # Axis increments.
+        if type(axis_incs) != int:
+            raise RelaxIntError, ('axis increments', axis_incs)
+        elif axis_incs <= 1:
+            raise RelaxError, "The axis increment value needs to be greater than 1."
+
         # File name.
         if type(file) != str:
             raise RelaxStrError, ('file name', file)
@@ -266,7 +276,7 @@ class OpenDX:
             raise RelaxFunctionError, ('remap function', remap)
 
         # Execute the functional code.
-        self.__relax__.generic.opendx.map(run=run, params=params, map_type=map_type, res_num=res_num, inc=inc, lower=lower, upper=upper, file=file, dir=dir, point=point, point_file=point_file, remap=remap)
+        self.__relax__.generic.opendx.map(run=run, params=params, map_type=map_type, res_num=res_num, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file=file, dir=dir, point=point, point_file=point_file, remap=remap)
 
 
     # Docstring modification.

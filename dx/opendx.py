@@ -37,7 +37,7 @@ class OpenDX:
         self.iso3d = Iso3D(relax)
 
 
-    def map(self, run=None, params=None, map_type='Iso3D', res_num=None, inc=20, lower=None, upper=None, file="map", dir="dx", point=None, point_file="point", remap=None):
+    def map(self, run=None, params=None, map_type='Iso3D', res_num=None, inc=20, lower=None, upper=None, axis_incs=10, file="map", dir="dx", point=None, point_file="point", remap=None):
         """Function for mapping the given space and creating OpenDX files."""
 
         # Residue index.
@@ -56,7 +56,7 @@ class OpenDX:
                 raise RelaxError, "The 3D isosurface map requires a 3 parameter model."
 
             # Create the map.
-            self.iso3d.map_space(run, params, res_num, index, inc, lower, upper, file, dir, point, point_file, remap)
+            self.iso3d.map_space(run, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap)
         else:
             raise RelaxError, "The map type '" + map_type + "' is not supported."
 

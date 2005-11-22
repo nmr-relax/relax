@@ -204,8 +204,7 @@ class Base_Map:
         self.labels = "{"
         self.tick_locations = []
         self.tick_values = []
-        axis_incs = 5
-        loc_inc = self.inc / axis_incs
+        loc_inc = float(self.inc) / float(self.axis_incs)
 
         # Loop over the parameters
         for i in xrange(self.n):
@@ -228,10 +227,10 @@ class Base_Map:
 
             # Tick values.
             vals = self.bounds[i, 0] / factor
-            val_inc = (self.bounds[i, 1] - self.bounds[i, 0]) / (axis_incs * factor)
+            val_inc = (self.bounds[i, 1] - self.bounds[i, 0]) / (self.axis_incs * factor)
 
             string = ""
-            for j in xrange(axis_incs + 1):
+            for j in xrange(self.axis_incs + 1):
                 string = string + "\"" + "%.2f" % vals + "\" "
                 vals = vals + val_inc
             self.tick_values.append("{" + string + "}")
@@ -239,13 +238,13 @@ class Base_Map:
             # Tick locations.
             string = ""
             val = 0.0
-            for j in xrange(axis_incs + 1):
+            for j in xrange(self.axis_incs + 1):
                 string = string + " " + `val`
                 val = val + loc_inc
             self.tick_locations.append("{" + string + " }")
 
 
-    def map_space(self, run, params, res_num, index, inc, lower, upper, file, dir, point, point_file, remap):
+    def map_space(self, run, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
         """Generic function for mapping a space."""
 
         # Initialise.
@@ -261,6 +260,7 @@ class Base_Map:
         self.index = index
         self.n = len(params)
         self.inc = inc
+        self.axis_incs = axis_incs
         self.file = file
         self.dir = dir
         self.point_file = point_file
