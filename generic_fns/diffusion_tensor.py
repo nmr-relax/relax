@@ -679,7 +679,7 @@ class Diffusion_tensor:
                 value[i] = self.default_value(object_names[i])
 
             # Geometric parameter.
-            if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr']:
+            if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
                 geo_params.append(param[i])
                 geo_values.append(value[i])
 
@@ -968,10 +968,20 @@ class Diffusion_tensor:
                     Dy = geo_values[geo_params.index('Dy')]
                     Dz = geo_values[geo_params.index('Dz')]
 
-                    # Set the internal parameter values.
-                    self.relax.data.diff[self.run].tm = 0.5 / (Dx + Dy + Dz)
+                    # Set the internal tm value.
+                    if Dx + Dy + Dz == 0.0:
+                        self.relax.data.diff[self.run].tm = 1e99
+                    else:
+                        self.relax.data.diff[self.run].tm = 0.5 / (Dx + Dy + Dz)
+
+                    # Set the internal Da value.
                     self.relax.data.diff[self.run].Da = Dz - 0.5*(Dx + Dy)
-                    self.relax.data.diff[self.run].Dr = (Dy - Dx) / (2.0*self.relax.data.diff[self.run].Da)
+
+                    # Set the internal Dr value.
+                    if self.relax.data.diff[self.run].Da == 0.0:
+                        self.relax.data.diff[self.run].Dr = (Dy - Dx) * 1e99
+                    else:
+                        self.relax.data.diff[self.run].Dr = (Dy - Dx) / (2.0*self.relax.data.diff[self.run].Da)
 
                 # Unknown parameter combination.
                 else:
