@@ -917,4 +917,8 @@ def calc_ellipsoid_d2ti(data, diff_data):
     data.tau_scale[3] = 0.0
     data.tau_scale[4] = -1.0
 
-    data.d2ti[2, 2] = data.d2ti[2, 2] + 6.0 * diff_data.params[1] / data.R**3 * data.tau_scale * data.tau_comps_sqrd
+    try:
+        data.R_cubed = data.R**3
+    except OverflowError:
+        data.R_cubed = 1e99
+    data.d2ti[2, 2] = data.d2ti[2, 2] + 6.0 * diff_data.params[1] / data.R_cubed * data.tau_scale * data.tau_comps_sqrd
