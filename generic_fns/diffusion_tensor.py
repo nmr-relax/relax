@@ -1286,7 +1286,13 @@ class Diffusion_tensor:
 
             # Simulated theta and phi values.
             else:
-                pass
+                # Fold phi_sim inside phi-pi/2 and phi+pi/2.
+                if self.relax.data.diff[self.run].phi_sim[sim_index] >= self.relax.data.diff[self.run].phi + pi/2.0:
+                    self.relax.data.diff[self.run].theta_sim[sim_index] = pi - self.relax.data.diff[self.run].theta_sim[sim_index]
+                    self.relax.data.diff[self.run].phi_sim[sim_index]   = self.relax.data.diff[self.run].phi_sim[sim_index] - pi
+                elif self.relax.data.diff[self.run].phi_sim[sim_index] <= self.relax.data.diff[self.run].phi - pi/2.0:
+                    self.relax.data.diff[self.run].theta_sim[sim_index] = pi - self.relax.data.diff[self.run].theta_sim[sim_index]
+                    self.relax.data.diff[self.run].phi_sim[sim_index]   = self.relax.data.diff[self.run].phi_sim[sim_index] + pi
 
         # Ellipsoid.
         elif self.relax.data.diff[self.run].type == 'ellipsoid':
@@ -1309,4 +1315,26 @@ class Diffusion_tensor:
 
             # Simulated theta and phi values.
             else:
-                pass
+                # Fold alpha_sim inside alpha-pi/2 and alpha+pi/2.
+                if self.relax.data.diff[self.run].alpha_sim[sim_index] >= self.relax.data.diff[self.run].alpha + pi/2.0:
+                    self.relax.data.diff[self.run].alpha_sim[sim_index] = self.relax.data.diff[self.run].alpha_sim[sim_index] - pi
+                elif self.relax.data.diff[self.run].alpha_sim[sim_index] <= self.relax.data.diff[self.run].alpha - pi/2.0:
+                    self.relax.data.diff[self.run].alpha_sim[sim_index] = self.relax.data.diff[self.run].alpha_sim[sim_index] + pi
+
+                # Fold beta_sim inside beta-pi/2 and beta+pi/2.
+                if self.relax.data.diff[self.run].beta_sim[sim_index] >= self.relax.data.diff[self.run].beta + pi/2.0:
+                    self.relax.data.diff[self.run].alpha_sim[sim_index] = pi - self.relax.data.diff[self.run].alpha_sim[sim_index]
+                    self.relax.data.diff[self.run].beta_sim[sim_index] = self.relax.data.diff[self.run].beta_sim[sim_index] - pi
+                elif self.relax.data.diff[self.run].beta_sim[sim_index] <= self.relax.data.diff[self.run].beta - pi/2.0:
+                    self.relax.data.diff[self.run].alpha_sim[sim_index] = pi - self.relax.data.diff[self.run].alpha_sim[sim_index]
+                    self.relax.data.diff[self.run].beta_sim[sim_index] = self.relax.data.diff[self.run].beta_sim[sim_index] + pi
+
+                # Fold gamma_sim inside gamma-pi/2 and gamma+pi/2.
+                if self.relax.data.diff[self.run].gamma_sim[sim_index] >= self.relax.data.diff[self.run].gamma + pi/2.0:
+                    self.relax.data.diff[self.run].alpha_sim[sim_index] = pi - self.relax.data.diff[self.run].alpha_sim[sim_index]
+                    self.relax.data.diff[self.run].beta_sim[sim_index] = pi - self.relax.data.diff[self.run].beta_sim[sim_index]
+                    self.relax.data.diff[self.run].gamma_sim[sim_index] = self.relax.data.diff[self.run].gamma_sim[sim_index] - pi
+                elif self.relax.data.diff[self.run].gamma_sim[sim_index] <= self.relax.data.diff[self.run].gamma - pi/2.0:
+                    self.relax.data.diff[self.run].alpha_sim[sim_index] = pi - self.relax.data.diff[self.run].alpha_sim[sim_index]
+                    self.relax.data.diff[self.run].beta_sim[sim_index] = pi - self.relax.data.diff[self.run].beta_sim[sim_index]
+                    self.relax.data.diff[self.run].gamma_sim[sim_index] = self.relax.data.diff[self.run].gamma_sim[sim_index] + pi
