@@ -1222,12 +1222,12 @@ class Diffusion_tensor:
             gamma - pi <= gamma_sim <= gamma + pi
         """
 
-        # Get the current angles.
-        #########################
+        # Wrap the angles.
+        ##################
 
         # Spheroid.
         if self.relax.data.diff[self.run].type == 'spheroid':
-            # theta and phi.
+            # Get the current angles.
             theta = self.relax.data.diff[self.run].theta
             phi = self.relax.data.diff[self.run].phi
 
@@ -1236,25 +1236,6 @@ class Diffusion_tensor:
                 theta_sim = self.relax.data.diff[self.run].theta_sim[sim_index]
                 phi_sim   = self.relax.data.diff[self.run].phi_sim[sim_index]
 
-        # Ellipsoid.
-        elif self.relax.data.diff[self.run].type == 'ellipsoid':
-            # alpha, beta, and gamma.
-            alpha = self.relax.data.diff[self.run].alpha
-            beta  = self.relax.data.diff[self.run].beta
-            gamma = self.relax.data.diff[self.run].gamma
-
-            # Simulated values.
-            if sim_index != None:
-                alpha_sim = self.relax.data.diff[self.run].alpha_sim[sim_index]
-                beta_sim  = self.relax.data.diff[self.run].beta_sim[sim_index]
-                gamma_sim = self.relax.data.diff[self.run].gamma_sim[sim_index]
-
-
-        # Wrap the angles.
-        ##################
-
-        # Spheroid.
-        if self.relax.data.diff[self.run].type == 'spheroid':
             # Normal value.
             if sim_index == None:
                 self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
@@ -1267,16 +1248,27 @@ class Diffusion_tensor:
 
         # Ellipsoid.
         elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            # Get the current angles.
+            alpha = self.relax.data.diff[self.run].alpha
+            beta  = self.relax.data.diff[self.run].beta
+            gamma = self.relax.data.diff[self.run].gamma
+
+            # Simulated values.
+            if sim_index != None:
+                alpha_sim = self.relax.data.diff[self.run].alpha_sim[sim_index]
+                beta_sim  = self.relax.data.diff[self.run].beta_sim[sim_index]
+                gamma_sim = self.relax.data.diff[self.run].gamma_sim[sim_index]
+
             # Normal value.
             if sim_index == None:
                 self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-                self.relax.data.diff[self.run].beta  = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+                self.relax.data.diff[self.run].beta  = self.relax.generic.angles.wrap_angles(beta, 0.0, 2.0*pi)
                 self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
 
             # Simulated alpha, beta, and gamma values.
             else:
                 self.relax.data.diff[self.run].alpha_sim[sim_index] = self.relax.generic.angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-                self.relax.data.diff[self.run].beta_sim[sim_index]  = self.relax.generic.angles.wrap_angles(beta_sim, beta - pi/2.0, beta + pi/2.0)
+                self.relax.data.diff[self.run].beta_sim[sim_index]  = self.relax.generic.angles.wrap_angles(beta_sim, beta - pi, beta + pi)
                 self.relax.data.diff[self.run].gamma_sim[sim_index] = self.relax.generic.angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
 
 
@@ -1288,9 +1280,9 @@ class Diffusion_tensor:
             # Normal value.
             if sim_index == None:
                 # Fold phi inside 0 and pi.
-                if phi >= pi:
-                    self.relax.data.diff[self.run].theta = pi - theta
-                    self.relax.data.diff[self.run].phi = phi - pi
+                if self.relax.data.diff[self.run].phi >= pi:
+                    self.relax.data.diff[self.run].theta = pi - self.relax.data.diff[self.run].theta
+                    self.relax.data.diff[self.run].phi = self.relax.data.diff[self.run].phi - pi
 
             # Simulated theta and phi values.
             else:
@@ -1301,13 +1293,19 @@ class Diffusion_tensor:
             # Normal value.
             if sim_index == None:
                 # Fold alpha inside 0 and pi.
-                if alpha >= pi:
-                    self.relax.data.diff[self.run].alpha = alpha - pi
+                if self.relax.data.diff[self.run].alpha >= pi:
+                    self.relax.data.diff[self.run].alpha = self.relax.data.diff[self.run].alpha - pi
+
+                # Fold beta inside 0 and pi.
+                if self.relax.data.diff[self.run].beta >= pi:
+                    self.relax.data.diff[self.run].alpha = pi - self.relax.data.diff[self.run].alpha
+                    self.relax.data.diff[self.run].beta = self.relax.data.diff[self.run].beta - pi
 
                 # Fold gamma inside 0 and pi.
-                if gamma >= pi:
-                    self.relax.data.diff[self.run].alpha = pi/2.0 - alpha
-                    self.relax.data.diff[self.run].gamma = gamma - pi
+                if self.relax.data.diff[self.run].gamma >= pi:
+                    self.relax.data.diff[self.run].alpha = pi - self.relax.data.diff[self.run].alpha
+                    self.relax.data.diff[self.run].beta = pi - self.relax.data.diff[self.run].beta
+                    self.relax.data.diff[self.run].gamma = self.relax.data.diff[self.run].gamma - pi
 
             # Simulated theta and phi values.
             else:
