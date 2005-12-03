@@ -821,25 +821,18 @@ class Diffusion_tensor:
             if len(orient_params) == 1:
                 # The single parameter theta.
                 if orient_params[0] == 'theta':
-                    theta = orient_values[orient_params.index('theta')]
-                    self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
+                    self.relax.data.diff[self.run].theta = orient_values[orient_params.index('theta')]
 
                 # The single parameter phi.
                 elif orient_params[0] == 'phi':
-                    phi = orient_values[orient_params.index('phi')]
-                    self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].phi = orient_values[orient_params.index('phi')]
 
             # Two orientational parameters.
             elif len(orient_params) == 2:
                 # The orientational parameter set {theta, phi}.
                 if orient_params.count('theta') == 1 and orient_params.count('phi') == 1:
-                    # The parameters.
-                    theta = orient_values[orient_params.index('theta')]
-                    phi = orient_values[orient_params.index('phi')]
-
-                    # Set the internal parameter values.
-                    self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
-                    self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].theta = orient_values[orient_params.index('theta')]
+                    self.relax.data.diff[self.run].phi = orient_values[orient_params.index('phi')]
 
                 # Unknown parameter combination.
                 else:
@@ -1000,50 +993,32 @@ class Diffusion_tensor:
             if len(orient_params) == 1:
                 # The single parameter alpha.
                 if orient_params[0] == 'alpha':
-                    alpha = orient_values[orient_params.index('alpha')]
-                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
 
                 # The single parameter beta.
                 elif orient_params[0] == 'beta':
-                    beta = orient_values[orient_params.index('beta')]
-                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+                    self.relax.data.diff[self.run].beta = orient_values[orient_params.index('beta')]
 
                 # The single parameter gamma.
                 elif orient_params[0] == 'gamma':
-                    gamma = orient_values[orient_params.index('gamma')]
-                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
 
             # Two orientational parameters.
             elif len(orient_params) == 2:
                 # The orientational parameter set {alpha, beta}.
                 if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                    # The parameters.
-                    alpha = orient_values[orient_params.index('alpha')]
-                    beta = orient_values[orient_params.index('beta')]
-
-                    # Set the internal parameter values.
-                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+                    self.relax.data.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
+                    self.relax.data.diff[self.run].beta = orient_values[orient_params.index('beta')]
 
                 # The orientational parameter set {alpha, gamma}.
                 if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
-                    # The parameters.
-                    alpha = orient_values[orient_params.index('alpha')]
-                    gamma = orient_values[orient_params.index('gamma')]
-
-                    # Set the internal parameter values.
-                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
+                    self.relax.data.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
 
                 # The orientational parameter set {beta, gamma}.
                 if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
-                    # The parameters.
-                    beta = orient_values[orient_params.index('beta')]
-                    gamma = orient_values[orient_params.index('gamma')]
-
-                    # Set the internal parameter values.
-                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
-                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].beta = orient_values[orient_params.index('beta')]
+                    self.relax.data.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
 
                 # Unknown parameter combination.
                 else:
@@ -1053,15 +1028,9 @@ class Diffusion_tensor:
             elif len(orient_params) == 3:
                 # The orientational parameter set {alpha, beta, gamma}.
                 if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                    # The parameters.
-                    alpha = orient_values[orient_params.index('alpha')]
-                    beta = orient_values[orient_params.index('beta')]
-                    gamma = orient_values[orient_params.index('gamma')]
-
-                    # Set the internal parameter values.
-                    self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-                    self.relax.data.diff[self.run].beta = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
-                    self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+                    self.relax.data.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
+                    self.relax.data.diff[self.run].beta = orient_values[orient_params.index('beta')]
+                    self.relax.data.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
 
                 # Unknown parameter combination.
                 else:
@@ -1070,6 +1039,13 @@ class Diffusion_tensor:
             # More than three orientational parameters.
             elif len(orient_params) > 3:
                 raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+
+        # Fold the angles in.
+        #####################
+
+        if orient_params:
+            self.fold_angles()
 
 
     def sphere(self):
@@ -1185,6 +1161,9 @@ class Diffusion_tensor:
     def test_params(self, num_params):
         """Function for testing the validity of the input parameters."""
 
+        # Debugging!!!
+        return
+
         # tm.
         tm = self.relax.data.diff[self.run].tm
         if tm <= 0.0 or tm > 1e-6:
@@ -1214,3 +1193,122 @@ class Diffusion_tensor:
             # Dr.
             if Dr < 0.0 or Dr > 1.0:
                 raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
+
+
+    def fold_angles(self, sim_index=None):
+        """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
+
+        Wrap the angles such that
+
+            0 <= theta <= pi,
+            0 <= phi <= 2pi,
+
+        and
+
+            0 <= alpha <= 2pi,
+            0 <= beta <= pi,
+            0 <= gamma <= 2pi.
+
+
+        For the simulated values, the angles are wrapped as
+
+            theta - pi/2 <= theta_sim <= theta + pi/2
+            phi - pi <= phi_sim <= phi + pi
+
+        and
+
+            alpha - pi <= alpha_sim <= alpha + pi
+            beta - pi/2 <= beta_sim <= beta + pi/2
+            gamma - pi <= gamma_sim <= gamma + pi
+        """
+
+        # Get the current angles.
+        #########################
+
+        # Spheroid.
+        if self.relax.data.diff[self.run].type == 'spheroid':
+            # theta and phi.
+            theta = self.relax.data.diff[self.run].theta
+            phi = self.relax.data.diff[self.run].phi
+
+            # Simulated values.
+            if sim_index != None:
+                theta_sim = self.relax.data.diff[self.run].theta_sim[sim_index]
+                phi_sim   = self.relax.data.diff[self.run].phi_sim[sim_index]
+
+        # Ellipsoid.
+        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            # alpha, beta, and gamma.
+            alpha = self.relax.data.diff[self.run].alpha
+            beta  = self.relax.data.diff[self.run].beta
+            gamma = self.relax.data.diff[self.run].gamma
+
+            # Simulated values.
+            if sim_index != None:
+                alpha_sim = self.relax.data.diff[self.run].alpha_sim[sim_index]
+                beta_sim  = self.relax.data.diff[self.run].beta_sim[sim_index]
+                gamma_sim = self.relax.data.diff[self.run].gamma_sim[sim_index]
+
+
+        # Wrap the angles.
+        ##################
+
+        # Spheroid.
+        if self.relax.data.diff[self.run].type == 'spheroid':
+            # Normal value.
+            if sim_index == None:
+                self.relax.data.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
+                self.relax.data.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
+
+            # Simulated theta and phi values.
+            else:
+                self.relax.data.diff[self.run].theta_sim[sim_index] = self.relax.generic.angles.wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
+                self.relax.data.diff[self.run].phi_sim[sim_index]   = self.relax.generic.angles.wrap_angles(phi_sim, phi - pi, phi + pi)
+
+        # Ellipsoid.
+        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            # Normal value.
+            if sim_index == None:
+                self.relax.data.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+                self.relax.data.diff[self.run].beta  = self.relax.generic.angles.wrap_angles(beta, 0.0, pi)
+                self.relax.data.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+
+            # Simulated alpha, beta, and gamma values.
+            else:
+                self.relax.data.diff[self.run].alpha_sim[sim_index] = self.relax.generic.angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
+                self.relax.data.diff[self.run].beta_sim[sim_index]  = self.relax.generic.angles.wrap_angles(beta_sim, beta - pi/2.0, beta + pi/2.0)
+                self.relax.data.diff[self.run].gamma_sim[sim_index] = self.relax.generic.angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
+
+
+        # Remove the glide reflection and translational symmetries.
+        ###########################################################
+
+        # Spheroid.
+        if self.relax.data.diff[self.run].type == 'spheroid':
+            # Normal value.
+            if sim_index == None:
+                # Fold phi inside 0 and pi.
+                if phi >= pi:
+                    self.relax.data.diff[self.run].theta = pi - theta
+                    self.relax.data.diff[self.run].phi = phi - pi
+
+            # Simulated theta and phi values.
+            else:
+                pass
+
+        # Ellipsoid.
+        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            # Normal value.
+            if sim_index == None:
+                # Fold alpha inside 0 and pi.
+                if alpha >= pi:
+                    self.relax.data.diff[self.run].alpha = alpha - pi
+
+                # Fold gamma inside 0 and pi.
+                if gamma >= pi:
+                    self.relax.data.diff[self.run].alpha = pi/2.0 - alpha
+                    self.relax.data.diff[self.run].gamma = gamma - pi
+
+            # Simulated theta and phi values.
+            else:
+                pass
