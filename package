@@ -14,11 +14,17 @@ class Package:
         # Check that the relax version string has been set.
         self.check_version()
 
-        # Test that the current directory is called relax.
-        self.test_dir()
-
         # Run the clean up script.
         system('./clean_up')
+
+        # Check that the version of the manual is the same as the relax version!
+        self.check_manual_version()
+
+        # Check that all changes have been committed into the SVN repository.
+        self.check_svn()
+
+        # Test that the current directory is called relax.
+        self.test_dir()
 
         # Remove the subversion directories.
         system('rm -rf .svn */.svn */*/.svn */*/*/.svn */*/*/*/.svn */*/*/*/*/.svn')
@@ -29,6 +35,41 @@ class Package:
         # Create the archive.
         chdir('..')
         system('tar jcvf ' + self.file_name + ' relax')
+
+
+    def check_manual_version(self):
+        """Function for checking that the version of the manual is the same as the relax version."""
+
+        # Open the manual version file.
+        file = open('doc/latex/relax_version.tex', 'r')
+
+        # Get the text.
+        text = file.readlines()
+
+        # Manual version.
+        manual_version = text[0][7:-1]
+
+        # Test if the versions are the same.
+        if manual_version != self.version:
+            print "The manual version does not match the program version."""
+            sys.exit()
+
+
+    def check_svn(self):
+        """Function for checking that all changes have been committed into the SVN repository."""
+
+        # Get the program version number printout.
+        stdin, stdout = popen2('svn st')
+        output = stdout.readline()
+
+        # Close the pipes.
+        stdin.close()
+        stdout.close()
+
+        # Their are changes.
+        if output:
+            print output
+            sys.exit()
 
 
     def check_version(self):

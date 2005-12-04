@@ -3,6 +3,9 @@
 echo -e "\n\n\n <<< Clean >>>\n\n\n"
 rm -f *.aux relax.bbl relax.blg relax.dvi relax.idx relax.ilg relax.ind relax.lof relax.log relax.lot relax.pdf relax.toc
 
+echo -e "\n\n\n <<< Getting the relax version number >>>\n"
+./version
+
 echo -e "\n\n\n <<< Fetching the docstrings >>>\n\n\n"
 ./fetch_docstrings
 
