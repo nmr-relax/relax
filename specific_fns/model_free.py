@@ -2927,7 +2927,7 @@ class Model_free(Common_functions):
             # Rex.
             try:
                 data.rex = float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex')
-            except:
+            except ValueError:
                 data.rex = None
 
             # Bond length.
@@ -3013,7 +3013,7 @@ class Model_free(Common_functions):
             # Rex.
             try:
                 data.rex_err = float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex')
-            except:
+            except ValueError:
                 data.rex_err = None
 
             # Bond length.
@@ -3105,7 +3105,7 @@ class Model_free(Common_functions):
             # Rex.
             try:
                 data.rex_sim.append(float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex'))
-            except:
+            except ValueError:
                 data.rex_sim.append(None)
 
             # Bond length.

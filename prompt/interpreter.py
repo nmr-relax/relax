@@ -24,7 +24,7 @@ import __builtin__
 from code import InteractiveConsole, softspace
 from os import F_OK, access
 import readline
-import signal
+#import signal
 import sys
 
 # Python modules accessible on the command prompt.
