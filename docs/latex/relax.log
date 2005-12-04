@@ -1,4 +1,4 @@
-This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2005.9.6)  4 DEC 2005 17:18
+This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2005.9.6)  4 DEC 2005 17:55
 entering extended mode
 **relax.tex
 (./relax.tex
@@ -171,7 +171,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 File: images/ulysses.eps.gz Graphic file (type eps)
 
-<images/ulysses.eps.gz> (./relax_version.tex) [1
+<images/ulysses.eps.gz> [1
 
 
 
@@ -179,25 +179,25 @@ File: images/ulysses.eps.gz Graphic file (type eps)
 
 ] [3] [4
 
-] (./relax.toc
-[5] [6])
+] (./relax.toc [5] [6])
 \tf@toc=\write4
 \openout4 = `relax.toc'.
 
  [7] [8
 
-] (./relax.lof)
+]
+(./relax.lof)
 \tf@lof=\write5
 \openout5 = `relax.lof'.
 
  [9] [10
 
 ]
-LaTeX Font Info:    Try loading font information for U+euf on input line 140.
-
-(/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
+LaTeX Font Info:    Try loading font information for U+euf on input line 141.
+ (/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2002/01/19 v2.2g AMS font definitions
-) [11] [12]
+) [11]
+[12]
 \openout2 = `intro.aux'.
 
  (./intro.tex
@@ -543,12 +543,12 @@ Package natbib Warning: There were undefined citations.
 
 (./relax.aux (./intro.aux) (./maths.aux) (./functions.aux) (./licence.aux)) ) 
 Here is how much of TeX's memory you used:
- 1813 strings out of 94501
- 21866 string characters out of 1169455
+ 1812 strings out of 94501
+ 21852 string characters out of 1169455
  79971 words of memory out of 1000000
- 4932 multiletter control sequences out of 10000+50000
- 15527 words of font info for 57 fonts, out of 500000 for 2000
+ 4934 multiletter control sequences out of 10000+50000
+ 16133 words of font info for 59 fonts, out of 500000 for 2000
  580 hyphenation exceptions out of 1000
  27i,12n,24p,1381b,375s stack positions out of 3000i,1500n,5000p,200000b,15000s
 
-Output written on relax.dvi (177 pages, 369564 bytes).
+Output written on relax.dvi (177 pages, 369584 bytes).
