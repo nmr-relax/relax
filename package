@@ -2,7 +2,7 @@
 
 # Script for packaging relax.
 
-from os import popen2
+from os import chdir, getcwd, popen2, system
 from string import split
 import sys
 
@@ -13,6 +13,22 @@ class Package:
 
         # Check that the relax version string has been set.
         self.check_version()
+
+        # Test that the current directory is called relax.
+        self.test_dir()
+
+        # Run the clean up script.
+        system('./clean_up')
+
+        # Remove the subversion directories.
+        system('rm -rf .svn */.svn */*/.svn */*/*/.svn */*/*/*/.svn */*/*/*/*/.svn')
+
+        # File name.
+        self.file_name = 'relax-' + self.version + '.tar.bz2'
+
+        # Create the archive.
+        chdir('..')
+        system('tar jcvf ' + self.file_name + ' relax')
 
 
     def check_version(self):
@@ -35,8 +51,21 @@ class Package:
             sys.exit()
 
         # Version number.
-        self.version == data[1]
-        print self.version
+        self.version = data[1]
+
+
+    def test_dir(self):
+        """Function for testing that the current directory is called relax."""
+
+        # Get the uppermost directory name.
+        cwd = getcwd()
+        dirs = split(cwd, '/')
+        basedir = dirs[-1]
+
+        # Test.
+        if basedir != 'relax':
+            print "The base directory should be called 'relax'."
+            sys.exit()
 
 
 if __name__ == '__main__':
