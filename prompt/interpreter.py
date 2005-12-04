@@ -280,7 +280,7 @@ def interact_prompt(self, intro, local):
         self.write("%s\n" % intro)
 
     # Ignore SIGINT.
-    signal.signal(2, 1)
+    #signal.signal(2, 1)
 
     # Prompt.
     more = 0
