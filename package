@@ -60,7 +60,7 @@ class Package:
 
         # Get the program version number printout.
         stdin, stdout = popen2('svn st')
-        output = stdout.readline()
+        output = stdout.readlines()
 
         # Close the pipes.
         stdin.close()
@@ -69,7 +69,8 @@ class Package:
         # Their are changes.
         if output:
             print "Changes to the SVN working copy have been detected."
-            print output
+            for line in output:
+                print line[:-1]
             sys.exit()
 
 
