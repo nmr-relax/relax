@@ -1161,9 +1161,6 @@ class Diffusion_tensor:
     def test_params(self, num_params):
         """Function for testing the validity of the input parameters."""
 
-        # Debugging!!!
-        return
-
         # tm.
         tm = self.relax.data.diff[self.run].tm
         if tm <= 0.0 or tm > 1e-6:
