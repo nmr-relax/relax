@@ -91,7 +91,7 @@
 \contentsline {subsubsection}{Synopsis}{29}
 \contentsline {subsubsection}{Defaults}{29}
 \contentsline {subsubsection}{Keyword Arguments}{29}
-\contentsline {subsection}{\numberline {3.2.9}diffusion\_tensor.set}{30}
+\contentsline {subsection}{\numberline {3.2.9}diffusion\_tensor.init}{30}
 \contentsline {subsubsection}{Synopsis}{30}
 \contentsline {subsubsection}{Defaults}{30}
 \contentsline {subsubsection}{Keyword Arguments}{30}
@@ -463,10 +463,10 @@
 \contentsline {subsubsection}{Description}{137}
 \contentsline {subsubsection}{Examples}{137}
 \contentsline {subsubsection}{Regular expression}{137}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{138}
 \contentsline {subsubsection}{Model-free set details}{138}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{139}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{139}
 \contentsline {subsubsection}{Reduced spectral density mapping set details}{139}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{139}
 \contentsline {subsection}{\numberline {3.2.76}value.display}{140}
 \contentsline {subsubsection}{Synopsis}{140}
 \contentsline {subsubsection}{Defaults}{140}
@@ -483,38 +483,42 @@
 \contentsline {subsubsection}{Description}{142}
 \contentsline {subsubsection}{Examples}{142}
 \contentsline {subsubsection}{Regular expression}{143}
+\contentsline {subsubsection}{Model-free set details}{143}
 \contentsline {subsubsection}{Model-free data type string matching patterns}{144}
-\contentsline {subsubsection}{Model-free set details}{144}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{145}
-\contentsline {subsubsection}{Reduced spectral density mapping set details}{145}
-\contentsline {subsection}{\numberline {3.2.78}value.set}{146}
-\contentsline {subsubsection}{Synopsis}{146}
-\contentsline {subsubsection}{Defaults}{146}
-\contentsline {subsubsection}{Keyword arguments}{146}
-\contentsline {subsubsection}{Description}{146}
-\contentsline {subsubsection}{Examples}{147}
-\contentsline {subsubsection}{Regular expression}{148}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{149}
-\contentsline {subsubsection}{Model-free set details}{149}
-\contentsline {subsubsection}{Model-free default values}{150}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{150}
-\contentsline {subsubsection}{Reduced spectral density mapping set details}{150}
-\contentsline {subsubsection}{Reduced spectral density mapping default values}{150}
-\contentsline {subsection}{\numberline {3.2.79}value.write}{151}
-\contentsline {subsubsection}{Synopsis}{151}
-\contentsline {subsubsection}{Defaults}{151}
-\contentsline {subsubsection}{Keyword Arguments}{151}
-\contentsline {subsubsection}{Description}{151}
-\contentsline {subsubsection}{Examples}{151}
-\contentsline {subsubsection}{Regular expression}{152}
-\contentsline {subsubsection}{Model-free data type string matching patterns}{153}
-\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{153}
-\contentsline {subsubsection}{NOE calculation data type string matching patterns}{153}
-\contentsline {subsection}{\numberline {3.2.80}vmd.view}{154}
-\contentsline {subsubsection}{Synopsis}{154}
-\contentsline {subsubsection}{Defaults}{154}
-\contentsline {subsubsection}{Keyword Arguments}{154}
-\contentsline {subsubsection}{Example}{154}
-\contentsline {chapter}{\numberline {4}Licence}{155}
-\contentsline {section}{\numberline {4.1}Copying, modification, sublicencing, and distribution of relax}{155}
-\contentsline {section}{\numberline {4.2}The GPL}{155}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{144}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{144}
+\contentsline {subsection}{\numberline {3.2.78}value.set}{145}
+\contentsline {subsubsection}{Synopsis}{145}
+\contentsline {subsubsection}{Defaults}{145}
+\contentsline {subsubsection}{Keyword arguments}{145}
+\contentsline {subsubsection}{Description}{145}
+\contentsline {subsubsection}{Residue number and name argument}{146}
+\contentsline {subsubsection}{Examples}{146}
+\contentsline {subsubsection}{Regular expression}{147}
+\contentsline {subsubsection}{Model-free set details}{148}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{148}
+\contentsline {subsubsection}{Model-free default values}{149}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{149}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{149}
+\contentsline {subsubsection}{Reduced spectral density mapping default values}{149}
+\contentsline {subsubsection}{Diffusion tensor set details}{150}
+\contentsline {subsubsection}{Diffusion tensor parameter string matching patterns}{151}
+\contentsline {subsubsection}{Diffusion tensor parameter default values}{152}
+\contentsline {subsection}{\numberline {3.2.79}value.write}{153}
+\contentsline {subsubsection}{Synopsis}{153}
+\contentsline {subsubsection}{Defaults}{153}
+\contentsline {subsubsection}{Keyword Arguments}{153}
+\contentsline {subsubsection}{Description}{153}
+\contentsline {subsubsection}{Examples}{153}
+\contentsline {subsubsection}{Regular expression}{154}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{155}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{155}
+\contentsline {subsubsection}{NOE calculation data type string matching patterns}{155}
+\contentsline {subsection}{\numberline {3.2.80}vmd.view}{156}
+\contentsline {subsubsection}{Synopsis}{156}
+\contentsline {subsubsection}{Defaults}{156}
+\contentsline {subsubsection}{Keyword Arguments}{156}
+\contentsline {subsubsection}{Example}{156}
+\contentsline {chapter}{\numberline {4}Licence}{157}
+\contentsline {section}{\numberline {4.1}Copying, modification, sublicencing, and distribution of relax}{157}
+\contentsline {section}{\numberline {4.2}The GPL}{157}

@@ -180,6 +180,9 @@
 \indexentry{parameter!bounds}{37}
 \indexentry{map}{37}
 \indexentry{parameter!bounds}{37}
+\indexentry{display}{37}
+\indexentry{OpenDX, the program}{37}
+\indexentry{plot}{37}
 \indexentry{OpenDX, the program}{37}
 \indexentry{OpenDX, the program}{37}
 \indexentry{map}{37}
@@ -198,7 +201,7 @@
 \indexentry{regular expression}{38}
 \indexentry{Python}{38}
 \indexentry{regular expression}{38}
-\indexentry{sequence}{38}
+\indexentry{sequence}{39}
 \indexentry{sequence}{39}
 \indexentry{regular expression}{39}
 \indexentry{regular expression}{39}
@@ -683,6 +686,7 @@
 \indexentry{copy}{137}
 \indexentry{copy}{137}
 \indexentry{copy}{137}
+\indexentry{copy}{137}
 \indexentry{minimisation}{137}
 \indexentry{minimisation}{137}
 \indexentry{copy}{137}
@@ -698,11 +702,12 @@
 \indexentry{sequence}{138}
 \indexentry{regular expression}{138}
 \indexentry{regular expression}{138}
-\indexentry{chemical exchange}{139}
-\indexentry{map|textbf}{139}
+\indexentry{chemical exchange}{138}
 \indexentry{map|textbf}{139}
 \indexentry{map}{139}
 \indexentry{bond length}{139}
+\indexentry{map|textbf}{139}
+\indexentry{display}{140}
 \indexentry{display}{140}
 \indexentry{regular expression|textbf}{140}
 \indexentry{Python}{140}
@@ -734,54 +739,89 @@
 \indexentry{sequence}{143}
 \indexentry{regular expression}{143}
 \indexentry{regular expression}{143}
-\indexentry{chemical exchange}{144}
-\indexentry{map|textbf}{145}
-\indexentry{map|textbf}{145}
-\indexentry{map}{145}
-\indexentry{bond length}{145}
-\indexentry{minimisation}{146}
-\indexentry{minimisation}{146}
+\indexentry{chemical exchange}{143}
+\indexentry{map|textbf}{144}
+\indexentry{map}{144}
+\indexentry{bond length}{144}
+\indexentry{map|textbf}{144}
+\indexentry{minimisation}{145}
+\indexentry{minimisation}{145}
+\indexentry{Python}{146}
+\indexentry{regular expression}{146}
+\indexentry{regular expression}{146}
+\indexentry{diffusion!tensor}{146}
+\indexentry{map}{147}
+\indexentry{bond length}{147}
+\indexentry{bond length}{147}
+\indexentry{regular expression|textbf}{147}
+\indexentry{Python}{147}
+\indexentry{regular expression}{147}
 \indexentry{Python}{147}
 \indexentry{regular expression}{147}
 \indexentry{regular expression}{147}
-\indexentry{map}{147}
-\indexentry{bond length}{148}
-\indexentry{bond length}{148}
-\indexentry{regular expression|textbf}{148}
-\indexentry{Python}{148}
-\indexentry{regular expression}{148}
-\indexentry{Python}{148}
+\indexentry{Python}{147}
+\indexentry{regular expression}{147}
+\indexentry{sequence}{147}
+\indexentry{sequence}{147}
 \indexentry{regular expression}{148}
 \indexentry{regular expression}{148}
-\indexentry{Python}{148}
-\indexentry{regular expression}{148}
-\indexentry{sequence}{148}
-\indexentry{sequence}{148}
-\indexentry{regular expression}{148}
-\indexentry{regular expression}{148}
-\indexentry{chemical exchange}{149}
-\indexentry{relaxation}{150}
-\indexentry{map|textbf}{150}
-\indexentry{map|textbf}{150}
-\indexentry{map}{150}
-\indexentry{bond length}{150}
-\indexentry{map|textbf}{150}
-\indexentry{write}{151}
-\indexentry{write}{151}
-\indexentry{regular expression|textbf}{152}
-\indexentry{Python}{152}
-\indexentry{regular expression}{152}
-\indexentry{Python}{152}
-\indexentry{regular expression}{152}
-\indexentry{regular expression}{152}
-\indexentry{Python}{152}
-\indexentry{regular expression}{152}
-\indexentry{sequence}{152}
-\indexentry{sequence}{152}
-\indexentry{regular expression}{152}
-\indexentry{regular expression}{152}
-\indexentry{map|textbf}{153}
-\indexentry{molecule}{154}
-\indexentry{PDB}{154}
-\indexentry{PDB}{154}
-\indexentry{GPL|textbf}{155}
+\indexentry{chemical exchange}{148}
+\indexentry{relaxation}{149}
+\indexentry{map|textbf}{149}
+\indexentry{map}{149}
+\indexentry{bond length}{149}
+\indexentry{map|textbf}{149}
+\indexentry{map|textbf}{149}
+\indexentry{diffusion!tensor|textbf}{150}
+\indexentry{diffusion!tensor}{150}
+\indexentry{diffusion!tensor}{150}
+\indexentry{angles}{150}
+\indexentry{diffusion!tensor}{150}
+\indexentry{diffusion!spheroid (axially symmetric)}{150}
+\indexentry{diffusion!ellipsoid (asymmetric)}{150}
+\indexentry{diffusion!spheroid (axially symmetric)}{150}
+\indexentry{diffusion!ellipsoid (asymmetric)}{150}
+\indexentry{diffusion!tensor|textbf}{151}
+\indexentry{correlation time}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{diffusion!spheroid (axially symmetric)}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{diffusion!spheroid (axially symmetric)}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{diffusion!spheroid (axially symmetric)}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{angles}{151}
+\indexentry{Euler angles}{151}
+\indexentry{diffusion!ellipsoid (asymmetric)}{151}
+\indexentry{angles}{151}
+\indexentry{Euler angles}{151}
+\indexentry{diffusion!ellipsoid (asymmetric)}{151}
+\indexentry{angles}{151}
+\indexentry{Euler angles}{151}
+\indexentry{diffusion!ellipsoid (asymmetric)}{151}
+\indexentry{angles}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{angles}{151}
+\indexentry{diffusion!tensor}{151}
+\indexentry{diffusion!tensor|textbf}{152}
+\indexentry{write}{153}
+\indexentry{write}{153}
+\indexentry{regular expression|textbf}{154}
+\indexentry{Python}{154}
+\indexentry{regular expression}{154}
+\indexentry{Python}{154}
+\indexentry{regular expression}{154}
+\indexentry{regular expression}{154}
+\indexentry{Python}{154}
+\indexentry{regular expression}{154}
+\indexentry{sequence}{154}
+\indexentry{sequence}{154}
+\indexentry{regular expression}{154}
+\indexentry{regular expression}{154}
+\indexentry{map|textbf}{155}
+\indexentry{molecule}{156}
+\indexentry{PDB}{156}
+\indexentry{PDB}{156}
+\indexentry{GPL|textbf}{157}
