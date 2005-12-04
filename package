@@ -41,13 +41,13 @@ class Package:
         """Function for checking that the version of the manual is the same as the relax version."""
 
         # Open the manual version file.
-        file = open('doc/latex/relax_version.tex', 'r')
+        file = open('docs/latex/relax_version.tex', 'r')
 
         # Get the text.
         text = file.readlines()
 
         # Manual version.
-        manual_version = text[0][7:-1]
+        manual_version = text[0][8:-1]
 
         # Test if the versions are the same.
         if manual_version != self.version:
@@ -68,6 +68,7 @@ class Package:
 
         # Their are changes.
         if output:
+            print "Changes to the SVN working copy have been detected."
             print output
             sys.exit()
 
