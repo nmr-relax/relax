@@ -3,6 +3,8 @@
 # Script for packaging relax.
 
 from os import popen2
+from string import split
+import sys
 
 
 class Package:
@@ -16,10 +18,26 @@ class Package:
     def check_version(self):
         """Function for checking that the relax version string has been set."""
 
-        # Get the version number.
+        # Get the program version number printout.
         stdin, stdout = popen2('./relax -v')
+        output = stdout.readline()
 
-        print stdout
+        # Close the pipes.
+        stdin.close()
+        stdout.close()
+
+        # Split by whitespace.
+        data = split(output)
+
+        # The version number has not been set.
+        if len(data) != 2:
+            print "The relax version number has not been set."
+            sys.exit()
+
+        # Version number.
+        self.version == data[1]
+        print self.version
+
 
 if __name__ == '__main__':
     Package()
