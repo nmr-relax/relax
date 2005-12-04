@@ -1,0 +1,25 @@
+#! /usr/bin/python
+
+# Script for packaging relax.
+
+from os import popen2
+
+
+class Package:
+    def __init__(self):
+        """Script for packaging relax into a .tar.bz2 archive."""
+
+        # Check that the relax version string has been set.
+        self.check_version()
+
+
+    def check_version(self):
+        """Function for checking that the relax version string has been set."""
+
+        # Get the version number.
+        stdin, stdout = popen2('./relax -v')
+
+        print stdout
+
+if __name__ == '__main__':
+    Package()
