@@ -1539,12 +1539,12 @@ class Model_free(Common_functions):
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion {tm}.
             if self.relax.data.diff[self.run].type == 'sphere':
-                min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
+                min_options.append([inc[0], 6.0 * 1e-9, 12.0 * 1e-9])
                 m = m + 1
 
             # Spheroidal diffusion {tm, Da, theta, phi}.
             if self.relax.data.diff[self.run].type == 'spheroid':
-                min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
+                min_options.append([inc[0], 6.0 * 1e-9, 12.0 * 1e-9])
                 if self.relax.data.diff[self.run].spheroid_type == 'prolate':
                     min_options.append([inc[1], 0.0, 1e7])
                 elif self.relax.data.diff[self.run].spheroid_type == 'oblate':
@@ -1557,7 +1557,7 @@ class Model_free(Common_functions):
 
             # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
             elif self.relax.data.diff[self.run].type == 'ellipsoid':
-                min_options.append([inc[0], 1.0 * 1e-9, 20.0 * 1e-9])
+                min_options.append([inc[0], 6.0 * 1e-9, 12.0 * 1e-9])
                 min_options.append([inc[1], 0.0, 1e7])
                 min_options.append([inc[2], 0.0, 1.0])
                 min_options.append([inc[3], 0.0, pi])
@@ -1580,7 +1580,7 @@ class Model_free(Common_functions):
                 for j in xrange(len(self.relax.data.res[self.run][i].params)):
                     # Local tm.
                     if self.relax.data.res[self.run][i].params[j] == 'tm':
-                        min_options.append([inc[m], 1.0 * 1e-9, 20.0 * 1e-9])
+                        min_options.append([inc[m], 6.0 * 1e-9, 12.0 * 1e-9])
 
                     # {S2, S2f, S2s}.
                     elif match('S2', self.relax.data.res[self.run][i].params[j]):
