@@ -76,6 +76,12 @@ class Iso3D(Base_Map):
         percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
         print "%-10s%8.3f%-1s" % ("Progress:", percent, "%")
 
+        # Fix the diffusion tensor.
+        unfix = 0
+        if not self.relax.data.diff[self.run].fixed:
+            self.relax.data.diff[self.run].fixed = 1
+            unfix = 1
+
         # Initial value of the first parameter.
         values[0] = self.bounds[0, 0]
 
@@ -118,6 +124,10 @@ class Iso3D(Base_Map):
 
             # Increment the value of the first parameter.
             values[0] = values[0] + self.step_size[0]
+
+        # Unfix the diffusion tensor.
+        if unfix:
+            self.relax.data.diff[self.run].fixed = 0
 
 
     def general_text(self):

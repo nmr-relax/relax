@@ -435,12 +435,6 @@ class Model_free(Common_functions):
         if not hasattr(self.relax.data, 'gx'):
             raise RelaxNucleusError
 
-        # Fix the diffusion tensor.
-        unfix = 0
-        if not self.relax.data.diff[self.run].fixed:
-            self.relax.data.diff[self.run].fixed = 1
-            unfix = 1
-
         # Loop over the residues.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Alias the data structure.
@@ -546,10 +540,6 @@ class Model_free(Common_functions):
                 self.relax.data.res[self.run][i].chi2 = self.mf.func(self.param_vector)
             except OverflowError:
                 self.relax.data.res[self.run][i].chi2 = 1e200
-
-        # Unfix the diffusion tensor.
-        if unfix:
-            self.relax.data.diff[self.run].fixed = 0
 
 
     def copy(self, run1=None, run2=None, sim=None):
