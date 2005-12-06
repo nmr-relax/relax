@@ -402,9 +402,6 @@ class Model_free(Common_functions):
         self.run = run
         self.print_flag = print_flag
 
-        # Go to the minimise function.
-        #self.minimise(run=self.run, min_algor='calc', min_options=res_num, sim_index=sim_index)
-
         # Test if the sequence data for self.run is loaded.
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
@@ -437,6 +434,12 @@ class Model_free(Common_functions):
         # Test if the nucleus type has been set.
         if not hasattr(self.relax.data, 'gx'):
             raise RelaxNucleusError
+
+        # Fix the diffusion tensor.
+        unfix = 0
+        if not self.relax.data.diff[self.run].fixed:
+            self.relax.data.diff[self.run].fixed = 1
+            unfix = 1
 
         # Loop over the residues.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -544,6 +547,9 @@ class Model_free(Common_functions):
             except OverflowError:
                 self.relax.data.res[self.run][i].chi2 = 1e200
 
+        # Unfix the diffusion tensor.
+        if unfix:
+            self.relax.data.diff[self.run].fixed = 0
 
 
     def copy(self, run1=None, run2=None, sim=None):
