@@ -2807,7 +2807,7 @@ class Mf:
 
                     # Any other parameter.
                     else:
-                        data.create_d2ri_prime[i].append(func_d2ri_drdjw_prime)
+                        data.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
 
             # CSA.
             elif index != None and data.param_types[index] == 'CSA':
@@ -2836,7 +2836,7 @@ class Mf:
 
                     # Any other parameter.
                     else:
-                        data.create_d2ri_prime[i].append(func_d2ri_dcsadjw_prime)
+                        data.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
 
             # Any other parameter.
             else:
