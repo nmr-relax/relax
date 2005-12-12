@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,6 +23,7 @@
 
 __all__ = ['angles',
            'command',
+           'dasha',
            'diffusion_tensor',
            'dx',
            'eliminate',

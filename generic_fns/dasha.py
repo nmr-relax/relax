@@ -33,43 +33,45 @@ class Dasha:
         self.relax = relax
 
 
-    def create(self, run, dir, force, diff_search, sims, sim_type, trim, steps, constraints, nucleus, atom1, atom2):
+    def create(self, run, dir, force):
         """Function for creating the Dasha script file 'dir/dasha_script'."""
 
+        # Arguments.
+        self.run = run
+        self.dir = dir
+        self.force = force
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
 
-        # Test if the PDB file is loaded (for the spheroid and ellipsoid).
-        if not self.relax.data.diff[run].type == 'sphere' and not self.relax.data.pdb.has_key(run):
-            raise RelaxNoPdbError, run
+        # Determine the parameter set.
+        self.param_set = self.relax.specific.model_free.determine_param_set_type(self.run)
+
+        # Test if diffusion tensor data for the run exists.
+        if self.param_set != 'local_tm' and not self.relax.data.diff.has_key(self.run):
+            raise RelaxNoTensorError, self.run
+
+        # Test if the PDB file has been loaded (for the spheroid and ellipsoid).
+        if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere' and not self.relax.data.pdb.has_key(self.run):
+            raise RelaxNoPdbError, self.run
 
         # Test if the nucleus type has been set.
         if not hasattr(self.relax.data, 'gx'):
             raise RelaxNucleusError
 
-        # Directory creation.
-        if dir == None:
-            dir = run
-        self.relax.IO.mkdir(dir, print_flag=0)
+        # Only spherical diffusion is currently supported.
+        if self.relax.data.diff[self.run].type != 'sphere':
+            raise RelaxError, 'Only spherical diffusion is currently supported.'
 
-        # Place the arguments into 'self'.
-        self.run = run
-        self.dir = dir
-        self.force = force
-        self.diff_search = diff_search
-        self.sims = sims
-        self.sim_type = sim_type
-        self.trim = trim
-        self.steps = steps
-        self.constraints = constraints
-        self.nucleus = nucleus
-        self.atom1 = atom1
-        self.atom2 = atom2
+        # Directory creation.
+        if self.dir == None:
+            self.dir = self.run
+        self.relax.IO.mkdir(self.dir, print_flag=0)
 
         # Number of field strengths and values.
         self.num_frq = 0
@@ -86,128 +88,154 @@ class Dasha:
                             self.frq.append(frq)
 
         # The 'dasha_script' file.
-        mfin = self.open_file('dasha_script')
-        self.create_script(mfin)
-        mfin.close()
-
-        # Open the 'mfdata', 'mfmodel', and 'mfpar' files.
-        mfdata = self.open_file('mfdata')
-        mfmodel = self.open_file('mfmodel')
-        mfpar = self.open_file('mfpar')
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            if hasattr(self.relax.data.res[self.run][i], 'num_frq'):
-                # The 'mfdata' file.
-                if not self.create_mfdata(i, mfdata):
-                    continue
-
-                # The 'mfmodel' file.
-                self.create_mfmodel(i, mfmodel)
-
-                # The 'mfpar' file.
-                self.create_mfpar(i, mfpar)
-
-        # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
-        mfdata.close()
-        mfmodel.close()
-        mfpar.close()
-
-        # The 'run.sh' script.
-        run = self.open_file('run.sh')
-        self.create_run(run)
-        run.close()
-        chmod(self.dir + '/run.sh', 0755)
+        script = self.open_file('dasha_script')
+        self.create_script(script)
+        script.close()
 
 
     def create_script(self, file):
-        """Create the Modelfree4 input file 'mfin'."""
+        """Create the Dasha script file."""
 
-        # Set the diffusion tensor specific values.
-        if self.relax.data.diff[self.run].type == 'sphere':
-            diff = 'isotropic'
-            algorithm = 'brent'
-            tm = self.relax.data.diff[self.run].tm / 1e-9
-            dratio = 1
-            theta = 0
-            phi = 0
-        elif self.relax.data.diff[self.run].type == 'spheroid':
-            diff = 'axial'
-            algorithm = 'powell'
-            tm = self.relax.data.diff[self.run].tm / 1e-9
-            dratio = self.relax.data.diff[self.run].Dratio
-            theta = self.relax.data.diff[self.run].theta * 360.0 / (2.0 * pi)
-            phi = self.relax.data.diff[self.run].phi * 360.0 / (2.0 * pi)
-        elif self.relax.data.diff[self.run].type == 'ellipsoid':
-            diff = 'anisotropic'
-            algorithm = 'powell'
-            tm = self.relax.data.diff[self.run].tm / 1e-9
-            dratio = 0
-            theta = 0
-            phi = 0
+        # Delete all data.
+        file.write('# Delete all data.\n')
+        file.write('del 1 10000\n')
 
-        # Add the main options.
-        file.write("optimization    tval\n\n")
-        file.write("seed            0\n\n")
-        file.write("search          grid\n\n")
-
-        # Diffusion type.
-        if self.relax.data.diff[self.run].fixed:
-            algorithm = 'fix'
-
-        file.write("diffusion       " + diff + " " + self.diff_search + "\n\n")
-        file.write("algorithm       " + algorithm + "\n\n")
-
-        # Monte Carlo simulations.
-        if self.sims:
-            file.write("simulations     " + self.sim_type + "    " + `self.sims` + "       " + `self.trim` + "\n\n")
+        # Nucleus type.
+        file.write('\n# Nucleus type.\n')
+        nucleus = self.relax.generic.nuclei.find_nucleus()
+        if nucleus == 'N':
+            nucleus = 'N15'
+        elif nucleus == 'C':
+            nucleus = 'C13'
         else:
-            file.write("simulations     none\n\n")
+            raise RelaxError, 'Cannot handle the nucleus type ' + `nucleus` + ' within Dasha.'
+        file.write('set nucl ' + nucleus + '\n')
 
-        selection = 'none'    # To be changed.
-        file.write("selection       " + selection + "\n\n")
-        file.write("sim_algorithm   " + algorithm + "\n\n")
+        # Number of frequencies.
+        file.write('\n# Number of frequencies.\n')
+        file.write('set n_freq ' + `self.relax.data.num_frq[self.run]` + '\n')
 
-        file.write("fields          " + `self.num_frq`)
-        for frq in self.frq:
-            file.write("  " + `frq*1e-6`)
-        file.write("\n")
+        # Frequency values.
+        file.write('\n# Frequency values.\n')
+        for i in xrange(self.relax.data.num_frq[self.run]):
+            file.write('set H1_freq ' + `self.relax.data.frq[self.run][i] / 1e6` + ' ' + `i+1` + '\n')
 
-        # tm.
-        file.write('%-7s' % 'tm')
-        file.write('%14.3f' % tm)
-        file.write('%2i' % 1)
-        file.write('%3i' % 0)
-        file.write('%5i' % 5)
-        file.write('%6i' % 15)
-        file.write('%4i\n' % 20)
+        # Global correlation time (ns).
+        file.write('\n# Global correlation time (ns).\n')
+        file.write('set tr ' + `self.relax.data.diff[self.run].tm / 1e-9` + '\n')
 
-        # dratio.
-        file.write('%-7s' % 'Dratio')
-        file.write('%14s' % dratio)
-        file.write('%2i' % 1)
-        file.write('%3i' % 0)
-        file.write('%5i' % 0)
-        file.write('%6i' % 2)
-        file.write('%4i\n' % 5)
+        # Reading the relaxation data.
+        file.write('\n# Reading the relaxation data.\n')
+        file.write('echo Reading the relaxation data.\n')
+        noe_index = 1
+        r1_index = 1
+        r2_index = 1
+        for i in xrange(self.relax.data.num_ri[self.run]):
+            # NOE.
+            if self.relax.data.ri_labels[self.run][i] == 'NOE':
+                # Data set number.
+                number = noe_index
 
-        # theta.
-        file.write('%-7s' % 'Theta')
-        file.write('%14s' % theta)
-        file.write('%2i' % 1)
-        file.write('%3i' % 0)
-        file.write('%5i' % 0)
-        file.write('%6i' % 180)
-        file.write('%4i\n' % 10)
+                # Data type.
+                data_type = 'noe'
 
-        # phi.
-        file.write('%-7s' % 'Phi')
-        file.write('%14s' % phi)
-        file.write('%2i' % 1)
-        file.write('%3i' % 0)
-        file.write('%5i' % 0)
-        file.write('%6i' % 360)
-        file.write('%4i\n' % 10)
+                # Increment the data set index.
+                noe_index = noe_index + 1
+
+            # R1.
+            elif self.relax.data.ri_labels[self.run][i] == 'R1':
+                # Data set number.
+                number = r1_index
+
+                # Data type.
+                data_type = '1/t1'
+
+                # Increment the data set index.
+                r1_index = r1_index + 1
+
+            # R2.
+            elif self.relax.data.ri_labels[self.run][i] == 'R2':
+                # Data set number.
+                number = r2_index
+
+                # Data type.
+                data_type = '1/t2'
+
+                # Increment the data set index.
+                r2_index = r2_index + 1
+
+            # Set the data type.
+            if number == 1:
+                file.write('\nread < ' + data_type + '\n')
+            else:
+                file.write('\nread < ' + data_type + ' ' + `number` + '\n')
+
+            # The relaxation data.
+            for j in xrange(len(self.relax.data.res[self.run])):
+                # Reassign the data.
+                data = self.relax.data.res[self.run][j]
+
+                # Data and errors.
+                file.write(`data.num` + ' ' + `data.relax_data[i]` + ' ' + `data.relax_error[i]` + '\n')
+
+            # Terminate the reading.
+            file.write('exit\n')
+
+        # Individual residue optimisation.
+        if self.param_set == 'mf':
+            # Loop over the residues.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Reassign the data.
+                data = self.relax.data.res[self.run][i]
+
+                # Comment.
+                file.write('\n\n\n# Residue ' + `data.num` + '\n\n')
+
+                # Echo.
+                file.write('echo Optimisation of residue ' + `data.num` + '\n')
+
+                # Select the residue.
+                file.write('\n# Select the residue.\n')
+                file.write('set cres ' + `data.num` + '\n')
+
+                # The 'jmode'.
+                if 'te' in data.params:
+                    jmode = 2
+                elif 'S2' in data.params:
+                    jmode = 1
+                elif 'ts' in data.params:
+                    jmode = 3
+
+                # Chemical exchange.
+                if 'Rex' in data.params:
+                    exch = 1
+                else:
+                    exch = 0
+
+                # Set the jmode.
+                file.write('\n# Set the jmode.\n')
+                file.write('set def jmode ' + `jmode`)
+                if exch:
+                    file.write(' exch\n')
+                else:
+                    file.write('\n')
+
+                # Parameter default values.
+                file.write('\n# Parameter default values.\n')
+                file.write('reset jmode ' + `data.num` + '\n')
+
+            # Optimisation of all residues.
+            file.write('\n\n\n# Optimisation of all residues.\n')
+            file.write('lmin all')
+
+            # Show the results.
+            file.write('\n# Show the results.\n')
+            file.write('echo\n')
+            file.write('show all\n')
+
+
+        else:
+            raise RelaxError, 'Optimisation of the parameter set ' + `self.param_set` + ' currently not supported.'
 
 
     def execute(self, run, dir, force):

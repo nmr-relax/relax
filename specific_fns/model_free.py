@@ -990,8 +990,12 @@ class Model_free(Common_functions):
         self.relax.generic.runs.eliminate_unused_runs()
 
 
-    def determine_param_set_type(self):
+    def determine_param_set_type(self, run=None):
         """Determine the type of parameter set."""
+
+        # Run name.
+        if run:
+            self.run = run
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(self.run):

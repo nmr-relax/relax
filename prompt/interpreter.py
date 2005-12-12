@@ -50,6 +50,7 @@ from nuclei import Nuclei
 from pdb import PDB
 
 # User classes.
+from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from grace import Grace
 from jw_mapping import Jw_mapping
@@ -105,6 +106,7 @@ class Interpreter:
         self._system = system
 
         # Place the user classes into the interpreter class namespace.
+        self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
         self._Grace = Grace(relax)
@@ -161,6 +163,7 @@ class Interpreter:
         pdb = self._PDB.pdb
 
         # Place the user classes in the local namespace.
+        dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
         grace = self._Grace
