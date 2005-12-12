@@ -22,6 +22,7 @@
 
 
 __all__ = [ 'angles',
+            'dasha',
             'diffusion_tensor',
             'eliminate',
             'fix',

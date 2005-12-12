@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,6 +23,7 @@
 from angles import Angles
 from dx.opendx import OpenDX
 from diffusion_tensor import Diffusion_tensor
+from dasha import Dasha
 from eliminate import Eliminate
 from fix import Fix
 from grace import Grace
@@ -52,6 +53,7 @@ class Generic:
 
         # Set up all the classes.
         self.angles = Angles(self.relax)
+        self.dasha = Dasha(self.relax)
         self.diffusion_tensor = Diffusion_tensor(self.relax)
         self.eliminate = Eliminate(self.relax)
         self.fix = Fix(self.relax)
