@@ -64,10 +64,6 @@ class Dasha:
         if not hasattr(self.relax.data, 'gx'):
             raise RelaxNucleusError
 
-        # Only spherical diffusion is currently supported.
-        if self.relax.data.diff[self.run].type != 'sphere':
-            raise RelaxError, 'Only spherical diffusion is currently supported.'
-
         # Directory creation.
         if self.dir == None:
             self.dir = self.run
@@ -120,9 +116,31 @@ class Dasha:
         for i in xrange(self.relax.data.num_frq[self.run]):
             file.write('set H1_freq ' + `self.relax.data.frq[self.run][i] / 1e6` + ' ' + `i+1` + '\n')
 
-        # Global correlation time (ns).
-        file.write('\n# Global correlation time (ns).\n')
-        file.write('set tr ' + `self.relax.data.diff[self.run].tm / 1e-9` + '\n')
+        # Set the diffusion tensor.
+        file.write('\n# Set the diffusion tensor.\n')
+        if self.param_set != 'local_tm':
+            # Sphere.
+            if self.relax.data.diff[self.run].type == 'sphere':
+                file.write('set tr ' + `self.relax.data.diff[self.run].tm / 1e-9` + '\n')
+
+            # Spheroid.
+            elif self.relax.data.diff[self.run].type == 'spheroid':
+                file.write('set tr ' + `self.relax.data.diff[self.run].tm / 1e-9` + '\n')
+
+            # Ellipsoid.
+            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                # Get the eigenvales.
+                Dx, Dy, Dz = self.relax.generic.diffusion_tensor.return_eigenvalues(self.run)
+
+                # Geometric parameters.
+                file.write('set tr ' + `self.relax.data.diff[self.run].tm / 1e-9` + '\n')
+                file.write('set D1/D3 ' + `Dx / Dz` + '\n')
+                file.write('set D2/D3 ' + `Dy / Dz` + '\n')
+
+                # Orientational parameters.
+                file.write('set alfa ' + `self.relax.data.diff[self.run].alpha / (2.0 * pi) * 360.0` + '\n')
+                file.write('set betta ' + `self.relax.data.diff[self.run].beta / (2.0 * pi) * 360.0` + '\n')
+                file.write('set gamma ' + `self.relax.data.diff[self.run].gamma / (2.0 * pi) * 360.0` + '\n')
 
         # Reading the relaxation data.
         file.write('\n# Reading the relaxation data.\n')
@@ -220,13 +238,21 @@ class Dasha:
                 else:
                     file.write('\n')
 
+                # Bond length.
+                file.write('\n# Bond length.\n')
+                file.write('set r_hx ' + `data.r / 1e-10` + '\n')
+
+                # CSA value.
+                file.write('\n# CSA value.\n')
+                file.write('set csa ' + `data.csa / 1e-6` + '\n')
+
                 # Parameter default values.
                 file.write('\n# Parameter default values.\n')
                 file.write('reset jmode ' + `data.num` + '\n')
 
             # Optimisation of all residues.
             file.write('\n\n\n# Optimisation of all residues.\n')
-            file.write('lmin all')
+            file.write('min all')
 
             # Show the results.
             file.write('\n# Show the results.\n')

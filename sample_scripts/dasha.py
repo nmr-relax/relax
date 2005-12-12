@@ -11,7 +11,7 @@ nuclei('N')
 sequence.read(name, 'noe.500.out')
 
 # Load a PDB file.
-#pdb(name, 'example.pdb')
+pdb(name, 'example.pdb')
 
 # Load the relaxation data.
 relax_data.read(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -22,7 +22,7 @@ relax_data.read(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
 relax_data.read(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
 # Setup other values.
-diffusion_tensor.init(name, 10e-9, fixed=1)
+diffusion_tensor.init(name, (10e-9, 0, 0, 0, 0, 180), fixed=1)
 value.set(name, 1.02 * 1e-10, 'bond_length')
 value.set(name, -160 * 1e-6, 'csa')
 

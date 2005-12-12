@@ -591,6 +591,32 @@ class Diffusion_tensor:
             return 'phi'
 
 
+    def return_eigenvalues(self, run=None):
+        """Function for returning Dx, Dy, and Dz."""
+
+        # Argument.
+        if run:
+            self.run = run
+
+        # Reassign the data.
+        data = self.relax.data.diff[self.run]
+
+        # Diso.
+        Diso = 1.0 / (6.0 * data.tm)
+
+        # Dx.
+        Dx = Diso - 1.0/3.0 * data.Da * (1.0  +  3.0 * data.Dr)
+
+        # Dy.
+        Dy = Diso - 1.0/3.0 * data.Da * (1.0  -  3.0 * data.Dr)
+
+        # Dz.
+        Dz = Diso + 2.0/3.0 * data.Da
+
+        # Return the eigenvalues.
+        return Dx, Dy, Dz
+
+
     def return_units(self, param):
         """Function for returning a string representing the parameters units.
 
