@@ -82,10 +82,10 @@ class Value:
             set(run=run2, value=value, error=error, param=param, index=i)
 
             # Reset the residue specific minimisation statistics.
-            self.reset_min_stats(run2, i)
+            self.relax.generic.minimise.reset_min_stats(run2, i)
 
         # Reset the global minimisation statistics.
-        self.reset_min_stats(run2)
+        self.relax.generic.minimise.reset_min_stats(run2)
 
 
     def display(self, run=None, param=None):
@@ -179,9 +179,15 @@ class Value:
 
             except ValueError:
                 if error_col != None:
-                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                    if name_col != None:
+                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                    else:
+                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
                 else:
-                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ")."
+                    if name_col != None:
+                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ")."
+                    else:
+                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ")."
 
         # Loop over the data.
         for i in xrange(len(file_data)):
@@ -189,7 +195,10 @@ class Value:
             res_num = int(file_data[i][num_col])
 
             # Residue name.
-            res_name = file_data[i][name_col]
+            if name_col == None:
+                res_name = None
+            else:
+                res_name = file_data[i][name_col]
 
             # Value.
             if file_data[i][data_col] != 'None':
@@ -206,7 +215,7 @@ class Value:
             # Find the index of self.relax.data.res[self.run] which corresponds to the relaxation data set i.
             index = None
             for j in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
+                if self.relax.data.res[self.run][j].num == res_num and (res_name == None or self.relax.data.res[self.run][j].name == res_name):
                     index = j
                     break
             if index == None:
@@ -216,10 +225,10 @@ class Value:
             set(run=run, value=value, error=error, param=self.param, index=i)
 
             # Reset the residue specific minimisation statistics.
-            self.reset_min_stats(self.run, i)
+            self.relax.generic.minimise.reset_min_stats(self.run, i)
 
         # Reset the global minimisation statistics.
-        self.reset_min_stats(self.run)
+        self.relax.generic.minimise.reset_min_stats(self.run)
 
 
     def set(self, run=None, value=None, param=None, res_num=None, res_name=None, force=0):

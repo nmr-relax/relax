@@ -220,8 +220,8 @@ class Value:
             raise RelaxIntError, ('residue number column', num_col)
 
         # The name column.
-        if type(name_col) != int:
-            raise RelaxIntError, ('residue name column', name_col)
+        if name_col != None and type(name_col) != int:
+            raise RelaxNoneIntError, ('residue name column', name_col)
 
         # The data column.
         if type(data_col) != int:

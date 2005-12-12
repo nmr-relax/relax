@@ -35,3 +35,9 @@ dasha.create(name, force=1)
 
 # Execute Dasha.
 dasha.execute(name)
+
+# Read the data.
+dasha.extract(name)
+
+# Write the results.
+results.write(name, file='results_dasha', force=1)

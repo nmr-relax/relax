@@ -21,9 +21,10 @@
 ###############################################################################
 
 from math import pi
-from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, spawnlp, system
+from os import F_OK, access, chdir, getcwd, system
 from re import match, search
 from string import split
+import sys
 
 
 class Dasha:
@@ -92,7 +93,7 @@ class Dasha:
             self.relax.generic.angles.ellipsoid_frame(self.run)
 
         # The 'dasha_script' file.
-        script = self.open_file('dasha_script')
+        script = self.relax.IO.open_write_file(file_name='dasha_script', dir=self.dir, force=self.force)
         self.create_script(script)
         script.close()
 
@@ -347,12 +348,12 @@ class Dasha:
         # Change back to the original directory.
         chdir(orig_dir)
 
+        # Print some blank lines (aesthetics)
+        sys.stdout.write('\n\n')
+
 
     def extract(self, run, dir):
         """Function for extracting the Dasha results out of the 'dasha_results' file."""
-
-        # Not implemented yet.
-        raise RelaxError, 'Function not implemented yet.'
 
         # Arguments.
         self.run = run
@@ -367,132 +368,14 @@ class Dasha:
         if not access(dir, F_OK):
             raise RelaxDirError, ('Dasha', dir)
 
-        # Test if the file exists.
-        if not access(dir + "/dasha_results", F_OK):
-            raise RelaxFileError, ('Dasha', dir + "/dasha_results")
+        # Loop over the parameters.
+        for param in ['S2', 'S2f', 'S2s', 'te', 'tf', 'ts', 'Rex']:
+            # The file name.
+            file_name = dir + '/' + param + '.out'
 
-        # Open the file.
-        results_file = open(dir + "/dasha_results", 'r')
-        results = results_file.readlines()
-        results_file.close()
+            # Test if the file exists.
+            if not access(file_name, F_OK):
+                raise RelaxFileError, ('Dasha', file_name)
 
-        # Find out if simulations were carried out.
-        sims = 0
-        for i in xrange(len(mfout)):
-            if search('_iterations', mfout[i]):
-                row = split(mfout[i])
-                sims = int(row[1])
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Missing data sets.
-            if not hasattr(self.relax.data.res[self.run][i], 'model'):
-                continue
-
-            # Get the S2 data.
-            data = self.get_mf_data('S2', mfout, self.relax.data.res[self.run][i].num)
-            if data != None:
-                s2, s2_err = data
-                self.relax.data.res[self.run][i].s2 = s2
-                #self.relax.data.res[self.run][i].s2_err = s2_err
-
-            # Get the S2f data.
-            if 'S2f' in self.relax.data.res[self.run][i].params or 'S2s' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('S2f', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    s2f, s2f_err = data
-                    self.relax.data.res[self.run][i].s2f = s2f
-                    #self.relax.data.res[self.run][i].s2f_err = s2f_err
-
-            # Get the S2s data.
-            if 'S2f' in self.relax.data.res[self.run][i].params or 'S2s' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('S2s', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    s2s, s2s_err = data
-                    self.relax.data.res[self.run][i].s2s = s2s
-                    #self.relax.data.res[self.run][i].s2s_err = s2s_err
-
-            # Get the te and ts data.
-            if 'te' in self.relax.data.res[self.run][i].params or 'ts' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('te', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    te, te_err = data
-                    self.relax.data.res[self.run][i].te = te / 1e12
-                    #self.relax.data.res[self.run][i].te_err = te_err / 1e12
-                    if 'ts' in self.relax.data.res[self.run][i].params:
-                        self.relax.data.res[self.run][i].ts = te / 1e12
-                        #self.relax.data.res[self.run][i].ts_err = te_err / 1e12
-
-            # Get the Rex data.
-            if 'Rex' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('Rex', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    rex, rex_err = data
-                    self.relax.data.res[self.run][i].rex = rex / (2.0 * pi * self.relax.data.res[self.run][i].frq[0])**2
-                    #self.relax.data.res[self.run][i].rex_err = rex_err / (2.0 * pi * self.relax.data.res[self.run][i].frq[0])**2
-
-            # Get the chi-squared data.
-            self.relax.data.res[self.run][i].chi2 = self.get_chi2(sims, mfout, self.relax.data.res[self.run][i].num)
-
-
-    def get_chi2(self, sims, mfout, res):
-        """Extract the chi-squared data from the mfout file."""
-
-        # Move to the section starting with 'data_sse'.
-        for i in xrange(len(mfout)):
-            if match('data_sse', mfout[i]):
-                break
-
-        # Get the chi-squared value.
-        for j in xrange(i+3, len(mfout)):
-            row = split(mfout[j])
-            if `res` == row[0]:
-                return float(row[1])
-
-            # Catch the end.
-            if row[0] == 'data_correlation_matrix':
-                return
-
-
-    def get_mf_data(self, data_type, mfout, res):
-        """Extract the model-free data from the mfout file."""
-
-        # Move to the section starting with 'data_model_1'.
-        for i in xrange(len(mfout)):
-            if match('data_model_1', mfout[i]):
-                break
-
-        # Move to the subsection starting with data_type.
-        for j in xrange(i, len(mfout)):
-            row = split(mfout[j])
-            if len(row) == 0:
-                continue
-            elif match(data_type, row[0]):
-                break
-
-        # Find the residue specific information.
-        for k in xrange(j+1, len(mfout)):
-            row = split(mfout[k])
-            if `res` == row[0]:
-                try:
-                    # Catch a series of '*' joining two columns.
-                    val = split(row[1], '*')
-                    err = split(row[4], '*')
-
-                    # Return the values.
-                    return float(val[0]), float(err[0])
-                except:
-                    return None, None
-
-            # Catch the end.
-            if row[0] == 'stop_':
-                return
-
-
-    def open_file(self, file_name):
-        """Function for opening a file to write to."""
-
-        file_name = self.dir + "/" + file_name
-        if access(file_name, F_OK) and not self.force:
-            raise RelaxFileOverwriteError, (file_name, 'force flag')
-        return open(file_name, 'w')
+            # Set the values.
+            self.relax.generic.value.read(self.run, param=param, file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)
