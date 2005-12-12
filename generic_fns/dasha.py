@@ -83,6 +83,14 @@ class Dasha:
                         if frq not in self.frq:
                             self.frq.append(frq)
 
+        # Calculate the angle alpha of the XH vector in the spheroid diffusion frame.
+        if self.relax.data.diff[self.run].type == 'spheroid':
+            self.relax.generic.angles.spheroid_frame(self.run)
+
+        # Calculate the angles theta and phi of the XH vector in the ellipsoid diffusion frame.
+        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            self.relax.generic.angles.ellipsoid_frame(self.run)
+
         # The 'dasha_script' file.
         script = self.open_file('dasha_script')
         self.create_script(script)
@@ -166,7 +174,7 @@ class Dasha:
                 number = r1_index
 
                 # Data type.
-                data_type = '1/t1'
+                data_type = '1/T1'
 
                 # Increment the data set index.
                 r1_index = r1_index + 1
@@ -177,7 +185,7 @@ class Dasha:
                 number = r2_index
 
                 # Data type.
-                data_type = '1/t2'
+                data_type = '1/T2'
 
                 # Increment the data set index.
                 r2_index = r2_index + 1
@@ -216,13 +224,23 @@ class Dasha:
                 file.write('\n# Select the residue.\n')
                 file.write('set cres ' + `data.num` + '\n')
 
+                # The angle alpha of the XH vector in the spheroid diffusion frame.
+                if self.relax.data.diff[self.run].type == 'spheroid':
+                    file.write('set teta ' + `data.alpha` + '\n')
+
+                # The angles theta and phi of the XH vector in the ellipsoid diffusion frame.
+                elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                    file.write('\n# Setting the spherical angles of the XH vector in the ellipsoid diffusion frame.\n')
+                    file.write('set teta ' + `data.theta` + '\n')
+                    file.write('set fi ' + `data.phi` + '\n')
+
                 # The 'jmode'.
-                if 'te' in data.params:
+                if 'ts' in data.params:
+                    jmode = 3
+                elif 'te' in data.params:
                     jmode = 2
                 elif 'S2' in data.params:
                     jmode = 1
-                elif 'ts' in data.params:
-                    jmode = 3
 
                 # Chemical exchange.
                 if 'Rex' in data.params:
@@ -230,13 +248,33 @@ class Dasha:
                 else:
                     exch = 0
 
+                # Anisotropic diffusion.
+                if self.relax.data.diff[self.run].type == 'sphere':
+                    anis = 0
+                else:
+                    anis = 1
+
+                # Axial symmetry.
+                if self.relax.data.diff[self.run].type == 'spheroid':
+                    sym = 1
+                else:
+                    sym = 0
+
                 # Set the jmode.
                 file.write('\n# Set the jmode.\n')
                 file.write('set def jmode ' + `jmode`)
                 if exch:
-                    file.write(' exch\n')
-                else:
-                    file.write('\n')
+                    file.write(' exch')
+                if anis:
+                    file.write(' anis')
+                if sym:
+                    file.write(' sym')
+                file.write('\n')
+
+                # Fix the tf parameter if it isn't in the model.
+                if not 'tf' in data.params and jmode == 3:
+                    file.write('\n# Fix the tf parameter.\n')
+                    file.write('fix tf 0\n')
 
                 # Bond length.
                 file.write('\n# Bond length.\n')
@@ -259,6 +297,16 @@ class Dasha:
             file.write('echo\n')
             file.write('show all\n')
 
+            # Write the results.
+            file.write('\n# Write the results.\n')
+            file.write('write S2.out S\n')
+            file.write('write S2f.out Sf\n')
+            file.write('write S2s.out Ss\n')
+            file.write('write te.out te\n')
+            file.write('write tf.out tf\n')
+            file.write('write ts.out ts\n')
+            file.write('write Rex.out rex\n')
+            file.write('write chi2.out F\n')
 
         else:
             raise RelaxError, 'Optimisation of the parameter set ' + `self.param_set` + ' currently not supported.'
