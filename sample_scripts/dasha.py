@@ -31,3 +31,6 @@ model_free.select_model(run=name, model=name)
 
 # Create the Dasha script.
 dasha.create(name, force=1)
+
+# Execute Dasha.
+dasha.execute(name)

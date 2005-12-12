@@ -285,21 +285,8 @@ class Dasha:
             if not access('dasha_script', F_OK):
                 raise RelaxFileError, ('dasha script', 'dasha_script')
 
-            # Test if the 'PDB' input file exists.
-            if self.relax.data.diff[run].type != 'sphere':
-                pdb = self.relax.data.pdb[self.run].file_name.split('/')[-1]
-                if not access(pdb, F_OK):
-                    raise RelaxFileError, ('PDB', pdb)
-            else:
-                pdb = None
-
             # Execute Dasha.
-            if pdb:
-                spawnlp(P_WAIT, 'dasha', 'dasha', '<', 'dasha_script', '>', 'dasha_results')
-            else:
-                test = spawnlp(P_WAIT, 'dasha', 'dasha', '<', 'dasha_script', '>', 'dasha_results')
-                if test:
-                    raise RelaxProgFailError, 'Dasha'
+            system('dasha < dasha_script | tee dasha_results')
 
         # Failure.
         except:
@@ -315,6 +302,9 @@ class Dasha:
 
     def extract(self, run, dir):
         """Function for extracting the Dasha results out of the 'dasha_results' file."""
+
+        # Not implemented yet.
+        raise RelaxError, 'Function not implemented yet.'
 
         # Arguments.
         self.run = run
