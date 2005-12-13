@@ -142,7 +142,7 @@ class Value:
         self.__relax__.generic.value.display(run=run, param=param)
 
 
-    def read(self, run=None, param=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    def read(self, run=None, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Function for reading residue specific data values from a file.
 
         Keyword Arguments
@@ -152,7 +152,7 @@ class Value:
 
         param:  The parameter.
 
-        frq:  The spectrometer frequency in Hz.
+        scaling:  The factor to scale parameters by.
 
         file:  The name of the file containing the relaxation data.
 
@@ -195,6 +195,7 @@ class Value:
             text = sys.ps3 + "value.read("
             text = text + "run=" + `run`
             text = text + ", param=" + `param`
+            text = text + ", scaling=" + `scaling`
             text = text + ", file=" + `file`
             text = text + ", num_col=" + `num_col`
             text = text + ", name_col=" + `name_col`
@@ -210,6 +211,10 @@ class Value:
         # The parameter.
         if type(param) != str:
             raise RelaxStrError, ('parameter', param)
+
+        # The scaling factor.
+        if type(scaling) != float:
+            raise RelaxFloatError, ('scaling', scaling)
 
         # The file name.
         if type(file) != str:
@@ -236,7 +241,7 @@ class Value:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(run=run, param=param, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
+        self.__relax__.generic.value.read(run=run, param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
     def set(self, run=None, value=None, param=None, res_num=None, res_name=None):

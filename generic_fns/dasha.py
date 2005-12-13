@@ -377,5 +377,23 @@ class Dasha:
             if not access(file_name, F_OK):
                 raise RelaxFileError, ('Dasha', file_name)
 
+            # Scaling.
+            if param in ['te', 'tf', 'ts']:
+                scaling = 1e-9
+            elif param == 'Rex':
+                scaling = 1.0 / (2.0 * pi * self.relax.data.frq[self.run][0]) ** 2
+            else:
+                scaling = 1.0
+
             # Set the values.
-            self.relax.generic.value.read(self.run, param=param, file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)
+            self.relax.generic.value.read(self.run, param=param, scaling=scaling, file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)
+
+        # Extract the chi-squared values.
+        file_name = dir + '/chi2.out'
+
+        # Test if the file exists.
+        if not access(file_name, F_OK):
+            raise RelaxFileError, ('Dasha', file_name)
+
+        # Set the values.
+        self.relax.generic.value.read(self.run, param='chi2', file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)

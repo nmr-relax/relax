@@ -107,12 +107,13 @@ class Value:
         self.write_data(sys.stdout)
 
 
-    def read(self, run=None, param=None, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    def read(self, run=None, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Function for reading residue specific data values from a file."""
 
         # Arguments.
         self.run = run
         self.param = param
+        self.scaling = scaling
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -125,11 +126,27 @@ class Value:
         # Function type.
         self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
-        # Specific value and error returning function.
-        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
+        # Minimisation parameter.
+        if self.relax.generic.minimise.return_data_name(param):
+            # Minimisation statistic flag.
+            min_stat = 1
 
-        # Specific set function.
-        set = self.relax.specific_setup.setup('set', self.function_type)
+            # Specific value and error returning function.
+            return_value = self.relax.generic.minimise.return_value
+
+            # Specific set function.
+            set = self.relax.generic.minimise.set
+
+        # Normal parameter.
+        else:
+            # Minimisation statistic flag.
+            min_stat = 0
+
+            # Specific value and error returning function.
+            return_value = self.relax.specific_setup.setup('return_value', self.function_type)
+
+            # Specific set function.
+            set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Test data corresponding to param already exists.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -221,14 +238,16 @@ class Value:
             if index == None:
                 raise RelaxNoResError, (res_num, res_name)
 
-            # Set the values of run2.
-            set(run=run, value=value, error=error, param=self.param, index=i)
+            # Set the value.
+            set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=i)
 
             # Reset the residue specific minimisation statistics.
-            self.relax.generic.minimise.reset_min_stats(self.run, i)
+            if not min_stat:
+                self.relax.generic.minimise.reset_min_stats(self.run, i)
 
         # Reset the global minimisation statistics.
-        self.relax.generic.minimise.reset_min_stats(self.run)
+        if not min_stat:
+            self.relax.generic.minimise.reset_min_stats(self.run)
 
 
     def set(self, run=None, value=None, param=None, res_num=None, res_name=None, force=0):

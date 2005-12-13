@@ -3997,7 +3997,7 @@ class Model_free(Common_functions):
         self.model_setup(self.run, model, equation, params, res_num)
 
 
-    def set(self, run=None, value=None, error=None, param=None, index=None):
+    def set(self, run=None, value=None, error=None, param=None, scaling=1.0, index=None):
         """
         Model-free set details
         ~~~~~~~~~~~~~~~~~~~~~~
@@ -4052,7 +4052,7 @@ class Model_free(Common_functions):
                     self.data_init(self.relax.data.res[self.run][index])
 
                 # Set the value.
-                setattr(self.relax.data.res[self.run][index], object_name, float(value[i]))
+                setattr(self.relax.data.res[self.run][index], object_name, float(value[i]) * scaling)
 
 
         # Individual data type.
@@ -4073,7 +4073,7 @@ class Model_free(Common_functions):
                 value = self.default_value(object_name)
 
             # Set the value.
-            setattr(self.relax.data.res[self.run][index], object_name, float(value))
+            setattr(self.relax.data.res[self.run][index], object_name, float(value) * scaling)
 
             # Set the error.
             if error != None:

@@ -323,6 +323,66 @@ class Minimise:
         return stat, None
 
 
+    def set(self, run=None, value=None, error=None, param=None, scaling=None, index=None):
+        """
+        Minimisation statistic set details
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        This shouldn't really be executed by a user.
+        """
+
+        # Arguments.
+        self.run = run
+
+        # Get the parameter name.
+        param_name = self.return_data_name(param)
+
+        # Global minimisation stats.
+        if index == None:
+            # Chi-squared.
+            if param_name == 'chi2':
+                self.relax.data.chi2[self.run] = value
+
+            # Iteration count.
+            elif param_name == 'iter':
+                self.relax.data.iter[self.run] = value
+
+            # Function call count.
+            elif param_name == 'f_count':
+                self.relax.data.f_count[self.run] = value
+
+            # Gradient call count.
+            elif param_name == 'g_count':
+                self.relax.data.g_count[self.run] = value
+
+            # Hessian call count.
+            elif param_name == 'h_count':
+                self.relax.data.h_count[self.run] = value
+
+        # Residue specific minimisation.
+        else:
+            # Chi-squared.
+            if param_name == 'chi2':
+                self.relax.data.res[self.run][index].chi2 = value
+
+            # Iteration count.
+            elif param_name == 'iter':
+                self.relax.data.res[self.run][index].iter = value
+
+            # Function call count.
+            elif param_name == 'f_count':
+                self.relax.data.res[self.run][index].f_count = value
+
+            # Gradient call count.
+            elif param_name == 'g_count':
+                self.relax.data.res[self.run][index].g_count = value
+
+            # Hessian call count.
+            elif param_name == 'h_count':
+                self.relax.data.res[self.run][index].h_count = value
+
+
+
 # Main threading loop for the minimisation of Monte Carlo simulations.
 ######################################################################
 
