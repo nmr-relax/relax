@@ -71,10 +71,3 @@ Molmol:
 
 Molmol is used for viewing the PDB structures and to display parameter values mapped onto the
 structure.
-
-
-VMD:
-----
-
-Version 1.8 or higher.  VMD is used for viewing the collection of molecules extracted from a PDB
-file.

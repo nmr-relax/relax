@@ -62,6 +62,119 @@ Function for calculating the function value.
 
 \newpage
 
+\subsection{dasha.create\index{computer programs!Dasha|textbf}}
+
+
+\subsubsection{Synopsis}
+
+Function for creating the Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} script.\index{scripting!script file}
+
+
+
+\subsubsection{Defaults}
+
+\textsf{\textbf{dasha.create}(self, run=None, algor=`LM', dir=None, force=0)}
+
+
+\subsubsection{Keyword Arguments}
+
+\keyword{run:}  The name of the run. 
+
+\keyword{algor:}  The minimisation\index{minimisation} algorithm. 
+
+\keyword{dir:}  The directory to place the files.  The default is the value of \quotecmd{run}. 
+
+\keyword{force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists. 
+
+
+
+
+\subsubsection{Description}
+
+The script\index{scripting!script file} file created is called \quotecmd{dir/dasha\_script}.
+
+
+
+\subsubsection{Optimisation algorithms}
+
+The two minimisation\index{minimisation} algorithms within Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} are accessible through the algor argument which can be set to:
+
+
+\begin{itemize}
+\item[] \quotecmd{LM} - The Levenberg-Marquardt\index{minimisation techniques!Levenberg-Marquardt} algorithm. 
+\item[] \quotecmd{NR} - Newton-Raphson\index{minimisation techniques!Newton} algorithm. 
+\end{itemize}
+
+
+For Levenberg-Marquardt\index{minimisation techniques!Levenberg-Marquardt} minisation, the function \quotecmd{lmin} will be called, while for Newton\index{minimisation techniques!Newton} -Raphson, the function \quotecmd{min} will be executed.
+
+
+
+
+\newpage
+
+\subsection{dasha.execute\index{computer programs!Dasha|textbf}}
+
+
+\subsubsection{Synopsis}
+
+Function for executing Dasha.\index{computer programs!Dasha}\index{computer programs!Dasha}
+
+
+
+\subsubsection{Defaults}
+
+\textsf{\textbf{dasha.execute}(self, run=None, dir=None, force=0)}
+
+
+\subsubsection{Keyword Arguments}
+
+\keyword{run:}  The name of the run. 
+
+\keyword{dir:}  The directory to place the files.  The default is the value of \quotecmd{run}. 
+
+\keyword{force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists. 
+
+
+
+
+\subsubsection{Execution}
+
+Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} will be executed as
+
+
+\example{\$ dasha < dasha\_script | tee dasha\_results}
+
+
+
+\newpage
+
+\subsection{dasha.extract\index{computer programs!Dasha|textbf}}
+
+
+\subsubsection{Synopsis}
+
+Function for extracting data from the Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} results file.
+
+
+
+\subsubsection{Defaults}
+
+\textsf{\textbf{dasha.extract}(self, run=None, dir=None)}
+
+
+\subsubsection{Keyword Arguments}
+
+\keyword{run:}  The name of the run. 
+
+\keyword{dir:}  The directory where the file \quotecmd{dasha\_results} is found.  The default is the value of \quotecmd{run}. 
+
+
+
+
+
+\newpage
+
 \subsection{diffusion\_tensor.copy}
 
 
@@ -156,18 +269,18 @@ Function for displaying\index{display} the diffusion tensor.\index{diffusion!ten
 
 \newpage
 
-\subsection{diffusion\_tensor.set}
+\subsection{diffusion\_tensor.init}
 
 
 \subsubsection{Synopsis}
 
-Function for setting up the diffusion tensor.\index{diffusion!tensor}
+Function for initialising the diffusion tensor.\index{diffusion!tensor}
 
 
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{diffusion\_tensor.set}(self, run=None, params=None, time\_scale=1.0, d\_scale=1.0, angle\_units=`deg', param\_types=0, spheroid\_type=None, fixed=1)}
+\textsf{\textbf{diffusion\_tensor.init}(self, run=None, params=None, time\_scale=1.0, d\_scale=1.0, angle\_units=`deg', param\_types=0, spheroid\_type=None, fixed=1)}
 
 
 \subsubsection{Keyword Arguments}
@@ -462,7 +575,7 @@ To select and minimise\index{minimisation} a spherical diffusion tensor,\index{d
 
 \subsubsection{Synopsis}
 
-Function for running OpenDX.\index{OpenDX, the program}
+Function for running OpenDX.\index{computer programs!OpenDX}
 
 
 
@@ -473,11 +586,11 @@ Function for running OpenDX.\index{OpenDX, the program}
 
 \subsubsection{Keyword Arguments}
 
-\keyword{file:}  The file name prefix.  For example if file is set to \quotecmd{temp}, then the OpenDX\index{OpenDX, the program} program temp.net will be loaded. 
+\keyword{file:}  The file name prefix.  For example if file is set to \quotecmd{temp}, then the OpenDX\index{computer programs!OpenDX} program temp.net will be loaded. 
 
-\keyword{dir:}  The directory to change to for running OpenDX.\index{OpenDX, the program}  If this is set to \quotecmd{None}, OpenDX\index{OpenDX, the program} will be run in the current directory. 
+\keyword{dir:}  The directory to change to for running OpenDX.\index{computer programs!OpenDX}  If this is set to \quotecmd{None}, OpenDX\index{computer programs!OpenDX} will be run in the current directory. 
 
-\keyword{dx\_exe:}  The OpenDX\index{OpenDX, the program} executable file. 
+\keyword{dx\_exe:}  The OpenDX\index{computer programs!OpenDX} executable file. 
 
 \keyword{vp\_exec:}  A flag specifying whether to execute the visual program automatically at start-up.  The default is 1 which turns execution on.  Setting the value to zero turns execution off. 
 
@@ -492,13 +605,13 @@ Function for running OpenDX.\index{OpenDX, the program}
 
 \subsubsection{Synopsis}
 
-Function for creating a map\index{map} of the given space in OpenDX\index{OpenDX, the program} format.
+Function for creating a map\index{map} of the given space in OpenDX\index{computer programs!OpenDX} format.
 
 
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{dx.map}(self, run=None, params=None, map\_type=`Iso3D', res\_num=None, inc=20, lower=None, upper=None, file=`map', dir=`dx', point=None, point\_file=`point', remap=None)}
+\textsf{\textbf{dx.map}(self, run=None, params=None, map\_type=`Iso3D', res\_num=None, inc=20, lower=None, upper=None, axis\_incs=10, file=`map', dir=`dx', point=None, point\_file=`point', remap=None)}
 
 
 \subsubsection{Keyword Arguments}
@@ -517,7 +630,9 @@ Function for creating a map\index{map} of the given space in OpenDX\index{OpenDX
 
 \keyword{upper:}  The upper bounds\index{parameter!bounds} of the space.  If you wish to change the upper bounds\index{parameter!bounds} of the map\index{map} then supply an array of length equal to the number of parameters in the model.  A upper bound\index{parameter!bounds} for each parameter must be supplied.  If nothing is supplied then the defaults will be used. 
 
-\keyword{file:}  The file name.  All the output files are prefixed with this name.  The main file containing the data points will be called the value of \quotecmd{file}.  The OpenDX\index{OpenDX, the program} program will be called \quotecmd{file.net} and the OpenDX\index{OpenDX, the program} import file will be called \quotecmd{file.general}. 
+\keyword{axis\_incs:}  The number of increments or ticks displaying\index{display} parameter values along the axes of the OpenDX\index{computer programs!OpenDX} plot.\index{plot} 
+
+\keyword{file:}  The file name.  All the output files are prefixed with this name.  The main file containing the data points will be called the value of \quotecmd{file}.  The OpenDX\index{computer programs!OpenDX} program will be called \quotecmd{file.net} and the OpenDX\index{computer programs!OpenDX} import file will be called \quotecmd{file.general}. 
 
 \keyword{dir:}  The directory to output files to.  Set this to \quotecmd{None} if you do not want the files to be placed in subdirectory.  If the directory does not exist, it will be created. 
 
@@ -812,12 +927,12 @@ Only parameters corresponding to the given run will be affected.
 
 \newpage
 
-\subsection{grace.view\index{Grace, the program|textbf}}
+\subsection{grace.view\index{computer programs!Grace|textbf}}
 
 
 \subsubsection{Synopsis}
 
-Function for running Grace.\index{Grace, the program}
+Function for running Grace.\index{computer programs!Grace}\index{computer programs!Grace}
 
 
 
@@ -832,14 +947,14 @@ Function for running Grace.\index{Grace, the program}
 
 \keyword{dir:}  The directory name. 
 
-\keyword{grace\_exe:}  The Grace\index{Grace, the program} executable file. 
+\keyword{grace\_exe:}  The Grace\index{computer programs!Grace}\index{computer programs!Grace} executable file. 
 
 
 
 
 \subsubsection{Description}
 
-This function can be used to execute Grace\index{Grace, the program} to view the specified file the Grace\index{Grace, the program} \quotecmd{.agr} file and the execute Grace.\index{Grace, the program} If the directory name is set to None, the file will be assumed to be in the current working directory.
+This function can be used to execute Grace\index{computer programs!Grace}\index{computer programs!Grace} to view the specified file the Grace\index{computer programs!Grace}\index{computer programs!Grace} \quotecmd{.agr} file and the execute Grace.\index{computer programs!Grace}\index{computer programs!Grace} If the directory name is set to None, the file will be assumed to be in the current working directory.
 
 
 
@@ -856,12 +971,12 @@ To view the file \quotecmd{s2.agr} in the directory \quotecmd{grace}, type:
 
 \newpage
 
-\subsection{grace.write\index{Grace, the program|textbf}}
+\subsection{grace.write\index{computer programs!Grace|textbf}}
 
 
 \subsubsection{Synopsis}
 
-Function for creating a grace\index{Grace, the program} \quotecmd{.agr} file.
+Function for creating a grace\index{computer programs!Grace} \quotecmd{.agr} file.
 
 
 
@@ -895,10 +1010,10 @@ Function for creating a grace\index{Grace, the program} \quotecmd{.agr} file.
 
 \subsubsection{Description}
 
-This function is designed to be as flexible as possible so that any combination of data can be plotted.\index{plot}  The output is in the format of a Grace\index{Grace, the program} plot\index{plot} (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.\index{plot}  Three types of keyword arguments can be used to create various types of plot.\index{plot}  These include the X-axis and Y-axis data types, the residue number and name selection arguments, and an argument for selecting what to actually plot.\index{plot}
+This function is designed to be as flexible as possible so that any combination of data can be plotted.\index{plot}  The output is in the format of a Grace\index{computer programs!Grace}\index{computer programs!Grace} plot\index{plot} (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.\index{plot}  Three types of keyword arguments can be used to create various types of plot.\index{plot}  These include the X-axis and Y-axis data types, the residue number and name selection arguments, and an argument for selecting what to actually plot.\index{plot}
 
 
-The X-axis and Y-axis data type arguments should be plain strings, regular expression\index{regular expression} is not allowed.  If the X-axis data type argument is not given, the plot\index{plot} will default to having the residue number along the x-axis.  The two axes of the Grace\index{Grace, the program} plot\index{plot} can be absolutely any of the data types listed in the tables below.  The only limitation,\index{parameter!limit} currently anyway, is that the data must belong to the same run.
+The X-axis and Y-axis data type arguments should be plain strings, regular expression\index{regular expression} is not allowed.  If the X-axis data type argument is not given, the plot\index{plot} will default to having the residue number along the x-axis.  The two axes of the Grace\index{computer programs!Grace}\index{computer programs!Grace} plot\index{plot} can be absolutely any of the data types listed in the tables below.  The only limitation,\index{parameter!limit} currently anyway, is that the data must belong to the same run.
 
 
 The residue number and name arguments can be used to limit\index{parameter!limit} the residues used in the plot.\index{plot} The default is that all residues will be used, however, these arguments can be used to select a subset of all residues, or a single residue for plots\index{plot} of Monte Carlo simulations, etc.  Regular expression\index{regular expression} is allowed for both the residue number and name, and the number can either be an integer or a string.
@@ -917,7 +1032,7 @@ The property which is actually plotted\index{plot} can be controlled by the \quo
 
 \subsubsection{Examples}
 
-To write\index{write} the NOE values for all residues from the run \quotecmd{noe} to the Grace\index{Grace, the program} file \quotecmd{noe.agr}, type:
+To write\index{write} the NOE values for all residues from the run \quotecmd{noe} to the Grace\index{computer programs!Grace}\index{computer programs!Grace} file \quotecmd{noe.agr}, type:
 
 
 \example{relax> grace.write(`noe', `res', `noe', file=`noe.agr')}
@@ -928,7 +1043,7 @@ To write\index{write} the NOE values for all residues from the run \quotecmd{noe
 
 \example{relax> grace.write(run=`noe', y\_data\_type=`noe', file=`noe.agr', force=1)}
 
-To create a Grace\index{Grace, the program} file of \quotecmd{S2} vs. \quotecmd{te} for all residues, type:
+To create a Grace\index{computer programs!Grace}\index{computer programs!Grace} file of \quotecmd{S2} vs. \quotecmd{te} for all residues, type:
 
 
 \example{relax> grace.write(`m2', `S2', `te', file=`s2\_te.agr')}
@@ -937,7 +1052,7 @@ To create a Grace\index{Grace, the program} file of \quotecmd{S2} vs. \quotecmd{
 
 \example{relax> grace.write(run=`m2', x\_data\_type=`S2', y\_data\_type=`te', file=`s2\_te.agr', force=1)}
 
-To create a Grace\index{Grace, the program} file of the Monte Carlo simulation values of \quotecmd{Rex} vs. \quotecmd{te} for residue 123, type:
+To create a Grace\index{computer programs!Grace}\index{computer programs!Grace} file of the Monte Carlo simulation values of \quotecmd{Rex} vs. \quotecmd{te} for residue 123, type:
 
 
 \example{relax> grace.write(`m4', `Rex', `te', res\_num=123, plot\_data=`sims', file=`s2\_te.agr')}
@@ -2057,12 +2172,12 @@ For model-free analysis, if the preset models 1 to 5 are minimised\index{minimis
 
 \newpage
 
-\subsection{molmol.clear\_history\index{Molmol, the program|textbf}}
+\subsection{molmol.clear\_history\index{computer programs!Molmol|textbf}}
 
 
 \subsubsection{Synopsis}
 
-Function for clearing the Molmol\index{Molmol, the program} command history.
+Function for clearing the Molmol\index{computer programs!Molmol}\index{computer programs!Molmol} command history.
 
 
 
@@ -2074,12 +2189,12 @@ Function for clearing the Molmol\index{Molmol, the program} command history.
 
 \newpage
 
-\subsection{molmol.command\index{Molmol, the program|textbf}}
+\subsection{molmol.command\index{computer programs!Molmol|textbf}}
 
 
 \subsubsection{Synopsis}
 
-Function for executing a user supplied Molmol\index{Molmol, the program} command.
+Function for executing a user supplied Molmol\index{computer programs!Molmol}\index{computer programs!Molmol} command.
 
 
 
@@ -2096,7 +2211,7 @@ Function for executing a user supplied Molmol\index{Molmol, the program} command
 
 \newpage
 
-\subsection{molmol.view\index{Molmol, the program|textbf}}
+\subsection{molmol.view\index{computer programs!Molmol|textbf}}
 
 
 \subsubsection{Synopsis}
@@ -2808,10 +2923,10 @@ The \quotecmd{format} argument can currently be set to:
 \end{itemize}
 
 
-If the \quotecmd{format} argument is set to \quotecmd{sparky}, the file should be a Sparky\index{Sparky, the program} peak list saved after typing the command \quotecmd{lt}.  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$, 2$^\mathrm{nd}$, 3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky\index{Sparky, the program} assignment, w1, w2, and peak intensity data respectively.  The frequency data w1 and w2 are ignored while the peak intensity data can either be the peak height or volume displayed\index{display} by changing the window options.  If the peak intensity data is not within column 3, set the argument \quotecmd{int\_col} to the appropriate value (column numbering starts from 0 rather than 1).
+If the \quotecmd{format} argument is set to \quotecmd{sparky}, the file should be a Sparky\index{computer programs!Sparky}\index{computer programs!Sparky} peak list saved after typing the command \quotecmd{lt}.  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$, 2$^\mathrm{nd}$, 3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky\index{computer programs!Sparky}\index{computer programs!Sparky} assignment, w1, w2, and peak intensity data respectively.  The frequency data w1 and w2 are ignored while the peak intensity data can either be the peak height or volume displayed\index{display} by changing the window options.  If the peak intensity data is not within column 3, set the argument \quotecmd{int\_col} to the appropriate value (column numbering starts from 0 rather than 1).
 
 
-If the \quotecmd{format} argument is set to \quotecmd{xeasy}, the file should be the saved XEasy text window output of the list peak entries command, \quotecmd{tw} followed by \quotecmd{le}.  As the columns are fixed, the peak intensity column is hardwired to number 10 (the 11$^\mathrm{th}$ column) which contains either the peak height or peak volume data.  Because the columns are fixed, the \quotecmd{int\_col} argument will be ignored.
+If the \quotecmd{format} argument is set to \quotecmd{xeasy}, the file should be the saved XEasy\index{computer programs!XEasy} text window output of the list peak entries command, \quotecmd{tw} followed by \quotecmd{le}.  As the columns are fixed, the peak intensity column is hardwired to number 10 (the 11$^\mathrm{th}$ column) which contains either the peak height or peak volume data.  Because the columns are fixed, the \quotecmd{int\_col} argument will be ignored.
 
 
 The \quotecmd{heteronuc} and \quotecmd{proton} arguments should be set respectively to the name of the heteronucleus and proton in the file.  Only those lines which match these labels will be used.
@@ -2820,14 +2935,14 @@ The \quotecmd{heteronuc} and \quotecmd{proton} arguments should be set respectiv
 
 \subsubsection{Examples}
 
-To read\index{read} the reference and saturated spectra peak heights from the Sparky\index{Sparky, the program} formatted files \quotecmd{ref.list} and \quotecmd{sat.list} to the run \quotecmd{noe}, type:
+To read\index{read} the reference and saturated spectra peak heights from the Sparky\index{computer programs!Sparky}\index{computer programs!Sparky} formatted files \quotecmd{ref.list} and \quotecmd{sat.list} to the run \quotecmd{noe}, type:
 
 
 \example{relax> noe.read(`noe', file=`ref.list', spectrum\_type=`ref')}
 
 \example{relax> noe.read(`noe', file=`sat.list', spectrum\_type=`sat')}
 
-To read\index{read} the reference and saturated spectra peak heights from the XEasy formatted files \quotecmd{ref.text} and \quotecmd{sat.text} to the run \quotecmd{noe}, type:
+To read\index{read} the reference and saturated spectra peak heights from the XEasy\index{computer programs!XEasy} formatted files \quotecmd{ref.text} and \quotecmd{sat.text} to the run \quotecmd{noe}, type:
 
 
 \example{relax> noe.read(`noe', file=`ref.text', spectrum\_type=`ref', format=`xeasy')}
@@ -2879,7 +2994,7 @@ The heteronuc argument can be set to the following strings:
 
 \subsubsection{Synopsis}
 
-Function for creating the Modelfree4 input files.
+Function for creating the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} input files.
 
 
 
@@ -2896,15 +3011,15 @@ Function for creating the Modelfree4 input files.
 
 \keyword{force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists. 
 
-\keyword{diff\_search:}  See the Modelfree4 manual for \quotecmd{diffusion\_search}. 
+\keyword{diff\_search:}  See the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} manual for \quotecmd{diffusion\_search}. 
 
 \keyword{sims:}  The number of Monte Carlo simulations. 
 
-\keyword{sim\_type:}  See the Modelfree4 manual. 
+\keyword{sim\_type:}  See the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} manual. 
 
-\keyword{trim:}  See the Modelfree4 manual. 
+\keyword{trim:}  See the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} manual. 
 
-\keyword{steps:}  See the Modelfree4 manual. 
+\keyword{steps:}  See the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} manual. 
 
 \keyword{constraints:}  A flag specifying whether the parameters should be constrained.  The default is to turn constraints\index{constraint} on (constraints=1). 
 
@@ -2937,7 +3052,7 @@ The file \quotecmd{run/run.sh} contains the single command,
 \quotecmd{modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out},
 
 
-which can be used to execute modelfree4.
+which can be used to execute modelfree4.\index{computer programs!Modelfree4}
 
 
 
@@ -2949,7 +3064,7 @@ which can be used to execute modelfree4.
 
 \subsubsection{Synopsis}
 
-Function for executing Modelfree4.
+Function for executing Modelfree4.\index{computer programs!Modelfree4}\index{computer programs!Modelfree4}
 
 
 
@@ -2974,8 +3089,7 @@ Function for executing Modelfree4.
 Modelfree 4 will be executed as
 
 
-\quotecmd{modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out}
-
+\example{\$ modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out}
 
 If a PDB\index{PDB} file is loaded and non-isotropic diffusion is selected, then the file name will be placed on the command line as \quotecmd{-s pdb\_file\_name}.
 
@@ -2989,7 +3103,7 @@ If a PDB\index{PDB} file is loaded and non-isotropic diffusion is selected, then
 
 \subsubsection{Synopsis}
 
-Function for extracting data from the Modelfree4 \quotecmd{mfout} star formatted file.
+Function for extracting data from the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} \quotecmd{mfout} star formatted file.
 
 
 
@@ -3400,10 +3514,10 @@ The format argument can currently be set to:
 \end{itemize}
 
 
-If the format argument is set to \quotecmd{sparky}, the file should be a Sparky\index{Sparky, the program} peak list saved after typing the command \quotecmd{lt}.  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$, 2$^\mathrm{nd}$, 3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky\index{Sparky, the program} assignment, w1, w2, and peak intensity data respectively. The frequency data w1 and w2 are ignored while the peak intensity data can either be the peak height or volume displayed\index{display} by changing the window options.  If the peak intensity data is not within column 3, set the argument int\_col to the appropriate value (column numbering starts from 0 rather than 1).
+If the format argument is set to \quotecmd{sparky}, the file should be a Sparky\index{computer programs!Sparky}\index{computer programs!Sparky} peak list saved after typing the command \quotecmd{lt}.  The default is to assume that columns 0, 1, 2, and 3 (1$^\mathrm{st}$, 2$^\mathrm{nd}$, 3$^\mathrm{rd}$, and 4$^\mathrm{th}$) contain the Sparky\index{computer programs!Sparky}\index{computer programs!Sparky} assignment, w1, w2, and peak intensity data respectively. The frequency data w1 and w2 are ignored while the peak intensity data can either be the peak height or volume displayed\index{display} by changing the window options.  If the peak intensity data is not within column 3, set the argument int\_col to the appropriate value (column numbering starts from 0 rather than 1).
 
 
-If the format argument is set to \quotecmd{xeasy}, the file should be the saved XEasy text window output of the list peak entries command, \quotecmd{tw} followed by \quotecmd{le}.  As the columns are fixed, the peak intensity column is hardwired to number 10 (the 11$^\mathrm{th}$ column) which contains either the peak height or peak volume data.  Because the columns are fixed, the int\_col argument will be ignored.
+If the format argument is set to \quotecmd{xeasy}, the file should be the saved XEasy\index{computer programs!XEasy} text window output of the list peak entries command, \quotecmd{tw} followed by \quotecmd{le}.  As the columns are fixed, the peak intensity column is hardwired to number 10 (the 11$^\mathrm{th}$ column) which contains either the peak height or peak volume data.  Because the columns are fixed, the int\_col argument will be ignored.
 
 
 The heteronuc and proton arguments should be set respectively to the name of the heteronucleus and proton in the file.  Only those lines which match these labels will be used.
@@ -4527,7 +4641,7 @@ Function for copying\index{copy} residue specific data values from run1 to run2.
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{value.copy}(self, run1=None, run2=None, data\_type=None)}
+\textsf{\textbf{value.copy}(self, run1=None, run2=None, param=None)}
 
 
 \subsubsection{Keyword Arguments}
@@ -4536,14 +4650,14 @@ Function for copying\index{copy} residue specific data values from run1 to run2.
 
 \keyword{run2:}  The name of the run to copy\index{copy} to. 
 
-\keyword{data\_type:}  The data type. 
+\keyword{param:}  The parameter to copy.\index{copy} 
 
 
 
 
 \subsubsection{Description}
 
-Only one data type may be selected, therefore the data type argument should be a string.
+Only one parameter may be selected, therefore the \quotecmd{param} argument should be a string.
 
 
 If this function is used to change values of previously minimised\index{minimisation} runs, then the minimisation\index{minimisation} statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.
@@ -4580,6 +4694,30 @@ Importantly, do not supply a string for the data type containing regular express
 
 
 
+\subsubsection{Model-free set details}
+
+Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect.
+
+
+Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
+
+
+\begin{itemize}
+\item[] value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2 
+\end{itemize}
+
+
+where:
+
+
+\begin{itemize}
+\item[] $R_{ex}$ is the chemical exchange\index{chemical exchange} value for the current frequency. 
+\item[] $\pi$ is in the namespace of relax, ie just type \quotecmd{$\pi$}. 
+\item[] frequency is the proton frequency corresponding to the data. 
+\end{itemize}
+
+
+
 \subsubsection{Model-free data type string matching patterns}
 
 \begin{center}
@@ -4612,27 +4750,9 @@ CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
 
 
 
-\subsubsection{Model-free set details}
+\subsubsection{Reduced spectral density mapping\index{map|textbf} set details}
 
-Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect.
-
-
-Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
-
-
-\begin{itemize}
-\item[] value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2 
-\end{itemize}
-
-
-where:
-
-
-\begin{itemize}
-\item[] $R_{ex}$ is the chemical exchange\index{chemical exchange} value for the current frequency. 
-\item[] $\pi$ is in the namespace of relax, ie just type \quotecmd{$\pi$}. 
-\item[] frequency is the proton frequency corresponding to the data. 
-\end{itemize}
+In reduced spectral density mapping,\index{map} only two values can be set, the bond length\index{bond length} and CSA value.  These must be set prior to the calculation of spectral density values.
 
 
 
@@ -4658,12 +4778,6 @@ CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
 
 
 
-\subsubsection{Reduced spectral density mapping\index{map|textbf} set details}
-
-In reduced spectral density mapping,\index{map} only two values can be set, the bond length\index{bond length} and CSA value.  These must be set prior to the calculation of spectral density values.
-
-
-
 
 \newpage
 
@@ -4678,21 +4792,21 @@ Function for displaying\index{display} residue specific data values.
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{value.display}(self, run=None, data\_type=None)}
+\textsf{\textbf{value.display}(self, run=None, param=None)}
 
 
 \subsubsection{Keyword Arguments}
 
 \keyword{run:}  The name of the run. 
 
-\keyword{data\_type:}  The data type. 
+\keyword{param:}  The parameter to display.\index{display} 
 
 
 
 
 \subsubsection{Description}
 
-Only one data type may be selected, therefore the data type argument should be a string.
+Only one parameter may be selected, therefore the \quotecmd{param} argument should be a string.
 
 
 
@@ -4794,16 +4908,16 @@ Function for reading\index{read} residue specific data values from a file.
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{value.read}(self, run=None, data\_type=None, file=None, num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)}
+\textsf{\textbf{value.read}(self, run=None, param=None, scaling=1.0, file=None, num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)}
 
 
 \subsubsection{Keyword Arguments}
 
 \keyword{run:}  The name of the run. 
 
-\keyword{data\_type:}  The data type. 
+\keyword{param:}  The parameter. 
 
-\keyword{frq:}  The spectrometer frequency in Hz. 
+\keyword{scaling:}  The factor to scale parameters by. 
 
 \keyword{file:}  The name of the file containing the relaxation\index{relaxation} data. 
 
@@ -4822,7 +4936,7 @@ Function for reading\index{read} residue specific data values from a file.
 
 \subsubsection{Description}
 
-Only one data type may be selected, therefore the data type argument should be a string.  If the file only contains values and no errors, set the error column argument to None.
+Only one parameter may be selected, therefore the \quotecmd{param} argument should be a string.  If the file only contains values and no errors, set the error column argument to None.
 
 
 If this function is used to change values of previously minimised\index{minimisation} runs, then the minimisation\index{minimisation} statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.
@@ -4838,7 +4952,7 @@ To load CSA values for the run \quotecmd{m1} from the file \quotecmd{csa\_values
 
 \example{relax> value.read(`m1', `CSA', `data/csa\_value', 0, 1, 2, 3, None, 1)}
 
-\example{relax> value.read(run=`m1', data\_type=`CSA', file=`data/csa\_value', num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)}
+\example{relax> value.read(run=`m1', param=`CSA', file=`data/csa\_value', num\_col=0, name\_col=1, data\_col=2, error\_col=3, sep=None)}
 
 
 \subsubsection{Regular expression\index{regular expression|textbf}}
@@ -4860,6 +4974,30 @@ This is a short description of python\index{Python} regular expression,\index{re
 
 
 Importantly, do not supply a string for the data type containing regular expression.\index{regular expression}  The regular expression\index{regular expression} is implemented so that various strings can be supplied which all match the same data type.
+
+
+
+\subsubsection{Model-free set details}
+
+Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect.
+
+
+Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
+
+
+\begin{itemize}
+\item[] value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2 
+\end{itemize}
+
+
+where:
+
+
+\begin{itemize}
+\item[] $R_{ex}$ is the chemical exchange\index{chemical exchange} value for the current frequency. 
+\item[] $\pi$ is in the namespace of relax, ie just type \quotecmd{$\pi$}. 
+\item[] frequency is the proton frequency corresponding to the data. 
+\end{itemize}
 
 
 
@@ -4895,27 +5033,9 @@ CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
 
 
 
-\subsubsection{Model-free set details}
+\subsubsection{Reduced spectral density mapping\index{map|textbf} set details}
 
-Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect.
-
-
-Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
-
-
-\begin{itemize}
-\item[] value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2 
-\end{itemize}
-
-
-where:
-
-
-\begin{itemize}
-\item[] $R_{ex}$ is the chemical exchange\index{chemical exchange} value for the current frequency. 
-\item[] $\pi$ is in the namespace of relax, ie just type \quotecmd{$\pi$}. 
-\item[] frequency is the proton frequency corresponding to the data. 
-\end{itemize}
+In reduced spectral density mapping,\index{map} only two values can be set, the bond length\index{bond length} and CSA value.  These must be set prior to the calculation of spectral density values.
 
 
 
@@ -4941,12 +5061,6 @@ CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
 
 
 
-\subsubsection{Reduced spectral density mapping\index{map|textbf} set details}
-
-In reduced spectral density mapping,\index{map} only two values can be set, the bond length\index{bond length} and CSA value.  These must be set prior to the calculation of spectral density values.
-
-
-
 
 \newpage
 
@@ -4961,7 +5075,7 @@ Function for setting residue specific data values.
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{value.set}(self, run=None, value=None, data\_type=None, res\_num=None, res\_name=None)}
+\textsf{\textbf{value.set}(self, run=None, value=None, param=None, res\_num=None, res\_name=None)}
 
 
 \subsubsection{Keyword arguments}
@@ -4970,7 +5084,7 @@ Function for setting residue specific data values.
 
 \keyword{value:}  The value(s). 
 
-\keyword{data\_type:}  The data type(s). 
+\keyword{param:}  The parameter(s). 
 
 \keyword{res\_num:}  The residue number. 
 
@@ -4984,13 +5098,13 @@ Function for setting residue specific data values.
 If this function is used to change values of previously minimised\index{minimisation} runs, then the minimisation\index{minimisation} statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.
 
 
-The value argument can be None, a single value, or an array of values while the data type argument can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  The Value column refers to the \quotecmd{value} argument while the Type column refers to the \quotecmd{data\_type} argument.  In these columns, \quotecmd{None} corresponds to None, \quotecmd{1} corresponds to either a single value or single string, and \quotecmd{n} corresponds to either an array of values or an array of strings.
+The value argument can be None, a single value, or an array of values while the parameter argument can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  The Value column refers to the \quotecmd{value} argument while the Param column refers to the \quotecmd{param} argument.  In these columns, \quotecmd{None} corresponds to None, \quotecmd{1} corresponds to either a single value or single string, and \quotecmd{n} corresponds to either an array of values or an array of strings.
 
 
 \begin{center}
 \begin{tabular}{lll}
 \toprule
-Value & Type & Descriptio$n$ \\
+Value & Param & Descriptio$n$ \\
 \midrule
 None & None & This case is used to set the model parameters prior to minimisatio$n$ or \\
  &  & calculatio$n$.  The model parameters are set to the default values. \\
@@ -5002,27 +5116,27 @@ $n$ & None & This case is used to set the model parameters prior to minimisatio$
  &  & of model parameters for a$n$ individual residue.  The parameters will be \\
  &  & set to the corresponding number. \\
  &  &  \\
-None & 1 & The data type matching the string will be set to the default value. \\
+None & 1 & The parameter matching the string will be set to the default value. \\
  &  &  \\
-1 & 1 & The data type matching the string will be set to the supplied number. \\
+1 & 1 & The parameter matching the string will be set to the supplied number. \\
  &  &  \\
 $n$ & 1 & Invalid combinatio$n$. \\
  &  &  \\
-None & $n$ & Each data type matching the strings will be set to the default values. \\
+None & $n$ & Each parameter matching the strings will be set to the default values. \\
  &  &  \\
-1 & $n$ & Each data type matching the strings will be set to the supplied number. \\
+1 & $n$ & Each parameter matching the strings will be set to the supplied number. \\
  &  &  \\
-$n$ & $n$ & Each data type matching the strings will be set to the corresponding \\
+$n$ & $n$ & Each parameter matching the strings will be set to the corresponding \\
  &  & number.  Both arrays must be of equal length. \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 
-Residue number and name argument.
 
+\subsubsection{Residue number and name argument}
 
-If the \quotecmd{res\_num} and \quotecmd{res\_name} arguments are left as the defaults of None, then the function will be applied to all residues.  Otherwise the residue number can be set to either an integer for selecting a single residue or a python\index{Python} regular expression\index{regular expression} string for selecting multiple residues.  The residue name argument must be a string and can use regular expression\index{regular expression} as well.
+If the \quotecmd{res\_num} and \quotecmd{res\_name} arguments are left as the defaults of None, then the function will be applied to all residues.  Otherwise the residue number can be set to either an integer for selecting a single residue or a python\index{Python} regular expression\index{regular expression} string for selecting multiple residues.  The residue name argument must be a string and can use regular expression\index{regular expression} as well.  If the data is global non-residue specific data, such as diffusion tensor\index{diffusion!tensor} parameters, supplying the residue number and name will terminate the program with an error.
 
 
 
@@ -5043,42 +5157,42 @@ To set the parameter values of residue 10, which is the model-free run \quotecmd
 To set the CSA value for the model-free run \quotecmd{tm3} to the default value, type:
 
 
-\example{relax> value.set(`tm3', data\_type=`csa')}
+\example{relax> value.set(`tm3', param=`csa')}
 
 To set the CSA value of all residues in the reduced spectral density mapping\index{map} run \quotecmd{600MHz} to -170 ppm, type:
 
 
 \example{relax> value.set(`600MHz', -170 * 1e-6, `csa')}
 
-\example{relax> value.set(`600MHz', value=-170 * 1e-6, data\_type=`csa')}
+\example{relax> value.set(`600MHz', value=-170 * 1e-6, param=`csa')}
 
 To set the NH bond length\index{bond length} of all residues in the model-free run \quotecmd{m5} to 1.02 \AA, type:
 
 
 \example{relax> value.set(`m5', 1.02 * 1e-10, `bond\_length')}
 
-\example{relax> value.set(`m5', value=1.02 * 1e-10, data\_type=`r')}
+\example{relax> value.set(`m5', value=1.02 * 1e-10, param=`r')}
 
 To set both the bond length\index{bond length} and the CSA value for the run \quotecmd{new} to the default values, type:
 
 
-\example{relax> value.set(`new', data\_type=[`bond length', `csa'])}
+\example{relax> value.set(`new', param=[`bond length', `csa'])}
 
 To set both $\tau_f$ and $\tau_s$ in the model-free run \quotecmd{m6} to 100 ps, type:
 
 
 \example{relax> value.set(`m6', 100e-12, [`tf', `ts'])}
 
-\example{relax> value.set(`m6', value=100e-12, data\_type=[`tf', `ts'])}
+\example{relax> value.set(`m6', value=100e-12, param=[`tf', `ts'])}
 
 To set the $S^2$ and $\tau_e$ parameter values for model-free run \quotecmd{m4} which has the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} to 0.56 and 13 ps, type:
 
 
 \example{relax> value.set(`m4', [0.56, 13e-12], [`S2', `te'], 10)}
 
-\example{relax> value.set(`m4', value=[0.56, 13e-12], data\_type=[`S2', `te'], res\_num=10)}
+\example{relax> value.set(`m4', value=[0.56, 13e-12], param=[`S2', `te'], res\_num=10)}
 
-\example{relax> value.set(run=`m4', value=[0.56, 13e-12], data\_type=[`S2', `te'], res\_num=10)}
+\example{relax> value.set(run=`m4', value=[0.56, 13e-12], param=[`S2', `te'], res\_num=10)}
 
 
 \subsubsection{Regular expression\index{regular expression|textbf}}
@@ -5100,6 +5214,30 @@ This is a short description of python\index{Python} regular expression,\index{re
 
 
 Importantly, do not supply a string for the data type containing regular expression.\index{regular expression}  The regular expression\index{regular expression} is implemented so that various strings can be supplied which all match the same data type.
+
+
+
+\subsubsection{Model-free set details}
+
+Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect.
+
+
+Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
+
+
+\begin{itemize}
+\item[] value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2 
+\end{itemize}
+
+
+where:
+
+
+\begin{itemize}
+\item[] $R_{ex}$ is the chemical exchange\index{chemical exchange} value for the current frequency. 
+\item[] $\pi$ is in the namespace of relax, ie just type \quotecmd{$\pi$}. 
+\item[] frequency is the proton frequency corresponding to the data. 
+\end{itemize}
 
 
 
@@ -5132,30 +5270,6 @@ CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
 \bottomrule
 \end{tabular}
 \end{center}
-
-
-
-\subsubsection{Model-free set details}
-
-Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect.
-
-
-Note that the $R_{ex}$ values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
-
-
-\begin{itemize}
-\item[] value = $R_{ex}$ / (2.0 * $\pi$ * frequency) ** 2 
-\end{itemize}
-
-
-where:
-
-
-\begin{itemize}
-\item[] $R_{ex}$ is the chemical exchange\index{chemical exchange} value for the current frequency. 
-\item[] $\pi$ is in the namespace of relax, ie just type \quotecmd{$\pi$}. 
-\item[] frequency is the proton frequency corresponding to the data. 
-\end{itemize}
 
 
 
@@ -5187,6 +5301,12 @@ CSA & \quotecmd{csa} & -170 * 1e-6 \\
 
 
 
+\subsubsection{Reduced spectral density mapping\index{map|textbf} set details}
+
+In reduced spectral density mapping,\index{map} only two values can be set, the bond length\index{bond length} and CSA value.  These must be set prior to the calculation of spectral density values.
+
+
+
 \subsubsection{Reduced spectral density mapping\index{map|textbf} data type string matching patterns}
 
 \begin{center}
@@ -5209,12 +5329,6 @@ CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
 
 
 
-\subsubsection{Reduced spectral density mapping\index{map|textbf} set details}
-
-In reduced spectral density mapping,\index{map} only two values can be set, the bond length\index{bond length} and CSA value.  These must be set prior to the calculation of spectral density values.
-
-
-
 \subsubsection{Reduced spectral density mapping\index{map|textbf} default values}
 
 \begin{center}
@@ -5225,6 +5339,143 @@ Data type & Object name & Value \\
 Bond length & \quotecmd{r} & 1.02 * 1e-10 \\
  &  &  \\
 CSA & \quotecmd{csa} & -170 * 1e-6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+\subsubsection{Diffusion tensor\index{diffusion!tensor|textbf} set details}
+
+If the diffusion tensor\index{diffusion!tensor} has not been setup, use the more powerful function \quotecmd{diffusion\_tensor.init} to initialise the tensor parameters.
+
+
+The diffusion tensor\index{diffusion!tensor} parameters can only be set when the run corresponds to model-free analysis.  The units of the parameters are:
+
+
+\begin{itemize}
+\item[] Inverse seconds for $\tau_m$. 
+\item[] Seconds for $\Diff_{iso}$, $\Diff_a$, $\Diff_x$, $\Diff_y$, $\Diff_z$, $\Diff_\Par$, $\Diff_\Per$. 
+\item[] Unitless for $\Diff_{ratio}$ and $\Diff_r$. 
+\item[] Radians for all angles\index{angles} ($\alpha$, $\beta$, $\gamma$, $\theta$, $\phi$). 
+\end{itemize}
+
+
+When setting a diffusion tensor\index{diffusion!tensor} parameter, the residue number has no effect.  As the internal parameters of spherical diffusion are \{tm\}, spheroidal\index{diffusion!spheroid (axially symmetric)} diffusion are \{$\tau_m$, $\Diff_a$, $\theta$, $\phi$\}, and ellipsoidal\index{diffusion!ellipsoid (asymmetric)} diffusion are \{$\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$\}, supplying geometric parameters must be done in the following way.  If a single geometric parameter is supplied, it must be one of $\tau_m$, $\Diff_{iso}$, $\Diff_a$, $\Diff_r$, or $\Diff_{ratio}$.  For the parameters $\Diff_\Par$, $\Diff_\Per$, $\Diff_x$, $\Diff_y$, and $\Diff_x$, it is not possible to determine how to use the currently set values together with the supplied value to calculate the new internal parameters.  For spheroidal\index{diffusion!spheroid (axially symmetric)} diffusion, when supplying multiple geometric parameters, the set must belong to one of
+
+
+\begin{itemize}
+\item[] \{$\tau_m$, $\Diff_a$\}, 
+\item[] \{$\Diff_{iso}$, $\Diff_a$\}, 
+\item[] \{$\tau_m$, $\Diff_{ratio}$\}, 
+\item[] \{$\Diff_\Par$, $\Diff_\Per$\}, 
+\item[] \{$\Diff_{iso}$, $\Diff_{ratio}$\}, 
+\end{itemize}
+
+
+where either $\theta$, $\phi$, or both orientational parameters can be additionally supplied.  For ellipsoidal\index{diffusion!ellipsoid (asymmetric)} diffusion, again when supplying multiple geometric parameters, the set must belong to one of
+
+
+\begin{itemize}
+\item[] \{$\tau_m$, $\Diff_a$, $\Diff_r$\}, 
+\item[] \{$\Diff_{iso}$, $\Diff_a$, $\Diff_r$\}, 
+\item[] \{$\Diff_x$, $\Diff_y$, $\Diff_z$\}, 
+\end{itemize}
+
+
+where any number of the orientational parameters, $\alpha$, $\beta$, or $\gamma$ can be additionally supplied.
+
+
+
+\subsubsection{Diffusion tensor\index{diffusion!tensor|textbf} parameter string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Global correlation time\index{correlation time} - $\tau_m$ & \quotecmd{tm} & \quotecmd{tm} \\
+ &  &  \\
+Isotropic component of the diffusion tensor\index{diffusion!tensor} - $\Diff_{iso}$ & \quotecmd{Diso} & \quotecmd{[Dd]iso} \\
+ &  &  \\
+Anisotropic component of the diffusion tensor\index{diffusion!tensor} - $\Diff_a$ & \quotecmd{Da} & \quotecmd{[Dd]a} \\
+ &  &  \\
+Rhombic component of the diffusion tensor\index{diffusion!tensor} - $\Diff_r$ & \quotecmd{Dr} & \quotecmd{[Dd]r\$} \\
+ &  &  \\
+Eigenvalue associated with the x-axis of the diffusion & \quotecmd{Dx} & \quotecmd{[Dd]x} \\
+diffusion tensor - $\Diff_x$ &  &  \\
+ &  &  \\
+Eigenvalue associated with the y-axis of the diffusion & \quotecmd{Dy} & \quotecmd{[Dd]y} \\
+diffusion tensor - $\Diff_y$ &  &  \\
+ &  &  \\
+Eigenvalue associated with the z-axis of the diffusion & \quotecmd{Dz} & \quotecmd{[Dd]z} \\
+diffusion tensor - $\Diff_z$ &  &  \\
+ &  &  \\
+Diffusion coefficient parallel to the major axis of & \quotecmd{Dpar} & \quotecmd{[Dd]par} \\
+the spheroid\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} - $\Diff_\Par$ &  &  \\
+ &  &  \\
+Diffusion coefficient perpendicular to the major axis & \quotecmd{Dper} & \quotecmd{[Dd]per} \\
+of the spheroid\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} - $\Diff_\Per$ &  &  \\
+ &  &  \\
+Ratio of the parallel and perpendicular components of & \quotecmd{Dratio} & \quotecmd{[Dd]ratio} \\
+the spheroid\index{diffusion!spheroid (axially symmetric)} diffusion tensor\index{diffusion!tensor} - $\Diff_{ratio}$ &  &  \\
+ &  &  \\
+The first Euler angle\index{angles}\index{Euler angles} of the ellipsoid\index{diffusion!ellipsoid (asymmetric)} diffusion & \quotecmd{alpha} & \quotecmd{\^{}a\$} or \quotecmd{alpha} \\
+tensor - $\alpha$ &  &  \\
+ &  &  \\
+The second Euler angle\index{angles}\index{Euler angles} of the ellipsoid\index{diffusion!ellipsoid (asymmetric)} diffusion & \quotecmd{beta} & \quotecmd{\^{}b\$} or \quotecmd{beta} \\
+tensor - $\beta$ &  &  \\
+ &  &  \\
+The third Euler angle\index{angles}\index{Euler angles} of the ellipsoid\index{diffusion!ellipsoid (asymmetric)} diffusion & \quotecmd{gamma} & \quotecmd{\^{}g\$} or \quotecmd{gamma} \\
+tensor - $\gamma$ &  &  \\
+ &  &  \\
+The polar angle\index{angles} defining the major axis of the & \quotecmd{theta} & \quotecmd{theta} \\
+spheroid diffusion tensor\index{diffusion!tensor} - $\theta$ &  &  \\
+ &  &  \\
+The azimuthal angle\index{angles} defining the major axis of the & \quotecmd{phi} & \quotecmd{phi} \\
+spheroid diffusion tensor\index{diffusion!tensor} - $\phi$ &  &  \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+\subsubsection{Diffusion tensor\index{diffusion!tensor|textbf} parameter default values}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Value \\
+\midrule
+$\tau_m$ & \quotecmd{$\tau_m$} & 10 * 1e-9 \\
+ &  &  \\
+$\Diff_{iso}$ & \quotecmd{$\Diff_{iso}$} & 1.666 * 1e7 \\
+ &  &  \\
+$\Diff_a$ & \quotecmd{$\Diff_a$} & 0.0 \\
+ &  &  \\
+$\Diff_r$ & \quotecmd{$\Diff_r$} & 0.0 \\
+ &  &  \\
+$\Diff_x$ & \quotecmd{$\Diff_x$} & 1.666 * 1e7 \\
+ &  &  \\
+$\Diff_y$ & \quotecmd{$\Diff_y$} & 1.666 * 1e7 \\
+ &  &  \\
+$\Diff_z$ & \quotecmd{$\Diff_z$} & 1.666 * 1e7 \\
+ &  &  \\
+$\Diff_\Par$ & \quotecmd{$\Diff_\Par$} & 1.666 * 1e7 \\
+ &  &  \\
+$\Diff_\Per$ & \quotecmd{$\Diff_\Per$} & 1.666 * 1e7 \\
+ &  &  \\
+$\Diff_{ratio}$ & \quotecmd{$\Diff_{ratio}$} & 1.0 \\
+ &  &  \\
+$\alpha$ & \quotecmd{$\alpha$} & 0.0 \\
+ &  &  \\
+$\beta$ & \quotecmd{$\beta$} & 0.0 \\
+ &  &  \\
+$\gamma$ & \quotecmd{$\gamma$} & 0.0 \\
+ &  &  \\
+$\theta$ & \quotecmd{$\theta$} & 0.0 \\
+ &  &  \\
+$\phi$ & \quotecmd{$\phi$} & 0.0 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -5245,14 +5496,14 @@ Function for writing residue specific data values to a file.
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{value.write}(self, run=None, data\_type=None, file=None, dir=None, force=0)}
+\textsf{\textbf{value.write}(self, run=None, param=None, file=None, dir=None, force=0)}
 
 
 \subsubsection{Keyword Arguments}
 
 \keyword{run:}  The name of the run. 
 
-\keyword{data\_type:}  The data type. 
+\keyword{param:}  The parameter. 
 
 \keyword{file:}  The name of the file. 
 
@@ -5268,7 +5519,7 @@ Function for writing residue specific data values to a file.
 If no directory name is given, the file will be placed in the current working directory.
 
 
-The data type argument should be a string.
+The parameter argument should be a string.
 
 
 
@@ -5279,18 +5530,18 @@ To write\index{write} the CSA values for the run \quotecmd{m1} to the file \quot
 
 \example{relax> value.write(`m1', `CSA', `csa.txt')}
 
-\example{relax> value.write(run=`m1', data\_type=`CSA', file=`csa.txt')}
+\example{relax> value.write(run=`m1', param=`CSA', file=`csa.txt')}
 
 To write\index{write} the NOE values from the run \quotecmd{noe} to the file \quotecmd{noe}, type:
 
 
 \example{relax> value.write(`noe', `noe', `noe.out')}
 
-\example{relax> value.write(`noe', data\_type=`noe', file=`noe.out')}
+\example{relax> value.write(`noe', param=`noe', file=`noe.out')}
 
-\example{relax> value.write(run=`noe', data\_type=`noe', file=`noe.out')}
+\example{relax> value.write(run=`noe', param=`noe', file=`noe.out')}
 
-\example{relax> value.write(run=`noe', data\_type=`noe', file=`noe.out', force=1)}
+\example{relax> value.write(run=`noe', param=`noe', file=`noe.out', force=1)}
 
 
 \subsubsection{Regular expression\index{regular expression|textbf}}
