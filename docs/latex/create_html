@@ -1,0 +1,3 @@
+#! /bin/sh
+
+latex2html -split +3 -html_version 4.0 -dir ../html relax.tex

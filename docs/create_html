@@ -1,3 +1,0 @@
-#! /bin/sh
-
-latex2html latex/relax.tex
