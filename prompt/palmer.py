@@ -178,7 +178,7 @@ class Palmer:
 
         Modelfree 4 will be executed as
 
-        'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
+        $ modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out
 
         If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be
         placed on the command line as '-s pdb_file_name'.

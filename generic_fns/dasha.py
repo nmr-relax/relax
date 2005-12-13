@@ -34,11 +34,12 @@ class Dasha:
         self.relax = relax
 
 
-    def create(self, run, dir, force):
+    def create(self, run=None, algor='LM', dir=None, force=0):
         """Function for creating the Dasha script file 'dir/dasha_script'."""
 
         # Arguments.
         self.run = run
+        self.algor = algor
         self.dir = dir
         self.force = force
 
@@ -64,6 +65,10 @@ class Dasha:
         # Test if the nucleus type has been set.
         if not hasattr(self.relax.data, 'gx'):
             raise RelaxNucleusError
+
+        # Test the optimisation algorithm.
+        if algor not in ['LM', 'NR']:
+            raise RelaxError, "The Dasha optimisation algorithm " + `algor` + " is unknown, it should either be 'LM' or 'NR'."
 
         # Directory creation.
         if self.dir == None:
@@ -291,7 +296,10 @@ class Dasha:
 
             # Optimisation of all residues.
             file.write('\n\n\n# Optimisation of all residues.\n')
-            file.write('min all')
+            if self.algor == 'LM':
+                file.write('lmin all')
+            elif self.algor == 'NR':
+                file.write('min all')
 
             # Show the results.
             file.write('\n# Show the results.\n')

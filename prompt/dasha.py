@@ -38,13 +38,15 @@ class Dasha:
         self.__relax__ = relax
 
 
-    def create(self, run=None, dir=None, force=0):
+    def create(self, run=None, algor='LM', dir=None, force=0):
         """Function for creating the Dasha script.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The name of the run.
+
+        algor:  The minimisation algorithm.
 
         dir:  The directory to place the files.  The default is the value of 'run'.
 
@@ -56,12 +58,26 @@ class Dasha:
         ~~~~~~~~~~~
 
         The script file created is called 'dir/dasha_script'.
+
+
+        Optimisation algorithms
+        ~~~~~~~~~~~~~~~~~~~~~~~
+
+        The two minimisation algorithms within Dasha are accessible through the algor argument which
+        can be set to:
+
+            'LM' - The Levenberg-Marquardt algorithm.
+            'NR' - Newton-Raphson algorithm.
+
+        For Levenberg-Marquardt minisation, the function 'lmin' will be called, while for Newton
+        -Raphson, the function 'min' will be executed.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.create("
             text = text + "run=" + `run`
+            text = text + ", algor=" + `algor`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
@@ -69,6 +85,10 @@ class Dasha:
         # The run argument.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
+
+        # The algor argument.
+        if type(algor) != str:
+            raise RelaxStrError, ('optimisation algorithm', algor)
 
         # Directory.
         if dir != None:
@@ -80,7 +100,7 @@ class Dasha:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.dasha.create(run=run, dir=dir, force=force)
+        self.__relax__.generic.dasha.create(run=run, algor=algor, dir=dir, force=force)
 
 
     def execute(self, run=None, dir=None, force=0):
@@ -97,12 +117,15 @@ class Dasha:
         exists.
 
 
-        Description
-        ~~~~~~~~~~~
+        Execution
+        ~~~~~~~~~
 
         Dasha will be executed as
 
-        'dasha < dasha_script > dasha_results'
+        $ dasha < dasha_script | tee dasha_results
+
+
+
         """
 
         # Function intro text.

@@ -31,7 +31,7 @@ value.set(name, -160 * 1e-6, 'csa')
 model_free.select_model(run=name, model=name)
 
 # Create the Dasha script.
-dasha.create(name, force=1)
+dasha.create(name, algor='NR', force=1)
 
 # Execute Dasha.
 dasha.execute(name)
