@@ -69,7 +69,7 @@ class Dasha:
             'LM' - The Levenberg-Marquardt algorithm.
             'NR' - Newton-Raphson algorithm.
 
-        For Levenberg-Marquardt minisation, the function 'lmin' will be called, while for Newton
+        For Levenberg-Marquardt minimisation, the function 'lmin' will be called, while for Newton
         -Raphson, the function 'min' will be executed.
         """
 
