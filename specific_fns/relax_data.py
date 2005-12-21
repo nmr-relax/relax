@@ -175,6 +175,10 @@ class Rx_data:
             # Remap the data structure 'self.relax.data.res[self.run][i]'.
             data = self.relax.data.res[self.run][i]
 
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
             # Store a copy of all the data in 'self.relax.data.res[self.run][i]' for backing up if the back_calculation function fails.
             back_up = deepcopy(data)
 
