@@ -1964,7 +1964,7 @@ class Model_free(Common_functions):
         self.run = run
 
         # {S2, S2f, S2s}.
-        if search('^S2', param):
+        if search('^s2', param):
             return [0, 1]
 
         # {tm, te, tf, ts}.
@@ -1972,7 +1972,7 @@ class Model_free(Common_functions):
             return [0, 1e-8]
 
         # Rex.
-        elif param == 'Rex':
+        elif param == 'rex':
             return [0, 30.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2]
 
         # Bond length.
@@ -1980,7 +1980,7 @@ class Model_free(Common_functions):
             return [1.0 * 1e-10, 1.1 * 1e-10]
 
         # CSA.
-        elif param == 'CSA':
+        elif param == 'csa':
             return [-100 * 1e-6, -300 * 1e-6]
 
 
