@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,33 @@ class Relax_fit:
         self.relax = relax
 
 
+    def assign_function(self, run=None, i=None, intensity=None):
+        """Function for assigning peak intensity data to either the reference or saturated spectra."""
+
+        # Remap the data structure.
+        data = self.relax.data.res[run][i]
+
+        # Initialise.
+        index = None
+        if not hasattr(data, 'intensity'):
+            data.intensity = []
+            data.relax_times = []
+
+        # Determine if the relaxation time already exists for the residue (duplicated spectra).
+        for i in xrange(len(data.relax_times)):
+            if self.relax_time == data.relax_times[i]:
+                index = i
+
+        # A new relaxation time has been encountered.
+        if index == None:
+            data.intensity.append([intensity])
+            data.relax_times.append(self.relax_time)
+
+        # Duplicated spectra.
+        else:
+            data.intensity[index].append(intensity)
+
+
     def read(self, run=None, file=None, dir=None, relax_time=0.0, fit_type=None, format=None, heteronuc=None, proton=None, int_col=None):
         """Function for reading peak intensity data."""
 
@@ -52,7 +79,7 @@ class Relax_fit:
             print "Three parameter inversion recovery fit."
 
         # Generic intensity function.
-        self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
+        self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
 
 
     def read_columnar_results(self, run, file_data):
