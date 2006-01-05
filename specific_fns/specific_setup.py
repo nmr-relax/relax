@@ -71,7 +71,7 @@ class Specific_setup:
 
             # Relaxation curve fitting.
             if function_type == 'relax_fit':
-                function = self.relax_funcs()
+                function = self.relax_fit()
 
             # Reduced spectral density mapping.
             if function_type == 'jw':
@@ -87,6 +87,12 @@ class Specific_setup:
 
         # Raise an error if the function doesn't exist.
         if raise_error and function == None:
+            # Some debugging output.
+            if Debug:
+                print "Function type: " + `function_type`
+                print "Eqi: " + `self.eqi`
+
+            # Raise the error.
             raise RelaxFuncSetupError, self.get_string(function_type)
 
         # Return the function.
@@ -313,9 +319,13 @@ class Specific_setup:
             return self.relax.specific.noe.write_columnar_results
 
 
-    def relax_funcs(self):
+    def relax_fit(self):
         """Relaxation curve fitting functions."""
+
+        # Grid search function.
+        if self.eqi == 'grid_search':
+            return self.relax.specific.relax_fit.grid_search
 
         # Value and error returning function.
         if self.eqi == 'return_value':
-            return self.relax.specific.relax_data.return_value
+            return self.relax.specific.relax_fit.return_value

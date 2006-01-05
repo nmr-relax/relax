@@ -57,26 +57,61 @@ class Relax_fit:
             data.intensity[index].append(intensity)
 
 
-    def read(self, run=None, file=None, dir=None, relax_time=0.0, fit_type=None, format=None, heteronuc=None, proton=None, int_col=None):
+    def curve_type(self, run=None, fit_type='exp'):
+        """Function for setting the exponential curve type."""
+
+        # Arguments.
+        self.run = run
+        self.fit_type = fit_type
+
+        # Two parameter exponential fit.
+        if self.fit_type == 'exp':
+            print "Two parameter exponential fit."
+            self.relax.data.curve_type[self.run] = 'exp'
+
+        # Three parameter inversion recovery fit.
+        elif self.fit_type == 'inv':
+            print "Three parameter inversion recovery fit."
+            self.relax.data.curve_type[self.run] = 'inv'
+
+        # Unknown fit type.
+        else:
+            raise RelaxArgNotInListError, ('fit type', self.fit_type, fit_type_list)
+
+
+    def data_init(self):
+        """Function for initialising the data structures."""
+
+        # Curve type.
+        if not hasattr(self.relax.data, 'curve_type'):
+            self.relax.data.curve_type = {}
+
+
+    def grid_search(self, run, lower, upper, inc, constraints, print_flag, sim_index=None):
+        """The grid search function."""
+
+        # Arguments.
+        self.lower = lower
+        self.upper = upper
+        self.inc = inc
+
+        # Minimisation.
+        self.minimise(run=run, min_algor='grid', constraints=constraints, print_flag=print_flag, sim_index=sim_index)
+
+
+    def read(self, run=None, file=None, dir=None, relax_time=0.0, format=None, heteronuc=None, proton=None, int_col=None):
         """Function for reading peak intensity data."""
 
         # Arguments.
         self.run = run
         self.relax_time = relax_time
-        self.fit_type = fit_type
         self.format = format
         self.heteronuc = heteronuc
         self.proton = proton
         self.int_col = int_col
 
-        # Fit type argument.
-        fit_type_list = ['exp', 'inv']
-        if self.fit_type not in fit_type_list:
-            raise RelaxArgNotInListError, ('fit type', self.fit_type, fit_type_list)
-        if self.fit_type == 'exp':
-            print "Two parameter exponential fit."
-        if self.fit_type == 'inv':
-            print "Three parameter inversion recovery fit."
+        # Initialise the global data if necessary.
+        self.data_init()
 
         # Generic intensity function.
         self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)

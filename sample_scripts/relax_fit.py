@@ -19,5 +19,23 @@ relax_fit.read(name, file='T2_ncyc9b_ave.list', relax_time=0.1584)
 relax_fit.read(name, file='T2_ncyc11_ave.list', relax_time=0.1936)
 relax_fit.read(name, file='T2_ncyc11b_ave.list', relax_time=0.1936)
 
+# Set the relaxation curve type.
+relax_fit.curve_type(name, 'exp')
+
+# Unselect unresolved residues.
+unselect.read(name, file='unresolved')
+
+# Grid search.
+grid_search(name, inc=11)
+
+# Minimise.
+minimise('simplex', run=name)
+
+# Save the relaxation rates.
+value.write(name, y_data_type='r1', file='r1.out', force=1)
+
+# Write the results.
+results.write(name, file='results', dir=None, force=1)
+
 # Save the program state.
 state.save(file='save', force=1)
