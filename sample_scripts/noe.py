@@ -28,7 +28,7 @@ unselect.read(name, file='unresolved')
 calc(name)
 
 # Save the NOEs.
-value.write(name, y_data_type='noe', file='noe.out', force=1)
+value.write(name, param='noe', file='noe.out', force=1)
 
 # Create grace files.
 grace.write(name, y_data_type='ref', file='ref.agr', force=1)

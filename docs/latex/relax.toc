@@ -1,0 +1,552 @@
+\contentsline {chapter}{\numberline {1}How to use relax}{1}
+\contentsline {section}{\numberline {1.1}The prompt}{1}
+\contentsline {section}{\numberline {1.2}Python}{1}
+\contentsline {section}{\numberline {1.3}User functions}{2}
+\contentsline {section}{\numberline {1.4}The help system}{3}
+\contentsline {section}{\numberline {1.5}Tab completion}{3}
+\contentsline {section}{\numberline {1.6}The `run'}{4}
+\contentsline {section}{\numberline {1.7}Scripting}{4}
+\contentsline {section}{\numberline {1.8}Sample scripts}{6}
+\contentsline {section}{\numberline {1.9}The GUI}{6}
+\contentsline {section}{\numberline {1.10}Access to the internals of relax}{6}
+\contentsline {section}{\numberline {1.11}Usage of the name relax}{6}
+\contentsline {chapter}{\numberline {2}Data analysis}{7}
+\contentsline {section}{\numberline {2.1}Introduction}{7}
+\contentsline {section}{\numberline {2.2}Calculating the NOE}{7}
+\contentsline {subsubsection}{The sample script}{7}
+\contentsline {subsubsection}{The run}{8}
+\contentsline {subsubsection}{The NOE}{8}
+\contentsline {subsubsection}{Calculating the NOE error}{8}
+\contentsline {section}{\numberline {2.3}The $\@mathrm {R}_1$ and $\@mathrm {R}_2$ relaxation rates - relaxation curve fitting}{8}
+\contentsline {chapter}{\numberline {3}Values, gradients, and Hessians}{9}
+\contentsline {section}{\numberline {3.1}Introduction}{9}
+\contentsline {subsection}{\numberline {3.1.1}Chi-squared function -- $\chi ^2(\theta )$}{9}
+\contentsline {subsection}{\numberline {3.1.2}Relaxation equations -- $\@mathrm {R}_i(\theta )$}{9}
+\contentsline {subsection}{\numberline {3.1.3}Transformed relaxation equations -- $\@mathrm {R}_i'(\theta )$}{10}
+\contentsline {subsection}{\numberline {3.1.4}Spectral density functions -- $J(\omega )$}{10}
+\contentsline {subsection}{\numberline {3.1.5}Brownian diffusion}{11}
+\contentsline {subsubsection}{Ellipsoid}{11}
+\contentsline {subsubsection}{Spheroid}{12}
+\contentsline {subsubsection}{Sphere}{13}
+\contentsline {section}{\numberline {3.2}Minimisation concepts}{13}
+\contentsline {subsection}{\numberline {3.2.1}The function value}{13}
+\contentsline {subsection}{\numberline {3.2.2}The gradient}{13}
+\contentsline {subsection}{\numberline {3.2.3}The Hessian}{14}
+\contentsline {section}{\numberline {3.3}Value, gradient, and Hessian dependency chain}{14}
+\contentsline {section}{\numberline {3.4}$\chi ^2$ values, gradients, and Hessians}{14}
+\contentsline {subsection}{\numberline {3.4.1}$\chi ^2$ values}{14}
+\contentsline {subsection}{\numberline {3.4.2}$\chi ^2$ gradients}{15}
+\contentsline {subsection}{\numberline {3.4.3}$\chi ^2$ Hessians}{15}
+\contentsline {section}{\numberline {3.5}$\@mathrm {R}_i(\theta )$ values, gradients, and Hessians}{15}
+\contentsline {subsection}{\numberline {3.5.1}$\@mathrm {R}_i(\theta )$ values}{15}
+\contentsline {subsection}{\numberline {3.5.2}$\@mathrm {R}_i(\theta )$ gradients}{15}
+\contentsline {subsection}{\numberline {3.5.3}$\@mathrm {R}_i(\theta )$ Hessians}{15}
+\contentsline {section}{\numberline {3.6}$\@mathrm {R}_i'(\theta )$ values, gradients, and Hessians}{16}
+\contentsline {subsection}{\numberline {3.6.1}Components of the $\@mathrm {R}_i'(\theta )$ equations}{16}
+\contentsline {subsubsection}{Dipolar constant}{16}
+\contentsline {subsubsection}{CSA constant}{16}
+\contentsline {subsubsection}{Spectral density terms of the $\@mathrm {R}_1$ dipolar component}{17}
+\contentsline {subsubsection}{Spectral density terms of the $\@mathrm {R}_1$ CSA component}{17}
+\contentsline {subsubsection}{Spectral density terms of the $\@mathrm {R}_2$ dipolar component}{17}
+\contentsline {subsubsection}{Spectral density terms of the $\@mathrm {R}_2$ CSA component}{18}
+\contentsline {subsubsection}{Spectral density terms of the $\sigma _{\scriptscriptstyle \@mathrm {NOE}}$ dipolar component}{18}
+\contentsline {subsection}{\numberline {3.6.2}$\@mathrm {R}_i'(\theta )$ values}{19}
+\contentsline {subsection}{\numberline {3.6.3}$\@mathrm {R}_i'(\theta )$ gradients}{19}
+\contentsline {subsubsection}{Spectral density function parameter}{19}
+\contentsline {subsubsection}{Chemical exchange parameter}{19}
+\contentsline {subsubsection}{CSA parameter}{20}
+\contentsline {subsubsection}{Bond length parameter}{20}
+\contentsline {subsection}{\numberline {3.6.4}$\@mathrm {R}_i'(\theta )$ Hessians}{20}
+\contentsline {subsubsection}{Spectral density function parameter - Spectral density function parameter}{20}
+\contentsline {subsubsection}{Spectral density function parameter - Chemical exchange parameter}{21}
+\contentsline {subsubsection}{Spectral density function parameter - CSA parameter}{21}
+\contentsline {subsubsection}{Spectral density function parameter - Bond length parameter}{21}
+\contentsline {subsubsection}{Chemical exchange parameter - Chemical exchange parameter}{21}
+\contentsline {subsubsection}{Chemical exchange parameter - CSA parameter}{22}
+\contentsline {subsubsection}{Chemical exchange parameter - Bond length parameter}{22}
+\contentsline {subsubsection}{CSA parameter - CSA parameter}{22}
+\contentsline {subsubsection}{CSA parameter - Bond length parameter}{22}
+\contentsline {subsubsection}{Bond length parameter - Bond length parameter}{23}
+\contentsline {section}{\numberline {3.7}Ellipsoidal diffusion tensor}{23}
+\contentsline {subsection}{\numberline {3.7.1}Ellipsoid weight derivatives}{23}
+\contentsline {chapter}{\numberline {4}Alphabetical listing of user functions}{25}
+\contentsline {section}{\numberline {4.1}A warning about the formatting}{25}
+\contentsline {section}{\numberline {4.2}The list of functions}{25}
+\contentsline {subsection}{\numberline {4.2.1}The synopsis}{25}
+\contentsline {subsection}{\numberline {4.2.2}Defaults}{25}
+\contentsline {subsection}{\numberline {4.2.3}Docstring sectioning}{26}
+\contentsline {subsection}{\numberline {4.2.4}angles}{27}
+\contentsline {subsubsection}{Synopsis}{27}
+\contentsline {subsubsection}{Defaults}{27}
+\contentsline {subsubsection}{Keyword Arguments}{27}
+\contentsline {subsubsection}{Description}{27}
+\contentsline {subsection}{\numberline {4.2.5}calc}{28}
+\contentsline {subsubsection}{Synopsis}{28}
+\contentsline {subsubsection}{Defaults}{28}
+\contentsline {subsubsection}{Keyword Arguments}{28}
+\contentsline {subsection}{\numberline {4.2.6}dasha.create}{29}
+\contentsline {subsubsection}{Synopsis}{29}
+\contentsline {subsubsection}{Defaults}{29}
+\contentsline {subsubsection}{Keyword Arguments}{29}
+\contentsline {subsubsection}{Description}{29}
+\contentsline {subsubsection}{Optimisation algorithms}{29}
+\contentsline {subsection}{\numberline {4.2.7}dasha.execute}{30}
+\contentsline {subsubsection}{Synopsis}{30}
+\contentsline {subsubsection}{Defaults}{30}
+\contentsline {subsubsection}{Keyword Arguments}{30}
+\contentsline {subsubsection}{Execution}{30}
+\contentsline {subsection}{\numberline {4.2.8}dasha.extract}{31}
+\contentsline {subsubsection}{Synopsis}{31}
+\contentsline {subsubsection}{Defaults}{31}
+\contentsline {subsubsection}{Keyword Arguments}{31}
+\contentsline {subsection}{\numberline {4.2.9}diffusion\_tensor.copy}{32}
+\contentsline {subsubsection}{Synopsis}{32}
+\contentsline {subsubsection}{Defaults}{32}
+\contentsline {subsubsection}{Keyword Arguments}{32}
+\contentsline {subsubsection}{Description}{32}
+\contentsline {subsubsection}{Examples}{32}
+\contentsline {subsection}{\numberline {4.2.10}diffusion\_tensor.delete}{33}
+\contentsline {subsubsection}{Synopsis}{33}
+\contentsline {subsubsection}{Defaults}{33}
+\contentsline {subsubsection}{Keyword Arguments}{33}
+\contentsline {subsubsection}{Description}{33}
+\contentsline {subsection}{\numberline {4.2.11}diffusion\_tensor.display}{34}
+\contentsline {subsubsection}{Synopsis}{34}
+\contentsline {subsubsection}{Defaults}{34}
+\contentsline {subsubsection}{Keyword Arguments}{34}
+\contentsline {subsection}{\numberline {4.2.12}diffusion\_tensor.init}{35}
+\contentsline {subsubsection}{Synopsis}{35}
+\contentsline {subsubsection}{Defaults}{35}
+\contentsline {subsubsection}{Keyword Arguments}{35}
+\contentsline {subsubsection}{The sphere (isotropic diffusion)}{35}
+\contentsline {subsubsection}{The spheroid (axially symmetric diffusion)}{36}
+\contentsline {subsubsection}{The ellipsoid (rhombic diffusion)}{37}
+\contentsline {subsubsection}{Units}{39}
+\contentsline {subsubsection}{Examples}{40}
+\contentsline {subsection}{\numberline {4.2.13}dx.execute}{41}
+\contentsline {subsubsection}{Synopsis}{41}
+\contentsline {subsubsection}{Defaults}{41}
+\contentsline {subsubsection}{Keyword Arguments}{41}
+\contentsline {subsection}{\numberline {4.2.14}dx.map}{42}
+\contentsline {subsubsection}{Synopsis}{42}
+\contentsline {subsubsection}{Defaults}{42}
+\contentsline {subsubsection}{Keyword Arguments}{42}
+\contentsline {subsubsection}{Map type}{43}
+\contentsline {subsubsection}{Examples}{43}
+\contentsline {subsubsection}{Regular expression}{43}
+\contentsline {subsubsection}{Diffusion tensor parameter string matching patterns}{44}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{46}
+\contentsline {subsection}{\numberline {4.2.15}eliminate}{47}
+\contentsline {subsubsection}{Synopsis}{47}
+\contentsline {subsubsection}{Defaults}{47}
+\contentsline {subsubsection}{Keyword arguments}{47}
+\contentsline {subsubsection}{Description}{47}
+\contentsline {subsubsection}{Local $\tau _m$ model elimination rule}{47}
+\contentsline {subsubsection}{Internal correlation times \{$\tau _e$, $\tau _f$, $\tau _s$\} model elimination rules}{48}
+\contentsline {subsubsection}{Arguments}{48}
+\contentsline {subsection}{\numberline {4.2.16}fix}{49}
+\contentsline {subsubsection}{Synopsis}{49}
+\contentsline {subsubsection}{Defaults}{49}
+\contentsline {subsubsection}{Keyword Arguments}{49}
+\contentsline {subsubsection}{Description}{49}
+\contentsline {subsection}{\numberline {4.2.17}grace.view}{50}
+\contentsline {subsubsection}{Synopsis}{50}
+\contentsline {subsubsection}{Defaults}{50}
+\contentsline {subsubsection}{Keyword Arguments}{50}
+\contentsline {subsubsection}{Description}{50}
+\contentsline {subsubsection}{Examples}{50}
+\contentsline {subsection}{\numberline {4.2.18}grace.write}{51}
+\contentsline {subsubsection}{Synopsis}{51}
+\contentsline {subsubsection}{Defaults}{51}
+\contentsline {subsubsection}{Keyword Arguments}{51}
+\contentsline {subsubsection}{Description}{51}
+\contentsline {subsubsection}{Examples}{52}
+\contentsline {subsubsection}{Regular expression}{52}
+\contentsline {subsubsection}{Minimisation statistic data type string matching patterns}{53}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{54}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{54}
+\contentsline {subsubsection}{NOE calculation data type string matching patterns}{54}
+\contentsline {subsection}{\numberline {4.2.19}grid\_search}{55}
+\contentsline {subsubsection}{Synopsis}{55}
+\contentsline {subsubsection}{Defaults}{55}
+\contentsline {subsubsection}{Keyword Arguments}{55}
+\contentsline {subsection}{\numberline {4.2.20}init\_data}{56}
+\contentsline {subsubsection}{Synopsis}{56}
+\contentsline {subsubsection}{Defaults}{56}
+\contentsline {subsection}{\numberline {4.2.21}intro\_off}{57}
+\contentsline {subsubsection}{Synopsis}{57}
+\contentsline {subsubsection}{Defaults}{57}
+\contentsline {subsection}{\numberline {4.2.22}intro\_on}{58}
+\contentsline {subsubsection}{Synopsis}{58}
+\contentsline {subsubsection}{Defaults}{58}
+\contentsline {subsection}{\numberline {4.2.23}jw\_mapping.set\_frq}{59}
+\contentsline {subsubsection}{Synopsis}{59}
+\contentsline {subsubsection}{Defaults}{59}
+\contentsline {subsubsection}{Keyword Arguments}{59}
+\contentsline {subsubsection}{Description}{59}
+\contentsline {subsubsection}{Examples}{59}
+\contentsline {subsection}{\numberline {4.2.24}minimise}{60}
+\contentsline {subsubsection}{Synopsis}{60}
+\contentsline {subsubsection}{Defaults}{60}
+\contentsline {subsubsection}{Arguments}{60}
+\contentsline {subsubsection}{Keyword Arguments}{60}
+\contentsline {subsubsection}{Diagonal scaling}{61}
+\contentsline {subsubsection}{Examples}{61}
+\contentsline {subsubsection}{Note}{61}
+\contentsline {subsubsection}{Keyword Arguments}{62}
+\contentsline {subsubsection}{Minimisation output}{63}
+\contentsline {subsubsection}{Minimisation algorithms}{63}
+\contentsline {subsubsection}{Minimisation options}{65}
+\contentsline {subsection}{\numberline {4.2.25}model\_free.copy}{67}
+\contentsline {subsubsection}{Synopsis}{67}
+\contentsline {subsubsection}{Defaults}{67}
+\contentsline {subsubsection}{Keyword Arguments}{67}
+\contentsline {subsubsection}{Description}{67}
+\contentsline {subsubsection}{Examples}{67}
+\contentsline {subsection}{\numberline {4.2.26}model\_free.create\_model}{68}
+\contentsline {subsubsection}{Synopsis}{68}
+\contentsline {subsubsection}{Defaults}{68}
+\contentsline {subsubsection}{Keyword Arguments}{68}
+\contentsline {subsubsection}{Model-free equation}{68}
+\contentsline {subsubsection}{Model-free parameters}{68}
+\contentsline {subsubsection}{Residue number}{69}
+\contentsline {subsubsection}{Examples}{69}
+\contentsline {subsection}{\numberline {4.2.27}model\_free.delete}{70}
+\contentsline {subsubsection}{Synopsis}{70}
+\contentsline {subsubsection}{Defaults}{70}
+\contentsline {subsubsection}{Keyword Arguments}{70}
+\contentsline {subsubsection}{Examples}{70}
+\contentsline {subsection}{\numberline {4.2.28}model\_free.remove\_tm}{71}
+\contentsline {subsubsection}{Synopsis}{71}
+\contentsline {subsubsection}{Defaults}{71}
+\contentsline {subsubsection}{Keyword Arguments}{71}
+\contentsline {subsubsection}{Description}{71}
+\contentsline {subsubsection}{Examples}{71}
+\contentsline {subsection}{\numberline {4.2.29}model\_free.select\_model}{72}
+\contentsline {subsubsection}{Synopsis}{72}
+\contentsline {subsubsection}{Defaults}{72}
+\contentsline {subsubsection}{Keyword Arguments}{72}
+\contentsline {subsubsection}{The preset models}{72}
+\contentsline {subsubsection}{Residue number}{75}
+\contentsline {subsubsection}{Examples}{75}
+\contentsline {subsection}{\numberline {4.2.30}model\_selection}{76}
+\contentsline {subsubsection}{Synopsis}{76}
+\contentsline {subsubsection}{Defaults}{76}
+\contentsline {subsubsection}{Keyword arguments}{76}
+\contentsline {subsubsection}{Description}{76}
+\contentsline {subsubsection}{Example}{77}
+\contentsline {subsection}{\numberline {4.2.31}molmol.clear\_history}{78}
+\contentsline {subsubsection}{Synopsis}{78}
+\contentsline {subsubsection}{Defaults}{78}
+\contentsline {subsection}{\numberline {4.2.32}molmol.command}{79}
+\contentsline {subsubsection}{Synopsis}{79}
+\contentsline {subsubsection}{Defaults}{79}
+\contentsline {subsubsection}{Example}{79}
+\contentsline {subsection}{\numberline {4.2.33}molmol.view}{80}
+\contentsline {subsubsection}{Synopsis}{80}
+\contentsline {subsubsection}{Defaults}{80}
+\contentsline {subsubsection}{Keyword Arguments}{80}
+\contentsline {subsubsection}{Example}{80}
+\contentsline {subsection}{\numberline {4.2.34}monte\_carlo.create\_data}{81}
+\contentsline {subsubsection}{Synopsis}{81}
+\contentsline {subsubsection}{Defaults}{81}
+\contentsline {subsubsection}{Keyword Arguments}{81}
+\contentsline {subsubsection}{Description}{81}
+\contentsline {subsubsection}{Monte Carlo Simulation Overview}{81}
+\contentsline {subsection}{\numberline {4.2.35}monte\_carlo.error\_analysis}{84}
+\contentsline {subsubsection}{Synopsis}{84}
+\contentsline {subsubsection}{Defaults}{84}
+\contentsline {subsubsection}{Keyword Arguments}{84}
+\contentsline {subsubsection}{Description}{84}
+\contentsline {subsubsection}{Monte Carlo Simulation Overview}{84}
+\contentsline {subsection}{\numberline {4.2.36}monte\_carlo.initial\_values}{87}
+\contentsline {subsubsection}{Synopsis}{87}
+\contentsline {subsubsection}{Defaults}{87}
+\contentsline {subsubsection}{Keyword Arguments}{87}
+\contentsline {subsubsection}{Description}{87}
+\contentsline {subsubsection}{Monte Carlo Simulation Overview}{87}
+\contentsline {subsection}{\numberline {4.2.37}monte\_carlo.off}{89}
+\contentsline {subsubsection}{Synopsis}{89}
+\contentsline {subsubsection}{Defaults}{89}
+\contentsline {subsubsection}{Keyword Arguments}{89}
+\contentsline {subsubsection}{Monte Carlo Simulation Overview}{89}
+\contentsline {subsection}{\numberline {4.2.38}monte\_carlo.on}{91}
+\contentsline {subsubsection}{Synopsis}{91}
+\contentsline {subsubsection}{Defaults}{91}
+\contentsline {subsubsection}{Keyword Arguments}{91}
+\contentsline {subsubsection}{Monte Carlo Simulation Overview}{91}
+\contentsline {subsection}{\numberline {4.2.39}monte\_carlo.setup}{93}
+\contentsline {subsubsection}{Synopsis}{93}
+\contentsline {subsubsection}{Defaults}{93}
+\contentsline {subsubsection}{Keyword Arguments}{93}
+\contentsline {subsubsection}{Description}{93}
+\contentsline {subsubsection}{Monte Carlo Simulation Overview}{93}
+\contentsline {subsection}{\numberline {4.2.40}noe.error}{95}
+\contentsline {subsubsection}{Synopsis}{95}
+\contentsline {subsubsection}{Defaults}{95}
+\contentsline {subsubsection}{Keyword Arguments}{95}
+\contentsline {subsubsection}{Description}{95}
+\contentsline {subsection}{\numberline {4.2.41}noe.read}{96}
+\contentsline {subsubsection}{Synopsis}{96}
+\contentsline {subsubsection}{Defaults}{96}
+\contentsline {subsubsection}{Keyword Arguments}{96}
+\contentsline {subsubsection}{Description}{96}
+\contentsline {subsubsection}{Examples}{97}
+\contentsline {subsection}{\numberline {4.2.42}nuclei}{98}
+\contentsline {subsubsection}{Synopsis}{98}
+\contentsline {subsubsection}{Defaults}{98}
+\contentsline {subsubsection}{Keyword arguments}{98}
+\contentsline {subsubsection}{Description}{98}
+\contentsline {subsection}{\numberline {4.2.43}palmer.create}{99}
+\contentsline {subsubsection}{Synopsis}{99}
+\contentsline {subsubsection}{Defaults}{99}
+\contentsline {subsubsection}{Keyword Arguments}{99}
+\contentsline {subsubsection}{Description}{99}
+\contentsline {subsection}{\numberline {4.2.44}palmer.execute}{101}
+\contentsline {subsubsection}{Synopsis}{101}
+\contentsline {subsubsection}{Defaults}{101}
+\contentsline {subsubsection}{Keyword Arguments}{101}
+\contentsline {subsubsection}{Description}{101}
+\contentsline {subsection}{\numberline {4.2.45}palmer.extract}{102}
+\contentsline {subsubsection}{Synopsis}{102}
+\contentsline {subsubsection}{Defaults}{102}
+\contentsline {subsubsection}{Keyword Arguments}{102}
+\contentsline {subsection}{\numberline {4.2.46}pdb}{103}
+\contentsline {subsubsection}{Synopsis}{103}
+\contentsline {subsubsection}{Defaults}{103}
+\contentsline {subsubsection}{Keyword Arguments}{103}
+\contentsline {subsubsection}{Description}{103}
+\contentsline {subsubsection}{Example}{103}
+\contentsline {subsection}{\numberline {4.2.47}relax\_data.back\_calc}{105}
+\contentsline {subsubsection}{Synopsis}{105}
+\contentsline {subsubsection}{Defaults}{105}
+\contentsline {subsubsection}{Keyword Arguments}{105}
+\contentsline {subsection}{\numberline {4.2.48}relax\_data.copy}{106}
+\contentsline {subsubsection}{Synopsis}{106}
+\contentsline {subsubsection}{Defaults}{106}
+\contentsline {subsubsection}{Keyword Arguments}{106}
+\contentsline {subsubsection}{Description}{106}
+\contentsline {subsubsection}{Examples}{106}
+\contentsline {subsection}{\numberline {4.2.49}relax\_data.delete}{107}
+\contentsline {subsubsection}{Synopsis}{107}
+\contentsline {subsubsection}{Defaults}{107}
+\contentsline {subsubsection}{Keyword Arguments}{107}
+\contentsline {subsubsection}{Examples}{107}
+\contentsline {subsection}{\numberline {4.2.50}relax\_data.display}{108}
+\contentsline {subsubsection}{Synopsis}{108}
+\contentsline {subsubsection}{Defaults}{108}
+\contentsline {subsubsection}{Keyword Arguments}{108}
+\contentsline {subsubsection}{Examples}{108}
+\contentsline {subsection}{\numberline {4.2.51}relax\_data.read}{109}
+\contentsline {subsubsection}{Synopsis}{109}
+\contentsline {subsubsection}{Defaults}{109}
+\contentsline {subsubsection}{Keyword Arguments}{109}
+\contentsline {subsubsection}{Description}{109}
+\contentsline {subsubsection}{Examples}{109}
+\contentsline {subsection}{\numberline {4.2.52}relax\_data.write}{111}
+\contentsline {subsubsection}{Synopsis}{111}
+\contentsline {subsubsection}{Defaults}{111}
+\contentsline {subsubsection}{Keyword Arguments}{111}
+\contentsline {subsubsection}{Description}{111}
+\contentsline {subsection}{\numberline {4.2.53}relax\_fit.read}{112}
+\contentsline {subsubsection}{Synopsis}{112}
+\contentsline {subsubsection}{Defaults}{112}
+\contentsline {subsubsection}{Keyword Arguments}{112}
+\contentsline {subsubsection}{Description}{112}
+\contentsline {subsection}{\numberline {4.2.54}relax\_fit.select\_model}{114}
+\contentsline {subsubsection}{Synopsis}{114}
+\contentsline {subsubsection}{Defaults}{114}
+\contentsline {subsubsection}{Keyword Arguments}{114}
+\contentsline {subsubsection}{The preset models}{114}
+\contentsline {subsection}{\numberline {4.2.55}results.display}{115}
+\contentsline {subsubsection}{Synopsis}{115}
+\contentsline {subsubsection}{Defaults}{115}
+\contentsline {subsubsection}{Keyword Arguments}{115}
+\contentsline {subsection}{\numberline {4.2.56}results.read}{116}
+\contentsline {subsubsection}{Synopsis}{116}
+\contentsline {subsubsection}{Defaults}{116}
+\contentsline {subsubsection}{Keyword Arguments}{116}
+\contentsline {subsubsection}{Description}{116}
+\contentsline {subsection}{\numberline {4.2.57}results.write}{117}
+\contentsline {subsubsection}{Synopsis}{117}
+\contentsline {subsubsection}{Defaults}{117}
+\contentsline {subsubsection}{Keyword Arguments}{117}
+\contentsline {subsubsection}{Description}{117}
+\contentsline {subsection}{\numberline {4.2.58}run.create}{118}
+\contentsline {subsubsection}{Synopsis}{118}
+\contentsline {subsubsection}{Defaults}{118}
+\contentsline {subsubsection}{Keyword Arguments}{118}
+\contentsline {subsubsection}{Description}{118}
+\contentsline {subsubsection}{Examples}{118}
+\contentsline {subsection}{\numberline {4.2.59}run.delete}{119}
+\contentsline {subsubsection}{Synopsis}{119}
+\contentsline {subsubsection}{Defaults}{119}
+\contentsline {subsubsection}{Keyword Arguments}{119}
+\contentsline {subsubsection}{Description}{119}
+\contentsline {subsection}{\numberline {4.2.60}select.all}{120}
+\contentsline {subsubsection}{Synopsis}{120}
+\contentsline {subsubsection}{Defaults}{120}
+\contentsline {subsubsection}{Keyword Arguments}{120}
+\contentsline {subsubsection}{Examples}{120}
+\contentsline {subsection}{\numberline {4.2.61}select.read}{121}
+\contentsline {subsubsection}{Synopsis}{121}
+\contentsline {subsubsection}{Defaults}{121}
+\contentsline {subsubsection}{Keyword Arguments}{121}
+\contentsline {subsubsection}{Description}{121}
+\contentsline {subsubsection}{Examples}{121}
+\contentsline {subsection}{\numberline {4.2.62}select.res}{122}
+\contentsline {subsubsection}{Synopsis}{122}
+\contentsline {subsubsection}{Defaults}{122}
+\contentsline {subsubsection}{Keyword Arguments}{122}
+\contentsline {subsubsection}{Description}{122}
+\contentsline {subsubsection}{Examples}{122}
+\contentsline {subsection}{\numberline {4.2.63}select.reverse}{123}
+\contentsline {subsubsection}{Synopsis}{123}
+\contentsline {subsubsection}{Defaults}{123}
+\contentsline {subsubsection}{Keyword Arguments}{123}
+\contentsline {subsubsection}{Examples}{123}
+\contentsline {subsection}{\numberline {4.2.64}sequence.add}{124}
+\contentsline {subsubsection}{Synopsis}{124}
+\contentsline {subsubsection}{Defaults}{124}
+\contentsline {subsubsection}{Keyword Arguments}{124}
+\contentsline {subsubsection}{Description}{124}
+\contentsline {subsubsection}{Examples}{124}
+\contentsline {subsection}{\numberline {4.2.65}sequence.copy}{125}
+\contentsline {subsubsection}{Synopsis}{125}
+\contentsline {subsubsection}{Defaults}{125}
+\contentsline {subsubsection}{Keyword Arguments}{125}
+\contentsline {subsubsection}{Description}{125}
+\contentsline {subsubsection}{Examples}{125}
+\contentsline {subsection}{\numberline {4.2.66}sequence.delete}{126}
+\contentsline {subsubsection}{Synopsis}{126}
+\contentsline {subsubsection}{Defaults}{126}
+\contentsline {subsubsection}{Keyword Arguments}{126}
+\contentsline {subsubsection}{Description}{126}
+\contentsline {subsection}{\numberline {4.2.67}sequence.display}{127}
+\contentsline {subsubsection}{Synopsis}{127}
+\contentsline {subsubsection}{Defaults}{127}
+\contentsline {subsubsection}{Keyword Arguments}{127}
+\contentsline {subsection}{\numberline {4.2.68}sequence.read}{128}
+\contentsline {subsubsection}{Synopsis}{128}
+\contentsline {subsubsection}{Defaults}{128}
+\contentsline {subsubsection}{Keyword Arguments}{128}
+\contentsline {subsubsection}{Description}{128}
+\contentsline {subsubsection}{Examples}{128}
+\contentsline {subsection}{\numberline {4.2.69}sequence.sort}{130}
+\contentsline {subsubsection}{Synopsis}{130}
+\contentsline {subsubsection}{Defaults}{130}
+\contentsline {subsubsection}{Keyword Arguments}{130}
+\contentsline {subsection}{\numberline {4.2.70}sequence.write}{131}
+\contentsline {subsubsection}{Synopsis}{131}
+\contentsline {subsubsection}{Defaults}{131}
+\contentsline {subsubsection}{Keyword Arguments}{131}
+\contentsline {subsubsection}{Description}{131}
+\contentsline {subsection}{\numberline {4.2.71}state.load}{132}
+\contentsline {subsubsection}{Synopsis}{132}
+\contentsline {subsubsection}{Defaults}{132}
+\contentsline {subsubsection}{Keyword Arguments}{132}
+\contentsline {subsubsection}{Description}{132}
+\contentsline {subsubsection}{Examples}{132}
+\contentsline {subsection}{\numberline {4.2.72}state.save}{133}
+\contentsline {subsubsection}{Synopsis}{133}
+\contentsline {subsubsection}{Defaults}{133}
+\contentsline {subsubsection}{Keyword Arguments}{133}
+\contentsline {subsubsection}{Description}{133}
+\contentsline {subsubsection}{Examples}{133}
+\contentsline {subsection}{\numberline {4.2.73}system}{135}
+\contentsline {subsubsection}{Synopsis}{135}
+\contentsline {subsubsection}{Defaults}{135}
+\contentsline {subsection}{\numberline {4.2.74}thread.read}{136}
+\contentsline {subsubsection}{Synopsis}{136}
+\contentsline {subsubsection}{Defaults}{136}
+\contentsline {subsubsection}{Keyword Arguments}{136}
+\contentsline {subsubsection}{Description}{136}
+\contentsline {subsubsection}{SSH Public Key Authentication}{137}
+\contentsline {subsection}{\numberline {4.2.75}unselect.all}{139}
+\contentsline {subsubsection}{Synopsis}{139}
+\contentsline {subsubsection}{Defaults}{139}
+\contentsline {subsubsection}{Keyword Arguments}{139}
+\contentsline {subsubsection}{Examples}{139}
+\contentsline {subsection}{\numberline {4.2.76}unselect.read}{140}
+\contentsline {subsubsection}{Synopsis}{140}
+\contentsline {subsubsection}{Defaults}{140}
+\contentsline {subsubsection}{Keyword Arguments}{140}
+\contentsline {subsubsection}{Description}{140}
+\contentsline {subsubsection}{Examples}{140}
+\contentsline {subsection}{\numberline {4.2.77}unselect.res}{141}
+\contentsline {subsubsection}{Synopsis}{141}
+\contentsline {subsubsection}{Defaults}{141}
+\contentsline {subsubsection}{Keyword Arguments}{141}
+\contentsline {subsubsection}{Description}{141}
+\contentsline {subsubsection}{Examples}{141}
+\contentsline {subsection}{\numberline {4.2.78}unselect.reverse}{142}
+\contentsline {subsubsection}{Synopsis}{142}
+\contentsline {subsubsection}{Defaults}{142}
+\contentsline {subsubsection}{Keyword Arguments}{142}
+\contentsline {subsubsection}{Examples}{142}
+\contentsline {subsection}{\numberline {4.2.79}value.copy}{143}
+\contentsline {subsubsection}{Synopsis}{143}
+\contentsline {subsubsection}{Defaults}{143}
+\contentsline {subsubsection}{Keyword Arguments}{143}
+\contentsline {subsubsection}{Description}{143}
+\contentsline {subsubsection}{Examples}{143}
+\contentsline {subsubsection}{Regular expression}{143}
+\contentsline {subsubsection}{Model-free set details}{144}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{145}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{145}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{145}
+\contentsline {subsection}{\numberline {4.2.80}value.display}{146}
+\contentsline {subsubsection}{Synopsis}{146}
+\contentsline {subsubsection}{Defaults}{146}
+\contentsline {subsubsection}{Keyword Arguments}{146}
+\contentsline {subsubsection}{Description}{146}
+\contentsline {subsubsection}{Examples}{146}
+\contentsline {subsubsection}{Regular expression}{146}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{147}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{147}
+\contentsline {subsection}{\numberline {4.2.81}value.read}{148}
+\contentsline {subsubsection}{Synopsis}{148}
+\contentsline {subsubsection}{Defaults}{148}
+\contentsline {subsubsection}{Keyword Arguments}{148}
+\contentsline {subsubsection}{Description}{148}
+\contentsline {subsubsection}{Examples}{148}
+\contentsline {subsubsection}{Regular expression}{149}
+\contentsline {subsubsection}{Model-free set details}{149}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{150}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{150}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{150}
+\contentsline {subsection}{\numberline {4.2.82}value.set}{151}
+\contentsline {subsubsection}{Synopsis}{151}
+\contentsline {subsubsection}{Defaults}{151}
+\contentsline {subsubsection}{Keyword arguments}{151}
+\contentsline {subsubsection}{Description}{151}
+\contentsline {subsubsection}{Residue number and name argument}{152}
+\contentsline {subsubsection}{Examples}{152}
+\contentsline {subsubsection}{Regular expression}{153}
+\contentsline {subsubsection}{Model-free set details}{154}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{154}
+\contentsline {subsubsection}{Model-free default values}{155}
+\contentsline {subsubsection}{Reduced spectral density mapping set details}{155}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{155}
+\contentsline {subsubsection}{Reduced spectral density mapping default values}{155}
+\contentsline {subsubsection}{Diffusion tensor set details}{156}
+\contentsline {subsubsection}{Diffusion tensor parameter string matching patterns}{157}
+\contentsline {subsubsection}{Diffusion tensor parameter default values}{158}
+\contentsline {subsection}{\numberline {4.2.83}value.write}{159}
+\contentsline {subsubsection}{Synopsis}{159}
+\contentsline {subsubsection}{Defaults}{159}
+\contentsline {subsubsection}{Keyword Arguments}{159}
+\contentsline {subsubsection}{Description}{159}
+\contentsline {subsubsection}{Examples}{159}
+\contentsline {subsubsection}{Regular expression}{160}
+\contentsline {subsubsection}{Model-free data type string matching patterns}{161}
+\contentsline {subsubsection}{Reduced spectral density mapping data type string matching patterns}{161}
+\contentsline {subsubsection}{NOE calculation data type string matching patterns}{161}
+\contentsline {subsection}{\numberline {4.2.84}vmd.view}{162}
+\contentsline {subsubsection}{Synopsis}{162}
+\contentsline {subsubsection}{Defaults}{162}
+\contentsline {subsubsection}{Keyword Arguments}{162}
+\contentsline {subsubsection}{Example}{162}
+\contentsline {chapter}{\numberline {5}Licence}{163}
+\contentsline {section}{\numberline {5.1}Copying, modification, sublicencing, and distribution of relax}{163}
+\contentsline {section}{\numberline {5.2}The GPL}{163}

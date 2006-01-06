@@ -451,6 +451,8 @@ class Relax_fit:
 
             # Loop over the time points.
             for j in xrange(len(data.relax_times)):
+                pass
+
 
     def model_setup(self, model, params):
         """Function for updating various data structures dependant on the model selected."""
