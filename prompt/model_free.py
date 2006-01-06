@@ -430,7 +430,8 @@ class Model_free:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.select_model("
             text = text + "run=" + `run`
-            text = text + ", model=" + `model` + ")"
+            text = text + ", model=" + `model`
+            text = text + ", res_num=" + `res_num` + ")"
             print text
 
         # Run argument.

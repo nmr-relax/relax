@@ -38,45 +38,6 @@ class Relax_fit:
         self.__relax__ = relax
 
 
-    def curve_type(self, run=None, fit_type='exp'):
-        """Function for setting the relaxation curve type.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        fit_type:  The type of relaxation curve to fit.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The supported relaxation experiments include the default two parameter exponential fit,
-        selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion
-        recovery experiment in which the peak intensity limit is a non-zero value, selected by
-        setting the argument to 'inv'.
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.curve_type("
-            text = text + "run=" + `run`
-            text = text + ", fit_type=" + `fit_type`
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # The fit type.
-        if type(fit_type) != str:
-            raise RelaxStrError, ('fit type', fit_type)
-
-        # Execute the functional code.
-        self.__relax__.specific.relax_fit.curve_type(run=run, fit_type=fit_type)
-
-
     def read(self, run=None, file=None, dir=None, relax_time=0.0, format='sparky', heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file.
 
@@ -179,3 +140,46 @@ class Relax_fit:
 
         # Execute the functional code.
         self.__relax__.specific.relax_fit.read(run=run, file=file, dir=dir, relax_time=relax_time, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
+
+
+    def select_model(self, run=None, model='exp'):
+        """Function for the selection of the relaxation curve type.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        model:  The type of relaxation curve to fit.
+
+
+        The preset models
+        ~~~~~~~~~~~~~~~~~
+
+        The supported relaxation experiments include the default two parameter exponential fit,
+        selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion
+        recovery experiment in which the peak intensity limit is a non-zero value, selected by
+        setting the argument to 'inv'.
+
+        The parameters of these two models are
+            'exp': [Rx, I0],
+            'inv': [Rx, I0, Iinf].
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_fit.select_model("
+            text = text + "run=" + `run`
+            text = text + ", model=" + `model`
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # The model argument.
+        if type(model) != str:
+            raise RelaxStrError, ('model', model)
+
+        # Execute the functional code.
+        self.__relax__.specific.relax_fit.select_model(run=run, model=model)

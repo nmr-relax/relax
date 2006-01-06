@@ -778,9 +778,7 @@ class Model_free(Common_functions):
             # Data structures which are initially empty arrays.
             list_data = [ 'params' ]
             if name in list_data:
-                # If the name is not in 'data', add it.
-                if not hasattr(data, name):
-                    setattr(data, name, [])
+                init_data = []
 
             # Data structures which are initially None.
             none_data = [ 'equation',
@@ -802,9 +800,11 @@ class Model_free(Common_functions):
                           'h_count',
                           'warning' ]
             if name in none_data:
-                # If the name is not in 'data', add it.
-                if not hasattr(data, name):
-                    setattr(data, name, None)
+                init_data = None
+
+            # If the name is not in 'data', add it.
+            if not hasattr(data, name):
+                setattr(data, name, init_data)
 
 
     def data_names(self, set='all'):
@@ -815,7 +815,7 @@ class Model_free(Common_functions):
 
         The names are as follows:
 
-        model: The model-free model name.
+        model:  The model-free model name.
 
         equation:  The model-free equation type.
 
@@ -1997,6 +1997,10 @@ class Model_free(Common_functions):
         # Arguments.
         self.run = run
         self.print_flag = print_flag
+
+        # Test if the sequence data for self.run is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
 
         # Test if the model-free model has been setup.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -3989,7 +3993,7 @@ class Model_free(Common_functions):
             equation = 'mf_orig'
             params = ['tm', 'r', 'CSA', 'Rex']
 
-        # Invalid models.
+        # Invalid model.
         else:
             raise RelaxError, "The model '" + model + "' is invalid."
 

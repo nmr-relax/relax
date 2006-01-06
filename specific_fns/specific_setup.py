@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -325,6 +325,10 @@ class Specific_setup:
         # Grid search function.
         if self.eqi == 'grid_search':
             return self.relax.specific.relax_fit.grid_search
+
+        # Minimise function.
+        if self.eqi == 'minimise':
+            return self.relax.specific.relax_fit.minimise
 
         # Value and error returning function.
         if self.eqi == 'return_value':
