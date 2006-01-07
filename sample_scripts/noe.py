@@ -10,8 +10,6 @@ pdb(name, 'Ap4Aase_new_3.pdb', load_seq=1)
 # Load the reference spectrum and saturated spectrum peak intensities.
 noe.read(name, file='ref.list', spectrum_type='ref')
 noe.read(name, file='sat.list', spectrum_type='sat')
-#noe.read(name, file='ref.text', spectrum_type='ref', format='xeasy')
-#noe.read(name, file='sat.text', spectrum_type='sat', format='xeasy')
 
 # Set the errors.
 noe.error(name, error=3600, spectrum_type='ref')

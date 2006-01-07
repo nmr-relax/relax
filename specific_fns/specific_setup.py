@@ -310,9 +310,21 @@ class Specific_setup:
         if self.eqi == 'read_columnar_results':
             return self.relax.specific.noe.read_columnar_results
 
+        # Factor of conversion between different parameter units returning function.
+        if self.eqi == 'return_conversion_factor':
+            return self.relax.specific.noe.return_conversion_factor
+
+        # Grace string returning function.
+        if self.eqi == 'return_grace_string':
+            return self.relax.specific.noe.return_grace_string
+
         # Value and error returning function.
         if self.eqi == 'return_value':
             return self.relax.specific.noe.return_value
+
+        # String of the external parameter units returning function.
+        if self.eqi == 'return_units':
+            return self.relax.specific.noe.return_units
 
         # Write results function (Columnar format).
         if self.eqi == 'write_columnar_results':

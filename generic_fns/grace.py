@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -303,7 +303,7 @@ class Grace:
 
         # X-axis label.
         if self.x_data_type == 'res':
-            self.file.write("@    xaxis  label \"Residue number\"")
+            self.file.write("@    xaxis  label \"Residue number\"\n")
         else:
             # Get the units.
             units = self.x_return_units(self.x_data_type)
@@ -341,8 +341,8 @@ class Grace:
         self.file.write("@    frame linewidth 0.5\n")
 
         # Symbols.
-        self.file.write("@    s0 symbol 9\n")
-        self.file.write("@    s0 symbol size 1.00\n")
+        self.file.write("@    s0 symbol 1\n")
+        self.file.write("@    s0 symbol size 0.45\n")
         self.file.write("@    s0 symbol fill pattern 1\n")
         self.file.write("@    s0 symbol linewidth 0.5\n")
         self.file.write("@    s0 line linestyle 0\n")
