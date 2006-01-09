@@ -1,7 +1,0 @@
-#! /bin/sh
-
-rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
-rm -f *.o */*.o */*/*.o */*/*/*.o
-rm -f *.so */*.so */*/*.so */*/*/*.so
-rm -f *_wrap.[co] */*_wrap.[co] */*/*_wrap.[co] */*/*/*_wrap.[co]

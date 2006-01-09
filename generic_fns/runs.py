@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -43,6 +43,10 @@ class Runs:
         # Test if run_type is valid.
         if not run_type in valid:
             raise RelaxError, "The run type name " + `run_type` + " is invalid and must be one of the strings in the list " + `valid` + "."
+
+        # Test that the C modules have been loaded.
+        if run_type == 'relax_fit' and not C_module_exp_fn:
+            raise RelaxError, "Relaxation curve fitting is not availible.  Try compiling the C modules on your platform."
 
         # Add the run and type.
         self.relax.data.run_names.append(run)

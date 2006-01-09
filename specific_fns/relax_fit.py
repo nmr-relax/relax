@@ -20,12 +20,27 @@
 #                                                                             #
 ###############################################################################
 
+import __builtin__
 from LinearAlgebra import inverse
+from math import sqrt
 from Numeric import Float64, array, average, identity, matrixmultiply, zeros
 from re import match, search
+import sys
+
+from base_class import Common_functions
+from minimise.generic import generic_minimise
+
+# C modules.
+try:
+    from maths_fns.exp_fn import exponential_fn, exponential_test_fn
+except ImportError:
+    sys.stderr.write("\nImportError: relaxation curve fitting is unavailible, try compiling the C modules.\n")
+    __builtin__.C_module_exp_fn = 0
+else:
+    __builtin__.C_module_exp_fn = 1
 
 
-class Relax_fit:
+class Relax_fit(Common_functions):
     def __init__(self, relax):
         """Class containing functions for relaxation data."""
 
@@ -90,7 +105,7 @@ class Relax_fit:
         # Alias the residue specific data structure.
         data = self.relax.data.res[self.run][index]
 
-        # Loop over the model-free parameters.
+        # Loop over the parameters.
         for i in xrange(len(data.params)):
             # Relaxation rate.
             if data.params[i] == 'Rx':
@@ -99,7 +114,7 @@ class Relax_fit:
             # Intensity scaling.
             elif search('^i', data.params[i]):
                 # Find the position of the first time point.
-                pos = data.relax_times.index(min(data.relax_times))
+                pos = self.relax.data.relax_times[self.run].index(min(self.relax.data.relax_times[self.run]))
 
                 # Scaling.
                 self.scaling_matrix[i, i] = 1.0 / average(data.intensities[pos])
@@ -118,21 +133,133 @@ class Relax_fit:
         index = None
         if not hasattr(data, 'intensities'):
             data.intensities = []
-            data.relax_times = []
 
         # Determine if the relaxation time already exists for the residue (duplicated spectra).
-        for i in xrange(len(data.relax_times)):
-            if self.relax_time == data.relax_times[i]:
+        for i in xrange(len(self.relax.data.relax_times[self.run])):
+            if self.relax_time == self.relax.data.relax_times[self.run][i]:
                 index = i
 
         # A new relaxation time has been encountered.
-        if index == None:
+        if index >= len(data.intensities):
             data.intensities.append([intensity])
-            data.relax_times.append(self.relax_time)
 
         # Duplicated spectra.
         else:
             data.intensities[index].append(intensity)
+
+
+    def ave_and_sd(self):
+        """Function for calculating the average intensity and standard deviation of all spectra."""
+
+        # Test if the standard deviation is already calculated.
+        if hasattr(self.relax.data, 'sd'):
+            raise RelaxError, "The average intensity and standard deviation of all spectra has already been calculated."
+
+        # Print out.
+        if self.print_flag >= 1:
+            print "\nCalculating the average intensity and standard deviation of all spectra."
+
+        # Initialise.
+        self.relax.data.sd = {}
+        self.relax.data.sd[self.run] = 0.0
+        num_error_sets = 0
+
+        # Loop over the time points.
+        for time_index in xrange(len(self.relax.data.relax_times[self.run])):
+            # Print out.
+            if self.print_flag >= 1:
+                print "\nTime point:  " + `self.relax.data.relax_times[self.run][time_index]` + " s"
+                print "Number of spectra:  " + `self.relax.data.num_spectra[self.run][time_index]`
+                if self.print_flag >= 2:
+                    print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
+
+            # Initialise the time point and residue specific sd.
+            total_res = 0
+            total_sd = 0.0
+
+            # Test for multiple spectra.
+            if self.relax.data.num_spectra[self.run][time_index] == 1:
+                multiple_spectra = 0
+            else:
+                multiple_spectra = 1
+
+            # Calculate the mean value.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Alias the residue specific data structure.
+                data = self.relax.data.res[self.run][i]
+
+                # Skip unselected residues.
+                if not data.select:
+                    continue
+
+                # Skip residues which have no data.
+                if not hasattr(data, 'intensities'):
+                    continue
+
+                # Initialise the average intensity and standard deviation data structures.
+                if not hasattr(data, 'ave_intensities'):
+                    data.ave_intensities = []
+                if not hasattr(data, 'sd'):
+                    data.sd = []
+
+                # Average intensity.
+                data.ave_intensities.append(average(data.intensities[time_index]))
+
+                # Skip the time point if only a single spectrum exists.
+                if not multiple_spectra:
+                    data.sd.append(0.0)
+                    continue
+
+                # Sum of squared errors.
+                SSE = 0.0
+                for j in xrange(self.relax.data.num_spectra[self.run][time_index]):
+                    SSE = SSE + (data.intensities[time_index][j] - data.ave_intensities[time_index]) ** 2
+
+                # Standard deviation.
+                #                  ____________________________
+                #                 /   1
+                #                /  ----- * sum({Xi - Xav}^2)]
+                #              \/   n - 1
+                #       sd =   --------------------------------
+                #                            ___
+                #                          \/ 2
+                #
+                sd = sqrt(0.5 * 1.0 / (self.relax.data.num_spectra[self.run][time_index] - 1.0) * SSE)
+                data.sd.append(sd)
+
+                # Print out.
+                if self.print_flag >= 2:
+                    print "%-5i%-6s%-20s%-20s" % (data.num, data.name, `data.ave_intensities[time_index]`, `data.sd[time_index]`)
+
+                # Sum of standard deviations (for average).
+                total_sd = total_sd + data.sd[time_index]
+
+                # Increment the number of residues counter.
+                total_res = total_res + 1
+
+            # Skip the rest if there is only a single spectrum for the time point.
+            if not multiple_spectra:
+                continue
+
+            # Average the sd.
+            total_sd = total_sd / float(total_res)
+
+            # Print out.
+            if self.print_flag >= 1:
+                print "Average sd:  " + `total_sd`
+
+            # Sum the standard deviation of all peaks for the time point (to be averaged at the end).
+            self.relax.data.sd[self.run] = self.relax.data.sd[self.run] + total_sd
+
+            # Increment the number of error sets.
+            num_error_sets = num_error_sets + 1
+
+        # Average standard deviation for all replicated spectra.
+        self.relax.data.sd[self.run] = self.relax.data.sd[self.run] / float(num_error_sets)
+
+        # Print out.
+        if self.print_flag >= 1:
+            print "\nSd averaged over all spectra:  " + `self.relax.data.sd[self.run]`
 
 
     def data_init(self):
@@ -178,7 +305,7 @@ class Relax_fit:
 
         The names are as follows:
 
-        params:  An array of the model-free parameter names associated with the model.
+        params:  An array of the parameter names associated with the model.
 
         rx:  Either the R1 or R2 relaxation rate.
 
@@ -222,6 +349,41 @@ class Relax_fit:
             names.append('warning')
 
         return names
+
+
+    def default_value(self, param):
+        """
+        Relaxation curve fitting default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        These values are completely arbitrary as peak heights (or volumes) are extremely variable
+        and the Rx value is a compensation for both the R1 and R2 values.
+        ___________________________________________________________________
+        |                        |               |                        |
+        | Data type              | Object name   | Value                  |
+        |________________________|_______________|________________________|
+        |                        |               |                        |
+        | Relaxation rate        | 'rx'          | 8.0                    |
+        |                        |               |                        |
+        | Initial intensity      | 'i0'          | 10000.0                |
+        |                        |               |                        |
+        | Intensity at infinity  | 'iinf'        | 0.0                    |
+        |                        |               |                        |
+        |________________________|_______________|________________________|
+
+        """
+
+        # Relaxation rate.
+        if param == 'rx':
+            return 8.0
+
+        # Initial intensity.
+        if param == 'i0':
+            return 10000.0
+
+        # Intensity at infinity.
+        if param == 'te':
+            return 0.0
 
 
     def grid_search(self, run, lower, upper, inc, constraints, print_flag, sim_index=None):
@@ -274,7 +436,7 @@ class Relax_fit:
         # Alias the residue specific data structure.
         data = self.relax.data.res[self.run][index]
 
-        # Loop over the model-free parameters.
+        # Loop over the parameters.
         for i in xrange(len(data.params)):
             # Relaxation rate (from 0 to 20 s^-1).
             if data.params[i] == 'Rx':
@@ -283,7 +445,7 @@ class Relax_fit:
             # Intensity
             elif search('^I', data.params[i]):
                 # Find the position of the first time point.
-                pos = data.relax_times.index(min(data.relax_times))
+                pos = self.relax.data.relax_times[self.run].index(min(self.relax.data.relax_times[self.run]))
 
                 # Scaling.
                 min_options.append([inc[j], 0.0, average(data.intensities[pos])])
@@ -357,7 +519,7 @@ class Relax_fit:
         # Alias the residue specific data structure.
         data = self.relax.data.res[self.run][index]
 
-        # Loop over the model-free parameters.
+        # Loop over the parameters.
         for k in xrange(len(data.params)):
             # Relaxation rate.
             if data.params[k] == 'Rx':
@@ -396,6 +558,9 @@ class Relax_fit:
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
+        # Calculate the average intensity and standard deviation.
+        self.ave_and_sd()
+
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Alias the residue specific data structure.
@@ -406,7 +571,7 @@ class Relax_fit:
                 continue
 
             # Skip residues which have no data.
-            if not hasattr(data, 'intensities') or not hasattr(data, 'relax_times'):
+            if not hasattr(data, 'intensities'):
                 continue
 
             # Create the initial parameter vector.
@@ -437,21 +602,13 @@ class Relax_fit:
                 if match('^[Gg]rid', min_algor):
                     print "Unconstrained grid search size: " + `self.grid_size` + " (constraints may decrease this size).\n"
 
-            # Initialise the iteration counter and function, gradient, and Hessian call counters.
-            self.iter_count = 0
-            self.f_count = 0
-            self.g_count = 0
-            self.h_count = 0
 
-            # Initialise the data structures for the model-free function.
-            ave_intensities = []
-            param_names = []
-            param_values = []
-            num_params = None
+            # Initialise the function to minimise.
+            ######################################
 
-            # Loop over the time points.
-            for j in xrange(len(data.relax_times)):
-                pass
+            print self.param_vector
+            exponential_fn(init_params=self.param_vector, scaling_matrix=self.scaling_matrix, name="Hello")
+            #exponential_test_fn(self.param_vector)
 
 
     def model_setup(self, model, params):
@@ -486,6 +643,36 @@ class Relax_fit:
 
         # Initialise the global data if necessary.
         self.data_init()
+
+        # Global relaxation time data structure.
+        if not hasattr(self.relax.data, 'relax_times'):
+            self.relax.data.relax_times = {}
+        if not self.relax.data.relax_times.has_key(self.run):
+            self.relax.data.relax_times[self.run] = []
+
+        # Number of spectra.
+        if not hasattr(self.relax.data, 'num_spectra'):
+            self.relax.data.num_spectra = {}
+        if not self.relax.data.num_spectra.has_key(self.run):
+            self.relax.data.num_spectra[self.run] = []
+
+        # Determine if the relaxation time already exists for the residue (duplicated spectra).
+        index = None
+        for i in xrange(len(self.relax.data.relax_times[self.run])):
+            if self.relax_time == self.relax.data.relax_times[self.run][i]:
+                index = i
+
+        # A new relaxation time.
+        if index == None:
+            # Add the time.
+            self.relax.data.relax_times[self.run].append(self.relax_time)
+
+            # First spectrum.
+            self.relax.data.num_spectra[self.run].append(1)
+
+        # Duplicated spectra.
+        else:
+            self.relax.data.num_spectra[self.run][index] = self.relax.data.num_spectra[self.run][index] + 1
 
         # Generic intensity function.
         self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
@@ -620,19 +807,31 @@ class Relax_fit:
         Relaxation curve fitting data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | rate                   | rate         | '^[Rr]ate$'                                      |
-        |________________________|______________|__________________________________________________|
+        ___________________________________________________________________
+        |                        |               |                        |
+        | Data type              | Object name   | Patterns               |
+        |________________________|_______________|________________________|
+        |                        |               |                        |
+        | Relaxation rate        | 'rx'          | '^[Rr]x$'              |
+        |                        |               |                        |
+        | Initial intensity      | 'i0'          | '^[Ii]0$'              |
+        |                        |               |                        |
+        | Intensity at infinity  | 'iinf'        | '^[Ii]inf$'            |
+        |________________________|_______________|________________________|
 
         """
 
-        # Rate.
-        if match('^[Rr]ate$', name):
-            return 'rate'
+        # Relaxation rate.
+        if match('^[Rr]x$', name):
+            return 'rx'
+
+        # Initial intensity.
+        if match('^[Ii]0$', name):
+            return 'i0'
+
+        # Intensity at infinity.
+        if match('^[Ii]inf$', name):
+            return 'iinf'
 
 
     def return_grace_string(self, data_type):
@@ -653,35 +852,6 @@ class Relax_fit:
         """Dummy function which returns None as the stats have no units."""
 
         return None
-
-
-    def return_value(self, run, i, data_type='noe'):
-        """Function for returning the NOE value and error."""
-
-        # Arguments.
-        self.run = run
-
-        # Alias the residue specific data structure.
-        data = self.relax.data.res[self.run][i]
-
-        # Get the object.
-        object_name = self.return_data_name(data_type)
-        if not object_name:
-            raise RelaxError, "The NOE calculation data type " + `data_type` + " does not exist."
-        object_error = object_name + "_err"
-
-        # Get the value.
-        value = None
-        if hasattr(data, object_name):
-            value = getattr(data, object_name)
-
-        # Get the error.
-        error = None
-        if hasattr(data, object_error):
-            error = getattr(data, object_error)
-
-        # Return the data.
-        return value, error
 
 
     def select_model(self, run=None, model='exp'):
@@ -719,6 +889,17 @@ class Relax_fit:
 
         # Set up the model.
         self.model_setup(model, params)
+
+
+    def set_doc(self):
+        """
+        Relaxation curve fitting set details
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and
+        the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen
+        model is that of the exponential curve which decays to zero.
+        """
 
 
     def set_error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):

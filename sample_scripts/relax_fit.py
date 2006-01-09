@@ -25,18 +25,24 @@ unselect.read(name, file='unresolved')
 # Set the relaxation curve type.
 relax_fit.select_model(name, 'exp')
 
+# Set the R2 rate to 10 s^-1.
+value.set(name, 10.0, 'rx')
+
+# Select only G4.
+select.res(name, num=4, change_all=1)
+
 # Grid search.
 state.save(file='save', force=1)
 grid_search(name, inc=21)
 
 # Minimise.
-minimise('simplex', run=name)
+#minimise('simplex', run=name)
 
 # Save the relaxation rates.
-value.write(name, param='r1', file='r1.out', force=1)
+#value.write(name, param='r1', file='r1.out', force=1)
 
 # Write the results.
-results.write(name, file='results', dir=None, force=1)
+#results.write(name, file='results', dir=None, force=1)
 
 # Save the program state.
-state.save(file='save', force=1)
+#state.save(file='save', force=1)

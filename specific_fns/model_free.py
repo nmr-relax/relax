@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -3660,56 +3660,6 @@ class Model_free(Common_functions):
             return 'ppm'
 
 
-    def return_value(self, run, i, param, sim=None):
-        """Function for returning the value and error corresponding to 'param'.
-
-        If sim is set to an integer, return the value of the simulation and None.
-        """
-
-        # Arguments.
-        self.run = run
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # The data type does not exist.
-        if not object_name:
-            raise RelaxError, "The model-free parameter " + `param` + " does not exist."
-
-        # The error and simulation names.
-        object_error = object_name + '_err'
-        object_sim = object_name + '_sim'
-
-        # Value and error.
-        if sim == None:
-            # Get the value.
-            if hasattr(self.relax.data.res[self.run][i], object_name):
-                value = getattr(self.relax.data.res[self.run][i], object_name)
-            else:
-                value = None
-
-            # Get the error.
-            if hasattr(self.relax.data.res[self.run][i], object_error):
-                error = getattr(self.relax.data.res[self.run][i], object_error)
-            else:
-                error = None
-
-            # Return the data.
-            return value, error
-
-        # Simulation value.
-        else:
-            # Get the value.
-            if hasattr(self.relax.data.res[self.run][i], object_sim):
-                object = getattr(self.relax.data.res[self.run][i], object_sim)
-                value = object[sim]
-            else:
-                value = None
-
-            # Return the data.
-            return value, None
-
-
     def select_model(self, run=None, model=None, res_num=None):
         """Function for the selection of a preset model-free model."""
 
@@ -4001,7 +3951,7 @@ class Model_free(Common_functions):
         self.model_setup(self.run, model, equation, params, res_num)
 
 
-    def set(self, run=None, value=None, error=None, param=None, scaling=1.0, index=None):
+    def set_doc(self):
         """
         Model-free set details
         ~~~~~~~~~~~~~~~~~~~~~~
@@ -4021,67 +3971,6 @@ class Model_free(Common_functions):
             pi is in the namespace of relax, ie just type 'pi'.
             frequency is the proton frequency corresponding to the data.
         """
-
-        # Arguments.
-        self.run = run
-
-        # Setting the model parameters prior to minimisation.
-        #####################################################
-
-        if param == None:
-            # The values are supplied by the user:
-            if value:
-                # Test if the length of the value array is equal to the length of the model-free parameter array.
-                if len(value) != len(self.relax.data.res[self.run][index].params):
-                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the model-free parameter array, " + `self.relax.data.res[self.run][index].params` + ", for residue " + `self.relax.data.res[self.run][index].num` + " " + self.relax.data.res[self.run][index].name + "."
-
-            # Default values.
-            else:
-                # Set 'value' to an empty array.
-                value = []
-
-                # Loop over the model-free parameters.
-                for i in xrange(len(self.relax.data.res[self.run][index].params)):
-                    value.append(self.default_value(self.relax.data.res[self.run][index].params[i]))
-
-            # Loop over the model-free parameters.
-            for i in xrange(len(self.relax.data.res[self.run][index].params)):
-                # Get the object.
-                object_name = self.return_data_name(self.relax.data.res[self.run][index].params[i])
-                if not object_name:
-                    raise RelaxError, "The model-free data type " + `self.relax.data.res[self.run][index].params[i]` + " does not exist."
-
-                # Initialise all data if it doesn't exist.
-                if not hasattr(self.relax.data.res[self.run][index], object_name):
-                    self.data_init(self.relax.data.res[self.run][index])
-
-                # Set the value.
-                setattr(self.relax.data.res[self.run][index], object_name, float(value[i]) * scaling)
-
-
-        # Individual data type.
-        #######################
-
-        else:
-            # Get the object.
-            object_name = self.return_data_name(param)
-            if not object_name:
-                raise RelaxError, "The model-free data type " + `param` + " does not exist."
-
-            # Initialise all data if it doesn't exist.
-            if not hasattr(self.relax.data.res[self.run][index], object_name):
-                self.data_init(self.relax.data.res[self.run][index])
-
-            # Default value.
-            if value == None:
-                value = self.default_value(object_name)
-
-            # Set the value.
-            setattr(self.relax.data.res[self.run][index], object_name, float(value) * scaling)
-
-            # Set the error.
-            if error != None:
-                setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
 
 
     def set_error(self, run, instance, index, error):

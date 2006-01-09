@@ -345,3 +345,11 @@ class Specific_setup:
         # Value and error returning function.
         if self.eqi == 'return_value':
             return self.relax.specific.relax_fit.return_value
+
+        # Data or parameter name returning function.
+        if self.eqi == 'return_data_name':
+            return self.relax.specific.relax_fit.return_data_name
+
+        # Set function.
+        if self.eqi == 'set':
+            return self.relax.specific.relax_fit.set
