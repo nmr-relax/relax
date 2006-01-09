@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -71,7 +71,7 @@ class Specific_setup:
 
             # Relaxation curve fitting.
             if function_type == 'relax_fit':
-                function = self.relax_fit()
+                function = self.relax_funcs()
 
             # Reduced spectral density mapping.
             if function_type == 'jw':
@@ -87,12 +87,6 @@ class Specific_setup:
 
         # Raise an error if the function doesn't exist.
         if raise_error and function == None:
-            # Some debugging output.
-            if Debug:
-                print "Function type: " + `function_type`
-                print "Eqi: " + `self.eqi`
-
-            # Raise the error.
             raise RelaxFuncSetupError, self.get_string(function_type)
 
         # Return the function.
@@ -310,46 +304,18 @@ class Specific_setup:
         if self.eqi == 'read_columnar_results':
             return self.relax.specific.noe.read_columnar_results
 
-        # Factor of conversion between different parameter units returning function.
-        if self.eqi == 'return_conversion_factor':
-            return self.relax.specific.noe.return_conversion_factor
-
-        # Grace string returning function.
-        if self.eqi == 'return_grace_string':
-            return self.relax.specific.noe.return_grace_string
-
         # Value and error returning function.
         if self.eqi == 'return_value':
             return self.relax.specific.noe.return_value
-
-        # String of the external parameter units returning function.
-        if self.eqi == 'return_units':
-            return self.relax.specific.noe.return_units
 
         # Write results function (Columnar format).
         if self.eqi == 'write_columnar_results':
             return self.relax.specific.noe.write_columnar_results
 
 
-    def relax_fit(self):
+    def relax_funcs(self):
         """Relaxation curve fitting functions."""
-
-        # Grid search function.
-        if self.eqi == 'grid_search':
-            return self.relax.specific.relax_fit.grid_search
-
-        # Minimise function.
-        if self.eqi == 'minimise':
-            return self.relax.specific.relax_fit.minimise
 
         # Value and error returning function.
         if self.eqi == 'return_value':
-            return self.relax.specific.relax_fit.return_value
-
-        # Data or parameter name returning function.
-        if self.eqi == 'return_data_name':
-            return self.relax.specific.relax_fit.return_data_name
-
-        # Set function.
-        if self.eqi == 'set':
-            return self.relax.specific.relax_fit.set
+            return self.relax.specific.relax_data.return_value

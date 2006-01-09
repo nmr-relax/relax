@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -358,7 +358,7 @@ class Jw_mapping(Common_functions):
         return value, error
 
 
-    def set(self, run=None, value=None, error=None, param=None, index=None):
+    def set(self, run=None, value=None, error=None, data_type=None, index=None):
         """
         Reduced spectral density mapping set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -374,7 +374,7 @@ class Jw_mapping(Common_functions):
         # Setting the model parameters prior to calculation.
         ####################################################
 
-        if param == None:
+        if data_type == None:
             # The values are supplied by the user:
             if value:
                 # Test if the length of the value array is equal to 2.
@@ -404,9 +404,9 @@ class Jw_mapping(Common_functions):
 
         else:
             # Get the object.
-            object_name = self.return_data_name(param)
+            object_name = self.return_data_name(data_type)
             if not object_name:
-                raise RelaxError, "The reduced spectral density mapping data type " + `param` + " does not exist."
+                raise RelaxError, "The reduced spectral density mapping data type " + `data_type` + " does not exist."
 
             # Initialise all data if it doesn't exist.
             if not hasattr(self.relax.data.res[self.run][index], object_name):

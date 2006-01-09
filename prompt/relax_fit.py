@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ class Relax_fit:
         self.__relax__ = relax
 
 
-    def read(self, run=None, file=None, dir=None, relax_time=0.0, format='sparky', heteronuc='N', proton='HN', int_col=None):
+    def read(self, run=None, file=None, dir=None, relax_time=0.0, fit_type='exp', format='sparky', heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file.
 
         Keyword Arguments
@@ -51,6 +51,8 @@ class Relax_fit:
         dir:  The directory where the file is located.
 
         relax_time:  The time, in seconds, of the relaxation period.
+
+        fit_type:  The type of relaxation curve to fit.
 
         format:  The type of file containing peak intensities.
 
@@ -65,6 +67,12 @@ class Relax_fit:
         ~~~~~~~~~~~
 
         The peak intensity can either be from peak heights or peak volumes.
+
+
+        The supported relaxation experiments include the default two parameter exponential fit,
+        selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion
+        recovery experiment in which the peak intensity limit is a non-zero value, selected by
+        setting the argument to 'inv'.
 
 
         The format argument can currently be set to:
@@ -100,6 +108,7 @@ class Relax_fit:
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", relax_time=" + `relax_time`
+            text = text + ", fit_type=" + `fit_type`
             text = text + ", format=" + `format`
             text = text + ", heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
@@ -122,6 +131,10 @@ class Relax_fit:
         if type(relax_time) != float:
             raise RelaxFloatError, ('relaxation time', relax_time)
 
+        # The fit type.
+        if type(fit_type) != str:
+            raise RelaxStrError, ('fit type', fit_type)
+
         # The format.
         if type(format) != str:
             raise RelaxStrError, ('format', format)
@@ -139,47 +152,4 @@ class Relax_fit:
             raise RelaxNoneIntError, ('intensity column', int_col)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_fit.read(run=run, file=file, dir=dir, relax_time=relax_time, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
-
-
-    def select_model(self, run=None, model='exp'):
-        """Function for the selection of the relaxation curve type.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        model:  The type of relaxation curve to fit.
-
-
-        The preset models
-        ~~~~~~~~~~~~~~~~~
-
-        The supported relaxation experiments include the default two parameter exponential fit,
-        selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion
-        recovery experiment in which the peak intensity limit is a non-zero value, selected by
-        setting the argument to 'inv'.
-
-        The parameters of these two models are
-            'exp': [Rx, I0],
-            'inv': [Rx, I0, Iinf].
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.select_model("
-            text = text + "run=" + `run`
-            text = text + ", model=" + `model`
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # The model argument.
-        if type(model) != str:
-            raise RelaxStrError, ('model', model)
-
-        # Execute the functional code.
-        self.__relax__.specific.relax_fit.select_model(run=run, model=model)
+        self.__relax__.specific.relax_fit.read(run=run, file=file, dir=dir, relax_time=relax_time, fit_type=fit_type, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)

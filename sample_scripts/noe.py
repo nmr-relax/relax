@@ -10,6 +10,8 @@ pdb(name, 'Ap4Aase_new_3.pdb', load_seq=1)
 # Load the reference spectrum and saturated spectrum peak intensities.
 noe.read(name, file='ref.list', spectrum_type='ref')
 noe.read(name, file='sat.list', spectrum_type='sat')
+#noe.read(name, file='ref.text', spectrum_type='ref', format='xeasy')
+#noe.read(name, file='sat.text', spectrum_type='sat', format='xeasy')
 
 # Set the errors.
 noe.error(name, error=3600, spectrum_type='ref')
@@ -26,7 +28,7 @@ unselect.read(name, file='unresolved')
 calc(name)
 
 # Save the NOEs.
-value.write(name, param='noe', file='noe.out', force=1)
+value.write(name, y_data_type='noe', file='noe.out', force=1)
 
 # Create grace files.
 grace.write(name, y_data_type='ref', file='ref.agr', force=1)

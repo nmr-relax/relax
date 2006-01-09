@@ -27,7 +27,6 @@ import help
 from generic_fns.diffusion_tensor import Diffusion_tensor
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
-from specific_fns.relax_fit import Relax_fit
 from specific_fns.noe import Noe
 
 
@@ -510,31 +509,26 @@ class Value:
 
     # Copy function.
     copy.__doc__ = copy.__doc__ + "\n\n" + regexp_doc() + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
+    copy.__doc__ = copy.__doc__ + Model_free.set.__doc__ + "\n\n"
     copy.__doc__ = copy.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Jw_mapping.set.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
 
     # Display function.
     display.__doc__ = display.__doc__ + "\n\n" + regexp_doc() + "\n"
     display.__doc__ = display.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
     display.__doc__ = display.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    display.__doc__ = display.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
 
     # Read function.
     read.__doc__ = read.__doc__ + "\n\n" + regexp_doc() + "\n"
-    read.__doc__ = read.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
+    read.__doc__ = read.__doc__ + Model_free.set.__doc__ + "\n\n"
     read.__doc__ = read.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Jw_mapping.set.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
 
     # Set function.
     set.__doc__ = set.__doc__ + "\n\n" + regexp_doc() + "\n"
-    set.__doc__ = set.__doc__ + Model_free.set_doc.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Model_free.set.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
     set.__doc__ = set.__doc__ + Jw_mapping.set.__doc__ + "\n"
@@ -543,13 +537,9 @@ class Value:
     set.__doc__ = set.__doc__ + Diffusion_tensor.set.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Diffusion_tensor.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Diffusion_tensor.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.default_value.__doc__ + "\n\n"
 
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
     write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"

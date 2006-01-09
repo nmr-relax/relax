@@ -7,7 +7,7 @@ echo -e "\n\n\n <<< Getting the relax version number >>>\n"
 ./version
 
 echo -e "\n\n\n <<< Fetching the docstrings >>>\n\n\n"
-#./fetch_docstrings
+./fetch_docstrings
 
 echo -e "\n\n\n <<< Latex (first round) >>>\n\n\n"
 latex relax.tex

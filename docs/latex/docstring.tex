@@ -106,7 +106,7 @@ The two minimisation\index{minimisation} algorithms within Dasha\index{computer 
 \end{itemize}
 
 
-For Levenberg-Marquardt\index{minimisation techniques!Levenberg-Marquardt} minimisation,\index{minimisation} the function \quotecmd{lmin} will be called, while for Newton\index{minimisation techniques!Newton} -Raphson, the function \quotecmd{min} will be executed.
+For Levenberg-Marquardt\index{minimisation techniques!Levenberg-Marquardt} minisation, the function \quotecmd{lmin} will be called, while for Newton\index{minimisation techniques!Newton} -Raphson, the function \quotecmd{min} will be executed.
 
 
 
@@ -3471,7 +3471,7 @@ Function for reading\index{read} peak intensities from a file.
 
 \subsubsection{Defaults}
 
-\textsf{\textbf{relax\_fit.read}(self, run=None, file=None, dir=None, relax\_time=0.0, format=`sparky', heteronuc=`N', proton=`HN', int\_col=None)}
+\textsf{\textbf{relax\_fit.read}(self, run=None, file=None, dir=None, relax\_time=0.0, fit\_type=`exp', format=`sparky', heteronuc=`N', proton=`HN', int\_col=None)}
 
 
 \subsubsection{Keyword Arguments}
@@ -3483,6 +3483,8 @@ Function for reading\index{read} peak intensities from a file.
 \keyword{dir:}  The directory where the file is located. 
 
 \keyword{relax\_time:}  The time, in seconds, of the relaxation\index{relaxation} period. 
+
+\keyword{fit\_type:}  The type of relaxation\index{relaxation} curve to fit. 
 
 \keyword{format:}  The type of file containing peak intensities. 
 
@@ -3498,6 +3500,9 @@ Function for reading\index{read} peak intensities from a file.
 \subsubsection{Description}
 
 The peak intensity can either be from peak heights or peak volumes.
+
+
+The supported relaxation\index{relaxation} experiments include the default two parameter exponential fit, selected by setting the \quotecmd{fit\_type} argument to \quotecmd{exp}, and the three parameter inversion recovery experiment in which the peak intensity limit\index{parameter!limit} is a non-zero value, selected by setting the argument to \quotecmd{inv}.
 
 
 The format argument can currently be set to:
@@ -3516,47 +3521,6 @@ If the format argument is set to \quotecmd{xeasy}, the file should be the saved 
 
 
 The heteronuc and proton arguments should be set respectively to the name of the heteronucleus and proton in the file.  Only those lines which match these labels will be used.
-
-
-
-
-\newpage
-
-\subsection{relax\_fit.select\_model}
-
-
-\subsubsection{Synopsis}
-
-Function for the selection of the relaxation\index{relaxation} curve type.
-
-
-
-\subsubsection{Defaults}
-
-\textsf{\textbf{relax\_fit.select\_model}(self, run=None, model=`exp')}
-
-
-\subsubsection{Keyword Arguments}
-
-\keyword{run:}  The name of the run. 
-
-\keyword{model:}  The type of relaxation\index{relaxation} curve to fit. 
-
-
-
-
-\subsubsection{The preset models}
-
-The supported relaxation\index{relaxation} experiments include the default two parameter exponential fit, selected by setting the \quotecmd{fit\_type} argument to \quotecmd{exp}, and the three parameter inversion recovery experiment in which the peak intensity limit\index{parameter!limit} is a non-zero value, selected by setting the argument to \quotecmd{inv}.
-
-
-The parameters of these two models are
-
-
-\begin{description}
-\item[\quotecmd{exp} --] [Rx, I0], 
-\item[\quotecmd{inv} --] [Rx, I0, Iinf]. 
-\end{description}
 
 
 

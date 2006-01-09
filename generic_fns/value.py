@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -345,7 +345,7 @@ class Value:
 
                 # Go to the specific code.
                 for j in xrange(len(self.res_params)):
-                    set(run=run, value=self.res_values[j], error=None, param=self.res_params[j], index=i)
+                        set(run=run, value=self.res_values[j], error=None, param=self.res_params[j], index=i)
 
 
         # Reset the minimisation statistics.
