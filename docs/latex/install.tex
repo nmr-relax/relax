@@ -1,0 +1,82 @@
+% Installation instructions for the program relax.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Installation instructions for the program relax}
+
+
+% Dependencies.
+%~~~~~~~~~~~~~~
+
+\section{Dependencies}
+
+The following packages need to be installed before using relax:
+
+\begin{itemize}
+\item[Python]  Version 2.2 or higher.
+\item[Numeric]  Version 21 or higher.
+\item[ScientificPython]  Version 2.2 or higher.
+\item[Optik]  Version 1.4 or higher.  This is only needed if running python 2.2.
+\end{itemize}
+
+Older versions of these packages may work, use at your own risk.
+
+
+
+% Installation.
+%~~~~~~~~~~~~~~
+
+\section{Installation}
+
+
+% Linux.
+\subsection{Linux}
+
+
+To install the program relax, first put the compressed archive in /usr/local/ and untar using the
+command
+
+\example{\$ tar jxvf relax.tar.bz2}
+
+Then make a link in usr/local/bin to the file relax/relax using the command,
+
+\example{\$ ln -s /usr/local/relax/relax /usr/local/bin/relax}
+
+
+
+% Post install.
+%~~~~~~~~~~~~~~
+
+\section{Post install}
+
+For faster loading of the program, run the program once as root so that all the '.pyc' files are
+created.  Simply typing 'relax' in a shell and then exiting is sufficient.
+
+
+
+% Optional programs.
+%~~~~~~~~~~~~~~~~~~~
+
+\section{Optional programs}
+
+The following is a list of programs which can be used by relax, although they are not essential for
+normal use.
+
+
+% Grace.
+\subsection{Grace}
+
+Viewer for parameter values.
+
+
+% OpenDX.
+\subsection{OpenDX}
+
+Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping function,
+and is executed by passing the command 'dx' to the command line with various options.
+
+
+% Molmol.
+\subsection{Molmol}
+
+Molmol is used for viewing the PDB structures and to display parameter values mapped onto the
+structure.
