@@ -16,6 +16,7 @@ This chapter is written for developers or those who would like to extend the fun
 % Indentation.
 \subsection{Indentation}
 
+\index{indentation|textbf}
 Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the python style guide found at \texttt{`http://www.python.org/doc/essays/styleguide.html'}.  For vi, add the following lines to \texttt{`\~/.vimrc'}:
 
 \begin{exampleenv}
@@ -37,6 +38,7 @@ If these lines are deleted, the bug will be removed.  Another way to fix the pro
 % Doc strings.
 \subsection{Doc strings}
 
+\index{doc string|textbf}
 These should be set to no more than 100 characters long including all leading white space.  The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.
 
 
@@ -46,18 +48,21 @@ These should be set to no more than 100 characters long including all leading wh
 
 \section{The make system}
 
+\index{make|textbf}
 For UNIX like systems, including GNU/Linux, various components of the program relax can be created using the Unix make utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  Makefiles exist in the various directories to facilitate this process.
 
 
 % C module compilation.
 \subsection{C module compilation}
 
+\index{C module compilation|textbf}
 As described in the installation chapter, typing \texttt{`make'} in the base directory will create the shared objects which are imported into Python as modules.
 
 
 % Creation of the PDF manual.
 \subsection{Creation of the PDF manual}
 
+\index{manual!PDF creation|textbf}
 To create the PDF version of the relax manual, type
 
 \example{make manual}
@@ -68,6 +73,7 @@ in the base directory.  Make will then shift to the \texttt{`docs/latex'} direct
 % Creation of the HTML manual.
 \subsection{Creation of the HTML manual}
 
+\index{manual!HTML creation|textbf}
 The HTML version of the relax manual is made by typing
 
 \example{make manual\_html}
@@ -78,6 +84,7 @@ in the base directory.  Again make will then shift to the \texttt{`docs/latex'} 
 % Making distribution archives.
 \subsection{Making distribution archives}
 
+\index{distribution|textbf}
 This section is incomplete.
 Creation of the HTML manual
 
@@ -85,6 +92,7 @@ Creation of the HTML manual
 % Cleaning up.
 \subsection{Cleaning up}
 
+\index{clean up|textbf}
 If the command
 
 \example{make clean}

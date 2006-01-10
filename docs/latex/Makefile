@@ -27,7 +27,7 @@ manual : clean
 	./version
 	
 	@echo -e "\n\n\n <<< Fetching the docstrings >>>\n\n\n"
-	#./fetch_docstrings
+	./fetch_docstrings
 	
 	@echo -e "\n\n\n <<< Latex (first round) >>>\n\n\n"
 	latex relax.tex
@@ -48,7 +48,40 @@ manual : clean
 	dvips -o relax.ps relax.dvi
 	
 	@echo -e "\n\n\n <<< ps2pdf >>>\n\n\n"
-	#ps2pdf relax.ps
+	ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps
+	
+	@echo -e "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
+	rm -f relax.ps
+	mv -f relax.pdf ..
+	
+	@echo -e "\n\n\n <<< acroread >>>\n\n\n"
+	acroread -openInNewWindow ../relax.pdf &
+
+
+# Create the PDF manual.
+manual_nofetch : clean
+	@echo -e "\n\n\n <<< Getting the relax version number >>>\n"
+	./version
+	
+	@echo -e "\n\n\n <<< Latex (first round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< Bibtex >>>\n\n\n"
+	bibtex relax.aux
+	
+	@echo -e "\n\n\n <<< Makeindex >>>\n\n\n"
+	makeindex relax.idx
+	
+	@echo -e "\n\n\n <<< Latex (second round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< Latex (third round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< dvips >>>\n\n\n"
+	dvips -o relax.ps relax.dvi
+	
+	@echo -e "\n\n\n <<< ps2pdf >>>\n\n\n"
 	ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps
 	
 	@echo -e "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"

@@ -39,6 +39,9 @@ relax :
 manual :
 	@cd docs/latex; make manual
 
+manual_nofetch :
+	@cd docs/latex; make manual_nofetch
+
 manual_html :
 	@cd docs/latex; make manual_html
 
