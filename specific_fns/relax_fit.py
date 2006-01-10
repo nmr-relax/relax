@@ -36,7 +36,6 @@ try:
 except ImportError:
     sys.stderr.write("\nImportError: relaxation curve fitting is unavailible, try compiling the C modules.\n")
     __builtin__.C_module_exp_fn = 0
-    raise
 else:
     __builtin__.C_module_exp_fn = 1
 

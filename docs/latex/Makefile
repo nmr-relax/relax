@@ -21,38 +21,47 @@
 ###############################################################################
 
 
-# Variables.
-sys = uname -o
-mach = uname -m
-
-SUBDIRS = maths_fns
-
-
-# Rule which is run when `make' is typed.
-.PHONY : relax
-relax :
-	@for i in $(SUBDIRS); do (cd $$i; make) done
-
-
-# Rule for compiling the manual.
-
+# Create the PDF manual.
 manual :
-	@cd docs/latex; make manual
+	@echo -e "\n\n\n <<< Clean >>>\n\n\n"
+	rm -f *.aux relax.bbl relax.blg relax.dvi relax.idx relax.ilg relax.ind relax.lof relax.log relax.lot relax.pdf relax.toc
+	
+	@echo -e "\n\n\n <<< Getting the relax version number >>>\n"
+	./version
+	
+	@echo -e "\n\n\n <<< Fetching the docstrings >>>\n\n\n"
+	#./fetch_docstrings
+	
+	@echo -e "\n\n\n <<< Latex (first round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< Bibtex >>>\n\n\n"
+	bibtex relax.aux
+	
+	@echo -e "\n\n\n <<< Makeindex >>>\n\n\n"
+	makeindex relax.idx
+	
+	@echo -e "\n\n\n <<< Latex (second round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< Latex (third round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< dvips >>>\n\n\n"
+	dvips -o relax.ps relax.dvi
+	
+	@echo -e "\n\n\n <<< ps2pdf >>>\n\n\n"
+	#ps2pdf relax.ps
+	ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps
+	
+	@echo -e "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
+	rm -f relax.ps
+	mv -f relax.pdf ..
+	
+	@echo -e "\n\n\n <<< acroread >>>\n\n\n"
+	acroread -openInNewWindow ../relax.pdf &
 
+
+# Create the HTML manual.
 manual_html :
-	@cd docs/latex; make manual_html
-
-
-# Rule for creating the package distribution.
-
-dist : relax
-	echo $(sys).$(mach)
-
-
-# Clean up rule.
-
-clean :
-	rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
-	rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
-	rm -f *.o */*.o */*/*.o */*/*/*.o
-	rm -f *.so */*.so */*/*.so */*/*/*.so
+	latex2html -split +3 -html_version 4.0 -dir ../html relax.tex
