@@ -1,6 +1,13 @@
 # General.
 ##########
 
+Change of the 'run' model.  Have the run as an object, ie you switch between runs and any command
+run is assumed to be for the current run.  The internal data representation should be:
+
+    self.relax.data[self.relax.run]
+
+and all data then assigned to the run.  This should simpify the code in relax.
+
 
 # Maths functions.
 ##################
@@ -14,7 +21,6 @@ Relaxation dispersion.
 ########
 
 Convert the chi2, ri, ri_prime, ri_comps, and jw_mf functions to C
-Use swig to integrate the C functions.  Maybe?
 
 
 # Model selection methods.
