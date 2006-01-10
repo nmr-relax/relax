@@ -1,0 +1,37 @@
+% Development of relax chapter.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Development of relax}
+
+This chapter is only of use to developers or those who would like to extend the functionality of relax.
+
+
+% Coding conventions.
+%~~~~~~~~~~~~~~~~~~~~
+
+\section{Coding conventions}
+
+
+% Indentation.
+\subsection{Indentation}
+
+Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the python style guide found at \texttt{`http://www.python.org/doc/essays/styleguide.html'}.  For vi, add the following lines to \texttt{`~/.vimrc'}:
+
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+Certain versions of vim, in the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{`~/.vimrc'} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which is located in the path \texttt{`/usr/share/vim/ftplugin/'} or equivalent. It contains the two lines:
+
+\begin{exampleenv}
+" Python always uses a `tabstop' of 8.
+setlocal ts=8
+\end{exampleenv}
+
+If these lines are deleted, the bug will be removed.  Another way to fix the problem is to install newer versions of the runtime files (which will pretty much do the same thing).
+
+
+% Doc strings.
+\subsection{Doc strings}
+
+These should be set to no more than 100 characters long including all leading whitespace.

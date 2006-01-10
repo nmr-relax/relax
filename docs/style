@@ -24,4 +24,4 @@ newer versions of the runtime files (which will pretty much do the same thing).
 Doc strings
 ~~~~~~~~~~~
 
-These should be set to no more than 100 characters long including leading whitespaces.
+These should be set to no more than 100 characters long including all leading whitespace.

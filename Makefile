@@ -56,3 +56,4 @@ clean :
 	rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
 	rm -f *.o */*.o */*/*.o */*/*/*.o
 	rm -f *.so */*.so */*/*.so */*/*/*.so
+	@cd docs/latex; make clean
