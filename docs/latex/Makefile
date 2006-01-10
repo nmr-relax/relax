@@ -22,10 +22,7 @@
 
 
 # Create the PDF manual.
-manual :
-	@echo -e "\n\n\n <<< Clean >>>\n\n\n"
-	rm -f *.aux relax.bbl relax.blg relax.dvi relax.idx relax.ilg relax.ind relax.lof relax.log relax.lot relax.pdf relax.toc
-	
+manual : clean
 	@echo -e "\n\n\n <<< Getting the relax version number >>>\n"
 	./version
 	
@@ -63,5 +60,21 @@ manual :
 
 
 # Create the HTML manual.
-manual_html :
+manual_html : clean
 	latex2html -split +3 -html_version 4.0 -dir ../html relax.tex
+
+
+# Clean up the temporary manual files.
+clean :
+	@echo -e "\n\n\n <<< Cleaning up the temporary manual files >>>\n\n\n"
+	rm -f *.aux
+	rm -f relax.bbl
+	rm -f relax.blg
+	rm -f relax.dvi
+	rm -f relax.idx
+	rm -f relax.ilg
+	rm -f relax.ind
+	rm -f relax.lof
+	rm -f relax.log
+	rm -f relax.lot
+	rm -f relax.toc
