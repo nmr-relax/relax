@@ -21,39 +21,15 @@
 ###############################################################################
 
 
-# Variables.
-sys = uname -o
-mach = uname -m
-
-SUBDIRS = maths_fns
-
-
 # Rule which is run when `make' is typed.
-.PHONY : relax
-relax :
-	@for i in $(SUBDIRS); do (cd $$i; make) done
+
+relax_curve_fitting : relax_fit.so c_chi2.so
 
 
-# Rule for compiling the manual.
+# Rule for compiling the exponential function shared object.
 
-manual : docs/relax.pdf
-	cd docs/latex
-	docs/latex/compile
+relax_fit.so : relax_fit.h relax_fit.c
+	cc -shared -I/usr/include/python2.4 relax_fit.c -o relax_fit.so
 
-html_manual :
-	docs/latex/create_html
-
-
-# Rule for creating the package distribution.
-
-dist : relax
-	echo $(sys).$(mach)
-
-
-# Clean up rule.
-
-clean :
-	rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
-	rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
-	rm -f *.o */*.o */*/*.o */*/*/*.o
-	rm -f *.so */*.so */*/*.so */*/*/*.so
+c_chi2.so : relax_fit.h c_chi2.c
+	cc -shared -I/usr/include/python2.4 c_chi2.c -o c_chi2.so

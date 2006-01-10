@@ -32,10 +32,11 @@ from minimise.generic import generic_minimise
 
 # C modules.
 try:
-    from maths_fns.exp_fn import exponential_fn, exponential_test_fn
+    from maths_fns.relax_fit import setup, func, dfunc, d2func
 except ImportError:
     sys.stderr.write("\nImportError: relaxation curve fitting is unavailible, try compiling the C modules.\n")
     __builtin__.C_module_exp_fn = 0
+    raise
 else:
     __builtin__.C_module_exp_fn = 1
 
@@ -594,7 +595,7 @@ class Relax_fit(Common_functions):
                 # Individual residue print out.
                 if self.print_flag >= 2:
                     print "\n\n"
-                string = "Fitting to residue: " + `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name
+                string = "Fitting to residue: " + `data.num` + " " + data.name
                 print "\n\n" + string
                 print len(string) * '~'
 
@@ -606,9 +607,90 @@ class Relax_fit(Common_functions):
             # Initialise the function to minimise.
             ######################################
 
-            print self.param_vector
-            exponential_fn(init_params=self.param_vector, scaling_matrix=self.scaling_matrix, name="Hello")
-            #exponential_test_fn(self.param_vector)
+            setup(num_params=len(data.params), intensities=data.ave_intensities, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
+
+
+            # Setup the minimisation algorithm when constraints are present.
+            ################################################################
+
+            if constraints and not match('^[Gg]rid', min_algor):
+                algor = min_options[0]
+            else:
+                algor = min_algor
+
+
+            # Levenberg-Marquardt minimisation.
+            ###################################
+
+            if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
+                # Reconstruct the error data structure.
+                lm_error = zeros(len(data.relax_times), Float64)
+                index = 0
+                for k in xrange(len(data.relax_times)):
+                    lm_error[index:index+len(relax_error[k])] = relax_error[k]
+                    index = index + len(relax_error[k])
+
+                min_options = min_options + (self.relax_fit.lm_dri, lm_error)
+
+
+            # Minimisation.
+            ###############
+
+            if constraints:
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+            else:
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+            if results == None:
+                return
+            self.param_vector, self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning = results
+
+            # Scaling.
+            if scaling:
+                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
+
+            # Disassemble the parameter vector.
+            self.disassemble_param_vector(index=index, sim_index=sim_index)
+
+            # Monte Carlo minimisation statistics.
+            if sim_index != None:
+                # Chi-squared statistic.
+                data.chi2_sim[sim_index] = self.func
+
+                # Iterations.
+                data.iter_sim[sim_index] = self.iter_count
+
+                # Function evaluations.
+                data.f_count_sim[sim_index] = self.f_count
+
+                # Gradient evaluations.
+                data.g_count_sim[sim_index] = self.g_count
+
+                # Hessian evaluations.
+                data.h_count_sim[sim_index] = self.h_count
+
+                # Warning.
+                data.warning_sim[sim_index] = self.warning
+
+
+            # Normal statistics.
+            else:
+                # Chi-squared statistic.
+                data.chi2 = self.func
+
+                # Iterations.
+                data.iter = self.iter_count
+
+                # Function evaluations.
+                data.f_count = self.f_count
+
+                # Gradient evaluations.
+                data.g_count = self.g_count
+
+                # Hessian evaluations.
+                data.h_count = self.h_count
+
+                # Warning.
+                data.warning = self.warning
 
 
     def model_setup(self, model, params):
