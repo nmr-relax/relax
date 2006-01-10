@@ -38,3 +38,55 @@ If these lines are deleted, the bug will be removed.  Another way to fix the pro
 \subsection{Doc strings}
 
 These should be set to no more than 100 characters long including all leading white space.  The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.
+
+
+
+% The make system.
+%~~~~~~~~~~~~~~~~~
+
+\section{The make system}
+
+For UNIX like systems, including GNU/Linux, various components of the program relax can be created using the Unix make utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  Makefiles exist in the various directories to facilitate this process.
+
+
+% C module compilation.
+\subsection{C module compilation}
+
+As described in the installation chapter, typing \texttt{`make'} in the base directory will create the shared objects which are imported into Python as modules.
+
+
+% Creation of the PDF manual.
+\subsection{Creation of the PDF manual}
+
+To create the PDF version of the relax manual, type
+
+\example{make manual}
+
+in the base directory.  Make will then shift to the \texttt{`docs/latex'} directory and run a series of shell commands to create the manual from the \LaTeX\ sources.  This is dependent on the programs \texttt{`rm'}, \texttt{`latex'}, \texttt{`makeindex'}, \texttt{`dvips'}, and \texttt{`ps2pdf'} being located in the environment's path.
+
+
+% Creation of the HTML manual.
+\subsection{Creation of the HTML manual}
+
+The HTML version of the relax manual is made by typing
+
+\example{make manual\_html}
+
+in the base directory.  Again make will then shift to the \texttt{`docs/latex'} directory.  One command calling the program \texttt{`latex2html'} will be executed which will create HTML pages from the \LaTeX\ sources.
+
+
+% Making distribution archives.
+\subsection{Making distribution archives}
+
+This section is incomplete.
+Creation of the HTML manual
+
+
+% Cleaning up.
+\subsection{Cleaning up}
+
+If the command
+
+\example{make clean}
+
+is run in the base directory, all Python byte compiled files `*.pyc', all C object files `*.o', all C shared object files `*.so', and any backup files with the extension `*.bak' are removed from all subdirectoies.  In addition, any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.

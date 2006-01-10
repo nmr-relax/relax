@@ -4814,6 +4814,30 @@ CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
 
 
 
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting set details}
+
+Only three parameters can be set, the relaxation\index{relaxation} rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.
+
+
+
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting data type string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Relaxation rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$} \\
+ &  &  \\
+Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$} \\
+ &  &  \\
+Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
 
 \newpage
 
@@ -4924,6 +4948,24 @@ $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[
 Bond length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength} \\
  &  &  \\
 CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting data type string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Relaxation rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$} \\
+ &  &  \\
+Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$} \\
+ &  &  \\
+Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -5091,6 +5133,30 @@ $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[
 Bond length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength} \\
  &  &  \\
 CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting set details}
+
+Only three parameters can be set, the relaxation\index{relaxation} rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.
+
+
+
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting data type string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Relaxation rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$} \\
+ &  &  \\
+Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$} \\
+ &  &  \\
+Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -5518,6 +5584,52 @@ $\phi$ & \quotecmd{$\phi$} & 0.0 \\
 
 
 
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting set details}
+
+Only three parameters can be set, the relaxation\index{relaxation} rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.
+
+
+
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting data type string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Relaxation rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$} \\
+ &  &  \\
+Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$} \\
+ &  &  \\
+Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting default values}
+
+These values are completely arbitrary as peak heights (or volumes) are extremely variable and the Rx value is a compensation for both the R$_1$ and R$_1$ values.
+
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Value \\
+\midrule
+Relaxation rate & \quotecmd{rx} & 8.0 \\
+ &  &  \\
+Initial intensity & \quotecmd{i0} & 10000.0 \\
+ &  &  \\
+Intensity at infinity & \quotecmd{iinf} & 0.0 \\
+ &  &  \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
 
 \newpage
 
@@ -5668,6 +5780,24 @@ Reference intensity & \quotecmd{ref} & \quotecmd{\^{}[Rr]ef\$} or \quotecmd{[Rr]
 Saturated intensity & \quotecmd{sat} & \quotecmd{\^{}[Ss]at\$} or \quotecmd{[Ss]at[ -\_][Ii]nt} \\
  &  &  \\
 NOE & \quotecmd{noe} & \quotecmd{\^{}[Nn][Oo][Ee]\$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+\subsubsection{Relaxation\index{relaxation|textbf} curve fitting data type string matching patterns}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Data type & Object name & Patterns \\
+\midrule
+Relaxation rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$} \\
+ &  &  \\
+Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$} \\
+ &  &  \\
+Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$} \\
 \bottomrule
 \end{tabular}
 \end{center}

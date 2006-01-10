@@ -46,7 +46,7 @@ manual_html :
 # Rule for creating the package distribution.
 
 dist : relax
-	echo $(sys).$(mach)
+	@echo $(sys).$(mach)
 
 
 # Clean up rule.
