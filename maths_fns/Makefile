@@ -21,15 +21,32 @@
 ###############################################################################
 
 
+# Variables.
+#objects = relax_fit.o c_chi2.o exponential.o
+objects = relax_fit.o c_chi2.o
+
+PYTHON_PATH = /usr/include/python2.4
+
+
+
 # Rule which is run when `make' is typed.
 
-relax_curve_fitting : relax_fit.so c_chi2.so
+.PHONY : relax_curve_fitting
+relax_curve_fitting : relax_fit.so
 
 
 # Rule for compiling the exponential function shared object.
 
-relax_fit.so : relax_fit.h relax_fit.c
-	cc -shared -I/usr/include/python2.4 relax_fit.c -o relax_fit.so
+relax_fit.so : $(objects)
+	cc -shared $(objects) -o relax_fit.so
 
-c_chi2.so : relax_fit.h c_chi2.c
-	cc -shared -I/usr/include/python2.4 c_chi2.c -o c_chi2.so
+
+# Rules for making the objects
+relax_fit.o : relax_fit.h
+	cc -c -I$(PYTHON_PATH) relax_fit.c
+
+exponential.o : relax_fit.h exponential.c
+	cc -c -I$(PYTHON_PATH) exponential.c
+
+c_chi2.o : relax_fit.h c_chi2.c
+	cc -c -I$(PYTHON_PATH) c_chi2.c

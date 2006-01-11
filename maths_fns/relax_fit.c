@@ -36,15 +36,15 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     extern PyArrayObject *intensities, *relax_times, *scaling_matrix;
 
     /* Normal declarations */
-    extern int *num_params;
+    extern int *num_params, *num_times;
     extern double *sd;
 
     /* The keyword list */
-    static char *keyword_list[] = {"num_params", "intensities", "sd", "relax_times", "scaling_matrix", NULL};
+    static char *keyword_list[] = {"num_params", "num_times", "intensities", "sd", "relax_times", "scaling_matrix", NULL};
 
 
     /* Parse the function arguments */
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iOdOO", keyword_list, &num_params, &intensities_arg, &sd, &relax_times_arg, &scaling_matrix_arg))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOdOO", keyword_list, &num_params, &num_times, &intensities_arg, &sd, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
     /* Make the Numeric arrays contiguous */
@@ -67,19 +67,26 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
 
 static PyObject *
 func(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared value. */
+    /* Function for calculating and returning the chi-squared value.
+     *
+     * Firstly the back calculated intensities are generated, then the chi-squared statistic is
+     * calculated
+     */
 
     PyObject *arg1;
     extern PyArrayObject *intensities, *params;
 
-    /* Parse the function arguments */
+    /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &arg1))
         return NULL;
 
     /* Convert the Numeric array to be contiguous */
     params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
 
-    return Py_BuildValue("f", 1.0);
+    /* Back calculated the peak intensities */
+    exponential();
+
+    return Py_BuildValue("f", 0.0);
 }
 
 

@@ -637,7 +637,7 @@ class Relax_fit(Common_functions):
             # Initialise the function to minimise.
             ######################################
 
-            setup(num_params=len(data.params), intensities=data.ave_intensities, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
+            setup(num_params=len(data.params), num_times=len(self.relax.data.relax_times[self.run]), intensities=data.ave_intensities, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.

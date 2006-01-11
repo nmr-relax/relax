@@ -32,12 +32,15 @@ RELAX_PATH = $(INSTALL_PATH)/relax
 
 
 # Rule which is run when `make' is typed.
-.PHONY : relax
-relax :
-	@for i in $(SUBDIRS); do (cd $$i; make) done
+.PHONY : relax $(SUBDIRS)
+relax : $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 
 # Installation.
+.PHONY : install
 install :
 	@echo -e "\nInstalling the program relax into $(INSTALL_PATH)\n\n"
 	
@@ -59,6 +62,7 @@ install :
 
 
 # Deinstallation.
+.PHONY : uninstall
 uninstall :
 	@echo -e "\nUninstalling the program relax from $(INSTALL_PATH)\n\n"
 	
@@ -72,24 +76,29 @@ uninstall :
 
 # Rule for compiling the manual.
 
+.PHONY : manual
 manual :
 	@cd docs/latex; make manual
 
+.PHONY : manual_nofetch
 manual_nofetch :
 	@cd docs/latex; make manual_nofetch
 
+.PHONY : manual_html
 manual_html :
 	@cd docs/latex; make manual_html
 
 
 # Rule for creating the package distribution.
 
+.PHONY : dist
 dist : relax
 	@echo $(sys).$(mach)
 
 
 # Clean up rule.
 
+.PHONY : clean
 clean :
 	rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
 	rm -f *.bak */*.bak */*/*.bak */*/*/*.bak

@@ -27,17 +27,22 @@
 /* The maximum number of parameters for this function */
 #define MAXPARAMS 3
 
+/* The maximum number of spectral time points */
+#define MAXTIMES 30
+
 
 /****************************************/
 /* External, hence permanent, variables */
 /****************************************/
 
-/* Python declarations */
+/* Variables sent to the setup function to be stored for later use */
 PyArrayObject *intensities, *relax_times, *scaling_matrix;
-PyArrayObject *params;
-
-/* Normal declarations */
-int *num_params;
+int *num_params, *num_times;
 double *sd;
 
+/* Variables sent to 'func', 'dfunc', and 'd2func' during optimisation */
+PyArrayObject *params;
+
+/* Variables used for storage during the function calls of optimisation */
+double back_calc[MAXTIMES];
 
