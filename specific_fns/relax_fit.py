@@ -386,6 +386,37 @@ class Relax_fit(Common_functions):
             return 0.0
 
 
+    def disassemble_param_vector(self, index=None, sim_index=None):
+        """Function for disassembling the parameter vector."""
+
+        # Alias the residue specific data structure.
+        data = self.relax.data.res[self.run][index]
+
+        # Monte Carlo simulations.
+        if sim_index != None:
+            # The relaxation rate.
+            data.rx_sim[sim_index] = self.param_vector[0]
+
+            # Initial intensity.
+            data.i0_sim[sim_index] = self.param_vector[1]
+
+            # Intensity at infinity.
+            if self.relax.data.curve_type[self.run] == 'inv':
+                data.iinf_sim[sim_index] = self.param_vector[2]
+
+        # Parameter values.
+        else:
+            # The relaxation rate.
+            data.rx = self.param_vector[0]
+
+            # Initial intensity.
+            data.i0 = self.param_vector[1]
+
+            # Intensity at infinity.
+            if self.relax.data.curve_type[self.run] == 'inv':
+                data.iinf = self.param_vector[2]
+
+
     def grid_search(self, run, lower, upper, inc, constraints, print_flag, sim_index=None):
         """The grid search function."""
 
@@ -648,7 +679,7 @@ class Relax_fit(Common_functions):
                 self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(index=index, sim_index=sim_index)
+            self.disassemble_param_vector(index=i, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:

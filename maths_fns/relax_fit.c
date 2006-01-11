@@ -79,8 +79,6 @@ func(PyObject *self, PyObject *args) {
     /* Convert the Numeric array to be contiguous */
     params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
 
-    printf("%-20g", *(double *)(intensities->data));
-    printf("%-20g%-20g\n", *(double *)(params->data), *(double *)(params->data + params->strides[0]));
     return Py_BuildValue("f", 1.0);
 }
 
