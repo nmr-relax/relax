@@ -26,6 +26,7 @@ objects = relax_fit.o c_chi2.o exponential.o
 
 PYTHON_PATH = /usr/include/python2.4
 
+CFLAGS = -I$(PYTHON_PATH)
 
 
 # Rule which is run when `make' is typed.
@@ -41,11 +42,5 @@ relax_fit.so : $(objects)
 
 
 # Rules for making the objects
-relax_fit.o : relax_fit.h relax_fit.c
-	cc -c -I$(PYTHON_PATH) relax_fit.c
-
-exponential.o : relax_fit.h exponential.c
-	cc -c -I$(PYTHON_PATH) exponential.c
-
-c_chi2.o : relax_fit.h c_chi2.c
-	cc -c -I$(PYTHON_PATH) c_chi2.c
+$(objects): %.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
