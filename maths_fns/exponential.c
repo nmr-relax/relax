@@ -37,6 +37,7 @@ void exponential(void) {
     /* Declarations */
     extern int *num_times;
     extern double *params, *relax_times;
+    extern double back_calc[];
     double Rx, I0;
     int i;
 
@@ -47,6 +48,7 @@ void exponential(void) {
     for (i = 0; i < 6; i++) {
         /* Back calculate */
         printf("%-20g", params[1] * exp(-relax_times[i]/params[0]));
+        back_calc[i] = params[1] * exp(-relax_times[i]/params[0]);
 
     }
 }
