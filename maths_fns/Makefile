@@ -41,7 +41,7 @@ relax_fit.so : $(objects)
 
 
 # Rules for making the objects
-relax_fit.o : relax_fit.h
+relax_fit.o : relax_fit.h relax_fit.c
 	cc -c -I$(PYTHON_PATH) relax_fit.c
 
 exponential.o : relax_fit.h exponential.c

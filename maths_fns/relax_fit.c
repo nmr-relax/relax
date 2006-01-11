@@ -73,8 +73,11 @@ func(PyObject *self, PyObject *args) {
      * calculated
      */
 
+    /* Declarations */
     PyObject *arg1;
-    extern PyArrayObject *intensities, *params;
+    extern PyArrayObject *params;
+    void exponential(void);
+
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &arg1))
