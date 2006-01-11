@@ -64,8 +64,8 @@ class Fetch_docstrings:
         names.sort()
 
         # Loop over the data structures.
-        #for name in ['minimise']:
-        for name in names:
+        #for name in names:
+        for name in ['minimise']:
             # Skip the name if it is in the blacklist.
             if name in self.blacklist:
                 continue
@@ -130,9 +130,6 @@ class Fetch_docstrings:
     def indexing(self, index, bold=0):
         """Function of inserting index marks into the text."""
 
-        # Get the words to index.
-        entries = self.index_entries()
-
         # End string.
         if bold:
             end_string = '|textbf}'
@@ -140,143 +137,143 @@ class Fetch_docstrings:
             end_string = '}'
 
         # Loop over the indecies.
-        for i in xrange(len(entries)):
-            # Find single word entries.
-            if entries[i][2] == 1 and search(entries[i][0], self.words[index]):
-                self.words[index] = self.words[index] + '\\index{' + entries[i][1] + end_string
+        for i in xrange(len(self.entries)):
+            # Find triple word entries.
+            if index+2 < len(self.words) and self.entries[i][2] == 3 and search(self.entries[i][0], self.words[index] + ' ' + self.words[index+1] + ' ' + self.words[index+2]):
+                self.words[index] = self.words[index] + '\\index{' + self.entries[i][1] + end_string
 
             # Find double word entries.
-            if index != 0 and entries[i][2] == 2 and search(entries[i][0], self.words[index-1] + ' ' + self.words[index]):
-                self.words[index] = self.words[index] + '\\index{' + entries[i][1] + end_string
+            elif index+1 < len(self.words) and self.entries[i][2] == 2 and search(self.entries[i][0], self.words[index] + ' ' + self.words[index+1]):
+                print `self.entries[i]` + ": " + `self.words[index] + ' ' + self.words[index+1]`
+                self.words[index] = self.words[index] + '\\index{' + self.entries[i][1] + end_string
 
-            # Find triple word entries.
-            if index > 1 and entries[i][2] == 3 and search(entries[i][0], self.words[index-2] + ' ' + self.words[index-1] + ' ' + self.words[index]):
-                self.words[index] = self.words[index] + '\\index{' + entries[i][1] + end_string
+            # Find single word entries.
+            elif self.entries[i][2] == 1 and search(self.entries[i][0], self.words[index]):
+                if index+1 < len(self.words):
+                    print `self.entries[i]` + ": " + `self.words[index] + ' ' + self.words[index+1]`
+                self.words[index] = self.words[index] + '\\index{' + self.entries[i][1] + end_string
 
 
     def index_entries(self):
         """Function for returning a data structure containing all words which should be indexed."""
 
         # Initialise.
-        entries = []
+        self.entries = []
 
         # The index entries (where to index and the index name).
         ########################################################
 
-        entries.append(['angle', 'angles'])
-        entries.append(['anisotropic', 'diffusion!anisotropic'])
-        entries.append(['asymmetric', 'diffusion!ellipsoid (asymmetric)'])
-        entries.append(['axially symmetric', 'diffusion!spheroid (axially symmetric)'])
+        self.entries.append(['angle', 'angles'])
+        self.entries.append(['anisotropic', 'diffusion!anisotropic'])
+        self.entries.append(['asymmetric', 'diffusion!ellipsoid (asymmetric)'])
+        self.entries.append(['axially symmetric', 'diffusion!spheroid (axially symmetric)'])
 
-        entries.append(['BFGS', 'minimisation techniques!BFGS'])
-        entries.append(['bond length', 'bond length'])
-        entries.append(['bound', 'parameter!bounds'])
-        entries.append(['Brownian', 'diffusion!Brownian'])
-        entries.append(['bzip2', 'compression!bzip2'])
+        self.entries.append(['BFGS', 'minimisation techniques!BFGS'])
+        self.entries.append(['bond length', 'bond length'])
+        self.entries.append(['bound', 'parameter!bounds'])
+        self.entries.append(['Brownian', 'diffusion!Brownian'])
+        self.entries.append(['bzip2', 'compression!bzip2'])
 
-        entries.append(['CG-Steihaug', 'minimisation techniques!CG-Steihaug'])
-        entries.append(['chemical exchange', 'chemical exchange'])
-        entries.append(['chi-squared', 'chi-squared'])
-        entries.append(['compression', 'compression'])
-        entries.append(['conjugate gradient', 'minimisation techniques!conjugate gradient'])
-        entries.append(['constraint', 'constraint'])
-        entries.append(['copy', 'copy'])
-        entries.append(['correlation time', 'correlation time'])
-        entries.append(['cauchy', 'minimisation techniques!Cauchy point'])
+        self.entries.append(['cauchy', 'minimisation techniques!Cauchy point'])
+        self.entries.append(['CG-Steihaug', 'minimisation techniques!CG-Steihaug'])
+        self.entries.append(['chemical exchange', 'chemical exchange'])
+        self.entries.append(['chi-squared', 'chi-squared'])
+        self.entries.append(['compression', 'compression'])
+        self.entries.append(['conjugate gradient', 'minimisation techniques!conjugate gradient'])
+        self.entries.append(['constraint', 'constraint'])
+        self.entries.append(['copy', 'copy'])
+        self.entries.append(['correlation time', 'correlation time'])
 
-        entries.append(['dasha', 'computer programs!Dasha'])
-        entries.append(['Dasha', 'computer programs!Dasha'])
-        entries.append(['delete', 'delete'])
-        entries.append(['diffusion tensor', 'diffusion!tensor'])
-        entries.append(['display', 'display'])
-        entries.append(['dogleg', 'minimisation techniques!dogleg'])
+        self.entries.append(['dasha', 'computer programs!Dasha'])
+        self.entries.append(['Dasha', 'computer programs!Dasha'])
+        self.entries.append(['delete', 'delete'])
+        self.entries.append(['diffusion tensor', 'diffusion!tensor'])
+        self.entries.append(['display', 'display'])
+        self.entries.append(['dogleg', 'minimisation techniques!dogleg'])
 
-        entries.append(['eigenvalue', 'eigenvalues'])
-        entries.append(['elimination', 'model elimination'])
-        entries.append(['ellipsoid', 'diffusion!ellipsoid (asymmetric)'])
-        entries.append(['Euler angle', 'Euler angles'])
-        entries.append(['exact trust region', 'minimisation techniques!exact trust region'])
+        self.entries.append(['eigenvalue', 'eigenvalues'])
+        self.entries.append(['elimination', 'model elimination'])
+        self.entries.append(['ellipsoid', 'diffusion!ellipsoid (asymmetric)'])
+        self.entries.append(['Euler angle', 'Euler angles'])
+        self.entries.append(['exact trust region', 'minimisation techniques!exact trust region'])
 
-        entries.append(['Fletcher-Reeves', 'minimisation techniques!Fletcher-Reeves'])
-        entries.append(['floating point', 'floating point number'])
+        self.entries.append(['Fletcher-Reeves', 'minimisation techniques!Fletcher-Reeves'])
+        self.entries.append(['floating point', 'floating point number'])
 
-        entries.append(['grace', 'computer programs!Grace'])
-        entries.append(['Grace', 'computer programs!Grace'])
-        entries.append(['gzip', 'compression!gzip'])
+        self.entries.append(['grace', 'computer programs!Grace'])
+        self.entries.append(['Grace', 'computer programs!Grace'])
+        self.entries.append(['gzip', 'compression!gzip'])
 
-        entries.append(['Hestenes-Stiefel', 'minimisation techniques!Hestenes-Stiefel'])
+        self.entries.append(['Hestenes-Stiefel', 'minimisation techniques!Hestenes-Stiefel'])
 
-        entries.append(['isotropic', 'diffusion!sphere (isotropic)'])
+        self.entries.append(['isotropic', 'diffusion!sphere (isotropic)'])
 
-        entries.append(['Levenberg-Marquardt', 'minimisation techniques!Levenberg-Marquardt'])
-        entries.append(['limit', 'parameter!limit'])
+        self.entries.append(['Levenberg-Marquardt', 'minimisation techniques!Levenberg-Marquardt'])
+        self.entries.append(['limit', 'parameter!limit'])
 
-        entries.append(['map', 'map'])
-        entries.append(['method of [Mm]ultipliers', 'minimisation techniques!Method of Multipliers'])
-        entries.append(['minimise', 'minimisation'])
-        entries.append(['minimisation', 'minimisation'])
-        entries.append(['model elimination', 'model elimination'])
-        entries.append(['modelfree4', 'computer programs!Modelfree4'])
-        entries.append(['Modelfree4', 'computer programs!Modelfree4'])
-        entries.append(['modelling', 'modelling'])
-        entries.append(['molecule', 'molecule'])
-        entries.append(['molmol', 'computer programs!Molmol'])
-        entries.append(['Molmol', 'computer programs!Molmol'])
+        self.entries.append(['map', 'map'])
+        self.entries.append(['method of [Mm]ultipliers', 'minimisation techniques!Method of Multipliers'])
+        self.entries.append(['minimise', 'minimisation'])
+        self.entries.append(['minimisation', 'minimisation'])
+        self.entries.append(['model elimination', 'model elimination'])
+        self.entries.append(['modelfree4', 'computer programs!Modelfree4'])
+        self.entries.append(['Modelfree4', 'computer programs!Modelfree4'])
+        self.entries.append(['modelling', 'modelling'])
+        self.entries.append(['molecule', 'molecule'])
+        self.entries.append(['molmol', 'computer programs!Molmol'])
+        self.entries.append(['Molmol', 'computer programs!Molmol'])
 
-        entries.append(['opendx', 'computer programs!OpenDX'])
-        entries.append(['OpenDX', 'computer programs!OpenDX'])
-        entries.append(['optimise', 'optimise'])
-        entries.append(['order parameter', 'order parameter'])
+        self.entries.append(['opendx', 'computer programs!OpenDX'])
+        self.entries.append(['OpenDX', 'computer programs!OpenDX'])
+        self.entries.append(['optimise', 'optimise'])
+        self.entries.append(['order parameter', 'order parameter'])
 
-        entries.append(['newton', 'minimisation techniques!Newton'])
-        entries.append(['newton-CG', 'minimisation techniques!Newton conjugate gradient'])
-        entries.append(['NMR', 'NMR'])
+        self.entries.append(['newton', 'minimisation techniques!Newton'])
+        self.entries.append(['newton-CG', 'minimisation techniques!Newton conjugate gradient'])
+        self.entries.append(['NMR', 'NMR'])
 
-        entries.append(['PDB', 'PDB'])
-        entries.append(['Polak-Ribi.*re', 'minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere'])
-        entries.append(['Polak-Ribi.*re +', 'minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere +'])
-        entries.append(['plot', 'plot'])
-        entries.append(['python', 'Python'])
+        self.entries.append(['PDB', 'PDB'])
+        self.entries.append(['Polak-Ribi.*re', 'minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere'])
+        self.entries.append(['Polak-Ribi.*re +', 'minimisation techniques!Polak-Ribiere@Polak-Ribi\`ere +'])
+        self.entries.append(['plot', 'plot'])
+        self.entries.append(['python', 'Python'])
 
-        entries.append(['read', 'read'])
-        entries.append(['regular expression', 'regular expression'])
-        entries.append(['relaxation', 'relaxation'])
-        entries.append(['rotation', 'rotation'])
+        self.entries.append(['read', 'read'])
+        self.entries.append(['regular expression', 'regular expression'])
+        self.entries.append(['relaxation', 'relaxation'])
+        self.entries.append(['rotation', 'rotation'])
 
-        entries.append(['sequence', 'sequence'])
-        entries.append(['script', 'scripting!script file'])
-        entries.append(['scripting', 'scripting'])
-        entries.append(['simplex', 'minimisation techniques!simplex'])
-        entries.append(['sphere', 'diffusion!sphere (isotropic)'])
-        entries.append(['spheroid', 'diffusion!spheroid (axially symmetric)'])
-        entries.append(['sparky', 'computer programs!Sparky'])
-        entries.append(['Sparky', 'computer programs!Sparky'])
-        entries.append(['steepest descent', 'minimisation techniques!steepest descent'])
+        self.entries.append(['sequence', 'sequence'])
+        self.entries.append(['script', 'scripting!script file'])
+        self.entries.append(['scripting', 'scripting'])
+        self.entries.append(['simplex', 'minimisation techniques!simplex'])
+        self.entries.append(['sphere', 'diffusion!sphere (isotropic)'])
+        self.entries.append(['spheroid', 'diffusion!spheroid (axially symmetric)'])
+        self.entries.append(['sparky', 'computer programs!Sparky'])
+        self.entries.append(['Sparky', 'computer programs!Sparky'])
+        self.entries.append(['steepest descent', 'minimisation techniques!steepest descent'])
 
-        entries.append(['tar', 'tar'])
+        self.entries.append(['tar', 'tar'])
 
-        entries.append(['uncompressed', 'compression!uncompressed'])
+        self.entries.append(['uncompressed', 'compression!uncompressed'])
 
-        entries.append(['write', 'write'])
+        self.entries.append(['write', 'write'])
 
-        entries.append(['xeasy', 'computer programs!XEasy'])
-        entries.append(['Xeasy', 'computer programs!XEasy'])
-        entries.append(['XEasy', 'computer programs!XEasy'])
+        self.entries.append(['xeasy', 'computer programs!XEasy'])
+        self.entries.append(['Xeasy', 'computer programs!XEasy'])
+        self.entries.append(['XEasy', 'computer programs!XEasy'])
 
         # Modifications.
-        for i in xrange(len(entries)):
+        for i in xrange(len(self.entries)):
             # Count the number of words.
-            entries[i].append(len(split(entries[i][0], ' ')))
+            self.entries[i].append(len(split(self.entries[i][0], ' ')))
 
             # Accept capitalisation.
-            if search(entries[i][0][0], lowercase):
-                entries[i][0] = '[' + upper(entries[i][0][0]) + entries[i][0][0] + ']' + entries[i][0][1:]
+            if search(self.entries[i][0][0], lowercase):
+                self.entries[i][0] = '[' + upper(self.entries[i][0][0]) + self.entries[i][0][0] + ']' + self.entries[i][0][1:]
 
             # Add a carrot to the start of the match string.
-            entries[i][0] = '^' + entries[i][0]
-
-        # Return the entries array.
-        return entries
+            self.entries[i][0] = '^' + self.entries[i][0]
 
 
     def keywords(self):
@@ -294,7 +291,7 @@ class Fetch_docstrings:
 
             # Empty line.
             if self.docstring_lines[self.i] == '':
-                string = string + '\n'
+                string = string + ' \n '
 
             # Continuation of an example.
             else:
@@ -538,7 +535,7 @@ class Fetch_docstrings:
         # Non-spaced list.
         if not list_spacing:
             # New line character.
-            string = string + ' \n'
+            string = string + ' \n '
 
             # Loop until the end of the list.
             while 1:
@@ -550,7 +547,7 @@ class Fetch_docstrings:
                     break
 
                 # Add the next line.
-                string = string + lstrip(self.docstring_lines[self.i]) + ' \n'
+                string = string + lstrip(self.docstring_lines[self.i]) + ' \n '
 
         # Spaced list.
         else:
@@ -566,7 +563,7 @@ class Fetch_docstrings:
                 # Empty line.
                 if len(self.docstring_lines[self.i]) == 0:
                     # New line character.
-                    string = string + ' \n'
+                    string = string + ' \n '
 
                     # Go to the next line.
                     continue
@@ -631,7 +628,7 @@ class Fetch_docstrings:
         #############
 
         # Print the function name to sys.stdout
-        sys.stdout.write("Function: " + `function` + "\n")
+        sys.stdout.write("Function: " + `function` + " \n ")
 
         # Get the docstring.
         docstring = getdoc(object)
@@ -741,6 +738,11 @@ class Fetch_docstrings:
         # Low level parse - formatting.
         ###############################
 
+        # Get the words to index.
+        self.index_entries()
+        for j in xrange(len(self.entries)):
+            print self.entries[j]
+
         # Loop over the sections.
         for i in xrange(len(self.section)):
             # The section type alias.
@@ -788,7 +790,7 @@ class Fetch_docstrings:
         ################
 
         # Start a new page.
-        self.file.write("\n\n\\newpage")
+        self.file.write(" \n\n \\newpage")
 
         # Loop over the data.
         for i in xrange(len(self.section)):
@@ -797,11 +799,11 @@ class Fetch_docstrings:
 
             # Subsection.
             if st == 'subsection':
-                self.file.write("\n\n\\subsection{" + self.section[i] + "}")
+                self.file.write(" \n\n \\subsection{" + self.section[i] + "}")
 
             # Subsubsection.
             elif st == 'subsubsection':
-                self.file.write("\n\\subsubsection{" + self.section[i] + "}")
+                self.file.write(" \n \\subsubsection{" + self.section[i] + "}")
 
             # Defaults.
             elif st == 'arguments':
@@ -819,16 +821,16 @@ class Fetch_docstrings:
 
                     # Don't know what to do with this!
                     if len(line_elements) > 2:
-                        sys.write("Keyword failure in: " + `line` + "\n")
+                        sys.write("Keyword failure in: " + `line` + " \n ")
                         sys.exit()
 
                     # Format the keyword.
-                    self.file.write("\\keyword{" + line_elements[0] + ":}" + line_elements[1] + "\n\n")
+                    self.file.write("\\keyword{" + line_elements[0] + ":}" + line_elements[1] + " \n\n ")
 
 
             # Verbatim.
             elif st == 'verbatim':
-                self.file.write("{\\footnotesize \\begin{verbatim}\n" + self.section[i] + "\\end{verbatim}}")
+                self.file.write("{\\footnotesize \\begin{verbatim} \n " + self.section[i] + "\\end{verbatim}}")
 
             # Example.
             elif st == 'example':
@@ -840,19 +842,19 @@ class Fetch_docstrings:
                 lines = split(self.section[i], '\n')
 
                 # Start the table, center it, and add the toprule.
-                self.file.write("\\begin{center}\n")
-                self.file.write("\\begin{tabular}{" + (int(lines[0]))*"l" + "}\n")
-                self.file.write("\\toprule\n")
+                self.file.write("\\begin{center} \n ")
+                self.file.write("\\begin{tabular}{" + (int(lines[0]))*"l" + "} \n ")
+                self.file.write("\\toprule \n ")
 
                 # Generate the LaTeX headings.
                 elements = split(lines[1], 'SEPARATOR')
                 self.file.write(elements[0])
                 for j in range(1, len(elements)):
                     self.file.write('&' + elements[j])
-                self.file.write(" \\\\\n")
+                self.file.write(" \\\\ \n ")
 
                 # Add the midrule.
-                self.file.write("\\midrule\n")
+                self.file.write("\\midrule \n ")
 
                 # Loop over the main table lines.
                 for line in lines[2:-1]:
@@ -863,12 +865,12 @@ class Fetch_docstrings:
                     self.file.write(elements[0])
                     for j in range(1, len(elements)):
                         self.file.write('&' + elements[j])
-                    self.file.write(" \\\\\n")
+                    self.file.write(" \\\\\n ")
 
                 # Add the bottomrule and terminate the tabular and center environment.
-                self.file.write("\\bottomrule\n")
-                self.file.write("\\end{tabular}\n")
-                self.file.write("\\end{center}\n")
+                self.file.write("\\bottomrule \n ")
+                self.file.write("\\end{tabular} \n ")
+                self.file.write("\\end{center} \n ")
 
             # Lists.
             elif st == 'list':
@@ -898,36 +900,40 @@ class Fetch_docstrings:
 
                 # Start the list.
                 if list_type == 1:
-                    self.file.write("\\begin{description}\n")
+                    self.file.write("\\begin{description} \n ")
                 else:
-                    self.file.write("\\begin{itemize}\n")
+                    self.file.write("\\begin{itemize} \n ")
 
                 # Loop over the lines.
                 for j in xrange(len(lines)):
                     # Plain list.
                     if list_type == 0:
-                        self.file.write("\\item[] " + lstrip(lines[j]) + '\n')
+                        self.file.write("\\item[] " + lstrip(lines[j]) + ' \n ')
 
                     # Description.
                     else:
                         # Get the description.
                         elements = split(lines[j], ':')
+                        
+                        # End of list.
+                        if len(elements) != 2:
+                            continue
 
                         # Format the element.
-                        self.file.write("\\item[" + lstrip(elements[0]) + " --]" + elements[1] + '\n')
+                        self.file.write("\\item[" + lstrip(elements[0]) + " --]" + elements[1] + ' \n ')
 
                 # End of the list.
                 if list_type == 1:
-                    self.file.write("\\end{description}\n")
+                    self.file.write("\\end{description} \n ")
                 else:
-                    self.file.write("\\end{itemize}\n")
+                    self.file.write("\\end{itemize} \n ")
 
             # No special formatting.
             else:
-                self.file.write(self.section[i] + '\n')
+                self.file.write(self.section[i] + ' \n ')
 
             # Add two newlines.
-            self.file.write("\n\n")
+            self.file.write(" \n\n ")
 
 
     def quotes(self, index):
@@ -1075,7 +1081,7 @@ class Fetch_docstrings:
 
         # Count the number of columns.
         num_col = len(split(self.docstring_lines[self.i], '|'))
-        string = `num_col-2` + '\n'
+        string = `num_col-2` + ' \n '
 
         # Not really a table!
         if num_col == 1:
@@ -1095,7 +1101,7 @@ class Fetch_docstrings:
         string = string + headings[0]
         for j in range(1, len(headings)):
             string = string + " SEPARATOR " + headings[j]
-        string = string + '\n'
+        string = string + ' \n '
 
         # Skip three lines.
         self.i = self.i + 3
@@ -1115,9 +1121,9 @@ class Fetch_docstrings:
                 string = string + lstrip(rstrip(columns[1]))
                 for j in range(2, len(columns)-1):
                     string = string + " SEPARATOR " + lstrip(rstrip(columns[j]))
-                string = string + '\n'
+                string = string + ' \n '
             else:
-                string = string + columns[0] + '\n'
+                string = string + columns[0] + ' \n '
 
             # Increment the line counter.
             self.i = self.i + 1
@@ -1144,7 +1150,7 @@ class Fetch_docstrings:
                 break
 
             # Add the next line.
-            string = string + self.docstring_lines[self.i] + '\n'
+            string = string + self.docstring_lines[self.i] + ' \n '
 
         # Add the sting to the verbatim section.
         self.section.append(string)

@@ -1,7 +1,7 @@
-% Installation instructions for the program relax.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Installation instructions.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Installation instructions for the program relax}
+\chapter{Installation instructions}
 
 
 % Dependencies.
@@ -11,14 +11,14 @@
 
 The following packages need to be installed before using relax:
 
-\begin{itemize}
-\item[Python]  Version 2.2 or higher.
-\item[Numeric]  Version 21 or higher.
-\item[ScientificPython]  Version 2.2 or higher.
-\item[Optik]  Version 1.4 or higher.  This is only needed if running python 2.2.
-\end{itemize}
+\begin{description}
+\item[Python:]  Version 2.2 or higher \index{Python}.
+\item[Numeric:]  Version 21 or higher \index{Numeric}.
+\item[ScientificPython:]  Version 2.2 or higher \index{ScientificPython}.
+\item[Optik:]  Version 1.4 or higher.  This is only needed if running python 2.2 \index{Optik}.
+\end{description}
 
-Older versions of these packages may work, use at your own risk.
+Older versions of these packages may work, use them at your own risk.
 
 
 
@@ -26,30 +26,47 @@ Older versions of these packages may work, use at your own risk.
 %~~~~~~~~~~~~~~
 
 \section{Installation}
+\index{installation|textbf}
+
+% Linux precompiled distribution.
+\subsection{Linux precompiled distribution}
+
+To install the program relax on a GNU/Linux system, download the precompiled distribution labelled \texttt{relax-x.x.x.Linux.i386.tar.bz2}.  This tar file has had the C code precompiled into shared objects files \texttt{*.so} which are loaded directly into relax.  Hence compilation is not necessary.  Untar and decompress the file using the command
+
+\example{\$ tar jxvf relax-x.x.x.Linux.i386.tar.bz2}
+
+Then in the base directory \texttt{relax}, switch user to root and type the command
+
+\example{\$ make install}
+\index{make}
+
+This will create a directory in \texttt{/usr/local/} called \texttt{relax}, copy all the untarred files into this directory, create a symbolic link in \texttt{/usr/local/bin} to the file \texttt{/usr/local/relax/relax}, and then finally run relax to create the byte-compiled Python \texttt{*.pyc} files to speed up the start time of relax.
+
+To change the installation path, modify the file \texttt{Makefile} and change the variable \texttt{INSTALL\_PATH} to point to the desired location.
 
 
-% Linux.
-\subsection{Linux}
+% Source distribution.
+\subsection{Source distribution}
+
+The source distribution should be named \texttt{relax-x.x.x.src.tar.bz2}.  The make utility and a C compiler are required for compilation of the C code into shared objects which are loaded as modules into relax.  To build these modules, type
+
+\example{\$ make}
+\index{make}
+
+Then to install the program, type
+
+\example{\$ make install}
+\index{make}
+
+The default installation path is currently \texttt{/usr/local/}.  To change this, edit the \texttt{Makefile} and modify the variable \texttt{INSTALL\_PATH}.
 
 
-To install the program relax, first put the compressed archive in /usr/local/ and untar using the
-command
+% Running a non-compiled version.
+\subsection{Running a non-compiled version}
 
-\example{\$ tar jxvf relax.tar.bz2}
+Compilation of the C code is not essential for running relax, however, certain features of the program will be disabled.  One example is relaxation curve fitting.  This approach may be necessary for systems, such as MS Windows, where C compilers are not readily available (although the cygwin environment may provide the tools required for compilation).
 
-Then make a link in usr/local/bin to the file relax/relax using the command,
-
-\example{\$ ln -s /usr/local/relax/relax /usr/local/bin/relax}
-
-
-
-% Post install.
-%~~~~~~~~~~~~~~
-
-\section{Post install}
-
-For faster loading of the program, run the program once as root so that all the '.pyc' files are
-created.  Simply typing 'relax' in a shell and then exiting is sufficient.
+To run relax without compilation, install the dependencies detailed above, download the source distribution which should be named \texttt{relax-x.x.x.src.tar.bz2}, extract the files, and then run the file called \texttt{relax} in the base directory.
 
 
 
@@ -58,25 +75,39 @@ created.  Simply typing 'relax' in a shell and then exiting is sufficient.
 
 \section{Optional programs}
 
-The following is a list of programs which can be used by relax, although they are not essential for
-normal use.
+The following is a list of programs which can be used by relax, although they are not essential for normal use.
 
 
 % Grace.
 \subsection{Grace}
+\index{computer programs!Grace|textbf}
 
-Viewer for parameter values.
+Grace is a program for plotting two dimensional data sets in a professional looking manner.  It is used to visualise parameter values.  It can be downloaded from \texttt{http://plasma-gate.weizmann.ac.il/Grace/}.
 
 
 % OpenDX.
 \subsection{OpenDX}
+\index{computer programs!OpenDX|textbf}
 
-Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping function,
-and is executed by passing the command 'dx' to the command line with various options.
+Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping function, and is executed by passing the command \texttt{dx} to the command line with various options.  The program is designed for visualising multidimensional data and can be found at \texttt{http://www.opendx.org/}.
 
 
 % Molmol.
 \subsection{Molmol}
+\index{computer programs!Molmol|textbf}
 
-Molmol is used for viewing the PDB structures and to display parameter values mapped onto the
-structure.
+Molmol is used for viewing the PDB structures loaded into the program and to display parameter values mapped onto the structure.
+
+
+% Dasha.
+\subsection{Dasha}
+\index{computer programs!Dasha|textbf}
+
+Dasha is a program used for model-free analysis of NMR relaxation data.  It can be used as an optimisation engine to replace the minimisation algorithms implemented within relax.
+
+
+% Modelfree4.
+\subsection{Modelfree4}
+\index{computer programs!Modelfree4|textbf}
+
+Art Palmer's Modelfree4 program is also designed for model-free analysis and can be used as an optimisation engine to replace relax's high precision minimisation algorithms.

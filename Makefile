@@ -27,11 +27,47 @@ mach = uname -m
 
 SUBDIRS = maths_fns
 
+INSTALL_PATH = /usr/local
+RELAX_PATH = $(INSTALL_PATH)/relax
+
 
 # Rule which is run when `make' is typed.
 .PHONY : relax
 relax :
 	@for i in $(SUBDIRS); do (cd $$i; make) done
+
+
+# Installation.
+install :
+	@echo -e "\nInstalling the program relax into $(INSTALL_PATH)\n\n"
+	
+	# Creating the directory.
+	mkdir $(RELAX_PATH)
+	
+	@echo -e "\n\n"
+	# Coping the files.
+	cp -urvp * $(RELAX_PATH)
+	
+	@echo -e "\n\n"
+	# Creating the symbolic link.
+	ln -s $(RELAX_PATH)/relax $(INSTALL_PATH)/bin/relax
+	
+	@echo -e "\n\n"
+	# Running relax to create the *.pyc files.
+	@cd $(RELAX_PATH)
+	relax --test
+
+
+# Deinstallation.
+uninstall :
+	@echo -e "\nUninstalling the program relax from $(INSTALL_PATH)\n\n"
+	
+	# Removing the directory.
+	rm -rvf $(RELAX_PATH)
+	
+	@echo -e "\n\n"
+	# Deleting the symbolic link.
+	rm -vf $(INSTALL_PATH)/bin/relax
 
 
 # Rule for compiling the manual.
