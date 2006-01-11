@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005 Edward d'Auvergne                                        #
+# Copyright (C) 2005-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -64,8 +64,8 @@ class Fetch_docstrings:
         names.sort()
 
         # Loop over the data structures.
-        #for name in names:
-        for name in ['minimise']:
+        #for name in ['minimise']:
+        for name in names:
             # Skip the name if it is in the blacklist.
             if name in self.blacklist:
                 continue
@@ -144,13 +144,10 @@ class Fetch_docstrings:
 
             # Find double word entries.
             elif index+1 < len(self.words) and self.entries[i][2] == 2 and search(self.entries[i][0], self.words[index] + ' ' + self.words[index+1]):
-                print `self.entries[i]` + ": " + `self.words[index] + ' ' + self.words[index+1]`
                 self.words[index] = self.words[index] + '\\index{' + self.entries[i][1] + end_string
 
             # Find single word entries.
             elif self.entries[i][2] == 1 and search(self.entries[i][0], self.words[index]):
-                if index+1 < len(self.words):
-                    print `self.entries[i]` + ": " + `self.words[index] + ' ' + self.words[index+1]`
                 self.words[index] = self.words[index] + '\\index{' + self.entries[i][1] + end_string
 
 
@@ -274,6 +271,14 @@ class Fetch_docstrings:
 
             # Add a carrot to the start of the match string.
             self.entries[i][0] = '^' + self.entries[i][0]
+
+            # Reverse the subarray in prepartion for sorting.
+            self.entries[i].reverse()
+
+        # Reverse sort by word count.
+        self.entries.sort(reverse=1)
+        for i in xrange(len(self.entries)):
+            self.entries[i].reverse()
 
 
     def keywords(self):
@@ -628,7 +633,7 @@ class Fetch_docstrings:
         #############
 
         # Print the function name to sys.stdout
-        sys.stdout.write("Function: " + `function` + " \n ")
+        sys.stdout.write("Function: " + `function` + "\n")
 
         # Get the docstring.
         docstring = getdoc(object)
@@ -740,8 +745,6 @@ class Fetch_docstrings:
 
         # Get the words to index.
         self.index_entries()
-        for j in xrange(len(self.entries)):
-            print self.entries[j]
 
         # Loop over the sections.
         for i in xrange(len(self.section)):
@@ -886,8 +889,8 @@ class Fetch_docstrings:
 
                 # Badly formatted list.
                 if len(elements) > 2:
-                    sys.stdout.write("Error: Badly formatted list element.\n")
-                    sys.stdout.write("The element is: " + `lines[i]` + "\n")
+                    sys.stderr.write("Error: Badly formatted list element.\n")
+                    sys.stderr.write("The element is: " + `lines[i]` + "\n")
                     sys.exit()
 
                 # Plain list.
@@ -948,7 +951,7 @@ class Fetch_docstrings:
 
         # Weird quote.
         elif len(elements) > 3:
-            sys.stdout.write('Unknown quote: ' + `self.words[index]`)
+            sys.stderr.write('Unknown quote: ' + `self.words[index]`)
             sys.exit()
 
         # Multiword quote.
