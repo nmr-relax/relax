@@ -33,9 +33,10 @@ static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Python declarations */
     PyObject *intensities_arg, *relax_times_arg, *scaling_matrix_arg;
-    extern PyArrayObject *intensities, *relax_times, *scaling_matrix;
+    extern PyArrayObject *numpy_intensities, *numpy_relax_times, *numpy_scaling_matrix;
 
     /* Normal declarations */
+    extern double *relax_time_array;
     extern int *num_params, *num_times;
     extern double *sd;
 
@@ -48,16 +49,14 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         return NULL;
 
     /* Make the Numeric arrays contiguous */
-    intensities = (PyArrayObject *) PyArray_ContiguousFromObject(intensities_arg, PyArray_DOUBLE, 1, 1);
-    relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
-    scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
+    numpy_intensities = (PyArrayObject *) PyArray_ContiguousFromObject(intensities_arg, PyArray_DOUBLE, 1, 1);
+    numpy_relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
+    numpy_scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
 
-    /* Destroy the references to the contiguous Numeric arrays */
-    /*
-    Py_DECREF(intensities);
-    Py_DECREF(relax_times);
-    Py_DECREF(scaling_matrix);
-    */
+    /* Pointers to the Numeric arrays */
+    intensities = (double *) numpy_intensities->data;
+    relax_times = (double *) numpy_relax_times->data;
+    scaling_matrix = (double *) numpy_scaling_matrix->data;
 
     /* Return nothing */
     Py_INCREF(Py_None);
@@ -75,7 +74,7 @@ func(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *arg1;
-    extern PyArrayObject *params;
+    extern PyArrayObject *numpy_params;
     void exponential(void);
 
 
@@ -84,7 +83,10 @@ func(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the Numeric array to be contiguous */
-    params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+    numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+
+    /* Pointers to the Numeric arrays */
+    params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
     exponential();

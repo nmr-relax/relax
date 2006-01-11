@@ -35,22 +35,18 @@ void exponential(void) {
 	*/
 
     /* Declarations */
-    extern PyArrayObject *params, *relax_times;
     extern int *num_times;
+    extern double *params, *relax_times;
     double Rx, I0;
     int i;
 
-
-    /* Get the parameters */
-    Rx = *(double *) (params->data);
-    I0 = *(double *) (params->data + params->strides[0]);
 
     /* Loop over the time points */
     /* for (i = 0; i < num_times; i++) { */
     printf("\n\nNum times: %i\n", num_times);
     for (i = 0; i < 6; i++) {
         /* Back calculate */
-        printf("%-20g", I0 * exp(-*(double *) (relax_times->data + i*relax_times->strides[0])/Rx));
+        printf("%-20g", params[1] * exp(-relax_times[i]/params[0]));
 
     }
 }
