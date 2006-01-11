@@ -91,7 +91,8 @@ func(PyObject *self, PyObject *args) {
     /* Back calculated the peak intensities */
     exponential();
 
-    return Py_BuildValue("f", 0.0);
+    /* Calculate and return the chi-squared value */
+    return Py_BuildValue("f", chi2());
 }
 
 

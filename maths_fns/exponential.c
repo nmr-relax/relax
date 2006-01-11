@@ -44,10 +44,8 @@ void exponential(void) {
 
     /* Loop over the time points */
     /* for (i = 0; i < num_times; i++) { */
-    printf("\n\nNum times: %i\n", num_times);
     for (i = 0; i < 6; i++) {
         /* Back calculate */
-        printf("%-20g", params[1] * exp(-relax_times[i]/params[0]));
         back_calc[i] = params[1] * exp(-relax_times[i]/params[0]);
 
     }
