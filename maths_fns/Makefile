@@ -22,8 +22,7 @@
 
 
 # Variables.
-#objects = relax_fit.o c_chi2.o exponential.o
-objects = relax_fit.o c_chi2.o
+objects = relax_fit.o c_chi2.o exponential.o
 
 PYTHON_PATH = /usr/include/python2.4
 
