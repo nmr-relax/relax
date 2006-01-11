@@ -3254,6 +3254,22 @@ class Model_free(Common_functions):
         # Add the relaxation data.
         self.relax.specific.relax_data.add_residue(run=self.run, res_index=self.res_index, ri_labels=self.ri_labels, remap_table=self.remap_table, frq_labels=self.frq_labels, frq=self.frq, values=values, errors=errors, sim=sim)
 
+        # Alias the newly created data
+        data = self.relax.data.res[self.run][self.res_index]
+        # Remove any data with the value None.
+        for index,Ri in enumerate(data.relax_data):
+            if Ri == None:
+                data.relax_data.pop(index)
+                data.relax_error.pop(index)
+                data.remap_table.pop(index)
+                data.ri_labels.pop(index)
+        # Remove any data with error of None.
+        for index,error in enumerate(data.relax_error):
+            if error == None:
+                data.relax_data.pop(index)
+                data.relax_error.pop(index)
+                data.remap_table.pop(index)
+                data.ri_labels.pop(index)
 
     def read_columnar_results(self, run, file_data, print_flag=1):
         """Function for reading the results file."""
