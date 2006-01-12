@@ -36,6 +36,7 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     extern PyArrayObject *numpy_intensities, *numpy_relax_times, *numpy_scaling_matrix;
 
     /* Normal declarations */
+    extern double *intensities, *relax_times, *scaling_matrix;
     extern double *relax_time_array;
     extern int *num_params, *num_times;
     extern double *sd;
@@ -116,14 +117,23 @@ back_calc_I(PyObject *self, PyObject *args) {
     /* Declarations */
     extern double back_calc[];
     PyArrayObject *back_calc_numpy;
+    double *test;
     int i;
 
-    /* Create an empyt Numeric array */
+    /* Create an empty Numeric array */
+    /* back_calc_numpy = (PyArrayObject *)PyArray_FromDimsAndData(1, num_times, PyArray_DOUBLE, (char *)back_calc); */
     back_calc_numpy = (PyArrayObject *)PyArray_FromDims(1, num_times, PyArray_DOUBLE);
+
+    /* Pointer to the Numeric array */
+    test = (double *) back_calc_numpy->data;
 
     /* Fill the Numeric array */
     for (i = 0; i < 6; i++)
-        back_calc_numpy[i] = (double *) back_calc[i];
+        *(test + i) = back_calc[i];
+
+    /* Error */
+    if (back_calc_numpy == NULL)
+        return NULL;
 
     /* Return the Numeric array */
     return PyArray_Return(back_calc_numpy);

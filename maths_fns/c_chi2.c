@@ -44,6 +44,7 @@ double chi2(void) {
 	*/
 
     /* Declarations */
+    extern int *num_params;
     extern double *intensities;
     extern double sd, back_calc[];
 	int i;
