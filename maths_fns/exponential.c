@@ -44,7 +44,7 @@ void exponential(void) {
 
     /* Loop over the time points */
     /* for (i = 0; i < num_times; i++) { */
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < (int)num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
             back_calc[i] = 0.0;
