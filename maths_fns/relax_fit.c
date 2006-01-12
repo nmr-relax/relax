@@ -116,27 +116,18 @@ back_calc_I(PyObject *self, PyObject *args) {
 
     /* Declarations */
     extern double back_calc[];
-    PyArrayObject *back_calc_numpy;
-    double *test;
+    extern int *num_times;
     int i;
 
-    /* Create an empty Numeric array */
-    /* back_calc_numpy = (PyArrayObject *)PyArray_FromDimsAndData(1, num_times, PyArray_DOUBLE, (char *)back_calc); */
-    back_calc_numpy = (PyArrayObject *)PyArray_FromDims(1, num_times, PyArray_DOUBLE);
+    PyObject *back_calc_py = PyList_New((int)num_times);
+    assert(PyList_Check(back_calc_py));
 
-    /* Pointer to the Numeric array */
-    test = (double *) back_calc_numpy->data;
-
-    /* Fill the Numeric array */
-    for (i = 0; i < 6; i++)
-        *(test + i) = back_calc[i];
-
-    /* Error */
-    if (back_calc_numpy == NULL)
-        return NULL;
+    /* Copy the values out of the C array into the Python array */
+    for (i = 0; i < (int)num_times; i++)
+        PyList_SetItem(back_calc_py, i, Py_BuildValue("f", back_calc[i]));
 
     /* Return the Numeric array */
-    return PyArray_Return(back_calc_numpy);
+    return back_calc_py;
 }
 
 

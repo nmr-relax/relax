@@ -170,7 +170,7 @@ class Relax_fit(Common_functions):
         results = back_calc_I()
 
         # Return the correct peak height.
-        return value[relax_time_index]
+        return results[relax_time_index]
 
 
     def create_mc_data(self, run, i):
@@ -196,6 +196,7 @@ class Relax_fit(Common_functions):
             data.append(value)
 
         # Return the data.
+        print `data`
         return data
 
 
