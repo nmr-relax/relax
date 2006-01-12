@@ -51,7 +51,7 @@ void exponential(void) {
 
         /* Back calculate */
         else
-            back_calc[i] = params[1] * exp(-relax_times[i]/params[0]);
+            back_calc[i] = params[1] * exp(-relax_times[i] * params[0]);
 
     }
 }

@@ -38,6 +38,55 @@ class Relax_fit:
         self.__relax__ = relax
 
 
+    def mean_and_error(self, run=None):
+        """Function for calculating the average intensity and standard deviation of all spectra.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The standard deviation for a single residue at a single time point is calculated by the
+        formula
+
+                      ____________________________
+                     /   1
+            sd =    /  ----- * sum({Xi - Xav}^2)]  ,
+                  \/   n - 1
+
+        where n is the total number of collected spectra for the time point and i is the
+        corresponding index, Xi is the peak intensity for spectra i, Xav is the mean over all
+        spectra, ie the sum of all peak intensities divided by n.
+
+        The standard deviation of all residues is averaged.  This is done because of the
+        low value of n, usually only a couple of spectra are collected.  Although all residues now
+        have the same error value, the error estimate increases in accuracy.
+        
+        Currently another averaging is applied.  The standard deviations of all replicated spectra
+        are averaged to give one error value for all residues across all spectra.  If all time
+        points are duplicated, this averaging is unecessary (although handling a separate error for
+        each spectra is not coded yet).
+        """
+
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_fit.mean_and_error("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.__relax__.specific.relax_fit.mean_and_error(run=run)
+
+
     def read(self, run=None, file=None, dir=None, relax_time=0.0, format='sparky', heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file.
 

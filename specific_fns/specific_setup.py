@@ -280,7 +280,7 @@ class Specific_setup:
 
         # Set the selected simulations array.
         if self.eqi == 'set_selected_sim':
-            return self.relax.specific.model_free.sim_set_selected
+            return self.relax.specific.model_free.set_selected_sim
 
         # Skip function.
         if self.eqi == 'skip_function':
@@ -334,6 +334,10 @@ class Specific_setup:
     def relax_fit(self):
         """Relaxation curve fitting functions."""
 
+        # Create Monte Carlo data function.
+        if self.eqi == 'create_mc_data':
+            return self.relax.specific.relax_fit.create_mc_data
+
         # Grid search function.
         if self.eqi == 'grid_search':
             return self.relax.specific.relax_fit.grid_search
@@ -342,14 +346,34 @@ class Specific_setup:
         if self.eqi == 'minimise':
             return self.relax.specific.relax_fit.minimise
 
-        # Value and error returning function.
-        if self.eqi == 'return_value':
-            return self.relax.specific.relax_fit.return_value
+        # Number of instances.
+        if self.eqi == 'num_instances':
+            return self.relax.specific.relax_fit.num_instances
+
+        # Pack Monte Carlo simulation data function.
+        if self.eqi == 'pack_sim_data':
+            return self.relax.specific.relax_fit.sim_pack_data
+
+        # Data returning function.
+        if self.eqi == 'return_data':
+            return self.relax.specific.relax_fit.return_data
 
         # Data or parameter name returning function.
         if self.eqi == 'return_data_name':
             return self.relax.specific.relax_fit.return_data_name
 
+        # Data error returning function.
+        if self.eqi == 'return_error':
+            return self.relax.specific.relax_fit.return_error
+
+        # Value and error returning function.
+        if self.eqi == 'return_value':
+            return self.relax.specific.relax_fit.return_value
+
         # Set function.
         if self.eqi == 'set':
             return self.relax.specific.relax_fit.set
+        
+        # Set the selected simulations array.
+        if self.eqi == 'set_selected_sim':
+            return self.relax.specific.relax_fit.set_selected_sim

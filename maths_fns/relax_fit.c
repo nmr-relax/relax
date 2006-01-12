@@ -75,7 +75,7 @@ func(PyObject *self, PyObject *args) {
     /* Declarations */
     PyObject *arg1;
     extern PyArrayObject *numpy_params;
-    void exponential(void);
+    double chi2(void);
 
 
     /* Parse the function arguments, the only argument should be the parameter array */
@@ -109,12 +109,34 @@ d2func(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *
+back_calc_I(PyObject *self, PyObject *args) {
+    /* Function for returning as a Numeric array the back calculated peak intensities */
+
+    /* Declarations */
+    extern double back_calc[];
+    PyArrayObject *back_calc_numpy;
+    int i;
+
+    /* Create an empyt Numeric array */
+    back_calc_numpy = (PyArrayObject *)PyArray_FromDims(1, num_times, PyArray_DOUBLE);
+
+    /* Fill the Numeric array */
+    for (i = 0; i < 6; i++)
+        back_calc_numpy[i] = (double *) back_calc[i];
+
+    /* Return the Numeric array */
+    return PyArray_Return(back_calc_numpy);
+}
+
+
 /* The method table for the functions called by Python */
 static PyMethodDef relax_fit_methods[] = {
     {"setup", (PyCFunction)setup, METH_VARARGS | METH_KEYWORDS, "The main relaxation curve fitting setup function."},
     {"func", func, METH_VARARGS},
     {"dfunc", dfunc, METH_VARARGS},
     {"d2func", d2func, METH_VARARGS},
+    {"back_calc_I", back_calc_I, METH_VARARGS},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

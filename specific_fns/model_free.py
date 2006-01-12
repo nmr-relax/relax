@@ -450,7 +450,7 @@ class Model_free(Common_functions):
 
             # Test if the model-free model has been setup.
             if not data.model:
-                raise RelaxNoMfModelError, self.run
+                raise RelaxNoModelError, self.run
 
             # Test if unit vectors exist.
             if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere' and not hasattr(data, 'xh_vect'):
@@ -619,7 +619,7 @@ class Model_free(Common_functions):
 
         # Test if the model is set.
         if not hasattr(self.relax.data.res[self.run][i], 'model') or not self.relax.data.res[self.run][i].model:
-            raise RelaxNoMfModelError, self.run
+            raise RelaxNoModelError, self.run
 
         # Loop over the relaxation data.
         for j in xrange(len(self.relax.data.res[run][i].relax_data)):
@@ -1434,7 +1434,7 @@ class Model_free(Common_functions):
 
             # Not setup.
             if not self.relax.data.res[self.run][j].model:
-                raise RelaxNoMfModelError, self.run
+                raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -1470,7 +1470,7 @@ class Model_free(Common_functions):
 
             # Not setup.
             if not self.relax.data.res[self.run][j].model:
-                raise RelaxNoMfModelError, self.run
+                raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -2010,7 +2010,7 @@ class Model_free(Common_functions):
 
             # Not setup.
             if not self.relax.data.res[self.run][i].model:
-                raise RelaxNoMfModelError, self.run
+                raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -4072,6 +4072,24 @@ class Model_free(Common_functions):
                 inc = inc + 1
 
 
+    def set_selected_sim(self, run, instance, select_sim):
+        """Function for returning the array of selected simulation flags."""
+
+        # Arguments.
+        self.run = run
+
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Single instance.
+        if self.param_set == 'all' or self.param_set == 'diff':
+            self.relax.data.select_sim = select_sim
+
+        # Multiple instances.
+        else:
+            self.relax.data.res[self.run][instance].select_sim = select_sim
+
+
     def sim_init_values(self, run):
         """Function for initialising Monte Carlo parameter values."""
 
@@ -4362,24 +4380,6 @@ class Model_free(Common_functions):
         # Multiple instances.
         else:
             return self.relax.data.res[self.run][instance].select_sim
-
-
-    def sim_set_selected(self, run, instance, select_sim):
-        """Function for returning the array of selected simulation flags."""
-
-        # Arguments.
-        self.run = run
-
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
-
-        # Single instance.
-        if self.param_set == 'all' or self.param_set == 'diff':
-            self.relax.data.select_sim = select_sim
-
-        # Multiple instances.
-        else:
-            self.relax.data.res[self.run][instance].select_sim = select_sim
 
 
     def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):

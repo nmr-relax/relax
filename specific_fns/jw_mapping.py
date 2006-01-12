@@ -229,6 +229,11 @@ class Jw_mapping(Common_functions):
         # Arguments.
         self.run = run
 
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            return 0
+
+        # Return the number of residues.
         return len(self.relax.data.res[self.run])
 
 

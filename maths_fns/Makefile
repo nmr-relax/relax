@@ -42,5 +42,6 @@ relax_fit.so : $(objects)
 
 
 # Rules for making the objects
-$(objects): %.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+relax_fit.o : relax_fit.h
+c_chi2.o : relax_fit.h
+exponential.o : relax_fit.h

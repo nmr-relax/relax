@@ -18,7 +18,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdio.h>
 #include <math.h>
+
+#define square(x) (x)*(x)
 
 
 double chi2(void) {
@@ -48,7 +51,7 @@ double chi2(void) {
 
     /* Loop over the time points and sum the chi-squared components */
 	for (i = 0; i < 6; ++i) {
-		chi2 = chi2 + ((intensities[i] - back_calc[i]) / sd)*((intensities[i] - back_calc[i]) / sd);
+		chi2 = chi2 + square((intensities[i] - back_calc[i]) / sd);
 	}
 
 	return chi2;

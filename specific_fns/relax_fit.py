@@ -32,7 +32,7 @@ from minimise.generic import generic_minimise
 
 # C modules.
 try:
-    from maths_fns.relax_fit import setup, func, dfunc, d2func
+    from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 except ImportError:
     sys.stderr.write("\nImportError: relaxation curve fitting is unavailible, try compiling the C modules.\n")
     __builtin__.C_module_exp_fn = 0
@@ -148,118 +148,55 @@ class Relax_fit(Common_functions):
             data.intensities[index].append(intensity)
 
 
-    def ave_and_sd(self):
-        """Function for calculating the average intensity and standard deviation of all spectra."""
+    def back_calc(self, run=None, index=None, relax_time_index=None):
+        """Back-calculation of peak intensity for the given relaxation time."""
 
-        # Test if the standard deviation is already calculated.
-        if hasattr(self.relax.data, 'sd'):
-            raise RelaxError, "The average intensity and standard deviation of all spectra has already been calculated."
+        # Run argument.
+        self.run = run
 
-        # Print out.
-        if self.print_flag >= 1:
-            print "\nCalculating the average intensity and standard deviation of all spectra."
+        # Alias the residue specific data structure.
+        data = self.relax.data.res[self.run][index]
 
-        # Initialise.
-        self.relax.data.sd = {}
-        self.relax.data.sd[self.run] = 0.0
-        num_error_sets = 0
+        # Create the initial parameter vector.
+        self.param_vector = self.assemble_param_vector(index=index)
 
-        # Loop over the time points.
-        for time_index in xrange(len(self.relax.data.relax_times[self.run])):
-            # Print out.
-            if self.print_flag >= 1:
-                print "\nTime point:  " + `self.relax.data.relax_times[self.run][time_index]` + " s"
-                print "Number of spectra:  " + `self.relax.data.num_spectra[self.run][time_index]`
-                if self.print_flag >= 2:
-                    print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
+        # Initialise the relaxation fit functions.
+        setup(num_params=len(data.params), num_times=len(self.relax.data.relax_times[self.run]), intensities=data.ave_intensities, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
 
-            # Initialise the time point and residue specific sd.
-            total_res = 0
-            total_sd = 0.0
+        # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
+        func(self.param_vector)
 
-            # Test for multiple spectra.
-            if self.relax.data.num_spectra[self.run][time_index] == 1:
-                multiple_spectra = 0
-            else:
-                multiple_spectra = 1
+        # Get the data back.
+        results = back_calc_I()
 
-            # Calculate the mean value.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Alias the residue specific data structure.
-                data = self.relax.data.res[self.run][i]
+        # Return the correct peak height.
+        return value[relax_time_index]
 
-                # Skip unselected residues.
-                if not data.select:
-                    continue
 
-                # Skip residues which have no data.
-                if not hasattr(data, 'intensities'):
-                    continue
+    def create_mc_data(self, run, i):
+        """Function for creating the Monte Carlo peak intensity data."""
 
-                # Initialise the average intensity and standard deviation data structures.
-                if not hasattr(data, 'ave_intensities'):
-                    data.ave_intensities = []
-                if not hasattr(data, 'sd'):
-                    data.sd = []
+        # Arguments
+        self.run = run
 
-                # Average intensity.
-                data.ave_intensities.append(average(data.intensities[time_index]))
+        # Initialise the data data structure.
+        data = []
 
-                # Skip the time point if only a single spectrum exists.
-                if not multiple_spectra:
-                    data.sd.append(0.0)
-                    continue
+        # Test if the model is set.
+        if not hasattr(self.relax.data.res[self.run][i], 'model') or not self.relax.data.res[self.run][i].model:
+            print self.relax.data.res[self.run][i]
+            raise RelaxNoModelError, self.run
 
-                # Sum of squared errors.
-                SSE = 0.0
-                for j in xrange(self.relax.data.num_spectra[self.run][time_index]):
-                    SSE = SSE + (data.intensities[time_index][j] - data.ave_intensities[time_index]) ** 2
+        # Loop over the spectral time points.
+        for j in xrange(len(self.relax.data.relax_times[run])):
+            # Back calculate the value.
+            value = self.back_calc(run=run, index=i, relax_time_index=j)
 
-                # Standard deviation.
-                #                  ____________________________
-                #                 /   1
-                #                /  ----- * sum({Xi - Xav}^2)]
-                #              \/   n - 1
-                #       sd =   --------------------------------
-                #                            ___
-                #                          \/ 2
-                #
-                sd = sqrt(0.5 * 1.0 / (self.relax.data.num_spectra[self.run][time_index] - 1.0) * SSE)
-                data.sd.append(sd)
+            # Append the value.
+            data.append(value)
 
-                # Print out.
-                if self.print_flag >= 2:
-                    print "%-5i%-6s%-20s%-20s" % (data.num, data.name, `data.ave_intensities[time_index]`, `data.sd[time_index]`)
-
-                # Sum of standard deviations (for average).
-                total_sd = total_sd + data.sd[time_index]
-
-                # Increment the number of residues counter.
-                total_res = total_res + 1
-
-            # Skip the rest if there is only a single spectrum for the time point.
-            if not multiple_spectra:
-                continue
-
-            # Average the sd.
-            total_sd = total_sd / float(total_res)
-
-            # Print out.
-            if self.print_flag >= 1:
-                print "Average sd:  " + `total_sd`
-
-            # Sum the standard deviation of all peaks for the time point (to be averaged at the end).
-            self.relax.data.sd[self.run] = self.relax.data.sd[self.run] + total_sd
-
-            # Increment the number of error sets.
-            num_error_sets = num_error_sets + 1
-
-        # Average standard deviation for all replicated spectra.
-        self.relax.data.sd[self.run] = self.relax.data.sd[self.run] / float(num_error_sets)
-
-        # Print out.
-        if self.print_flag >= 1:
-            print "\nSd averaged over all spectra:  " + `self.relax.data.sd[self.run]`
+        # Return the data.
+        return data
 
 
     def data_init(self):
@@ -578,6 +515,116 @@ class Relax_fit(Common_functions):
         return A, b
 
 
+    def mean_and_error(self, run=None, print_flag=0):
+        """Function for calculating the average intensity and standard deviation of all spectra."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the standard deviation is already calculated.
+        if hasattr(self.relax.data, 'sd'):
+            raise RelaxError, "The average intensity and standard deviation of all spectra has already been calculated."
+
+        # Print out.
+        print "\nCalculating the average intensity and standard deviation of all spectra."
+
+        # Initialise.
+        self.relax.data.sd = {}
+        self.relax.data.sd[self.run] = 0.0
+        num_error_sets = 0
+
+        # Loop over the time points.
+        for time_index in xrange(len(self.relax.data.relax_times[self.run])):
+            # Print out.
+            print "\nTime point:  " + `self.relax.data.relax_times[self.run][time_index]` + " s"
+            print "Number of spectra:  " + `self.relax.data.num_spectra[self.run][time_index]`
+            if print_flag:
+                print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
+
+            # Initialise the time point and residue specific sd.
+            total_res = 0
+            total_sd = 0.0
+
+            # Test for multiple spectra.
+            if self.relax.data.num_spectra[self.run][time_index] == 1:
+                multiple_spectra = 0
+            else:
+                multiple_spectra = 1
+
+            # Calculate the mean value.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Alias the residue specific data structure.
+                data = self.relax.data.res[self.run][i]
+
+                # Skip unselected residues.
+                if not data.select:
+                    continue
+
+                # Skip residues which have no data.
+                if not hasattr(data, 'intensities'):
+                    continue
+
+                # Initialise the average intensity and standard deviation data structures.
+                if not hasattr(data, 'ave_intensities'):
+                    data.ave_intensities = []
+                if not hasattr(data, 'sd'):
+                    data.sd = []
+
+                # Average intensity.
+                data.ave_intensities.append(average(data.intensities[time_index]))
+
+                # Skip the time point if only a single spectrum exists.
+                if not multiple_spectra:
+                    data.sd.append(0.0)
+                    continue
+
+                # Sum of squared errors.
+                SSE = 0.0
+                for j in xrange(self.relax.data.num_spectra[self.run][time_index]):
+                    SSE = SSE + (data.intensities[time_index][j] - data.ave_intensities[time_index]) ** 2
+
+                # Standard deviation.
+                #                 ____________________________
+                #                /   1
+                #       sd =    /  ----- * sum({Xi - Xav}^2)]
+                #             \/   n - 1
+                #
+                sd = sqrt(1.0 / (self.relax.data.num_spectra[self.run][time_index] - 1.0) * SSE)
+                data.sd.append(sd)
+
+                # Print out.
+                if print_flag:
+                    print "%-5i%-6s%-20s%-20s" % (data.num, data.name, `data.ave_intensities[time_index]`, `data.sd[time_index]`)
+
+                # Sum of standard deviations (for average).
+                total_sd = total_sd + data.sd[time_index]
+
+                # Increment the number of residues counter.
+                total_res = total_res + 1
+
+            # Skip the rest if there is only a single spectrum for the time point.
+            if not multiple_spectra:
+                continue
+
+            # Average the sd.
+            total_sd = total_sd / float(total_res)
+
+            # Print out.
+            print "Average sd:  " + `total_sd`
+
+            # Sum the standard deviation of all peaks for the time point (to be averaged at the end).
+            self.relax.data.sd[self.run] = self.relax.data.sd[self.run] + total_sd
+
+            # Increment the number of error sets.
+            num_error_sets = num_error_sets + 1
+
+        # Average standard deviation for all replicated spectra.
+        self.relax.data.sd[self.run] = self.relax.data.sd[self.run] / float(num_error_sets)
+
+        # Print out.
+        print "\nSd averaged over all spectra:  " + `self.relax.data.sd[self.run]`
+
+
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
         """Relaxation curve fitting function."""
 
@@ -588,9 +635,6 @@ class Relax_fit(Common_functions):
         # Test if the sequence data for self.run is loaded.
         if not self.relax.data.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
-
-        # Calculate the average intensity and standard deviation.
-        self.ave_and_sd()
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
@@ -738,8 +782,23 @@ class Relax_fit(Common_functions):
             if not self.relax.data.res[self.run][i].select:
                 continue
 
-            # The parameter names.
+            # The model and parameter names.
+            self.relax.data.res[self.run][i].model = model
             self.relax.data.res[self.run][i].params = params
+
+
+    def num_instances(self, run=None):
+        """Function for returning the number of instances."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            return 0
+
+        # Return the number of residues.
+        return len(self.relax.data.res[self.run])
 
 
     def read(self, run=None, file=None, dir=None, relax_time=0.0, format=None, heteronuc=None, proton=None, int_col=None):
@@ -914,6 +973,18 @@ class Relax_fit(Common_functions):
         return 1.0
 
 
+    def return_data(self, run, i):
+        """Function for returning the peak intensity data structure."""
+
+        return self.relax.data.res[run][i].intensities
+
+
+    def return_error(self, run, i):
+        """Function for returning the standard deviation data structure."""
+
+        return self.relax.data.sd[run]
+
+
     def return_data_name(self, name):
         """
         Relaxation curve fitting data type string matching patterns
@@ -1070,6 +1141,27 @@ class Relax_fit(Common_functions):
             elif self.spectrum_type == 'sat':
                 data.sat_err = float(error)
 
+
+    def set_selected_sim(self, run, instance, select_sim):
+        """Function for returning the array of selected simulation flags."""
+
+        # Arguments.
+        self.run = run
+
+        # Multiple instances.
+        self.relax.data.res[self.run][instance].select_sim = select_sim
+
+
+    def sim_pack_data(self, run, i, sim_data):
+        """Function for packing Monte Carlo simulation data."""
+
+        # Test if the simulation data already exists.
+        if hasattr(self.relax.data.res[run][i], 'sim_intensities'):
+            raise RelaxError, "Monte Carlo simulation data already exists."
+
+        # Create the data structure.
+        self.relax.data.res[run][i].sim_intensities = sim_data
+        
 
     def write(self, run=None, file=None, dir=None, force=0):
         """Function for writing NOE values and errors to a file."""

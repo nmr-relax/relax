@@ -305,11 +305,6 @@ class RelaxErrors:
     # Model-free errors.
     ####################
 
-    # No model-free model.
-    class RelaxNoMfModelError(BaseError):
-        def __init__(self, run):
-            self.text = "The model-free models corresponding to the run " + `run` + " have not been setup."
-
     # Model-free data already exists.
     class RelaxMfError(BaseError):
         def __init__(self, run):
@@ -386,6 +381,11 @@ class RelaxErrors:
     class RelaxFuncSetupError(BaseError):
         def __init__(self, string):
             self.text = "This function is not available for " + string + "."
+
+    # The model has not been setup.
+    class RelaxNoModelError(BaseError):
+        def __init__(self, run):
+            self.text = "The models corresponding to the run " + `run` + " have not been setup."
 
 
     # Regular expression errors.
