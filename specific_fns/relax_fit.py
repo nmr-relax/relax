@@ -56,36 +56,34 @@ class Relax_fit(Common_functions):
         # Alias the residue specific data structure.
         data = self.relax.data.res[self.run][index]
 
-        # Normal parameters.
-        if sim_index == None:
-            # Loop over the model parameters.
-            for i in xrange(len(data.params)):
-                # Relaxation rate.
-                if data.params[i] == 'Rx':
-                    if data.rx == None:
-                        param_vector.append(0.0)
-                    elif sim_index != None:
-                        param_vector.append(data.rx_sim[sim_index])
-                    else:
-                        param_vector.append(data.rx)
+        # Loop over the model parameters.
+        for i in xrange(len(data.params)):
+            # Relaxation rate.
+            if data.params[i] == 'Rx':
+                if sim_index != None:
+                    param_vector.append(data.rx_sim[sim_index])
+                elif data.rx == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(data.rx)
 
-                # Initial intensity.
-                elif data.params[i] == 'I0':
-                    if data.i0 == None:
-                        param_vector.append(0.0)
-                    elif sim_index != None:
-                        param_vector.append(data.i0_sim[sim_index])
-                    else:
-                        param_vector.append(data.i0)
+            # Initial intensity.
+            elif data.params[i] == 'I0':
+                if sim_index != None:
+                    param_vector.append(data.i0_sim[sim_index])
+                elif data.i0 == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(data.i0)
 
-                # Intensity at infinity.
-                elif data.params[i] == 'Iinf':
-                    if data.iinf == None:
-                        param_vector.append(0.0)
-                    elif sim_index != None:
-                        param_vector.append(data.iinf_sim[sim_index])
-                    else:
-                        param_vector.append(data.iinf)
+            # Intensity at infinity.
+            elif data.params[i] == 'Iinf':
+                if sim_index != None:
+                    param_vector.append(data.iinf_sim[sim_index])
+                elif data.iinf == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(data.iinf)
 
         # Return a Numeric array.
         return array(param_vector, Float64)
@@ -161,7 +159,7 @@ class Relax_fit(Common_functions):
         self.param_vector = self.assemble_param_vector(index=index)
 
         # Initialise the relaxation fit functions.
-        setup(num_params=len(data.params), num_times=len(self.relax.data.relax_times[self.run]), intensities=data.ave_intensities, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
+        setup(num_params=len(data.params), num_times=len(self.relax.data.relax_times[self.run]), values=data.ave_intensities, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         func(self.param_vector)
@@ -179,12 +177,22 @@ class Relax_fit(Common_functions):
         # Arguments
         self.run = run
 
-        # Initialise the data data structure.
-        data = []
+        # Initialise the MC data data structure.
+        mc_data = []
+
+        # Alias the residue specific data structure.
+        data = self.relax.data.res[self.run][i]
+
+        # Skip unselected residues.
+        if not data.select:
+            return
+
+        # Skip residues which have no data.
+        if not hasattr(data, 'intensities'):
+            return
 
         # Test if the model is set.
-        if not hasattr(self.relax.data.res[self.run][i], 'model') or not self.relax.data.res[self.run][i].model:
-            print self.relax.data.res[self.run][i]
+        if not hasattr(data, 'model') or not data.model:
             raise RelaxNoModelError, self.run
 
         # Loop over the spectral time points.
@@ -193,11 +201,10 @@ class Relax_fit(Common_functions):
             value = self.back_calc(run=run, index=i, relax_time_index=j)
 
             # Append the value.
-            data.append(value)
+            mc_data.append(value)
 
-        # Return the data.
-        print `data`
-        return data
+        # Return the MC data.
+        return mc_data
 
 
     def data_init(self):
@@ -531,8 +538,7 @@ class Relax_fit(Common_functions):
 
         # Initialise.
         self.relax.data.sd = {}
-        self.relax.data.sd[self.run] = 0.0
-        num_error_sets = 0
+        self.relax.data.sd[self.run] = []
 
         # Loop over the time points.
         for time_index in xrange(len(self.relax.data.relax_times[self.run])):
@@ -542,9 +548,11 @@ class Relax_fit(Common_functions):
             if print_flag:
                 print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
+            # Append zero to the global standard deviation structure.
+            self.relax.data.sd[self.run].append(0.0)
+
             # Initialise the time point and residue specific sd.
             total_res = 0
-            total_sd = 0.0
 
             # Test for multiple spectra.
             if self.relax.data.num_spectra[self.run][time_index] == 1:
@@ -561,8 +569,9 @@ class Relax_fit(Common_functions):
                 if not data.select:
                     continue
 
-                # Skip residues which have no data.
+                # Skip and unselect residues which have no data.
                 if not hasattr(data, 'intensities'):
+                    data.select = 0
                     continue
 
                 # Initialise the average intensity and standard deviation data structures.
@@ -573,11 +582,6 @@ class Relax_fit(Common_functions):
 
                 # Average intensity.
                 data.ave_intensities.append(average(data.intensities[time_index]))
-
-                # Skip the time point if only a single spectrum exists.
-                if not multiple_spectra:
-                    data.sd.append(0.0)
-                    continue
 
                 # Sum of squared errors.
                 SSE = 0.0
@@ -590,7 +594,10 @@ class Relax_fit(Common_functions):
                 #       sd =    /  ----- * sum({Xi - Xav}^2)]
                 #             \/   n - 1
                 #
-                sd = sqrt(1.0 / (self.relax.data.num_spectra[self.run][time_index] - 1.0) * SSE)
+                if self.relax.data.num_spectra[self.run][time_index] == 1:
+                    sd = 0.0
+                else:
+                    sd = sqrt(1.0 / (self.relax.data.num_spectra[self.run][time_index] - 1.0) * SSE)
                 data.sd.append(sd)
 
                 # Print out.
@@ -598,32 +605,43 @@ class Relax_fit(Common_functions):
                     print "%-5i%-6s%-20s%-20s" % (data.num, data.name, `data.ave_intensities[time_index]`, `data.sd[time_index]`)
 
                 # Sum of standard deviations (for average).
-                total_sd = total_sd + data.sd[time_index]
+                self.relax.data.sd[self.run][time_index] = self.relax.data.sd[self.run][time_index] + data.sd[time_index]
 
                 # Increment the number of residues counter.
                 total_res = total_res + 1
 
-            # Skip the rest if there is only a single spectrum for the time point.
-            if not multiple_spectra:
-                continue
-
-            # Average the sd.
-            total_sd = total_sd / float(total_res)
+            # Average sd.
+            self.relax.data.sd[self.run][time_index] = self.relax.data.sd[self.run][time_index] / float(total_res)
 
             # Print out.
-            print "Average sd:  " + `total_sd`
+            print "Standard deviation for time point %s:  %s" % (`time_index`, `self.relax.data.sd[self.run][time_index]`)
 
-            # Sum the standard deviation of all peaks for the time point (to be averaged at the end).
-            self.relax.data.sd[self.run] = self.relax.data.sd[self.run] + total_sd
 
-            # Increment the number of error sets.
-            num_error_sets = num_error_sets + 1
+        # Average across all spectra if there are time points with a single spectrum.
+        if 0.0 in self.relax.data.sd[self.run]:
+            # Initialise.
+            sd = 0.0
+            num_dups = 0
 
-        # Average standard deviation for all replicated spectra.
-        self.relax.data.sd[self.run] = self.relax.data.sd[self.run] / float(num_error_sets)
+            # Loop over all time points.
+            for i in xrange(len(self.relax.data.relax_times[self.run])):
+                # Single spectrum (or extrodinarily accurate NMR spectra!).
+                if self.relax.data.sd[self.run][i] == 0.0:
+                    continue
 
-        # Print out.
-        print "\nSd averaged over all spectra:  " + `self.relax.data.sd[self.run]`
+                # Sum and count.
+                sd = sd + self.relax.data.sd[self.run][i]
+                num_dups = num_dups + 1
+
+            # Average value.
+            sd = sd / float(num_dups)
+
+            # Assign the average value to all time points.
+            for i in xrange(len(self.relax.data.relax_times[self.run])):
+                self.relax.data.sd[self.run][i] = sd
+
+            # Print out.
+            print "\nStandard deviation (averaged over all spectra):  " + `sd`
 
 
     def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
@@ -682,7 +700,12 @@ class Relax_fit(Common_functions):
             # Initialise the function to minimise.
             ######################################
 
-            setup(num_params=len(data.params), num_times=len(self.relax.data.relax_times[self.run]), intensities=data.ave_intensities, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
+            if sim_index == None:
+                values = data.ave_intensities
+            else:
+                values = data.sim_intensities[sim_index]
+
+            setup(num_params=len(data.params), num_times=len(self.relax.data.relax_times[self.run]), values=values, sd=self.relax.data.sd[self.run], relax_times=self.relax.data.relax_times[self.run], scaling_matrix=self.scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -850,124 +873,6 @@ class Relax_fit(Common_functions):
         self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
 
 
-    def read_columnar_results(self, run, file_data):
-        """Function for reading the results file."""
-
-        # Arguments.
-        self.run = run
-
-        # Extract and remove the header.
-        header = file_data[0]
-        file_data = file_data[1:]
-
-        # Sort the column numbers.
-        col = {}
-        for i in xrange(len(header)):
-            if header[i] == 'Num':
-                col['num'] = i
-            elif header[i] == 'Name':
-                col['name'] = i
-            elif header[i] == 'Selected':
-                col['select'] = i
-            elif header[i] == 'Ref_intensity':
-                col['ref_int'] = i
-            elif header[i] == 'Ref_error':
-                col['ref_err'] = i
-            elif header[i] == 'Sat_intensity':
-                col['sat_int'] = i
-            elif header[i] == 'Sat_error':
-                col['sat_err'] = i
-            elif header[i] == 'NOE':
-                col['noe'] = i
-            elif header[i] == 'NOE_error':
-                col['noe_err'] = i
-
-        # Test the file.
-        if len(col) < 2:
-            raise RelaxInvalidDataError
-
-
-        # Sequence.
-        ###########
-
-        # Generate the sequence.
-        for i in xrange(len(file_data)):
-            # Residue number and name.
-            try:
-                res_num = int(file_data[i][col['num']])
-            except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-            res_name = file_data[i][col['name']]
-
-            # Add the residue.
-            self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(file_data[i][col['select']]))
-
-
-        # Data.
-        #######
-
-        # Loop over the file data.
-        for i in xrange(len(file_data)):
-            # Residue number and name.
-            try:
-                res_num = int(file_data[i][col['num']])
-            except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-            res_name = file_data[i][col['name']]
-
-            # Find the residue index.
-            index = None
-            for j in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][j].num == res_num and self.relax.data.res[self.run][j].name == res_name:
-                    index = j
-                    break
-            if index == None:
-                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
-
-            # Reassign data structure.
-            data = self.relax.data.res[self.run][index]
-
-            # Skip unselected residues.
-            if not data.select:
-                continue
-
-            # Reference intensity.
-            try:
-                data.ref = float(file_data[i][col['ref_int']])
-            except ValueError:
-                data.ref = None
-
-            # Reference error.
-            try:
-                data.ref_err = float(file_data[i][col['ref_err']])
-            except ValueError:
-                data.ref_err = None
-
-            # Saturated intensity.
-            try:
-                data.sat = float(file_data[i][col['sat_int']])
-            except ValueError:
-                data.sat = None
-
-            # Saturated error.
-            try:
-                data.sat_err = float(file_data[i][col['sat_err']])
-            except ValueError:
-                data.sat_err = None
-
-            # NOE.
-            try:
-                data.noe = float(file_data[i][col['noe']])
-            except ValueError:
-                data.noe = None
-
-            # NOE error.
-            try:
-                data.noe_err = float(file_data[i][col['noe_err']])
-            except ValueError:
-                data.noe_err = None
-
-
     def return_conversion_factor(self, stat_type):
         """Dummy function for returning 1.0."""
 
@@ -1024,9 +929,17 @@ class Relax_fit(Common_functions):
         # Get the object name.
         object_name = self.return_data_name(data_type)
 
-        # Rate.
-        if object_name == 'rate':
-            grace_string = 'Rate'
+        # Relaxation rate.
+        if object_name == 'rx':
+            grace_string = '\\qR\\sx\\Q'
+
+        # Initial intensity.
+        elif object_name == 'i0':
+            grace_string = '\\qI\\s0\\Q'
+
+        # Intensity at infinity.
+        elif object_name == 'iinf':
+            grace_string = '\\qI\\sinf\\Q'
 
         # Return the Grace string.
         return grace_string
@@ -1086,63 +999,6 @@ class Relax_fit(Common_functions):
         """
 
 
-    def set_error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
-        """Function for setting the errors."""
-
-        # Arguments.
-        self.run = run
-        self.spectrum_type = spectrum_type
-        self.res_num = res_num
-        self.res_name = res_name
-
-        # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Test if the residue number is a valid regular expression.
-        if type(res_num) == str:
-            try:
-                compile(res_num)
-            except:
-                raise RelaxRegExpError, ('residue number', res_num)
-
-        # Test if the residue name is a valid regular expression.
-        if res_name:
-            try:
-                compile(res_name)
-            except:
-                raise RelaxRegExpError, ('residue name', res_name)
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[run])):
-            # Alias the residue specific data structure.
-            data = self.relax.data.res[self.run][i]
-
-            # Skip unselected residues.
-            if not data.select:
-                continue
-
-            # If 'res_num' is not None, skip the residue if there is no match.
-            if type(res_num) == int and not data.num == res_num:
-                continue
-            elif type(res_num) == str and not match(res_num, `data.num`):
-                continue
-
-            # If 'res_name' is not None, skip the residue if there is no match.
-            if res_name != None and not match(res_name, data.name):
-                continue
-
-            # Set the error.
-            if self.spectrum_type == 'ref':
-                data.ref_err = float(error)
-            elif self.spectrum_type == 'sat':
-                data.sat_err = float(error)
-
-
     def set_selected_sim(self, run, instance, select_sim):
         """Function for returning the array of selected simulation flags."""
 
@@ -1162,120 +1018,3 @@ class Relax_fit(Common_functions):
 
         # Create the data structure.
         self.relax.data.res[run][i].sim_intensities = sim_data
-        
-
-    def write(self, run=None, file=None, dir=None, force=0):
-        """Function for writing NOE values and errors to a file."""
-
-        # Arguments
-        self.run = run
-
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Open the file for writing.
-        noe_file = self.relax.IO.open_write_file(file, dir, force)
-
-        # Write the data.
-        self.relax.generic.value.write_data(self.run, None, noe_file, return_value=self.return_value)
-
-        # Close the file.
-        noe_file.close()
-
-
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, ref_int=None, ref_err=None, sat_int=None, sat_err=None, noe=None, noe_err=None):
-        """Function for printing a single line of the columnar formatted results."""
-
-        # Residue number and name.
-        file.write("%-4s %-5s " % (num, name))
-
-        # Selected flag and data set.
-        file.write("%-9s " % select)
-        if not select:
-            file.write("\n")
-            return
-
-        # Reference and saturated data.
-        file.write("%-25s %-25s " % (ref_int, ref_err))
-        file.write("%-25s %-25s " % (sat_int, sat_err))
-
-        # NOE and error.
-        file.write("%-25s %-25s " % (noe, noe_err))
-
-        # End of the line.
-        file.write("\n")
-
-
-    def write_columnar_results(self, file, run):
-        """Function for printing the results into a file."""
-
-        # Arguments.
-        self.run = run
-
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-
-        # Header.
-        #########
-
-
-        # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', ref_int='Ref_intensity', ref_err='Ref_error', sat_int='Sat_intensity', sat_err='Sat_error', noe='NOE', noe_err='NOE_error')
-
-
-        # Values.
-        #########
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Reassign data structure.
-            data = self.relax.data.res[self.run][i]
-
-            # Unselected residues.
-            if not data.select:
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0)
-                continue
-
-            # Reference intensity.
-            ref_int = None
-            if hasattr(data, 'ref'):
-                ref_int = data.ref
-
-            # Reference error.
-            ref_err = None
-            if hasattr(data, 'ref_err'):
-                ref_err = data.ref_err
-
-            # Saturated intensity.
-            sat_int = None
-            if hasattr(data, 'sat'):
-                sat_int = data.sat
-
-            # Saturated error.
-            sat_err = None
-            if hasattr(data, 'sat_err'):
-                sat_err = data.sat_err
-
-            # NOE
-            noe = None
-            if hasattr(data, 'noe'):
-                noe = data.noe
-
-            # NOE error.
-            noe_err = None
-            if hasattr(data, 'noe_err'):
-                noe_err = data.noe_err
-
-            # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, ref_int=ref_int, ref_err=ref_err, sat_int=sat_int, sat_err=sat_err, noe=noe, noe_err=noe_err)

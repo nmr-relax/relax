@@ -32,30 +32,31 @@
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Python declarations */
-    PyObject *intensities_arg, *relax_times_arg, *scaling_matrix_arg;
-    extern PyArrayObject *numpy_intensities, *numpy_relax_times, *numpy_scaling_matrix;
+    PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
+    extern PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
 
     /* Normal declarations */
-    extern double *intensities, *relax_times, *scaling_matrix;
+    extern double *values, *sd, *relax_times, *scaling_matrix;
     extern double *relax_time_array;
     extern int *num_params, *num_times;
-    extern double *sd;
 
     /* The keyword list */
-    static char *keyword_list[] = {"num_params", "num_times", "intensities", "sd", "relax_times", "scaling_matrix", NULL};
+    static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
 
 
     /* Parse the function arguments */
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOdOO", keyword_list, &num_params, &num_times, &intensities_arg, &sd, &relax_times_arg, &scaling_matrix_arg))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
     /* Make the Numeric arrays contiguous */
-    numpy_intensities = (PyArrayObject *) PyArray_ContiguousFromObject(intensities_arg, PyArray_DOUBLE, 1, 1);
+    numpy_values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
+    numpy_sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
     numpy_relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
     numpy_scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
 
     /* Pointers to the Numeric arrays */
-    intensities = (double *) numpy_intensities->data;
+    values = (double *) numpy_values->data;
+    sd = (double *) numpy_sd->data;
     relax_times = (double *) numpy_relax_times->data;
     scaling_matrix = (double *) numpy_scaling_matrix->data;
 

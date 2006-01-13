@@ -47,29 +47,44 @@ class Relax_fit:
         run:  The name of the run.
 
 
-        Description
-        ~~~~~~~~~~~
+        Errors of individual residues at a single time point
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         The standard deviation for a single residue at a single time point is calculated by the
         formula
 
-                      ____________________________
-                     /   1
-            sd =    /  ----- * sum({Xi - Xav}^2)]  ,
-                  \/   n - 1
+        -----
+                     ____________________________
+            sd =   \/ sum({Ii - Iav}^2) / (n - 1) ,
+
+        -----
 
         where n is the total number of collected spectra for the time point and i is the
-        corresponding index, Xi is the peak intensity for spectra i, Xav is the mean over all
+        corresponding index, Ii is the peak intensity for spectrum i, Iav is the mean over all
         spectra, ie the sum of all peak intensities divided by n.
 
-        The standard deviation of all residues is averaged.  This is done because of the
-        low value of n, usually only a couple of spectra are collected.  Although all residues now
-        have the same error value, the error estimate increases in accuracy.
-        
-        Currently another averaging is applied.  The standard deviations of all replicated spectra
-        are averaged to give one error value for all residues across all spectra.  If all time
-        points are duplicated, this averaging is unecessary (although handling a separate error for
-        each spectra is not coded yet).
+
+        Averaging of the errors
+        ~~~~~~~~~~~~~~~~~~~~~~~
+
+        As the value of n in the above equation is always very low, normally only a couple of
+        spectra are collected per time point, the standard deviation of all residues is averaged for
+        a single time point.  Although this results in all residues having the same error, the
+        accuracy of the error estimate is significantly improved.
+
+
+        Errors across multiple time points
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        If all spectra are collected in duplicate (triplicate or higher number of spectra are
+        supported), the each time point will have its own error estimate.  However, if there are
+        time points in the series which only consist of a single spectrum, then the standard
+        deviations of replicated time points will be averaged.  Hence, for the entire experiment
+        there will be a single error value for all residues and for all time points.
+
+        A better approach rather than averaging across all time points would be to use a form of
+        interpolation as the errors across time points generally decreases for longer time periods.
+        This is currently not implemented.
         """
 
 

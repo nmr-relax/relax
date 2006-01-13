@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+from copy import deepcopy
+
 
 class Common_functions:
     def __init__(self):
@@ -156,12 +158,131 @@ class Common_functions:
                 setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
 
 
-    def sim_pack_data(self, run, i, sim_data):
-        """Function for packing Monte Carlo simulation data."""
+    def set_error(self, run, instance, index, error):
+        """Function for setting parameter errors."""
 
-        # Test if the simulation data already exists.
-        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
+        # Arguments.
+        self.run = run
 
-        # Create the data structure.
-        self.relax.data.res[run][i].relax_sim_data = sim_data
+        # Skip unselected residues.
+        if not self.relax.data.res[self.run][instance].select:
+            return
+
+        # Parameter increment counter.
+        inc = 0
+
+        # Loop over the residue specific parameters.
+        for param in self.data_names(set='params'):
+            # Return the parameter array.
+            if index == inc:
+                setattr(self.relax.data.res[self.run][instance], param + "_err", error)
+
+            # Increment.
+            inc = inc + 1
+
+
+    def sim_init_values(self, run):
+        """Function for initialising Monte Carlo parameter values."""
+
+        # Arguments.
+        self.run = run
+
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
+        # Get the minimisation statistic object names.
+        min_names = self.data_names(set='min')
+
+
+        # Test if Monte Carlo parameter values have already been set.
+        #############################################################
+
+        # Loop over the residues.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][i].select:
+                continue
+
+            # Loop over all the parameter names.
+            for object_name in param_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Test if the simulation object already exists.
+                if hasattr(self.relax.data.res[self.run][i], sim_object_name):
+                    raise RelaxError, "Monte Carlo parameter values have already been set."
+
+
+        # Set the Monte Carlo parameter values.
+        #######################################
+
+        # Loop over the residues.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][i].select:
+                continue
+
+            # Loop over all the data names.
+            for object_name in param_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+
+                # Loop over the simulations.
+                for j in xrange(self.relax.data.sim_number[self.run]):
+                    # Copy and append the data.
+                    sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+
+            # Loop over all the minimisation object names.
+            for object_name in min_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+
+                # Loop over the simulations.
+                for j in xrange(self.relax.data.sim_number[self.run]):
+                    # Copy and append the data.
+                    sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+
+
+    def sim_return_param(self, run, instance, index):
+        """Function for returning the array of simulation parameter values."""
+
+        # Arguments.
+        self.run = run
+
+        # Skip unselected residues.
+        if not self.relax.data.res[self.run][instance].select:
+            return
+
+        # Parameter increment counter.
+        inc = 0
+
+        # Loop over the residue specific parameters.
+        for param in self.data_names(set='params'):
+            # Return the parameter array.
+            if index == inc:
+                return getattr(self.relax.data.res[self.run][instance], param + "_sim")
+
+            # Increment.
+            inc = inc + 1
+
+
+    def sim_return_selected(self, run, index):
+        """Function for returning the array of selected simulation flags."""
+
+        # Arguments.
+        self.run = run
+
+        # Return the array.
+        return self.relax.data.res[self.run][index].select_sim

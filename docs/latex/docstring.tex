@@ -3478,6 +3478,60 @@
 
  \newpage 
 
+ \subsection{relax\_fit.mean\_and\_error} 
+
+  
+ \subsubsection{Synopsis} 
+
+ Function for calculating the average intensity and standard deviation of all spectra. 
+  
+
+  
+ \subsubsection{Defaults} 
+
+ \textsf{\textbf{relax\_fit.mean\_and\_error}(self, run=None)} 
+
+  
+ \subsubsection{Keyword Arguments} 
+
+ \keyword{run:}  The name of the run.  
+
+  
+
+  
+ \subsubsection{Errors of individual residues at a single time point} 
+
+ The standard deviation for a single residue at a single time point is calculated by the formula 
+  
+
+ {\footnotesize \begin{verbatim} 
+              ____________________________ 
+     sd =   \/ sum({Ii - Iav}^2) / (n - 1) , 
+  
+ \end{verbatim}} 
+
+ where $n$ is the total number of collected spectra for the time point and $i$ is the corresponding index, Ii is the peak intensity for spectrum $i$, Iav is the mean over all spectra, ie the sum of all peak intensities divided by $n$. 
+  
+
+  
+ \subsubsection{Averaging of the errors} 
+
+ As the value of $n$ in the above equation is always very low, normally only a couple of spectra are collected per time point, the standard deviation of all residues is averaged for a single time point.  Although this results in all residues having the same error, the accuracy of the error estimate is significantly improved. 
+  
+
+  
+ \subsubsection{Errors across multiple time points} 
+
+ If all spectra are collected in duplicate (triplicate or higher number of spectra are supported), the each time point will have its own error estimate.  However, if there are time points in the series which only consist of a single spectrum, then the standard deviations of replicated time points will be averaged.  Hence, for the entire experiment there will be a single error value for all residues and for all time points. 
+  
+
+ A better approach rather than averaging across all time points would be to use a form of interpolation as the errors across time points generally decreases for longer time periods. This is currently not implemented. 
+  
+
+  
+
+ \newpage 
+
  \subsection{relax\_fit.read} 
 
   

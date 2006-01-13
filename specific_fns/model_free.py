@@ -3979,7 +3979,7 @@ class Model_free(Common_functions):
         # Arguments.
         self.run = run
 
-        # Increment counter for the parameter set 'all'.
+        # Parameter increment counter.
         inc = 0
 
         # Get the parameter object names.
@@ -4247,6 +4247,17 @@ class Model_free(Common_functions):
                         sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
 
 
+    def sim_pack_data(self, run, i, sim_data):
+        """Function for packing Monte Carlo simulation data."""
+
+        # Test if the simulation data already exists.
+        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
+            raise RelaxError, "Monte Carlo simulation data already exists."
+
+        # Create the data structure.
+        self.relax.data.res[run][i].relax_sim_data = sim_data
+        
+
     def sim_return_chi2(self, run, instance):
         """Function for returning the array of simulation chi-squared values."""
 
@@ -4271,7 +4282,7 @@ class Model_free(Common_functions):
         # Arguments.
         self.run = run
 
-        # Increment counter for the parameter set 'all'.
+        # Parameter increment counter.
         inc = 0
 
         # Get the parameter object names.
