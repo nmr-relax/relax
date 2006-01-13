@@ -89,6 +89,24 @@ class Rx_data:
             # Associated data structures.
             data.ri_labels = ri_labels
             data.remap_table = remap_table
+
+            # Remove any data with the value None.
+            for index,Ri in enumerate(data.relax_data):
+                if Ri == None:
+                    data.relax_data.pop(index)
+                    data.relax_error.pop(index)
+                    data.ri_labels.pop(index)
+                    data.remap_table.pop(index)
+
+            # Remove any data with error of None.
+            for index,error in enumerate(data.relax_error):
+                if error == None:
+                    data.relax_data.pop(index)
+                    data.relax_error.pop(index)
+                    data.ri_labels.pop(index)
+                    data.remap_table.pop(index)
+
+            # Associated data structures.
             data.frq_labels = frq_labels
             data.frq = frq
             data.num_ri = len(ri_labels)

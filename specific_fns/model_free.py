@@ -3222,15 +3222,10 @@ class Model_free(Common_functions):
             return
 
         # Relaxation data structures.
-        if not self.ri_labels:
-            self.ri_labels = eval(self.file_line[self.col['ri_labels']])
-            self.remap_table = eval(self.file_line[self.col['remap_table']])
-            self.frq_labels = eval(self.file_line[self.col['frq_labels']])
-            self.frq = eval(self.file_line[self.col['frq']])
-
-        # Test if the relaxation data is consistent.
-        if self.ri_labels != eval(self.file_line[self.col['ri_labels']]) or self.remap_table != eval(self.file_line[self.col['remap_table']]) or self.frq_labels != eval(self.file_line[self.col['frq_labels']]) or self.frq != eval(self.file_line[self.col['frq']]):
-            raise RelaxError, "The relaxation data is not consistent for all residues."
+        self.ri_labels = eval(self.file_line[self.col['ri_labels']])
+        self.remap_table = eval(self.file_line[self.col['remap_table']])
+        self.frq_labels = eval(self.file_line[self.col['frq_labels']])
+        self.frq = eval(self.file_line[self.col['frq']])
 
         # No relaxation data.
         if not self.ri_labels:
