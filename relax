@@ -14,7 +14,7 @@
 #                                                                             #
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
-# Copyright (C) 2001-2005  Edward d'Auvergne                                  #
+# Copyright (C) 2001-2006  Edward d'Auvergne                                  #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,16 +33,13 @@
 ###############################################################################
 
 
-# Version.
-version = 'respository checkout'
-
-
 # Python modules.
 import __builtin__
 from os import F_OK, access, getpid, putenv
 import profile
 import pstats
 from re import match
+from string import split, strip
 import sys
 
 # Numeric.
@@ -76,6 +73,7 @@ from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
 from thread_classes import Threading, ThreadData
+import version
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -85,6 +83,9 @@ putenv('PDBVIEWER', 'vmd')
 class Relax:
     def __init__(self):
         """The top level class for initialising the program."""
+
+        # relax version number.
+        self.version = version.version
 
         # Get and store the PID of this process.
         self.pid = getpid()
@@ -124,7 +125,7 @@ class Relax:
 
         # Show the version number and exit.
         if mode == 'version':
-            print 'relax ' + version
+            print 'relax ' + self.version
             sys.exit()
 
         # Logging.
@@ -318,7 +319,7 @@ class Relax:
         self.intro_string = '\n\n\n'
 
         # Program name and version.
-        string = "relax " + version
+        string = "relax " + self.version
         self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
 
         # Program description.
@@ -326,7 +327,7 @@ class Relax:
         self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
 
         # Copyright printout.
-        string = "Copyright (C) 2001-2005 Edward d'Auvergne"
+        string = "Copyright (C) 2001-2006 Edward d'Auvergne"
         self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
 
         # Program licence and help.

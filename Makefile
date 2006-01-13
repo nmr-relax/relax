@@ -21,6 +21,10 @@
 ###############################################################################
 
 
+# Includes.
+include version.py
+
+
 # Variables.
 sys = uname -o
 mach = uname -m
