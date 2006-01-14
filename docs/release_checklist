@@ -1,0 +1,39 @@
+1.  Make a copy of the current head to the tags directory using a command such as:
+
+$ svn cp file:///data/src/repositories/relax/1.0 file:///data/src/repositories/relax/tags/1.0.9
+
+In the commit message, have a header line which says 'relax version 1.0.9.', followed by a description of the release.
+
+
+2.  Checkout the tagged version with:
+
+$ svn co file:///data/src/repositories/relax/tags/1.0.9 relax
+
+
+3.  Change the version number in relax and commit the change.
+
+
+4.  Recompile the PDF manual with the script 'compile' in the directory 'docs/latex'.  Commit the change.
+
+
+5.  Run the script 'package' in the base directory to create the tar.bz2 file.
+
+
+6.  Move the tar.bz2 file to the directory '/data/src/backup/relax/releases'.
+
+
+7.  Sign the file with the command:
+
+$ gpg --detach-sign --default-key relax relax-1.0.9.tar.bz2
+
+
+8.  Rsync the tar.bz2 file and its signature to http://download.gna.org/upload/relax/
+
+
+9.  Modify the download page to point to the newest version of relax.
+
+
+10.  Replace the PDF manual with the new version using rsync to http://download.gna.org/upload/relax/manual/.
+
+
+11.  Run the script 'create_html' in the directory 'docs/latex' to produce the latest html version of the manual.  Replace the old manual with the new in the CVS repository.
