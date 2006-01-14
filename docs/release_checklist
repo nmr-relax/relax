@@ -35,7 +35,7 @@ $ make source_dist
 
 
 
-8.  Replace the PDF manual with the new version using rsync to http://download.gna.org/upload/relax/manual/
+8.  Replace the PDF manual with the new version using rsync to download.gna.org/upload/relax/manual/
 
 
 
