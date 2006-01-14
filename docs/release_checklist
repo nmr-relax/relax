@@ -19,7 +19,7 @@ $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4 relax
 4.  Generate the binary and source distribution files (and their GPG signatures) by typing:
 
 $ make binary_dist
-$ make src_dist
+$ make source_dist
 
 
 
@@ -27,7 +27,7 @@ $ make src_dist
 
 
 
-6.  Rsync the distribution files and its signature to http://download.gna.org/upload/relax/
+6.  Rsync the distribution files and its signature to download.gna.org/upload/relax/
 
 
 
