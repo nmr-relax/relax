@@ -19,21 +19,18 @@ $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.0.9 relax
 5.  Run the script 'package' in the base directory to create the tar.bz2 file.
 
 
-6.  Move the tar.bz2 file to the directory '/data/src/backup/relax/releases'.
-
-
-7.  Sign the file with the command:
+6.  Sign the file with the command:
 
 $ gpg --detach-sign --default-key relax relax-1.0.9.tar.bz2
 
 
-8.  Rsync the tar.bz2 file and its signature to download.gna.org/upload/relax/
+7.  Rsync the tar.bz2 file and its signature to download.gna.org/upload/relax/
 
 
-9.  Modify the download page to point to the newest version of relax.
+8.  Modify the download page to point to the newest version of relax.
 
 
-10.  Replace the PDF manual with the new version using rsync to download.gna.org/upload/relax/manual/.
+9.  Replace the PDF manual with the new version using rsync to download.gna.org/upload/relax/manual/.
 
 
-11.  Run the script 'create_html' in the directory 'docs/latex' to produce the latest html version of the manual.  Replace the old manual with the new in the CVS repository.
+10.  Run the script 'create_html' in the directory 'docs/latex' to produce the latest html version of the manual.  Replace the old manual with the new in the CVS repository.
