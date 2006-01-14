@@ -22,83 +22,47 @@
 
 
 # Create the PDF manual.
-manual : clean
-	@echo -e "\n\n\n <<< Getting the relax version number >>>\n"
-	./version
-	
-	@echo -e "\n\n\n <<< Fetching the docstrings >>>\n\n\n"
-	./fetch_docstrings
-	
-	@echo -e "\n\n\n <<< Latex (first round) >>>\n\n\n"
-	latex relax.tex
-	
-	@echo -e "\n\n\n <<< Bibtex >>>\n\n\n"
-	bibtex relax.aux
-	
-	@echo -e "\n\n\n <<< Makeindex >>>\n\n\n"
-	makeindex relax.idx
-	
-	@echo -e "\n\n\n <<< Latex (second round) >>>\n\n\n"
-	latex relax.tex
-	
-	@echo -e "\n\n\n <<< Latex (third round) >>>\n\n\n"
-	latex relax.tex
-	
-	@echo -e "\n\n\n <<< dvips >>>\n\n\n"
-	dvips -o relax.ps relax.dvi
-	
-	@echo -e "\n\n\n <<< ps2pdf >>>\n\n\n"
-	ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps
-	
-	@echo -e "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
-	rm -f relax.ps
-	mv -f relax.pdf ..
-	
-	@echo -e "\n\n\n <<< acroread >>>\n\n\n"
-	acroread -openInNewWindow ../relax.pdf &
+.PHONY: manual
+manual:
+	make clean
+	make version
+	make fetch_docstrings
+	make latex
+	make move
+	make acro
 
 
-# Create the PDF manual.
-manual_nofetch : clean
-	@echo -e "\n\n\n <<< Getting the relax version number >>>\n"
-	./version
-	
-	@echo -e "\n\n\n <<< Latex (first round) >>>\n\n\n"
-	latex relax.tex
-	
-	@echo -e "\n\n\n <<< Bibtex >>>\n\n\n"
-	bibtex relax.aux
-	
-	@echo -e "\n\n\n <<< Makeindex >>>\n\n\n"
-	makeindex relax.idx
-	
-	@echo -e "\n\n\n <<< Latex (second round) >>>\n\n\n"
-	latex relax.tex
-	
-	@echo -e "\n\n\n <<< Latex (third round) >>>\n\n\n"
-	latex relax.tex
-	
-	@echo -e "\n\n\n <<< dvips >>>\n\n\n"
-	dvips -o relax.ps relax.dvi
-	
-	@echo -e "\n\n\n <<< ps2pdf >>>\n\n\n"
-	ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps
-	
-	@echo -e "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
-	rm -f relax.ps
-	mv -f relax.pdf ..
-	
-	@echo -e "\n\n\n <<< acroread >>>\n\n\n"
-	acroread -openInNewWindow ../relax.pdf &
+# Create the PDF manual without fetching the docstrings.
+.PHONY: manual_nofetch
+manual_nofetch:
+	make clean
+	make version
+	make latex
+	make move
+	make acro
+
+
+# Create the PDF manual for distribution (remember to add make fetch_docstrings).
+.PHONY: manual_dist
+manual_dist:
+	make clean
+	make version
+	make fetch_docstrings
+	make latex
+	make move
+	make clean
 
 
 # Create the HTML manual.
-manual_html : clean
+.PHONY: manual_html
+manual_html:
+	make clean
 	latex2html -split +3 -html_version 4.0 -dir ../html relax.tex
 
 
 # Clean up the temporary manual files.
-clean :
+.PHONY: clean
+clean:
 	@echo -e "\n\n\n <<< Cleaning up the temporary manual files >>>\n\n\n"
 	rm -f *.aux
 	rm -f relax.bbl
@@ -111,3 +75,57 @@ clean :
 	rm -f relax.log
 	rm -f relax.lot
 	rm -f relax.toc
+
+
+# Rule for getting the program version.
+.PHONY: version
+version:
+	@echo -e "\n\n\n <<< Getting the relax version number >>>\n"
+	./version
+
+
+# Rule for getting the docstrings.
+.PHONY: fetch_docstrings
+fetch_docstrings:
+	@echo -e "\n\n\n <<< Fetching the docstrings >>>\n\n\n"
+	./fetch_docstrings
+
+
+# Rule for compiling the LaTeX into the PDF file.
+.PHONY: latex
+latex:
+	@echo -e "\n\n\n <<< LaTeX (first round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< Bibtex >>>\n\n\n"
+	bibtex relax.aux
+	
+	@echo -e "\n\n\n <<< Makeindex >>>\n\n\n"
+	makeindex relax.idx
+	
+	@echo -e "\n\n\n <<< LaTeX (second round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< LaTeX (third round) >>>\n\n\n"
+	latex relax.tex
+	
+	@echo -e "\n\n\n <<< dvips >>>\n\n\n"
+	dvips -o relax.ps relax.dvi
+	
+	@echo -e "\n\n\n <<< ps2pdf >>>\n\n\n"
+	ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps
+
+
+# Rule for post LaTeX compilation.
+.PHONY: move
+move:
+	@echo -e "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
+	rm -f relax.ps
+	mv -f relax.pdf ..
+
+
+# Rule for running Adobe Acrobat Reader with the PDF manual.
+.PHONY: acro
+acro:
+	@echo -e "\n\n\n <<< acroread >>>\n\n\n"
+	acroread -openInNewWindow ../relax.pdf &

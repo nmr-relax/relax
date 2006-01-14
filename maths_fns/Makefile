@@ -25,23 +25,21 @@
 objects = relax_fit.o c_chi2.o exponential.o
 
 PYTHON_PATH = /usr/include/python2.4
-
 CFLAGS = -I$(PYTHON_PATH)
 
 
 # Rule which is run when `make' is typed.
 
-.PHONY : relax_curve_fitting
-relax_curve_fitting : relax_fit.so
+.PHONY: relax_curve_fitting
+relax_curve_fitting: relax_fit.so
 
 
 # Rule for compiling the exponential function shared object.
-
-relax_fit.so : $(objects)
+relax_fit.so: $(objects)
 	cc -shared $(objects) -o relax_fit.so
 
 
 # Rules for making the objects
-relax_fit.o : relax_fit.h
-c_chi2.o : relax_fit.h
-exponential.o : relax_fit.h
+relax_fit.o: relax_fit.h
+c_chi2.o: relax_fit.h
+exponential.o: relax_fit.h

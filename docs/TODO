@@ -12,9 +12,8 @@ and all data then assigned to the run.  This should simpify the code in relax.
 # Maths functions.
 ##################
 
-Relaxation curves.
-SRLS.
 Relaxation dispersion.
+SRLS.
 
 
 # Speed.
@@ -31,6 +30,13 @@ Expected
 Overall
 Farrow (Farrow et. al., 1994)
 Palmer (Mandel et. al., 1995)
+
+
+# Relaxation curve fitting.
+###########################
+
+Activate parameter scaling.
+Code the C module functions 'dfunc()' and 'd2func()'
 
 
 # Threading.

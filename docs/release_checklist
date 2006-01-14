@@ -1,0 +1,42 @@
+1.  Make a copy of the current head to the tags directory using a command such as:
+
+$ svn cp svn+ssh://bugman@svn.gna.org/svn/relax/1.2 svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4
+
+In the commit message, have a header line which says 'relax version 1.2.4.', followed by a description of the release.
+
+
+
+2.  Checkout the tagged version with:
+
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4 relax
+
+
+
+3.  Change the version number in file 'version.py'.
+
+
+
+4.  Generate the binary and source distribution files (and their GPG signatures) by typing:
+
+$ make binary_dist
+$ make src_dist
+
+
+
+5.  Commit the changes so the 'tags' directory is updated.
+
+
+
+6.  Rsync the distribution files and its signature to http://download.gna.org/upload/relax/
+
+
+
+7.  Modify the http://nmr-relax.com download page to point to the newest version of relax.
+
+
+
+8.  Replace the PDF manual with the new version using rsync to http://download.gna.org/upload/relax/manual/
+
+
+
+9.  Run the script 'create_html' in the directory 'docs/latex' to produce the latest html version of the manual.  Replace the old manual with the new in the CVS repository.
