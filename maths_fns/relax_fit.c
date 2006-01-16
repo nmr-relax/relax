@@ -100,13 +100,48 @@ func(PyObject *self, PyObject *args) {
 
 static PyObject *
 dfunc(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared value. */
-    return Py_BuildValue("f", 0.0);
+    /* Function for calculating and returning the chi-squared gradient. */
+
+    /* Declarations */
+    PyObject *arg1;
+    extern PyArrayObject *numpy_params;
+
+    /* Temp Declarations */
+    PyArrayObject *aaa_numpy;
+    double aaa[MAXPARAMS] = {1.0, 2.0};
+    double *aaa_pointer;
+    int i;
+
+    /* Parse the function arguments, the only argument should be the parameter array */
+    if (!PyArg_ParseTuple(args, "O", &arg1))
+        return NULL;
+
+    /* Convert the Numeric array to be contiguous */
+    numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+
+    /* Pointers to the Numeric arrays */
+    params = (double *) numpy_params->data;
+
+    /* Back calculated the peak intensities */
+    exponential();
+
+
+    /* Test code (convert aaa to a Numeric array */
+    /* aaa_numpy = (PyArrayObject *) PyArray_FromDimsAndData(1, num_params, PyArray_DOUBLE, aaa_pointer); */
+    aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, num_params, PyArray_DOUBLE);
+    aaa_pointer = (double *) aaa_numpy->data;
+
+    /* Fill the Numeric array */
+    for (i = 0; i < 2; i++)
+        aaa_pointer[i] = aaa[i];
+
+    return NULL;
+    return PyArray_Return(aaa_numpy);
 }
 
 static PyObject *
 d2func(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared value. */
+    /* Function for calculating and returning the chi-squared Hessian. */
     return Py_BuildValue("f", 0.0);
 }
 
