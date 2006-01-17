@@ -59,11 +59,11 @@ class Rx_data:
         # Initialise the global data if necessary.
         self.data_init(self.relax.data)
 
-        # Add the data structures.
-        self.relax.data.ri_labels[self.run] = ri_labels
-        self.relax.data.remap_table[self.run] = remap_table
-        self.relax.data.frq_labels[self.run] = frq_labels
-        self.relax.data.frq[self.run] = frq
+        # Update global data structures.
+        self.relax.data.ri_labels[self.run] = deepcopy(ri_labels)
+        self.relax.data.remap_table[self.run] = deepcopy(remap_table)
+        self.relax.data.frq_labels[self.run] = deepcopy(frq_labels)
+        self.relax.data.frq[self.run] = deepcopy(frq)
         self.relax.data.num_ri[self.run] = len(ri_labels)
         self.relax.data.num_frq[self.run] = len(frq)
 
