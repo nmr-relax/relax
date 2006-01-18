@@ -157,6 +157,9 @@ class Common_functions:
             if error != None:
                 setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
 
+            # Update the other parameters if necessary.
+            self.set_update(run=run, param=param, index=index)
+
 
     def set_error(self, run, instance, index, error):
         """Function for setting parameter errors."""
@@ -179,6 +182,12 @@ class Common_functions:
 
             # Increment.
             inc = inc + 1
+
+
+    def set_update(self, run, param, index):
+        """Dummy function to do nothing!"""
+
+        return
 
 
     def sim_init_values(self, run):

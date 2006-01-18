@@ -4085,6 +4085,26 @@ class Model_free(Common_functions):
             self.relax.data.res[self.run][instance].select_sim = select_sim
 
 
+    def set_update(self, run, param, index):
+        """Function to update the other model-free parameters."""
+
+        # Alias the residue specific data structure.
+        data = self.relax.data.res[self.run][index]
+
+        # S2f parameter.
+        if param == 'S2f':
+            # Update S2 if S2s exists.
+            if hasattr(data, 's2s') and data.s2s != None:
+                data.s2 = data.s2f * data.s2s
+
+
+        # S2s parameter.
+        if param == 'S2s':
+            # Update S2 if S2f exists.
+            if hasattr(data, 's2f') and data.s2f != None:
+                data.s2 = data.s2f * data.s2s
+
+
     def sim_init_values(self, run):
         """Function for initialising Monte Carlo parameter values."""
 

@@ -49,12 +49,12 @@ value.set(name, -160 * 1e-6, 'csa')
 model_free.select_model(run=name, model=name)
 
 # Map data.
-inc = 10
-lower = [0.5, 0.5, 0]
-upper = [1.0, 1.0, 300e-12]
-swap = [0, 2, 1]
-point = [0.952, 0.582, 32.0e-12]
-point = [point[0], point[0]*point[1], point[2]]
+inc = 100
+params = ['S2f', 'ts', 'S2s']
+lower = [0.5, 0, 0.5]
+upper = [1.0, 300e-12, 1.0]
+point = [0.952, 32.0e-12, 0.582]
+point = [point[0], point[1], point[0]*point[2]]
 
-map(name, res_num=1, inc=inc, lower=lower, upper=upper, swap=swap, file='remap', point=point, remap=remap, labels=['S2f', 'S2s', 'ts'])
-dx(file='remap')
+dx.map(name, params=params, res_num=1, inc=inc, lower=lower, upper=upper, file='remap', point=point, axis_incs=5, remap=remap)
+dx.execute(file='remap')
