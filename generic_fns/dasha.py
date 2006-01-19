@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005 Edward d'Auvergne                                        #
+# Copyright (C) 2005-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,7 +23,7 @@
 from math import pi
 from os import F_OK, access, chdir, getcwd, system
 from re import match, search
-from string import split
+from string import lower, split
 import sys
 
 
@@ -395,6 +395,19 @@ class Dasha:
 
             # Set the values.
             self.relax.generic.value.read(self.run, param=param, scaling=scaling, file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)
+
+            # Clean up of non-existant parameters (set the parameter to None!).
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Skip unselected residues.
+                if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Skip the residue (don't set the parameter to None) if the parameter exists in the model.
+                if param in self.relax.data.res[self.run][i].params:
+                    continue
+
+                # Set the parameter to None.
+                setattr(self.relax.data.res[self.run][i], lower(param), None)
 
         # Extract the chi-squared values.
         file_name = dir + '/chi2.out'

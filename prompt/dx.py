@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -92,7 +92,7 @@ class OpenDX:
         self.__relax__.generic.opendx.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
 
 
-    def map(self, run=None, params=None, map_type="Iso3D", res_num=None, inc=20, lower=None, upper=None, axis_incs=10, file="map", dir="dx", point=None, point_file="point", remap=None):
+    def map(self, run=None, params=None, map_type="Iso3D", res_num=None, inc=20, lower=None, upper=None, axis_incs=5, file="map", dir="dx", point=None, point_file="point", remap=None):
         """Function for creating a map of the given space in OpenDX format.
 
         Keyword Arguments
