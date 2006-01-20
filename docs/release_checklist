@@ -29,7 +29,7 @@ $ make source_dist
 
 6.  Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  Rsync the entire directory contents to download.gna.org/upload/relax/ using the command
 
-$ rsync --delete -avr --rsh="ssh" . bugman@download.gna.org:/upload/relax/
+$ rsync --delete -avr --rsh="ssh" * bugman@download.gna.org:/upload/relax/
 
 
 
@@ -37,4 +37,8 @@ $ rsync --delete -avr --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
-8.  Run the script 'create_html' in the directory 'docs/latex' to produce the latest html version of the manual.  Replace the old manual with the new in the CVS repository.
+8.  Create the HTML version of the manual with the command:
+
+$ make manual_html
+
+Replace the old manual with the new in the CVS repository.
