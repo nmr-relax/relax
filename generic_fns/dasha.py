@@ -277,10 +277,9 @@ class Dasha:
                     file.write(' sym')
                 file.write('\n')
 
-                # Fix the tf parameter if it isn't in the model.
-                if not 'tf' in data.params and jmode == 3:
-                    file.write('\n# Fix the tf parameter.\n')
-                    file.write('fix tf 0\n')
+                # Parameter default values.
+                file.write('\n# Parameter default values.\n')
+                file.write('reset jmode ' + `data.num` + '\n')
 
                 # Bond length.
                 file.write('\n# Bond length.\n')
@@ -290,9 +289,10 @@ class Dasha:
                 file.write('\n# CSA value.\n')
                 file.write('set csa ' + `data.csa / 1e-6` + '\n')
 
-                # Parameter default values.
-                file.write('\n# Parameter default values.\n')
-                file.write('reset jmode ' + `data.num` + '\n')
+                # Fix the tf parameter if it isn't in the model.
+                if not 'tf' in data.params and jmode == 3:
+                    file.write('\n# Fix the tf parameter.\n')
+                    file.write('fix tf 0\n')
 
             # Optimisation of all residues.
             file.write('\n\n\n# Optimisation of all residues.\n')

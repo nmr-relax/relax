@@ -841,11 +841,5 @@ class Rx_data:
         if file == None:
             file = self.ri_label + "." + self.frq_label + ".out"
 
-        # Open the file for writing.
-        relax_file = self.relax.IO.open_write_file(file, dir, force)
-
         # Write the data.
-        self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), relax_file, return_value=self.return_value)
-
-        # Close the file.
-        relax_file.close()
+        self.relax.generic.value.write(run=self.run, param=(self.ri_label, self.frq_label), file=file, dir=dir, force=force, return_value=self.return_value)

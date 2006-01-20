@@ -56,16 +56,16 @@ nuclei('N')
 # Set the diffusion tensor to isotropic with tm set to 10 ns.
 diffusion_tensor.init(name, 10e-9)
 
-# Generate the sequence from the PDB file.
-pdb(name, 'test.pdb')
+# Add a residue.
+sequence.add(name, 1, 'ALA')
 
 # Set the CSA and bond lengths.
-value.set(name, value=-170e-6, data_type='CSA')
-value.set(name, value=1.02e-10, data_type='r')
+value.set(name, value=-170e-6, param='CSA')
+value.set(name, value=1.02e-10, param='r')
 
 # Set the model-free parameters.
-value.set(name, value=0.8, data_type='S2')
-value.set(name, value=20e-12, data_type='te')
+value.set(name, value=0.8, param='S2')
+value.set(name, value=20e-12, param='te')
 
 # Select model-free model m2.
 model_free.select_model(name, model='m2')
@@ -75,6 +75,9 @@ back_calc(name)
 
 # Generate the errors.
 errors(name)
+
+# Write the data.
+write(name)
 
 # Write the relaxation data to file.
 results.write(name)

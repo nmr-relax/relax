@@ -63,7 +63,9 @@ class Nuclei:
     def gh(self):
         """The 1H gyromagnetic ratio."""
 
+        # Old, low precision gyromagnetic ratio.
         #return 26.7522e7
+
         return 26.7522212e7
 
 

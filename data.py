@@ -34,7 +34,7 @@ class Data:
         """Class containing all the program data."""
 
         # Fundamental constants.
-        #self.h = 6.6260755e-34
+        #self.h = 6.6260755e-34    # Old low precision value.
         self.h = 6.62606876e-34
         self.h_bar = self.h / ( 2.0*pi )
         self.mu0 = 4.0 * pi * 1e-7

@@ -495,7 +495,7 @@ class Value:
             raise RelaxError, "Bug in the code."
 
 
-    def write(self, run=None, param=None, file=None, dir=None, force=0):
+    def write(self, run=None, param=None, file=None, dir=None, force=0, return_value=None):
         """Function for writing data to a file."""
 
         # Arguments.
@@ -514,7 +514,7 @@ class Value:
         file = self.relax.IO.open_write_file(file, dir, force)
 
         # Write the data.
-        self.write_data(file)
+        self.write_data(file, return_value)
 
         # Close the file.
         file.close()
