@@ -37,6 +37,20 @@ py_include_path = sys.prefix + '/include/python' + `sys.version_info[0]` + '.' +
 cflags = '-I' + py_include_path
 
 
+
+# Relaxation curve fitting.
+###########################
+
+
+# Relaxation curve fitting build environment.
+relax_fit_env = Environment()
+
+
+# Catch Mac OS X and send the correct command line options to the linker.
+if relax_fit_env['PLATFORM'] == 'darwin' and isNativeOnMac:
+    relax_fit_env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', '/usr/bin/python', '-dynamic'])
+
+
 # File names.
 relax_fit_files = ['maths_fns/c_chi2.c',
                    'maths_fns/exponential.c',
@@ -45,12 +59,10 @@ relax_fit_files = ['maths_fns/c_chi2.c',
 # Loop over the relaxation curve fitting files.
 relax_fit_nodes = []
 for file in relax_fit_files:
-    relax_fit_nodes.append(SharedObject(file, CCFLAGS=cflags, CPPPATH='maths_fns'))
+    relax_fit_nodes.append(relax_fit_env.SharedObject(file, CCFLAGS=cflags, CPPPATH='maths_fns'))
 
 # Build the relaxation curve fitting module.
-relax_fit_object = SharedLibrary(target='maths_fns/relax_fit', source=relax_fit_nodes, SHLIBPREFIX='')
-SourceSignatures('timestamp')
-
+relax_fit_object = relax_fit_env.SharedLibrary(target='maths_fns/relax_fit', source=relax_fit_nodes, SHLIBPREFIX='')
 
 
 # Print out.
