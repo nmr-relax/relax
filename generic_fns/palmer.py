@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,7 @@ class Palmer:
         self.relax = relax
 
 
-    def create(self, run, dir, force, diff_search, sims, sim_type, trim, steps, constraints, nucleus, atom1, atom2):
+    def create(self, run, dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, nucleus, atom1, atom2):
         """Function for creating the Modelfree4 input files.
 
         The following files are created:
@@ -69,6 +69,7 @@ class Palmer:
         self.run = run
         self.dir = dir
         self.force = force
+        self.binary = binary
         self.diff_search = diff_search
         self.sims = sims
         self.sim_type = sim_type
@@ -164,21 +165,21 @@ class Palmer:
 
             # Test if the R1 exists for this frequency, otherwise skip the data.
             if r1:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.frq[j]*1e-6, r1, r1_err, 1))
+                file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', self.frq[j]*1e-6, r1, r1_err, 1))
             else:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R1', self.frq[j]*1e-6, 0, 0, 0))
+                file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', self.frq[j]*1e-6, 0, 0, 0))
 
             # Test if the R2 exists for this frequency, otherwise skip the data.
             if r2:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.frq[j]*1e-6, r2, r2_err, 1))
+                file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', self.frq[j]*1e-6, r2, r2_err, 1))
             else:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('R2', self.frq[j]*1e-6, 0, 0, 0))
+                file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', self.frq[j]*1e-6, 0, 0, 0))
 
             # Test if the NOE exists for this frequency, otherwise skip the data.
             if noe:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.frq[j]*1e-6, noe, noe_err, 1))
+                file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', self.frq[j]*1e-6, noe, noe_err, 1))
             else:
-                file.write('%-7s%-10.3f%20f%20f %-3i\n' % ('NOE', self.frq[j]*1e-6, 0, 0, 0))
+                file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', self.frq[j]*1e-6, 0, 0, 0))
 
             written = 1
 
@@ -385,7 +386,7 @@ class Palmer:
         """Create the script 'run.sh' for the execution of Modelfree4."""
 
         file.write("#! /bin/sh\n")
-        file.write("modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
+        file.write(self.binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
         if self.relax.data.diff[self.run].type != 'sphere':
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
             system('cp ' + self.relax.data.pdb[self.run].file_name + ' ' + self.dir)
@@ -393,11 +394,17 @@ class Palmer:
         file.write("\n")
 
 
-    def execute(self, run, dir, force):
+    def execute(self, run, dir, force, binary):
         """Function for executing Modelfree4.
 
         BUG:  Control-C during execution causes the cwd to stay as dir.
         """
+
+        # Arguments.
+        self.run = run
+        self.dir = dir
+        self.force = force
+        self.binary = binary
 
         # The current directory.
         orig_dir = getcwd()
@@ -445,9 +452,9 @@ class Palmer:
 
             # Execute Modelfree4.
             if pdb:
-                spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
+                spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
             else:
-                test = spawnlp(P_WAIT, 'modelfree4', 'modelfree4', '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
+                test = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
                 if test:
                     raise RelaxProgFailError, 'Modelfree4'
 
@@ -485,120 +492,141 @@ class Palmer:
 
         # Open the file.
         mfout_file = open(dir + "/mfout", 'r')
-        mfout = mfout_file.readlines()
+        self.mfout_lines = mfout_file.readlines()
         mfout_file.close()
+
+        # Get the section line positions of the mfout file.
+        self.line_positions()
+
 
         # Find out if simulations were carried out.
         sims = 0
-        for i in xrange(len(mfout)):
-            if search('_iterations', mfout[i]):
-                row = split(mfout[i])
+        for i in xrange(len(self.mfout_lines)):
+            if search('_iterations', self.mfout_lines[i]):
+                row = split(self.mfout_lines[i])
                 sims = int(row[1])
 
         # Loop over the sequence.
+        pos = 0
         for i in xrange(len(self.relax.data.res[self.run])):
+            # Reassign the data structure.
+            data = self.relax.data.res[self.run][i]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
             # Missing data sets.
-            if not hasattr(self.relax.data.res[self.run][i], 'model'):
+            if not hasattr(data, 'model'):
                 continue
 
             # Get the S2 data.
-            data = self.get_mf_data('S2', mfout, self.relax.data.res[self.run][i].num)
-            if data != None:
-                s2, s2_err = data
-                self.relax.data.res[self.run][i].s2 = s2
-                #self.relax.data.res[self.run][i].s2_err = s2_err
+            if 'S2' in data.params:
+                data.s2, data.s2_err = self.get_mf_data(self.mfout_S2_pos + pos)
 
             # Get the S2f data.
-            if 'S2f' in self.relax.data.res[self.run][i].params or 'S2s' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('S2f', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    s2f, s2f_err = data
-                    self.relax.data.res[self.run][i].s2f = s2f
-                    #self.relax.data.res[self.run][i].s2f_err = s2f_err
+            if 'S2f' in data.params or 'S2s' in data.params:
+                data.s2f, data.s2f_err = self.get_mf_data(self.mfout_S2f_pos + pos)
 
             # Get the S2s data.
-            if 'S2f' in self.relax.data.res[self.run][i].params or 'S2s' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('S2s', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    s2s, s2s_err = data
-                    self.relax.data.res[self.run][i].s2s = s2s
-                    #self.relax.data.res[self.run][i].s2s_err = s2s_err
+            if 'S2f' in data.params or 'S2s' in data.params:
+                data.s2s, data.s2s_err = self.get_mf_data(self.mfout_S2s_pos + pos)
 
-            # Get the te and ts data.
-            if 'te' in self.relax.data.res[self.run][i].params or 'ts' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('te', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    te, te_err = data
-                    self.relax.data.res[self.run][i].te = te / 1e12
-                    #self.relax.data.res[self.run][i].te_err = te_err / 1e12
-                    if 'ts' in self.relax.data.res[self.run][i].params:
-                        self.relax.data.res[self.run][i].ts = te / 1e12
-                        #self.relax.data.res[self.run][i].ts_err = te_err / 1e12
+            # Get the te data.
+            if 'te' in data.params:
+                data.te, data.te_err = self.get_mf_data(self.mfout_te_pos + pos)
+                data.te = data.te / 1e12
+                data.te_err = data.te_err / 1e12
+
+            # Get the ts data.
+            if 'ts' in data.params:
+                data.ts, data.ts_err = self.get_mf_data(self.mfout_te_pos + pos)
+                data.ts = data.ts / 1e12
+                data.ts_err = data.ts_err / 1e12
 
             # Get the Rex data.
-            if 'Rex' in self.relax.data.res[self.run][i].params:
-                data = self.get_mf_data('Rex', mfout, self.relax.data.res[self.run][i].num)
-                if data != None:
-                    rex, rex_err = data
-                    self.relax.data.res[self.run][i].rex = rex / (2.0 * pi * self.relax.data.res[self.run][i].frq[0])**2
-                    #self.relax.data.res[self.run][i].rex_err = rex_err / (2.0 * pi * self.relax.data.res[self.run][i].frq[0])**2
+            if 'Rex' in data.params:
+                data.rex, data.rex_err = self.get_mf_data(self.mfout_Rex_pos + pos)
+                data.rex = data.rex / (2.0 * pi * data.frq[0])**2
+                data.rex_err = data.rex_err / (2.0 * pi * data.frq[0])**2
 
             # Get the chi-squared data.
-            self.relax.data.res[self.run][i].chi2 = self.get_chi2(sims, mfout, self.relax.data.res[self.run][i].num)
+            row = split(self.mfout_lines[self.mfout_chi2_pos + pos])
+            data.chi2 = float(row[1])
+
+            # Increment the residue position.
+            pos = pos + 1
 
 
-    def get_chi2(self, sims, mfout, res):
-        """Extract the chi-squared data from the mfout file."""
+    def get_mf_data(self, pos):
+        """Extract the model-free data from the given position of the mfout file."""
 
-        # Move to the section starting with 'data_sse'.
-        for i in xrange(len(mfout)):
-            if match('data_sse', mfout[i]):
-                break
+        # Split the line up.
+        row = split(self.mfout_lines[pos])
 
-        # Get the chi-squared value.
-        for j in xrange(i+3, len(mfout)):
-            row = split(mfout[j])
-            if `res` == row[0]:
-                return float(row[1])
+        # Attempt to extract the value and error.
+        try:
+            # Catch a series of '*' joining two columns.
+            val = split(row[1], '*')
+            err = split(row[4], '*')
 
-            # Catch the end.
-            if row[0] == 'data_correlation_matrix':
-                return
+            # Return the value and error.
+            return float(val[0]), float(err[0])
+
+        # Otherwise, there is no data???
+        except:
+            return None, None
 
 
-    def get_mf_data(self, data_type, mfout, res):
-        """Extract the model-free data from the mfout file."""
+    def line_positions(self):
+        """Function for getting the section positions (line number) of the mfout file."""
 
-        # Move to the section starting with 'data_model_1'.
-        for i in xrange(len(mfout)):
-            if match('data_model_1', mfout[i]):
-                break
+        # Loop over the file.
+        i = 0
+        while i < len(self.mfout_lines):
+            # Model-free data.
+            if match('data_model_1', self.mfout_lines[i]):
+                # Shift down two lines (to avoid the lines not starting with a space)..
+                i = i + 2
 
-        # Move to the subsection starting with data_type.
-        for j in xrange(i, len(mfout)):
-            row = split(mfout[j])
-            if len(row) == 0:
-                continue
-            elif match(data_type, row[0]):
-                break
+                # Walk through all the data.
+                while 1:
+                    # Break once the end of the data section is reached.
+                    if not self.mfout_lines[i] == '\n' and not search('^ ', self.mfout_lines[i]):
+                        break
 
-        # Find the residue specific information.
-        for k in xrange(j+1, len(mfout)):
-            row = split(mfout[k])
-            if `res` == row[0]:
-                try:
-                    # Catch a series of '*' joining two columns.
-                    val = split(row[1], '*')
-                    err = split(row[4], '*')
+                    # Split the line up.
+                    row = split(self.mfout_lines[i])
 
-                    # Return the values.
-                    return float(val[0]), float(err[0])
-                except:
-                    return None, None
+                    # S2 position (skip the heading and move to the first residue).
+                    if len(row) == 2 and row[0] == 'S2':
+                        self.mfout_S2_pos = i + 1
 
-            # Catch the end.
-            if row[0] == 'stop_':
-                return
+                    # S2f position (skip the heading and move to the first residue).
+                    if len(row) == 2 and row[0] == 'S2f':
+                        self.mfout_S2f_pos = i + 1
+
+                    # S2s position (skip the heading and move to the first residue).
+                    if len(row) == 2 and row[0] == 'S2s':
+                        self.mfout_S2s_pos = i + 1
+
+                    # te position (skip the heading and move to the first residue).
+                    if len(row) == 2 and row[0] == 'te':
+                        self.mfout_te_pos = i + 1
+
+                    # Rex position (skip the heading and move to the first residue).
+                    if len(row) == 2 and row[0] == 'Rex':
+                        self.mfout_Rex_pos = i + 1
+
+                    # Move to the next line number.
+                    i = i + 1
+
+            # Chi-squared values.
+            if match('data_sse', self.mfout_lines[i]):
+                self.mfout_chi2_pos = i + 3
+
+            # Move to the next line number.
+            i = i + 1
 
 
     def open_file(self, file_name):
