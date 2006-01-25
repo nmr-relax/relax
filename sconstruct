@@ -47,7 +47,7 @@ relax_fit_env = Environment()
 
 
 # Catch Mac OS X and send the correct command line options to the linker.
-if relax_fit_env['PLATFORM'] == 'darwin' and isNativeOnMac:
+if relax_fit_env['PLATFORM'] == 'darwin':
     relax_fit_env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', '/usr/bin/python', '-dynamic'])
 
 
