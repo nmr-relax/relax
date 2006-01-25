@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2006 Edward d'Auvergne                                        #
@@ -21,5 +23,33 @@
 ###############################################################################
 
 
-print "Hello"
+# Import statements.
+import sys
 
+
+# Construct the python include path (for Python.h).
+py_include_path = sys.prefix + '/include/python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
+
+
+# C flags.
+cflags = '-I' + py_include_path
+
+
+# File names.
+relax_fit_files = ['maths_fns/c_chi2.c',
+                   'maths_fns/exponential.c',
+                   'maths_fns/relax_fit.c']
+
+# Loop over the relaxation curve fitting files.
+relax_fit_nodes = []
+for file in relax_fit_files:
+    relax_fit_nodes.append(SharedObject(file, CCFLAGS=cflags, CPPPATH='maths_fns'))
+
+# Build the relaxation curve fitting module.
+relax_fit_object = SharedLibrary(target='maths_fns/relax_fit.so', source=relax_fit_nodes, SHLIBPREFIX='')
+SourceSignatures('timestamp')
+
+
+
+# Print out.
+print "Building the relaxation curve fitting module " + `str(relax_fit_object[0])`

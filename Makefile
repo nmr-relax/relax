@@ -244,4 +244,5 @@ clean_temp:
 	rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
 	rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
 	rm -f *.o */*.o */*/*.o */*/*/*.o
+	rm -f *.os */*.os */*/*.os */*/*/*.os
 	@cd docs/latex; make clean
