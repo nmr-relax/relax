@@ -1,4 +1,6 @@
 #! /usr/bin/python
+# That line was just so programs like gvim or emacs will understand that this is Python code!  Don't
+# make this file executable.
 
 ###############################################################################
 #                                                                             #
@@ -46,7 +48,7 @@ for file in relax_fit_files:
     relax_fit_nodes.append(SharedObject(file, CCFLAGS=cflags, CPPPATH='maths_fns'))
 
 # Build the relaxation curve fitting module.
-relax_fit_object = SharedLibrary(target='maths_fns/relax_fit.so', source=relax_fit_nodes, SHLIBPREFIX='')
+relax_fit_object = SharedLibrary(target='maths_fns/relax_fit', source=relax_fit_nodes, SHLIBPREFIX='')
 SourceSignatures('timestamp')
 
 
