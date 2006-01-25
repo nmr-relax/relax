@@ -4,13 +4,13 @@
 #                                                                             #
 #                                    relax                                    #
 #                                                                             #
-#                 A program for NMR relaxation data analysis                  #
+#               Protein dynamics by NMR relaxation data analysis              #
 #                                                                             #
 #                             by Edward d'Auvergne                            #
 #                                                                             #
 ###############################################################################
 #                                                                             #
-#                                   License                                   #
+#                                   Licence                                   #
 #                                                                             #
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
@@ -323,7 +323,7 @@ class Relax:
         self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
 
         # Program description.
-        string = "A program for NMR relaxation data analysis"
+        string = "Protein dynamics by NMR relaxation data analysis"
         self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
 
         # Copyright printout.
