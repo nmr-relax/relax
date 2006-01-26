@@ -26,44 +26,162 @@
 
 
 # Import statements.
+from os import getcwd, mkdir, symlink
+from shutil import copytree
 import sys
 
 
-# Construct the python include path (for Python.h).
-py_include_path = sys.prefix + '/include/python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
+
+# Test class.
+class Main:
+    def __init__(self):
+        """Testing"""
+
+        # Initialisation.
+        #################
+
+        # Set the help message.
+        self.help()
+
+        # Set up the C options.
+        self.setup_c()
 
 
-# C flags.
-cflags = '-I' + py_include_path
+        # Targets.
+        ##########
+
+        # Setup the rules for building the relaxation curve fitting C modules.
+        self.relax_fit()
+
+        # Only one target is supported.
+        if len(BUILD_TARGETS) > 1:
+            print "Only one target is supported.  The targets " + `map(str, BUILD_TARGETS)` + " cannot be executed."
+            sys.exit()
+
+        # Install target.
+        install_env = Environment(BUILDERS = {'install' : Builder(action=self.install)})
+        install_env.install('install', None)
+
+        # Set relaxation curve fitting as the default.
+        Default(self.relax_fit_object)
+
+
+    def dummy(self, target=None, source=None, env=None):
+        """Dummy function which returns zero."""
+
+        return 0
+
+
+    def help(self):
+        """The help message."""
+
+        # Intro.
+        string = '\nSconstruct help for relax.\n\n'
+
+        # Main text.
+        string = string + 'To build the C modules, type\n\n$ scons'
+
+        # Set the help message.
+        Help(string)
+
+
+    def install(self, target, source, env):
+        """relax installation function."""
+
+        # Paths.
+        INSTALL_PATH = '/usr/local'
+        INSTALL_PATH = '/home/edward'
+        RELAX_PATH = INSTALL_PATH + '/relax'
+
+        # Print out.
+        print "\n\n\n"
+        print "####################"
+        print "# Installing relax #"
+        print "####################\n\n"
+        print "Installing the program relax into the directory " + `RELAX_PATH` + "\n\n"
+
+
+        # Setup.
+        # Tests.
+
+
+        # Copy the files (and create the directory).
+        try:
+            print "Copying all files in " + `getcwd()` + " to " + `RELAX_PATH` + "."
+            copytree(getcwd(), RELAX_PATH)
+        except OSError, message:
+            # Failure message.
+            sys.stderr.write("Cannot install relax, " + message.__doc__ + "\n")
+
+            # You don't have the privilages to do this.
+            if message.errno == 13:
+                sys.stderr.write("Permission denied, cannot create the directory " + `RELAX_PATH` + ".\n\n")
+
+            # Directory already exists.
+            elif message.errno == 17:
+                sys.stderr.write("The directory " + `RELAX_PATH` + " already exists.\n\n")
+
+            # All other errors (print normal python error message).
+            else:
+                sys.stderr.write("OSError: [Errno " + `message.errno` + "] " + message.strerror + ": " + `message.filename` + "\n\n")
+
+            # Quit the function.
+            return
+
+        # Create the symbolic link.
+        print "Creating the symbolic link from " + `RELAX_PATH + '/relax'` + " to " + `INSTALL_PATH + '/bin/relax'` + "."
+        symlink(RELAX_PATH + '/relax', INSTALL_PATH + '/bin/relax')
+
+
+    def relax_fit(self):
+        """Function for setting up scons for building the relaxation curve fitting C modules."""
+
+        # The directory.
+        dir = 'maths_fns'
+
+        # File names.
+        files = ['c_chi2.c',
+                 'exponential.c',
+                 'relax_fit.c']
+
+        # Relaxation curve fitting build environment.
+        env = Environment()
+
+        # Catch Mac OS X and send the correct command line options to the linker.
+        if env['PLATFORM'] == 'darwin':
+            env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', sys.prefix + '/bin/python', '-dynamic'])
+
+        # Loop over the relaxation curve fitting files.
+        nodes = []
+        for file in files:
+            nodes.append(env.SharedObject(dir + '/' + file, CCFLAGS=self.cflags))
+
+        # Build the relaxation curve fitting module.
+        self.relax_fit_object = env.SharedLibrary(target=dir + '/relax_fit', source=nodes, SHLIBPREFIX='')
+
+        # Print out string returning function.
+        def print_string(target=None, source=None, env=None):
+            string = "\n\n\n\n"
+            string = string + "###########################\n"
+            string = string + "# Compiling the C modules #\n"
+            string = string + "###########################\n\n\n"
+            string = string + "Building the relaxation curve fitting module " + `str(self.relax_fit_object[0])` + "\n"
+            return string
+
+        # Add the print out as an action to take before constructing the first object.
+        env.AddPreAction(nodes[0], Action(self.dummy, print_string))
+        
+
+    def setup_c(self):
+        """Function for setting up the C options."""
+
+        # Construct the python include path (for Python.h).
+        py_include_path = sys.prefix + '/include/python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
+
+        # C flags.
+        self.cflags = '-I' + py_include_path
 
 
 
-# Relaxation curve fitting.
-###########################
-
-
-# Relaxation curve fitting build environment.
-relax_fit_env = Environment()
-
-
-# Catch Mac OS X and send the correct command line options to the linker.
-if relax_fit_env['PLATFORM'] == 'darwin':
-    relax_fit_env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', '/usr/bin/python', '-dynamic'])
-
-
-# File names.
-relax_fit_files = ['maths_fns/c_chi2.c',
-                   'maths_fns/exponential.c',
-                   'maths_fns/relax_fit.c']
-
-# Loop over the relaxation curve fitting files.
-relax_fit_nodes = []
-for file in relax_fit_files:
-    relax_fit_nodes.append(relax_fit_env.SharedObject(file, CCFLAGS=cflags, CPPPATH='maths_fns'))
-
-# Build the relaxation curve fitting module.
-relax_fit_object = relax_fit_env.SharedLibrary(target='maths_fns/relax_fit', source=relax_fit_nodes, SHLIBPREFIX='')
-
-
-# Print out.
-print "Building the relaxation curve fitting module " + `str(relax_fit_object[0])`
+# Execute the main class.
+Main()
