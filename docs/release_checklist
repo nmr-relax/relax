@@ -18,8 +18,8 @@ $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4 relax
 
 4.  Generate the binary and source distribution files (and their GPG signatures) by typing:
 
-$ make binary_dist
-$ make source_dist
+$ scons binary_dist
+$ scons source_dist
 
 
 
@@ -39,6 +39,6 @@ $ rsync --delete -avr --rsh="ssh" * bugman@download.gna.org:/upload/relax/
 
 8.  Create the HTML version of the manual with the command:
 
-$ make manual_html
+$ scons manual_html
 
 Replace the old manual with the new in the CVS repository.

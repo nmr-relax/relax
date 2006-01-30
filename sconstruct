@@ -26,16 +26,21 @@
 
 
 # Import statements.
-from os import getcwd, mkdir, symlink
-from shutil import copytree
+from glob import glob
+import platform
+from os import F_OK, access, chdir, getcwd, lstat, path, remove, rmdir, sep, symlink, system, walk
+from re import search
+from shutil import copytree, move
 import sys
+import tarfile
+
+from docs.latex.fetch_docstrings import Fetch_docstrings
+from version import version
 
 
-
-# Test class.
 class Main:
     def __init__(self):
-        """Testing"""
+        """Initialise the main building targets."""
 
         # Initialisation.
         #################
@@ -46,30 +51,180 @@ class Main:
         # Set up the C options.
         self.setup_c()
 
+        # The operating system.
+        self.system = platform.uname()[0]
+
+        # Set up the paths and file names.
+        self.set_paths()
+
 
         # Targets.
         ##########
 
-        # Setup the rules for building the relaxation curve fitting C modules.
+        # Setup the rules for building the relaxation curve fitting C modules (and set it as the default).
         self.relax_fit()
-
-        # Only one target is supported.
-        if len(BUILD_TARGETS) > 1:
-            print "Only one target is supported.  The targets " + `map(str, BUILD_TARGETS)` + " cannot be executed."
-            sys.exit()
+        Default(self.relax_fit_object)
 
         # Install target.
         install_env = Environment(BUILDERS = {'install' : Builder(action=self.install)})
-        install_env.install('install', None)
+        install_env.install(target='install', source=None)
 
-        # Set relaxation curve fitting as the default.
-        Default(self.relax_fit_object)
+        # Uninstall target.
+        uninstall_env = Environment(BUILDERS = {'uninstall' : Builder(action=self.uninstall)})
+        uninstall_env.uninstall(target='uninstall', source=None)
+
+        # Target for creating the binary distribution file.
+        binary_dist_env = Environment(BUILDERS = {'dummy' : Builder(action=self.dummy)})
+        binary_dist_env.dummy(target='binary_dist', source=None)
+        binary_dist_env.Depends('binary_dist', 'version_check')           # First check the program version number.
+        binary_dist_env.Depends('binary_dist', 'clean')                   # Then clean up the sources.
+        binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
+        binary_dist_env.Depends('binary_dist', 'manual_dist')             # Compile the manual.
+        binary_dist_env.Depends('binary_dist', 'tar_bin')                 # Create the tar.gz file of the binary distribution.
+        binary_dist_env.Depends('binary_dist', 'gpg_bin')                 # GPG sign the tar.gz file.
+
+        # Target for creating the source distribution file.
+        source_dist_env = Environment(BUILDERS = {'dummy' : Builder(action=self.dummy)})
+        source_dist_env.dummy(target='source_dist', source=None)
+        source_dist_env.Depends('source_dist', 'version_check')           # First check the program version number.
+        source_dist_env.Depends('source_dist', 'manual_dist')             # Compile the manual.
+        source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
+        source_dist_env.Depends('source_dist', 'tar_src')                 # Create the tar.gz file of the source distribution.
+        source_dist_env.Depends('source_dist', 'gpg_src')                 # GPG sign the tar.gz file.
+
+        # Target for creating the tar file of the binary distribution.
+        tar_bin_env = Environment(BUILDERS = {'archive' : Builder(action=self.tar)})
+        tar_bin_env.archive(target='tar_bin', source=None)
+        tar_bin_env.Prepend(TAR_FILE = self.TAR_BIN_FILE)
+        tar_bin_env.Depends('tar_bin', 'version_check')     # Check the program version number first.
+
+        # Target for creating the tar file of the source distribution.
+        tar_src_env = Environment(BUILDERS = {'archive' : Builder(action=self.tar)})
+        tar_src_env.archive(target='tar_src', source=None)
+        tar_src_env.Prepend(TAR_FILE = self.TAR_SRC_FILE)
+        tar_src_env.Depends('tar_bin', 'version_check')     # Check the program version number first.
+
+        # Target for creating a GPG signature of the binary distribution file.
+        gpg_bin_env = Environment(BUILDERS = {'sign' : Builder(action=self.gpg_bin_sign)})
+        gpg_bin_env.sign(target='gpg_bin', source=None)
+        gpg_bin_env.Depends('gpg_bin', 'version_check')     # Check the program version number before signing.
+
+        # Target for creating a GPG signature of the source distribution file.
+        gpg_src_env = Environment(BUILDERS = {'sign' : Builder(action=self.gpg_src_sign)})
+        gpg_src_env.sign(target='gpg_src', source=None)
+        gpg_src_env.Depends('gpg_src', 'version_check')     # Check the program version number before signing.
+
+        # relax version number checking target.
+        version_check_env = Environment(BUILDERS = {'check' : Builder(action=self.test_version)})
+        version_check_env.check(target='version_check', source=None)
+
+        # Clean target.
+        clean_env = Environment(BUILDERS = {'clean' : Builder(action=self.clean_files)})
+        clean_env.clean(target='clean', source=None)
+        clean_env.Depends('clean', 'clean_temp')       # Run the 'clean_temp' target.
+        clean_env.Depends('clean', 'manual_clean')     # Run the 'manual_clean' target.
+
+        # Target for removing temporary files.
+        clean_temp_env = Environment(BUILDERS = {'clean' : Builder(action=self.clean_temp_files)})
+        clean_temp_env.clean(target='clean_temp', source=None)
+
+
+    def clean_files(self, target=None, source=None, env=None):
+        """Builder action for cleaning up."""
+
+        # Print out.
+        print
+        print "###############"
+        print "# Cleaning up #"
+        print "###############\n\n"
+
+        # Extensions of files to remove.
+        temp_extns = ['.so', '.sconsign']
+
+        # Print out.
+        print "\nRemoving the files ending in " + `temp_extns` + ".\n"
+
+        # Walk through the directories.
+        for root, dirs, files in walk(getcwd()):
+            # Loop over the files in the current directory.
+            for file in files:
+                # Loop over the extensions.
+                for ext in temp_extns:
+                    if search(ext + '$', file):
+                        remove(path.join(root, file))
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def clean_temp_files(self, target=None, source=None, env=None):
+        """Builder action for removing temporary files."""
+
+        # Print out.
+        print
+        print "###############################"
+        print "# Cleaning up temporary files #"
+        print "###############################\n\n"
+
+        # Extensions of temporary files.
+        temp_extns = ['.pyc', '.bak', '.o', '.os']
+
+        # Print out.
+        print "\nRemoving the files ending in " + `temp_extns` + ".\n"
+
+        # Walk through the directories.
+        for root, dirs, files in walk(getcwd()):
+            # Loop over the files in the current directory.
+            for file in files:
+                # Loop over the extensions.
+                for ext in temp_extns:
+                    if search(ext + '$', file):
+                        remove(path.join(root, file))
+
+
+        # Remove the temporary documentation files.
+        #self.clean_docs()
+
+        # Final print out.
+        print "\n\n\n"
 
 
     def dummy(self, target=None, source=None, env=None):
         """Dummy function which returns zero."""
 
         return 0
+
+
+    def gpg_bin_sign(self, target=None, source=None, env=None):
+        """Builder action for creating a GPG signature of the binary distribution file."""
+
+        # Print out.
+        print
+        print "############################################"
+        print "# GPG signing the binary distribution file #"
+        print "############################################\n\n"
+
+        # Run the 'gpg' command.
+        system("gpg --detach-sign --default-key relax .." + sep + self.TAR_BIN_FILE)
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def gpg_src_sign(self, target=None, source=None, env=None):
+        """Builder action for creating a GPG signature of the source distribution file."""
+
+        # Print out.
+        print
+        print "############################################"
+        print "# GPG signing the source distribution file #"
+        print "############################################\n\n"
+
+        # Run the 'gpg' command.
+        system("gpg --detach-sign --default-key relax .." + sep + self.TAR_SRC_FILE)
+
+        # Final print out.
+        print "\n\n\n"
 
 
     def help(self):
@@ -79,47 +234,70 @@ class Main:
         string = '\nSconstruct help for relax.\n\n'
 
         # Main text.
-        string = string + 'To build the C modules, type\n\n$ scons'
+        string = string + 'To build the C modules, type\n\n$ scons\n\n'
+        string = string + 'To install the program, type\n\n$ scons install\n\n'
 
         # Set the help message.
         Help(string)
 
 
     def install(self, target, source, env):
-        """relax installation function."""
-
-        # Paths.
-        INSTALL_PATH = '/usr/local'
-        INSTALL_PATH = '/home/edward'
-        RELAX_PATH = INSTALL_PATH + '/relax'
+        """relax installation function (a Builder action)."""
 
         # Print out.
-        print "\n\n\n"
+        ############
+
+        print
         print "####################"
         print "# Installing relax #"
         print "####################\n\n"
-        print "Installing the program relax into the directory " + `RELAX_PATH` + "\n\n"
+        print "Installing the program relax into the directory " + `self.RELAX_PATH` + "\n\n"
 
 
-        # Setup.
         # Tests.
+        ########
 
+        # Test that the installation path exists.
+        if not access(self.INSTALL_PATH, F_OK):
+            sys.stderr.write("Cannot install relax, the installation path " + `self.INSTALL_PATH` + " does not exist.\n\n")
+            return
+
+        # Test if the binary directory already exists.
+        if not access(self.BIN_PATH, F_OK):
+            sys.stderr.write("Cannot install relax, the directory " + `self.BIN_PATH` + " does not exist.\n\n")
+            return
+
+        # Test if the relax installation directory already exists.
+        if access(self.RELAX_PATH, F_OK):
+            sys.stderr.write("Cannot install relax, the directory " + `self.RELAX_PATH` + " already exists.\n\n")
+            return
+
+        # Test if the symlink exists.
+        if self.symlink_flag:
+            try:
+                lstat(self.SYMLINK)
+            except OSError:
+                # OK, symlink doesn't exist.
+                pass
+            else:
+                sys.stderr.write("Cannot install relax, the file " + `self.SYMLINK` + " already exists.\n\n")
+                return
+
+
+        # Install.
+        ##########
 
         # Copy the files (and create the directory).
         try:
-            print "Copying all files in " + `getcwd()` + " to " + `RELAX_PATH` + "."
-            copytree(getcwd(), RELAX_PATH)
+            print "\nCopying all files in " + `getcwd()` + " to " + `self.RELAX_PATH` + "."
+            copytree(getcwd(), self.RELAX_PATH)
         except OSError, message:
             # Failure message.
             sys.stderr.write("Cannot install relax, " + message.__doc__ + "\n")
 
             # You don't have the privilages to do this.
             if message.errno == 13:
-                sys.stderr.write("Permission denied, cannot create the directory " + `RELAX_PATH` + ".\n\n")
-
-            # Directory already exists.
-            elif message.errno == 17:
-                sys.stderr.write("The directory " + `RELAX_PATH` + " already exists.\n\n")
+                sys.stderr.write("Permission denied, cannot create the directory " + `self.RELAX_PATH` + ".\n\n")
 
             # All other errors (print normal python error message).
             else:
@@ -129,8 +307,20 @@ class Main:
             return
 
         # Create the symbolic link.
-        print "Creating the symbolic link from " + `RELAX_PATH + '/relax'` + " to " + `INSTALL_PATH + '/bin/relax'` + "."
-        symlink(RELAX_PATH + '/relax', INSTALL_PATH + '/bin/relax')
+        if self.symlink_flag:
+            print "\nCreating the symbolic link from " + `self.RELAX_PATH + sep + 'relax'` + " to " + `self.SYMLINK` + "."
+            symlink(self.RELAX_PATH + sep + 'relax', self.SYMLINK)
+
+
+        # Byte compile.
+        ###############
+
+        # Run relax to create the *.pyc files.
+	    print "\nRunning relax to create the byte-compiled *.pyc files."
+        system(self.SYMLINK + " --test")
+
+        # Final print out.
+        print "\n\n\n"
 
 
     def relax_fit(self):
@@ -170,7 +360,59 @@ class Main:
 
         # Add the print out as an action to take before constructing the first object.
         env.AddPreAction(nodes[0], Action(self.dummy, print_string))
-        
+
+
+    def set_paths(self):
+        """Function for setting the paths and file names."""
+
+        # The system architecture.
+        self.MACH = platform.uname()[4]
+
+        # System specific string.
+        if self.system == 'Linux':
+            self.SYS = 'GNU-Linux'
+        elif self.system == 'Windows':
+            if self.MACH in ['i386', 'i486', 'i586', 'i686']:
+                self.SYS == 'Win32'
+            else:
+                self.SYS == 'Win'
+        else:
+            self.SYS = self.system
+
+        # Symbolic link flag.
+        self.symlink_flag = 1
+
+        # Linux installation path.
+        if self.system == 'Linux':
+            self.INSTALL_PATH = '/usr/local'
+            self.INSTALL_PATH = '/home/edward'
+
+        # Mac OS X installation path.
+        elif self.system == 'Darwin':
+            self.INSTALL_PATH = sys.prefix + sep + 'local'
+
+        # Windows installation path.
+        elif self.system == 'Windows':
+            self.INSTALL_PATH = 'C:\\'
+            self.symlink_flag = 0
+
+        # All other operating systems.
+        else:
+            self.INSTALL_PATH = sys.prefix + sep + 'local'
+
+        # Relax installation directory.
+        self.RELAX_PATH = self.INSTALL_PATH + sep + 'relax'
+
+        # Installation path for binaries.
+        self.BIN_PATH = self.INSTALL_PATH + sep + 'bin'
+
+        # Symbolic link installation path.
+        self.SYMLINK = self.BIN_PATH + sep + 'relax'
+
+        # The distribution files.
+        self.TAR_BIN_FILE = 'relax-' + version + '.' + self.SYS + '.' + self.MACH + '.tar.gz'
+        self.TAR_SRC_FILE = 'relax-' + version + '.src.tar.gz'
+
 
     def setup_c(self):
         """Function for setting up the C options."""
@@ -182,6 +424,373 @@ class Main:
         self.cflags = '-I' + py_include_path
 
 
+    def tar(self, target=None, source=None, env=None):
+        """Builder action for creating the tar archive."""
 
-# Execute the main class.
+        # Print out.
+        print
+        print "#######################"
+        print "# Packaging the files #"
+        print "#######################\n\n"
+        print "Creating the tar archive " + `env.subst('$TAR_FILE')` + ".\n"
+
+        # Open the tar file.
+        archive = tarfile.open(".." + sep + env.subst('$TAR_FILE'), 'w')
+
+        # Base directory.
+        base = getcwd() + sep
+
+        # Walk through the directories.
+        for root, dirs, files in walk(getcwd()):
+            # Skip the subversion directories.
+            if search("\.svn", root):
+                continue
+
+            # Add the files in the current directory to the archive.
+            for i in xrange(len(files)):
+                # Skip any '.sconsign' files.
+                if search("\.sconsign", files[i]):
+                    continue
+
+                # Skip any hidden files.
+                if search("^\.", files[i]):
+                    continue
+
+                # Open the file.
+                file = open(path.join(root, files[i]))
+
+                # Create the file name (without the base directory).
+                name = path.join(root, files[i])
+                name = name[len(base):]
+                print 'relax/' + name
+
+                # Tar information.
+                tarinfo = archive.gettarinfo(name, 'relax/' + name)
+
+                # Add the file.
+                archive.addfile(tarinfo, file)
+
+                # Close the file.
+                file.close()
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def test_version(self, target=None, source=None, env=None):
+        """Builder action for testing that the program version number has been set."""
+
+        # Print out.
+        print
+        print "#######################################"
+        print "# Checking the program version number #"
+        print "#######################################\n\n"
+        print "Version number: " + version + "\n"
+
+        # Test.
+        if version == "repository checkout":
+            sys.stderr.write("The program version number has not been set.\n\n")
+            sys.exit()
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def uninstall(self, target, source, env):
+        """relax deinstallation function (a Builder action)."""
+
+        # Print out.
+        ############
+
+        print
+        print "######################"
+        print "# Uninstalling relax #"
+        print "######################\n\n"
+        print "Uninstalling the program relax from the directory " + `self.INSTALL_PATH` + "\n\n"
+
+
+        # Tests.
+        ########
+
+        # Test that the installation path exists.
+        if not access(self.INSTALL_PATH, F_OK):
+            sys.stderr.write("Cannot uninstall relax, the installation path " + `self.INSTALL_PATH` + " does not exist.\n\n")
+            return
+
+        # Test if the binary directory already exists.
+        if not access(self.BIN_PATH, F_OK):
+            sys.stderr.write("Cannot uninstall relax, the directory " + `self.BIN_PATH` + " does not exist.\n\n")
+            return
+
+        # Test if the relax installation directory exists.
+        if not access(self.RELAX_PATH, F_OK):
+            sys.stderr.write("Cannot uninstall relax, the directory " + `self.RELAX_PATH` + " does not exist.\n\n")
+            return
+
+        # Test if the symlink exists.
+        if self.symlink_flag:
+            try:
+                lstat(self.SYMLINK)
+            except OSError:
+                sys.stderr.write("Cannot uninstall relax, the file " + `self.SYMLINK` + " does not exist.\n\n")
+                return
+
+
+        # Uninstall.
+        ############
+
+        # Remove the symbolic link.
+        if self.symlink_flag:
+            print "\nRemoving the symbolic link " + `self.SYMLINK` + "."
+            remove(self.SYMLINK)
+
+        # Remove the directory.
+        print "\nRemoving the entire directory " + `self.RELAX_PATH` + ".\n"
+        for root, dirs, files in walk(self.RELAX_PATH, topdown=False):
+            for file in files:
+                remove(path.join(root, file))
+            for file in dirs:
+                rmdir(path.join(root, file))
+        rmdir(self.RELAX_PATH)
+
+        # Final print out.
+        print "\n\n\n"
+
+
+
+
+class Manual:
+    def __init__(self):
+        """Initialise the manual building targets."""
+
+        # Documentation directory.
+        self.DOCS_DIR = 'docs' + sep
+
+        # LaTeX directory.
+        self.LATEX_DIR = 'docs' + sep + 'latex' + sep
+
+        # Create a manual build environment.
+        manual_env = Environment()
+
+        # Target for creating the PDF manual.
+        manual_env.Append(BUILDERS = {'Manual' : Builder(action=self.dummy)})
+        manual_env.Manual(target='manual', source=None)
+        manual_env.Depends('manual', 'manual_clean')
+        manual_env.Depends('manual', 'manual_version_file')
+        manual_env.Depends('manual', 'fetch_docstrings')
+        manual_env.Depends('manual', 'manual_latex')
+        manual_env.Depends('manual', 'manual_acro')
+
+        # Target for creating the PDF manual without fetching the docstrings.
+        manual_env.Manual(target='manual_nofetch', source=None)
+        manual_env.Depends('manual_nofetch', 'manual_clean')
+        manual_env.Depends('manual_nofetch', 'manual_version_file')
+        manual_env.Depends('manual_nofetch', 'manual_latex')
+        manual_env.Depends('manual_nofetch', 'manual_acro')
+
+        # Target for creating the PDF manual for distribution.
+        manual_env.Manual(target='manual_dist', source=None)
+        manual_env.Depends('manual_dist', 'manual_clean')
+        manual_env.Depends('manual_dist', 'manual_version_file')
+        manual_env.Depends('manual_dist', 'fetch_docstrings')
+        manual_env.Depends('manual_dist', 'manual_latex')
+
+        # Target for creating the HTML manual.
+        manual_env.Append(BUILDERS = {'Manual_html' : Builder(action=self.html)})
+        manual_env.Manual_html(target='manual_html', source=None)
+        manual_env.Depends('manual_html', 'manual_clean')
+
+        # Target for creating relax version number LaTeX file.
+        manual_env.Append(BUILDERS = {'Version' : Builder(action=self.version_file)})
+        manual_env.Version(target='manual_version_file', source=None)
+
+        # Target for fetching the docstrings.
+        manual_env.Append(BUILDERS = {'Fetch' : Builder(action=self.fetch_docstrings)})
+        manual_env.Fetch(target='fetch_docstrings', source=None)
+
+        # LaTeX compilation target.
+        manual_env.Append(BUILDERS = {'Latex' : Builder(action=self.latex)})
+        manual_env.Latex(target='manual_latex', source=None)
+
+        # Adobe Acrobat target.
+        manual_env.Append(BUILDERS = {'Acro' : Builder(action=self.acro)})
+        manual_env.Acro(target='manual_acro', source=None)
+
+        # Clean target.
+        manual_env.Append(BUILDERS = {'Clean' : Builder(action=self.clean_files)})
+        manual_env.Clean(target='manual_clean', source=None)
+
+
+    def acro(self, target=None, source=None, env=None):
+        """Builder action for executing Adobe Acrobat reader with the PDF manual."""
+
+        # Print out.
+        print
+        print "##############################################"
+        print "# Viewing the PDF manual using Adobe Acrobat #"
+        print "##############################################\n\n"
+
+        print "Running the command:\n$ acroread -openInNewWindow " + self.DOCS_DIR + "relax.pdf &\n\n\n"
+        system("acroread -openInNewWindow " + self.DOCS_DIR + "relax.pdf &")
+
+
+    def clean_files(self, target=None, source=None, env=None):
+        """Builder action for removing the temporary manual files."""
+
+        # Print out.
+        print
+        print "##########################################"
+        print "# Cleaning up the temporary manual files #"
+        print "##########################################\n\n"
+
+        # File list to remove.
+        files = ["relax.bbl",
+                 "relax.blg",
+                 "relax.dvi",
+                 "relax.idx",
+                 "relax.ilg",
+                 "relax.ind",
+                 "relax.lof",
+                 "relax.log",
+                 "relax.lot",
+                 "relax.toc"]
+
+        # Add the LaTeX directory.
+        for i in xrange(len(files)):
+            files[i] = path.join(self.LATEX_DIR, files[i])
+
+        # LaTeX auxillary files.
+        for file in glob(self.LATEX_DIR + '*.aux'):
+            files.append(file)
+
+        # Remove the files.
+        for file in files:
+            try:
+                remove(file)
+            except OSError, message:
+                # The file does not exist.
+                if message.errno == 2:
+                    pass
+
+                # All other errors.
+                else:
+                    raise
+            else:
+                print "Removing the file " + `file` + "."
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def dummy(self, target=None, source=None, env=None):
+        """Dummy function which returns zero."""
+
+        return 0
+
+
+    def fetch_docstrings(self, target=None, source=None, env=None):
+        """Builder action for fetching the relax user function docstrings."""
+
+        # Print out.
+        print
+        print "###############################################"
+        print "# Fetching the relax user function docstrings #"
+        print "###############################################\n\n"
+
+        # Get the docstrings.
+        Fetch_docstrings(self.LATEX_DIR + sep + 'docstring.tex')
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def html(self, target=None, source=None, env=None):
+        """Builder action for creating the HTML manual."""
+
+        # Print out.
+        print
+        print "############################"
+        print "# Creating the HTML manual #"
+        print "############################\n\n"
+
+        # Go to the LaTeX directory.
+        base_dir = getcwd()
+        chdir(self.LATEX_DIR)
+
+        # Get the docstrings.
+        print "Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir .." + sep + "html relax.tex\n\n\n"
+        system("latex2html -split +3 -html_version 4.0 -dir .." + sep + "html relax.tex")
+
+        # Return to the base directory.
+        chdir(base_dir)
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def latex(self, target=None, source=None, env=None):
+        """Builder action for compiling the LaTeX manual."""
+
+        # Print out.
+        print
+        print "###################################"
+        print "# LaTeX compilation of the manual #"
+        print "###################################\n\n"
+
+        # Go to the LaTeX directory.
+        base_dir = getcwd()
+        chdir(self.LATEX_DIR)
+
+        print "\n\n\n <<< LaTeX (first round) >>>\n\n\n"
+        system('latex relax.tex')
+
+        print "\n\n\n <<< Bibtex >>>\n\n\n"
+        system('bibtex relax.aux')
+
+        print "\n\n\n <<< Makeindex >>>\n\n\n"
+        system('makeindex relax.idx')
+
+        print "\n\n\n <<< LaTeX (second round) >>>\n\n\n"
+        system('latex relax.tex')
+
+        print "\n\n\n <<< LaTeX (third round) >>>\n\n\n"
+        system('latex relax.tex')
+
+        print "\n\n\n <<< dvips >>>\n\n\n"
+        system('dvips -o relax.ps relax.dvi')
+
+        print "\n\n\n <<< ps2pdf >>>\n\n\n"
+        system('ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps')
+
+        print "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
+        remove('relax.ps')
+        move('relax.pdf', '..')
+
+        # Return to the base directory.
+        chdir(base_dir)
+
+        # Final print out.
+        print "\n\n\n"
+
+
+    def version_file(self, target=None, source=None, env=None):
+        """Builder action for creating the LaTeX relax version file."""
+
+        # Print out.
+        print
+        print "################################################"
+        print "# Creating the LaTeX relax version number file #"
+        print "################################################"
+
+        # Place the program version number into a LaTeX file.
+        file = open(self.LATEX_DIR + sep + 'relax_version.tex', 'w')
+        file.write("Version " + version + '\n')
+        file.close()
+
+        # Final print out.
+        print "\n\n\n"
+
+
+# Execute the main and manual classes.
 Main()
+Manual()

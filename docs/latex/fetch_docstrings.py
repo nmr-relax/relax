@@ -39,7 +39,7 @@ from prompt.interpreter import Interpreter
 
 
 class Fetch_docstrings:
-    def __init__(self):
+    def __init__(self, file='docstring.tex'):
         """Fetch all the docstrings of the user functions and format them LaTeX style."""
 
         # Some dummy data structures.
@@ -55,7 +55,7 @@ class Fetch_docstrings:
         self.get_blacklist()
 
         # Open the LaTeX file.
-        self.file = open('docstring.tex', 'w')
+        self.file = open(file, 'w')
 
         # Get the names of the data structures.
         names = self.local.keys()
@@ -1158,7 +1158,3 @@ class Fetch_docstrings:
         # Add the sting to the verbatim section.
         self.section.append(string)
         self.section_type.append('verbatim')
-
-
-if __name__ == '__main__':
-    Fetch_docstrings()

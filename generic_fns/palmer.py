@@ -547,8 +547,13 @@ class Palmer:
             # Get the Rex data.
             if 'Rex' in data.params:
                 data.rex, data.rex_err = self.get_mf_data(self.mfout_Rex_pos + pos)
-                data.rex = data.rex / (2.0 * pi * data.frq[0])**2
-                data.rex_err = data.rex_err / (2.0 * pi * data.frq[0])**2
+                try:
+                    data.rex = data.rex / (2.0 * pi * data.frq[0])**2
+                    data.rex_err = data.rex_err / (2.0 * pi * data.frq[0])**2
+                except TypeError:
+                    # Bug in Modelfree4's mfout output file (fusion of columns).
+                    data.rex = None
+                    data_rex_err = None
 
             # Get the chi-squared data.
             row = split(self.mfout_lines[self.mfout_chi2_pos + pos])
