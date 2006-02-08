@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2006 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -63,17 +63,22 @@ def cholesky(dfk, d2fk, I, n, print_prefix, print_flag, return_matrix=0):
         # Calculate the matrix A + tk.I
         matrix = d2fk + tk * I
 
+        # Attempt the Cholesky decomposition.
         try:
             L = cholesky_decomposition(matrix)
             if print_flag >= 3:
                 print print_prefix + "\tCholesky matrix L:"
                 for i in xrange(n):
                     print print_prefix + "\t\t" + `L[i]`
-            break
-        except "LinearAlgebraError":
+        except:
             if print_flag >= 3:
                 print print_prefix + "\tLinearAlgebraError, matrix is not positive definite."
+
+            # Update of tk.
             tk = max(2.0*tk, half_norm)
+        else:
+            # Success, therefore break out of the while loop.
+            break
 
     # Calculate the Newton direction.
     y = solve_linear_equations(L, dfk)

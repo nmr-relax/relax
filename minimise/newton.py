@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2005 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2005-2006 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -184,8 +184,8 @@ class Newton(Hessian_mods, Line_search, Min):
             print self.print_prefix + "dfk+1:  " + `self.dfk_new`
             print self.print_prefix + "d2fk:\n" + `self.d2fk`
 
-            eigen = eigenvectors(self.d2fk)
-            print self.print_prefix + "Eigenvalues: " + `eigen[0]`
+            #eigen = eigenvectors(self.d2fk)
+            #print self.print_prefix + "Eigenvalues: " + `eigen[0]`
 
             print self.print_prefix + "Angle to the unit vector pointing along the first dimension."
             unit_vect = zeros(self.n, Float64)
