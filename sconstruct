@@ -34,7 +34,6 @@ from shutil import copytree, move
 import sys
 import tarfile
 
-from docs.latex.fetch_docstrings import Fetch_docstrings
 from version import version
 
 
@@ -696,6 +695,9 @@ class Manual:
         print "###############################################"
         print "# Fetching the relax user function docstrings #"
         print "###############################################\n\n"
+
+        # Import the fetch_docstrings module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
+        from docs.latex.fetch_docstrings import Fetch_docstrings
 
         # Get the docstrings.
         Fetch_docstrings(self.LATEX_DIR + sep + 'docstring.tex')
