@@ -3512,7 +3512,7 @@ class Model_free(Common_functions):
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Local tm               | 'tm'         | '^tm$'                                           |
+        | Local tm               | 'tm'         | '^tm$' or 'local_tm'                             |
         |                        |              |                                                  |
         | Order parameter S2     | 's2'         | '^[Ss]2$'                                        |
         |                        |              |                                                  |
@@ -3536,7 +3536,7 @@ class Model_free(Common_functions):
         """
 
         # Local tm.
-        if search('^tm$', name):
+        if search('^tm$', name) or search('local_tm', name):
             return 'tm'
 
         # Order parameter S2.

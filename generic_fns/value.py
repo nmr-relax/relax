@@ -253,12 +253,20 @@ class Value:
     def set(self, run=None, value=None, param=None, res_num=None, res_name=None, force=0):
         """Function for setting residue specific data values."""
 
+        # Arguments
+        self.run = run
+        self.value = value
+        self.param = param
+        self.res_num = res_num
+        self.res_name = res_name
+        self.force = force
+
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
-            raise RelaxNoRunError, run
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
         # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
         # Specific functions.
         self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
@@ -266,7 +274,7 @@ class Value:
         set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Sort the parameters and their values.
-        self.sort_params(value, param)
+        self.sort_params()
 
 
         # Diffusion tensor parameters.
@@ -274,7 +282,7 @@ class Value:
 
         if self.diff_params:
             # Set the diffusion parameters.
-            self.relax.generic.diffusion_tensor.set(run=run, value=self.diff_values, param=self.diff_params)
+            self.relax.generic.diffusion_tensor.set(run=self.run, value=self.diff_values, param=self.diff_params)
 
 
         # Residue specific parameters.
@@ -282,85 +290,85 @@ class Value:
 
         if self.res_params:
             # Test if the sequence data is loaded.
-            if not self.relax.data.res.has_key(run):
-                raise RelaxNoSequenceError, run
+            if not self.relax.data.res.has_key(self.run):
+                raise RelaxNoSequenceError, self.run
 
             # Test if the residue number is a valid regular expression.
-            if type(res_num) == str:
+            if type(self.res_num) == str:
                 try:
-                    compile(res_num)
+                    compile(self.res_num)
                 except:
-                    raise RelaxRegExpError, ('residue number', res_num)
+                    raise RelaxRegExpError, ('residue number', self.res_num)
 
             # Test if the residue name is a valid regular expression.
-            if res_name:
+            if self.res_name:
                 try:
-                    compile(res_name)
+                    compile(self.res_name)
                 except:
-                    raise RelaxRegExpError, ('residue name', res_name)
+                    raise RelaxRegExpError, ('residue name', self.res_name)
 
             # Test if parameter value already exists.
-            if not force:
+            if not self.force:
                 # Loop over the residues.
-                for i in xrange(len(self.relax.data.res[run])):
+                for i in xrange(len(self.relax.data.res[self.run])):
                     # Skip unselected residues.
-                    if not self.relax.data.res[run][i].select:
+                    if not self.relax.data.res[self.run][i].select:
                         continue
 
                     # If 'res_num' is not None, skip the residue if there is no match.
-                    if type(res_num) == int and not self.relax.data.res[run][i].num == res_num:
+                    if type(self.res_num) == int and not self.relax.data.res[self.run][i].num == self.res_num:
                         continue
-                    elif type(res_num) == str and not match(res_num, `self.relax.data.res[run][i].num`):
+                    elif type(self.res_num) == str and not match(self.res_num, `self.relax.data.res[self.run][i].num`):
                         continue
 
                     # If 'res_name' is not None, skip the residue if there is no match.
-                    if res_name != None and not match(res_name, self.relax.data.res[run][i].name):
+                    if self.res_name != None and not match(self.res_name, self.relax.data.res[self.run][i].name):
                         continue
 
                     # Loop over the parameters.
                     for param in self.res_params:
                         if param:
                             # Get the value and error.
-                            temp_value, temp_error = return_value(run, i, param)
+                            temp_value, temp_error = return_value(self.run, i, param)
 
                             # Data exists.
                             if temp_value != None or temp_error != None:
-                                raise RelaxValueError, (param, run)
+                                raise RelaxValueError, (param, self.run)
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[run])):
+            for i in xrange(len(self.relax.data.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[run][i].select:
+                if not self.relax.data.res[self.run][i].select:
                     continue
 
                 # If 'res_num' is not None, skip the residue if there is no match.
-                if type(res_num) == int and not self.relax.data.res[run][i].num == res_num:
+                if type(self.res_num) == int and not self.relax.data.res[self.run][i].num == self.res_num:
                     continue
-                elif type(res_num) == str and not match(res_num, `self.relax.data.res[run][i].num`):
+                elif type(self.res_num) == str and not match(self.res_num, `self.relax.data.res[self.run][i].num`):
                     continue
 
                 # If 'res_name' is not None, skip the residue if there is no match.
-                if res_name != None and not match(res_name, self.relax.data.res[run][i].name):
+                if self.res_name != None and not match(self.res_name, self.relax.data.res[self.run][i].name):
                     continue
 
                 # Go to the specific code.
                 for j in xrange(len(self.res_params)):
-                    set(run=run, value=self.res_values[j], error=None, param=self.res_params[j], index=i)
+                    set(run=self.run, value=self.res_values[j], error=None, param=self.res_params[j], index=i)
 
 
         # Reset the minimisation statistics.
         ####################################
 
         # Reset the global minimisation statistics.
-        self.relax.generic.minimise.reset_min_stats(run)
+        self.relax.generic.minimise.reset_min_stats(self.run)
 
         # Reset the sequence specific minimisation statistics.
-        if self.relax.data.res.has_key(run):
-            for i in xrange(len(self.relax.data.res[run])):
-                self.relax.generic.minimise.reset_min_stats(run, i)
+        if self.relax.data.res.has_key(self.run):
+            for i in xrange(len(self.relax.data.res[self.run])):
+                self.relax.generic.minimise.reset_min_stats(self.run, i)
 
 
-    def sort_params(self, value, param):
+    def sort_params(self):
         """Function for sorting the parameters and their values."""
 
         # Initialise.
@@ -370,121 +378,122 @@ class Value:
         self.res_values = []
 
         # Separate the residue specific parameters from the diffusion tensor parameters.
-        if param and self.function_type == 'mf':
+        if self.param and self.function_type == 'mf':
             # Single parameter.
-            if type(param) == str:
+            if type(self.param) == str:
                 # Get the diffusion tensor parameter name.
-                diff_name = self.relax.generic.diffusion_tensor.return_data_name(param)
+                diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.param)
 
                 # The parameter is a diffusion parameter.
-                if diff_name:
+                if self.res_num == None and self.res_name == None and diff_name:
                     # List of values.
-                    if type(value) == list or type(value) == ArrayType:
+                    if type(self.value) == list or type(self.value) == ArrayType:
                         # Parameter name.
-                        for i in xrange(len(value)):
+                        for i in xrange(len(self.value)):
                             self.diff_params.append(diff_name)
 
                         # Parameter value.
-                        self.diff_values = value
+                        self.diff_values = self.value
 
                     # Single value.
                     else:
                         # Parameter name.
-                        self.diff_params.append(param)
+                        self.diff_params.append(self.param)
 
                         # Parameter value.
-                        self.diff_values.append(value)
+                        self.diff_values.append(self.value)
 
                 # The parameter is not a diffusion parameter.
-                elif self.return_data_name(param):
+                elif self.return_data_name(self.param):
                     # List of values.
-                    if type(value) == list or type(value) == ArrayType:
+                    if type(self.value) == list or type(self.value) == ArrayType:
                         # Parameter name.
-                        for i in xrange(len(value)):
-                            self.res_params.append(param)
+                        for i in xrange(len(self.value)):
+                            self.res_params.append(self.param)
 
                         # Parameter value.
-                        self.res_values = value
+                        self.res_values = self.value
 
                     # Single value.
                     else:
                         # Parameter name.
-                        self.res_params.append(param)
+                        self.res_params.append(self.param)
 
                         # Parameter value.
-                        self.res_values.append(value)
+                        self.res_values.append(self.value)
 
                 # Unknown parameter
                 else:
-                    raise RelaxUnknownParamError, param
+                    raise RelaxUnknownParamError, self.param
 
             # Multiple parameters.
-            elif type(param) == list:
+            elif type(self.param) == list:
+                # Catch the local tm parameter (identified when
                 # Loop over all parameters.
-                for i in xrange(len(param)):
+                for i in xrange(len(self.param)):
                     # Get the diffusion tensor parameter name.
-                    diff_name = self.relax.generic.diffusion_tensor.return_data_name(param[i])
+                    diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.param[i])
 
                     # The parameter is a diffusion parameter.
-                    if diff_name:
+                    if self.res_num == None and self.res_name == None and diff_name:
                         # Parameter name.
                         self.diff_params.append(diff_name)
 
                         # Parameter value.
-                        if type(value) == list or type(value) == ArrayType:
-                            self.diff_values.append(value[i])
+                        if type(self.value) == list or type(self.value) == ArrayType:
+                            self.diff_values.append(self.value[i])
                         else:
-                            self.diff_values.append(value)
+                            self.diff_values.append(self.value)
 
                     # The parameter is not a diffusion parameter.
-                    elif self.return_data_name(param[i]):
+                    elif self.return_data_name(self.param[i]):
                         # Parameter name.
-                        self.res_params.append(param[i])
+                        self.res_params.append(self.param[i])
 
                         # Parameter value.
-                        if type(value) == list or type(value) == ArrayType:
-                            self.res_values.append(value[i])
+                        if type(self.value) == list or type(self.value) == ArrayType:
+                            self.res_values.append(self.value[i])
                         else:
-                            self.res_values.append(value)
+                            self.res_values.append(self.value)
 
                     # Unknown parameter
                     else:
-                        raise RelaxUnknownParamError, param[i]
+                        raise RelaxUnknownParamError, self.param[i]
 
 
         # All other parameters.
         else:
             # No parameter or a single parameter.
-            if param == None or type(param) == str:
+            if self.param == None or type(self.param) == str:
                 # List of values.
-                if type(value) == list or type(value) == ArrayType:
+                if type(self.value) == list or type(self.value) == ArrayType:
                     # Parameter name.
-                    for i in xrange(len(value)):
-                        self.res_params.append(param)
+                    for i in xrange(len(self.value)):
+                        self.res_params.append(self.param)
 
                     # Parameter value.
-                    self.res_values = value
+                    self.res_values = self.value
 
                 # Single value.
                 else:
                     # Parameter name.
-                    self.res_params.append(param)
+                    self.res_params.append(self.param)
 
                     # Parameter value.
-                    self.res_values.append(value)
+                    self.res_values.append(self.value)
 
             # Multiple parameters.
-            elif type(param) == list:
+            elif type(self.param) == list:
                 # Loop over all parameters.
-                for i in xrange(len(param)):
+                for i in xrange(len(self.param)):
                     # Parameter name.
-                    self.res_params.append(param[i])
+                    self.res_params.append(self.param[i])
 
                     # Parameter value.
-                    if type(value) == list or type(value) == ArrayType:
-                        self.res_values.append(value[i])
+                    if type(self.value) == list or type(self.value) == ArrayType:
+                        self.res_values.append(self.value[i])
                     else:
-                        self.res_values.append(value)
+                        self.res_values.append(self.value)
 
         # Debugging.
         if len(self.diff_params) != len(self.diff_values) or len(self.res_params) != len(self.res_values):

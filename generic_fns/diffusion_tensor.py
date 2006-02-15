@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -632,7 +632,7 @@ class Diffusion_tensor:
         | Data type                                              | Object name  | Patterns         |
         |________________________________________________________|______________|__________________|
         |                                                        |              |                  |
-        | Global correlation time - tm                           | 'tm'         | 'tm'             |
+        | Global correlation time - tm                           | 'tm'         | '^tm$'           |
         |                                                        |              |                  |
         | Isotropic component of the diffusion tensor - Diso     | 'Diso'       | '[Dd]iso'        |
         |                                                        |              |                  |
@@ -676,7 +676,7 @@ class Diffusion_tensor:
         """
 
         # Local tm.
-        if search('tm', name):
+        if search('^tm$', name):
             return 'tm'
 
         # Diso.

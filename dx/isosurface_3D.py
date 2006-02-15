@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -78,7 +78,7 @@ class Iso3D(Base_Map):
 
         # Fix the diffusion tensor.
         unfix = 0
-        if not self.relax.data.diff[self.run].fixed:
+        if self.relax.data.diff.has_key(self.run) and not self.relax.data.diff[self.run].fixed:
             self.relax.data.diff[self.run].fixed = 1
             unfix = 1
 
