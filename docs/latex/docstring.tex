@@ -125,7 +125,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{dasha.execute}(self, run=None, dir=None, force=0)} 
+ \textsf{\textbf{dasha.execute}(self, run=None, dir=None, force=0, binary=`dasha')} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -134,7 +134,9 @@
 
  \keyword{ dir:}  The directory to place the files.  The default is the value of \quotecmd{run}.   
 
- \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.  
+ \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.   
+
+ \keyword{ binary:}  The name of the executable Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} program file.  
 
   
 
@@ -145,6 +147,9 @@
   
 
  \example{\$ dasha < dasha\_script | tee dasha\_results} 
+
+ If you would like to use a different Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} executable file, change the keyword argument \quotecmd{binary} to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name. 
+  
 
   
 
@@ -625,7 +630,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{dx.map}(self, run=None, params=None, map\_type=`Iso3D', res\_num=None, inc=20, lower=None, upper=None, axis\_incs=10, file=`map', dir=`dx', point=None, point\_file=`point', remap=None)} 
+ \textsf{\textbf{dx.map}(self, run=None, params=None, map\_type=`Iso3D', res\_num=None, inc=20, lower=None, upper=None, axis\_incs=5, file=`map', dir=`dx', point=None, point\_file=`point', remap=None)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -731,7 +736,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{tm}  \\
+  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
    &  &   \\
   Isotropic\index{diffusion!sphere (isotropic)} component of the diffusion\index{diffusion!tensor} tensor - $\Diff_{iso}$ & \quotecmd{Diso} & \quotecmd{[Dd]iso}  \\
    &  &   \\
@@ -784,7 +789,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -1127,7 +1132,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -3017,7 +3022,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{palmer.create}(self, run=None, dir=None, force=0, diff\_search=`none', sims=0, sim\_type=`pred', trim=0, steps=20, constraints=1, nucleus=`15N', atom1=`N', atom2=`H')} 
+ \textsf{\textbf{palmer.create}(self, run=None, dir=None, force=0, binary=`modelfree4', diff\_search=`none', sims=0, sim\_type=`pred', trim=0, steps=20, constraints=1, nucleus=`15N', atom1=`N', atom2=`H')} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -3027,6 +3032,8 @@
  \keyword{ dir:}  The directory to place the files.  The default is the value of \quotecmd{run}.   
 
  \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.   
+
+ \keyword{ binary:}  The name of the executable Modelfree program file.   
 
  \keyword{ diff\_search:}  See the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} manual for \quotecmd{diffusion\_search}.   
 
@@ -3073,6 +3080,9 @@
  which can be used to execute modelfree4.\index{computer programs!Modelfree4} 
   
 
+ If you would like to use a different Modelfree executable file, change the keyword argument \quotecmd{binary} to the appropriate file name.  If the file is not located within the environment's path, include the full path infront of the binary file name. 
+  
+
   
 
  \newpage 
@@ -3088,7 +3098,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{palmer.execute}(self, run=None, dir=None, force=0)} 
+ \textsf{\textbf{palmer.execute}(self, run=None, dir=None, force=0, binary=`modelfree4')} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -3097,7 +3107,9 @@
 
  \keyword{ dir:}  The directory to place the files.  The default is the value of \quotecmd{run}.   
 
- \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.  
+ \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.   
+
+ \keyword{ binary:}  The name of the executable Modelfree program file.  
 
   
 
@@ -3110,6 +3122,9 @@
  \example{\$ modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out} 
 
  If a PDB\index{PDB} file is loaded and non-isotropic diffusion is selected, then the file name will be placed on the command line as \quotecmd{-s pdb\_file\_name}. 
+  
+
+ If you would like to use a different Modelfree executable file, change the keyword argument \quotecmd{binary} to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name. 
   
 
   
@@ -4836,7 +4851,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -4982,7 +4997,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -5163,7 +5178,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -5429,7 +5444,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -5578,7 +5593,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{tm}  \\
+  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
    &  &   \\
   Isotropic\index{diffusion!sphere (isotropic)} component of the diffusion\index{diffusion!tensor} tensor - $\Diff_{iso}$ & \quotecmd{Diso} & \quotecmd{[Dd]iso}  \\
    &  &   \\
@@ -5803,7 +5818,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
