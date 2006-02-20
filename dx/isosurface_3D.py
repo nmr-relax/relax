@@ -361,7 +361,7 @@ main_Receiver_13_out_1[cache: 0] = Surface3;
     // 
     // node Color[7]: x = 246, y = 145, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [0.2 0.2 0.2]
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.2
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.4
     // page group: Grey Space
     //
 main_Color_7_out_1 = 
@@ -408,7 +408,7 @@ main_Receiver_12_out_1[cache: 0] = Surface2;
     // 
     // node Color[8]: x = 350, y = 145, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [0.5 0.5 0.5]
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.2
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.5
     // page group: Grey Space
     //
 main_Color_8_out_1 = 
@@ -633,7 +633,7 @@ main_Receiver_10_out_1[cache: 0] = Surface4;
     // 
     // node Color[12]: x = 142, y = 145, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [0 0 0.2]
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.4
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.3
     // input[4]: defaulting = 1, visible = 0, type = 32, value = NULL
     // input[5]: defaulting = 1, visible = 0, type = 3, value = NULL
     // page group: Colour Space
@@ -654,7 +654,7 @@ main_Receiver_9_out_1[cache: 0] = Surface3;
     // 
     // node Color[13]: x = 246, y = 145, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 32, value = "blue"
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.45
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.3
     // page group: Colour Space
     //
 main_Color_13_out_1 = 
@@ -682,7 +682,7 @@ main_Receiver_8_out_1[cache: 0] = Surface2;
     // 
     // node Color[14]: x = 350, y = 145, inputs = 5, label = Color
     // input[2]: defaulting = 0, visible = 1, type = 8, value = [0.5 0.5 1]
-    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.3
+    // input[3]: defaulting = 0, visible = 1, type = 5, value = 0.2
     // page group: Colour Space
     //
 main_Color_14_out_1 = 
@@ -1051,7 +1051,7 @@ main_Isosurface_6_out_1 = NULL;
 main_Transmitter_8_out_1 = NULL;
 main_Receiver_13_out_1 = NULL;
 main_Color_7_in_2 = [0.2 0.2 0.2];
-main_Color_7_in_3 = 0.2;
+main_Color_7_in_3 = 0.4;
 main_Color_7_in_4 = NULL;
 main_Color_7_in_5 = NULL;
 main_Color_7_out_1 = NULL;
@@ -1065,7 +1065,7 @@ main_Isosurface_7_out_1 = NULL;
 main_Transmitter_9_out_1 = NULL;
 main_Receiver_12_out_1 = NULL;
 main_Color_8_in_2 = [0.5 0.5 0.5];
-main_Color_8_in_3 = 0.2;
+main_Color_8_in_3 = 0.5;
 main_Color_8_in_4 = NULL;
 main_Color_8_in_5 = NULL;
 main_Color_8_out_1 = NULL;
@@ -1139,20 +1139,20 @@ main_Receiver_1_out_1 = NULL;"""
         text = text + """
 main_Receiver_10_out_1 = NULL;
 main_Color_12_in_2 = [0 0 0.2];
-main_Color_12_in_3 = 0.4;
+main_Color_12_in_3 = 0.3;
 main_Color_12_in_4 = NULL;
 main_Color_12_in_5 = NULL;
 main_Color_12_out_1 = NULL;
 main_Receiver_9_out_1 = NULL;
 main_Color_13_in_2 = "blue";
-main_Color_13_in_3 = 0.45;
+main_Color_13_in_3 = 0.3;
 main_Color_13_in_4 = NULL;
 main_Color_13_in_5 = NULL;
 main_Color_13_out_1 = NULL;
 main_Collect_9_out_1 = NULL;
 main_Receiver_8_out_1 = NULL;
 main_Color_14_in_2 = [0.5 0.5 1];
-main_Color_14_in_3 = 0.3;
+main_Color_14_in_3 = 0.2;
 main_Color_14_in_4 = NULL;
 main_Color_14_in_5 = NULL;
 main_Color_14_out_1 = NULL;

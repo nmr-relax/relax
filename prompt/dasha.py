@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005 Edward d'Auvergne                                        #
+# Copyright (C) 2005-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -103,7 +103,7 @@ class Dasha:
         self.__relax__.generic.dasha.create(run=run, algor=algor, dir=dir, force=force)
 
 
-    def execute(self, run=None, dir=None, force=0):
+    def execute(self, run=None, dir=None, force=0, binary='dasha'):
         """Function for executing Dasha.
 
         Keyword Arguments
@@ -116,6 +116,8 @@ class Dasha:
         force:  A flag which if set to 1 will cause the results file to be overwritten if it already
         exists.
 
+        binary:  The name of the executable Dasha program file.
+
 
         Execution
         ~~~~~~~~~
@@ -125,7 +127,9 @@ class Dasha:
         $ dasha < dasha_script | tee dasha_results
 
 
-
+        If you would like to use a different Dasha executable file, change the keyword argument
+        'binary' to the appropriate file name.  If the file is not located within the environment's
+        path, include the full path in front of the binary file name.
         """
 
         # Function intro text.
@@ -133,7 +137,8 @@ class Dasha:
             text = sys.ps3 + "dasha.execute("
             text = text + "run=" + `run`
             text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + ", force=" + `force`
+            text = text + ", binary=" + `binary` + ")"
             print text
 
         # The run argument.
@@ -149,8 +154,12 @@ class Dasha:
         if type(force) != int or (force != 0 and force != 1):
             raise RelaxBinError, ('force flag', force)
 
+        # The Dasha executable file.
+        if type(binary) != str:
+            raise RelaxStrError, ('Dasha binary', binary)
+
         # Execute the functional code.
-        self.__relax__.generic.dasha.execute(run=run, dir=dir, force=force)
+        self.__relax__.generic.dasha.execute(run=run, dir=dir, force=force, binary=binary)
 
 
     def extract(self, run=None, dir=None):

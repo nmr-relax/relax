@@ -297,9 +297,9 @@ class Dasha:
             # Optimisation of all residues.
             file.write('\n\n\n# Optimisation of all residues.\n')
             if self.algor == 'LM':
-                file.write('lmin all')
+                file.write('lmin ' + `self.relax.data.res[self.run][0].num` + ' ' + `self.relax.data.res[self.run][-1].num`)
             elif self.algor == 'NR':
-                file.write('min all')
+                file.write('min ' + `self.relax.data.res[self.run][0].num` + ' ' + `self.relax.data.res[self.run][-1].num`)
 
             # Show the results.
             file.write('\n# Show the results.\n')
@@ -321,20 +321,26 @@ class Dasha:
             raise RelaxError, 'Optimisation of the parameter set ' + `self.param_set` + ' currently not supported.'
 
 
-    def execute(self, run, dir, force):
+    def execute(self, run, dir, force, binary):
         """Function for executing Dasha."""
+
+        # Arguments.
+        self.run = run
+        self.dir = dir
+        self.force = force
+        self.binary = binary
 
         # The current directory.
         orig_dir = getcwd()
 
         # The directory.
-        if dir == None:
-            dir = run
-        if not access(dir, F_OK):
-            raise RelaxDirError, ('Dasha', dir)
+        if self.dir == None:
+            self.dir = self.run
+        if not access(self.dir, F_OK):
+            raise RelaxDirError, ('Dasha', self.dir)
 
         # Change to this directory.
-        chdir(dir)
+        chdir(self.dir)
 
         # Catch failures and return to the correct directory.
         try:
@@ -343,7 +349,7 @@ class Dasha:
                 raise RelaxFileError, ('dasha script', 'dasha_script')
 
             # Execute Dasha.
-            system('dasha < dasha_script | tee dasha_results')
+            system(binary + ' < dasha_script | tee dasha_results')
 
         # Failure.
         except:

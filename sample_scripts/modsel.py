@@ -1,4 +1,4 @@
-# Script for model-free model selection of the models m1, m2, m3, m4, and m5.
+# Script for model-free model selection.
 
 # Nuclei type
 nuclei('N')
@@ -16,8 +16,10 @@ for name in runs:
     # Reload precalculated results from the file 'm1/results', etc.
     results.read(run=name, file='results', dir=name)
 
-# Model selection.
+# Model elimination.
 eliminate()
+
+# Model selection.
 run.create('aic', 'mf')
 model_selection('AIC', 'aic')
 

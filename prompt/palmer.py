@@ -199,7 +199,7 @@ class Palmer:
 
         If you would like to use a different Modelfree executable file, change the keyword argument
         'binary' to the appropriate file name.  If the file is not located within the environment's
-        path, include the full path infront of the binary file name.
+        path, include the full path in front of the binary file name.
         """
 
         # Function intro text.
