@@ -182,6 +182,7 @@ def calc_S2f_S2s_ts_jw_comps(data, params):
 
     # Order parameter factors.
     data.one_s2s = 1.0 - params[data.s2s_i]
+    data.s2f_s2 = data.one_s2s * params[data.s2f_i]
 
     # Internal correlation time, ts, factors.
     data.ts_ti =        params[data.ts_i] + data.ti

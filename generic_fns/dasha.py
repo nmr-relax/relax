@@ -207,6 +207,10 @@ class Dasha:
                 # Reassign the data.
                 data = self.relax.data.res[self.run][j]
 
+                # Skip unselected residues.
+                if not data.select:
+                    continue
+
                 # Data and errors.
                 file.write(`data.num` + ' ' + `data.relax_data[i]` + ' ' + `data.relax_error[i]` + '\n')
 
@@ -219,6 +223,10 @@ class Dasha:
             for i in xrange(len(self.relax.data.res[self.run])):
                 # Reassign the data.
                 data = self.relax.data.res[self.run][i]
+
+                # Skip unselected residues.
+                if not data.select:
+                    continue
 
                 # Comment.
                 file.write('\n\n\n# Residue ' + `data.num` + '\n\n')

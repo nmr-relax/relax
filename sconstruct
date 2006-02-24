@@ -697,6 +697,7 @@ class Manual:
         print "###############################################\n\n"
 
         # Import the fetch_docstrings module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
+        sys.path.append(getcwd())
         from docs.latex.fetch_docstrings import Fetch_docstrings
 
         # Get the docstrings.

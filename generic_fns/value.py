@@ -150,6 +150,10 @@ class Value:
 
         # Test data corresponding to param already exists.
         for i in xrange(len(self.relax.data.res[self.run])):
+            # Skip unselected residues.
+            if not self.relax.data.res[self.run][i].select:
+                continue
+
             # Get the value and error.
             value, error = return_value(self.run, i, self.param)
 
@@ -239,11 +243,11 @@ class Value:
                 raise RelaxNoResError, (res_num, res_name)
 
             # Set the value.
-            set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=i)
+            set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=index)
 
             # Reset the residue specific minimisation statistics.
             if not min_stat:
-                self.relax.generic.minimise.reset_min_stats(self.run, i)
+                self.relax.generic.minimise.reset_min_stats(self.run, index)
 
         # Reset the global minimisation statistics.
         if not min_stat:

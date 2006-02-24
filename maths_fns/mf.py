@@ -2319,7 +2319,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps =           calc_S2f_S2s_ts_djw_comps
                     data.calc_djw[data.s2f_li] =    calc_S2f_S2s_ts_djw_dS2f
-                    data.calc_djw[data.s2s_li] =    calc_S2f_S2s_ts_djw_dS2s
+                    data.calc_djw[data.s2s_li] =    calc_S2f_tf_S2s_ts_djw_dS2s
                     data.calc_djw[data.ts_li] =     calc_S2f_S2s_ts_djw_dts
 
                     # Hessian.
