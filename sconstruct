@@ -32,7 +32,7 @@ from os import F_OK, access, chdir, getcwd, lstat, path, remove, rmdir, sep, sym
 from re import search
 from shutil import copytree, move
 import sys
-import tarfile
+from tarfile import TarFile
 
 from version import version
 
@@ -343,7 +343,7 @@ class Main:
         # Loop over the relaxation curve fitting files.
         nodes = []
         for file in files:
-            nodes.append(env.SharedObject(dir + '/' + file, CCFLAGS=self.cflags))
+            nodes.append(env.SharedObject(dir + '/' + file, CCFLAGS=self.cflags, SHCCFLAGS=self.cflags))
 
         # Build the relaxation curve fitting module.
         self.relax_fit_object = env.SharedLibrary(target=dir + '/relax_fit', source=nodes, SHLIBPREFIX='')
@@ -409,8 +409,8 @@ class Main:
         self.SYMLINK = self.BIN_PATH + sep + 'relax'
 
         # The distribution files.
-        self.TAR_BIN_FILE = 'relax-' + version + '.' + self.SYS + '.' + self.MACH + '.tar.gz'
-        self.TAR_SRC_FILE = 'relax-' + version + '.src.tar.gz'
+        self.TAR_BIN_FILE = 'relax-' + version + '.' + self.SYS + '.' + self.MACH + '.tar.bz2'
+        self.TAR_SRC_FILE = 'relax-' + version + '.src.tar.bz2'
 
 
     def setup_c(self):
@@ -426,15 +426,23 @@ class Main:
     def tar(self, target=None, source=None, env=None):
         """Builder action for creating the tar archive."""
 
+        # The file name.
+        file_name = env.subst('$TAR_FILE')
+
         # Print out.
         print
         print "#######################"
         print "# Packaging the files #"
         print "#######################\n\n"
-        print "Creating the tar archive " + `env.subst('$TAR_FILE')` + ".\n"
+        print "Creating the tar archive " + `file_name` + ".\n"
 
         # Open the tar file.
-        archive = tarfile.open(".." + sep + env.subst('$TAR_FILE'), 'w')
+        if search('.bz2$', file_name):
+            archive = TarFile.bz2open(".." + sep + env.subst('$TAR_FILE'), 'w')
+        elif search('.gz$', file_name):
+            archive = TarFile.gzopen(".." + sep + env.subst('$TAR_FILE'), 'w')
+        else:
+            archive = TarFile.open(".." + sep + env.subst('$TAR_FILE'), 'w')
 
         # Base directory.
         base = getcwd() + sep

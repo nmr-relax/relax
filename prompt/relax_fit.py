@@ -234,7 +234,7 @@ class Relax_fit:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.select_model("
             text = text + "run=" + `run`
-            text = text + ", model=" + `model`
+            text = text + ", model=" + `model` + ")"
             print text
 
         # The run argument.
