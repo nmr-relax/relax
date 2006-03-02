@@ -76,20 +76,22 @@ class Main:
         binary_dist_env = Environment(BUILDERS = {'dummy' : Builder(action=self.dummy)})
         binary_dist_env.dummy(target='binary_dist', source=None)
         binary_dist_env.Depends('binary_dist', 'version_check')           # First check the program version number.
-        binary_dist_env.Depends('binary_dist', 'clean')                   # Then clean up the sources.
         binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
         binary_dist_env.Depends('binary_dist', 'manual_dist')             # Compile the manual.
-        binary_dist_env.Depends('binary_dist', 'tar_bin')                 # Create the tar.gz file of the binary distribution.
-        binary_dist_env.Depends('binary_dist', 'gpg_bin')                 # GPG sign the tar.gz file.
+        binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
+        binary_dist_env.Depends('binary_dist', 'clean_temp')              # Then clean up all other temporary files.
+        binary_dist_env.Depends('binary_dist', 'tar_bin')                 # Create the tar.bz2 file of the binary distribution.
+        binary_dist_env.Depends('binary_dist', 'gpg_bin')                 # GPG sign the tar.bz2 file.
 
         # Target for creating the source distribution file.
         source_dist_env = Environment(BUILDERS = {'dummy' : Builder(action=self.dummy)})
         source_dist_env.dummy(target='source_dist', source=None)
         source_dist_env.Depends('source_dist', 'version_check')           # First check the program version number.
         source_dist_env.Depends('source_dist', 'manual_dist')             # Compile the manual.
+        binary_dist_env.Depends('source_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
-        source_dist_env.Depends('source_dist', 'tar_src')                 # Create the tar.gz file of the source distribution.
-        source_dist_env.Depends('source_dist', 'gpg_src')                 # GPG sign the tar.gz file.
+        source_dist_env.Depends('source_dist', 'tar_src')                 # Create the tar.bz2 file of the source distribution.
+        source_dist_env.Depends('source_dist', 'gpg_src')                 # GPG sign the tar.bz2 file.
 
         # Target for creating the tar file of the binary distribution.
         tar_bin_env = Environment(BUILDERS = {'archive' : Builder(action=self.tar)})
@@ -138,7 +140,7 @@ class Main:
         print "###############\n\n"
 
         # Extensions of files to remove.
-        temp_extns = ['.so', '.sconsign']
+        temp_extns = ['so', 'sconsign']
 
         # Print out.
         print "\nRemoving the files ending in " + `temp_extns` + ".\n"
@@ -149,7 +151,7 @@ class Main:
             for file in files:
                 # Loop over the extensions.
                 for ext in temp_extns:
-                    if search(ext + '$', file):
+                    if search('\.' + ext + '$', file):
                         remove(path.join(root, file))
 
         # Final print out.
@@ -166,7 +168,7 @@ class Main:
         print "###############################\n\n"
 
         # Extensions of temporary files.
-        temp_extns = ['.pyc', '.bak', '.o', '.os']
+        temp_extns = ['pyc', 'bak', 'o', 'os']
 
         # Print out.
         print "\nRemoving the files ending in " + `temp_extns` + ".\n"
@@ -177,12 +179,8 @@ class Main:
             for file in files:
                 # Loop over the extensions.
                 for ext in temp_extns:
-                    if search(ext + '$', file):
+                    if search('\.' + ext + '$', file):
                         remove(path.join(root, file))
-
-
-        # Remove the temporary documentation files.
-        #self.clean_docs()
 
         # Final print out.
         print "\n\n\n"
@@ -455,12 +453,8 @@ class Main:
 
             # Add the files in the current directory to the archive.
             for i in xrange(len(files)):
-                # Skip any '.sconsign' files.
-                if search("\.sconsign", files[i]):
-                    continue
-
-                # Skip any hidden files.
-                if search("^\.", files[i]):
+                # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o' and '.os'.
+                if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]):
                     continue
 
                 # Open the file.
@@ -626,6 +620,10 @@ class Manual:
         # Clean target.
         manual_env.Append(BUILDERS = {'Clean' : Builder(action=self.clean_files)})
         manual_env.Clean(target='manual_clean', source=None)
+
+        # Clean target (with no manual environments dependent on it).
+        manual_env.Append(BUILDERS = {'Clean' : Builder(action=self.clean_files)})
+        manual_env.Clean(target='manual_clean_nodeps', source=None)
 
 
     def acro(self, target=None, source=None, env=None):
