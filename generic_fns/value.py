@@ -186,6 +186,10 @@ class Value:
 
         # Test the validity of the data.
         for i in xrange(len(file_data)):
+            # Skip missing data.
+            if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
+                continue
+
             try:
                 # Number column.
                 int(file_data[i][num_col])
@@ -212,6 +216,10 @@ class Value:
 
         # Loop over the data.
         for i in xrange(len(file_data)):
+            # Skip missing data.
+            if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
+                continue
+
             # Residue number.
             res_num = int(file_data[i][num_col])
 
