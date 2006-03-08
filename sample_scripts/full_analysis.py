@@ -125,7 +125,7 @@ class Main:
         """
 
         # The diffusion model (this is the variable which should be changed).
-        self.diff_model = 'final'
+        self.diff_model = 'local_tm'
 
 
         # MI - Local tm.
@@ -181,7 +181,7 @@ class Main:
                 elif self.diff_model == 'oblate':
                     diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
                 elif self.diff_model == 'ellipsoid':
-                    diffusion_tensor.init(name, (8.6e-09, -8e6, 0, 360, 90, 360), fixed=0)
+                    diffusion_tensor.init(name, (10e-09, 0, 0, 0, 0, 0), fixed=0)
 
                 # Minimise just the diffusion tensor.
                 fix(name, 'all_res')
