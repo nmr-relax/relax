@@ -304,7 +304,10 @@ class Model_free(Common_functions):
         """Function for creating the scaling matrix."""
 
         # Initialise.
-        self.scaling_matrix = identity(len(self.param_vector), Float64)
+        if len(self.param_vector) == 0:
+            self.scaling_matrix = zeros((0,0), Float64)
+        else:
+            self.scaling_matrix = identity(len(self.param_vector), Float64)
         i = 0
 
         # No diagonal scaling.
@@ -1508,7 +1511,7 @@ class Model_free(Common_functions):
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
-            raise RelaxError, "Cannot run a grid search on a model with zero parameters."
+            print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
 
         # Lower bounds.
         if self.lower != None:
@@ -2131,7 +2134,8 @@ class Model_free(Common_functions):
 
                 # Diagonal scaling.
                 self.assemble_scaling_matrix(index=index, scaling=scaling)
-                self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+                if self.scaling_matrix:
+                    self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
