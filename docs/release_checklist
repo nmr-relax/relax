@@ -42,3 +42,7 @@ $ rsync --delete -avr --rsh="ssh" * bugman@download.gna.org:/upload/relax/
 $ scons manual_html
 
 Replace the old manual with the new in the CVS repository.
+
+
+
+9.  Post the release message to the relax-users mailing list and as a news item on the relax Gna! website. 
