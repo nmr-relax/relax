@@ -176,16 +176,20 @@ class Main:
                 # Add an arbitrary diffusion tensor which will be optimised.
                 if self.diff_model == 'sphere':
                     diffusion_tensor.init(name, 10e-9, fixed=0)
+                    inc = 11
                 elif self.diff_model == 'prolate':
                     diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
+                    inc = 11
                 elif self.diff_model == 'oblate':
                     diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
+                    inc = 11
                 elif self.diff_model == 'ellipsoid':
                     diffusion_tensor.init(name, (10e-09, 0, 0, 0, 0, 0), fixed=0)
+                    inc = 6
 
                 # Minimise just the diffusion tensor.
                 fix(name, 'all_res')
-                grid_search(name, inc=11)
+                grid_search(name, inc=inc)
                 minimise('newton', run=name)
 
                 # Write the results.
