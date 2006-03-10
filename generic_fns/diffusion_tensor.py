@@ -295,7 +295,7 @@ class Diffusion_tensor:
         self.set(run=self.run, value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
 
 
-    def fold_angles(self, sim_index=None):
+    def fold_angles(self, run=None, sim_index=None):
         """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
 
         Wrap the angles such that
@@ -321,6 +321,10 @@ class Diffusion_tensor:
             beta - pi/2 <= beta_sim <= beta + pi/2
             gamma - pi <= gamma_sim <= gamma + pi
         """
+
+        # Arguments.
+        self.run = run
+
 
         # Wrap the angles.
         ##################
@@ -1216,7 +1220,7 @@ class Diffusion_tensor:
         #####################
 
         if orient_params:
-            self.fold_angles()
+            self.fold_angles(self.run)
 
 
     def sphere(self):

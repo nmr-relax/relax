@@ -1087,7 +1087,7 @@ class Model_free(Common_functions):
                 self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
                 self.relax.data.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
                 self.relax.data.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
-                self.relax.generic.diffusion_tensor.fold_angles(sim_index=sim_index)
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
 
                 # Parameter index.
                 param_index = param_index + 4
@@ -1101,7 +1101,7 @@ class Model_free(Common_functions):
                 self.relax.data.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
                 self.relax.data.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
                 self.relax.data.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
-                self.relax.generic.diffusion_tensor.fold_angles(sim_index=sim_index)
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
 
                 # Parameter index.
                 param_index = param_index + 6
@@ -1123,7 +1123,7 @@ class Model_free(Common_functions):
                 self.relax.data.diff[self.run].Da = self.param_vector[1]
                 self.relax.data.diff[self.run].theta = self.param_vector[2]
                 self.relax.data.diff[self.run].phi = self.param_vector[3]
-                self.relax.generic.diffusion_tensor.fold_angles()
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
 
                 # Parameter index.
                 param_index = param_index + 4
@@ -1137,7 +1137,7 @@ class Model_free(Common_functions):
                 self.relax.data.diff[self.run].alpha = self.param_vector[3]
                 self.relax.data.diff[self.run].beta = self.param_vector[4]
                 self.relax.data.diff[self.run].gamma = self.param_vector[5]
-                self.relax.generic.diffusion_tensor.fold_angles()
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
 
                 # Parameter index.
                 param_index = param_index + 6
