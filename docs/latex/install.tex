@@ -28,43 +28,70 @@ Older versions of these packages may work, use them at your own risk.
 \section{Installation}
 \index{installation|textbf}
 
-% Linux precompiled distribution.
-\subsection{Linux precompiled distribution}
 
-To install the program relax on a GNU/Linux system, download the precompiled distribution labelled \texttt{relax-x.x.x.Linux.i386.tar.bz2}.  This tar file has had the C code precompiled into shared objects files \texttt{*.so} which are loaded directly into relax.  Hence compilation is not necessary.  Untar and decompress the file using the command
+% The precompiled verses source distribution.
+\subsection{The precompiled verses source distribution}
 
-\example{\$ tar jxvf relax-x.x.x.Linux.i386.tar.bz2}
+Two types of software packages are available for download, the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and, hence, all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture, then if a C compiler is present, the C code can be compiled into the shared objects files \texttt{*.so} which are loaded as modules into relax.  To build these modules, the Sconstruct system from \texttt{http://scons.org/} is required.  This software only depends on Python which is essential for running relax anyway.  Once Sconstruct is installed, type
 
-Then in the base directory \texttt{relax}, switch user to root and type the command
+\example{\$ scons}
+\index{scons}
 
-\example{\$ make install}
-\index{make}
-
-This will create a directory in \texttt{/usr/local/} called \texttt{relax}, copy all the untarred files into this directory, create a symbolic link in \texttt{/usr/local/bin} to the file \texttt{/usr/local/relax/relax}, and then finally run relax to create the byte-compiled Python \texttt{*.pyc} files to speed up the start time of relax.
-
-To change the installation path, modify the file \texttt{Makefile} and change the variable \texttt{INSTALL\_PATH} to point to the desired location.
+in the base directory where relax has been installed and the C modules should, hopefully, compile without any problems.  Otherwise please submit a bug report to the bug tracker at \texttt{https://gna.org/bugs/?group=relax}.
 
 
-% Source distribution.
-\subsection{Source distribution}
 
-The source distribution should be named \texttt{relax-x.x.x.src.tar.bz2}.  The make utility and a C compiler are required for compilation of the C code into shared objects which are loaded as modules into relax.  To build these modules, type
+% Installation on GNU/Linux.
+\subsection{Installation on GNU/Linux}
 
-\example{\$ make}
-\index{make}
+To install the program relax on a GNU/Linux system, download either the precompiled distribution labelled \texttt{relax-x.x.x.GNU-Linux.\textit{arch}.tar.bz2} matching your machine architecture or the source distribution \texttt{relax-x.x.x.src.tar.bz2}.  A number of installation methods are possible.  The simplest way is to switch to the user `root', unpack and decompress the archive within the \texttt{/usr/local} directory by typing, for instance
 
-Then to install the program, type
+\example{\$ tar jxvf relax-x.x.x.GNU-Linux.i686.tar.bz2}
+\index{tar}
 
-\example{\$ make install}
-\index{make}
+then create a symbolic link in \texttt{/usr/local/bin} by moving to that directory and typing
 
-The default installation path is currently \texttt{/usr/local/}.  To change this, edit the \texttt{Makefile} and modify the variable \texttt{INSTALL\_PATH}.
+\example{\$ ln -s ../relax/relax .}
+\index{symbolic link}
+
+and finally running relax to create the byte-compiled Python \texttt{*.pyc} files to speed up the start time of relax by typing
+
+\example{\$ relax --test}
+
+Alternatively if the Sconstruct system is installed, by typing
+
+\example{\$ scons install}
+\index{scons}
+
+in the relax base directory will create a directory in \texttt{/usr/local/} called \texttt{relax}, copy all the uncompressed and untarred files into this directory, create a symbolic link in \texttt{/usr/local/bin} to the file \texttt{/usr/local/relax/relax}, and then finally run relax to create the byte-compiled Python \texttt{*.pyc}.  To change the installation path to a non-standard location, the Sconstruct script \texttt{sconstruct} in the base relax directory should be modified by changing the variable \texttt{INSTALL\_PATH} to point to the desired location.
+
+
+
+% Installation on Mac OS X.
+\subsection{Installation on Mac OS X}
+
+Please write me if you know how to do this!
+
+
+
+% Installation on MS Windows.
+\subsection{Installation on MS Windows}
+
+Please write me if you know how to do this!
+
+
+
+% Installation on your OS.
+\subsection{Installation on your OS}
+
+Please write me if you know how to do this!
+
 
 
 % Running a non-compiled version.
 \subsection{Running a non-compiled version}
 
-Compilation of the C code is not essential for running relax, however, certain features of the program will be disabled.  One example is relaxation curve fitting.  This approach may be necessary for systems, such as MS Windows, where C compilers are not readily available (although the cygwin environment may provide the tools required for compilation).
+Compilation of the C code is not essential for running relax, however, certain features of the program will be disabled.  One example is relaxation curve-fitting.  This approach may be necessary for systems, such as MS Windows, where C compilers are not readily available (although the cygwin environment may provide the tools required for compilation).
 
 To run relax without compilation, install the dependencies detailed above, download the source distribution which should be named \texttt{relax-x.x.x.src.tar.bz2}, extract the files, and then run the file called \texttt{relax} in the base directory.
 

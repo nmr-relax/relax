@@ -382,7 +382,6 @@ class Main:
         # Linux installation path.
         if self.system == 'Linux':
             self.INSTALL_PATH = '/usr/local'
-            self.INSTALL_PATH = '/home/edward'
 
         # Mac OS X installation path.
         elif self.system == 'Darwin':

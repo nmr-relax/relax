@@ -3,7 +3,30 @@
 
 \chapter{Development of relax}
 
-This chapter is written for developers or those who would like to extend the functionality of relax.  It is not required for using relax.
+This chapter is written for developers or those who would like to extend the functionality of relax.  It is not required for using relax.  If you would like to modify relax to suit your needs, please subscribe to all three mailing lists.  $<$relax-users@gna.org$>$ is the list where discussions about the usage of relax should be posted.  $<$relax-devel@gna.org$>$ is where all discussions about the development of relax, including feature requests, program design, or any other discussions relating to relax's structure or code should be posted.  Finally, $<$relax-commits@gna.org$>$ is where all changes to relax's code and documentation, as well as changes to the webpages, are automatically sent to.  Anyone interested in joining the project should subscribe to this list as well.
+
+
+
+% Version control using Subversion.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section{Version control using Subversion}
+
+The development of relax requires the use of the Subversion version control software \texttt{http://subversion.tigris.org/}.  Although the downloadable distribution archives can be modified, it is best that the most current and up to date revision, the \textit{head} revision, is modified instead.  More information about the basics of version control and how this is implemented in Subversion can be found in the subversion book located at \texttt{http://svnbook.red-bean.com/}.
+
+If you are not currently a relax developer, you can checkout the head revision by typing
+
+\example{\$ svn co svn://svn.gna.org/svn/relax/1.2 relax}
+
+assuming that 1.2 is the current major version number.  You are able to modify the sources and update your version by typing
+
+\example{\$ svn up}
+
+but committing the change back to the repository is not allowed.  If you which to submit a patch of your changes, type
+
+\example{\$ svn diff > patch}
+
+and then send the patch to the $<$relax-devel@gna.org$>$ mailing list.  Make sure you label which revision the patch is for.
 
 
 
@@ -17,7 +40,7 @@ This chapter is written for developers or those who would like to extend the fun
 \subsection{Indentation}
 
 \index{indentation|textbf}
-Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the python style guide found at \texttt{`http://www.python.org/doc/essays/styleguide.html'}.  For vi, add the following lines to \texttt{`\~/.vimrc'}:
+Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the python style guide found at \texttt{http://www.python.org/doc/essays/styleguide.html}.  Emacs should automatically set the tabstop correctly.  For vi, add the following lines to \texttt{`$\sim$/.vimrc'}:
 
 \begin{exampleenv}
 set tabstop=4 \\
@@ -25,7 +48,7 @@ set shiftwidth=4 \\
 set expandtab
 \end{exampleenv}
 
-Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{`\~/.vimrc'} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which is located in the path \texttt{`/usr/share/vim/ftplugin/'} or equivalent. It contains the two lines:
+Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{`$\sim$/.vimrc'} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which is located in the path \texttt{`/usr/share/vim/ftplugin/'} or equivalent. It contains the two lines:
 
 \begin{exampleenv}
 " Python always uses a `tabstop' of 8. \\
@@ -39,24 +62,24 @@ If these lines are deleted, the bug will be removed.  Another way to fix the pro
 \subsection{Doc strings}
 
 \index{doc string|textbf}
-These should be set to no more than 100 characters long including all leading white space.  The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.
+These should be set to no more than 100 characters long including all leading white space.  The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.  All functions should have a docstring describing in detail the structure and organisation of the code.
 
 
 
-% The make system.
-%~~~~~~~~~~~~~~~~~
+% The Sconstruct build system.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{The make system}
+\section{The Sconstruct build system}
 
-\index{make|textbf}
-For UNIX like systems, including GNU/Linux, various components of the program relax can be created using the Unix make utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  Makefiles exist in the various directories to facilitate this process.
+\index{Sconstruct|textbf}
+The Sconstruct build system was chosen over other build systems including `make' as it is a cross-platform build system which can be used in Unix, GNU/Linux, Mac OS X, and even Windows (the correct compilers are nevertheless required).  Various components of the program relax can be created using the Sconstruct utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file `sconstruct' in the base relax directory, which consists of python code, directs the operation of Sconstruct for the various functions.
 
 
 % C module compilation.
 \subsection{C module compilation}
 
 \index{C module compilation|textbf}
-As described in the installation chapter, typing \texttt{`make'} in the base directory will create the shared objects which are imported into Python as modules.
+As described in the installation chapter, typing \texttt{`scons'} in the base directory will create the shared objects which are imported into Python as modules.
 
 
 % Creation of the PDF manual.
@@ -65,9 +88,9 @@ As described in the installation chapter, typing \texttt{`make'} in the base dir
 \index{manual!PDF creation|textbf}
 To create the PDF version of the relax manual, type
 
-\example{make manual}
+\example{\$ scons manual}
 
-in the base directory.  Make will then shift to the \texttt{`docs/latex'} directory and run a series of shell commands to create the manual from the \LaTeX\ sources.  This is dependent on the programs \texttt{`rm'}, \texttt{`latex'}, \texttt{`makeindex'}, \texttt{`dvips'}, and \texttt{`ps2pdf'} being located in the environment's path.
+in the base directory.  Sconstruct will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \texttt{`docs/latex'} directory.  This is dependent on the programs \texttt{`latex'}, \texttt{`makeindex'}, \texttt{`dvips'}, and \texttt{`ps2pdf'} being located within the environment's path.
 
 
 % Creation of the HTML manual.
@@ -76,17 +99,32 @@ in the base directory.  Make will then shift to the \texttt{`docs/latex'} direct
 \index{manual!HTML creation|textbf}
 The HTML version of the relax manual is made by typing
 
-\example{make manual\_html}
+\example{\$ scons manual\_html}
 
-in the base directory.  Again make will then shift to the \texttt{`docs/latex'} directory.  One command calling the program \texttt{`latex2html'} will be executed which will create HTML pages from the \LaTeX\ sources.
+in the base directory.  One command calling the program \texttt{`latex2html'} will be executed which will create HTML pages from the \LaTeX\ sources.
 
 
 % Making distribution archives.
 \subsection{Making distribution archives}
 
 \index{distribution|textbf}
-This section is incomplete.
-Creation of the HTML manual
+Two types of distribution archive can be created from the currently checkout sources, the source and binary distributions.  To create the source distribution, type 
+
+\example{\$ scons source\_dist}
+
+while to create the binary distribution, whereby the C modules are compiled and the resultant shared objects are included in the bzipped tar file, type
+
+\example{\$ scons binary\_dist}
+
+If a binary distribution does not exist for your architecture, feel free to create it yourself and contribute the archive to be included on the download pages.  To do this, you will need to checkout the appropriate tagged branch from the relax subversion repository.  If the current stable release is called 1.2.3, then checkout that branch by typing
+
+\example{\$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.3 relax}
+
+replacing `bugman' with your user name if you are a relax developer, or typing
+
+\example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.3 relax}
+
+otherwise.  Then build the binary distribution and send a message to the relax development mailing list.  If compilation does not work, please submit a bug to the bug tracker system at \texttt{https://gna.org/bugs/?group=relax} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.
 
 
 % Cleaning up.
@@ -95,6 +133,6 @@ Creation of the HTML manual
 \index{clean up|textbf}
 If the command
 
-\example{make clean}
+\example{\$ scons clean}
 
-is run in the base directory, all Python byte compiled files `*.pyc', all C object files `*.o', all C shared object files `*.so', and any backup files with the extension `*.bak' are removed from all subdirectoies.  In addition, any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
+is run in the base directory, all Python byte compiled files `*.pyc', all C object files `*.o' and `*.os', all C shared object files `*.so', and any backup files with the extension `*.bak' are removed from all subdirectoies.  In addition, any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
