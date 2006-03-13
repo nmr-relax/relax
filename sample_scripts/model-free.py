@@ -53,6 +53,7 @@ minimise('newton', run=name)
 #monte_carlo.create_data(name)
 #monte_carlo.initial_values(name)
 #minimise('newton', run=name)
+#eliminate(run=name)
 #monte_carlo.error_analysis(name)
 
 # Finish.

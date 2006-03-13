@@ -274,6 +274,7 @@ class Main:
             monte_carlo.create_data('final')
             monte_carlo.initial_values('final')
             minimise('newton', run='final')
+            eliminate('final')
             monte_carlo.error_analysis('final')
 
 
