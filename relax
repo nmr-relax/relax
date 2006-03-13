@@ -299,19 +299,6 @@ class Relax:
         help(gpl)
 
 
-    def spacing(self, string):
-        """Function for formatting the string to be centered to 100 spaces."""
-
-        # Calculate the number of spaces needed.
-        spaces = (100 - len(string)) / 2
-
-        # The new string.
-        string = spaces * ' ' + string
-
-        # Return the new string.
-        return string
-
-
     def set_intro_string(self):
         """Create the program introduction."""
 
@@ -335,6 +322,19 @@ class Relax:
         self.intro_string = self.intro_string + "GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL\n"
         self.intro_string = self.intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
         self.intro_string = self.intro_string + "can be accessed by typing 'help'.\n"
+
+
+    def spacing(self, string):
+        """Function for formatting the string to be centered to 100 spaces."""
+
+        # Calculate the number of spaces needed.
+        spaces = (100 - len(string)) / 2
+
+        # The new string.
+        string = spaces * ' ' + string
+
+        # Return the new string.
+        return string
 
 
     def test_mode(self):
