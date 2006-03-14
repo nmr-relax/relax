@@ -341,7 +341,8 @@ class Main:
         # Loop over the relaxation curve fitting files.
         nodes = []
         for file in files:
-            nodes.append(env.SharedObject(dir + '/' + file, CCFLAGS=self.cflags, SHCCFLAGS=self.cflags))
+            nodes.append(env.SharedObject(dir + '/' + file, CCFLAGS=self.cflags))
+            #nodes.append(env.SharedObject(dir + '/' + file, CCFLAGS=self.cflags, SHCCFLAGS=self.cflags))
 
         # Build the relaxation curve fitting module.
         self.relax_fit_object = env.SharedLibrary(target=dir + '/relax_fit', source=nodes, SHLIBPREFIX='')
@@ -417,7 +418,7 @@ class Main:
         py_include_path = sys.prefix + '/include/python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
         # C flags.
-        self.cflags = '-I' + py_include_path
+        self.cflags = '-I' + py_include_path + ' -pedantic'
 
 
     def tar(self, target=None, source=None, env=None):
