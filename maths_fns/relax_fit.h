@@ -36,16 +36,11 @@
 /****************************************/
 
 /* Variables sent to the setup function to be stored for later use */
-PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
+PyArrayObject *values, *sd, *relax_times, *scaling_matrix;
 int *num_params, *num_times;
-double *sd;
 
 /* Variables sent to 'func', 'dfunc', and 'd2func' during optimisation */
-PyArrayObject *numpy_params;
-
-/* Pointers to contiguous PyArrayObjects */
-double *values, *sd, *relax_times, *scaling_matrix;
-double *params;
+PyArrayObject *params;
 
 /* Variables used for storage during the function calls of optimisation */
 double back_calc[MAXTIMES];
