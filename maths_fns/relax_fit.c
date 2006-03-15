@@ -21,58 +21,46 @@
 /* This include must come first */
 #include <Python.h>
 
-/* The header for all functions which will be called */
-#include "relax_fit.h"
-
 /* The Numeric array object header file, must come second */
 #include <Numeric/arrayobject.h>
+
+/* The header for all functions which will be called */
+#include "relax_fit.h"
 
 
 
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
-    /* Debugging */
-    printf("Setting up\n");
-
     /* Python declarations */
     PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
-    extern PyArrayObject *values, *sd, *relax_times, *scaling_matrix;
+    PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
 
     /* Normal declarations */
-    extern double *relax_time_array;
-    extern int *num_params, *num_times;
+    extern double *values, *sd, *relax_times, *scaling_matrix;
+    extern double relax_time_array;
+    extern int num_params, num_times;
 
     /* The keyword list */
     static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
 
-
     /* Parse the function arguments */
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd, &relax_times_arg, &scaling_matrix_arg))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
-    /* Debugging */
-    printf("Function args have been parsed\n");
-
     /* Make the Numeric arrays contiguous */
-    values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
-    sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
-    relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
-    scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
+    numpy_values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
+    numpy_sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
+    numpy_relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
+    numpy_scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
 
-    /* Debugging */
-    printf("Py_INCREF\n");
-
-    /* ??? */
-    Py_INCREF(Py_None);
-    Py_INCREF(values);
-    Py_INCREF(sd);
-    Py_INCREF(relax_times);
-    Py_INCREF(scaling_matrix);
-
-    /* Debugging */
-    printf("Finished setup\n");
+    /* Pointers to the Numeric arrays */
+    values = (double *) numpy_values->data;
+    sd = (double *) numpy_sd->data;
+    relax_times = (double *) numpy_relax_times->data;
+    scaling_matrix = (double *) numpy_scaling_matrix->data;
 
     /* Return nothing */
+    Py_INCREF(Py_None);
     return Py_None;
 }
 
@@ -85,13 +73,9 @@ func(PyObject *self, PyObject *args) {
      * calculated
      */
 
-    /* Debugging */
-    printf("Inside func\n");
-
     /* Declarations */
     PyObject *arg1;
-    extern PyArrayObject *params;
-    extern double *params;
+    extern PyArrayObject *numpy_params;
     double chi2(void);
 
 
@@ -100,13 +84,13 @@ func(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the Numeric array to be contiguous */
-    params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+    numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+
+    /* Pointers to the Numeric arrays */
+    params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
     exponential();
-
-    /* ??? */
-    Py_INCREF(params);
 
     /* Calculate and return the chi-squared value */
     return Py_BuildValue("f", chi2());
@@ -119,8 +103,7 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *arg1;
-    extern PyArrayObject *params;
-    extern double *params;
+    extern PyArrayObject *numpy_params;
 
     /* Temp Declarations */
     PyArrayObject *aaa_numpy;
@@ -133,7 +116,10 @@ dfunc(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the Numeric array to be contiguous */
-    params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+    numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+
+    /* Pointers to the Numeric arrays */
+    params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
     exponential();
@@ -141,7 +127,8 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Test code (convert aaa to a Numeric array */
     /* aaa_numpy = (PyArrayObject *) PyArray_FromDimsAndData(1, num_params, PyArray_DOUBLE, aaa_pointer); */
-    aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, (int *) *num_params, PyArray_DOUBLE);
+    aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, &num_params, PyArray_DOUBLE);
+    aaa_pointer = (double *) aaa_numpy->data;
 
     /* Fill the Numeric array */
     for (i = 0; i < 2; i++)
@@ -164,14 +151,14 @@ back_calc_I(PyObject *self, PyObject *args) {
 
     /* Declarations */
     extern double back_calc[];
-    extern int *num_times;
+    extern int num_times;
     int i;
 
-    PyObject *back_calc_py = PyList_New(*num_times);
+    PyObject *back_calc_py = PyList_New(num_times);
     assert(PyList_Check(back_calc_py));
 
     /* Copy the values out of the C array into the Python array */
-    for (i = 0; i < *num_times; i++)
+    for (i = 0; i < num_times; i++)
         PyList_SetItem(back_calc_py, i, Py_BuildValue("f", back_calc[i]));
 
     /* Return the Numeric array */

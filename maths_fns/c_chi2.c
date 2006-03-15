@@ -21,15 +21,6 @@
 #include <stdio.h>
 #include <math.h>
 
-/* This include must come first */
-#include <Python.h>
-
-/* The header for all functions which will be called */
-#include "relax_fit.h"
-
-/* The Numeric array object header file, must come second */
-#include <Numeric/arrayobject.h>
-
 #define square(x) (x)*(x)
 
 
@@ -53,15 +44,15 @@ double chi2(void) {
 	*/
 
     /* Declarations */
-    extern int *num_times;
-    extern PyArrayObject *values, *sd;
+    extern int num_times;
+    extern double *values, *sd;
     extern double back_calc[];
 	int i;
 	double chi2 = 0.0;
 
     /* Loop over the time points and sum the chi-squared components */
-	for (i = 0; i < *num_times; ++i) {
-		chi2 = chi2 + square((*(double *)values->data[i] - back_calc[i]) / *(double *)sd->data[i]);
+	for (i = 0; i < num_times; ++i) {
+		chi2 = chi2 + square((values[i] - back_calc[i]) / sd[i]);
 	}
 
 	return chi2;

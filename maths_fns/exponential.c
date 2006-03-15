@@ -22,11 +22,11 @@
 /* This include must come first */
 #include <Python.h>
 
-/* The header for all functions which will be called */
-#include "relax_fit.h"
-
 /* The Numeric array object header file, must come second */
 #include <Numeric/arrayobject.h>
+
+/* The header for all functions which will be called */
+#include "relax_fit.h"
 
 
 
@@ -35,22 +35,23 @@ void exponential(void) {
 	*/
 
     /* Declarations */
-    extern int *num_times;
-    extern PyArrayObject *params, *relax_times;
+    extern int num_times;
+    extern double *params, *relax_times;
     extern double back_calc[];
     double Rx, I0;
     int i;
 
 
     /* Loop over the time points */
-    for (i = 0; i < *num_times; i++) {
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
             back_calc[i] = 0.0;
 
         /* Back calculate */
         else
-            back_calc[i] = (double *)params->data[1] * exp(-(double *)relax_times->data[i] * (double *)params->data[0]);
+            back_calc[i] = params[1] * exp(-relax_times[i] * params[0]);
 
     }
 }
