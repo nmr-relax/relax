@@ -182,4 +182,71 @@ class ResidueList(ListType):
     def add_item(self):
         """Function for appending an empty container to the list."""
 
-        self.append(Element())
+        self.append(ResidueElement())
+
+
+class ResidueElement(object):
+    def __init__(self):
+        """Empty container for residue specific data for a single residue."""
+
+        self.userSelect = 1
+
+
+    def autoSelect(self):
+        """Function to automatically deselect residues lacking relax_data"""
+
+        if not hasattr(self, 'relax_data'):
+            return 0
+
+        if hasattr(self, 'params'):
+            if len(self.params) < len(self.relax_data):
+                return 0
+
+        return 1
+
+
+    def __getattr__(self, name):
+        """Force on-the-fly evaluation of select every time it is referenced"""
+
+        # The list of data maps.
+        if name == 'select':
+            return (self.autoSelect() and self.userSelect)
+        raise AttributeError, name
+
+
+    def __repr__(self):
+        # Header.
+        text = "%-25s%-100s\n\n" % ("Data structure", "Value")
+
+        # Data structures.
+        for name in dir(self):
+            if match("^__", name):
+                continue
+            if name == 'autoSelect' or name == 'userSelect':
+                continue
+            text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
+
+        text = text + "%-25s%-100s\n" % ('select', `getattr(self, 'select')`)
+
+        # Return the lot.
+        return text
+
+
+    def __setattr__(self, name, value):
+        """Prevent accidental rebinding of select."""
+
+        # The list of prescribed attributes.
+        dontRebind = ['select', 'autoSelect']
+        if name in dontRebind:
+
+            # Allow initial binding of the attribute.
+            if not hasattr(self, name):
+                self.__dict__[name] = value
+
+            # But prevent rebinding.
+            else:
+                raise AttributeError, """Can't rebind automated residue selection. Use userSelect instead (do select.res())"""
+
+        # Normal behaviour for attributes not in list.
+        self.__dict__[name] = value
+
