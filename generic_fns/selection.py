@@ -53,10 +53,10 @@ class Selection:
                 data = self.relax.data.res[self.run][i]
 
                 # Reverse the selection.
-                if data.userSelect:
-                    data.userSelect = 0
+                if data.user_select:
+                    data.user_select = 0
                 else:
-                    data.userSelect = 1
+                    data.user_select = 1
 
 
     def sel_all(self, run=None):
@@ -77,7 +77,7 @@ class Selection:
 
             # Loop over the sequence and set the selection flag to 1.
             for i in xrange(len(self.relax.data.res[self.run])):
-                self.relax.data.res[self.run][i].userSelect = 1
+                self.relax.data.res[self.run][i].user_select = 1
 
 
     def sel_read(self, run=None, file=None, dir=None, change_all=None):
@@ -118,11 +118,11 @@ class Selection:
 
                 # Unselect all residues.
                 if change_all:
-                    data.userSelect = 0
+                    data.user_select = 0
 
                 # Select the residue if it is in the list select.
                 if data.num in select:
-                    data.userSelect = 1
+                    data.user_select = 1
 
                 # Match flag.
                 no_match = 0
@@ -170,7 +170,7 @@ class Selection:
 
                 # Unselect all residues.
                 if change_all:
-                    data.userSelect = 0
+                    data.user_select = 0
 
                 # Skip the residue if there is no match to 'num'.
                 if type(num) == int:
@@ -186,7 +186,7 @@ class Selection:
                         continue
 
                 # Select the residue.
-                data.userSelect = 1
+                data.user_select = 1
 
                 # Match flag.
                 no_match = 0
@@ -214,7 +214,7 @@ class Selection:
 
             # Loop over the sequence and set the selection flag to 0.
             for i in xrange(len(self.relax.data.res[self.run])):
-                self.relax.data.res[self.run][i].userSelect = 0
+                self.relax.data.res[self.run][i].user_select = 0
 
 
     def unsel_read(self, run=None, file=None, dir=None, change_all=None):
@@ -255,11 +255,11 @@ class Selection:
 
                 # Select all residues.
                 if change_all:
-                    data.userSelect = 1
+                    data.user_select = 1
 
                 # Unselect the residue if it is in the list unselect.
                 if data.num in unselect:
-                    data.userSelect = 0
+                    data.user_select = 0
 
                 # Match flag.
                 no_match = 0
@@ -307,7 +307,7 @@ class Selection:
 
                 # Select all residues.
                 if change_all:
-                    data.userSelect = 1
+                    data.user_select = 1
 
                 # Skip the residue if there is no match to 'num'.
                 if type(num) == int:
@@ -323,7 +323,7 @@ class Selection:
                         continue
 
                 # Unselect the residue.
-                data.userSelect = 0
+                data.user_select = 0
 
                 # Match flag.
                 no_match = 0

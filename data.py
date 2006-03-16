@@ -46,7 +46,7 @@ class Data:
         self.diff = SpecificData()
 
         # The residue specific data.
-        self.res = Residue()
+        self.res = Residue(self)
 
         # The name of the runs.
         self.run_names = []
@@ -138,8 +138,11 @@ class SpecificData(DictType):
 ########################
 
 class Residue(DictType):
-    def __init__(self):
+    def __init__(self, global_data):
         """Class containing all the residue specific data."""
+
+        # Store the global data
+        self.__global_data__ = global_data
 
 
     def __repr__(self):
@@ -162,12 +165,18 @@ class Residue(DictType):
     def add_list(self, key):
         """Function for adding an empty container to the dictionary."""
 
-        self[key] = ResidueList()
+        self[key] = ResidueList(key, self.__global_data__)
 
 
 class ResidueList(ListType):
-    def __init__(self):
+    def __init__(self, key, global_data):
         """Empty data container for residue specific data."""
+
+        # Store the key
+        self.__key__ = key
+
+        # Store the global data
+        self.__global_data__ = global_data
 
 
     def __repr__(self):
@@ -182,35 +191,72 @@ class ResidueList(ListType):
     def add_item(self):
         """Function for appending an empty container to the list."""
 
-        self.append(ResidueElement())
+        self.append(ResidueElement(self.__key__, self.__global_data__))
 
 
 class ResidueElement(object):
-    def __init__(self):
+    def __init__(self, key, global_data):
         """Empty container for residue specific data for a single residue."""
 
-        self.userSelect = 1
+        # Store the key
+        self.__key__ = key
+
+        # Store the global data
+        self.__global_data__ = global_data
+
+        self.user_select = 1
 
 
-    def autoSelect(self):
-        """Function to automatically deselect residues lacking relax_data"""
+    def auto_select(self):
+        """Function to automatically deselect residues lacking sufficient data"""
 
-        if not hasattr(self, 'relax_data'):
-            return 0
+        # Get the run type
+        run_type_list = self.__global_data__.run_types
+        run_names = self.__global_data__.run_names
+        run_type = run_type_list[run_names.index(self.__key__)]
 
-        if hasattr(self, 'params'):
-            if len(self.params) < len(self.relax_data):
+        # Check for sufficient data for mf or jw run type
+        if run_type == 'mf' or run_type == 'jw':
+            if not hasattr(self, 'relax_data'):
+                return 0
+            
+            # Require 3 or more data points
+            if len(self.relax_data) < 3:
                 return 0
 
-        return 1
+            # and require at least as many data points as params to prevent 
+            # under-fitting
+            if hasattr(self, 'params'):
+                if len(self.params) < len(self.relax_data):
+                    return 0
+
+            return 1
+
+        # Check for sufficient data for relax_fit run_type
+        elif run_type == 'relax_fit':
+            if not hasattr(self, 'intensities'):
+                return 0
+            
+            # Require 3 or more data points
+            if len(self.intensities) < 3:
+                return 0
+            return 1
+
+        # Check for sufficient data for noe run_type
+        elif run_type == 'noe':
+            if not ( hasattr(self, 'ref') and hasattr(self, 'sat') ):
+                return 0
+
+        # All other run types
+        else:
+            return 1
 
 
     def __getattr__(self, name):
         """Force on-the-fly evaluation of select every time it is referenced"""
 
-        # The list of data maps.
         if name == 'select':
-            return (self.autoSelect() and self.userSelect)
+            return (self.auto_select() and self.user_select)
         raise AttributeError, name
 
 
@@ -222,7 +268,7 @@ class ResidueElement(object):
         for name in dir(self):
             if match("^__", name):
                 continue
-            if name == 'autoSelect' or name == 'userSelect':
+            if name == 'auto_select' or name == 'user_select':
                 continue
             text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
 
@@ -236,7 +282,7 @@ class ResidueElement(object):
         """Prevent accidental rebinding of select."""
 
         # The list of prescribed attributes.
-        dontRebind = ['select', 'autoSelect']
+        dontRebind = ['select', 'auto_select']
         if name in dontRebind:
 
             # Allow initial binding of the attribute.
@@ -245,7 +291,7 @@ class ResidueElement(object):
 
             # But prevent rebinding.
             else:
-                raise AttributeError, """Can't rebind automated residue selection. Use userSelect instead (do select.res())"""
+                raise AttributeError, """Can't rebind automated residue selection. Use user_select instead (do select.res())"""
 
         # Normal behaviour for attributes not in list.
         self.__dict__[name] = value

@@ -54,7 +54,7 @@ class Sequence:
         # Insert the data.
         self.relax.data.res[run][index].num = res_num
         self.relax.data.res[run][index].name = res_name
-        self.relax.data.res[run][index].userSelect = select
+        self.relax.data.res[run][index].user_select = select
 
 
     def copy(self, run1=None, run2=None):
@@ -87,7 +87,7 @@ class Sequence:
             # Insert the data.
             self.relax.data.res[run2][i].num = self.relax.data.res[run1][i].num
             self.relax.data.res[run2][i].name = self.relax.data.res[run1][i].name
-            self.relax.data.res[run2][i].userSelect = self.relax.data.res[run1][i].userSelect
+            self.relax.data.res[run2][i].user_select = self.relax.data.res[run1][i].user_select
 
 
     def data_names(self):

@@ -223,8 +223,8 @@ class Relax_fit(Common_functions):
             data = self.relax.data.res[self.run][i]
 
             # Skip unselected residues.
-            if not data.select:
-                continue
+            #if not data.select:
+            #    continue
 
             # Loop over the data structure names.
             for name in data_names:
@@ -570,9 +570,9 @@ class Relax_fit(Common_functions):
                     continue
 
                 # Skip and unselect residues which have no data.
-                if not hasattr(data, 'intensities'):
-                    data.select = 0
-                    continue
+                #if not hasattr(data, 'intensities'):
+                #    data.select = 0
+                #    continue
 
                 # Initialise the average intensity and standard deviation data structures.
                 if not hasattr(data, 'ave_intensities'):

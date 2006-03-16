@@ -152,8 +152,8 @@ class Intensity:
             data = self.relax.data.res[self.run][index]
 
             # Skip unselected residues.
-            if not data.select:
-                continue
+            #if not data.select:
+            #    continue
 
             # Assign the data.
             self.assign_func(run=self.run, i=index, intensity=intensity)

@@ -631,15 +631,15 @@ class Rx_data:
         #################
 
         # Loop over the sequence.
-        for index in xrange(len(self.relax.data.res[self.run])):
+        #for index in xrange(len(self.relax.data.res[self.run])):
             # Remap the data structure 'self.relax.data.res[self.run][index]'.
-            data = self.relax.data.res[self.run][index]
+        #    data = self.relax.data.res[self.run][index]
 
             # No data loaded for this residue.
-            if index not in index_list:
+        #    if index not in index_list:
                 # If no relaxation data exists, unselect the residue.
-                if not hasattr(data, 'relax_data'):
-                    data.select = 0
+        #        if not hasattr(data, 'relax_data'):
+        #            data.select = 0
 
 
     def return_value(self, run, i, data_type):
