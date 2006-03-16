@@ -59,8 +59,10 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     relax_times = (double *) numpy_relax_times->data;
     scaling_matrix = (double *) numpy_scaling_matrix->data;
 
-    /* Return nothing */
+    /* Increment the reference count for the python object None */
     Py_INCREF(Py_None);
+
+    /* Return nothing */
     return Py_None;
 }
 
@@ -91,6 +93,9 @@ func(PyObject *self, PyObject *args) {
 
     /* Back calculated the peak intensities */
     exponential();
+
+    /* Deallocate the memory used by the parameters */
+    Py_DECREF(numpy_params);
 
     /* Calculate and return the chi-squared value */
     return Py_BuildValue("f", chi2());
@@ -126,13 +131,15 @@ dfunc(PyObject *self, PyObject *args) {
 
 
     /* Test code (convert aaa to a Numeric array */
-    /* aaa_numpy = (PyArrayObject *) PyArray_FromDimsAndData(1, num_params, PyArray_DOUBLE, aaa_pointer); */
     aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, &num_params, PyArray_DOUBLE);
     aaa_pointer = (double *) aaa_numpy->data;
 
     /* Fill the Numeric array */
     for (i = 0; i < 2; i++)
         aaa_pointer[i] = aaa[i];
+
+    /* Deallocate the memory used by the parameters */
+    Py_DECREF(numpy_params);
 
     return NULL;
     return PyArray_Return(aaa_numpy);
