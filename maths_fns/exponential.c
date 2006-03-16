@@ -35,7 +35,7 @@ void exponential(void) {
 	*/
 
     /* Declarations */
-    extern int *num_times;
+    extern int num_times;
     extern double *params, *relax_times;
     extern double back_calc[];
     double Rx, I0;
@@ -44,7 +44,7 @@ void exponential(void) {
 
     /* Loop over the time points */
     /* for (i = 0; i < num_times; i++) { */
-    for (i = 0; i < (int)num_times; i++) {
+    for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
             back_calc[i] = 0.0;

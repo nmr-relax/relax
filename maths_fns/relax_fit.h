@@ -37,7 +37,7 @@
 
 /* Variables sent to the setup function to be stored for later use */
 PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
-int *num_params, *num_times;
+int num_params, num_times;
 double *sd;
 
 /* Variables sent to 'func', 'dfunc', and 'd2func' during optimisation */

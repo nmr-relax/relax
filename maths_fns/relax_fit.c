@@ -33,19 +33,18 @@ static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Python declarations */
     PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
-    extern PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
+    PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
 
     /* Normal declarations */
     extern double *values, *sd, *relax_times, *scaling_matrix;
-    extern double *relax_time_array;
-    extern int *num_params, *num_times;
+    extern double relax_time_array;
+    extern int num_params, num_times;
 
     /* The keyword list */
     static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
 
-
     /* Parse the function arguments */
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd, &relax_times_arg, &scaling_matrix_arg))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
     /* Make the Numeric arrays contiguous */
@@ -128,7 +127,7 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Test code (convert aaa to a Numeric array */
     /* aaa_numpy = (PyArrayObject *) PyArray_FromDimsAndData(1, num_params, PyArray_DOUBLE, aaa_pointer); */
-    aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, num_params, PyArray_DOUBLE);
+    aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, &num_params, PyArray_DOUBLE);
     aaa_pointer = (double *) aaa_numpy->data;
 
     /* Fill the Numeric array */
@@ -152,14 +151,14 @@ back_calc_I(PyObject *self, PyObject *args) {
 
     /* Declarations */
     extern double back_calc[];
-    extern int *num_times;
+    extern int num_times;
     int i;
 
-    PyObject *back_calc_py = PyList_New((int)num_times);
+    PyObject *back_calc_py = PyList_New(num_times);
     assert(PyList_Check(back_calc_py));
 
     /* Copy the values out of the C array into the Python array */
-    for (i = 0; i < (int)num_times; i++)
+    for (i = 0; i < num_times; i++)
         PyList_SetItem(back_calc_py, i, Py_BuildValue("f", back_calc[i]));
 
     /* Return the Numeric array */
