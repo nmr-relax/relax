@@ -54,7 +54,7 @@ class Sequence:
         # Insert the data.
         self.relax.data.res[run][index].num = res_num
         self.relax.data.res[run][index].name = res_name
-        self.relax.data.res[run][index].userSelect = select
+        self.relax.data.res[run][index].select = select
 
 
     def copy(self, run1=None, run2=None):
@@ -87,7 +87,7 @@ class Sequence:
             # Insert the data.
             self.relax.data.res[run2][i].num = self.relax.data.res[run1][i].num
             self.relax.data.res[run2][i].name = self.relax.data.res[run1][i].name
-            self.relax.data.res[run2][i].userSelect = self.relax.data.res[run1][i].userSelect
+            self.relax.data.res[run2][i].select = self.relax.data.res[run1][i].select
 
 
     def data_names(self):
@@ -156,7 +156,7 @@ class Sequence:
             # Insert the data.
             self.relax.data.res[run][i].num = res[i].number
             self.relax.data.res[run][i].name = res[i].name
-            #self.relax.data.res[run][i].select = 1
+            self.relax.data.res[run][i].select = 1
 
 
     def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
@@ -211,7 +211,7 @@ class Sequence:
             # Insert the data.
             self.relax.data.res[run][i].num = int(file_data[i][num_col])
             self.relax.data.res[run][i].name = file_data[i][name_col]
-            #self.relax.data.res[run][i].select = 1
+            self.relax.data.res[run][i].select = 1
 
 
     def sort(self, run=None):
