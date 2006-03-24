@@ -33,9 +33,9 @@ from run_create import Run_create
 from sequence import Sequence
 
 
-class Testing:
+class Test_suite:
     def __init__(self, relax):
-        """Testing of relax.
+        """The relax test suite.
 
         This class runs a number of tests to determine if any changes to relax have caused
         breakages.
