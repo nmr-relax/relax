@@ -146,7 +146,7 @@ All the objects beginning with an underscore are ``hidden'', they contain inform
 \index{run|textbf}
 Within relax, the majority of operations are assigned to a special construct called a `run'.  For example, to load relaxation data into the program it must be committed to a pre-created `run'.  Within one instance of relax, multiple runs can be created and various operations performed in sequence on these runs.  This is useful for operations such as model selection whereby the function `model\_selection' can operate on a number of runs corresponding to different models and then assign the results to a newly created run.
 
-The flow of data through relax can be thought of as travelling through pipes -- each pipe is synonymous with a run.  User functions \index{user functions} exist to transfer data between these pipes, while other functions combine data from multiple pipes into one or vice-verse.  The simplest invocation of relax would be the creation of a single run and with the data being processed as it is passing through this pipe.
+The flow of data through relax can be thought of as travelling through pipes -- each pipe is synonymous with a run.  User functions \index{user functions} exist to transfer data between these pipes, while other functions combine data from multiple pipes into one or vice versa.  The simplest invocation of relax would be the creation of a single run and with the data being processed as it is passing through this pipe.
 
 The primary method for creating a run is through the user function \index{user functions} \texttt{`run.create'}.  For example
 
