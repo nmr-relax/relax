@@ -45,13 +45,13 @@ class Mf:
         self.run = run
 
         # Load the original state.
-        self.relax.interpreter._State.load(file='orig_state', dir=sys.path[-1] + '/testing/data/model_free')
+        self.relax.interpreter._State.load(file='orig_state', dir=sys.path[-1] + '/test_suite/data/model_free')
 
         # Create the run.
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Read the results.
-        self.relax.interpreter._Results.read(self.run, dir=sys.path[-1] + '/testing/data/model_free')
+        self.relax.interpreter._Results.read(self.run, dir=sys.path[-1] + '/test_suite/data/model_free')
 
         # Success.
         return self.test_integrity()
