@@ -125,7 +125,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{dasha.execute}(self, run=None, dir=None, force=0)} 
+ \textsf{\textbf{dasha.execute}(self, run=None, dir=None, force=0, binary=`dasha')} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -134,7 +134,9 @@
 
  \keyword{ dir:}  The directory to place the files.  The default is the value of \quotecmd{run}.   
 
- \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.  
+ \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.   
+
+ \keyword{ binary:}  The name of the executable Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} program file.  
 
   
 
@@ -145,6 +147,9 @@
   
 
  \example{\$ dasha < dasha\_script | tee dasha\_results} 
+
+ If you would like to use a different Dasha\index{computer programs!Dasha}\index{computer programs!Dasha} executable file, change the keyword argument \quotecmd{binary} to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name. 
+  
 
   
 
@@ -320,8 +325,8 @@
   
 
  \begin{description} 
- \item[0 --]  $\tau_m$   (Default),  
- \item[1 --]  $\Diff_{iso}$,  
+ \item[0 --]  \{tm\}   (Default),  
+ \item[1 --]  \{Diso\},  
  \end{description} 
   
 
@@ -377,11 +382,11 @@
   
 
  \begin{description} 
- \item[0 --]  ($\tau_m$, $\Diff_a$, $\theta$, $\phi$)   (Default),  
- \item[1 --]  ($\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$),  
- \item[2 --]  ($\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$),  
- \item[3 --]  ($\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$),  
- \item[4 --]  ($\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$),  
+ \item[0 --]  \{$\tau_m$, $\Diff_a$, $\theta$, $\phi$\}   (Default),  
+ \item[1 --]  \{$\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$\},  
+ \item[2 --]  \{$\tau_m$, $\Diff_{ratio}$, $\theta$, $\phi$\},  
+ \item[3 --]  \{$\Diff_\Par$, $\Diff_\Per$, $\theta$, $\phi$\},  
+ \item[4 --]  \{$\Diff_{iso}$, $\Diff_{ratio}$, $\theta$, $\phi$\},  
  \end{description} 
   
 
@@ -485,9 +490,9 @@
   
 
  \begin{description} 
- \item[0 --]  ($\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$)   (Default),  
- \item[1 --]  ($\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$),  
- \item[2 --]  ($\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$),  
+ \item[0 --]  \{$\tau_m$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$\}   (Default),  
+ \item[1 --]  \{$\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$\},  
+ \item[2 --]  \{$\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$\},  
  \end{description} 
   
 
@@ -625,7 +630,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{dx.map}(self, run=None, params=None, map\_type=`Iso3D', res\_num=None, inc=20, lower=None, upper=None, axis\_incs=10, file=`map', dir=`dx', point=None, point\_file=`point', remap=None)} 
+ \textsf{\textbf{dx.map}(self, run=None, params=None, map\_type=`Iso3D', res\_num=None, inc=20, lower=None, upper=None, axis\_incs=5, file=`map', dir=`dx', point=None, point\_file=`point', remap=None)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -731,7 +736,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{tm}  \\
+  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
    &  &   \\
   Isotropic\index{diffusion!sphere (isotropic)} component of the diffusion\index{diffusion!tensor} tensor - $\Diff_{iso}$ & \quotecmd{Diso} & \quotecmd{[Dd]iso}  \\
    &  &   \\
@@ -784,7 +789,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -1127,7 +1132,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -1951,69 +1956,73 @@
  The standard preset model-free models are 
   
 
- \begin{description} 
- \item[\quotecmd{m0} --]  [],  
- \item[\quotecmd{m1} --]  [$S^2$],  
- \item[\quotecmd{m2} --]  [$S^2$, $\tau_e$],  
- \item[\quotecmd{m3} --]  [$S^2$, $R_{ex}$],  
- \item[\quotecmd{m4} --]  [$S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{m5} --]  [$S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m6} --]  [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m7} --]  [$S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m8} --]  [$S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m9} --]  [$R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{m0} = \{\},  
+ \item[] \quotecmd{m1} = \{S2\},  
+ \item[] \quotecmd{m2} = \{$S^2$, $\tau_e$\},  
+ \item[] \quotecmd{m3} = \{$S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{m4} = \{$S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{m5} = \{$S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m6} = \{$S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m7} = \{$S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m8} = \{$S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m9} = \{Rex\}.  
+ \item[]  
+ \end{itemize} 
   
 
  The preset model-free models with optimisation of the CSA value are 
   
 
- \begin{description} 
- \item[\quotecmd{m10} --]  [CSA],  
- \item[\quotecmd{m11} --]  [CSA, $S^2$],  
- \item[\quotecmd{m12} --]  [CSA, $S^2$, $\tau_e$],  
- \item[\quotecmd{m13} --]  [CSA, $S^2$, $R_{ex}$],  
- \item[\quotecmd{m14} --]  [CSA, $S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{m15} --]  [CSA, $S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m16} --]  [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m17} --]  [CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m18} --]  [CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m19} --]  [CSA, $R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{m10} = \{CSA\},  
+ \item[] \quotecmd{m11} = \{CSA, $S^2$\},  
+ \item[] \quotecmd{m12} = \{CSA, $S^2$, $\tau_e$\},  
+ \item[] \quotecmd{m13} = \{CSA, $S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{m14} = \{CSA, $S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{m15} = \{CSA, $S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m16} = \{CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m17} = \{CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m18} = \{CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m19} = \{CSA, $R_{ex}$\}.  
+ \item[]  
+ \end{itemize} 
   
 
  The preset model-free models with optimisation of the bond\index{bond length} length are 
   
 
- \begin{description} 
- \item[\quotecmd{m20} --]  [$r$],  
- \item[\quotecmd{m21} --]  [$r$, $S^2$],  
- \item[\quotecmd{m22} --]  [$r$, $S^2$, $\tau_e$],  
- \item[\quotecmd{m23} --]  [$r$, $S^2$, $R_{ex}$],  
- \item[\quotecmd{m24} --]  [$r$, $S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{m25} --]  [$r$, $S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m26} --]  [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m27} --]  [$r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m28} --]  [$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m29} --]  [$r$, CSA, $R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{m20} = \{r\},  
+ \item[] \quotecmd{m21} = \{$r$, $S^2$\},  
+ \item[] \quotecmd{m22} = \{$r$, $S^2$, $\tau_e$\},  
+ \item[] \quotecmd{m23} = \{$r$, $S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{m24} = \{$r$, $S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{m25} = \{$r$, $S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m26} = \{$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m27} = \{$r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m28} = \{$r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m29} = \{$r$, CSA, $R_{ex}$\}.  
+ \item[]  
+ \end{itemize} 
   
 
  The preset model-free models with both optimisation of the bond\index{bond length} length and CSA are 
   
 
- \begin{description} 
- \item[\quotecmd{m30} --]  [$r$, CSA],  
- \item[\quotecmd{m31} --]  [$r$, CSA, $S^2$],  
- \item[\quotecmd{m32} --]  [$r$, CSA, $S^2$, $\tau_e$],  
- \item[\quotecmd{m33} --]  [$r$, CSA, $S^2$, $R_{ex}$],  
- \item[\quotecmd{m34} --]  [$r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{m35} --]  [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m36} --]  [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{m37} --]  [$r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m38} --]  [$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{m39} --]  [$r$, CSA, $R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{m30} = \{$r$, CSA\},  
+ \item[] \quotecmd{m31} = \{$r$, CSA, $S^2$\},  
+ \item[] \quotecmd{m32} = \{$r$, CSA, $S^2$, $\tau_e$\},  
+ \item[] \quotecmd{m33} = \{$r$, CSA, $S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{m34} = \{$r$, CSA, $S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{m35} = \{$r$, CSA, $S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m36} = \{$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{m37} = \{$r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m38} = \{$r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{m39} = \{$r$, CSA, $R_{ex}$\}.  
+ \item[]  
+ \end{itemize} 
   
 
  Warning:  The models in the thirties range fail when using standard R$_1$, R$_1$, and NOE relaxation\index{relaxation} data.  This is due to the extreme flexibly of these models where a change in the parameter \quotecmd{r} is compensated by a corresponding change in the parameter \quotecmd{CSA} and vice versa. 
@@ -2022,69 +2031,73 @@
  Additional preset model-free models, which are simply extensions of the above models with the addition of a local $\tau_m$ parameter are: 
   
 
- \begin{description} 
- \item[\quotecmd{tm0} --]  [$\tau_m$],  
- \item[\quotecmd{tm1} --]  [$\tau_m$, $S^2$],  
- \item[\quotecmd{tm2} --]  [$\tau_m$, $S^2$, $\tau_e$],  
- \item[\quotecmd{tm3} --]  [$\tau_m$, $S^2$, $R_{ex}$],  
- \item[\quotecmd{tm4} --]  [$\tau_m$, $S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{tm5} --]  [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm6} --]  [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm7} --]  [$\tau_m$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm8} --]  [$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm9} --]  [$\tau_m$, $R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{tm0} = \{tm\},  
+ \item[] \quotecmd{tm1} = \{$\tau_m$, $S^2$\},  
+ \item[] \quotecmd{tm2} = \{$\tau_m$, $S^2$, $\tau_e$\},  
+ \item[] \quotecmd{tm3} = \{$\tau_m$, $S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{tm4} = \{$\tau_m$, $S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{tm5} = \{$\tau_m$, $S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm6} = \{$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm7} = \{$\tau_m$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm8} = \{$\tau_m$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm9} = \{$\tau_m$, $R_{ex}$\}.  
+ \item[]  
+ \end{itemize} 
   
 
  The preset model-free models with optimisation of the CSA value are 
   
 
- \begin{description} 
- \item[\quotecmd{tm10} --]  [$\tau_m$, CSA],  
- \item[\quotecmd{tm11} --]  [$\tau_m$, CSA, $S^2$],  
- \item[\quotecmd{tm12} --]  [$\tau_m$, CSA, $S^2$, $\tau_e$],  
- \item[\quotecmd{tm13} --]  [$\tau_m$, CSA, $S^2$, $R_{ex}$],  
- \item[\quotecmd{tm14} --]  [$\tau_m$, CSA, $S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{tm15} --]  [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm16} --]  [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm17} --]  [$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm18} --]  [$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm19} --]  [$\tau_m$, CSA, $R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{tm10} = \{$\tau_m$, CSA\},  
+ \item[] \quotecmd{tm11} = \{$\tau_m$, CSA, $S^2$\},  
+ \item[] \quotecmd{tm12} = \{$\tau_m$, CSA, $S^2$, $\tau_e$\},  
+ \item[] \quotecmd{tm13} = \{$\tau_m$, CSA, $S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{tm14} = \{$\tau_m$, CSA, $S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{tm15} = \{$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm16} = \{$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm17} = \{$\tau_m$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm18} = \{$\tau_m$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm19} = \{$\tau_m$, CSA, $R_{ex}$\}.  
+ \item[]  
+ \end{itemize} 
   
 
  The preset model-free models with optimisation of the bond\index{bond length} length are 
   
 
- \begin{description} 
- \item[\quotecmd{tm20} --]  [$\tau_m$, $r$],  
- \item[\quotecmd{tm21} --]  [$\tau_m$, $r$, $S^2$],  
- \item[\quotecmd{tm22} --]  [$\tau_m$, $r$, $S^2$, $\tau_e$],  
- \item[\quotecmd{tm23} --]  [$\tau_m$, $r$, $S^2$, $R_{ex}$],  
- \item[\quotecmd{tm24} --]  [$\tau_m$, $r$, $S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{tm25} --]  [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm26} --]  [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm27} --]  [$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm28} --]  [$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm29} --]  [$\tau_m$, $r$, CSA, $R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{tm20} = \{$\tau_m$, $r$\},  
+ \item[] \quotecmd{tm21} = \{$\tau_m$, $r$, $S^2$\},  
+ \item[] \quotecmd{tm22} = \{$\tau_m$, $r$, $S^2$, $\tau_e$\},  
+ \item[] \quotecmd{tm23} = \{$\tau_m$, $r$, $S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{tm24} = \{$\tau_m$, $r$, $S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{tm25} = \{$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm26} = \{$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm27} = \{$\tau_m$, $r$, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm28} = \{$\tau_m$, $r$, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm29} = \{$\tau_m$, $r$, CSA, $R_{ex}$\}.  
+ \item[]  
+ \end{itemize} 
   
 
  The preset model-free models with both optimisation of the bond\index{bond length} length and CSA are 
   
 
- \begin{description} 
- \item[\quotecmd{tm30} --]  [$\tau_m$, $r$, CSA],  
- \item[\quotecmd{tm31} --]  [$\tau_m$, $r$, CSA, $S^2$],  
- \item[\quotecmd{tm32} --]  [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$],  
- \item[\quotecmd{tm33} --]  [$\tau_m$, $r$, CSA, $S^2$, $R_{ex}$],  
- \item[\quotecmd{tm34} --]  [$\tau_m$, $r$, CSA, $S^2$, $\tau_e$, $R_{ex}$],  
- \item[\quotecmd{tm35} --]  [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm36} --]  [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$],  
- \item[\quotecmd{tm37} --]  [$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm38} --]  [$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$],  
- \item[\quotecmd{tm39} --]  [$\tau_m$, $r$, CSA, $R_{ex}$].  
- \end{description} 
+ \begin{itemize} 
+ \item[] \quotecmd{tm30} = \{$\tau_m$, $r$, CSA\},  
+ \item[] \quotecmd{tm31} = \{$\tau_m$, $r$, CSA, $S^2$\},  
+ \item[] \quotecmd{tm32} = \{$\tau_m$, $r$, CSA, $S^2$, $\tau_e$\},  
+ \item[] \quotecmd{tm33} = \{$\tau_m$, $r$, CSA, $S^2$, $R_{ex}$\},  
+ \item[] \quotecmd{tm34} = \{$\tau_m$, $r$, CSA, $S^2$, $\tau_e$, $R_{ex}$\},  
+ \item[] \quotecmd{tm35} = \{$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm36} = \{$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$\},  
+ \item[] \quotecmd{tm37} = \{$\tau_m$, $r$, CSA, $S^2_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm38} = \{$\tau_m$, $r$, CSA, $S^2_f$, $\tau_f$, $S^2$, $\tau_s$, $R_{ex}$\},  
+ \item[] \quotecmd{tm39} = \{$\tau_m$, $r$, CSA, $R_{ex}$\}.  
+ \item[]  
+ \end{itemize} 
   
 
   
@@ -3017,7 +3030,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{palmer.create}(self, run=None, dir=None, force=0, diff\_search=`none', sims=0, sim\_type=`pred', trim=0, steps=20, constraints=1, nucleus=`15N', atom1=`N', atom2=`H')} 
+ \textsf{\textbf{palmer.create}(self, run=None, dir=None, force=0, binary=`modelfree4', diff\_search=`none', sims=0, sim\_type=`pred', trim=0, steps=20, constraints=1, nucleus=`15N', atom1=`N', atom2=`H')} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -3027,6 +3040,8 @@
  \keyword{ dir:}  The directory to place the files.  The default is the value of \quotecmd{run}.   
 
  \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.   
+
+ \keyword{ binary:}  The name of the executable Modelfree program file.   
 
  \keyword{ diff\_search:}  See the Modelfree4\index{computer programs!Modelfree4}\index{computer programs!Modelfree4} manual for \quotecmd{diffusion\_search}.   
 
@@ -3073,6 +3088,9 @@
  which can be used to execute modelfree4.\index{computer programs!Modelfree4} 
   
 
+ If you would like to use a different Modelfree executable file, change the keyword argument \quotecmd{binary} to the appropriate file name.  If the file is not located within the environment's path, include the full path infront of the binary file name. 
+  
+
   
 
  \newpage 
@@ -3088,7 +3106,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{palmer.execute}(self, run=None, dir=None, force=0)} 
+ \textsf{\textbf{palmer.execute}(self, run=None, dir=None, force=0, binary=`modelfree4')} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -3097,7 +3115,9 @@
 
  \keyword{ dir:}  The directory to place the files.  The default is the value of \quotecmd{run}.   
 
- \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.  
+ \keyword{ force:}  A flag which if set to 1 will cause the results file to be overwritten if it already exists.   
+
+ \keyword{ binary:}  The name of the executable Modelfree program file.  
 
   
 
@@ -3110,6 +3130,9 @@
  \example{\$ modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out} 
 
  If a PDB\index{PDB} file is loaded and non-isotropic diffusion is selected, then the file name will be placed on the command line as \quotecmd{-s pdb\_file\_name}. 
+  
+
+ If you would like to use a different Modelfree executable file, change the keyword argument \quotecmd{binary} to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name. 
   
 
   
@@ -4836,7 +4859,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -4982,7 +5005,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -5163,7 +5186,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -5429,7 +5452,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\
@@ -5578,7 +5601,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{tm}  \\
+  Global correlation\index{correlation time} time - $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
    &  &   \\
   Isotropic\index{diffusion!sphere (isotropic)} component of the diffusion\index{diffusion!tensor} tensor - $\Diff_{iso}$ & \quotecmd{Diso} & \quotecmd{[Dd]iso}  \\
    &  &   \\
@@ -5803,7 +5826,7 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$}  \\
+  Local $\tau_m$ & \quotecmd{tm} & \quotecmd{\^{}tm\$} or \quotecmd{local\_tm}  \\
    &  &   \\
   Order\index{order parameter} parameter $S^2$ & \quotecmd{s2} & \quotecmd{\^{}[Ss]2\$}  \\
    &  &   \\

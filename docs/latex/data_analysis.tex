@@ -105,13 +105,13 @@ noe.read(name, file=`ref.list', spectrum\_type=`ref') \\
 noe.read(name, file=`sat.list', spectrum\_type=`sat') \\
 \end{exampleenv}
 
-load the peak heights of the reference and saturated NOE experiments (although the volume could be used instead).  The keyword argument \texttt{format} has not been specified, hence the default format of a Sparky \index{computer prgrams!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy \index{computer prgrams!XEasy} was used to analyse the spectra, the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string, while it is assumed that the 4$^\textrm{th}$ column contains either the peak height.
+load the peak heights of the reference and saturated NOE experiments (although the volume could be used instead).  The keyword argument \texttt{format} has not been specified, hence the default format of a Sparky\index{computer prgrams!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer prgrams!XEasy} was used to analyse the spectra, the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string, while it is assumed that the 4$^\textrm{th}$ column contains either the peak height.
 
 
 % Setting the errors.
 \subsubsection{Setting the errors}
 
-In this example, the errors where measured from the base plain noise.  The Sparky RMSD \index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 while in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
+In this example, the errors where measured from the base plain noise.  The Sparky RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 while in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
 
 \begin{exampleenv}
 noe.error(name, error=3600, spectrum\_type=`ref') \\
@@ -205,7 +205,7 @@ An example of the output, after modifying the axes, is shown in figure~\ref{fig:
 
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, bb=0 0 792 612]{images/noe.eps.gz}}
-\caption[NOE plot]{A Grace \index{computer programs!Grace|textbf} plot of the NOE value and error against the residue number.  An example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
+\caption[NOE plot]{A Grace\index{computer programs!Grace|textbf} plot of the NOE value and error against the residue number.  An example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
 \end{figure}
 
 
@@ -293,7 +293,7 @@ initialise the run by setting the variable \texttt{name} to \texttt{`rx'} to be 
 \example{pdb(name, `Ap4Aase\_new\_3.pdb', load\_seq=1)}
 \index{PDB}
 
-To load the peak intensities into relax, use the user function \texttt{relax\_fit.read}.  Two important keyword arguments to this command are the file name and the relaxation time period of the experiment in seconds.  It is assumed that the file format is that of a Sparky \index{computer prgrams!Sparky} peak list.  Using the format argument, this can be changed to XEasy \index{computer prgrams!XEasy} text window output format.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated.
+To load the peak intensities into relax, use the user function \texttt{relax\_fit.read}.  Two important keyword arguments to this command are the file name and the relaxation time period of the experiment in seconds.  It is assumed that the file format is that of a Sparky\index{computer prgrams!Sparky} peak list.  Using the format argument, this can be changed to XEasy\index{computer prgrams!XEasy} text window output format.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated.
 
 \begin{exampleenv}
 relax\_fit.read(name, file=`T2\_ncyc1.list', relax\_time=0.0176) \\
