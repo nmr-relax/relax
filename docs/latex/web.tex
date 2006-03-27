@@ -50,7 +50,19 @@ Once the bug has been confirmed by one of the relax developers, you may speed up
 
 
 
-% The latest sources -- repositories.
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Latest sources -- the relax repositories.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{The latest sources -- repositories}
+\section{Latest sources -- the relax repositories}
+
+The source code to relax is kept in a version control system called Subversion (\href{http://subversion.tigris.org/}{http://subversion.tigris.org/}).  Subversion, or SVN, allows fine control over the development of the program.  The repository contains all information about every change ever made to the program.  To learn more about the system, the Subversion book located at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} is a good place to start.
+
+The contents of the relax repository can be viewed online at \href{http://svn.gna.org/viewcvs/relax/}{http://svn.gna.org/viewcvs/relax/}.  The current sources, assuming that the most recent minor version number is 1.2, can be downloaded using the SVN protocol by typing
+
+\example{\$ svn co svn://svn.gna.org/svn/relax/1.2 relax}
+
+however if this does not work, try the command
+
+\example{\$ svn co http://svn.gna.org/svn/relax/1.2 relax}
+
+to download using the http protocol.  The entire relax repository is backed up daily to \href{http://svn.gna.org/daily/relax.dump.gz}{http://svn.gna.org/daily/relax.dump.gz}.
