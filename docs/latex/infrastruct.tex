@@ -44,7 +44,7 @@ One last mailing list is the relax commits list.  This list is reserved for auto
 
 One of the philosophies in the construction of relax is that if there is something which is not immediately obvious, then that is considered a design bug.  If any flaws in relax are uncovered, including general design flaws, bugs in the code, or documentation issues, these can be reported within relax's bug tracker system.  The link to submit a bug is \href{https://gna.org/bugs/?group=relax\&func=additem}{https://gna.org/bugs/?group=relax\&func=additem} while the main page for browsing, submitting, viewing the statistics, or searching through the data base is at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax}.  Please do not report bugs to personal email addresses or to the mailing lists.
 
-When reporting a bug, please include as much information as possible so that the problem can be reproduced.  Include information such as the release version or the revision number if the repository sources are being used.  Also include all the steps performed in order to trigger the bug.  Attachment of files is allowed, so scripts and subsets of the input data can be included.  Make sure that you are confident that the problem is truly a bug prior to reporting it, if you have any doubts please feel free to ask on the relax-users mailing list.  To avoid duplicates, be sure that the bug has not already been submitted to the bug tracker.  You can search the bugs from the page \href{https://gna.org/project/search.php?group=relax}{https://gna.org/project/search.php?group=relax}.
+When reporting a bug, please include as much information as possible so that the problem can be reproduced.  Include information such as the release version or the revision number if the repository sources are being used.  Also include all the steps performed in order to trigger the bug.  Attachment of files is allowed, so scripts and subsets of the input data can be included.  Please do not attach large files to the report.  Prior to reporting the bug, try to make sure that the problem is indeed a bug and if you have any doubts please feel free to ask on the relax-users mailing list.  To avoid duplicates, be sure that the bug has not already been submitted to the bug tracker.  You can search the bugs from the page \href{https://gna.org/project/search.php?group=relax}{https://gna.org/project/search.php?group=relax}.
 
 Once the bug has been confirmed by one of the relax developers, you may speed up the resolution of the problem by trying to fixing the bug yourself.  If you do wish to play with the source code and try to fix the issue, see the relax development chapter of this manual on how to check out the latest sources, how to generate a patch (which is just the output of diff in the `unified' format), and the guidelines for the format of the code.
 
@@ -81,13 +81,13 @@ Summaries of the latest news on relax can be found on the relax web site \href{h
 
 \section{The relax distribution archives}
 
-The relax distribution archives, the files to download to install relax, can be found at \href{http://download.gna.org/relax/}{http://download.gna.org/relax/}.  If a compiled binary distribution for your architecture does not exist, you are welcome to create this distribution yourself.  To do this, a number of steps are required.  Firstly, the code to each relax release or version resides in the `tags' directory of the relax repository.  To check out version 1.2.3, for example, type
+The relax distribution archives, the files to download to install relax, can be found at \href{http://download.gna.org/relax/}{http://download.gna.org/relax/}.  If a compiled binary distribution for your architecture does not exist, you are welcome to create this distribution yourself and submit it for inclusion in the relax project.  To do this, a number of steps are required.  Firstly, the code to each relax release or version resides in the `tags' directory of the relax repository.  To check out version 1.2.0, for example, type
 
-\example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.3 relax}
+\example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.0 relax}
 
 Again, the sources are available through HTTP by typing
 
-\example{\$ svn co http://svn.gna.org/svn/relax/tags/1.2.3 relax}
+\example{\$ svn co http://svn.gna.org/svn/relax/tags/1.2.0 relax}
 
 The binary distribution can then be created for your architecture by shifting to the main directory of the checked out sources and typing
 
