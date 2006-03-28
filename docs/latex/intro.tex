@@ -22,7 +22,7 @@ the result being
 \begin{exampleenv}
 relax> print "Hello World" \\
 Hello World \\
-relax> \\
+relax>
 \end{exampleenv}
 
 Or, using relax as a calculator
@@ -30,7 +30,7 @@ Or, using relax as a calculator
 \begin{exampleenv}
 relax> (1.0 + (2 * 3))/10 \\
 0.69999999999999996 \\
-relax> \\
+relax>
 \end{exampleenv}
 
 
@@ -131,7 +131,7 @@ model\_free.create\_model \\
 model\_free.delete \\
 model\_free.remove\_tm \\
 model\_free.select\_model \\
-relax> model\_free. \\
+relax> model\_free.
 \end{exampleenv}
 
 All the objects beginning with an underscore are ``hidden'', they contain information about the function class\index{function class} and should be ignored.  From the listing the user functions\index{user functions} \texttt{`copy'}, \texttt{`create\_model'}, \texttt{`delete'}, \texttt{`remove\_tm'}, and \texttt{`select\_model'} contained within \texttt{`model\_free'} are all visible.
@@ -223,7 +223,7 @@ minimise(`newton', run=name) \\
  \\
 \# Finish. \\
 results.write(run=name, file=`results', force=1) \\
-state.save(`save', force=1) \\
+state.save(`save', force=1)
 \end{exampleenv}
 
 Scripting is much more powerful than the prompt as advanced Python\index{Python} programming can be employed (see the file `full\_analysis.py' in the `sample\_scripts' directory for an example).

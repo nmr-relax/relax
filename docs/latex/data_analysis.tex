@@ -70,7 +70,7 @@ grace.view(file=`noe.agr') \\
 results.write(name, file=`results', dir=None, force=1) \\
  \\
 \# Save the program state. \\
-state.save(`save', force=1) \\
+state.save(`save', force=1)
 \end{exampleenv}
 
 
@@ -102,7 +102,7 @@ The next two commands
 
 \begin{exampleenv}
 noe.read(name, file=`ref.list', spectrum\_type=`ref') \\
-noe.read(name, file=`sat.list', spectrum\_type=`sat') \\
+noe.read(name, file=`sat.list', spectrum\_type=`sat')
 \end{exampleenv}
 
 load the peak heights of the reference and saturated NOE experiments (although the volume could be used instead).  The keyword argument \texttt{format} has not been specified, hence the default format of a Sparky\index{computer prgrams!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer prgrams!XEasy} was used to analyse the spectra, the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string, while it is assumed that the 4$^\textrm{th}$ column contains either the peak height.
@@ -115,14 +115,14 @@ In this example, the errors where measured from the base plain noise.  The Spark
 
 \begin{exampleenv}
 noe.error(name, error=3600, spectrum\_type=`ref') \\
-noe.error(name, error=3000, spectrum\_type=`sat') \\
+noe.error(name, error=3000, spectrum\_type=`sat')
 \end{exampleenv}
 
 For the residue G114, the noise levels are significantly increased compared to the rest of the protein as the peak is located close to the water signal.  The higher errors for this residue are specified by the commands
 
 \begin{exampleenv}
 noe.error(name, error=122000, spectrum\_type=`ref', res\_num=114) \\
-noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114) \\
+noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114)
 \end{exampleenv}
 
 
@@ -186,7 +186,7 @@ Any two dimensional data set can be plotted in relax in conjunction with the pro
 \begin{exampleenv}
 grace.write(name, y\_data\_type=`ref', file=`ref.agr', force=1) \\
 grace.write(name, y\_data\_type=`sat', file=`sat.agr', force=1) \\
-grace.write(name, y\_data\_type=`noe', file=`noe.agr', force=1) \\
+grace.write(name, y\_data\_type=`noe', file=`noe.agr', force=1)
 \end{exampleenv}
 
 create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.  The x-axis in all three defaults to the residue number.  As the x and y-axes can be any parameter, the command
@@ -198,7 +198,7 @@ would create a plot of the reference verses the saturated intensity, with one po
 \begin{exampleenv}
 grace.view(file=`ref.agr') \\
 grace.view(file=`sat.agr') \\
-grace.view(file=`noe.agr') \\
+grace.view(file=`noe.agr')
 \end{exampleenv}
 
 An example of the output, after modifying the axes, is shown in figure~\ref{fig: NOE plot}.
@@ -274,7 +274,7 @@ grace.write(name, y\_data\_type=`rx', file=`rx.agr', force=1) \\
 grace.view(file=`rx.agr') \\
  \\
 \# Save the program state. \\
-state.save(file=name + `.save', force=1) \\
+state.save(file=name + `.save', force=1)
 \end{exampleenv}
 
 
@@ -285,7 +285,7 @@ The start of this sample script is very similar to that of the NOE calculation o
 
 \begin{exampleenv}
 name = `rx' \\
-run.create(name, `relax\_fit') \\
+run.create(name, `relax\_fit')
 \end{exampleenv}
 
 initialise the run by setting the variable \texttt{name} to \texttt{`rx'} to be used in the calls to user functions and creating a run called \texttt{`rx'} which is to relaxation curve fitting by the argument \texttt{`relax\_fit'}.  The sequence is extracted from a PDB file using the same command as the NOE calculation script
@@ -305,7 +305,7 @@ relax\_fit.read(name, file=`T2\_ncyc6.list', relax\_time=0.1056) \\
 relax\_fit.read(name, file=`T2\_ncyc9.list', relax\_time=0.1584) \\
 relax\_fit.read(name, file=`T2\_ncyc9b.list', relax\_time=0.1584) \\
 relax\_fit.read(name, file=`T2\_ncyc11.list', relax\_time=0.1936) \\
-relax\_fit.read(name, file=`T2\_ncyc11b.list', relax\_time=0.1936) \\
+relax\_fit.read(name, file=`T2\_ncyc11b.list', relax\_time=0.1936)
 \end{exampleenv}
 
 
