@@ -3,7 +3,7 @@
 
 \chapter{Development of relax}
 
-This chapter is written for developers or those who would like to extend the functionality of relax.  It is not required for using relax.  If you would like to modify relax to suit your needs, please subscribe to all the relax mailing lists (see the open source infrastructure chapter for more details).  Announcements are sent to ``relax-announce at gna.org'' while ``relax-users at gna.org'' is the list where discussions about the usage of relax should be posted.  ``relax-devel at gna.org'' is where all discussions about the development of relax, including feature requests, program design, or any other discussions relating to relax's structure or code should be posted.  Finally, ``relax-commits at gna.org'' is where all changes to relax's code and documentation, as well as changes to the web pages, are automatically sent to.  Anyone interested in joining the project should subscribe to this list as well.
+This chapter is written for developers or those who would like to extend the functionality of relax.  It is not required for using relax.  If you would like to modify relax to suit your needs, please subscribe to all the relax mailing lists (see the open source infrastructure chapter for more details).  Announcements are sent to ``relax-announce at gna.org'' while ``relax-users at gna.org'' is the list where discussions about the usage of relax should be posted.  ``relax-devel at gna.org'' is where all discussions about the development of relax, including feature requests, program design, or any other discussions relating to relax's structure or code should be posted.  Finally, ``relax-commits at gna.org'' is where all changes to relax's code and documentation, as well as changes to the web pages, are automatically sent to.  Anyone interested in joining the project should subscribe to all four lists.
 
 
 
@@ -53,14 +53,14 @@ set shiftwidth=4 \\
 set expandtab
 \end{exampleenv}
 
-Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{`$\sim$/.vimrc'} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which is located in the path \texttt{`/usr/share/vim/ftplugin/'} or equivalent. It contains the two lines:
+Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{`$\sim$/.vimrc'} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which on GNU/Linux systems is located in the path \texttt{`/usr/share/vim/ftplugin/'}.  It contains the two lines
 
 \begin{exampleenv}
 " Python always uses a `tabstop' of 8. \\
 setlocal ts=8
 \end{exampleenv}
 
-If these lines are deleted, the bug will be removed.  Another way to fix the problem is to install newer versions of the run-time files (which will pretty much do the same thing).
+If these lines are deleted, the bug will be removed.  Another way to fix the problem is to install newer versions of the run-time files (which will do the same thing).
 
 
 
@@ -87,7 +87,7 @@ For both variables and functions, lower case with underscores between words is a
 % Classes.
 \subsubsection{Classes}
 
-For classes, relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the \texttt{self.relax.data} code.  All the data analysis specific code, generic code, interface code, etc uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.
+For classes, relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the \texttt{self.relax.data} code.  All the data analysis specific code, generic code, interface code, etc. uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.
 
 
 
@@ -102,7 +102,7 @@ If you are a relax developer and you have commit access to the repository, the f
 % Format of the commit logs.
 \subsection{Format of the commit logs}
 
-The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \texttt{svn log} is legible.  The first line of the commit log should be a short description or synopsis of the changes.  The second line should be blank.
+The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \mbox{\texttt{svn log}} is legible.  The first line of the commit log should be a short description or synopsis of the changes.  The second line should be blank.
 
 If the commit is a bug fix reported by someone else or if the commit originates from a patch posted by someone else, the next lines should be reserved for crediting.  The name of the person and their obfuscated email address (for example edward at nmr-relax.com) should be included in the message.
 
@@ -132,18 +132,17 @@ Once the sources are up to date, your changes can be can be converted into a tex
 
 \example{\$ svn diff > patch}
 
-and then send the file `patch' to the ``relax-devel at gna.org'' mailing list.  The patch is simply the output of the Unix diff command in the unified format.  Make sure you label in your post which revision the patch is for.  Also try to create a commit log message according to the format described above for one of the relax committers to copy and possibly modify.
+in the base relax directory and then send the file `patch' to the ``relax-devel at gna.org'' mailing list.  The patch is simply the output of the Unix diff command in the unified format.  Make sure you label in your post which revision the patch is for.  Also try to create a commit log message according to the format described above for one of the relax committers to copy and possibly modify.
 
 
 % Becoming a committer.
 \subsection{Becoming a committer}
 
-After proving oneself, anyone can become a relax developer and obtain commit access to the relax repository.  The main criteria for selection by the relax developers is to show good judgement, competence in producing good patches, compliance with the coding and commit log conventions, comportment on the mailing lists, not producing too many bugs, only taking on challenges which can be handled, and the skill in judging your own abilities.  After a number of patches have been submitted and accepted, any of the relax developers can propose that you receive commit access.  If a number of developers agree while no one says no, then commit access will be offered.
+After proving oneself, anyone can become a relax developer and obtain commit access to the relax repository.  The main criteria for selection by the relax developers is to show good judgement, competence in producing good patches, compliance with the coding and commit log conventions, comportment on the mailing lists, not producing too many bugs, only taking on challenges which can be handled, and the skill in judging your own abilities.  You will also need to have an understanding of the concepts of version control, specifically those relating to Subversion.  The SVN book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} contains all the version control information you will need.  After a number of patches have been submitted and accepted, any of the relax developers can propose that you receive commit access.  If a number of developers agree while no one says no, then commit access will be offered.
 
-One area where coding ability can be demonstrated is within the relax test suite.  The addition of tests, especially those where the relax internal data structures of \texttt{self.relax.data} are scrutinised, can be a good starting point for learning the structure of relax.  The beauty of the tests are that the introduction of bugs has no effect on normal program execution.  The relax test suite is an ideal proving ground.
+One area where coding ability can be demonstrated is within the relax test suite.  The addition of tests, especially those where the relax internal data structures of \texttt{self.relax.data} are scrutinised, can be a good starting point for learning the structure of relax.  The beauty of the tests is that the introduction of bugs has no effect on normal program execution.  The relax test suite is an ideal proving ground.
 
 If skills in only certain areas of relax development, for example in creation of the documentation, an understanding of C but not python, an understanding of solely the code of the user interface, or an understanding of the code specific to a certain type of data analysis methodology, then partial commit access may be granted.  Although you will have the ability to make modifications to any part of the repository, please make modifications only those areas for which you have permission.
-
 
 
 
@@ -189,7 +188,7 @@ in the base directory.  One command calling the program \texttt{`latex2html'} wi
 \subsection{Making distribution archives}
 
 \index{distribution|textbf}
-Two types of distribution archive can be created from the currently check out sources, the source and binary distributions.  To create the source distribution, type 
+Two types of distribution archive can be created from the currently checked out sources, the source and binary distributions.  To create the source distribution, type 
 
 \example{\$ scons source\_dist}
 
@@ -205,7 +204,7 @@ replacing `bugman' with your user name if you are a relax developer, or typing
 
 \example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.3 relax}
 
-otherwise.  Then build the binary distribution and send a message to the relax development mailing list.  If compilation does not work, please submit a bug to the bug tracker system at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.
+otherwise.  Then build the binary distribution and send a message to the relax development mailing list.  If compilation does not work, please submit a bug to the bug tracker system at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.  More information about donating binary distributions to the relax project is given in the open source infrastructure chapter.
 
 
 % Cleaning up.
