@@ -3,7 +3,7 @@
 
 \chapter{Development of relax}
 
-This chapter is written for developers or those who would like to extend the functionality of relax.  It is not required for using relax.  If you would like to modify relax to suit your needs, please subscribe to all three mailing lists.  $<$relax-users@gna.org$>$ is the list where discussions about the usage of relax should be posted.  $<$relax-devel@gna.org$>$ is where all discussions about the development of relax, including feature requests, program design, or any other discussions relating to relax's structure or code should be posted.  Finally, $<$relax-commits@gna.org$>$ is where all changes to relax's code and documentation, as well as changes to the webpages, are automatically sent to.  Anyone interested in joining the project should subscribe to this list as well.
+This chapter is written for developers or those who would like to extend the functionality of relax.  It is not required for using relax.  If you would like to modify relax to suit your needs, please subscribe to all the relax mailing lists (see the open source infrastructure chapter for more details).  Announcements are sent to ``relax-announce at gna.org'' while ``relax-users at gna.org'' is the list where discussions about the usage of relax should be posted.  ``relax-devel at gna.org'' is where all discussions about the development of relax, including feature requests, program design, or any other discussions relating to relax's structure or code should be posted.  Finally, ``relax-commits at gna.org'' is where all changes to relax's code and documentation, as well as changes to the web pages, are automatically sent to.  Anyone interested in joining the project should subscribe to this list as well.
 
 
 
@@ -12,21 +12,23 @@ This chapter is written for developers or those who would like to extend the fun
 
 \section{Version control using Subversion}
 
-The development of relax requires the use of the Subversion version control software \href{http://subversion.tigris.org/}{http://subversion.tigris.org/}.  Although the downloadable distribution archives can be modified, it is best that the most current and up to date revision, the \textit{head} revision, is modified instead.  More information about the basics of version control and how this is implemented in Subversion can be found in the subversion book located at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/}.
+The development of relax requires the use of the Subversion (SVN) version control software \href{http://subversion.tigris.org/}{http://subversion.tigris.org/}.  The source code to relax is stored in an SVN repository located at \href{http://svn.gna.org/svn/relax/}{http://svn.gna.org/svn/relax/}.  Every single change ever made to the program is recorded in this repository, for more information see the open source infrastructure chapter.
 
-If you are not currently a relax developer, you can checkout the head revision by typing
+Although the downloadable distribution archives can be modified, it is best that the most current and up to date revision, the \textit{head} revision, is modified instead.  More information about the basics of version control and how this is implemented in Subversion can be found in the Subversion book located at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/}.
+
+If you are not currently a relax developer you can check out the head revision, assuming that 1.2 is the current major version number, by typing
 
 \example{\$ svn co svn://svn.gna.org/svn/relax/1.2 relax}
 
-assuming that 1.2 is the current major version number.  You are able to modify the sources and update your version by typing
+Otherwise if you are a developer, type
+
+\example{\$ svn co svn+ssh://user\_name@svn.gna.org/svn/relax/1.2 relax}
+
+replacing \texttt{user\_name} with your Gna! login name.  If your version is out of data, it can be updated to the latest revision by typing
 
 \example{\$ svn up}
 
-but committing the change back to the repository is not allowed.  If you which to submit a patch of your changes, type
-
-\example{\$ svn diff > patch}
-
-and then send the patch to the $<$relax-devel@gna.org$>$ mailing list.  Make sure you label which revision the patch is for.
+Modifications can be made to these sources.
 
 
 
@@ -34,6 +36,9 @@ and then send the patch to the $<$relax-devel@gna.org$>$ mailing list.  Make sur
 %~~~~~~~~~~~~~~~~~~~~
 
 \section{Coding conventions}
+
+The following conventions must be followed at all times for any code to be accepted into the relax repository.
+
 
 
 % Indentation.
@@ -60,9 +65,73 @@ If these lines are deleted, the bug will be removed.  Another way to fix the pro
 
 % Doc strings.
 \subsection{Doc strings}
-
 \index{doc string|textbf}
+
 These should be set to no more than 100 characters long including all leading white space.  The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.  All functions should have a docstring describing in detail the structure and organisation of the code.
+
+
+% Variable, function, and class names.
+\subsection{Variable, function, and class names}
+
+Copy email!
+
+These naming conventions should be observed at all times.
+
+
+
+% Committing conventions.
+%~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section{Committing conventions}
+
+If you are a relax developer and you have commit access to the repository, the following conventions should be followed.
+
+
+% Format of the commit logs.
+\subsection{Format of the commit logs}
+
+The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \texttt{svn log} is legible.  The first line of the commit log should be a short description or synopsis of the changes.  The second line should be blank.
+
+If the commit is a bug fix reported by someone else or if the commit originates from a patch posted by someone else, the next lines should be reserved for crediting.  The name of the person and their obfusicated email address (for example edward at nmr-relax.com) should be included in the message.
+
+If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists, then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).  All relevant links should be included to allow easy navigation between the repository, mailing lists, bug tracker, etc.
+
+A full description containing all the details can follow.  This description should follow a blank line, can itself be sectioned using blank lines, and finally the log is terminated by one blank line at the end of the message.
+
+
+
+
+% Making changes.
+%~~~~~~~~~~~~~~~~
+
+\section{Making changes}
+
+
+% Patching.
+\subsection{Patching}
+
+Fixes and improvements to the relax source code can be posted to the relax-devel mailing list in the form of a patch.  The modified sources need be a checked out version of the one of the directories in the relax repository.  Prior to submitting a patch to the mailing list, your sources should be updated to include the most recent changes.  To do this, type
+
+\example{\$ svn up}
+
+and note the revision number.  The update may cause a conflict if changes added to the repository clash with your modifications.  If this occurs, see the Subversion book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} for details on how to resolve the conflict.
+
+Once the sources are up to date, your changes can be can be converted into a text file called a patch.  Using SVN, creating a patch is easy.  Just type
+
+\example{\$ svn diff > patch}
+
+and then send the file `patch' to the ``relax-devel at gna.org'' mailing list.  The patch is simply the output of the Unix diff command in the unified format.  Make sure you label in your post which revision the patch is for.  Also try to create a commit log message according to the format described above for one of the relax committers to copy and possibly modify.
+
+
+% Becoming a committer.
+\subsection{Becoming a committer}
+
+After proving oneself, anyone can become a relax developer and obtain commit access to the relax repository.  The main criteria for selection by the relax developers is to show good judgement, competence in producing good patches, compliance with the coding and commit log conventions, comportment on the mailing lists, not producing too many bugs, only taking on challenges which can be handled, and the skill in judging your own abilities.  After a number of patches have been submitted and accepted, any of the relax developers can propose that you receive commit access.  If a number of developers agree while no one says no, then commit access will be offered.
+
+One area where coding ability can be demonstrated is within the relax test suite.  The addition of tests, especially those where the relax internal data structures of \texttt{self.relax.data} are scrutinised, can be a good starting point for learning the structure of relax.  The beauty of the tests are that the introduction of bugs has no effect on normal program executiong.  The relax test suite is an ideal proving ground.
+
+If skills in only certain areas of relax development, for example in creation of the documentation, an understanding of C but not python, an understanding of solely the code of the user interface, or an understanding of the code specific to a certain type of data analysis methodology, then partial commit access may be granted.  Although you will have the ablity to make modifications to any part of the repository, please make modifications only those areas for which you have permission.
+
 
 
 
@@ -108,7 +177,7 @@ in the base directory.  One command calling the program \texttt{`latex2html'} wi
 \subsection{Making distribution archives}
 
 \index{distribution|textbf}
-Two types of distribution archive can be created from the currently checkout sources, the source and binary distributions.  To create the source distribution, type 
+Two types of distribution archive can be created from the currently check out sources, the source and binary distributions.  To create the source distribution, type 
 
 \example{\$ scons source\_dist}
 
@@ -116,7 +185,7 @@ while to create the binary distribution, whereby the C modules are compiled and 
 
 \example{\$ scons binary\_dist}
 
-If a binary distribution does not exist for your architecture, feel free to create it yourself and contribute the archive to be included on the download pages.  To do this, you will need to checkout the appropriate tagged branch from the relax subversion repository.  If the current stable release is called 1.2.3, then checkout that branch by typing
+If a binary distribution does not exist for your architecture, feel free to create it yourself and contribute the archive to be included on the download pages.  To do this, you will need to check out the appropriate tagged branch from the relax subversion repository.  If the current stable release is called 1.2.3, then check out that branch by typing
 
 \example{\$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.3 relax}
 
