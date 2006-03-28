@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -43,7 +43,7 @@ class Data:
         self.pdb = SpecificData()
 
         # Diffusion data.
-        self.diff = SpecificData()
+        self.diff = DiffTensorData()
 
         # The residue specific data.
         self.res = Residue()
@@ -131,6 +131,80 @@ class SpecificData(DictType):
         """Function for adding an empty container to the dictionary."""
 
         self[key] = Element()
+
+
+
+# Diffusion tensor specific data.
+#################################
+
+class DiffTensorData(SpecificData):
+    def __init__(self):
+        """Dictionary type class for the diffusion tensor data.
+
+        The non-default diffusion parameters are calculated on the fly.
+        """
+
+
+    def add_item(self, key):
+        """Function for adding an empty container to the dictionary.
+        
+        This overwrites the function from the parent class SpecificData.
+        """
+
+        self[key] = DiffTensorElement()
+
+
+
+class DiffTensorElement(Element):
+    def __init__(self):
+        """An empty data container for the diffusion tensor elements."""
+
+
+    def __getattr__(self, name):
+        """Function for calculating the parameters on the fly."""
+
+        # All tensor types.
+        ###################
+
+        # Diso.
+        if name == 'Diso':
+            return 1.0 / (6.0 * self.tm)
+
+
+        # Spheroidal diffusion.
+        #######################
+
+        # Dper = Diso - 1/3Da.
+        if name == 'Dper':
+            return self.Diso - 1.0/3.0 * self.Da
+
+        # Dpar = Diso + 2/3Da.
+        if name == 'Dpar':
+            return self.Diso + 2.0/3.0 * self.Da
+
+        # Dratio = Dpar / Dper.
+        if name == 'Dratio':
+            return self.Dpar / self.Dper
+
+        
+        # Ellipsoidal diffusion.
+        ########################
+
+        # Dx = Diso - 1/3Da(1 + 3Dr).
+        if name == 'Dx':
+            return self.Diso - 1.0/3.0 * self.Da * (1.0 + 3.0*self.Dr)
+
+        # Dy = Diso - 1/3Da(1 - 3Dr).
+        if name == 'Dy':
+            return self.Diso - 1.0/3.0 * self.Da * (1.0 - 3.0*self.Dr)
+
+        # Dz = Diso + 2/3Da.
+        if name == 'Dz':
+            return self.Diso + 2.0/3.0 * self.Da
+
+
+        # The attribute asked for does not exist.
+        raise AttributeError, name
 
 
 
