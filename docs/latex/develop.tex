@@ -63,6 +63,7 @@ setlocal ts=8
 If these lines are deleted, the bug will be removed.  Another way to fix the problem is to install newer versions of the run-time files (which will pretty much do the same thing).
 
 
+
 % Doc strings.
 \subsection{Doc strings}
 \index{doc string|textbf}
@@ -70,12 +71,23 @@ If these lines are deleted, the bug will be removed.  Another way to fix the pro
 These should be set to no more than 100 characters long including all leading white space.  The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.  All functions should have a docstring describing in detail the structure and organisation of the code.
 
 
+
 % Variable, function, and class names.
 \subsection{Variable, function, and class names}
 
-Copy email!
+In relax, a mixture of both camel case (eg. CamelCase) and lower case with underscores is used.  Despite the variablilty, there are fixed rules which should be adhered to.  These naming conventions should be observed at all times.
 
-These naming conventions should be observed at all times.
+
+% Variables and functions.
+\subsubsection{Variables and functions}
+
+For both variables and functions, lower case with underscores between words is always used.  This is for readability as the convention is much more fluent than camel case.  A few rare exceptions exist, an example is the Brownian diffusion tensor parameter of anisotropy, $\Diff_a$, which is referenced as \texttt{self.relax.data.diff[run].Da}.  As a rule though, all new variable or function names should be kept as lower case.
+
+
+% Classes.
+\subsubsection{Classes}
+
+For classes, relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the \texttt{self.relax.data} code.  All the data analysis specific code, generic code, interface code, etc uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.
 
 
 
