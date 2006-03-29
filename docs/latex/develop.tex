@@ -135,7 +135,7 @@ in the base relax directory.
 
 
 % Becoming a committer.
-\subsection{Becoming a committer}
+\subsection{Becoming a committer}\label{becoming a committer}
 
 After proving oneself, anyone can become a relax developer and obtain commit access to the relax repository.  The main criteria for selection by the relax developers is to show good judgement, competence in producing good patches, compliance with the coding and commit log conventions, comportment on the mailing lists, not producing too many bugs, only taking on challenges which can be handled, and the skill in judging your own abilities.  You will also need to have an understanding of the concepts of version control, specifically those relating to Subversion.  The SVN book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} contains all the version control information you will need.  After a number of patches have been submitted and accepted, any of the relax developers can propose that you receive commit access.  If a number of developers agree while no one says no, then commit access will be offered.
 
@@ -144,10 +144,22 @@ One area where coding ability can be demonstrated is within the relax test suite
 If skills in only certain areas of relax development, for example in creation of the documentation, an understanding of C but not python, an understanding of solely the code of the user interface, or an understanding of the code specific to a certain type of data analysis methodology, then partial commit access may be granted.  Although you will have the ability to make modifications to any part of the repository, please make modifications only those areas for which you have permission.
 
 
+% Joining Gna!
+\subsection{Joining Gna!}
+
+The first step in becoming a committer is to create a Gna! account.  Go to \href{https://gna.org/account/register.php}{https://gna.org/account/register.php} and type in a login name, password, real name, and the email address you would like to use.  You will then get an automatic email from Gna! which will contain a link to activate your registration.
+
+
+% Joining the relax project.
+\subsection{Joining the relax project}
+
+The second step in becoming a committer is to register to become a member of the relax project.  Go to the Gna! website (\href{https://gna.org/}{https://gna.org/}) and login.  Click on 'My Groups' to go to \href{https://gna.org/my/groups.php}{https://gna.org/my/groups.php}.  In the section 'Request for inclusion', type 'relax' and hit enter.  Select relax and write something in the comments.  If you have been approved (see section~\ref{becoming a committer}), then you will be added to the project.
+
+
 % Format of the commit logs.
 \subsection{Format of the commit logs}\label{commit log format}
 
-If you are a relax developer and you have commit access to the repository, the following conventions should be followed.
+If you are a relax developer and you have commit access to the repository, the following conventions should be followed for all commits.
 
 The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \mbox{\texttt{svn log}} is legible.  The first line of the commit log should be a short description or synopsis of the changes.  The second line should be blank.
 
