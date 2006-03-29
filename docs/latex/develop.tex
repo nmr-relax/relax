@@ -87,7 +87,7 @@ For both variables and functions, lower case with underscores between words is a
 % Classes.
 \subsubsection{Classes}
 
-For classes, relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the \texttt{self.relax.data} code.  All the data analysis specific code, generic code, interface code, etc. uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.
+For classes, relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the \texttt{self.relax.data} code.  All the data analysis specific code, generic code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.
 
 
 
@@ -103,16 +103,16 @@ For classes, relax uses a mix of camel case (for example all the \texttt{RelaxEr
 The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.  If your changes are a fix, make sure you have submitted a bug report to the bug tracker located at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} first.  See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.  Two methods can be used to generate the patch, either using the Unix command \texttt{diff} or using the Subversion program.  The resultant file \texttt{patch} of either the \texttt{diff} or \texttt{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list.  Please label within your post which version of relax you modified or which revision the patch is for.  Also try to create a commit log message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
 
 
-% Modification of official releases -- creating patchs with diff.
-\subsection{Modification of official releases -- creating patchs with diff}
+% Modification of official releases -- creating patches with diff.
+\subsection{Modification of official releases -- creating patches with diff}
 
 If your modifications have been made to the source code of one of the official relax releases (for example 1.2.2), then the Unix command \texttt{diff} can be used to create a patch.  A patch file is simply the output of the diff command used recursively and presented in the `unified' format.  Therefore two directories need to be compared.  If the original sources are located in the directory \texttt{relax\_orig} and the modified sources in \texttt{relax\_mod}, then the patch can be created by typing
 
 \example{\$ diff -ur relax\_orig relax\_mod > patch}
 
 
-% Modification of the latest sources -- creating patchs with Subversion.
-\subsection{Modification of the latest sources -- creating patchs with Subversion}
+% Modification of the latest sources -- creating patches with Subversion.
+\subsection{Modification of the latest sources -- creating patches with Subversion}
 
 If possible, changes to the latest sources is preferred.  Using the most up to date sources from the relax SVN repository will significantly aid the relax developers to incorporate your changes back into the main development line.  To check out the current development line, see section~\ref{svn repository} on page~\pageref{svn repository} for details.  Prior to submitting a patch to the mailing list, your sources should be updated to include the most recent changes.  To do this, type
 
@@ -153,7 +153,7 @@ The first step in becoming a committer is to create a Gna!\ account.  Go to \hre
 % Joining the relax project.
 \subsection{Joining the relax project}
 
-The second step in becoming a committer is to register to become a member of the relax project.  Go to the Gna!\ website (\href{https://gna.org/}{https://gna.org/}) and login.  Click on 'My Groups' to go to \href{https://gna.org/my/groups.php}{https://gna.org/my/groups.php}.  In the section 'Request for inclusion', type 'relax' and hit enter.  Select relax and write something in the comments.  If you have been approved (see section~\ref{becoming a committer}), then you will be added to the project.
+The second step in becoming a committer is to register to become a member of the relax project.  Go to the Gna!\ website (\href{https://gna.org/}{https://gna.org/}) and login.  Click on `My Groups' to go to \href{https://gna.org/my/groups.php}{https://gna.org/my/groups.php}.  In the section `Request for inclusion', type `relax' and hit enter.  Select relax and write something in the comments.  If you have been approved (see section~\ref{becoming a committer}), then you will be added to the project.
 
 
 % Format of the commit logs.
