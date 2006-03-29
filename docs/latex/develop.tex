@@ -91,28 +91,6 @@ For classes, relax uses a mix of camel case (for example all the \texttt{RelaxEr
 
 
 
-% Committing conventions.
-%~~~~~~~~~~~~~~~~~~~~~~~~
-
-\section{Committing conventions}
-
-If you are a relax developer and you have commit access to the repository, the following conventions should be followed.
-
-
-% Format of the commit logs.
-\subsection{Format of the commit logs}\label{commit log format}
-
-The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \mbox{\texttt{svn log}} is legible.  The first line of the commit log should be a short description or synopsis of the changes.  The second line should be blank.
-
-If the commit is a bug fix reported by someone else or if the commit originates from a patch posted by someone else, the next lines should be reserved for crediting.  The name of the person and their obfuscated email address (for example edward at nmr-relax.com) should be included in the message.
-
-If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists, then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).  All relevant links should be included to allow easy navigation between the repository, mailing lists, bug tracker, etc.  An example is bug \#5559 which is located at \href{https://gna.org/bugs/?func=detailitem\&item\_id=5559}{https://gna.org/bugs/?func=detailitem\&item\_id=5559} and the post to ``relax-devel at gna.org'' describing the fix to that bug which is located at \href{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}.
-
-A full description containing all the details can follow.  This description should follow a blank line, can itself be sectioned using blank lines, and finally the log is terminated by one blank line at the end of the message.
-
-
-
-
 % Submitting changes to the relax project.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -125,16 +103,16 @@ A full description containing all the details can follow.  This description shou
 The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.  If your changes are a fix, make sure you have submitted a bug report to the bug tracker located at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} first.  See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.  Two methods can be used to generate the patch, either using the Unix command \texttt{diff} or using the Subversion program.  The resultant file \texttt{patch} of either the \texttt{diff} or \texttt{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list.  Please label within your post which version of relax you modified or which revision the patch is for.  Also try to create a commit log message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
 
 
-% Modifications of official releases -- creating patchs with diff.
-\subsection{Modifications of the latest sources -- creating patchs with diff}
+% Modification of official releases -- creating patchs with diff.
+\subsection{Modification of official releases -- creating patchs with diff}
 
 If your modifications have been made to the source code of one of the official relax releases (for example 1.2.2), then the Unix command \texttt{diff} can be used to create a patch.  A patch file is simply the output of the diff command used recursively and presented in the `unified' format.  Therefore two directories need to be compared.  If the original sources are located in the directory \texttt{relax\_orig} and the modified sources in \texttt{relax\_mod}, then the patch can be created by typing
 
 \example{\$ diff -ur relax\_orig relax\_mod > patch}
 
 
-% Modifications of the latest sources -- creating patchs with Subversion.
-\subsection{Modifications of the latest sources -- creating patchs with Subversion}
+% Modification of the latest sources -- creating patchs with Subversion.
+\subsection{Modification of the latest sources -- creating patchs with Subversion}
 
 If possible, changes to the latest sources is preferred.  Using the most up to date sources from the relax SVN repository will significantly aid the relax developers to incorporate your changes back into the main development line.  To check out the current development line, see section~\ref{svn repository} on page~\pageref{svn repository} for details.  Prior to submitting a patch to the mailing list, your sources should be updated to include the most recent changes.  To do this, type
 
@@ -150,6 +128,12 @@ in the base relax directory.
 
 
 
+% Committers.
+%~~~~~~~~~~~~
+
+\section{Committers}
+
+
 % Becoming a committer.
 \subsection{Becoming a committer}
 
@@ -158,6 +142,20 @@ After proving oneself, anyone can become a relax developer and obtain commit acc
 One area where coding ability can be demonstrated is within the relax test suite.  The addition of tests, especially those where the relax internal data structures of \texttt{self.relax.data} are scrutinised, can be a good starting point for learning the structure of relax.  The beauty of the tests is that the introduction of bugs has no effect on normal program execution.  The relax test suite is an ideal proving ground.
 
 If skills in only certain areas of relax development, for example in creation of the documentation, an understanding of C but not python, an understanding of solely the code of the user interface, or an understanding of the code specific to a certain type of data analysis methodology, then partial commit access may be granted.  Although you will have the ability to make modifications to any part of the repository, please make modifications only those areas for which you have permission.
+
+
+% Format of the commit logs.
+\subsection{Format of the commit logs}\label{commit log format}
+
+If you are a relax developer and you have commit access to the repository, the following conventions should be followed.
+
+The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \mbox{\texttt{svn log}} is legible.  The first line of the commit log should be a short description or synopsis of the changes.  The second line should be blank.
+
+If the commit is a bug fix reported by someone else or if the commit originates from a patch posted by someone else, the next lines should be reserved for crediting.  The name of the person and their obfuscated email address (for example edward at nmr-relax.com) should be included in the message.
+
+If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists, then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).  All relevant links should be included to allow easy navigation between the repository, mailing lists, bug tracker, etc.  An example is bug \#5559 which is located at \href{https://gna.org/bugs/?func=detailitem\&item\_id=5559}{https://gna.org/bugs/?func=detailitem\&item\_id=5559} and the post to ``relax-devel at gna.org'' describing the fix to that bug which is located at \href{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}.
+
+A full description containing all the details can follow.  This description should follow a blank line, can itself be sectioned using blank lines, and finally the log is terminated by one blank line at the end of the message.
 
 
 
