@@ -22,9 +22,9 @@ If you are not currently a relax developer you can check out the head revision, 
 
 Otherwise if you are a developer, type
 
-\example{\$ svn co svn+ssh://user\_name@svn.gna.org/svn/relax/1.2 relax}
+\example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/1.2 relax}
 
-replacing \texttt{user\_name} with your Gna!\ login name.  If your version is out of date, it can be updated to the latest revision by typing
+replacing \texttt{xxxxx} with your Gna!\ login name.  If your version is out of date, it can be updated to the latest revision by typing
 
 \example{\$ svn up}
 
@@ -78,10 +78,12 @@ These should be set to no more than 100 characters long including all leading wh
 In relax, a mixture of both camel case (eg. CamelCase) and lower case with underscores is used.  Despite the variability, there are fixed rules which should be adhered to.  These naming conventions should be observed at all times.
 
 
+
 % Variables and functions.
 \subsubsection{Variables and functions}
 
 For both variables and functions, lower case with underscores between words is always used.  This is for readability as the convention is much more fluent than camel case.  A few rare exceptions exist, an example is the Brownian diffusion tensor parameter of anisotropy, $\Diff_a$, which is referenced as \texttt{self.relax.data.diff[run].Da}.  As a rule though, all new variable or function names should be kept as lower case.
+
 
 
 % Classes.
@@ -103,12 +105,14 @@ For classes, relax uses a mix of camel case (for example all the \texttt{RelaxEr
 The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.  If your changes are a fix, make sure you have submitted a bug report to the bug tracker located at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} first.  See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.  Two methods can be used to generate the patch, either using the Unix command \texttt{diff} or using the Subversion program.  The resultant file \texttt{patch} of either the \texttt{diff} or \texttt{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list.  Please label within your post which version of relax you modified or which revision the patch is for.  Also try to create a commit log message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
 
 
+
 % Modification of official releases -- creating patches with diff.
 \subsection{Modification of official releases -- creating patches with diff}
 
 If your modifications have been made to the source code of one of the official relax releases (for example 1.2.2), then the Unix command \texttt{diff} can be used to create a patch.  A patch file is simply the output of the diff command used recursively and presented in the `unified' format.  Therefore two directories need to be compared.  If the original sources are located in the directory \texttt{relax\_orig} and the modified sources in \texttt{relax\_mod}, then the patch can be created by typing
 
 \example{\$ diff -ur relax\_orig relax\_mod > patch}
+
 
 
 % Modification of the latest sources -- creating patches with Subversion.
@@ -118,7 +122,7 @@ If possible, changes to the latest sources is preferred.  Using the most up to d
 
 \example{\$ svn up}
 
-and note the revision number to include in your post.  The update may cause a conflict if changes added to the repository clash with your modifications.  If this occurs, see the Subversion book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} for details on how to resolve the conflict or submit a message to the relax-devel list.
+and note the revision number to include in your post.  The update may cause a conflict if changes added to the repository clash with your modifications.  If this occurs, see the Subversion book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} for details on how to resolve the conflict or submit a message to the rela\mbox{x-d}evel list.
 
 Once the sources are up to date, your changes can be can be converted into the patch text file.  Using SVN, creating a patch is easy.  Just type
 
@@ -144,10 +148,12 @@ One area where coding ability can be demonstrated is within the relax test suite
 If skills in only certain areas of relax development, for example in creation of the documentation, an understanding of C but not python, an understanding of solely the code of the user interface, or an understanding of the code specific to a certain type of data analysis methodology, then partial commit access may be granted.  Although you will have the ability to make modifications to any part of the repository, please make modifications only those areas for which you have permission.
 
 
+
 % Joining Gna!
 \subsection{Joining Gna!}
 
 The first step in becoming a committer is to create a Gna!\ account.  Go to \href{https://gna.org/account/register.php}{https://gna.org/account/register.php} and type in a login name, password, real name, and the email address you would like to use.  You will then get an automatic email from Gna!\ which will contain a link to activate your registration.
+
 
 
 % Joining the relax project.
@@ -156,10 +162,11 @@ The first step in becoming a committer is to create a Gna!\ account.  Go to \hre
 The second step in becoming a committer is to register to become a member of the relax project.  Go to the Gna!\ website (\href{https://gna.org/}{https://gna.org/}) and login.  Click on `My Groups' to go to \href{https://gna.org/my/groups.php}{https://gna.org/my/groups.php}.  In the section `Request for inclusion', type `relax' and hit enter.  Select relax and write something in the comments.  If you have been approved (see section~\ref{becoming a committer}), then you will be added to the project.
 
 
+
 % Format of the commit logs.
 \subsection{Format of the commit logs}\label{commit log format}
 
-If you are a relax developer and you have commit access to the repository, the following conventions should be followed for all commits.
+If you are a relax developer and you have commit access to the repository, the following conventions should be followed for all commit messages.
 
 The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \mbox{\texttt{svn log}} is legible.  The first line of the commit log should be a short description or synopsis of the changes.  The second line should be blank.
 
@@ -168,6 +175,57 @@ If the commit is a bug fix reported by someone else or if the commit originates 
 If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists, then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).  All relevant links should be included to allow easy navigation between the repository, mailing lists, bug tracker, etc.  An example is bug \#5559 which is located at \href{https://gna.org/bugs/?func=detailitem\&item\_id=5559}{https://gna.org/bugs/?func=detailitem\&item\_id=5559} and the post to ``relax-devel at gna.org'' describing the fix to that bug which is located at \href{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}.
 
 A full description containing all the details can follow.  This description should follow a blank line, can itself be sectioned using blank lines, and finally the log is terminated by one blank line at the end of the message.
+
+
+
+% Discussing major changes.
+\subsection{Discussing major changes}
+
+If you are contemplating major changes, either for a bug fix, to add a completely new feature or user function for your own work, to improve the behaviour of part the program, or any other potentially disruptive modifications, please discuss these ideas on the rela\mbox{x-d}evel mailing list.  If the planned changes have the potential to introduce problems, the creation of a private branch may be suggested.
+
+
+
+% Branches.
+\subsection{Branches}
+
+If a change is likely to be disruptive or cause breakages in the program, the use of your own temporary branch is recommended.  This private branch is a complete copy of one of the main development lines wherein you can make changes without disrupting the other developers.  Although called a private branch, every change is visible to all other developers and each commit will result in an automatic email to the relax-commit mailing list.  Other developers are even able to check out your branch and make modifications to it.  Private branches can also be used for testing ideas, if they do not work the branch can be deleted from the repository (in reality the branch will always exist between the revision numbers of its creation and deletion and can always be resurrected).  For example to create a branch from the main 1.2 development line called \texttt{molmol\_macros} whereby new Molmol macros are to be written, type
+
+\begin{exampleenv}
+\$ svn cp svn+ssh://xxxxx@svn.gna.org/svn/relax/1.2 $\backslash$ \\
+ svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros
+\end{exampleenv}
+
+replacing \texttt{xxxxx} with your login name.  You can then check out your private branch by typing
+
+\example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
+
+which will create a directory called \texttt{molmol\_macros} containing all the relax source files.  To have the files dumped into a different directory, type the name of that directory at the end of the last command.  Modifications can be made to this copy while normal development continues on the main line.  Once the desired changes have been made and reviewed, the changes which have occurred on the main line can be merged.  If development is taking a long time, then merging should occur on a regular basis to avoid large incompatible changes forming between the two branches.  For example to merge the changes which have occurred between the initial branch, say r2351 (revision number 2351), and r2378 of the main development line, type in the base directory of your branch
+
+\example{\$ svn merge -r2351:2378 svn+ssh://xxxxx@svn.gna.org/svn/relax/1.2 .}
+
+The differences will have been merged into your checked out copy.  If conflicts have occurred, see the Subversion book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} for information on how to resolve the problem.  Otherwise the changes to your branch can be committed
+
+\example{\$ svn ci}
+
+Make sure to include in your commit message the revision numbers which have been merged (cutting and pasting the command would be useful).  This is important because if new changes need to be merged again, for example up to r2401, then you will need to type
+
+\example{\$ svn merge -r2378:2401 svn+ssh://xxxxx@svn.gna.org/svn/relax/1.2 .}
+
+Note that the changes from r2351 to r2378 have not been merged for a second time, this is important and is the reason that the revision numbers need to be noted in the commit logs.  Once you have completed your modifications, you have merged all changes which have occurred in the main line, and the changes have been approved for merging back into the main line, then your branch can be merged.  First check out a copy of the main line,
+
+\example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/1.2 relax}
+
+or update a previously checked out version,
+
+\example{\$ svn up}
+
+Assuming the initial branch occurred at r2351 and the final modification occurred at r2430, then in the base directory of the checked out main line, type
+
+\example{\$ svn merge -r2351:2430 svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros .}
+
+and then check in the modifications.  Your changes will now be present in the main line.  The last step is to delete your private branch
+
+\example{\$ svn rm svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
 
 
 
@@ -180,11 +238,13 @@ A full description containing all the details can follow.  This description shou
 The Sconstruct build system was chosen over other build systems including `make' as it is a cross-platform build system which can be used in Unix, GNU/Linux, Mac OS X, and even Windows (the correct compilers are nevertheless required).  Various components of the program relax can be created using the Sconstruct utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file `sconstruct' in the base relax directory, which consists of python code, directs the operation of Sconstruct for the various functions.
 
 
+
 % C module compilation.
 \subsection{C module compilation}
 
 \index{C module compilation|textbf}
 As described in the installation chapter, typing \texttt{`scons'} in the base directory will create the shared objects which are imported into Python as modules.
+
 
 
 % Creation of the PDF manual.
@@ -198,6 +258,7 @@ To create the PDF version of the relax manual, type
 in the base directory.  Sconstruct will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \texttt{`docs/latex'} directory.  This is dependent on the programs \texttt{`latex'}, \texttt{`makeindex'}, \texttt{`dvips'}, and \texttt{`ps2pdf'} being located within the environment's path.
 
 
+
 % Creation of the HTML manual.
 \subsection{Creation of the HTML manual}
 
@@ -207,6 +268,7 @@ The HTML version of the relax manual is made by typing
 \example{\$ scons manual\_html}
 
 in the base directory.  One command calling the program \texttt{`latex2html'} will be executed which will create HTML pages from the \LaTeX\ sources.
+
 
 
 % Making distribution archives.
@@ -230,6 +292,7 @@ replacing `bugman' with your user name if you are a relax developer, or typing
 \example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.3 relax}
 
 otherwise.  Then build the binary distribution and send a message to the relax development mailing list.  If compilation does not work, please submit a bug to the bug tracker system at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.  More information about donating binary distributions to the relax project is given in the open source infrastructure chapter.
+
 
 
 % Cleaning up.
