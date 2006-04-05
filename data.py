@@ -55,7 +55,7 @@ class Data:
         self.run_types = []
 
         # Hybrid models.
-        self.hybrid_runs = []
+        self.hybrid_runs = {}
 
         # Global minimisation statistics.
         self.chi2 = {}

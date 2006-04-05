@@ -64,4 +64,4 @@ class Hybrid:
         self.relax.data.run_types.append('hybrid')
 
         # Create the data structure of the runs which form the hybrid.
-        self.relax.data.hybrid[hybrid] = runs
+        self.relax.data.hybrid_runs[hybrid] = runs
