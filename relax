@@ -72,6 +72,7 @@ from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
+from test_suite.test_suite import Test_suite
 from thread_classes import Threading, ThreadData
 import version
 
@@ -162,6 +163,18 @@ class Relax:
             # Execute the script.
             self.threading.execute()
 
+        # Execute the relax test suite
+        elif mode == 'test suite':
+            # Create a string to pass to the interpreter to print.
+            self.set_intro_string()
+
+            # Load the interpreter and turn intros on.
+            self.interpreter = Interpreter(self)
+            self.interpreter._on()
+
+            # Run the tests.
+            Test_suite(self)
+
         # Test mode.
         elif mode == 'test':
             self.test_mode()
@@ -183,6 +196,7 @@ class Relax:
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to sdtout and the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
+        parser.add_option('--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (this mode should not be invoked by a user)')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
 
@@ -236,6 +250,24 @@ class Relax:
         if options.version:
             mode = 'version'
 
+        # Run the relax tests.
+        elif options.test_suite:
+            # Make sure no script is supplied.
+            if self.script_file:
+                parser.error("a script should not be supplied when executing the test suite")
+
+            # Exclusive modes.
+            if options.test:
+                parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
+            elif options.thread:
+                parser.error("executing the relax test suite and running relax in thread mode are mutually exclusive")
+            elif options.licence:
+                parser.error("executing the relax test suite and running relax in licence mode are mutually exclusive")
+
+            # Set the mode.
+            mode = 'test suite'
+
+
         # Test mode.
         elif options.test:
             # Make sure no script is supplied.
@@ -243,7 +275,9 @@ class Relax:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive modes.
-            if options.thread:
+            if options.test_suite:
+                parser.error("the relax test mode and executing the test suite are mutually exclusive")
+            elif options.thread:
                 parser.error("the relax modes test and thread are mutually exclusive")
             elif options.licence:
                 parser.error("the relax modes test and licence are mutually exclusive")
@@ -273,7 +307,9 @@ class Relax:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive modes.
-            if options.test:
+            if options.test_suite:
+                parser.error("the relax licence mode and executing the test suite are mutually exclusive")
+            elif options.test:
                 parser.error("the relax modes licence and test are mutually exclusive")
             elif options.thread:
                 parser.error("the relax modes licence and thread are mutually exclusive")

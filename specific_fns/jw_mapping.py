@@ -426,7 +426,7 @@ class Jw_mapping(Common_functions):
 
             # Set the error.
             if error != None:
-                setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
+                setattr(self.relax.data.res[self.run][index], object_name+'_err', float(error))
 
 
     def set_frq(self, run=None, frq=None):

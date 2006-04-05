@@ -70,7 +70,7 @@ grace.view(file=`noe.agr') \\
 results.write(name, file=`results', dir=None, force=1) \\
  \\
 \# Save the program state. \\
-state.save(`save', force=1) \\
+state.save(`save', force=1)
 \end{exampleenv}
 
 
@@ -102,27 +102,27 @@ The next two commands
 
 \begin{exampleenv}
 noe.read(name, file=`ref.list', spectrum\_type=`ref') \\
-noe.read(name, file=`sat.list', spectrum\_type=`sat') \\
+noe.read(name, file=`sat.list', spectrum\_type=`sat')
 \end{exampleenv}
 
-load the peak heights of the reference and saturated NOE experiments (although the volume could be used instead).  The keyword argument \texttt{format} has not been specified, hence the default format of a Sparky \index{computer prgrams!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy \index{computer prgrams!XEasy} was used to analyse the spectra, the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string, while it is assumed that the 4$^\textrm{th}$ column contains either the peak height.
+load the peak heights of the reference and saturated NOE experiments (although the volume could be used instead).  The keyword argument \texttt{format} has not been specified, hence the default format of a Sparky\index{computer prgrams!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer prgrams!XEasy} was used to analyse the spectra, the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string, while it is assumed that the 4$^\textrm{th}$ column contains either the peak height.
 
 
 % Setting the errors.
 \subsubsection{Setting the errors}
 
-In this example, the errors where measured from the base plain noise.  The Sparky RMSD \index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 while in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
+In this example, the errors where measured from the base plain noise.  The Sparky RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 while in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
 
 \begin{exampleenv}
 noe.error(name, error=3600, spectrum\_type=`ref') \\
-noe.error(name, error=3000, spectrum\_type=`sat') \\
+noe.error(name, error=3000, spectrum\_type=`sat')
 \end{exampleenv}
 
 For the residue G114, the noise levels are significantly increased compared to the rest of the protein as the peak is located close to the water signal.  The higher errors for this residue are specified by the commands
 
 \begin{exampleenv}
 noe.error(name, error=122000, spectrum\_type=`ref', res\_num=114) \\
-noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114) \\
+noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114)
 \end{exampleenv}
 
 
@@ -181,12 +181,12 @@ Num  Name  Value                         Error
 % Viewing the results.
 \subsubsection{Viewing the results}
 
-Any two dimensional data set can be plotted in relax in conjunction with the program Grace (http://plasma-gate.weizmann.ac.il/Grace/).  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
+Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
 
 \begin{exampleenv}
 grace.write(name, y\_data\_type=`ref', file=`ref.agr', force=1) \\
 grace.write(name, y\_data\_type=`sat', file=`sat.agr', force=1) \\
-grace.write(name, y\_data\_type=`noe', file=`noe.agr', force=1) \\
+grace.write(name, y\_data\_type=`noe', file=`noe.agr', force=1)
 \end{exampleenv}
 
 create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.  The x-axis in all three defaults to the residue number.  As the x and y-axes can be any parameter, the command
@@ -198,14 +198,14 @@ would create a plot of the reference verses the saturated intensity, with one po
 \begin{exampleenv}
 grace.view(file=`ref.agr') \\
 grace.view(file=`sat.agr') \\
-grace.view(file=`noe.agr') \\
+grace.view(file=`noe.agr')
 \end{exampleenv}
 
 An example of the output, after modifying the axes, is shown in figure~\ref{fig: NOE plot}.
 
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, bb=0 0 792 612]{images/noe.eps.gz}}
-\caption[NOE plot]{A Grace \index{computer programs!Grace|textbf} plot of the NOE value and error against the residue number.  An example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
+\caption[NOE plot]{A Grace\index{computer programs!Grace|textbf} plot of the NOE value and error against the residue number.  An example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
 \end{figure}
 
 
@@ -274,7 +274,7 @@ grace.write(name, y\_data\_type=`rx', file=`rx.agr', force=1) \\
 grace.view(file=`rx.agr') \\
  \\
 \# Save the program state. \\
-state.save(file=name + `.save', force=1) \\
+state.save(file=name + `.save', force=1)
 \end{exampleenv}
 
 
@@ -285,7 +285,7 @@ The start of this sample script is very similar to that of the NOE calculation o
 
 \begin{exampleenv}
 name = `rx' \\
-run.create(name, `relax\_fit') \\
+run.create(name, `relax\_fit')
 \end{exampleenv}
 
 initialise the run by setting the variable \texttt{name} to \texttt{`rx'} to be used in the calls to user functions and creating a run called \texttt{`rx'} which is to relaxation curve fitting by the argument \texttt{`relax\_fit'}.  The sequence is extracted from a PDB file using the same command as the NOE calculation script
@@ -293,7 +293,7 @@ initialise the run by setting the variable \texttt{name} to \texttt{`rx'} to be 
 \example{pdb(name, `Ap4Aase\_new\_3.pdb', load\_seq=1)}
 \index{PDB}
 
-To load the peak intensities into relax, use the user function \texttt{relax\_fit.read}.  Two important keyword arguments to this command are the file name and the relaxation time period of the experiment in seconds.  It is assumed that the file format is that of a Sparky \index{computer prgrams!Sparky} peak list.  Using the format argument, this can be changed to XEasy \index{computer prgrams!XEasy} text window output format.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated.
+To load the peak intensities into relax, use the user function \texttt{relax\_fit.read}.  Two important keyword arguments to this command are the file name and the relaxation time period of the experiment in seconds.  It is assumed that the file format is that of a Sparky\index{computer prgrams!Sparky} peak list.  Using the format argument, this can be changed to XEasy\index{computer prgrams!XEasy} text window output format.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated.
 
 \begin{exampleenv}
 relax\_fit.read(name, file=`T2\_ncyc1.list', relax\_time=0.0176) \\
@@ -305,7 +305,7 @@ relax\_fit.read(name, file=`T2\_ncyc6.list', relax\_time=0.1056) \\
 relax\_fit.read(name, file=`T2\_ncyc9.list', relax\_time=0.1584) \\
 relax\_fit.read(name, file=`T2\_ncyc9b.list', relax\_time=0.1584) \\
 relax\_fit.read(name, file=`T2\_ncyc11.list', relax\_time=0.1936) \\
-relax\_fit.read(name, file=`T2\_ncyc11b.list', relax\_time=0.1936) \\
+relax\_fit.read(name, file=`T2\_ncyc11b.list', relax\_time=0.1936)
 \end{exampleenv}
 
 

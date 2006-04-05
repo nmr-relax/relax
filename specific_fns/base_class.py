@@ -155,7 +155,7 @@ class Common_functions:
 
             # Set the error.
             if error != None:
-                setattr(self.relax.data.res[self.run][index], object_name+'_error', float(error))
+                setattr(self.relax.data.res[self.run][index], object_name+'_err', float(error) * scaling)
 
             # Update the other parameters if necessary.
             self.set_update(run=run, param=param, index=index)

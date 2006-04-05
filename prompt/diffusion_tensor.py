@@ -181,8 +181,8 @@ class Diffusion_tensor:
         To specify the time in nanoseconds, set the 'time_scale' argument to 1e-9.  Alternative
         parameters can be used by changing the 'param_types' flag to the following integers
 
-            0:  tm   (Default),
-            1:  Diso,
+            0:  {tm}   (Default),
+            1:  {Diso},
 
         where
 
@@ -226,11 +226,11 @@ class Diffusion_tensor:
         round brackets, the elements of which are separated by commas.  Alternative sets of
         parameters, 'param_types', are
 
-            0:  (tm, Da, theta, phi)   (Default),
-            1:  (Diso, Da, theta, phi),
-            2:  (tm, Dratio, theta, phi),
-            3:  (Dpar, Dper, theta, phi),
-            4:  (Diso, Dratio, theta, phi),
+            0:  {tm, Da, theta, phi}   (Default),
+            1:  {Diso, Da, theta, phi},
+            2:  {tm, Dratio, theta, phi},
+            3:  {Dpar, Dper, theta, phi},
+            4:  {Diso, Dratio, theta, phi},
 
         where
 
@@ -310,9 +310,9 @@ class Diffusion_tensor:
         six.  A tuple is a type of data structure enclosed in round brackets, the elements of which
         are separated by commas.  Alternative sets of parameters, 'param_types', are
 
-            0:  (tm, Da, Dr, alpha, beta, gamma)   (Default),
-            1:  (Diso, Da, Dr, alpha, beta, gamma),
-            2:  (Dx, Dy, Dz, alpha, beta, gamma),
+            0:  {tm, Da, Dr, alpha, beta, gamma}   (Default),
+            1:  {Diso, Da, Dr, alpha, beta, gamma},
+            2:  {Dx, Dy, Dz, alpha, beta, gamma},
 
         where
 

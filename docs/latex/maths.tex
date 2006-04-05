@@ -18,7 +18,7 @@ A word of warning before reading this chapter, the topics covered here are quite
 % Chi-squared function.
 \subsection{Chi-squared function -- $\chi^2(\theta)$}
 
-For the minimisation \index{minimisation} of models, a chain of calculations using different theories is required.  At the highest level, the function which is actually minimised is the chi-squared function
+For the minimisation\index{minimisation} of models, a chain of calculations using different theories is required.  At the highest level, the function which is actually minimised is the chi-squared function
 \begin{equation} \label{eq: chi-squared}
  \chi^2(\theta) = \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2},
 \end{equation}
@@ -31,7 +31,7 @@ The significance of equation~\eqref{eq: chi-squared} is that the function return
 % Relaxation equations.
 \subsection{Relaxation equations -- $\Ri(\theta)$}
 
-The chi-squared equation is itself dependent on the relaxation equations through the back calculated relaxation data R$(\theta)$.  These data are the spin-lattice \index{relaxation rate!spin-lattice} , spin-spin \index{relaxation rate!spin-spin}, and cross-relaxation rates of \citet{Abragam61} and are respectively
+The chi-squared equation is itself dependent on the relaxation equations through the back calculated relaxation data R$(\theta)$.  These data are the spin-lattice\index{relaxation rate!spin-lattice} , spin-spin\index{relaxation rate!spin-spin}, and cross-relaxation rates of \citet{Abragam61} and are respectively
 \begin{align}
  \Rone(\theta) &= d \Big( J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H + \omega_X) \Big) + cJ(\omega_X),     \label{eq: R1} \\
  \Rtwo(\theta) &= \frac{d}{2} \Big( 4J(0) + J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H)                    \nonumber \\
@@ -45,7 +45,7 @@ The chi-squared equation is itself dependent on the relaxation equations through
  c = \frac{(\omega_H \Delta\sigma)^2}{3}, \label{eq: CSA constant}
 \end{gather}
 
-\noindent where $\mu_0$ is the permeability of free space, $\gH$ and $\gX$ are the gyromagnetic ratios of the $H$ and $X$ spins respectively, $\hbar$ is Plank's constant divided by $2\pi$, $r$ is the bond length, and $\Delta\sigma$ is the chemical shift anisotropy measured in ppm.  The cross-relaxation rate $\crossrate$ \index{relaxation rate!cross-relaxation|textbf} is related to the steady state NOE by the equation
+\noindent where $\mu_0$ is the permeability of free space, $\gH$ and $\gX$ are the gyromagnetic ratios of the $H$ and $X$ spins respectively, $\hbar$ is Plank's constant divided by $2\pi$, $r$ is the bond length, and $\Delta\sigma$ is the chemical shift anisotropy measured in ppm.  The cross-relaxation rate $\crossrate$\index{relaxation rate!cross-relaxation|textbf} is related to the steady state NOE by the equation
 \begin{equation} \label{eq: NOE}
  \mathrm{NOE}(\theta) = 1 + \frac{\gH}{\gX} \frac{\crossrate(\theta)}{\Rone(\theta)}.
 \end{equation}
@@ -97,7 +97,7 @@ In equations~\eqref{eq: J(w) model-free generic} and~\eqref{eq: J(w) model-free 
  C(\tau) = \frac{1}{5} \sum_{i=-k}^k c_i \cdot e^{-\tau/\tau_i},
 \end{equation}
 
-\noindent where the summation index $i$ ranges over the number of exponential terms within the correlation function.  This equation is generic in that it describes the diffusion \index{diffusion} of an ellipsoid, a spheroid, and a sphere.
+\noindent where the summation index $i$ ranges over the number of exponential terms within the correlation function.  This equation is generic in that it describes the diffusion\index{diffusion} of an ellipsoid, a spheroid, and a sphere.
 
 
 % Ellipsoid.
@@ -162,7 +162,7 @@ The five correlation times $\tau_i$ are
 
 % Spheroid.
 \subsubsection{Spheroid}
-The variable $k$ is equal to one in the case of the spheroid \index{diffusion!spheroid (axially symmetric)|textbf} defined by the parameter set \{$\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$\}, hence $i \in \{-1, 0, 1\}$.  The geometric parameters \{$\Diff_{iso}$, $\Diff_a$\} are defined as
+The variable $k$ is equal to one in the case of the spheroid\index{diffusion!spheroid (axially symmetric)|textbf} defined by the parameter set \{$\Diff_{iso}$, $\Diff_a$, $\theta$, $\phi$\}, hence $i \in \{-1, 0, 1\}$.  The geometric parameters \{$\Diff_{iso}$, $\Diff_a$\} are defined as
 \begin{subequations}
 \begin{align}
  & \Diff_{iso} = \tfrac{1}{3} (\Diff_\Par + 2\Diff_\Per),   \label{eq: Diso spheroid def} \\
@@ -202,7 +202,7 @@ The five correlation times $\tau_i$ are
 
 % Sphere.
 \subsubsection{Sphere}
-In the situation of a molecule diffusing as a sphere \index{diffusion!sphere (isotropic)|textbf} either described by the single parameter $\tau_m$ or $\Diff_{iso}$, the variable $k$ is equal to zero.  Therefore $i \in \{0\}$.  The single weight $c_0$ is equal to one, while the single correlation time $\tau_0$ is equivalent to the global tumbling time $\tau_m$ given by
+In the situation of a molecule diffusing as a sphere\index{diffusion!sphere (isotropic)|textbf} either described by the single parameter $\tau_m$ or $\Diff_{iso}$, the variable $k$ is equal to zero.  Therefore $i \in \{0\}$.  The single weight $c_0$ is equal to one, while the single correlation time $\tau_0$ is equivalent to the global tumbling time $\tau_m$ given by
 \begin{equation} \label{eq: sphere tau0}
  1/\tau_m = 6\Diff_{iso}.
 \end{equation}
@@ -221,7 +221,7 @@ In the situation of a molecule diffusing as a sphere \index{diffusion!sphere (is
 % The function value.
 \subsection{The function value}
 
-At the simplest level, all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data, this is given by equation~\eqref{eq: chi-squared}.  For certain algorithms, such a Simplex minimisation \index{minimisation techniques!simplex}, this single value suffices.
+At the simplest level, all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data, this is given by equation~\eqref{eq: chi-squared}.  For certain algorithms, such a Simplex minimisation\index{minimisation techniques!simplex}, this single value suffices.
 
 
 % The gradient.
@@ -239,7 +239,7 @@ The majority of minimisation algorithms, however, also require the gradient at t
 
 \noindent where $n$ is the total number of parameters in the model.
 
-An example of a powerful algorithm which requires both the value and gradient at given parameter values is BFGS quasi-Newton minimisation \index{minimisation techniques!BFGS}.
+An example of a powerful algorithm which requires both the value and gradient at given parameter values is BFGS quasi-Newton minimisation\index{minimisation techniques!BFGS}.
 
 
 % The Hessian.
@@ -255,7 +255,7 @@ A few algorithms, including the most powerful, require in addition the Hessian a
  \end{pmatrix}
 \end{equation}
 
-The most powerful minimisation algorithm, Newton minimisation \index{minimisation techniques!Newton}, requires the value, gradient, and Hessian at the given parameter values.
+The most powerful minimisation algorithm, Newton minimisation\index{minimisation techniques!Newton}, requires the value, gradient, and Hessian at the given parameter values.
 
 
 
