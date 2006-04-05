@@ -28,6 +28,28 @@ class Hybrid:
         self.relax = relax
 
 
+    def duplicate_data(self, new_run=None, old_run=None, instance=None):
+        """Function for duplicating data."""
+
+        # Test that the new run exists.
+        if not new_run in self.relax.data.run_names:
+            raise RelaxNoRunError, new_run
+
+        # Test that the old run exists.
+        if not old_run in self.relax.data.run_names:
+            raise RelaxNoRunError, old_run
+
+        # Test that the new run has no sequence loaded.
+        if self.relax.data.res.has_key(new_run):
+            raise RelaxSequenceError, new_run
+
+        # Reset the new run type to hybrid!
+        self.relax.data.run_types[self.relax.data.run_names.index(new_run)] = 'hybrid'
+
+        # Duplicate the hybrid run data structure.
+        self.relax.data.hybrid_runs[new_run] = self.relax.data.hybrid_runs[old_run]
+
+
     def hybridise(self, hybrid=None, runs=None):
         """Function for creating the hybrid run."""
 
@@ -65,3 +87,52 @@ class Hybrid:
 
         # Create the data structure of the runs which form the hybrid.
         self.relax.data.hybrid_runs[hybrid] = runs
+
+
+    def model_statistics(self, run=None, instance=None, min_instances=None, num_instances=None):
+        """Function for returning the values k, n, and chi2 of the hybrid.
+
+        k - number of parameters.
+        n - number of data points.
+        chi2 - the chi-squared value.
+        """
+
+        # Arguments.
+        self.run = run
+
+        # Initialise.
+        k_total = 0
+        n_total = 0
+        chi2_total = 0.0
+
+        # Specific setup.
+        for run in self.relax.data.hybrid_runs[self.run]:
+            # Function type.
+            function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
+            # Specific model statistics functions.
+            model_statistics = self.relax.specific_setup.setup('model_stats', function_type)
+
+            # Get the statistics.
+            k, n, chi2 = model_statistics(run, instance=0, min_instances=1)
+
+            # Sum the stats.
+            k_total = k_total + k
+            n_total = n_total + n
+            chi2_total = chi2_total + chi2
+
+        # Return the totals.
+        return k_total, n_total, chi2_total
+
+
+    def num_instances(self, run=None):
+        """Function for returning the number of instances, which for hybrids is always 1."""
+
+        return 1
+
+
+    def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):
+        """Dummy function."""
+
+        return
+

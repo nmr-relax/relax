@@ -85,6 +85,10 @@ class Specific_setup:
             if function_type == 'mf':
                 function = self.mf_funcs()
 
+            # Hybrid models.
+            if function_type == 'hybrid':
+                function = self.hybrid_funcs()
+
         # Catch all errors.
         except:
             function = None
@@ -103,8 +107,28 @@ class Specific_setup:
         return function
 
 
+    def hybrid_funcs(self):
+        """Hybrid model specific functions."""
+
+        # Duplicate data function.
+        if self.eqi == 'duplicate_data':
+            return self.relax.specific.hybrid.duplicate_data
+
+        # Model statistics.
+        if self.eqi == 'model_stats':
+            return self.relax.specific.hybrid.model_statistics
+
+        # Number of instances.
+        if self.eqi == 'num_instances':
+            return self.relax.specific.hybrid.num_instances
+
+        # Skip function.
+        if self.eqi == 'skip_function':
+            return self.relax.specific.hybrid.skip_function
+
+
     def jw_funcs(self):
-        """Model-free analysis specific functions."""
+        """Reduced spectral density mapping specific functions."""
 
         # Calculate function.
         if self.eqi == 'calculate':

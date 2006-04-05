@@ -69,20 +69,65 @@ class Model_selection:
         if len(self.runs) == 0:
             raise RelaxError, "No runs are availible for use in model selection."
 
-        # Store the first run.
+        # Initialise.
+        self.first_run = None
+        self.function_type = {}
+        self.duplicate_data = {}
+        self.count_num_instances = {}
+        self.model_statistics = {}
+        self.skip_function = {}
+
+        # Cross validation setup.
         if type(self.runs[0]) == list:
-            self.first_run = self.runs[0][0]
+            # No runs.
+            if len(run) == 0:
+                raise RelaxError, "No runs are availible for use in model selection in the array " + `run` + "."
+
+            # Loop over the runs.
+            for i in xrange(len(self.runs)):
+                for j in xrange(len(self.runs[i])):
+                    # The run name.
+                    run = self.runs[i][j]
+
+                    # Function type.
+                    self.function_type[run] = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+
+                    # Store the first non-hybrid run.
+                    if not self.first_run and self.function_type[run] != 'hybrid':
+                        self.first_run = run
+
+                    # Specific duplicate data, number of instances, and model statistics functions.
+                    self.duplicate_data[run] = self.relax.specific_setup.setup('duplicate_data', self.function_type[run])
+                    self.count_num_instances[run] = self.relax.specific_setup.setup('num_instances', self.function_type[run])
+                    self.model_statistics[run] = self.relax.specific_setup.setup('model_stats', self.function_type[run])
+                    self.skip_function[run] = self.relax.specific_setup.setup('skip_function', self.function_type[run])
+
+                    # Run various tests.
+                    self.tests(run)
+
+        # All other model selection setup.
         else:
-            self.first_run = self.runs[0]
+            # Loop over the runs.
+            for i in xrange(len(self.runs)):
+                # The run name.
+                run = self.runs[i]
 
-        # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.first_run)]
+                # Function type.
+                self.function_type[run] = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Specific duplicate data, number of instances, and model statistics functions.
-        self.duplicate_data = self.relax.specific_setup.setup('duplicate_data', self.function_type)
-        self.count_num_instances = self.relax.specific_setup.setup('num_instances', self.function_type)
-        self.model_statistics = self.relax.specific_setup.setup('model_stats', self.function_type)
-        self.skip_function = self.relax.specific_setup.setup('skip_function', self.function_type)
+                # Store the first non-hybrid run.
+                if not self.first_run and self.function_type[run] != 'hybrid':
+                    self.first_run = run
+
+                # Specific duplicate data, number of instances, and model statistics functions.
+                self.duplicate_data[run] = self.relax.specific_setup.setup('duplicate_data', self.function_type[run])
+                self.count_num_instances[run] = self.relax.specific_setup.setup('num_instances', self.function_type[run])
+                self.model_statistics[run] = self.relax.specific_setup.setup('model_stats', self.function_type[run])
+                self.skip_function[run] = self.relax.specific_setup.setup('skip_function', self.function_type[run])
+
+                # Run various tests.
+                self.tests(run)
+
 
         # Number of instances.  If the number is not the same for each run, then the minimum number will give the specific function self.model_statistics the
         # opportunity to consolidate the instances to the minimum number if possible.
@@ -96,7 +141,7 @@ class Model_selection:
                 # Loop over the nested array.
                 for j in xrange(len(self.runs[i])):
                     # Number of instances.
-                    num = self.count_num_instances(self.runs[i][j])
+                    num = self.count_num_instances[self.runs[i][j]](self.runs[i][j])
                     self.num_instances[i].append(num)
 
                     # Minimum.
@@ -105,30 +150,12 @@ class Model_selection:
 
             else:
                 # Number of instances.
-                num = self.count_num_instances(self.runs[i])
+                num = self.count_num_instances[self.runs[i]](self.runs[i])
                 self.num_instances.append(num)
 
                 # Minimum.
                 if num < self.min_instances:
                     self.min_instances = num
-
-        # Tests for all runs.
-        for run in self.runs:
-            # An array of arrays - for cross validation model selection.
-            if type(run) == list:
-                # No runs.
-                if len(run) == 0:
-                    raise RelaxError, "No runs are availible for use in model selection in the array " + `run` + "."
-
-                # Loop over the nested array.
-                for run2 in run:
-                    # Run various tests.
-                    self.tests(run2)
-
-            # runs is a normal array.
-            else:
-                # Run various tests.
-                self.tests(run)
 
 
         # Loop over the number of instances.
@@ -145,20 +172,20 @@ class Model_selection:
             for j in xrange(len(self.runs)):
                 # Single-item-out cross validation.
                 if method == 'CV':
-                    # Reassign the run.
-                    run = self.runs[j][0]
-
                     # Sum of chi-squared values.
                     sum_crit = 0.0
 
                     # Loop over the validation samples and sum the chi-squared values.
                     for k in xrange(len(self.runs[j])):
+                        # Reassign the run.
+                        run = self.runs[j][k]
+
                         # Skip function.
-                        if self.skip_function(run=self.runs[j][k], instance=i):
+                        if self.skip_function[run](run=run, instance=i):
                             continue
 
                         # Get the model statistics.
-                        k, n, chi2 = self.model_statistics(run=self.runs[j][k], instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j][k])
+                        k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j][k])
 
                         # Missing data sets.
                         if k == None or n == None or chi2 == None:
@@ -176,11 +203,11 @@ class Model_selection:
                     run = self.runs[j]
 
                     # Skip function.
-                    if self.skip_function(run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j]):
+                    if self.skip_function[run](run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j]):
                         continue
 
                     # Get the model statistics.
-                    k, n, chi2 = self.model_statistics(run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j])
+                    k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j])
 
                     # Missing data sets.
                     if k == None or n == None or chi2 == None:
@@ -202,7 +229,7 @@ class Model_selection:
 
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
             if best_model != None:
-                self.duplicate_data(new_run=modsel_run, old_run=best_model, instance=i)
+                self.duplicate_data[best_model](new_run=modsel_run, old_run=best_model, instance=i)
 
 
     def aic(self, chi2, k, n):
@@ -264,9 +291,14 @@ class Model_selection:
         # Find the index of the run.
         index = self.relax.data.run_names.index(run)
 
-        # Test if the function type is the same as 'self.function_type'.
-        if self.relax.data.run_types[index] != self.function_type:
+        # Test if the function type is the same as 'self.function_type' (skip the test if self.function_type is a hybrid).
+        #if self.function_type != 'hybrid' and self.relax.data.run_types[index] != self.function_type:
+        if self.relax.data.run_types[index] != self.function_type[run]:
             raise RelaxError, "The runs supplied are not all of the same function type."
+
+        # Skip all tests if the model is a hybrid.
+        if self.relax.data.run_types[index] == 'hybrid':
+            return
 
         # Test if sequence data is loaded.
         if not self.relax.data.res.has_key(run):

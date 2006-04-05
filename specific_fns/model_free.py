@@ -2507,6 +2507,10 @@ class Model_free(Common_functions):
                 global_stats = 0
                 break
 
+        # Determine the parameter set type.
+        self.param_set = self.determine_param_set_type()
+
+        # Sequence specific data.
         # Statistics for a single residue.
         if not global_stats and not combine:
             # Missing data sets.
