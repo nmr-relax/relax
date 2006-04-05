@@ -170,4 +170,4 @@ class Run:
                     raise RelaxListStrError, ('runs', runs)
 
         # Execute the functional code.
-        self.__relax__.generic.runs.hybridise(hybrid=hybrid, runs=runs)
+        self.__relax__.specific.hybrid.hybridise(hybrid=hybrid, runs=runs)

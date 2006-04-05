@@ -53,6 +53,10 @@ class Specific_setup:
         if function_type == 'mf':
             string = "Model-free analysis"
 
+        # Hybrid models.
+        if function_type == 'hybrid':
+            string = "hybrid models"
+
         return string
 
 

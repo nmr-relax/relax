@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,6 +21,7 @@
 ###############################################################################
 
 
+from hybrid import Hybrid
 from jw_mapping import Jw_mapping
 from model_free import Model_free
 from noe import Noe
@@ -36,6 +37,7 @@ class Specific:
         self.relax = relax
 
         # Set up all the functions
+        self.hybrid = Hybrid(self.relax)
         self.jw_mapping = Jw_mapping(self.relax)
         self.model_free = Model_free(self.relax)
         self.noe = Noe(self.relax)
