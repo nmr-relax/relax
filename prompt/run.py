@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -115,3 +115,59 @@ class Run:
 
         # Execute the functional code.
         self.__relax__.generic.runs.delete(run=run)
+
+
+    def hybridise(self, hybrid=None, runs=None):
+        """Function for a hybridised run from a number of other runs.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        hybrid:  The name of the hybrid run to create.
+
+        runs:  An array containing the names of all runs to hybridise.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function can be used to construct hybrid models.  An example of the use of a
+        hybrid model could be if the protein consists of two independent domains.  These two domains
+        could be analysed separately, each having their own optimised diffusion tensors.  The
+        N-terminal domain run could be called 'N_sphere' while the C-terminal domain could be called
+        'C_ellipsoid'.  These two runs could then be hybridised into a run called 'mixed model' by
+        typing
+
+        relax> run.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
+        relax> run.hybridise(hybrid='mixed model', runs=['N_sphere', 'C_ellipsoid'])
+
+        This hybrid run can then be compared via model selection to a run where the entire protein
+        is assumed to have a single diffusion tensor.
+
+        The only requirements for runs to be hybridised is that, at minimum, a sequence has been
+        loaded, that the sequence for all hybridised runs is the same, and that no residue is
+        allowed to be selected in two or more runs.  The last condition is to ensure that overlap
+        does not occur to allow statistically significant comparisons.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "run.hybridise("
+            text = text + "hybrid=" + `hybrid`
+            text = text + ", runs=" + `runs` + ")"
+            print text
+
+        # The hybrid argument.
+        if hybrid != None and type(hybrid) != str:
+            raise RelaxNoneStrError, ('hybrid run', hybrid)
+
+        # Runs.
+        if type(runs) != list:
+            raise RelaxNoneListError, ('runs', runs)
+        else:
+            for name in runs:
+                if type(name) != str:
+                    raise RelaxListStrError, ('runs', runs)
+
+        # Execute the functional code.
+        self.__relax__.generic.runs.hybridise(hybrid=hybrid, runs=runs)
