@@ -27,6 +27,7 @@ import sys
 
 # Import the tests.
 from diffusion_tensor import Diffusion_tensor
+from generic import Generic
 from model_free import Mf
 from relax_fit import Relax_fit
 from run_create import Run_create
@@ -135,6 +136,22 @@ class Test_suite:
 
         # Execute the tests.
         self.exec_tests(self.mf_test_array)
+
+
+        # Generic tests.
+        ################
+
+        # Heading.
+        self.heading("The generic tests")
+
+        # Initialise the array containing each test element.
+        self.generic_test_array = []
+
+        # The tests.
+        self.generic_test_array.append(Generic(self.relax, 'value_diff'))
+
+        # Execute the tests.
+        self.exec_tests(self.generic_test_array)
 
 
         # Summary.
@@ -260,6 +277,17 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.mf_test_array:
+            self.summary_line(test)
+
+
+        # Generic tests.
+        ################
+
+        # Heading.
+        sys.stdout.write("\nThe generic tests:\n")
+
+        # Loop over the tests.
+        for test in self.generic_test_array:
             self.summary_line(test)
 
 

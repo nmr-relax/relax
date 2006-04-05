@@ -21,5 +21,10 @@
 ###############################################################################
 
 
-__all__ = ['test',
-           'run_create']
+__all__ = ['test_suite',
+           'diffusion_tensor',
+           'generic.py',
+           'model_free',
+           'relax_fit',
+           'run_create',
+           'sequence']
