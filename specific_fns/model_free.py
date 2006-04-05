@@ -4777,174 +4777,45 @@ class Model_free(Common_functions):
         # Errors.
         #########
 
-        # Skip this section and the next if no simulations have been setup.
-        if not hasattr(self.relax.data, 'sim_state'):
-            return
-        elif self.relax.data.sim_state[self.run] == 0:
-            return
-
-        # Diffusion parameters.
-        diff_params = None
-        if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
-            # Sphere.
-            if self.relax.data.diff[self.run].type == 'sphere':
-                diff_params = [None]
-
-            # Spheroid.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
-                diff_params = [None, None, None, None]
-
-            # Ellipsoid.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
-                diff_params = [None, None, None, None, None, None]
-
-            # Diffusion parameter errors.
-            if self.param_set == 'diff' or self.param_set == 'all':
-                # Sphere.
-                if self.relax.data.diff[self.run].type == 'sphere' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
-                    diff_params = [`self.relax.data.diff[self.run].tm_err`]
-
-                # Spheroid.
-                elif self.relax.data.diff[self.run].type == 'spheroid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
-                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_err * 360 / (2.0 * pi)`]
-
-                # Ellipsoid.
-                elif self.relax.data.diff[self.run].type == 'ellipsoid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
-                    diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].Dr_err`, `self.relax.data.diff[self.run].alpha_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_err * 360 / (2.0 * pi)`]
-
-        # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Reassign data structure.
-            data = self.relax.data.res[self.run][i]
-
-            # Unselected residues.
-            if not data.select:
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='error')
-                continue
-
-            # Model details.
-            model = None
-            if hasattr(data, 'model'):
-                model = data.model
-
-            equation = None
-            if hasattr(data, 'equation'):
-                equation = data.equation
-
-            params = None
-            if hasattr(data, 'params'):
-                params = replace(`data.params`, ' ', '')
-
-            # S2.
-            s2 = None
-            if hasattr(data, 's2_err') and data.s2_err != None:
-                s2 = data.s2_err / self.return_conversion_factor('s2')
-
-            # S2f.
-            s2f = None
-            if hasattr(data, 's2f_err') and data.s2f_err != None:
-                s2f = data.s2f_err / self.return_conversion_factor('s2f')
-
-            # S2s.
-            s2s = None
-            if hasattr(data, 's2s_err') and data.s2s_err != None:
-                s2s = data.s2s_err / self.return_conversion_factor('s2s')
-
-            # tm.
-            local_tm = None
-            if hasattr(data, 'tm_err') and data.tm_err != None:
-                local_tm = data.tm_err / self.return_conversion_factor('tm')
-
-            # te.
-            te = None
-            if hasattr(data, 'te_err') and data.te_err != None:
-                te = data.te_err / self.return_conversion_factor('te')
-
-            # tf.
-            tf = None
-            if hasattr(data, 'tf_err') and data.tf_err != None:
-                tf = data.tf_err / self.return_conversion_factor('tf')
-
-            # ts.
-            ts = None
-            if hasattr(data, 'ts_err') and data.ts_err != None:
-                ts = data.ts_err / self.return_conversion_factor('ts')
-
-            # Rex.
-            rex = None
-            if hasattr(data, 'rex_err') and data.rex_err != None:
-                rex = data.rex_err / self.return_conversion_factor('rex')
-
-            # Bond length.
-            r = None
-            if hasattr(data, 'r_err') and data.r_err != None:
-                r = data.r_err / self.return_conversion_factor('r')
-
-            # CSA.
-            csa = None
-            if hasattr(data, 'csa_err') and data.csa_err != None:
-                csa = data.csa_err / self.return_conversion_factor('csa')
-
-            # Relaxation data and errors.
-            ri = []
-            ri_error = []
-            for i in xrange(self.relax.data.num_ri[self.run]):
-                ri.append(None)
-                ri_error.append(None)
-
-            # XH vector.
-            xh_vect = None
-            if hasattr(data, 'xh_vect'):
-                xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
-
-            # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
-
-
-        # Simulation values.
-        ####################
-
-        # Loop over the simulations.
-        for i in xrange(self.relax.data.sim_number[self.run]):
+        # Only invoke this section if errors exist.
+        if self.has_errors():
             # Diffusion parameters.
             diff_params = None
             if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
-                # Diffusion parameter simulation values.
+                # Sphere.
+                if self.relax.data.diff[self.run].type == 'sphere':
+                    diff_params = [None]
+
+                # Spheroid.
+                elif self.relax.data.diff[self.run].type == 'spheroid':
+                    diff_params = [None, None, None, None]
+
+                # Ellipsoid.
+                elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                    diff_params = [None, None, None, None, None, None]
+
+                # Diffusion parameter errors.
                 if self.param_set == 'diff' or self.param_set == 'all':
                     # Sphere.
-                    if self.relax.data.diff[self.run].type == 'sphere':
-                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`]
+                    if self.relax.data.diff[self.run].type == 'sphere' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
+                        diff_params = [`self.relax.data.diff[self.run].tm_err`]
 
                     # Spheroid.
-                    elif self.relax.data.diff[self.run].type == 'spheroid':
-                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_sim[i] * 360 / (2.0 * pi)`]
+                    elif self.relax.data.diff[self.run].type == 'spheroid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
+                        diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_err * 360 / (2.0 * pi)`]
 
                     # Ellipsoid.
-                    elif self.relax.data.diff[self.run].type == 'ellipsoid':
-                        diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].Dr_sim[i]`, `self.relax.data.diff[self.run].alpha_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_sim[i] * 360 / (2.0 * pi)`]
-
-                # No simulation values.
-                else:
-                    # Sphere.
-                    if self.relax.data.diff[self.run].type == 'sphere':
-                        diff_params = [None]
-
-                    # Spheroid.
-                    elif self.relax.data.diff[self.run].type == 'spheroid':
-                        diff_params = [None, None, None, None]
-
-                    # Ellipsoid.
-                    elif self.relax.data.diff[self.run].type == 'ellipsoid':
-                        diff_params = [None, None, None, None, None, None]
+                    elif self.relax.data.diff[self.run].type == 'ellipsoid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
+                        diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].Dr_err`, `self.relax.data.diff[self.run].alpha_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_err * 360 / (2.0 * pi)`]
 
             # Loop over the sequence.
-            for j in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(self.relax.data.res[self.run])):
                 # Reassign data structure.
-                data = self.relax.data.res[self.run][j]
+                data = self.relax.data.res[self.run][i]
 
                 # Unselected residues.
                 if not data.select:
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='sim_'+`i`)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='error')
                     continue
 
                 # Model details.
@@ -4960,114 +4831,62 @@ class Model_free(Common_functions):
                 if hasattr(data, 'params'):
                     params = replace(`data.params`, ' ', '')
 
-                # Selected simulation.
-                if self.param_set == 'diff' or self.param_set == 'all':
-                    select_sim = self.relax.data.select_sim[i]
-                else:
-                    select_sim = data.select_sim[i]
-
                 # S2.
                 s2 = None
-                if hasattr(data, 's2_sim') and data.s2_sim[i] != None:
-                    s2 = data.s2_sim[i] / self.return_conversion_factor('s2')
+                if hasattr(data, 's2_err') and data.s2_err != None:
+                    s2 = data.s2_err / self.return_conversion_factor('s2')
 
                 # S2f.
                 s2f = None
-                if hasattr(data, 's2f_sim') and data.s2f_sim[i] != None:
-                    s2f = data.s2f_sim[i] / self.return_conversion_factor('s2f')
+                if hasattr(data, 's2f_err') and data.s2f_err != None:
+                    s2f = data.s2f_err / self.return_conversion_factor('s2f')
 
                 # S2s.
                 s2s = None
-                if hasattr(data, 's2s_sim') and data.s2s_sim[i] != None:
-                    s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
+                if hasattr(data, 's2s_err') and data.s2s_err != None:
+                    s2s = data.s2s_err / self.return_conversion_factor('s2s')
 
                 # tm.
                 local_tm = None
-                if hasattr(data, 'tm_sim') and data.tm_sim[i] != None:
-                    local_tm = data.tm_sim[i] / self.return_conversion_factor('tm')
+                if hasattr(data, 'tm_err') and data.tm_err != None:
+                    local_tm = data.tm_err / self.return_conversion_factor('tm')
 
                 # te.
                 te = None
-                if hasattr(data, 'te_sim') and data.te_sim[i] != None:
-                    te = data.te_sim[i] / self.return_conversion_factor('te')
+                if hasattr(data, 'te_err') and data.te_err != None:
+                    te = data.te_err / self.return_conversion_factor('te')
 
                 # tf.
                 tf = None
-                if hasattr(data, 'tf_sim') and data.tf_sim[i] != None:
-                    tf = data.tf_sim[i] / self.return_conversion_factor('tf')
+                if hasattr(data, 'tf_err') and data.tf_err != None:
+                    tf = data.tf_err / self.return_conversion_factor('tf')
 
                 # ts.
                 ts = None
-                if hasattr(data, 'ts_sim') and data.ts_sim[i] != None:
-                    ts = data.ts_sim[i] / self.return_conversion_factor('ts')
+                if hasattr(data, 'ts_err') and data.ts_err != None:
+                    ts = data.ts_err / self.return_conversion_factor('ts')
 
                 # Rex.
                 rex = None
-                if hasattr(data, 'rex_sim') and data.rex_sim[i] != None:
-                    rex = data.rex_sim[i] / self.return_conversion_factor('rex')
+                if hasattr(data, 'rex_err') and data.rex_err != None:
+                    rex = data.rex_err / self.return_conversion_factor('rex')
 
                 # Bond length.
                 r = None
-                if hasattr(data, 'r_sim') and data.r_sim[i] != None:
-                    r = data.r_sim[i] / self.return_conversion_factor('r')
+                if hasattr(data, 'r_err') and data.r_err != None:
+                    r = data.r_err / self.return_conversion_factor('r')
 
                 # CSA.
                 csa = None
-                if hasattr(data, 'csa_sim') and data.csa_sim[i] != None:
-                    csa = data.csa_sim[i] / self.return_conversion_factor('csa')
-
-                # Minimisation details.
-                try:
-                    # Global minimisation results.
-                    if self.param_set == 'diff' or self.param_set == 'all':
-                        chi2 = self.relax.data.chi2_sim[self.run][i]
-                        iter = self.relax.data.iter_sim[self.run][i]
-                        f = self.relax.data.f_count_sim[self.run][i]
-                        g = self.relax.data.g_count_sim[self.run][i]
-                        h = self.relax.data.h_count_sim[self.run][i]
-                        if type(self.relax.data.warning_sim[self.run][i]) == str:
-                            warn = replace(self.relax.data.warning_sim[self.run][i], ' ', '_')
-                        else:
-                            warn = self.relax.data.warning_sim[self.run][i]
-
-                    # Individual residue results.
-                    else:
-                        chi2 = data.chi2_sim[i]
-                        iter = data.iter_sim[i]
-                        f = data.f_count_sim[i]
-                        g = data.g_count_sim[i]
-                        h = data.h_count_sim[i]
-                        if type(data.warning_sim[i]) == str:
-                            warn = replace(data.warning_sim[i], ' ', '_')
-                        else:
-                            warn = data.warning_sim[i]
-
-                # No minimisation details.
-                except AttributeError:
-                    chi2 = None
-                    iter = None
-                    f = None
-                    g = None
-                    h = None
-                    warn = None
+                if hasattr(data, 'csa_err') and data.csa_err != None:
+                    csa = data.csa_err / self.return_conversion_factor('csa')
 
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                for k in xrange(self.relax.data.num_ri[self.run]):
-                    # Find the residue specific data corresponding to k.
-                    index = None
-                    for l in xrange(data.num_ri):
-                        if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
-                            index = l
-
-                    # Data exists for this data type.
-                    try:
-                        ri.append(`data.relax_sim_data[i][index]`)
-                        ri_error.append(`data.relax_error[index]`)
-                    except:
-                        ri.append(None)
-                        ri_error.append(None)
+                for i in xrange(self.relax.data.num_ri[self.run]):
+                    ri.append(None)
+                    ri_error.append(None)
 
                 # XH vector.
                 xh_vect = None
@@ -5075,4 +4894,183 @@ class Model_free(Common_functions):
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+
+
+        # Simulation values.
+        ####################
+
+        # Only invoke this section if simulations have been setup.
+        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[self.run]:
+            # Loop over the simulations.
+            for i in xrange(self.relax.data.sim_number[self.run]):
+                # Diffusion parameters.
+                diff_params = None
+                if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
+                    # Diffusion parameter simulation values.
+                    if self.param_set == 'diff' or self.param_set == 'all':
+                        # Sphere.
+                        if self.relax.data.diff[self.run].type == 'sphere':
+                            diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`]
+
+                        # Spheroid.
+                        elif self.relax.data.diff[self.run].type == 'spheroid':
+                            diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_sim[i] * 360 / (2.0 * pi)`]
+
+                        # Ellipsoid.
+                        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                            diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].Dr_sim[i]`, `self.relax.data.diff[self.run].alpha_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_sim[i] * 360 / (2.0 * pi)`]
+
+                    # No simulation values.
+                    else:
+                        # Sphere.
+                        if self.relax.data.diff[self.run].type == 'sphere':
+                            diff_params = [None]
+
+                        # Spheroid.
+                        elif self.relax.data.diff[self.run].type == 'spheroid':
+                            diff_params = [None, None, None, None]
+
+                        # Ellipsoid.
+                        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                            diff_params = [None, None, None, None, None, None]
+
+                # Loop over the sequence.
+                for j in xrange(len(self.relax.data.res[self.run])):
+                    # Reassign data structure.
+                    data = self.relax.data.res[self.run][j]
+
+                    # Unselected residues.
+                    if not data.select:
+                        self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='sim_'+`i`)
+                        continue
+
+                    # Model details.
+                    model = None
+                    if hasattr(data, 'model'):
+                        model = data.model
+
+                    equation = None
+                    if hasattr(data, 'equation'):
+                        equation = data.equation
+
+                    params = None
+                    if hasattr(data, 'params'):
+                        params = replace(`data.params`, ' ', '')
+
+                    # Selected simulation.
+                    if self.param_set == 'diff' or self.param_set == 'all':
+                        select_sim = self.relax.data.select_sim[i]
+                    else:
+                        select_sim = data.select_sim[i]
+
+                    # S2.
+                    s2 = None
+                    if hasattr(data, 's2_sim') and data.s2_sim[i] != None:
+                        s2 = data.s2_sim[i] / self.return_conversion_factor('s2')
+
+                    # S2f.
+                    s2f = None
+                    if hasattr(data, 's2f_sim') and data.s2f_sim[i] != None:
+                        s2f = data.s2f_sim[i] / self.return_conversion_factor('s2f')
+
+                    # S2s.
+                    s2s = None
+                    if hasattr(data, 's2s_sim') and data.s2s_sim[i] != None:
+                        s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
+
+                    # tm.
+                    local_tm = None
+                    if hasattr(data, 'tm_sim') and data.tm_sim[i] != None:
+                        local_tm = data.tm_sim[i] / self.return_conversion_factor('tm')
+
+                    # te.
+                    te = None
+                    if hasattr(data, 'te_sim') and data.te_sim[i] != None:
+                        te = data.te_sim[i] / self.return_conversion_factor('te')
+
+                    # tf.
+                    tf = None
+                    if hasattr(data, 'tf_sim') and data.tf_sim[i] != None:
+                        tf = data.tf_sim[i] / self.return_conversion_factor('tf')
+
+                    # ts.
+                    ts = None
+                    if hasattr(data, 'ts_sim') and data.ts_sim[i] != None:
+                        ts = data.ts_sim[i] / self.return_conversion_factor('ts')
+
+                    # Rex.
+                    rex = None
+                    if hasattr(data, 'rex_sim') and data.rex_sim[i] != None:
+                        rex = data.rex_sim[i] / self.return_conversion_factor('rex')
+
+                    # Bond length.
+                    r = None
+                    if hasattr(data, 'r_sim') and data.r_sim[i] != None:
+                        r = data.r_sim[i] / self.return_conversion_factor('r')
+
+                    # CSA.
+                    csa = None
+                    if hasattr(data, 'csa_sim') and data.csa_sim[i] != None:
+                        csa = data.csa_sim[i] / self.return_conversion_factor('csa')
+
+                    # Minimisation details.
+                    try:
+                        # Global minimisation results.
+                        if self.param_set == 'diff' or self.param_set == 'all':
+                            chi2 = self.relax.data.chi2_sim[self.run][i]
+                            iter = self.relax.data.iter_sim[self.run][i]
+                            f = self.relax.data.f_count_sim[self.run][i]
+                            g = self.relax.data.g_count_sim[self.run][i]
+                            h = self.relax.data.h_count_sim[self.run][i]
+                            if type(self.relax.data.warning_sim[self.run][i]) == str:
+                                warn = replace(self.relax.data.warning_sim[self.run][i], ' ', '_')
+                            else:
+                                warn = self.relax.data.warning_sim[self.run][i]
+
+                        # Individual residue results.
+                        else:
+                            chi2 = data.chi2_sim[i]
+                            iter = data.iter_sim[i]
+                            f = data.f_count_sim[i]
+                            g = data.g_count_sim[i]
+                            h = data.h_count_sim[i]
+                            if type(data.warning_sim[i]) == str:
+                                warn = replace(data.warning_sim[i], ' ', '_')
+                            else:
+                                warn = data.warning_sim[i]
+
+                    # No minimisation details.
+                    except AttributeError:
+                        chi2 = None
+                        iter = None
+                        f = None
+                        g = None
+                        h = None
+                        warn = None
+
+                    # Relaxation data and errors.
+                    ri = []
+                    ri_error = []
+                    for k in xrange(self.relax.data.num_ri[self.run]):
+                        # Find the residue specific data corresponding to k.
+                        index = None
+                        for l in xrange(data.num_ri):
+                            if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
+                                index = l
+
+                        # Data exists for this data type.
+                        try:
+                            ri.append(`data.relax_sim_data[i][index]`)
+                            ri_error.append(`data.relax_error[index]`)
+                        except:
+                            ri.append(None)
+                            ri_error.append(None)
+
+                    # XH vector.
+                    xh_vect = None
+                    if hasattr(data, 'xh_vect'):
+                        xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
+
+                    # Write the line.
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

@@ -28,6 +28,37 @@ class Common_functions:
         """Base class containing functions common to the specific functions."""
 
 
+    def has_errors(self):
+        """Function for testing if errors exist for the run."""
+
+        # Diffusion tensor errors.
+        if self.relax.data.diff.has_key(self.run):
+            for object_name in dir(self.relax.data.diff[self.run]):
+                # The object error name.
+                object_error = object_name + '_err'
+
+                # Error exists.
+                if hasattr(self.relax.data.diff[self.run], object_error):
+                    return 1
+
+        # Loop over the sequence.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Reassign data structure.
+            data = self.relax.data.res[self.run][i]
+
+            # Parameter errors.
+            for object_name in dir(data):
+                # The object error name.
+                object_error = object_name + '_err'
+
+                # Error exists.
+                if hasattr(data, object_error):
+                    return 1
+
+        # No errors found.
+        return 0
+
+
     def return_data(self, run, i):
         """Function for returning the Ri data structure."""
 
