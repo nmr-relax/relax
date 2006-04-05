@@ -54,6 +54,9 @@ class Data:
         # The type of the runs.
         self.run_types = []
 
+        # Hybrid models.
+        self.hybrid_runs = []
+
         # Global minimisation statistics.
         self.chi2 = {}
         self.iter = {}
