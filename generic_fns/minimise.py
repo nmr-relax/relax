@@ -163,10 +163,11 @@ class Minimise:
                         continue
 
                 # Test for structural data if required
-                if self.relax.data.diff[run].type == 'spheroid' or self.relax.data.diff[run].type == 'ellipsoid':
-                    if not hasattr(residue, 'xh_vect'):
-                        residue.select = 0
-                        continue
+                if hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(run):
+                    if self.relax.data.diff[run].type == 'spheroid' or self.relax.data.diff[run].type == 'ellipsoid':
+                        if not hasattr(residue, 'xh_vect'):
+                            residue.select = 0
+                            continue
 
             # Check for sufficient data for jw
             if run_type == 'jw':
