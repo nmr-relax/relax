@@ -110,16 +110,26 @@ class Hybrid:
             # Function type.
             function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-            # Specific model statistics functions.
+            # Specific model statistics and number of instances functions.
             model_statistics = self.relax.specific_setup.setup('model_stats', function_type)
+            num_instances = self.relax.specific_setup.setup('num_instances', function_type)
 
-            # Get the statistics.
-            k, n, chi2 = model_statistics(run, instance=0, min_instances=1)
+            # Number of instances.
+            num = num_instances(run)
 
-            # Sum the stats.
-            k_total = k_total + k
-            n_total = n_total + n
-            chi2_total = chi2_total + chi2
+            # Loop over the instances.
+            for i in xrange(num):
+                # Get the statistics.
+                k, n, chi2 = model_statistics(run, instance=i, num_instances=num)
+
+                # Bad stats.
+                if k == None or n == None or chi2 == None:
+                    continue
+
+                # Sum the stats.
+                k_total = k_total + k
+                n_total = n_total + n
+                chi2_total = chi2_total + chi2
 
         # Return the totals.
         return k_total, n_total, chi2_total
