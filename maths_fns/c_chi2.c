@@ -24,7 +24,7 @@
 #define square(x) (x)*(x)
 
 
-double chi2(void) {
+double chi2(double *values, double *sd, double *back_calc, int num_times) {
 	/* Function to calculate the chi-squared value.
 
 	The chi-sqared equation
@@ -43,10 +43,6 @@ double chi2(void) {
 	The chi-squared value is returned.
 	*/
 
-    /* Declarations */
-    extern int num_times;
-    extern double *values, *sd;
-    extern double back_calc[];
 	int i;
 	double chi2 = 0.0;
 

@@ -30,14 +30,11 @@
 
 
 
-void exponential(void) {
+void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
 	/* Function to back calculate the peak intensities.
 	*/
 
     /* Declarations */
-    extern int num_times;
-    extern double *params, *relax_times;
-    extern double back_calc[];
     double Rx, I0;
     int i;
 

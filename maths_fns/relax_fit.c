@@ -27,26 +27,35 @@
 /* The header for all functions which will be called */
 #include "relax_fit.h"
 
-
+/* functions for chi2 and exponential */
+#include "c_chi2.h"
+#include "exponential.h"
 
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Python declarations */
     PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
-    PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
+    extern PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
 
     /* Normal declarations */
     extern double *values, *sd, *relax_times, *scaling_matrix;
     extern double relax_time_array;
     extern int num_params, num_times;
-
+            
     /* The keyword list */
     static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
 
     /* Parse the function arguments */
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
+    
 
+        
+    Py_XDECREF(numpy_values);    
+    Py_XDECREF(numpy_sd);
+    Py_XDECREF(numpy_relax_times);
+    Py_XDECREF(numpy_scaling_matrix);
+             
     /* Make the Numeric arrays contiguous */
     numpy_values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
     numpy_sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
@@ -59,10 +68,8 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     relax_times = (double *) numpy_relax_times->data;
     scaling_matrix = (double *) numpy_scaling_matrix->data;
 
-    /* Increment the reference count for the python object None */
-    Py_INCREF(Py_None);
-
     /* Return nothing */
+    Py_INCREF(Py_None);
     return Py_None;
 }
 
@@ -77,8 +84,8 @@ func(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *arg1;
-    extern PyArrayObject *numpy_params;
-    double chi2(void);
+    PyArrayObject *numpy_params;
+    double* params;
 
 
     /* Parse the function arguments, the only argument should be the parameter array */
@@ -92,13 +99,11 @@ func(PyObject *self, PyObject *args) {
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
-    exponential();
+    exponential(params, relax_times, back_calc, num_times);
 
-    /* Deallocate the memory used by the parameters */
     Py_DECREF(numpy_params);
-
     /* Calculate and return the chi-squared value */
-    return Py_BuildValue("f", chi2());
+    return Py_BuildValue("f", chi2(values,sd,back_calc,num_times));
 }
 
 
@@ -108,13 +113,14 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *arg1;
-    extern PyArrayObject *numpy_params;
+    PyArrayObject *numpy_params;
 
     /* Temp Declarations */
     PyArrayObject *aaa_numpy;
     double aaa[MAXPARAMS] = {1.0, 2.0};
     double *aaa_pointer;
     int i;
+    double* params; 
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &arg1))
@@ -127,20 +133,19 @@ dfunc(PyObject *self, PyObject *args) {
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
-    exponential();
+    exponential(params, relax_times, back_calc, num_times);
 
 
     /* Test code (convert aaa to a Numeric array */
-    aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, &num_params, PyArray_DOUBLE);
-    aaa_pointer = (double *) aaa_numpy->data;
+    /* aaa_numpy = (PyArrayObject *) PyArray_FromDimsAndData(1, num_params, PyArray_DOUBLE, aaa_pointer); */
+    /*aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, &num_params, PyArray_DOUBLE);
+    aaa_pointer = (double *) aaa_numpy->data;*/
 
     /* Fill the Numeric array */
-    for (i = 0; i < 2; i++)
-        aaa_pointer[i] = aaa[i];
+    /*for (i = 0; i < 2; i++)
+        aaa_pointer[i] = aaa[i];*/
 
-    /* Deallocate the memory used by the parameters */
     Py_DECREF(numpy_params);
-
     return NULL;
     return PyArray_Return(aaa_numpy);
 }

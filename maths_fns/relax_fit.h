@@ -41,11 +41,12 @@ int num_params, num_times;
 double *sd;
 
 /* Variables sent to 'func', 'dfunc', and 'd2func' during optimisation */
-PyArrayObject *numpy_params;
+/*PyArrayObject *numpy_params;*/
 
 /* Pointers to contiguous PyArrayObjects */
 double *values, *sd, *relax_times, *scaling_matrix;
-double *params;
+/*double *params;*/
+
 
 /* Variables used for storage during the function calls of optimisation */
 double back_calc[MAXTIMES];
