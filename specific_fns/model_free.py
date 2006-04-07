@@ -2598,6 +2598,28 @@ class Model_free(Common_functions):
             return 1
 
 
+    def molmol_macro(self, run, data_type, style):
+        """Function for creating Molmol macros of the model-free parameters."""
+
+        # Arguments.
+        self.run = run
+
+        # The classic style.
+        if style == 'classic':
+            return self.molmol_macro_classic(data_type)
+
+        # Unknown style.
+        else:
+            raise RelaxStyleError, style
+
+
+    def molmol_macro_classic(self, data_type):
+        """Create and return an array of Molmol commands in the classic style."""
+
+        # Dummy array.
+        return ["InitAll yes"]
+
+
     def read_columnar_col_numbers(self, header):
         """Function for sorting the column numbers from the columnar formatted results file."""
 
@@ -4283,7 +4305,7 @@ class Model_free(Common_functions):
 
         # Create the data structure.
         self.relax.data.res[run][i].relax_sim_data = sim_data
-        
+
 
     def sim_return_chi2(self, run, instance):
         """Function for returning the array of simulation chi-squared values."""

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,24 +39,17 @@ class Molmol:
         self.command_history = ""
 
 
-    def open_pipe(self):
-        """Function for opening a Molmol pipe."""
+    def create_macro(self):
+        """Function for creating an array of Molmol commands."""
 
-        # Open the Molmol pipe.
-        self.relax.data.molmol = popen("molmol -f -", 'w', 0)
+        # Function type.
+        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
-        # Execute the command history.
-        if len(self.command_history) > 0:
-            self.write(self.command_history, store_command=0)
-            return
+        # Specific Molmol macro creation function.
+        molmol_macro = self.relax.specific_setup.setup('molmol_macro', self.function_type)
 
-        # Test if the PDB file has been loaded.
-        if hasattr(self.relax.data, 'pdb'):
-            self.open_pdb()
-
-        # Run InitAll to remove everything from molmol.
-        else:
-            self.write("InitAll yes")
+        # Get the macro.
+        self.commands = molmol_macro(self.run, self.data_type, self.style)
 
 
     def open_pdb(self, run=None):
@@ -67,17 +60,37 @@ class Molmol:
             self.run = run
 
         # Test if the pipe is open.
-        if not self.pipe_open():
+        if not self.pipe_open_test():
             return
 
         # Run InitAll to remove everything from molmol.
-        self.write("InitAll yes")
+        self.pipe_write("InitAll yes")
 
         # Open the PDB.
-        self.write("ReadPdb " + self.relax.data.pdb[self.run].file_name)
+        self.pipe_write("ReadPdb " + self.relax.data.pdb[self.run].file_name)
 
 
     def pipe_open(self):
+        """Function for opening a Molmol pipe."""
+
+        # Open the Molmol pipe.
+        self.relax.data.molmol = popen("molmol -f -", 'w', 0)
+
+        # Execute the command history.
+        if len(self.command_history) > 0:
+            self.pipe_write(self.command_history, store_command=0)
+            return
+
+        # Test if the PDB file has been loaded.
+        if hasattr(self.relax.data, 'pdb'):
+            self.open_pdb()
+
+        # Run InitAll to remove everything from molmol.
+        else:
+            self.pipe_write("InitAll yes")
+
+
+    def pipe_open_test(self):
         """Function for testing if the Molmol pipe is open."""
 
         # Test if a pipe has been opened.
@@ -86,12 +99,30 @@ class Molmol:
 
         # Test if the pipe has been broken.
         try:
-            self.relax.data.molmol.write('\n')
+            self.relax.data.molmol.pipe_write('\n')
         except IOError:
             return 0
 
         # The pipe is open.
         return 1
+
+
+    def pipe_write(self, command=None, store_command=1):
+        """Function for writing to the Molmol pipe.
+
+        This function is also used to execute a user supplied Molmol command.
+        """
+
+        # Reopen the pipe if needed.
+        if not self.pipe_open_test():
+            self.pipe_open()
+
+        # Write the command to the pipe.
+        self.relax.data.molmol.pipe_write(command + '\n')
+
+        # Place the command in the command history.
+        if store_command:
+            self.command_history = self.command_history + command + "\n"
 
 
     def view(self, run=None):
@@ -101,25 +132,43 @@ class Molmol:
         self.run = run
 
         # Open a Molmol pipe.
-        if self.pipe_open():
+        if self.pipe_open_test():
             raise RelaxError, "The Molmol pipe already exists."
         else:
-            self.open_pipe()
+            self.pipe_open()
 
 
-    def write(self, command=None, store_command=1):
-        """Function for writing to the Molmol pipe.
+    def write(self, run=None, data_type=None, style="classic", file=None, dir=None, force=0):
+        """Function for creating a Molmol macro."""
 
-        This function is also used to execute a user supplied Molmol command.
-        """
+        # Arguments.
+        self.run = run
+        self.data_type = data_type
+        self.style = style
 
-        # Reopen the pipe if needed.
-        if not self.pipe_open():
-            self.open_pipe()
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
 
-        # Write the command to the pipe.
-        self.relax.data.molmol.write(command + '\n')
+        # Test if the sequence data is loaded.
+        if not self.relax.data.res.has_key(self.run):
+            raise RelaxNoSequenceError, self.run
 
-        # Place the command in the command history.
-        if store_command:
-            self.command_history = self.command_history + command + "\n"
+        # Create the macro.
+        self.create_macro()
+
+        # File name.
+        if file == None:
+            file = data_type + '.mac'
+
+        # Open the file for writing.
+        file = self.relax.IO.open_write_file(file, dir, force)
+
+        # Loop over the commands and write them.
+        for command in self.commands:
+            file.write(command + "\n")
+
+        # Close the file.
+        file.close()
+
+

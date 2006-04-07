@@ -432,3 +432,11 @@ class RelaxErrors:
         def __init__(self, run):
             self.text = "Simulations for the run " + `run` + " have not been setup."
 
+
+    # Style errors.
+    ###############
+
+    # Unknown style.
+    class RelaxStyleError(BaseError):
+        def __init__(self, style):
+            self.text = "The style " + `style` + " is unknown."
