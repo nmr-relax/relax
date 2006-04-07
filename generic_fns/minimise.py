@@ -45,11 +45,12 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Deselect residues lacking data:
-        self.overfit_deselect(run, function_type)
-
         # Specific calculate function setup.
         calculate = self.relax.specific_setup.setup('calculate', function_type)
+        overfit_deselect = self.relax.specific_setup.setup('overfit_deselect', function_type)
+
+        # Deselect residues lacking data:
+        overfit_deselect(run)
 
         # Monte Carlo simulation calculation.
         if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
@@ -75,11 +76,12 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Deselect residues lacking data:
-        self.overfit_deselect(run, function_type)
-
         # Specific grid search function.
         grid_search = self.relax.specific_setup.setup('grid_search', function_type)
+        overfit_deselect = self.relax.specific_setup.setup('overfit_deselect', function_type)
+
+        # Deselect residues lacking data:
+        overfit_deselect(run)
 
         # Monte Carlo simulation grid search.
         if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
@@ -104,11 +106,12 @@ class Minimise:
         # Function type.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
 
-        # Deselect residues lacking data:
-        self.overfit_deselect(run, function_type)
-
         # Specific minimisation function.
         minimise = self.relax.specific_setup.setup('minimise', function_type)
+        overfit_deselect = self.relax.specific_setup.setup('overfit_deselect', function_type)
+
+        # Deselect residues lacking data:
+        overfit_deselect(run)
 
         # Single Monte Carlo simulation.
         if sim_index != None:
@@ -134,63 +137,6 @@ class Minimise:
         # Standard minimisation.
         else:
             minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
-
-
-    def overfit_deselect(self, run, run_type):
-        """Function for deselecting residues without sufficient data to support minimisation"""
-
-        # Loop over residue data:
-        for residue in self.relax.data.res[run]:
-
-            # Skip unselected data:
-            if not residue.select:
-                continue
-
-            # Check for sufficient data for mf
-            if run_type == 'mf':
-                if not hasattr(residue, 'relax_data'):
-                    residue.select = 0
-                    continue
-
-                # Require 3 or more data points
-                if len(residue.relax_data) < 3:
-                    residue.select = 0
-                    continue 
-    
-                # Require at least as many data points as params to prevent under-fitting
-                if hasattr(residue, 'params'):
-                    if len(residue.params) > len(residue.relax_data):
-                        residue.select = 0
-                        continue
-
-                # Test for structural data if required
-                if hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(run):
-                    if self.relax.data.diff[run].type == 'spheroid' or self.relax.data.diff[run].type == 'ellipsoid':
-                        if not hasattr(residue, 'xh_vect'):
-                            residue.select = 0
-                            continue
-
-            # Check for sufficient data for jw
-            if run_type == 'jw':
-                if not hasattr(residue, 'relax_data'):
-                    residue.select = 0
-                    continue
-
-                # Require 3 or more data points
-                if len(residue.relax_data) < 3:
-                    residue.select = 0
-                    continue
-
-            # Check for sufficient data for relax_fit run_type
-            elif run_type == 'relax_fit':
-                if not hasattr(residue, 'intensities'):
-                    residue.select = 0
-                    continue
-
-                # Require 3 or more data points
-                if len(residue.intensities) < 3:
-                    residue.select = 0
-                    continue
 
 
     def reset_min_stats(self, run, index=None):

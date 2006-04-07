@@ -237,6 +237,27 @@ class Jw_mapping(Common_functions):
         return len(self.relax.data.res[self.run])
 
 
+    def overfit_deselect(self, run):
+        """Function for deselecting residues without sufficient data to support calculation"""
+
+        # Test the sequence data exists:
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
+        # Loop over residue data:
+        for residue in self.relax.data.res[run]:
+    
+            # Check for sufficient data
+            if not hasattr(residue, 'relax_data'):
+                residue.select = 0
+                continue
+
+            # Require 3 or more data points
+            if len(residue.relax_data) < 3:
+                residue.select = 0
+                continue
+
+
     def return_conversion_factor(self, stat_type):
         """Dummy function for returning 1.0."""
 

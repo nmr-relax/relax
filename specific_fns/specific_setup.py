@@ -146,6 +146,10 @@ class Specific_setup:
         if self.eqi == 'num_instances':
             return self.relax.specific.jw_mapping.num_instances
 
+        # Overfit deselect.
+        if self.eqi == 'overfit_deselect':
+            return self.relax.specific.jw_mapping.overfit_deselect
+
         # Pack Monte Carlo simulation data function.
         if self.eqi == 'pack_sim_data':
             return self.relax.specific.jw_mapping.sim_pack_data
@@ -254,6 +258,10 @@ class Specific_setup:
         if self.eqi == 'num_instances':
             return self.relax.specific.model_free.num_instances
 
+        # Overfit deselect.
+        if self.eqi == 'overfit_deselect':
+            return self.relax.specific.model_free.overfit_deselect
+
         # Pack Monte Carlo simulation data function.
         if self.eqi == 'pack_sim_data':
             return self.relax.specific.model_free.sim_pack_data
@@ -350,6 +358,10 @@ class Specific_setup:
         if self.eqi == 'calculate':
             return self.relax.specific.noe.calculate
 
+        # Overfit deselect.
+        if self.eqi == 'overfit_deselect':
+            return self.relax.specific.noe.overfit_deselect
+
         # Read results file function (Columnar format).
         if self.eqi == 'read_columnar_results':
             return self.relax.specific.noe.read_columnar_results
@@ -397,6 +409,10 @@ class Specific_setup:
         # Number of instances.
         if self.eqi == 'num_instances':
             return self.relax.specific.relax_fit.num_instances
+
+        # Overfit deselect.
+        if self.eqi == 'overfit_deselect':
+            return self.relax.specific.relax_fit.overfit_deselect
 
         # Pack Monte Carlo simulation data function.
         if self.eqi == 'pack_sim_data':

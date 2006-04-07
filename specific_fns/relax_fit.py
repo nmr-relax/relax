@@ -825,6 +825,27 @@ class Relax_fit(Common_functions):
         return len(self.relax.data.res[self.run])
 
 
+    def overfit_deselect(self, run):
+        """Function for deselecting residues without sufficient data to support minimisation"""
+
+        # Test the sequence data exists:
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
+        # Loop over residue data:
+        for residue in self.relax.data.res[run]:
+
+            # Check for sufficient data
+            if not hasattr(residue, 'intensities'):
+                residue.select = 0
+                continue
+
+            # Require 3 or more data points
+            if len(residue.intensities) < 3:
+                residue.select = 0
+                continue
+
+
     def read(self, run=None, file=None, dir=None, relax_time=0.0, format=None, heteronuc=None, proton=None, int_col=None):
         """Function for reading peak intensity data."""
 

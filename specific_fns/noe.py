@@ -58,10 +58,6 @@ class Noe:
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
             # Remap the data structure 'self.relax.data.res[self.run][i]'.
@@ -71,15 +67,27 @@ class Noe:
             if not data.select:
                 continue
 
-            # Skip residues which have no intensity values or errors.
-            if not (hasattr(data, 'ref') and hasattr(data, 'sat') and hasattr(data, 'ref_err') and hasattr(data, 'sat_err')):
-                continue
-
             # Calculate the NOE.
             data.noe = data.sat / data.ref
 
             # Calculate the error.
             data.noe_err = sqrt((data.sat_err * data.ref)**2 + (data.ref_err * data.sat)**2) / data.ref**2
+
+
+    def overfit_deselect(self, run):
+        """Function for deselecting residues without sufficient data to support calculation"""
+
+        # Test the sequence data exists:
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
+        # Loop over residue data:
+        for residue in self.relax.data.res[run]:
+
+            # Check for sufficient data.
+            if not (hasattr(residue, 'ref') and hasattr(residue, 'sat') and hasattr(residue, 'ref_err') and hasattr(residue, 'sat_err')):
+                residue.select = 0
+                continue
 
 
     def read(self, run=None, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):

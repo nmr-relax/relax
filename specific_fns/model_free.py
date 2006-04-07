@@ -2620,6 +2620,44 @@ class Model_free(Common_functions):
         return ["InitAll yes"]
 
 
+    def overfit_deselect(self, run):
+        """Function for deselecting residues without sufficient data to support minimisation"""
+        
+        # Test sequence data exists.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
+        # Loop over residue data:
+        for residue in self.relax.data.res[run]:
+
+            # Skip unselected data:
+            if not residue.select:
+                continue
+
+            # Check for data structure.
+            if not hasattr(residue, 'relax_data'):
+                residue.select = 0
+                continue
+
+            # Require 3 or more data points
+            if len(residue.relax_data) < 3:
+                residue.select = 0
+                continue
+
+            # Require at least as many data points as params to prevent under-fitting
+            if hasattr(residue, 'params'):
+                if len(residue.params) > len(residue.relax_data):
+                    residue.select = 0
+                    continue
+
+            # Test for structural data if required
+            if hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(run):
+                if self.relax.data.diff[run].type == 'spheroid' or self.relax.data.diff[run].type == 'ellipsoid':
+                    if not hasattr(residue, 'xh_vect'):
+                        residue.select = 0
+                        continue
+
+
     def read_columnar_col_numbers(self, header):
         """Function for sorting the column numbers from the columnar formatted results file."""
 
