@@ -24,6 +24,7 @@
 __all__ = ['test_suite',
            'diffusion_tensor',
            'generic.py',
+           'jw_mapping',
            'model_free',
            'relax_fit',
            'run_create',

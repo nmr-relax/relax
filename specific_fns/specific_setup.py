@@ -154,6 +154,10 @@ class Specific_setup:
         if self.eqi == 'return_data':
             return self.relax.specific.jw_mapping.return_data
 
+        # Data or parameter name returning function.
+        if self.eqi == 'return_data_name':
+            return self.relax.specific.jw_mapping.return_data_name
+
         # Data error returning function.
         if self.eqi == 'return_error':
             return self.relax.specific.jw_mapping.return_error
@@ -165,6 +169,10 @@ class Specific_setup:
         # Simulation parameter array returning function.
         if self.eqi == 'return_sim_param':
             return self.relax.specific.jw_mapping.sim_return_param
+
+        # Simulation parameter array returning function.
+        if self.eqi == 'return_selected_sim':
+            return self.relax.specific.jw_mapping.sim_return_selected
 
         # String of the external parameter units returning function.
         if self.eqi == 'return_units':
@@ -181,6 +189,10 @@ class Specific_setup:
         # Set error function.
         if self.eqi == 'set_error':
             return self.relax.specific.jw_mapping.set_error
+
+        # Set error function.
+        if self.eqi == 'set_selected_sim':
+            return self.relax.specific.jw_mapping.set_selected_sim
 
         # Write results function (Columnar format).
         if self.eqi == 'write_columnar_results':

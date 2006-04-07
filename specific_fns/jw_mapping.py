@@ -481,6 +481,10 @@ class Jw_mapping(Common_functions):
         # Arguments.
         self.run = run
 
+        # Skip unselected residues.
+        if not self.relax.data.res[self.run][instance].select:
+                return
+
         # Return J(0) sim data.
         if index == 0:
             return self.relax.data.res[self.run][instance].j0_sim
@@ -492,6 +496,37 @@ class Jw_mapping(Common_functions):
         # Return J(wH) sim data.
         if index == 2:
             return self.relax.data.res[self.run][instance].jwh_sim
+
+
+    def sim_return_selected(self, run, instance):
+        """Function for returning the array of selected simulation flags."""
+
+        # Arguments.
+        self.run = run
+
+        # Multiple instances.
+        return self.relax.data.res[self.run][instance].select_sim
+
+
+    def set_selected_sim(self, run, instance, select_sim):
+        """Function for returning the array of selected simulation flags."""
+
+        # Arguments.
+        self.run = run
+
+        # Multiple instances.
+        self.relax.data.res[self.run][instance].select_sim = select_sim
+
+
+    def sim_pack_data(self, run, i, sim_data):
+        """Function for packing Monte Carlo simulation data."""
+
+        # Test if the simulation data already exists.
+        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
+            raise RelaxError, "Monte Carlo simulation data already exists."
+
+        # Create the data structure.
+        self.relax.data.res[run][i].relax_sim_data = sim_data
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):

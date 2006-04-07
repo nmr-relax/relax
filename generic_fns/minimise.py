@@ -61,6 +61,7 @@ class Minimise:
 
         # Minimisation.
         else:
+
             calculate(run=run, print_flag=print_flag)
 
 

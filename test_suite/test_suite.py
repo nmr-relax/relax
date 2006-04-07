@@ -28,6 +28,7 @@ import sys
 # Import the tests.
 from diffusion_tensor import Diffusion_tensor
 from generic import Generic
+from jw_mapping import Jw
 from model_free import Mf
 from relax_fit import Relax_fit
 from run_create import Run_create
@@ -136,6 +137,23 @@ class Test_suite:
 
         # Execute the tests.
         self.exec_tests(self.mf_test_array)
+
+
+        # Reduced spectral density mapping tests.
+        #########################################
+
+        # Heading.
+        self.heading("The reduced spectral density mapping tests")
+
+        # Initialise the array containing each test element.
+        self.jw_test_array = []
+
+        # User function value.set() test.
+        self.jw_test_array.append(Jw(self.relax, 'set'))
+        self.jw_test_array.append(Jw(self.relax, 'calc'))
+
+        # Execute the tests.
+        self.exec_tests(self.jw_test_array)
 
 
         # Generic tests.
@@ -277,6 +295,17 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.mf_test_array:
+            self.summary_line(test)
+
+
+        # Reduced spectral density Mapping tests.
+        #########################################
+
+        # Heading.
+        sys.stdout.write("\nThe reduced spectral density tests:\n")
+
+        # Loop over the tests.
+        for test in self.jw_test_array:
             self.summary_line(test)
 
 
