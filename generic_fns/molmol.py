@@ -49,7 +49,7 @@ class Molmol:
         molmol_macro = self.relax.specific_setup.setup('molmol_macro', self.function_type)
 
         # Get the macro.
-        self.commands = molmol_macro(self.run, self.data_type, self.style)
+        self.commands = molmol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end)
 
 
     def open_pdb(self, run=None):
@@ -138,13 +138,15 @@ class Molmol:
             self.pipe_open()
 
 
-    def write(self, run=None, data_type=None, style="classic", file=None, dir=None, force=0):
+    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, file=None, dir=None, force=0):
         """Function for creating a Molmol macro."""
 
         # Arguments.
         self.run = run
         self.data_type = data_type
         self.style = style
+        self.colour_start = colour_start
+        self.colour_end = colour_end
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:

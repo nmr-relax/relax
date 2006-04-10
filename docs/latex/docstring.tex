@@ -2271,6 +2271,202 @@
 
  \newpage 
 
+ \subsection{molmol.write\index{computer programs!Molmol|textbf}} 
+
+  
+ \subsubsection{Synopsis} 
+
+ Function for creating Molmol\index{computer programs!Molmol}\index{computer programs!Molmol} macros. 
+  
+
+  
+ \subsubsection{Defaults} 
+
+ \textsf{\textbf{molmol.write}(self, run=None, data\_type=None, style=`classic', colour\_start=None, colour\_end=None, file=None, dir=`molmol', force=0)} 
+
+  
+ \subsubsection{Keyword Arguments} 
+
+ \keyword{run:}  The name of the run.   
+
+ \keyword{ data\_type:}  The data type to map\index{map} to the structure.   
+
+ \keyword{ style:}  The style of the macro.   
+
+ \keyword{ colour\_start:}  The starting colour of the linear colour gradient.   
+
+ \keyword{ colour\_end:}  The ending colour of the linear colour gradient.   
+
+ \keyword{ file:}  The name of the file.   
+
+ \keyword{ dir:}  The directory name.   
+
+ \keyword{ force:}  A flag which, if set to 1, will cause the file to be overwritten.  
+
+  
+
+  
+ \subsubsection{Description} 
+
+ This function allows residues specific values to be mapped\index{map} to a structure through the creation of a Molmol\index{computer programs!Molmol}\index{computer programs!Molmol} \quotecmd{*.mac} macro which can be executed in Molmol\index{computer programs!Molmol}\index{computer programs!Molmol} by clicking on \quotecmd{File, Macro, Execute User...}.  Currently only the \quotecmd{classic} style, which is described below, is availible. 
+  
+
+  
+ \subsubsection{Colour} 
+
+ The values are coloured based on a linear colour gradient which is specified through the \quotecmd{colour\_start} and \quotecmd{colour\_end} arguments.  These arguments can either be a string to identify one of the RGB (red, green, blue) colour arrays listed in the table below, or you can give the RGB vector itself.  For example, colour\_start=\quotecmd{white} and colour\_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None will select the default colour gradient which for each type of analysis is described below. 
+  
+
+  
+ \subsubsection{Examples} 
+
+ To create a Molmol\index{computer programs!Molmol}\index{computer programs!Molmol} macro mapping\index{map} the order\index{order parameter} parameter values, $S^2$, of the run \quotecmd{final} onto the structure using the classic style, type: 
+  
+
+ \example{relax> molmol.write(`final', `S2')} 
+
+ \example{relax> molmol.write(`final', data\_type=`S2')} 
+
+ \example{relax> molmol.write(`final', data\_type=`S2', style="classic", file=`s2.mac', dir=`molmol')} 
+
+  
+ \subsubsection{Classic style} 
+
+ Creator:  Edward d'Auvergne 
+  
+
+ Argument string:  "classic" 
+  
+
+ Description:  The classic style draws the backbone of the protein in \quotecmd{neon} style.  Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds of the petide bond from Ca to Ca to which the NH bond belongs are coloured.  Deselected residues are shown as black lines. 
+  
+
+ Supported data types: 
+  
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & String & Description  \\ 
+ \midrule 
+  $S^2$. & \quotecmd{S2} & The standard model-free order\index{order parameter} parameter, equal to $S^2_f$.S2s  \\
+   &  & for the two timescale models.  The default colour  \\
+   &  & gradient starts at \quotecmd{yellow} and ends at \quotecmd{red}.  \\
+   &  &   \\
+  $S^2_f$. & \quotecmd{S2f} & The order\index{order parameter} parameter of the faster of two internal  \\
+   &  & motions.  Residues which are described by model-free  \\
+   &  & models m1 to m4, the single timescale models, are  \\
+   &  & illustrated as white neon bonds.  The default colour  \\
+   &  & gradient is the same as that for the $S^2$ data type.  \\
+   &  &   \\
+  $S^2_s$. & \quotecmd{S2s} & The order\index{order parameter} parameter of the slower of two internal  \\
+   &  & motions.  This functions exactly as $S^2_f$ except that $S^2_s$  \\
+   &  & is plotted\index{plot} instead.  \\
+   &  &   \\
+  Amplitude of & \quotecmd{amp\_fast} & Model independent display\index{display} of the amplite of fast motions.  \\
+  fast motions. &  & For residues described by model-free models m5 to m8, the  \\
+   &  & value plotted\index{plot} is that of $S^2_f$.  However, for residues  \\
+   &  & described by models m1 to m4, what is shown is dependent  \\
+   &  & on the timescale of the motions.  This is because these  \\
+   &  & single timescale models can, at times, be perfect  \\
+   &  & approximations to the more complex two timescale models.  \\
+   &  & Hence if $\tau_e$ is less than 100 ps, $S^2$ is plotted.\index{plot} Otherwise  \\
+   &  & the peptide bond is coloured white.  The default colour  \\
+   &  & gradient  is the same as that for $S^2$.  \\
+   &  &   \\
+  Amplitude of & \quotecmd{amp\_slow} & Model independent display\index{display} of the amplite of slow motions,  \\
+  slow motions. &  & arbitrarily defined as motions slower than 100 ps.  For  \\
+   &  & residues described by model-free models m5 to m8, the  \\
+   &  & order\index{order parameter} parameter $S^2$ is plotted\index{plot} if $\tau_s$ $>$ 100 ps.  For models  \\
+   &  & m1 to m4, $S^2$ is plotted\index{plot} if $\tau_e$ $>$ 100 ps.  The default  \\
+   &  & colour gradient is the same as that for $S^2$.  \\
+   &  &   \\
+  $\tau_e$. & \quotecmd{te} & The correlation\index{correlation time} time, $\tau_e$.  The default colour gradient  \\
+   &  & starts at \quotecmd{turquoise} and ends at \quotecmd{blue}.  \\
+   &  &   \\
+  $\tau_f$. & \quotecmd{tf} & The correlation\index{correlation time} time, $\tau_f$.  The default colour gradient is  \\
+   &  & the same as that of $\tau_e$.  \\
+   &  &   \\
+  $\tau_s$. & \quotecmd{ts} & The correlation\index{correlation time} time, $\tau_s$.  The default colour gradient  \\
+   &  & starts at \quotecmd{blue} and ends at \quotecmd{black}.  \\
+   &  &   \\
+  Timescale of & \quotecmd{time\_fast} & Model independent display\index{display} of the timescale of fast  \\
+  fast motions &  & motions.  For models m5 to m8, only the parameter $\tau_f$ is  \\
+   &  & plotted.\index{plot}  For models m2 and m4, the parameter $\tau_e$ is  \\
+   &  & plotted\index{plot} only if it is less than 100 ps.  All other  \\
+   &  & residues are assumed to have a correlation\index{correlation time} time of zero.  \\
+   &  & The default colour gradient is the same as that of $\tau_e$.  \\
+   &  &   \\
+  Timescale of & \quotecmd{time\_slow} & Model independent display\index{display} of the timescale of slow  \\
+  slow motions &  & motions.  For models m5 to m8, only the parameter $\tau_s$ is  \\
+   &  & plotted.\index{plot}  For models m2 and m4, the parameter $\tau_e$ is  \\
+   &  & plotted\index{plot} only if it is greater than 100 ps.  All other  \\
+   &  & residues are coloured white.  The default colour gradient  \\
+   &  & is the same as that of $\tau_s$.  \\
+   &  &   \\
+  Chemical & \quotecmd{Rex} & The chemical\index{chemical exchange} exchange, $R_{ex}$.  Residues which experience no  \\
+  exchange &  & chemical\index{chemical exchange} exchange are coloured white.  The default colour  \\
+   &  & gradient starts at \quotecmd{yellow} and finishes at \quotecmd{red}.  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
+ \subsubsection{RGB colour arrays} 
+
+ Table of RGB colour values and the corresponding colour name. 
+  
+
+ \begin{center} 
+ \begin{tabular}{llll} 
+ \toprule 
+  Name & Red & Green & Blue  \\ 
+ \midrule 
+  \quotecmd{black} & 0.000 & 0.000 & 0.000  \\
+  \quotecmd{navy} & 0.000 & 0.000 & 0.502  \\
+  \quotecmd{blue} & 0.000 & 0.000 & 1.000  \\
+  \quotecmd{dark green} & 0.000 & 0.392 & 0.000  \\
+  \quotecmd{green} & 0.000 & 1.000 & 0.000  \\
+  \quotecmd{cyan} & 0.000 & 1.000 & 1.000  \\
+  \quotecmd{turquoise} & 0.251 & 0.878 & 0.816  \\
+  \quotecmd{royal blue} & 0.255 & 0.412 & 0.882  \\
+  \quotecmd{aquamarine} & 0.498 & 1.000 & 0.831  \\
+  \quotecmd{sky green} & 0.529 & 0.808 & 0.922  \\
+  \quotecmd{dark violet} & 0.580 & 0.000 & 0.827  \\
+  \quotecmd{pale green} & 0.596 & 0.984 & 0.596  \\
+  \quotecmd{purple} & 0.627 & 0.125 & 0.941  \\
+  \quotecmd{brown} & 0.647 & 0.165 & 0.165  \\
+  \quotecmd{light blue} & 0.678 & 0.847 & 0.902  \\
+  \quotecmd{grey} & 0.745 & 0.745 & 0.745  \\
+  \quotecmd{light grey} & 0.827 & 0.827 & 0.827  \\
+  \quotecmd{violet} & 0.933 & 0.510 & 0.933  \\
+  \quotecmd{light coral} & 0.941 & 0.502 & 0.502  \\
+  \quotecmd{khaki} & 0.941 & 0.902 & 0.549  \\
+  \quotecmd{beige} & 0.961 & 0.961 & 0.863  \\
+  \quotecmd{red} & 1.000 & 0.000 & 0.000  \\
+  \quotecmd{magenta} & 1.000 & 0.000 & 1.000  \\
+  \quotecmd{deep pink} & 1.000 & 0.078 & 0.576  \\
+  \quotecmd{orange red} & 1.000 & 0.271 & 0.000  \\
+  \quotecmd{hot pink} & 1.000 & 0.412 & 0.706  \\
+  \quotecmd{coral} & 1.000 & 0.498 & 0.314  \\
+  \quotecmd{dark orange} & 1.000 & 0.549 & 0.000  \\
+  \quotecmd{orange} & 1.000 & 0.647 & 0.000  \\
+  \quotecmd{pink} & 1.000 & 0.753 & 0.796  \\
+  \quotecmd{gold} & 1.000 & 0.843 & 0.000  \\
+  \quotecmd{yellow} & 1.000 & 1.000 & 0.000  \\
+  \quotecmd{light yellow} & 1.000 & 1.000 & 0.878  \\
+  \quotecmd{ivory} & 1.000 & 1.000 & 0.941  \\
+  \quotecmd{white} & 1.000 & 1.000 & 1.000  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
+
+ \newpage 
+
  \subsection{monte\_carlo.create\_data} 
 
   
@@ -3848,6 +4044,48 @@
  \subsubsection{Description} 
 
  This function will destroy all data corresponding to the given run. 
+  
+
+  
+
+ \newpage 
+
+ \subsection{run.hybridise} 
+
+  
+ \subsubsection{Synopsis} 
+
+ Function for a hybridised run from a number of other runs. 
+  
+
+  
+ \subsubsection{Defaults} 
+
+ \textsf{\textbf{run.hybridise}(self, hybrid=None, runs=None)} 
+
+  
+ \subsubsection{Keyword Arguments} 
+
+ \keyword{hybrid:}  The name of the hybrid run to create.   
+
+ \keyword{ runs:}  An array containing the names of all runs to hybridise.  
+
+  
+
+  
+ \subsubsection{Description} 
+
+ This user function can be used to construct hybrid models.  An example of the use of a hybrid model could be if the protein consists of two independent domains.  These two domains could be analysed separately, each having their own optimised\index{optimise} diffusion\index{diffusion!tensor} tensors.  The N-terminal domain run could be called \quotecmd{N\_sphere} while the C-terminal domain could be called \quotecmd{C\_ellipsoid}.  These two runs could then be hybridised into a run called \quotecmd{mixed model} by typing 
+  
+
+ \example{relax> run.hybridise(`mixed model', [`N\_sphere', `C\_ellipsoid'])} 
+
+ \example{relax> run.hybridise(hybrid=`mixed model', runs=[`N\_sphere', `C\_ellipsoid'])} 
+
+ This hybrid run can then be compared via model selection to a run where the entire protein is assumed to have a single diffusion\index{diffusion!tensor} tensor. 
+  
+
+ The only requirements for runs to be hybridised is that, at minimum, a sequence\index{sequence} has been loaded, that the sequence\index{sequence} for all hybridised runs is the same, and that no residue is allowed to be selected in two or more runs.  The last condition is to ensure that overlap does not occur to allow statistically significant comparisons. 
   
 
   

@@ -64,6 +64,14 @@ class RelaxErrors:
             self.text = text
 
 
+    # Fault.
+    ########
+
+    class RelaxFault(BaseError):
+        def __init__(self):
+            self.text = "Impossible to be here, please summit a bug report at https://gna.org/projects/relax/."
+
+
     # Program errors.
     #################
 
@@ -410,6 +418,11 @@ class RelaxErrors:
         def __init__(self, name):
             self.text = "The " + `name` + " value has not yet been set."
 
+    # Unknown data type.
+    class RelaxUnknownDataTypeError(BaseError):
+        def __init__(self, name):
+            self.text = "The data type " + `name` + " is unknown."
+
     # Unknown parameter.
     class RelaxUnknownParamError(BaseError):
         def __init__(self, name, param_type=None):
@@ -440,3 +453,12 @@ class RelaxErrors:
     class RelaxStyleError(BaseError):
         def __init__(self, style):
             self.text = "The style " + `style` + " is unknown."
+
+
+    # Colour errors.
+    ################
+
+    # Invalid colour.
+    class RelaxInvalidColourError(BaseError):
+        def __init__(self, colour):
+            self.text = "The colour " + `colour` + " is invalid."

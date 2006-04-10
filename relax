@@ -64,6 +64,7 @@ except ImportError:
     sys.exit()
 
 # relax modules.
+from colour import Colour
 from data import Data
 from errors import RelaxErrors
 from io import IO
@@ -108,6 +109,9 @@ class Relax:
 
         # File operation functions.
         self.IO = IO(self)
+
+        # Colour operations.
+        self.colour = Colour()
 
         # Setup the specific setup object.
         self.specific_setup = Specific_setup(self)

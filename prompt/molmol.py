@@ -22,6 +22,7 @@
 
 import sys
 
+from colour import Colour
 from doc_string import regexp_doc
 import help
 from generic_fns.minimise import Minimise
@@ -108,7 +109,7 @@ class Molmol:
         self.__relax__.generic.molmol.view(run=run)
 
 
-    def write(self, run=None, data_type=None, style="classic", file=None, dir='molmol', force=0):
+    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, file=None, dir='molmol', force=0):
         """Function for creating Molmol macros.
 
         Keyword Arguments
@@ -119,6 +120,10 @@ class Molmol:
         data_type:  The data type to map to the structure.
 
         style:  The style of the macro.
+
+        colour_start:  The starting colour of the linear colour gradient.
+
+        colour_end:  The ending colour of the linear colour gradient.
 
         file:  The name of the file.
 
@@ -134,23 +139,18 @@ class Molmol:
         creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File,
         Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is
         availible.
-
-
-        Classic style
-        ~~~~~~~~~~~~~
-
-        Creator:  Edward d'Auvergne
-
-        Argument string:  "classic"
-
-        Description:  The classic style draws the backbone of the protein in 'neon' style.  Rather
-        than colouring the amino acids to which the NH bond belongs, the three covalent bonds of the
-        petide bond from Ca to Ca to which the NH bond belongs is coloured.
-
-        Supported data types:
-        Model-free:  S2, te, Rex.
         
 
+        Colour
+        ~~~~~~
+
+        The values are coloured based on a linear colour gradient which is specified through the
+        'colour_start' and 'colour_end' arguments.  These arguments can either be a string to
+        identify one of the RGB (red, green, blue) colour arrays listed in the table below, or you
+        can give the RGB vector itself.  For example, colour_start='white' and
+        colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
+        will select the default colour gradient which for each type of analysis is described below.
+        
 
         Examples
         ~~~~~~~~
@@ -169,6 +169,8 @@ class Molmol:
             text = text + "run=" + `run`
             text = text + ", data_type=" + `data_type`
             text = text + ", style=" + `style`
+            text = text + ", colour_start=" + `colour_start`
+            text = text + ", colour_end=" + `colour_end`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -186,9 +188,25 @@ class Molmol:
         if type(style) != str:
             raise RelaxStrError, ('style', style)
 
+        # The starting colour of the linear gradient.
+        if colour_start != None and type(colour_start) != str and type(colour_start) != list:
+            raise RelaxNoneStrListError, ('starting colour of the linear gradient', colour_start)
+        if type(colour_start) == list:
+            for i in xrange(len(colour_start)):
+                if type(colour_start[i]) != float and type(colour_start[i]) != int:
+                    raise RelaxListNumError, ('starting colour of the linear gradient', colour_start)
+
+        # The ending colour of the linear gradient.
+        if colour_end != None and type(colour_end) != str and type(colour_end) != list:
+            raise RelaxNoneStrListError, ('ending colour of the linear gradient', colour_end)
+        if type(colour_end) == list:
+            for i in xrange(len(colour_end)):
+                if type(colour_end[i]) != float and type(colour_end[i]) != int:
+                    raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
+
         # File.
         if file != None and type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxNoneStrError, ('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
@@ -199,7 +217,7 @@ class Molmol:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.write(run=run, data_type=data_type, style=style, file=file, dir=dir, force=force)
+        self.__relax__.generic.molmol.write(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, file=file, dir=dir, force=force)
 
 
 
@@ -207,8 +225,7 @@ class Molmol:
     #########################
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
-    write.__doc__ = write.__doc__ + Minimise.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + "\n\n" + Model_free.molmol_macro_classic.__doc__ + "\n\n"
+
+    # RGB colour selection.
+    write.__doc__ = write.__doc__ + "\n\n" + Colour.rgb.__doc__ + "\n\n"
