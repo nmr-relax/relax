@@ -99,7 +99,7 @@ class Molmol:
 
         # Test if the pipe has been broken.
         try:
-            self.relax.data.molmol.pipe_write('\n')
+            self.relax.data.molmol.write('\n')
         except IOError:
             return 0
 
@@ -118,7 +118,7 @@ class Molmol:
             self.pipe_open()
 
         # Write the command to the pipe.
-        self.relax.data.molmol.pipe_write(command + '\n')
+        self.relax.data.molmol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
