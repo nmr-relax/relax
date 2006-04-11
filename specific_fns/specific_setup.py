@@ -252,7 +252,7 @@ class Specific_setup:
 
         # Molmol macro creation.
         if self.eqi == 'molmol_macro':
-            return self.relax.specific.model_free.molmol_macro
+            return self.relax.specific.model_free.molmol.macro
 
         # Number of instances.
         if self.eqi == 'num_instances':

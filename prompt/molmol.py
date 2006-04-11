@@ -26,7 +26,7 @@ from colour import Colour
 from doc_string import regexp_doc
 import help
 from generic_fns.minimise import Minimise
-from specific_fns.model_free import Model_free
+from specific_fns.model_free import Molmol
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
 
@@ -139,7 +139,7 @@ class Molmol:
         creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File,
         Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is
         availible.
-        
+
 
         Colour
         ~~~~~~
@@ -150,7 +150,7 @@ class Molmol:
         can give the RGB vector itself.  For example, colour_start='white' and
         colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
         will select the default colour gradient which for each type of analysis is described below.
-        
+
 
         Examples
         ~~~~~~~~
@@ -225,7 +225,7 @@ class Molmol:
     #########################
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + Model_free.molmol_macro_classic.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + Molmol.classic.__doc__ + "\n\n"
 
     # RGB colour selection.
     write.__doc__ = write.__doc__ + "\n\n" + Colour.rgb.__doc__ + "\n\n"
