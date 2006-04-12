@@ -2515,7 +2515,7 @@ class Model_free(Common_functions):
 
         # Sequence specific data.
         # Statistics for a single residue.
-        if not global_stats or not combine:
+        if not global_stats and not combine:
             # Skip unselected residues.
             if not self.relax.data.res[self.run][instance].select:
                 return None, None, None
