@@ -196,156 +196,93 @@ class Colour:
         |                               |         |         |         |
         | snow                          |     255 |     250 |     250 |
         | ghost white                   |     248 |     248 |     255 |
-        | ghost white                   |     248 |     248 |     255 |
         | white smoke                   |     245 |     245 |     245 |
         | gainsboro                     |     220 |     220 |     220 |
         | floral white                  |     255 |     250 |     240 |
-        | floral white                  |     255 |     250 |     240 |
-        | old lace                      |     253 |     245 |     230 |
         | old lace                      |     253 |     245 |     230 |
         | linen                         |     250 |     240 |     230 |
         | antique white                 |     250 |     235 |     215 |
-        | antique white                 |     250 |     235 |     215 |
         | papaya whip                   |     255 |     239 |     213 |
-        | papaya whip                   |     255 |     239 |     213 |
-        | blanched almond               |     255 |     235 |     205 |
         | blanched almond               |     255 |     235 |     205 |
         | bisque                        |     255 |     228 |     196 |
         | peach puff                    |     255 |     218 |     185 |
-        | peach puff                    |     255 |     218 |     185 |
-        | navajo white                  |     255 |     222 |     173 |
         | navajo white                  |     255 |     222 |     173 |
         | moccasin                      |     255 |     228 |     181 |
         | cornsilk                      |     255 |     248 |     220 |
         | ivory                         |     255 |     255 |     240 |
         | lemon chiffon                 |     255 |     250 |     205 |
-        | lemon chiffon                 |     255 |     250 |     205 |
         | seashell                      |     255 |     245 |     238 |
         | honeydew                      |     240 |     255 |     240 |
         | mint cream                    |     245 |     255 |     250 |
-        | mint cream                    |     245 |     255 |     250 |
         | azure                         |     240 |     255 |     255 |
-        | alice blue                    |     240 |     248 |     255 |
         | alice blue                    |     240 |     248 |     255 |
         | lavender                      |     230 |     230 |     250 |
         | lavender blush                |     255 |     240 |     245 |
-        | lavender blush                |     255 |     240 |     245 |
-        | misty rose                    |     255 |     228 |     225 |
         | misty rose                    |     255 |     228 |     225 |
         | white                         |     255 |     255 |     255 |
         | black                         |       0 |       0 |       0 |
-        | dark slate gray               |      47 |      79 |      79 |
-        | dim gray                      |     105 |     105 |     105 |
-        | slate gray                    |     112 |     128 |     144 |
-        | slate gray                    |     112 |     128 |     144 |
+        | dark slate grey               |      47 |      79 |      79 |
+        | dim grey                      |     105 |     105 |     105 |
         | slate grey                    |     112 |     128 |     144 |
-        | slate grey                    |     112 |     128 |     144 |
-        | light slate gray              |     119 |     136 |     153 |
-        | light slate gray              |     119 |     136 |     153 |
         | light slate grey              |     119 |     136 |     153 |
-        | light slate grey              |     119 |     136 |     153 |
-        | gray                          |     190 |     190 |     190 |
+        | grey                          |     190 |     190 |     190 |
         | light grey                    |     211 |     211 |     211 |
         | midnight blue                 |      25 |      25 |     112 |
-        | midnight blue                 |      25 |      25 |     112 |
         | navy                          |       0 |       0 |     128 |
-        | navy blue                     |       0 |       0 |     128 |
-        | navy blue                     |       0 |       0 |     128 |
-        | cornflower blue               |     100 |     149 |     237 |
         | cornflower blue               |     100 |     149 |     237 |
         | dark slate blue               |      72 |      61 |     139 |
-        | dark slate blue               |      72 |      61 |     139 |
-        | slate blue                    |     106 |      90 |     205 |
         | slate blue                    |     106 |      90 |     205 |
         | medium slate blue             |     123 |     104 |     238 |
-        | medium slate blue             |     123 |     104 |     238 |
-        | light slate blue              |     132 |     112 |     255 |
         | light slate blue              |     132 |     112 |     255 |
         | medium blue                   |       0 |       0 |     205 |
-        | medium blue                   |       0 |       0 |     205 |
-        | royal blue                    |      65 |     105 |     225 |
         | royal blue                    |      65 |     105 |     225 |
         | blue                          |       0 |       0 |     255 |
         | dodger blue                   |      30 |     144 |     255 |
-        | dodger blue                   |      30 |     144 |     255 |
-        | deep sky blue                 |       0 |     191 |     255 |
         | deep sky blue                 |       0 |     191 |     255 |
         | sky blue                      |     135 |     206 |     235 |
-        | sky blue                      |     135 |     206 |     235 |
-        | light sky blue                |     135 |     206 |     250 |
         | light sky blue                |     135 |     206 |     250 |
         | steel blue                    |      70 |     130 |     180 |
-        | steel blue                    |      70 |     130 |     180 |
-        | light steel blue              |     176 |     196 |     222 |
         | light steel blue              |     176 |     196 |     222 |
         | light blue                    |     173 |     216 |     230 |
-        | light blue                    |     173 |     216 |     230 |
-        | powder blue                   |     176 |     224 |     230 |
         | powder blue                   |     176 |     224 |     230 |
         | pale turquoise                |     175 |     238 |     238 |
         | dark turquoise                |       0 |     206 |     209 |
-        | dark turquoise                |       0 |     206 |     209 |
-        | medium turquoise              |      72 |     209 |     204 |
         | medium turquoise              |      72 |     209 |     204 |
         | turquoise                     |      64 |     224 |     208 |
         | cyan                          |       0 |     255 |     255 |
         | light cyan                    |     224 |     255 |     255 |
         | cadet blue                    |      95 |     158 |     160 |
-        | cadet blue                    |      95 |     158 |     160 |
-        | medium aquamarine             |     102 |     205 |     170 |
         | medium aquamarine             |     102 |     205 |     170 |
         | aquamarine                    |     127 |     255 |     212 |
         | dark green                    |       0 |     100 |       0 |
-        | dark green                    |       0 |     100 |       0 |
-        | dark olive green              |      85 |     107 |      47 |
         | dark olive green              |      85 |     107 |      47 |
         | dark sea green                |     143 |     188 |     143 |
-        | dark sea green                |     143 |     188 |     143 |
-        | sea green                     |      46 |     139 |      87 |
         | sea green                     |      46 |     139 |      87 |
         | medium sea green              |      60 |     179 |     113 |
-        | medium sea green              |      60 |     179 |     113 |
-        | light sea green               |      32 |     178 |     170 |
         | light sea green               |      32 |     178 |     170 |
         | pale green                    |     152 |     251 |     152 |
-        | pale green                    |     152 |     251 |     152 |
         | spring green                  |       0 |     255 |     127 |
-        | spring green                  |       0 |     255 |     127 |
-        | lawn green                    |     124 |     252 |       0 |
         | lawn green                    |     124 |     252 |       0 |
         | green                         |       0 |     255 |       0 |
         | chartreuse                    |     127 |     255 |       0 |
         | medium spring green           |       0 |     250 |     154 |
-        | medium spring green           |       0 |     250 |     154 |
-        | green yellow                  |     173 |     255 |      47 |
         | green yellow                  |     173 |     255 |      47 |
         | lime green                    |      50 |     205 |      50 |
-        | lime green                    |      50 |     205 |      50 |
-        | yellow green                  |     154 |     205 |      50 |
         | yellow green                  |     154 |     205 |      50 |
         | forest green                  |      34 |     139 |      34 |
-        | forest green                  |      34 |     139 |      34 |
         | olive drab                    |     107 |     142 |      35 |
-        | olive drab                    |     107 |     142 |      35 |
-        | dark khaki                    |     189 |     183 |     107 |
         | dark khaki                    |     189 |     183 |     107 |
         | khaki                         |     240 |     230 |     140 |
         | pale goldenrod                |     238 |     232 |     170 |
-        | pale goldenrod                |     238 |     232 |     170 |
         | light goldenrod yellow        |     250 |     250 |     210 |
-        | light goldenrod yellow        |     250 |     250 |     210 |
-        | light yellow                  |     255 |     255 |     224 |
         | light yellow                  |     255 |     255 |     224 |
         | yellow                        |     255 |     255 |       0 |
         | gold                          |     255 |     215 |       0 |
         | light goldenrod               |     238 |     221 |     130 |
-        | light goldenrod               |     238 |     221 |     130 |
         | goldenrod                     |     218 |     165 |      32 |
-        | dark goldenrod                |     184 |     134 |      11 |
         | dark goldenrod                |     184 |     134 |      11 |
         | rosy brown                    |     188 |     143 |     143 |
         | indian red                    |     205 |      92 |      92 |
-        | saddle brown                  |     139 |      69 |      19 |
         | saddle brown                  |     139 |      69 |      19 |
         | sienna                        |     160 |      82 |      45 |
         | peru                          |     205 |     133 |      63 |
@@ -353,53 +290,37 @@ class Colour:
         | beige                         |     245 |     245 |     220 |
         | wheat                         |     245 |     222 |     179 |
         | sandy brown                   |     244 |     164 |      96 |
-        | sandy brown                   |     244 |     164 |      96 |
         | tan                           |     210 |     180 |     140 |
         | chocolate                     |     210 |     105 |      30 |
         | firebrick                     |     178 |      34 |      34 |
         | brown                         |     165 |      42 |      42 |
         | dark salmon                   |     233 |     150 |     122 |
-        | dark salmon                   |     233 |     150 |     122 |
         | salmon                        |     250 |     128 |     114 |
         | light salmon                  |     255 |     160 |     122 |
-        | light salmon                  |     255 |     160 |     122 |
         | orange                        |     255 |     165 |       0 |
-        | dark orange                   |     255 |     140 |       0 |
         | dark orange                   |     255 |     140 |       0 |
         | coral                         |     255 |     127 |      80 |
         | light coral                   |     240 |     128 |     128 |
         | tomato                        |     255 |      99 |      71 |
         | orange red                    |     255 |      69 |       0 |
-        | orange red                    |     255 |      69 |       0 |
         | red                           |     255 |       0 |       0 |
         | hot pink                      |     255 |     105 |     180 |
-        | hot pink                      |     255 |     105 |     180 |
-        | deep pink                     |     255 |      20 |     147 |
         | deep pink                     |     255 |      20 |     147 |
         | pink                          |     255 |     192 |     203 |
         | light pink                    |     255 |     182 |     193 |
-        | light pink                    |     255 |     182 |     193 |
-        | pale violet red               |     219 |     112 |     147 |
         | pale violet red               |     219 |     112 |     147 |
         | maroon                        |     176 |      48 |      96 |
         | medium violet red             |     199 |      21 |     133 |
-        | medium violet red             |     199 |      21 |     133 |
-        | violet red                    |     208 |      32 |     144 |
         | violet red                    |     208 |      32 |     144 |
         | magenta                       |     255 |       0 |     255 |
         | violet                        |     238 |     130 |     238 |
         | plum                          |     221 |     160 |     221 |
         | orchid                        |     218 |     112 |     214 |
         | medium orchid                 |     186 |      85 |     211 |
-        | medium orchid                 |     186 |      85 |     211 |
-        | dark orchid                   |     153 |      50 |     204 |
         | dark orchid                   |     153 |      50 |     204 |
         | dark violet                   |     148 |       0 |     211 |
-        | dark violet                   |     148 |       0 |     211 |
-        | blue violet                   |     138 |      43 |     226 |
         | blue violet                   |     138 |      43 |     226 |
         | purple                        |     160 |      32 |     240 |
-        | medium purple                 |     147 |     112 |     219 |
         | medium purple                 |     147 |     112 |     219 |
         | thistle                       |     216 |     191 |     216 |
         | snow 1                        |     255 |     250 |     250 |
@@ -486,10 +407,10 @@ class Colour:
         | light sky blue 2              |     164 |     211 |     238 |
         | light sky blue 3              |     141 |     182 |     205 |
         | light sky blue 4              |      96 |     123 |     139 |
-        | slate gray 1                  |     198 |     226 |     255 |
-        | slate gray 2                  |     185 |     211 |     238 |
-        | slate gray 3                  |     159 |     182 |     205 |
-        | slate gray 4                  |     108 |     123 |     139 |
+        | slate grey 1                  |     198 |     226 |     255 |
+        | slate grey 2                  |     185 |     211 |     238 |
+        | slate grey 3                  |     159 |     182 |     205 |
+        | slate grey 4                  |     108 |     123 |     139 |
         | light steel blue 1            |     202 |     225 |     255 |
         | light steel blue 2            |     188 |     210 |     238 |
         | light steel blue 3            |     162 |     181 |     205 |
@@ -518,10 +439,10 @@ class Colour:
         | cyan 2                        |       0 |     238 |     238 |
         | cyan 3                        |       0 |     205 |     205 |
         | cyan 4                        |       0 |     139 |     139 |
-        | dark slate gray 1             |     151 |     255 |     255 |
-        | dark slate gray 2             |     141 |     238 |     238 |
-        | dark slate gray 3             |     121 |     205 |     205 |
-        | dark slate gray 4             |      82 |     139 |     139 |
+        | dark slate grey 1             |     151 |     255 |     255 |
+        | dark slate grey 2             |     141 |     238 |     238 |
+        | dark slate grey 3             |     121 |     205 |     205 |
+        | dark slate grey 4             |      82 |     139 |     139 |
         | aquamarine 1                  |     127 |     255 |     212 |
         | aquamarine 2                  |     118 |     238 |     198 |
         | aquamarine 3                  |     102 |     205 |     170 |
@@ -714,115 +635,112 @@ class Colour:
         | thistle 2                     |     238 |     210 |     238 |
         | thistle 3                     |     205 |     181 |     205 |
         | thistle 4                     |     139 |     123 |     139 |
-        | gray 0                        |       0 |       0 |       0 |
-        | gray 1                        |       3 |       3 |       3 |
-        | gray 2                        |       5 |       5 |       5 |
-        | gray 3                        |       8 |       8 |       8 |
-        | gray 4                        |      10 |      10 |      10 |
-        | gray 5                        |      13 |      13 |      13 |
-        | gray 6                        |      15 |      15 |      15 |
-        | gray 7                        |      18 |      18 |      18 |
-        | gray 8                        |      20 |      20 |      20 |
-        | gray 9                        |      23 |      23 |      23 |
-        | gray 10                       |      26 |      26 |      26 |
-        | gray 11                       |      28 |      28 |      28 |
-        | gray 12                       |      31 |      31 |      31 |
-        | gray 13                       |      33 |      33 |      33 |
-        | gray 14                       |      36 |      36 |      36 |
-        | gray 15                       |      38 |      38 |      38 |
-        | gray 16                       |      41 |      41 |      41 |
-        | gray 17                       |      43 |      43 |      43 |
-        | gray 18                       |      46 |      46 |      46 |
-        | gray 19                       |      48 |      48 |      48 |
-        | gray 20                       |      51 |      51 |      51 |
-        | gray 21                       |      54 |      54 |      54 |
-        | gray 22                       |      56 |      56 |      56 |
-        | gray 23                       |      59 |      59 |      59 |
-        | gray 24                       |      61 |      61 |      61 |
-        | gray 25                       |      64 |      64 |      64 |
-        | gray 26                       |      66 |      66 |      66 |
-        | gray 27                       |      69 |      69 |      69 |
-        | gray 28                       |      71 |      71 |      71 |
-        | gray 29                       |      74 |      74 |      74 |
-        | gray 30                       |      77 |      77 |      77 |
-        | gray 31                       |      79 |      79 |      79 |
-        | gray 32                       |      82 |      82 |      82 |
-        | gray 33                       |      84 |      84 |      84 |
-        | gray 34                       |      87 |      87 |      87 |
-        | gray 35                       |      89 |      89 |      89 |
-        | gray 36                       |      92 |      92 |      92 |
-        | gray 37                       |      94 |      94 |      94 |
-        | gray 38                       |      97 |      97 |      97 |
-        | gray 39                       |      99 |      99 |      99 |
-        | gray 40                       |     102 |     102 |     102 |
-        | gray 41                       |     105 |     105 |     105 |
-        | gray 42                       |     107 |     107 |     107 |
-        | gray 43                       |     110 |     110 |     110 |
-        | gray 44                       |     112 |     112 |     112 |
-        | gray 45                       |     115 |     115 |     115 |
-        | gray 46                       |     117 |     117 |     117 |
-        | gray 47                       |     120 |     120 |     120 |
-        | gray 48                       |     122 |     122 |     122 |
-        | gray 49                       |     125 |     125 |     125 |
-        | gray 50                       |     127 |     127 |     127 |
-        | gray 51                       |     130 |     130 |     130 |
-        | gray 52                       |     133 |     133 |     133 |
-        | gray 53                       |     135 |     135 |     135 |
-        | gray 54                       |     138 |     138 |     138 |
-        | gray 55                       |     140 |     140 |     140 |
-        | gray 56                       |     143 |     143 |     143 |
-        | gray 57                       |     145 |     145 |     145 |
-        | gray 58                       |     148 |     148 |     148 |
-        | gray 59                       |     150 |     150 |     150 |
-        | gray 60                       |     153 |     153 |     153 |
-        | gray 61                       |     156 |     156 |     156 |
-        | gray 62                       |     158 |     158 |     158 |
-        | gray 63                       |     161 |     161 |     161 |
-        | gray 64                       |     163 |     163 |     163 |
-        | gray 65                       |     166 |     166 |     166 |
-        | gray 66                       |     168 |     168 |     168 |
-        | gray 67                       |     171 |     171 |     171 |
-        | gray 68                       |     173 |     173 |     173 |
-        | gray 69                       |     176 |     176 |     176 |
-        | gray 70                       |     179 |     179 |     179 |
-        | gray 71                       |     181 |     181 |     181 |
-        | gray 72                       |     184 |     184 |     184 |
-        | gray 73                       |     186 |     186 |     186 |
-        | gray 74                       |     189 |     189 |     189 |
-        | gray 75                       |     191 |     191 |     191 |
-        | gray 76                       |     194 |     194 |     194 |
-        | gray 77                       |     196 |     196 |     196 |
-        | gray 78                       |     199 |     199 |     199 |
-        | gray 79                       |     201 |     201 |     201 |
-        | gray 80                       |     204 |     204 |     204 |
-        | gray 81                       |     207 |     207 |     207 |
-        | gray 82                       |     209 |     209 |     209 |
-        | gray 83                       |     212 |     212 |     212 |
-        | gray 84                       |     214 |     214 |     214 |
-        | gray 85                       |     217 |     217 |     217 |
-        | gray 86                       |     219 |     219 |     219 |
-        | gray 87                       |     222 |     222 |     222 |
-        | gray 88                       |     224 |     224 |     224 |
-        | gray 89                       |     227 |     227 |     227 |
-        | gray 90                       |     229 |     229 |     229 |
-        | gray 91                       |     232 |     232 |     232 |
-        | gray 92                       |     235 |     235 |     235 |
-        | gray 93                       |     237 |     237 |     237 |
-        | gray 94                       |     240 |     240 |     240 |
-        | gray 95                       |     242 |     242 |     242 |
-        | gray 96                       |     245 |     245 |     245 |
-        | gray 97                       |     247 |     247 |     247 |
-        | gray 98                       |     250 |     250 |     250 |
-        | gray 99                       |     252 |     252 |     252 |
-        | gray 100                      |     255 |     255 |     255 |
+        | grey 0                        |       0 |       0 |       0 |
+        | grey 1                        |       3 |       3 |       3 |
+        | grey 2                        |       5 |       5 |       5 |
+        | grey 3                        |       8 |       8 |       8 |
+        | grey 4                        |      10 |      10 |      10 |
+        | grey 5                        |      13 |      13 |      13 |
+        | grey 6                        |      15 |      15 |      15 |
+        | grey 7                        |      18 |      18 |      18 |
+        | grey 8                        |      20 |      20 |      20 |
+        | grey 9                        |      23 |      23 |      23 |
+        | grey 10                       |      26 |      26 |      26 |
+        | grey 11                       |      28 |      28 |      28 |
+        | grey 12                       |      31 |      31 |      31 |
+        | grey 13                       |      33 |      33 |      33 |
+        | grey 14                       |      36 |      36 |      36 |
+        | grey 15                       |      38 |      38 |      38 |
+        | grey 16                       |      41 |      41 |      41 |
+        | grey 17                       |      43 |      43 |      43 |
+        | grey 18                       |      46 |      46 |      46 |
+        | grey 19                       |      48 |      48 |      48 |
+        | grey 20                       |      51 |      51 |      51 |
+        | grey 21                       |      54 |      54 |      54 |
+        | grey 22                       |      56 |      56 |      56 |
+        | grey 23                       |      59 |      59 |      59 |
+        | grey 24                       |      61 |      61 |      61 |
+        | grey 25                       |      64 |      64 |      64 |
+        | grey 26                       |      66 |      66 |      66 |
+        | grey 27                       |      69 |      69 |      69 |
+        | grey 28                       |      71 |      71 |      71 |
+        | grey 29                       |      74 |      74 |      74 |
+        | grey 30                       |      77 |      77 |      77 |
+        | grey 31                       |      79 |      79 |      79 |
+        | grey 32                       |      82 |      82 |      82 |
+        | grey 33                       |      84 |      84 |      84 |
+        | grey 34                       |      87 |      87 |      87 |
+        | grey 35                       |      89 |      89 |      89 |
+        | grey 36                       |      92 |      92 |      92 |
+        | grey 37                       |      94 |      94 |      94 |
+        | grey 38                       |      97 |      97 |      97 |
+        | grey 39                       |      99 |      99 |      99 |
+        | grey 40                       |     102 |     102 |     102 |
+        | grey 41                       |     105 |     105 |     105 |
+        | grey 42                       |     107 |     107 |     107 |
+        | grey 43                       |     110 |     110 |     110 |
+        | grey 44                       |     112 |     112 |     112 |
+        | grey 45                       |     115 |     115 |     115 |
+        | grey 46                       |     117 |     117 |     117 |
+        | grey 47                       |     120 |     120 |     120 |
+        | grey 48                       |     122 |     122 |     122 |
+        | grey 49                       |     125 |     125 |     125 |
+        | grey 50                       |     127 |     127 |     127 |
+        | grey 51                       |     130 |     130 |     130 |
+        | grey 52                       |     133 |     133 |     133 |
+        | grey 53                       |     135 |     135 |     135 |
+        | grey 54                       |     138 |     138 |     138 |
+        | grey 55                       |     140 |     140 |     140 |
+        | grey 56                       |     143 |     143 |     143 |
+        | grey 57                       |     145 |     145 |     145 |
+        | grey 58                       |     148 |     148 |     148 |
+        | grey 59                       |     150 |     150 |     150 |
+        | grey 60                       |     153 |     153 |     153 |
+        | grey 61                       |     156 |     156 |     156 |
+        | grey 62                       |     158 |     158 |     158 |
+        | grey 63                       |     161 |     161 |     161 |
+        | grey 64                       |     163 |     163 |     163 |
+        | grey 65                       |     166 |     166 |     166 |
+        | grey 66                       |     168 |     168 |     168 |
+        | grey 67                       |     171 |     171 |     171 |
+        | grey 68                       |     173 |     173 |     173 |
+        | grey 69                       |     176 |     176 |     176 |
+        | grey 70                       |     179 |     179 |     179 |
+        | grey 71                       |     181 |     181 |     181 |
+        | grey 72                       |     184 |     184 |     184 |
+        | grey 73                       |     186 |     186 |     186 |
+        | grey 74                       |     189 |     189 |     189 |
+        | grey 75                       |     191 |     191 |     191 |
+        | grey 76                       |     194 |     194 |     194 |
+        | grey 77                       |     196 |     196 |     196 |
+        | grey 78                       |     199 |     199 |     199 |
+        | grey 79                       |     201 |     201 |     201 |
+        | grey 80                       |     204 |     204 |     204 |
+        | grey 81                       |     207 |     207 |     207 |
+        | grey 82                       |     209 |     209 |     209 |
+        | grey 83                       |     212 |     212 |     212 |
+        | grey 84                       |     214 |     214 |     214 |
+        | grey 85                       |     217 |     217 |     217 |
+        | grey 86                       |     219 |     219 |     219 |
+        | grey 87                       |     222 |     222 |     222 |
+        | grey 88                       |     224 |     224 |     224 |
+        | grey 89                       |     227 |     227 |     227 |
+        | grey 90                       |     229 |     229 |     229 |
+        | grey 91                       |     232 |     232 |     232 |
+        | grey 92                       |     235 |     235 |     235 |
+        | grey 93                       |     237 |     237 |     237 |
+        | grey 94                       |     240 |     240 |     240 |
+        | grey 95                       |     242 |     242 |     242 |
+        | grey 96                       |     245 |     245 |     245 |
+        | grey 97                       |     247 |     247 |     247 |
+        | grey 98                       |     250 |     250 |     250 |
+        | grey 99                       |     252 |     252 |     252 |
+        | grey 100                      |     255 |     255 |     255 |
         | dark grey                     |     169 |     169 |     169 |
-        | dark blue                     |       0 |       0 |     139 |
         | dark blue                     |       0 |       0 |     139 |
         | dark cyan                     |       0 |     139 |     139 |
         | dark magenta                  |     139 |       0 |     139 |
-        | dark magenta                  |     139 |       0 |     139 |
         | dark red                      |     139 |       0 |       0 |
-        | light green                   |     144 |     238 |     144 |
         | light green                   |     144 |     238 |     144 |
         |_______________________________|_________|_________|_________|
 
@@ -834,156 +752,93 @@ class Colour:
         # The colours as sorted in the /usr/X11R6/lib/X11/rgb.txt file.
         colours['snow']                     = [255, 250, 250]
         colours['ghost white']              = [248, 248, 255]
-        colours['ghost white']              = [248, 248, 255]
         colours['white smoke']              = [245, 245, 245]
         colours['gainsboro']                = [220, 220, 220]
         colours['floral white']             = [255, 250, 240]
-        colours['floral white']             = [255, 250, 240]
-        colours['old lace']                 = [253, 245, 230]
         colours['old lace']                 = [253, 245, 230]
         colours['linen']                    = [250, 240, 230]
         colours['antique white']            = [250, 235, 215]
-        colours['antique white']            = [250, 235, 215]
         colours['papaya whip']              = [255, 239, 213]
-        colours['papaya whip']              = [255, 239, 213]
-        colours['blanched almond']          = [255, 235, 205]
         colours['blanched almond']          = [255, 235, 205]
         colours['bisque']                   = [255, 228, 196]
         colours['peach puff']               = [255, 218, 185]
-        colours['peach puff']               = [255, 218, 185]
-        colours['navajo white']             = [255, 222, 173]
         colours['navajo white']             = [255, 222, 173]
         colours['moccasin']                 = [255, 228, 181]
         colours['cornsilk']                 = [255, 248, 220]
         colours['ivory']                    = [255, 255, 240]
         colours['lemon chiffon']            = [255, 250, 205]
-        colours['lemon chiffon']            = [255, 250, 205]
         colours['seashell']                 = [255, 245, 238]
         colours['honeydew']                 = [240, 255, 240]
         colours['mint cream']               = [245, 255, 250]
-        colours['mint cream']               = [245, 255, 250]
         colours['azure']                    = [240, 255, 255]
-        colours['alice blue']               = [240, 248, 255]
         colours['alice blue']               = [240, 248, 255]
         colours['lavender']                 = [230, 230, 250]
         colours['lavender blush']           = [255, 240, 245]
-        colours['lavender blush']           = [255, 240, 245]
-        colours['misty rose']               = [255, 228, 225]
         colours['misty rose']               = [255, 228, 225]
         colours['white']                    = [255, 255, 255]
         colours['black']                    = [  0,   0,   0]
-        colours['dark slate gray']          = [ 47,  79,  79]
-        colours['dim gray']                 = [105, 105, 105]
-        colours['slate gray']               = [112, 128, 144]
-        colours['slate gray']               = [112, 128, 144]
+        colours['dark slate grey']          = [ 47,  79,  79]
+        colours['dim grey']                 = [105, 105, 105]
         colours['slate grey']               = [112, 128, 144]
-        colours['slate grey']               = [112, 128, 144]
-        colours['light slate gray']         = [119, 136, 153]
-        colours['light slate gray']         = [119, 136, 153]
         colours['light slate grey']         = [119, 136, 153]
-        colours['light slate grey']         = [119, 136, 153]
-        colours['gray']                     = [190, 190, 190]
+        colours['grey']                     = [190, 190, 190]
         colours['light grey']               = [211, 211, 211]
         colours['midnight blue']            = [ 25,  25, 112]
-        colours['midnight blue']            = [ 25,  25, 112]
         colours['navy']                     = [  0,   0, 128]
-        colours['navy blue']                = [  0,   0, 128]
-        colours['navy blue']                = [  0,   0, 128]
-        colours['cornflower blue']          = [100, 149, 237]
         colours['cornflower blue']          = [100, 149, 237]
         colours['dark slate blue']          = [ 72,  61, 139]
-        colours['dark slate blue']          = [ 72,  61, 139]
-        colours['slate blue']               = [106,  90, 205]
         colours['slate blue']               = [106,  90, 205]
         colours['medium slate blue']        = [123, 104, 238]
-        colours['medium slate blue']        = [123, 104, 238]
-        colours['light slate blue']         = [132, 112, 255]
         colours['light slate blue']         = [132, 112, 255]
         colours['medium blue']              = [  0,   0, 205]
-        colours['medium blue']              = [  0,   0, 205]
-        colours['royal blue']               = [ 65, 105, 225]
         colours['royal blue']               = [ 65, 105, 225]
         colours['blue']                     = [  0,   0, 255]
         colours['dodger blue']              = [ 30, 144, 255]
-        colours['dodger blue']              = [ 30, 144, 255]
-        colours['deep sky blue']            = [  0, 191, 255]
         colours['deep sky blue']            = [  0, 191, 255]
         colours['sky blue']                 = [135, 206, 235]
-        colours['sky blue']                 = [135, 206, 235]
-        colours['light sky blue']           = [135, 206, 250]
         colours['light sky blue']           = [135, 206, 250]
         colours['steel blue']               = [ 70, 130, 180]
-        colours['steel blue']               = [ 70, 130, 180]
-        colours['light steel blue']         = [176, 196, 222]
         colours['light steel blue']         = [176, 196, 222]
         colours['light blue']               = [173, 216, 230]
-        colours['light blue']               = [173, 216, 230]
-        colours['powder blue']              = [176, 224, 230]
         colours['powder blue']              = [176, 224, 230]
         colours['pale turquoise']           = [175, 238, 238]
         colours['dark turquoise']           = [  0, 206, 209]
-        colours['dark turquoise']           = [  0, 206, 209]
-        colours['medium turquoise']         = [ 72, 209, 204]
         colours['medium turquoise']         = [ 72, 209, 204]
         colours['turquoise']                = [ 64, 224, 208]
         colours['cyan']                     = [  0, 255, 255]
         colours['light cyan']               = [224, 255, 255]
         colours['cadet blue']               = [ 95, 158, 160]
-        colours['cadet blue']               = [ 95, 158, 160]
-        colours['medium aquamarine']        = [102, 205, 170]
         colours['medium aquamarine']        = [102, 205, 170]
         colours['aquamarine']               = [127, 255, 212]
         colours['dark green']               = [  0, 100,   0]
-        colours['dark green']               = [  0, 100,   0]
-        colours['dark olive green']         = [ 85, 107,  47]
         colours['dark olive green']         = [ 85, 107,  47]
         colours['dark sea green']           = [143, 188, 143]
-        colours['dark sea green']           = [143, 188, 143]
-        colours['sea green']                = [ 46, 139,  87]
         colours['sea green']                = [ 46, 139,  87]
         colours['medium sea green']         = [ 60, 179, 113]
-        colours['medium sea green']         = [ 60, 179, 113]
-        colours['light sea green']          = [ 32, 178, 170]
         colours['light sea green']          = [ 32, 178, 170]
         colours['pale green']               = [152, 251, 152]
-        colours['pale green']               = [152, 251, 152]
         colours['spring green']             = [  0, 255, 127]
-        colours['spring green']             = [  0, 255, 127]
-        colours['lawn green']               = [124, 252,   0]
         colours['lawn green']               = [124, 252,   0]
         colours['green']                    = [  0, 255,   0]
         colours['chartreuse']               = [127, 255,   0]
         colours['medium spring green']      = [  0, 250, 154]
-        colours['medium spring green']      = [  0, 250, 154]
-        colours['green yellow']             = [173, 255,  47]
         colours['green yellow']             = [173, 255,  47]
         colours['lime green']               = [ 50, 205,  50]
-        colours['lime green']               = [ 50, 205,  50]
-        colours['yellow green']             = [154, 205,  50]
         colours['yellow green']             = [154, 205,  50]
         colours['forest green']             = [ 34, 139,  34]
-        colours['forest green']             = [ 34, 139,  34]
         colours['olive drab']               = [107, 142,  35]
-        colours['olive drab']               = [107, 142,  35]
-        colours['dark khaki']               = [189, 183, 107]
         colours['dark khaki']               = [189, 183, 107]
         colours['khaki']                    = [240, 230, 140]
         colours['pale goldenrod']           = [238, 232, 170]
-        colours['pale goldenrod']           = [238, 232, 170]
         colours['light goldenrod yellow']   = [250, 250, 210]
-        colours['light goldenrod yellow']   = [250, 250, 210]
-        colours['light yellow']             = [255, 255, 224]
         colours['light yellow']             = [255, 255, 224]
         colours['yellow']                   = [255, 255,   0]
         colours['gold']                     = [255, 215,   0]
         colours['light goldenrod']          = [238, 221, 130]
-        colours['light goldenrod']          = [238, 221, 130]
         colours['goldenrod']                = [218, 165,  32]
-        colours['dark goldenrod']           = [184, 134,  11]
         colours['dark goldenrod']           = [184, 134,  11]
         colours['rosy brown']               = [188, 143, 143]
         colours['indian red']               = [205,  92,  92]
-        colours['saddle brown']             = [139,  69,  19]
         colours['saddle brown']             = [139,  69,  19]
         colours['sienna']                   = [160,  82,  45]
         colours['peru']                     = [205, 133,  63]
@@ -991,53 +846,37 @@ class Colour:
         colours['beige']                    = [245, 245, 220]
         colours['wheat']                    = [245, 222, 179]
         colours['sandy brown']              = [244, 164,  96]
-        colours['sandy brown']              = [244, 164,  96]
         colours['tan']                      = [210, 180, 140]
         colours['chocolate']                = [210, 105,  30]
         colours['firebrick']                = [178,  34,  34]
         colours['brown']                    = [165,  42,  42]
         colours['dark salmon']              = [233, 150, 122]
-        colours['dark salmon']              = [233, 150, 122]
         colours['salmon']                   = [250, 128, 114]
         colours['light salmon']             = [255, 160, 122]
-        colours['light salmon']             = [255, 160, 122]
         colours['orange']                   = [255, 165,   0]
-        colours['dark orange']              = [255, 140,   0]
         colours['dark orange']              = [255, 140,   0]
         colours['coral']                    = [255, 127,  80]
         colours['light coral']              = [240, 128, 128]
         colours['tomato']                   = [255,  99,  71]
         colours['orange red']               = [255,  69,   0]
-        colours['orange red']               = [255,  69,   0]
         colours['red']                      = [255,   0,   0]
         colours['hot pink']                 = [255, 105, 180]
-        colours['hot pink']                 = [255, 105, 180]
-        colours['deep pink']                = [255,  20, 147]
         colours['deep pink']                = [255,  20, 147]
         colours['pink']                     = [255, 192, 203]
         colours['light pink']               = [255, 182, 193]
-        colours['light pink']               = [255, 182, 193]
-        colours['pale violet red']          = [219, 112, 147]
         colours['pale violet red']          = [219, 112, 147]
         colours['maroon']                   = [176,  48,  96]
         colours['medium violet red']        = [199,  21, 133]
-        colours['medium violet red']        = [199,  21, 133]
-        colours['violet red']               = [208,  32, 144]
         colours['violet red']               = [208,  32, 144]
         colours['magenta']                  = [255,   0, 255]
         colours['violet']                   = [238, 130, 238]
         colours['plum']                     = [221, 160, 221]
         colours['orchid']                   = [218, 112, 214]
         colours['medium orchid']            = [186,  85, 211]
-        colours['medium orchid']            = [186,  85, 211]
-        colours['dark orchid']              = [153,  50, 204]
         colours['dark orchid']              = [153,  50, 204]
         colours['dark violet']              = [148,   0, 211]
-        colours['dark violet']              = [148,   0, 211]
-        colours['blue violet']              = [138,  43, 226]
         colours['blue violet']              = [138,  43, 226]
         colours['purple']                   = [160,  32, 240]
-        colours['medium purple']            = [147, 112, 219]
         colours['medium purple']            = [147, 112, 219]
         colours['thistle']                  = [216, 191, 216]
         colours['snow 1']                   = [255, 250, 250]
@@ -1124,10 +963,10 @@ class Colour:
         colours['light sky blue 2']         = [164, 211, 238]
         colours['light sky blue 3']         = [141, 182, 205]
         colours['light sky blue 4']         = [ 96, 123, 139]
-        colours['slate gray 1']             = [198, 226, 255]
-        colours['slate gray 2']             = [185, 211, 238]
-        colours['slate gray 3']             = [159, 182, 205]
-        colours['slate gray 4']             = [108, 123, 139]
+        colours['slate grey 1']             = [198, 226, 255]
+        colours['slate grey 2']             = [185, 211, 238]
+        colours['slate grey 3']             = [159, 182, 205]
+        colours['slate grey 4']             = [108, 123, 139]
         colours['light steel blue 1']       = [202, 225, 255]
         colours['light steel blue 2']       = [188, 210, 238]
         colours['light steel blue 3']       = [162, 181, 205]
@@ -1156,10 +995,10 @@ class Colour:
         colours['cyan 2']                   = [  0, 238, 238]
         colours['cyan 3']                   = [  0, 205, 205]
         colours['cyan 4']                   = [  0, 139, 139]
-        colours['dark slate gray 1']        = [151, 255, 255]
-        colours['dark slate gray 2']        = [141, 238, 238]
-        colours['dark slate gray 3']        = [121, 205, 205]
-        colours['dark slate gray 4']        = [ 82, 139, 139]
+        colours['dark slate grey 1']        = [151, 255, 255]
+        colours['dark slate grey 2']        = [141, 238, 238]
+        colours['dark slate grey 3']        = [121, 205, 205]
+        colours['dark slate grey 4']        = [ 82, 139, 139]
         colours['aquamarine 1']             = [127, 255, 212]
         colours['aquamarine 2']             = [118, 238, 198]
         colours['aquamarine 3']             = [102, 205, 170]
@@ -1352,115 +1191,112 @@ class Colour:
         colours['thistle 2']                = [238, 210, 238]
         colours['thistle 3']                = [205, 181, 205]
         colours['thistle 4']                = [139, 123, 139]
-        colours['gray 0']                   = [  0,   0,   0]
-        colours['gray 1']                   = [  3,   3,   3]
-        colours['gray 2']                   = [  5,   5,   5]
-        colours['gray 3']                   = [  8,   8,   8]
-        colours['gray 4']                   = [ 10,  10,  10]
-        colours['gray 5']                   = [ 13,  13,  13]
-        colours['gray 6']                   = [ 15,  15,  15]
-        colours['gray 7']                   = [ 18,  18,  18]
-        colours['gray 8']                   = [ 20,  20,  20]
-        colours['gray 9']                   = [ 23,  23,  23]
-        colours['gray 10']                  = [ 26,  26,  26]
-        colours['gray 11']                  = [ 28,  28,  28]
-        colours['gray 12']                  = [ 31,  31,  31]
-        colours['gray 13']                  = [ 33,  33,  33]
-        colours['gray 14']                  = [ 36,  36,  36]
-        colours['gray 15']                  = [ 38,  38,  38]
-        colours['gray 16']                  = [ 41,  41,  41]
-        colours['gray 17']                  = [ 43,  43,  43]
-        colours['gray 18']                  = [ 46,  46,  46]
-        colours['gray 19']                  = [ 48,  48,  48]
-        colours['gray 20']                  = [ 51,  51,  51]
-        colours['gray 21']                  = [ 54,  54,  54]
-        colours['gray 22']                  = [ 56,  56,  56]
-        colours['gray 23']                  = [ 59,  59,  59]
-        colours['gray 24']                  = [ 61,  61,  61]
-        colours['gray 25']                  = [ 64,  64,  64]
-        colours['gray 26']                  = [ 66,  66,  66]
-        colours['gray 27']                  = [ 69,  69,  69]
-        colours['gray 28']                  = [ 71,  71,  71]
-        colours['gray 29']                  = [ 74,  74,  74]
-        colours['gray 30']                  = [ 77,  77,  77]
-        colours['gray 31']                  = [ 79,  79,  79]
-        colours['gray 32']                  = [ 82,  82,  82]
-        colours['gray 33']                  = [ 84,  84,  84]
-        colours['gray 34']                  = [ 87,  87,  87]
-        colours['gray 35']                  = [ 89,  89,  89]
-        colours['gray 36']                  = [ 92,  92,  92]
-        colours['gray 37']                  = [ 94,  94,  94]
-        colours['gray 38']                  = [ 97,  97,  97]
-        colours['gray 39']                  = [ 99,  99,  99]
-        colours['gray 40']                  = [102, 102, 102]
-        colours['gray 41']                  = [105, 105, 105]
-        colours['gray 42']                  = [107, 107, 107]
-        colours['gray 43']                  = [110, 110, 110]
-        colours['gray 44']                  = [112, 112, 112]
-        colours['gray 45']                  = [115, 115, 115]
-        colours['gray 46']                  = [117, 117, 117]
-        colours['gray 47']                  = [120, 120, 120]
-        colours['gray 48']                  = [122, 122, 122]
-        colours['gray 49']                  = [125, 125, 125]
-        colours['gray 50']                  = [127, 127, 127]
-        colours['gray 51']                  = [130, 130, 130]
-        colours['gray 52']                  = [133, 133, 133]
-        colours['gray 53']                  = [135, 135, 135]
-        colours['gray 54']                  = [138, 138, 138]
-        colours['gray 55']                  = [140, 140, 140]
-        colours['gray 56']                  = [143, 143, 143]
-        colours['gray 57']                  = [145, 145, 145]
-        colours['gray 58']                  = [148, 148, 148]
-        colours['gray 59']                  = [150, 150, 150]
-        colours['gray 60']                  = [153, 153, 153]
-        colours['gray 61']                  = [156, 156, 156]
-        colours['gray 62']                  = [158, 158, 158]
-        colours['gray 63']                  = [161, 161, 161]
-        colours['gray 64']                  = [163, 163, 163]
-        colours['gray 65']                  = [166, 166, 166]
-        colours['gray 66']                  = [168, 168, 168]
-        colours['gray 67']                  = [171, 171, 171]
-        colours['gray 68']                  = [173, 173, 173]
-        colours['gray 69']                  = [176, 176, 176]
-        colours['gray 70']                  = [179, 179, 179]
-        colours['gray 71']                  = [181, 181, 181]
-        colours['gray 72']                  = [184, 184, 184]
-        colours['gray 73']                  = [186, 186, 186]
-        colours['gray 74']                  = [189, 189, 189]
-        colours['gray 75']                  = [191, 191, 191]
-        colours['gray 76']                  = [194, 194, 194]
-        colours['gray 77']                  = [196, 196, 196]
-        colours['gray 78']                  = [199, 199, 199]
-        colours['gray 79']                  = [201, 201, 201]
-        colours['gray 80']                  = [204, 204, 204]
-        colours['gray 81']                  = [207, 207, 207]
-        colours['gray 82']                  = [209, 209, 209]
-        colours['gray 83']                  = [212, 212, 212]
-        colours['gray 84']                  = [214, 214, 214]
-        colours['gray 85']                  = [217, 217, 217]
-        colours['gray 86']                  = [219, 219, 219]
-        colours['gray 87']                  = [222, 222, 222]
-        colours['gray 88']                  = [224, 224, 224]
-        colours['gray 89']                  = [227, 227, 227]
-        colours['gray 90']                  = [229, 229, 229]
-        colours['gray 91']                  = [232, 232, 232]
-        colours['gray 92']                  = [235, 235, 235]
-        colours['gray 93']                  = [237, 237, 237]
-        colours['gray 94']                  = [240, 240, 240]
-        colours['gray 95']                  = [242, 242, 242]
-        colours['gray 96']                  = [245, 245, 245]
-        colours['gray 97']                  = [247, 247, 247]
-        colours['gray 98']                  = [250, 250, 250]
-        colours['gray 99']                  = [252, 252, 252]
-        colours['gray 100']                 = [255, 255, 255]
+        colours['grey 0']                   = [  0,   0,   0]
+        colours['grey 1']                   = [  3,   3,   3]
+        colours['grey 2']                   = [  5,   5,   5]
+        colours['grey 3']                   = [  8,   8,   8]
+        colours['grey 4']                   = [ 10,  10,  10]
+        colours['grey 5']                   = [ 13,  13,  13]
+        colours['grey 6']                   = [ 15,  15,  15]
+        colours['grey 7']                   = [ 18,  18,  18]
+        colours['grey 8']                   = [ 20,  20,  20]
+        colours['grey 9']                   = [ 23,  23,  23]
+        colours['grey 10']                  = [ 26,  26,  26]
+        colours['grey 11']                  = [ 28,  28,  28]
+        colours['grey 12']                  = [ 31,  31,  31]
+        colours['grey 13']                  = [ 33,  33,  33]
+        colours['grey 14']                  = [ 36,  36,  36]
+        colours['grey 15']                  = [ 38,  38,  38]
+        colours['grey 16']                  = [ 41,  41,  41]
+        colours['grey 17']                  = [ 43,  43,  43]
+        colours['grey 18']                  = [ 46,  46,  46]
+        colours['grey 19']                  = [ 48,  48,  48]
+        colours['grey 20']                  = [ 51,  51,  51]
+        colours['grey 21']                  = [ 54,  54,  54]
+        colours['grey 22']                  = [ 56,  56,  56]
+        colours['grey 23']                  = [ 59,  59,  59]
+        colours['grey 24']                  = [ 61,  61,  61]
+        colours['grey 25']                  = [ 64,  64,  64]
+        colours['grey 26']                  = [ 66,  66,  66]
+        colours['grey 27']                  = [ 69,  69,  69]
+        colours['grey 28']                  = [ 71,  71,  71]
+        colours['grey 29']                  = [ 74,  74,  74]
+        colours['grey 30']                  = [ 77,  77,  77]
+        colours['grey 31']                  = [ 79,  79,  79]
+        colours['grey 32']                  = [ 82,  82,  82]
+        colours['grey 33']                  = [ 84,  84,  84]
+        colours['grey 34']                  = [ 87,  87,  87]
+        colours['grey 35']                  = [ 89,  89,  89]
+        colours['grey 36']                  = [ 92,  92,  92]
+        colours['grey 37']                  = [ 94,  94,  94]
+        colours['grey 38']                  = [ 97,  97,  97]
+        colours['grey 39']                  = [ 99,  99,  99]
+        colours['grey 40']                  = [102, 102, 102]
+        colours['grey 41']                  = [105, 105, 105]
+        colours['grey 42']                  = [107, 107, 107]
+        colours['grey 43']                  = [110, 110, 110]
+        colours['grey 44']                  = [112, 112, 112]
+        colours['grey 45']                  = [115, 115, 115]
+        colours['grey 46']                  = [117, 117, 117]
+        colours['grey 47']                  = [120, 120, 120]
+        colours['grey 48']                  = [122, 122, 122]
+        colours['grey 49']                  = [125, 125, 125]
+        colours['grey 50']                  = [127, 127, 127]
+        colours['grey 51']                  = [130, 130, 130]
+        colours['grey 52']                  = [133, 133, 133]
+        colours['grey 53']                  = [135, 135, 135]
+        colours['grey 54']                  = [138, 138, 138]
+        colours['grey 55']                  = [140, 140, 140]
+        colours['grey 56']                  = [143, 143, 143]
+        colours['grey 57']                  = [145, 145, 145]
+        colours['grey 58']                  = [148, 148, 148]
+        colours['grey 59']                  = [150, 150, 150]
+        colours['grey 60']                  = [153, 153, 153]
+        colours['grey 61']                  = [156, 156, 156]
+        colours['grey 62']                  = [158, 158, 158]
+        colours['grey 63']                  = [161, 161, 161]
+        colours['grey 64']                  = [163, 163, 163]
+        colours['grey 65']                  = [166, 166, 166]
+        colours['grey 66']                  = [168, 168, 168]
+        colours['grey 67']                  = [171, 171, 171]
+        colours['grey 68']                  = [173, 173, 173]
+        colours['grey 69']                  = [176, 176, 176]
+        colours['grey 70']                  = [179, 179, 179]
+        colours['grey 71']                  = [181, 181, 181]
+        colours['grey 72']                  = [184, 184, 184]
+        colours['grey 73']                  = [186, 186, 186]
+        colours['grey 74']                  = [189, 189, 189]
+        colours['grey 75']                  = [191, 191, 191]
+        colours['grey 76']                  = [194, 194, 194]
+        colours['grey 77']                  = [196, 196, 196]
+        colours['grey 78']                  = [199, 199, 199]
+        colours['grey 79']                  = [201, 201, 201]
+        colours['grey 80']                  = [204, 204, 204]
+        colours['grey 81']                  = [207, 207, 207]
+        colours['grey 82']                  = [209, 209, 209]
+        colours['grey 83']                  = [212, 212, 212]
+        colours['grey 84']                  = [214, 214, 214]
+        colours['grey 85']                  = [217, 217, 217]
+        colours['grey 86']                  = [219, 219, 219]
+        colours['grey 87']                  = [222, 222, 222]
+        colours['grey 88']                  = [224, 224, 224]
+        colours['grey 89']                  = [227, 227, 227]
+        colours['grey 90']                  = [229, 229, 229]
+        colours['grey 91']                  = [232, 232, 232]
+        colours['grey 92']                  = [235, 235, 235]
+        colours['grey 93']                  = [237, 237, 237]
+        colours['grey 94']                  = [240, 240, 240]
+        colours['grey 95']                  = [242, 242, 242]
+        colours['grey 96']                  = [245, 245, 245]
+        colours['grey 97']                  = [247, 247, 247]
+        colours['grey 98']                  = [250, 250, 250]
+        colours['grey 99']                  = [252, 252, 252]
+        colours['grey 100']                 = [255, 255, 255]
         colours['dark grey']                = [169, 169, 169]
-        colours['dark blue']                = [  0,   0, 139]
         colours['dark blue']                = [  0,   0, 139]
         colours['dark cyan']                = [  0, 139, 139]
         colours['dark magenta']             = [139,   0, 139]
-        colours['dark magenta']             = [139,   0, 139]
         colours['dark red']                 = [139,   0,   0]
-        colours['light green']              = [144, 238, 144]
         colours['light green']              = [144, 238, 144]
 
         # Invalid colour string.
