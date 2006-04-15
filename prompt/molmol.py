@@ -79,6 +79,106 @@ class Molmol:
         self.__relax__.generic.molmol.write(command=command)
 
 
+    def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+        """Function for executing Molmol macros.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        data_type:  The data type to map to the structure.
+
+        style:  The style of the macro.
+
+        colour_start:  The starting colour, either an array or string, of the linear colour
+        gradient.
+
+        colour_end:  The ending colour, either an array or string, of the linear colour gradient.
+
+        colour_list:  The list of colours to match the start and end strings.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function allows residues specific values to be mapped to a structure through Molmol
+        macros.  Currently only the 'classic' style, which is described below, is availible.
+
+
+        Colour
+        ~~~~~~
+
+        The values are coloured based on a linear colour gradient which is specified through the
+        'colour_start' and 'colour_end' arguments.  These arguments can either be a string to
+        identify one of the RGB (red, green, blue) colour arrays listed in the tables below, or you
+        can give the RGB vector itself.  For example, colour_start='white' and
+        colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
+        will select the default colour gradient which for each type of analysis is described below.
+
+        When supplying the colours as strings, two lists of colours can be selected from which to
+        match the strings.  These are the default Molmol colour list and the X11 colour list, both
+        of which are described in the tables below.  The default behaviour is to first search the
+        Molmol list and then the X11 colour list, raising an error if neither contain the string.
+        To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
+        'x11'.
+
+
+        Examples
+        ~~~~~~~~
+
+        To map the order parameter values, S2, of the run 'final' onto the structure using the
+        classic style, type:
+
+        relax> molmol.macro_exec('final', 'S2')
+        relax> molmol.macro_exec('final', data_type='S2')
+        relax> molmol.macro_exec('final', data_type='S2', style="classic")
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "molmol.macro_exec("
+            text = text + "run=" + `run`
+            text = text + ", data_type=" + `data_type`
+            text = text + ", style=" + `style`
+            text = text + ", colour_start=" + `colour_start`
+            text = text + ", colour_end=" + `colour_end`
+            text = text + ", colour_list=" + `colour_list` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Data type for mapping to the structure.
+        if type(data_type) != str:
+            raise RelaxStrError, ('data type', data_type)
+
+        # The style.
+        if type(style) != str:
+            raise RelaxStrError, ('style', style)
+
+        # The starting colour of the linear gradient.
+        if colour_start != None and type(colour_start) != str and type(colour_start) != list:
+            raise RelaxNoneStrListError, ('starting colour of the linear gradient', colour_start)
+        if type(colour_start) == list:
+            for i in xrange(len(colour_start)):
+                if type(colour_start[i]) != float and type(colour_start[i]) != int:
+                    raise RelaxListNumError, ('starting colour of the linear gradient', colour_start)
+
+        # The ending colour of the linear gradient.
+        if colour_end != None and type(colour_end) != str and type(colour_end) != list:
+            raise RelaxNoneStrListError, ('ending colour of the linear gradient', colour_end)
+        if type(colour_end) == list:
+            for i in xrange(len(colour_end)):
+                if type(colour_end[i]) != float and type(colour_end[i]) != int:
+                    raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
+
+        # Execute the functional code.
+        self.__relax__.generic.molmol.macro_exec(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+
+
+
     def view(self, run=None):
         """Function for viewing the collection of molecules extracted from the PDB file.
 
@@ -181,6 +281,7 @@ class Molmol:
             text = text + ", style=" + `style`
             text = text + ", colour_start=" + `colour_start`
             text = text + ", colour_end=" + `colour_end`
+            text = text + ", colour_list=" + `colour_list`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -227,7 +328,7 @@ class Molmol:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.write(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, file=file, dir=dir, force=force)
+        self.__relax__.generic.molmol.write(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
 
 
