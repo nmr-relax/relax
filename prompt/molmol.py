@@ -227,5 +227,5 @@ class Molmol:
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + Molmol.classic.__doc__ + "\n\n"
 
-    # RGB colour selection.
-    write.__doc__ = write.__doc__ + "\n\n" + Colour.rgb.__doc__ + "\n\n"
+    # Molmol RGB colour list.
+    write.__doc__ = write.__doc__ + "\n\n" + Colour.molmol_colours.__doc__ + "\n\n"
