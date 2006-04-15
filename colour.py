@@ -28,7 +28,7 @@ class Colour:
         """Class for all functions relating to colour."""
 
 
-    def linear_gradient(self, value=None, start=None, colour_list='molmol', end=None):
+    def linear_gradient(self, value, start, end, colour_list=None):
         """Return an RGB colour array of the value placed on a linear colour gradient.
 
         The argment value should be a number between zero and one.  The start and end colours can
@@ -37,13 +37,37 @@ class Colour:
 
         # Translate the end colour to RGB arrays if necessary.
         if type(start) == str:
-            if colour_list == 'molmol':
+            # Default (search the molmol list then the X11 list).
+            if colour_list == None:
+                try:
+                    start = self.molmol_colours(start)
+                except:
+                    start = self.x11_colours(start)
+
+            # Molmol colours.
+            elif colour_list == 'molmol':
                 start = self.molmol_colours(start)
+
+            # X11 colours.
+            elif colour_list == 'x11':
+                start = self.x11_colours(start)
 
         # Translate the end colour to RGB arrays if necessary.
         if type(end) == str:
-            if colour_list == 'molmol':
+            # Default (search the molmol list then the X11 list).
+            if colour_list == None:
+                try:
+                    end = self.molmol_colours(end)
+                except:
+                    end = self.x11_colours(end)
+
+            # Molmol colours.
+            elif colour_list == 'molmol':
                 end = self.molmol_colours(end)
+
+            # X11 colours.
+            elif colour_list == 'x11':
+                end = self.x11_colours(end)
 
         # Truncate the value to be between zero and one.
         if value < 0.0:

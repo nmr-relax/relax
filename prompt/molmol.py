@@ -109,7 +109,7 @@ class Molmol:
         self.__relax__.generic.molmol.view(run=run)
 
 
-    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, file=None, dir='molmol', force=0):
+    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=0):
         """Function for creating Molmol macros.
 
         Keyword Arguments
@@ -121,9 +121,12 @@ class Molmol:
 
         style:  The style of the macro.
 
-        colour_start:  The starting colour of the linear colour gradient.
+        colour_start:  The starting colour, either an array or string, of the linear colour
+        gradient.
 
-        colour_end:  The ending colour of the linear colour gradient.
+        colour_end:  The ending colour, either an array or string, of the linear colour gradient.
+
+        colour_list:  The list of colours to match the start and end strings.
 
         file:  The name of the file.
 
@@ -146,10 +149,17 @@ class Molmol:
 
         The values are coloured based on a linear colour gradient which is specified through the
         'colour_start' and 'colour_end' arguments.  These arguments can either be a string to
-        identify one of the RGB (red, green, blue) colour arrays listed in the table below, or you
+        identify one of the RGB (red, green, blue) colour arrays listed in the tables below, or you
         can give the RGB vector itself.  For example, colour_start='white' and
         colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
         will select the default colour gradient which for each type of analysis is described below.
+
+        When supplying the colours as strings, two lists of colours can be selected from which to
+        match the strings.  These are the default Molmol colour list and the X11 colour list, both
+        of which are described in the tables below.  The default behaviour is to first search the
+        Molmol list and then the X11 colour list, raising an error if neither contain the string.
+        To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
+        'x11'.
 
 
         Examples
@@ -229,3 +239,6 @@ class Molmol:
 
     # Molmol RGB colour list.
     write.__doc__ = write.__doc__ + "\n\n" + Colour.molmol_colours.__doc__ + "\n\n"
+
+    # X11 RGB colour list.
+    write.__doc__ = write.__doc__ + "\n\n" + Colour.x11_colours.__doc__ + "\n\n"
