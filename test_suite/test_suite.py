@@ -345,7 +345,7 @@ class Test_suite:
         """Function for printing the summary lines."""
 
         # Name.
-        sys.stdout.write("    Test of " + test.name + " ")
+        sys.stdout.write("    " + test.name + " ")
 
         # Dots.
         for j in xrange(76 - len(test.name)):
