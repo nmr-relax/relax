@@ -40,7 +40,7 @@ class Mf:
         # Results reading test.
         if test_name == 'read results':
             # The name of the test.
-            self.name = "the user function results.read()"
+            self.name = "The user function results.read()"
 
             # The test.
             self.test = self.read_results

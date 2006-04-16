@@ -31,22 +31,22 @@ class Diffusion_tensor:
 
         # Initialisation test.
         if test_name == 'init':
-            self.name = "the user function diffusion_tensor.init()"
+            self.name = "The user function diffusion_tensor.init()"
             self.test = self.init
 
         # Deletion test.
         if test_name == 'delete':
-            self.name = "the user function diffusion_tensor.delete()"
+            self.name = "The user function diffusion_tensor.delete()"
             self.test = self.delete
 
         # Display test.
         if test_name == 'display':
-            self.name = "the user function diffusion_tensor.display()"
+            self.name = "The user function diffusion_tensor.display()"
             self.test = self.display
 
         # Copy test.
         if test_name == 'copy':
-            self.name = "the user function diffusion_tensor.copy()"
+            self.name = "The user function diffusion_tensor.copy()"
             self.test = self.copy
 
 

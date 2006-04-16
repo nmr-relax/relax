@@ -28,7 +28,7 @@ class Run_create:
         self.relax = relax
 
         # The name of the test.
-        self.name = "the user function run.create()"
+        self.name = "The user function run.create()"
 
 
     def test(self, run):

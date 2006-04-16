@@ -32,7 +32,7 @@ class Relax_fit:
         # Sparky loading test.
         if test_name == 'read_sparky':
             # The name of the test.
-            self.name = "the loading of Sparky peak heights"
+            self.name = "Loading of Sparky peak heights"
 
             # The test.
             self.test = self.read_sparky

@@ -33,7 +33,7 @@ class Jw:
         if test_name == 'set':
             
             # The name of the test.
-            self.name = "the user function value.set()"
+            self.name = "The user function value.set()"
 
             # The test.
             self.test = self.set_value
@@ -42,7 +42,7 @@ class Jw:
         if test_name == 'calc':
             
             # The name of the test.
-            self.name = "spectral density calculation"
+            self.name = "Spectral density calculation"
 
             # The test.
             self.test = self.calc

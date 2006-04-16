@@ -32,7 +32,7 @@ class Sequence:
         # Sequence reading test.
         if test_name == 'read':
             # The name of the test.
-            self.name = "the user function sequence.read()"
+            self.name = "The user function sequence.read()"
 
             # The test.
             self.test = self.read
@@ -40,7 +40,7 @@ class Sequence:
         # Loading the sequence from a PDB file test.
         if test_name == 'pdb':
             # The name of the test.
-            self.name = "loading the sequence from a PDB file"
+            self.name = "Loading the sequence from a PDB file"
 
             # The test.
             self.test = self.pdb
