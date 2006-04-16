@@ -232,6 +232,10 @@ class Test_suite:
             # Print out.
             sys.stdout.write("\n\n\n\n\n\n\n")
 
+            # Debugging.
+            if not test_array[i].passed and Debug:
+                sys.exit()
+
 
     def summary(self):
         """Function for printing out a summary of all tests."""
