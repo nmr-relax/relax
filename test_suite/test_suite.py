@@ -133,7 +133,8 @@ class Test_suite:
         self.mf_test_array = []
 
         # User function results.read() test.
-        self.mf_test_array.append(Mf(self.relax, 'read'))
+        self.mf_test_array.append(Mf(self.relax, 'read relaxation data'))
+        self.mf_test_array.append(Mf(self.relax, 'read results'))
 
         # Execute the tests.
         self.exec_tests(self.mf_test_array)

@@ -29,16 +29,55 @@ class Mf:
 
         self.relax = relax
 
+        # Relaxation data reading test.
+        if test_name == 'read relaxation data':
+            # The name of the test.
+            self.name = "The user function relax_data.read()"
+
+            # The test.
+            self.test = self.read_relax_data
+
         # Results reading test.
-        if test_name == 'read':
+        if test_name == 'read results':
             # The name of the test.
             self.name = "the user function results.read()"
 
             # The test.
-            self.test = self.read
+            self.test = self.read_results
 
 
-    def read(self, run):
+    def read_relax_data(self, run):
+        """The relaxation data reading test."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Read the relaxation data.
+        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+
+        # Test the data.
+        if self.relax.data.res[self.run][0].relax_data[0] != 1.3874977659397683:
+            print "The relaxation data does not match."
+            return
+
+        # Test the error.
+        if self.relax.data.res[self.run][0].relax_error[0] != 0.027749955318795365:
+            print "The relaxation error does not match."
+            return
+
+        return 1
+
+
+    def read_results(self, run):
         """The results reading test."""
 
         # Arguments.
@@ -52,19 +91,6 @@ class Mf:
 
         # Read the results.
         self.relax.interpreter._Results.read(self.run, dir=sys.path[-1] + '/test_suite/data/model_free')
-
-        # Success.
-        return self.test_integrity()
-
-
-    def print_error(self, name):
-        """Function for printing a residue mismatch."""
-
-        print "The " + name + " of " + self.orig_res + " and " + self.new_res + " do not match."
-
-
-    def test_integrity(self):
-        """Function for testing the integrity of the model-free data."""
 
         # Print out.
         print "\nTesting the integrity of the loaded data.\n"
@@ -223,7 +249,12 @@ class Mf:
                 self.print_error('relaxation data errors')
                 return
 
-
         # Success.
         print "The data structures have been created successfully."
         return 1
+
+
+    def print_error(self, name):
+        """Function for printing a residue mismatch."""
+
+        print "The " + name + " of " + self.orig_res + " and " + self.new_res + " do not match."
