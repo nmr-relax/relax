@@ -168,7 +168,7 @@ class Main:
         print "###############################\n\n"
 
         # Extensions of temporary files.
-        temp_extns = ['pyc', 'bak', 'o', 'os', 'out']
+        temp_extns = ['pyc', 'bak', 'o', 'os']
 
         # Print out.
         print "\nRemoving the files ending in " + `temp_extns` + ".\n"
