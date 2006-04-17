@@ -137,6 +137,9 @@ class Test_suite:
         self.mf_test_array.append(Mf(self.relax, 'read results'))
         self.mf_test_array.append(Mf(self.relax, 'set csa'))
         self.mf_test_array.append(Mf(self.relax, 'set bond length'))
+        self.mf_test_array.append(Mf(self.relax, 'set csa and bond length'))
+        self.mf_test_array.append(Mf(self.relax, 'select m4'))
+        self.mf_test_array.append(Mf(self.relax, 'create m4'))
 
         # Execute the tests.
         self.exec_tests(self.mf_test_array)

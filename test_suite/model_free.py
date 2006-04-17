@@ -61,6 +61,61 @@ class Mf:
             # The test.
             self.test = self.set_csa
 
+         # Test of setting the CSA and the bond length.
+        if test_name == 'set csa and bond length':
+            # The name of the test.
+            self.name = "Setting both the CSA value and bond length through the user function value.set()"
+
+            # The test.
+            self.test = self.set_csa_bond_length
+
+       # Test of selecting model-free model m4.
+        if test_name == 'select m4':
+            # The name of the test.
+            self.name = "Selecting model m4 with parameters {S2, te, Rex} using model_free.select_model()"
+
+            # The test.
+            self.test = self.select_m4
+
+        # Test of creating model-free model m4.
+        if test_name == 'create m4':
+            # The name of the test.
+            self.name = "Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()"
+
+            # The test.
+            self.test = self.select_m4
+
+
+    def create_m4(self, run):
+        """Testing the creation of model-free model m4."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Select the model.
+        self.relax.interpreter._Model_free.create_model(self.run, model='m4', equation='mf_orig', params=['S2', 'te', 'Rex'])
+
+        # Test the model.
+        if self.relax.data.res[self.run][1].model != 'm4':
+            print "The model has not been selected."
+            return
+
+        # Test the parameters.
+        if self.relax.data.res[self.run][1].params != ['S2', 'te', 'Rex']:
+            print "The parameters are incorrect."
+            return
+
+        return 1
+
 
     def read_relax_data(self, run):
         """The relaxation data reading test."""
@@ -276,6 +331,37 @@ class Mf:
         print "The " + name + " of " + self.orig_res + " and " + self.new_res + " do not match."
 
 
+    def select_m4(self, run):
+        """Testing the selection of model-free model m4."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Select the model.
+        self.relax.interpreter._Model_free.select_model(self.run, model='m4')
+
+        # Test the model.
+        if self.relax.data.res[self.run][1].model != 'm4':
+            print "The model has not been selected."
+            return
+
+        # Test the parameters.
+        if self.relax.data.res[self.run][1].params != ['S2', 'te', 'Rex']:
+            print "The parameters are incorrect."
+            return
+
+        return 1
+
+
     def set_bond_length(self, run):
         """Testing the setting of the bond length."""
 
@@ -323,6 +409,37 @@ class Mf:
         # Test the value.
         if self.relax.data.res[self.run][1].csa != -170*1e-6:
             print "The CSA value has not been set correctly."
+            return
+
+        return 1
+
+
+    def set_csa_bond_length(self, run):
+        """Testing the setting of the CSA value and bond length simultaneously."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Set the CSA value.
+        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+
+        # Test the CSA value.
+        if self.relax.data.res[self.run][1].csa != -170*1e-6:
+            print "The CSA value has not been set correctly."
+            return
+
+        # Test the bond length.
+        if self.relax.data.res[self.run][1].r != 1.02 * 1e-10:
+            print "The bond length has not been set correctly."
             return
 
         return 1
