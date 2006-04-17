@@ -65,12 +65,12 @@ class Mf:
         self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
 
         # Test the data.
-        if self.relax.data.res[self.run][0].relax_data[0] != 1.3874977659397683:
+        if self.relax.data.res[self.run][1].relax_data[0] != 1.3874977659397683:
             print "The relaxation data does not match."
             return
 
         # Test the error.
-        if self.relax.data.res[self.run][0].relax_error[0] != 0.027749955318795365:
+        if self.relax.data.res[self.run][1].relax_error[0] != 0.027749955318795365:
             print "The relaxation error does not match."
             return
 

@@ -566,10 +566,15 @@ class Rx_data:
 
             # Test the validity of the relaxation data.
             for i in xrange(len(file_data)):
+                # Skip missing data.
+                if len(file_data[i]) != 4:
+                    continue
+
+                # Test that the data are numbers.
                 try:
                     int(file_data[i][num_col])
-                    eval(file_data[i][data_col])
-                    eval(file_data[i][error_col])
+                    float(file_data[i][data_col])
+                    float(file_data[i][error_col])
                 except ValueError:
                     raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
 
@@ -598,6 +603,10 @@ class Rx_data:
 
         # Loop over the relaxation data.
         for i in xrange(len(file_data)):
+            # Skip missing data.
+            if len(file_data[i]) != 4:
+                continue
+
             # Convert the data.
             res_num = int(file_data[i][num_col])
             res_name = file_data[i][name_col]
