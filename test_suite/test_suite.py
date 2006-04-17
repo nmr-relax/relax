@@ -352,7 +352,7 @@ class Test_suite:
         sys.stdout.write("    " + test.name + " ")
 
         # Dots.
-        for j in xrange(76 - len(test.name)):
+        for j in xrange(84 - len(test.name)):
             sys.stdout.write(".")
 
         # Passed.
