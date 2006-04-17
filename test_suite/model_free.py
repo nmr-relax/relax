@@ -87,12 +87,28 @@ class Mf:
             self.test = self.read_results
 
         # OpenDX {S2, te, Rex} mapping test.
-        if test_name == 'opendx {s2, te, Rex} map':
+        if test_name == 'opendx {S2, te, Rex} map':
             # The name of the test.
             self.name = "Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()"
 
             # The test.
             self.test = self.opendx_s2_te_rex
+
+        # OpenDX {theta, phi, Da} mapping test.
+        if test_name == 'opendx {theta, phi, Da} map':
+            # The name of the test.
+            self.name = "Mapping the {theta, phi, Da} chi2 space through the OpenDX user function dx.map()"
+
+            # The test.
+            self.test = self.opendx_theta_phi_da
+
+        # OpenDX {tm, S2, te} mapping test.
+        if test_name == 'opendx {tm, S2, te} map':
+            # The name of the test.
+            self.name = "Mapping the {tm, S2, te} chi2 space through the OpenDX user function dx.map()"
+
+            # The test.
+            self.test = self.opendx_tm_s2_te
 
 
     def create_m4(self, run):
@@ -160,7 +176,84 @@ class Mf:
         self.relax.interpreter._Model_free.select_model(self.run, model='m4')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(self.run, params=['S2', 'te', 'Rex'], res_num=2, inc=3, lower=[0.0, 0, 0], upper=[1.0, 10000e-12, 3.0 / (2.0 * pi * 600000000.0)**2], point=[0.970, 2048.0e-12, 0.149 / (2.0 * pi * 600000000.0)**2], file='devnull', point_file='devnull')
+        self.relax.interpreter._OpenDX.map(self.run, params=['S2', 'te', 'Rex'], res_num=2, inc=2, lower=[0.0, 0, 0], upper=[1.0, 10000e-12, 3.0 / (2.0 * pi * 600000000.0)**2], point=[0.970, 2048.0e-12, 0.149 / (2.0 * pi * 600000000.0)**2], file='devnull', point_file='devnull')
+
+        return 1
+
+
+    def opendx_theta_phi_da(self, run):
+        """The OpenDX {theta, phi, Da} mapping test."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Nuclei type
+        self.relax.interpreter._Nuclei.nuclei('N')
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Read the relaxation data.
+        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+
+        # Setup other values.
+        self.relax.interpreter._Diffusion_tensor.init(self.run, (1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
+        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+
+        # Select the model.
+        self.relax.interpreter._Model_free.select_model(self.run, model='m4')
+
+        # Map the space.
+        self.relax.interpreter._OpenDX.map(self.run, params=['theta', 'phi', 'Da'], res_num=2, inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file='devnull')
+
+        return 1
+
+
+    def opendx_tm_s2_te(self, run):
+        """The OpenDX {tm, S2, te} mapping test."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Nuclei type
+        self.relax.interpreter._Nuclei.nuclei('N')
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Read the relaxation data.
+        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+
+        # Setup other values.
+        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+
+        # Select the model.
+        self.relax.interpreter._Model_free.select_model(self.run, model='tm2')
+
+        # Map the space.
+        self.relax.interpreter._OpenDX.map(self.run, params=['tm', 'S2', 'te'], res_num=2, inc=2, file='devnull')
 
         return 1
 
