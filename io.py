@@ -33,7 +33,7 @@ except ImportError, message:
 # Gzip compression module.
 from gzip import GzipFile
 
-from os import F_OK, access, makedirs, remove, stat
+from os import F_OK, access, devnull, makedirs, remove, stat
 from os.path import expanduser
 from re import match, search
 from string import split
@@ -244,6 +244,21 @@ class IO:
 
     def open_write_file(self, file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
         """Function for opening a file for writing and creating directories if necessary."""
+
+        # The null device.
+        if search('devnull', file_name):
+            # Print out.
+            if print_flag:
+                print "Opening the null device file for writing."
+
+            # Open the null device.
+            file = open(devnull, 'w')
+
+            # Return the file.
+            if return_path:
+                return file, None
+            else:
+                return file
 
         # Create the directories.
         self.mkdir(dir, print_flag=0)
