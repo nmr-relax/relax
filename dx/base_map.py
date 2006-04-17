@@ -298,9 +298,6 @@ class Base_Map:
         else:
             self.num_points = 0
 
-        # The OpenDX directory.
-        self.relax.IO.mkdir(self.dir, print_flag=0)
-
         # Get the default map bounds.
         self.bounds = zeros((self.n, 2), Float64)
         for i in xrange(self.n):
