@@ -37,14 +37,6 @@ class Mf:
             # The test.
             self.test = self.read_relax_data
 
-        # Results reading test.
-        if test_name == 'read results':
-            # The name of the test.
-            self.name = "The user function results.read()"
-
-            # The test.
-            self.test = self.read_results
-
         # Test of setting the CSA.
         if test_name == 'set csa':
             # The name of the test.
@@ -84,6 +76,14 @@ class Mf:
 
             # The test.
             self.test = self.select_m4
+
+        # Results reading test.
+        if test_name == 'read results':
+            # The name of the test.
+            self.name = "The user function results.read()"
+
+            # The test.
+            self.test = self.read_results
 
 
     def create_m4(self, run):
