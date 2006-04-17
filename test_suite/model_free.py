@@ -45,6 +45,22 @@ class Mf:
             # The test.
             self.test = self.read_results
 
+        # Test of setting the CSA.
+        if test_name == 'set csa':
+            # The name of the test.
+            self.name = "Setting the CSA value through the user function value.set()"
+
+            # The test.
+            self.test = self.set_csa
+
+        # Test of setting the bond length.
+        if test_name == 'set bond length':
+            # The name of the test.
+            self.name = "Setting the bond length through the user function value.set()"
+
+            # The test.
+            self.test = self.set_csa
+
 
     def read_relax_data(self, run):
         """The relaxation data reading test."""
@@ -258,3 +274,55 @@ class Mf:
         """Function for printing a residue mismatch."""
 
         print "The " + name + " of " + self.orig_res + " and " + self.new_res + " do not match."
+
+
+    def set_bond_length(self, run):
+        """Testing the setting of the bond length."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Set the CSA value.
+        self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
+
+        # Test the value.
+        if self.relax.data.res[self.run][1].r != 1.02 * 1e-10:
+            print "The bond length has not been set correctly."
+            return
+
+        return 1
+
+
+    def set_csa(self, run):
+        """Testing the setting of the CSA value."""
+
+        # Arguments.
+        self.run = run
+
+        # Create the run.
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+
+        # Set the CSA value.
+        self.relax.interpreter._Value.set(self.run, -170 * 1e-6, 'csa')
+
+        # Test the value.
+        if self.relax.data.res[self.run][1].csa != -170*1e-6:
+            print "The CSA value has not been set correctly."
+            return
+
+        return 1
