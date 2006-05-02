@@ -462,10 +462,10 @@ class Main:
                 # Create the file name (without the base directory).
                 name = path.join(root, files[i])
                 name = name[len(base):]
-                print 'relax/' + name
+                print 'relax-' + version + '/' + name
 
                 # Tar information.
-                tarinfo = archive.gettarinfo(name, 'relax/' + name)
+                tarinfo = archive.gettarinfo(name, 'relax-' + version + '/' + name)
 
                 # Add the file.
                 archive.addfile(tarinfo, file)
