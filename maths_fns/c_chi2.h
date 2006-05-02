@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2006  Gary S Thompson (see https://gna.org/users for contact
+ *                                      details)
  *
  * This file is part of the program relax.
  *
