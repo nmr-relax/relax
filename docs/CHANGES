@@ -44,7 +44,7 @@ http://svn.gna.org/svn/relax/tags/1.2.4
         minimisation used the wrong run name.
         * Fixed the -fPIC option segfault problem on some Linux systems. (bug #5473)
         * Changed the tm grid search which was between 6-12 ns to be between 1-12ns.
-        * Fixed some grammer in the intro chapter of the manual.
+        * Fixed some grammar in the intro chapter of the manual.
         * Fixed a bug in the model-free sample script in the spheroid diffusion tensor function.
         * Removed the spaces in front of the \index{} commands from the manual LaTeX source files.
         * The diffusion parameters 'Diso', 'Dper', 'Dpar', 'Dratio', 'Dx', 'Dy', and 'Dz' are
