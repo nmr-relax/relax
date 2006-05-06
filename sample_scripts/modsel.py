@@ -4,7 +4,7 @@
 nuclei('N')
 
 # Set the run names.
-runs = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+runs = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Loop over the run names.
 for name in runs:
