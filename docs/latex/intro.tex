@@ -8,12 +8,13 @@
 %~~~~~~~~~~~~
 
 \section{The prompt}
+\index{prompt|textbf}
 
-The primary interface of relax is the prompt.  After typing \texttt{`relax'} within a terminal, you will be presented with
+The primary interface of relax is the prompt.  After typing \texttt{`relax'} within a terminal\index{terminal} you will be presented with
 
 \example{relax>}
 
-This is the Python prompt which has been tailored specifically for relax.  You will hence have full access, if necessary, to the power of the Python\index{Python} programing language to manipulate your data.  You can for instance type
+This is the Python prompt which has been tailored specifically for relax.  You will hence have full access, if desired, to the power of the Python\index{Python} programing language to manipulate your data.  You can for instance type
 
 \example{relax> print "Hello World"}
 
@@ -25,7 +26,7 @@ Hello World \\
 relax>
 \end{exampleenv}
 
-Or, using relax as a calculator
+Or using relax as a calculator
 
 \begin{exampleenv}
 relax> (1.0 + (2 * 3))/10 \\
@@ -41,9 +42,9 @@ relax>
 \section{Python}
 
 \index{Python|textbf}
-relax has been designed such that knowledge about Python is not required to be able to fully use the program.  A few basics, though, will aid in understanding relax.
+relax has been designed such that knowledge about Python is not required to be able to fully use the program.  A few basics though will aid in understanding relax.
 
-A number of simple programming axioms includes that of strings\index{string}, integers\index{integer}, floating point numbers\index{floating point number}, and lists\index{list}.  A string is text and within Python (as well as relax) this is delimited by either single or double quotes.  An integer is a number with no decimal point while a float is a number with a decimal point.  A list in Python (called an array in other languages) is a list of anything separated by commas and delimited by square brackets, an example is [0, 1, 2, `a', 1.2143235].
+A number of simple programming axioms includes that of strings\index{string}, integers\index{integer}, floating point numbers\index{floating point number}, and lists\index{list}.  A string is text and within Python (as well as relax) this is delimited by either single or double quotes.  An integer is a number with no decimal point whereas a float is a number with a decimal point.  A list in Python (called an array in other languages) is a list of anything separated by commas and delimited by square brackets, an example is [0, 1, 2, `a', 1.2143235].
 
 Probably the most important detail is that functions in Python require brackets around their arguments.  For example
 
@@ -55,11 +56,11 @@ will commence minimisation\index{minimisation} however
 
 will do nothing.
 
-The arguments to a function are simply a comma separated list within the brackets of the function.  For example to save the program's current state, type
+The arguments to a function are simply a comma separated list within the brackets of the function.  For example to save the program's current state type
 
 \example{relax> state.save(`save', force=1)}
 
-Two types of arguments exist in Python\index{Python|textbf}, standard arguments and keyword arguments.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments, just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts, the key and the value.  For example the key may be \texttt{file} while the value you would like to supply is \texttt{`R1.out'}.  Various methods exist for supplying this argument.  Firstly you could simply type \texttt{`R1.out'} into the correct position in the argument list.  Secondly you can type \texttt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
+Two types of arguments exist in Python\index{Python|textbf} -- standard arguments\index{argument} and keyword arguments\index{keyword argument}\index{argument!keyword}.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts -- the key and the value.  For example the key may be \texttt{file} and the value you would like to supply is \texttt{`R1.out'}.  Various methods exist for supplying this argument.  Firstly you could simply type \texttt{`R1.out'} into the correct position in the argument list.  Secondly you can type \texttt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
 
 
 
@@ -67,19 +68,19 @@ Two types of arguments exist in Python\index{Python|textbf}, standard arguments 
 %~~~~~~~~~~~~~~~~
 
 \section{User functions}
-
 \index{user functions|textbf}
-For standard data analysis, a large number of specially tailored functions called `user functions' have been implemented.  These are accessible from the relax prompt by simply typing the name of the function.  An example is \texttt{`help()'}\index{help system}.  An alphabetical listing of all accessible user functions together with full descriptions is presented later within this manual.
+
+For standard data analysis a large number of specially tailored functions called `user functions' have been implemented.  These are accessible from the relax prompt by simply typing the name of the function.  An example is \texttt{`help()'}\index{help system}.  An alphabetical listing of all accessible user functions together with full descriptions is presented later in this manual.
 
 A few special objects which are available within the prompt are not actually functions.  These objects do not require brackets at their end for them to function.  For example to exit relax type
 
 \example{relax> exit}
 
-Another special object is that of the function class\index{function class}.  This object is simply a container which holds a number of user functions.  You can access the user function within the class by typing the name of the class, then a dot \texttt{`.'}, followed by the name of the user function.  An example is the user function for reading relaxation data out of a file and loading the data into relax.  The function is called \texttt{`read'} while the class is called \texttt{`relax\_data'}.  To execute the function, type something like
+Another special object is that of the function class\index{function class}.  This object is simply a container which holds a number of user functions.  You can access the user function within the class by typing the name of the class, then a dot \texttt{`.'}, followed by the name of the user function.  An example is the user function for reading relaxation data out of a file and loading the data into relax.  The function is called \texttt{`read'} and the class is called \texttt{`relax\_data'}.  To execute the function, type something like
 
 \example{relax> relax\_data.read(name, `R1', `600', 600.0 * 1e6, `r1.600.out')}
 
-The relax prompt, on first usage, can be quite daunting.  Two features exist, however, to increase the usability of the prompt -- the help system and tab completion
+On first usage the relax prompt can be quite daunting.  Two features exist to increase the usability of the prompt -- the help system and tab completion.
 
 
 
@@ -87,17 +88,17 @@ The relax prompt, on first usage, can be quite daunting.  Two features exist, ho
 %~~~~~~~~~~~~~~~~~
 
 \section{The help system}
-
 \index{help system|textbf}
-For assistance in using a function, simply type
+
+For assistance in using a function simply type
 
 \example{help(function)}
 
-In addition to functions, if
+In addition to functions if
 
 \example{help(object)}
 
-is typed, the help for the python object is returned.  This system is similar to the help function built into the python interpreter, which has been renamed to \texttt{help\_python}, with the interactive component removed.  For the interactive python help system, type
+is typed the help for the python object is returned.  This system is similar to the help function built into the python interpreter, which has been renamed to \texttt{help\_python}, with the interactive component removed.  For the standard interactive python help system type
 
 \example{help\_python()}
 
@@ -108,15 +109,15 @@ is typed, the help for the python object is returned.  This system is similar to
 %~~~~~~~~~~~~~~~~
 
 \section{Tab completion}
-
 \index{tab completion|textbf}
+
 Tab completion is implemented to prevent insanity as the function names can be quite long -- a deliberate feature to improve usability.  The behaviour of the tab completion is very similar to that of the bash prompt.
 
-Not only is tab completion useful for preventing RSI, but it can also be used for finding out what functions are available.  To begin with if you hit the [TAB] key without typing any text, all available functions will be listed (along with function classes\index{function class} and other python objects).  This extends to the exploration of user functions\index{user functions} within a function class\index{function class}.  For example, to list the user functions within the function class \texttt{`model\_free'}, type
+Not only is tab completion useful for preventing RSI but it can also be used for listing all available functions.  To begin with if you hit the [TAB] key without typing any text all available functions will be listed (along with function classes\index{function class} and other python objects).  This extends to the exploration of user functions\index{user functions} within a function class\index{function class}.  For example to list the user functions within the function class \texttt{`model\_free'} type
 
 \example{relax> model\_free.}
 
-The dot character at the end is essential.  After hitting the [TAB] key, you should see something like
+The dot character at the end is essential.  After hitting the [TAB] key you should see something like
 
 \begin{exampleenv}
 relax> model\_free. \\
@@ -142,17 +143,17 @@ All the objects beginning with an underscore are ``hidden'', they contain inform
 %~~~~~~~~~~~
 
 \section{The `run'}
-
 \index{run|textbf}
-Within relax, the majority of operations are assigned to a special construct called a `run'.  For example, to load relaxation data into the program it must be committed to a pre-created `run'.  Within one instance of relax, multiple runs can be created and various operations performed in sequence on these runs.  This is useful for operations such as model selection whereby the function `model\_selection' can operate on a number of runs corresponding to different models and then assign the results to a newly created run.
 
-The flow of data through relax can be thought of as travelling through pipes -- each pipe is synonymous with a run.  User functions\index{user functions} exist to transfer data between these pipes, while other functions combine data from multiple pipes into one or vice versa.  The simplest invocation of relax would be the creation of a single run and with the data being processed as it is passing through this pipe.
+Within relax the majority of operations are assigned to a special construct called a `run'.  For example to load relaxation data into the program it must be committed to a pre-created `run'.  Within one instance of relax multiple runs can be created and various operations performed in sequence on these runs.  This is useful for operations such as model selection whereby the function \texttt{`model\_selection'} can operate on a number of runs corresponding to different models and then assign the results to a newly created run.
+
+The flow of data through relax can be thought of as travelling through pipes -- each pipe is synonymous with a run.  User functions\index{user functions} exist to transfer data between these pipes and other functions combine data from multiple pipes into one or vice versa.  The simplest invocation of relax would be the creation of a single run and with the data being processed as it is passing through this pipe.
 
 The primary method for creating a run is through the user function\index{user functions} \texttt{`run.create'}.  For example
 
 \example{relax> run.create(`m1', `mf')}
 
-will create a run called \texttt{`m1'}.  The run is also associated with a type which, in this case, is model-free analysis.  The following is a table of all the types which can be assigned to a run.
+will create a run called \texttt{`m1'}.  The run is also associated with a type which in this case is model-free analysis.  The following is a table of all the types which can be assigned to a run.
 
 \begin{center}
 \begin{tabular}{ll}
@@ -165,14 +166,14 @@ Run type                & Description \\
 \texttt{`jw'}           & Reduced spectral density mapping \\
 \texttt{`mf'}           & Model-free data analysis \\
 \texttt{`noe'}          & Steady state NOE calculation \\
-\texttt{`relax\_fit'}   & Relaxation curve fitting \\
+\texttt{`relax\_fit'}   & Relaxation curve-fitting \\
 \texttt{`srls'}         & SRLS analysis \\
 
 \bottomrule
 \end{tabular}
 \end{center}
 
-Currently only the NOE calculation, model-free analysis, and reduced spectral density mapping features of relax are implemented (if this documentation is out of date, then you may be able to do a lot more).
+Currently the NOE calculation, relaxation curve-fitting, model-free analysis, and reduced spectral density mapping features of relax are implemented (if this documentation is out of date then you may be able to do a lot more).
 
 
 
@@ -180,8 +181,8 @@ Currently only the NOE calculation, model-free analysis, and reduced spectral de
 %~~~~~~~~~~~
 
 \section{Scripting}
-
 \index{scripting|textbf}
+
 What ever is done within the prompt is also accessible through scripting.  Just type your commands into a text file and then at the terminal type
 
 \example{\$ relax your\_script}
@@ -234,8 +235,8 @@ Scripting is much more powerful than the prompt as advanced Python\index{Python}
 %~~~~~~~~~~~~~~~~
 
 \section{Sample scripts}
-
 \index{scripting!sample scripts}
+
 A few sample scripts have been provided in the directory `sample\_scripts'.  These can be used as a good starting point for using relax.
 
 
@@ -244,8 +245,8 @@ A few sample scripts have been provided in the directory `sample\_scripts'.  The
 %~~~~~~~~~
 
 \section{The GUI}
-
 \index{GUI}
+
 relax has been designed primarily for scripting and, as such, no graphical user interface (GUI) currently exists.  The internal structure of the program has been specifically designed so any type of control mechanism can be easily added, including a GUI, therefore in the future one may be written.  A GUI will, however, detract from the power and flexibility inherent in the control by scripting.
 
 
@@ -255,7 +256,7 @@ relax has been designed primarily for scripting and, as such, no graphical user 
 
 \section{Access to the internals of relax}
 
-For highly advanced Python\index{Python} scripting or control of relax, almost every part of relax has been designed in an object oriented fashion.  If you would like to play with internals of the program, the entirety of relax is accessible within the object called \texttt{`self.relax'}.  To access the raw objects within relax which contain the program data, all data is stored within the object called \texttt{`self.relax.data'}.
+To enable advanced Python\index{Python} scripting and control almost every part of relax has been designed in an object oriented fashion.  If you would like to play with internals of the program the entirety of relax is accessible within the object called \texttt{`self.relax'}.  To access the raw objects within relax which contain the program data the object called \texttt{`self.relax.data'} stores all the data.
 
 
 

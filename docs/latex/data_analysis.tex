@@ -10,7 +10,7 @@
 
 \section{Introduction}
 
-This chapter aims to explain not only the steps involved in the data analysis of relaxation data but also how to use the program relax to achieve this.  Although a work in progress, it covers how to calculate the NOE, how to optimise and find the $\Rone$ and $\Rtwo$ relaxation rates, and how to implement model-free analysis.
+This chapter aims to explain not only the steps involved in the data analysis of relaxation data but also how to use the program relax to achieve this.  Although a work in progress it covers how to calculate the NOE, how to optimise and find the $\Rone$ and $\Rtwo$ relaxation rates, and how to implement model-free analysis.
 
 
 % Calculating the NOE.
@@ -19,7 +19,7 @@ This chapter aims to explain not only the steps involved in the data analysis of
 \section{Calculating the NOE}
 \index{NOE|textbf}
 
-The calculation of NOE values is a straight forward and quick procedure which involves two components, the calculation of the value itself and the calculation of the errors.  To understand the steps involved, we will follow in detail the execution of a sample NOE calculation script.
+The calculation of NOE values is a straight forward and quick procedure which involves two components -- the calculation of the value itself and the calculation of the errors.  To understand the steps involved the execution of a sample NOE calculation script will be followed in detail.
 
 
 % The sample script.
@@ -77,26 +77,26 @@ state.save(`save', force=1)
 % Initialisation of the run.
 \subsubsection{Initialisation of the run} \label{NOE initialisation}
 
-Firstly to simplify referencing of the run name in the relevent functions, the name \texttt{`noe'} is assigned to to the object \texttt{name} by the command
+Firstly to simplify referencing of the run name in the relevent functions the name \texttt{`noe'} is assigned to to the object \texttt{name} by the command
 
 \example{name = `noe'}
 
-Therefore instead of typing \texttt{`noe'} each time the run needs to be referenced, \texttt{name} can be used instead.   The run is created by the command
+Therefore instead of typing \texttt{`noe'} each time the run needs to be referenced, \texttt{name} can be used instead.  The run is created by the command
 
 \example{run.create(name, `noe')}
 
-This user function will then create a run which is named \texttt{`noe'}, the second argument setting the run type to that of calculating the NOE.  Setting the run type is important so that the program knows which user functions are compatible with the run, for example the function \texttt{minimise()} is meaningless in this sample script as the NOE values are computed by direct calculation rather than through optimisation.
+This user function will then create a run which is named \texttt{`noe'}, the second argument setting the run type to that of calculating the NOE.  Setting the run type is important so that the program knows which user functions are compatible with the run, for example the function \texttt{minimise()} is meaningless in this sample script as the NOE values are directly calculated rather than optimised.
 
 
 % Loading the data.
 \subsubsection{Loading the data}
 
-The first thing which need to be done prior to any residue specific command is to load the sequence.  In this case, the command
+The first thing which need to be completed prior to any residue specific command is to load the sequence.  In this case the command
 
 \example{pdb(name, `Ap4Aase\_new\_3.pdb', load\_seq=1)}
 \index{PDB}
 
-will extract the sequence from the PDB file `Ap4Aase\_new\_3.pdb'.  The first argument specifies the run into which the sequence will be loaded, the second specifies the file name, while the third causes the function to extract the sequence rather than just load the PDB into relax.  Although the PDB coordinates have been loaded into the program, the structure serves no purpose when calculating NOE values.
+will extract the sequence from the PDB file `Ap4Aase\_new\_3.pdb'.  The first argument specifies the run into which the sequence will be loaded, the second specifies the file name, and the third causes the function to extract the sequence rather than just load the PDB into relax.  Although the PDB coordinates have been loaded into the program the structure serves no purpose when calculating NOE values.
 
 The next two commands
 
@@ -105,13 +105,13 @@ noe.read(name, file=`ref.list', spectrum\_type=`ref') \\
 noe.read(name, file=`sat.list', spectrum\_type=`sat')
 \end{exampleenv}
 
-load the peak heights of the reference and saturated NOE experiments (although the volume could be used instead).  The keyword argument \texttt{format} has not been specified, hence the default format of a Sparky\index{computer prgrams!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer prgrams!XEasy} was used to analyse the spectra, the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string, while it is assumed that the 4$^\textrm{th}$ column contains either the peak height.
+load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  The keyword argument \texttt{format} has not been specified hence the default format of a Sparky\index{computer prgrams!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer prgrams!XEasy} was used to analyse the spectra the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height.  If you have any other format you would like read by relax please send an email to the relax development mailing list\index{mailing list!relax-devel} detailing the software used, the format of the file (specifically where the residue number and peak intensity\index{peak!intensity} are located), and possibly attaching an example of the file itself.
 
 
 % Setting the errors.
 \subsubsection{Setting the errors}
 
-In this example, the errors where measured from the base plain noise.  The Sparky RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 while in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
+In this example the errors where measured from the base plain noise.  The Sparky RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 whereas in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
 
 \begin{exampleenv}
 noe.error(name, error=3600, spectrum\_type=`ref') \\
@@ -129,7 +129,7 @@ noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114)
 % Unresolved residues.
 \subsubsection{Unresolved residues}
 
-As the peaks of certain residues overlaps to such an extent that the heights of both cannot be resolved, a simple text file was created called \texttt{unresolved} in which each line consists of a single residue number.  By using the command
+As the peaks of certain residues overlap to such an extent that the heights cannot be resolved a simple text file was created called \texttt{unresolved} in which each line consists of a single residue number.  By using the command
 
 \example{unselect.read(name, file=`unresolved')}
 
@@ -139,7 +139,7 @@ all residues in the file \texttt{unresolved} are excluded from the analysis.
 % The NOE.
 \subsubsection{The NOE}
 
-At this point, the NOE can be calculated.  The user function
+At this point the NOE can be calculated.  The user function
 
 \example{calc(name)}
 
@@ -148,12 +148,12 @@ will calculate both the NOE and the errors.  The NOE value will be calculated us
 NOE = \frac{I_{sat}}{I_{ref}},
 \end{equation}
 
-\noindent where $I_{sat}$ is the intensity of the peak in the saturated spectrum while $I_{ref}$ is that of the reference spectrum.  The error is calculated by
+\noindent where $I_{sat}$ is the intensity of the peak in the saturated spectrum and $I_{ref}$ is that of the reference spectrum.  The error is calculated by
 \begin{equation}
 \sigma_{NOE} = \sqrt{\frac{(\sigma_{sat} \cdot I_{ref})^2 + (\sigma_{ref} \cdot I_{sat})^2}{I_{ref}}},
 \end{equation}
 
-\noindent where $\sigma_{sat}$ and $\sigma_{ref}$ are the peak intensity errors in the saturated and reference spectra respectively.  To create a file of the NOEs, the command
+\noindent where $\sigma_{sat}$ and $\sigma_{ref}$ are the peak intensity errors in the saturated and reference spectra respectively.  To create a file of the NOEs the command
 
 \example{value.write(name, param=`noe', file=`noe.out', force=1)}
 
@@ -181,7 +181,7 @@ Num  Name  Value                         Error
 % Viewing the results.
 \subsubsection{Viewing the results}
 
-Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
+Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{computer program!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
 
 \begin{exampleenv}
 grace.write(name, y\_data\_type=`ref', file=`ref.agr', force=1) \\
@@ -189,11 +189,11 @@ grace.write(name, y\_data\_type=`sat', file=`sat.agr', force=1) \\
 grace.write(name, y\_data\_type=`noe', file=`noe.agr', force=1)
 \end{exampleenv}
 
-create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.  The x-axis in all three defaults to the residue number.  As the x and y-axes can be any parameter, the command
+create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.  The x-axis in all three defaults to the residue number.  As the x and y-axes can be any parameter the command
 
 \example{grace.write(name, x\_data\_type=`ref', y\_data\_type=`sat', file=`ref\_vs\_sat.agr', force=1)}
 
-would create a plot of the reference verses the saturated intensity, with one point per residue.  Returning to the sample script, three Grace data files are created, \texttt{ref.agr}, \texttt{sat.agr}, and \texttt{noe.agr} and placed in the default directory \texttt{./grace}.  These can be visualised by opening the file within Grace, however relax will do that for you with the commands
+would create a plot of the reference verses the saturated intensity with one point per residue.  Returning to the sample script three Grace data files are created \texttt{ref.agr}, \texttt{sat.agr}, and \texttt{noe.agr} and placed in the default directory \texttt{./grace}.  These can be visualised by opening the file within Grace.  However relax will do that for you with the commands
 
 \begin{exampleenv}
 grace.view(file=`ref.agr') \\
@@ -201,29 +201,29 @@ grace.view(file=`sat.agr') \\
 grace.view(file=`noe.agr')
 \end{exampleenv}
 
-An example of the output, after modifying the axes, is shown in figure~\ref{fig: NOE plot}.
+An example of the output after modifying the axes is shown in figure~\ref{fig: NOE plot}.
 
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, bb=0 0 792 612]{images/noe.eps.gz}}
-\caption[NOE plot]{A Grace\index{computer programs!Grace|textbf} plot of the NOE value and error against the residue number.  An example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
+\caption[NOE plot]{A Grace\index{computer programs!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
 \end{figure}
 
 
 
-% Relaxation curve fitting.
+% Relaxation curve-fitting.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
-\section{The $\Rone$ and $\Rtwo$ relaxation rates - relaxation curve fitting}
-\index{relaxation curve fitting|textbf}
+\section{The $\Rone$ and $\Rtwo$ relaxation rates - relaxation curve-fitting}
+\index{relaxation curve-fitting|textbf}
 
-Relaxation curve fitting involves a number of steps including the loading of data, the calculation of both the average peak intensity across replicated spectra and the standard deviations of those peak intensities, selection of the experiment type, optimisation of the parameters of the fit, Monte Carlo simulations to find the parameter errors, and saving and viewing the results.  To simplify the process, a sample script will be followed step by step as was done with the NOE calculation.
+Relaxation curve-fitting involves a number of steps including the loading of data, the calculation of both the average peak intensity\index{peak!intensity} across replicated spectra and the standard deviations\index{standard deviation} of those peak intensities, selection of the experiment type, optimisation of the parameters of the fit, Monte Carlo simulations\index{Monte Carlo simulation} to find the parameter errors, and saving and viewing the results.  To simplify the process a sample script will be followed step by step as was done with the NOE calculation.
 
 % The sample script.
 \subsubsection{The sample script}
 
 \begin{exampleenv}
-\# Script for relaxation curve fitting. \\
+\# Script for relaxation curve-fitting. \\
  \\
 \# Create the run. \\
 name = `rx' \\
@@ -288,12 +288,12 @@ name = `rx' \\
 run.create(name, `relax\_fit')
 \end{exampleenv}
 
-initialise the run by setting the variable \texttt{name} to \texttt{`rx'} to be used in the calls to user functions and creating a run called \texttt{`rx'} which is to relaxation curve fitting by the argument \texttt{`relax\_fit'}.  The sequence is extracted from a PDB file using the same command as the NOE calculation script
+initialise the run by setting the variable \texttt{name} to \texttt{`rx'} to be used in the calls to user functions and creating a run called \texttt{`rx'}.  The run type is set to relaxation curve-fitting by the argument \texttt{`relax\_fit'}.  The sequence is extracted from a PDB\index{PDB} file using the same command as the NOE calculation script
 
 \example{pdb(name, `Ap4Aase\_new\_3.pdb', load\_seq=1)}
 \index{PDB}
 
-To load the peak intensities into relax, use the user function \texttt{relax\_fit.read}.  Two important keyword arguments to this command are the file name and the relaxation time period of the experiment in seconds.  It is assumed that the file format is that of a Sparky\index{computer prgrams!Sparky} peak list.  Using the format argument, this can be changed to XEasy\index{computer prgrams!XEasy} text window output format.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated.
+To load the peak intensities\index{peak!intensity} into relax the user function \texttt{relax\_fit.read} is executed.  Two important keyword arguments to this command are the file name and the relaxation time period of the experiment in seconds.  It is assumed that the file format is that of a Sparky\index{computer prgrams!Sparky} peak list.  Using the format argument, this can be changed to XEasy\index{computer prgrams!XEasy} text window output format.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated
 
 \begin{exampleenv}
 relax\_fit.read(name, file=`T2\_ncyc1.list', relax\_time=0.0176) \\
@@ -312,7 +312,7 @@ relax\_fit.read(name, file=`T2\_ncyc11b.list', relax\_time=0.1936)
 % The rest of the setup.
 \subsubsection{The rest of the setup}
 
-Once all the peak intensity data has been loaded, a few calculations are required prior to optimisation.  Firstly the peak intensities for individual residues needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user function
+Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual residues needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user function
 
 \example{relax\_fit.mean\_and\_error(name)}
 
@@ -329,20 +329,20 @@ The argument \texttt{`exp'} sets the relaxation curve to a two parameter \{$\mat
  I(t) = I_0 e^{-\mathrm{R}_x \cdot t},
 \end{equation}
 
-\noindent where $I(t)$ is the peak intensity at any time point $t$, $I_0$ is the initial intensity, and $\mathrm{R}_x$ is the relaxation rate, either being the $\Rone$ or $\Rtwo$.  Changing the user function argument to \texttt{`inv'} will select the inversion recovery experiment.  This curve consists of three paremeters \{$\Rone$, $I_0$, $I_{\infty}$\} and does not decay to zero.  The formula is
+\noindent where $I(t)$ is the peak intensity at any time point $t$, $I_0$ is the initial intensity, and $\mathrm{R}_x$ is the relaxation rate (either the $\Rone$ or $\Rtwo$).  Changing the user function argument to \texttt{`inv'} will select the inversion recovery experiment.  This curve consists of three paremeters \{$\Rone$, $I_0$, $I_{\infty}$\} and does not decay to zero.  The formula is
 \begin{equation}
- I(t) = I_{\infty} - I_0 e^{-\Rone \cdot t},
+ I(t) = I_{\infty} - I_0 e^{-\Rone \cdot t}.
 \end{equation}
 
 
 % Optimisation.
 \subsubsection{Optimisation}
 
-Now that everything has been setup, minimision can be used to optimise the parameter values.  Firstly a grid search is applied to find a rough starting position for the subsequent optimisation algorithm.  Eleven increments per dimension of the model (in this case the two dimensions \{$\mathrm{R}_x$, $I_0$\}) is sufficient.  The user function for executing the grid search is
+Now that everything has been setup minimision can be used to optimise the parameter values.  Firstly a grid search is applied to find a rough starting position for the subsequent optimisation algorithm.  Eleven increments per dimension of the model (in this case the two dimensions \{$\mathrm{R}_x$, $I_0$\}) is sufficient.  The user function for executing the grid search is
 
 \example{grid\_search(name, inc=11)}
 
-The next step is to select one of the minimisation algorithms to optimise the model parameters.  Currently for relaxation curve fitting, only simplex minimisation is supported.  This is because the relaxation curve fitting C module which implements the functions used during optimisation is incomplete.  It is the chi-squared function which is used in optimisation.  However, the chi-squared gradient (first partial derivatives) and chi-squared Hessian (second partial derivatives) are not yet present in the C modules and hence only optimisation algorithms which employ function calls are supported.  Simplex minimisation is the only technique in relax which fits this critera.  In addition, constraints cannot be used as the constraint algorithm is dependent on gradient calls.  Therefore the minimisation command for relaxation curve fitting is forced to be
+The next step is to select one of the minimisation algorithms to optimise the model parameters.  Currently for relaxation curve-fitting only simplex minimisation is supported.  This is because the relaxation curve-fitting C module is incomplete only implementing the chi-squared function.  The chi-squared gradient (the vector of first partial derivatives) and chi-squared Hessian (the matrix of second partial derivatives) are not yet implemented in the C modules and hence optimisation algorithms which only employ function calls are supported.  Simplex minimisation is the only technique in relax which fits this criteron.  In addition constraints cannot be used as the constraint algorithm is dependent on gradient calls.  Therefore the minimisation command for relaxation curve-fitting is forced to be
 
 \example{minimise(`simplex', run=name, constraints=0)}
 
@@ -350,7 +350,7 @@ The next step is to select one of the minimisation algorithms to optimise the mo
 % Error analysis.
 \subsubsection{Error analysis}
 
-Only one technique adequately estimates parameter errors when the parameter values where found by optimisation -- Monte Carlo simulations.
+Only one technique adequately estimates parameter errors when the parameter values where found by optimisation -- Monte Carlo simulations\index{Monte Carlo simulation}.
 
 \textbf{\textit{Please write me!}}
 
@@ -365,6 +365,8 @@ Only one technique adequately estimates parameter errors when the parameter valu
 
 \textbf{\textit{Please write me!}}
 
+Until this chapter is written please look at the sample script \texttt{`full\_analysis.py'}.
+
 
 % Reduced spectral density mapping.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -374,3 +376,5 @@ Only one technique adequately estimates parameter errors when the parameter valu
 \index{reduced spectral density mapping|textbf}
 
 \textbf{\textit{Please write me!}}
+
+Until this chapter is written please look at the sample script \texttt{`jw\_mapping.py'}.
