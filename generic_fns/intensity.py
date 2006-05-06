@@ -29,56 +29,67 @@ class Intensity:
         self.relax = relax
 
 
-    def extract_int_data(self, line):
-        """Function for returning relevant data from the peak intensity line.
+    def intensity_sparky(self, line):
+        """Function for returning relevant data from the Sparky peak intensity line.
 
         The residue number, heteronucleus and proton names, and peak intensity will be returned.
         """
 
-        # Sparky formatted line.
-        if self.format == 'sparky':
-            # The Sparky assignment.
-            assignment = split('([A-Z]+)', line[0])
-            assignment = assignment[1:-1]
+        # The Sparky assignment.
+        assignment = split('([A-Z]+)', line[0])
+        assignment = assignment[1:-1]
 
-            # The residue number.
-            try:
-                res_num = int(assignment[1])
-            except:
-                raise RelaxError, "Improperly formatted Sparky file."
-
-            # Nuclei names.
-            x_name = assignment[2]
-            h_name = assignment[4]
-
-            # Intensity.
-            intensity = line[self.int_col]
-
-        # XEasy formatted line.
-        elif self.format == 'xeasy':
-            # Test for invalid assignment lines which have the column numbers changed and return empty data.
-            if line[4] == 'inv.':
-                return None, None, None, 0.0
-
-            # The residue number.
-            try:
-                res_num = int(line[5])
-            except:
-                raise RelaxError, "Improperly formatted XEasy file."
-
-            # Nuclei names.
-            x_name = line[7]
-            h_name = line[4]
-
-            # Intensity.
-            intensity = line[self.int_col]
-
-        # Test the validity of the peak intensity data.
+        # The residue number.
         try:
-            intensity = float(intensity)
-        except ValueError:
-            raise RelaxError, "The peak height value " + `intensity` + " from the line " + `line` + " is invalid."
+            res_num = int(assignment[1])
+        except:
+            raise RelaxError, "Improperly formatted Sparky file."
 
+        # Nuclei names.
+        x_name = assignment[2]
+        h_name = assignment[4]
+
+        # The peak intensity column.
+        if self.int_col == None:
+            self.int_col = 3
+
+        # Intensity.
+        try:
+            intensity = float(line[self.int_col])
+        except ValueError:
+            raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+
+        # Return the data.
+        return res_num, x_name, h_name, intensity
+
+
+    def intensity_xeasy(self, line):
+        """Function for returning relevant data from the XEasy peak intensity line.
+
+        The residue number, heteronucleus and proton names, and peak intensity will be returned.
+        """
+
+        # Test for invalid assignment lines which have the column numbers changed and return empty data.
+        if line[4] == 'inv.':
+            return None, None, None, 0.0
+
+        # The residue number.
+        try:
+            res_num = int(line[5])
+        except:
+            raise RelaxError, "Improperly formatted XEasy file."
+
+        # Nuclei names.
+        x_name = line[7]
+        h_name = line[4]
+
+        # Intensity (located in column 10).
+        try:
+            intensity = float(line[10])
+        except ValueError:
+            raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+
+        # Return the data.
         return res_num, x_name, h_name, intensity
 
 
@@ -97,10 +108,16 @@ class Intensity:
         format_list = ['sparky', 'xeasy']
         if self.format not in format_list:
             raise RelaxArgNotInListError, ('format', self.format, format_list)
+
+        # Sparky.
         if self.format == 'sparky':
             print "Sparky formatted data file.\n"
+            self.intensity = self.intensity_sparky
+
+        # XEasy.
         elif self.format == 'xeasy':
             print "XEasy formatted data file.\n"
+            self.intensity = self.intensity_xeasy
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -119,19 +136,10 @@ class Intensity:
         # Strip the data.
         file_data = self.relax.IO.strip(file_data)
 
-        # The peak intensity column.
-        if self.format == 'sparky':
-            if int_col:
-                self.int_col = int_col
-            else:
-                self.int_col = 3
-        elif self.format == 'xeasy':
-            self.int_col = 10
-
         # Loop over the peak intensity data.
         for i in xrange(len(file_data)):
             # Extract the data.
-            res_num, X_name, H_name, intensity = self.extract_int_data(file_data[i])
+            res_num, X_name, H_name, intensity = self.intensity(file_data[i])
 
             # Skip data.
             if X_name != self.heteronuc or H_name != self.proton:
