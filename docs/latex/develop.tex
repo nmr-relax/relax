@@ -319,11 +319,75 @@ Then build the binary distribution and send a message to the relax development m
 
 % Cleaning up.
 \subsection{Cleaning up}
-
 \index{clean up|textbf}
+
 If the command
 
 \example{\$ scons clean}
 \index{Sconstruct!clean up|textbf}
 
-is run in the base directory all Python byte compiled files `*.pyc', all C object files `*.o' and `*.os', all C shared object files `*.so', and any backup files with the extension `*.bak' are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
+is run in the base directory all Python byte compiled files \texttt{`*.pyc'}, all C object files \texttt{`*.o'} and \texttt{`*.os'}, all C shared object files \texttt{`*.so'}, and any backup files with the extension \texttt{`*.bak'} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
+
+
+
+% The core design of relax.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section{The core design of relax}
+
+To enable flexibility the internal structure of relax is modular.  By construction the large collection of independent data analysis tools can be used individually and relatively easily by any new code implementing other forms of relaxation data analysis or even by other programs.  The core modular design of the program is shown in Figure~\ref{fig: core design}.
+
+
+
+% The divisions of relax's source code.
+\subsection{The divisions of relax's source code}
+
+relax's source code can be divided into five major areas:  the initialisation code, the user interface (UI) code, the functional code, the number crunching code, and the code storing the program state.
+
+\begin{description}
+\item[Initialisation:]  The code belonging to this section initialises the program, processes the command-line arguments, and determines what mode the program will be run in including the choice of the UI.
+
+\item[UI:]  The user interface\index{UI|textbf}.  Currently the prompt and the script are the only user interfaces into relax.  There are other program modes which are not part of a user interface.  These include the test mode in which the program instantly exits and threading mode which is spawned by a parent process and waits for commands.  In the future a graphical user interface (GUI), a web based interface, or any other type of interface may be added.
+
+\item[Functional code:]  This code is the main part of the program.  It includes anything which does not fit into the other sections and comprises the generic code, the specific code, and the specific setup code used as an interface between the two.
+
+\item[Number crunching:]  The computationally expensive code belongs in this section.
+
+\item[Program state:]  The state of the program is contained within the data structure \texttt{self.relax.data} which is accessible from all parts of the program.  It should only be read by the generic, specific, and number crunching code.  Only the generic and specific code should change its contents.
+\end{description}
+
+% Core relax design figure.
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=57 274 447 750]{images/core_design.eps.gz}}
+\caption{The core design of relax} \label{fig: core design}
+\end{figure}
+
+
+
+% The major components of relax.
+\subsection{The major components of relax}
+
+Each of the boxes in Figure~\ref{fig: core design} represents a different grouping of code.
+\begin{description}
+\item[relax:]  The top level module.  This initialises the entire program, tests the dependencies, places the custom errors into the module \texttt{\_\_builtin\_\_}, and prints the program's introduction message.
+
+\item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
+
+\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{prompt|textbf}.  The namespace of the interpreter contains the various user functions which are front ends to the generic code.  The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.  The code for the prompt is located in the directory \texttt{prompt/}.
+
+\item[Script:]  If a script\index{script|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.  Hence the script has access to all the user functions availible at the relax prompt.  This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
+
+\item[GUI:]  The graphical user interface\index{GUI|textbf}.  Although not coded the most mature and least destabilising widget set to use would be QT\index{QT}.  The GUI should be relatively easy to tie into relax.  The design is such that the GUI can be dropped straight into relax without effecting the normal prompt and script based operation of the program.
+
+\item[Other interfaces:]  Any number of interfaces for example other GUIs, an ncurses interface, a web based interface, or an MPI interface could be added to relax without modification of the current sources.
+
+\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain run type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \texttt{generic\_fns/}.
+
+\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given run type.  For example by asking for the minimise function when the run type is model-free analysis the function \texttt{self.rel\-ax.spec\-if\-ic.mod\-el\_free.min\-im\-ise()} is returned.  Althought the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \texttt{specific\_fns/specific\_setup.py}.
+
+\item[Specific code:]  This is the code which is specific to the run type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \texttt{specific\_fns/}.
+
+\item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.  The code may be written in Python however C code can be used to significantly increase the speed of the calculations.  For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.  These functions are located in the directory \texttt{maths\_fns/}.
+
+\item[Data:]  The program state stored in the class \texttt{self.relax.data}.  This class contains all the program data and is accessed by the generic and specific code.  The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \texttt{data.py} and the data is modified solely by the generic and specific code.
+\end{description}

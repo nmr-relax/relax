@@ -11,7 +11,7 @@
 \section{Introduction}
 
 
-A word of warning before reading this chapter, the topics covered here are quite advanced and are not necessary for understanding how to either use relax or to implement any of the data analysis techniques present within relax.  The material of this chapter is intended as an in-depth explanation of the mathematics involved in the optimisation of the parameters of the model-free models.  As such it contains the chi-squared equation, relaxation equations, spectral density functions, and diffusion tensor equations as well as their gradients (the vector of first partial derivatives) and Hessians (the matrix of second partial derivatives).
+A word of warning before reading this chapter, the topics covered here are quite advanced and are not necessary for understanding how to either use relax or to implement any of the data analysis techniques present within relax.  The material of this chapter is intended as an in-depth explanation of the mathematics involved in the optimisation of the parameters of the model-free models.  As such it contains the chi-squared equation, relaxation equations, spectral density functions, and diffusion tensor equations as well as their gradients (the vector of first partial derivatives) and Hessians (the matrix of second partial derivatives).  All these equations are used in the optimisation of models $m0$ to $m9$; models $tm0$ to $tm9$; the ellipsoidal, spheroidal, and spherical diffusion tensors; and the diffusion tensor simultaneously with the model-free models.
 
 
 
@@ -30,7 +30,7 @@ At the simplest level all minimisation techniques require at least a function wh
 % The gradient.
 \subsection{The gradient}
 
-However te majority of minimisation algorithms also require the gradient at the point of the given parameter values $\theta$.  The gradient is a vector of partial derivatives defined as
+However the majority of minimisation algorithms also require the gradient at the point in the space represented by the parameter values $\theta$.  The gradient is a vector of partial derivatives and is defined as
 \begin{equation}
  \nabla = \begin{pmatrix}
   \frac{\partial}{\partial \theta_1} \\
@@ -42,13 +42,13 @@ However te majority of minimisation algorithms also require the gradient at the 
 
 \noindent where $n$ is the total number of parameters in the model.
 
-An example of a powerful algorithm which requires both the value and gradient at given parameter values is BFGS quasi-Newton minimisation\index{minimisation techniques!BFGS}.  The gradient is also essential for the use of the Method of Multipliers (also known as the Augmented Lagrangian) constraints algoirthm.
+An example of a powerful algorithm which requires both the value and gradient at given parameter values is the BFGS quasi-Newton minimisation\index{minimisation techniques!BFGS}.  The gradient is also essential for the use of the Method of Multipliers constraints algorithm (also known as the Augmented Lagrangian algorithm).
 
 
 % The Hessian.
 \subsection{The Hessian}
 
-A few optimisation algorithms, which are amoung the most reliable for model-free analysis, additionally require the Hessian at given parameter values $\theta$.  The Hessian is the matrix of second partial derivatives defined as
+A few optimisation algorithms which are among the most reliable for model-free analysis additionally require the Hessian at given parameter values $\theta$.  The Hessian is the matrix of second partial derivatives and is defined as
 \begin{equation}
  \nabla^2 = \begin{pmatrix}
   \frac{\partial^2}{\partial \theta_1^2}                       & \frac{\partial^2}{\partial \theta_1 \cdot \partial \theta_2}  & \ldots    & \frac{\partial^2}{\partial \theta_1 \cdot \partial \theta_n} \\
@@ -58,16 +58,16 @@ A few optimisation algorithms, which are amoung the most reliable for model-free
  \end{pmatrix}
 \end{equation}
 
-The most powerful minimisation algorithm -- Newton minimisation\index{minimisation techniques!Newton} -- requires the value, gradient, and Hessian at the given parameter values.
+The most powerful minimisation algorithm for model-free analysis -- Newton minimisation\index{minimisation techniques!Newton} -- requires the value, gradient, and Hessian at the given parameter values.
 
 
 
-% Value, gradient, and Hessian dependency chain.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The value, gradient, and Hessian dependency chain.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Value, gradient, and Hessian dependency chain}
+\section{The value, gradient, and Hessian dependency chain}
 
-The dependency chain which was outlined in the model-free chapter -- that the chi-squared function is dependent on the relaxation equations which are dependent on the transformed relaxation equations which themselves are dependent on the spectral density functions -- combine with the values, gradients, and Hessians to create a complex web of dependencies.  The relationship between all the values, gradients, and Hessians are outlined in Figure~\ref{fig: dependencies}.
+The dependency chain which was outlined in the model-free chapter -- that the chi-squared function is dependent on the transformed relaxation equations which are dependent on the relaxation equations which themselves are dependent on the spectral density functions -- combine with the values, gradients, and Hessians to create a complex web of dependencies.  The relationship between all the values, gradients, and Hessians are outlined in Figure~\ref{fig: dependencies}.
 
 % Dependency figure.
 \begin{figure}[!h]
@@ -77,62 +77,68 @@ The dependency chain which was outlined in the model-free chapter -- that the ch
 
 
 
-% Chi-squared values, gradients, and Hessians.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The chi-squared value, gradient, and Hessian.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{$\chi^2$ values, gradients, and Hessians}
+\section{The $\chi^2$ value, gradient, and Hessian}
 
-% Chi-squared values.
-\subsection{$\chi^2$ values}
+% The chi-squared value.
+\subsection{The $\chi^2$ value}
 
-The $\chi^2$ value is
+As was presented in Equation~\eqref{eq: chi-squared} on page~\pageref{eq: chi-squared} the $\chi^2$ value is
 \begin{equation}
  \chi^2(\theta) = \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2},
 \end{equation}
 
-\noindent which is the same as Equation~\eqref{eq: chi-squared} on page~\pageref{eq: chi-squared}.
+\noindent where the summation index $i$ ranges over all the relaxation data of all residues used in the analysis.
 
 
-% Chi-squared gradients.
-\subsection{$\chi^2$ gradients}
 
-The $\chi^2$ gradient is
+% The chi-squared gradient.
+\subsection{The $\chi^2$ gradient}
+
+The $\chi^2$ gradient in vector notation is
 \begin{equation}
  \nabla \chi^2(\theta) = 2 \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2} \nabla \Ri(\theta).
 \end{equation}
 
 
-% Chi-squared Hessians.
-\subsection{$\chi^2$ Hessians}
 
-The $\chi^2$ Hessian is
+% The chi-squared Hessian.
+\subsection{The $\chi^2$ Hessian}
+
+The $\chi^2$ Hessian in vector notation is
 \begin{equation}
  \nabla^2 \chi^2(\theta) = 2 \sum_{i=1}^n \frac{1}{\sigma_i^2} \left(\nabla \Ri(\theta) \cdot \nabla \Ri(\theta)^T - (\Ri - \Ri(\theta)) \nabla^2 \Ri(\theta) \right).
 \end{equation}
 
 
 
-% Ri values, gradients, and Hessians.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The Ri values, gradients, and Hessians.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{$\Ri(\theta)$ values, gradients, and Hessians}
+\newpage
+\section{The $\Ri(\theta)$ values, gradients, and Hessians}
 
 
-% Ri values.
-\subsection{$\Ri(\theta)$ values}
+% The Ri values.
+\subsection{The $\Ri(\theta)$ values}
 
 The $\Ri(\theta)$ values are given by
+\begin{subequations}
 \begin{align}
     \Rone(\theta) & = \Rone'(\theta), \label{eq: Ri trans: R1} \\
     \Rtwo(\theta) & = \Rtwo'(\theta), \label{eq: Ri trans: R2} \\
     \mathrm{NOE}(\theta) & = 1 + \frac{\gH}{\gX} \frac{\crossrate(\theta)}{\Rone(\theta)}. \label{eq: Ri trans: NOE}
 \end{align}
+\end{subequations}
 
 
-% Ri gradients.
-\subsection{$\Ri(\theta)$ gradients}
+% The Ri gradients.
+\subsection{The $\Ri(\theta)$ gradients}
 
-The $\Ri(\theta)$ gradients are
+The $\Ri(\theta)$ gradients in vector notation are
+\begin{subequations}
 \begin{align}
     \nabla \Rone(\theta) & = \nabla \Rone'(\theta), \label{eq: Ri trans: dR1} \\
     \nabla \Rtwo(\theta) & = \nabla \Rtwo'(\theta), \label{eq: Ri trans: dR2} \\
@@ -140,12 +146,14 @@ The $\Ri(\theta)$ gradients are
         \Rone(\theta) \nabla \crossrate(\theta) - \crossrate(\theta) \nabla \Rone(\theta)
     \Big). \label{eq: Ri trans: dNOE}
 \end{align}
+\end{subequations}
 
 
-% Ri Hessians.
-\subsection{$\Ri(\theta)$ Hessians}
+% The Ri Hessians.
+\subsection{The $\Ri(\theta)$ Hessians}
 
-The $\Ri(\theta)$ Hessians are
+The $\Ri(\theta)$ Hessians in vector notation are
+\begin{subequations}
 \begin{align}
     \nabla^2 \Rone(\theta) & = \nabla^2 \Rone'(\theta), \label{eq: Ri trans: d2R1} \\
     \nabla^2 \Rtwo(\theta) & = \nabla^2 \Rtwo'(\theta), \label{eq: Ri trans: d2R2} \\
@@ -154,19 +162,21 @@ The $\Ri(\theta)$ Hessians are
         & \quad - \Rone(\theta) \Big( \nabla \crossrate(\theta) \cdot \nabla \Rone(\theta)^T - \Rone(\theta) \nabla^2 \crossrate(\theta) \Big)
     \bigg]. \label{eq: Ri trans: d2NOE}
 \end{align}
+\end{subequations}
 
 
 
 % Ri' values, gradients, and Hessians.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage
 \section{$\Ri'(\theta)$ values, gradients, and Hessians}
 
-The partial and second partial derivatives of the transformed relaxation equations $\Ri'(\theta)$ are different for each parameter of the vector $\theta$.  The vector representation of the gradient $\nabla \textrm{R}_i'(\theta)$ and the matrix representation of the Hessian $\nabla^2 \textrm{R}_i'(\theta)$ can be reconstructed from the individual elements presented below.
+The partial and second partial derivatives of the relaxation equations of the set R$'(\theta)$ are different for each parameter of the vector $\theta$.  The vector representation of the gradient $\nabla \textrm{R}_i'(\theta)$ and the matrix representation of the Hessian $\nabla^2 \textrm{R}_i'(\theta)$ can be reconstructed from the individual elements presented in the next section.
 
 
-% Components
-%~~~~~~~~~~~
+% Components.
+%~~~~~~~~~~~~
 
 \subsection{Components of the $\Ri'(\theta)$ equations}
 
@@ -353,16 +363,18 @@ For the dipolar component of the $\crossrate$ equation the spectral density term
 
 
 % Ri' values.
-%~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~
 
 \subsection{$\Ri'(\theta)$ values}
 
 The three relaxation equations, utilising the above components, can be expressed as
+\begin{subequations}
 \begin{align}
     \Rone(\theta) & = d J_d^{\Rone} + c J_c^{\Rone},                          \label{eq: Ri': R1} \\
     \Rtwo(\theta) & = \frac{d}{2} J_d^{\Rtwo} + \frac{c}{6} J_c^{\Rtwo},      \label{eq: Ri': R2} \\
     \crossrate(\theta) & = d J_d^{\crossrate}.                          \label{eq: Ri': sigmaNOE}
 \end{align}
+\end{subequations}
 
 
 
@@ -378,44 +390,52 @@ The partial derivatives with respect to the parameter of the spectral density fu
 \subsubsection{Spectral density function parameter}
 
 The partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial \Rone(\theta)}{\partial \theta_j} &= d {J_d^{\Rone}}' + c {J_c^{\Rone}}',                      \label{eq: Ri': dR1/dmf} \\
     \frac{\partial \Rtwo(\theta)}{\partial \theta_j} &= \frac{d}{2} {J_d^{\Rtwo}}' + \frac{c}{6} {J_c^{\Rtwo}}',  \label{eq: Ri': dR2/dmf} \\
     \frac{\partial \crossrate(\theta)}{\partial \theta_j} &= d {J_d^{\crossrate}}'.                         \label{eq: Ri': dsigmaNOE/dmf}
 \end{align}
+\end{subequations}
 
 
 % Chemical exchange parameter.
 \subsubsection{Chemical exchange parameter}
 
 The partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial \Rone(\theta)}{\partial \rho_{ex}} &= 0,          \label{eq: Ri': dR1/dRex} \\
     \frac{\partial \Rtwo(\theta)}{\partial \rho_{ex}} &= (2 \pi \omega_H)^2,          \label{eq: Ri': dR2/dRex} \\
     \frac{\partial \crossrate(\theta)}{\partial \rho_{ex}} &= 0.   \label{eq: Ri': dsigmaNOE/dRex}
 \end{align}
+\end{subequations}
 
 
 % CSA parameter.
 \subsubsection{CSA parameter}
 
 The partial derivatives of the relaxation equations with respect to the CSA parameter $\Delta\sigma$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial \Rone(\theta)}{\partial \Delta\sigma} &= c' J_c^{\Rone},             \label{eq: Ri': dR1/dCSA} \\
     \frac{\partial \Rtwo(\theta)}{\partial \Delta\sigma} &= \frac{c'}{6} J_c^{\Rtwo},   \label{eq: Ri': dR2/dCSA} \\
     \frac{\partial \crossrate(\theta)}{\partial \Delta\sigma} &= 0.                 \label{eq: Ri': dsigmaNOE/dCSA}
 \end{align}
+\end{subequations}
 
 
 % Bond length parameter.
 \subsubsection{Bond length parameter}
 
 The partial derivatives of the relaxation equations with respect to the bond length parameter $r$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial \Rone(\theta)}{\partial r} &= d' J_d^{\Rone},                \label{eq: Ri': dR1/dr} \\
     \frac{\partial \Rtwo(\theta)}{\partial r} &= \frac{d'}{2} J_d^{\Rtwo},      \label{eq: Ri': dR2/dr} \\
     \frac{\partial \crossrate(\theta)}{\partial r} &= d' J_d^{\crossrate}.  \label{eq: Ri': dsigmaNOE/dr}
 \end{align}
+\end{subequations}
 
 
 % Ri' Hessians.
@@ -426,128 +446,2611 @@ The partial derivatives of the relaxation equations with respect to the bond len
 The second partial derivatives with respect to the parameter of the spectral density functions, the chemical exchange parameter, CSA parameter, and bond length parameters are presented below.
 
 
-% Spectral density function parameter - Spectral density function parameter.
-\subsubsection{Spectral density function parameter - Spectral density function parameter}
+% Spectral density function parameter -- Spectral density function parameter.
+\subsubsection{Spectral density function parameter -- Spectral density function parameter}
 
 The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density functions $\theta_j$ and $\theta_k$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial \theta_k} &= d {J_d^{\Rone}}'' + c {J_c^{\Rone}}'',                      \label{eq: Ri': d2R1/dmfj.dmfk} \\
     \frac{\partial^2 \Rtwo(\theta)}{\partial \theta_j \cdot \partial \theta_k} &= \frac{d}{2} {J_d^{\Rtwo}}'' + \frac{c}{6} {J_c^{\Rtwo}}'',  \label{eq: Ri': d2R2/dmfj.dmfk} \\
     \frac{\partial^2 \crossrate(\theta)}{\partial \theta_j \cdot \partial \theta_k} &= d {J_d^{\crossrate}}''.                          \label{eq: Ri': d2sigmaNOE/dmfj.dmfk}
 \end{align}
+\end{subequations}
 
 
-% Spectral density function parameter - Chemical exchange parameter.
-\subsubsection{Spectral density function parameter - Chemical exchange parameter}
+% Spectral density function parameter -- Chemical exchange parameter.
+\subsubsection{Spectral density function parameter -- Chemical exchange parameter}
 
 The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ and the chemical exchange parameter $\rho_{ex}$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial \rho_{ex}} &= 0,        \label{eq: Ri': d2R1/dmfj.dRex} \\
     \frac{\partial^2 \Rtwo(\theta)}{\partial \theta_j \cdot \partial \rho_{ex}} &= 0,        \label{eq: Ri': d2R2/dmfj.dRex} \\
     \frac{\partial^2 \crossrate(\theta)}{\partial \theta_j \cdot \partial \rho_{ex}} &= 0. \label{eq: Ri': d2sigmaNOE/dmfj.dRex}
 \end{align}
+\end{subequations}
 
 
-% Spectral density function parameter - CSA parameter.
-\subsubsection{Spectral density function parameter - CSA parameter}
+% Spectral density function parameter -- CSA parameter.
+\subsubsection{Spectral density function parameter -- CSA parameter}
 
 The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ and the CSA parameter $\Delta\sigma$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial \Delta\sigma} &= c' {J_c^{\Rone}}',            \label{eq: Ri': d2R1/dmfj.dCSA} \\
     \frac{\partial^2 \Rtwo(\theta)}{\partial \theta_j \cdot \partial \Delta\sigma} &= \frac{c'}{6} {J_c^{\Rtwo}}',  \label{eq: Ri': d2R2/dmfj.dCSA} \\
     \frac{\partial^2 \crossrate(\theta)}{\partial \theta_j \cdot \partial \Delta\sigma} &= 0.                   \label{eq: Ri': d2sigmaNOE/dmfj.dCSA}
 \end{align}
+\end{subequations}
 
 
-% Spectral density function parameter - Bond length parameter.
-\subsubsection{Spectral density function parameter - Bond length parameter}
+% Spectral density function parameter -- Bond length parameter.
+\subsubsection{Spectral density function parameter -- Bond length parameter}
 
 The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ and the bond length parameter $r$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial r} &= d' {J_d^{\Rone}}',               \label{eq: Ri': d2R1/dmfj.dr} \\
     \frac{\partial^2 \Rtwo(\theta)}{\partial \theta_j \cdot \partial r} &= \frac{d'}{2} {J_d^{\Rtwo}}',     \label{eq: Ri': d2R2/dmfj.dr} \\
     \frac{\partial^2 \crossrate(\theta)}{\partial \theta_j \cdot \partial r} &= d' {J_d^{\crossrate}}'. \label{eq: Ri': d2sigmaNOE/dmfj.dr}
 \end{align}
+\end{subequations}
 
 
-% Chemical exchange parameter - Chemical exchange parameter.
-\subsubsection{Chemical exchange parameter - Chemical exchange parameter}
+% Chemical exchange parameter -- Chemical exchange parameter.
+\subsubsection{Chemical exchange parameter -- Chemical exchange parameter}
 
 The second partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ twice are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{{\partial \rho_{ex}}^2} &= 0,        \label{eq: Ri': d2R1/dRex2} \\
     \frac{\partial^2 \Rtwo(\theta)}{{\partial \rho_{ex}}^2} &= 0,        \label{eq: Ri': d2R2/dRex2} \\
     \frac{\partial^2 \crossrate(\theta)}{{\partial \rho_{ex}}^2} &= 0. \label{eq: Ri': d2sigmaNOE/dRex2}
 \end{align}
+\end{subequations}
 
 
-% Chemical exchange parameter - CSA parameter.
-\subsubsection{Chemical exchange parameter - CSA parameter}
+% Chemical exchange parameter -- CSA parameter.
+\subsubsection{Chemical exchange parameter -- CSA parameter}
 
 The second partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ and the CSA parameter $\Delta\sigma$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \rho_{ex} \cdot \partial \Delta\sigma} &= 0,        \label{eq: Ri': d2R1/dRex.dCSA} \\
     \frac{\partial^2 \Rtwo(\theta)}{\partial \rho_{ex} \cdot \partial \Delta\sigma} &= 0,        \label{eq: Ri': d2R2/dRex.dCSA} \\
     \frac{\partial^2 \crossrate(\theta)}{\partial \rho_{ex} \cdot \partial \Delta\sigma} &= 0. \label{eq: Ri': d2sigmaNOE/dRex.dCSA}
 \end{align}
+\end{subequations}
 
 
-% Chemical exchange parameter - Bond length parameter.
-\subsubsection{Chemical exchange parameter - Bond length parameter}
+% Chemical exchange parameter -- Bond length parameter.
+\subsubsection{Chemical exchange parameter -- Bond length parameter}
 
 The second partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ and the bond length parameter $r$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \rho_{ex} \cdot \partial r} &= 0,           \label{eq: Ri': d2R1/dRex.dr} \\
     \frac{\partial^2 \Rtwo(\theta)}{\partial \rho_{ex} \cdot \partial r} &= 0,           \label{eq: Ri': d2R2/dRex.dr} \\
     \frac{\partial^2 \crossrate(\theta)}{\partial \rho_{ex} \cdot \partial r} &= 0.    \label{eq: Ri': d2sigmaNOE/dRex.dr}
 \end{align}
+\end{subequations}
 
 
-% CSA parameter - CSA parameter.
-\subsubsection{CSA parameter - CSA parameter}
+% CSA parameter -- CSA parameter.
+\subsubsection{CSA parameter -- CSA parameter}
 
 The second partial derivatives of the relaxation equations with respect to the CSA parameter $\Delta\sigma$ twice are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{{\partial \Delta\sigma}^2} &= c'' J_c^{\Rone},              \label{eq: Ri': d2R1/dCSA2} \\
     \frac{\partial^2 \Rtwo(\theta)}{{\partial \Delta\sigma}^2} &= \frac{c''}{6} J_c^{\Rtwo},    \label{eq: Ri': d2R2/dCSA2} \\
     \frac{\partial^2 \crossrate(\theta)}{{\partial \Delta\sigma}^2} &= 0.                   \label{eq: Ri': d2sigmaNOE/dCSA2}
 \end{align}
+\end{subequations}
 
 
-% CSA parameter - Bond length parameter.
-\subsubsection{CSA parameter - Bond length parameter}
+% CSA parameter -- Bond length parameter.
+\subsubsection{CSA parameter -- Bond length parameter}
 
 The second partial derivatives of the relaxation equations with respect to the CSA parameter $\Delta\sigma$ and the bond length parameter $r$ are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \Delta\sigma \cdot \partial r} &= 0,         \label{eq: Ri': d2R1/dCSA.dr} \\
     \frac{\partial^2 \Rtwo(\theta)}{\partial \Delta\sigma \cdot \partial r} &= 0,         \label{eq: Ri': d2R2/dCSA.dr} \\
     \frac{\partial^2 \crossrate(\theta)}{\partial \Delta\sigma \cdot \partial r} &= 0.  \label{eq: Ri': d2sigmaNOE/dCSA.dr}
 \end{align}
+\end{subequations}
 
 
-% Bond length parameter - Bond length parameter.
-\subsubsection{Bond length parameter - Bond length parameter}
+% Bond length parameter -- Bond length parameter.
+\subsubsection{Bond length parameter -- Bond length parameter}
 
 The second partial derivatives of the relaxation equations with respect to the bond length parameter $r$ twice are
+\begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{{\partial r}^2} &= d'' J_d^{\Rone},                 \label{eq: Ri': d2R1/dr2} \\
     \frac{\partial^2 \Rtwo(\theta)}{{\partial r}^2} &= \frac{d''}{2} J_d^{\Rtwo},       \label{eq: Ri': d2R2/dr2} \\
     \frac{\partial^2 \crossrate(\theta)}{{\partial r}^2} &= d'' J_d^{\crossrate}.   \label{eq: Ri': d2sigmaNOE/dr2}
 \end{align}
+\end{subequations}
+
+
+
+
+% Model-free analysis.
+%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\section{Model-free analysis}
+
+
+
+% The model-free equations.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The model-free equations}
+
+In the original model-free analysis of \cite{LipariSzabo82a} the correlation function $C(\tau)$ of the XH bond vector is approximated by decoupling the internal fluctuations of the bond vector $C_\mathrm{I}(\tau)$ from the correlation function of the overall Brownian rotational diffusion $C_\mathrm{O}(\tau)$ by the equation
+\begin{equation}
+    C(\tau) = C_\mathrm{O}(\tau) \cdot C_\mathrm{I}(\tau).
+\end{equation}
+
+\noindent The overall correlation functions of the diffusion of a sphere, spheroid, and ellipsoid are presented in the sections below.  These three different equations can be combined into one generic correlation function which is independent of the type of diffusion.  This generic correlation function is
+\begin{equation}
+    C_\mathrm{O}(\tau) = \frac{1}{5} \sum_{i=-k}^k c_i \cdot e^{-\tau/\tau_i},
+\end{equation}
+
+\noindent where $c_i$ are the weights and $\tau_i$ are correlation times of the exponential terms.  For the specific diffusion type the weights and correlation times are presented below.  In the original model-free analysis of \citet{LipariSzabo82a} and \citet{LipariSzabo82b} the internal motions are modelled by the correlation function
+\begin{equation}
+    C_\mathrm{I}(\tau) = S^2 + (1 - S^2) e^{-\tau / \tau_e},
+\end{equation}
+
+\noindent where $S^2$ is the generalised Lipari and Szabo order parameter which is related to the amplitude of the motion and $\tau_e$ is the effective correlation time which is an indicator of the timescale of the motion, albeit being dependent on the value of the order parameter.  The order parameter ranges from one for complete rigidity to zero for unrestricted motions.  Model-free theory was extended by \citet{Clore90} to include motions on two timescales by the correlation function
+\begin{equation}
+    C_\mathrm{I}(\tau) = S^2 + (1 - S^2_f) e^{-\tau / \tau_f} + (S^2_f - S^2) e^{-\tau / \tau_s},
+\end{equation}
+
+\noindent where the faster of the motions is defined by the order parameter $S^2_f$ and the correlation time $\tau_f$, the slower by the parameters $S^2_s$ and $\tau_s$, and the two order parameter are related by the equation $S^2 = S^2_f \cdot S^2_s$.
+
+The relaxation equations of \citet{Abragam61} are composed of a sum of power spectral density functions $J(\omega)$ at five frequencies.  The spectral density function is related to the correlation function as the two are a Fourier pair.  Applying the Fourier transform to the correlation function composed of the generic diffusion equation and the original model-free correlation function results in the equation
+\begin{equation} \label{eq: J(w) model-free generic}
+    J(\omega) = \frac{2}{5} \sum_{i=-k}^k c_i \cdot \tau_i \Bigg(
+        \frac{S^2}{1 + (\omega \tau_i)^2}
+        + \frac{(1 - S^2)(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+The Fourier transform using the extended model-free correlation function is
+\begin{equation} \label{eq: J(w) model-free ext generic}
+    J(\omega) = \frac{2}{5} \sum_{i=-k}^k c_i \cdot \tau_i \Bigg(
+        \frac{S^2}{1 + (\omega \tau_i)^2}
+        + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+        + \frac{(S^2_f - S^2)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% The original model-free gradient.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The original model-free gradient}
+
+The model-free gradient of the original spectral density function~\eqref{eq: J(w) model-free generic} is the vector of partial derivatives of the function with respect to the geometric parameters $\Diffgeoset_i$, the orientational parameters $\Difforiset_i$, the order parameters, and the internal correlation times.  The positions in the vector correspond to the model parameters which are being optimised.
+
+
+
+% Gj partial derivative.
+\subsubsection{$\Diffgeoset_j$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the geometric parameter $\Diffgeoset_j$ is
+\begin{multline}
+    \frac{\partial J(\omega)}{\partial \Diffgeoset_j} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            S^2 \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2}
+            + (1 - S^2) \tau_e^2 \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{S^2}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2)(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Oj partial derivative.
+\subsubsection{$\Difforiset_j$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the orientational parameter $\Difforiset_j$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \Difforiset_j} = \frac{2}{5} \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{S^2}{1 + (\omega \tau_i)^2}
+        + \frac{(1 - S^2)(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% S2 partial derivative.
+\subsubsection{$S^2$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the order parameter $S^2$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial S^2} = \frac{2}{5} \sum_{i=-k}^k c_i \tau_i \Bigg(
+        \frac{1}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% te partial derivative.
+\subsubsection{$\tau_e$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation time $\tau_e$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \tau_e} = \frac{2}{5} (1 - S^2) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% The original model-free Hessian.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The original model-free Hessian}
+
+The model-free Hessian of the original spectral density function~\eqref{eq: J(w) model-free generic} is the matrix of second partial derivatives.  The matrix coordinates correspond to the model parameters which are being optimised.
+
+
+
+% Gj-Gk partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\Diffgeoset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the geometric parameters $\Diffgeoset_j$ and $\Diffgeoset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        -2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \cdot \frac{\partial \tau_i}{\partial \Diffgeoset_k} \Bigg(
+            S^2 \omega^2 \tau_i \frac{3 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^3}  \\
+            + (1 - S^2) \tau_e^2 \frac{(\tau_e + \tau_i)^3  +  3 \omega^2 \tau_e^3 \tau_i (\tau_e + \tau_i)  -  (\omega \tau_e)^4 \tau_i^3}
+                {\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^3}
+        \Bigg) \\
+        + \Bigg(
+            \frac{\partial \tau_i}{\partial \Diffgeoset_j} \cdot \frac{\partial c_i}{\partial \Diffgeoset_k}
+            + \frac{\partial \tau_i}{\partial \Diffgeoset_k} \cdot \frac{\partial c_i}{\partial \Diffgeoset_j}
+            + c_i \frac{\partial^2 \tau_i}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k}
+        \Bigg)
+        \Bigg(
+            S^2 \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2} \\
+            + (1 - S^2) \tau_e^2 \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}
+        \Bigg) \\
+        + \Bigg(
+            \frac{\partial^2 c_i}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k} \tau_i \Bigg(
+                \frac{S^2}{1 + (\omega \tau_i)^2}
+                + \frac{(1 - S^2)(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+            \Bigg)
+        \Bigg)
+    \Bigg).
+\end{multline}
+                
+
+
+% Gj-Ok partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\Difforiset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the geometric parameter $\Diffgeoset_j$ and the orientational parameter $\Difforiset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \Difforiset_k} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        \frac{\partial \tau_i}{\partial \Diffgeoset_j} \frac{\partial c_i}{\partial \Difforiset_k} \Bigg(
+            S^2 \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2}
+            + (1 - S^2) \tau_e^2 \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial^2 c_i}{\partial \Diffgeoset_j \cdot \partial \Difforiset_k} \tau_i \Bigg(
+            \frac{S^2}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2)(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-S2 partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $S^2$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the geometric parameter $\Diffgeoset_j$ and the order parameter $S^2$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial S^2} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2}
+            - \tau_e^2 \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{1}{1 + (\omega \tau_i)^2}
+            - \frac{(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-te partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\tau_e$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the geometric parameter $\Diffgeoset_j$ and the correlation time $\tau_e$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \tau_e} = \frac{2}{5} (1 - S^2) \sum_{i=-k}^k \Bigg(
+        2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \tau_e \tau_i (\tau_e + \tau_i)
+            \frac{(\tau_e + \tau_i)^2 - 3(\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^3}  \\
+        + \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i^2 \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}
+    \Bigg).
+\end{multline}
+
+
+% Oj-Ok partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\Difforiset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the orientational parameters $\Difforiset_j$ and $\Difforiset_k$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \Difforiset_k} = \frac{2}{5} \sum_{i=-k}^k
+        \frac{\partial^2 c_i}{\partial \Difforiset_j \cdot \partial \Difforiset_k} \tau_i \Bigg(
+            \frac{S^2}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2)(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+        \Bigg).
+\end{equation}
+
+
+
+% Oj-S2 partial derivative.
+\subsubsection{$\Difforiset_j$ -- $S^2$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the orientational parameter $\Difforiset_j$ and the order parameter $S^2$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial S^2} = \frac{2}{5} \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{1}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_e + \tau_i)\tau_e}{(\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% Oj-te partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\tau_e$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the orientational parameter $\Difforiset_j$ and the correlation time $\tau_e$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \tau_e} = \frac{2}{5} (1 - S^2) \sum_{i=-k}^k
+        \frac{\partial c_i}{\partial \Difforiset_j} \tau_i^2
+        \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% S2-S2 partial derivative.
+\subsubsection{$S^2$ -- $S^2$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the order parameter $S^2$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{(\partial S^2)^2} = 0.
+\end{equation}
+
+
+
+% S2-te partial derivative.
+\subsubsection{$S^2$ -- $\tau_e$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the order parameter $S^2$ and correlation time $\tau_e$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2 \cdot \partial \tau_e} = -\frac{2}{5} \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_e + \tau_i)^2 - (\omega \tau_e \tau_i)^2}{\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% te-te partial derivative.
+\subsubsection{$\tau_e$ -- $\tau_e$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation time $\tau_e$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{{\partial \tau_e}^2} = -\frac{4}{5} (1 - S^2) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_e + \tau_i)^3  +  3 \omega^2 \tau_i^3 \tau_e (\tau_e + \tau_i)  -  (\omega \tau_i)^4 \tau_e^3}
+            {\left((\tau_e + \tau_i)^2 + (\omega \tau_e \tau_i)^2 \right)^3}
+\end{equation}
+
+
+
+
+% The extended model-free gradient.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The extended model-free gradient}
+
+The model-free gradient of the extended spectral density function~\eqref{eq: J(w) model-free ext generic} is the vector of partial derivatives of the function with respect to the geometric parameters $\Diffgeoset_i$, the orientational parameters $\Difforiset_i$, the order parameters, and the internal correlation times.  The positions in the vector correspond to the model parameters which are being optimised.
+
+
+
+% Gj partial derivative.
+\subsubsection{$\Diffgeoset_j$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ is
+\begin{multline}
+    \frac{\partial J(\omega)}{\partial \Diffgeoset_j} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            S^2 \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2} \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2} \\
+            + (S^2_f - S^2) \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{S^2}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+            + \frac{(S^2_f - S^2)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Oj partial derivative.
+\subsubsection{$\Difforiset_j$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \Difforiset_j} = \frac{2}{5} \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{S^2}{1 + (\omega \tau_i)^2}
+        + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+        + \frac{(S^2_f - S^2)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% S2 partial derivative.
+\subsubsection{$S^2$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial S^2} = \frac{2}{5} \sum_{i=-k}^k c_i \tau_i \Bigg(
+        \frac{1}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% S2f partial derivative.
+\subsubsection{$S^2_f$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial S^2_f} = -\frac{2}{5} \sum_{i=-k}^k c_i \tau_i \Bigg(
+        \frac{(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+        - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% tf partial derivative.
+\subsubsection{$\tau_f$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \tau_f} = \frac{2}{5} (1 - S^2_f) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% ts partial derivative.
+\subsubsection{$\tau_s$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \tau_s} = \frac{2}{5} (S^2_f - S^2) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+
+% The extended model-free Hessian.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The extended model-free Hessian}
+
+The model-free Hessian of the extended spectral density function~\eqref{eq: J(w) model-free ext generic} is the matrix of second partial derivatives.  The matrix coordinates correspond to the model parameters which are being optimised.
+
+
+
+% Gj-Gk partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\Diffgeoset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameters $\Diffgeoset_j$ and $\Diffgeoset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        -2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \cdot \frac{\partial \tau_i}{\partial \Diffgeoset_k} \Bigg(
+            S^2 \omega^2 \tau_i \frac{3 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^3}  \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^3  +  3 \omega^2 \tau_f^3 \tau_i (\tau_f + \tau_i)  -  (\omega \tau_f)^4 \tau_i^3}
+                {\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^3} \\
+            + (S^2_f - S^2) \tau_s^2 \frac{(\tau_s + \tau_i)^3  +  3 \omega^2 \tau_s^3 \tau_i (\tau_s + \tau_i)  -  (\omega \tau_s)^4 \tau_i^3}
+                {\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^3}
+        \Bigg) \\
+        + \Bigg(
+            \frac{\partial \tau_i}{\partial \Diffgeoset_j} \cdot \frac{\partial c_i}{\partial \Diffgeoset_k}
+            + \frac{\partial \tau_i}{\partial \Diffgeoset_k} \cdot \frac{\partial c_i}{\partial \Diffgeoset_j}
+            + c_i \frac{\partial^2 \tau_i}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k}
+        \Bigg)
+        \Bigg(
+            S^2 \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2} \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2} \\
+            + (S^2_f - S^2) \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        + \Bigg(
+            \frac{\partial^2 c_i}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k} \tau_i \Bigg(
+                \frac{S^2}{1 + (\omega \tau_i)^2}
+                + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+                + \frac{(S^2_f - S^2)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+            \Bigg)
+        \Bigg)
+    \Bigg).
+\end{multline}
+                
+
+
+% Gj-Ok partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\Difforiset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the orientational parameter $\Difforiset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \Difforiset_k} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        \frac{\partial \tau_i}{\partial \Diffgeoset_j} \frac{\partial c_i}{\partial \Difforiset_k} \Bigg(
+            S^2 \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2} \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2} \\
+            + (S^2_f - S^2) \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial^2 c_i}{\partial \Diffgeoset_j \cdot \partial \Difforiset_k} \tau_i \Bigg(
+            \frac{S^2}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+            + \frac{(S^2_f - S^2)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-S2 partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $S^2$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the order parameter $S^2$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial S^2} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2}
+            - \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{1}{1 + (\omega \tau_i)^2}
+            - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-S2f partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $S^2_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the order parameter $S^2_f$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial S^2_f} = -\frac{2}{5} \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}
+            - \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+            - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-tf partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the correlation time $\tau_f$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \tau_f} = \frac{2}{5} (1 - S^2_f) \sum_{i=-k}^k \Bigg(
+        2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \tau_f \tau_i (\tau_f + \tau_i)
+            \frac{(\tau_f + \tau_i)^2 - 3(\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^3}  \\
+        + \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-ts partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the correlation time $\tau_s$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \tau_s} = \frac{2}{5} (S^2_f - S^2) \sum_{i=-k}^k \Bigg(
+        2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \tau_s \tau_i (\tau_s + \tau_i)
+            \frac{(\tau_s + \tau_i)^2 - 3(\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^3}  \\
+        + \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+    \Bigg).
+\end{multline}
+
+
+
+% Oj-Ok partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\Difforiset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameters $\Difforiset_j$ and $\Difforiset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \Difforiset_k} = \frac{2}{5} \sum_{i=-k}^k
+        \frac{\partial^2 c_i}{\partial \Difforiset_j \cdot \partial \Difforiset_k} \tau_i \Bigg(
+            \frac{S^2}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2} \\
+            + \frac{(S^2_f - S^2)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg).
+\end{multline}
+
+
+
+% Oj-S2 partial derivative.
+\subsubsection{$\Difforiset_j$ -- $S^2$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the order parameter $S^2$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial S^2} = \frac{2}{5} \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{1}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% Oj-S2f partial derivative.
+\subsubsection{$\Difforiset_j$ -- $S^2_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the order parameter $S^2_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial S^2_f} = -\frac{2}{5} \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+        - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% Oj-tf partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \tau_f} = \frac{2}{5} (1 - S^2_f) \sum_{i=-k}^k
+        \frac{\partial c_i}{\partial \Difforiset_j} \tau_i^2
+        \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% Oj-ts partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \tau_s} = \frac{2}{5} (S^2_f - S^2) \sum_{i=-k}^k
+        \frac{\partial c_i}{\partial \Difforiset_j} \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% S2-S2 partial derivative.
+\subsubsection{$S^2$ -- $S^2$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{(\partial S^2)^2} = 0.
+\end{equation}
+
+
+
+% S2-S2f partial derivative.
+\subsubsection{$S^2$ -- $S^2_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameters $S^2$ and $S^2_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2 \cdot \partial S^2_f} = 0.
+\end{equation}
+
+
+
+% S2-tf partial derivative.
+\subsubsection{$S^2$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2$ and correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2 \cdot \partial \tau_f} = 0.
+\end{equation}
+
+
+% S2-ts partial derivative.
+\subsubsection{$S^2$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2$ and correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2 \cdot \partial \tau_s} = -\frac{2}{5} \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% S2f-S2f partial derivative.
+\subsubsection{$S^2_f$ -- $S^2_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{(\partial S^2_f)^2} = 0.
+\end{equation}
+
+
+
+% S2f-tf partial derivative.
+\subsubsection{$S^2_f$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ and correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2_f \cdot \partial \tau_f} = -\frac{2}{5} \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% S2f-ts partial derivative.
+\subsubsection{$S^2_f$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ and correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2_f \cdot \partial \tau_s} = \frac{2}{5} \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% tf-tf partial derivative.
+\subsubsection{$\tau_f$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation time $\tau_f$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{{\partial \tau_f}^2} = -\frac{4}{5} (1 - S^2_f) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_f + \tau_i)^3  +  3 \omega^2 \tau_i^3 \tau_f (\tau_f + \tau_i)  -  (\omega \tau_i)^4 \tau_f^3}
+            {\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^3}
+\end{equation}
+
+
+
+% tf-ts partial derivative.
+\subsubsection{$\tau_f$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation times $\tau_f$ and $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \tau_f \cdot \partial \tau_s} = 0.
+\end{equation}
+
+
+
+% ts-ts partial derivative.
+\subsubsection{$\tau_s$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation time $\tau_s$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{{\partial \tau_s}^2} = -\frac{4}{5} (S^2_f - S^2) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^3  +  3 \omega^2 \tau_i^3 \tau_s (\tau_s + \tau_i)  -  (\omega \tau_i)^4 \tau_s^3}
+            {\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^3}
+\end{equation}
+
+
+
+
+% The alternative extended model-free gradient.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The alternative extended model-free gradient}
+
+Because of the equation $S^2 = S^2_f \cdot S^2_s$ and the form of the extended spectral density function~\eqref{eq: J(w) model-free ext generic} a convolution\index{parameter convolution} of the model-free space occurs if the model-free parameters \{$S^2_f$, $S^2_s$, $\tau_f$, $\tau_s$\} are optimised rather than the parameters \{$S^2$, $S^2_f$, $\tau_f$, $\tau_s$\}.  This convolution increases the complexity of the gradient.  For completeness the first partial derivatives are presented below.
+
+
+
+% Gj partial derivative.
+\subsubsection{$\Diffgeoset_j$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ is
+\begin{multline}
+    \frac{\partial J(\omega)}{\partial \Diffgeoset_j} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            S^2_f \cdot S^2_s \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2} \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2} \\
+            + S^2_f(1 - S^2_s) \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{S^2_f \cdot S^2_s}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+            + \frac{S^2_f(1 - S^2_s)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Oj partial derivative.
+\subsubsection{$\Difforiset_j$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \Difforiset_j} = \frac{2}{5} \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{S^2_f \cdot S^2_s}{1 + (\omega \tau_i)^2}
+        + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+        + \frac{S^2_f(1 - S^2_s)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% S2f partial derivative.
+\subsubsection{$S^2_f$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial S^2_f} = \frac{2}{5} \sum_{i=-k}^k c_i \tau_i \Bigg(
+        \frac{S^2_s}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+        + \frac{(1 - S^2_s) (\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% S2s partial derivative.
+\subsubsection{$S^2_s$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_s$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial S^2_s} = \frac{2}{5} S^2_f \sum_{i=-k}^k c_i \tau_i \Bigg(
+        \frac{1}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% tf partial derivative.
+\subsubsection{$\tau_f$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \tau_f} = \frac{2}{5} (1 - S^2_f) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% ts partial derivative.
+\subsubsection{$\tau_s$ partial derivative}
+
+The partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial J(\omega)}{\partial \tau_s} = \frac{2}{5} S^2_f(1 - S^2_s) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+
+% The alternative extended model-free Hessian.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The alternative extended model-free Hessian}
+
+The model-free Hessian of the extended spectral density function~\eqref{eq: J(w) model-free ext generic} is also complicated by the convolution resulting from the use of the parameters \{$S^2_f$, $S^2_s$, $\tau_f$, $\tau_s$\}.  The second partial derivatives with respect to these parameters are presented below.
+
+
+
+% Gj-Gk partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\Diffgeoset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameters $\Diffgeoset_j$ and $\Diffgeoset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        -2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \cdot \frac{\partial \tau_i}{\partial \Diffgeoset_k} \Bigg(
+            S^2_f \cdot S^2_s \omega^2 \tau_i \frac{3 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^3}  \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^3  +  3 \omega^2 \tau_f^3 \tau_i (\tau_f + \tau_i)  -  (\omega \tau_f)^4 \tau_i^3}
+                {\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^3} \\
+            + S^2_f(1 - S^2_s) \tau_s^2 \frac{(\tau_s + \tau_i)^3  +  3 \omega^2 \tau_s^3 \tau_i (\tau_s + \tau_i)  -  (\omega \tau_s)^4 \tau_i^3}
+                {\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^3}
+        \Bigg) \\
+        + \Bigg(
+            \frac{\partial \tau_i}{\partial \Diffgeoset_j} \cdot \frac{\partial c_i}{\partial \Diffgeoset_k}
+            + \frac{\partial \tau_i}{\partial \Diffgeoset_k} \cdot \frac{\partial c_i}{\partial \Diffgeoset_j}
+            + c_i \frac{\partial^2 \tau_i}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k}
+        \Bigg)
+        \Bigg(
+            S^2_f \cdot S^2_s \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2} \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2} \\
+            + S^2_f(1 - S^2_s) \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        + \Bigg(
+            \frac{\partial^2 c_i}{\partial \Diffgeoset_j \cdot \partial \Diffgeoset_k} \tau_i \Bigg(
+                \frac{S^2_f \cdot S^2_s}{1 + (\omega \tau_i)^2}
+                + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+                + \frac{S^2_f(1 - S^2_s)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+            \Bigg)
+        \Bigg)
+    \Bigg).
+\end{multline}
+                
+
+
+% Gj-Ok partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\Difforiset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the orientational parameter $\Difforiset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \Difforiset_k} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        \frac{\partial \tau_i}{\partial \Diffgeoset_j} \frac{\partial c_i}{\partial \Difforiset_k} \Bigg(
+            S^2_f \cdot S^2_s \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2} \\
+            + (1 - S^2_f) \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2} \\
+            + S^2_f(1 - S^2_s) \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial^2 c_i}{\partial \Diffgeoset_j \cdot \partial \Difforiset_k} \tau_i \Bigg(
+            \frac{S^2_f \cdot S^2_s}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+            + \frac{S^2_f(1 - S^2_s)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-S2f partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $S^2_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the order parameter $S^2_f$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial S^2_f} = \frac{2}{5} \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            S^2_s \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2}
+            - \tau_f^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2} \\
+            + (1 - S^2_s) \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{S^2_s}{1 + (\omega \tau_i)^2}
+            - \frac{(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2} \\
+            + \frac{(1 - S^2_s)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-S2s partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $S^2_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the order parameter $S^2_s$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial S^2_s} = \frac{2}{5} S^2_f \sum_{i=-k}^k \Bigg(
+        c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \Bigg(
+            \frac{1 - (\omega \tau_i)^2}{\left(1 + (\omega \tau_i)^2 \right)^2}
+            - \tau_s^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+        \Bigg) \\
+        +  \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i \Bigg(
+            \frac{1}{1 + (\omega \tau_i)^2}
+            - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg)
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-tf partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the correlation time $\tau_f$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \tau_f} = \frac{2}{5} (1 - S^2_f) \sum_{i=-k}^k \Bigg(
+        2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \tau_f \tau_i (\tau_f + \tau_i)
+            \frac{(\tau_f + \tau_i)^2 - 3(\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^3}  \\
+        + \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i^2 \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}
+    \Bigg).
+\end{multline}
+
+
+
+% Gj-ts partial derivative.
+\subsubsection{$\Diffgeoset_j$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the geometric parameter $\Diffgeoset_j$ and the correlation time $\tau_s$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Diffgeoset_j \cdot \partial \tau_s} = \frac{2}{5} S^2_f(1 - S^2_s) \sum_{i=-k}^k \Bigg(
+        2 c_i \frac{\partial \tau_i}{\partial \Diffgeoset_j} \tau_s \tau_i (\tau_s + \tau_i)
+            \frac{(\tau_s + \tau_i)^2 - 3(\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^3}  \\
+        + \frac{\partial c_i}{\partial \Diffgeoset_j} \tau_i^2 \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}
+    \Bigg).
+\end{multline}
+
+
+
+% Oj-Ok partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\Difforiset_k$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameters $\Difforiset_j$ and $\Difforiset_k$ is
+\begin{multline}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \Difforiset_k} = \frac{2}{5} \sum_{i=-k}^k
+        \frac{\partial^2 c_i}{\partial \Difforiset_j \cdot \partial \Difforiset_k} \tau_i \Bigg(
+            \frac{S^2_f \cdot S^2_s}{1 + (\omega \tau_i)^2}
+            + \frac{(1 - S^2_f)(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2} \\
+            + \frac{S^2_f(1 - S^2_s)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+        \Bigg).
+\end{multline}
+
+
+
+% Oj-S2f partial derivative.
+\subsubsection{$\Difforiset_j$ -- $S^2_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the order parameter $S^2_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial S^2_f} = \frac{2}{5} \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{S^2_s}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_f + \tau_i)\tau_f}{(\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2}
+        + \frac{(1 - S^2_s)(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% Oj-S2s partial derivative.
+\subsubsection{$\Difforiset_j$ -- $S^2_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the order parameter $S^2_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial S^2_s} = \frac{2}{5} S^2_f \sum_{i=-k}^k \frac{\partial c_i}{\partial \Difforiset_j} \tau_i \Bigg(
+        \frac{1}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% Oj-tf partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \tau_f} = \frac{2}{5} (1 - S^2_f) \sum_{i=-k}^k
+        \frac{\partial c_i}{\partial \Difforiset_j} \tau_i^2
+        \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% Oj-ts partial derivative.
+\subsubsection{$\Difforiset_j$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the orientational parameter $\Difforiset_j$ and the correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \Difforiset_j \cdot \partial \tau_s} = \frac{2}{5} S^2_f(1 - S^2_s) \sum_{i=-k}^k
+        \frac{\partial c_i}{\partial \Difforiset_j} \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% S2f-S2f partial derivative.
+\subsubsection{$S^2_f$ -- $S^2_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{(\partial S^2_f)^2} = 0.
+\end{equation}
+
+
+
+% S2f-S2s partial derivative.
+\subsubsection{$S^2_f$ -- $S^2_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameters $S^2_f$ and $S^2_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2_f \cdot \partial S^2_s} = \frac{2}{5} \sum_{i=-k}^k c_i \tau_i \Bigg(
+        \frac{1}{1 + (\omega \tau_i)^2}
+        - \frac{(\tau_s + \tau_i)\tau_s}{(\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2}
+    \Bigg).
+\end{equation}
+
+
+
+% S2f-tf partial derivative.
+\subsubsection{$S^2_f$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ and correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2_f \cdot \partial \tau_f} = -\frac{2}{5} \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_f + \tau_i)^2 - (\omega \tau_f \tau_i)^2}{\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% S2f-ts partial derivative.
+\subsubsection{$S^2_f$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_f$ and correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2_f \cdot \partial \tau_s} = \frac{2}{5} (1 - S^2_s) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% S2s-S2s partial derivative.
+\subsubsection{$S^2_s$ -- $S^2_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_s$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{(\partial S^2_s)^2} = 0.
+\end{equation}
+
+
+
+% S2s-tf partial derivative.
+\subsubsection{$S^2_s$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_s$ and correlation time $\tau_f$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2_s \cdot \partial \tau_f} = 0.
+\end{equation}
+
+
+
+% S2s-ts partial derivative.
+\subsubsection{$S^2_s$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free ext generic} with respect to the order parameter $S^2_s$ and correlation time $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial S^2_s \cdot \partial \tau_s} = -\frac{2}{5} S^2_f \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^2 - (\omega \tau_s \tau_i)^2}{\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^2}.
+\end{equation}
+
+
+
+% tf-tf partial derivative.
+\subsubsection{$\tau_f$ -- $\tau_f$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation time $\tau_f$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{{\partial \tau_f}^2} = -\frac{4}{5} (1 - S^2_f) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_f + \tau_i)^3  +  3 \omega^2 \tau_i^3 \tau_f (\tau_f + \tau_i)  -  (\omega \tau_i)^4 \tau_f^3}
+            {\left((\tau_f + \tau_i)^2 + (\omega \tau_f \tau_i)^2 \right)^3}
+\end{equation}
+
+
+
+% tf-ts partial derivative.
+\subsubsection{$\tau_f$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation times $\tau_f$ and $\tau_s$ is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{\partial \tau_f \cdot \partial \tau_s} = 0.
+\end{equation}
+
+
+
+% ts-ts partial derivative.
+\subsubsection{$\tau_s$ -- $\tau_s$ partial derivative}
+
+The second partial derivative of~\eqref{eq: J(w) model-free generic} with respect to the correlation time $\tau_s$ twice is
+\begin{equation}
+    \frac{\partial^2 J(\omega)}{{\partial \tau_s}^2} = -\frac{4}{5} S^2_f(1 - S^2_s) \sum_{i=-k}^k c_i \tau_i^2
+        \frac{(\tau_s + \tau_i)^3  +  3 \omega^2 \tau_i^3 \tau_s (\tau_s + \tau_i)  -  (\omega \tau_i)^4 \tau_s^3}
+            {\left((\tau_s + \tau_i)^2 + (\omega \tau_s \tau_i)^2 \right)^3}
+\end{equation}
+
 
 
 
 % Ellipsoidal diffusion tensor.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage
 \section{Ellipsoidal diffusion tensor}
 
-\index{diffusion!ellipsoid (asymmetric)}
+\index{diffusion!ellipsoid (asymmetric)|textbf}
 
 
-% Ellipsoid weight derivatives.
+
+% The diffusion equation of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The diffusion equation of the ellipsoid}
+
+The correlation function of the Brownian rotational diffusion of an ellipsoid is
+\begin{equation} \label{eq: ellipsoid correlation function}
+    C_\mathrm{O}(\tau) = \frac{1}{5} \sum^2_{i=-2} c_i e^{-\frac{\tau}{\tau_i}}.
+\end{equation}
+
+\noindent where $c_i$ are the weights of the five exponential terms which are dependent on the orientation of the XH bond vector and $\tau_i$ are the correlation times of the five exponential terms.
+
+
+
+% The weights of the ellipsoid.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Ellipsoid weight derivatives}
+\subsection{The weights of the ellipsoid}
+
+
+% Definitions.
+\subsubsection{Definitions}
+
+The three direction cosines\index{direction cosine} defining the XH bond vector within the diffusion frame are
+\begin{subequations}
+\begin{align}
+    \delta_x &= \widehat{XH} \cdot \widehat{\Diff_x}, \\
+    \delta_y &= \widehat{XH} \cdot \widehat{\Diff_y}, \\
+    \delta_z &= \widehat{XH} \cdot \widehat{\Diff_z}.
+\end{align}
+\end{subequations}
+
+\noindent Let the set of geometric parameters be
+\begin{equation}
+    \Diffgeoset = \{\Diff_{iso}, \Diff_a, \Diff_r\},
+\end{equation}
+
+\noindent and the set of orientational parameters (Euler angles)\index{Euler angles} be
+\begin{equation}
+    \Difforiset = \{\alpha, \beta, \gamma\}.
+\end{equation}
+
+
+
+% Summation terms.
+\subsubsection{Summation terms}
+
+The summation indecies of the correlation function of the Brownian rotational diffusion of an ellipsoid~\eqref{eq: ellipsoid correlation function} range from $k = -2$ to $k = 2$ and therefore
+\begin{equation}
+    i \in \{ -2, -1, 0, 1, 2 \}.
+\end{equation}
+
+
+
+% The weights.
+\subsubsection{The weights}
+
+The five weights $c_i$ in the correlation function of the Brownian rotational diffusion of an ellipsoid~\eqref{eq: ellipsoid correlation function} are
+\begin{subequations}
+\begin{align}
+ c_{-2} &= \tfrac{1}{4}(d - e),     \\
+ c_{-1} &= 3\delta_y^2\delta_z^2,   \\
+ c_{0}  &= 3\delta_x^2\delta_z^2,   \\
+ c_{1}  &= 3\delta_x^2\delta_y^2,   \\
+ c_{2}  &= \tfrac{1}{4}(d + e),
+\end{align}
+\end{subequations}
+
+\noindent where
+\begin{align}
+ d &= 3 \left( \delta_x^4 + \delta_y^4 + \delta_z^4 \right) - 1, \\
+ e &= \frac{1}{\mathfrak{R}} \bigg[ (1 + 3\Diff_r) \left(\delta_x^4 + 2\delta_y^2\delta_z^2\right)
+   + (1 - 3\Diff_r) \left(\delta_y^4 + 2\delta_x^2\delta_z^2\right) - 2 \left(\delta_z^4 + 2\delta_x^2\delta_y^2\right) \bigg].
+\end{align}
+
+\noindent The factor $\mathfrak{R}$ is defined as
+\begin{equation} \label{eq: R}
+ \mathfrak{R} = \sqrt{1 + 3\Diff_r^2}.
+\end{equation}
+
+
+
+% The weight gradients of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The weight gradients of the ellipsoid}
+
+
+% Oi partial derivative.
+\subsubsection{$\Difforiset_i$ partial derivative}
+
+The partial derivatives with respect to the orientational parameters are
+\begin{subequations}
+\begin{align}
+    \frac{\partial c_{-2}}{\partial \Difforiset_i} &= 3 \left( \delta_x^3 \frac{\partial \delta_x}{\partial \Difforiset_i}  +  \delta_y^3 \frac{\partial \delta_y}{\partial \Difforiset_i}  +  \delta_z^3 \frac{\partial \delta_z}{\partial \Difforiset_i} \right) - \frac{\partial e}{\partial \Difforiset_i}, \\
+    \frac{\partial c_{-1}}{\partial \Difforiset_i} &= 6 \delta_y \delta_z \left( \delta_y \frac{\partial \delta_z}{\partial \Difforiset_i}  +  \delta_z \frac{\partial \delta_y}{\partial \Difforiset_i} \right), \\
+    \frac{\partial c_{0}}{\partial \Difforiset_i}  &= 6 \delta_x \delta_z \left( \delta_x \frac{\partial \delta_z}{\partial \Difforiset_i}  +  \delta_z \frac{\partial \delta_x}{\partial \Difforiset_i} \right), \\
+    \frac{\partial c_{1}}{\partial \Difforiset_i}  &= 6 \delta_x \delta_y \left( \delta_x \frac{\partial \delta_y}{\partial \Difforiset_i}  +  \delta_y \frac{\partial \delta_x}{\partial \Difforiset_i} \right), \\
+    \frac{\partial c_{2}}{\partial \Difforiset_i}  &= 3 \left( \delta_x^3 \frac{\partial \delta_x}{\partial \Difforiset_i}  +  \delta_y^3 \frac{\partial \delta_y}{\partial \Difforiset_i}  +  \delta_z^3 \frac{\partial \delta_z}{\partial \Difforiset_i} \right) + \frac{\partial e}{\partial \Difforiset_i},
+\end{align}
+\end{subequations}
+
+\noindent where
+\begin{align}
+    \frac{\partial e}{\partial \Difforiset_i}  =  \frac{1}{\mathfrak{R}} \Bigg[
+        (1 + 3\Diff_r) \left(
+            \delta_x^3 \frac{\partial \delta_x}{\partial \Difforiset_i}
+            +  \delta_y \delta_z \left( \delta_y \frac{\partial \delta_z}{\partial \Difforiset_i}  +  \delta_z \frac{\partial \delta_y}{\partial \Difforiset_i} \right) \right) & \nonumber \\
+        + (1 - 3\Diff_r) \left(
+            \delta_y^3 \frac{\partial \delta_y}{\partial \Difforiset_i}
+            +  \delta_x \delta_z \left( \delta_x \frac{\partial \delta_z}{\partial \Difforiset_i}  +  \delta_z \frac{\partial \delta_x}{\partial \Difforiset_i} \right) \right) & \nonumber \\
+        - 2 \left(
+            \delta_z^3 \frac{\partial \delta_z}{\partial \Difforiset_i}
+            +  \delta_x \delta_y \left( \delta_x \frac{\partial \delta_y}{\partial \Difforiset_i}  +  \delta_y \frac{\partial \delta_x}{\partial \Difforiset_i} \right) \right) &
+    \Bigg].
+\end{align}
+
+
+% tm partial derivative.
+\subsubsection{$\tau_m$ partial derivative}
+
+The partial derivatives with respect to the $\tau_m$ geometric parameter are
+\begin{subequations}
+\begin{align}
+    \frac{\partial c_{-2}}{\partial \tau_m} &= 0, \\
+    \frac{\partial c_{-1}}{\partial \tau_m} &= 0, \\
+    \frac{\partial c_{0}}{\partial \tau_m}  &= 0, \\
+    \frac{\partial c_{1}}{\partial \tau_m}  &= 0, \\
+    \frac{\partial c_{2}}{\partial \tau_m}  &= 0.
+\end{align}
+\end{subequations}
+
+
+% Da partial derivative.
+\subsubsection{$\Diff_a$ partial derivative}
+
+The partial derivatives with respect to the $\Diff_a$ geometric parameter are
+\begin{subequations}
+\begin{align}
+    \frac{\partial c_{-2}}{\partial \Diff_a} &= 0, \\
+    \frac{\partial c_{-1}}{\partial \Diff_a} &= 0, \\
+    \frac{\partial c_{0}}{\partial \Diff_a}  &= 0, \\
+    \frac{\partial c_{1}}{\partial \Diff_a}  &= 0, \\
+    \frac{\partial c_{2}}{\partial \Diff_a}  &= 0.
+\end{align}
+\end{subequations}
+
+
+% Dr partial derivative.
+\subsubsection{$\Diff_r$ partial derivative}
+
+The partial derivatives with respect to the $\Diff_r$ geometric parameter are
+\begin{subequations}
+\begin{align}
+    \frac{\partial c_{-2}}{\partial \Diff_r} &= -\frac{3}{4} \frac{\partial e}{\partial \Diff_r}, \\
+    \frac{\partial c_{-1}}{\partial \Diff_r} &= 0, \\
+    \frac{\partial c_{0}}{\partial \Diff_r}  &= 0, \\
+    \frac{\partial c_{1}}{\partial \Diff_r}  &= 0, \\
+    \frac{\partial c_{2}}{\partial \Diff_r}  &= \frac{3}{4} \frac{\partial e}{\partial \Diff_r},
+\end{align}
+\end{subequations}
+
+\noindent where
+\begin{equation}
+    \frac{\partial e}{\partial \Diff_r} = \frac{1}{\mathfrak{R}^3} \bigg[ (1 - \Diff_r) \left(\delta_x^4 + 2\delta_y^2\delta_z^2\right)
+        - (1 + \Diff_r) \left(\delta_y^4 + 2\delta_x^2\delta_z^2\right) + 2 \Diff_r \left(\delta_z^4 + 2\delta_x^2\delta_y^2\right) \bigg].
+\end{equation}
+
+
+
+% The weight Hessians of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The weight Hessians of the ellipsoid}
+
+
+% Oi-Oj partial derivative.
+\subsubsection{$\Difforiset_i$ -- $\Difforiset_j$ partial derivative}
+
+The second partial derivatives with respect to the orientational parameters $\Difforiset_i$ and $\Difforiset_j$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  =  3 \Bigg(
+        \delta_x^2 \left( \delta_x \frac{\partial^2 \delta_x}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  3 \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right) & \nonumber \\
+        +  \delta_y^2 \left( \delta_y \frac{\partial^2 \delta_y}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  3 \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right) & \nonumber \\
+        +  \delta_z^2 \left( \delta_z \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  3 \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j} \right) &
+        \Bigg)  -  \frac{\partial^2 e}{\partial \Difforiset_i \cdot \partial \Difforiset_j},
+\end{align}
+\begin{multline}
+    \frac{\partial^2 c_{-1}}{\partial \Difforiset_i \cdot \partial \Difforiset_j} = 
+        6 \delta_y^2 \left( \delta_z \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j} \right) \\
+        +  12 \delta_y \delta_z \left( \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j}
+            +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right) \\
+        +  6 \delta_z^2 \left( \delta_y \frac{\partial^2 \delta_y}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right),
+\end{multline}
+\begin{multline}
+    \frac{\partial^2 c_{0}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  = 
+        6 \delta_x^2 \left( \delta_z \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j} \right) \\
+        +  12 \delta_x \delta_z \left( \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j}
+            +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right) \\
+        +  6 \delta_z^2 \left( \delta_x \frac{\partial^2 \delta_x}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right),
+\end{multline}
+\begin{multline}
+    \frac{\partial^2 c_{1}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  = 
+        6 \delta_x^2 \left( \delta_y \frac{\partial^2 \delta_y}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right) \\
+        +  12 \delta_x \delta_y \left( \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j}
+            +  \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right) \\
+        +  6 \delta_y^2 \left( \delta_x \frac{\partial^2 \delta_x}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right),
+\end{multline}
+\begin{align}
+    \frac{\partial^2 c_{2}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  =  3 \Bigg(
+        \delta_x^2 \left( \delta_x \frac{\partial^2 \delta_x}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  3 \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right) & \nonumber \\
+        +  \delta_y^2 \left( \delta_y \frac{\partial^2 \delta_y}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  3 \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right) & \nonumber \\
+        +  \delta_z^2 \left( \delta_z \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+            +  3 \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j} \right) &
+        \Bigg)  +  \frac{\partial^2 e}{\partial \Difforiset_i \cdot \partial \Difforiset_j},
+\end{align}
+\end{subequations}
+
+\noindent where
+\begin{align}
+    \frac{\partial^2 e}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  =  \frac{1}{\mathfrak{R}} \Bigg[
+        (1 + 3\Diff_r) \Bigg(
+            \delta_x^2 \left( \delta_x \frac{\partial^2 \delta_x}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  3 \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  \delta_y^2 \left( \delta_z \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  \delta_z^2 \left( \delta_y \frac{\partial^2 \delta_y}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  2 \delta_y \delta_z \left( \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j}
+                +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right)
+        \Bigg) & \nonumber \\
+        +  (1 - 3\Diff_r) \Bigg(
+            \delta_y^2 \left( \delta_y \frac{\partial^2 \delta_y}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  3 \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  \delta_x^2 \left( \delta_z \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  \delta_z^2 \left( \delta_x \frac{\partial^2 \delta_x}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  2 \delta_x \delta_z \left( \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j}
+                +  \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right)
+        \Bigg) & \nonumber \\
+        -  2 \Bigg(
+            \delta_z^2 \left( \delta_z \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  3 \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  \delta_x^2 \left( \delta_y \frac{\partial^2 \delta_y}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  \delta_y^2 \left( \delta_x \frac{\partial^2 \delta_x}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+                +  \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right) \phantom{\Bigg)} & \nonumber \\
+            +  2 \delta_x \delta_y \left( \frac{\partial \delta_x}{\partial \Difforiset_i} \cdot \frac{\partial \delta_y}{\partial \Difforiset_j}
+                +  \frac{\partial \delta_y}{\partial \Difforiset_i} \cdot \frac{\partial \delta_x}{\partial \Difforiset_j} \right)
+        \Bigg) &
+    \Bigg].
+\end{align}
+
+
+
+% Oi-tm partial derivative.
+\subsubsection{$\Difforiset_i$ -- $\tau_m$ partial derivative}
+
+The second partial derivatives with respect to the orientational parameter $\Difforiset_i$ and the geometric parameter $\tau_m$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{\partial \Difforiset_i \cdot \partial \tau_m}  &=  0, \\
+    \frac{\partial^2 c_{-1}}{\partial \Difforiset_i \cdot \partial \tau_m} &= 0, \\
+    \frac{\partial^2 c_{0}}{\partial \Difforiset_i \cdot \partial \tau_m}  &= 0, \\
+    \frac{\partial^2 c_{1}}{\partial \Difforiset_i \cdot \partial \tau_m}  &= 0, \\
+    \frac{\partial^2 c_{2}}{\partial \Difforiset_i \cdot \partial \tau_m}  &= 0.
+\end{align}
+\end{subequations}
+
+
+
+% Oi-Da partial derivative.
+\subsubsection{$\Difforiset_i$ -- $\Diff_a$ partial derivative}
+
+The second partial derivatives with respect to the orientational parameter $\Difforiset_i$ and the geometric parameter $\Diff_a$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{\partial \Difforiset_i \cdot \partial \Diff_a}  &=  0, \\
+    \frac{\partial^2 c_{-1}}{\partial \Difforiset_i \cdot \partial \Diff_a} &= 0, \\
+    \frac{\partial^2 c_{0}}{\partial \Difforiset_i \cdot \partial \Diff_a}  &= 0, \\
+    \frac{\partial^2 c_{1}}{\partial \Difforiset_i \cdot \partial \Diff_a}  &= 0, \\
+    \frac{\partial^2 c_{2}}{\partial \Difforiset_i \cdot \partial \Diff_a}  &= 0.
+\end{align}
+\end{subequations}
+
+
+
+% Oi-Dr partial derivative.
+\subsubsection{$\Difforiset_i$ -- $\Diff_r$ partial derivative}
+
+The second partial derivatives with respect to the orientational parameter $\Difforiset_i$ and the geometric parameter $\Diff_r$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{\partial \Difforiset_i \cdot \partial \Diff_r}  &=  -3 \frac{\partial^2 e}{\partial \Difforiset_i \cdot \partial \Diff_r}, \\
+    \frac{\partial^2 c_{-1}}{\partial \Difforiset_i \cdot \partial \Diff_r} &= 0, \\
+    \frac{\partial^2 c_{0}}{\partial \Difforiset_i \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 c_{1}}{\partial \Difforiset_i \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 c_{2}}{\partial \Difforiset_i \cdot \partial \Diff_r}  &= 3 \frac{\partial^2 e}{\partial \Difforiset_i \cdot \partial \Diff_r},
+\end{align}
+\end{subequations}
+
+\noindent where
+\begin{align}
+    \frac{\partial^2 e}{\partial \Difforiset_i \cdot \partial \Diff_r}  =  \frac{1}{\mathfrak{R}^3} \Bigg[
+        (1 - \Diff_r) \left(
+            \delta_x^3 \frac{\partial \delta_x}{\partial \Difforiset_i}
+            +  \delta_y \delta_z \left( \delta_y \frac{\partial \delta_z}{\partial \Difforiset_i}  +  \delta_z \frac{\partial \delta_y}{\partial \Difforiset_i} \right) \right) & \nonumber \\
+        -  (1 + \Diff_r) \left(
+            \delta_y^3 \frac{\partial \delta_y}{\partial \Difforiset_i}
+            +  \delta_x \delta_z \left( \delta_x \frac{\partial \delta_z}{\partial \Difforiset_i}  +  \delta_z \frac{\partial \delta_x}{\partial \Difforiset_i} \right) \right) & \nonumber \\
+        +  2 \Diff_r \left(
+            \delta_z^3 \frac{\partial \delta_z}{\partial \Difforiset_i}
+            +  \delta_x \delta_y \left( \delta_x \frac{\partial \delta_y}{\partial \Difforiset_i}  +  \delta_y \frac{\partial \delta_x}{\partial \Difforiset_i} \right) \right) &
+    \Bigg].
+\end{align}
+
+
+
+% tm-tm partial derivative.
+\subsubsection{$\tau_m$ -- $\tau_m$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\tau_m$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{{\partial \tau_m}^2}  &=  0, \\
+    \frac{\partial^2 c_{-1}}{{\partial \tau_m}^2} &= 0, \\
+    \frac{\partial^2 c_{0}}{{\partial \tau_m}^2}  &= 0, \\
+    \frac{\partial^2 c_{1}}{{\partial \tau_m}^2}  &= 0, \\
+    \frac{\partial^2 c_{2}}{{\partial \tau_m}^2}  &= 0.
+\end{align}
+\end{subequations}
+
+
+
+% tm-Da partial derivative.
+\subsubsection{$\tau_m$ -- $\Diff_a$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameters $\tau_m$ and $\Diff_a$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{\partial \tau_m \cdot \partial \Diff_a}  &=  0, \\
+    \frac{\partial^2 c_{-1}}{\partial \tau_m \cdot \partial \Diff_a} &= 0, \\
+    \frac{\partial^2 c_{0}}{\partial \tau_m \cdot \partial \Diff_a}  &= 0, \\
+    \frac{\partial^2 c_{1}}{\partial \tau_m \cdot \partial \Diff_a}  &= 0, \\
+    \frac{\partial^2 c_{2}}{\partial \tau_m \cdot \partial \Diff_a}  &= 0.
+\end{align}
+\end{subequations}
+
+
+
+% tm-Dr partial derivative.
+\subsubsection{$\tau_m$ -- $\Diff_r$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameters $\tau_m$ and $\Diff_r$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{\partial \tau_m \cdot \partial \Diff_r}  &=  0, \\
+    \frac{\partial^2 c_{-1}}{\partial \tau_m \cdot \partial \Diff_r} &= 0, \\
+    \frac{\partial^2 c_{0}}{\partial \tau_m \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 c_{1}}{\partial \tau_m \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 c_{2}}{\partial \tau_m \cdot \partial \Diff_r}  &= 0.
+\end{align}
+\end{subequations}
+
+
+
+% Da-Da partial derivative.
+\subsubsection{$\Diff_a$ -- $\Diff_a$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\Diff_a$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{{\partial \Diff_a}^2}  &=  0, \\
+    \frac{\partial^2 c_{-1}}{{\partial \Diff_a}^2} &= 0, \\
+    \frac{\partial^2 c_{0}}{{\partial \Diff_a}^2}  &= 0, \\
+    \frac{\partial^2 c_{1}}{{\partial \Diff_a}^2}  &= 0, \\
+    \frac{\partial^2 c_{2}}{{\partial \Diff_a}^2}  &= 0.
+\end{align}
+\end{subequations}
+
+
+
+% Da-Dr partial derivative.
+\subsubsection{$\Diff_a$ -- $\Diff_r$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameters $\Diff_a$ and $\Diff_r$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{\partial \Diff_a \cdot \partial \Diff_r}  &=  0, \\
+    \frac{\partial^2 c_{-1}}{\partial \Diff_a \cdot \partial \Diff_r} &= 0, \\
+    \frac{\partial^2 c_{0}}{\partial \Diff_a \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 c_{1}}{\partial \Diff_a \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 c_{2}}{\partial \Diff_a \cdot \partial \Diff_r}  &= 0.
+\end{align}
+\end{subequations}
+
+
+
+% Dr-Dr partial derivative.
+\subsubsection{$\Diff_r$ -- $\Diff_r$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\Diff_r$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-2}}{{\partial \Diff_r}^2}  &=  - \frac{3}{4} \frac{\partial^2 e}{\partial \Diff_r^2}, \\
+    \frac{\partial^2 c_{-1}}{{\partial \Diff_r}^2} &= 0, \\
+    \frac{\partial^2 c_{0}}{{\partial \Diff_r}^2}  &= 0, \\
+    \frac{\partial^2 c_{1}}{{\partial \Diff_r}^2}  &= 0, \\
+    \frac{\partial^2 c_{2}}{{\partial \Diff_r}^2}  &= \frac{3}{4} \frac{\partial^2 e}{\partial \Diff_r^2},
+\end{align}
+\end{subequations}
+
+\noindent where
+\begin{align}
+    \frac{\partial^2 e}{\partial \Diff_r^2}  =  \frac{1}{\mathfrak{R}^5} \bigg[
+        (6\Diff_r^2 - 9\Diff_r - 1) \left(\delta_x^4 + 2\delta_y^2\delta_z^2\right) & \nonumber \\
+        + (6\Diff_r^2 + 9\Diff_r - 1) \left(\delta_y^4 + 2\delta_x^2\delta_z^2\right) & \nonumber \\
+        - 2 (6\Diff_r^2 - 1) \left(\delta_z^4 + 2\delta_x^2\delta_y^2\right) & \bigg].
+\end{align}
+
+
+
+% The correlation times of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The correlation times of the ellipsoid}
+
+The five correlation times $\tau_i$ in the correlation function of the Brownian rotational diffusion of an ellipsoid~\eqref{eq: ellipsoid correlation function} are
+\begin{subequations}
+\begin{align}
+    \tau_{-2} &= (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-1}, \\
+    \tau_{-1} &= (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-1}, \\
+    \tau_{0}  &= (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-1}, \\
+    \tau_{1}  &= (6\Diff_{iso} + 2\Diff_a)^{-1}, \\
+    \tau_{2}  &= (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-1},
+\end{align}
+\end{subequations}
+
+\noindent where $\mathfrak{R}$ is defined in Equation~\eqref{eq: R} on page~\pageref{eq: R}.
+
+
+
+% The correlation time gradients of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The correlation time gradients of the ellipsoid}
+
+
+% tm partial derivative.
+\subsubsection{$\tau_m$ partial derivative}
+
+The partial derivatives with respect to the geometric parameter $\tau_m$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \tau_{-2}}{\partial \tau_m} &= {\tau_m}^{-2} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-2}, \\
+    \frac{\partial \tau_{-1}}{\partial \tau_m} &= {\tau_m}^{-2} (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-2}, \\
+    \frac{\partial \tau_{0}}{\partial \tau_m}  &= {\tau_m}^{-2} (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-2}, \\
+    \frac{\partial \tau_{1}}{\partial \tau_m}  &= {\tau_m}^{-2} (6\Diff_{iso} + 2\Diff_a)^{-2}, \\
+    \frac{\partial \tau_{2}}{\partial \tau_m}  &= {\tau_m}^{-2} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% Da partial derivative.
+\subsubsection{$\Diff_a$ partial derivative}
+
+The partial derivatives with respect to the geometric parameter $\Diff_a$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \tau_{-2}}{\partial \Diff_a} &= 2\mathfrak{R} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-2}, \\
+    \frac{\partial \tau_{-1}}{\partial \Diff_a} &= (1 + 3\Diff_r) (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-2}, \\
+    \frac{\partial \tau_{0}}{\partial \Diff_a}  &= (1 - 3\Diff_r) (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-2}, \\
+    \frac{\partial \tau_{1}}{\partial \Diff_a}  &= -2 (6\Diff_{iso} + 2\Diff_a)^{-2}, \\
+    \frac{\partial \tau_{2}}{\partial \Diff_a}  &= -2\mathfrak{R} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% Dr partial derivative.
+\subsubsection{$\Diff_r$ partial derivative}
+
+The partial derivatives with respect to the geometric parameter $\Diff_r$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \tau_{-2}}{\partial \Diff_r} &= 6\frac{\Diff_a \Diff_r}{\mathfrak{R}} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-2}, \\
+    \frac{\partial \tau_{-1}}{\partial \Diff_r} &= 3\Diff_a (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-2}, \\
+    \frac{\partial \tau_{0}}{\partial \Diff_r}  &= -3\Diff_a (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-2}, \\
+    \frac{\partial \tau_{1}}{\partial \Diff_r}  &= 0, \\
+    \frac{\partial \tau_{2}}{\partial \Diff_r}  &= -6\frac{\Diff_a \Diff_r}{\mathfrak{R}} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% The correlation time Hessians of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The correlation time Hessians of the ellipsoid}
+
+
+% tm-tm partial derivative.
+\subsubsection{$\tau_m$ -- $\tau_m$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\tau_m$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-2}}{{\partial \tau_m}^2} &= 2{\tau_m}^{-4} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-2}, \\
+    \frac{\partial^2 \tau_{-1}}{{\partial \tau_m}^2} &= 2{\tau_m}^{-4} (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-2}, \\
+    \frac{\partial^2 \tau_{0}}{{\partial \tau_m}^2}  &= 2{\tau_m}^{-4} (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-2}, \\
+    \frac{\partial^2 \tau_{1}}{{\partial \tau_m}^2}  &= 2{\tau_m}^{-4} (6\Diff_{iso} + 2\Diff_a)^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} + 2\Diff_a)^{-2}, \\
+    \frac{\partial^2 \tau_{2}}{{\partial \tau_m}^2}  &= 2{\tau_m}^{-4} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% tm-Da partial derivative.
+\subsubsection{$\tau_m$ -- $\Diff_a$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameters $\tau_m$ and $\Diff_a$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-2}}{\partial \tau_m \cdot \partial \Diff_a} &= 4\mathfrak{R} {\tau_m}^{-2} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-3}, \\
+    \frac{\partial^2 \tau_{-1}}{\partial \tau_m \cdot \partial \Diff_a} &= 2(1 + 3\Diff_r){\tau_m}^{-2} (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{0}}{\partial \tau_m \cdot \partial \Diff_a}  &= 2(1 - 3\Diff_r){\tau_m}^{-2} (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{1}}{\partial \tau_m \cdot \partial \Diff_a}  &= -4{\tau_m}^{-2} (6\Diff_{iso} + 2\Diff_a)^{-3}, \\
+    \frac{\partial^2 \tau_{2}}{\partial \tau_m \cdot \partial \Diff_a}  &= -4\mathfrak{R} {\tau_m}^{-2} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-3}.
+\end{align}
+\end{subequations}
+
+
+
+% tm-Dr partial derivative.
+\subsubsection{$\tau_m$ -- $\Diff_r$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameters $\tau_m$ and $\Diff_r$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-2}}{\partial \tau_m \cdot \partial \Diff_r} &= 12 \frac{\Diff_a \Diff_r}{\mathfrak{R}} {\tau_m}^{-2} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-3}, \\
+    \frac{\partial^2 \tau_{-1}}{\partial \tau_m \cdot \partial \Diff_r} &= 6 \Diff_a {\tau_m}^{-2} (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{0}}{\partial \tau_m \cdot \partial \Diff_r}  &= -6 \Diff_a {\tau_m}^{-2} (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{1}}{\partial \tau_m \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 \tau_{2}}{\partial \tau_m \cdot \partial \Diff_r}  &= -12 \frac{\Diff_a \Diff_r}{\mathfrak{R}} {\tau_m}^{-2} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-3}.
+\end{align}
+\end{subequations}
+
+
+
+% Da-Da partial derivative.
+\subsubsection{$\Diff_a$ -- $\Diff_a$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\Diff_a$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-2}}{{\partial \Diff_a}^2} &= 8\mathfrak{R}^2 (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-3}, \\
+    \frac{\partial^2 \tau_{-1}}{{\partial \Diff_a}^2} &= 2(1 + 3\Diff_r)^2 (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{0}}{{\partial \Diff_a}^2}  &= 2(1 - 3\Diff_r)^2 (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{1}}{{\partial \Diff_a}^2}  &= 8 (6\Diff_{iso} + 2\Diff_a)^{-3}, \\
+    \frac{\partial^2 \tau_{2}}{{\partial \Diff_a}^2}  &= 8\mathfrak{R}^2 (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-3}.
+\end{align}
+\end{subequations}
+
+
+
+% Da-Dr partial derivative.
+\subsubsection{$\Diff_a$ -- $\Diff_r$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameters $\Diff_a$ and $\Diff_r$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-2}}{\partial \Diff_a \cdot \partial \Diff_r} &= 24 \Diff_a \Diff_r (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-3}
+        + 6 \frac{\Diff_r}{\mathfrak{R}} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-2}, \\
+    \frac{\partial^2 \tau_{-1}}{\partial \Diff_a \cdot \partial \Diff_r} &= 6\Diff_a(1 + 3\Diff_r) (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-3}
+        + 3 (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-2}, \\
+    \frac{\partial^2 \tau_{0}}{\partial \Diff_a \cdot \partial \Diff_r}  &= -6\Diff_a(1 - 3\Diff_r) (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-3}
+        - 3 (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-2}, \\
+    \frac{\partial^2 \tau_{1}}{\partial \Diff_a \cdot \partial \Diff_r}  &= 0, \\
+    \frac{\partial^2 \tau_{2}}{\partial \Diff_a \cdot \partial \Diff_r}  &= 24 \Diff_a \Diff_r (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-3}
+        - 6 \frac{\Diff_r}{\mathfrak{R}} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% Dr-Dr partial derivative.
+\subsubsection{$\Diff_r$ -- $\Diff_r$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\Diff_r$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-2}}{{\partial \Diff_r}^2} &=
+        72 \left( \frac{\Diff_a \Diff_r}{\mathfrak{R}} \right)^2 (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-3}
+        + 6 \frac{\Diff_a}{\mathfrak{R}^3} (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-2}, \\
+    \frac{\partial^2 \tau_{-1}}{{\partial \Diff_r}^2} &= 18\Diff_a^2 (6\Diff_{iso} - \Diff_a (1 + 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{0}}{{\partial \Diff_r}^2}  &= 18\Diff_a^2 (6\Diff_{iso} - \Diff_a (1 - 3\Diff_r))^{-3}, \\
+    \frac{\partial^2 \tau_{1}}{{\partial \Diff_r}^2}  &= 0, \\
+    \frac{\partial^2 \tau_{2}}{{\partial \Diff_r}^2}  &= 
+        72 \left( \frac{\Diff_a \Diff_r}{\mathfrak{R}} \right)^2 (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-3}
+        - 6 \frac{\Diff_a}{\mathfrak{R}^3} (6\Diff_{iso} + 2\Diff_a\mathfrak{R})^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+
+% Spheroidal diffusion tensor.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\section{Spheroidal diffusion tensor}
+
+\index{diffusion!spheroid (axially symmetric)|textbf}
+
+
+
+% The diffusion equation of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The diffusion equation of the spheroid}
+
+The correlation function of the Brownian rotational diffusion of a spheroid is
+\begin{equation} \label{eq: spheroid correlation function}
+    C_\mathrm{O}(\tau) = \frac{1}{5} \sum^1_{i=-1} c_i e^{-\frac{\tau}{\tau_i}}.
+\end{equation}
+
+\noindent where $c_i$ are the weights of the three exponential terms which are dependent on the orientation of the XH bond vector and $\tau_i$ are the correlation times of the three exponential terms.
+
+
+
+% The weights of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The weights of the spheroid}
+
+
+% Definitions.
+\subsubsection{Definitions}
+
+The direction cosine\index{direction cosine} defining the XH bond vector within the spheroidal diffusion frame is
+\begin{equation}
+    \delta_z = \widehat{XH} \cdot \widehat{\Diff_z}.
+\end{equation}
+
+\noindent Let the set of geometric parameters be
+\begin{equation}
+    \Diffgeoset = \{\Diff_{iso}, \Diff_a\},
+\end{equation}
+
+\noindent and the set of orientational parameters (spherical angles)\index{spherical angles} be
+\begin{equation}
+    \Difforiset = \{\theta, \phi\}.
+\end{equation}
+
+
+
+% Summation terms.
+\subsubsection{Summation terms}
+
+The summation indecies of the correlation function of the Brownian rotational diffusion of a spheroid~\eqref{eq: spheroid correlation function} range from $k = -1$ to $k = 1$ therefore
+\begin{equation}
+    i \in \{ -1, 0, 1 \}.
+\end{equation}
+
+
+
+% The weights.
+\subsubsection{The weights}
+
+The three spheroid weights $c_i$ in the correlation function of the Brownian rotational diffusion of a spheroid~\eqref{eq: spheroid correlation function} are
+\begin{subequations}
+\begin{align}
+ c_{-1} &= \tfrac{1}{4} (3\delta_z^2 - 1)^2,   \\
+ c_{0}  &= 3\delta_z^2(1 - \delta_z^2),   \\
+ c_{1}  &= \tfrac{3}{4} (\delta_z^2 - 1)^2.   \\
+\end{align}
+\end{subequations}
+
+
+
+% The weight gradients of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The weight gradients of the spheroid}
+
+
+% Oi partial derivative.
+\subsubsection{$\Difforiset_i$ partial derivative}
+
+The partial derivatives with respect to the orientational parameter $\Difforiset_i$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial c_{-1}}{\partial \Difforiset_i} &= 3\delta_z (3\delta_z^2 - 1) \frac{\partial \delta_z}{\partial \Difforiset_i}, \\
+    \frac{\partial c_{0}}{\partial \Difforiset_i}  &= 6\delta_z (1 - 2\delta_z^2) \frac{\partial \delta_z}{\partial \Difforiset_i}, \\
+    \frac{\partial c_{1}}{\partial \Difforiset_i}  &= 3\delta_z (\delta_z^2 - 1)  \frac{\partial \delta_z}{\partial \Difforiset_i}.
+\end{align}
+\end{subequations}
+
+
+
+% The weight Hessians of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The weight Hessians of the spheroid}
+
+
+% Oi-Oj partial derivative.
+\subsubsection{$\Difforiset_i$ -- $\Difforiset_j$ partial derivative}
+
+The second partial derivatives with respect to the orientational parameters $\Difforiset_i$ and $\Difforiset_j$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 c_{-1}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  &=  3 \left(
+        (9\delta_z^2 - 1) \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j}
+        +  \delta_z (3\delta_z^2 - 1) \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j} \right), \\
+    \frac{\partial^2 c_{0}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  &=  6 \left(
+        (1 - 6\delta_z^2) \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j}
+        +  \delta_z (1 - 2\delta_z^2) \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j} \right), \\
+    \frac{\partial^2 c_{1}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}  &=  3 \left(
+        (3\delta_z^2 - 1) \frac{\partial \delta_z}{\partial \Difforiset_i} \cdot \frac{\partial \delta_z}{\partial \Difforiset_j}
+        +  \delta_z (\delta_z^2 - 1) \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j} \right).
+\end{align}
+\end{subequations}
+
+
+
+% The correlation times of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The correlation times of the spheroid}
+
+The three spheroid correlation times $\tau_i$ in the correlation function of the Brownian rotational diffusion of a spheroid~\eqref{eq: spheroid correlation function} are
+\begin{subequations}
+\begin{align}
+    \tau_{-1} &= (6\Diff_{iso} - 2\Diff_a)^{-1}, \\
+    \tau_{0}  &= (6\Diff_{iso} - \Diff_a)^{-1}, \\
+    \tau_{1}  &= (6\Diff_{iso} + 2\Diff_a)^{-1}.
+\end{align}
+\end{subequations}
+
+
+
+% The correlation time gradients of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The correlation time gradients of the spheroid}
+
+
+% tm partial derivative.
+\subsubsection{$\tau_m$ partial derivative}
+
+The partial derivatives with respect to the geometric parameter $\tau_m$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \tau_{-1}}{\partial \tau_m} &= {\tau_m}^{-2} (6\Diff_{iso} - 2\Diff_a)^{-2}, \\
+    \frac{\partial \tau_{0}}{\partial \tau_m}  &= {\tau_m}^{-2} (6\Diff_{iso} - \Diff_a)^{-2}, \\
+    \frac{\partial \tau_{1}}{\partial \tau_m}  &= {\tau_m}^{-2} (6\Diff_{iso} + 2\Diff_a)^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% Da partial derivative.
+\subsubsection{$\Diff_a$ partial derivative}
+
+The partial derivatives with respect to the geometric parameter $\Diff_a$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \tau_{-1}}{\partial \Diff_a} &= 2(6\Diff_{iso} - 2\Diff_a)^{-2}, \\
+    \frac{\partial \tau_{0}}{\partial \Diff_a}  &= (6\Diff_{iso} - \Diff_a)^{-2}, \\
+    \frac{\partial \tau_{1}}{\partial \Diff_a}  &= -2(6\Diff_{iso} + 2\Diff_a)^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% The correlation time Hessians of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The correlation time Hessians of the spheroid}
+
+
+% tm-tm partial derivative.
+\subsubsection{$\tau_m$ -- $\tau_m$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\tau_m$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-1}}{{\partial \tau_m}^2} &= 2{\tau_m}^{-4} (6\Diff_{iso} - 2\Diff_a)^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} - 2\Diff_a)^{-2}, \\
+    \frac{\partial^2 \tau_{0}}{{\partial \tau_m}^2}  &= 2{\tau_m}^{-4} (6\Diff_{iso} - \Diff_a)^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} - \Diff_a)^{-2}, \\
+    \frac{\partial^2 \tau_{1}}{{\partial \tau_m}^2}  &= 2{\tau_m}^{-4} (6\Diff_{iso} + 2\Diff_a)^{-3}
+        - 2{\tau_m}^{-3} (6\Diff_{iso} + 2\Diff_a)^{-2}.
+\end{align}
+\end{subequations}
+
+
+
+% tm-Da partial derivative.
+\subsubsection{$\tau_m$ -- $\Diff_a$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameters $\tau_m$ and $\Diff_a$ are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-1}}{\partial \tau_m \cdot \partial \Diff_a} &= 4{\tau_m}^{-2} (6\Diff_{iso} - 2\Diff_a)^{-3}, \\
+    \frac{\partial^2 \tau_{0}}{\partial \tau_m \cdot \partial \Diff_a}  &= 2{\tau_m}^{-2} (6\Diff_{iso} - \Diff_a)^{-3}, \\
+    \frac{\partial^2 \tau_{1}}{\partial \tau_m \cdot \partial \Diff_a}  &= -4{\tau_m}^{-2} (6\Diff_{iso} + 2\Diff_a)^{-3}.
+\end{align}
+\end{subequations}
+
+
+
+% Da-Da partial derivative.
+\subsubsection{$\Diff_a$ -- $\Diff_a$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\Diff_a$ twice are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \tau_{-1}}{{\partial \Diff_a}^2} &= 8 (6\Diff_{iso} - 2\Diff_a)^{-3}, \\
+    \frac{\partial^2 \tau_{0}}{{\partial \Diff_a}^2}  &= 2 (6\Diff_{iso} - \Diff_a)^{-3}, \\
+    \frac{\partial^2 \tau_{1}}{{\partial \Diff_a}^2}  &= 8 (6\Diff_{iso} + 2\Diff_a)^{-3}.
+\end{align}
+\end{subequations}
+
+
+
+
+% Spherical diffusion tensor.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\section{Spherical diffusion tensor}
+
+\index{diffusion!sphere (isotropic)|textbf}
+
+
+
+% The diffusion equation of the sphere.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The diffusion equation of the sphere}
+
+The correlation function of the Brownian rotational diffusion of a sphere is
+\begin{align} \label{eq: spherical correlation function}
+    C_\mathrm{O}(\tau) &= \frac{1}{5} e^{-\frac{\tau}{\tau_m}}, \\
+              &= \frac{1}{5} \sum^0_{i=0} c_i e^{-\frac{\tau}{\tau_i}}.
+\end{align}
+
+\noindent where $c_i$ is the weight of the single exponential term and $\tau_i$ is the correlation time of the single exponential term.
+
+
+
+% The weight of the sphere.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The weight of the sphere}
+
+
+% Definitions.
+\subsubsection{Definitions}
+
+The entire diffusion parameter set consists of a single geometric parameter and is
+\begin{equation}
+    \Diffset = \{ \tau_m \}.
+\end{equation}
+
+
+
+% Summation terms.
+\subsubsection{Summation terms}
+
+The summation indecies of the correlation function of the Brownian rotational diffusion of a sphere~\eqref{eq: spheroid correlation function} range from $k = 0$ to $k = 0$ therefore
+\begin{equation}
+    i \in \{ 0 \}.
+\end{equation}
+
+
+% The weights.
+\subsubsection{The weights}
+
+The single weight $c_i$ in the correlation function of the Brownian rotational diffusion of a sphere~\eqref{eq: spheroid correlation function} is
+\begin{equation}
+    c_{0} = 1.
+\end{equation}
+
+
+
+% The weight gradient of the sphere.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The weight gradient of the sphere}
+
+
+% tm partial derivative.
+\subsubsection{$\tau_m$ partial derivative}
+
+The partial derivative with respect to the geometric parameter $\tau_m$ is
+\begin{equation}
+    \frac{\partial c_{0}}{\partial \tau_m} = 0.
+\end{equation}
+
+
+
+% The weight Hessian of the sphere.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The weight Hessian of the sphere}
+
+
+% tm-tm partial derivative.
+\subsubsection{$\tau_m$ -- $\tau_m$ partial derivative}
+
+The second partial derivatives with respect to the geometric parameter $\tau_m$ twice is
+\begin{equation}
+    \frac{\partial^2 c_{0}}{{\partial \tau_m}^2} = 0.
+\end{equation}
+
+
+
+% The correlation time of the sphere.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The correlation time of the sphere}
+
+The single correlation time $\tau_i$ of the correlation function of the Brownian rotational diffusion of a sphere~\eqref{eq: spheroid correlation function} is
+\begin{equation}
+    \tau_{0} = \tau_m.
+\end{equation}
+
+
+
+% The correlation time gradient of the sphere.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The correlation time gradient of the sphere}
+
+
+% tm partial derivative.
+\subsubsection{$\tau_m$ partial derivative}
+
+The partial derivative with respect to the geometric parameter $\tau_m$ is
+\begin{equation}
+    \frac{\partial \tau_{0}}{\partial \tau_m} = 1.
+\end{equation}
+
+
+
+% The correlation time Hessian of the sphere.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The correlation time Hessian of the sphere}
+
+
+% tm-tm partial derivative.
+\subsubsection{$\tau_m$ -- $\tau_m$ partial derivative}
+
+The second partial derivative with respect to the geometric parameter $\tau_m$ twice is
+\begin{equation}
+    \frac{\partial^2 \tau_{0}}{{\partial \tau_m}^2} = 0.
+\end{equation}
+
+
+
+
+% Ellipsoidal dot product derivatives.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\section{Ellipsoidal dot product derivatives}
+
+
+
+% The dot product of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The dot product of the ellipsoid}
+
+The dot product is defined as
+\begin{equation}
+    \delta_i = \widehat{XH} \cdot \widehat{\Diff_i},
+\end{equation}
+
+\noindent where $i$ is one of \{$x$, $y$, $z$\}, $\widehat{XH}$ is a unit vector parallel to the XH bond vector, and $\widehat{\Diff_i}$ is one of the unit vectors defining the diffusion frame.  The three diffusion frame unit vectors can be expressed using the Euler angles $\alpha$, $\beta$, and $\gamma$ as
+\begin{subequations}
+\begin{align}
+    \widehat{\Diff_x} &= \begin{pmatrix}
+        -\sin \alpha \sin \gamma + \cos \alpha \cos \beta \cos \gamma \\
+        -\sin \alpha \cos \gamma - \cos \alpha \cos \beta \sin \gamma \\
+        \cos \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \widehat{\Diff_y} &= \begin{pmatrix}
+        \cos \alpha \sin \gamma + \sin \alpha \cos \beta \cos \gamma \\
+        \cos \alpha \cos \gamma - \sin \alpha \cos \beta \sin \gamma \\
+        \sin \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \widehat{\Diff_z} &= \begin{pmatrix}
+        -\sin \beta \cos \gamma \\
+        \sin \beta \sin \gamma \\
+        \cos \beta \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+% The dot product gradient of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The dot product gradient of the ellipsoid}
+
+The partial derivative of the dot product $\delta_i$ with respect to the orientational parameter $\Difforiset_j$ is
+\begin{equation}
+    \frac{\partial \delta_i}{\partial \Difforiset_j}
+        = \frac{\partial}{\partial \Difforiset_j} \left( \widehat{XH} \cdot \widehat{\Diff_i} \right) \\
+        = \widehat{XH} \frac{\partial \widehat{\Diff_i}}{\partial \Difforiset_j}  +  \frac{\partial \widehat{XH}}{\partial \Difforiset_j} \widehat{\Diff_i}.
+\end{equation}
+
+\noindent Because $\widehat{XH}$ is constant and not dependent on the Euler angles its derivative is zero.  Therefore
+\begin{equation}
+    \frac{\partial \delta_i}{\partial \Difforiset_j} = \widehat{XH} \frac{\partial \widehat{\Diff_i}}{\partial \Difforiset_j}.
+\end{equation}
+
+
+
+% The Dx gradient.
+\subsubsection{The $\widehat{\Diff_x}$ gradient}
+
+The partial derivatives of the unit vector $\widehat{\Diff_x}$ with respect to the Euler angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \widehat{\Diff_x}}{\partial \alpha} &= \begin{pmatrix}
+        -\cos \alpha \sin \gamma - \sin \alpha \cos \beta \cos \gamma \\
+        -\cos \alpha \cos \gamma + \sin \alpha \cos \beta \sin \gamma \\
+        -\sin \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial \widehat{\Diff_x}}{\partial \beta} &= \begin{pmatrix}
+        -\cos \alpha \sin \beta \cos \gamma \\
+        \cos \alpha \sin \beta \sin \gamma \\
+        \cos \alpha \cos \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial \widehat{\Diff_x}}{\partial \gamma} &= \begin{pmatrix}
+        -\sin \alpha \cos \gamma - \cos \alpha \cos \beta \sin \gamma \\
+        \sin \alpha \sin \gamma - \cos \alpha \cos \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+% The Dy gradient.
+\subsubsection{The $\widehat{\Diff_y}$ gradient}
+
+The partial derivatives of the unit vector $\widehat{\Diff_y}$ with respect to the Euler angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \widehat{\Diff_y}}{\partial \alpha} &= \begin{pmatrix}
+        -\sin \alpha \sin \gamma + \cos \alpha \cos \beta \cos \gamma \\
+        -\sin \alpha \cos \gamma - \cos \alpha \cos \beta \sin \gamma \\
+        \cos \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial \widehat{\Diff_y}}{\partial \beta} &= \begin{pmatrix}
+        -\sin \alpha \sin \beta \cos \gamma \\
+        \sin \alpha \sin \beta \sin \gamma \\
+        \sin \alpha \cos \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial \widehat{\Diff_y}}{\partial \gamma} &= \begin{pmatrix}
+        \cos \alpha \cos \gamma - \sin \alpha \cos \beta \sin \gamma \\
+        -\cos \alpha \sin \gamma - \sin \alpha \cos \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+% The Dz gradient.
+\subsubsection{The $\widehat{\Diff_z}$ gradient}
+
+The partial derivatives of the unit vector $\widehat{\Diff_z}$ with respect to the Euler angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \widehat{\Diff_z}}{\partial \alpha} &= \begin{pmatrix}
+        0 \\
+        0 \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial \widehat{\Diff_z}}{\partial \beta} &= \begin{pmatrix}
+        -\cos \beta \cos \gamma \\
+        \cos \beta \sin \gamma \\
+        -\sin \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial \widehat{\Diff_z}}{\partial \gamma} &= \begin{pmatrix}
+        \sin \beta \sin \gamma \\
+        \sin \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+% The dot product Hessian of the ellipsoid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\newpage
+\subsection{The dot product Hessian of the ellipsoid}
+
+The second partial derivative of the dot product $\delta_i$ with respect to the orientational parameters $\Difforiset_j$ and $\Difforiset_k$ is
+\begin{equation}
+    \frac{\partial^2 \delta_i}{\partial \Difforiset_j \cdot \partial \Difforiset_k}
+        = \frac{\partial^2}{\partial \Difforiset_j \cdot \partial \Difforiset_k} \left( \widehat{XH} \cdot \widehat{\Diff_i} \right) \\
+        = \widehat{XH} \frac{\partial^2 \widehat{\Diff_i}}{\partial \Difforiset_j \cdot \partial \Difforiset_k}.
+\end{equation}
+
+
+
+% The Dx Hessian.
+\subsubsection{The $\widehat{\Diff_x}$ Hessian}
+
+The second partial derivatives of the unit vector $\widehat{\Diff_x}$ with respect to the Euler angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \widehat{\Diff_x}}{\partial \alpha^2} &= \begin{pmatrix}
+        \sin \alpha \sin \gamma - \cos \alpha \cos \beta \cos \gamma \\
+        \sin \alpha \cos \gamma + \cos \alpha \cos \beta \sin \gamma \\
+        -\cos \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_x}}{\partial \alpha \cdot \partial \beta} &= \begin{pmatrix}
+        \sin \alpha \sin \beta \cos \gamma \\
+        - \sin \alpha \sin \beta \sin \gamma \\
+        -\sin \alpha \cos \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_x}}{\partial \alpha \cdot \partial \gamma} &= \begin{pmatrix}
+        -\cos \alpha \cos \gamma + \sin \alpha \cos \beta \sin \gamma \\
+        \cos \alpha \sin \gamma + \sin \alpha \cos \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_x}}{\partial \beta^2} &= \begin{pmatrix}
+        -\cos \alpha \cos \beta \cos \gamma \\
+        \cos \alpha \cos \beta \sin \gamma \\
+        -\cos \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_x}}{\partial \beta \cdot \partial \gamma} &= \begin{pmatrix}
+        \cos \alpha \sin \beta \sin \gamma \\
+        \cos \alpha \sin \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_x}}{\partial \gamma^2} &= \begin{pmatrix}
+        \sin \alpha \sin \gamma - \cos \alpha \cos \beta \cos \gamma \\
+        \sin \alpha \cos \gamma + \cos \alpha \cos \beta \sin \gamma \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+% The Dy Hessian.
+\subsubsection{The $\widehat{\Diff_y}$ Hessian}
+
+The second partial derivatives of the unit vector $\widehat{\Diff_y}$ with respect to the Euler angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \widehat{\Diff_y}}{\partial \alpha^2} &= \begin{pmatrix}
+        -\cos \alpha \sin \gamma - \sin \alpha \cos \beta \cos \gamma \\
+        -\cos \alpha \cos \gamma + \sin \alpha \cos \beta \sin \gamma \\
+        -\sin \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_y}}{\partial \alpha \cdot \partial \beta} &= \begin{pmatrix}
+        -\cos \alpha \sin \beta \cos \gamma \\
+        \cos \alpha \sin \beta \sin \gamma \\
+        \cos \alpha \cos \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_y}}{\partial \alpha \cdot \partial \gamma} &= \begin{pmatrix}
+        -\sin \alpha \cos \gamma - \cos \alpha \cos \beta \sin \gamma \\
+        \sin \alpha \sin \gamma - \cos \alpha \cos \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_y}}{\partial \beta^2} &= \begin{pmatrix}
+        -\sin \alpha \cos \beta \cos \gamma \\
+        \sin \alpha \cos \beta \sin \gamma \\
+        -\sin \alpha \sin \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_y}}{\partial \beta \cdot \partial \gamma} &= \begin{pmatrix}
+        \sin \alpha \sin \beta \sin \gamma \\
+        \sin \alpha \sin \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_y}}{\partial \gamma^2} &= \begin{pmatrix}
+        -\cos \alpha \sin \gamma - \sin \alpha \cos \beta \cos \gamma \\
+        -\cos \alpha \cos \gamma + \sin \alpha \cos \beta \sin \gamma \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+% The Dz Hessian.
+\subsubsection{The $\widehat{\Diff_z}$ Hessian}
+
+The second partial derivatives of the unit vector $\widehat{\Diff_z}$ with respect to the Euler angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \widehat{\Diff_z}}{\partial \alpha^2} &= \begin{pmatrix}
+        0 \\
+        0 \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_z}}{\partial \alpha \cdot \partial \beta} &= \begin{pmatrix}
+        0 \\
+        0 \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_z}}{\partial \alpha \cdot \partial \gamma} &= \begin{pmatrix}
+        0 \\
+        0 \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_z}}{\partial \beta^2} &= \begin{pmatrix}
+        \sin \beta \cos \gamma \\
+        -\sin \beta \sin \gamma \\
+        -\cos \beta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_z}}{\partial \beta \cdot \partial \gamma} &= \begin{pmatrix}
+        \cos \beta \sin \gamma \\
+        \cos \beta \cos \gamma \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_z}}{\partial \gamma^2} &= \begin{pmatrix}
+        \sin \beta \cos \gamma \\
+        -\sin \beta \sin \gamma \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+
+% Spheroidal dot product derivatives.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\section{Spheroidal dot product derivatives}
+
+
+
+% The dot product of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The dot product of the spheroid}
+
+The single dot product of the spheroid is defined as
+\begin{equation}
+    \delta_z = \widehat{XH} \cdot \widehat{\Diff_\Par},
+\end{equation}
+
+\noindent where $\widehat{XH}$ is a unit vector parallel to the XH vector.  $\widehat{\Diff_\Par}$ is a unit vector parallel to the unique axis of the diffusion tensor and can be expressed using the spherical angles where $\theta$ is the polar angle and $\phi$ is the azimuthal angle as
+\begin{equation}
+    \widehat{\Diff_\Par} = \begin{pmatrix}
+        \sin \theta \cos \phi \\
+        \sin \theta \sin \phi \\
+        \cos \theta \\
+    \end{pmatrix}.
+\end{equation}
+
+
+
+% The dot product gradient of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The dot product gradient of the spheroid}
+
+The partial derivative of the dot product with respect to the orientational parameter $\Difforiset_i$ is
+\begin{equation}
+    \frac{\partial \delta_z}{\partial \Difforiset_i}
+        = \frac{\partial}{\partial \Difforiset_i} \left( \widehat{XH} \cdot \widehat{\Diff_\Par} \right) \\
+        = \widehat{XH} \frac{\partial \widehat{\Diff_\Par}}{\partial \Difforiset_i}  +  \frac{\partial \widehat{XH}}{\partial \Difforiset_i} \widehat{\Diff_\Par}.
+\end{equation}
+
+\noindent Because the XH bond vector is constant and not dependent on the spherical angles its derivative is zero.  Therefore
+\begin{equation}
+    \frac{\partial \delta_z}{\partial \Difforiset_i} = \widehat{XH} \frac{\partial \widehat{\Diff_\Par}}{\partial \Difforiset_i}.
+\end{equation}
+
+
+
+% The Dpar gradient.
+\subsubsection{The $\widehat{\Diff_\Par}$ gradient}
+
+The partial derivatives of the unit vector $\widehat{\Diff_\Par}$ with respect to the spherical angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial \widehat{\Diff_\Par}}{\partial \theta} &= \begin{pmatrix}
+        \cos \theta \cos \phi \\
+        \cos \theta \sin \phi \\
+        -\sin \theta \\
+    \end{pmatrix}, \\
+    \frac{\partial \widehat{\Diff_\Par}}{\partial \phi} &= \begin{pmatrix}
+        -\sin \theta \sin \phi \\
+        \sin \theta \cos \phi \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
+% The dot product Hessian of the spheroid.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The dot product Hessian of the spheroid}
+
+The second partial derivative of the single spheroidal dot product $\delta_z$ with respect to the orientational parameters $\Difforiset_i$ and $\Difforiset_j$ is
+\begin{equation}
+    \frac{\partial^2 \delta_z}{\partial \Difforiset_i \cdot \partial \Difforiset_j}
+        = \frac{\partial^2}{\partial \Difforiset_i \cdot \partial \Difforiset_j} \left( \widehat{XH} \cdot \widehat{\Diff_\Par} \right) \\
+        = \widehat{XH} \frac{\partial^2 \widehat{\Diff_\Par}}{\partial \Difforiset_i \cdot \partial \Difforiset_j}.
+\end{equation}
+
+
+
+% The Dpar Hessian.
+\subsubsection{The $\widehat{\Diff_\Par}$ Hessian}
+
+The second partial derivatives of the unit vector $\widehat{\Diff_\Par}$ with respect to the spherical angles are
+\begin{subequations}
+\begin{align}
+    \frac{\partial^2 \widehat{\Diff_\Par}}{\partial \theta^2} &= \begin{pmatrix}
+        -\sin \theta \cos \phi \\
+        -\sin \theta \sin \phi \\
+        -\cos \theta \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_\Par}}{\partial \theta \cdot \partial \phi} &= \begin{pmatrix}
+        -\cos \theta \sin \phi \\
+        \cos \theta \cos \phi \\
+        0 \\
+    \end{pmatrix}, \\
+    \frac{\partial^2 \widehat{\Diff_\Par}}{\partial \phi^2} &= \begin{pmatrix}
+        -\sin \theta \cos \phi \\
+        -\sin \theta \sin \phi \\
+        0 \\
+    \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+
+
 
 
