@@ -1667,26 +1667,26 @@ class Mf:
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
-                        data.calc_djw[0] = calc_diff_djw_dDj
+                        data.calc_djw[0] = calc_diff_djw_dGj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_d2jw_dGjdGk
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_diff_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_diff_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_diff_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_diff_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_d2jw_dDjdOj
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_d2jw_dDjdOj
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_d2jw_dDjdOj
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_d2jw_dGjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_d2jw_dGjdOj
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_d2jw_dGjdOj
 
                         data.calc_d2jw[2][2] =                          calc_diff_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_d2jw_dOjdOk
@@ -1695,26 +1695,26 @@ class Mf:
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_ellipsoid_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_ellipsoid_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] =                          calc_ellipsoid_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_ellipsoid_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_d2jw_dGjdGk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_ellipsoid_d2jw_dGjdGk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_d2jw_dGjdGk
+                        data.calc_d2jw[2][2] =                          calc_ellipsoid_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_d2jw_dDjdOj
-                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_d2jw_dDjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_d2jw_dGjdOj
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_d2jw_dGjdOj
 
                         data.calc_d2jw[3][3] =                          calc_diff_d2jw_dOjdOk
                         data.calc_d2jw[3][4] = data.calc_d2jw[4][3] =   calc_diff_d2jw_dOjdOk
@@ -1739,62 +1739,62 @@ class Mf:
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
-                        data.calc_djw[0] = calc_diff_S2_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2_djw_dGj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dGjdGk
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dGjdS2
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_diff_S2_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_diff_S2_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_diff_S2_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_diff_S2_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2_d2jw_dDjdOj
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2_d2jw_dDjdOj
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2_d2jw_dDjdOj
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2_d2jw_dGjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2_d2jw_dGjdOj
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2_d2jw_dGjdOj
 
                         data.calc_d2jw[2][2] =                          calc_diff_S2_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_diff_S2_d2jw_dOjdS2
                             data.calc_d2jw[3][data.s2_li] = data.calc_d2jw[data.s2_li][3] = calc_diff_S2_d2jw_dOjdS2
 
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2_d2jw_dDjdOj
-                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2_d2jw_dDjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2_d2jw_dGjdOj
 
                         data.calc_d2jw[3][3] =                          calc_diff_S2_d2jw_dOjdOk
                         data.calc_d2jw[3][4] = data.calc_d2jw[4][3] =   calc_diff_S2_d2jw_dOjdOk
@@ -1804,9 +1804,9 @@ class Mf:
                         data.calc_d2jw[5][5] =                          calc_diff_S2_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_d2jw_dDjdS2
-                            data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_ellipsoid_S2_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_ellipsoid_S2_d2jw_dGjdS2
                             data.calc_d2jw[3][data.s2_li] = data.calc_d2jw[data.s2_li][3] = calc_diff_S2_d2jw_dOjdS2
                             data.calc_d2jw[4][data.s2_li] = data.calc_d2jw[data.s2_li][4] = calc_diff_S2_d2jw_dOjdS2
                             data.calc_d2jw[5][data.s2_li] = data.calc_d2jw[data.s2_li][5] = calc_diff_S2_d2jw_dOjdS2
@@ -1833,68 +1833,68 @@ class Mf:
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
-                        data.calc_djw[0] = calc_diff_S2_te_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2_te_djw_dGj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_diff_S2_te_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_S2_te_d2jw_dGjdGk
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dDjdS2
-                            data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_diff_S2_te_d2jw_dDjdte
+                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dGjdS2
+                            data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_diff_S2_te_d2jw_dGjdte
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_te_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_te_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2_te_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_diff_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_diff_S2_te_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_diff_S2_te_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2_te_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_diff_S2_te_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2_te_d2jw_dDjdOj
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2_te_d2jw_dGjdOj
 
                         data.calc_d2jw[2][2] =                          calc_diff_S2_te_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2_te_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2_te_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_te_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_diff_S2_te_d2jw_dOjdS2
                             data.calc_d2jw[3][data.s2_li] = data.calc_d2jw[data.s2_li][3] = calc_diff_S2_te_d2jw_dOjdS2
 
-                            data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_diff_S2_te_d2jw_dDjdte
-                            data.calc_d2jw[1][data.te_li] = data.calc_d2jw[data.te_li][1] = calc_diff_S2_te_d2jw_dDjdte
+                            data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_diff_S2_te_d2jw_dGjdte
+                            data.calc_d2jw[1][data.te_li] = data.calc_d2jw[data.te_li][1] = calc_diff_S2_te_d2jw_dGjdte
                             data.calc_d2jw[2][data.te_li] = data.calc_d2jw[data.te_li][2] = calc_diff_S2_te_d2jw_dOjdte
                             data.calc_d2jw[3][data.te_li] = data.calc_d2jw[data.te_li][3] = calc_diff_S2_te_d2jw_dOjdte
 
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2_te_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2_te_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2_te_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2_te_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2_te_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2_te_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
-                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2_te_d2jw_dDjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2_te_d2jw_dGjdOj
 
                         data.calc_d2jw[3][3] =                          calc_diff_S2_te_d2jw_dOjdOk
                         data.calc_d2jw[3][4] = data.calc_d2jw[4][3] =   calc_diff_S2_te_d2jw_dOjdOk
@@ -1904,16 +1904,16 @@ class Mf:
                         data.calc_d2jw[5][5] =                          calc_diff_S2_te_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_te_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_te_d2jw_dDjdS2
-                            data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_ellipsoid_S2_te_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_ellipsoid_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[3][data.s2_li] = data.calc_d2jw[data.s2_li][3] = calc_diff_S2_te_d2jw_dOjdS2
                             data.calc_d2jw[4][data.s2_li] = data.calc_d2jw[data.s2_li][4] = calc_diff_S2_te_d2jw_dOjdS2
                             data.calc_d2jw[5][data.s2_li] = data.calc_d2jw[data.s2_li][5] = calc_diff_S2_te_d2jw_dOjdS2
 
-                            data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_ellipsoid_S2_te_d2jw_dDjdte
-                            data.calc_d2jw[1][data.te_li] = data.calc_d2jw[data.te_li][1] = calc_ellipsoid_S2_te_d2jw_dDjdte
-                            data.calc_d2jw[2][data.te_li] = data.calc_d2jw[data.te_li][2] = calc_ellipsoid_S2_te_d2jw_dDjdte
+                            data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_d2jw[1][data.te_li] = data.calc_d2jw[data.te_li][1] = calc_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_d2jw[2][data.te_li] = data.calc_d2jw[data.te_li][2] = calc_ellipsoid_S2_te_d2jw_dGjdte
                             data.calc_d2jw[3][data.te_li] = data.calc_d2jw[data.te_li][3] = calc_diff_S2_te_d2jw_dOjdte
                             data.calc_d2jw[4][data.te_li] = data.calc_d2jw[data.te_li][4] = calc_diff_S2_te_d2jw_dOjdte
                             data.calc_d2jw[5][data.te_li] = data.calc_d2jw[data.te_li][5] = calc_diff_S2_te_d2jw_dOjdte
@@ -2030,74 +2030,74 @@ class Mf:
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
-                        data.calc_djw[0] = calc_diff_S2f_S2_ts_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2f_S2_ts_djw_dGj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_diff_S2f_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_S2f_S2_ts_d2jw_dGjdGk
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2_ts_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_S2_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_diff_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_diff_S2f_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_diff_S2f_S2_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_S2_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_S2_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_S2_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_S2_ts_d2jw_dOjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_S2_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_diff_S2f_S2_ts_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li]  = data.calc_d2jw[data.s2_li][2]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
                             data.calc_d2jw[3][data.s2_li]  = data.calc_d2jw[data.s2_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
 
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_S2_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_S2_ts_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_S2_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_S2_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][4] = data.calc_d2jw[4][3] =   calc_diff_S2f_S2_ts_d2jw_dOjdOk
@@ -2107,23 +2107,23 @@ class Mf:
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_S2_ts_d2jw_dOjdS2f
                             data.calc_d2jw[4][data.s2f_li] = data.calc_d2jw[data.s2f_li][4] = calc_diff_S2f_S2_ts_d2jw_dOjdS2f
                             data.calc_d2jw[5][data.s2f_li] = data.calc_d2jw[data.s2f_li][5] = calc_diff_S2f_S2_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[2][data.s2_li]  = data.calc_d2jw[data.s2_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[2][data.s2_li]  = data.calc_d2jw[data.s2_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
                             data.calc_d2jw[3][data.s2_li]  = data.calc_d2jw[data.s2_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
                             data.calc_d2jw[4][data.s2_li]  = data.calc_d2jw[data.s2_li][4]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
                             data.calc_d2jw[5][data.s2_li]  = data.calc_d2jw[data.s2_li][5]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts
-                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
@@ -2155,80 +2155,80 @@ class Mf:
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
-                        data.calc_djw[0] = calc_diff_S2f_tf_S2_ts_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2f_tf_S2_ts_djw_dGj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2_ts_d2jw_dDjdtf
-                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2_ts_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_tf_S2_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_diff_S2f_tf_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_tf_S2_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_tf_S2_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_tf_S2_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2_ts_d2jw_dDjdtf
-                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_diff_S2f_tf_S2_ts_d2jw_dDjdtf
+                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf
                             data.calc_d2jw[2][data.tf_li]  = data.calc_d2jw[data.tf_li][2]  = calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf
                             data.calc_d2jw[3][data.tf_li]  = data.calc_d2jw[data.tf_li][3]  = calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf
 
-                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_diff_S2f_S2_ts_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li]  = data.calc_d2jw[data.s2_li][2]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
                             data.calc_d2jw[3][data.s2_li]  = data.calc_d2jw[data.s2_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
 
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_tf_S2_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_tf_S2_ts_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_tf_S2_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][4] = data.calc_d2jw[4][3] =   calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
@@ -2238,30 +2238,30 @@ class Mf:
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
                             data.calc_d2jw[4][data.s2f_li] = data.calc_d2jw[data.s2f_li][4] = calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
                             data.calc_d2jw[5][data.s2f_li] = data.calc_d2jw[data.s2f_li][5] = calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdtf
-                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdtf
-                            data.calc_d2jw[2][data.tf_li]  = data.calc_d2jw[data.tf_li][2]  = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dDjdtf
+                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_d2jw[2][data.tf_li]  = data.calc_d2jw[data.tf_li][2]  = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
                             data.calc_d2jw[3][data.tf_li]  = data.calc_d2jw[data.tf_li][3]  = calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf
                             data.calc_d2jw[4][data.tf_li]  = data.calc_d2jw[data.tf_li][4]  = calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf
                             data.calc_d2jw[5][data.tf_li]  = data.calc_d2jw[data.tf_li][5]  = calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf
 
-                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2
-                            data.calc_d2jw[2][data.s2_li]  = data.calc_d2jw[data.s2_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdS2
+                            data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[1][data.s2_li]  = data.calc_d2jw[data.s2_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_d2jw[2][data.s2_li]  = data.calc_d2jw[data.s2_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
                             data.calc_d2jw[3][data.s2_li]  = data.calc_d2jw[data.s2_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
                             data.calc_d2jw[4][data.s2_li]  = data.calc_d2jw[data.s2_li][4]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
                             data.calc_d2jw[5][data.s2_li]  = data.calc_d2jw[data.s2_li][5]  = calc_diff_S2f_S2_ts_d2jw_dOjdS2
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts
-                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
@@ -2380,74 +2380,74 @@ class Mf:
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
-                        data.calc_djw[0] = calc_diff_S2f_S2s_ts_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2f_S2s_ts_djw_dGj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdGk
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  =   calc_diff_S2f_S2s_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  =   calc_diff_S2f_S2s_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2s_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2s_ts_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_S2s_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_diff_S2f_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_diff_S2f_S2s_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_diff_S2f_S2s_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_S2s_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_S2s_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2s
+                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2s
                             data.calc_d2jw[2][data.s2s_li] = data.calc_d2jw[data.s2s_li][2] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
                             data.calc_d2jw[3][data.s2s_li] = data.calc_d2jw[data.s2s_li][3] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2s_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2s_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2s_ts_d2jw_dGjdts
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
 
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_S2s_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_S2s_ts_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_S2s_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][4] = data.calc_d2jw[4][3] =   calc_diff_S2f_S2s_ts_d2jw_dOjdOk
@@ -2457,23 +2457,23 @@ class Mf:
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2f
                             data.calc_d2jw[4][data.s2f_li] = data.calc_d2jw[data.s2f_li][4] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2f
                             data.calc_d2jw[5][data.s2f_li] = data.calc_d2jw[data.s2f_li][5] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[2][data.s2s_li] = data.calc_d2jw[data.s2s_li][2] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2s
+                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[2][data.s2s_li] = data.calc_d2jw[data.s2s_li][2] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
                             data.calc_d2jw[3][data.s2s_li] = data.calc_d2jw[data.s2s_li][3] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
                             data.calc_d2jw[4][data.s2s_li] = data.calc_d2jw[data.s2s_li][4] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
                             data.calc_d2jw[5][data.s2s_li] = data.calc_d2jw[data.s2s_li][5] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts
-                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
@@ -2505,80 +2505,80 @@ class Mf:
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
-                        data.calc_djw[0] = calc_diff_S2f_tf_S2s_ts_djw_dDj
+                        data.calc_djw[0] = calc_diff_S2f_tf_S2s_ts_djw_dGj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdtf
-                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2s_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2s_ts_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_tf_S2s_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_tf_S2s_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdtf
-                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_diff_S2f_tf_S2s_ts_d2jw_dDjdtf
+                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
                             data.calc_d2jw[2][data.tf_li]  = data.calc_d2jw[data.tf_li][2]  = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
                             data.calc_d2jw[3][data.tf_li]  = data.calc_d2jw[data.tf_li][3]  = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
 
-                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_diff_S2f_S2s_ts_d2jw_dDjdS2s
+                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2s
                             data.calc_d2jw[2][data.s2s_li] = data.calc_d2jw[data.s2s_li][2] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
                             data.calc_d2jw[3][data.s2s_li] = data.calc_d2jw[data.s2s_li][3] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2s_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2s_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_diff_S2f_S2s_ts_d2jw_dGjdts
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
 
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
-                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_tf_S2s_ts_djw_dDj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_tf_S2s_ts_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_tf_S2s_ts_djw_dOj
 
                         # Hessian.
-                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk
-                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdDk
+                        data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][1] = data.calc_d2jw[1][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[0][2] = data.calc_d2jw[2][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][1] =                          calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[1][2] = data.calc_d2jw[2][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_d2jw[2][2] =                          calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
 
-                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
-                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdOj
+                        data.calc_d2jw[0][3] = data.calc_d2jw[3][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][4] = data.calc_d2jw[4][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[0][5] = data.calc_d2jw[5][0] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][3] = data.calc_d2jw[3][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][4] = data.calc_d2jw[4][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[1][5] = data.calc_d2jw[5][1] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][4] = data.calc_d2jw[4][2] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_d2jw[2][5] = data.calc_d2jw[5][2] =   calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
 
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][4] = data.calc_d2jw[4][3] =   calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
@@ -2588,30 +2588,30 @@ class Mf:
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
 
                         if self.param_set != 'diff':
-                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdS2f
-                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdS2f
+                            data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[3][data.s2f_li] = data.calc_d2jw[data.s2f_li][3] = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
                             data.calc_d2jw[4][data.s2f_li] = data.calc_d2jw[data.s2f_li][4] = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
                             data.calc_d2jw[5][data.s2f_li] = data.calc_d2jw[data.s2f_li][5] = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
 
-                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdtf
-                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdtf
-                            data.calc_d2jw[2][data.tf_li]  = data.calc_d2jw[data.tf_li][2]  = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dDjdtf
+                            data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_d2jw[1][data.tf_li]  = data.calc_d2jw[data.tf_li][1]  = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_d2jw[2][data.tf_li]  = data.calc_d2jw[data.tf_li][2]  = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
                             data.calc_d2jw[3][data.tf_li]  = data.calc_d2jw[data.tf_li][3]  = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
                             data.calc_d2jw[4][data.tf_li]  = data.calc_d2jw[data.tf_li][4]  = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
                             data.calc_d2jw[5][data.tf_li]  = data.calc_d2jw[data.tf_li][5]  = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
 
-                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2s
-                            data.calc_d2jw[2][data.s2s_li] = data.calc_d2jw[data.s2s_li][2] = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdS2s
+                            data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[1][data.s2s_li] = data.calc_d2jw[data.s2s_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_d2jw[2][data.s2s_li] = data.calc_d2jw[data.s2s_li][2] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
                             data.calc_d2jw[3][data.s2s_li] = data.calc_d2jw[data.s2s_li][3] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
                             data.calc_d2jw[4][data.s2s_li] = data.calc_d2jw[data.s2s_li][4] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
                             data.calc_d2jw[5][data.s2s_li] = data.calc_d2jw[data.s2s_li][5] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2s
 
-                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts
-                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts
-                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dDjdts
+                            data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_d2jw[1][data.ts_li]  = data.calc_d2jw[data.ts_li][1]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
