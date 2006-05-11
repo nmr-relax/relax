@@ -180,7 +180,7 @@ The partial and second partial derivatives of the relaxation equations of the se
 
 \subsection{Components of the $\Ri'(\theta)$ equations}
 
-To simplify the calculations of the gradients and Hessians the $\Ri'(\theta)$ equations have been broken down into their various components.  These include the dipolar and CSA constants as well as the dipolar and CSA spectral density terms for each of the three transformed relaxation data types ($\Rone$, $\Rtwo$, and $\crossrate$).  The segregation of these components simplifies the maths as many partial derivatives of the components are zero.
+To simplify the calculations of the gradients and Hessians the $\Ri'(\theta)$ equations have been broken down into a number of components.  These include the dipolar and CSA constants as well as the dipolar and CSA spectral density terms for each of the three transformed relaxation data types \{$\Rone$, $\Rtwo$, $\crossrate$\}.  The segregation of these components simplifies the maths as many partial derivatives of the components are zero.
 
 
 % Dipolar comps.
@@ -191,12 +191,12 @@ The dipolar constant is defined as
     d = \frac{1}{4} \left(\frac{\mu_0}{4\pi}\right)^2 \frac{\left( \gH \gX \hbar \right)^2}{<r^6>}. \label{eq: Ri': d}
 \end{equation}
 
-\noindent This component of the relaxation equations is independent of the parameter of the spectral density function $\theta_j$, the chemical exchange parameter $\rho_{ex}$, and the CSA parameter $\Delta\sigma$.  Therefore the partial and second partial derivatives with respect to these parameters is zero.  Only the partial derivative with respect to the bond length $r$ is non-zero being
+\noindent This component of the relaxation equations is independent of the parameter of the spectral density function $\theta_j$, the chemical exchange parameter $\rho_{ex}$, and the CSA parameter $\Delta\sigma$.  Therefore the partial and second partial derivatives with respect to these parameters is zero.  Only the derivative with respect to the bond length $r$ is non-zero being
 \begin{equation}
     d' \equiv \frac{\mathrm{d} d}{\mathrm{d} r} = - \frac{3}{2} \left(\frac{\mu_0}{4\pi}\right)^2 \frac{\left( \gH \gX \hbar \right)^2}{<r^7>}. \label{eq: Ri': d'}
 \end{equation}
 
-\noindent The double partial derivative with respect to the bond length twice is
+\noindent The second derivative with respect to the bond length is
 \begin{equation}
     d'' \equiv \frac{\mathrm{d}^2 d}{\mathrm{d} r^2} = \frac{21}{2} \left(\frac{\mu_0}{4\pi}\right)^2 \frac{\left( \gH \gX \hbar \right)^2}{<r^8>}. \label{eq: Ri': d"}
 \end{equation}
@@ -210,12 +210,12 @@ The CSA constant is defined as
     c = \frac{\left(\omega_X \cdot \Delta\sigma \right)^2}{3}. \label{eq: Ri': c}
 \end{equation}
 
-\noindent The partial derivative of this component with respect to all parameters but the CSA parameter $\Delta\sigma$ is zero.  This partial derivative is
+\noindent The partial derivative of this component with respect to all parameters but the CSA parameter $\Delta\sigma$ is zero.  This derivative is
 \begin{equation}
     c' \equiv \frac{\mathrm{d} c}{\mathrm{d} \Delta\sigma} = \frac{2 \omega_X^2 \cdot \Delta\sigma}{3}. \label{eq: Ri': c'}
 \end{equation}
 
-\noindent The CSA constant double partial derivative with respect to $\Delta\sigma$ is
+\noindent The CSA constant second derivative with respect to $\Delta\sigma$ is
 \begin{equation}
     c'' \equiv \frac{\mathrm{d}^2 c}{\mathrm{d} \Delta\sigma^2} = \frac{2 \omega_X^2}{3}. \label{eq: Ri': c"}
 \end{equation}
@@ -229,12 +229,12 @@ The $R_{ex}$ constant is defined as
     R_{ex} = \rho_{ex} (2 \pi \omega_H)^2 . \label{eq: Ri': Rex}
 \end{equation}
 
-\noindent The partial derivative of this component with respect to all parameters but the chemical exchange parameter $\rho_{ex}$ is zero.  This partial derivative is
+\noindent The partial derivative of this component with respect to all parameters but the chemical exchange parameter $\rho_{ex}$ is zero.  This derivative is
 \begin{equation}
     R_{ex}' \equiv \frac{\mathrm{d} R_{ex}}{\mathrm{d} \rho_{ex}} = (2 \pi \omega_H)^2. \label{eq: Ri': Rex'}
 \end{equation}
 
-\noindent The $R_{ex}$ constant double partial derivative with respect to $\rho_{ex}$ is
+\noindent The $R_{ex}$ constant second derivative with respect to $\rho_{ex}$ is
 \begin{equation}
     R_{ex}'' \equiv \frac{\mathrm{d}^2 R_{ex}}{\mathrm{d} \rho_{ex}^2} = 0. \label{eq: Ri': Rex"}
 \end{equation}
@@ -243,12 +243,12 @@ The $R_{ex}$ constant is defined as
 % R1 dip Spectral density terms.
 \subsubsection{Spectral density terms of the $\Rone$ dipolar component}
 
-For the dipolar component of the $\Rone$ equation the spectral density terms are
+For the dipolar component of the $\Rone$ equation~\eqref{eq: R1} on page~\pageref{eq: R1} the spectral density terms are
 \begin{equation}
     J_d^{\Rone} = J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H + \omega_X).  \label{eq: J terms: JR1d}
 \end{equation}
 
-\noindent The partial derivative of these terms with respect to the parameter of the spectral density function $\theta_j$ is
+\noindent The partial derivative of these terms with respect to the spectral density function parameter $\theta_j$ is
 \begin{equation}
     {J_d^{\Rone}}' \equiv \frac{\partial J_d^{\Rone}}{\partial \theta_j}
         = \frac{\partial J(\omega_H - \omega_X)}{\partial \theta_j}
@@ -256,7 +256,7 @@ For the dipolar component of the $\Rone$ equation the spectral density terms are
         + 6 \frac{\partial J(\omega_H + \omega_X)}{\partial \theta_j}.  \label{eq: J terms: JR1d'}
 \end{equation}
 
-\noindent The second partial derivative with respect to the parameter of the spectral density function $\theta_j$ and $\theta_k$ is
+\noindent The second partial derivative with respect to the spectral density function parameters $\theta_j$ and $\theta_k$ is
 \begin{equation}
     {J_d^{\Rone}}'' \equiv \frac{\partial^2 J_d^{\Rone}}{\partial \theta_j \cdot \partial \theta_k}
         = \frac{\partial^2 J(\omega_H - \omega_X)}{\partial \theta_j \cdot \partial \theta_k}
@@ -268,18 +268,18 @@ For the dipolar component of the $\Rone$ equation the spectral density terms are
 % R1 CSA Spectral density terms.
 \subsubsection{Spectral density terms of the $\Rone$ CSA component}
 
-For the CSA component of the $\Rone$ equation the spectral density terms are
+For the CSA component of the $\Rone$ equation~\eqref{eq: R1} on page~\pageref{eq: R1} the spectral density terms are
 \begin{equation}
     J_c^{\Rone} = J(\omega_X).  \label{eq: J terms: JR1c}
 \end{equation}
 
-\noindent The partial derivative of these terms with respect to the parameter of the spectral density function $\theta_j$ is
+\noindent The partial derivative of these terms with respect to the spectral density function parameter $\theta_j$ is
 \begin{equation}
     {J_c^{\Rone}}' \equiv \frac{\partial J_c^{\Rone}}{\partial \theta_j}
         = \frac{\partial J(\omega_X)}{\partial \theta_j}.  \label{eq: J terms: JR1c'}
 \end{equation}
 
-\noindent The second partial derivative with respect to the parameter of the spectral density function $\theta_j$ and $\theta_k$ is
+\noindent The second partial derivative with respect to the spectral density function parameters $\theta_j$ and $\theta_k$ is
 \begin{equation}
     {J_c^{\Rone}}'' \equiv \frac{\partial^2 J_c^{\Rone}}{\partial \theta_j . \partial \theta_k}
         = \frac{\partial^2 J(\omega_X)}{\partial \theta_j \cdot \partial \theta_k}.  \label{eq: J terms: JR1c"}
@@ -289,12 +289,12 @@ For the CSA component of the $\Rone$ equation the spectral density terms are
 % R2 dip Spectral density terms.
 \subsubsection{Spectral density terms of the $\Rtwo$ dipolar component}
 
-For the dipolar component of the $\Rtwo$ equation the spectral density terms are
+For the dipolar component of the $\Rtwo$ equation~\eqref{eq: R2} on page~\pageref{eq: R2} the spectral density terms are
 \begin{equation}
     J_d^{\Rtwo} = 4J(0) + J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H) + 6J(\omega_H + \omega_X).  \label{eq: J terms: JR2d}
 \end{equation}
 
-\noindent The partial derivative of these terms with respect to the parameter of the spectral density function $\theta_j$ is
+\noindent The partial derivative of these terms with respect to the spectral density function parameter $\theta_j$ is
 \begin{equation}
     {J_d^{\Rtwo}}' \equiv \frac{\partial J_d^{\Rtwo}}{\partial \theta_j}
         = 4 \frac{\partial J(0)}{\partial \theta_j}
@@ -304,7 +304,7 @@ For the dipolar component of the $\Rtwo$ equation the spectral density terms are
         + 6 \frac{\partial J(\omega_H + \omega_X)}{\partial \theta_j}.  \label{eq: J terms: JR2d'}
 \end{equation}
 
-\noindent The second partial derivative with respect to the parameter of the spectral density function $\theta_j$ and $\theta_k$ is
+\noindent The second partial derivative with respect to the spectral density function parameters $\theta_j$ and $\theta_k$ is
 \begin{multline}
     {J_d^{\Rtwo}}'' \equiv \frac{\partial^2 J_d^{\Rtwo}}{\partial \theta_j \cdot \partial \theta_k}
         = 4 \frac{\partial^2 J(0)}{\partial \theta_j \cdot \partial \theta_k}
@@ -318,19 +318,19 @@ For the dipolar component of the $\Rtwo$ equation the spectral density terms are
 % R2 CSA Spectral density terms.
 \subsubsection{Spectral density terms of the $\Rtwo$ CSA component}
 
-For the CSA component of the $\Rtwo$ equation the spectral density terms are
+For the CSA component of the $\Rtwo$ equation~\eqref{eq: R2} on page~\pageref{eq: R2} the spectral density terms are
 \begin{equation}
     J_c^{\Rtwo} = 4J(0) + 3J(\omega_X).  \label{eq: J terms: JR2c}
 \end{equation}
 
-\noindent The partial derivative of these terms with respect to the parameter of the spectral density function $\theta_j$ is
+\noindent The partial derivative of these terms with respect to the spectral density function parameter $\theta_j$ is
 \begin{equation}
     {J_c^{\Rtwo}}' \equiv \frac{\partial J_c^{\Rtwo}}{\partial \theta_j}
         = 4 \frac{\partial J(0)}{\partial \theta_j}
         + 3 \frac{\partial J(\omega_X)}{\partial \theta_j}.  \label{eq: J terms: JR2c'}
 \end{equation}
 
-\noindent The second partial derivative with respect to the parameter of the spectral density function $\theta_j$ and $\theta_k$ is
+\noindent The second partial derivative with respect to the spectral density function parameters $\theta_j$ and $\theta_k$ is
 \begin{equation}
     {J_c^{\Rtwo}}'' \equiv \frac{\partial^2 J_c^{\Rtwo}}{\partial \theta_j \cdot \partial \theta_k}
         = 4 \frac{\partial^2 J(0)}{\partial \theta_j \cdot \partial \theta_k}
@@ -341,19 +341,19 @@ For the CSA component of the $\Rtwo$ equation the spectral density terms are
 % Sigma_NOE dip Spectral density terms.
 \subsubsection{Spectral density terms of the $\crossrate$ dipolar component}
 
-For the dipolar component of the $\crossrate$ equation the spectral density terms are
+For the dipolar component of the $\crossrate$ equation~\eqref{eq: sigma_NOE} on page~\pageref{eq: sigma_NOE} the spectral density terms are
 \begin{equation}
     J_d^{\crossrate} = 6J(\omega_H + \omega_X) - 6J(\omega_H - \omega_X).  \label{eq: J terms: JsigmaNOEd}
 \end{equation}
 
-\noindent The partial derivative of these terms with respect to the parameter of the spectral density function $\theta_j$ is
+\noindent The partial derivative of these terms with respect to the spectral density function parameter $\theta_j$ is
 \begin{equation}
     {J_d^{\crossrate}}' \equiv \frac{\partial J_d^{\crossrate}}{\partial \theta_j}
         = 6 \frac{\partial J(\omega_H + \omega_X)}{\partial \theta_j}
         - 6 \frac{\partial J(\omega_H - \omega_X)}{\partial \theta_j}.  \label{eq: J terms: JsigmaNOEd'}
 \end{equation}
 
-\noindent The second partial derivative with respect to the parameter of the spectral density function $\theta_j$ and $\theta_k$ is
+\noindent The second partial derivative with respect to the spectral density function parameters $\theta_j$ and $\theta_k$ is
 \begin{equation}
     {J_d^{\crossrate}}'' \equiv \frac{\partial^2 J_d^{\crossrate}}{\partial \theta_j \cdot \partial \theta_k}
         = 6 \frac{\partial^2 J(\omega_H + \omega_X)}{\partial \theta_j \cdot \partial \theta_k}
@@ -367,7 +367,7 @@ For the dipolar component of the $\crossrate$ equation the spectral density term
 
 \subsection{$\Ri'(\theta)$ values}
 
-The three relaxation equations, utilising the above components, can be expressed as
+Using the components of the relaxation equations defined above the three relaxation equations can be re-expressed as
 \begin{subequations}
 \begin{align}
     \Rone(\theta) & = d J_d^{\Rone} + c J_c^{\Rone},                          \label{eq: Ri': R1} \\
@@ -383,13 +383,13 @@ The three relaxation equations, utilising the above components, can be expressed
 
 \subsection{$\Ri'(\theta)$ gradients}
 
-The partial derivatives with respect to the parameter of the spectral density functions, the chemical exchange parameter, CSA parameter, and bond length parameters are all different and are presented below.
+A different partial derivative exists for the spectral density function parameter $\theta_j$, the chemical exchange parameter $\rho_{ex}$, CSA parameter $\Delta\sigma$, and bond length parameter $r$.  In model-free analysis the spectral density parameters include both the parameters of the diffuison tensor and the parameters of the various model-free models.
 
 
 % Spectral density function parameter.
-\subsubsection{Spectral density function parameter}
+\subsubsection{$\theta_j$ partial derivative}
 
-The partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ are
+The partial derivatives of the relaxation equations with respect to the spectral density function parameter $\theta_j$ are
 \begin{subequations}
 \begin{align}
     \frac{\partial \Rone(\theta)}{\partial \theta_j} &= d {J_d^{\Rone}}' + c {J_c^{\Rone}}',                      \label{eq: Ri': dR1/dmf} \\
@@ -400,7 +400,7 @@ The partial derivatives of the relaxation equations with respect to the paramete
 
 
 % Chemical exchange parameter.
-\subsubsection{Chemical exchange parameter}
+\subsubsection{$\rho_{ex}$ partial derivative}
 
 The partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ are
 \begin{subequations}
@@ -413,7 +413,7 @@ The partial derivatives of the relaxation equations with respect to the chemical
 
 
 % CSA parameter.
-\subsubsection{CSA parameter}
+\subsubsection{$\Delta\sigma$ partial derivative}
 
 The partial derivatives of the relaxation equations with respect to the CSA parameter $\Delta\sigma$ are
 \begin{subequations}
@@ -426,7 +426,7 @@ The partial derivatives of the relaxation equations with respect to the CSA para
 
 
 % Bond length parameter.
-\subsubsection{Bond length parameter}
+\subsubsection{$r$ partial derivative}
 
 The partial derivatives of the relaxation equations with respect to the bond length parameter $r$ are
 \begin{subequations}
@@ -438,18 +438,19 @@ The partial derivatives of the relaxation equations with respect to the bond len
 \end{subequations}
 
 
+
 % Ri' Hessians.
 %~~~~~~~~~~~~~~
 
 \subsection{$\Ri'(\theta)$ Hessians}
 
-The second partial derivatives with respect to the parameter of the spectral density functions, the chemical exchange parameter, CSA parameter, and bond length parameters are presented below.
+Again different second partial derivatives with respect to the spectral density function parameters $\theta_j$ and $\theta_k$, the chemical exchange parameter $\rho_{ex}$, CSA parameter $\Delta\sigma$, and bond length parameter $r$.  These second partial derivatives are the components of the $\Ri'(\theta)$ Hessian matrices.
 
 
 % Spectral density function parameter -- Spectral density function parameter.
-\subsubsection{Spectral density function parameter -- Spectral density function parameter}
+\subsubsection{$\theta_j$ -- $\theta_k$ partial derivative}
 
-The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density functions $\theta_j$ and $\theta_k$ are
+The second partial derivatives of the relaxation equations with respect to the spectral density function parameters $\theta_j$ and $\theta_k$ are
 \begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial \theta_k} &= d {J_d^{\Rone}}'' + c {J_c^{\Rone}}'',                      \label{eq: Ri': d2R1/dmfj.dmfk} \\
@@ -460,9 +461,9 @@ The second partial derivatives of the relaxation equations with respect to the p
 
 
 % Spectral density function parameter -- Chemical exchange parameter.
-\subsubsection{Spectral density function parameter -- Chemical exchange parameter}
+\subsubsection{$\theta_j$ -- $\rho_{ex}$ partial derivative}
 
-The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ and the chemical exchange parameter $\rho_{ex}$ are
+The second partial derivatives of the relaxation equations with respect to the spectral density function parameter $\theta_j$ and the chemical exchange parameter $\rho_{ex}$ are
 \begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial \rho_{ex}} &= 0,        \label{eq: Ri': d2R1/dmfj.dRex} \\
@@ -473,9 +474,9 @@ The second partial derivatives of the relaxation equations with respect to the p
 
 
 % Spectral density function parameter -- CSA parameter.
-\subsubsection{Spectral density function parameter -- CSA parameter}
+\subsubsection{$\theta_j$ -- $\Delta\sigma$ partial derivative}
 
-The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ and the CSA parameter $\Delta\sigma$ are
+The second partial derivatives of the relaxation equations with respect to the spectral density function parameter $\theta_j$ and the CSA parameter $\Delta\sigma$ are
 \begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial \Delta\sigma} &= c' {J_c^{\Rone}}',            \label{eq: Ri': d2R1/dmfj.dCSA} \\
@@ -486,9 +487,9 @@ The second partial derivatives of the relaxation equations with respect to the p
 
 
 % Spectral density function parameter -- Bond length parameter.
-\subsubsection{Spectral density function parameter -- Bond length parameter}
+\subsubsection{$\theta_j$ -- $r$ partial derivative}
 
-The second partial derivatives of the relaxation equations with respect to the parameter of the spectral density function $\theta_j$ and the bond length parameter $r$ are
+The second partial derivatives of the relaxation equations with respect to the spectral density function parameter $\theta_j$ and the bond length parameter $r$ are
 \begin{subequations}
 \begin{align}
     \frac{\partial^2 \Rone(\theta)}{\partial \theta_j \cdot \partial r} &= d' {J_d^{\Rone}}',               \label{eq: Ri': d2R1/dmfj.dr} \\
@@ -499,7 +500,7 @@ The second partial derivatives of the relaxation equations with respect to the p
 
 
 % Chemical exchange parameter -- Chemical exchange parameter.
-\subsubsection{Chemical exchange parameter -- Chemical exchange parameter}
+\subsubsection{$\rho_{ex}$ -- $\rho_{ex}$ partial derivative}
 
 The second partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ twice are
 \begin{subequations}
@@ -512,7 +513,7 @@ The second partial derivatives of the relaxation equations with respect to the c
 
 
 % Chemical exchange parameter -- CSA parameter.
-\subsubsection{Chemical exchange parameter -- CSA parameter}
+\subsubsection{$\rho_{ex}$ -- $\Delta\sigma$ partial derivative}
 
 The second partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ and the CSA parameter $\Delta\sigma$ are
 \begin{subequations}
@@ -525,7 +526,7 @@ The second partial derivatives of the relaxation equations with respect to the c
 
 
 % Chemical exchange parameter -- Bond length parameter.
-\subsubsection{Chemical exchange parameter -- Bond length parameter}
+\subsubsection{$\rho_{ex}$ -- $r$ partial derivative}
 
 The second partial derivatives of the relaxation equations with respect to the chemical exchange parameter $\rho_{ex}$ and the bond length parameter $r$ are
 \begin{subequations}
@@ -538,7 +539,7 @@ The second partial derivatives of the relaxation equations with respect to the c
 
 
 % CSA parameter -- CSA parameter.
-\subsubsection{CSA parameter -- CSA parameter}
+\subsubsection{$\Delta\sigma$ -- $\Delta\sigma$ partial derivative}
 
 The second partial derivatives of the relaxation equations with respect to the CSA parameter $\Delta\sigma$ twice are
 \begin{subequations}
@@ -551,7 +552,7 @@ The second partial derivatives of the relaxation equations with respect to the C
 
 
 % CSA parameter -- Bond length parameter.
-\subsubsection{CSA parameter -- Bond length parameter}
+\subsubsection{$\Delta\sigma$ -- $r$ partial derivative}
 
 The second partial derivatives of the relaxation equations with respect to the CSA parameter $\Delta\sigma$ and the bond length parameter $r$ are
 \begin{subequations}
@@ -564,7 +565,7 @@ The second partial derivatives of the relaxation equations with respect to the C
 
 
 % Bond length parameter -- Bond length parameter.
-\subsubsection{Bond length parameter -- Bond length parameter}
+\subsubsection{$r$ -- $r$ partial derivative}
 
 The second partial derivatives of the relaxation equations with respect to the bond length parameter $r$ twice are
 \begin{subequations}
@@ -596,12 +597,12 @@ In the original model-free analysis of \cite{LipariSzabo82a} the correlation fun
     C(\tau) = C_\mathrm{O}(\tau) \cdot C_\mathrm{I}(\tau).
 \end{equation}
 
-\noindent The overall correlation functions of the diffusion of a sphere, spheroid, and ellipsoid are presented in the sections below.  These three different equations can be combined into one generic correlation function which is independent of the type of diffusion.  This generic correlation function is
+\noindent The overall correlation functions of the diffusion of a sphere, spheroid, and ellipsoid are presented respectively in section~\ref{ellipsoid equation} on page~\pageref{ellipsoid equation}, section~\ref{spheroid equation} on page~\pageref{spheroid equation}, and section~\ref{sphere equation} on page~\pageref{sphere equation}.  These three different equations can be combined into one generic correlation function which is independent of the type of diffusion.  This generic correlation function is
 \begin{equation}
     C_\mathrm{O}(\tau) = \frac{1}{5} \sum_{i=-k}^k c_i \cdot e^{-\tau/\tau_i},
 \end{equation}
 
-\noindent where $c_i$ are the weights and $\tau_i$ are correlation times of the exponential terms.  For the specific diffusion type the weights and correlation times are presented below.  In the original model-free analysis of \citet{LipariSzabo82a} and \citet{LipariSzabo82b} the internal motions are modelled by the correlation function
+\noindent where $c_i$ are the weights and $\tau_i$ are correlation times of the exponential terms.  In the original model-free analysis of \citet{LipariSzabo82a,LipariSzabo82b} the internal motions are modelled by the correlation function
 \begin{equation}
     C_\mathrm{I}(\tau) = S^2 + (1 - S^2) e^{-\tau / \tau_e},
 \end{equation}
@@ -637,7 +638,7 @@ The Fourier transform using the extended model-free correlation function is
 
 \subsection{The original model-free gradient}
 
-The model-free gradient of the original spectral density function~\eqref{eq: J(w) model-free generic} is the vector of partial derivatives of the function with respect to the geometric parameters $\Diffgeoset_i$, the orientational parameters $\Difforiset_i$, the order parameters, and the internal correlation times.  The positions in the vector correspond to the model parameters which are being optimised.
+The model-free gradient of the original spectral density function~\eqref{eq: J(w) model-free generic} is the vector of partial derivatives of the function with respect to the geometric parameter $\Diffgeoset_i$, the orientational parameter $\Difforiset_i$, the order parameter $S^2$, and the internal correlation time $\tau_e$.  The positions in the vector correspond to the model parameters which are being optimised.
 
 
 
@@ -868,7 +869,7 @@ The second partial derivative of~\eqref{eq: J(w) model-free generic} with respec
 \newpage
 \subsection{The extended model-free gradient}
 
-The model-free gradient of the extended spectral density function~\eqref{eq: J(w) model-free ext generic} is the vector of partial derivatives of the function with respect to the geometric parameters $\Diffgeoset_i$, the orientational parameters $\Difforiset_i$, the order parameters, and the internal correlation times.  The positions in the vector correspond to the model parameters which are being optimised.
+The model-free gradient of the extended spectral density function~\eqref{eq: J(w) model-free ext generic} is the vector of partial derivatives of the function with respect to the geometric parameter $\Diffgeoset_i$, the orientational parameter $\Difforiset_i$, the order parameters $S^2$ and $S^2_f$, and the internal correlation times $\tau_f$ and $\tau_s$.  The positions in the vector correspond to the model parameters which are being optimised.
 
 
 
@@ -1679,7 +1680,7 @@ The second partial derivative of~\eqref{eq: J(w) model-free generic} with respec
 % The diffusion equation of the ellipsoid.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The diffusion equation of the ellipsoid}
+\subsection{The diffusion equation of the ellipsoid} \label{ellipsoid equation}
 
 The correlation function of the Brownian rotational diffusion of an ellipsoid is
 \begin{equation} \label{eq: ellipsoid correlation function}
@@ -1713,19 +1714,9 @@ The three direction cosines\index{direction cosine} defining the XH bond vector 
     \Diffgeoset = \{\Diff_{iso}, \Diff_a, \Diff_r\},
 \end{equation}
 
-\noindent and the set of orientational parameters (Euler angles)\index{Euler angles} be
+\noindent and the set of orientational parameters be the Euler angles\index{Euler angles}
 \begin{equation}
     \Difforiset = \{\alpha, \beta, \gamma\}.
-\end{equation}
-
-
-
-% Summation terms.
-\subsubsection{Summation terms}
-
-The summation indecies of the correlation function of the Brownian rotational diffusion of an ellipsoid~\eqref{eq: ellipsoid correlation function} range from $k = -2$ to $k = 2$ and therefore
-\begin{equation}
-    i \in \{ -2, -1, 0, 1, 2 \}.
 \end{equation}
 
 
@@ -1761,14 +1752,13 @@ The five weights $c_i$ in the correlation function of the Brownian rotational di
 % The weight gradients of the ellipsoid.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\newpage
 \subsection{The weight gradients of the ellipsoid}
 
 
 % Oi partial derivative.
 \subsubsection{$\Difforiset_i$ partial derivative}
 
-The partial derivatives with respect to the orientational parameters are
+The partial derivatives with respect to the orientational parameter $\Difforiset_i$ are
 \begin{subequations}
 \begin{align}
     \frac{\partial c_{-2}}{\partial \Difforiset_i} &= 3 \left( \delta_x^3 \frac{\partial \delta_x}{\partial \Difforiset_i}  +  \delta_y^3 \frac{\partial \delta_y}{\partial \Difforiset_i}  +  \delta_z^3 \frac{\partial \delta_z}{\partial \Difforiset_i} \right) - \frac{\partial e}{\partial \Difforiset_i}, \\
@@ -2119,7 +2109,7 @@ The second partial derivatives with respect to the geometric parameter $\Diff_r$
 \newpage
 \subsection{The correlation times of the ellipsoid}
 
-The five correlation times $\tau_i$ in the correlation function of the Brownian rotational diffusion of an ellipsoid~\eqref{eq: ellipsoid correlation function} are
+The five correlation times $\tau_i$ in the correlation function of the Brownian rotational diffusion of an ellipsoid~\eqref{eq: ellipsoid correlation function} on page~\pageref{eq: ellipsoid correlation function} are
 \begin{subequations}
 \begin{align}
     \tau_{-2} &= (6\Diff_{iso} - 2\Diff_a\mathfrak{R})^{-1}, \\
@@ -2318,7 +2308,7 @@ The second partial derivatives with respect to the geometric parameter $\Diff_r$
 % The diffusion equation of the spheroid.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The diffusion equation of the spheroid}
+\subsection{The diffusion equation of the spheroid} \label{spheroid equation}
 
 The correlation function of the Brownian rotational diffusion of a spheroid is
 \begin{equation} \label{eq: spheroid correlation function}
@@ -2348,19 +2338,9 @@ The direction cosine\index{direction cosine} defining the XH bond vector within 
     \Diffgeoset = \{\Diff_{iso}, \Diff_a\},
 \end{equation}
 
-\noindent and the set of orientational parameters (spherical angles)\index{spherical angles} be
+\noindent and the set of orientational parameters be the spherical angles\index{spherical angles}
 \begin{equation}
     \Difforiset = \{\theta, \phi\}.
-\end{equation}
-
-
-
-% Summation terms.
-\subsubsection{Summation terms}
-
-The summation indecies of the correlation function of the Brownian rotational diffusion of a spheroid~\eqref{eq: spheroid correlation function} range from $k = -1$ to $k = 1$ therefore
-\begin{equation}
-    i \in \{ -1, 0, 1 \}.
 \end{equation}
 
 
@@ -2373,7 +2353,7 @@ The three spheroid weights $c_i$ in the correlation function of the Brownian rot
 \begin{align}
  c_{-1} &= \tfrac{1}{4} (3\delta_z^2 - 1)^2,   \\
  c_{0}  &= 3\delta_z^2(1 - \delta_z^2),   \\
- c_{1}  &= \tfrac{3}{4} (\delta_z^2 - 1)^2.   \\
+ c_{1}  &= \tfrac{3}{4} (\delta_z^2 - 1)^2.
 \end{align}
 \end{subequations}
 
@@ -2541,7 +2521,7 @@ The second partial derivatives with respect to the geometric parameter $\Diff_a$
 % The diffusion equation of the sphere.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The diffusion equation of the sphere}
+\subsection{The diffusion equation of the sphere} \label{sphere equation}
 
 The correlation function of the Brownian rotational diffusion of a sphere is
 \begin{align} \label{eq: spherical correlation function}
@@ -2623,7 +2603,6 @@ The second partial derivatives with respect to the geometric parameter $\tau_m$ 
 % The correlation time of the sphere.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\newpage
 \subsection{The correlation time of the sphere}
 
 The single correlation time $\tau_i$ of the correlation function of the Brownian rotational diffusion of a sphere~\eqref{eq: spheroid correlation function} is
