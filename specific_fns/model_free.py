@@ -2254,7 +2254,7 @@ class Model_free(Common_functions):
                 remap_table.append(data.remap_table)
                 noe_r1_table.append(data.noe_r1_table)
                 ri_labels.append(data.ri_labels)
-                if sim_index == None:
+                if sim_index == None or self.param_set == 'diff':
                     r.append(data.r)
                     csa.append(data.csa)
                 else:
@@ -4250,7 +4250,7 @@ class Model_free(Common_functions):
                 object = getattr(self.relax.data, object_name)
 
                 # Test if the object has the key self.run.
-                if not object.has_key(self.relax):
+                if not object.has_key(self.run):
                     continue
 
                 # Copy and append the data.
