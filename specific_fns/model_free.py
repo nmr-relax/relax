@@ -4130,7 +4130,9 @@ class Model_free(Common_functions):
 
         # Single instance.
         if self.param_set == 'all' or self.param_set == 'diff':
-            self.relax.data.select_sim = select_sim
+            if not hasattr(self.relax.data, 'select_sim'):
+                self.relax.data.select_sim = {}
+            self.relax.data.select_sim[self.run] = select_sim
 
         # Multiple instances.
         else:
@@ -4499,7 +4501,7 @@ class Model_free(Common_functions):
 
             # Multiple instances.
             else:
-                self.relax.data.select_sim[sim_index] = 0
+                self.relax.data.select_sim[self.run][sim_index] = 0
 
         # Residue unselect.
         else:
@@ -5008,7 +5010,7 @@ class Model_free(Common_functions):
 
                     # Selected simulation.
                     if self.param_set == 'diff' or self.param_set == 'all':
-                        select_sim = self.relax.data.select_sim[i]
+                        select_sim = self.relax.data.select_sim[self.run][i]
                     else:
                         select_sim = data.select_sim[i]
 
