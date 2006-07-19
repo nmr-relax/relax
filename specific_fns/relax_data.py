@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,9 @@ class Rx_data:
         """Class containing functions for relaxation data."""
 
         self.relax = relax
+
+        # Global data flag (default to residue specific data).
+        self.global_flag = 0
 
 
     def add_residue(self, run=None, res_index=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=0):
@@ -427,6 +430,9 @@ class Rx_data:
         for i in xrange(len(self.relax.data.res[self.run])):
             # Remap the data structure 'self.relax.data.res[self.run][i]'.
             data = self.relax.data.res[self.run][i]
+
+            # Global data flag.
+            self.global_flag = 0
 
             # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
             index = self.find_index(data)
