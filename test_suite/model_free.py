@@ -213,6 +213,7 @@ class Mf:
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(self.run, (1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
         self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(self.run, model='m4')
