@@ -55,8 +55,8 @@ class Model_free(Common_functions):
 
         # Loop over the model-free parameters.
         for j in xrange(len(data.params)):
-            # tm.
-            if data.params[j] == 'tm' and data.tm == None:
+            # Local tm.
+            if data.params[j] == 'local_tm' and data.local_tm == None:
                 return data.params[j]
 
             # S2.
@@ -205,14 +205,14 @@ class Model_free(Common_functions):
 
                 # Loop over the model-free parameters.
                 for j in xrange(len(self.relax.data.res[self.run][i].params)):
-                    # tm.
-                    if self.relax.data.res[self.run][i].params[j] == 'tm':
-                        if self.relax.data.res[self.run][i].tm == None:
+                    # local tm.
+                    if self.relax.data.res[self.run][i].params[j] == 'local_tm':
+                        if self.relax.data.res[self.run][i].local_tm == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].tm_sim[sim_index])
+                            param_vector.append(self.relax.data.res[self.run][i].local_tm_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].tm)
+                            param_vector.append(self.relax.data.res[self.run][i].local_tm)
 
                     # S2.
                     elif self.relax.data.res[self.run][i].params[j] == 'S2':
@@ -368,8 +368,8 @@ class Model_free(Common_functions):
 
                 # Loop over the model-free parameters.
                 for k in xrange(len(self.relax.data.res[self.run][j].params)):
-                    # tm, te, tf, and ts (must all be the same for diagonal scaling!).
-                    if search('^t', self.relax.data.res[self.run][j].params[k]):
+                    # Local tm, te, tf, and ts (must all be the same for diagonal scaling!).
+                    if self.relax.data.res[self.run][j].params[k] == 'local_tm' or search('^t', self.relax.data.res[self.run][j].params[k]):
                         self.scaling_matrix[i, i] = ti_scaling
 
                     # Rex.
@@ -517,7 +517,7 @@ class Model_free(Common_functions):
 
             # Package the diffusion tensor parameters.
             if self.param_set == 'local_tm':
-                diff_params = [self.relax.data.res[self.run][i].tm]
+                diff_params = [self.relax.data.res[self.run][i].local_tm]
                 diff_type = 'sphere'
             else:
                 # Alias.
@@ -792,7 +792,7 @@ class Model_free(Common_functions):
                           's2',
                           's2f',
                           's2s',
-                          'tm',
+                          'local_tm',
                           'te',
                           'tf',
                           'ts',
@@ -833,7 +833,7 @@ class Model_free(Common_functions):
 
         s2s:  S2s.
 
-        tm:  tm.
+        local_tm:  local tm.
 
         te:  te.
 
@@ -874,7 +874,7 @@ class Model_free(Common_functions):
             names.append('s2')
             names.append('s2f')
             names.append('s2s')
-            names.append('tm')
+            names.append('local_tm')
             names.append('te')
             names.append('tf')
             names.append('ts')
@@ -904,7 +904,7 @@ class Model_free(Common_functions):
         | Data type                             | Object name        | Value                  |
         |_______________________________________|____________________|________________________|
         |                                       |                    |                        |
-        | Local tm                              | 'tm'               | 10 * 1e-9              |
+        | Local tm                              | 'local_tm'         | 10 * 1e-9              |
         |                                       |                    |                        |
         | Order parameters S2, S2f, and S2s     | 's2', 's2f', 's2s' | 0.8                    |
         |                                       |                    |                        |
@@ -923,8 +923,8 @@ class Model_free(Common_functions):
 
         """
 
-        # tm.
-        if param == 'tm':
+        # Local tm.
+        if param == 'local_tm':
             return 10.0 * 1e-9
 
         # {S2, S2f, S2s}.
@@ -1019,11 +1019,11 @@ class Model_free(Common_functions):
                 continue
 
             # Local tm.
-            if local_tm == 0 and 'tm' in self.relax.data.res[self.run][i].params:
+            if local_tm == 0 and 'local_tm' in self.relax.data.res[self.run][i].params:
                 local_tm = 1
 
             # Inconsistencies.
-            elif local_tm == 1 and not 'tm' in self.relax.data.res[self.run][i].params:
+            elif local_tm == 1 and not 'local_tm' in self.relax.data.res[self.run][i].params:
                 raise RelaxError, "All residues must either have a local tm parameter or not."
 
         # Check if any model-free parameters are allowed to vary.
@@ -1162,12 +1162,12 @@ class Model_free(Common_functions):
 
                 # Loop over the model-free parameters.
                 for j in xrange(len(data.params)):
-                    # tm.
-                    if data.params[j] == 'tm':
+                    # Local tm.
+                    if data.params[j] == 'local_tm':
                         if sim_index == None:
-                            data.tm = self.param_vector[param_index]
+                            data.local_tm = self.param_vector[param_index]
                         else:
-                            data.tm_sim[sim_index] = self.param_vector[param_index]
+                            data.local_tm_sim[sim_index] = self.param_vector[param_index]
 
                     # S2.
                     elif data.params[j] == 'S2':
@@ -1406,12 +1406,12 @@ class Model_free(Common_functions):
 
         # Get the tm value.
         if self.param_set == 'local_tm':
-            tm = self.relax.data.res[run][i].tm
+            tm = self.relax.data.res[run][i].local_tm
         else:
-            tm = self.relax.data.diff[run].tm
+            tm = self.relax.data.diff[run].local_tm
 
         # Local tm.
-        if name == 'tm' and value >= c1:
+        if name == 'local_tm' and value >= c1:
             return 1
 
         # Internal correlation times.
@@ -1585,7 +1585,7 @@ class Model_free(Common_functions):
                 # Loop over the model-free parameters.
                 for j in xrange(len(self.relax.data.res[self.run][i].params)):
                     # Local tm.
-                    if self.relax.data.res[self.run][i].params[j] == 'tm':
+                    if self.relax.data.res[self.run][i].params[j] == 'local_tm':
                         min_options.append([inc[m], 1.0 * 1e-9, 12.0 * 1e-9])
 
                     # {S2, S2f, S2s}.
@@ -1853,7 +1853,7 @@ class Model_free(Common_functions):
                 # Loop over the model-free parameters.
                 for l in xrange(len(self.relax.data.res[self.run][k].params)):
                     # Local tm.
-                    if self.relax.data.res[self.run][k].params[l] == 'tm':
+                    if self.relax.data.res[self.run][k].params[l] == 'local_tm':
                         if upper_time_limit:
                             # 0 <= tm <= 200 ns.
                             A.append(zero_array * 0.0)
@@ -1973,8 +1973,8 @@ class Model_free(Common_functions):
         if search('^s2', param):
             return [0, 1]
 
-        # {tm, te, tf, ts}.
-        elif search('^t', param):
+        # {local tm, te, tf, ts}.
+        elif search('^t', param) or param == 'local_tm':
             return [0, 1e-8]
 
         # Rex.
@@ -2308,7 +2308,7 @@ class Model_free(Common_functions):
                     diff_params = [data.tm, data.Da, data.Dr, data.alpha, data.beta, data.gamma]
             elif min_algor == 'back_calc' and self.param_set == 'local_tm':
                 # Spherical diffusion.
-                diff_params = [self.relax.data.res[self.run][index].tm]
+                diff_params = [self.relax.data.res[self.run][index].local_tm]
 
 
 
@@ -2463,9 +2463,9 @@ class Model_free(Common_functions):
     def model_setup(self, run=None, model=None, equation=None, params=None, res_num=None):
         """Function for updating various data structures depending on the model selected."""
 
-        # Test that no diffusion tensor exists for the run if tm is a parameter in the model.
+        # Test that no diffusion tensor exists for the run if local tm is a parameter in the model.
         for param in params:
-            if param == 'tm' and self.relax.data.diff.has_key(run):
+            if param == 'local_tm' and self.relax.data.diff.has_key(run):
                 raise RelaxTensorError, run
 
         # Loop over the sequence.
@@ -2966,9 +2966,9 @@ class Model_free(Common_functions):
 
             # Local tm.
             try:
-                data.tm = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('tm')
+                data.local_tm = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('local_tm')
             except ValueError:
-                data.tm = None
+                data.local_tm = None
 
             # te.
             try:
@@ -3052,9 +3052,9 @@ class Model_free(Common_functions):
 
             # Local tm.
             try:
-                data.tm_err = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('tm')
+                data.local_tm_err = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('local_tm')
             except ValueError:
-                data.tm_err = None
+                data.local_tm_err = None
 
             # te.
             try:
@@ -3144,9 +3144,9 @@ class Model_free(Common_functions):
 
             # Local tm.
             try:
-                data.tm_sim.append(float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('tm'))
+                data.local_tm_sim.append(float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('local_tm'))
             except ValueError:
-                data.tm_sim.append(None)
+                data.local_tm_sim.append(None)
 
             # te.
             try:
@@ -3497,18 +3497,18 @@ class Model_free(Common_functions):
                 continue
 
             # Test if a local tm parameter exists.
-            if not hasattr(data, 'params') or not 'tm' in data.params:
+            if not hasattr(data, 'params') or not 'local_tm' in data.params:
                 continue
 
             # Remove tm.
-            data.params.remove('tm')
+            data.params.remove('local_tm')
 
             # Model name.
             if match('^tm', data.model):
                 data.model = data.model[1:]
 
-            # Set the tm value to None.
-            data.tm = None
+            # Set the local tm value to None.
+            data.local_tm = None
 
             # Set all the minimisation details to None.
             data.chi2 = None
@@ -3538,7 +3538,7 @@ class Model_free(Common_functions):
         object_name = self.return_data_name(param)
 
         # tm (nanoseconds).
-        if object_name == 'tm':
+        if object_name == 'tm' or object_name == 'local_tm':
             return 1e-9
 
         # te, tf, and ts (picoseconds).
@@ -3572,7 +3572,7 @@ class Model_free(Common_functions):
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | Local tm               | 'tm'         | '^tm$' or 'local_tm'                             |
+        | Local tm               | 'local_tm'   | '[Ll]ocal[ -_]tm'                                |
         |                        |              |                                                  |
         | Order parameter S2     | 's2'         | '^[Ss]2$'                                        |
         |                        |              |                                                  |
@@ -3596,8 +3596,8 @@ class Model_free(Common_functions):
         """
 
         # Local tm.
-        if search('^tm$', name) or search('local_tm', name):
-            return 'tm'
+        if search('[Ll]ocal[ -_]tm', name):
+            return 'local_tm'
 
         # Order parameter S2.
         if search('^[Ss]2$', name):
@@ -3643,7 +3643,7 @@ class Model_free(Common_functions):
         object_name = self.return_data_name(param)
 
         # Local tm.
-        if object_name == 'tm':
+        if object_name == 'tm' or object_name == 'local_tm':
             return '\\xt\\f{}\\sm'
 
         # Order parameter S2.
@@ -3695,7 +3695,7 @@ class Model_free(Common_functions):
         object_name = self.return_data_name(param)
 
         # tm (nanoseconds).
-        if object_name == 'tm':
+        if object_name == 'tm' or object_name == 'local_tm':
             return 'ns'
 
         # te, tf, and ts (picoseconds).
@@ -3873,130 +3873,130 @@ class Model_free(Common_functions):
         # Block 1.
         elif model == 'tm0':
             equation = 'mf_orig'
-            params = ['tm']
+            params = ['local_tm']
         elif model == 'tm1':
             equation = 'mf_orig'
-            params = ['tm', 'S2']
+            params = ['local_tm', 'S2']
         elif model == 'tm2':
             equation = 'mf_orig'
-            params = ['tm', 'S2', 'te']
+            params = ['local_tm', 'S2', 'te']
         elif model == 'tm3':
             equation = 'mf_orig'
-            params = ['tm', 'S2', 'Rex']
+            params = ['local_tm', 'S2', 'Rex']
         elif model == 'tm4':
             equation = 'mf_orig'
-            params = ['tm', 'S2', 'te', 'Rex']
+            params = ['local_tm', 'S2', 'te', 'Rex']
         elif model == 'tm5':
             equation = 'mf_ext'
-            params = ['tm', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 'S2f', 'S2', 'ts']
         elif model == 'tm6':
             equation = 'mf_ext'
-            params = ['tm', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm7':
             equation = 'mf_ext'
-            params = ['tm', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm8':
             equation = 'mf_ext'
-            params = ['tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm9':
             equation = 'mf_orig'
-            params = ['tm', 'Rex']
+            params = ['local_tm', 'Rex']
 
         # Block 2.
         elif model == 'tm10':
             equation = 'mf_orig'
-            params = ['tm', 'CSA']
+            params = ['local_tm', 'CSA']
         elif model == 'tm11':
             equation = 'mf_orig'
-            params = ['tm', 'CSA', 'S2']
+            params = ['local_tm', 'CSA', 'S2']
         elif model == 'tm12':
             equation = 'mf_orig'
-            params = ['tm', 'CSA', 'S2', 'te']
+            params = ['local_tm', 'CSA', 'S2', 'te']
         elif model == 'tm13':
             equation = 'mf_orig'
-            params = ['tm', 'CSA', 'S2', 'Rex']
+            params = ['local_tm', 'CSA', 'S2', 'Rex']
         elif model == 'tm14':
             equation = 'mf_orig'
-            params = ['tm', 'CSA', 'S2', 'te', 'Rex']
+            params = ['local_tm', 'CSA', 'S2', 'te', 'Rex']
         elif model == 'tm15':
             equation = 'mf_ext'
-            params = ['tm', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts']
         elif model == 'tm16':
             equation = 'mf_ext'
-            params = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm17':
             equation = 'mf_ext'
-            params = ['tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm18':
             equation = 'mf_ext'
-            params = ['tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm19':
             equation = 'mf_orig'
-            params = ['tm', 'CSA', 'Rex']
+            params = ['local_tm', 'CSA', 'Rex']
 
         # Block 3.
         elif model == 'tm20':
             equation = 'mf_orig'
-            params = ['tm', 'r']
+            params = ['local_tm', 'r']
         elif model == 'tm21':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'S2']
+            params = ['local_tm', 'r', 'S2']
         elif model == 'tm22':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'S2', 'te']
+            params = ['local_tm', 'r', 'S2', 'te']
         elif model == 'tm23':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'S2', 'Rex']
+            params = ['local_tm', 'r', 'S2', 'Rex']
         elif model == 'tm24':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'S2', 'te', 'Rex']
+            params = ['local_tm', 'r', 'S2', 'te', 'Rex']
         elif model == 'tm25':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 'r', 'S2f', 'S2', 'ts']
         elif model == 'tm26':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm27':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm28':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm29':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'Rex']
+            params = ['local_tm', 'r', 'Rex']
 
         # Block 4.
         elif model == 'tm30':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'CSA']
+            params = ['local_tm', 'r', 'CSA']
         elif model == 'tm31':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'CSA', 'S2']
+            params = ['local_tm', 'r', 'CSA', 'S2']
         elif model == 'tm32':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'CSA', 'S2', 'te']
+            params = ['local_tm', 'r', 'CSA', 'S2', 'te']
         elif model == 'tm33':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'CSA', 'S2', 'Rex']
+            params = ['local_tm', 'r', 'CSA', 'S2', 'Rex']
         elif model == 'tm34':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'CSA', 'S2', 'te', 'Rex']
+            params = ['local_tm', 'r', 'CSA', 'S2', 'te', 'Rex']
         elif model == 'tm35':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
         elif model == 'tm36':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
         elif model == 'tm37':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
         elif model == 'tm38':
             equation = 'mf_ext'
-            params = ['tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
         elif model == 'tm39':
             equation = 'mf_orig'
-            params = ['tm', 'r', 'CSA', 'Rex']
+            params = ['local_tm', 'r', 'CSA', 'Rex']
 
         # Invalid model.
         else:
@@ -4641,7 +4641,7 @@ class Model_free(Common_functions):
                 ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(' + self.return_units('tm') + ')', te='te_(' + self.return_units('te') + ')', tf='tf_(' + self.return_units('tf') + ')', ts='ts_(' + self.return_units('ts') + ')', rex='Rex_(' + replace(self.return_units('rex'), ' ', '_') + ')', r='Bond_length_(' + self.return_units('r') + ')', csa='CSA_(' + self.return_units('csa') + ')', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(' + self.return_units('local_tm') + ')', te='te_(' + self.return_units('te') + ')', tf='tf_(' + self.return_units('tf') + ')', ts='ts_(' + self.return_units('ts') + ')', rex='Rex_(' + replace(self.return_units('rex'), ' ', '_') + ')', r='Bond_length_(' + self.return_units('r') + ')', csa='CSA_(' + self.return_units('csa') + ')', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -4732,10 +4732,10 @@ class Model_free(Common_functions):
             if hasattr(data, 's2s') and data.s2s != None:
                 s2s = data.s2s / self.return_conversion_factor('s2s')
 
-            # tm.
+            # Local tm.
             local_tm = None
-            if hasattr(data, 'tm') and data.tm != None:
-                local_tm = data.tm / self.return_conversion_factor('tm')
+            if hasattr(data, 'local_tm') and data.local_tm != None:
+                local_tm = data.local_tm / self.return_conversion_factor('local_tm')
 
             # te.
             te = None
@@ -4904,10 +4904,10 @@ class Model_free(Common_functions):
                 if hasattr(data, 's2s_err') and data.s2s_err != None:
                     s2s = data.s2s_err / self.return_conversion_factor('s2s')
 
-                # tm.
+                # Local tm.
                 local_tm = None
-                if hasattr(data, 'tm_err') and data.tm_err != None:
-                    local_tm = data.tm_err / self.return_conversion_factor('tm')
+                if hasattr(data, 'local_tm_err') and data.local_tm_err != None:
+                    local_tm = data.local_tm_err / self.return_conversion_factor('local_tm')
 
                 # te.
                 te = None
@@ -5037,10 +5037,10 @@ class Model_free(Common_functions):
                     if hasattr(data, 's2s_sim') and data.s2s_sim[i] != None:
                         s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
 
-                    # tm.
+                    # Local tm.
                     local_tm = None
-                    if hasattr(data, 'tm_sim') and data.tm_sim[i] != None:
-                        local_tm = data.tm_sim[i] / self.return_conversion_factor('tm')
+                    if hasattr(data, 'local_tm_sim') and data.local_tm_sim[i] != None:
+                        local_tm = data.local_tm_sim[i] / self.return_conversion_factor('local_tm')
 
                     # te.
                     te = None

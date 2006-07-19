@@ -143,7 +143,7 @@ class Test_suite:
         self.mf_test_array.append(Mf(self.relax, 'read results'))
         self.mf_test_array.append(Mf(self.relax, 'opendx {S2, te, Rex} map'))
         self.mf_test_array.append(Mf(self.relax, 'opendx {theta, phi, Da} map'))
-        self.mf_test_array.append(Mf(self.relax, 'opendx {tm, S2, te} map'))
+        self.mf_test_array.append(Mf(self.relax, 'opendx {local_tm, S2, te} map'))
 
         # Execute the tests.
         self.exec_tests(self.mf_test_array)

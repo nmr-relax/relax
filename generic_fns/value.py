@@ -390,7 +390,8 @@ class Value:
         self.res_values = []
 
         # Separate the residue specific parameters from the diffusion tensor parameters.
-        if self.param and self.function_type == 'mf':
+        #if self.param and self.function_type == 'mf':
+        if self.param:
             # Single parameter.
             if type(self.param) == str:
                 # Get the diffusion tensor parameter name.
