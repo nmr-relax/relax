@@ -199,6 +199,9 @@ class Mf:
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
+        # Read the PDF file.
+        self.relax.interpreter._PDB.pdb(run, file='pdb', dir=path, model=1, heteronuc='N', proton='H', load_seq=0)
+
         # Read the relaxation data.
         self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
         self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)

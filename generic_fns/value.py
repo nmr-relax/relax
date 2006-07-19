@@ -390,7 +390,6 @@ class Value:
         self.res_values = []
 
         # Separate the residue specific parameters from the diffusion tensor parameters.
-        #if self.param and self.function_type == 'mf':
         if self.param:
             # Single parameter.
             if type(self.param) == str:
@@ -398,7 +397,7 @@ class Value:
                 diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.param)
 
                 # The parameter is a diffusion parameter.
-                if self.res_num == None and self.res_name == None and diff_name:
+                if diff_name:
                     # List of values.
                     if type(self.value) == list or type(self.value) == ArrayType:
                         # Parameter name.
@@ -441,14 +440,13 @@ class Value:
 
             # Multiple parameters.
             elif type(self.param) == list:
-                # Catch the local tm parameter (identified when
                 # Loop over all parameters.
                 for i in xrange(len(self.param)):
                     # Get the diffusion tensor parameter name.
                     diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.param[i])
 
                     # The parameter is a diffusion parameter.
-                    if self.res_num == None and self.res_name == None and diff_name:
+                    if diff_name:
                         # Parameter name.
                         self.diff_params.append(diff_name)
 
