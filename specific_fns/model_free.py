@@ -2547,6 +2547,10 @@ class Model_free(Common_functions):
                 if not self.relax.data.res[self.run][i].select:
                     continue
 
+                # Skip residues with no relaxation data.
+                if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not len(self.relax.data.res[self.run][i].relax_data):
+                    continue
+
                 # Count the number of parameters.
                 self.param_vector = self.assemble_param_vector(index=i)
                 k = k + len(self.param_vector)
@@ -2568,6 +2572,10 @@ class Model_free(Common_functions):
             for i in xrange(len(self.relax.data.res[self.run])):
                 # Skip unselected residues.
                 if not self.relax.data.res[self.run][i].select:
+                    continue
+
+                # Skip residues with no relaxation data.
+                if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not len(self.relax.data.res[self.run][i].relax_data):
                     continue
 
                 n = n + len(self.relax.data.res[self.run][i].relax_data)
