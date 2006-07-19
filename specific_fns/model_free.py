@@ -1408,7 +1408,7 @@ class Model_free(Common_functions):
         if self.param_set == 'local_tm':
             tm = self.relax.data.res[run][i].local_tm
         else:
-            tm = self.relax.data.diff[run].local_tm
+            tm = self.relax.data.diff[run].tm
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
