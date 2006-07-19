@@ -543,9 +543,15 @@ class Model_free(Common_functions):
 
             # Chi-squared calculation.
             try:
-                self.relax.data.res[self.run][i].chi2 = self.mf.func(self.param_vector)
+                chi2 = self.mf.func(self.param_vector)
             except OverflowError:
-                self.relax.data.res[self.run][i].chi2 = 1e200
+                chi2 = 1e200
+
+            # Global chi-squared value.
+            if self.param_set == 'all' or self.param_set == 'diff':
+                self.relax.data.chi2[self.run] = self.relax.data.chi2[self.run] + chi2
+            else:
+                self.relax.data.res[self.run][i].chi2 = chi2
 
 
     def copy(self, run1=None, run2=None, sim=None):
@@ -2487,7 +2493,7 @@ class Model_free(Common_functions):
             self.relax.data.res[run][i].params = params
 
 
-    def model_statistics(self, run=None, instance=None, min_instances=None, num_instances=None):
+    def model_statistics(self, run=None, instance=None, min_instances=None):
         """Function for returning k, n, and chi2.
 
         k - number of parameters.
@@ -2497,11 +2503,6 @@ class Model_free(Common_functions):
 
         # Arguments.
         self.run = run
-
-        # All residues.
-        combine = 0
-        if min_instances == 1 and min_instances != num_instances:
-            combine = 1
 
         # Determine if local or global statistics will be returned.
         global_stats = 1
@@ -2513,9 +2514,8 @@ class Model_free(Common_functions):
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
-        # Sequence specific data.
         # Statistics for a single residue.
-        if not global_stats and not combine:
+        if not global_stats:
             # Skip unselected residues.
             if not self.relax.data.res[self.run][instance].select:
                 return None, None, None
@@ -2534,34 +2534,7 @@ class Model_free(Common_functions):
             # The chi2 value.
             chi2 = self.relax.data.res[self.run][instance].chi2
 
-        # Statistics for all residues combined.
-        elif not global_stats and combine:
-            # Initialise.
-            k = 0
-            n = 0
-            chi2 = 0
-
-            # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
-                    continue
-
-                # Skip residues with no relaxation data.
-                if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not len(self.relax.data.res[self.run][i].relax_data):
-                    continue
-
-                # Count the number of parameters.
-                self.param_vector = self.assemble_param_vector(index=i)
-                k = k + len(self.param_vector)
-
-                # Count the number of data points.
-                n = n + len(self.relax.data.res[self.run][i].relax_data)
-
-                # The chi2 value.
-                chi2 = chi2 + self.relax.data.res[self.run][i].chi2
-
-        # Other data.
+        # Global stats.
         elif global_stats:
             # Count the number of parameters.
             self.param_vector = self.assemble_param_vector()
