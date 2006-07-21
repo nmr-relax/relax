@@ -33,7 +33,15 @@ except ImportError, message:
 # Gzip compression module.
 from gzip import GzipFile
 
-from os import F_OK, access, devnull, makedirs, remove, stat
+# Devnull.
+try:
+    from os import devnull
+    __builtin__.devnull_import = 1
+except ImportError, message:
+    __builtin__.devnull_import = 0
+    __builtin__.devnull_import_message = message.args[0]
+
+from os import F_OK, access, makedirs, remove, stat
 from os.path import expanduser
 from re import match, search
 from string import split
@@ -247,6 +255,10 @@ class IO:
 
         # The null device.
         if search('devnull', file_name):
+            # Devnull could not be imported!
+            if not devnull_import:
+                raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
+
             # Print out.
             if print_flag:
                 print "Opening the null device file for writing."
