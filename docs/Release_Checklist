@@ -37,15 +37,15 @@ $ rsync --delete -av --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
-* Modify the http://nmr-relax.com download page to point to the newest version of relax.
-
-
-
-* Create the HTML version of the manual with the command:
+* Modify the http://nmr-relax.com download page to point to the newest version of relax and create the HTML version of the manual with the command:
 
 $ scons manual_html
 
-Replace the old manual with the new in the CVS repository.
+Replace the old manual with the new in the CVS homepage repository and commit both the download page and new manual.
+
+
+
+* Add the version number to the bug tracker field 'Release' at https://gna.org/bugs/admin/field_values.php?group=relax.
 
 
 
