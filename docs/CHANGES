@@ -1,3 +1,19 @@
+Version 1.2.6
+(21 July 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.6
+
+    Features:
+        N/A
+
+    Changes:
+        N/A
+
+    Bugfixes:
+        * Added the missing PDB file used by one of the OpenDX tests of the relax test-suite. (bug #6404)
+        * Fixed the fatal devnull import failure for Python versions < 2.4. (bug #6403)
+
+
+
 Version 1.2.5
 (20 July 2006, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.5
