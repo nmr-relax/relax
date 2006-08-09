@@ -2376,11 +2376,11 @@ class Model_free(Common_functions):
 
             # Catch infinite chi-squared values.
             if self.func == float('inf'):
-                raise RelaxInfError
+                raise RelaxInfError, 'chi-squared'
 
             # Catch chi-squared values of NaN.
             if isnan(self.func):
-                raise RelaxNaNError
+                raise RelaxNaNError, 'chi-squared'
 
             # Scaling.
             if scaling:
