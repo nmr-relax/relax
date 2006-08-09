@@ -2374,6 +2374,14 @@ class Model_free(Common_functions):
             self.g_count = self.g_count + gc
             self.h_count = self.h_count + hc
 
+            # Catch infinite chi-squared values.
+            if self.func == float('inf'):
+                raise RelaxInfError
+
+            # Catch chi-squared values of NaN.
+            if isnan(self.func):
+                raise RelaxNaNError
+
             # Scaling.
             if scaling:
                 self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)

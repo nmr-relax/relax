@@ -156,6 +156,10 @@ class PDB:
                     print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
                 return
 
+        # Test that the nuclei have been correctly set.
+        if self.heteronuc == self.proton:
+            raise RelaxError, "The proton and heteronucleus are set to the same atom."
+
 
         # Data creation.
         ################
@@ -256,9 +260,18 @@ class PDB:
                     # Get the heteronucleus position.
                     posX = pdb_res.atoms[self.heteronuc].position.array
 
-                    # Calculate the normalised vector.
+                    # Calculate the XH bond vector.
                     vector = posH - posX
-                    self.relax.data.res[self.run][j].xh_vect.append(vector / sqrt(dot(vector, vector)))
+
+                    # Normalisation factor.
+                    norm_factor = sqrt(dot(vector, vector))
+
+                    # Test for zero length.
+                    if norm_factor == 0.0:
+                        raise RelaxError, "The XH bond vector for residue " + `self.relax.data.res[self.run][j].num` + " is of zero length."
+
+                    # Calculate the normalised vector.
+                    self.relax.data.res[self.run][j].xh_vect.append(vector / norm_factor)
 
         # Print out.
         if self.print_flag:

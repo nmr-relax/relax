@@ -462,3 +462,17 @@ class RelaxErrors:
     class RelaxInvalidColourError(BaseError):
         def __init__(self, colour):
             self.text = "The colour " + `colour` + " is invalid."
+
+
+    # Value errors.
+    ###############
+
+    # Infinity.
+    class RelaxInfError(BaseError):
+        def __init__(self, name):
+            self.text = "The invalid " + name + " floating point value of infinity has occurred."
+
+    # NaN (Not a Number).
+    class RelaxNaNError(BaseError):
+        def __init__(self, name):
+            self.text = "The invalid " + name + " floating point value of NaN (Not a Number) has occurred."
