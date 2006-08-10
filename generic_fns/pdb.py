@@ -268,8 +268,10 @@ class PDB:
 
                     # Test for zero length.
                     if norm_factor == 0.0:
-                        if self.print_flag:
-                            print "The XH bond vector for residue " + `self.relax.data.res[self.run][j].num` + " is of zero length."
+                        # Warning.
+                        warn(RelaxZeroVector(self.relax.data.res[self.run][j].num))
+
+                        # Set the vector to None.
                         self.relax.data.res[self.run][j].xh_vect.append(None)
 
                     # Calculate the normalised vector.
