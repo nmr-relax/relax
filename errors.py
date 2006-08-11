@@ -21,9 +21,88 @@
 ###############################################################################
 
 import __builtin__
-from re import match
+from re import match, search
 from types import ClassType
 import time
+import sys
+
+
+class RelaxErrorSystem:
+    def __init__(self, relax, UI_mode=None):
+        """The relax error and warning system."""
+
+        # Arguments.
+        self.relax = relax
+        self.UI_mode = UI_mode
+
+        # Instant exiting modes (i.e. no error system is necessary).
+        if UI_mode == 'version':
+            return
+
+        # Loop over the errors, set their error handling functions, and pack them into __builtin__.
+        self.initialise_errors()
+
+
+    def error(self, message):
+        """Default error function - traceback, error message, then sys.exit()."""
+
+        # Write the traceback to stderr.
+
+        # Write the error message to stderr.
+        sys.stderr.write("RelaxError: " + message + "\n")
+
+        # Hard exit!
+        sys.exit()
+
+
+    def initialise_errors(self):
+        """Set the error handling functions and place the errors into __builtin__."""
+
+        # Loop over all objects in 'self'.
+        for name in dir(self):
+            # Get the object.
+            object = getattr(self, name)
+
+            # Skip over all non error/warning class objects.
+            if type(object) != ClassType or not search('^Relax', name):
+                continue
+
+            # Add the top level relax class.
+            setattr(object, 'relax', self.relax)
+
+            # Set up the RelaxError handling functions.
+            if search('Error$', name):
+                object.exception = self.error
+
+            # Set up the RelaxWarning handling functions.
+            if search('Warning$', name):
+                object.exception = self.warning
+
+            # Place the errors into __builtin__
+            __builtin__.__setattr__(name, object)
+
+            # Tuple of all the errors.
+            if hasattr(__builtin__, 'AllRelaxErrors'):
+                __builtin__.AllRelaxErrors = __builtin__.AllRelaxErrors, object
+            else:
+                __builtin__.AllRelaxErrors = object,
+
+
+
+    class RelaxBadError:
+        def __init__(self, text):
+            """This error is really BAD!!!"""
+
+            # Format the message.
+            message = text + " - This error is very, very bad."
+
+            # Save the program state.
+            if Debug:
+                self.save_state()
+
+            # Run the error handling code.
+            self.exception(message)
+
 
 
 class RelaxErrors:
@@ -58,6 +137,7 @@ class RelaxErrors:
     class BaseError(Exception):
         def __str__(self):
             return ("RelaxError: " + self.text + "\n")
+
         def save_state(self):
             now = time.localtime()
             file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], 
