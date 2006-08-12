@@ -22,6 +22,7 @@
 
 import __builtin__
 from re import match, search
+from traceback import extract_stack, format_list
 from types import ClassType
 import time
 import sys
@@ -43,16 +44,37 @@ class RelaxErrorSystem:
         self.initialise_errors()
 
 
-    def error(self, message):
-        """Default error function - traceback, error message, then sys.exit()."""
+    def error(self, message, traceback=0, save=0):
+        """Default error function - traceback (Debug), error message, then sys.exit()."""
+
+        # Save the program state.
+        if save:
+            self.save_state()
 
         # Write the traceback to stderr.
+        if traceback and not self.UI_mode == 'prompt':
+            self.traceback()
 
         # Write the error message to stderr.
         sys.stderr.write("RelaxError: " + message + "\n")
 
         # Hard exit!
         sys.exit()
+
+
+    def error_no_exit(self, message, traceback=0, save=0):
+        """Error function without exit - print traceback (Debug) and error message but don't exit."""
+
+        # Save the program state.
+        if save:
+            self.save_state()
+
+        # Write the traceback to stderr.
+        if traceback and not self.UI_mode == 'prompt':
+            self.traceback()
+
+        # Write the error message to stderr.
+        sys.stderr.write("RelaxError: " + message + "\n\n\n")
 
 
     def initialise_errors(self):
@@ -67,41 +89,159 @@ class RelaxErrorSystem:
             if type(object) != ClassType or not search('^Relax', name):
                 continue
 
-            # Add the top level relax class.
-            setattr(object, 'relax', self.relax)
+            # Instantiate the object.
+            instance = object()
+
+
+            # Place data structures and functions into the RelaxError and RelaxWarning instances.
+            #####################################################################################
+
+            # Place the relax data structure into the instance.
+            instance.relax = self.relax
+
+            # Place the save state function into the instance.
+            #instance.save_state = self.save_state
 
             # Set up the RelaxError handling functions.
             if search('Error$', name):
-                object.exception = self.error
+                # Default error.
+                instance.exception = self.error
+
+                # Don't exit the program in prompt mode when an error occurs.
+                if self.UI_mode == 'prompt':
+                    instance.exception = self.error_no_exit
 
             # Set up the RelaxWarning handling functions.
             if search('Warning$', name):
-                object.exception = self.warning
+                # Default warning.
+                instance.exception = self.warning
 
             # Place the errors into __builtin__
-            __builtin__.__setattr__(name, object)
+            __builtin__.__setattr__(name, instance)
 
             # Tuple of all the errors.
             if hasattr(__builtin__, 'AllRelaxErrors'):
-                __builtin__.AllRelaxErrors = __builtin__.AllRelaxErrors, object
+                __builtin__.AllRelaxErrors = __builtin__.AllRelaxErrors, instance
             else:
-                __builtin__.AllRelaxErrors = object,
+                __builtin__.AllRelaxErrors = instance,
 
 
+    def save_state(self):
+        """Function for saving the program state (self.relax.data) into a temporary file."""
+
+        # Get the current time.
+        now = time.localtime()
+
+        # Format the file name.
+        file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], now[2], now[1], now[3], now[4], now[5])
+
+        # Save the program state.
+        self.relax.interpreter._State.save(file_name)
+
+
+    def traceback(self):
+        """Function for formatting and printing out the traceback."""
+
+        # Get the stack.
+        stack = extract_stack()
+
+        # Initialise the trimmed stack and stack start flag.
+        trimmed_stack = []
+        start = 0
+
+        # Trim the stack (script mode):
+        if self.UI_mode == 'script':
+            for i in xrange(len(stack)):
+                # Find the 'interact_script()' function, the start of the scripting.
+                if stack[i][2] == 'interact_script':
+                    start = 1
+                    continue
+
+                # Not at the start of the script section of the stack.
+                if not start:
+                    continue
+
+                # Append the next item.
+                trimmed_stack.append(stack[i])
+
+                # Find the RelaxError and then stop.
+                if search('^Relax.*Error', stack[i][3]):
+                    break
+
+        # Trim the stack (default).
+        else:
+            for i in xrange(len(stack)):
+                # Append the next item.
+                trimmed_stack.append(stack[i])
+
+                # Find the RelaxError and then stop.
+                if search('^Relax.*Error', stack[i][3]):
+                    break
+
+        # Default formatting of the stack.
+        string_stack = format_list(trimmed_stack)
+
+        # Print out the formatted stack.
+        for i in xrange(len(string_stack)):
+            sys.stderr.write(string_stack[i])
+
+
+    def warning(self, message):
+        """Default warning function - just print the warning message."""
+
+        # Write the warning message to stderr.
+        sys.stderr.write("RelaxWarning: " + message + "\n")
+
+
+    def warning_pedantic(self, message, save=0):
+        """Pedantic warning function - print the warning message then exit."""
+
+        # Save the program state.
+        if save:
+            self.save_state()
+
+        # Write the warning message to stderr.
+        sys.stderr.write("RelaxWarning: " + message + "\n")
+
+        # Hard exit!
+        sys.exit()
+
+
+
+    ####################
+    # The RelaxErrors. #
+    ####################
 
     class RelaxBadError:
-        def __init__(self, text):
+        def __init__(self):
             """This error is really BAD!!!"""
+
+        def __call__(self, text):
 
             # Format the message.
             message = text + " - This error is very, very bad."
 
-            # Save the program state.
-            if Debug:
-                self.save_state()
+            # Run the error handling code.
+            self.exception(message, traceback=Debug, save=Debug)
+
+
+
+    ######################
+    # The RelaxWarnings. #
+    ######################
+
+    class RelaxBadWarning:
+        def __init__(self):
+            """This warning is really BAD!!!"""
+
+        def generate(self, text):
+            # Format the message.
+            message = text + " - This warning is very, very bad."
 
             # Run the error handling code.
             self.exception(message)
+
+
 
 
 
