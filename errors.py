@@ -58,8 +58,8 @@ class RelaxErrorSystem:
         # Write the error message to stderr.
         sys.stderr.write("RelaxError: " + message + "\n")
 
-        # Hard exit!
-        sys.exit()
+        # Hard exit (and return 1 to indicate failure)!
+        sys.exit(1)
 
 
     def error_no_exit(self, message, traceback=0, save=0):
@@ -203,8 +203,8 @@ class RelaxErrorSystem:
         # Write the warning message to stderr.
         sys.stderr.write("RelaxWarning: " + message + "\n")
 
-        # Hard exit!
-        sys.exit()
+        # Hard exit (and return 1 to indicate failure)!
+        sys.exit(1)
 
 
 
