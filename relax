@@ -66,7 +66,7 @@ except ImportError:
 # relax modules.
 from colour import Colour
 from data import Data
-from errors import RelaxErrorSystem, RelaxErrors
+from errors import RelaxErrors
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
@@ -127,9 +127,6 @@ class Relax:
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
-
-        # Set up the relax error system.
-        RelaxErrorSystem(self, UI_mode=mode)
 
         # Show the version number and exit.
         if mode == 'version':
