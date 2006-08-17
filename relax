@@ -41,6 +41,7 @@ import pstats
 from re import match
 from string import split, strip
 import sys
+from warnings import warn
 
 # Numeric.
 try:
@@ -66,7 +67,7 @@ except ImportError:
 # relax modules.
 from colour import Colour
 from data import Data
-from errors import RelaxErrors
+from errors import RelaxErrors, RelaxWarnings
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
@@ -92,11 +93,16 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Set up the program internal errors.
-        RelaxErrors(self)
+        # Set up the program internal errors and warnings.
+        #RelaxErrors()
+        #RelaxWarnings()
+        #__builtin__.warn = warn
 
         # Debugging flag (default is off).
         __builtin__.Debug = 0
+        
+        # Pedantic flag (default is off).
+        __builtin__.Pedantic = 0
 
         # Set the program introduction string to nothing.
         self.intro_string = None
@@ -127,7 +133,12 @@ class Relax:
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
-
+        
+        # Set up the program internal errors and warnings.
+        RelaxErrors()
+        RelaxWarnings()
+        __builtin__.warn = warn
+        
         # Show the version number and exit.
         if mode == 'version':
             print 'relax ' + self.version
@@ -199,6 +210,7 @@ class Relax:
         parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to sdtout and the file LOG_FILE', metavar='LOG_FILE')
+        parser.add_option('-p', '--pedantic', action='store_true', dest='pedantic', default=0, help='escalate all warnings to errors')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (this mode should not be invoked by a user)')
@@ -210,6 +222,10 @@ class Relax:
         # Debugging flag.
         if options.debug:
             __builtin__.Debug = 1
+        
+        # Pedantic flag.
+        if options.pedantic:
+            __builtin__.Pedantic = 1
 
         # Logging.
         if options.log:

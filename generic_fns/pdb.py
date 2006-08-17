@@ -153,7 +153,7 @@ class PDB:
                 raise RelaxFileError, ('PDB', self.file_path)
             else:
                 if self.print_flag:
-                    print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
+                    warn(RelaxNoPDBFileWarning(self.file_path))
                 return
 
 
@@ -239,13 +239,13 @@ class PDB:
                 # Test if the proton atom exists for residue i.
                 if not pdb_res.atoms.has_key(self.proton):
                     if self.print_flag:
-                        print "The proton atom " + `self.proton` + " could not be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                        warn(RelaxNoAtomWarning(self.proton, self.relax.data.res[self.run][j].num))
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Test if the heteronucleus atom exists for residue i.
                 elif not pdb_res.atoms.has_key(self.heteronuc):
                     if self.print_flag:
-                        print "The heteronucleus atom " + `self.heteronuc` + " could not be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                        warn(RelaxNoAtomWarning(self.heteronuc, self.relax.data.res[self.run][j].num))
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Calculate the vector.

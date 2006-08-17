@@ -597,4 +597,97 @@ class RelaxErrors:
             self.text = "The colour " + `colour` + " is invalid."
             if Debug:
                 self.save_state()
-                                            
+
+
+# Warning objects.
+##################
+
+class RelaxWarnings:
+    def __init__(self):
+        """Class for placing all the warnings below into __builtin__"""
+
+        # Loop over all objects in 'self'.
+        for name in dir(self):
+            # Get the object.
+            object = getattr(self, name)
+
+            # Skip over all non-warning class objects.
+            if type(object) != ClassType or not match('Relax', name):
+                continue
+
+            # Place the warnings into __builtin__
+            __builtin__.__setattr__(name, object)
+
+            # Tuple of all the warnings.
+            if hasattr(__builtin__, 'AllRelaxWarnings'):
+                __builtin__.AllRelaxWarnings = __builtin__.AllRelaxWarnings, object
+            else:
+                __builtin__.AllRelaxWarnings = object,
+
+        # Format warning messages.
+        def format(message, category, filename, lineno):
+            if issubclass(category, self.BaseWarning):
+                message = "RelaxWarning: %s\n\n" % message
+
+            if Debug:
+                tb = ""
+                for frame in inspect.stack()[4:]:
+                    file = frame[1]
+                    lineNo = frame[2]
+                    func = frame[3]
+                    tb_frame = '  File "%s", line %i, in %s\n' % (file, lineNo, func)
+                    try:
+                        context = frame[4][frame[5]]
+                    except TypeError:
+                        pass
+                    else:
+                        tb_frame = '%s    %s\n' % (tb_frame, context.strip())
+                    tb = tb_frame + tb
+                tb = "Traceback (most recent call last):\n%s" % tb
+                message = tb + message
+
+            return message
+
+        warnings.formatwarning = format
+
+        # Set warning filters.
+        if Pedantic:
+            warnings.filterwarnings('error', category=self.BaseWarning)
+        else:
+            warnings.filterwarnings('always', category=self.BaseWarning)
+
+
+    # Base class for all warnings.
+    ############################
+
+    class BaseWarning(Warning, RelaxErrors.BaseError):
+        def __str__(self):
+            return self.text
+
+
+    # Standard warnings.
+    ####################
+
+    class RelaxWarning(BaseWarning):
+        def __init__(self, text):
+            self.text = text
+
+
+    # Zero length vector.
+    #####################
+
+    class RelaxZeroVectorWarning(BaseWarning):
+        def __init__(self, res):
+            self.text = "The XH bond vector for residue " + `res` + " is of zero length."
+
+    # PDB warnings.
+    ###############
+
+    class RelaxNoAtomWarning(BaseWarning):
+        def __init__(self, atom, res):
+            self.text = "The atom %s could not be found for residue %i" % (atom, res)
+
+    class RelaxNoPDBFileWarning(BaseWarning):
+        def __init__(self, file):
+            self.text = "The PDB file %s cannot be found, no structures will be loaded." % file
+                                                                
