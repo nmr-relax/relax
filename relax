@@ -135,7 +135,7 @@ class Relax:
         mode, log_file, tee_file = self.arguments()
         
         # Set up the program internal errors and warnings.
-        RelaxErrors()
+        RelaxErrors(self)
         RelaxWarnings()
         __builtin__.warn = warn
         

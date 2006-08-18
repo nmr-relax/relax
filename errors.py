@@ -24,6 +24,8 @@ import __builtin__
 from re import match
 from types import ClassType
 import time
+import warnings
+import inspect
 
 
 class RelaxErrors:
