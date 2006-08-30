@@ -93,16 +93,16 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Set up the program internal errors and warnings.
-        #RelaxErrors()
-        #RelaxWarnings()
-        #__builtin__.warn = warn
-
         # Debugging flag (default is off).
         __builtin__.Debug = 0
         
         # Pedantic flag (default is off).
         __builtin__.Pedantic = 0
+
+        # Set up the program internal errors and warnings.
+        RelaxErrors(self)
+        RelaxWarnings()
+        __builtin__.warn = warn
 
         # Set the program introduction string to nothing.
         self.intro_string = None
@@ -133,11 +133,6 @@ class Relax:
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
-        
-        # Set up the program internal errors and warnings.
-        RelaxErrors(self)
-        RelaxWarnings()
-        __builtin__.warn = warn
         
         # Show the version number and exit.
         if mode == 'version':
