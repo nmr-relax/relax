@@ -604,6 +604,30 @@ class RelaxErrors:
 # Warning objects.
 ##################
 
+# Replacement for warnings.formatwarning to customise output format.
+def format(message, category, filename, lineno):
+    if issubclass(category, self.BaseWarning):
+        message = "RelaxWarning: %s\n\n" % message
+
+        if Debug:
+            tb = ""
+            for frame in inspect.stack()[4:]:
+                file = frame[1]
+                lineNo = frame[2]
+                func = frame[3]
+                tb_frame = '  File "%s", line %i, in %s\n' % (file, lineNo, func)
+                try:
+                    context = frame[4][frame[5]]
+                except TypeError:
+                    pass
+                else:
+                    tb_frame = '%s    %s\n' % (tb_frame, context.strip())
+                tb = tb_frame + tb
+            tb = "Traceback (most recent call last):\n%s" % tb
+            message = tb + message
+
+            return message
+
 class RelaxWarnings:
     def __init__(self):
         """Class for placing all the warnings below into __builtin__"""
@@ -627,36 +651,39 @@ class RelaxWarnings:
                 __builtin__.AllRelaxWarnings = object,
 
         # Format warning messages.
-        def format(message, category, filename, lineno):
-            if issubclass(category, self.BaseWarning):
-                message = "RelaxWarning: %s\n\n" % message
-
-            if Debug:
-                tb = ""
-                for frame in inspect.stack()[4:]:
-                    file = frame[1]
-                    lineNo = frame[2]
-                    func = frame[3]
-                    tb_frame = '  File "%s", line %i, in %s\n' % (file, lineNo, func)
-                    try:
-                        context = frame[4][frame[5]]
-                    except TypeError:
-                        pass
-                    else:
-                        tb_frame = '%s    %s\n' % (tb_frame, context.strip())
-                    tb = tb_frame + tb
-                tb = "Traceback (most recent call last):\n%s" % tb
-                message = tb + message
-
-            return message
-
-        warnings.formatwarning = format
+        warnings.formatwarning = self.format
 
         # Set warning filters.
         if Pedantic:
             warnings.filterwarnings('error', category=self.BaseWarning)
         else:
             warnings.filterwarnings('always', category=self.BaseWarning)
+
+    # Replacement for warnings.formatwarning to customise output format.
+    def format(self, message, category, filename, lineno):
+        if issubclass(category, self.BaseWarning):
+            message = "RelaxWarning: %s\n\n" % message
+        
+        # Print stack-trace in debug mode.
+        if Debug:
+            tb = ""
+            for frame in inspect.stack()[4:]:
+                file = frame[1]
+                lineNo = frame[2]
+                func = frame[3]
+                tb_frame = '  File "%s", line %i, in %s\n' % (file, lineNo, func)
+                try:
+                    context = frame[4][frame[5]]
+                except TypeError:
+                    pass
+                else:
+                    tb_frame = '%s    %s\n' % (tb_frame, context.strip())
+                tb = tb_frame + tb
+            tb = "Traceback (most recent call last):\n%s" % tb
+            message = tb + message
+
+        return message
+                                                                                                                                                                                                                                                                                                        
 
 
     # Base class for all warnings.
