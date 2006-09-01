@@ -28,13 +28,20 @@
 # Import statements.
 from glob import glob
 import platform
-from os import F_OK, access, chdir, getcwd, lstat, path, remove, rmdir, sep, symlink, system, walk
+from os import F_OK, access, chdir, getcwd, path, remove, rmdir, sep, system, walk
 from re import search
 from shutil import copytree, move
 import sys
 from tarfile import TarFile
 
 from version import version
+
+# UNIX only functions from the os module.
+try:
+    from os import lstat, symlink
+except ImportError:
+    pass
+
 
 
 class Main:
