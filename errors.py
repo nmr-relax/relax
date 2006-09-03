@@ -597,4 +597,21 @@ class RelaxErrors:
             self.text = "The colour " + `colour` + " is invalid."
             if Debug:
                 self.save_state()
-                                            
+
+
+    # Value errors.
+    ###############
+
+    # Infinity.
+    class RelaxInfError(BaseError):
+        def __init__(self, name):
+            self.text = "The invalid " + name + " floating point value of infinity has occurred."
+            if Debug:
+                self.save_state()
+
+    # NaN (Not a Number).
+    class RelaxNaNError(BaseError):
+        def __init__(self, name):
+            self.text = "The invalid " + name + " floating point value of NaN (Not a Number) has occurred."
+            if Debug:
+                self.save_state()
