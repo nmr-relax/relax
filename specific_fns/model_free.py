@@ -2375,11 +2375,11 @@ class Model_free(Common_functions):
             self.h_count = self.h_count + hc
 
             # Catch infinite chi-squared values.
-            if self.func == float('inf'):
+            if self.relax.float.isinf(self.func):
                 raise RelaxInfError, 'chi-squared'
 
             # Catch chi-squared values of NaN.
-            if isnan(self.func):
+            if self.relax.float.isnan(self.func):
                 raise RelaxNaNError, 'chi-squared'
 
             # Scaling.
