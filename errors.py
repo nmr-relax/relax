@@ -23,11 +23,7 @@
 import __builtin__
 from re import match
 from types import ClassType
-import warnings
 
-
-# Error objects.
-################
 
 class RelaxErrors:
     def __init__(self):
@@ -480,68 +476,3 @@ class RelaxErrors:
     class RelaxNaNError(BaseError):
         def __init__(self, name):
             self.text = "The invalid " + name + " floating point value of NaN (Not a Number) has occurred."
-
-
-
-# Warning objects.
-##################
-
-class RelaxWarnings:
-    def __init__(self):
-        """Class for placing all the warnings below into __builtin__"""
-
-        # Loop over all objects in 'self'.
-        for name in dir(self):
-            # Get the object.
-            object = getattr(self, name)
-
-            # Skip over all non-warning class objects.
-            if type(object) != ClassType or not match('Relax', name):
-                continue
-
-            # Place the warnings into __builtin__
-            __builtin__.__setattr__(name, object)
-
-            # Tuple of all the warnings.
-            if hasattr(__builtin__, 'AllRelaxWarnings'):
-                __builtin__.AllRelaxWarnings = __builtin__.AllRelaxWarnings, object
-            else:
-                __builtin__.AllRelaxWarnings = object,
-
-        # Change the formatting of the warning message.
-        warnings.formatwarning = self.format
-
-
-    def format(self, message, category, filename, lineno):
-        """Change the warning message formatting."""
-
-        # The RelaxWarning string.
-        string = "RelaxWarning: %s\n" % message
-
-        return string
-
-
-    # Base class for all warnings.
-    ############################
-
-    class BaseWarning(Warning):
-        def __str__(self):
-            return (self.text + "\n")
-
-
-    # Standard warnings.
-    ####################
-
-    class RelaxWarning(BaseWarning):
-        def __init__(self, text):
-            self.text = text
-
-
-    # Zero length vector.
-    #####################
-
-    class RelaxZeroVectorWarning(BaseWarning):
-        def __init__(self, res):
-            self.text = "The XH bond vector for residue " + `res` + " is of zero length."
-
-

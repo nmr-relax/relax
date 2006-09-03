@@ -301,10 +301,7 @@ def interact_prompt(self, intro, local):
             else:
                 more = self.push(line)
         except KeyboardInterrupt:
-            if Debug:
-                self.showtraceback()
-            else:
-                self.write("\nKeyboardInterrupt\n")
+            self.write("\nKeyboardInterrupt\n")
             self.resetbuffer()
             more = 0
 
@@ -344,11 +341,6 @@ def interact_script(self, intro, local, script_file, quit):
     except KeyboardInterrupt:
         sys.stderr.write("\nScript execution cancelled.\n")
     except AllRelaxErrors, instance:
-        if Debug:
-            self.showtraceback()
-        else:
-            sys.stderr.write(instance.__str__())
-    except AllRelaxWarnings, instance:
         if Debug:
             self.showtraceback()
         else:

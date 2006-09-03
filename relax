@@ -41,7 +41,6 @@ import pstats
 from re import match
 from string import split, strip
 import sys
-from warnings import warn
 
 # Numeric.
 try:
@@ -67,7 +66,7 @@ except ImportError:
 # relax modules.
 from colour import Colour
 from data import Data
-from errors import RelaxErrors, RelaxWarnings
+from errors import RelaxErrors
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
@@ -93,10 +92,8 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Set up the program internal errors and warnings.
+        # Set up the program internal errors.
         RelaxErrors()
-        RelaxWarnings()
-        __builtin__.warn = warn
 
         # Debugging flag (default is off).
         __builtin__.Debug = 0
