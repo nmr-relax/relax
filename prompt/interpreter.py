@@ -339,7 +339,10 @@ def interact_script(self, intro, local, script_file, quit):
     try:
         execfile(script_file, local)
     except KeyboardInterrupt:
-        sys.stderr.write("\nScript execution cancelled.\n")
+        if Debug:
+            raise
+        else:
+            sys.stderr.write("\nScript execution cancelled.\n")
     except AllRelaxErrors, instance:
         if Debug:
             self.showtraceback()

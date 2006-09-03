@@ -20,8 +20,16 @@
 #                                                                             #
 ###############################################################################
 
-from os import kill, popen3, system
+from os import popen3, system
 from popen2 import Popen3
+
+# UNIX only module.
+try:
+    from os import kill
+    kill_module = 1
+except ImportError:
+    kill_module = 0
+
 
 
 class RelaxPopen3(Popen3):
@@ -40,10 +48,11 @@ class RelaxPopen3(Popen3):
             return
 
         # Kill the child process (or pass silently if the PID no longer exists).
-        try:
-            kill(self.pid, sig)
-        except:
-            pass
+        if kill_module:
+            try:
+                kill(self.pid, sig)
+            except:
+                pass
 
         # Kill the relax process spawned by the thread.
         if hasattr(self, 'relax_pid') and self.relax_pid != None:

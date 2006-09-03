@@ -94,7 +94,7 @@ class Relax:
         self.pid = getpid()
 
         # Set up the program internal errors.
-        RelaxErrors()
+        RelaxErrors(self)
 
         # Debugging flag (default is off).
         __builtin__.Debug = 0
