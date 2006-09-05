@@ -166,7 +166,7 @@ class Model_selection:
 
             # Initial model.
             best_model = None
-            best_crit = float('inf')
+            best_crit = 1e300
 
             # Loop over the runs.
             for j in xrange(len(self.runs)):
