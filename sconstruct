@@ -377,9 +377,9 @@ class Main:
             self.SYS = 'GNU-Linux'
         elif self.system == 'Windows':
             if self.MACH in ['i386', 'i486', 'i586', 'i686']:
-                self.SYS == 'Win32'
+                self.SYS = 'Win32'
             else:
-                self.SYS == 'Win'
+                self.SYS = 'Win'
         else:
             self.SYS = self.system
 
