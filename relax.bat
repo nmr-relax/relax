@@ -8,4 +8,13 @@ REM 'Envirnment Variables' button.  Then double click on the 'Path' system
 REM variable and add the text ";C:\Program Files\Python24;C:\relax" to the end
 REM of variable value field (modify the text to point to the correct location).
 
+REM Catch [Ctrl-C] and exit without asking "Terminate batch job (Y/N)?".
+REM on break quit
+
+REM Clear the screen.
+cls
+
+REM Run relax using python.  %~dp0 will expand to the path where relax is found
+REM and %0 is simply 'relax'.  %* will send all the remaining arguments to
+REM relax.
 python %~dp0%0 %*
