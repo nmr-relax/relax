@@ -787,8 +787,10 @@ class Manual:
         system('ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps')
 
         print "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
-        remove('relax.ps')
-        move('relax.pdf', '..')
+        if access('relax.ps', F_OK):
+            remove('relax.ps')
+        if access('relax.pdf', F_OK):
+            move('relax.pdf', '..')
 
         # Return to the base directory.
         chdir(base_dir)
