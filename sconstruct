@@ -33,6 +33,7 @@ from re import search
 from shutil import copytree, move
 import sys
 from tarfile import TarFile
+from zipfile import ZipFile
 
 from version import version
 
@@ -84,8 +85,8 @@ class Main:
         binary_dist_env.Depends('binary_dist', 'manual_dist')             # Compile the manual.
         binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         binary_dist_env.Depends('binary_dist', 'clean_temp')              # Then clean up all other temporary files.
-        binary_dist_env.Depends('binary_dist', 'tar_bin')                 # Create the tar.bz2 file of the binary distribution.
-        binary_dist_env.Depends('binary_dist', 'gpg_bin')                 # GPG sign the tar.bz2 file.
+        binary_dist_env.Depends('binary_dist', 'package_bin')             # Package the binary distribution.
+        binary_dist_env.Depends('binary_dist', 'gpg_bin')                 # GPG sign the binary distribution file.
 
         # Target for creating the source distribution file.
         source_dist_env = Environment(BUILDERS = {'dummy' : Builder(action=self.dummy)})
@@ -94,20 +95,20 @@ class Main:
         source_dist_env.Depends('source_dist', 'manual_dist')             # Compile the manual.
         binary_dist_env.Depends('source_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
-        source_dist_env.Depends('source_dist', 'tar_src')                 # Create the tar.bz2 file of the source distribution.
-        source_dist_env.Depends('source_dist', 'gpg_src')                 # GPG sign the tar.bz2 file.
+        source_dist_env.Depends('source_dist', 'package_src')             # Package the source distribution.
+        source_dist_env.Depends('source_dist', 'gpg_src')                 # GPG sign the source distribution file.
 
-        # Target for creating the tar file of the binary distribution.
-        tar_bin_env = Environment(BUILDERS = {'archive' : Builder(action=self.tar)})
-        tar_bin_env.archive(target='tar_bin', source=None)
-        tar_bin_env.Prepend(TAR_FILE = self.TAR_BIN_FILE)
-        tar_bin_env.Depends('tar_bin', 'version_check')     # Check the program version number first.
+        # Target for packaging the binary distribution.
+        package_bin_env = Environment(BUILDERS = {'archive' : Builder(action=self.package)})
+        package_bin_env.archive(target='package_bin', source=None)
+        package_bin_env.Prepend(DIST_FILE = self.BIN_FILE)
+        package_bin_env.Depends('package_bin', 'version_check')     # Check the program version number first.
 
-        # Target for creating the tar file of the source distribution.
-        tar_src_env = Environment(BUILDERS = {'archive' : Builder(action=self.tar)})
-        tar_src_env.archive(target='tar_src', source=None)
-        tar_src_env.Prepend(TAR_FILE = self.TAR_SRC_FILE)
-        tar_src_env.Depends('tar_bin', 'version_check')     # Check the program version number first.
+        # Target for packaging the source distribution.
+        package_src_env = Environment(BUILDERS = {'archive' : Builder(action=self.package)})
+        package_src_env.archive(target='package_src', source=None)
+        package_src_env.Prepend(DIST_FILE = self.SRC_FILE)
+        package_src_env.Depends('package_bin', 'version_check')     # Check the program version number first.
 
         # Target for creating a GPG signature of the binary distribution file.
         gpg_bin_env = Environment(BUILDERS = {'sign' : Builder(action=self.gpg_bin_sign)})
@@ -144,7 +145,7 @@ class Main:
         print "###############\n\n"
 
         # Extensions of files to remove.
-        temp_extns = ['so', 'sconsign']
+        temp_extns = ['so', 'sconsign', 'dll']
 
         # Print out.
         print "\nRemoving the files ending in " + `temp_extns` + ".\n"
@@ -172,7 +173,7 @@ class Main:
         print "###############################\n\n"
 
         # Extensions of temporary files.
-        temp_extns = ['pyc', 'bak', 'o', 'os', 'obj', 'dll', 'exp', 'lib']
+        temp_extns = ['pyc', 'bak', 'o', 'os', 'obj', 'exp', 'lib']
 
         # Print out.
         print "\nRemoving the files ending in " + `temp_extns` + ".\n"
@@ -206,7 +207,7 @@ class Main:
         print "############################################\n\n"
 
         # Run the 'gpg' command.
-        system("gpg --detach-sign --default-key relax .." + sep + self.TAR_BIN_FILE)
+        system("gpg --detach-sign --default-key relax " + path.pardir + path.sep + self.BIN_FILE)
 
         # Final print out.
         print "\n\n\n"
@@ -222,7 +223,7 @@ class Main:
         print "############################################\n\n"
 
         # Run the 'gpg' command.
-        system("gpg --detach-sign --default-key relax .." + sep + self.TAR_SRC_FILE)
+        system("gpg --detach-sign --default-key relax " + path.pardir + path.sep + self.SRC_FILE)
 
         # Final print out.
         print "\n\n\n"
@@ -384,38 +385,53 @@ class Main:
     def set_paths(self):
         """Function for setting the paths and file names."""
 
-        # The system architecture.
+        # The machine type.
         self.MACH = platform.uname()[4]
-
-        # System specific string.
-        if self.system == 'Linux':
-            self.SYS = 'GNU-Linux'
-        elif self.system == 'Windows':
-            if self.MACH in ['i386', 'i486', 'i586', 'i686']:
-                self.SYS = 'Win32'
-            else:
-                self.SYS = 'Win'
-        else:
-            self.SYS = self.system
 
         # Symbolic link flag.
         self.symlink_flag = 1
 
-        # Linux installation path.
+        # GNU/Linux.
         if self.system == 'Linux':
+            # System specific string.
+            self.SYS = 'GNU-Linux'
+
+            # Linux installation path.
             self.INSTALL_PATH = '/usr/local'
 
-        # Mac OS X installation path.
-        elif self.system == 'Darwin':
-            self.INSTALL_PATH = sys.prefix + sep + 'local'
-
-        # Windows installation path.
+        # MS Windows.
         elif self.system == 'Windows':
+            # Architecture.
+            arch = platform.architecture()[0]
+
+            # 32 bit.
+            if arch == '32bit':
+                self.SYS = 'Win32'
+            elif arch == '64bit':
+                self.SYS = 'Win64'
+            else:
+                self.SYS = 'Win'
+
+            # Windows installation path.
             self.INSTALL_PATH = 'C:\\'
+
+            # No symlinks!
             self.symlink_flag = 0
+
+        # Mac OS X.
+        elif self.system == 'Darwin':
+            # System specific string.
+            self.SYS = self.system
+
+            # Mac OS X installation path.
+            self.INSTALL_PATH = sys.prefix + sep + 'local'
 
         # All other operating systems.
         else:
+            # System specific string.
+            self.SYS = self.system
+
+            # Installation path.
             self.INSTALL_PATH = sys.prefix + sep + 'local'
 
         # Relax installation directory.
@@ -428,30 +444,41 @@ class Main:
         self.SYMLINK = self.BIN_PATH + sep + 'relax'
 
         # The distribution files.
-        self.TAR_BIN_FILE = 'relax-' + version + '.' + self.SYS + '.' + self.MACH + '.tar.bz2'
-        self.TAR_SRC_FILE = 'relax-' + version + '.src.tar.bz2'
+        if self.system == 'Windows':
+            self.BIN_FILE = 'relax-' + version + '.' + self.SYS + '.zip'
+            self.SRC_FILE = 'relax-' + version + '.src.zip'
+            self.DIST_TYPE = 'zip'
+        else:
+            self.BIN_FILE = 'relax-' + version + '.' + self.SYS + '.tar.bz2'
+            self.SRC_FILE = 'relax-' + version + '.src.tar.bz2'
+            self.DIST_TYPE = 'tar'
 
 
-    def tar(self, target=None, source=None, env=None):
-        """Builder action for creating the tar archive."""
+    def package(self, target=None, source=None, env=None):
+        """Builder action for packaging the distribution archives."""
 
         # The file name.
-        file_name = env.subst('$TAR_FILE')
+        file_name = env.subst('$DIST_FILE')
 
         # Print out.
         print
         print "#######################"
         print "# Packaging the files #"
         print "#######################\n\n"
-        print "Creating the tar archive " + `file_name` + ".\n"
+        print "Creating the package distribution " + `file_name` + ".\n"
 
-        # Open the tar file.
-        if search('.bz2$', file_name):
-            archive = TarFile.bz2open(".." + sep + env.subst('$TAR_FILE'), 'w')
-        elif search('.gz$', file_name):
-            archive = TarFile.gzopen(".." + sep + env.subst('$TAR_FILE'), 'w')
-        else:
-            archive = TarFile.open(".." + sep + env.subst('$TAR_FILE'), 'w')
+        # Open the Zip distribution file.
+        if self.DIST_TYPE == 'zip':
+            archive = ZipFile(path.pardir + path.sep + env.subst('$DIST_FILE'), 'w', compression=8)
+
+        # Open the Tar distribution file.
+        elif self.DIST_TYPE == 'tar':
+            if search('.bz2$', file_name):
+                archive = TarFile.bz2open(path.pardir + path.sep + env.subst('$DIST_FILE'), 'w')
+            elif search('.gz$', file_name):
+                archive = TarFile.gzopen(path.pardir + path.sep + env.subst('$DIST_FILE'), 'w')
+            else:
+                archive = TarFile.open(path.pardir + path.sep + env.subst('$DIST_FILE'), 'w')
 
         # Base directory.
         base = getcwd() + sep
@@ -464,26 +491,40 @@ class Main:
 
             # Add the files in the current directory to the archive.
             for i in xrange(len(files)):
-                # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o' and '.os'.
-                if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]):
+                # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
+                if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]) or search("\.obj$", files[i]) or search("\.lib$", files[i]) or search("\.exp$", files[i]):
                     continue
-
-                # Open the file.
-                file = open(path.join(root, files[i]))
 
                 # Create the file name (without the base directory).
                 name = path.join(root, files[i])
                 name = name[len(base):]
                 print 'relax-' + version + path.sep + name
 
-                # Tar information.
-                tarinfo = archive.gettarinfo(name, 'relax-' + version + path.sep + name)
+                # The archive file name.
+                arcname = 'relax-' + version + path.sep + name
 
-                # Add the file.
-                archive.addfile(tarinfo, file)
+                # Zip archives.
+                if self.DIST_TYPE == 'zip':
+                    archive.write(filename=name, arcname=arcname)
 
-                # Close the file.
-                file.close()
+                # Tar archives.
+                if self.DIST_TYPE == 'tar':
+                    archive.add(name=name, arcname=arcname)
+
+                    # Open the file.
+                    #file = open(path.join(root, files[i]))
+
+                    # Tar information.
+                    #tarinfo = archive.gettarinfo(name, arcname)
+
+                    # Add the file.
+                    #archive.addfile(tarinfo, file)
+
+                    # Close the file.
+                    #file.close()
+
+        # Close the archive.
+        archive.close()
 
         # Final print out.
         print "\n\n\n"
@@ -574,6 +615,9 @@ class Main:
 class Manual:
     def __init__(self):
         """Initialise the manual building targets."""
+
+        # The operating system.
+        self.system = platform.uname()[0]
 
         # Documentation directory.
         self.DOCS_DIR = 'docs' + sep
@@ -739,8 +783,8 @@ class Manual:
         chdir(self.LATEX_DIR)
 
         # Get the docstrings.
-        print "Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir .." + sep + "html relax.tex\n\n\n"
-        system("latex2html -split +3 -html_version 4.0 -dir .." + sep + "html relax.tex")
+        print "Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex\n\n\n"
+        system("latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex")
 
         # Return to the base directory.
         chdir(base_dir)
@@ -763,34 +807,41 @@ class Manual:
         chdir(self.LATEX_DIR)
 
         print "\n\n\n <<< LaTeX (first round) >>>\n\n\n"
-        system('latex relax.tex')
+        system('latex relax')
 
         print "\n\n\n <<< Bibtex >>>\n\n\n"
-        system('bibtex relax.aux')
+        system('bibtex relax')
 
         print "\n\n\n <<< Makeindex >>>\n\n\n"
-        system('makeindex relax.idx')
+        system('makeindex relax')
 
         print "\n\n\n <<< LaTeX (second round) >>>\n\n\n"
-        system('latex relax.tex')
+        system('latex relax')
 
         print "\n\n\n <<< LaTeX (third round) >>>\n\n\n"
-        system('latex relax.tex')
+        system('latex relax')
 
         print "\n\n\n <<< LaTeX (fourth round) >>>\n\n\n"
-        system('latex relax.tex')
+        system('latex relax')
 
         print "\n\n\n <<< dvips >>>\n\n\n"
         system('dvips -o relax.ps relax.dvi')
 
         print "\n\n\n <<< ps2pdf >>>\n\n\n"
-        system('ps2pdf -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dMonoImageFilter=/FlateEncode -dPDFSETTINGS=/prepress relax.ps')
+        if self.system == 'Windows':
+            # According to the Ghostscript documentation, "When passing options to ghostcript through a batch
+            # file wrapper such as ps2pdf.bat you need to substitute '#' for '=' as the separator between options
+            # and their arguments."
+            assign = '#'
+        else:
+            assign = '='
+        system('ps2pdf -dAutoFilterColorImages' + assign + 'false -dAutoFilterGrayImages' + assign + 'false -dColorImageFilter' + assign + '/FlateEncode -dColorImageFilter' + assign + '/FlateEncode -dGrayImageFilter' + assign + '/FlateEncode -dMonoImageFilter' + assign + '/FlateEncode -dPDFSETTINGS' + assign + '/prepress relax.ps relax.pdf')
 
         print "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
         if access('relax.ps', F_OK):
             remove('relax.ps')
         if access('relax.pdf', F_OK):
-            move('relax.pdf', '..')
+            move('relax.pdf', path.pardir)
 
         # Return to the base directory.
         chdir(base_dir)
