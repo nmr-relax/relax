@@ -1,3 +1,27 @@
+Version 1.2.7
+(18 September 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.7
+
+    Features:
+        * The C modules now compile without problem on MS Windows.
+        * The MS Windows binary distribution packages are now successfully built using the SCons build system.
+        * The batch file 'relax.bat' has been created for running relax from the MS Windows command prompt.
+        * The program introduction width is now 80 characters in MS Windows for proper display from the command prompt.
+
+    Changes:
+        * The program state is saved when a RelaxError occurs in debugging mode.
+        * KeyboardInterupt during script execution in debugging mode will print the Python traceback.
+
+    Bugfixes:
+        * The sconstruct script no longer fails in MS Windows. (bug #6980)
+        * Model selection is now functional on all operating systems. (bug #6873).
+        * The use of the Unix only class 'Popen3' has been removed to allow relax to function on all non-Unix operating systems. (bug #6841)
+        * If the XH bond vector length is 0, the vector is set to None rather than raising a RelaxError. (partial fix to bug #6503)
+        * Fix for the sconstruct script failure on MS Windows due to ImportErrors caused by importing Unix specific code. (bug #6841)
+        * Fix for ImportErrors in MS Windows preventing relax from running. (bug #6841)
+
+
+
 Version 1.2.6
 (21 July 2006, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.6
