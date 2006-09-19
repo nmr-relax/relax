@@ -449,7 +449,7 @@ class Main:
             self.SRC_FILE = 'relax-' + version + '.src.zip'
             self.DIST_TYPE = 'zip'
         else:
-            self.BIN_FILE = 'relax-' + version + '.' + self.SYS + '.tar.bz2'
+            self.BIN_FILE = 'relax-' + version + '.' + self.SYS + '.' + self.MACH + '.tar.bz2'
             self.SRC_FILE = 'relax-' + version + '.src.tar.bz2'
             self.DIST_TYPE = 'tar'
 
