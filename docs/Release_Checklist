@@ -37,7 +37,7 @@ $ rsync --delete -av --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
-* Modify the http://nmr-relax.com download page to point to the newest version of relax and create the HTML version of the manual with the command:
+* Modify the http://nmr-relax.com download page to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Create the HTML version of the manual with the command:
 
 $ scons manual_html
 

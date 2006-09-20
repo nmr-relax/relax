@@ -45,7 +45,7 @@ The following conventions must be followed at all times for any code to be accep
 \subsection{Indentation}
 
 \index{indentation|textbf}
-Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the python style guide found at \href{http://www.python.org/doc/essays/styleguide.html}{http://www.python.org/doc/essays/styleguide.html}.  Emacs should automatically set the tabstop correctly.  For vi add the following lines to \texttt{`$\sim$/.vimrc'}:
+Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the python style guide found at \href{http://www.python.org/doc/essays/styleguide.html}{http://www.python.org/doc/essays/styleguide.html}.  Emacs should automatically set the tabstop correctly.  For vi add the following lines to the \texttt{vimrc} file:
 
 \begin{exampleenv}
 set tabstop=4 \\
@@ -53,7 +53,7 @@ set shiftwidth=4 \\
 set expandtab
 \end{exampleenv}
 
-Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{`$\sim$/.vimrc'} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which on GNU/Linux systems is located in the path \texttt{`/usr/share/vim/ftplugin/'}.  It contains the two lines
+For UNIX systems, including Linux and Mac OS X, the \texttt{vimrc} file is \texttt{`$\sim$/.vimrc'} whereas in MS Windows the file is \texttt{`\$VIM/\_vimrc'} which is usually \texttt{`C:$\backslash$Program Files$\backslash$vim$\backslash$\_vimrc'}.  Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{vimrc} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which on GNU/Linux systems is located in the path \texttt{`/usr/share/vim/ftplugin/'}.  It contains the two lines
 
 \begin{exampleenv}
 " Python always uses a `tabstop' of 8. \\
