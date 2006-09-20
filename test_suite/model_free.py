@@ -102,10 +102,10 @@ class Mf:
             # The test.
             self.test = self.opendx_theta_phi_da
 
-        # OpenDX {tm, S2, te} mapping test.
-        if test_name == 'opendx {tm, S2, te} map':
+        # OpenDX {local_tm, S2, te} mapping test.
+        if test_name == 'opendx {local_tm, S2, te} map':
             # The name of the test.
-            self.name = "Mapping the {tm, S2, te} chi2 space through the OpenDX user function dx.map()"
+            self.name = "Mapping the {local_tm, S2, te} chi2 space through the OpenDX user function dx.map()"
 
             # The test.
             self.test = self.opendx_tm_s2_te
@@ -199,6 +199,9 @@ class Mf:
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
+        # Read the PDF file.
+        self.relax.interpreter._PDB.pdb(run, file='pdb', dir=path, model=1, heteronuc='N', proton='H', load_seq=0)
+
         # Read the relaxation data.
         self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
         self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
@@ -210,6 +213,7 @@ class Mf:
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(self.run, (1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
         self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(self.run, model='m4')
@@ -221,7 +225,7 @@ class Mf:
 
 
     def opendx_tm_s2_te(self, run):
-        """The OpenDX {tm, S2, te} mapping test."""
+        """The OpenDX {local_tm, S2, te} mapping test."""
 
         # Arguments.
         self.run = run
@@ -253,7 +257,7 @@ class Mf:
         self.relax.interpreter._Model_free.select_model(self.run, model='tm2')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(self.run, params=['tm', 'S2', 'te'], res_num=2, inc=2, file='devnull')
+        self.relax.interpreter._OpenDX.map(self.run, params=['local_tm', 'S2', 'te'], res_num=2, inc=2, file='devnull')
 
         return 1
 
@@ -372,7 +376,7 @@ class Mf:
                 return
 
             # local tm test.
-            if orig_data.tm != new_data.tm:
+            if orig_data.local_tm != new_data.local_tm:
                 self.print_error('local tm values')
                 return
 

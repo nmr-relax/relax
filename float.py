@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2006 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,48 +20,19 @@
 #                                                                             #
 ###############################################################################
 
-from os import popen3, system
-from popen2 import Popen3
 
-# UNIX only module.
-try:
-    from os import kill
-    kill_module = 1
-except ImportError:
-    kill_module = 0
+class Float:
+    def __init__(self):
+        """Class of floating point number operations."""
 
 
+    def isinf(self, num):
+        """Function for identifying infinite floating point numbers by bit pattern."""
 
-class RelaxPopen3(Popen3):
-    def __init__(self, cmd, capturestderr=0, bufsize=-1):
-        """Extended Popen3 class."""
-
-        # Run the init function of the Popen3 class.
-        Popen3.__init__(self, cmd, capturestderr, bufsize)
+        raise RelaxError, "not implemented yet."
 
 
-    def kill(self, login_cmd=None, sig=9):
-        """Function for killing the child process."""
+    def isnan(self, num):
+        """Function for identifying NaN floating point numbers by bit pattern."""
 
-        # Don't do anything if the child process has already finished.
-        if self.poll() != -1:
-            return
-
-        # Kill the child process (or pass silently if the PID no longer exists).
-        if kill_module:
-            try:
-                kill(self.pid, sig)
-            except:
-                pass
-
-        # Kill the relax process spawned by the thread.
-        if hasattr(self, 'relax_pid') and self.relax_pid != None:
-            # Kill command.
-            kill_cmd = 'kill -%s %s' % (sig, self.relax_pid)
-
-            # Remote relax process.
-            if login_cmd:
-                kill_cmd = login_cmd + " \"" + kill_cmd + "\""
-
-            # Kill relax.
-            stdin, stdout, stderr = popen3(kill_cmd)
+        raise RelaxError, "not implemented yet."

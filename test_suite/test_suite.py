@@ -30,6 +30,7 @@ from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
 from model_free import Mf
+from model_selection import Modsel
 from relax_fit import Relax_fit
 from run_create import Run_create
 from sequence import Sequence
@@ -142,7 +143,7 @@ class Test_suite:
         self.mf_test_array.append(Mf(self.relax, 'read results'))
         self.mf_test_array.append(Mf(self.relax, 'opendx {S2, te, Rex} map'))
         self.mf_test_array.append(Mf(self.relax, 'opendx {theta, phi, Da} map'))
-        self.mf_test_array.append(Mf(self.relax, 'opendx {tm, S2, te} map'))
+        self.mf_test_array.append(Mf(self.relax, 'opendx {local_tm, S2, te} map'))
 
         # Execute the tests.
         self.exec_tests(self.mf_test_array)
@@ -163,6 +164,22 @@ class Test_suite:
 
         # Execute the tests.
         self.exec_tests(self.jw_test_array)
+
+
+        # Model selection tests.
+        ########################
+
+        # Heading.
+        self.heading("The model selection tests")
+
+        # Initialise the array containing each test element.
+        self.modsel_test_array = []
+
+        # The tests.
+        self.modsel_test_array.append(Modsel(self.relax, 'diff tensor'))
+
+        # Execute the tests.
+        self.exec_tests(self.modsel_test_array)
 
 
         # Generic tests.
@@ -319,6 +336,17 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.jw_test_array:
+            self.summary_line(test)
+
+
+        # Model selection tests.
+        ########################
+
+        # Heading.
+        sys.stdout.write("\nThe model selection tests:\n")
+
+        # Loop over the tests.
+        for test in self.modsel_test_array:
             self.summary_line(test)
 
 

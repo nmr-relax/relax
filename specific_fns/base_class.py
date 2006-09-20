@@ -161,7 +161,10 @@ class Common_functions:
                     self.data_init(self.relax.data.res[self.run][index])
 
                 # Set the value.
-                setattr(self.relax.data.res[self.run][index], object_name, float(value[i]) * scaling)
+                if value[i] == None:
+                    setattr(self.relax.data.res[self.run][index], object_name, None)
+                else:
+                    setattr(self.relax.data.res[self.run][index], object_name, float(value[i]) * scaling)
 
 
         # Individual data type.
@@ -182,7 +185,10 @@ class Common_functions:
                 value = self.default_value(object_name)
 
             # Set the value.
-            setattr(self.relax.data.res[self.run][index], object_name, float(value) * scaling)
+            if value == None:
+                setattr(self.relax.data.res[self.run][index], object_name, None)
+            else:
+                setattr(self.relax.data.res[self.run][index], object_name, float(value) * scaling)
 
             # Set the error.
             if error != None:

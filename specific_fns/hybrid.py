@@ -89,7 +89,7 @@ class Hybrid:
         self.relax.data.hybrid_runs[hybrid] = runs
 
 
-    def model_statistics(self, run=None, instance=None, min_instances=None, num_instances=None):
+    def model_statistics(self, run=None, instance=None, min_instances=None):
         """Function for returning the values k, n, and chi2 of the hybrid.
 
         k - number of parameters.
@@ -112,15 +112,11 @@ class Hybrid:
 
             # Specific model statistics and number of instances functions.
             model_statistics = self.relax.specific_setup.setup('model_stats', function_type)
-            num_instances = self.relax.specific_setup.setup('num_instances', function_type)
-
-            # Number of instances.
-            num = num_instances(run)
 
             # Loop over the instances.
             for i in xrange(num):
                 # Get the statistics.
-                k, n, chi2 = model_statistics(run, instance=i, num_instances=num)
+                k, n, chi2 = model_statistics(run, instance=i)
 
                 # Bad stats.
                 if k == None or n == None or chi2 == None:

@@ -166,7 +166,7 @@ class Model_selection:
 
             # Initial model.
             best_model = None
-            best_crit = float('inf')
+            best_crit = 1e300
 
             # Loop over the runs.
             for j in xrange(len(self.runs)):
@@ -185,7 +185,7 @@ class Model_selection:
                             continue
 
                         # Get the model statistics.
-                        k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j][k])
+                        k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances)
 
                         # Missing data sets.
                         if k == None or n == None or chi2 == None:
@@ -207,7 +207,7 @@ class Model_selection:
                         continue
 
                     # Get the model statistics.
-                    k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j])
+                    k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances)
 
                     # Missing data sets.
                     if k == None or n == None or chi2 == None:

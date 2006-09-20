@@ -1603,7 +1603,7 @@ class Mf:
                 elif data.param_types[i] == 'CSA':
                     data.csa_li = num_diff_params + i
                     data.csa_i = self.param_index + i
-                elif data.param_types[i] == 'tm':
+                elif data.param_types[i] == 'local_tm':
                     pass
                 else:
                     print "Unknown parameter."
@@ -1952,7 +1952,7 @@ class Mf:
                 elif data.param_types[i] == 'CSA':
                     data.csa_li = num_diff_params + i
                     data.csa_i = self.param_index + i
-                elif data.param_types[i] == 'tm':
+                elif data.param_types[i] == 'local_tm':
                     pass
                 else:
                     print "Unknown parameter."
@@ -2299,7 +2299,7 @@ class Mf:
                 elif data.param_types[i] == 'CSA':
                     data.csa_li = num_diff_params + i
                     data.csa_i = self.param_index + i
-                elif data.param_types[i] == 'tm':
+                elif data.param_types[i] == 'local_tm':
                     pass
                 else:
                     print "Unknown parameter."

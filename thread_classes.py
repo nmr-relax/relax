@@ -31,7 +31,7 @@ from time import sleep
 from threading import Lock, Thread
 
 from data import Element
-from processes import RelaxPopen3
+#from processes import RelaxPopen3
 
 
 # Class for setting up threading.

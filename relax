@@ -36,11 +36,13 @@
 # Python modules.
 import __builtin__
 from os import F_OK, access, getpid, putenv
+import platform
 import profile
 import pstats
 from re import match
 from string import split, strip
 import sys
+from warnings import warn
 
 # Numeric.
 try:
@@ -66,7 +68,8 @@ except ImportError:
 # relax modules.
 from colour import Colour
 from data import Data
-from errors import RelaxErrors
+from errors import RelaxErrors, RelaxWarnings
+from float import Float
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
@@ -92,11 +95,20 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
+        # Store the operating system name.
+        self.platform = platform.uname()[0]
+
         # Set up the program internal errors.
-        RelaxErrors()
+        RelaxErrors(self)
 
         # Debugging flag (default is off).
         __builtin__.Debug = 0
+        
+        # Pedantic flag (default is off).
+        __builtin__.Pedantic = 0
+
+        # Set up the program internal errors.
+        RelaxErrors(self)
 
         # Set the program introduction string to nothing.
         self.intro_string = None
@@ -109,6 +121,9 @@ class Relax:
 
         # File operation functions.
         self.IO = IO(self)
+
+        # Floating point number functions.
+        self.float = Float()
 
         # Colour operations.
         self.colour = Colour()
@@ -127,7 +142,11 @@ class Relax:
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
-
+        
+        # Initialise the warnings sytem.
+        RelaxWarnings()
+        __builtin__.warn = warn
+                
         # Show the version number and exit.
         if mode == 'version':
             print 'relax ' + self.version
@@ -199,6 +218,7 @@ class Relax:
         parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to sdtout and the file LOG_FILE', metavar='LOG_FILE')
+        parser.add_option('-p', '--pedantic', action='store_true', dest='pedantic', default=0, help='escalate all warnings to errors')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (this mode should not be invoked by a user)')
@@ -210,6 +230,10 @@ class Relax:
         # Debugging flag.
         if options.debug:
             __builtin__.Debug = 1
+        
+        # Pedantic flag.
+        if options.pedantic:
+            __builtin__.Pedantic = 1
 
         # Logging.
         if options.log:
@@ -342,33 +366,48 @@ class Relax:
     def set_intro_string(self):
         """Create the program introduction."""
 
+        # The width of the printout.
+        if self.platform == 'Windows':
+            width = 80
+        else:
+            width = 100
+
         # Some new lines.
         self.intro_string = '\n\n\n'
 
         # Program name and version.
         string = "relax " + self.version
-        self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
+        self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
 
         # Program description.
         string = "Protein dynamics by NMR relaxation data analysis"
-        self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
+        self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
 
         # Copyright printout.
         string = "Copyright (C) 2001-2006 Edward d'Auvergne"
-        self.intro_string = self.intro_string + self.spacing(string) + '\n\n'
+        self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
 
-        # Program licence and help.
-        self.intro_string = self.intro_string + "This is free software which you are welcome to modify and redistribute under the conditions of the\n"
-        self.intro_string = self.intro_string + "GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL\n"
-        self.intro_string = self.intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
-        self.intro_string = self.intro_string + "can be accessed by typing 'help'.\n"
+        # Program licence and help (80 characters wide).
+        if width == 80:
+            self.intro_string = self.intro_string + "This is free software which you are welcome to modify and redistribute under\n"
+            self.intro_string = self.intro_string + "the conditions of the GNU General Public License (GPL).  This program,\n"
+            self.intro_string = self.intro_string + "including all modules, is licensed under the GPL and comes with absolutely no\n"
+            self.intro_string = self.intro_string + "warranty.  For details type 'GPL'.  Assistance in using this program can be\n"
+            self.intro_string = self.intro_string + "accessed by typing 'help'.\n"
+
+        # Program licence and help (100 characters wide).
+        else:
+            self.intro_string = self.intro_string + "This is free software which you are welcome to modify and redistribute under the conditions of the\n"
+            self.intro_string = self.intro_string + "GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL\n"
+            self.intro_string = self.intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
+            self.intro_string = self.intro_string + "can be accessed by typing 'help'.\n"
 
 
-    def spacing(self, string):
+    def spacing(self, string, width=100):
         """Function for formatting the string to be centered to 100 spaces."""
 
         # Calculate the number of spaces needed.
-        spaces = (100 - len(string)) / 2
+        spaces = (width - len(string)) / 2
 
         # The new string.
         string = spaces * ' ' + string

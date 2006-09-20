@@ -12,13 +12,13 @@
 The following packages need to be installed before using relax:
 
 \begin{description}
-\item[Python:]  Version 2.2 or higher\index{Python}.
-\item[Numeric:]  Version 21 or higher\index{Numeric}.
-\item[ScientificPython:]  Version 2.2 or higher\index{ScientificPython}.
-\item[Optik:]  Version 1.4 or higher.  This is only needed if running python 2.2\index{Optik}.
+\item[\href{http://python.org/}{Python}\index{Python}:]  Version 2.4 or higher (although any 2.x version may work).
+\item[\href{http://numpy.scipy.org/}{Numeric}\index{Numeric}:]  Version 21 or higher.
+\item[\href{http://starship.python.net/~hinsen/ScientificPython/}{ScientificPython}\index{ScientificPython}:]  Version 2.2 or higher.
+\item[Optik\index{Optik}:]  Version 1.4 or higher.  This is only needed if running python $<=$ 2.2.
 \end{description}
 
-Older versions of these packages may work, use them at your own risk.
+Older versions of these packages may work, use them at your own risk.  If, for older dependency versions, errors do occur please submit a bug report to the bug tracker\index{bug tracker} at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax}.  That way a solution may be created for the next relax release.
 
 
 
@@ -68,17 +68,27 @@ in the relax base directory will create a directory in \texttt{/usr/local/} call
 
 
 
-% Installation on Mac OS X.
-\subsection{Installation on Mac OS X}
-\index{Mac OS X|textbf}
-
-Please write me if you know how to do this!
-
-
-
 % Installation on MS Windows.
 \subsection{Installation on MS Windows}
 \index{MS Windows|textbf}
+
+In addition to the above dependencies, running relax on MS Windows requires a number of additional programs.  These include:
+
+\begin{description}
+\item[\href{http://projects.scipy.org/ipython/ipython/wiki/PyReadline/Intro}{pyreadline}\index{pyreadline}:]  Version 1.3 or higher (\href{http://ipython.scipy.org/dist/pyreadline-1.3.win32.exe}{download}).
+\item[\href{http://starship.python.net/crew/theller/ctypes/}{ctypes}\index{ctypes}:]  The pyreadline package requires ctypes (\href{http://prdownloads.sourceforge.net/ctypes/ctypes-1.0.0.win32-py2.4.exe?download}{download}).
+\end{description}
+
+To install, simply download the pre-compiled binary distribution \texttt{relax-x.x.x.Win32.zip} or the source distribution \texttt{relax-x.x.x.src.zip} and extract the files to \texttt{C:$\backslash$Program Files$\backslash$relax-x.x.x}.  Then add this directory to the system environment path (in Windows XP, right click on `My Computer', go to `Properties', click on the `Advanced' tab, and click on the `Envirnment Variables' button.  Then double click on the `Path' system variable and add the text ``;C:$\backslash$Program Files$\backslash$relax-x.x.x'' to the end of variable value field.  The Python installation must also be located on the path (add the text ``;C:$\backslash$Program Files$\backslash$Python24'', changing the text to point to the correct directory, to the field).  To run the program from any directory inside the Windows command prompt (or dos prompt) type:
+
+\example{C:$\backslash$> relax}
+
+
+
+
+% Installation on Mac OS X.
+\subsection{Installation on Mac OS X}
+\index{Mac OS X|textbf}
 
 Please write me if you know how to do this!
 
@@ -94,9 +104,7 @@ Please write me if you know how to do this!
 % Running a non-compiled version.
 \subsection{Running a non-compiled version}
 
-Compilation of the C code is not essential for running relax.  However certain features of the program will be disabled.  One example is relaxation curve-fitting.  This approach may be necessary for systems, such as MS Windows, where C compilers are not readily available (although the cygwin environment may provide the tools required for compilation).
-
-To run relax without compilation install the dependencies detailed above, download the source distribution which should be named \texttt{relax-x.x.x.src.tar.bz2}, extract the files, and then run the file called \texttt{relax} in the base directory.
+Compilation of the C code is not essential for running relax, however certain features of the program will be disabled.  Currently only the exponential curve-fitting for determining the $\Rone$ and $\Rtwo$ relaxation rates requires compilation.  To run relax without compilation install the dependencies detailed above, download the source distribution which should be named \texttt{relax-x.x.x.src.tar.bz2}, extract the files, and then run the file called \texttt{relax} in the base directory.
 
 
 

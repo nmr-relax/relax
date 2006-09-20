@@ -24,7 +24,7 @@
 from Queue import Queue
 from re import search
 
-from processes import RelaxPopen3
+#from processes import RelaxPopen3
 from thread_classes import RelaxParentThread, RelaxThread
 
 

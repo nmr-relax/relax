@@ -21,9 +21,15 @@
 ###############################################################################
 
 from math import pi
-from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, spawnlp, system
+from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, system
 from re import match, search
 from string import split
+
+# UNIX only functions from the os module (Modelfree4 only runs under UNIX anyway).
+try:
+    from os import spawnlp
+except ImportError:
+    pass
 
 
 class Palmer:

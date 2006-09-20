@@ -23,7 +23,7 @@
 
 from Numeric import dot
 
-def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4):
+def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4, max_iter=500):
     """Backtracking line search.
 
     Procedure 3.1, page 41, from 'Numerical Optimization' by Jorge Nocedal and Stephen J. Wright,
@@ -63,8 +63,9 @@ def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4):
     # Initialise values.
     a = a_init
     f_count = 0
+    i = 0
 
-    while 1:
+    while i <= max_iter:
         fk = apply(func, (x + a*p,)+args)
         f_count = f_count + 1
 
@@ -73,3 +74,6 @@ def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4):
             return a, f_count
         else:
             a = rho*a
+
+        # Increment the counter.
+        i = i + 1

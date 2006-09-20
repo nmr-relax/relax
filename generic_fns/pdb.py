@@ -152,9 +152,12 @@ class PDB:
             if fail:
                 raise RelaxFileError, ('PDB', self.file_path)
             else:
-                if self.print_flag:
-                    print "The PDB file " + `self.file_path` + " cannot be found, no structures will be loaded."
+                warn(RelaxNoPDBFileWarning(self.file_path))
                 return
+
+        # Test that the nuclei have been correctly set.
+        if self.heteronuc == self.proton:
+            raise RelaxError, "The proton and heteronucleus are set to the same atom."
 
 
         # Data creation.
@@ -238,14 +241,12 @@ class PDB:
 
                 # Test if the proton atom exists for residue i.
                 if not pdb_res.atoms.has_key(self.proton):
-                    if self.print_flag:
-                        print "The proton atom " + `self.proton` + " could not be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                    warn(RelaxNoAtomWarning(self.proton, self.relax.data.res[self.run][j].num))
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Test if the heteronucleus atom exists for residue i.
                 elif not pdb_res.atoms.has_key(self.heteronuc):
-                    if self.print_flag:
-                        print "The heteronucleus atom " + `self.heteronuc` + " could not be found for residue '" + `self.relax.data.res[self.run][j].num` + " " + self.relax.data.res[self.run][j].name + "'."
+                    warn(RelaxNoAtomWarning(self.heteronuc, self.relax.data.res[self.run][j].num))
                     self.relax.data.res[self.run][j].xh_vect.append(None)
 
                 # Calculate the vector.
@@ -256,9 +257,21 @@ class PDB:
                     # Get the heteronucleus position.
                     posX = pdb_res.atoms[self.heteronuc].position.array
 
-                    # Calculate the normalised vector.
+                    # Calculate the XH bond vector.
                     vector = posH - posX
-                    self.relax.data.res[self.run][j].xh_vect.append(vector / sqrt(dot(vector, vector)))
+
+                    # Normalisation factor.
+                    norm_factor = sqrt(dot(vector, vector))
+
+                    # Test for zero length.
+                    if norm_factor == 0.0:
+                        if self.print_flag:
+                            print "The XH bond vector for residue " + `self.relax.data.res[self.run][j].num` + " is of zero length."
+                        self.relax.data.res[self.run][j].xh_vect.append(None)
+
+                    # Calculate the normalised vector.
+                    else:
+                        self.relax.data.res[self.run][j].xh_vect.append(vector / norm_factor)
 
         # Print out.
         if self.print_flag:

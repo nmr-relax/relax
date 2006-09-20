@@ -1,4 +1,8 @@
-1.  Make a copy of the current head to the tags directory using a command such as:
+* Review the SVN log and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.
+
+
+
+* Make a copy of the current head to the tags directory using a command such as:
 
 $ svn cp svn+ssh://bugman@svn.gna.org/svn/relax/1.2 svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4
 
@@ -6,43 +10,43 @@ In the commit message, have a header line which says 'relax version 1.2.4.', fol
 
 
 
-2.  Checkout the tagged version with:
+* Checkout the tagged version with:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4 relax-1.2.4
 
 
 
-3.  Change the version number in file 'version.py'.
+* Change the version number in file 'version.py'.
 
 
 
-4.  Generate the binary and source distribution files (and their GPG signatures) by typing:
+* Generate the binary and source distribution files (and their GPG signatures) by typing:
 
 $ scons binary_dist
 $ scons source_dist
 
 
 
-5.  Commit the changes so the 'tags' directory is updated.
+* Commit the changes so the 'tags' directory is updated.
 
 
 
-6.  Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  Rsync the entire directory contents to download.gna.org/upload/relax/ using the command
+* Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  Rsync the entire directory contents to download.gna.org/upload/relax/ using the command
 
-$ rsync --delete -avr --rsh="ssh" * bugman@download.gna.org:/upload/relax/
-
-
-
-7.  Modify the http://nmr-relax.com download page to point to the newest version of relax.
+$ rsync --delete -av --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
-8.  Create the HTML version of the manual with the command:
+* Modify the http://nmr-relax.com download page to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Create the HTML version of the manual with the command:
 
 $ scons manual_html
 
-Replace the old manual with the new in the CVS repository.
+Replace the old manual with the new in the CVS homepage repository and commit both the download page and new manual.
 
 
 
-9.  Post the release message to the relax-announce mailing list and as a news item on the relax Gna! website. 
+* Add the version number to the bug tracker field 'Release' at https://gna.org/bugs/admin/field_values.php?group=relax.
+
+
+
+* Post the release message to the relax-announce mailing list and as a news item on the relax Gna! website. 
