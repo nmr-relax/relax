@@ -610,34 +610,6 @@ class RelaxErrors:
                 self.save_state()
 
 
-# Warning objects.
-##################
-
-# Replacement for warnings.formatwarning to customise output format.
-def format(message, category, filename, lineno):
-    if issubclass(category, self.BaseWarning):
-        message = "RelaxWarning: %s\n\n" % message
-
-        if Debug:
-            tb = ""
-            for frame in inspect.stack()[4:]:
-                file = frame[1]
-                lineNo = frame[2]
-                func = frame[3]
-                tb_frame = '  File "%s", line %i, in %s\n' % (file, lineNo, func)
-                try:
-                    context = frame[4][frame[5]]
-                except TypeError:
-                    pass
-                else:
-                    tb_frame = '%s    %s\n' % (tb_frame, context.strip())
-                tb = tb_frame + tb
-            tb = "Traceback (most recent call last):\n%s" % tb
-            message = tb + message
-
-            return message
-
-
 
 # The RelaxWarning system.
 ##########################
@@ -677,6 +649,7 @@ class RelaxWarnings:
     def format(self, message, category, filename, lineno):
         """ Replacement for warnings.formatwarning to customise output format."""
 
+        # Add the text 'RelaxWarning: ' to the start of the warning message.
         if issubclass(category, self.BaseWarning):
             message = "RelaxWarning: %s\n\n" % message
 
@@ -698,6 +671,7 @@ class RelaxWarnings:
             tb = "Traceback (most recent call last):\n%s" % tb
             message = tb + message
 
+        # Return the warning message.
         return message
 
 
