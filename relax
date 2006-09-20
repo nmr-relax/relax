@@ -70,7 +70,6 @@ from colour import Colour
 from data import Data
 from errors import RelaxErrors, RelaxWarnings
 from float import Float
-from float import Float
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
