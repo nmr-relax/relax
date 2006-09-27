@@ -148,6 +148,7 @@ class Model_selection:
                     if num < self.min_instances:
                         self.min_instances = num
 
+            # All other model selection techniques.
             else:
                 # Number of instances.
                 num = self.count_num_instances[self.runs[i]](self.runs[i])
