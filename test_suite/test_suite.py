@@ -26,6 +26,7 @@ import sys
 
 
 # Import the tests.
+from angles import Angles
 from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
@@ -106,6 +107,22 @@ class Test_suite:
 
         # Execute the tests.
         self.exec_tests(self.diff_tensor_test_array)
+
+
+        # Angle calculation tests.
+        ##########################
+
+        # Heading.
+        self.heading("Angle calculation tests")
+
+        # Initialise the array containing each test element.
+        self.angles_test_array = []
+
+        # User function tests.
+        self.angles_test_array.append(Angles(self.relax))
+
+        # Execute the tests.
+        self.exec_tests(self.angles_test_array)
 
 
         # Relaxation curve-fitting tests.
@@ -303,6 +320,17 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.diff_tensor_test_array:
+            self.summary_line(test)
+
+
+        # Angle calculation tests.
+        ##########################
+
+        # Heading.
+        sys.stdout.write("\nAngle calculation tests:\n")
+
+        # Loop over the tests.
+        for test in self.angles_test_array:
             self.summary_line(test)
 
 
