@@ -456,6 +456,9 @@ class Palmer:
                     if search('out$', file) or search('rotate$', file):
                         remove(file)
 
+            # Test the binary file string corresponds to a valid executable.
+            self.relax.IO.test_binary(self.binary)
+
             # Execute Modelfree4 (inputting a PDB file).
             if pdb:
                 status = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)

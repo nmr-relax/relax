@@ -103,6 +103,31 @@ class RelaxErrors:
             if Debug:
                 self.save_state()
 
+
+    # The binary executable file does not exist (full path has been given!).
+    class RelaxMissingBinaryError(BaseError):
+        def __init__(self, name):
+            self.text = "The binary executable file " + `name` + " does not exist."
+            if Debug:
+                self.save_state()
+
+
+    # The binary executable file is not executable.
+    class RelaxNonExecError(BaseError):
+        def __init__(self, name):
+            self.text = "The binary executable file " + `name` + " is not executable."
+            if Debug:
+                self.save_state()
+
+
+    # The binary executable file is not located within the system path.
+    class RelaxNoInPathError(BaseError):
+        def __init__(self, name):
+            self.text = "The binary executable file " + `name` + " is not located within the system path."
+            if Debug:
+                self.save_state()
+
+
     # Program execution failure.
     class RelaxProgFailError(BaseError):
         def __init__(self, name):

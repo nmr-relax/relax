@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,7 +41,7 @@ except ImportError, message:
     __builtin__.devnull_import = 0
     __builtin__.devnull_import_message = message.args[0]
 
-from os import F_OK, access, makedirs, remove, stat
+from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
 from os.path import expanduser
 from re import match, search
 from string import split
@@ -362,6 +362,41 @@ class IO:
         sys.stdout = self.tee_stdout
         sys.stderr = self.tee_stderr
 
+
+    def test_binary(self, binary):
+        """Function for testing that the binary string corresponds to a valid executable file."""
+
+        # Path separator RE string.
+        if altsep:
+            path_sep = '[' + sep + altsep + ']'
+        else:
+            path_sep = sep
+
+        # The full path of the program has been given (if a directory separatory has been supplied).
+        if search(path_sep, binary):
+            # Test that the binary exists.
+            if not access(binary, F_OK):
+                raise RelaxMissingBinaryError, binary
+
+            # Test that if the binary is executable.
+            if not access(binary, X_OK):
+                raise RelaxNonExecError, binary
+
+        # The path to the binary has not been given.
+        else:
+            # Get the PATH environmental variable.
+            path = getenv('PATH')
+
+            # Split PATH by the path separator.
+            path_list = split(path, pathsep)
+
+            # Test that the binary exists within the system path (and exit this function instantly once it has been found).
+            for path in path_list:
+                if access(path + sep + binary, F_OK):
+                    return
+
+            # The binary is not located in the system path!
+            raise RelaxNoInPathError, binary
 
 
 class SplitIO:
