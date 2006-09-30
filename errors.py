@@ -135,6 +135,7 @@ class RelaxErrors:
             if Debug:
                 self.save_state()
 
+
     # PDB errors.
     #############
 
@@ -155,7 +156,7 @@ class RelaxErrors:
     # Loading error.
     class RelaxPdbLoadError(BaseError):
         def __init__(self, name):
-            self.text = "The PDB file " + `name` + " could not be loaded properly, no proteins could be extracted."
+            self.text = "The PDB file " + `name` + " could not be loaded properly, no molecular chains could be extracted."
             if Debug:
                 self.save_state()
 
@@ -165,6 +166,14 @@ class RelaxErrors:
             self.text = "The unit XH bond vectors for the run " + `run` + " have not been calculated."
             if Debug:
                 self.save_state()
+
+    # PDB data corresponding to the run already exists.
+    class RelaxNoPdbChainError(BaseError):
+        def __init__(self):
+            self.text = "No peptide or nucleotide chains can be found within the PDB file."
+            if Debug:
+                self.save_state()
+
 
     # Nuclear errors.
     #################
