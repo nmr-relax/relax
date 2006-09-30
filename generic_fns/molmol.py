@@ -100,6 +100,9 @@ class Molmol:
     def pipe_open(self):
         """Function for opening a Molmol pipe."""
 
+        # Test that the Molmol binary exists.
+        self.relax.IO.test_binary('molmol')
+
         # Open the Molmol pipe.
         self.relax.data.molmol = popen("molmol -f -", 'w', 0)
 
