@@ -1017,8 +1017,9 @@ class Model_free(Common_functions):
         local_tm = 0
         for i in xrange(len(self.relax.data.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
-                continue
+            # This code causes a bug after model elimination if the model has been eliminated (select = 0).
+            #if not self.relax.data.res[self.run][i].select:
+            #    continue
 
             # No params.
             if not hasattr(self.relax.data.res[self.run][i], 'params'):
@@ -2588,6 +2589,10 @@ class Model_free(Common_functions):
         # Other data.
         elif self.param_set == 'diff' or self.param_set == 'all':
             return 1
+
+        # Should not be here.
+        else:
+            raise RelaxFault
 
 
     def overfit_deselect(self, run):

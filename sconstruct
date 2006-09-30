@@ -511,18 +511,6 @@ class Main:
                 if self.DIST_TYPE == 'tar':
                     archive.add(name=name, arcname=arcname)
 
-                    # Open the file.
-                    #file = open(path.join(root, files[i]))
-
-                    # Tar information.
-                    #tarinfo = archive.gettarinfo(name, arcname)
-
-                    # Add the file.
-                    #archive.addfile(tarinfo, file)
-
-                    # Close the file.
-                    #file.close()
-
         # Close the archive.
         archive.close()
 
