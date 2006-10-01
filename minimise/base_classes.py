@@ -430,7 +430,7 @@ class Line_search:
             if self.print_flag:
                 print self.print_prefix + "Line search:  More and Thuente line search."
             self.line_search = self.mt
-        elif match('^[Nn]one$', self.line_search_algor):
+        elif match('^[Nn]o [Ll]ine [Ss]earch$', self.line_search_algor):
             if self.print_flag:
                 print self.print_prefix + "Line search:  No line search."
             self.line_search = self.no_search
@@ -441,7 +441,7 @@ class Line_search:
 
         if type == None:
             return 0
-        elif match('^[Bb]ack', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', type) or match('^[Nn][Ww][Ii]', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', type) or match('^[Nn][Ww][Ww]', type) or match('^[Mm]ore[ _][Tt]huente$', type) or match('^[Mm][Tt]', type) or match('^[Nn]one$', type):
+        elif match('^[Bb]ack', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ii]nt', type) or match('^[Nn][Ww][Ii]', type) or match('^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe', type) or match('^[Nn][Ww][Ww]', type) or match('^[Mm]ore[ _][Tt]huente$', type) or match('^[Mm][Tt]', type) or match('^[Nn]o [Ll]ine [Ss]earch$', type):
             return 1
         else:
             return 0
@@ -659,7 +659,7 @@ class Hessian_mods:
         """Initialise the Hessian modification functions."""
 
         # Unmodified Hessian.
-        if self.hessian_mod == None or match('[Nn]one', self.hessian_mod):
+        if self.hessian_mod == None or match('^[Nn]o [Hh]essian [Mm]od', self.hessian_mod):
             if self.print_flag:
                 print self.print_prefix + "Hessian modification:  Unmodified Hessian."
             self.get_pk = self.unmodified_hessian
@@ -710,7 +710,7 @@ class Hessian_mods:
     def valid_hessian_mod(self, mod):
         """Test if the string 'mod' is a valid Hessian modification."""
 
-        if mod == None or match('^[Ee]igen', mod) or match('^[Cc]hol', mod) or match('^[Gg][Mm][Ww]$', mod) or match('^[Gg][Mm][Ww][ -_]old', mod) or match('^[Ss][Ee]99', mod) or match('^[Nn]one', mod):
+        if mod == None or match('^[Ee]igen', mod) or match('^[Cc]hol', mod) or match('^[Gg][Mm][Ww]$', mod) or match('^[Gg][Mm][Ww][ -_]old', mod) or match('^[Ss][Ee]99', mod) or match('^[Nn]o [Hh]essian [Mm]od', mod):
             return 1
         else:
             return 0

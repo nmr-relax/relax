@@ -244,7 +244,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |                                   |                                                     |
     | More and Thuente line search      | '^[Mm][Tt]' or '^[Mm]ore[ _][Tt]huente$'            |
     |                                   |                                                     |
-    | No line search                    | '^[Nn]one$'                                         |
+    | No line search                    | '^[Nn]o [Ll]ine [Ss]earch$'                         |
     |___________________________________|_____________________________________________________|
 
 
@@ -255,7 +255,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     | Hessian modification              | Patterns                                            |
     |___________________________________|_____________________________________________________|
     |                                   |                                                     |
-    | Unmodified Hessian                | '[Nn]one'                                           |
+    | Unmodified Hessian                | '^[Nn]o [Hh]essian [Mm]od'                          |
     |                                   |                                                     |
     | Eigenvalue modification           | '^[Ee]igen'                                         |
     |                                   |                                                     |
