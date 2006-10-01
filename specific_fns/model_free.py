@@ -2927,7 +2927,7 @@ class Model_free(Common_functions):
             model = self.file_line[self.col['model']]
             equation = self.file_line[self.col['eqi']]
             params = eval(self.file_line[self.col['params']])
-            if model and equation and params:
+            if model and equation:
                 self.model_setup(self.run, model=model, equation=equation, params=params, res_num=self.res_num)
 
         # Values.
