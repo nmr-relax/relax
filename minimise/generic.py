@@ -270,6 +270,12 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     |___________________________________|_____________________________________________________|
 
 
+    As both the line search algorithm and Hessian modification can be specified for Newton
+    optimisation, supplying the option 'None' may appear to be ambiguous.  In fact, the Hessian
+    takes precedence over the line search.  Hence supplying the option 'None' with the Newton
+    algorithm selects the unmodified Hessian.  Supplying 'None' twice will turn off the Hessian
+    modification and no step length selection (or line search) will be performed.
+
 
     Hessian type, these are used in a few of the trust region methods including the Dogleg and Exact
     trust region algorithms.  In these cases, when the Hessian type is set to Newton, a Hessian
