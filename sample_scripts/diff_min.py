@@ -35,7 +35,7 @@ for name in runs:
     # Setup other values.
     diffusion_tensor.init(name, (1e-8, 1.0, 60, 290), param_types=1, spheroid_type='oblate', fixed=1)
     value.set(name, 1.02 * 1e-10, 'bond_length')
-    value.set(name, -160 * 1e-6, 'csa')
+    value.set(name, -170 * 1e-6, 'csa')
 
     # Select the model-free model.
     model_free.select_model(run=name, model=name)

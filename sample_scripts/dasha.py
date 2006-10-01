@@ -30,7 +30,7 @@ for name in runs:
     diffusion_tensor.init(name, 10e-9, fixed=1)
     #diffusion_tensor.init(name, (10e-9, 0, 0, 40, 30, 80), fixed=1)
     value.set(name, 1.02 * 1e-10, 'bond_length')
-    value.set(name, -160 * 1e-6, 'csa')
+    value.set(name, -170 * 1e-6, 'csa')
 
     # Select the model-free model.
     model_free.select_model(run=name, model=name)

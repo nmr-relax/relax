@@ -456,12 +456,20 @@ class Palmer:
                     if search('out$', file) or search('rotate$', file):
                         remove(file)
 
-            # Execute Modelfree4.
+            # Test the binary file string corresponds to a valid executable.
+            self.relax.IO.test_binary(self.binary)
+
+            # Execute Modelfree4 (inputting a PDB file).
             if pdb:
-                spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
+                status = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
+                if status:
+                    raise RelaxProgFailError, 'Modelfree4'
+
+
+            # Execute Modelfree4 (without a PDB file).
             else:
-                test = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
-                if test:
+                status = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
+                if status:
                     raise RelaxProgFailError, 'Modelfree4'
 
         # Failure.

@@ -161,6 +161,9 @@ class Grace:
     def view(self, file=None, dir=None, grace_exe='xmgrace'):
         """Function for running Grace."""
 
+        # Test the binary file string corresponds to a valid executable.
+        self.relax.IO.test_binary(grace_exe)
+
         # File path.
         self.file_path = self.relax.IO.file_path(file, dir)
 

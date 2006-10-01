@@ -74,5 +74,8 @@ class OpenDX:
         if vp_exec:
             execute_text = " -execute"
 
+        # Test the binary file string corresponds to a valid executable.
+        self.relax.IO.test_binary(dx_exe)
+
         # Run OpenDX.
         system(dx_exe + dir_text + " -program " + file + ".net" + execute_text + " &")

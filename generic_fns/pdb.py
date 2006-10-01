@@ -225,8 +225,13 @@ class PDB:
             if self.print_flag:
                 print "\nStructure " + `i + 1` + "\n"
 
-            # Reassign the first peptide chain of the first structure.
-            pdb_residues = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
+            # Reassign the first peptide or nucleotide chain of the first structure.
+            if self.relax.data.pdb[self.run].structures[i].peptide_chains:
+                pdb_residues = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
+            elif self.relax.data.pdb[self.run].structures[i].nucleotide_chains:
+                pdb_residues = self.relax.data.pdb[self.run].structures[i].nucleotide_chains[0].residues
+            else:
+                raise RelaxNoPdbChainError
 
             # Loop over the sequence.
             for j in xrange(len(self.relax.data.res[self.run])):

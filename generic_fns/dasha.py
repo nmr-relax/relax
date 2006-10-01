@@ -338,6 +338,9 @@ class Dasha:
         self.force = force
         self.binary = binary
 
+        # Test the binary file string corresponds to a valid executable.
+        self.relax.IO.test_binary(self.binary)
+
         # The current directory.
         orig_dir = getcwd()
 

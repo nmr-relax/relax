@@ -66,11 +66,8 @@ class Angles:
             raise RelaxError, "No coded yet."
 
 
-    def ellipsoid_frame(self, run=None):
+    def ellipsoid_frame(self):
         """Function for calculating the spherical angles of the XH vector in the ellipsoid frame."""
-
-        # Arguments.
-        self.run = run
 
         # Get the unit vectors Dx, Dy, and Dz of the diffusion tensor axes.
         Dx, Dy, Dz = self.relax.generic.diffusion_tensor.unit_axes()
@@ -93,11 +90,8 @@ class Angles:
             self.relax.data.res[self.run][i].phi = acos(dx / sin(self.relax.data.res[self.run][i].theta))
 
 
-    def spheroid_frame(self, run=None):
+    def spheroid_frame(self):
         """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
-
-        # Arguments.
-        self.run = run
 
         # Get the unit vector Dpar of the diffusion tensor axis.
         Dpar = self.relax.generic.diffusion_tensor.unit_axes()
