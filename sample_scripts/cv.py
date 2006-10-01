@@ -43,7 +43,7 @@ for i in xrange(len(runs)):
 
         # Set the bond length and CSA values.
         value.set(cv_runs[i][j], 1.02 * 1e-10, 'bond_length')
-        value.set(cv_runs[i][j], -170 * 1e-6, 'csa')
+        value.set(cv_runs[i][j], -172 * 1e-6, 'csa')
 
         # Select the preset model-free models.
         model_free.select_model(run=cv_runs[i][j], model=runs[i])

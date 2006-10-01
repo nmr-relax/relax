@@ -397,7 +397,7 @@ class Main:
 
             # Set the bond length and CSA values.
             value.set(name, 1.02 * 1e-10, 'bond_length')
-            value.set(name, -170 * 1e-6, 'csa')
+            value.set(name, -172 * 1e-6, 'csa')
 
             # Select the model-free model.
             model_free.select_model(run=name, model=name)
