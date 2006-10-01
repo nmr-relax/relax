@@ -60,7 +60,7 @@ diffusion_tensor.init(name, 10e-9)
 sequence.add(name, 1, 'ALA')
 
 # Set the CSA and bond lengths.
-value.set(name, value=-170e-6, param='CSA')
+value.set(name, value=-172e-6, param='CSA')
 value.set(name, value=1.02e-10, param='r')
 
 # Set the model-free parameters.

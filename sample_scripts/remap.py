@@ -43,7 +43,7 @@ relax_data.read(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
 # Setup other values.
 diffusion_tensor.init(name, 1e-8)
 value.set(name, 1.02 * 1e-10, 'bond_length')
-value.set(name, -170 * 1e-6, 'csa')
+value.set(name, -172 * 1e-6, 'csa')
 
 # Select the model-free model.
 model_free.select_model(run=name, model=name)
