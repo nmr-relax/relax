@@ -226,9 +226,9 @@ class PDB:
                 print "\nStructure " + `i + 1` + "\n"
 
             # Reassign the first peptide or nucleotide chain of the first structure.
-            if hasattr(self.relax.data.pdb[self.run].structures[i], 'peptide_chains'):
+            if self.relax.data.pdb[self.run].structures[i].peptide_chains:
                 pdb_residues = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
-            elif hasattr(self.relax.data.pdb[self.run].structures[i], 'nucleotide_chains'):
+            elif self.relax.data.pdb[self.run].structures[i].nucleotide_chains:
                 pdb_residues = self.relax.data.pdb[self.run].structures[i].nucleotide_chains[0].residues
             else:
                 raise RelaxNoPdbChainError
