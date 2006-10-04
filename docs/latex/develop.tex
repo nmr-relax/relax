@@ -244,20 +244,20 @@ and then check in the modifications.  Your changes will now be present in the ma
 
 
 
-% The Sconstruct build system.
+% The SCons build system.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{The Sconstruct build system}
+\section{The SCons build system}
 
-\index{Sconstruct|textbf}
-The Sconstruct build system was chosen over other build systems including \texttt{`make'}\index{make} as it is a cross-platform build system which can be used in Unix\index{Unix}, GNU/Linux\index{GNU/Linux}, Mac OS X\index{Mac OS X}, and even MS Windows\index{MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the Sconstruct utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file `sconstruct' in the base relax directory, which consists of python code, directs the operation of Sconstruct for the various functions.
+\index{SCons|textbf}
+The SCons build system was chosen over other build systems including \texttt{`make'}\index{make} as it is a cross-platform build system which can be used in Unix\index{Unix}, GNU/Linux\index{GNU/Linux}, Mac OS X\index{Mac OS X}, and even MS Windows\index{MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the SCons utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file `sconstruct' in the base relax directory, which consists of python code, directs the operation of SCons for the various functions.
 
 
 
 % C module compilation.
 \subsection{C module compilation}
 \index{C module compilation|textbf}
-\index{Sconstruct!C module compilation|textbf}
+\index{SCons!C module compilation|textbf}
 
 As described in the installation chapter typing \texttt{`scons'} in the base directory will create the shared objects which are imported into Python as modules.
 
@@ -270,9 +270,9 @@ As described in the installation chapter typing \texttt{`scons'} in the base dir
 To create the PDF version of the relax manual type
 
 \example{\$ scons manual}
-\index{Sconstruct!PDF manual|textbf}
+\index{SCons!PDF manual|textbf}
 
-in the base directory.  Sconstruct will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \texttt{`docs/latex'} directory.  This is dependent on the programs \texttt{`latex'}, \texttt{`makeindex'}, \texttt{`dvips'}, and \texttt{`ps2pdf'} being located within the environment's path.
+in the base directory.  SCons will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \texttt{`docs/latex'} directory.  This is dependent on the programs \texttt{`latex'}, \texttt{`makeindex'}, \texttt{`dvips'}, and \texttt{`ps2pdf'} being located within the environment's path.
 
 
 
@@ -283,7 +283,7 @@ in the base directory.  Sconstruct will then run a series of shell commands to c
 The HTML version of the relax manual is made by typing
 
 \example{\$ scons manual\_html}
-\index{Sconstruct!HTML manual|textbf}
+\index{SCons!HTML manual|textbf}
 
 in the base directory.  One command calling the program \texttt{`latex2html'} will be executed which will create HTML pages from the \LaTeX\ sources.
 
@@ -296,12 +296,12 @@ in the base directory.  One command calling the program \texttt{`latex2html'} wi
 Two types of distribution archive can be created from the currently checked out sources -- the source and binary distributions.  To create the source distribution type 
 
 \example{\$ scons source\_dist}
-\index{Sconstruct!source distribution|textbf}
+\index{SCons!source distribution|textbf}
 
 whereas to create the binary distribution, whereby the C modules are compiled and the resultant shared objects are included in the bzipped tar file, type
 
 \example{\$ scons binary\_dist}
-\index{Sconstruct!binary distribution|textbf}
+\index{SCons!binary distribution|textbf}
 
 If a binary distribution does not exist for your architecture feel free to create it yourself and contribute the archive to be included on the download pages.  To do this you will need to check out the appropriate tagged branch from the relax subversion repository.  If the current stable release is called 1.2.3 check out that branch by typing
 
@@ -324,7 +324,7 @@ Then build the binary distribution and send a message to the relax development m
 If the command
 
 \example{\$ scons clean}
-\index{Sconstruct!clean up|textbf}
+\index{SCons!clean up|textbf}
 
 is run in the base directory all Python byte compiled files \texttt{`*.pyc'}, all C object files \texttt{`*.o'} and \texttt{`*.os'}, all C shared object files \texttt{`*.so'}, and any backup files with the extension \texttt{`*.bak'} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
 
