@@ -114,7 +114,7 @@ class PDB:
                 i = i + 1
 
 
-    def load(self, run=None, file=None, dir=None, model=None, heteronuc=None, proton=None, load_seq=1, calc_vectors=1, fail=1, print_flag=1):
+    def read(self, run=None, file=None, dir=None, model=None, load_seq=1, fail=1, print_flag=1):
         """The pdb loading function."""
 
         # Arguments.
@@ -122,10 +122,7 @@ class PDB:
         self.file = file
         self.dir = dir
         self.model = model
-        self.heteronuc = heteronuc
-        self.proton = proton
         self.load_seq = load_seq
-        self.calc_vectors = calc_vectors
         self.fail = fail
         self.print_flag = print_flag
 
@@ -193,10 +190,6 @@ class PDB:
         # Load into Molmol (if running).
         self.relax.generic.molmol.open_pdb(self.run)
 
-        # Calculate the unit XH vectors.
-        if calc_vectors:
-            self.vectors()
-
 
     def set_vector(self, run=None, res=None, xh_vect=None):
         """Function for setting the XH unit vectors."""
@@ -205,8 +198,34 @@ class PDB:
         self.relax.data.res[run][res].xh_vect = xh_vect
 
 
-    def vectors(self):
-        """Function for calculating the XH unit vector from the loaded structure."""
+    def vectors(self, heteronuc=None, proton=None, res_num=None, res_name=None):
+        """Function for calculating/extracting the XH unit vector from the loaded structure."""
+
+        # Arguments.
+        self.heteronuc = heteronuc
+        self.proton = proton
+
+        # Test if the PDB file has been loaded.
+        if not self.relax.data.pdb.has_key(run):
+            raise RelaxPdbError, run
+
+        # Test if sequence data is loaded.
+        if not self.relax.data.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
+        # Test if the residue number is a valid regular expression.
+        if type(num) == str:
+            try:
+                compile(num)
+            except:
+                raise RelaxRegExpError, ('residue number', num)
+
+        # Test if the residue name is a valid regular expression.
+        if name:
+            try:
+                compile(name)
+            except:
+                raise RelaxRegExpError, ('residue name', name)
 
         # Print out.
         if self.print_flag:
@@ -235,24 +254,44 @@ class PDB:
 
             # Loop over the sequence.
             for j in xrange(len(self.relax.data.res[self.run])):
+                # Remap the data structure 'self.relax.data.res[self.run][j]'.
+                data = self.relax.data.res[self.run][j]
+
+                # Skip unselected residues.
+                if not data.select:
+                    continue
+
+                # Skip the residue if there is no match to 'num'.
+                if type(num) == int:
+                    if not data.num == num:
+                        continue
+                elif type(num) == str:
+                    if not match(num, `data.num`):
+                        continue
+
+                # Skip the residue if there is no match to 'name'.
+                if name != None:
+                    if not match(name, data.name):
+                        continue
+
                 # Find the corresponding residue in the PDB.
                 pdb_res = None
                 for k in xrange(len(pdb_residues)):
-                    if self.relax.data.res[self.run][j].num == pdb_residues[k].number:
+                    if data.num == pdb_residues[k].number:
                         pdb_res = pdb_residues[k]
                         break
                 if pdb_res == None:
-                    raise RelaxNoResError, self.relax.data.res[self.run][j].num
+                    raise RelaxNoResError, data.num
 
                 # Test if the proton atom exists for residue i.
                 if not pdb_res.atoms.has_key(self.proton):
-                    warn(RelaxNoAtomWarning(self.proton, self.relax.data.res[self.run][j].num))
-                    self.relax.data.res[self.run][j].xh_vect.append(None)
+                    warn(RelaxNoAtomWarning(self.proton, data.num))
+                    data.xh_vect.append(None)
 
                 # Test if the heteronucleus atom exists for residue i.
                 elif not pdb_res.atoms.has_key(self.heteronuc):
-                    warn(RelaxNoAtomWarning(self.heteronuc, self.relax.data.res[self.run][j].num))
-                    self.relax.data.res[self.run][j].xh_vect.append(None)
+                    warn(RelaxNoAtomWarning(self.heteronuc, data.num))
+                    data.xh_vect.append(None)
 
                 # Calculate the vector.
                 else:
@@ -271,12 +310,12 @@ class PDB:
                     # Test for zero length.
                     if norm_factor == 0.0:
                         if self.print_flag:
-                            print "The XH bond vector for residue " + `self.relax.data.res[self.run][j].num` + " is of zero length."
-                        self.relax.data.res[self.run][j].xh_vect.append(None)
+                            print "The XH bond vector for residue " + `data.num` + " is of zero length."
+                        data.xh_vect.append(None)
 
                     # Calculate the normalised vector.
                     else:
-                        self.relax.data.res[self.run][j].xh_vect.append(vector / norm_factor)
+                        data.xh_vect.append(vector / norm_factor)
 
         # Print out.
         if self.print_flag:
@@ -287,9 +326,29 @@ class PDB:
 
         # Average the vectors and convert xh_vect from an array of vectors to a vector.
         for i in xrange(len(self.relax.data.res[self.run])):
+            # Remap the data structure 'self.relax.data.res[self.run][j]'.
+            data = self.relax.data.res[self.run][j]
+
+            # Skip unselected residues.
+            if not data.select:
+                continue
+
+            # Skip the residue if there is no match to 'num'.
+            if type(num) == int:
+                if not data.num == num:
+                    continue
+            elif type(num) == str:
+                if not match(num, `data.num`):
+                    continue
+
+            # Skip the residue if there is no match to 'name'.
+            if name != None:
+                if not match(name, data.name):
+                    continue
+
             # No vectors.
-            if self.relax.data.res[self.run][i].xh_vect[0] == None:
-                del self.relax.data.res[self.run][i].xh_vect
+            if data.xh_vect[0] == None:
+                del data.xh_vect
                 continue
 
             # Average vectors.
@@ -298,10 +357,10 @@ class PDB:
             # Sum the vectors.
             for j in xrange(num_str):
                 # Sum.
-                ave_vector = ave_vector + self.relax.data.res[self.run][i].xh_vect[j]
+                ave_vector = ave_vector + data.xh_vect[j]
 
             # Average the vector.
             ave_vector = ave_vector / num_str
 
             # Replace the temporary vector list with the normalised average vector.
-            self.relax.data.res[self.run][i].xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
+            data.xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))

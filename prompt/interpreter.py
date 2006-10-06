@@ -47,7 +47,6 @@ from init_data import Init_data
 from minimisation import Minimisation
 from model_selection import Modsel
 from nuclei import Nuclei
-from pdb import PDB
 
 # User classes.
 from dasha import Dasha
@@ -59,6 +58,7 @@ from molmol import Molmol
 from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
+from pdb import PDB
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
@@ -102,7 +102,6 @@ class Interpreter:
         self._Modsel = Modsel(relax)
         self._Nuclei = Nuclei(relax)
         self._OpenDX = OpenDX(relax)
-        self._PDB = PDB(relax)
         self._system = system
 
         # Place the user classes into the interpreter class namespace.
@@ -116,6 +115,7 @@ class Interpreter:
         self._Monte_carlo = Monte_carlo(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
+        self._PDB = PDB(relax)
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Results = Results(relax)
@@ -160,7 +160,6 @@ class Interpreter:
         minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei
-        pdb = self._PDB.pdb
 
         # Place the user classes in the local namespace.
         dasha = self._Dasha
@@ -173,6 +172,7 @@ class Interpreter:
         monte_carlo = self._Monte_carlo
         noe = self._Noe
         palmer = self._Palmer
+        pdb = self._PDB
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
         results = self._Results
