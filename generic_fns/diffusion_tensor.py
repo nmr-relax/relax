@@ -1336,6 +1336,9 @@ class Diffusion_tensor:
     def test_params(self, num_params):
         """Function for testing the validity of the input parameters."""
 
+        # An allowable error to account for machine precision, optimisation quality, etc.
+        error = 1e-4
+
         # tm.
         tm = self.relax.data.diff[self.run].tm
         if tm <= 0.0 or tm > 1e-6:
@@ -1348,7 +1351,7 @@ class Diffusion_tensor:
             Da = self.relax.data.diff[self.run].Da
 
             # Da.
-            if Da < -1.5*Diso or Da > 3.0*Diso:
+            if Da < (-1.5*Diso - error*Diso) or Da > (3.0*Diso + error*Diso):
                 raise RelaxError, "The Da value of " + `Da` + " should be between -3/2 * Diso and 3Diso."
 
         # Ellipsoid.
@@ -1359,11 +1362,11 @@ class Diffusion_tensor:
             Dr = self.relax.data.diff[self.run].Dr
 
             # Da.
-            if Da < 0.0 or Da > 3.0*Diso:
+            if Da < (0.0 - error*Diso) or Da > (3.0*Diso + error*Diso):
                 raise RelaxError, "The Da value of " + `Da` + " should be between zero and 3Diso."
 
             # Dr.
-            if Dr < 0.0 or Dr > 1.0:
+            if Dr < (0.0 - error) or Dr > (1.0 + error):
                 raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
 
 
