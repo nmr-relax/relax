@@ -534,6 +534,10 @@ class Palmer:
             if not hasattr(data, 'model'):
                 continue
 
+            # No relaxation data.
+            if not hasattr(data, 'num_frq'):
+                continue
+
             # Get the S2 data.
             if 'S2' in data.params:
                 data.s2, data.s2_err = self.get_mf_data(self.mfout_S2_pos + pos)
