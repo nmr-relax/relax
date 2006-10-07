@@ -1,0 +1,90 @@
+The relax managers.
+
+This file presents the details of the tasks preformed by the relax managers.  The day-to-day activities which keep the relax project running are documented.
+
+
+Index:
+1.  All managers
+    1.1  Documentation
+    1.2  Transitions
+2.  The mailing list manager
+    2.1  Tasks
+        2.1.1  Configuration
+        2.1.2  Spam
+        2.1.3  Rejection
+        2.1.4  Acceptance
+        2.1.5  Redirection
+        2.1.6  Invitation
+        2.1.7  Sharing the job
+        2.1.6  Invitation
+    2.2  Email addresses
+    2.3  Administrative passwords
+
+
+
+
+
+1.  All managers
+
+The following are tasks common to all the manager positions.
+
+
+1.1  Documentation
+
+An important part of the job of the relax managers is to document all the actions performed as the manager and to keep the job descriptions below up to date.  This file will constantly evolve as the manager positions are refined.  There may also be tasks or details missing from the descriptions.  This is an important task as it allows the next volunteer to easily take over when a transition occurs.
+
+
+1.2  Transitions
+
+The management position can be passed on by request at any time.  This may be because you would like to move onto another job, if job becomes too demanding, or if you do not currently have the time to contribute to the project.
+
+
+
+
+
+2.  The mailing list manager
+
+This position is currently held by Chris MacRaild (c.a.macraild at leeds.ac.uk).
+
+
+2.1  Tasks
+
+2.1.1  Configuration
+
+Part of the job is to change the mailing list settings as necessary.  This is a relatively infrequent task.  The changes should be discussed on the relax-devel mailing list first so that subscribers are aware that a change may soon occur.  Changes to relax-users and relax-devel should also be announced prior to the event.
+
+2.1.2  Spam
+
+All four mailing lists (relax-announce, relax-users, relax-devel, and relax-commits) are moderated - only members can post to the lists.  Posts by non-subscribers are first sent to the Mailing List Manager for approval, denial, rejection, etc.  The number of spam messages are low because all posts must first pass through Gna's blacklists and SpamAssassin (https://gna.org/cookbook/?func=detailitem&item_id=112).
+
+2.1.3  Rejection
+
+All posts to relax-announce and relax-commits are to be rejected.  The exceptions are posts to relax-announce by the Project Administrator and posts to relax-commits by the subversion and CVS relax repositories (https://gna.org/svn/?group=relax and https://gna.org/cvs/?group=relax).  The repository commit messages are currently automatically accepted.
+
+2.1.4  Acceptance
+
+Non-member posts to relax-users or relax-devel should be quickly accepted if they are legitimate.  The poster will receive an automatic email saying that the list is for members only and that the email is awaiting approval.  Even if the poster subsequently subscribes to the list, their post should nevertheless be accepted by the manager as it will still be waiting for approval.
+
+2.1.5  Redirection
+
+If people have sent the message to the wrong forum (a post talking about source code modifications is sent to relax-user, somebody accidentally sending a message to relax-announce or relax-commits when it should be sent to one of the other lists, or program usage questions which are sent to relax-users, etc.) then redirection is necessary.  To do this, the person should be politely asked to repost the message to the relevant forum.  This should be done publicly as a reply to their original post unless the message was sent to relax-announce or relax-commits.
+
+If somebody reports a bug on one of the mailing lists, then the Mailing List Manager should politely ask the person if they would like to create a bug report (pointing them to the bug tracker at https://gna.org/bugs/?group=relax or the bug submission page https://gna.org/bugs/?func=additem&group=relax).  In the post the person should be directed to the relevant section of the manual describing how to submit a bug report (both the PDF and HTML versions).  It is quite likely that the poster won't take the time to create the report.  If that is the case then the Mailing List Manager should create a report pointing to the original post.  An example of this is bug #6873 (https://gna.org/bugs/?6873).  Redirection is not an exclusive job, anyone can request redirection, however if no one responds then the Mailing List Manager should make the request.
+
+2.1.6  Invitation
+
+Some people subscribe solely to relax-users or relax-devel.  Any subscribers to these two lists should probably also be subscribed to relax-announce.  If there are people who receive messages from the other lists but are not subscribed to relax-announce then, from the relax-announce mailman configuration page, they should politely be asked if they would like to subscribe to relax-announce.  Only new subscribers should be invited.
+
+2.1.7  Sharing the job
+
+Importantly these tasks are not the exclusive domain of the Mailing List Manager.  Everyone is free to do any part of the task description.  The job of the manager is to make sure that these things occur if no one picks up the slack.  However, the first four tasks require the administrative password so only the Manager and the Project Admin can do these tasks.
+
+
+2.2  Email addresses
+
+The Mailing List Manager is a position of trust.  The manager has full access to the email addresses and names of all subscribers.  These details must not be used in any way or the information disclosed to anyone.  In addition, people's settings should not be changed.  If someone has their settings incorrect, then they should fix the problem.  A private message describing the problem and presenting yourself as the Mailing List Manager can be sent.
+
+
+2.3  Administrative passwords
+
+The passwords for the administrative pages of all four mailing lists are to be kept by both the Mailing List Manager and Project Admin.  Although the Project Admin can still perform all the tasks of the manager, all the tasks should be left for the Mailing List Manager.  By both people having access to the administrative interface, Project Admin can clear messages when the Mailing List Manager is away or at any other time requested.
