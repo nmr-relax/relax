@@ -152,10 +152,6 @@ class PDB:
                 warn(RelaxNoPDBFileWarning(self.file_path))
                 return
 
-        # Test that the nuclei have been correctly set.
-        if self.heteronuc == self.proton:
-            raise RelaxError, "The proton and heteronucleus are set to the same atom."
-
 
         # Data creation.
         ################
@@ -168,10 +164,6 @@ class PDB:
 
         # Model.
         self.relax.data.pdb[self.run].model = model
-
-        # Nuclei.
-        self.relax.data.pdb[self.run].proton = proton
-        self.relax.data.pdb[self.run].heteronuc = heteronuc
 
 
         # Load the structures.
@@ -227,9 +219,17 @@ class PDB:
             except:
                 raise RelaxRegExpError, ('residue name', name)
 
+        # Test that the nuclei have been correctly set.
+        if self.heteronuc == self.proton:
+            raise RelaxError, "The proton and heteronucleus are set to the same atom."
+
         # Print out.
         if self.print_flag:
             print "\nCalculating unit XH vectors.\n"
+
+        # Nuclei.
+        self.relax.data.pdb[self.run].proton = proton
+        self.relax.data.pdb[self.run].heteronuc = heteronuc
 
         # Number of structures.
         num_str = len(self.relax.data.pdb[self.run].structures)
