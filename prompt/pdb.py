@@ -191,12 +191,12 @@ class PDB:
             raise RelaxStrError, ('proton', proton)
 
         # Residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
 
         # Residue name.
-        if type(res_name) != str:
-            raise RelaxStrError, ('residue name', res_name)
+        if res_name != None and type(res_name) != str:
+            raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
         self.__relax__.generic.pdb.vectors(run=run, heteronuc=heteronuc, proton=proton, res_num=res_num, res_name=res_name)
