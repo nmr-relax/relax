@@ -84,7 +84,7 @@ class PDB:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pdb.read("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
@@ -169,7 +169,7 @@ class PDB:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pdb.vectors("
             text = text + "run=" + `run`
             text = text + ", heteronuc=" + `heteronuc`
