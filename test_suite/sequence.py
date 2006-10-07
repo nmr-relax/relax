@@ -53,7 +53,7 @@ class Sequence:
         self.relax.generic.runs.create(run, 'mf')
 
         # Read the sequence.
-        self.relax.interpreter._PDB.pdb(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/data', model=1, heteronuc='N', proton='H', load_seq=1)
+        self.relax.interpreter._PDB.read(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/data', model=1, load_seq=1)
 
         # Success.
         return 1
