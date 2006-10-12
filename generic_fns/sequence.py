@@ -143,7 +143,12 @@ class Sequence:
         print "\nLoading the sequence from the PDB file.\n"
 
         # Reassign the sequence of the first structure.
-        res = self.relax.data.pdb[run].structures[0].peptide_chains[0].residues
+        if self.relax.data.pdb[self.run].structures[i].peptide_chains:
+            res = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
+        elif self.relax.data.pdb[self.run].structures[i].nucleotide_chains:
+            res = self.relax.data.pdb[self.run].structures[i].nucleotide_chains[0].residues
+        else:
+            raise RelaxNoPdbChainError
 
         # Add the run to 'self.relax.data.res'.
         self.relax.data.res.add_list(run)
