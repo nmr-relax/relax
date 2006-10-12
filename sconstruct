@@ -218,7 +218,7 @@ class Main:
         manual_env.Append(BUILDERS={'Fetch' : Builder(action=fetch_docstrings)})
         manual_env.Fetch(target='fetch_docstrings', source=None)
 
-        # Target for compiling the PDF version of the user manaul from the LaTeX sources.
+        # Target for compiling the PDF version of the user manual from the LaTeX sources.
         manual_env.Append(BUILDERS={'CompileUserManualPDF' : Builder(action=compile_user_manual_pdf)})
         manual_env.CompileUserManualPDF(target='compile_user_manual_pdf', source=None)
 
@@ -321,11 +321,43 @@ class Main:
         """The help message."""
 
         # Intro.
-        string = '\nSconstruct help for relax.\n\n'
+        string = '\nHelp for using Scons to build the various components of relax.\n\n'
 
-        # Main text.
-        string = string + 'To build the C modules, type\n\n$ scons\n\n'
-        string = string + 'To install the program, type\n\n$ scons install\n\n'
+        # Usage message.
+        string = string + 'usage: scons [target]\n'
+
+        # No target.
+        string = string + '\nNo target:\n'
+        string = string + '  %-25s\n' % ('build the C modules')
+
+        # Standard targets.
+        string = string + '\nStandard targets:\n'
+        string = string + '  %-25s%-40s\n' % ('install', 'install relax')
+        string = string + '  %-25s%-40s\n' % ('uninstall', 'uninstall relax')
+        string = string + '  %-25s%-40s\n' % ('binary_dist', 'create the binary distribution packages')
+        string = string + '  %-25s%-40s\n' % ('source_dist', 'create the source distribution packages')
+        string = string + '  %-25s%-40s\n' % ('clean', 'remove the compiled and temporary files')
+        string = string + '  %-25s%-40s\n' % ('user_manual_pdf', 'create the user manual (PDF version)')
+        string = string + '  %-25s%-40s\n' % ('user_manual_pdf_nofetch', 'create the user manual (PDF version, without fetching the docstrings)')
+        string = string + '  %-25s%-40s\n' % ('user_manual_html', 'create the user manual (HTML version)')
+        string = string + '  %-25s%-40s\n' % ('user_manual_html_nofetch', 'create the user manual (HTML version, without fetching the docstrings)')
+        string = string + '  %-25s%-40s\n' % ('api_manual_html', 'create the API documentation manual (HTML version)')
+
+        # Specific targets.
+        string = string + '\nSpecific targets:\n'
+        string = string + '  %-25s%-40s\n' % ('package_bin', 'package the binary distribution')
+        string = string + '  %-25s%-40s\n' % ('package_src', 'package the source distribution')
+        string = string + '  %-25s%-40s\n' % ('gpg_bin', 'GPG sign the binary distribution file')
+        string = string + '  %-25s%-40s\n' % ('gpg_src', 'GPG sign the source distribution file')
+        string = string + '  %-25s%-40s\n' % ('version_check', 'check the relax version number')
+        string = string + '  %-25s%-40s\n' % ('clean_temp', 'remove the temporary files')
+        string = string + '  %-25s%-40s\n' % ('manual_version_file', 'create the relax version number LaTeX file')
+        string = string + '  %-25s%-40s\n' % ('fetch_docstrings', 'fetch and LaTeX format the docstrings')
+        string = string + '  %-25s%-40s\n' % ('compile_user_manual_pdf', 'compile the PDF version of the user manual from the LaTeX sources')
+        string = string + '  %-25s%-40s\n' % ('compile_user_manual_html', 'compile the HTML version of the user manual from the LaTeX sources')
+        string = string + '  %-25s%-40s\n' % ('compile_api_manual_html', 'compile the HTML version of the API documentation manual using Epydoc')
+        string = string + '  %-25s%-40s\n' % ('manual_clean', 'remove the temporary manual files')
+        string = string + '  %-25s%-40s\n' % ('manual_clean_nodeps', 'remove the temporary manual files (with no manual environments dependent on it)')
 
         # Set the help message.
         Help(string)
