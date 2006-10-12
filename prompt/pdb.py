@@ -38,7 +38,7 @@ class PDB:
         self.__relax__ = relax
 
 
-    def read(self, run=None, file=None, dir=None, model=None, heteronuc='N', proton='H', load_seq=1):
+    def read(self, run=None, file=None, dir=None, model=None, load_seq=1):
         """The pdb loading function.
 
         Keyword Arguments
