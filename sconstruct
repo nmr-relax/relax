@@ -533,7 +533,7 @@ class Main:
         print "#######################"
         print "# Packaging the files #"
         print "#######################\n\n"
-        print "Creating the package distribution " + `file_name` + ".\n"
+        print "Creating the package distribution " + `env['DIST_FILE']` + ".\n"
 
         # Open the Zip distribution file.
         if self.DIST_TYPE == 'zip':
@@ -541,9 +541,9 @@ class Main:
 
         # Open the Tar distribution file.
         elif self.DIST_TYPE == 'tar':
-            if search('.bz2$', file_name):
+            if search('.bz2$', env['DIST_FILE']):
                 archive = TarFile.bz2open(path.pardir + path.sep + env['DIST_FILE'], 'w')
-            elif search('.gz$', file_name):
+            elif search('.gz$', env['DIST_FILE']):
                 archive = TarFile.gzopen(path.pardir + path.sep + env['DIST_FILE'], 'w')
             else:
                 archive = TarFile.open(path.pardir + path.sep + env['DIST_FILE'], 'w')
