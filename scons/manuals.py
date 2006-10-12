@@ -270,6 +270,24 @@ def compile_api_manual_html(target, source, env):
     # System call.
     system(epydoc_cmd)
 
+
+
+    # Modify the CSS file.
+    ######################
+
+    # Open the file.
+    css_file = open(target + '/epydoc.css', 'a')
+
+    # Header.
+    css_file.write("\n\n\n\n/* Edward */\n\n")
+
+    # Append the new link style to the end.
+    css_file.write("a { text-decoration:none; color:#0017aa; font-weight:normal; }\n")
+    css_file.write("a:hover { color:#316fff; }\n")
+
+    # Close the file.
+    css_file.close()
+
     # Final print out.
     print "\n\n\n"
 
