@@ -31,6 +31,7 @@ import sys
 from base_class import Common_functions
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
+from float import isNaN,isInf 
 
 
 class Model_free(Common_functions):
@@ -2376,12 +2377,12 @@ class Model_free(Common_functions):
             self.h_count = self.h_count + hc
 
             # Catch infinite chi-squared values.
-            #if self.relax.float.isinf(self.func):
-            #    raise RelaxInfError, 'chi-squared'
+            if isInf(self.func):
+                raise RelaxInfError, 'chi-squared'
 
             # Catch chi-squared values of NaN.
-            #if self.relax.float.isnan(self.func):
-            #    raise RelaxNaNError, 'chi-squared'
+            if isNaN(self.func):
+                raise RelaxNaNError, 'chi-squared'
 
             # Scaling.
             if scaling:

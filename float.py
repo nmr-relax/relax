@@ -30,9 +30,9 @@
     
     ieee-74 uses special bit patterns to represent the following states or classes 
     of ieee floating point numbers (ieee-class)
-        nan   - not a number (e.g. 0.0/0.0)
-         ∓inf  - positive or negative infinity (1.0/0.0)
-         ∓zero - zero maybe positive or negative under ieee-754
+      +-nan  - not a number (e.g. 0.0/0.0)
+      inf    - positive or negative infinity (1.0/0.0)
+      +-zero - zero maybe positive or negative under ieee-754
         
     this module provides functions for working with python floats and their 
     special values, if they contain ieee-754 formatted values. Specifically
@@ -48,7 +48,7 @@
        neg-zero,...)
      - check that the current python float implmentations uses ieee-754 doubles
      
-    It also provides constants containg specific bit patterns for nan and ∓inf as 
+    It also provides constants containg specific bit patterns for nan and +-inf as 
     these values cannot be generated from strings via the constructor float(x) 
     with some compiler implementations (typically older microsoft windows compilers)
     
@@ -518,7 +518,7 @@ def isNaN(obj):
     return manNan
 
 def isInf(obj): 
-    ''' check to see if a python float is an infinity (∓inf)
+    ''' check to see if a python float is an infinity 
         
         the check returns true for either positive or negative infinities
         
