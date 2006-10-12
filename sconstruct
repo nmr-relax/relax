@@ -42,7 +42,7 @@ except ImportError:
 
 
 # relax and Scons modules.
-from scons.manuals import clean_manual_files, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
+from scons.manuals import clean_manual_files, compile_api_manual_html, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
 from version import version
 
 
@@ -204,6 +204,11 @@ class Main:
         manual_env.Depends('user_manual_html_nofetch', 'manual_version_file')
         manual_env.Depends('user_manual_html_nofetch', 'compile_user_manual_html')
 
+        # Target for creating the HTML version of the API documentation manual.
+        manual_env.Manual(target='api_manual_html', source=None)
+        manual_env.Depends('api_manual_html', 'manual_clean')
+        manual_env.Depends('api_manual_html', 'compile_api_manual_html')
+
 
         # Target for creating relax version number LaTeX file.
         manual_env.Append(BUILDERS={'Version' : Builder(action=version_file)})
@@ -220,6 +225,10 @@ class Main:
         # Target for compiling the HTML version of the user manual from the LaTeX sources.
         manual_env.Append(BUILDERS={'CompileUserManualHTML' : Builder(action=compile_user_manual_html)})
         manual_env.CompileUserManualHTML(target='compile_user_manual_html', source=None)
+
+        # Target for compiling the HTML version of the API documentation manual using Epydoc.
+        manual_env.Append(BUILDERS={'CompileAPIManualHTML' : Builder(action=compile_api_manual_html)})
+        manual_env.CompileAPIManualHTML(target='compile_api_manual_html', source=None)
 
         # Clean target.
         manual_env.Append(BUILDERS={'Clean' : Builder(action=clean_manual_files)})
