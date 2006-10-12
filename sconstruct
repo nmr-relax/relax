@@ -328,7 +328,7 @@ class Main:
 
         # No target.
         string = string + '\nNo target:\n'
-        string = string + '  %-25s\n' % ('build the C modules')
+        string = string + '  %-25s\n' % ('compile the C modules')
 
         # Standard targets.
         string = string + '\nStandard targets:\n'
