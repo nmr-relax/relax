@@ -126,7 +126,7 @@ class Main:
         package_src_env = Environment(BUILDERS={'archive' : Builder(action=self.package)},
                                       DIST_FILE=self.SRC_FILE)
         package_src_env.archive(target='package_src', source=None)
-        package_src_env.Depends('package_bin', 'version_check')     # Check the program version number first.
+        package_src_env.Depends('package_src', 'version_check')     # Check the program version number first.
 
         # Target for creating a GPG signature of the binary distribution file.
         gpg_bin_env = Environment(BUILDERS={'sign' : Builder(action=self.gpg_sign)},
