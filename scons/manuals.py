@@ -305,7 +305,7 @@ def compile_user_manual_html(target, source, env):
     base_dir = getcwd()
     chdir(env['LATEX_DIR'])
 
-    # Get the docstrings.
+    # Run the latex2html command.
     print "Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex\n\n\n"
     system("latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex")
 
