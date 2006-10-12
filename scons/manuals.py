@@ -32,19 +32,6 @@ from version import version
 
 
 
-def acro(target, source, env):
-    """Builder action for executing Adobe Acrobat reader with the PDF manual."""
-
-    # Print out.
-    print
-    print "##############################################"
-    print "# Viewing the PDF manual using Adobe Acrobat #"
-    print "##############################################\n\n"
-
-    print "Running the command:\n$ acroread -openInNewWindow " + env['DOCS_DIR'] + "relax.pdf &\n\n\n"
-    system("acroread -openInNewWindow " + env['DOCS_DIR'] + "relax.pdf &")
-
-
 def clean_manual_files(target, source, env):
     """Builder action for removing the temporary manual files."""
 
