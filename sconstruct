@@ -42,6 +42,7 @@ except ImportError:
 
 
 # relax and Scons modules.
+from scons.distrib import package, gpg_sign
 from scons.manuals import clean_manual_files, compile_api_manual_html, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
 from version import version
 
@@ -117,25 +118,27 @@ class Main:
         source_dist_env.Depends('source_dist', 'gpg_src')                 # GPG sign the source distribution file.
 
         # Target for packaging the binary distribution.
-        package_bin_env = Environment(BUILDERS={'archive' : Builder(action=self.package)},
-                                      DIST_FILE=self.BIN_FILE)
+        package_bin_env = Environment(BUILDERS={'archive' : Builder(action=package)},
+                                      DIST_FILE=self.BIN_FILE,
+                                      DIST_TYPE=self.DIST_TYPE)
         package_bin_env.archive(target='package_bin', source=None)
         package_bin_env.Depends('package_bin', 'version_check')     # Check the program version number first.
 
         # Target for packaging the source distribution.
-        package_src_env = Environment(BUILDERS={'archive' : Builder(action=self.package)},
-                                      DIST_FILE=self.SRC_FILE)
+        package_src_env = Environment(BUILDERS={'archive' : Builder(action=package)},
+                                      DIST_FILE=self.SRC_FILE,
+                                      DIST_TYPE=self.DIST_TYPE)
         package_src_env.archive(target='package_src', source=None)
         package_src_env.Depends('package_src', 'version_check')     # Check the program version number first.
 
         # Target for creating a GPG signature of the binary distribution file.
-        gpg_bin_env = Environment(BUILDERS={'sign' : Builder(action=self.gpg_sign)},
+        gpg_bin_env = Environment(BUILDERS={'sign' : Builder(action=gpg_sign)},
                                   DIST_FILE=self.BIN_FILE)
         gpg_bin_env.sign(target='gpg_bin', source=None)
         gpg_bin_env.Depends('gpg_bin', 'version_check')     # Check the program version number before signing.
 
         # Target for creating a GPG signature of the source distribution file.
-        gpg_src_env = Environment(BUILDERS={'sign' : Builder(action=self.gpg_sign)},
+        gpg_src_env = Environment(BUILDERS={'sign' : Builder(action=gpg_sign)},
                                   DIST_FILE=self.SRC_FILE)
         gpg_src_env.sign(target='gpg_src', source=None)
         gpg_src_env.Depends('gpg_src', 'version_check')     # Check the program version number before signing.
@@ -299,22 +302,6 @@ class Main:
         """Dummy function which returns zero."""
 
         return 0
-
-
-    def gpg_sign(self, target, source, env):
-        """Builder action for creating a GPG signature of the binary distribution file."""
-
-        # Print out.
-        print
-        print "############################################"
-        print "# GPG signing the binary distribution file #"
-        print "############################################\n\n"
-
-        # Run the 'gpg' command.
-        system("gpg --detach-sign --default-key relax " + path.pardir + path.sep + env['DIST_FILE'])
-
-        # Final print out.
-        print "\n\n\n"
 
 
     def help(self):
@@ -591,68 +578,6 @@ class Main:
 
         # LaTeX directory.
         self.LATEX_DIR = 'docs' + sep + 'latex' + sep
-
-
-
-    def package(self, target, source, env):
-        """Builder action for packaging the distribution archives."""
-
-        # Print out.
-        print
-        print "#######################"
-        print "# Packaging the files #"
-        print "#######################\n\n"
-        print "Creating the package distribution " + `env['DIST_FILE']` + ".\n"
-
-        # Open the Zip distribution file.
-        if self.DIST_TYPE == 'zip':
-            archive = ZipFile(path.pardir + path.sep + env['DIST_FILE'], 'w', compression=8)
-
-        # Open the Tar distribution file.
-        elif self.DIST_TYPE == 'tar':
-            if search('.bz2$', env['DIST_FILE']):
-                archive = TarFile.bz2open(path.pardir + path.sep + env['DIST_FILE'], 'w')
-            elif search('.gz$', env['DIST_FILE']):
-                archive = TarFile.gzopen(path.pardir + path.sep + env['DIST_FILE'], 'w')
-            else:
-                archive = TarFile.open(path.pardir + path.sep + env['DIST_FILE'], 'w')
-
-        # Base directory.
-        base = getcwd() + sep
-
-        # Walk through the directories.
-        for root, dirs, files in walk(getcwd()):
-            # Skip the subversion directories.
-            if search("\.svn", root):
-                continue
-
-            # Add the files in the current directory to the archive.
-            for i in xrange(len(files)):
-                # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
-                if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]) or search("\.obj$", files[i]) or search("\.lib$", files[i]) or search("\.exp$", files[i]):
-                    continue
-
-                # Create the file name (without the base directory).
-                name = path.join(root, files[i])
-                name = name[len(base):]
-                print 'relax-' + version + path.sep + name
-
-                # The archive file name.
-                arcname = 'relax-' + version + path.sep + name
-
-                # Zip archives.
-                if self.DIST_TYPE == 'zip':
-                    archive.write(filename=name, arcname=arcname)
-
-                # Tar archives.
-                if self.DIST_TYPE == 'tar':
-                    archive.add(name=name, arcname=arcname)
-
-        # Close the archive.
-        archive.close()
-
-        # Final print out.
-        print "\n\n\n"
 
 
     def test_version(self, target, source, env):
