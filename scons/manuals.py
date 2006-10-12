@@ -293,13 +293,13 @@ def compile_api_manual_html(target, source, env):
 
 
 def compile_user_manual_html(target, source, env):
-    """Builder action for compiling the HTML version of the user manual from the LaTeX sources."""
+    """Builder action for compiling the user manual (HTML version) from the LaTeX sources."""
 
     # Print out.
     print
-    print "#################################################"
-    print "# Compiling the HTML version of the user manual #"
-    print "#################################################\n\n"
+    print "############################################"
+    print "# Compiling the user manual (HTML version) #"
+    print "############################################\n\n"
 
     # Go to the LaTeX directory.
     base_dir = getcwd()
@@ -317,13 +317,13 @@ def compile_user_manual_html(target, source, env):
 
 
 def compile_user_manual_pdf(target, source, env):
-    """Builder action for compiling the PDF version of the user manual from the LaTeX sources."""
+    """Builder action for compiling the user manual (PDF version) from the LaTeX sources."""
 
     # Print out.
     print
-    print "################################################"
-    print "# Compiling the PDF version of the user manual #"
-    print "################################################\n\n"
+    print "###########################################"
+    print "# Compiling the user manual (PDF version) #"
+    print "###########################################\n\n"
 
     # Go to the LaTeX directory.
     base_dir = getcwd()

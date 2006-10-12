@@ -178,33 +178,33 @@ class Main:
         # Set up the builder for the standard manual targets (using the self.dummy function).
         manual_env.Append(BUILDERS={'Manual' : Builder(action=self.dummy)})
 
-        # Target for creating the PDF version of the user manual.
+        # Target for creating the user manual (PDF version).
         manual_env.Manual(target='user_manual_pdf', source=None)
         manual_env.Depends('user_manual_pdf', 'manual_clean')
         manual_env.Depends('user_manual_pdf', 'manual_version_file')
         manual_env.Depends('user_manual_pdf', 'fetch_docstrings')
         manual_env.Depends('user_manual_pdf', 'compile_user_manual_pdf')
 
-        # Target for creating the PDF version of the user manual (without fetching the docstrings).
+        # Target for creating the user manual (PDF version, without fetching the docstrings).
         manual_env.Manual(target='user_manual_pdf_nofetch', source=None)
         manual_env.Depends('user_manual_pdf_nofetch', 'manual_clean')
         manual_env.Depends('user_manual_pdf_nofetch', 'manual_version_file')
         manual_env.Depends('user_manual_pdf_nofetch', 'compile_user_manual_pdf')
 
-        # Target for creating the HTML version of the user manual.
+        # Target for creating the user manual (HTML version).
         manual_env.Manual(target='user_manual_html', source=None)
         manual_env.Depends('user_manual_html', 'manual_clean')
         manual_env.Depends('user_manual_html', 'manual_version_file')
         manual_env.Depends('user_manual_html', 'fetch_docstrings')
         manual_env.Depends('user_manual_html', 'compile_user_manual_html')
 
-        # Target for creating the HTML version of the user manual (without fetching the docstrings).
+        # Target for creating the user manual (HTML version, without fetching the docstrings).
         manual_env.Manual(target='user_manual_html_nofetch', source=None)
         manual_env.Depends('user_manual_html_nofetch', 'manual_clean')
         manual_env.Depends('user_manual_html_nofetch', 'manual_version_file')
         manual_env.Depends('user_manual_html_nofetch', 'compile_user_manual_html')
 
-        # Target for creating the HTML version of the API documentation manual.
+        # Target for creating the API documentation manual (HTML version).
         manual_env.Manual(target='api_manual_html', source=None)
         manual_env.Depends('api_manual_html', 'manual_clean')
         manual_env.Depends('api_manual_html', 'compile_api_manual_html')
