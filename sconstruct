@@ -100,7 +100,7 @@ class Main:
         binary_dist_env.dummy(target='binary_dist', source=None)
         binary_dist_env.Depends('binary_dist', 'version_check')           # First check the program version number.
         binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
-        binary_dist_env.Depends('binary_dist', 'user_manual_pdf_dist')    # Compile the PDF version of the user manual.
+        binary_dist_env.Depends('binary_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         binary_dist_env.Depends('binary_dist', 'clean_temp')              # Then clean up all other temporary files.
         binary_dist_env.Depends('binary_dist', 'package_bin')             # Package the binary distribution.
@@ -110,7 +110,7 @@ class Main:
         source_dist_env = Environment(BUILDERS={'dummy' : Builder(action=self.dummy)})
         source_dist_env.dummy(target='source_dist', source=None)
         source_dist_env.Depends('source_dist', 'version_check')           # First check the program version number.
-        source_dist_env.Depends('source_dist', 'user_manual_pdf_dist')    # Compile the PDF version of the user manual.
+        source_dist_env.Depends('source_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         source_dist_env.Depends('source_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
         source_dist_env.Depends('source_dist', 'package_src')             # Package the source distribution.
@@ -184,7 +184,12 @@ class Main:
         manual_env.Depends('user_manual_pdf', 'manual_version_file')
         manual_env.Depends('user_manual_pdf', 'fetch_docstrings')
         manual_env.Depends('user_manual_pdf', 'compile_user_manual_pdf')
-        manual_env.Depends('user_manual_pdf', 'manual_acro')
+
+        # Target for creating the PDF version of the user manual (without fetching the docstrings).
+        manual_env.Manual(target='user_manual_pdf_nofetch', source=None)
+        manual_env.Depends('user_manual_pdf_nofetch', 'manual_clean')
+        manual_env.Depends('user_manual_pdf_nofetch', 'manual_version_file')
+        manual_env.Depends('user_manual_pdf_nofetch', 'compile_user_manual_pdf')
 
         # Target for creating the HTML version of the user manual.
         manual_env.Manual(target='user_manual_html', source=None)
@@ -192,21 +197,6 @@ class Main:
         manual_env.Depends('user_manual_html', 'manual_version_file')
         manual_env.Depends('user_manual_html', 'fetch_docstrings')
         manual_env.Depends('user_manual_html', 'compile_user_manual_html')
-        manual_env.Depends('user_manual_html', 'manual_acro')
-
-        # Target for creating the PDF version of the user manual (without fetching the docstrings).
-        manual_env.Manual(target='user_manual_pdf_nofetch', source=None)
-        manual_env.Depends('user_manual_pdf_nofetch', 'manual_clean')
-        manual_env.Depends('user_manual_pdf_nofetch', 'manual_version_file')
-        manual_env.Depends('user_manual_pdf_nofetch', 'compile_user_manual_pdf')
-        manual_env.Depends('user_manual_pdf_nofetch', 'manual_acro')
-
-        # Target for creating the PDF version of the user manual for distribution.
-        manual_env.Manual(target='user_manual_pdf_dist', source=None)
-        manual_env.Depends('user_manual_pdf_dist', 'manual_clean')
-        manual_env.Depends('user_manual_pdf_dist', 'manual_version_file')
-        manual_env.Depends('user_manual_pdf_dist', 'fetch_docstrings')
-        manual_env.Depends('user_manual_pdf_dist', 'compile_user_manual_pdf')
 
         # Target for creating relax version number LaTeX file.
         manual_env.Append(BUILDERS={'Version' : Builder(action=version_file)})
