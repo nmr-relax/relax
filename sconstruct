@@ -42,7 +42,7 @@ except ImportError:
 
 
 # relax and Scons modules.
-from scons.manuals import acro, clean_manual_files, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
+from scons.manuals import clean_manual_files, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
 from version import version
 
 
@@ -198,6 +198,13 @@ class Main:
         manual_env.Depends('user_manual_html', 'fetch_docstrings')
         manual_env.Depends('user_manual_html', 'compile_user_manual_html')
 
+        # Target for creating the HTML version of the user manual (without fetching the docstrings).
+        manual_env.Manual(target='user_manual_html_nofetch', source=None)
+        manual_env.Depends('user_manual_html_nofetch', 'manual_clean')
+        manual_env.Depends('user_manual_html_nofetch', 'manual_version_file')
+        manual_env.Depends('user_manual_html_nofetch', 'compile_user_manual_html')
+
+
         # Target for creating relax version number LaTeX file.
         manual_env.Append(BUILDERS={'Version' : Builder(action=version_file)})
         manual_env.Version(target='manual_version_file', source=None)
@@ -213,10 +220,6 @@ class Main:
         # Target for compiling the HTML version of the user manual from the LaTeX sources.
         manual_env.Append(BUILDERS={'CompileUserManualHTML' : Builder(action=compile_user_manual_html)})
         manual_env.CompileUserManualHTML(target='compile_user_manual_html', source=None)
-
-        # Target for launching Adobe Acrobat with the PDF version of the relax manual.
-        manual_env.Append(BUILDERS={'Acro' : Builder(action=acro)})
-        manual_env.Acro(target='manual_acro', source=None)
 
         # Clean target.
         manual_env.Append(BUILDERS={'Clean' : Builder(action=clean_manual_files)})
