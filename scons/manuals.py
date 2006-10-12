@@ -94,34 +94,14 @@ def clean_manual_files(target, source, env):
     print "\n\n\n"
 
 
-def fetch_docstrings(target, source, env):
-    """Builder action for fetching the relax user function docstrings."""
+def compile_user_manual_html(target, source, env):
+    """Builder action for compiling the HTML version of the user manual from the LaTeX sources."""
 
     # Print out.
     print
-    print "###############################################"
-    print "# Fetching the relax user function docstrings #"
-    print "###############################################\n\n"
-
-    # Import the fetch_docstrings module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
-    sys.path.append(getcwd())
-    from docs.latex.fetch_docstrings import Fetch_docstrings
-
-    # Get the docstrings.
-    Fetch_docstrings(env['LATEX_DIR'] + sep + 'docstring.tex')
-
-    # Final print out.
-    print "\n\n\n"
-
-
-def user_manual_html(target, source, env):
-    """Builder action for creating the HTML manual."""
-
-    # Print out.
-    print
-    print "############################"
-    print "# Creating the HTML manual #"
-    print "############################\n\n"
+    print "#################################################"
+    print "# Compiling the HTML version of the user manual #"
+    print "#################################################\n\n"
 
     # Go to the LaTeX directory.
     base_dir = getcwd()
@@ -138,14 +118,14 @@ def user_manual_html(target, source, env):
     print "\n\n\n"
 
 
-def user_manual_pdf(target, source, env):
-    """Builder action for compiling the LaTeX manual into a PDF file."""
+def compile_user_manual_pdf(target, source, env):
+    """Builder action for compiling the PDF version of the user manual from the LaTeX sources."""
 
     # Print out.
     print
-    print "###################################"
-    print "# LaTeX compilation of the manual #"
-    print "###################################\n\n"
+    print "################################################"
+    print "# Compiling the PDF version of the user manual #"
+    print "################################################\n\n"
 
     # Go to the LaTeX directory.
     base_dir = getcwd()
@@ -190,6 +170,26 @@ def user_manual_pdf(target, source, env):
 
     # Return to the base directory.
     chdir(base_dir)
+
+    # Final print out.
+    print "\n\n\n"
+
+
+def fetch_docstrings(target, source, env):
+    """Builder action for fetching the relax user function docstrings."""
+
+    # Print out.
+    print
+    print "###############################################"
+    print "# Fetching the relax user function docstrings #"
+    print "###############################################\n\n"
+
+    # Import the fetch_docstrings module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
+    sys.path.append(getcwd())
+    from docs.latex.fetch_docstrings import Fetch_docstrings
+
+    # Get the docstrings.
+    Fetch_docstrings(env['LATEX_DIR'] + sep + 'docstring.tex')
 
     # Final print out.
     print "\n\n\n"

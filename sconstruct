@@ -42,7 +42,7 @@ except ImportError:
 
 
 # relax and Scons modules.
-from scons.manuals import acro, clean_manual_files, fetch_docstrings, user_manual_html, user_manual_pdf, version_file
+from scons.manuals import acro, clean_manual_files, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
 from version import version
 
 
@@ -100,7 +100,7 @@ class Main:
         binary_dist_env.dummy(target='binary_dist', source=None)
         binary_dist_env.Depends('binary_dist', 'version_check')           # First check the program version number.
         binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
-        binary_dist_env.Depends('binary_dist', 'manual_dist')             # Compile the manual.
+        binary_dist_env.Depends('binary_dist', 'user_manual_pdf_dist')    # Compile the PDF version of the user manual.
         binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         binary_dist_env.Depends('binary_dist', 'clean_temp')              # Then clean up all other temporary files.
         binary_dist_env.Depends('binary_dist', 'package_bin')             # Package the binary distribution.
@@ -110,7 +110,7 @@ class Main:
         source_dist_env = Environment(BUILDERS={'dummy' : Builder(action=self.dummy)})
         source_dist_env.dummy(target='source_dist', source=None)
         source_dist_env.Depends('source_dist', 'version_check')           # First check the program version number.
-        source_dist_env.Depends('source_dist', 'manual_dist')             # Compile the manual.
+        source_dist_env.Depends('source_dist', 'user_manual_pdf_dist')    # Compile the PDF version of the user manual.
         source_dist_env.Depends('source_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
         source_dist_env.Depends('source_dist', 'package_src')             # Package the source distribution.
@@ -169,38 +169,42 @@ class Main:
         # relax manuals.
         ################
 
-        # Create a manual build environment.
+        # Create the manual build environment.
         manual_env = Environment(DOCS_DIR=self.DOCS_DIR,
                                  LATEX_DIR=self.LATEX_DIR,
                                  SYSTEM=self.SYSTEM)
 
-        # Target for creating the PDF manual.
-        manual_env.Append(BUILDERS={'Manual' : Builder(action=self.dummy)})
-        manual_env.Manual(target='manual', source=None)
-        manual_env.Depends('manual', 'manual_clean')
-        manual_env.Depends('manual', 'manual_version_file')
-        manual_env.Depends('manual', 'fetch_docstrings')
-        manual_env.Depends('manual', 'user_manual_pdf')
-        manual_env.Depends('manual', 'manual_acro')
+        # Target for creating the PDF version of the user manual.
+        manual_env.Append(BUILDERS={'UserManualPDF' : Builder(action=self.dummy)})
+        manual_env.UserManualPDF(target='user_manual_pdf', source=None)
+        manual_env.Depends('user_manual_pdf', 'manual_clean')
+        manual_env.Depends('user_manual_pdf', 'manual_version_file')
+        manual_env.Depends('user_manual_pdf', 'fetch_docstrings')
+        manual_env.Depends('user_manual_pdf', 'compile_user_manual_pdf')
+        manual_env.Depends('user_manual_pdf', 'manual_acro')
 
-        # Target for creating the PDF manual without fetching the docstrings.
-        manual_env.Manual(target='manual_nofetch', source=None)
-        manual_env.Depends('manual_nofetch', 'manual_clean')
-        manual_env.Depends('manual_nofetch', 'manual_version_file')
-        manual_env.Depends('manual_nofetch', 'user_manual_pdf')
-        manual_env.Depends('manual_nofetch', 'manual_acro')
-
-        # Target for creating the PDF manual for distribution.
-        manual_env.Manual(target='manual_dist', source=None)
-        manual_env.Depends('manual_dist', 'manual_clean')
-        manual_env.Depends('manual_dist', 'manual_version_file')
-        manual_env.Depends('manual_dist', 'fetch_docstrings')
-        manual_env.Depends('manual_dist', 'user_manual_pdf')
-
-        # Target for creating the HTML manual.
-        manual_env.Append(BUILDERS={'User_manual_html' : Builder(action=user_manual_html)})
-        manual_env.User_manual_html(target='user_manual_html', source=None)
+        # Target for creating the HTML version of the user manual.
+        manual_env.Append(BUILDERS={'UserManualHTML' : Builder(action=self.dummy)})
+        manual_env.UserManualHTML(target='user_manual_html', source=None)
         manual_env.Depends('user_manual_html', 'manual_clean')
+        manual_env.Depends('user_manual_html', 'manual_version_file')
+        manual_env.Depends('user_manual_html', 'fetch_docstrings')
+        manual_env.Depends('user_manual_html', 'compile_user_manual_html')
+        manual_env.Depends('user_manual_html', 'manual_acro')
+
+        # Target for creating the PDF version of the user manual (without fetching the docstrings).
+        manual_env.Manual(target='user_manual_pdf_nofetch', source=None)
+        manual_env.Depends('user_manual_pdf_nofetch', 'manual_clean')
+        manual_env.Depends('user_manual_pdf_nofetch', 'manual_version_file')
+        manual_env.Depends('user_manual_pdf_nofetch', 'compile_user_manual_pdf')
+        manual_env.Depends('user_manual_pdf_nofetch', 'manual_acro')
+
+        # Target for creating the PDF version of the user manual for distribution.
+        manual_env.Manual(target='user_manual_pdf_dist', source=None)
+        manual_env.Depends('user_manual_pdf_dist', 'manual_clean')
+        manual_env.Depends('user_manual_pdf_dist', 'manual_version_file')
+        manual_env.Depends('user_manual_pdf_dist', 'fetch_docstrings')
+        manual_env.Depends('user_manual_pdf_dist', 'compile_user_manual_pdf')
 
         # Target for creating relax version number LaTeX file.
         manual_env.Append(BUILDERS={'Version' : Builder(action=version_file)})
@@ -210,11 +214,15 @@ class Main:
         manual_env.Append(BUILDERS={'Fetch' : Builder(action=fetch_docstrings)})
         manual_env.Fetch(target='fetch_docstrings', source=None)
 
-        # LaTeX compilation target.
-        manual_env.Append(BUILDERS={'User_manual_pdf' : Builder(action=user_manual_pdf)})
-        manual_env.User_manual_pdf(target='user_manual_pdf', source=None)
+        # Target for compiling the PDF version of the user manaul from the LaTeX sources.
+        manual_env.Append(BUILDERS={'CompileUserManualPDF' : Builder(action=compile_user_manual_pdf)})
+        manual_env.CompileUserManualPDF(target='compile_user_manual_pdf', source=None)
 
-        # Adobe Acrobat target.
+        # Target for compiling the HTML version of the user manual from the LaTeX sources.
+        manual_env.Append(BUILDERS={'CompileUserManualHTML' : Builder(action=compile_user_manual_html)})
+        manual_env.CompileUserManualHTML(target='compile_user_manual_html', source=None)
+
+        # Target for launching Adobe Acrobat with the PDF version of the relax manual.
         manual_env.Append(BUILDERS={'Acro' : Builder(action=acro)})
         manual_env.Acro(target='manual_acro', source=None)
 
