@@ -27,6 +27,9 @@ from re import search
 from tarfile import TarFile
 from zipfile import ZipFile
 
+# relax version file.
+from version import version
+
 
 
 def gpg_sign(target, source, env):
@@ -86,10 +89,10 @@ def package(target, source, env):
             # Create the file name (without the base directory).
             name = path.join(root, files[i])
             name = name[len(base):]
-            print 'relax-' + env['RELAX_VERSION'] + path.sep + name
+            print 'relax-' + version + path.sep + name
 
             # The archive file name.
-            arcname = 'relax-' + env['RELAX_VERSION'] + path.sep + name
+            arcname = 'relax-' + version + path.sep + name
 
             # Zip archives.
             if env['DIST_TYPE'] == 'zip':
