@@ -27,24 +27,121 @@
 
 # Import statements.
 import platform
-from os import F_OK, access, getcwd, path, remove, rmdir, sep, system, walk
+from os import getcwd, path, remove, sep, walk
 from re import search
-from shutil import copytree
 import sys
-from tarfile import TarFile
-from zipfile import ZipFile
 
-# UNIX only functions from the os module.
-try:
-    from os import lstat, symlink
-except ImportError:
-    pass
-
-
-# relax and Scons modules.
+# Scons modules.
 from scons.distrib import package, gpg_sign
+from scons.install import install, uninstall
 from scons.manuals import clean_manual_files, compile_api_manual_html, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
+
+# relax version file.
 from version import version
+
+
+
+########################
+# Paths and file names #
+########################
+
+# The operating system.
+SYSTEM = platform.uname()[0]
+
+# The machine type.
+MACH = platform.uname()[4]
+
+# Symbolic link flag.
+SYMLINK_FLAG = 1
+
+# GNU/Linux.
+if SYSTEM == 'Linux':
+    # System specific string.
+    SYS = 'GNU-Linux'
+
+    # Linux installation path.
+    INSTALL_PATH = '/usr/local'
+
+
+# MS Windows.
+elif SYSTEM == 'Windows':
+    # Architecture.
+    arch = platform.architecture()[0]
+
+    # 32 bit.
+    if arch == '32bit':
+        SYS = 'Win32'
+
+    # 64 bit.
+    elif arch == '64bit':
+        SYS = 'Win64'
+
+    # Unknown.
+    else:
+        SYS = 'Win'
+
+    # Windows installation path.
+    INSTALL_PATH = 'C:\\'
+
+    # No symlinks!
+    SYMLINK_FLAG = 0
+
+
+# Mac OS X.
+elif SYSTEM == 'Darwin':
+    # System specific string.
+    SYS = SYSTEM
+
+    # Mac OS X installation path.
+    INSTALL_PATH = sys.prefix + sep + 'local'
+
+
+# All other operating systems.
+else:
+    # System specific string.
+    SYS = SYSTEM
+
+    # Installation path.
+    INSTALL_PATH = sys.prefix + sep + 'local'
+
+
+
+# Installation.
+###############
+
+# Relax installation directory.
+RELAX_PATH = INSTALL_PATH + sep + 'relax'
+
+# Installation path for binaries.
+BIN_PATH = INSTALL_PATH + sep + 'bin'
+
+# Symbolic link installation path.
+SYMLINK = BIN_PATH + sep + 'relax'
+
+
+
+# The distribution files.
+#########################
+
+if SYSTEM == 'Windows':
+    BIN_FILE = 'relax-' + version + '.' + SYS + '.zip'
+    SRC_FILE = 'relax-' + version + '.src.zip'
+    DIST_TYPE = 'zip'
+else:
+    BIN_FILE = 'relax-' + version + '.' + SYS + '.' + MACH + '.tar.bz2'
+    SRC_FILE = 'relax-' + version + '.src.tar.bz2'
+    DIST_TYPE = 'tar'
+
+
+# Documentation.
+################
+
+# Documentation directory.
+DOCS_DIR = 'docs' + sep
+
+# LaTeX directory.
+LATEX_DIR = 'docs' + sep + 'latex' + sep
+
 
 
 
@@ -62,13 +159,6 @@ class Main:
         # Set the help message.
         self.help()
 
-        # The operating system.
-        self.SYSTEM = platform.uname()[0]
-
-        # Set up the paths and file names.
-        self.set_paths()
-
-
 
         # C module compilation.
         #######################
@@ -83,12 +173,21 @@ class Main:
         #######################
 
         # Install target.
-        install_env = Environment(BUILDERS={'install' : Builder(action=self.install)},
-                                  RELAX_PATH=self.RELAX_PATH)
+        install_env = Environment(BUILDERS={'install' : Builder(action=install)},
+                                  BIN_PATH=BIN_PATH,
+                                  INSTALL_PATH=INSTALL_PATH,
+                                  RELAX_PATH=RELAX_PATH,
+                                  SYMLINK=SYMLINK,
+                                  SYMLINK_FLAG=SYMLINK_FLAG)
         install_env.install(target='install', source=None)
 
         # Uninstall target.
-        uninstall_env = Environment(BUILDERS={'uninstall' : Builder(action=self.uninstall)})
+        uninstall_env = Environment(BUILDERS={'uninstall' : Builder(action=uninstall)},
+                                  BIN_PATH=BIN_PATH,
+                                  INSTALL_PATH=INSTALL_PATH,
+                                  RELAX_PATH=RELAX_PATH,
+                                  SYMLINK=SYMLINK,
+                                  SYMLINK_FLAG=SYMLINK_FLAG)
         uninstall_env.uninstall(target='uninstall', source=None)
 
 
@@ -119,27 +218,27 @@ class Main:
 
         # Target for packaging the binary distribution.
         package_bin_env = Environment(BUILDERS={'archive' : Builder(action=package)},
-                                      DIST_FILE=self.BIN_FILE,
-                                      DIST_TYPE=self.DIST_TYPE)
+                                      DIST_FILE=BIN_FILE,
+                                      DIST_TYPE=DIST_TYPE)
         package_bin_env.archive(target='package_bin', source=None)
         package_bin_env.Depends('package_bin', 'version_check')     # Check the program version number first.
 
         # Target for packaging the source distribution.
         package_src_env = Environment(BUILDERS={'archive' : Builder(action=package)},
-                                      DIST_FILE=self.SRC_FILE,
-                                      DIST_TYPE=self.DIST_TYPE)
+                                      DIST_FILE=SRC_FILE,
+                                      DIST_TYPE=DIST_TYPE)
         package_src_env.archive(target='package_src', source=None)
         package_src_env.Depends('package_src', 'version_check')     # Check the program version number first.
 
         # Target for creating a GPG signature of the binary distribution file.
         gpg_bin_env = Environment(BUILDERS={'sign' : Builder(action=gpg_sign)},
-                                  DIST_FILE=self.BIN_FILE)
+                                  DIST_FILE=BIN_FILE)
         gpg_bin_env.sign(target='gpg_bin', source=None)
         gpg_bin_env.Depends('gpg_bin', 'version_check')     # Check the program version number before signing.
 
         # Target for creating a GPG signature of the source distribution file.
         gpg_src_env = Environment(BUILDERS={'sign' : Builder(action=gpg_sign)},
-                                  DIST_FILE=self.SRC_FILE)
+                                  DIST_FILE=SRC_FILE)
         gpg_src_env.sign(target='gpg_src', source=None)
         gpg_src_env.Depends('gpg_src', 'version_check')     # Check the program version number before signing.
 
@@ -173,9 +272,9 @@ class Main:
         ################
 
         # Create the manual build environment.
-        manual_env = Environment(DOCS_DIR=self.DOCS_DIR,
-                                 LATEX_DIR=self.LATEX_DIR,
-                                 SYSTEM=self.SYSTEM)
+        manual_env = Environment(DOCS_DIR=DOCS_DIR,
+                                 LATEX_DIR=LATEX_DIR,
+                                 SYSTEM=SYSTEM)
 
 
         # Set up the builder for the standard manual targets (using the self.dummy function).
@@ -350,88 +449,6 @@ class Main:
         Help(string)
 
 
-    def install(self, target, source, env):
-        """relax installation function (a Builder action)."""
-
-        # Print out.
-        ############
-
-        print
-        print "####################"
-        print "# Installing relax #"
-        print "####################\n\n"
-        print "Installing the program relax into the directory " + `self.RELAX_PATH` + "\n\n"
-
-
-        # Tests.
-        ########
-
-        # Test that the installation path exists.
-        if not access(self.INSTALL_PATH, F_OK):
-            sys.stderr.write("Cannot install relax, the installation path " + `self.INSTALL_PATH` + " does not exist.\n\n")
-            return
-
-        # Test if the binary directory already exists.
-        if not access(self.BIN_PATH, F_OK):
-            sys.stderr.write("Cannot install relax, the directory " + `self.BIN_PATH` + " does not exist.\n\n")
-            return
-
-        # Test if the relax installation directory already exists.
-        if access(self.RELAX_PATH, F_OK):
-            sys.stderr.write("Cannot install relax, the directory " + `self.RELAX_PATH` + " already exists.\n\n")
-            return
-
-        # Test if the symlink exists.
-        if self.symlink_flag:
-            try:
-                lstat(self.SYMLINK)
-            except OSError:
-                # OK, symlink doesn't exist.
-                pass
-            else:
-                sys.stderr.write("Cannot install relax, the file " + `self.SYMLINK` + " already exists.\n\n")
-                return
-
-
-        # Install.
-        ##########
-
-        # Copy the files (and create the directory).
-        try:
-            print "\nCopying all files in " + `getcwd()` + " to " + `self.RELAX_PATH` + "."
-            copytree(getcwd(), self.RELAX_PATH)
-        except OSError, message:
-            # Failure message.
-            sys.stderr.write("Cannot install relax, " + message.__doc__ + "\n")
-
-            # You don't have the privilages to do this.
-            if message.errno == 13:
-                sys.stderr.write("Permission denied, cannot create the directory " + `self.RELAX_PATH` + ".\n\n")
-
-            # All other errors (print normal python error message).
-            else:
-                sys.stderr.write("OSError: [Errno " + `message.errno` + "] " + message.strerror + ": " + `message.filename` + "\n\n")
-
-            # Quit the function.
-            return
-
-        # Create the symbolic link.
-        if self.symlink_flag:
-            print "\nCreating the symbolic link from " + `self.RELAX_PATH + sep + 'relax'` + " to " + `self.SYMLINK` + "."
-            symlink(self.RELAX_PATH + sep + 'relax', self.SYMLINK)
-
-
-        # Byte compile.
-        ###############
-
-        # Run relax to create the *.pyc files.
-	    print "\nRunning relax to create the byte-compiled *.pyc files."
-        system(self.SYMLINK + " --test")
-
-        # Final print out.
-        print "\n\n\n"
-
-
     def relax_fit(self):
         """Function for setting up scons for building the relaxation curve fitting C modules."""
 
@@ -448,7 +465,7 @@ class Main:
         py_include_fullpath = py_include_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
         # C flags.
-        if self.SYSTEM == 'Windows':
+        if SYSTEM == 'Windows':
             cflags = '/nologo /I\"' + py_include_minpath + '\"'
         else:
             cflags = '-I' + py_include_fullpath
@@ -458,7 +475,7 @@ class Main:
 
         # Python library path.
         libpath = ''
-        if self.SYSTEM == 'Windows':
+        if SYSTEM == 'Windows':
             libpath = sys.prefix + path.sep + 'libs'
 
         # Add the python library path to the environment.
@@ -489,97 +506,6 @@ class Main:
         env.AddPreAction(nodes[0], Action(self.dummy, print_string))
 
 
-    def set_paths(self):
-        """Function for setting the paths and file names."""
-
-        # The machine type.
-        self.MACH = platform.uname()[4]
-
-        # Symbolic link flag.
-        self.symlink_flag = 1
-
-        # GNU/Linux.
-        if self.SYSTEM == 'Linux':
-            # System specific string.
-            self.SYS = 'GNU-Linux'
-
-            # Linux installation path.
-            self.INSTALL_PATH = '/usr/local'
-
-
-        # MS Windows.
-        elif self.SYSTEM == 'Windows':
-            # Architecture.
-            arch = platform.architecture()[0]
-
-            # 32 bit.
-            if arch == '32bit':
-                self.SYS = 'Win32'
-            elif arch == '64bit':
-                self.SYS = 'Win64'
-            else:
-                self.SYS = 'Win'
-
-            # Windows installation path.
-            self.INSTALL_PATH = 'C:\\'
-
-            # No symlinks!
-            self.symlink_flag = 0
-
-        # Mac OS X.
-        elif self.SYSTEM == 'Darwin':
-            # System specific string.
-            self.SYS = self.SYSTEM
-
-            # Mac OS X installation path.
-            self.INSTALL_PATH = sys.prefix + sep + 'local'
-
-
-        # All other operating systems.
-        else:
-            # System specific string.
-            self.SYS = self.SYSTEM
-
-            # Installation path.
-            self.INSTALL_PATH = sys.prefix + sep + 'local'
-
-
-
-        # Installation.
-        ###############
-        
-        # Relax installation directory.
-        self.RELAX_PATH = self.INSTALL_PATH + sep + 'relax'
-
-        # Installation path for binaries.
-        self.BIN_PATH = self.INSTALL_PATH + sep + 'bin'
-
-        # Symbolic link installation path.
-        self.SYMLINK = self.BIN_PATH + sep + 'relax'
-
-
-
-        # The distribution files.
-        if self.SYSTEM == 'Windows':
-            self.BIN_FILE = 'relax-' + version + '.' + self.SYS + '.zip'
-            self.SRC_FILE = 'relax-' + version + '.src.zip'
-            self.DIST_TYPE = 'zip'
-        else:
-            self.BIN_FILE = 'relax-' + version + '.' + self.SYS + '.' + self.MACH + '.tar.bz2'
-            self.SRC_FILE = 'relax-' + version + '.src.tar.bz2'
-            self.DIST_TYPE = 'tar'
-
-
-        # Documentation.
-        ################
-
-        # Documentation directory.
-        self.DOCS_DIR = 'docs' + sep
-
-        # LaTeX directory.
-        self.LATEX_DIR = 'docs' + sep + 'latex' + sep
-
-
     def test_version(self, target, source, env):
         """Builder action for testing that the program version number has been set."""
 
@@ -599,67 +525,5 @@ class Main:
         print "\n\n\n"
 
 
-    def uninstall(self, target, source, env):
-        """relax deinstallation function (a Builder action)."""
-
-        # Print out.
-        ############
-
-        print
-        print "######################"
-        print "# Uninstalling relax #"
-        print "######################\n\n"
-        print "Uninstalling the program relax from the directory " + `self.INSTALL_PATH` + "\n\n"
-
-
-        # Tests.
-        ########
-
-        # Test that the installation path exists.
-        if not access(self.INSTALL_PATH, F_OK):
-            sys.stderr.write("Cannot uninstall relax, the installation path " + `self.INSTALL_PATH` + " does not exist.\n\n")
-            return
-
-        # Test if the binary directory already exists.
-        if not access(self.BIN_PATH, F_OK):
-            sys.stderr.write("Cannot uninstall relax, the directory " + `self.BIN_PATH` + " does not exist.\n\n")
-            return
-
-        # Test if the relax installation directory exists.
-        if not access(self.RELAX_PATH, F_OK):
-            sys.stderr.write("Cannot uninstall relax, the directory " + `self.RELAX_PATH` + " does not exist.\n\n")
-            return
-
-        # Test if the symlink exists.
-        if self.symlink_flag:
-            try:
-                lstat(self.SYMLINK)
-            except OSError:
-                sys.stderr.write("Cannot uninstall relax, the file " + `self.SYMLINK` + " does not exist.\n\n")
-                return
-
-
-        # Uninstall.
-        ############
-
-        # Remove the symbolic link.
-        if self.symlink_flag:
-            print "\nRemoving the symbolic link " + `self.SYMLINK` + "."
-            remove(self.SYMLINK)
-
-        # Remove the directory.
-        print "\nRemoving the entire directory " + `self.RELAX_PATH` + ".\n"
-        for root, dirs, files in walk(self.RELAX_PATH, topdown=False):
-            for file in files:
-                remove(path.join(root, file))
-            for file in dirs:
-                rmdir(path.join(root, file))
-        rmdir(self.RELAX_PATH)
-
-        # Final print out.
-        print "\n\n\n"
-
-
-
-# Execute the main and manual classes.
+# Execute the main class.
 Main()
