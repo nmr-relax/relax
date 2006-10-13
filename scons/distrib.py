@@ -86,10 +86,10 @@ def package(target, source, env):
             # Create the file name (without the base directory).
             name = path.join(root, files[i])
             name = name[len(base):]
-            print 'relax-' + version + path.sep + name
+            print 'relax-' + env['RELAX_VERSION'] + path.sep + name
 
             # The archive file name.
-            arcname = 'relax-' + version + path.sep + name
+            arcname = 'relax-' + env['RELAX_VERSION'] + path.sep + name
 
             # Zip archives.
             if env['DIST_TYPE'] == 'zip':
