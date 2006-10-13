@@ -502,21 +502,21 @@ For the CSA component of the $\Rtwo$ equation~\eqref{eq: R2} on page~\pageref{eq
 
 For the dipolar component of the $\crossrate$ equation~\eqref{eq: sigma_NOE} on page~\pageref{eq: sigma_NOE} the spectral density terms are
 \begin{equation}
-    J_d^{\crossrate} = 6J(\omega_H + \omega_X) - 6J(\omega_H - \omega_X).  \label{eq: J terms: JsigmaNOEd}
+    J_d^{\crossrate} = 6J(\omega_H + \omega_X) - J(\omega_H - \omega_X).  \label{eq: J terms: JsigmaNOEd}
 \end{equation}
 
 \noindent The partial derivative of these terms with respect to the spectral density function parameter $\theta_j$ is
 \begin{equation}
     {J_d^{\crossrate}}' \equiv \frac{\partial J_d^{\crossrate}}{\partial \theta_j}
         = 6 \frac{\partial J(\omega_H + \omega_X)}{\partial \theta_j}
-        - 6 \frac{\partial J(\omega_H - \omega_X)}{\partial \theta_j}.  \label{eq: J terms: JsigmaNOEd'}
+          - \frac{\partial J(\omega_H - \omega_X)}{\partial \theta_j}.  \label{eq: J terms: JsigmaNOEd'}
 \end{equation}
 
 \noindent The second partial derivative with respect to the spectral density function parameters $\theta_j$ and $\theta_k$ is
 \begin{equation}
     {J_d^{\crossrate}}'' \equiv \frac{\partial^2 J_d^{\crossrate}}{\partial \theta_j \cdot \partial \theta_k}
         = 6 \frac{\partial^2 J(\omega_H + \omega_X)}{\partial \theta_j \cdot \partial \theta_k}
-        - 6 \frac{\partial^2 J(\omega_H - \omega_X)}{\partial \theta_j \cdot \partial \theta_k}.  \label{eq: J terms: JsigmaNOEd"}
+          - \frac{\partial^2 J(\omega_H - \omega_X)}{\partial \theta_j \cdot \partial \theta_k}.  \label{eq: J terms: JsigmaNOEd"}
 \end{equation}
 
 
