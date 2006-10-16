@@ -309,7 +309,7 @@ class Model_free(Common_functions):
 
         # Initialise.
         if len(self.param_vector) == 0:
-            self.scaling_matrix = zeros((0,0), Float64)
+            self.scaling_matrix = zeros((0, 0), Float64)
         else:
             self.scaling_matrix = identity(len(self.param_vector), Float64)
         i = 0
@@ -2005,7 +2005,6 @@ class Model_free(Common_functions):
             'mf' - Model-free parameters for single residues.
             'diff' - Diffusion tensor parameters.
             'all' - All model-free and all diffusion tensor parameters.
-
         """
 
         # Arguments.
