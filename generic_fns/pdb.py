@@ -190,7 +190,7 @@ class PDB:
         self.relax.data.res[run][res].xh_vect = xh_vect
 
 
-    def vectors(self, heteronuc=None, proton=None, res_num=None, res_name=None):
+    def vectors(self, run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
         """Function for calculating/extracting the XH unit vector from the loaded structure."""
 
         # Arguments.
@@ -206,18 +206,18 @@ class PDB:
             raise RelaxNoSequenceError, run
 
         # Test if the residue number is a valid regular expression.
-        if type(num) == str:
+        if type(res_num) == str:
             try:
-                compile(num)
+                compile(res_num)
             except:
-                raise RelaxRegExpError, ('residue number', num)
+                raise RelaxRegExpError, ('residue number', res_num)
 
         # Test if the residue name is a valid regular expression.
-        if name:
+        if res_name:
             try:
-                compile(name)
+                compile(res_name)
             except:
-                raise RelaxRegExpError, ('residue name', name)
+                raise RelaxRegExpError, ('residue name', res_name)
 
         # Test that the nuclei have been correctly set.
         if self.heteronuc == self.proton:
@@ -262,16 +262,16 @@ class PDB:
                     continue
 
                 # Skip the residue if there is no match to 'num'.
-                if type(num) == int:
-                    if not data.num == num:
+                if type(res_num) == int:
+                    if not data.num == res_num:
                         continue
-                elif type(num) == str:
-                    if not match(num, `data.num`):
+                elif type(res_num) == str:
+                    if not match(res_num, `data.num`):
                         continue
 
                 # Skip the residue if there is no match to 'name'.
-                if name != None:
-                    if not match(name, data.name):
+                if res_name != None:
+                    if not match(res_name, data.name):
                         continue
 
                 # Find the corresponding residue in the PDB.
@@ -326,24 +326,24 @@ class PDB:
 
         # Average the vectors and convert xh_vect from an array of vectors to a vector.
         for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][j]'.
-            data = self.relax.data.res[self.run][j]
+            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            data = self.relax.data.res[self.run][i]
 
             # Skip unselected residues.
             if not data.select:
                 continue
 
             # Skip the residue if there is no match to 'num'.
-            if type(num) == int:
-                if not data.num == num:
+            if type(res_num) == int:
+                if not data.num == res_num:
                     continue
-            elif type(num) == str:
-                if not match(num, `data.num`):
+            elif type(res_num) == str:
+                if not match(res_num, `data.num`):
                     continue
 
             # Skip the residue if there is no match to 'name'.
-            if name != None:
-                if not match(name, data.name):
+            if res_name != None:
+                if not match(res_name, data.name):
                     continue
 
             # No vectors.
