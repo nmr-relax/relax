@@ -111,6 +111,87 @@ class Mf:
             self.test = self.opendx_tm_s2_te
 
 
+        # Optimisation:  Constrained grid search {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained grid search {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained grid search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_grid_search_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained SD, backtracking {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained SD, backtracking opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained steepest descent opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained SD, MT {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained SD, MT opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained steepest descent opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained CD, backtracking {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained CD, backtracking opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained coordinate descent opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_cd_back_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained CD, MT {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained CD, MT opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained coordinate descent opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained BFGS, backtracking {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained BFGS, backtracking opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained BFGS opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained BFGS, MT {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained BFGS, MT opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained BFGS opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained Newton, GMW, backtracking {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained Newton, GMW, backtracking opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained Newton opt, GMW Hessian mod, backtracking line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_newton_gmw_back_S2_0_970_te_2048_Rex_0_149
+
+
+        # Optimisation:  Constrained Newton, GMW, MT {S2=0.970, te=2048, Rex=0.149}.
+        if test_name == 'Constrained Newton, GMW, MT opt {S2=0.970, te=2048, Rex=0.149}':
+            # The name of the test.
+            self.name = "Constrained Newton opt, GMW Hessian mod, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}"
+
+            # The test.
+            self.test = self.opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149
+
+
     def create_m4(self, run):
         """Testing the creation of model-free model m4."""
 
@@ -260,6 +341,464 @@ class Mf:
         self.relax.interpreter._OpenDX.map(self.run, params=['local_tm', 'S2', 'te'], res_num=2, inc=2, file='devnull')
 
         return 1
+
+
+    def opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            BFGS optimisation.
+            Backtracking line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('bfgs', 'back', run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
+        if not self.test_values(val1=3.1024517431117421e-27, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=203, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=955, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=209, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            BFGS optimisation.
+            More and Thuente line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('bfgs', 'mt', run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
+        if not self.test_values(val1=3.1024517431117421e-27, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=203, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=955, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=209, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_constr_cd_back_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            Coordinate descent optimisation.
+            Backtracking line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('cd', 'back', max_iter=50, run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=0.9097900390625, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=2.5000000000000001e-11, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=1.24017333984375 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
+        if not self.test_values(val1=53.476155463267176, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=50, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=131, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=51, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            Coordinate descent optimisation.
+            More and Thuente line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('cd', 'mt', max_iter=50, run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'): return
+        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=0, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=1, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=1, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_constr_newton_gmw_back_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            Newton optimisation.
+            GMW Hessian modification.
+            Backtracking line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'back', run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
+        if not self.test_values(val1=7.3040158179665562e-28, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=18, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=55, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=23, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=18, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            Newton optimisation.
+            GMW Hessian modification.
+            More and Thuente line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt', run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
+        if not self.test_values(val1=6.8756889983348349e-28, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=22, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=159, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=159, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=22, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            Steepest descent optimisation.
+            Backtracking line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('sd', 'back', max_iter=50, run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=0.91579220834688024, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=3.056865872253173e-13, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.34008409798366124 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
+        if not self.test_values(val1=68.321956795264342, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=50, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=134, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=51, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            Steepest descent optimisation.
+            More and Thuente line search.
+            Constrained.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Minimise.
+        self.relax.interpreter._Minimisation.minimise('sd', 'mt', max_iter=50, run=self.run)
+
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=0.91619994957822126, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=1.2319687570987945e-13, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.16249110942961512 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
+        if not self.test_values(val1=73.843613546506191, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=50, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=108, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=108, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_grid_search_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Optimisation test.
+
+        The optimisation options are:
+            Constrained grid search.
+
+        The true data set is:
+            S2  = 0.970
+            te  = 2048 ps
+            Rex = 0.149 s^-1
+        """
+
+        # Setup the run for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+
+        # Grid search.
+        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+
+        # Test the optimisation statistics and parameter values.
+        ########################################################
+
+        # Alias the data structure.
+        data = self.relax.data.res[self.run][1]
+
+        # Error tolerance.
+        error = 1e-8
+
+        # Test the values.
+        if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'): return
+        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value'): return
+        if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'): return
+        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=error, name='chi-squared value'): return
+        if not self.test_values(val1=1331, val2=data.iter, error=None, name='iteration count'): return
+        if not self.test_values(val1=1331, val2=data.f_count, error=None, name='function count'): return
+        if not self.test_values(val1=0, val2=data.g_count, error=None, name='gradient count'): return
+        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+
+        # Success.
+        return 1
+
+
+    def opt_setup_S2_0_970_te_2048_Rex_0_149(self, run):
+        """Setup the run for testing optimisation.
+
+        The data set is:
+            S2 = 0.970.
+            te = 2048 ps.
+            Rex = 0.149 s^-1.
+        """
+
+        # Create the run.
+        self.run = run
+        self.relax.generic.runs.create(self.run, 'mf')
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+
+        # Nuclei type
+        self.relax.interpreter._Nuclei.nuclei('N')
+
+        # Load the sequence.
+        self.relax.interpreter._Sequence.read(self.run, 'noe.500.out', dir=path)
+
+        # Load the relaxation data.
+        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+
+        # Setup other values.
+        self.relax.interpreter._Diffusion_tensor.init(self.run, 10e-9, fixed=1)
+        self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
+        self.relax.interpreter._Value.set(self.run, -160 * 1e-6, 'csa')
+
+        # Select the model-free model.
+        self.relax.interpreter._Model_free.select_model(run=self.run, model='m4')
 
 
     def read_relax_data(self, run):
@@ -588,3 +1127,30 @@ class Mf:
             return
 
         return 1
+
+
+    def test_values(self, val1, val2, error, name, scale=None):
+        """Test that value 1 is equal to value 2, within the error."""
+
+        # Failure (with an error tolerance).
+        if error:
+            if val2 < val1 * (1 - error) or val2 > val1 * (1 + error):
+                if scale:
+                    print "The " + name + " of '" + `val2 * scale` + "' should be " + `val1 * scale` + "."
+                else:
+                    print "The " + name + " of '" + `val2` + "' should be " + `val1` + "."
+                return
+
+        # Failure (with no error tolerance).
+        else:
+            if val2 != val1:
+                if scale:
+                    print "The " + name + " of '" + `val2 * scale` + "' should be " + `val1 * scale` + "."
+                else:
+                    print "The " + name + " of '" + `val2` + "' should be " + `val1` + "."
+                return
+
+        # Success.
+        return 1
+
+
