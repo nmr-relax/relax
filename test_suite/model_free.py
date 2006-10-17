@@ -360,8 +360,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('bfgs', 'back', run=self.run)
@@ -407,8 +407,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('bfgs', 'mt', run=self.run)
@@ -454,8 +454,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('cd', 'back', max_iter=50, run=self.run)
@@ -501,8 +501,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('cd', 'mt', max_iter=50, run=self.run)
@@ -549,8 +549,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'back', run=self.run)
@@ -597,8 +597,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt', run=self.run)
@@ -644,8 +644,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('sd', 'back', max_iter=50, run=self.run)
@@ -691,8 +691,8 @@ class Mf:
         # Setup the run for optimisation.
         self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
 
-        # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('sd', 'mt', max_iter=50, run=self.run)
