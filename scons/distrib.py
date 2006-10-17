@@ -27,6 +27,9 @@ from re import search
 from tarfile import TarFile
 from zipfile import ZipFile
 
+# relax version file.
+from version import version
+
 
 
 def gpg_sign(target, source, env):
