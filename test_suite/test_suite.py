@@ -161,6 +161,15 @@ class Test_suite:
         self.mf_test_array.append(Mf(self.relax, 'opendx {S2, te, Rex} map'))
         self.mf_test_array.append(Mf(self.relax, 'opendx {theta, phi, Da} map'))
         self.mf_test_array.append(Mf(self.relax, 'opendx {local_tm, S2, te} map'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained grid search {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained SD, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained SD, MT opt {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained CD, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained CD, MT opt {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained BFGS, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained BFGS, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained Newton, GMW, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
+        self.mf_test_array.append(Mf(self.relax, 'Constrained Newton, GMW, MT opt {S2=0.970, te=2048, Rex=0.149}'))
 
         # Execute the tests.
         self.exec_tests(self.mf_test_array)
