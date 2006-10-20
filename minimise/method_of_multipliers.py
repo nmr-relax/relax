@@ -244,7 +244,7 @@ class Method_of_multipliers(Min):
         # Initial Lagrange multipliers.
         if lambda0 == None:
             self.lambda_k = zeros(self.m, Float64)
-            self.ck = apply(self.c, (self.xk,)+args)
+            self.ck = self.c(*(self.xk,)+args)
             for i in xrange(self.m):
                 #self.lambda_k[i] = init_lambda
                 if self.ck[i] <= 0.0:
@@ -254,7 +254,7 @@ class Method_of_multipliers(Min):
 
         # Initialise data structures.
         self.test_str = zeros(self.m)
-        self.L = apply(self.func_LA, (self.xk,)+self.args)
+        self.L = self.func_LA(*(self.xk,)+self.args)
 
         # Set the convergence test function.
         self.setup_conv_tests()
@@ -275,8 +275,8 @@ class Method_of_multipliers(Min):
         """
 
         # Calculate the function and constraint values.
-        self.fk = L = apply(self.func, (args[0],)+args[1:])
-        self.ck = apply(self.c, (args[0],))
+        self.fk = L = self.func(*(args[0],)+args[1:])
+        self.ck = self.c(*(args[0],))
 
         # Calculate the quadratic augmented Lagrangian value.
         for i in xrange(self.m):
@@ -307,8 +307,8 @@ class Method_of_multipliers(Min):
         """The augmented Lagrangian gradient."""
 
         # Calculate the function and constraint gradients.
-        dfk = dL = apply(self.dfunc, (args[0],)+args[1:])
-        self.dck = apply(self.dc, (args[0],))
+        dfk = dL = self.dfunc(*(args[0],)+args[1:])
+        self.dck = self.dc(*(args[0],))
 
         # Calculate the quadratic augmented Lagrangian gradient.
         for i in xrange(self.m):
@@ -329,8 +329,8 @@ class Method_of_multipliers(Min):
         """The quadratic augmented Lagrangian Hessian."""
 
         # Calculate the function and constraint Hessians.
-        d2L = apply(self.d2func, (args[0],)+args[1:])
-        self.d2ck = apply(self.d2c, (args[0],))
+        d2L = self.d2func(*(args[0],)+args[1:])
+        self.d2ck = self.d2c(*(args[0],))
 
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in xrange(self.m):
@@ -347,7 +347,7 @@ class Method_of_multipliers(Min):
         """
 
         # Calculate the function Hessians.
-        d2L = d2fk = apply(self.d2func, (args[0],)+args[1:])
+        d2L = d2fk = self.d2func(*(args[0],)+args[1:])
 
         # Calculate the quadratic augmented Lagrangian Hessian.
         for i in xrange(self.m):
@@ -411,14 +411,14 @@ class Method_of_multipliers(Min):
 
             # Convergence test.
             if not hasattr(self, 'dL'):
-                self.dL = apply(self.func_dLA, (self.xk_new,)+self.args)
+                self.dL = self.func_dLA(*(self.xk_new,)+self.args)
             if self.conv_test(self.L_new, self.L, self.dL):
                 break
 
             # Lagrange multiplier update function.
             # The update is given by the following formula:
             #    lambdai_k+1 = max(lambdai_k - ci(xk)/mu, 0)
-            self.ck = apply(self.c, (self.xk_new,)+self.args)
+            self.ck = self.c(*(self.xk_new,)+self.args)
             for i in xrange(self.m):
                 self.lambda_k[i] = max(self.lambda_k[i] - self.ck[i] / self.mu, 0.0)
 
@@ -441,10 +441,10 @@ class Method_of_multipliers(Min):
         # Return.
         if self.full_output:
             try:
-                self.fk = apply(self.func, (self.xk_new,)+self.args)
+                self.fk = self.func(*(self.xk_new,)+self.args)
                 return self.xk_new, self.fk, self.j, self.f_count, self.g_count, self.h_count, self.warning
             except AttributeError:
-                self.fk = apply(self.func, (self.xk,)+self.args)
+                self.fk = self.func(*(self.xk,)+self.args)
                 return self.xk, self.fk, self.j, self.f_count, self.g_count, self.h_count, self.warning
         else:
             try:

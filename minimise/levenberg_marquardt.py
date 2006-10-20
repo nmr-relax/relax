@@ -109,8 +109,8 @@ class Levenberg_marquardt(Min):
         self.conv_test = self.test_mod
 
         # The initial chi-squared value, chi-squared gradient vector, and derivative function matrix.
-        self.fk, self.f_count = apply(self.chi2_func, (self.xk,)+self.args), self.f_count + 1
-        self.dfk, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk,)+self.args), self.g_count + 1
+        self.fk, self.f_count = self.chi2_func(*(self.xk,)+self.args), self.f_count + 1
+        self.dfk, self.g_count = -0.5 * self.dchi2_func(*(self.xk,)+self.args), self.g_count + 1
         self.df = self.dfunc()
         self.dfk_new = None
 
@@ -177,11 +177,11 @@ class Levenberg_marquardt(Min):
 
         # Find the new parameter vector and function value at that point.
         self.xk_new = self.xk + self.pk
-        self.fk_new, self.f_count = apply(self.chi2_func, (self.xk_new,)+self.args), self.f_count + 1
+        self.fk_new, self.f_count = self.chi2_func(*(self.xk_new,)+self.args), self.f_count + 1
 
         if self.fk_new <= self.fk:
             # Move to xk+1 and shrink lambda.
-            self.dfk_new, self.g_count = -0.5 * apply(self.dchi2_func, (self.xk_new,)+self.args), self.g_count + 1
+            self.dfk_new, self.g_count = -0.5 * self.dchi2_func(*(self.xk_new,)+self.args), self.g_count + 1
             if self.l >= 1e-99:
                 self.l = self.l * 0.1
             self.move_flag = 1

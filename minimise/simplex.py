@@ -75,7 +75,7 @@ class Simplex(Min):
         self.simplex_vals = zeros(self.m, Float64)
 
         self.simplex[0] = self.xk * 1.0
-        self.simplex_vals[0], self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+        self.simplex_vals[0], self.f_count = self.func(*(self.xk,)+self.args), self.f_count + 1
 
         for i in xrange(self.n):
             j = i + 1
@@ -84,7 +84,7 @@ class Simplex(Min):
                 self.simplex[j, i] = 2.5 * 1e-4
             else:
                 self.simplex[j, i] = 1.05 * self.simplex[j, i]
-            self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
+            self.simplex_vals[j], self.f_count = self.func(*(self.simplex[j],)+self.args), self.f_count + 1
 
         # Order the simplex.
         self.order_simplex()
@@ -138,7 +138,7 @@ class Simplex(Min):
         """Contraction step."""
 
         self.contract_vector = 1.5 * self.pivot_point - 0.5 * self.simplex[-1]
-        self.contract_val, self.f_count = apply(self.func, (self.contract_vector,)+self.args), self.f_count + 1
+        self.contract_val, self.f_count = self.func(*(self.contract_vector,)+self.args), self.f_count + 1
         if self.contract_val < self.reflect_val:
             self.simplex[-1], self.simplex_vals[-1] = self.contract_vector, self.contract_val
         else:
@@ -149,7 +149,7 @@ class Simplex(Min):
         """Contraction of the original simplex."""
 
         self.contract_orig_vector = 0.5 * (self.pivot_point + self.simplex[-1])
-        self.contract_orig_val, self.f_count = apply(self.func, (self.contract_orig_vector,)+self.args), self.f_count + 1
+        self.contract_orig_val, self.f_count = self.func(*(self.contract_orig_vector,)+self.args), self.f_count + 1
         if self.contract_orig_val < self.simplex_vals[-1]:
             self.simplex[-1], self.simplex_vals[-1] = self.contract_orig_vector, self.contract_orig_val
         else:
@@ -160,7 +160,7 @@ class Simplex(Min):
         """Extension step."""
 
         self.extend_vector = 3.0 * self.pivot_point - 2.0 * self.simplex[-1]
-        self.extend_val, self.f_count = apply(self.func, (self.extend_vector,)+self.args), self.f_count + 1
+        self.extend_val, self.f_count = self.func(*(self.extend_vector,)+self.args), self.f_count + 1
         if self.extend_val < self.reflect_val:
             self.simplex[-1], self.simplex_vals[-1] = self.extend_vector, self.extend_val
             self.reflect_flag = 0
@@ -177,7 +177,7 @@ class Simplex(Min):
         """Reflection step."""
 
         self.reflect_vector = 2.0 * self.pivot_point - self.simplex[-1]
-        self.reflect_val, self.f_count = apply(self.func, (self.reflect_vector,)+self.args), self.f_count + 1
+        self.reflect_val, self.f_count = self.func(*(self.reflect_vector,)+self.args), self.f_count + 1
 
 
     def shrink(self):
@@ -186,7 +186,7 @@ class Simplex(Min):
         for i in xrange(self.n):
             j = i + 1
             self.simplex[j] = 0.5 * (self.simplex[0] + self.simplex[j])
-            self.simplex_vals[j], self.f_count = apply(self.func, (self.simplex[j],)+self.args), self.f_count + 1
+            self.simplex_vals[j], self.f_count = self.func(*(self.simplex[j],)+self.args), self.f_count + 1
 
 
     def conv_test(self, *args):

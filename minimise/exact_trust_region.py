@@ -158,8 +158,8 @@ class Exact_trust_region(Hessian_mods, Trust_region, Min, Bfgs, Newton):
 
         # Find the new parameter vector and function value at that point.
         self.xk_new = self.xk + self.pk
-        self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
-        self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
+        self.fk_new, self.f_count = self.func(*(self.xk_new,)+self.args), self.f_count + 1
+        self.dfk_new, self.g_count = self.dfunc(*(self.xk_new,)+self.args), self.g_count + 1
 
 
     def old_param_func(self):
@@ -309,8 +309,8 @@ class Exact_trust_region(Hessian_mods, Trust_region, Min, Bfgs, Newton):
 
         # Find the new parameter vector and function value at that point.
         self.xk_new = self.xk + self.pk
-        self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
-        self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
+        self.fk_new, self.f_count = self.func(*(self.xk_new,)+self.args), self.f_count + 1
+        self.dfk_new, self.g_count = self.dfunc(*(self.xk_new,)+self.args), self.g_count + 1
 
 
     def safeguard(self, eigenvals):
