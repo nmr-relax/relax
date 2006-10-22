@@ -274,11 +274,11 @@ class Jw_mapping(Common_functions):
         | Data type              | Object name  | Patterns                                         |
         |________________________|______________|__________________________________________________|
         |                        |              |                                                  |
-        | J(0)                   | 'j0'         | '^[Jj]0$' or '[Jj](0)'                           |
+        | J(0)                   | 'j0'         | '^[Jj]0$' or '[Jj]\(0\)'                         |
         |                        |              |                                                  |
-        | J(wX)                  | 'jwx'        | '^[Jj]w[Xx]$' or '[Jj](w[Xx])'                   |
+        | J(wX)                  | 'jwx'        | '^[Jj]w[Xx]$' or '[Jj]\(w[Xx]\)'                 |
         |                        |              |                                                  |
-        | J(wH)                  | 'jwh'        | '^[Jj]w[Hh]$' or '[Jj](w[Hh])'                   |
+        | J(wH)                  | 'jwh'        | '^[Jj]w[Hh]$' or '[Jj]\(w[Hh]\)'                 |
         |                        |              |                                                  |
         | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
         |                        |              |                                                  |
@@ -288,15 +288,15 @@ class Jw_mapping(Common_functions):
         """
 
         # J(0).
-        if search('^[Jj]0$', name) or search('[Jj](0)', name):
+        if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
             return 'j0'
 
         # J(wX).
-        if search('^[Jj]w[Xx]$', name) or search('[Jj](w[Xx])', name):
+        if search('^[Jj]w[Xx]$', name) or search('[Jj]\(w[Xx]\)', name):
             return 'jwx'
 
         # J(wH).
-        if search('^[Jj]w[Hh]$', name) or search('[Jj](w[Hh])', name):
+        if search('^[Jj]w[Hh]$', name) or search('[Jj]\(w[Hh]\)', name):
             return 'jwh'
 
         # Bond length.

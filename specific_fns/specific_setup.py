@@ -162,13 +162,17 @@ class Specific_setup:
         if self.eqi == 'return_data_name':
             return self.relax.specific.jw_mapping.return_data_name
 
+        # Factor of conversion between different parameter units returning function.
+        if self.eqi == 'return_conversion_factor':
+            return self.relax.specific.jw_mapping.return_conversion_factor
+
         # Data error returning function.
         if self.eqi == 'return_error':
             return self.relax.specific.jw_mapping.return_error
 
         # Grace string returning function.
         if self.eqi == 'return_grace_string':
-            return self.relax.specific.model_free.return_grace_string
+            return self.relax.specific.jw_mapping.return_grace_string
 
         # Simulation parameter array returning function.
         if self.eqi == 'return_sim_param':
@@ -180,7 +184,7 @@ class Specific_setup:
 
         # String of the external parameter units returning function.
         if self.eqi == 'return_units':
-            return self.relax.specific.model_free.return_units
+            return self.relax.specific.jw_mapping.return_units
 
         # Value and error returning function.
         if self.eqi == 'return_value':
