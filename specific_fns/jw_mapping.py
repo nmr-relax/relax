@@ -355,35 +355,6 @@ class Jw_mapping(Common_functions):
             return 'ppm'
 
 
-    def return_value(self, run, i, data_type):
-        """Function for returning the value and error corresponding to 'data_type'."""
-
-        # Arguments.
-        self.run = run
-
-        # Remap the data structure 'self.relax.data.res[run][i]'.
-        data = self.relax.data.res[run][i]
-
-        # Get the object.
-        object_name = self.return_data_name(data_type)
-        if not object_name:
-            raise RelaxError, "The reduced spectral density mapping data type " + `data_type` + " does not exist."
-        object_error = object_name + "_err"
-
-        # Get the value.
-        value = None
-        if hasattr(data, object_name):
-            value = getattr(data, object_name)
-
-        # Get the error.
-        error = None
-        if hasattr(data, object_error):
-            error = getattr(data, object_error)
-
-        # Return the data.
-        return value, error
-
-
     def set(self, run=None, value=None, error=None, param=None, index=None):
         """
         Reduced spectral density mapping set details
