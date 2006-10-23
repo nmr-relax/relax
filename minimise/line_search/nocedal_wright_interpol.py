@@ -59,7 +59,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
     # Initialise sequence data.
     a = {}
     a['a'] = a_init
-    a['phi'] = apply(func, (x + a['a']*p,)+args)
+    a['phi'] = func(*(x + a['a']*p,)+args)
     f_count = f_count + 1
 
     if print_flag:
@@ -80,7 +80,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
     # Quadratic interpolation.
     a_new = - 0.5 * a0['phi_prime'] * a['a']**2 / (a['phi'] - a0['phi'] - a0['phi_prime']*a['a'])
     a['a'] = a_new
-    a['phi'] = apply(func, (x + a['a']*p,)+args)
+    a['phi'] = func(*(x + a['a']*p,)+args)
     f_count = f_count + 1
 
     # Check for sufficient decrease.  If so, return a['a'].
@@ -102,7 +102,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
 
         a_new = {}
         a_new['a'] = (-fact_b + sqrt(fact_b**2 - 3.0 * fact_a * a0['phi_prime'])) / (3.0 * fact_a)
-        a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
+        a_new['phi'] = func(*(x + a_new['a']*p,)+args)
         f_count = f_count + 1
 
         # Check for sufficient decrease.  If so, return a_new['a'].
@@ -112,7 +112,7 @@ def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_
         # Safeguarding.
         if a['a'] - a_new['a'] > 0.5 * a['a'] or 1.0 - a_new['a']/a['a'] < 0.9:
             a_new['a'] = 0.5 * a['a']
-            a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
+            a_new['phi'] = func(*(x + a_new['a']*p,)+args)
             f_count = f_count + 1
 
         # Updating.
