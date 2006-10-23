@@ -104,8 +104,8 @@ class Polak_ribiere(Conjugate_gradient, Line_search, Min):
         self.setup_conv_tests()
 
         # Calculate the initial function value and gradient vector.
-        self.fk, self.f_count = self.func(*(self.xk,)+self.args), self.f_count + 1
-        self.dfk, self.g_count = self.dfunc(*(self.xk,)+self.args), self.g_count + 1
+        self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+        self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
         self.pk = -self.dfk
         self.dot_dfk = dot(self.dfk, self.dfk)
 

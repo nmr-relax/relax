@@ -104,9 +104,9 @@ class Ncg(Line_search, Min):
         self.setup_conv_tests()
 
         # Calculate the initial Newton function value, gradient vector, and Hessian matrix.
-        self.fk, self.f_count = self.func(*(self.xk,)+self.args), self.f_count + 1
-        self.dfk, self.g_count = self.dfunc(*(self.xk,)+self.args), self.g_count + 1
-        self.d2fk, self.h_count = self.d2func(*(self.xk,)+self.args), self.h_count + 1
+        self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+        self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
+        self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1
 
 
     def get_pk(self):
@@ -189,8 +189,8 @@ class Ncg(Line_search, Min):
 
         # Find the new parameter vector and function value at that point.
         self.xk_new = self.xk + self.alpha * self.pk
-        self.fk_new, self.f_count = self.func(*(self.xk_new,)+self.args), self.f_count + 1
-        self.dfk_new, self.g_count = self.dfunc(*(self.xk_new,)+self.args), self.g_count + 1
+        self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+        self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
 
     def update(self):
@@ -199,4 +199,4 @@ class Ncg(Line_search, Min):
         self.xk = self.xk_new * 1.0
         self.fk = self.fk_new
         self.dfk = self.dfk_new * 1.0
-        self.d2fk, self.h_count = self.d2func(*(self.xk,)+self.args), self.h_count + 1
+        self.d2fk, self.h_count = apply(self.d2func, (self.xk,)+self.args), self.h_count + 1

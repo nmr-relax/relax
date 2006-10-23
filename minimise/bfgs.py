@@ -109,8 +109,8 @@ class Bfgs(Line_search, Min):
 
         # Find the new parameter vector and function value at that point.
         self.xk_new = self.xk + self.alpha * self.pk
-        self.fk_new, self.f_count = self.func(*(self.xk_new,)+self.args), self.f_count + 1
-        self.dfk_new, self.g_count = self.dfunc(*(self.xk_new,)+self.args), self.g_count + 1
+        self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+        self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
         # Debugging.
         if self.print_flag >= 2:
@@ -133,8 +133,8 @@ class Bfgs(Line_search, Min):
         self.I = identity(len(self.xk), Float64)
 
         # The initial BFGS function value, gradient vector, and BFGS approximation to the inverse Hessian matrix.
-        self.fk, self.f_count = self.func(*(self.xk,)+self.args), self.f_count + 1
-        self.dfk, self.g_count = self.dfunc(*(self.xk,)+self.args), self.g_count + 1
+        self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+        self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
         self.Hk = self.I * 1.0
 
 

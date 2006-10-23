@@ -66,7 +66,7 @@ def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4, max_iter=500)
     i = 0
 
     while i <= max_iter:
-        fk = func(*(x + a*p,)+args)
+        fk = apply(func, (x + a*p,)+args)
         f_count = f_count + 1
 
         # Check if the sufficient decrease condition is met.  If not, scale the step length by rho.

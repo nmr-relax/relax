@@ -79,8 +79,8 @@ def run():
         args = (beta1, beta2)
     else:
         args = ()
-    f0 = f(*(xk,)+args)
-    g0 = df(*(xk,)+args)
+    f0 = apply(f, (xk,)+args)
+    g0 = apply(df, (xk,)+args)
     a = more_thuente(f, df, args, xk, pk, f0, g0, a_init=a0, mu=mu, eta=eta, print_flag=1)
     print "The minimum is at " + `a`
 

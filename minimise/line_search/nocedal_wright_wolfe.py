@@ -67,16 +67,16 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
     a_last = copy.deepcopy(a0)
     a_max = {}
     a_max['a'] = max_a
-    a_max['phi'] = func(*(x + a_max['a']*p,)+args)
-    a_max['phi_prime'] = dot(func_prime(*(x + a_max['a']*p,)+args), p)
+    a_max['phi'] = apply(func, (x + a_max['a']*p,)+args)
+    a_max['phi_prime'] = dot(apply(func_prime, (x + a_max['a']*p,)+args), p)
     f_count = f_count + 1
     g_count = g_count + 1
 
     # Initialise sequence data.
     a = {}
     a['a'] = a_init
-    a['phi'] = func(*(x + a['a']*p,)+args)
-    a['phi_prime'] = dot(func_prime(*(x + a['a']*p,)+args), p)
+    a['phi'] = apply(func, (x + a['a']*p,)+args)
+    a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
     f_count = f_count + 1
     g_count = g_count + 1
 
@@ -127,8 +127,8 @@ def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1
         # Update.
         a_last = copy.deepcopy(a)
         a['a'] = a_new
-        a['phi'] = func(*(x + a['a']*p,)+args)
-        a['phi_prime'] = dot(func_prime(*(x + a['a']*p,)+args), p)
+        a['phi'] = apply(func, (x + a['a']*p,)+args)
+        a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
         f_count = f_count + 1
         g_count = g_count + 1
         i = i + 1
@@ -176,8 +176,8 @@ def zoom(func, func_prime, args, f_count, g_count, x, f, g, p, mu, eta, i, a0, a
         aj['a'] = max(aj_last['a'] + 0.66*(a_hi['a'] - aj_last['a']), aj_new)
 
         # Calculate the function and gradient value at aj['a'].
-        aj['phi'] = func(*(x + aj['a']*p,)+args)
-        aj['phi_prime'] = dot(func_prime(*(x + aj['a']*p,)+args), p)
+        aj['phi'] = apply(func, (x + aj['a']*p,)+args)
+        aj['phi_prime'] = dot(apply(func_prime, (x + aj['a']*p,)+args), p)
         f_count = f_count + 1
         g_count = g_count + 1
 

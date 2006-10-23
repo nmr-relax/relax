@@ -89,8 +89,8 @@ class Coordinate_descent(Line_search, Min):
         self.setup_conv_tests()
 
         # The initial function value and gradient vector.
-        self.fk, self.f_count = self.func(*(self.xk,)+self.args), self.f_count + 1
-        self.dfk, self.g_count = self.dfunc(*(self.xk,)+self.args), self.g_count + 1
+        self.fk, self.f_count = apply(self.func, (self.xk,)+self.args), self.f_count + 1
+        self.dfk, self.g_count = apply(self.dfunc, (self.xk,)+self.args), self.g_count + 1
 
         # Create the coordinate descent directions, and initialise the coordinate descent iteration number and direction flag.
         self.cd_dir = identity(len(self.xk), Float64)
@@ -115,8 +115,8 @@ class Coordinate_descent(Line_search, Min):
 
         # Find the new parameter vector and function value at that point.
         self.xk_new = self.xk + self.alpha * self.pk
-        self.fk_new, self.f_count = self.func(*(self.xk_new,)+self.args), self.f_count + 1
-        self.dfk_new, self.g_count = self.dfunc(*(self.xk_new,)+self.args), self.g_count + 1
+        self.fk_new, self.f_count = apply(self.func, (self.xk_new,)+self.args), self.f_count + 1
+        self.dfk_new, self.g_count = apply(self.dfunc, (self.xk_new,)+self.args), self.g_count + 1
 
         # Scale the coordinate direction to minimise the number of function calls.
         self.cd_dir[self.n] = self.alpha * self.pk

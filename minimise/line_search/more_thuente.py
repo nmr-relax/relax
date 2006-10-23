@@ -85,8 +85,8 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_
     # Initialise sequence data.
     a = {}
     a['a'] = a_init
-    a['phi'] = func(*(x + a['a']*p,)+args)
-    a['phi_prime'] = dot(func_prime(*(x + a['a']*p,)+args), p)
+    a['phi'] = apply(func, (x + a['a']*p,)+args)
+    a['phi_prime'] = dot(apply(func_prime, (x + a['a']*p,)+args), p)
     f_count = f_count + 1
     g_count = g_count + 1
 
@@ -250,8 +250,8 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_
         # Calculate new values.
         if print_flag:
             print "Calculating new values."
-        a_new['phi'] = func(*(x + a_new['a']*p,)+args)
-        a_new['phi_prime'] = dot(func_prime(*(x + a_new['a']*p,)+args), p)
+        a_new['phi'] = apply(func, (x + a_new['a']*p,)+args)
+        a_new['phi_prime'] = dot(apply(func_prime, (x + a_new['a']*p,)+args), p)
         f_count = f_count + 1
         g_count = g_count + 1
 
