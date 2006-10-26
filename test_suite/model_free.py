@@ -377,17 +377,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
-        if not self.test_values(val1=3.1024517431117421e-27, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=203, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=955, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=209, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
+            success = 0
+        if not self.test_values(val1=3.1024517431117421e-27, val2=data.chi2, error=1e-20, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=203, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=955, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=209, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -424,17 +438,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
-        if not self.test_values(val1=3.1024517431117421e-27, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=203, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=955, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=209, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
+            success = 0
+        if not self.test_values(val1=3.1024517431117421e-27, val2=data.chi2, error=1e-20, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=203, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=955, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=209, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_constr_cd_back_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -471,17 +499,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=0.9097900390625, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=2.5000000000000001e-11, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=1.24017333984375 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
-        if not self.test_values(val1=53.476155463267176, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=50, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=131, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=51, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=0.9097900390625, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=2.5000000000000001e-11, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=1.24017333984375 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
+            success = 0
+        if not self.test_values(val1=53.476155463267176, val2=data.chi2, error=error, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=50, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=131, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=51, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -518,17 +560,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'): return
-        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=0, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=1, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=1, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'):
+            success = 0
+        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=error, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=0, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=1, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=1, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_constr_newton_gmw_back_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -566,17 +622,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
-        if not self.test_values(val1=7.3040158179665562e-28, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=18, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=55, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=23, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=18, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
+            success = 0
+        if not self.test_values(val1=7.3040158179665562e-28, val2=data.chi2, error=1e-20, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=18, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=55, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=23, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=18, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -614,17 +684,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
-        if not self.test_values(val1=6.8756889983348349e-28, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=22, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=159, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=159, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=22, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
+            success = 0
+        if not self.test_values(val1=6.8756889983348349e-28, val2=data.chi2, error=1e-20, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=22, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=159, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=159, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=22, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -661,17 +745,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=0.91579220834688024, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=3.056865872253173e-13, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.34008409798366124 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
-        if not self.test_values(val1=68.321956795264342, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=50, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=134, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=51, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=0.91579220834688024, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=3.056865872253173e-13, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.34008409798366124 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
+            success = 0
+        if not self.test_values(val1=68.321956795264342, val2=data.chi2, error=error, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=50, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=134, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=51, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -708,17 +806,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=0.91619994957822126, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=1.2319687570987945e-13, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.16249110942961512 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2): return
-        if not self.test_values(val1=73.843613546506191, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=50, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=108, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=108, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=0.91619994957822126, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=1.2319687570987945e-13, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.16249110942961512 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
+            success = 0
+        if not self.test_values(val1=73.843613546506191, val2=data.chi2, error=error, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=50, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=108, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=108, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_grid_search_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -749,17 +861,31 @@ class Mf:
         error = 1e-8
 
         # Test the values.
-        if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'): return
-        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value'): return
-        if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'): return
-        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=error, name='chi-squared value'): return
-        if not self.test_values(val1=1331, val2=data.iter, error=None, name='iteration count'): return
-        if not self.test_values(val1=1331, val2=data.f_count, error=None, name='function count'): return
-        if not self.test_values(val1=0, val2=data.g_count, error=None, name='gradient count'): return
-        if not self.test_values(val1=0, val2=data.h_count, error=None, name='Hessian count'): return
+        success = 1
+        if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'):
+            success = 0
+        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value', scale = 1e12):
+            success = 0
+        if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'):
+            success = 0
+        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=1e-20, name='chi-squared value'):
+            success = 0
+        if not self.test_values(val1=1331, val2=data.iter, name='iteration count', max=1):
+            success = 0
+        if not self.test_values(val1=1331, val2=data.f_count, name='function count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.g_count, name='gradient count', max=1):
+            success = 0
+        if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
+            success = 0
+
+        # Warning.
+        if data.warning:
+            print data.warning
+            success = 0
 
         # Success.
-        return 1
+        return success
 
 
     def opt_setup_S2_0_970_te_2048_Rex_0_149(self, run):
@@ -1129,25 +1255,25 @@ class Mf:
         return 1
 
 
-    def test_values(self, val1, val2, error, name, scale=None):
+    def test_values(self, val1, val2, error=None, name=None, scale=1.0, max=0):
         """Test that value 1 is equal to value 2, within the error."""
 
         # Failure (with an error tolerance).
         if error:
-            if val2 < val1 * (1 - error) or val2 > val1 * (1 + error):
-                if scale:
-                    print "The " + name + " of '" + `val2 * scale` + "' should be " + `val1 * scale` + "."
-                else:
-                    print "The " + name + " of '" + `val2` + "' should be " + `val1` + "."
+            if val2*scale < val1*scale - error or val2*scale > val1*scale + error:
+                print "The " + name + " of '" + `val2*scale` + "' should be within +/- " + `error` + " of " + `val1*scale` + "."
+                return
+
+        # Failure (val2 is greater than val1).
+        elif max:
+            if val2 > val1:
+                print "The " + name + " of '" + `val2*scale` + "' should be greater than " + `val1*scale` + "."
                 return
 
         # Failure (with no error tolerance).
         else:
             if val2 != val1:
-                if scale:
-                    print "The " + name + " of '" + `val2 * scale` + "' should be " + `val1 * scale` + "."
-                else:
-                    print "The " + name + " of '" + `val2` + "' should be " + `val1` + "."
+                print "The " + name + " of '" + `val2*scale` + "' should be " + `val1*scale` + "."
                 return
 
         # Success.
