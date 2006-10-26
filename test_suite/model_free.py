@@ -518,7 +518,7 @@ class Mf:
             success = 0
 
         # Warning.
-        if data.warning:
+        if data.warning and not data.warning == 'Maximum number of iterations reached':
             print data.warning
             success = 0
 
@@ -579,7 +579,7 @@ class Mf:
             success = 0
 
         # Warning.
-        if data.warning:
+        if data.warning and not data.warning == 'Maximum number of iterations reached':
             print data.warning
             success = 0
 
@@ -764,7 +764,7 @@ class Mf:
             success = 0
 
         # Warning.
-        if data.warning:
+        if data.warning and not data.warning == 'Maximum number of iterations reached':
             print data.warning
             success = 0
 
@@ -825,7 +825,7 @@ class Mf:
             success = 0
 
         # Warning.
-        if data.warning:
+        if data.warning and not data.warning == 'Maximum number of iterations reached':
             print data.warning
             success = 0
 
