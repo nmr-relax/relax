@@ -37,6 +37,95 @@ class PDB:
         self.print_flag = 1
 
 
+    def atomic_mass(self, element=None):
+        """Return the atomic mass of the given element."""
+
+        # Proton.
+        if element == 'H' or element == 'Q':
+            return 1.00794
+
+        # Carbon.
+        elif element == 'C':
+            return 12.0107
+
+        # Nitrogen.
+        elif element == 'N':
+            return 14.0067
+
+        # Oxygen.
+        elif element == 'O':
+            return 15.9994
+
+        # Sulphur.
+        elif element == 'S':
+            return 32.065
+
+        # Unknown.
+        else:
+            raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
+
+
+    def center_of_mass(self):
+        """Calculate and return the center of mass of the structure."""
+
+        # Print out.
+        print "Calculating the center of mass."
+
+        # Initialise the center of mass.
+        R = zeros(3, Float64)
+
+        # Initialise the total mass.
+        M = 0.0
+
+        # Loop over the structures.
+        for struct in self.relax.data.pdb[self.run].structures:
+            # Protein.
+            if struct.peptide_chains:
+                chains = struct.peptide_chains
+
+            # RNA/DNA.
+            elif struct.nucleotide_chains:
+                chains = struct.nucleotide_chains
+
+            # Loop over the residues of the protein in the PDB file.
+            for res in chains[0].residues:
+                # Find the corresponding residue in 'self.relax.data'.
+                found = 0
+                for res_data in self.relax.data.res[self.run]:
+                    if res.number == res_data.num:
+                        found = 1
+                        break
+
+                # Doesn't exist.
+                if not found:
+                    continue
+
+                # Skip unselected residues.
+                if not res_data.select:
+                    continue
+
+                # Loop over the atoms of the residue.
+                for atom in res:
+                    # Atomic mass.
+                    mass = self.atomic_mass(atom.properties['element'])
+
+                    # Total mass.
+                    M = M + mass
+
+                    # Sum of mass * position.
+                    R = R + mass * atom.position.array
+
+        # Normalise.
+        R = R / M
+
+        # Final print out.
+        print "    Total mass:      M = " + `M`
+        print "    Center of mass:  R = " + `R`
+
+        # Return the center of mass.
+        return R
+
+
     def create_tensor_pdb(self, run=None, file=None, dir=None, force=0):
         """The pdb loading function."""
 
@@ -60,6 +149,9 @@ class PDB:
 
         # Open the PDB file for writing.
         tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, self.force)
+
+        # Calculate the center of mass.
+        R = self.center_of_mass()
 
         # Close the PDB file.
         tensor_pdb_file.close()
