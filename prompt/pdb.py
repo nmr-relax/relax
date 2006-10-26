@@ -38,6 +38,60 @@ class PDB:
         self.__relax__ = relax
 
 
+    def create_tensor_pdb(self, run=None, file='tensor.pdb', dir=None, force=0):
+        """Create a PDB file to represent the diffusion tensor.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the structure to.
+
+        file:  The name of the PDB file.
+
+        dir:  The directory where the file is located.
+
+        force:  A flag which, if set to 1, will overwrite the any pre-existing file.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function creates a PDB file containing artificial structures which represent the
+        diffusion tensor.  A structure must have previously been read.  The diffusion tensor is
+        represented by an ellipsoidal, spheroidal, or spherical geometric centered at the center of
+        mass.  This diffusion tensor PDB file can subsequently read into any molecular viewer.
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pdb.create_tensor_pdb("
+            text = text + "run=" + `run`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # File name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The force flag.
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
+
+        # Execute the functional code.
+        self.__relax__.generic.pdb.create_tensor_pdb(run=run, file=file, dir=dir, force=force)
+
+
     def read(self, run=None, file=None, dir=None, model=None, load_seq=1):
         """The pdb loading function.
 

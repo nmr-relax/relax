@@ -37,6 +37,34 @@ class PDB:
         self.print_flag = 1
 
 
+    def create_tensor_pdb(self, run=None, file=None, dir=None, force=0):
+        """The pdb loading function."""
+
+        # Arguments.
+        self.run = run
+        self.file = file
+        self.dir = dir
+        self.force = force
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if PDB data corresponding to the run already exists.
+        if not self.relax.data.pdb.has_key(self.run):
+            raise RelaxNoPdbError, self.run
+
+        # Test if sequence data is loaded.
+        if not self.load_seq and not len(self.relax.data.res[self.run]):
+            raise RelaxNoSequenceError, self.run
+
+        # Open the PDB file for writing.
+        tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, self.force)
+
+        # Close the PDB file.
+        tensor_pdb_file.close()
+
+
     def load_structures(self):
         """Function for loading the structures from the PDB file."""
 
