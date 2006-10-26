@@ -121,6 +121,7 @@ class PDB:
         # Final print out.
         print "    Total mass:      M = " + `M`
         print "    Center of mass:  R = " + `R`
+        print
 
         # Return the center of mass.
         return R
@@ -135,6 +136,9 @@ class PDB:
         self.dir = dir
         self.force = force
 
+        # Tests.
+        ########
+
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
@@ -147,13 +151,50 @@ class PDB:
         if not self.load_seq and not len(self.relax.data.res[self.run]):
             raise RelaxNoSequenceError, self.run
 
-        # Open the PDB file for writing.
-        tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, self.force)
+
+        # Initialise the PDB data.
+        ##########################
+
+        # PDB HETATM and CONECT data.
+        hetatm = []
+        conect = []
+
+        # Chain ID, residue number, residue name.
+        chain_id = 'A'
+        res_num = 1
+        res_name = 'TNS'
+        chemical_name = 'Tensor'
+        occupancy = 1.0
+        element = 'C'
+
+
+        # Center of mass.
+        #################
 
         # Calculate the center of mass.
         R = self.center_of_mass()
 
-        # Close the PDB file.
+        # Add the central atom.
+        hetatm.append(R)
+
+
+        # Connectivities.
+        #################
+
+        #conect.append(['1', '2'])
+        #conect.append(['2', '1'])
+
+
+        # Create the PDB file.
+        ######################
+
+        # Open the PDB file for writing.
+        tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
+
+        # Write the data.
+        self.write_pdb_file(tensor_pdb_file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy, element)
+
+        # Close the file.
         tensor_pdb_file.close()
 
 
@@ -485,3 +526,63 @@ class PDB:
 
             # Replace the temporary vector list with the normalised average vector.
             data.xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
+
+
+    def write_pdb_file(self, file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy, element):
+        """Function for creating a PDB file from the given data."""
+
+        # The HET record.
+        file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', res_name, chain_id, res_num, '', len(hetatm), ''))
+
+        # The HETNAM record.
+        file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', res_name, chemical_name))
+
+        # The FORMUL record (chemical formula).
+        file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', 1, res_name, '', '', element+`len(hetatm)`))
+
+        # Loop over the HETATMs.
+        serial_num = 1
+        for vector in hetatm:
+            # Write the HETATM record.
+            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', serial_num, element+`serial_num`, '', res_name, chain_id, res_num, '', vector[0], vector[1], vector[2], occupancy, 0, '', element, ''))
+
+            # Increment the atom number.
+            serial_num = serial_num + 1
+
+        # Terminate (TER record).
+        file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', serial_num, res_name, chain_id, '', ''))
+
+        # Loop over the connections.
+        for array in conect:
+            # The atom.
+            atom_serial_num = array[0]
+
+            # First bonded atom.
+            bonded1 = array[1]
+
+            # Second bonded atom.
+            if len(array) > 2:
+                bonded2 = array[2]
+            else:
+                bonded2 = ''
+
+            # Third bonded atom.
+            if len(array) > 3:
+                bonded3 = array[3]
+            else:
+                bonded3 = ''
+
+            # Forth bonded atom.
+            if len(array) > 4:
+                bonded4 = array[4]
+            else:
+                bonded4 = ''
+
+            # Write the CONECT record.
+            file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', atom_serial_num, bonded1, bonded2, bonded3, bonded4, '', '', '', '', '', ''))
+
+        # MASTER record.
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, 1, 0, 0, 0, 0, 0, len(hetatm), 1, len(conect), 0))
+
+        # END.
+        file.write("END\n")
