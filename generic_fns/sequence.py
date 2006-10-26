@@ -145,8 +145,10 @@ class Sequence:
         # Reassign the sequence of the first structure.
         if self.relax.data.pdb[run].structures[0].peptide_chains:
             res = self.relax.data.pdb[run].structures[0].peptide_chains[0].residues
+            molecule = 'protein'
         elif self.relax.data.pdb[run].structures[0].nucleotide_chains:
             res = self.relax.data.pdb[run].structures[0].nucleotide_chains[0].residues
+            molecule = 'nucleic acid'
         else:
             raise RelaxNoPdbChainError
 
@@ -158,9 +160,16 @@ class Sequence:
             # Append a data container.
             self.relax.data.res[run].add_item()
 
-            # Insert the data.
+            # Residue number.
             self.relax.data.res[run][i].num = res[i].number
-            self.relax.data.res[run][i].name = res[i].name
+
+            # Residue name.
+            if molecule == 'nucleic acid':
+                self.relax.data.res[run][i].name = res[i].name[-1]
+            else:
+                self.relax.data.res[run][i].name = res[i].name
+
+            # Select the residue.
             self.relax.data.res[run][i].select = 1
 
 
