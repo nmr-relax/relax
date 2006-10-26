@@ -237,7 +237,8 @@ class PDB:
 
         # Create a temporary vector list for each residue.
         for i in xrange(len(self.relax.data.res[self.run])):
-            self.relax.data.res[self.run][i].xh_vect = []
+            if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
+                self.relax.data.res[self.run][i].xh_vect = []
 
         # Loop over the structures.
         for i in xrange(num_str):
