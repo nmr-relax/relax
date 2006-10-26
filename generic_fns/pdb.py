@@ -23,7 +23,7 @@
 from math import sqrt
 from Numeric import Float64, dot, zeros
 from os import F_OK, access
-from re import compile
+from re import compile, match
 import Scientific.IO.PDB
 
 
