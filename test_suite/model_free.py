@@ -381,7 +381,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
             success = 0
@@ -442,7 +442,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
             success = 0
@@ -503,7 +503,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=0.9097900390625, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=2.5000000000000001e-11, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=2.5000000000000001e-11, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=1.24017333984375 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
             success = 0
@@ -564,7 +564,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'):
             success = 0
@@ -626,7 +626,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
             success = 0
@@ -634,7 +634,7 @@ class Mf:
             success = 0
         if not self.test_values(val1=18, val2=data.iter, name='iteration count', max=1):
             success = 0
-        if not self.test_values(val1=55, val2=data.f_count, name='function count', max=1):
+        if not self.test_values(val1=96, val2=data.f_count, name='function count', max=1):
             success = 0
         if not self.test_values(val1=23, val2=data.g_count, name='gradient count', max=1):
             success = 0
@@ -688,7 +688,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
             success = 0
@@ -749,7 +749,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=0.91579220834688024, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=3.056865872253173e-13, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=3.056865872253173e-13, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.34008409798366124 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
             success = 0
@@ -810,7 +810,7 @@ class Mf:
         success = 1
         if not self.test_values(val1=0.91619994957822126, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=1.2319687570987945e-13, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=1.2319687570987945e-13, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.16249110942961512 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value', scale=(2.0 * pi * data.frq[0])**2):
             success = 0
@@ -865,11 +865,11 @@ class Mf:
         success = 1
         if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value', scale = 1e12):
+        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
         if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'):
             success = 0
-        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=1e-20, name='chi-squared value'):
+        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=error, name='chi-squared value'):
             success = 0
         if not self.test_values(val1=1331, val2=data.iter, name='iteration count', max=1):
             success = 0
@@ -1262,19 +1262,19 @@ class Mf:
         # Failure (with an error tolerance).
         if error:
             if val2*scale < val1*scale - error or val2*scale > val1*scale + error:
-                print "The " + name + " of '" + `val2*scale` + "' should be within +/- " + `error` + " of " + `val1*scale` + "."
+                print "The " + name + " of " + `val2*scale` + " should be within +/- " + `error` + " of " + `val1*scale` + "."
                 return
 
         # Failure (val2 is greater than val1).
         elif max:
             if val2 > val1:
-                print "The " + name + " of '" + `val2*scale` + "' should be greater than " + `val1*scale` + "."
+                print "The " + name + " of " + `val2*scale` + " should be less than " + `val1*scale` + "."
                 return
 
         # Failure (with no error tolerance).
         else:
             if val2 != val1:
-                print "The " + name + " of '" + `val2*scale` + "' should be " + `val1*scale` + "."
+                print "The " + name + " of " + `val2*scale` + " should be " + `val1*scale` + "."
                 return
 
         # Success.
