@@ -3243,17 +3243,9 @@ class Model_free(Common_functions):
         # PDB model.
         pdb_model = eval(self.file_line[self.col['pdb_model']])
 
-        # Heteronucleus.
-        if self.col.has_key('pdb_heteronuc'):
-            pdb_heteronuc = self.file_line[self.col['pdb_heteronuc']]
-
-        # Proton.
-        if self.col.has_key('pdb_proton'):
-            pdb_proton = self.file_line[self.col['pdb_proton']]
-
-        # Load the PDB.
+        # Read the PDB file (if it exists).
         if not pdb == 'None':
-            self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, heteronuc=pdb_heteronuc, proton=pdb_proton, calc_vectors=0, fail=0, print_flag=print_flag)
+            self.relax.generic.pdb.read(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
             return 1
         else:
             return 0
