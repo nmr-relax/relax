@@ -21,7 +21,7 @@
 ###############################################################################
 
 from math import sqrt, cos, pi, sin
-from Numeric import Float64, arccos, dot, transpose, zeros
+from Numeric import Float64, arccos, dot, zeros
 from os import F_OK, access
 from re import compile
 import Scientific.IO.PDB
@@ -309,7 +309,7 @@ class PDB:
         ######################
 
         # Print out.
-        print "Creating the vector distribution."
+        print "Creating the vector distribution.\n"
 
         # Increment value.
         inc = 20
@@ -328,7 +328,7 @@ class PDB:
                 atom_id = 'T' + `i` + 'P' + `j`
 
                 # Rotate the vector into the diffusion frame.
-                vector = dot(transpose(self.relax.data.diff[self.run].rotation), vectors[index])
+                vector = dot(self.relax.data.diff[self.run].rotation, vectors[index])
 
                 # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
                 vector = dot(self.relax.data.diff[self.run].tensor, vector)

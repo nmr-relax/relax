@@ -217,9 +217,9 @@ class DiffTensorElement(Element):
         The rotation matrix required to shift from the diffusion tensor frame to the PDB frame is
         equal to
 
-                  |  cos(theta) * cos(phi)   cos(theta) * sin(phi)  -sin(theta) |
-            R  =  | -sin(phi)                cos(phi)                0          |.
-                  |  sin(theta) * cos(phi)   sin(theta) * sin(phi)   cos(tehta) |
+                  |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
+            R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
+                  | -sin(theta)              0          cos(theta)            |
 
 
         Ellipsoidal diffusion
@@ -262,9 +262,9 @@ class DiffTensorElement(Element):
 
             R  =  | Dx_unit  Dy_unit  Dz_unit |,
 
-                  | Dx_unit[0]  Dy_unit[0]  Dz_unit[0] | 
+                  | Dx_unit[0]  Dy_unit[0]  Dz_unit[0] |
                =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
-                  | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] | 
+                  | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
         """
 
         # All tensor types.
@@ -339,9 +339,9 @@ class DiffTensorElement(Element):
 
         # The diffusion tensor (within the structural frame).
         if name == 'tensor' and self.type == 'spheroid':
-            # Rotation (R^T . tensor . R).
+            # Rotation (R . tensor . R^T).
             R = self.rotation
-            return dot(transpose(R), dot(self.tensor_diag, R))
+            return dot(R, dot(self.tensor_diag, transpose(R)))
 
         # The rotation matrix.
         if name == 'rotation' and self.type == 'spheroid':
@@ -350,15 +350,15 @@ class DiffTensorElement(Element):
 
             # First row of the rotation matrix.
             rotation[0, 0] = cos(self.theta) * cos(self.phi)
-            rotation[0, 1] = cos(self.theta) * sin(self.phi)
-            rotation[0, 2] = -sin(self.theta)
+            rotation[1, 0] = cos(self.theta) * sin(self.phi)
+            rotation[2, 0] = -sin(self.theta)
 
             # Second row of the rotation matrix.
-            rotation[1, 0] = -sin(self.phi)
+            rotation[0, 1] = -sin(self.phi)
             rotation[1, 1] = cos(self.phi)
 
             # Replace the last row of the rotation matrix with the Dpar unit vector.
-            rotation[2] = self.Dpar_unit
+            rotation[:, 2] = self.Dpar_unit
 
             # Return the tensor.
             return rotation
