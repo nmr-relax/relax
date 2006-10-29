@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -166,7 +166,7 @@ class PDB:
         res_name = 'TNS'
         chemical_name = 'Tensor'
         occupancy = 1.0
-        element = 'C'
+        element = 'H'
 
 
         # Center of mass.
@@ -176,7 +176,7 @@ class PDB:
         R = self.center_of_mass()
 
         # Add the central atom.
-        hetatm.append(R)
+        hetatm.append([R, 'C'])
 
 
         # Axes of the tensor.
@@ -197,7 +197,7 @@ class PDB:
             pos = R + Dpar_vect
 
             # Add the position as a HETATM.
-            hetatm.append(pos)
+            hetatm.append([pos, 'C'])
 
             # Print out.
             print "    Scaling factor:              " + `scale`
@@ -221,7 +221,7 @@ class PDB:
         tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
 
         # Write the data.
-        self.write_pdb_file(tensor_pdb_file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy, element)
+        self.write_pdb_file(tensor_pdb_file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy)
 
         # Close the file.
         tensor_pdb_file.close()
@@ -557,7 +557,7 @@ class PDB:
             data.xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
 
 
-    def write_pdb_file(self, file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy, element):
+    def write_pdb_file(self, file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy):
         """Function for creating a PDB file from the given data."""
 
         # The HET record.
@@ -566,12 +566,34 @@ class PDB:
         # The HETNAM record.
         file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', res_name, chemical_name))
 
+        # Count the elements.
+        H_count = 0
+        C_count = 0
+        for vector, element in hetatm:
+            if element == 'H':
+                H_count = H_count + 1
+            elif element == 'C':
+                C_count = C_count + 1
+            else:
+                raise RelaxError, "The element " + `element` + " was expected to be one of ['H', 'C']."
+
+        # Chemical formula.
+        formula = ''
+        if H_count:
+            if formula:
+                formula = formula + ' '
+            formula = formula + 'H' + `H_count`
+        if C_count:
+            if formula:
+                formula = formula + ' '
+            formula = formula + 'C' + `C_count`
+
         # The FORMUL record (chemical formula).
-        file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', 1, res_name, '', '', element+`len(hetatm)`))
+        file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', 1, res_name, '', '', formula))
 
         # Loop over the HETATMs.
         serial_num = 1
-        for vector in hetatm:
+        for vector, element in hetatm:
             # Write the HETATM record.
             file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', serial_num, element+`serial_num`, '', res_name, chain_id, res_num, '', vector[0], vector[1], vector[2], occupancy, 0, '', element, ''))
 
