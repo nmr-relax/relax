@@ -39,6 +39,20 @@ class Molmol:
         self.command_history = ""
 
 
+    def command(self, run, command):
+        """Function for sending Molmol commands to the program pipe."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Pass the command to Molmol.
+        self.pipe_write(command)
+
+
     def create_macro(self):
         """Function for creating an array of Molmol commands."""
 

@@ -56,8 +56,23 @@ class Molmol:
         self.__relax__.generic.molmol.clear_history()
 
 
-    def command(self, command):
+    def command(self, run=None, command=None):
         """Function for executing a user supplied Molmol command.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        command:  The Molmol command to execute.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function allows you to pass Molmol commands to the program.  This can be useful
+        for automation or scripting.
+
 
         Example
         ~~~~~~~
@@ -68,15 +83,20 @@ class Molmol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.command("
-            text = text + "command=" + `command` + ")"
+            text = text + "run=" + `run`
+            text = text + ", command=" + `command` + ")"
             print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
 
         # The command argument.
         if type(command) != str:
             raise RelaxStrError, ('command', command)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.write(command=command)
+        self.__relax__.generic.molmol.command(run=run, command=command)
 
 
     def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
