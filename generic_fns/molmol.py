@@ -169,6 +169,27 @@ class Molmol:
             self.command_history = self.command_history + command + "\n"
 
 
+    def ribbon(self, run=None):
+        """Apply the Molmol ribbon style."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Calculate the protons.
+        self.pipe_write("CalcAtom 'H'")
+        self.pipe_write("CalcAtom 'HN'")
+
+        # Calculate the secondary structure.
+        self.pipe_write("CalcSecondary")
+
+        # Execute the ribbon macro.
+        self.pipe_write("XMacStand ribbon.mac")
+
+
     def view(self, run=None):
         """Function for running Molmol."""
 

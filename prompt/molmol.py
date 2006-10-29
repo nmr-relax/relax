@@ -77,7 +77,9 @@ class Molmol:
         Example
         ~~~~~~~
 
-        relax> molmol.command("InitAll yes")
+        To reinitialise the Molmol instance for the run 'aic', type:
+
+        relax> molmol.command("aic", "InitAll yes")
         """
 
         # Function intro text.
@@ -197,6 +199,48 @@ class Molmol:
         # Execute the functional code.
         self.__relax__.generic.molmol.macro_exec(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
+
+    def ribbon(self, run=None):
+        """Apply the Molmol ribbon style.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function applies the Molmol ribbon style.  To do this, the following commands are
+        executed:
+
+            CalcAtom 'H'
+            CalcAtom 'HN'
+            CalcSecondary
+            XMacStand ribbon.mac
+
+
+        Example
+        ~~~~~~~
+
+        To apply the ribbon style to the PDB file loaded for the run 'final', type:
+
+        relax> molmol.ribbon("final")
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "molmol.ribbon("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.__relax__.generic.molmol.ribbon(run=run)
 
 
     def view(self, run=None):
