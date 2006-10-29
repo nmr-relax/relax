@@ -21,7 +21,8 @@
 ###############################################################################
 
 
-from math import pi
+from Numeric import Float64, zeros
+from math import cos, pi, sin
 from re import match
 from types import DictType, ListType
 
@@ -64,7 +65,6 @@ class Data:
         self.g_count = {}
         self.h_count = {}
         self.warning = {}
-
 
 
     def __repr__(self):
@@ -150,7 +150,7 @@ class DiffTensorData(SpecificData):
 
     def add_item(self, key):
         """Function for adding an empty container to the dictionary.
-        
+
         This overwrites the function from the parent class SpecificData.
         """
 
@@ -164,7 +164,64 @@ class DiffTensorElement(Element):
 
 
     def __getattr__(self, name):
-        """Function for calculating the parameters on the fly."""
+        """Function for calculating the parameters and unit vectors on the fly.
+
+        All tensor types
+        ================
+
+        The equation for calculating Diso is
+
+            Diso  =  1 / (6tm).
+
+
+        Spheroidal diffusion
+        ====================
+
+        The equations for the parameters Dper, Dpar, and Dratio are
+
+            Dper  =  Diso - 1/3 Da,
+
+            Dpar  =  Diso + 2/3 Da,
+
+            Dratio  =  Dpar / Dper.
+
+        The unit vector parallel to the unique axis of the diffusion tensor is
+
+                          | sin(theta) * cos(phi) |
+            Dpar_unit  =  | sin(theta) * sin(phi) |.
+                          |      cos(theta)       |
+
+
+        Ellipsoidal diffusion
+        =====================
+
+        The equations for the parameters Dx, Dy, and Dz are
+
+            Dx  =  Diso - 1/3 Da(1 + 3Dr),
+
+            Dy  =  Diso - 1/3 Da(1 - 3Dr),
+
+            Dz  =  Diso + 2/3 Da.
+
+        The unit Dx vector is
+
+                        | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+            Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |,
+                        |                    cos(alpha) * sin(beta)                      |
+
+        the unit Dy vector is
+
+                        | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+            Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |,
+                        |                   sin(alpha) * sin(beta)                      |
+
+        and the unit Dz vector is
+
+                        | -sin(beta) * cos(gamma) |
+            Dz_unit  =  |  sin(beta) * sin(gamma) |.
+                        |        cos(beta)        |
+
+        """
 
         # All tensor types.
         ###################
@@ -177,33 +234,85 @@ class DiffTensorElement(Element):
         # Spheroidal diffusion.
         #######################
 
-        # Dper = Diso - 1/3Da.
-        if name == 'Dper':
+        # Dper.
+        if name == 'Dper' and self.type == 'spheroid':
             return self.Diso - 1.0/3.0 * self.Da
 
-        # Dpar = Diso + 2/3Da.
-        if name == 'Dpar':
+        # Dpar.
+        if name == 'Dpar' and self.type == 'spheroid':
             return self.Diso + 2.0/3.0 * self.Da
 
-        # Dratio = Dpar / Dper.
-        if name == 'Dratio':
+        # Dratio.
+        if name == 'Dratio' and self.type == 'spheroid':
             return self.Dpar / self.Dper
 
-        
+        # Dpar unit vector.
+        if name == 'Dpar_unit' and self.type == 'spheroid':
+            # Initilise the vector.
+            Dpar_unit = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dpar_unit[0] = sin(self.theta) * cos(self.phi)
+            Dpar_unit[1] = sin(self.theta) * sin(self.phi)
+            Dpar_unit[2] = cos(self.theta)
+
+            # Return the unit vector.
+            return Dpar_unit
+
+
         # Ellipsoidal diffusion.
         ########################
 
-        # Dx = Diso - 1/3Da(1 + 3Dr).
-        if name == 'Dx':
+        # Dx.
+        if name == 'Dx' and self.type == 'ellipsoid':
             return self.Diso - 1.0/3.0 * self.Da * (1.0 + 3.0*self.Dr)
 
-        # Dy = Diso - 1/3Da(1 - 3Dr).
-        if name == 'Dy':
+        # Dy.
+        if name == 'Dy' and self.type == 'ellipsoid':
             return self.Diso - 1.0/3.0 * self.Da * (1.0 - 3.0*self.Dr)
 
-        # Dz = Diso + 2/3Da.
-        if name == 'Dz':
+        # Dz.
+        if name == 'Dz' and self.type == 'ellipsoid':
             return self.Diso + 2.0/3.0 * self.Da
+
+        # Dx unit vector.
+        if name == 'Dx_unit' and self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dx_unit = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dx_unit[0] = -sin(self.alpha) * sin(self.gamma)  +  cos(self.alpha) * cos(self.beta) * cos(self.gamma)
+            Dx_unit[1] = -sin(self.alpha) * cos(self.gamma)  -  cos(self.alpha) * cos(self.beta) * sin(self.gamma)
+            Dx_unit[2] = cos(self.alpha) * sin(self.beta)
+
+            # Return the unit vector.
+            return Dx_unit
+
+        # Dy unit vector.
+        if name == 'Dy_unit' and self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dy_unit = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dy_unit[0] = cos(self.alpha) * sin(self.gamma)  +  sin(self.alpha) * cos(self.beta) * cos(self.gamma)
+            Dy_unit[1] = cos(self.alpha) * cos(self.gamma)  -  sin(self.alpha) * cos(self.beta) * sin(self.gamma)
+            Dy_unit[2] = sin(self.alpha) * sin(self.beta)
+
+            # Return the unit vector.
+            return Dy_unit
+
+        # Dz unit vector.
+        if name == 'Dz_unit' and self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dz_unit = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dz_unit[0] = -sin(self.beta) * cos(self.gamma)
+            Dz_unit[1] = sin(self.beta) * sin(self.gamma)
+            Dz_unit[2] = cos(self.beta)
+
+            # Return the unit vector.
+            return Dz_unit
 
 
         # The attribute asked for does not exist.
