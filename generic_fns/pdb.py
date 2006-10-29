@@ -254,29 +254,54 @@ class PDB:
         # Axes of the tensor.
         #####################
 
-        # Get the unique axis of the spheroid.
+        # Create the unique axis of the spheroid.
         if self.relax.data.diff[self.run].type == 'spheroid':
             # Print out.
-            print "Calculating the Dpar unit vector (the unique axis of the diffusion tensor)."
-
-            # The Dpar unit vector.
-            Dpar_unit = self.relax.data.diff[self.run].Dpar_unit
+            print "Generating the unique axis of the diffusion tensor."
 
             # The Dpar vector.
-            Dpar_vect = Dpar_unit * self.relax.data.diff[self.run].Dpar * scale
+            Dpar_vect = self.relax.data.diff[self.run].Dpar_unit * self.relax.data.diff[self.run].Dpar * scale
 
             # Position relative to the center of mass.
-            pos = R + Dpar_vect
+            Dpar_vect = R + Dpar_vect
 
             # Add the atom and connect it to the center of mass.
-            self.atom_add(atom_id='Dpar', element='C', pos=pos)
+            self.atom_add(atom_id='Dpar', element='C', pos=Dpar_vect)
             self.atom_connect(atom_id='Dpar', bonded_id='R')
 
             # Print out.
-            print "    Scaling factor:              " + `scale`
-            print "    Unit vector:                 " + `Dpar_unit`
-            print "    Dpar vector (scaled):        " + `Dpar_vect`
-            print "    Relative to center of mass:  " + `pos`
+            print "    Scaling factor:                      " + `scale`
+            print "    Dpar vector (scaled + shifted to R): " + `Dpar_vect`
+            print
+
+        # Create the three axes of the ellipsoid.
+        if self.relax.data.diff[self.run].type == 'ellipsoid':
+            # Print out.
+            print "Generating the three axes of the ellipsoid."
+
+            # The Dx, Dy, and Dz vectors.
+            Dx_vect = self.relax.data.diff[self.run].Dx_unit * self.relax.data.diff[self.run].Dx * scale
+            Dy_vect = self.relax.data.diff[self.run].Dy_unit * self.relax.data.diff[self.run].Dy * scale
+            Dz_vect = self.relax.data.diff[self.run].Dz_unit * self.relax.data.diff[self.run].Dz * scale
+
+            # Positions relative to the center of mass.
+            Dx_vect = R + Dx_vect
+            Dy_vect = R + Dy_vect
+            Dz_vect = R + Dz_vect
+
+            # Add the atoms and connect them to the center of mass.
+            self.atom_add(atom_id='Dx', element='C', pos=Dx_vect)
+            self.atom_add(atom_id='Dy', element='C', pos=Dy_vect)
+            self.atom_add(atom_id='Dz', element='C', pos=Dz_vect)
+            self.atom_connect(atom_id='Dx', bonded_id='R')
+            self.atom_connect(atom_id='Dy', bonded_id='R')
+            self.atom_connect(atom_id='Dz', bonded_id='R')
+
+            # Print out.
+            print "    Scaling factor:                      " + `scale`
+            print "    Dx vector (scaled + shifted to R):   " + `Dx_vect`
+            print "    Dy vector (scaled + shifted to R):   " + `Dy_vect`
+            print "    Dz vector (scaled + shifted to R):   " + `Dz_vect`
             print
 
 
