@@ -21,7 +21,7 @@
 ###############################################################################
 
 from math import sqrt, cos, pi, sin
-from Numeric import Float64, arccos, dot, zeros
+from Numeric import Float64, arccos, dot, transpose, zeros
 from os import F_OK, access
 from re import compile
 import Scientific.IO.PDB
@@ -280,12 +280,55 @@ class PDB:
             print
 
 
-        # Uniform vector distribution.
-        ##############################
+        # Vector distribution.
+        ######################
 
-        vectors = self.uniform_vect_dist_spherical_angles()
-        for i in xrange(len(vectors)):
-            self.atom_add(atom_id='H'+`i`, element='H', pos=vectors[i])
+        # Print out.
+        print "Creating the vector distribution."
+
+        # Increment value.
+        inc = 20
+
+        # Get the uniform vector distribution.
+        vectors = self.uniform_vect_dist_spherical_angles(inc=20)
+
+        # Loop over the radial array of vectors (loop over the azimauthal angle distribution of theta).
+        for i in range(inc):
+            # Loop over the vectors of the radial array (loop over the polar angle distribution of phi).
+            for j in range(inc/2+1):
+                # Index.
+                index = i + j*inc
+
+                # Atom id.
+                atom_id = 'T' + `i` + 'P' + `j`
+
+                # Tranform from the structural into the diffusion frame.
+                vector = dot(transpose(self.relax.data.diff[self.run].tensor), vectors[index])
+
+                # Scale the vector.
+                vector = vector * scale
+
+                # Position relative to the center of mass.
+                pos = R + vector
+
+                # Add the vector as a H atom.
+                self.atom_add(atom_id=atom_id, element='H', pos=pos)
+
+                # Connect to the previous atom.
+                if j != 0:
+                    prev_id = 'T' + `i` + 'P' + `j-1`
+                    self.atom_connect(atom_id=atom_id, bonded_id=prev_id)
+
+                # Connect across the radial arrays.
+                if i != 0:
+                    neighbour_id = 'T' + `i-1` + 'P' + `j`
+                    self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+
+                # Connect the last radial array to the first.
+                if i == inc-1:
+                    neighbour_id = 'T' + `0` + 'P' + `j`
+                    self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+
 
 
         # Create the PDB file.
@@ -630,7 +673,7 @@ class PDB:
             # Replace the temporary vector list with the normalised average vector.
             data.xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
 
- 
+
     def uniform_vect_dist_spherical_angles(self, inc=20):
         """Uniform distribution of vectors on a sphere using uniform spherical angles.
 
