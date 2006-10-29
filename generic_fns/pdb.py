@@ -836,43 +836,47 @@ class PDB:
         # The FORMUL record (chemical formula).
         file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', 1, res_name, '', '', formula))
 
+        # Convert the self.atomic_data structure from a dictionary of arrays to an array of arrays and sort it by atom number.
+        atomic_arrays = self.atomic_data.values()
+        atomic_arrays.sort()
+
         # Add the HETATM records.
-        for key in self.atomic_data:
+        for array in atomic_arrays:
             # Write the HETATM record.
-            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', self.atomic_data[key][0], self.atomic_data[key][1]+`self.atomic_data[key][0]`, '', res_name, chain_id, res_num, '', self.atomic_data[key][2], self.atomic_data[key][3], self.atomic_data[key][4], occupancy, 0, '', self.atomic_data[key][1], ''))
+            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', array[0], array[1]+`array[0]`, '', res_name, chain_id, res_num, '', array[2], array[3], array[4], occupancy, 0, '', array[1], ''))
 
         # Terminate (TER record).
         file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', len(self.atomic_data)+1, res_name, chain_id, '', ''))
 
         # Create the CONECT records.
         connect_count = 0
-        for key in self.atomic_data:
+        for array in atomic_arrays:
             # The atom number.
-            atom_num = self.atomic_data[key][0]
+            atom_num = array[0]
 
             # First bonded atom.
-            if len(self.atomic_data[key]) > 5:
-                bonded1 = self.atomic_data[key][5]
+            if len(array) > 5:
+                bonded1 = array[5]
 
             # No CONECT record required!
             else:
                 continue
 
             # Second bonded atom.
-            if len(self.atomic_data[key]) > 6:
-                bonded2 = self.atomic_data[key][6]
+            if len(array) > 6:
+                bonded2 = array[6]
             else:
                 bonded2 = ''
 
             # Third bonded atom.
-            if len(self.atomic_data[key]) > 7:
-                bonded3 = self.atomic_data[key][7]
+            if len(array) > 7:
+                bonded3 = array[7]
             else:
                 bonded3 = ''
 
             # Forth bonded atom.
-            if len(self.atomic_data[key]) > 8:
-                bonded4 = self.atomic_data[key][8]
+            if len(array) > 8:
+                bonded4 = array[8]
             else:
                 bonded4 = ''
 
