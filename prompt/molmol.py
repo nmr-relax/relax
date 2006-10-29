@@ -212,8 +212,8 @@ class Molmol:
         Description
         ~~~~~~~~~~~
 
-        This function applies the Molmol ribbon style.  To do this, the following commands are
-        executed:
+        This function applies the Molmol ribbon style which is equivalent to clicking on 'ribbon' in
+        the Molmol side menu.  To do this, the following commands are executed:
 
             CalcAtom 'H'
             CalcAtom 'HN'
