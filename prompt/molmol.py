@@ -23,12 +23,8 @@
 import sys
 
 from colour import Colour
-from doc_string import regexp_doc
 import help
-from generic_fns.minimise import Minimise
 from specific_fns.model_free import Molmol
-from specific_fns.jw_mapping import Jw_mapping
-from specific_fns.noe import Noe
 
 
 class Molmol:
