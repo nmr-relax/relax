@@ -35,6 +35,7 @@ from monte_carlo import Monte_carlo
 from nuclei import Nuclei
 from palmer import Palmer
 from pdb import PDB
+from pymol import Pymol
 from results import Results
 from runs import Runs
 from selection import Selection
@@ -67,6 +68,7 @@ class Generic:
         self.opendx = OpenDX(self.relax)
         self.palmer = Palmer(self.relax)
         self.pdb = PDB(self.relax)
+        self.pymol = Pymol(self.relax)
         self.results = Results(self.relax)
         self.runs = Runs(self.relax)
         self.selection = Selection(self.relax)
