@@ -262,12 +262,18 @@ class PDB:
             # The Dpar vector.
             Dpar_vect = self.relax.data.diff[self.run].Dpar_unit * self.relax.data.diff[self.run].Dpar * scale
 
-            # Position relative to the center of mass.
+            # The negative Dpar vector.
+            Dpar_vect_neg = -Dpar_vect
+
+            # Position of both vectors relative to the center of mass.
             Dpar_vect = R + Dpar_vect
+            Dpar_vect_neg = R + Dpar_vect_neg
 
             # Add the atom and connect it to the center of mass.
             self.atom_add(atom_id='Dpar', element='C', pos=Dpar_vect)
+            self.atom_add(atom_id='Dpar_neg', element='C', pos=Dpar_vect_neg)
             self.atom_connect(atom_id='Dpar', bonded_id='R')
+            self.atom_connect(atom_id='Dpar_neg', bonded_id='R')
 
             # Print out.
             print "    Scaling factor:                      " + `scale`
@@ -284,18 +290,32 @@ class PDB:
             Dy_vect = self.relax.data.diff[self.run].Dy_unit * self.relax.data.diff[self.run].Dy * scale
             Dz_vect = self.relax.data.diff[self.run].Dz_unit * self.relax.data.diff[self.run].Dz * scale
 
+            # The negative Dx, Dy, and Dz vectors.
+            Dx_vect_neg = -Dx_vect
+            Dy_vect_neg = -Dy_vect
+            Dz_vect_neg = -Dz_vect
+
             # Positions relative to the center of mass.
             Dx_vect = R + Dx_vect
             Dy_vect = R + Dy_vect
             Dz_vect = R + Dz_vect
+            Dx_vect_neg = R + Dx_vect_neg
+            Dy_vect_neg = R + Dy_vect_neg
+            Dz_vect_neg = R + Dz_vect_neg
 
             # Add the atoms and connect them to the center of mass.
             self.atom_add(atom_id='Dx', element='C', pos=Dx_vect)
             self.atom_add(atom_id='Dy', element='C', pos=Dy_vect)
             self.atom_add(atom_id='Dz', element='C', pos=Dz_vect)
+            self.atom_add(atom_id='Dx_neg', element='C', pos=Dx_vect_neg)
+            self.atom_add(atom_id='Dy_neg', element='C', pos=Dy_vect_neg)
+            self.atom_add(atom_id='Dz_neg', element='C', pos=Dz_vect_neg)
             self.atom_connect(atom_id='Dx', bonded_id='R')
             self.atom_connect(atom_id='Dy', bonded_id='R')
             self.atom_connect(atom_id='Dz', bonded_id='R')
+            self.atom_connect(atom_id='Dx_neg', bonded_id='R')
+            self.atom_connect(atom_id='Dy_neg', bonded_id='R')
+            self.atom_connect(atom_id='Dz_neg', bonded_id='R')
 
             # Print out.
             print "    Scaling factor:                      " + `scale`
