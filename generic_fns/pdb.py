@@ -127,11 +127,12 @@ class PDB:
         return R
 
 
-    def create_tensor_pdb(self, run=None, file=None, dir=None, force=0):
+    def create_tensor_pdb(self, run=None, scale=1.8e-6, file=None, dir=None, force=0):
         """The pdb loading function."""
 
         # Arguments.
         self.run = run
+        self.scale = scale
         self.file = file
         self.dir = dir
         self.force = force
@@ -189,15 +190,21 @@ class PDB:
             # The Dpar unit vector.
             Dpar_unit = self.relax.data.diff[self.run].Dpar_unit
 
+            # The Dpar vector.
+            Dpar_vect = Dpar_unit * self.relax.data.diff[self.run].Dpar * scale
+
             # Position relative to the center of mass.
-            pos = R + Dpar_unit
+            pos = R + Dpar_vect
 
             # Add the position as a HETATM.
-            hetatm.append(R + self.relax.data.diff[self.run].Dpar_unit)
+            hetatm.append(pos)
 
             # Print out.
+            print "    Scaling factor:              " + `scale`
             print "    Unit vector:                 " + `Dpar_unit`
+            print "    Dpar vector (scaled):        " + `Dpar_vect`
             print "    Relative to center of mass:  " + `pos`
+            print
 
 
         # Connectivities.

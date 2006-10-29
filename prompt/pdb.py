@@ -38,13 +38,15 @@ class PDB:
         self.__relax__ = relax
 
 
-    def create_tensor_pdb(self, run=None, file='tensor.pdb', dir=None, force=0):
+    def create_tensor_pdb(self, run=None, scale=1.8e-6, file='tensor.pdb', dir=None, force=0):
         """Create a PDB file to represent the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The run to assign the structure to.
+
+        scale:  Value to scale the diffusion rates into Angstroms.
 
         file:  The name of the PDB file.
 
@@ -58,15 +60,29 @@ class PDB:
 
         This function creates a PDB file containing artificial structures which represent the
         diffusion tensor.  A structure must have previously been read.  The diffusion tensor is
-        represented by an ellipsoidal, spheroidal, or spherical geometric centered at the center of
-        mass.  This diffusion tensor PDB file can subsequently read into any molecular viewer.
+        represented by an ellipsoidal, spheroidal, or spherical geometric object with its origin
+        located at the center of mass.  This diffusion tensor PDB file can subsequently read into
+        any molecular viewer.
 
+        As the units of the Brownian rotational diffusion tensor is the rate of diffusion measured
+        in inverse seconds, the size of the tensor geometric object is hence proportional to the
+        rate and not the correlation times.  Hence the larger the geometric object, the faster the
+        diffusion of a molecule.  For example the diffusion tensor of a water molecule is much
+        larger than the diffusion tensor of a macromolecule.
+
+        The scaling argument can be used to vary the size of the tensor geometric object.  The
+        default value is 1.8e-6.  For spherical diffusion with a global correlation time of 10 ns
+        (this is equivalent to a Diso diffusion rate of 1.66e7 s^-1), the radius of the sphere then
+        be equal to 30 Angstrom.  When the global correlation time is 30 ns, the radius is 10
+        Angstrom.  If the global correlation time is 3ns, the radius will be 100 Angstrom (hence the
+        scaling may need to be adjusted).
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pdb.create_tensor_pdb("
             text = text + "run=" + `run`
+            text = text + ", scale=" + `scale`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -75,6 +91,10 @@ class PDB:
         # The run argument.
         if type(run) != str:
             raise RelaxStrError, ('run', run)
+
+        # Scaling.
+        if type(scale) != float and type(scale) != int:
+            raise RelaxNumError, ('scaling factor', scale)
 
         # File name.
         if type(file) != str:
@@ -89,7 +109,7 @@ class PDB:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.pdb.create_tensor_pdb(run=run, file=file, dir=dir, force=force)
+        self.__relax__.generic.pdb.create_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
 
 
     def read(self, run=None, file=None, dir=None, model=None, load_seq=1):
