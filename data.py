@@ -291,6 +291,10 @@ class DiffTensorElement(Element):
             # Return the tensor.
             return tensor
 
+        # The rotation matrix.
+        if name == 'rotation' and self.type == 'sphere':
+            return identity(3, Float64)
+
 
         # Spheroidal diffusion.
         #######################
@@ -335,14 +339,14 @@ class DiffTensorElement(Element):
 
         # The diffusion tensor (within the structural frame).
         if name == 'tensor' and self.type == 'spheroid':
-            # Initialise the tensor and the rotation matrix.
-            tensor = zeros((3, 3), Float64)
-            rotation = identity(3, Float64)
+            # Rotation (R^T . tensor . R).
+            R = self.rotation
+            return dot(transpose(R), dot(self.tensor_diag, R))
 
-            # Populate the diagonal elements.
-            tensor[0, 0] = self.Dper
-            tensor[1, 1] = self.Dper
-            tensor[2, 2] = self.Dpar
+        # The rotation matrix.
+        if name == 'rotation' and self.type == 'spheroid':
+            # Initialise the rotation matrix.
+            rotation = identity(3, Float64)
 
             # First row of the rotation matrix.
             rotation[0, 0] = cos(self.theta) * cos(self.phi)
@@ -356,11 +360,8 @@ class DiffTensorElement(Element):
             # Replace the last row of the rotation matrix with the Dpar unit vector.
             rotation[2] = self.Dpar_unit
 
-            # Rotation (R^T . tensor . R).
-            tensor = dot(transpose(rotation), dot(tensor, rotation))
-
             # Return the tensor.
-            return tensor
+            return rotation
 
 
         # Ellipsoidal diffusion.
@@ -433,14 +434,14 @@ class DiffTensorElement(Element):
 
         # The diffusion tensor (within the structural frame).
         if name == 'tensor' and self.type == 'ellipsoid':
-            # Initialise the tensor and the rotation matrix.
-            tensor = zeros((3, 3), Float64)
-            rotation = identity(3, Float64)
+            # Rotation (R . tensor . R^T).
+            R = self.rotation
+            return dot(R, dot(self.tensor_diag, transpose(R)))
 
-            # Populate the diagonal elements.
-            tensor[0, 0] = self.Dx
-            tensor[1, 1] = self.Dy
-            tensor[2, 2] = self.Dz
+        # The rotation matrix.
+        if name == 'rotation' and self.type == 'ellipsoid':
+            # Initialise the rotation matrix.
+            rotation = identity(3, Float64)
 
             # First column of the rotation matrix.
             rotation[:, 0] = self.Dx_unit
@@ -451,12 +452,8 @@ class DiffTensorElement(Element):
             # Third column of the rotation matrix.
             rotation[:, 2] = self.Dz_unit
 
-            # Rotation (R . tensor . R^T).
-            tensor = dot(rotation, dot(tensor, transpose(rotation)))
-
             # Return the tensor.
-            return tensor
-
+            return rotation
 
         # The attribute asked for does not exist.
         raise AttributeError, name
