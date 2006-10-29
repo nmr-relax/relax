@@ -58,17 +58,18 @@ class PDB:
         Description
         ~~~~~~~~~~~
 
-        This function creates a PDB file containing artificial structures which represent the
-        diffusion tensor.  A structure must have previously been read.  The diffusion tensor is
-        represented by an ellipsoidal, spheroidal, or spherical geometric object with its origin
-        located at the center of mass.  This diffusion tensor PDB file can subsequently read into
-        any molecular viewer.
+        IMPORTANT:  As the units of the Brownian rotational diffusion tensor is the rate of
+        diffusion measured in inverse seconds, the size of the tensor geometric object is hence
+        proportional to the rate and is not a correlation time.  Hence the larger the geometric
+        object, the faster the diffusion of a molecule.  For example the diffusion tensor of a water
+        molecule is much larger than the diffusion tensor of a macromolecule.  Hence, XH bond
+        vectors parallel to the longest axis of the tensor tumble the fastest. 
 
-        As the units of the Brownian rotational diffusion tensor is the rate of diffusion measured
-        in inverse seconds, the size of the tensor geometric object is hence proportional to the
-        rate and not the correlation times.  Hence the larger the geometric object, the faster the
-        diffusion of a molecule.  For example the diffusion tensor of a water molecule is much
-        larger than the diffusion tensor of a macromolecule.
+        This function creates a PDB file containing an artificial geometric structure to represent
+        the diffusion tensor.  A structure must have previously been read into relax.  The diffusion
+        tensor is represented by an ellipsoidal, spheroidal, or spherical geometric object with its
+        origin located at the center of mass (of the selected residues).  This diffusion tensor PDB
+        file can subsequently read into any molecular viewer.
 
         The scaling argument can be used to vary the size of the tensor geometric object.  The
         default value is 1.8e-6.  For spherical diffusion with a global correlation time of 10 ns
