@@ -178,11 +178,33 @@ class PDB:
         hetatm.append(R)
 
 
+        # Axes of the tensor.
+        #####################
+
+        # Get the unique axis of the spheroid.
+        if self.relax.data.diff[self.run].type == 'spheroid':
+            # Print out.
+            print "Calculating the Dpar unit vector (the unique axis of the diffusion tensor)."
+
+            # The Dpar unit vector.
+            Dpar_unit = self.relax.data.diff[self.run].Dpar_unit
+
+            # Position relative to the center of mass.
+            pos = R + Dpar_unit
+
+            # Add the position as a HETATM.
+            hetatm.append(R + self.relax.data.diff[self.run].Dpar_unit)
+
+            # Print out.
+            print "    Unit vector:                 " + `Dpar_unit`
+            print "    Relative to center of mass:  " + `pos`
+
+
         # Connectivities.
         #################
 
-        #conect.append(['1', '2'])
-        #conect.append(['2', '1'])
+        conect.append(['1', '2'])
+        conect.append(['2', '1'])
 
 
         # Create the PDB file.
