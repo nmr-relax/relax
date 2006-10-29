@@ -195,7 +195,6 @@ class PDB:
         # Final print out.
         print "    Total mass:      M = " + `M`
         print "    Center of mass:  R = " + `R`
-        print
 
         # Return the center of mass.
         return R
@@ -257,7 +256,7 @@ class PDB:
         # Create the unique axis of the spheroid.
         if self.relax.data.diff[self.run].type == 'spheroid':
             # Print out.
-            print "Generating the unique axis of the diffusion tensor."
+            print "\nGenerating the unique axis of the diffusion tensor."
 
             # The Dpar vector.
             Dpar_vect = self.relax.data.diff[self.run].Dpar_unit * self.relax.data.diff[self.run].Dpar * scale
@@ -278,7 +277,6 @@ class PDB:
             # Print out.
             print "    Scaling factor:                      " + `scale`
             print "    Dpar vector (scaled + shifted to R): " + `Dpar_vect`
-            print
 
         # Create the three axes of the ellipsoid.
         if self.relax.data.diff[self.run].type == 'ellipsoid':
@@ -322,19 +320,19 @@ class PDB:
             print "    Dx vector (scaled + shifted to R):   " + `Dx_vect`
             print "    Dy vector (scaled + shifted to R):   " + `Dy_vect`
             print "    Dz vector (scaled + shifted to R):   " + `Dz_vect`
-            print
 
 
         # Vector distribution.
         ######################
 
         # Print out.
-        print "Creating the vector distribution.\n"
+        print "\nGenerating the geometric object."
 
         # Increment value.
         inc = 20
 
         # Get the uniform vector distribution.
+        print "    Creating the uniform vector distribution."
         vectors = self.uniform_vect_dist_spherical_angles(inc=20)
 
         # Loop over the radial array of vectors (change in longitude).
@@ -381,6 +379,9 @@ class PDB:
 
         # Create the PDB file.
         ######################
+
+        # Print out.
+        print "\nGenerating the PDB file."
 
         # Open the PDB file for writing.
         tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
