@@ -243,6 +243,80 @@ class Molmol:
         self.__relax__.generic.molmol.ribbon(run=run)
 
 
+    def tensor_pdb(self, run=None, file=None):
+        """Function displaying the diffusion tensor PDB geometric object over the loaded PDB.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        file:  The name of the PDB file containing the tensor geometric object.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        In executing this user function, a PDB file must have previously been loaded into this run,
+        a geometric object or polygon representing the Brownian rotational diffusion tensor will be
+        overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the
+        geometric object must be created using the complementary 'pdb.create_tensor_pdb()' user
+        function.
+
+        To display the diffusion tensor, the multiple commands will be executed.  To overlay the
+        structure with the diffusion tensor, everything will be selected and reoriented and moved to
+        their original PDB frame positions:
+
+            SelectAtom ''
+            SelectBond ''
+            SelectAngle ''
+            SelectDist ''
+            SelectPrim ''
+            RotateInit
+            MoveInit
+
+        Next the tensor PDB file is read in, selected, and the covalent bonds of the PDB CONECT
+        records calculated:
+
+            ReadPdb file
+            SelectMol '@file'
+            CalcBond 1 1 1
+
+        Then only the atoms and bonds of the geometric object are selected and the 'ball/stick'
+        style applied:
+
+            SelectAtom '0'
+            SelectBond '0'
+            SelectAtom ':TNS'
+            SelectBond ':TNS'
+            XMacStand ball_stick.mac
+
+        The appearance is finally touched up:
+
+            RadiusAtom 1
+            SelectAtom ':TNS@C*'
+            RadiusAtom 1.5
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "molmol.tensor_pdb("
+            text = text + "run=" + `run`
+            text = text + ", file=" + `file` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # The file name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Execute the functional code.
+        self.__relax__.generic.molmol.tensor_pdb(run=run, file=file)
+
+
     def view(self, run=None):
         """Function for viewing the collection of molecules extracted from the PDB file.
 

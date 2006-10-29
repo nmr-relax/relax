@@ -21,6 +21,7 @@
 ###############################################################################
 
 from os import popen
+from string import split
 
 
 class Molmol:
@@ -188,6 +189,44 @@ class Molmol:
 
         # Execute the ribbon macro.
         self.pipe_write("XMacStand ribbon.mac")
+
+
+    def tensor_pdb(self, run=None, file=None):
+        """Display the diffusion tensor geometric structure."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
+        self.pipe_write("SelectAtom ''")
+        self.pipe_write("SelectBond ''")
+        self.pipe_write("SelectAngle ''")
+        self.pipe_write("SelectDist ''")
+        self.pipe_write("SelectPrim ''")
+        self.pipe_write("RotateInit")
+        self.pipe_write("MoveInit")
+
+        # Read in the tensor PDB file and force Molmol to recognise the CONECT records (not that it will show the bonds)!
+        self.pipe_write("ReadPdb " + file)
+        file_parts = split(file, '.')
+        self.pipe_write("SelectMol '@" + file_parts[0] + "'")
+        self.pipe_write("CalcBond 1 1 1")
+
+        # Apply the 'ball/stick' style to the tensor.
+        self.pipe_write("SelectAtom '0'")
+        self.pipe_write("SelectBond '0'")
+        self.pipe_write("SelectAtom ':TNS'")
+        self.pipe_write("SelectBond ':TNS'")
+        self.pipe_write("XMacStand ball_stick.mac")
+
+        # Touch up.
+        self.pipe_write("RadiusAtom 1")
+        self.pipe_write("SelectAtom ':TNS@C*'")
+        self.pipe_write("RadiusAtom 1.5")
 
 
     def view(self, run=None):
