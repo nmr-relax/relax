@@ -37,6 +37,80 @@ class PDB:
         self.print_flag = 1
 
 
+    def atom_add(self, atom_id, element, pos):
+        """Function for adding an atom to the self.atomic_data structure.
+
+        The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
+        'atom_id' strings.  The elements of the array are:
+
+            0:  Atom number.
+
+            1:  Element type.
+
+            2:  The x coordinate of the atom.
+
+            3:  The y coordinate of the atom.
+
+            4:  The z coordinate of the atom.
+
+            5 onwards:  The bonded atom numbers.
+
+        This function will create the key-value pair for the atom.
+
+        """
+
+        # Create the key-value pair.
+        # The array elements added are:
+        #     The atom number (length of the structure + 1).
+        #     The element type.
+        #     The coordinates.
+        self.atomic_data[atom_id] = [len(self.atomic_data) + 1, element, pos[0], pos[1], pos[2]]
+
+
+    def atom_connect(self, atom_id, bonded_id):
+        """Function for connecting two atoms within the self.atomic_data data structure.
+
+        The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
+        'atom_id' strings.  The elements of the array are:
+
+            0:  Atom number.
+
+            1:  Element type.
+
+            2:  The x coordinate of the atom.
+
+            3:  The y coordinate of the atom.
+
+            4:  The z coordinate of the atom.
+
+            5 onwards:  The bonded atom numbers.
+
+        This function will find the atom number corresponding to both the atom_id and bonded_id.
+        The bonded_id atom number will then be appended to the atom_id array.  Because the
+        connections work both ways in the PDB file, the atom_id atom number will be appended to the
+        bonded_id atom array as well.
+
+        """
+
+        # Find the atom number corresponding to atom_id.
+        if self.atomic_data.has_key(atom_id):
+            atom_num = self.atomic_data[atom_id][0]
+        else:
+            raise RelaxError, "The atom corresponding to the atom_id " + `atom_id` + " doesn't exist."
+
+        # Find the atom number corresponding to bonded_id.
+        if self.atomic_data.has_key(bonded_id):
+            bonded_num = self.atomic_data[bonded_id][0]
+        else:
+            raise RelaxError, "The atom corresponding to the bonded_id " + `bonded_id` + " doesn't exist."
+
+        # Add the bonded_id to the atom_id array.
+        self.atomic_data[atom_id].append(bonded_num)
+
+        # Add the atom_id to the bonded_id array.
+        self.atomic_data[bonded_id].append(atom_num)
+
+
     def atomic_mass(self, element=None):
         """Return the atomic mass of the given element."""
 
@@ -156,11 +230,10 @@ class PDB:
         # Initialise the PDB data.
         ##########################
 
-        # PDB HETATM and CONECT data.
-        hetatm = []
-        conect = []
+        # The atom and atomic connections data structures.
+        self.atomic_data = {}
 
-        # Chain ID, residue number, residue name.
+        # Chain ID, residue number, residue name, chemical name, occupancy, and default element.
         chain_id = 'A'
         res_num = 1
         res_name = 'TNS'
@@ -176,7 +249,7 @@ class PDB:
         R = self.center_of_mass()
 
         # Add the central atom.
-        hetatm.append([R, 'C'])
+        self.atom_add(atom_id='R', element='C', pos=R)
 
 
         # Axes of the tensor.
@@ -196,8 +269,9 @@ class PDB:
             # Position relative to the center of mass.
             pos = R + Dpar_vect
 
-            # Add the position as a HETATM.
-            hetatm.append([pos, 'C'])
+            # Add the atom and connect it to the center of mass.
+            self.atom_add(atom_id='Dpar', element='C', pos=pos)
+            self.atom_connect(atom_id='Dpar', bonded_id='R')
 
             # Print out.
             print "    Scaling factor:              " + `scale`
@@ -207,13 +281,6 @@ class PDB:
             print
 
 
-        # Connectivities.
-        #################
-
-        conect.append(['1', '2'])
-        conect.append(['2', '1'])
-
-
         # Create the PDB file.
         ######################
 
@@ -221,7 +288,7 @@ class PDB:
         tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
 
         # Write the data.
-        self.write_pdb_file(tensor_pdb_file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy)
+        self.write_pdb_file(tensor_pdb_file, chain_id, res_num, res_name, chemical_name, occupancy)
 
         # Close the file.
         tensor_pdb_file.close()
@@ -557,11 +624,11 @@ class PDB:
             data.xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
 
 
-    def write_pdb_file(self, file, hetatm, conect, chain_id, res_num, res_name, chemical_name, occupancy):
+    def write_pdb_file(self, file, chain_id, res_num, res_name, chemical_name, occupancy):
         """Function for creating a PDB file from the given data."""
 
         # The HET record.
-        file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', res_name, chain_id, res_num, '', len(hetatm), ''))
+        file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', res_name, chain_id, res_num, '', len(self.atomic_data), ''))
 
         # The HETNAM record.
         file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', res_name, chemical_name))
@@ -569,11 +636,19 @@ class PDB:
         # Count the elements.
         H_count = 0
         C_count = 0
-        for vector, element in hetatm:
+        for key in self.atomic_data:
+            # The element.
+            element = self.atomic_data[key][1]
+
+            # Protons.
             if element == 'H':
                 H_count = H_count + 1
+
+            # Carbons.
             elif element == 'C':
                 C_count = C_count + 1
+
+            # Unsupported element type.
             else:
                 raise RelaxError, "The element " + `element` + " was expected to be one of ['H', 'C']."
 
@@ -591,49 +666,54 @@ class PDB:
         # The FORMUL record (chemical formula).
         file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', 1, res_name, '', '', formula))
 
-        # Loop over the HETATMs.
-        serial_num = 1
-        for vector, element in hetatm:
+        # Add the HETATM records.
+        for key in self.atomic_data:
             # Write the HETATM record.
-            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', serial_num, element+`serial_num`, '', res_name, chain_id, res_num, '', vector[0], vector[1], vector[2], occupancy, 0, '', element, ''))
-
-            # Increment the atom number.
-            serial_num = serial_num + 1
+            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', self.atomic_data[key][0], self.atomic_data[key][1]+`self.atomic_data[key][0]`, '', res_name, chain_id, res_num, '', self.atomic_data[key][2], self.atomic_data[key][3], self.atomic_data[key][4], occupancy, 0, '', self.atomic_data[key][1], ''))
 
         # Terminate (TER record).
-        file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', serial_num, res_name, chain_id, '', ''))
+        file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', len(self.atomic_data)+1, res_name, chain_id, '', ''))
 
-        # Loop over the connections.
-        for array in conect:
-            # The atom.
-            atom_serial_num = array[0]
+        # Create the CONECT records.
+        connect_count = 0
+        for key in self.atomic_data:
+            # The atom number.
+            atom_num = self.atomic_data[key][0]
 
             # First bonded atom.
-            bonded1 = array[1]
+            if len(self.atomic_data[key]) > 5:
+                bonded1 = self.atomic_data[key][5]
+
+            # No CONECT record required!
+            else:
+                continue
 
             # Second bonded atom.
-            if len(array) > 2:
-                bonded2 = array[2]
+            if len(self.atomic_data[key]) > 6:
+                bonded2 = self.atomic_data[key][6]
             else:
                 bonded2 = ''
 
             # Third bonded atom.
-            if len(array) > 3:
-                bonded3 = array[3]
+            if len(self.atomic_data[key]) > 7:
+                bonded3 = self.atomic_data[key][7]
             else:
                 bonded3 = ''
 
             # Forth bonded atom.
-            if len(array) > 4:
-                bonded4 = array[4]
+            if len(self.atomic_data[key]) > 8:
+                bonded4 = self.atomic_data[key][8]
             else:
                 bonded4 = ''
 
             # Write the CONECT record.
-            file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', atom_serial_num, bonded1, bonded2, bonded3, bonded4, '', '', '', '', '', ''))
+            file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', atom_num, bonded1, bonded2, bonded3, bonded4, '', '', '', '', '', ''))
+
+            # Increment the CONECT record count.
+            connect_count = connect_count + 1
 
         # MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, 1, 0, 0, 0, 0, 0, len(hetatm), 1, len(conect), 0))
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, 1, 0, 0, 0, 0, 0, len(self.atomic_data), 1, connect_count, 0))
 
         # END.
         file.write("END\n")
