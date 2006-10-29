@@ -119,7 +119,7 @@ class Pymol:
         self.relax.IO.test_binary('pymol')
 
         # Open the PyMOL pipe.
-        self.relax.data.molmol = popen("pymol -qp", 'w', 0)
+        self.relax.data.pymol = popen("pymol -qp", 'w', 0)
 
         # Execute the command history.
         if len(self.command_history) > 0:
