@@ -295,7 +295,7 @@ class PDB:
         # Loop over the radial array of vectors (loop over the azimauthal angle distribution of theta).
         for i in range(inc):
             # Loop over the vectors of the radial array (loop over the polar angle distribution of phi).
-            for j in range(inc/2+1):
+            for j in range(inc/2+2):
                 # Index.
                 index = i + j*inc
 
@@ -712,17 +712,17 @@ class PDB:
             u[i] = float(i) * val
 
         # Generate the increment values of v.
-        v = zeros(inc/2+1, Float64)
+        v = zeros(inc/2+2, Float64)
         val = 1.0 / float(inc/2)
-        for i in xrange(inc/2+1):
-            v[i] = float(i) * val
+        for i in xrange(1, inc/2+1):
+            v[i] = float(i-1) * val + val/2.0
+        v[-1] = 1.0
 
         # Generate the distribution of spherical angles theta.
         theta = 2.0 * pi * u
 
         # Generate the distribution of spherical angles phi.
         phi = arccos(2.0 * v - 1.0)
-
 
         # Generate the distribution of vectors.
         vectors = []
