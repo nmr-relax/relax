@@ -302,8 +302,11 @@ class PDB:
                 # Atom id.
                 atom_id = 'T' + `i` + 'P' + `j`
 
-                # Tranform from the structural into the diffusion frame.
-                vector = dot(transpose(self.relax.data.diff[self.run].tensor), vectors[index])
+                # Rotate the vector into the diffusion frame.
+                vector = dot(transpose(self.relax.data.diff[self.run].rotation), vectors[index])
+
+                # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
+                vector = dot(self.relax.data.diff[self.run].tensor, vector)
 
                 # Scale the vector.
                 vector = vector * scale
