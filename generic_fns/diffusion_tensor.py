@@ -1231,19 +1231,19 @@ class Diffusion_tensor:
 
         # tm.
         if self.param_types == 0:
-            # Correlation times.
-            self.relax.data.diff[self.run].tm = self.params * self.time_scale
+            # Scaling.
+            tm = self.params * self.time_scale
 
-            # Diffusion tensor eigenvalues.
-            self.relax.data.diff[self.run].Diso = 6.0 / self.relax.data.diff[self.run].tm
+            # Set the parameters.
+            self.set(run=self.run, value=[tm], param=['tm'])
 
         # Diso
         elif self.param_types == 1:
-            # Diffusion tensor eigenvalues.
-            self.relax.data.diff[self.run].Diso = self.params * self.d_scale
+            # Scaling.
+            Diso = self.params * self.d_scale
 
-            # Correlation times.
-            self.relax.data.diff[self.run].tm = 1.0 / (6.0 * self.relax.data.diff[self.run].Diso)
+            # Set the parameters.
+            self.set(run=self.run, value=[Diso], param=['Diso'])
 
         # Unknown parameter combination.
         else:
