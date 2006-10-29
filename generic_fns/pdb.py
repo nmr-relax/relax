@@ -851,40 +851,48 @@ class PDB:
         # Create the CONECT records.
         connect_count = 0
         for array in atomic_arrays:
+            # No bonded atoms, hence no CONECT record is required.
+            if len(array) == 4:
+                continue
+
             # The atom number.
             atom_num = array[0]
 
-            # First bonded atom.
-            if len(array) > 5:
-                bonded1 = array[5]
 
-            # No CONECT record required!
-            else:
-                continue
+            # Initialise some data structures.
+            flush = 0
+            bonded_index = 0
+            bonded = ['', '', '', '']
 
-            # Second bonded atom.
-            if len(array) > 6:
-                bonded2 = array[6]
-            else:
-                bonded2 = ''
+            # Loop over the bonded atoms.
+            for i in xrange(len(array[5:])):
+                # End of the array, hence create the CONECT record in this iteration.
+                if i == len(array[5:])-1:
+                    flush = 1
 
-            # Third bonded atom.
-            if len(array) > 7:
-                bonded3 = array[7]
-            else:
-                bonded3 = ''
+                # Only four covalently bonded atoms allowed in one CONECT record.
+                if bonded_index == 3:
+                    flush = 1
 
-            # Forth bonded atom.
-            if len(array) > 8:
-                bonded4 = array[8]
-            else:
-                bonded4 = ''
+                # Get the bonded atom name.
+                bonded[bonded_index] = array[i+5]
 
-            # Write the CONECT record.
-            file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', atom_num, bonded1, bonded2, bonded3, bonded4, '', '', '', '', '', ''))
+                # Increment the bonded_index value.
+                bonded_index = bonded_index + 1
 
-            # Increment the CONECT record count.
-            connect_count = connect_count + 1
+                # Generate the CONECT record and increment the counter.
+                if flush:
+                    # Write the CONECT record.
+                    file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', atom_num, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+
+                    # Increment the CONECT record count.
+                    connect_count = connect_count + 1
+
+                    # Reset the flush flag, the bonded atom count, and the bonded atom names.
+                    flush = 0
+                    bonded_index = 0
+                    bonded = ['', '', '', '']
+
 
         # MASTER record.
         file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, 1, 0, 0, 0, 0, 0, len(self.atomic_data), 1, connect_count, 0))
