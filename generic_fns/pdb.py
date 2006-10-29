@@ -53,7 +53,7 @@ class PDB:
 
             4:  The z coordinate of the atom.
 
-            5 onwards:  The bonded atom numbers.
+            5+:  The bonded atom numbers.
 
         This function will create the key-value pair for the atom.
 
@@ -317,9 +317,9 @@ class PDB:
         # Get the uniform vector distribution.
         vectors = self.uniform_vect_dist_spherical_angles(inc=20)
 
-        # Loop over the radial array of vectors (loop over the azimauthal angle distribution of theta).
+        # Loop over the radial array of vectors (change in longitude).
         for i in range(inc):
-            # Loop over the vectors of the radial array (loop over the polar angle distribution of phi).
+            # Loop over the vectors of the radial array (change in latitude).
             for j in range(inc/2+2):
                 # Index.
                 index = i + j*inc
@@ -342,17 +342,17 @@ class PDB:
                 # Add the vector as a H atom.
                 self.atom_add(atom_id=atom_id, element='H', pos=pos)
 
-                # Connect to the previous atom.
+                # Connect to the previous atom (to generate the longitudinal lines).
                 if j != 0:
                     prev_id = 'T' + `i` + 'P' + `j-1`
                     self.atom_connect(atom_id=atom_id, bonded_id=prev_id)
 
-                # Connect across the radial arrays.
+                # Connect across the radial arrays (to generate the latitudinal lines).
                 if i != 0:
                     neighbour_id = 'T' + `i-1` + 'P' + `j`
                     self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
 
-                # Connect the last radial array to the first.
+                # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
                 if i == inc-1:
                     neighbour_id = 'T' + `0` + 'P' + `j`
                     self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
@@ -724,6 +724,8 @@ class PDB:
                        | cos(theta) * sin(phi) |
             vector  =  | sin(theta) * sin(phi) |.
                        |      cos(phi)         |
+
+        The vectors of this distribution generate both longitudinal and latitudinal lines.
         """
 
         # The inc argument must be an even number.
@@ -749,9 +751,12 @@ class PDB:
         # Generate the distribution of spherical angles phi.
         phi = arccos(2.0 * v - 1.0)
 
-        # Generate the distribution of vectors.
+        # Initialise array of the distribution of vectors.
         vectors = []
+
+        # Loop over the longitudinal lines.
         for j in xrange(len(v)):
+            # Loop over the latitudinal lines.
             for i in xrange(len(u)):
                 # X coordinate.
                 x = cos(theta[i]) * sin(phi[j])
