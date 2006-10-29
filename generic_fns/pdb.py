@@ -20,8 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-from math import sqrt
-from Numeric import Float64, dot, zeros
+from math import sqrt, cos, pi, sin
+from Numeric import Float64, arccos, dot, zeros
 from os import F_OK, access
 from re import compile
 import Scientific.IO.PDB
@@ -233,13 +233,12 @@ class PDB:
         # The atom and atomic connections data structures.
         self.atomic_data = {}
 
-        # Chain ID, residue number, residue name, chemical name, occupancy, and default element.
+        # Chain ID, residue number, residue name, chemical name, and occupancy.
         chain_id = 'A'
         res_num = 1
         res_name = 'TNS'
         chemical_name = 'Tensor'
         occupancy = 1.0
-        element = 'H'
 
 
         # Center of mass.
@@ -279,6 +278,14 @@ class PDB:
             print "    Dpar vector (scaled):        " + `Dpar_vect`
             print "    Relative to center of mass:  " + `pos`
             print
+
+
+        # Uniform vector distribution.
+        ##############################
+
+        vectors = self.uniform_vect_dist_spherical_angles()
+        for i in xrange(len(vectors)):
+            self.atom_add(atom_id='H'+`i`, element='H', pos=vectors[i])
 
 
         # Create the PDB file.
@@ -622,6 +629,73 @@ class PDB:
 
             # Replace the temporary vector list with the normalised average vector.
             data.xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
+
+ 
+    def uniform_vect_dist_spherical_angles(self, inc=20):
+        """Uniform distribution of vectors on a sphere using uniform spherical angles.
+
+        This function returns an array of unit vectors uniformly distributed within 3D space.  To
+        create the distribution, uniform spherical angles are used.  The two spherical angles are
+        defined as
+
+            theta = 2.pi.u,
+            phi = cos^-1(2v - 1),
+
+        where
+
+            u in [0, 1),
+            v in [0, 1].
+
+        Because theta is defined between [0, pi] and phi is defined between [0, 2pi], for a uniform
+        distribution u is only incremented half of 'inc'.  The unit vectors are gerenated using the
+        equation
+
+                       | cos(theta) * sin(phi) |
+            vector  =  | sin(theta) * sin(phi) |.
+                       |      cos(phi)         |
+        """
+
+        # The inc argument must be an even number.
+        if inc%2:
+            raise RelaxError, "The increment value of " + `inc` + " must be an even number."
+
+        # Generate the increment values of u.
+        u = zeros(inc, Float64)
+        val = 1.0 / float(inc)
+        for i in xrange(inc):
+            u[i] = float(i) * val
+
+        # Generate the increment values of v.
+        v = zeros(inc/2+1, Float64)
+        val = 1.0 / float(inc/2)
+        for i in xrange(inc/2+1):
+            v[i] = float(i) * val
+
+        # Generate the distribution of spherical angles theta.
+        theta = 2.0 * pi * u
+
+        # Generate the distribution of spherical angles phi.
+        phi = arccos(2.0 * v - 1.0)
+
+
+        # Generate the distribution of vectors.
+        vectors = []
+        for j in xrange(len(v)):
+            for i in xrange(len(u)):
+                # X coordinate.
+                x = cos(theta[i]) * sin(phi[j])
+
+                # Y coordinate.
+                y =  sin(theta[i])* sin(phi[j])
+
+                # Z coordinate.
+                z = cos(phi[j])
+
+                # Append the vector.
+                vectors.append([x, y, z])
+
+        # Return the array of vectors.
+        return vectors
 
 
     def write_pdb_file(self, file, chain_id, res_num, res_name, chemical_name, occupancy):
