@@ -93,6 +93,15 @@ class RelaxErrors:
             self.save_state()
 
 
+    # Code implementation errors.
+    #############################
+
+    # Not implemented yet.
+    class RelaxImplementError(BaseError):
+        def __init__(self):
+            self.text = "This function has not yet been implement."
+
+
     # Program errors.
     #################
 

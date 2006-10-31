@@ -102,7 +102,7 @@ class Pymol:
         self.colour_list = colour_list
 
         # No coded yet.
-        raise RelaxError, "This function has not yet been implemented."
+        raise RelaxImplementError
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -231,7 +231,7 @@ class Pymol:
         self.colour_list = colour_list
 
         # No coded yet.
-        raise RelaxError, "This function has not yet been implemented."
+        raise RelaxImplementError
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
