@@ -89,7 +89,7 @@ class RelaxErrors:
 
     class RelaxFault(BaseError):
         def __init__(self):
-            self.text = "Impossible to be here, please summit a bug report at https://gna.org/projects/relax/."
+            self.text = "Impossible to be here, please re-run relax with the '--debug' flag and summit a bug report at https://gna.org/projects/relax/."
             self.save_state()
 
 
