@@ -45,7 +45,7 @@ class Pymol:
             raise RelaxNoRunError, self.run
 
         # Identifier.
-        pdb_file = self.relax.data.pdb[self.run].file_name[:-4]
+        pdb_file = self.relax.data.pdb[self.run].file_name
         id = io.file_root(pdb_file)
 
         # Hide everything.
