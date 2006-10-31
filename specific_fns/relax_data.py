@@ -549,6 +549,9 @@ class Rx_data:
         if self.test_labels(run):
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
+        # Minimum number of columns.
+        min_col_num = max(num_col, name_col, data_col, error_col)
+
         # Extract the data from the file.
         if not file_data:
             # Extract.
@@ -573,7 +576,7 @@ class Rx_data:
             # Test the validity of the relaxation data.
             for i in xrange(len(file_data)):
                 # Skip missing data.
-                if len(file_data[i]) != 4:
+                if len(file_data[i]) <= min_col_num:
                     continue
 
                 # Test that the data are numbers.
@@ -610,7 +613,7 @@ class Rx_data:
         # Loop over the relaxation data.
         for i in xrange(len(file_data)):
             # Skip missing data.
-            if len(file_data[i]) != 4:
+            if len(file_data[i]) <= min_col_num:
                 continue
 
             # Convert the data.

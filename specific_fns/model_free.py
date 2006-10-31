@@ -2107,7 +2107,10 @@ class Model_free(Common_functions):
             num_data_sets = 0
             num_res = 1
 
+
         # Loop over the minimisation instances.
+        #######################################
+        
         for i in xrange(num_instances):
             # Set the residue index.
             if min_algor == 'back_calc':
@@ -2617,7 +2620,7 @@ class Model_free(Common_functions):
                 residue.select = 0
                 continue
 
-            # Require at least as many data points as params to prevent under-fitting
+            # Require at least as many data points as params to prevent over-fitting
             if hasattr(residue, 'params'):
                 if len(residue.params) > len(residue.relax_data):
                     residue.select = 0
