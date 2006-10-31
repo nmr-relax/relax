@@ -95,7 +95,7 @@ class Pymol:
 
 
     def open_pdb(self, run=None):
-        """Function for opening the PDB file in Molmol."""
+        """Function for opening the PDB file in PyMOL."""
 
         # Argument.
         if run:
@@ -105,11 +105,11 @@ class Pymol:
         if not self.pipe_open_test():
             return
 
-        # Run InitAll to remove everything from molmol.
-        self.pipe_write("InitAll yes")
+        # Reinitialise PyMOL.
+        self.pipe_write("reinitialise")
 
-        # Open the PDB.
-        self.pipe_write("ReadPdb " + self.relax.data.pdb[self.run].file_name)
+        # Open the PDB file.
+        self.pipe_write("load " + self.relax.data.pdb[self.run].file_name)
 
 
     def pipe_open(self):
@@ -140,7 +140,7 @@ class Pymol:
 
         # Test if the pipe has been broken.
         try:
-            self.relax.data.molmol.write('\n')
+            self.relax.data.pymol.write('\n')
         except IOError:
             return 0
 
@@ -159,7 +159,7 @@ class Pymol:
             self.pipe_open()
 
         # Write the command to the pipe.
-        self.relax.data.molmol.write(command + '\n')
+        self.relax.data.pymol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
