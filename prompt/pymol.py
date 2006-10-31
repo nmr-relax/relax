@@ -207,26 +207,28 @@ class Pymol:
         Description
         ~~~~~~~~~~~
 
-        This function applies the Molmol ribbon style which is equivalent to clicking on 'ribbon' in
-        the Molmol side menu.  To do this, the following commands are executed:
+        This function applies the PyMOL cartoon style which is equivalent to hiding everything and
+        clicking on show cartoon.  It also colours the cartoon with red helices, yellow strands, and
+        green loops.  The following commands are executed:
 
-            CalcAtom 'H'
-            CalcAtom 'HN'
-            CalcSecondary
-            XMacStand ribbon.mac
+            cmd.hide('everything', file)
+            cmd.show('cartoon', file)
+            util.cbss(file, 'red', 'yellow', 'green')
+
+        where file is the file name without the '.pdb' extension.
 
 
         Example
         ~~~~~~~
 
-        To apply the ribbon style to the PDB file loaded for the run 'final', type:
+        To apply this user function to the run 'final', type:
 
-        relax> pymol.ribbon("final")
+        relax> pymol.cartoon("final")
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pymol.ribbon("
+            text = sys.ps3 + "pymol.cartoon("
             text = text + "run=" + `run` + ")"
             print text
 
@@ -235,7 +237,7 @@ class Pymol:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.__relax__.generic.pymol.ribbon(run=run)
+        self.__relax__.generic.pymol.cartoon(run=run)
 
 
     def tensor_pdb(self, run=None, file=None):

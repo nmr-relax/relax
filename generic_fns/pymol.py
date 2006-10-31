@@ -34,6 +34,29 @@ class Pymol:
         self.clear_history()
 
 
+    def cartoon(self, run=None):
+        """Apply the PyMOL cartoon style and colour by secondary structure."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Identifier.
+        id = self.relax.data.pdb[self.run].file_name[:-4]
+
+        # Hide everything.
+        self.pipe_write("cmd.hide('everything'," + `id` + ")")
+
+        # Show the cartoon style.
+        self.pipe_write("cmd.show('cartoon'," + `id` + ")")
+
+        # Colour by secondary structure.
+        self.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+
+
     def clear_history(self):
         """Function for clearing the Molmol command history."""
 
@@ -164,27 +187,6 @@ class Pymol:
         # Place the command in the command history.
         if store_command:
             self.command_history = self.command_history + command + "\n"
-
-
-    def ribbon(self, run=None):
-        """Apply the Molmol ribbon style."""
-
-        # Arguments.
-        self.run = run
-
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Calculate the protons.
-        self.pipe_write("CalcAtom 'H'")
-        self.pipe_write("CalcAtom 'HN'")
-
-        # Calculate the secondary structure.
-        self.pipe_write("CalcSecondary")
-
-        # Execute the ribbon macro.
-        self.pipe_write("XMacStand ribbon.mac")
 
 
     def tensor_pdb(self, run=None, file=None):
