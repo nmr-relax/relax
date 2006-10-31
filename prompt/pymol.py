@@ -260,39 +260,9 @@ class Pymol:
         geometric object must be created using the complementary 'pdb.create_tensor_pdb()' user
         function.
 
-        To display the diffusion tensor, the multiple commands will be executed.  To overlay the
-        structure with the diffusion tensor, everything will be selected and reoriented and moved to
-        their original PDB frame positions:
+        The tensor PDB file is read in using the command:
 
-            SelectAtom ''
-            SelectBond ''
-            SelectAngle ''
-            SelectDist ''
-            SelectPrim ''
-            RotateInit
-            MoveInit
-
-        Next the tensor PDB file is read in, selected, and the covalent bonds of the PDB CONECT
-        records calculated:
-
-            ReadPdb file
-            SelectMol '@file'
-            CalcBond 1 1 1
-
-        Then only the atoms and bonds of the geometric object are selected and the 'ball/stick'
-        style applied:
-
-            SelectAtom '0'
-            SelectBond '0'
-            SelectAtom ':TNS'
-            SelectBond ':TNS'
-            XMacStand ball_stick.mac
-
-        The appearance is finally touched up:
-
-            RadiusAtom 1
-            SelectAtom ':TNS@C*'
-            RadiusAtom 1.5
+            load file
         """
 
         # Function intro text.
