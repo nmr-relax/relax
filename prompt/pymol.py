@@ -30,7 +30,7 @@ class Pymol:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for interfacing with Molmol."""
+        """Class for interfacing with PyMOL."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -39,8 +39,53 @@ class Pymol:
         self.__relax__ = relax
 
 
+    def cartoon(self, run=None):
+        """Apply the PyMOL cartoon style and colour by secondary structure.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function applies the PyMOL cartoon style which is equivalent to hiding everything and
+        clicking on show cartoon.  It also colours the cartoon with red helices, yellow strands, and
+        green loops.  The following commands are executed:
+
+            cmd.hide('everything', file)
+            cmd.show('cartoon', file)
+            util.cbss(file, 'red', 'yellow', 'green')
+
+        where file is the file name without the '.pdb' extension.
+
+
+        Example
+        ~~~~~~~
+
+        To apply this user function to the run 'final', type:
+
+        relax> pymol.cartoon("final")
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pymol.cartoon("
+            text = text + "run=" + `run` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Execute the functional code.
+        self.__relax__.generic.pymol.cartoon(run=run)
+
+
     def clear_history(self):
-        """Function for clearing the Molmol command history."""
+        """Function for clearing the PyMOL command history."""
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
@@ -52,29 +97,29 @@ class Pymol:
 
 
     def command(self, run=None, command=None):
-        """Function for executing a user supplied Molmol command.
+        """Function for executing a user supplied PyMOL command.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         run:  The name of the run.
 
-        command:  The Molmol command to execute.
+        command:  The PyMOL command to execute.
 
 
         Description
         ~~~~~~~~~~~
 
-        This user function allows you to pass Molmol commands to the program.  This can be useful
+        This user function allows you to pass PyMOL commands to the program.  This can be useful
         for automation or scripting.
 
 
         Example
         ~~~~~~~
 
-        To reinitialise the Molmol instance for the run 'aic', type:
+        To reinitialise the PyMOL instance for the run 'aic', type:
 
-        relax> pymol.command("aic", "InitAll yes")
+        relax> pymol.command("aic", "reinitialise")
         """
 
         # Function intro text.
@@ -97,7 +142,7 @@ class Pymol:
 
 
     def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-        """Function for executing Molmol macros.
+        """Function for executing PyMOL macros.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -119,7 +164,7 @@ class Pymol:
         Description
         ~~~~~~~~~~~
 
-        This function allows residues specific values to be mapped to a structure through Molmol
+        This function allows residues specific values to be mapped to a structure through PyMOL
         macros.  Currently only the 'classic' style, which is described below, is availible.
 
 
@@ -134,7 +179,7 @@ class Pymol:
         will select the default colour gradient which for each type of analysis is described below.
 
         When supplying the colours as strings, two lists of colours can be selected from which to
-        match the strings.  These are the default Molmol colour list and the X11 colour list, both
+        match the strings.  These are the default PyMOL colour list and the X11 colour list, both
         of which are described in the tables below.  The default behaviour is to first search the
         Molmol list and then the X11 colour list, raising an error if neither contain the string.
         To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
@@ -195,51 +240,6 @@ class Pymol:
         self.__relax__.generic.pymol.macro_exec(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
-    def cartoon(self, run=None):
-        """Apply the PyMOL cartoon style and colour by secondary structure.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function applies the PyMOL cartoon style which is equivalent to hiding everything and
-        clicking on show cartoon.  It also colours the cartoon with red helices, yellow strands, and
-        green loops.  The following commands are executed:
-
-            cmd.hide('everything', file)
-            cmd.show('cartoon', file)
-            util.cbss(file, 'red', 'yellow', 'green')
-
-        where file is the file name without the '.pdb' extension.
-
-
-        Example
-        ~~~~~~~
-
-        To apply this user function to the run 'final', type:
-
-        relax> pymol.cartoon("final")
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pymol.cartoon("
-            text = text + "run=" + `run` + ")"
-            print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Execute the functional code.
-        self.__relax__.generic.pymol.cartoon(run=run)
-
-
     def tensor_pdb(self, run=None, file=None):
         """Function displaying the diffusion tensor PDB geometric object over the loaded PDB.
 
@@ -256,7 +256,7 @@ class Pymol:
 
         In executing this user function, a PDB file must have previously been loaded into this run,
         a geometric object or polygon representing the Brownian rotational diffusion tensor will be
-        overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the
+        overlain with the loaded PDB file and displayed within PyMOL.  The PDB file containing the
         geometric object must be created using the complementary 'pdb.create_tensor_pdb()' user
         function.
 
@@ -314,7 +314,7 @@ class Pymol:
         self.__relax__.generic.pymol.view(run=run)
 
 
-    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=0):
+    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=0):
         """Function for creating PyMOL macros.
 
         Keyword Arguments
@@ -344,7 +344,7 @@ class Pymol:
         ~~~~~~~~~~~
 
         This function allows residues specific values to be mapped to a structure through the
-        creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File,
+        creation of a PyMOL macro which can be executed in PyMOL by clicking on 'File,
         Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is
         availible.
 
@@ -360,9 +360,9 @@ class Pymol:
         will select the default colour gradient which for each type of analysis is described below.
 
         When supplying the colours as strings, two lists of colours can be selected from which to
-        match the strings.  These are the default Molmol colour list and the X11 colour list, both
+        match the strings.  These are the default PyMOL colour list and the X11 colour list, both
         of which are described in the tables below.  The default behaviour is to first search the
-        Molmol list and then the X11 colour list, raising an error if neither contain the string.
+        PyMOL list and then the X11 colour list, raising an error if neither contain the string.
         To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
         'x11'.
 
@@ -370,12 +370,12 @@ class Pymol:
         Examples
         ~~~~~~~~
 
-        To create a Molmol macro mapping the order parameter values, S2, of the run 'final' onto the
+        To create a PyMOL macro mapping the order parameter values, S2, of the run 'final' onto the
         structure using the classic style, type:
 
         relax> pymol.write('final', 'S2')
         relax> pymol.write('final', data_type='S2')
-        relax> pymol.write('final', data_type='S2', style="classic", file='s2.mac', dir='molmol')
+        relax> pymol.write('final', data_type='S2', style="classic", file='s2.mac', dir='pymol')
         """
 
         # Function intro text.
@@ -441,7 +441,7 @@ class Pymol:
     #########################
 
     # Write function.
-    #write.__doc__ = write.__doc__ + "\n\n" + Molmol.classic.__doc__ + "\n\n"
+    #write.__doc__ = write.__doc__ + "\n\n" + Pymol.classic.__doc__ + "\n\n"
 
     # Molmol RGB colour list.
     write.__doc__ = write.__doc__ + "\n\n" + Colour.molmol_colours.__doc__ + "\n\n"

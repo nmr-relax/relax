@@ -26,11 +26,11 @@ from string import split
 
 class Pymol:
     def __init__(self, relax):
-        """Class containing the functions for viewing molecules."""
+        """Class containing the functions for viewing molecules using PyMOL."""
 
         self.relax = relax
 
-        # Initialise the command history (for reopening Molmol pipes).
+        # Initialise the command history (for reopening PyMOL pipes).
         self.clear_history()
 
 
@@ -58,13 +58,13 @@ class Pymol:
 
 
     def clear_history(self):
-        """Function for clearing the Molmol command history."""
+        """Function for clearing the PyMOL command history."""
 
         self.command_history = ""
 
 
     def command(self, run, command):
-        """Function for sending Molmol commands to the program pipe."""
+        """Function for sending PyMOL commands to the program pipe."""
 
         # Arguments.
         self.run = run
@@ -73,25 +73,25 @@ class Pymol:
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # Pass the command to Molmol.
+        # Pass the command to PyMOL.
         self.pipe_write(command)
 
 
     def create_macro(self):
-        """Function for creating an array of Molmol commands."""
+        """Function for creating an array of PyMOL commands."""
 
         # Function type.
         self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
-        # Specific Molmol macro creation function.
-        molmol_macro = self.relax.specific_setup.setup('molmol_macro', self.function_type)
+        # Specific PyMOL macro creation function.
+        pymol_macro = self.relax.specific_setup.setup('pymol_macro', self.function_type)
 
         # Get the macro.
-        self.commands = molmol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
+        self.commands = pymol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
 
 
     def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-        """Function for executing a Molmol macro."""
+        """Function for executing a PyMOL macro."""
 
         # Arguments.
         self.run = run
@@ -100,6 +100,9 @@ class Pymol:
         self.colour_start = colour_start
         self.colour_end = colour_end
         self.colour_list = colour_list
+
+        # No coded yet.
+        raise RelaxError, "This function has not yet been implemented."
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -172,9 +175,9 @@ class Pymol:
 
 
     def pipe_write(self, command=None, store_command=1):
-        """Function for writing to the Molmol pipe.
+        """Function for writing to the PyMOL pipe.
 
-        This function is also used to execute a user supplied Molmol command.
+        This function is also used to execute a user supplied PyMOL command.
         """
 
         # Reopen the pipe if needed.
@@ -204,7 +207,7 @@ class Pymol:
 
 
     def view(self, run=None):
-        """Function for running Molmol."""
+        """Function for running PyMOL."""
 
         # Arguments.
         self.run = run
@@ -217,7 +220,7 @@ class Pymol:
 
 
     def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=0):
-        """Function for creating a Molmol macro."""
+        """Function for creating a PyMOL macro."""
 
         # Arguments.
         self.run = run
@@ -226,6 +229,9 @@ class Pymol:
         self.colour_start = colour_start
         self.colour_end = colour_end
         self.colour_list = colour_list
+
+        # No coded yet.
+        raise RelaxError, "This function has not yet been implemented."
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
