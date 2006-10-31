@@ -47,7 +47,7 @@ class Modsel:
         self.relax.generic.runs.create('aic', 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read('sphere', file='r1.600.out', dir=path)

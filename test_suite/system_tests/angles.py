@@ -20,7 +20,36 @@
 #                                                                             #
 ###############################################################################
 
+import sys
 
-__all__ = ['system_tests',
-           'unit_tests']
 
+class Angles:
+    def __init__(self, relax):
+        """Class for testing the angle calculation function."""
+
+        self.relax = relax
+
+        # The name of the test.
+        self.name = "The user function angles()"
+
+
+    def test(self, run):
+        """The actual test."""
+
+        # Create the run.
+        self.relax.interpreter._Run.create(run, 'mf')
+
+        # Read a PDB file.
+        self.relax.interpreter._PDB.read(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
+
+        # Set the NH vector.
+        self.relax.interpreter._PDB.vectors(run, heteronuc='N', proton='H')
+
+        # Initialise a diffusion tensor.
+        self.relax.interpreter._Diffusion_tensor.init(run, (1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
+
+        # Calculate the angles.
+        self.relax.interpreter._Angles.angles(run)
+
+        # Success.
+        return 1

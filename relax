@@ -76,7 +76,7 @@ from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
-from test_suite.test_suite import Test_suite
+from test_suite.system_tests.test_suite import Test_suite
 from thread_classes import Threading, ThreadData
 import version
 

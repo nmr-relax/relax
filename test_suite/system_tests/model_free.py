@@ -202,7 +202,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
@@ -233,7 +233,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Nuclei type
         self.relax.interpreter._Nuclei.nuclei('N')
@@ -272,7 +272,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Nuclei type
         self.relax.interpreter._Nuclei.nuclei('N')
@@ -316,7 +316,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Nuclei type
         self.relax.interpreter._Nuclei.nuclei('N')
@@ -903,7 +903,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Nuclei type
         self.relax.interpreter._Nuclei.nuclei('N')
@@ -938,7 +938,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
@@ -966,13 +966,13 @@ class Mf:
         self.run = run
 
         # Load the original state.
-        self.relax.interpreter._State.load(file='orig_state', dir=sys.path[-1] + '/test_suite/data/model_free')
+        self.relax.interpreter._State.load(file='orig_state', dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
 
         # Create the run.
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Read the results.
-        self.relax.interpreter._Results.read(self.run, dir=sys.path[-1] + '/test_suite/data/model_free')
+        self.relax.interpreter._Results.read(self.run, dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
 
         # Print out.
         print "\nTesting the integrity of the loaded data.\n"
@@ -1152,7 +1152,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
@@ -1183,7 +1183,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
@@ -1209,7 +1209,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
@@ -1235,7 +1235,7 @@ class Mf:
         self.relax.generic.runs.create(self.run, 'mf')
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)

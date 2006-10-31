@@ -45,16 +45,16 @@ class Relax_fit:
         self.run = run
 
         # Load the original state.
-        self.relax.interpreter._State.load(file='rx.save', dir=sys.path[-1] + '/test_suite/data/curve_fitting')
+        self.relax.interpreter._State.load(file='rx.save', dir=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
 
         # Create the run.
         self.relax.generic.runs.create(self.run, "mf")
 
         # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read(self.run, file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/data")
+        self.relax.interpreter._Sequence.read(self.run, file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
 
         # Read the peak heights.
-        self.relax.interpreter._Relax_fit.read(self.run, file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/data/curve_fitting", relax_time=0.0176)
+        self.relax.interpreter._Relax_fit.read(self.run, file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/system_tests/data/curve_fitting", relax_time=0.0176)
 
 
         # Test the integrity of the data.

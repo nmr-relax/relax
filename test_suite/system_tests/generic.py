@@ -50,9 +50,9 @@ class Generic:
         self.relax.interpreter._Run.create('new', "mf")
 
         # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read('orig1', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/data")
-        self.relax.interpreter._Sequence.read('orig2', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/data")
-        self.relax.interpreter._Sequence.read('new', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/data")
+        self.relax.interpreter._Sequence.read('orig1', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
+        self.relax.interpreter._Sequence.read('orig2', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
+        self.relax.interpreter._Sequence.read('new', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
 
         # Only select residue 8.
         self.relax.interpreter._Select.res('orig1', num=8, change_all=1)
