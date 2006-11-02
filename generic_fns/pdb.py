@@ -139,13 +139,13 @@ class PDB:
             raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
 
 
-    def center_of_mass(self):
-        """Calculate and return the center of mass of the structure."""
+    def centre_of_mass(self):
+        """Calculate and return the centre of mass of the structure."""
 
         # Print out.
-        print "Calculating the center of mass."
+        print "Calculating the centre of mass."
 
-        # Initialise the center of mass.
+        # Initialise the centre of mass.
         R = zeros(3, Float64)
 
         # Initialise the total mass.
@@ -196,7 +196,7 @@ class PDB:
         print "    Total mass:      M = " + `M`
         print "    Center of mass:  R = " + `R`
 
-        # Return the center of mass.
+        # Return the centre of mass.
         return R
 
 
@@ -247,8 +247,8 @@ class PDB:
         # Center of mass.
         #################
 
-        # Calculate the center of mass.
-        R = self.center_of_mass()
+        # Calculate the centre of mass.
+        R = self.centre_of_mass()
 
         # Add the central atom.
         self.atom_add(atom_id='R', element='C', pos=R)
@@ -268,11 +268,11 @@ class PDB:
             # The negative Dpar vector.
             Dpar_vect_neg = -Dpar_vect
 
-            # Position of both vectors relative to the center of mass.
+            # Position of both vectors relative to the centre of mass.
             Dpar_vect = R + Dpar_vect
             Dpar_vect_neg = R + Dpar_vect_neg
 
-            # Add the atom and connect it to the center of mass.
+            # Add the atom and connect it to the centre of mass.
             self.atom_add(atom_id='Dpar', element='C', pos=Dpar_vect)
             self.atom_add(atom_id='Dpar_neg', element='C', pos=Dpar_vect_neg)
             self.atom_connect(atom_id='Dpar', bonded_id='R')
@@ -297,7 +297,7 @@ class PDB:
             Dy_vect_neg = -Dy_vect
             Dz_vect_neg = -Dz_vect
 
-            # Positions relative to the center of mass.
+            # Positions relative to the centre of mass.
             Dx_vect = R + Dx_vect
             Dy_vect = R + Dy_vect
             Dz_vect = R + Dz_vect
@@ -305,7 +305,7 @@ class PDB:
             Dy_vect_neg = R + Dy_vect_neg
             Dz_vect_neg = R + Dz_vect_neg
 
-            # Add the atoms and connect them to the center of mass.
+            # Add the atoms and connect them to the centre of mass.
             self.atom_add(atom_id='Dx', element='C', pos=Dx_vect)
             self.atom_add(atom_id='Dy', element='C', pos=Dy_vect)
             self.atom_add(atom_id='Dz', element='C', pos=Dz_vect)
@@ -358,7 +358,7 @@ class PDB:
                 # Scale the vector.
                 vector = vector * scale
 
-                # Position relative to the center of mass.
+                # Position relative to the centre of mass.
                 pos = R + vector
 
                 # Add the vector as a H atom.
