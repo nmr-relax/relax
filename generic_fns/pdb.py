@@ -217,7 +217,11 @@ class PDB:
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-        # Test if PDB data corresponding to the run already exists.
+        # Test if the diffusion tensor data is loaded.
+        if not self.relax.data.diff.has_key(run):
+            raise RelaxNoTensorError, run
+
+        # Test if the PDB file of the macromolecule has been loaded.
         if not self.relax.data.pdb.has_key(self.run):
             raise RelaxNoPdbError, self.run
 
