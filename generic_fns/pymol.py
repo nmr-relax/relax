@@ -133,7 +133,7 @@ class Pymol:
             return
 
         # Reinitialise PyMOL.
-        self.pipe_write("reinitialise")
+        self.pipe_write("reinitialize")
 
         # Open the PDB file.
         self.pipe_write("load " + self.relax.data.pdb[self.run].file_name)
