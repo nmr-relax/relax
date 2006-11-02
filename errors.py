@@ -176,7 +176,7 @@ class RelaxErrors:
             if Debug:
                 self.save_state()
 
-    # PDB data corresponding to the run already exists.
+    # No chains within the PDB file.
     class RelaxNoPdbChainError(BaseError):
         def __init__(self):
             self.text = "No peptide or nucleotide chains can be found within the PDB file."
