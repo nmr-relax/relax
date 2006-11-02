@@ -69,7 +69,6 @@ except ImportError:
 from colour import Colour
 from data import Data
 from errors import RelaxErrors, RelaxWarnings
-from float import Float
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
@@ -121,9 +120,6 @@ class Relax:
 
         # File operation functions.
         self.IO = IO(self)
-
-        # Floating point number functions.
-        self.float = Float()
 
         # Colour operations.
         self.colour = Colour()

@@ -31,6 +31,7 @@ import sys
 from base_class import Common_functions
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
+from float import isNaN,isInf 
 
 
 class Model_free(Common_functions):
@@ -2107,7 +2108,10 @@ class Model_free(Common_functions):
             num_data_sets = 0
             num_res = 1
 
+
         # Loop over the minimisation instances.
+        #######################################
+        
         for i in xrange(num_instances):
             # Set the residue index.
             if min_algor == 'back_calc':
@@ -2375,12 +2379,12 @@ class Model_free(Common_functions):
             self.h_count = self.h_count + hc
 
             # Catch infinite chi-squared values.
-            #if self.relax.float.isinf(self.func):
-            #    raise RelaxInfError, 'chi-squared'
+            if isInf(self.func):
+                raise RelaxInfError, 'chi-squared'
 
             # Catch chi-squared values of NaN.
-            #if self.relax.float.isnan(self.func):
-            #    raise RelaxNaNError, 'chi-squared'
+            if isNaN(self.func):
+                raise RelaxNaNError, 'chi-squared'
 
             # Scaling.
             if scaling:
@@ -2617,7 +2621,7 @@ class Model_free(Common_functions):
                 residue.select = 0
                 continue
 
-            # Require at least as many data points as params to prevent under-fitting
+            # Require at least as many data points as params to prevent over-fitting
             if hasattr(residue, 'params'):
                 if len(residue.params) > len(residue.relax_data):
                     residue.select = 0
@@ -3243,17 +3247,9 @@ class Model_free(Common_functions):
         # PDB model.
         pdb_model = eval(self.file_line[self.col['pdb_model']])
 
-        # Heteronucleus.
-        if self.col.has_key('pdb_heteronuc'):
-            pdb_heteronuc = self.file_line[self.col['pdb_heteronuc']]
-
-        # Proton.
-        if self.col.has_key('pdb_proton'):
-            pdb_proton = self.file_line[self.col['pdb_proton']]
-
-        # Load the PDB.
+        # Read the PDB file (if it exists).
         if not pdb == 'None':
-            self.relax.generic.pdb.load(run=self.run, file=pdb, model=pdb_model, heteronuc=pdb_heteronuc, proton=pdb_proton, calc_vectors=0, fail=0, print_flag=print_flag)
+            self.relax.generic.pdb.read(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
             return 1
         else:
             return 0

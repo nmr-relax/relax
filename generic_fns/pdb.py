@@ -23,7 +23,7 @@
 from math import sqrt, cos, pi, sin
 from Numeric import Float64, arccos, dot, zeros
 from os import F_OK, access
-from re import compile
+from re import compile, match
 import Scientific.IO.PDB
 
 
@@ -597,7 +597,8 @@ class PDB:
 
         # Create a temporary vector list for each residue.
         for i in xrange(len(self.relax.data.res[self.run])):
-            self.relax.data.res[self.run][i].xh_vect = []
+            if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
+                self.relax.data.res[self.run][i].xh_vect = []
 
         # Loop over the structures.
         for i in xrange(num_str):
