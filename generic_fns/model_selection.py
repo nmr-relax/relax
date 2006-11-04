@@ -207,8 +207,14 @@ class Model_selection:
                     if self.skip_function[run](run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j]):
                         continue
 
+                    # Global stats.
+                    if self.num_instances[j] > self.min_instances or self.num_instances[j] == 1:
+                        global_stats = 1
+                    else:
+                        global_stats = 0
+
                     # Get the model statistics.
-                    k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances)
+                    k, n, chi2 = self.model_statistics[run](run=run, instance=i, global_stats=global_stats)
 
                     # Missing data sets.
                     if k == None or n == None or chi2 == None:
