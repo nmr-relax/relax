@@ -1,3 +1,36 @@
+Version 1.2.8
+(4 November 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.8
+
+    Features:
+        * Preliminary support for RNA/DNA. (bug #7241)
+        * Significant improvements to the SCons build system (see 'scons --help').
+        * Expansion and improvement of the relax development chapter.
+        * The grace.write() user function works with reduced spectral density mapping. (task #4002)
+
+    Changes:
+        * MS Windows installation instructions have been added to the manual.
+        * The RelaxWarning system has been added to standardise warning messages.
+        * The relax manual now describes the test suite. (task #3781)
+        * The 15N CSA values in the sample scripts are now all -172 ppm.
+        * The ambiguity cased by supplying the option 'None' together with Newton optimisation has been resolved in the documentation. (task #3630)
+        * Optimisation tests have been added to the test suite.
+
+    Bugfixes:
+        * Model selection between the global diffusion models no longer fails if all residues of the local tm models have been deselected by model elimination. (bug #7192)
+        * The 'angles.py' sample script no longer fails when residue specific relaxation data is missing (corrupt input data). (bug #7224)
+        * Prior to executing Modelfree4, Dasha, Molmol, Grace, or OpenDX, tests are run to determine if the binary exists, is executable, and is in the system path. (bug #7225)
+        * Model elimination when using the model-free model 'm0' no longer fails. (bug #7226)
+        * The strict checking of the Da and Dr diffusion tensor parameters has been relaxed to allow for optimisation imprecision. (bug #7297)
+        * The reading of Modelfree4 mfout results files no longer fails when residue specific relaxation data is missing (corrupt input data). (bug #7277)
+        * If optimisation returns an infinit value or a NaN value, these are now caught and a RelaxError thrown. (bug #6503, task #3621)
+        * The sigma(NOE) equations of Chapter 8 of the manual have been fixed. (bug #7402)
+        * Files containing relaxation data not consisting of exactly 4 columns will now be read. (bug #7583)
+        * Model-free results files from relax versions prior to 1.2.5 are now properly read. (bug #7587)
+        * Model selection between the global diffusion models does not fail when the local tm models are included. (bug #7616)
+
+
+
 Version 1.2.7
 (18 September 2006, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.7
