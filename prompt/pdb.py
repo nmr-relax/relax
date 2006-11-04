@@ -82,7 +82,7 @@ class PDB:
         units of inverse seconds) then by the scaling factor (which has the units of second
         Angstroms and has the default value of 1.8e-6 s.Angstrom).  Therefore the rotational
         diffusion rate per Angstrom is equal the inverse of the scale value (which defaults to
-        5.55e5 s^-1.Angstrom^-1).  Using the default scaling value for spherical diffusion, the
+        5.56e5 s^-1.Angstrom^-1).  Using the default scaling value for spherical diffusion, the
         correspondence between global correlation time, Diso diffusion rate, and the radius of the
         sphere for a number of discrete cases will be:
 
@@ -93,11 +93,11 @@ class PDB:
         |           |               |                   |
         | 1         | 1.67e8        | 300               |
         |           |               |                   |
-        | 3         | 5.55e7        | 100               |
+        | 3         | 5.56e7        | 100               |
         |           |               |                   |
         | 10        | 1.67e7        | 30                |
         |           |               |                   |
-        | 30        | 5.55e6        | 10                |
+        | 30        | 5.56e6        | 10                |
         |___________|_______________|___________________|
 
         
