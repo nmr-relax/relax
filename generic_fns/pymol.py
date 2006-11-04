@@ -46,7 +46,7 @@ class Pymol:
 
         # Identifier.
         pdb_file = self.relax.data.pdb[self.run].file_name
-        id = io.file_root(pdb_file)
+        id = self.relax.IO.file_root(pdb_file)
 
         # Hide everything.
         self.pipe_write("cmd.hide('everything'," + `id` + ")")
