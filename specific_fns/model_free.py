@@ -2927,9 +2927,21 @@ class Model_free(Common_functions):
 
         # Set up the model-free models.
         if self.data_set == 'value':
+            # Get the model-free model.
             model = self.file_line[self.col['model']]
+
+            # Get the model-free equation.
             equation = self.file_line[self.col['eqi']]
+
+            # Get the model-free parameters.
             params = eval(self.file_line[self.col['params']])
+
+            # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
+            for i in xrange(len(params)):
+                if params[i] == 'tm':
+                    params[i] = 'local_tm'
+
+            # Set up the model-free model.
             if model and equation:
                 self.model_setup(self.run, model=model, equation=equation, params=params, res_num=self.res_num)
 
