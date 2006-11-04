@@ -2505,7 +2505,7 @@ class Model_free(Common_functions):
             self.relax.data.res[run][i].params = params
 
 
-    def model_statistics(self, run=None, instance=None, min_instances=None):
+    def model_statistics(self, run=None, instance=None, global_stats=None):
         """Function for returning k, n, and chi2.
 
         k - number of parameters.
@@ -2517,11 +2517,12 @@ class Model_free(Common_functions):
         self.run = run
 
         # Determine if local or global statistics will be returned.
-        global_stats = 1
-        for i in xrange(len(self.relax.data.res[self.run])):
-            if hasattr(self.relax.data.res[self.run][i], 'chi2') and self.relax.data.res[self.run][i].chi2 != None:
-                global_stats = 0
-                break
+        if global_stats == None:
+            global_stats = 1
+            for i in xrange(len(self.relax.data.res[self.run])):
+                if hasattr(self.relax.data.res[self.run][i], 'chi2') and self.relax.data.res[self.run][i].chi2 != None:
+                    global_stats = 0
+                    break
 
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
@@ -2554,6 +2555,7 @@ class Model_free(Common_functions):
 
             # Count the number of data points.
             n = 0
+            chi2 = 0
             for i in xrange(len(self.relax.data.res[self.run])):
                 # Skip unselected residues.
                 if not self.relax.data.res[self.run][i].select:
@@ -2565,8 +2567,13 @@ class Model_free(Common_functions):
 
                 n = n + len(self.relax.data.res[self.run][i].relax_data)
 
+                # Local tm models.
+                if self.param_set == 'local_tm':
+                    chi2 = chi2 + self.relax.data.res[self.run][i].chi2
+
             # The chi2 value.
-            chi2 = self.relax.data.chi2[self.run]
+            if self.param_set != 'local_tm':
+                chi2 = self.relax.data.chi2[self.run]
 
         # Return the data.
         return k, n, chi2
