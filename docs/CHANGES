@@ -23,7 +23,7 @@ http://svn.gna.org/svn/relax/tags/1.2.8
         * Model elimination when using the model-free model 'm0' no longer fails. (bug #7226)
         * The strict checking of the Da and Dr diffusion tensor parameters has been relaxed to allow for optimisation imprecision. (bug #7297)
         * The reading of Modelfree4 mfout results files no longer fails when residue specific relaxation data is missing (corrupt input data). (bug #7277)
-        * If optimisation returns an infinit value or a NaN value, these are now caught and a RelaxError thrown. (bug #6503, task #3621)
+        * If optimisation returns an infinite value or a NaN value, these are now caught and a RelaxError thrown. (bug #6503, task #3621)
         * The sigma(NOE) equations of Chapter 8 of the manual have been fixed. (bug #7402)
         * Files containing relaxation data not consisting of exactly 4 columns will now be read. (bug #7583)
         * Model-free results files from relax versions prior to 1.2.5 are now properly read. (bug #7587)
