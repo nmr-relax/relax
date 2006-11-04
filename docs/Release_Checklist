@@ -1,7 +1,3 @@
-* Review the SVN log and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.
-
-
-
 * Make a copy of the current head to the tags directory using a command such as:
 
 $ svn cp svn+ssh://bugman@svn.gna.org/svn/relax/1.2 svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4
@@ -13,6 +9,10 @@ In the commit message, have a header line which says 'relax version 1.2.4.', fol
 * Checkout the tagged version with:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4 relax-1.2.4
+
+
+
+* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  Commit the changes and then port the revision back into the main line.
 
 
 
@@ -49,4 +49,4 @@ Replace the old manual with the new in the CVS homepage repository and commit bo
 
 
 
-* Post the release message to the relax-announce mailing list and as a news item on the relax Gna! website. 
+* Post the release message to the relax-announce mailing list, as a news item on the relax Gna! website, and on the freshmeat website.
