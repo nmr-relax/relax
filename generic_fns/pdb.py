@@ -1065,10 +1065,35 @@ class PDB:
         @return:        None
         """
 
-        # The HET record.
-        file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', res_name, chain_id, res_num, '', len(self.atomic_data), ''))
+        # The HET records.
+        ##################
 
-        # The HETNAM record.
+        # Get the data for the HET record.
+        het_data = []
+        for key in self.atomic_data:
+            # The residue number.
+            res_num = self.atomic_data[key][4]
+
+            # If the residue is already stored, increment the number of HETATM records and go to the next atom.
+            exists = 0
+            for i in xrange(len(het_data)):
+                if res_num == het_data[i, 2]:
+                    het_data[i, 3] = het_data[i, 3] + 1
+                    exists = 1
+            if exists:
+                continue
+
+            # Add the data (residue name, chain ID, residue number, number of atoms).
+            het_data.append([self.atomic_data[key][2], self.atomic_data[key][3], self.atomic_data[key][4], 1])
+
+        # Write the HET record.
+        for het in het_data:
+            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[0], het[1], het[2], '', het[3], ''))
+
+
+        # The HETNAM records.
+        #####################
+
         file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', res_name, chemical_name))
 
         # Count the elements.
