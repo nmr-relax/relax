@@ -37,26 +37,44 @@ class PDB:
         self.print_flag = 1
 
 
-    def atom_add(self, atom_id='', record_name='HETATM', atom_name='', res_name='', chain_id='', res_num='', pos=None, segment_id='', element=''):
+    def atom_add(self, atom_id=None, atom_name='', res_name='', chain_id='', res_num=None, pos=None, segment_id='', element=''):
         """Function for adding an atom to the self.atomic_data structure.
 
         The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
         'atom_id' strings.  The elements of the array are:
 
             0:  Atom number.
-            1:  Record name.
-            2:  Atom name.
-            3:  Residue name.
-            4:  Chain ID.
-            5:  Residue number.
-            6:  The x coordinate of the atom.
-            7:  The y coordinate of the atom.
-            8:  The z coordinate of the atom.
-            9:  Segment ID.
-            10:  Element symbol.
-            11+:  The bonded atom numbers.
+            1:  Atom name.
+            2:  Residue name.
+            3:  Chain ID.
+            4:  Residue number.
+            5:  The x coordinate of the atom.
+            6:  The y coordinate of the atom.
+            7:  The z coordinate of the atom.
+            8:  Segment ID.
+            9:  Element symbol.
+            10+:  The bonded atom numbers.
 
         This function will create the key-value pair for the given atom.
+
+
+        @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
+        @type atom_id:      str
+        @param atom_name:   The atom name, e.g. H1.
+        @type atom_name:    str
+        @param res_name:    The residue name.
+        @type res_name:     str
+        @param chain_id:    The chain identifier.
+        @type chain_id:     str
+        @param res_num:     The residue number.
+        @type res_num:      int
+        @param pos:         The position vector of coordinates.
+        @type pos:          list (length = 3)
+        @param segment_id:  The segment identifier.
+        @type segment_id:   str
+        @param element:     The element symbol.
+        @type element:      str
+        @return:            None
         """
 
         # Initialise the key-value pair.
@@ -64,7 +82,6 @@ class PDB:
 
         # Fill the positions.
         self.atomic_data[atom_id].append(len(self.atomic_data) + 1)
-        self.atomic_data[atom_id].append(record_name)
         self.atomic_data[atom_id].append(atom_name)
         self.atomic_data[atom_id].append(residue_name)
         self.atomic_data[atom_id].append(chain_id)
@@ -76,29 +93,28 @@ class PDB:
         self.atomic_data[atom_id].append(element)
 
 
-    def atom_connect(self, atom_id, bonded_id):
+    def atom_connect(self, atom_id=None, bonded_id=None):
         """Function for connecting two atoms within the self.atomic_data data structure.
 
         The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
         'atom_id' strings.  The elements of the array are:
 
             0:  Atom number.
-
-            1:  Element type.
-
-            2:  The x coordinate of the atom.
-
-            3:  The y coordinate of the atom.
-
-            4:  The z coordinate of the atom.
-
-            5 onwards:  The bonded atom numbers.
+            1:  Atom name.
+            2:  Residue name.
+            3:  Chain ID.
+            4:  Residue number.
+            5:  The x coordinate of the atom.
+            6:  The y coordinate of the atom.
+            7:  The z coordinate of the atom.
+            8:  Segment ID.
+            9:  Element symbol.
+            10+:  The bonded atom numbers.
 
         This function will find the atom number corresponding to both the atom_id and bonded_id.
         The bonded_id atom number will then be appended to the atom_id array.  Because the
         connections work both ways in the PDB file, the atom_id atom number will be appended to the
         bonded_id atom array as well.
-
         """
 
         # Find the atom number corresponding to atom_id.
