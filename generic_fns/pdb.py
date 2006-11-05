@@ -397,6 +397,48 @@ class PDB:
         tensor_pdb_file.close()
 
 
+    def get_chemical_name(self, hetID):
+        """Function for returning the chemical name corresponding to the given residue ID.
+
+        The following names are currently returned:
+        ________________________________________________
+        |        |                                     |
+        | hetID  | Chemical name                       |
+        |________|_____________________________________|
+        |        |                                     |
+        | TNS    | Tensor                              |
+        | COM    | Centre of mass                      |
+        | AXS    | Tensor axes                         |
+        | SIM    | Monte Carlo simulation tensor axes  |
+        |________|_____________________________________|
+
+
+        @param res: The residue ID.
+        @type res:  str
+        @return:    The chemical name.
+        @rtype:     str
+        """
+
+        # Tensor.
+        if hetID == 'TNS':
+            return 'Tensor'
+
+        # Centre of mass.
+        if hetID == 'COM':
+            return 'Centre of mass'
+
+        # Tensor axes.
+        if hetID == 'AXS':
+            return 'Tensor axes'
+
+        # Monte Carlo simulation tensor axes.
+        if hetID == 'SIM':
+            return 'Monte Carlo simulation tensor axes'
+
+        # Unknown hetID.
+        raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
+
+        
     def load_structures(self):
         """Function for loading the structures from the PDB file."""
 
@@ -986,7 +1028,7 @@ class PDB:
 
 
 
-        @type file:     string
+        @type file:     str
         @param file:    The PDB file name.
         @return:        None
         """
