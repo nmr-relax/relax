@@ -83,7 +83,7 @@ class PDB:
         # Fill the positions.
         self.atomic_data[atom_id].append(len(self.atomic_data) + 1)
         self.atomic_data[atom_id].append(atom_name)
-        self.atomic_data[atom_id].append(residue_name)
+        self.atomic_data[atom_id].append(res_name)
         self.atomic_data[atom_id].append(chain_id)
         self.atomic_data[atom_id].append(res_num)
         self.atomic_data[atom_id].append(pos[0])
