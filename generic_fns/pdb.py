@@ -276,79 +276,10 @@ class PDB:
         R = self.centre_of_mass()
 
         # Add the central atom.
-        self.atom_add(atom_id='R', element='C', pos=R)
+        self.atom_add(atom_id='R', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
 
-
-        # Axes of the tensor.
-        #####################
-
-        # Create the unique axis of the spheroid.
-        if self.relax.data.diff[self.run].type == 'spheroid':
-            # Print out.
-            print "\nGenerating the unique axis of the diffusion tensor."
-
-            # The Dpar vector.
-            Dpar_vect = self.relax.data.diff[self.run].Dpar_unit * self.relax.data.diff[self.run].Dpar * scale
-
-            # The negative Dpar vector.
-            Dpar_vect_neg = -Dpar_vect
-
-            # Position of both vectors relative to the centre of mass.
-            Dpar_vect = R + Dpar_vect
-            Dpar_vect_neg = R + Dpar_vect_neg
-
-            # Add the atom and connect it to the centre of mass.
-            self.atom_add(atom_id='Dpar', element='C', pos=Dpar_vect)
-            self.atom_add(atom_id='Dpar_neg', element='C', pos=Dpar_vect_neg)
-            self.atom_connect(atom_id='Dpar', bonded_id='R')
-            self.atom_connect(atom_id='Dpar_neg', bonded_id='R')
-
-            # Print out.
-            print "    Scaling factor:                      " + `scale`
-            print "    Dpar vector (scaled + shifted to R): " + `Dpar_vect`
-
-        # Create the three axes of the ellipsoid.
-        if self.relax.data.diff[self.run].type == 'ellipsoid':
-            # Print out.
-            print "Generating the three axes of the ellipsoid."
-
-            # The Dx, Dy, and Dz vectors.
-            Dx_vect = self.relax.data.diff[self.run].Dx_unit * self.relax.data.diff[self.run].Dx * scale
-            Dy_vect = self.relax.data.diff[self.run].Dy_unit * self.relax.data.diff[self.run].Dy * scale
-            Dz_vect = self.relax.data.diff[self.run].Dz_unit * self.relax.data.diff[self.run].Dz * scale
-
-            # The negative Dx, Dy, and Dz vectors.
-            Dx_vect_neg = -Dx_vect
-            Dy_vect_neg = -Dy_vect
-            Dz_vect_neg = -Dz_vect
-
-            # Positions relative to the centre of mass.
-            Dx_vect = R + Dx_vect
-            Dy_vect = R + Dy_vect
-            Dz_vect = R + Dz_vect
-            Dx_vect_neg = R + Dx_vect_neg
-            Dy_vect_neg = R + Dy_vect_neg
-            Dz_vect_neg = R + Dz_vect_neg
-
-            # Add the atoms and connect them to the centre of mass.
-            self.atom_add(atom_id='Dx', element='C', pos=Dx_vect)
-            self.atom_add(atom_id='Dy', element='C', pos=Dy_vect)
-            self.atom_add(atom_id='Dz', element='C', pos=Dz_vect)
-            self.atom_add(atom_id='Dx_neg', element='C', pos=Dx_vect_neg)
-            self.atom_add(atom_id='Dy_neg', element='C', pos=Dy_vect_neg)
-            self.atom_add(atom_id='Dz_neg', element='C', pos=Dz_vect_neg)
-            self.atom_connect(atom_id='Dx', bonded_id='R')
-            self.atom_connect(atom_id='Dy', bonded_id='R')
-            self.atom_connect(atom_id='Dz', bonded_id='R')
-            self.atom_connect(atom_id='Dx_neg', bonded_id='R')
-            self.atom_connect(atom_id='Dy_neg', bonded_id='R')
-            self.atom_connect(atom_id='Dz_neg', bonded_id='R')
-
-            # Print out.
-            print "    Scaling factor:                      " + `scale`
-            print "    Dx vector (scaled + shifted to R):   " + `Dx_vect`
-            print "    Dy vector (scaled + shifted to R):   " + `Dy_vect`
-            print "    Dz vector (scaled + shifted to R):   " + `Dz_vect`
+        # Increment the residue number.
+        res_num = res_num + 1
 
 
         # Vector distribution.
@@ -386,8 +317,8 @@ class PDB:
                 # Position relative to the centre of mass.
                 pos = R + vector
 
-                # Add the vector as a H atom.
-                self.atom_add(atom_id=atom_id, element='H', pos=pos)
+                # Add the vector as a H atom of the TNS residue.
+                self.atom_add(atom_id=atom_id, atom_name=atom_id, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
 
                 # Connect to the previous atom (to generate the longitudinal lines).
                 if j != 0:
@@ -404,6 +335,82 @@ class PDB:
                     neighbour_id = 'T' + `0` + 'P' + `j`
                     self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
 
+        # Increment the residue number.
+        res_num = res_num + 1
+
+
+        # Axes of the tensor.
+        #####################
+
+        # Create the unique axis of the spheroid.
+        if self.relax.data.diff[self.run].type == 'spheroid':
+            # Print out.
+            print "\nGenerating the unique axis of the diffusion tensor."
+
+            # The Dpar vector.
+            Dpar_vect = self.relax.data.diff[self.run].Dpar_unit * self.relax.data.diff[self.run].Dpar * scale
+
+            # The negative Dpar vector.
+            Dpar_vect_neg = -Dpar_vect
+
+            # Position of both vectors relative to the centre of mass.
+            Dpar_vect = R + Dpar_vect
+            Dpar_vect_neg = R + Dpar_vect_neg
+
+            # Create the 'AXS' residue.
+            self.atom_add(atom_id='R_axes', atom_name='R', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=R, element='C')
+            self.atom_add(atom_id='Dpar', atom_name='Dpar', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dpar_vect, element='C')
+            self.atom_add(atom_id='Dpar_neg', atom_name='Dpar', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
+            self.atom_connect(atom_id='Dpar', bonded_id='R_axes')
+            self.atom_connect(atom_id='Dpar_neg', bonded_id='R_axes')
+
+            # Print out.
+            print "    Scaling factor:                      " + `scale`
+            print "    Dpar vector (scaled + shifted to R): " + `Dpar_vect`
+
+        # Create the three axes of the ellipsoid.
+        if self.relax.data.diff[self.run].type == 'ellipsoid':
+            # Print out.
+            print "Generating the three axes of the ellipsoid."
+
+            # The Dx, Dy, and Dz vectors.
+            Dx_vect = self.relax.data.diff[self.run].Dx_unit * self.relax.data.diff[self.run].Dx * scale
+            Dy_vect = self.relax.data.diff[self.run].Dy_unit * self.relax.data.diff[self.run].Dy * scale
+            Dz_vect = self.relax.data.diff[self.run].Dz_unit * self.relax.data.diff[self.run].Dz * scale
+
+            # The negative Dx, Dy, and Dz vectors.
+            Dx_vect_neg = -Dx_vect
+            Dy_vect_neg = -Dy_vect
+            Dz_vect_neg = -Dz_vect
+
+            # Positions relative to the centre of mass.
+            Dx_vect = R + Dx_vect
+            Dy_vect = R + Dy_vect
+            Dz_vect = R + Dz_vect
+            Dx_vect_neg = R + Dx_vect_neg
+            Dy_vect_neg = R + Dy_vect_neg
+            Dz_vect_neg = R + Dz_vect_neg
+
+            # Create the 'AXS' residue.
+            self.atom_add(atom_id='R_axes', atom_name='R', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=R, element='C')
+            self.atom_add(atom_id='Dx', atom_name='Dx', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dx_vect, element='C')
+            self.atom_add(atom_id='Dy', atom_name='Dy', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dy_vect, element='C')
+            self.atom_add(atom_id='Dz', atom_name='Dz', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dz_vect, element='C')
+            self.atom_add(atom_id='Dx_neg', atom_name='Dx', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dx_vect_neg, element='C')
+            self.atom_add(atom_id='Dy_neg', atom_name='Dy', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dy_vect_neg, element='C')
+            self.atom_add(atom_id='Dz_neg', atom_name='Dz', res_name='AXS', chain_id=chain_id, res_num=res_num, pos=Dz_vect_neg, element='C')
+            self.atom_connect(atom_id='Dx', bonded_id='R_axes')
+            self.atom_connect(atom_id='Dy', bonded_id='R_axes')
+            self.atom_connect(atom_id='Dz', bonded_id='R_axes')
+            self.atom_connect(atom_id='Dx_neg', bonded_id='R_axes')
+            self.atom_connect(atom_id='Dy_neg', bonded_id='R_axes')
+            self.atom_connect(atom_id='Dz_neg', bonded_id='R_axes')
+
+            # Print out.
+            print "    Scaling factor:                      " + `scale`
+            print "    Dx vector (scaled + shifted to R):   " + `Dx_vect`
+            print "    Dy vector (scaled + shifted to R):   " + `Dy_vect`
+            print "    Dz vector (scaled + shifted to R):   " + `Dz_vect`
 
 
         # Create the PDB file.
