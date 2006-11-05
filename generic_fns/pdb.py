@@ -37,34 +37,43 @@ class PDB:
         self.print_flag = 1
 
 
-    def atom_add(self, atom_id, element, pos):
+    def atom_add(self, atom_id='', record_name='HETATM', atom_name='', res_name='', chain_id='', res_num='', pos=None, segment_id='', element=''):
         """Function for adding an atom to the self.atomic_data structure.
 
         The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
         'atom_id' strings.  The elements of the array are:
 
             0:  Atom number.
+            1:  Record name.
+            2:  Atom name.
+            3:  Residue name.
+            4:  Chain ID.
+            5:  Residue number.
+            6:  The x coordinate of the atom.
+            7:  The y coordinate of the atom.
+            8:  The z coordinate of the atom.
+            9:  Segment ID.
+            10:  Element symbol.
+            11+:  The bonded atom numbers.
 
-            1:  Element type.
-
-            2:  The x coordinate of the atom.
-
-            3:  The y coordinate of the atom.
-
-            4:  The z coordinate of the atom.
-
-            5+:  The bonded atom numbers.
-
-        This function will create the key-value pair for the atom.
-
+        This function will create the key-value pair for the given atom.
         """
 
-        # Create the key-value pair.
-        # The array elements added are:
-        #     The atom number (length of the structure + 1).
-        #     The element type.
-        #     The coordinates.
-        self.atomic_data[atom_id] = [len(self.atomic_data) + 1, element, pos[0], pos[1], pos[2]]
+        # Initialise the key-value pair.
+        self.atomic_data[atom_id] = []
+
+        # Fill the positions.
+        self.atomic_data[atom_id].append(len(self.atomic_data) + 1)
+        self.atomic_data[atom_id].append(record_name)
+        self.atomic_data[atom_id].append(atom_name)
+        self.atomic_data[atom_id].append(residue_name)
+        self.atomic_data[atom_id].append(chain_id)
+        self.atomic_data[atom_id].append(res_num)
+        self.atomic_data[atom_id].append(pos[0])
+        self.atomic_data[atom_id].append(pos[1])
+        self.atomic_data[atom_id].append(pos[2])
+        self.atomic_data[atom_id].append(segment_id)
+        self.atomic_data[atom_id].append(element)
 
 
     def atom_connect(self, atom_id, bonded_id):
