@@ -1077,8 +1077,8 @@ class PDB:
             # If the residue is already stored, increment the number of HETATM records and go to the next atom.
             exists = 0
             for i in xrange(len(het_data)):
-                if res_num == het_data[i, 2]:
-                    het_data[i, 3] = het_data[i, 3] + 1
+                if res_num == het_data[i][2]:
+                    het_data[i][3] = het_data[i][3] + 1
                     exists = 1
             if exists:
                 continue
