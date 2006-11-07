@@ -263,6 +263,25 @@ class Pymol:
         The tensor PDB file is read in using the command:
 
             load file
+
+        The centre of mass residue 'COM' is displayed using the commands:
+
+            select resn COM
+            show dots, 'sele'
+            color blue, 'sele'
+
+        The axes of the diffusion tensor, the residue 'AXS', is displayed using the commands:
+
+            select resn AXS
+            hide ('sele')
+            show sticks, 'sele'
+            color cyan, 'sele'
+            label 'sele', name
+
+        The simulation axes, the residues 'SIM', are displayed using the commands:
+
+            select resn SIM
+            colour cyan, 'sele'
         """
 
         # Function intro text.

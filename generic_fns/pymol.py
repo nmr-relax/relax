@@ -207,6 +207,59 @@ class Pymol:
         self.pipe_write("load " + file)
 
 
+        # Centre of mass.
+        #################
+
+        # Select the COM residue.
+        self.pipe_write("select resn COM")
+
+        # Show the centre of mass as the dots representation.
+        self.pipe_write("show dots, 'sele'")
+
+        # Colour it blue.
+        self.pipe_write("color blue, 'sele'")
+
+
+        # The diffusion tensor axes.
+        ############################
+
+        # Select the AXS residue.
+        self.pipe_write("select resn AXS")
+
+        # Hide everything.
+        self.pipe_write("hide ('sele')")
+
+        # Show as 'sticks'.
+        self.pipe_write("show sticks, 'sele'")
+
+        # Colour it cyan.
+        self.pipe_write("color cyan, 'sele'")
+
+        # Select the N atoms of the AXS residue (used to display the axis labels).
+        self.pipe_write("select (resn AXS and elem N)")
+
+        # Label the atoms.
+        self.pipe_write("label 'sele', name")
+
+
+
+        # Monte Carlo simulations.
+        ##########################
+
+        # Select the SIM residue.
+        self.pipe_write("select resn SIM")
+
+        # Colour it.
+        self.pipe_write("colour cyan, 'sele'")
+
+
+        # Clean up.
+        ###########
+
+        # Remove the selection.
+        self.pipe_write("cmd.delete('sele')")
+
+
     def view(self, run=None):
         """Function for running PyMOL."""
 
