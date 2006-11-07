@@ -261,12 +261,9 @@ class PDB:
         # The atom and atomic connections data structures.
         self.atomic_data = {}
 
-        # Chain ID, residue number, residue name, chemical name, and occupancy.
+        # Chain ID and residue number.
         chain_id = 'A'
         res_num = 1
-        res_name = 'TNS'
-        chemical_name = 'Tensor'
-        occupancy = 1.0
 
 
         # Center of mass.
@@ -396,7 +393,7 @@ class PDB:
         tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
 
         # Write the data.
-        self.write_pdb_file(tensor_pdb_file, chain_id, res_num, res_name, chemical_name, occupancy)
+        self.write_pdb_file(tensor_pdb_file)
 
         # Close the file.
         tensor_pdb_file.close()
@@ -973,7 +970,7 @@ class PDB:
         return vectors
 
 
-    def write_pdb_file(self, file, chain_id, res_num, res_name, chemical_name, occupancy):
+    def write_pdb_file(self, file):
         """Function for creating a PDB file from the given data.
 
         Introduction
@@ -1283,7 +1280,7 @@ class PDB:
 
         for array in atomic_arrays:
             # Write the HETATM record.
-            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', array[0], array[1], '', array[2], array[3], array[4], '', array[5], array[6], array[7], occupancy, 0, array[8], array[9], ''))
+            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', array[0], array[1], '', array[2], array[3], array[4], '', array[5], array[6], array[7], 1.0, 0, array[8], array[9], ''))
 
 
         # Terminate the chain - TER record.
