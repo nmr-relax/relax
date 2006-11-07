@@ -468,6 +468,21 @@ class PDB:
         self.atom_connect(atom_id='Dy_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
         self.atom_connect(atom_id='Dz_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
 
+        # Add six more atoms to allow the axis labels to be shifted just outside of the geometric object.
+        if i == None:
+            # A slightly longer vector (by 3 Angstrom).
+            Dx_vect = Dx_unit * (Dx * scale + 3.0)
+            Dy_vect = Dy_unit * (Dy * scale + 3.0)
+            Dz_vect = Dz_unit * (Dz * scale + 3.0)
+
+            # Add the atoms.
+            self.atom_add(atom_id='Dx label', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dx_vect, element='N')
+            self.atom_add(atom_id='Dx neg label', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dx_vect, element='N')
+            self.atom_add(atom_id='Dy label', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dy_vect, element='N')
+            self.atom_add(atom_id='Dy neg label', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dy_vect, element='N')
+            self.atom_add(atom_id='Dz label', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dz_vect, element='N')
+            self.atom_add(atom_id='Dz neg label', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dz_vect, element='N')
+
         # Print out.
         if i == None:
             print "    Dx vector (scaled + shifted to R):   " + `Dx_vect`
@@ -519,6 +534,15 @@ class PDB:
         self.atom_add(atom_id='Dpar_neg'+atom_id_ext, atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
         self.atom_connect(atom_id='Dpar'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
         self.atom_connect(atom_id='Dpar_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+
+        # Add two more atoms to allow the axis labels to be shifted just outside of the geometric object.
+        if i == None:
+            # A slightly longer vector (by 3 Angstrom).
+            vect = Dpar_unit * (Dpar * scale + 3.0)
+
+            # Add the atoms.
+            self.atom_add(atom_id='Dpar label', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+vect, element='N')
+            self.atom_add(atom_id='Dpar neg label', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-vect, element='N')
 
         # Print out.
         if i == None:
@@ -1200,9 +1224,9 @@ class PDB:
             element = array[9]
 
             # If the residue is not already stored initialise a new het_data element.
-            # (residue number, residue name, chain ID, number of atoms, number of H, number of C).
+            # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
             if not het_data or not res_num == het_data[-1][0]:
-                het_data.append([array[4], array[2], array[3], 0, 0, 0])
+                het_data.append([array[4], array[2], array[3], 0, 0, 0, 0])
 
             # Total atom count.
             het_data[-1][3] = het_data[-1][3] + 1
@@ -1215,9 +1239,13 @@ class PDB:
             elif element == 'C':
                 het_data[-1][5] = het_data[-1][5] + 1
 
+            # Nitrogen count.
+            elif element == 'N':
+                het_data[-1][6] = het_data[-1][6] + 1
+
             # Unsupported element type.
             else:
-                raise RelaxError, "The element " + `element` + " was expected to be one of ['H', 'C']."
+                raise RelaxError, "The element " + `element` + " was expected to be one of ['H', 'C', 'N']."
 
         # Sort by residue number.
         het_data.sort()
@@ -1255,18 +1283,28 @@ class PDB:
         # Print out.
         print "Creating the FORMUL records."
 
-        # Loop over the non-standard residues.
+        # Loop over the non-standard residues and generate and write the chemical formula.
         for het in het_data:
-            # Chemical formula.
+            # Initialise the chemical formula.
             formula = ''
+
+            # Protons.
             if het[4]:
                 if formula:
                     formula = formula + ' '
                 formula = formula + 'H' + `het[4]`
+
+            # Carbon.
             if het[5]:
                 if formula:
                     formula = formula + ' '
                 formula = formula + 'C' + `het[5]`
+
+            # Nitrogen
+            if het[6]:
+                if formula:
+                    formula = formula + ' '
+                formula = formula + 'N' + `het[6]`
 
             # The FORMUL record (chemical formula).
             file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
