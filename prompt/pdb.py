@@ -63,6 +63,16 @@ class PDB:
         tensor is represented by an ellipsoidal, spheroidal, or spherical geometric object with its
         origin located at the centre of mass (of the selected residues).  This diffusion tensor PDB
         file can subsequently read into any molecular viewer.
+        
+        There are four different types of residue within the PDB.  The centre of mass of the
+        selected residues is represented as a single carbon atom of the residue 'COM'.  The
+        ellipsoidal geometric shape constists of numberous H atoms of the residue 'TNS'.  The axes
+        of the tensor, when defined, are presented as the residue 'AXS' and consist of carbon atoms:
+        one at the centre of mass and one at the end of each eigenvector.  Finally, if Monte Carlo
+        simulations were run and the diffusion tensor parameters were allowed to vary then there
+        will be multiple 'SIM' residues, one for each simulation.  These are essentially the same as
+        the 'AXS' residue, representing the axes of the simulated tensors, and they will appear as a
+        distribution.
 
         As the Brownian rotational diffusion tensor is a measure of the rate of rotation about
         different axes - the larger the geometric object, the faster the diffusion of a molecule.
