@@ -191,7 +191,7 @@ class DiffTensorElement(Element):
 
         # Unit vector parallel to the axis.
         self.Dpar_unit = DiffAutoNumericObject(self._auto_object_Dpar_unit)
-        self.Dpar_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dpar_unit_sim, self)
+        self.Dpar_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dpar_unit, self)
 
 
         # Automatically generated objects for ellipsoidal diffusion.
@@ -206,9 +206,9 @@ class DiffTensorElement(Element):
         self.Dx_unit = DiffAutoNumericObject(self._auto_object_Dx_unit)
         self.Dy_unit = DiffAutoNumericObject(self._auto_object_Dy_unit)
         self.Dz_unit = DiffAutoNumericObject(self._auto_object_Dz_unit)
-        self.Dx_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dx_unit_sim, self)
-        self.Dy_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dy_unit_sim, self)
-        self.Dz_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dz_unit_sim, self)
+        self.Dx_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dx_unit, self)
+        self.Dy_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dy_unit, self)
+        self.Dz_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dz_unit, self)
 
 
     def __getattr__(self, name):
@@ -314,7 +314,7 @@ class DiffTensorElement(Element):
             return self.Diso_sim[i] + 2.0/3.0 * self.Da_sim[i]
 
 
-    def _auto_object_Dpar_unit(self):
+    def _auto_object_Dpar_unit(self, i=None):
         """Function for automatically calculating the Dpar unit vector.
 
         The unit vector parallel to the unique axis of the diffusion tensor is
@@ -323,49 +323,33 @@ class DiffTensorElement(Element):
             Dpar_unit  =  | sin(theta) * sin(phi) |.
                           |      cos(theta)       |
 
+        If the argument 'i' is supplied, then the Dpar unit vector for Monte Carlo simulation i is
+        returned instead.
+
         @return:    The Dpar unit vector.
         @rtype:     array (Float64)
         """
 
-        # Dpar unit vector (only generate the object if the diffusion is spheroidal).
+        # Only calculate the array if diffusion is spheroidal.
         if self.type == 'spheroid':
+            # Determine which angles to use.
+            if i == None:
+                theta = self.theta
+                phi = self.phi
+            else:
+                theta = self.theta_sim[i]
+                phi = self.phi_sim[i]
+
             # Initilise the vector.
             Dpar_unit = zeros(3, Float64)
 
             # Calculate the x, y, and z components.
-            Dpar_unit[0] = sin(self.theta) * cos(self.phi)
-            Dpar_unit[1] = sin(self.theta) * sin(self.phi)
-            Dpar_unit[2] = cos(self.theta)
+            Dpar_unit[0] = sin(theta) * cos(phi)
+            Dpar_unit[1] = sin(theta) * sin(phi)
+            Dpar_unit[2] = cos(theta)
 
             # Return the unit vector.
             return Dpar_unit
-
-
-    def _auto_object_Dpar_unit_sim(self, i):
-        """Function for automatically calculating the Dpar unit vector for the simulation i.
-
-        The unit vector parallel to the unique axis of the diffusion tensor is
-
-                          | sin(theta) * cos(phi) |
-            Dpar_unit  =  | sin(theta) * sin(phi) |.
-                          |      cos(theta)       |
-
-        @return:    The Dpar unit vector for Monte Carlo simulation i.
-        @rtype:     array (Float64)
-        """
-
-        # Dpar unit vector for simulation i (only generate the object if the diffusion is spheroidal).
-        if self.type == 'spheroid':
-            # Initilise the vector.
-            Dpar_unit_i = zeros(3, Float64)
-
-            # Calculate the x, y, and z components.
-            Dpar_unit_i[0] = sin(self.theta_sim[i]) * cos(self.phi_sim[i])
-            Dpar_unit_i[1] = sin(self.theta_sim[i]) * sin(self.phi_sim[i])
-            Dpar_unit_i[2] = cos(self.theta_sim[i])
-
-            # Return the unit vector.
-            return Dpar_unit_i
 
 
     def _auto_object_Dper_sim(self, i):
@@ -392,7 +376,7 @@ class DiffTensorElement(Element):
             return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i] * (1.0 + 3.0*self.Dr_sim[i])
 
 
-    def _auto_object_Dx_unit(self):
+    def _auto_object_Dx_unit(self, i=None):
         """Function for automatically calculating the Dx unit vector.
 
         The unit Dx vector is
@@ -401,43 +385,35 @@ class DiffTensorElement(Element):
             Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
                         |                    cos(alpha) * sin(beta)                      |
 
+        If the argument 'i' is supplied, then the Dx unit vector for Monte Carlo simulation i is
+        returned instead.
+
         @return:    The Dx unit vector.
         @rtype:     array (Float64)
         """
 
-        # Dx unit vector (only generate the object if the diffusion is ellipsoidal).
+        # Only calculate the array if diffusion is ellipsoidal.
         if self.type == 'ellipsoid':
+            # Determine which angles to use.
+            if i == None:
+                alpha = self.alpha
+                beta = self.beta
+                gamma = self.gamma
+            else:
+                alpha = self.alpha_sim[i]
+                beta = self.beta_sim[i]
+                gamma = self.gamma_sim[i]
+
             # Initilise the vector.
             Dx_unit = zeros(3, Float64)
 
             # Calculate the x, y, and z components.
-            Dx_unit[0] = -sin(self.alpha) * sin(self.gamma)  +  cos(self.alpha) * cos(self.beta) * cos(self.gamma)
-            Dx_unit[1] = -sin(self.alpha) * cos(self.gamma)  -  cos(self.alpha) * cos(self.beta) * sin(self.gamma)
-            Dx_unit[2] = cos(self.alpha) * sin(self.beta)
+            Dx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
+            Dx_unit[1] = -sin(alpha) * cos(gamma)  -  cos(alpha) * cos(beta) * sin(gamma)
+            Dx_unit[2] = cos(alpha) * sin(beta)
 
             # Return the unit vector.
             return Dx_unit
-
-
-    def _auto_object_Dx_unit_sim(self, i):
-        """Function for automatically calculating the Dx unit vector for simulation i.
-
-        @return:    The Dx unit vector for Monte Carlo simulation i.
-        @rtype:     array (Float64)
-        """
-
-        # Dx unit vector for simulation i (only generate the object if the diffusion is ellipsoidal).
-        if self.type == 'ellipsoid':
-            # Initilise the vector.
-            Dx_unit_i = zeros(3, Float64)
-
-            # Calculate the x, y, and z components.
-            Dx_unit_i[0] = -sin(self.alpha_sim[i]) * sin(self.gamma_sim[i])  +  cos(self.alpha_sim[i]) * cos(self.beta_sim[i]) * cos(self.gamma_sim[i])
-            Dx_unit_i[1] = -sin(self.alpha_sim[i]) * cos(self.gamma_sim[i])  -  cos(self.alpha_sim[i]) * cos(self.beta_sim[i]) * sin(self.gamma_sim[i])
-            Dx_unit_i[2] = cos(self.alpha_sim[i]) * sin(self.beta_sim[i])
-
-            # Return the unit vector.
-            return Dx_unit_i
 
 
     def _auto_object_Dy_sim(self, i):
@@ -452,7 +428,7 @@ class DiffTensorElement(Element):
             return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i] * (1.0 - 3.0*self.Dr_sim[i])
 
 
-    def _auto_object_Dy_unit(self):
+    def _auto_object_Dy_unit(self, i=None):
         """Function for automatically calculating the Dy unit vector.
 
         The unit Dy vector is
@@ -461,43 +437,35 @@ class DiffTensorElement(Element):
             Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
                         |                   sin(alpha) * sin(beta)                      |
 
+        If the argument 'i' is supplied, then the Dy unit vector for Monte Carlo simulation i is
+        returned instead.
+
         @return:    The Dy unit vector.
         @rtype:     array (Float64)
         """
 
-        # Dy unit vector (only generate the object if the diffusion is ellipsoidal).
+        # Only calculate the array if diffusion is ellipsoidal.
         if self.type == 'ellipsoid':
+            # Determine which angles to use.
+            if i == None:
+                alpha = self.alpha
+                beta = self.beta
+                gamma = self.gamma
+            else:
+                alpha = self.alpha_sim[i]
+                beta = self.beta_sim[i]
+                gamma = self.gamma_sim[i]
+
             # Initilise the vector.
             Dy_unit = zeros(3, Float64)
 
             # Calculate the x, y, and z components.
-            Dy_unit[0] = cos(self.alpha) * sin(self.gamma)  +  sin(self.alpha) * cos(self.beta) * cos(self.gamma)
-            Dy_unit[1] = cos(self.alpha) * cos(self.gamma)  -  sin(self.alpha) * cos(self.beta) * sin(self.gamma)
-            Dy_unit[2] = sin(self.alpha) * sin(self.beta)
+            Dy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
+            Dy_unit[1] = cos(alpha) * cos(gamma)  -  sin(alpha) * cos(beta) * sin(gamma)
+            Dy_unit[2] = sin(alpha) * sin(beta)
 
             # Return the unit vector.
             return Dy_unit
-
-
-    def _auto_object_Dy_unit_sim(self, i):
-        """Function for automatically calculating the Dy unit vector for simulation i.
-
-        @return:    The Dy unit vector for Monte Carlo simulation i.
-        @rtype:     array (Float64)
-        """
-
-        # Dy unit vector for simulation i (only generate the object if the diffusion is ellipsoidal).
-        if self.type == 'ellipsoid':
-            # Initilise the vector.
-            Dy_unit_i = zeros(3, Float64)
-
-            # Calculate the x, y, and z components.
-            Dy_unit_i[0] = cos(self.alpha_sim[i]) * sin(self.gamma_sim[i])  +  sin(self.alpha_sim[i]) * cos(self.beta_sim[i]) * cos(self.gamma_sim[i])
-            Dy_unit_i[1] = cos(self.alpha_sim[i]) * cos(self.gamma_sim[i])  -  sin(self.alpha_sim[i]) * cos(self.beta_sim[i]) * sin(self.gamma_sim[i])
-            Dy_unit_i[2] = sin(self.alpha_sim[i]) * sin(self.beta_sim[i])
-
-            # Return the unit vector.
-            return Dy_unit_i
 
 
     def _auto_object_Dz_sim(self, i):
@@ -512,7 +480,7 @@ class DiffTensorElement(Element):
             return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i] * (1.0 - 3.0*self.Dr_sim[i])
 
 
-    def _auto_object_Dz_unit(self):
+    def _auto_object_Dz_unit(self, i=None):
         """Function for automatically calculating the Dz unit vector.
 
         The unit Dz vector is
@@ -521,43 +489,35 @@ class DiffTensorElement(Element):
             Dz_unit  =  |  sin(beta) * sin(gamma) |.
                         |        cos(beta)        |
 
+        If the argument 'i' is supplied, then the Dz unit vector for Monte Carlo simulation i is
+        returned instead.
+
         @return:    The Dz unit vector.
         @rtype:     array (Float64)
         """
 
-        # Dz unit vector (only generate the object if the diffusion is ellipsoidal).
+        # Only calculate the array if diffusion is ellipsoidal.
         if self.type == 'ellipsoid':
+            # Determine which angles to use.
+            if i == None:
+                alpha = self.alpha
+                beta = self.beta
+                gamma = self.gamma
+            else:
+                alpha = self.alpha_sim[i]
+                beta = self.beta_sim[i]
+                gamma = self.gamma_sim[i]
+
             # Initilise the vector.
             Dz_unit = zeros(3, Float64)
 
             # Calculate the x, y, and z components.
-            Dz_unit[0] = -sin(self.beta) * cos(self.gamma)
-            Dz_unit[1] = sin(self.beta) * sin(self.gamma)
-            Dz_unit[2] = cos(self.beta)
+            Dz_unit[0] = -sin(beta) * cos(gamma)
+            Dz_unit[1] = sin(beta) * sin(gamma)
+            Dz_unit[2] = cos(beta)
 
             # Return the unit vector.
             return Dz_unit
-
-
-    def _auto_object_Dz_unit_sim(self, i):
-        """Function for automatically calculating the Dz unit vector for simulation i.
-
-        @return:    The Dz unit vector for Monte Carlo simulation i.
-        @rtype:     array (Float64)
-        """
-
-        # Dz unit vector for simulation i (only generate the object if the diffusion is ellipsoidal).
-        if self.type == 'ellipsoid':
-            # Initilise the vector.
-            Dz_unit_i = zeros(3, Float64)
-
-            # Calculate the x, y, and z components.
-            Dz_unit_i[0] = -sin(self.beta_sim[i]) * cos(self.gamma_sim[i])
-            Dz_unit_i[1] = sin(self.beta_sim[i]) * sin(self.gamma_sim[i])
-            Dz_unit_i[2] = cos(self.beta_sim[i])
-
-            # Return the unit vector.
-            return Dz_unit_i
 
 
     def _auto_object_rotation(self):
