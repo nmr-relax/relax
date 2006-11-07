@@ -4,9 +4,9 @@ import unittest
 from float  import *
 FLOAT_EPSILON=float(4.94065645841247e-324) # replace a a later date
 
-class Test_float(unittest.TestCase):
-    def test_GetFloatClass(self):
-        tests = ( CLASS_POS_INF, pos_inf,
+class testfloat(unittest.TestCase):
+    def testGetFloatClass(self):
+        tests = (CLASS_POS_INF, pos_inf,
                   CLASS_NEG_INF, neg_inf,
                   CLASS_POS_NORMAL, float(1e6),
                   CLASS_NEG_NORMAL, -float(1e6),
@@ -16,9 +16,7 @@ class Test_float(unittest.TestCase):
                   # WE DON'T USE SIGNAL NANS CLASS_SIGNAL_NAN,
                   CLASS_POS_ZERO,    float(0),
                   CLASS_NEG_ZERO,    -float(0))
-
-        i=iter(tests)
-        for (fpClass, value) in zip(i,i):
+        for (fpClass, value) in tests:
             self.assertEqual(fpClass, getFloatClass(value))
         
     
