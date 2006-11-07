@@ -177,17 +177,17 @@ class DiffTensorElement(Element):
 
         # The isotropic diffusion rate.
         #self.Diso = DiffAutoFloat(self._auto_object_tensor)
-        self.Diso_sim = DiffAutoSimArrayObject(self._auto_object_Diso_sim, self)
+        self.Diso_sim = DiffAutoSimArrayObject(self._auto_object_Diso, self)
 
 
         # Automatically generated objects for spherical diffusion.
         ##########################################################
 
         # Eigenvalue parallel to the unique axis.
-        self.Dpar_sim = DiffAutoSimArrayObject(self._auto_object_Dpar_sim, self)
+        self.Dpar_sim = DiffAutoSimArrayObject(self._auto_object_Dpar, self)
 
         # Eigenvalue perpendicular to the unique axis.
-        self.Dper_sim = DiffAutoSimArrayObject(self._auto_object_Dper_sim, self)
+        self.Dper_sim = DiffAutoSimArrayObject(self._auto_object_Dper, self)
 
         # Unit vector parallel to the axis.
         self.Dpar_unit = DiffAutoNumericObject(self._auto_object_Dpar_unit)
@@ -198,9 +198,9 @@ class DiffTensorElement(Element):
         ############################################################
 
         # Eigenvalues Dx, Dy, and Dz.
-        self.Dx_sim = DiffAutoSimArrayObject(self._auto_object_Dx_sim, self)
-        self.Dy_sim = DiffAutoSimArrayObject(self._auto_object_Dy_sim, self)
-        self.Dz_sim = DiffAutoSimArrayObject(self._auto_object_Dz_sim, self)
+        self.Dx_sim = DiffAutoSimArrayObject(self._auto_object_Dx, self)
+        self.Dy_sim = DiffAutoSimArrayObject(self._auto_object_Dy, self)
+        self.Dz_sim = DiffAutoSimArrayObject(self._auto_object_Dz, self)
 
         # Unit vectors parallel to the axes.
         self.Dx_unit = DiffAutoNumericObject(self._auto_object_Dx_unit)
@@ -291,7 +291,7 @@ class DiffTensorElement(Element):
         raise AttributeError, name
 
 
-    def _auto_object_Diso_sim(self, i):
+    def _auto_object_Diso(self, i=None):
         """Function for automatically calculating the Diso value for simulation i.
 
         @return:    The Diso value for Monte Carlo simulation i.
@@ -302,8 +302,8 @@ class DiffTensorElement(Element):
         return 1.0 / (6.0 * self.tm_sim[i])
 
 
-    def _auto_object_Dpar_sim(self, i):
-        """Function for automatically calculating the Dpar value for simulation i.
+    def _auto_object_Dpar(self, i=None):
+        """Function for automatically calculating the Dpar value.
 
         @return:    The Dpar value for Monte Carlo simulation i.
         @rtype:     float
@@ -352,8 +352,8 @@ class DiffTensorElement(Element):
             return Dpar_unit
 
 
-    def _auto_object_Dper_sim(self, i):
-        """Function for automatically calculating the Dper value for simulation i.
+    def _auto_object_Dper(self, i=None):
+        """Function for automatically calculating the Dper value.
 
         @return:    The Dper value for Monte Carlo simulation i.
         @rtype:     float
@@ -364,8 +364,8 @@ class DiffTensorElement(Element):
             return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i]
 
 
-    def _auto_object_Dx_sim(self, i):
-        """Function for automatically calculating the Dx value for simulation i.
+    def _auto_object_Dx(self, i=None):
+        """Function for automatically calculating the Dx value.
 
         @return:    The Dx value for Monte Carlo simulation i.
         @rtype:     float
@@ -416,8 +416,8 @@ class DiffTensorElement(Element):
             return Dx_unit
 
 
-    def _auto_object_Dy_sim(self, i):
-        """Function for automatically calculating the Dy value for simulation i.
+    def _auto_object_Dy(self, i=None):
+        """Function for automatically calculating the Dy value.
 
         @return:    The Dy value for Monte Carlo simulation i.
         @rtype:     float
@@ -468,8 +468,8 @@ class DiffTensorElement(Element):
             return Dy_unit
 
 
-    def _auto_object_Dz_sim(self, i):
-        """Function for automatically calculating the Dz value for simulation i.
+    def _auto_object_Dz(self, i=None):
+        """Function for automatically calculating the Dz value.
 
         @return:    The Dz value for Monte Carlo simulation i.
         @rtype:     float
@@ -520,7 +520,7 @@ class DiffTensorElement(Element):
             return Dz_unit
 
 
-    def _auto_object_rotation(self):
+    def _auto_object_rotation(self, i=None):
         """Function for automatically calculating the rotation matrix.
 
         Spherical diffusion
@@ -604,7 +604,7 @@ class DiffTensorElement(Element):
 
 
 
-    def _auto_object_tensor(self):
+    def _auto_object_tensor(self, i=None):
         """Function for automatically calculating the diffusion tensor (in the structural frame).
 
         The diffusion tensor is calculated using the diagonalised tensor and the rotation matrix
@@ -623,7 +623,7 @@ class DiffTensorElement(Element):
         return dot(R, dot(self.tensor_diag, transpose(R)))
 
 
-    def _auto_object_tensor_diag(self):
+    def _auto_object_tensor_diag(self, i=None):
         """Function for automatically calculating the diagonalised diffusion tensor.
 
         The diagonalised spherical diffusion tensor is defined as
