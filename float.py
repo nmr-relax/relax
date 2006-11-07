@@ -154,7 +154,7 @@ def getFloatClass(float):
     if isFinite(float):
          # check and store is positive
          positive = isPositive(float)
-         if isZero():
+         if isZero(float):
             if positive:
                 result = CLASS_POS_ZERO
             else:
@@ -178,7 +178,7 @@ def getFloatClass(float):
             result  = CLASS_POS_INF
         elif isNegInf(float):
             result  = CLASS_NEG_INF
-   
+    return result
         
 
 def packBytesAsPyFloat(bytes):
@@ -612,16 +612,19 @@ def isInf(obj):
     # if exponent is not all ones this can't be a Inf    
     if not isExpAllOnes(obj):
         result =  False
-    
-    # get the mantissa as a byte array properly masked    
-    manBytes = getMantissaBytes(obj)
-    
-    for byte in manBytes:
-        #check if any of the unmasked mantissa bytes are zero
-        # to be a NaN the mantissa must be zero
-        if byte > 0:
-            return False
-    return True
+    else:
+        # get the mantissa as a byte array properly masked    
+        manBytes = getMantissaBytes(obj)
+        
+        for byte in manBytes:
+            #check if any of the unmasked mantissa bytes are zero
+            # to be a NaN the mantissa must be zero
+            if byte > 0:
+                result = False
+                break
+            result = True
+            
+    return result
         
 def isPosInf(obj):
     ''' check to see if a python float is positive infinity 
