@@ -219,7 +219,7 @@ class PDB:
 
         # Final print out.
         print "    Total mass:      M = " + `M`
-        print "    Center of mass:  R = " + `R`
+        print "    Centre of mass:  R = " + `R`
 
         # Return the centre of mass.
         return R
@@ -266,7 +266,7 @@ class PDB:
         res_num = 1
 
 
-        # Center of mass.
+        # Centre of mass.
         #################
 
         # Calculate the centre of mass.
@@ -408,7 +408,7 @@ class PDB:
         @type chain_id:     str
         @param res_num:     The residue number.
         @type res_num:      int
-        @param R:           The center of mass.
+        @param R:           The centre of mass.
         @type R:            Numeric array (Float64)
         @param i:           The Monte Carlo simulation index.
         @type i:            int
@@ -499,7 +499,7 @@ class PDB:
         @type chain_id:     str
         @param res_num:     The residue number.
         @type res_num:      int
-        @param R:           The center of mass.
+        @param R:           The centre of mass.
         @type R:            Numeric array (Float64)
         @param i:           The Monte Carlo simulation index.
         @type i:            int
@@ -938,7 +938,7 @@ class PDB:
             v in [0, 1].
 
         Because theta is defined between [0, pi] and phi is defined between [0, 2pi], for a uniform
-        distribution u is only incremented half of 'inc'.  The unit vectors are gerenated using the
+        distribution u is only incremented half of 'inc'.  The unit vectors are generated using the
         equation
 
                        | cos(theta) * sin(phi) |

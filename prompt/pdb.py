@@ -66,7 +66,7 @@ class PDB:
         
         There are four different types of residue within the PDB.  The centre of mass of the
         selected residues is represented as a single carbon atom of the residue 'COM'.  The
-        ellipsoidal geometric shape constists of numberous H atoms of the residue 'TNS'.  The axes
+        ellipsoidal geometric shape consists of numerous H atoms of the residue 'TNS'.  The axes
         of the tensor, when defined, are presented as the residue 'AXS' and consist of carbon atoms:
         one at the centre of mass and one at the end of each eigenvector.  Finally, if Monte Carlo
         simulations were run and the diffusion tensor parameters were allowed to vary then there
