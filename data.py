@@ -72,7 +72,7 @@ class Data:
         text = "The data class containing all permanent program data.\n"
         text = text + "The class contains the following objects:\n"
         for name in dir(self):
-            if match("^__", name):
+            if match("^_", name):
                 continue
             text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
         return text
@@ -93,7 +93,7 @@ class Element:
 
         # Data structures.
         for name in dir(self):
-            if match("^__", name):
+            if match("^_", name):
                 continue
             text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
 
@@ -122,7 +122,7 @@ class SpecificData(DictType):
                     text = text + "  , "
                 text = text + "Key " + `key` + ":\n"
                 for name in dir(self[key]):
-                    if match("^__", name):
+                    if match("^_", name):
                         continue
                     text = text + "    " + name + ", " + `type(getattr(self[key], name))` + "\n"
                 i = i + 1
@@ -163,6 +163,37 @@ class DiffTensorElement(Element):
     def __init__(self):
         """An empty data container for the diffusion tensor elements."""
 
+        # Automatically generated objects for all tensor types.
+        #######################################################
+
+        # The diagonalised diffusion tensor (within the diffusion frame).
+        self.tensor_diag = DiffAutoNumericObject(self._auto_object_tensor_diag)
+
+        # The diffusion tensor (within the structural frame).
+        self.tensor = DiffAutoNumericObject(self._auto_object_tensor)
+
+        # The rotation matrix (diffusion frame to structural frame).
+        self.rotation = DiffAutoNumericObject(self._auto_object_rotation)
+
+        # The isotropic diffusion rate.
+        #self.Diso = DiffAutoFloat(self._auto_object_tensor)
+
+
+        # Automatically generated objects for spherical diffusion.
+        ##########################################################
+
+        # Unit vector parallel to the axis.
+        self.Dpar_unit = DiffAutoNumericObject(self._auto_object_Dpar_unit)
+
+
+        # Automatically generated objects for ellipsoidal diffusion.
+        ############################################################
+
+        # Unit vectors parallel to the axes.
+        self.Dx_unit = DiffAutoNumericObject(self._auto_object_Dx_unit)
+        self.Dy_unit = DiffAutoNumericObject(self._auto_object_Dy_unit)
+        self.Dz_unit = DiffAutoNumericObject(self._auto_object_Dz_unit)
+
 
     def __getattr__(self, name):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
@@ -173,22 +204,6 @@ class DiffTensorElement(Element):
         The equation for calculating Diso is
 
             Diso  =  1 / (6tm).
-
-
-        Spherical diffusion
-        ===================
-
-        The diagonalised spherical diffusion tensor is defined as
-
-                       | Diso     0     0 |
-            tensor  =  |    0  Diso     0 |.
-                       |    0     0  Diso |
-
-        The rotation matrix required to shift from the diffusion tensor frame to the PDB frame is
-
-                  | 1  0  0 |
-            R  =  | 0  1  0 |.
-                  | 0  0  1 |
 
 
         Spheroidal diffusion
@@ -202,25 +217,6 @@ class DiffTensorElement(Element):
 
             Dratio  =  Dpar / Dper.
 
-        The unit vector parallel to the unique axis of the diffusion tensor is
-
-                          | sin(theta) * cos(phi) |
-            Dpar_unit  =  | sin(theta) * sin(phi) |.
-                          |      cos(theta)       |
-
-        The diagonalised spheroidal diffusion tensor is defined as
-
-                       | Dper     0     0 |
-            tensor  =  |    0  Dper     0 |.
-                       |    0     0  Dpar |
-
-        The rotation matrix required to shift from the diffusion tensor frame to the PDB frame is
-        equal to
-
-                  |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
-            R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
-                  | -sin(theta)              0          cos(theta)            |
-
 
         Ellipsoidal diffusion
         =====================
@@ -233,38 +229,7 @@ class DiffTensorElement(Element):
 
             Dz  =  Diso + 2/3 Da.
 
-        The unit Dx vector is
 
-                        | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
-            Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |,
-                        |                    cos(alpha) * sin(beta)                      |
-
-        the unit Dy vector is
-
-                        | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
-            Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |,
-                        |                   sin(alpha) * sin(beta)                      |
-
-        and the unit Dz vector is
-
-                        | -sin(beta) * cos(gamma) |
-            Dz_unit  =  |  sin(beta) * sin(gamma) |.
-                        |        cos(beta)        |
-
-        The diagonalised ellipsoidal diffusion tensor is defined as
-
-                       | Dx   0   0 |
-            tensor  =  |  0  Dy   0 |.
-                       |  0   0  Dz |
-
-        The rotation matrix required to shift from the diffusion tensor frame to the PDB frame is
-        equal to
-
-            R  =  | Dx_unit  Dy_unit  Dz_unit |,
-
-                  | Dx_unit[0]  Dy_unit[0]  Dz_unit[0] |
-               =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
-                  | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
         """
 
         # All tensor types.
@@ -273,27 +238,6 @@ class DiffTensorElement(Element):
         # Diso.
         if name == 'Diso':
             return 1.0 / (6.0 * self.tm)
-
-
-        # Spherical diffusion.
-        ######################
-
-        # The diffusion tensor.
-        if (name == 'tensor_diag' or name == 'tensor') and self.type == 'sphere':
-            # Initialise the tensor.
-            tensor = zeros((3, 3), Float64)
-
-            # Populate the diagonal elements.
-            tensor[0, 0] = self.Diso
-            tensor[1, 1] = self.Diso
-            tensor[2, 2] = self.Diso
-
-            # Return the tensor.
-            return tensor
-
-        # The rotation matrix.
-        if name == 'rotation' and self.type == 'sphere':
-            return identity(3, Float64)
 
 
         # Spheroidal diffusion.
@@ -311,8 +255,41 @@ class DiffTensorElement(Element):
         if name == 'Dratio' and self.type == 'spheroid':
             return self.Dpar / self.Dper
 
-        # Dpar unit vector.
-        if name == 'Dpar_unit' and self.type == 'spheroid':
+
+        # Ellipsoidal diffusion.
+        ########################
+
+        # Dx.
+        if name == 'Dx' and self.type == 'ellipsoid':
+            return self.Diso - 1.0/3.0 * self.Da * (1.0 + 3.0*self.Dr)
+
+        # Dy.
+        if name == 'Dy' and self.type == 'ellipsoid':
+            return self.Diso - 1.0/3.0 * self.Da * (1.0 - 3.0*self.Dr)
+
+        # Dz.
+        if name == 'Dz' and self.type == 'ellipsoid':
+            return self.Diso + 2.0/3.0 * self.Da
+
+        # The attribute asked for does not exist.
+        raise AttributeError, name
+
+
+    def _auto_object_Dpar_unit(self):
+        """Function for automatically calculating the Dpar unit vector.
+
+        The unit vector parallel to the unique axis of the diffusion tensor is
+
+                          | sin(theta) * cos(phi) |
+            Dpar_unit  =  | sin(theta) * sin(phi) |.
+                          |      cos(theta)       |
+
+        @return:    The Dpar unit vector.
+        @rtype:     array (Float64)
+        """
+
+        # Dpar unit vector (only generate the object if the diffusion is spheroidal).
+        if self.type == 'spheroid':
             # Initilise the vector.
             Dpar_unit = zeros(3, Float64)
 
@@ -324,27 +301,135 @@ class DiffTensorElement(Element):
             # Return the unit vector.
             return Dpar_unit
 
-        # The diffusion tensor (diagonalised).
-        if name == 'tensor_diag' and self.type == 'spheroid':
-            # Initialise the tensor.
-            tensor = zeros((3, 3), Float64)
 
-            # Populate the diagonal elements.
-            tensor[0, 0] = self.Dper
-            tensor[1, 1] = self.Dper
-            tensor[2, 2] = self.Dpar
+    def _auto_object_Dx_unit(self):
+        """Function for automatically calculating the Dx unit vector.
 
-            # Return the tensor.
-            return tensor
+        The unit Dx vector is
 
-        # The diffusion tensor (within the structural frame).
-        if name == 'tensor' and self.type == 'spheroid':
-            # Rotation (R . tensor . R^T).
-            R = self.rotation
-            return dot(R, dot(self.tensor_diag, transpose(R)))
+                        | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+            Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
+                        |                    cos(alpha) * sin(beta)                      |
 
-        # The rotation matrix.
-        if name == 'rotation' and self.type == 'spheroid':
+        @return:    The Dx unit vector.
+        @rtype:     array (Float64)
+        """
+
+        # Dx unit vector (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dx_unit = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dx_unit[0] = -sin(self.alpha) * sin(self.gamma)  +  cos(self.alpha) * cos(self.beta) * cos(self.gamma)
+            Dx_unit[1] = -sin(self.alpha) * cos(self.gamma)  -  cos(self.alpha) * cos(self.beta) * sin(self.gamma)
+            Dx_unit[2] = cos(self.alpha) * sin(self.beta)
+
+            # Return the unit vector.
+            return Dx_unit
+
+
+    def _auto_object_Dy_unit(self):
+        """Function for automatically calculating the Dy unit vector.
+
+        The unit Dy vector is
+
+                        | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+            Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
+                        |                   sin(alpha) * sin(beta)                      |
+
+        @return:    The Dy unit vector.
+        @rtype:     array (Float64)
+        """
+
+        # Dy unit vector (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dy_unit = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dy_unit[0] = cos(self.alpha) * sin(self.gamma)  +  sin(self.alpha) * cos(self.beta) * cos(self.gamma)
+            Dy_unit[1] = cos(self.alpha) * cos(self.gamma)  -  sin(self.alpha) * cos(self.beta) * sin(self.gamma)
+            Dy_unit[2] = sin(self.alpha) * sin(self.beta)
+
+            # Return the unit vector.
+            return Dy_unit
+
+
+    def _auto_object_Dz_unit(self):
+        """Function for automatically calculating the Dz unit vector.
+
+        The unit Dz vector is
+
+                        | -sin(beta) * cos(gamma) |
+            Dz_unit  =  |  sin(beta) * sin(gamma) |.
+                        |        cos(beta)        |
+
+        @return:    The Dz unit vector.
+        @rtype:     array (Float64)
+        """
+
+        # Dz unit vector (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dz_unit = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dz_unit[0] = -sin(self.beta) * cos(self.gamma)
+            Dz_unit[1] = sin(self.beta) * sin(self.gamma)
+            Dz_unit[2] = cos(self.beta)
+
+            # Return the unit vector.
+            return Dz_unit
+
+
+    def _auto_object_rotation(self):
+        """Function for automatically calculating the rotation matrix.
+
+        Spherical diffusion
+        ===================
+
+        As the orientation of the diffusion tensor within the structural frame is undefined when the
+        molecule diffuses as a sphere, the rotation matrix is simply the identity matrix
+
+                  | 1  0  0 |
+            R  =  | 0  1  0 |.
+                  | 0  0  1 |
+
+
+        Spheroidal diffusion
+        ====================
+
+        The rotation matrix required to shift from the diffusion tensor frame to the structural
+        frame is equal to
+
+                  |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
+            R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
+                  | -sin(theta)              0          cos(theta)            |
+
+
+        Ellipsoidal diffusion
+        =====================
+
+        The rotation matrix required to shift from the diffusion tensor frame to the structural
+        frame is equal to
+
+            R  =  | Dx_unit  Dy_unit  Dz_unit |,
+
+                  | Dx_unit[0]  Dy_unit[0]  Dz_unit[0] |
+               =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
+                  | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
+
+        @return:    The rotation matrix.
+        @rtype:     matrix (Float64)
+        """
+
+        # The rotation matrix for the sphere.
+        if self.type == 'sphere':
+            return identity(3, Float64)
+
+        # The rotation matrix for the spheroid.
+        elif self.type == 'spheroid':
             # Initialise the rotation matrix.
             rotation = identity(3, Float64)
 
@@ -363,83 +448,8 @@ class DiffTensorElement(Element):
             # Return the tensor.
             return rotation
 
-
-        # Ellipsoidal diffusion.
-        ########################
-
-        # Dx.
-        if name == 'Dx' and self.type == 'ellipsoid':
-            return self.Diso - 1.0/3.0 * self.Da * (1.0 + 3.0*self.Dr)
-
-        # Dy.
-        if name == 'Dy' and self.type == 'ellipsoid':
-            return self.Diso - 1.0/3.0 * self.Da * (1.0 - 3.0*self.Dr)
-
-        # Dz.
-        if name == 'Dz' and self.type == 'ellipsoid':
-            return self.Diso + 2.0/3.0 * self.Da
-
-        # Dx unit vector.
-        if name == 'Dx_unit' and self.type == 'ellipsoid':
-            # Initilise the vector.
-            Dx_unit = zeros(3, Float64)
-
-            # Calculate the x, y, and z components.
-            Dx_unit[0] = -sin(self.alpha) * sin(self.gamma)  +  cos(self.alpha) * cos(self.beta) * cos(self.gamma)
-            Dx_unit[1] = -sin(self.alpha) * cos(self.gamma)  -  cos(self.alpha) * cos(self.beta) * sin(self.gamma)
-            Dx_unit[2] = cos(self.alpha) * sin(self.beta)
-
-            # Return the unit vector.
-            return Dx_unit
-
-        # Dy unit vector.
-        if name == 'Dy_unit' and self.type == 'ellipsoid':
-            # Initilise the vector.
-            Dy_unit = zeros(3, Float64)
-
-            # Calculate the x, y, and z components.
-            Dy_unit[0] = cos(self.alpha) * sin(self.gamma)  +  sin(self.alpha) * cos(self.beta) * cos(self.gamma)
-            Dy_unit[1] = cos(self.alpha) * cos(self.gamma)  -  sin(self.alpha) * cos(self.beta) * sin(self.gamma)
-            Dy_unit[2] = sin(self.alpha) * sin(self.beta)
-
-            # Return the unit vector.
-            return Dy_unit
-
-        # Dz unit vector.
-        if name == 'Dz_unit' and self.type == 'ellipsoid':
-            # Initilise the vector.
-            Dz_unit = zeros(3, Float64)
-
-            # Calculate the x, y, and z components.
-            Dz_unit[0] = -sin(self.beta) * cos(self.gamma)
-            Dz_unit[1] = sin(self.beta) * sin(self.gamma)
-            Dz_unit[2] = cos(self.beta)
-
-            # Return the unit vector.
-            return Dz_unit
-
-
-        # The diffusion tensor (diagonalised).
-        if name == 'tensor_diag' and self.type == 'ellipsoid':
-            # Initialise the tensor.
-            tensor = zeros((3, 3), Float64)
-
-            # Populate the diagonal elements.
-            tensor[0, 0] = self.Dx
-            tensor[1, 1] = self.Dy
-            tensor[2, 2] = self.Dz
-
-            # Return the tensor.
-            return tensor
-
-        # The diffusion tensor (within the structural frame).
-        if name == 'tensor' and self.type == 'ellipsoid':
-            # Rotation (R . tensor . R^T).
-            R = self.rotation
-            return dot(R, dot(self.tensor_diag, transpose(R)))
-
-        # The rotation matrix.
-        if name == 'rotation' and self.type == 'ellipsoid':
+        # The rotation matrix for the ellipsoid.
+        elif self.type == 'ellipsoid':
             # Initialise the rotation matrix.
             rotation = identity(3, Float64)
 
@@ -455,8 +465,169 @@ class DiffTensorElement(Element):
             # Return the tensor.
             return rotation
 
-        # The attribute asked for does not exist.
-        raise AttributeError, name
+
+
+    def _auto_object_tensor(self):
+        """Function for automatically calculating the diffusion tensor (in the structural frame).
+
+        The diffusion tensor is calculated using the diagonalised tensor and the rotation matrix
+        through the equation
+
+            R . tensor_diag . R^T.
+
+        @return:    The diffusion tensor (within the structural frame).
+        @rtype:     matrix (Float64)
+        """
+
+        # Alias the rotation matrix.
+        R = self.rotation
+
+        # Rotation (R . tensor_diag . R^T).
+        return dot(R, dot(self.tensor_diag, transpose(R)))
+
+
+    def _auto_object_tensor_diag(self):
+        """Function for automatically calculating the diagonalised diffusion tensor.
+
+        The diagonalised spherical diffusion tensor is defined as
+
+                       | Diso     0     0 |
+            tensor  =  |    0  Diso     0 |.
+                       |    0     0  Diso |
+
+        The diagonalised spheroidal tensor is defined as
+
+                       | Dper     0     0 |
+            tensor  =  |    0  Dper     0 |.
+                       |    0     0  Dpar |
+
+        The diagonalised ellipsoidal diffusion tensor is defined as
+
+                       | Dx   0   0 |
+            tensor  =  |  0  Dy   0 |.
+                       |  0   0  Dz |
+
+        @return:    The diagonalised diffusion tensor.
+        @rtype:     matrix (Float64)
+        """
+
+        # Spherical diffusion tensor.
+        if self.type == 'sphere':
+            # Initialise the tensor.
+            tensor = zeros((3, 3), Float64)
+
+            # Populate the diagonal elements.
+            tensor[0, 0] = self.Diso
+            tensor[1, 1] = self.Diso
+            tensor[2, 2] = self.Diso
+
+            # Return the tensor.
+            return tensor
+
+        # Spheroidal diffusion tensor.
+        elif self.type == 'spheroid':
+            # Initialise the tensor.
+            tensor = zeros((3, 3), Float64)
+
+            # Populate the diagonal elements.
+            tensor[0, 0] = self.Dper
+            tensor[1, 1] = self.Dper
+            tensor[2, 2] = self.Dpar
+
+            # Return the tensor.
+            return tensor
+
+        # Ellipsoidal diffusion tensor.
+        elif self.type == 'ellipsoid':
+            # Initialise the tensor.
+            tensor = zeros((3, 3), Float64)
+
+            # Populate the diagonal elements.
+            tensor[0, 0] = self.Dx
+            tensor[1, 1] = self.Dy
+            tensor[2, 2] = self.Dz
+
+            # Return the tensor.
+            return tensor
+
+
+# Automatic Numeric-like objects.
+class DiffAutoNumericObject(ListType):
+    def __init__(self, object):
+        """Class for implementing an automatically generated Numeric-like object."""
+
+        # Function which returns the Numeric data structure (to be called at run-time).
+        self.object = object
+
+
+    def __add__(self, x):
+        """Function for the implementation of addition.
+
+        @return:    The array plus x.
+        @rtype:     array
+        """
+
+        return self.object() + x
+
+
+    def __getitem__(self, i):
+        """Function for selecting individual elements of the array.
+
+        @return:    Element i of the array.
+        @rtype:     float
+        """
+
+        return self.object()[i]
+
+
+    def __iter__(self):
+        """Function for looping over the array.
+
+        @return:    An iterator object for looping over the array.
+        @rtype:     iterator object
+        """
+
+        return iter(self.object())
+
+
+    def __len__(self):
+        """Function to calculate the length of the array.
+
+        @return:    The length of the array.
+        @rtype:     int
+        """
+
+        return len(self.object())
+
+
+    def __mul__(self, x):
+        """Function for the implementation of multiplication.
+
+        @return:    The array multiplied by x.
+        @rtype:     array
+        """
+
+        return self.object() * x
+
+
+    def __repr__(self):
+        """Function for computing the 'official' string representation of the array.
+
+        @return:    The string representation of the array.
+        @rtype:     string
+        """
+
+        return `self.object()`
+
+
+    def __setitem__(self, key, value):
+        """Disallow modifications to the array.
+
+        @raise:     RelaxError.
+        """
+
+        raise RelaxError, "This object cannot be modified!"
+
 
 
 
