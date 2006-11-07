@@ -177,22 +177,38 @@ class DiffTensorElement(Element):
 
         # The isotropic diffusion rate.
         #self.Diso = DiffAutoFloat(self._auto_object_tensor)
+        self.Diso_sim = DiffAutoSimArrayObject(self._auto_object_Diso_sim, self)
 
 
         # Automatically generated objects for spherical diffusion.
         ##########################################################
 
+        # Eigenvalue parallel to the unique axis.
+        self.Dpar_sim = DiffAutoSimArrayObject(self._auto_object_Dpar_sim, self)
+
+        # Eigenvalue perpendicular to the unique axis.
+        self.Dper_sim = DiffAutoSimArrayObject(self._auto_object_Dper_sim, self)
+
         # Unit vector parallel to the axis.
         self.Dpar_unit = DiffAutoNumericObject(self._auto_object_Dpar_unit)
+        self.Dpar_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dpar_unit_sim, self)
 
 
         # Automatically generated objects for ellipsoidal diffusion.
         ############################################################
 
+        # Eigenvalues Dx, Dy, and Dz.
+        self.Dx_sim = DiffAutoSimArrayObject(self._auto_object_Dx_sim, self)
+        self.Dy_sim = DiffAutoSimArrayObject(self._auto_object_Dy_sim, self)
+        self.Dz_sim = DiffAutoSimArrayObject(self._auto_object_Dz_sim, self)
+
         # Unit vectors parallel to the axes.
         self.Dx_unit = DiffAutoNumericObject(self._auto_object_Dx_unit)
         self.Dy_unit = DiffAutoNumericObject(self._auto_object_Dy_unit)
         self.Dz_unit = DiffAutoNumericObject(self._auto_object_Dz_unit)
+        self.Dx_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dx_unit_sim, self)
+        self.Dy_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dy_unit_sim, self)
+        self.Dz_unit_sim = DiffAutoSimArrayObject(self._auto_object_Dz_unit_sim, self)
 
 
     def __getattr__(self, name):
@@ -275,6 +291,29 @@ class DiffTensorElement(Element):
         raise AttributeError, name
 
 
+    def _auto_object_Diso_sim(self, i):
+        """Function for automatically calculating the Diso value for simulation i.
+
+        @return:    The Diso value for Monte Carlo simulation i.
+        @rtype:     float
+        """
+
+        # Diso value for simulation i.
+        return 1.0 / (6.0 * self.tm_sim[i])
+
+
+    def _auto_object_Dpar_sim(self, i):
+        """Function for automatically calculating the Dpar value for simulation i.
+
+        @return:    The Dpar value for Monte Carlo simulation i.
+        @rtype:     float
+        """
+
+        # Dpar value for simulation i (only generate the object if the diffusion is spheroidal).
+        if self.type == 'spheroid':
+            return self.Diso_sim[i] + 2.0/3.0 * self.Da_sim[i]
+
+
     def _auto_object_Dpar_unit(self):
         """Function for automatically calculating the Dpar unit vector.
 
@@ -300,6 +339,57 @@ class DiffTensorElement(Element):
 
             # Return the unit vector.
             return Dpar_unit
+
+
+    def _auto_object_Dpar_unit_sim(self, i):
+        """Function for automatically calculating the Dpar unit vector for the simulation i.
+
+        The unit vector parallel to the unique axis of the diffusion tensor is
+
+                          | sin(theta) * cos(phi) |
+            Dpar_unit  =  | sin(theta) * sin(phi) |.
+                          |      cos(theta)       |
+
+        @return:    The Dpar unit vector for Monte Carlo simulation i.
+        @rtype:     array (Float64)
+        """
+
+        # Dpar unit vector for simulation i (only generate the object if the diffusion is spheroidal).
+        if self.type == 'spheroid':
+            # Initilise the vector.
+            Dpar_unit_i = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dpar_unit_i[0] = sin(self.theta_sim[i]) * cos(self.phi_sim[i])
+            Dpar_unit_i[1] = sin(self.theta_sim[i]) * sin(self.phi_sim[i])
+            Dpar_unit_i[2] = cos(self.theta_sim[i])
+
+            # Return the unit vector.
+            return Dpar_unit_i
+
+
+    def _auto_object_Dper_sim(self, i):
+        """Function for automatically calculating the Dper value for simulation i.
+
+        @return:    The Dper value for Monte Carlo simulation i.
+        @rtype:     float
+        """
+
+        # Dper value for simulation i (only generate the object if the diffusion is spheroidal).
+        if self.type == 'spheroid':
+            return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i]
+
+
+    def _auto_object_Dx_sim(self, i):
+        """Function for automatically calculating the Dx value for simulation i.
+
+        @return:    The Dx value for Monte Carlo simulation i.
+        @rtype:     float
+        """
+
+        # Dx value for simulation i (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i] * (1.0 + 3.0*self.Dr_sim[i])
 
 
     def _auto_object_Dx_unit(self):
@@ -329,6 +419,39 @@ class DiffTensorElement(Element):
             return Dx_unit
 
 
+    def _auto_object_Dx_unit_sim(self, i):
+        """Function for automatically calculating the Dx unit vector for simulation i.
+
+        @return:    The Dx unit vector for Monte Carlo simulation i.
+        @rtype:     array (Float64)
+        """
+
+        # Dx unit vector for simulation i (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dx_unit_i = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dx_unit_i[0] = -sin(self.alpha_sim[i]) * sin(self.gamma_sim[i])  +  cos(self.alpha_sim[i]) * cos(self.beta_sim[i]) * cos(self.gamma_sim[i])
+            Dx_unit_i[1] = -sin(self.alpha_sim[i]) * cos(self.gamma_sim[i])  -  cos(self.alpha_sim[i]) * cos(self.beta_sim[i]) * sin(self.gamma_sim[i])
+            Dx_unit_i[2] = cos(self.alpha_sim[i]) * sin(self.beta_sim[i])
+
+            # Return the unit vector.
+            return Dx_unit_i
+
+
+    def _auto_object_Dy_sim(self, i):
+        """Function for automatically calculating the Dy value for simulation i.
+
+        @return:    The Dy value for Monte Carlo simulation i.
+        @rtype:     float
+        """
+
+        # Dy value for simulation i (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i] * (1.0 - 3.0*self.Dr_sim[i])
+
+
     def _auto_object_Dy_unit(self):
         """Function for automatically calculating the Dy unit vector.
 
@@ -356,6 +479,39 @@ class DiffTensorElement(Element):
             return Dy_unit
 
 
+    def _auto_object_Dy_unit_sim(self, i):
+        """Function for automatically calculating the Dy unit vector for simulation i.
+
+        @return:    The Dy unit vector for Monte Carlo simulation i.
+        @rtype:     array (Float64)
+        """
+
+        # Dy unit vector for simulation i (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dy_unit_i = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dy_unit_i[0] = cos(self.alpha_sim[i]) * sin(self.gamma_sim[i])  +  sin(self.alpha_sim[i]) * cos(self.beta_sim[i]) * cos(self.gamma_sim[i])
+            Dy_unit_i[1] = cos(self.alpha_sim[i]) * cos(self.gamma_sim[i])  -  sin(self.alpha_sim[i]) * cos(self.beta_sim[i]) * sin(self.gamma_sim[i])
+            Dy_unit_i[2] = sin(self.alpha_sim[i]) * sin(self.beta_sim[i])
+
+            # Return the unit vector.
+            return Dy_unit_i
+
+
+    def _auto_object_Dz_sim(self, i):
+        """Function for automatically calculating the Dz value for simulation i.
+
+        @return:    The Dz value for Monte Carlo simulation i.
+        @rtype:     float
+        """
+
+        # Dz value for simulation i (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            return self.Diso_sim[i] - 1.0/3.0 * self.Da_sim[i] * (1.0 - 3.0*self.Dr_sim[i])
+
+
     def _auto_object_Dz_unit(self):
         """Function for automatically calculating the Dz unit vector.
 
@@ -381,6 +537,27 @@ class DiffTensorElement(Element):
 
             # Return the unit vector.
             return Dz_unit
+
+
+    def _auto_object_Dz_unit_sim(self, i):
+        """Function for automatically calculating the Dz unit vector for simulation i.
+
+        @return:    The Dz unit vector for Monte Carlo simulation i.
+        @rtype:     array (Float64)
+        """
+
+        # Dz unit vector for simulation i (only generate the object if the diffusion is ellipsoidal).
+        if self.type == 'ellipsoid':
+            # Initilise the vector.
+            Dz_unit_i = zeros(3, Float64)
+
+            # Calculate the x, y, and z components.
+            Dz_unit_i[0] = -sin(self.beta_sim[i]) * cos(self.gamma_sim[i])
+            Dz_unit_i[1] = sin(self.beta_sim[i]) * sin(self.gamma_sim[i])
+            Dz_unit_i[2] = cos(self.beta_sim[i])
+
+            # Return the unit vector.
+            return Dz_unit_i
 
 
     def _auto_object_rotation(self):
@@ -627,6 +804,104 @@ class DiffAutoNumericObject(ListType):
         """
 
         raise RelaxError, "This object cannot be modified!"
+
+
+
+# Automatic array-like objects for the Monte Carlo simulations.
+class DiffAutoSimArrayObject(ListType):
+    def __init__(self, object, diff_data):
+        """Class for implementing an automatically generated array-like object for the MC sims."""
+
+        # Function which returns the Numeric data structure (to be called at run-time).
+        self.object = object
+
+        # The local scope of the diffusion tensor data structure.
+        self.diff_data = diff_data
+
+
+    def __add__(self, x):
+        """Disallow addition.
+
+        @raise:     RelaxError.
+        """
+
+        raise RelaxError, "Addition is not allowed."
+
+
+    def __getitem__(self, i):
+        """Function for selecting individual elements of the array.
+
+        @return:    Element i of the array.
+        @rtype:     float
+        """
+
+        return self.object(i)
+
+
+    def __iter__(self):
+        """Function for looping over the array.
+
+        @return:    An iterator object for looping over the array.
+        @rtype:     iterator object
+        """
+
+        return iter(self.create_array())
+
+
+    def __len__(self):
+        """Function to calculate the length of the array.
+
+        @return:    The length of the array.
+        @rtype:     int
+        """
+
+        return len(self.diff_data.tm_sim)
+
+
+    def __mul__(self, x):
+        """Disallow multiplication.
+
+        @raise:     RelaxError.
+        """
+
+        raise RelaxError, "Multiplication is not allowed."
+
+
+    def __repr__(self):
+        """Function for computing the 'official' string representation of the array.
+
+        @return:    The string representation of the array.
+        @rtype:     string
+        """
+
+        return `self.create_array()`
+
+
+    def __setitem__(self, key, value):
+        """Disallow modifications to the array.
+
+        @raise:     RelaxError.
+        """
+
+        raise RelaxError, "This object cannot be modified!"
+
+
+    def create_array(self):
+        """Generate the array.
+
+        @return:    The array of objects.
+        @rtype:     list
+        """
+
+        # Initialise the array.
+        array = []
+
+        # Loop over the elements, appending the structure to the array.
+        for i in xrange(len(self.diff_data.tm_sim)):
+            array.append(self.object(i))
+
+        # Return the array.
+        return array
 
 
 
