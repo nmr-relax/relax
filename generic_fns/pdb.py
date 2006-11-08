@@ -169,8 +169,21 @@ class PDB:
         else:
             raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
 
+    
+    def autoscale_tensor(self,method=None):
+        """Automatically determine an appropriate scaling factor for display
+        of the diffusion tensor"""
 
-    def centre_of_mass(self):
+        if method == 'mass':
+            com, mass = self.centre_of_mass(return_mass=True)
+            scale = mass * 6.8e-11
+            return scale
+
+        warn(RelaxWarning("Autoscale method %s not implimented. Reverting to scale=1.8e-6 A.s" % method))
+        return 1.8e-6
+
+
+    def centre_of_mass(self, return_mass=False):
         """Calculate and return the centre of mass of the structure."""
 
         # Print out.
@@ -228,7 +241,10 @@ class PDB:
         print "    Centre of mass:  R = " + `R`
 
         # Return the centre of mass.
-        return R
+        if return_mass:
+            return R,M
+        else:
+            return R
 
 
     def create_tensor_pdb(self, run=None, scale=1.8e-6, file=None, dir=None, force=0):
@@ -239,6 +255,10 @@ class PDB:
         self.file = file
         self.dir = dir
         self.force = force
+        if scale == 'mass':
+            self.scale = self.autoscale_tensor(scale)
+        else:
+            self.scale = scale
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -335,7 +355,7 @@ class PDB:
                     vector = dot(self.relax.data.diff[self.run].tensor, vector)
 
                     # Scale the vector.
-                    vector = vector * scale
+                    vector = vector * self.scale
 
                     # Position relative to the centre of mass.
                     pos = R + vector
@@ -372,10 +392,10 @@ class PDB:
             if self.relax.data.diff[self.run].type == 'spheroid':
                 # Print out.
                 print "\nGenerating the unique axis of the diffusion tensor."
-                print "    Scaling factor:                      " + `scale`
+                print "    Scaling factor:                      " + `self.scale`
 
                 # Create the axis.
-                self.generate_spheroid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R)
+                self.generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
                 # Simulations.
                 if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
@@ -385,17 +405,17 @@ class PDB:
                     # Create each MC simulation axis as a new residue.
                     for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
                         res_num = res_num + 1
-                        self.generate_spheroid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R, i=i)
+                        self.generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
 
             # Create the three axes of the ellipsoid.
             if self.relax.data.diff[self.run].type == 'ellipsoid':
                 # Print out.
                 print "Generating the three axes of the ellipsoid."
-                print "    Scaling factor:                      " + `scale`
+                print "    Scaling factor:                      " + `self.scale`
 
                 # Create the axes.
-                self.generate_ellipsoid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R)
+                self.generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
                 # Simulations.
                 if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
@@ -405,7 +425,7 @@ class PDB:
                     # Create each MC simulation axis as a new residue.
                     for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
                         res_num = res_num + 1
-                        self.generate_ellipsoid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R, i=i)
+                        self.generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
 
             # Terminate the chain (the TER record).
@@ -436,11 +456,9 @@ class PDB:
         tensor_pdb_file.close()
 
 
-    def generate_ellipsoid_axes(self, scale=None, chain_id=None, res_num=None, R=None, i=None):
+    def generate_ellipsoid_axes(self, chain_id=None, res_num=None, R=None, i=None):
         """Generate the AXS and SIM residues of the ellipsoidal PDB tensor representation.
 
-        @param scale:       The scaling factor (with the units of second Angstroms).
-        @type scale:        float
         @param chain_id:    The chain identification code.
         @type chain_id:     str
         @param res_num:     The residue number.
@@ -451,8 +469,10 @@ class PDB:
         @type i:            int
         @return:            None
         """
-
+        
+        
         # Alias the relevant data.
+        scale = self.scale
         if i == None:
             Dx = self.relax.data.diff[self.run].Dx
             Dy = self.relax.data.diff[self.run].Dy
@@ -527,11 +547,9 @@ class PDB:
             print "    Dz vector (scaled + shifted to R):   " + `Dz_vect`
 
 
-    def generate_spheroid_axes(self, scale=None, chain_id=None, res_num=None, R=None, i=None):
+    def generate_spheroid_axes(self, chain_id=None, res_num=None, R=None, i=None):
         """Generate the AXS and SIM residues of the spheroid PDB tensor representation.
 
-        @param scale:       The scaling factor (with the units of second Angstroms).
-        @type scale:        float
         @param chain_id:    The chain identification code.
         @type chain_id:     str
         @param res_num:     The residue number.
@@ -544,6 +562,7 @@ class PDB:
         """
 
         # Alias the relevant data.
+        scale = self.scale
         if i == None:
             Dpar = self.relax.data.diff[self.run].Dpar
             Dpar_unit = self.relax.data.diff[self.run].Dpar_unit

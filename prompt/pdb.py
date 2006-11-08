@@ -150,8 +150,8 @@ class PDB:
             raise RelaxStrError, ('run', run)
 
         # Scaling.
-        if type(scale) != float and type(scale) != int:
-            raise RelaxNumError, ('scaling factor', scale)
+        #if type(scale) != float and type(scale) != int:
+        #    raise RelaxNumError, ('scaling factor', scale)
 
         # File name.
         if type(file) != str:
