@@ -67,7 +67,7 @@ except ImportError:
 
 # relax modules.
 from colour import Colour
-from data import Data
+from data.main import Data
 from errors import RelaxErrors, RelaxWarnings
 from io import IO
 from generic_fns.main import Generic

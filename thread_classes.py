@@ -30,7 +30,7 @@ import sys
 from time import sleep
 from threading import Lock, Thread
 
-from data import Element
+from data.data_classes import Element
 #from processes import RelaxPopen3
 
 

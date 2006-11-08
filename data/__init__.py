@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2006 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,17 +21,7 @@
 ###############################################################################
 
 
-from data.main import Data
-
-
-class Init_data:
-    def __init__(self, relax):
-        """Class containing the function for reinitialising self.relax.data"""
-
-        self.relax = relax
-
-
-    def init(self):
-        """Function for reinitialising self.relax.data"""
-
-        self.relax.data = Data()
+__all__ = [ 'data_classes',
+            'diff_tensor',
+            'diff_tensor_auto_objects',
+            'main' ]

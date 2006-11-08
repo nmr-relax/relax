@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,17 +21,60 @@
 ###############################################################################
 
 
-from data.main import Data
+from math import pi
+from re import match
+from types import DictType, ListType
+
+from data_classes import Element, Residue, SpecificData
+from diff_tensor import DiffTensorData
 
 
-class Init_data:
-    def __init__(self, relax):
-        """Class containing the function for reinitialising self.relax.data"""
 
-        self.relax = relax
+# Global data.
+##############
+
+class Data:
+    def __init__(self):
+        """Class containing all the program data."""
+
+        # Fundamental constants.
+        #self.h = 6.6260755e-34    # Old low precision value.
+        self.h = 6.62606876e-34
+        self.h_bar = self.h / ( 2.0*pi )
+        self.mu0 = 4.0 * pi * 1e-7
+
+        # PDB data.
+        self.pdb = SpecificData()
+
+        # Diffusion data.
+        self.diff = DiffTensorData()
+
+        # The residue specific data.
+        self.res = Residue()
+
+        # The name of the runs.
+        self.run_names = []
+
+        # The type of the runs.
+        self.run_types = []
+
+        # Hybrid models.
+        self.hybrid_runs = {}
+
+        # Global minimisation statistics.
+        self.chi2 = {}
+        self.iter = {}
+        self.f_count = {}
+        self.g_count = {}
+        self.h_count = {}
+        self.warning = {}
 
 
-    def init(self):
-        """Function for reinitialising self.relax.data"""
-
-        self.relax.data = Data()
+    def __repr__(self):
+        text = "The data class containing all permanent program data.\n"
+        text = text + "The class contains the following objects:\n"
+        for name in dir(self):
+            if match("^_", name):
+                continue
+            text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
+        return text
