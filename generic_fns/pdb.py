@@ -25,6 +25,7 @@ from Numeric import Float64, arccos, dot, zeros
 from os import F_OK, access
 from re import compile, match
 import Scientific.IO.PDB
+from string import ascii_uppercase
 
 
 class PDB:
@@ -37,30 +38,33 @@ class PDB:
         self.print_flag = 1
 
 
-    def atom_add(self, atom_id=None, atom_name='', res_name='', chain_id='', res_num=None, pos=None, segment_id='', element=''):
+    def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
         """Function for adding an atom to the self.atomic_data structure.
 
         The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
         'atom_id' strings.  The elements of the array are:
 
             0:  Atom number.
-            1:  Atom name.
-            2:  Residue name.
-            3:  Chain ID.
-            4:  Residue number.
-            5:  The x coordinate of the atom.
-            6:  The y coordinate of the atom.
-            7:  The z coordinate of the atom.
-            8:  Segment ID.
-            9:  Element symbol.
-            10+:  The bonded atom numbers.
+            1:  The record name (one of ATOM, HETATM, or TER).
+            2:  Atom name.
+            3:  Residue name.
+            4:  Chain ID.
+            5:  Residue number.
+            6:  The x coordinate of the atom.
+            7:  The y coordinate of the atom.
+            8:  The z coordinate of the atom.
+            9:  Segment ID.
+            10:  Element symbol.
+            11+:  The bonded atom numbers.
 
         This function will create the key-value pair for the given atom.
 
 
         @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
         @type atom_id:      str
-        @param atom_name:   The atom name, e.g. H1.
+        @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
+        @type record_name:  str
+        @param atom_name:   The atom name, e.g. 'H1'.
         @type atom_name:    str
         @param res_name:    The residue name.
         @type res_name:     str
@@ -82,6 +86,7 @@ class PDB:
 
         # Fill the positions.
         self.atomic_data[atom_id].append(len(self.atomic_data))
+        self.atomic_data[atom_id].append(record_name)
         self.atomic_data[atom_id].append(atom_name)
         self.atomic_data[atom_id].append(res_name)
         self.atomic_data[atom_id].append(chain_id)
@@ -100,16 +105,17 @@ class PDB:
         'atom_id' strings.  The elements of the array are:
 
             0:  Atom number.
-            1:  Atom name.
-            2:  Residue name.
-            3:  Chain ID.
-            4:  Residue number.
-            5:  The x coordinate of the atom.
-            6:  The y coordinate of the atom.
-            7:  The z coordinate of the atom.
-            8:  Segment ID.
-            9:  Element symbol.
-            10+:  The bonded atom numbers.
+            1:  The record name (one of ATOM, HETATM, or TER).
+            2:  Atom name.
+            3:  Residue name.
+            4:  Chain ID.
+            5:  Residue number.
+            6:  The x coordinate of the atom.
+            7:  The y coordinate of the atom.
+            8:  The z coordinate of the atom.
+            9:  Segment ID.
+            10:  Element symbol.
+            11+:  The bonded atom numbers.
 
         This function will find the atom number corresponding to both the atom_id and bonded_id.
         The bonded_id atom number will then be appended to the atom_id array.  Because the
@@ -229,158 +235,189 @@ class PDB:
         """The pdb loading function."""
 
         # Arguments.
-        self.run = run
         self.scale = scale
         self.file = file
         self.dir = dir
         self.force = force
 
-        # Tests.
-        ########
-
         # Test if the run exists.
         if not run in self.relax.data.run_names:
             raise RelaxNoRunError, run
 
-        # Test if the diffusion tensor data is loaded.
-        if not self.relax.data.diff.has_key(run):
-            raise RelaxNoTensorError, run
+        # Create an array of runs to loop over (hybrid support).
+        if self.relax.data.run_types[self.relax.data.run_names.index(run)] == 'hybrid':
+            runs = self.relax.data.hybrid_runs[run]
+        else:
+            runs = [run]
 
-        # Test if the PDB file of the macromolecule has been loaded.
-        if not self.relax.data.pdb.has_key(self.run):
-            raise RelaxNoPdbError, self.run
-
-        # Test if sequence data is loaded.
-        if not self.load_seq and not len(self.relax.data.res[self.run]):
-            raise RelaxNoSequenceError, self.run
-
-
-        # Initialise the PDB data.
-        ##########################
-
-        # The atom and atomic connections data structures.
+        # Initialise the atom and atomic connections data structures.
         self.atomic_data = {}
 
-        # Chain ID and residue number.
-        chain_id = 'A'
-        res_num = 1
+        # Loop over the runs.
+        for run_index in xrange(len(runs)):
+            # Place the run into 'self'.
+            self.run = runs[run_index]
 
 
-        # Centre of mass.
-        #################
+            # Tests.
+            ########
 
-        # Calculate the centre of mass.
-        R = self.centre_of_mass()
+            # Test if the diffusion tensor data is loaded.
+            if not self.relax.data.diff.has_key(self.run):
+                raise RelaxNoTensorError, self.run
 
-        # Add the central atom.
-        self.atom_add(atom_id='R', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
+            # Test if the PDB file of the macromolecule has been loaded.
+            if not self.relax.data.pdb.has_key(self.run):
+                raise RelaxNoPdbError, self.run
 
-        # Increment the residue number.
-        res_num = res_num + 1
-
-
-        # Vector distribution.
-        ######################
-
-        # Print out.
-        print "\nGenerating the geometric object."
-
-        # Increment value and initial atom number.
-        inc = 20
-        atom_num = 1
-
-        # Get the uniform vector distribution.
-        print "    Creating the uniform vector distribution."
-        vectors = self.uniform_vect_dist_spherical_angles(inc=20)
-
-        # Loop over the radial array of vectors (change in longitude).
-        for i in range(inc):
-            # Loop over the vectors of the radial array (change in latitude).
-            for j in range(inc/2+2):
-                # Index.
-                index = i + j*inc
-
-                # Atom id.
-                atom_id = 'T' + `i` + 'P' + `j`
-
-                # Rotate the vector into the diffusion frame.
-                vector = dot(self.relax.data.diff[self.run].rotation, vectors[index])
-
-                # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
-                vector = dot(self.relax.data.diff[self.run].tensor, vector)
-
-                # Scale the vector.
-                vector = vector * scale
-
-                # Position relative to the centre of mass.
-                pos = R + vector
-
-                # Add the vector as a H atom of the TNS residue.
-                self.atom_add(atom_id=atom_id, atom_name='H'+`atom_num`, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
-
-                # Connect to the previous atom (to generate the longitudinal lines).
-                if j != 0:
-                    prev_id = 'T' + `i` + 'P' + `j-1`
-                    self.atom_connect(atom_id=atom_id, bonded_id=prev_id)
-
-                # Connect across the radial arrays (to generate the latitudinal lines).
-                if i != 0:
-                    neighbour_id = 'T' + `i-1` + 'P' + `j`
-                    self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
-
-                # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
-                if i == inc-1:
-                    neighbour_id = 'T' + `0` + 'P' + `j`
-                    self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
-
-                # Increment the atom number.
-                atom_num = atom_num + 1
-
-        # Increment the residue number.
-        res_num = res_num + 1
+            # Test if sequence data is loaded.
+            if not self.load_seq and not len(self.relax.data.res[self.run]):
+                raise RelaxNoSequenceError, self.run
 
 
-        # Axes of the tensor.
-        #####################
+            # Initialise.
+            #############
 
-        # Create the unique axis of the spheroid.
-        if self.relax.data.diff[self.run].type == 'spheroid':
+            # Initialise the residue number.
+            res_num = 1
+
+            # The chain identifier.
+            chain_id = ascii_uppercase[run_index]
+
+            # Atom ID extension (allow for multiple chains for hybrid runs).
+            atom_id_ext = '_' + chain_id
+
             # Print out.
-            print "\nGenerating the unique axis of the diffusion tensor."
-            print "    Scaling factor:                      " + `scale`
-
-            # Create the axis.
-            self.generate_spheroid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R)
-
-            # Simulations.
-            if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
-                # Print out.
-                print "    Creating the MC simulation axes."
-
-                # Create each MC simulation axis as a new residue.
-                for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
-                    res_num = res_num + 1
-                    self.generate_spheroid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R, i=i)
+            print "\nChain " + chain_id + "\n"
 
 
-        # Create the three axes of the ellipsoid.
-        if self.relax.data.diff[self.run].type == 'ellipsoid':
+            # Centre of mass.
+            #################
+
+            # Calculate the centre of mass.
+            R = self.centre_of_mass()
+
+            # Add the central atom.
+            self.atom_add(atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
+
+            # Increment the residue number.
+            res_num = res_num + 1
+
+
+            # Vector distribution.
+            ######################
+
             # Print out.
-            print "Generating the three axes of the ellipsoid."
-            print "    Scaling factor:                      " + `scale`
+            print "\nGenerating the geometric object."
 
-            # Create the axes.
-            self.generate_ellipsoid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R)
+            # Increment value and initial atom number.
+            inc = 20
+            atom_num = 1
 
-            # Simulations.
-            if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
+            # Get the uniform vector distribution.
+            print "    Creating the uniform vector distribution."
+            vectors = self.uniform_vect_dist_spherical_angles(inc=20)
+
+            # Loop over the radial array of vectors (change in longitude).
+            for i in range(inc):
+                # Loop over the vectors of the radial array (change in latitude).
+                for j in range(inc/2+2):
+                    # Index.
+                    index = i + j*inc
+
+                    # Atom id.
+                    atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
+
+                    # Rotate the vector into the diffusion frame.
+                    vector = dot(self.relax.data.diff[self.run].rotation, vectors[index])
+
+                    # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
+                    vector = dot(self.relax.data.diff[self.run].tensor, vector)
+
+                    # Scale the vector.
+                    vector = vector * scale
+
+                    # Position relative to the centre of mass.
+                    pos = R + vector
+
+                    # Add the vector as a H atom of the TNS residue.
+                    self.atom_add(atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
+
+                    # Connect to the previous atom (to generate the longitudinal lines).
+                    if j != 0:
+                        prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
+                        self.atom_connect(atom_id=atom_id, bonded_id=prev_id)
+
+                    # Connect across the radial arrays (to generate the latitudinal lines).
+                    if i != 0:
+                        neighbour_id = 'T' + `i-1` + 'P' + `j` + atom_id_ext
+                        self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+
+                    # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
+                    if i == inc-1:
+                        neighbour_id = 'T' + `0` + 'P' + `j` + atom_id_ext
+                        self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+
+                    # Increment the atom number.
+                    atom_num = atom_num + 1
+
+            # Increment the residue number.
+            res_num = res_num + 1
+
+
+            # Axes of the tensor.
+            #####################
+
+            # Create the unique axis of the spheroid.
+            if self.relax.data.diff[self.run].type == 'spheroid':
                 # Print out.
-                print "    Creating the MC simulation axes."
+                print "\nGenerating the unique axis of the diffusion tensor."
+                print "    Scaling factor:                      " + `scale`
 
-                # Create each MC simulation axis as a new residue.
-                for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
-                    res_num = res_num + 1
-                    self.generate_ellipsoid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R, i=i)
+                # Create the axis.
+                self.generate_spheroid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R)
+
+                # Simulations.
+                if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
+                    # Print out.
+                    print "    Creating the MC simulation axes."
+
+                    # Create each MC simulation axis as a new residue.
+                    for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
+                        res_num = res_num + 1
+                        self.generate_spheroid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R, i=i)
+
+
+            # Create the three axes of the ellipsoid.
+            if self.relax.data.diff[self.run].type == 'ellipsoid':
+                # Print out.
+                print "Generating the three axes of the ellipsoid."
+                print "    Scaling factor:                      " + `scale`
+
+                # Create the axes.
+                self.generate_ellipsoid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R)
+
+                # Simulations.
+                if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
+                    # Print out.
+                    print "    Creating the MC simulation axes."
+
+                    # Create each MC simulation axis as a new residue.
+                    for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
+                        res_num = res_num + 1
+                        self.generate_ellipsoid_axes(scale=scale, chain_id=chain_id, res_num=res_num, R=R, i=i)
+
+
+            # Terminate the chain (the TER record).
+            #######################################
+
+            # The name of the last residue.
+            atomic_arrays = self.atomic_data.values()
+            atomic_arrays.sort()
+            last_res = atomic_arrays[-1][3]
+
+            # Add the TER 'atom''.
+            self.atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
         # Create the PDB file.
@@ -424,7 +461,7 @@ class PDB:
             Dy_unit = self.relax.data.diff[self.run].Dy_unit
             Dz_unit = self.relax.data.diff[self.run].Dz_unit
             res_name = 'AXS'
-            atom_id_ext = ''
+            atom_id_ext = '_' + chain_id
         else:
             Dx = self.relax.data.diff[self.run].Dx_sim[i]
             Dy = self.relax.data.diff[self.run].Dy_sim[i]
@@ -433,7 +470,7 @@ class PDB:
             Dy_unit = self.relax.data.diff[self.run].Dy_unit_sim[i]
             Dz_unit = self.relax.data.diff[self.run].Dz_unit_sim[i]
             res_name = 'SIM'
-            atom_id_ext = '_sim' + `i`
+            atom_id_ext = '_' + chain_id + '_sim' + `i`
 
         # The Dx, Dy, and Dz vectors.
         Dx_vect = Dx_unit * Dx * scale
@@ -454,13 +491,13 @@ class PDB:
         Dz_vect_neg = R + Dz_vect_neg
 
         # Create the 'AXS' residue.
-        self.atom_add(atom_id='R_axes'+atom_id_ext, atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
-        self.atom_add(atom_id='Dx'+atom_id_ext, atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect, element='C')
-        self.atom_add(atom_id='Dy'+atom_id_ext, atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect, element='C')
-        self.atom_add(atom_id='Dz'+atom_id_ext, atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect, element='C')
-        self.atom_add(atom_id='Dx_neg'+atom_id_ext, atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect_neg, element='C')
-        self.atom_add(atom_id='Dy_neg'+atom_id_ext, atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect_neg, element='C')
-        self.atom_add(atom_id='Dz_neg'+atom_id_ext, atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect_neg, element='C')
+        self.atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
+        self.atom_add(atom_id='Dx'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect, element='C')
+        self.atom_add(atom_id='Dy'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect, element='C')
+        self.atom_add(atom_id='Dz'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect, element='C')
+        self.atom_add(atom_id='Dx_neg'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect_neg, element='C')
+        self.atom_add(atom_id='Dy_neg'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect_neg, element='C')
+        self.atom_add(atom_id='Dz_neg'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect_neg, element='C')
         self.atom_connect(atom_id='Dx'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
         self.atom_connect(atom_id='Dy'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
         self.atom_connect(atom_id='Dz'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
@@ -476,12 +513,12 @@ class PDB:
             Dz_vect = Dz_unit * (Dz * scale + 3.0)
 
             # Add the atoms.
-            self.atom_add(atom_id='Dx label', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dx_vect, element='N')
-            self.atom_add(atom_id='Dx neg label', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dx_vect, element='N')
-            self.atom_add(atom_id='Dy label', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dy_vect, element='N')
-            self.atom_add(atom_id='Dy neg label', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dy_vect, element='N')
-            self.atom_add(atom_id='Dz label', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dz_vect, element='N')
-            self.atom_add(atom_id='Dz neg label', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dz_vect, element='N')
+            self.atom_add(atom_id='Dx label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dx_vect, element='N')
+            self.atom_add(atom_id='Dx neg label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dx_vect, element='N')
+            self.atom_add(atom_id='Dy label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dy_vect, element='N')
+            self.atom_add(atom_id='Dy neg label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dy_vect, element='N')
+            self.atom_add(atom_id='Dz label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dz_vect, element='N')
+            self.atom_add(atom_id='Dz neg label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dz_vect, element='N')
 
         # Print out.
         if i == None:
@@ -511,12 +548,12 @@ class PDB:
             Dpar = self.relax.data.diff[self.run].Dpar
             Dpar_unit = self.relax.data.diff[self.run].Dpar_unit
             res_name = 'AXS'
-            atom_id_ext = ''
+            atom_id_ext = '_' + chain_id
         else:
             Dpar = self.relax.data.diff[self.run].Dpar_sim[i]
             Dpar_unit = self.relax.data.diff[self.run].Dpar_unit_sim[i]
             res_name = 'SIM'
-            atom_id_ext = '_sim' + `i`
+            atom_id_ext = '_' + chain_id + '_sim' + `i`
 
         # The Dpar vector.
         Dpar_vect = Dpar_unit * Dpar * scale
@@ -529,9 +566,9 @@ class PDB:
         Dpar_vect_neg = R + Dpar_vect_neg
 
         # Create the 'AXS' residue.
-        self.atom_add(atom_id='R_axes'+atom_id_ext, atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
-        self.atom_add(atom_id='Dpar'+atom_id_ext, atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect, element='C')
-        self.atom_add(atom_id='Dpar_neg'+atom_id_ext, atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
+        self.atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
+        self.atom_add(atom_id='Dpar'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect, element='C')
+        self.atom_add(atom_id='Dpar_neg'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
         self.atom_connect(atom_id='Dpar'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
         self.atom_connect(atom_id='Dpar_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
 
@@ -541,8 +578,8 @@ class PDB:
             vect = Dpar_unit * (Dpar * scale + 3.0)
 
             # Add the atoms.
-            self.atom_add(atom_id='Dpar label', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+vect, element='N')
-            self.atom_add(atom_id='Dpar neg label', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-vect, element='N')
+            self.atom_add(atom_id='Dpar label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+vect, element='N')
+            self.atom_add(atom_id='Dpar neg label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-vect, element='N')
 
         # Print out.
         if i == None:
@@ -1107,8 +1144,8 @@ class PDB:
         TER record
         ----------
 
-        The end of the ATOM and HETATM records.  According to the draft atomic coordinate entry
-        format description:
+        The end of the ATOM and HETATM records for a chain.  According to the draft atomic
+        coordinate entry format description:
 
         "The TER record has the same residue name, chain identifier, sequence number and insertion
         code as the terminal residue. The serial number of the TER record is one number greater than
@@ -1219,14 +1256,18 @@ class PDB:
 
         # Loop over the atomic data.
         for array in atomic_arrays:
+            # Skip all ATOM and TER records.
+            if array[1] != 'HETATM':
+                continue
+
             # The residue number and element.
-            res_num = array[4]
-            element = array[9]
+            res_num = array[5]
+            element = array[10]
 
             # If the residue is not already stored initialise a new het_data element.
             # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
             if not het_data or not res_num == het_data[-1][0]:
-                het_data.append([array[4], array[2], array[3], 0, 0, 0, 0])
+                het_data.append([array[5], array[3], array[4], 0, 0, 0, 0])
 
             # Total atom count.
             het_data[-1][3] = het_data[-1][3] + 1
@@ -1247,9 +1288,6 @@ class PDB:
             else:
                 raise RelaxError, "The element " + `element` + " was expected to be one of ['H', 'C', 'N']."
 
-        # Sort by residue number.
-        het_data.sort()
-
 
         # The HET records.
         ##################
@@ -1269,7 +1307,14 @@ class PDB:
         print "Creating the HETNAM records."
 
         # Loop over the non-standard residues.
+        residues = []
         for het in het_data:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
             # Get the chemical name.
             chemical_name = self.get_chemical_name(het[1])
 
@@ -1284,7 +1329,14 @@ class PDB:
         print "Creating the FORMUL records."
 
         # Loop over the non-standard residues and generate and write the chemical formula.
+        residues = []
         for het in het_data:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
             # Initialise the chemical formula.
             formula = ''
 
@@ -1310,22 +1362,25 @@ class PDB:
             file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
 
 
-        # Add the HETATM records.
-        #########################
+        # Add the atomic coordinate records (ATOM, HETATM, and TER).
+        ############################################################
 
         # Print out.
-        print "Creating the HETATM records."
+        print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
 
+        # Loop over the atomic data.
         for array in atomic_arrays:
+            # Write the ATOM record.
+            if array[1] == 'ATOM':
+                raise RelaxError, 'Not coded yet.'
+
             # Write the HETATM record.
-            file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', array[0], array[1], '', array[2], array[3], array[4], '', array[5], array[6], array[7], 1.0, 0, array[8], array[9], ''))
+            if array[1] == 'HETATM':
+                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', array[0], array[2], '', array[3], array[4], array[5], '', array[6], array[7], array[8], 1.0, 0, array[9], array[10], ''))
 
-
-        # Terminate the chain - TER record.
-        ###################################
-
-        # Write the TER record.
-        file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', len(self.atomic_data)+1, array[2], array[3], array[4], ''))
+            # Write the TER record.
+            if array[1] == 'TER':
+                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', array[0], array[3], array[4], array[5], ''))
 
 
         # Create the CONECT records.
@@ -1349,9 +1404,9 @@ class PDB:
             bonded = ['', '', '', '']
 
             # Loop over the bonded atoms.
-            for i in xrange(len(array[10:])):
+            for i in xrange(len(array[11:])):
                 # End of the array, hence create the CONECT record in this iteration.
-                if i == len(array[10:])-1:
+                if i == len(array[11:])-1:
                     flush = 1
 
                 # Only four covalently bonded atoms allowed in one CONECT record.
@@ -1359,7 +1414,7 @@ class PDB:
                     flush = 1
 
                 # Get the bonded atom name.
-                bonded[bonded_index] = array[i+10]
+                bonded[bonded_index] = array[i+11]
 
                 # Increment the bonded_index value.
                 bonded_index = bonded_index + 1
