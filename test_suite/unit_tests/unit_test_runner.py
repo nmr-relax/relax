@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os,re,unittest,string,sys
 
 class TestFinder:
