@@ -1,3 +1,19 @@
+Version 1.2.9
+(9 November 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.9
+
+    Features:
+        N/A
+
+    Changes:
+        * For Mac OS X compatibility, the interpreter has been changed from '/usr/bin/python' to '/usr/bin/env python'.
+
+    Bugfixes:
+        * The infinite chi-squared RelaxError when the chi-squared value is zero has been fixed. (see bug #7641)
+        * Profiling is now functional again. (see bug #7677)
+
+
+
 Version 1.2.8
 (4 November 2006, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.8
