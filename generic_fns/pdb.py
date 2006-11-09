@@ -291,7 +291,7 @@ class PDB:
                 raise RelaxNoPdbError, self.run
 
             # Test if sequence data is loaded.
-            if not self.load_seq and not len(self.relax.data.res[self.run]):
+            if not len(self.relax.data.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
 
