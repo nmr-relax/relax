@@ -1164,11 +1164,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -1677,6 +1677,9 @@
  \bottomrule 
  \end{tabular} 
  \end{center} 
+  
+
+ As both the line search algorithm and Hessian modification can be specified for Newton\index{minimisation techniques!Newton} optimisation, supplying the option \quotecmd{None} may appear to be ambiguous.  In fact, the Hessian takes precedence over the line search.  Hence supplying the option \quotecmd{None} with the Newton\index{minimisation techniques!Newton} algorithm selects the unmodified Hessian.  Supplying \quotecmd{None} twice will turn off the Hessian modification and no step length selection (or line search) will be performed. 
   
 
  Hessian type, these are used in a few of the trust region methods including the Dogleg\index{minimisation techniques!dogleg} and Exact\index{minimisation techniques!exact trust region} trust region algorithms.  In these cases, when the Hessian type is set to Newton,\index{minimisation techniques!Newton} a Hessian modification can also be supplied as above.  The default Hessian type is Newton,\index{minimisation techniques!Newton} and the default Hessian modification when Newton\index{minimisation techniques!Newton} is selected is the GMW algorithm. 
@@ -5765,11 +5768,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -5905,11 +5908,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -6092,11 +6095,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -6386,11 +6389,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -6726,11 +6729,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
