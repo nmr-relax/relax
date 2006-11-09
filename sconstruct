@@ -486,6 +486,7 @@ class Main:
         if env['PLATFORM'] == 'darwin':
             env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', sys.prefix + path.sep + 'bin' + path.sep + 'python', '-dynamic'])
             env['SHLINKFLAGS'] = SCons.Util.CLVar('$LINKFLAGS')
+            env['SHLIBSUFFIX'] = '.so'
 
         # Loop over the relaxation curve fitting files.
         nodes = []
