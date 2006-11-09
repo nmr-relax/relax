@@ -35,6 +35,7 @@ import sys
 from scons.distrib import package, gpg_sign
 from scons.install import install, uninstall
 from scons.manuals import clean_manual_files, compile_api_manual_html, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
+import SCons.Util
 
 # relax version file.
 from version import version
@@ -481,9 +482,10 @@ class Main:
         # Add the python library path to the environment.
         env.Append(LIBPATH = libpath)
 
-        # Catch Mac OS X and send the correct command line options to the linker.
+        # Catch Mac OS X and send the correct command line options to the linker (these may become redundant as SCons improves).
         if env['PLATFORM'] == 'darwin':
             env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', sys.prefix + path.sep + 'bin' + path.sep + 'python', '-dynamic'])
+            env['SHLINKFLAGS'] = SCons.Util.CLVar('$LINKFLAGS')
 
         # Loop over the relaxation curve fitting files.
         nodes = []
