@@ -93,6 +93,41 @@ class Intensity:
         return res_num, x_name, h_name, intensity
 
 
+    def number_of_header_lines(self):
+        """Function for determining how many header lines are in the intensity file.
+
+        @return:    The number of header lines.
+        @rtype:     int
+        """
+
+        # Sparky.
+        #########
+
+        # Assume the Sparky file has two header lines!
+        if self.format == 'sparky':
+            return 2
+
+
+        # XEasy.
+        ########
+
+        # Loop over the lines of the file until a peak intensity value is reached.
+        header_lines = 0
+        for i in xrange(len(self.file_data)):
+            # Try to see if the intensity can be extracted.
+            try:
+                self.intensity(self.file_data[i])
+            except RelaxError:
+                header_lines = header_lines + 1
+            except IndexError:
+                header_lines = header_lines + 1
+            else:
+                break
+
+        # Return the number of lines.
+        return header_lines
+
+
     def read(self, run=None, file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None):
         """Function for reading peak intensity data."""
 
@@ -128,22 +163,26 @@ class Intensity:
             raise RelaxNoSequenceError, self.run
 
         # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file, dir)
+        self.file_data = self.relax.IO.extract_data(file, dir)
+
+        # Determine the number of header lines.
+        num = self.number_of_header_lines()
+        print "Number of header lines found: " + `num`
 
         # Remove the header.
-        file_data = file_data[2:]
+        self.file_data = self.file_data[num:]
 
         # Strip the data.
-        file_data = self.relax.IO.strip(file_data)
+        self.file_data = self.relax.IO.strip(self.file_data)
 
         # Loop over the peak intensity data.
-        for i in xrange(len(file_data)):
+        for i in xrange(len(self.file_data)):
             # Extract the data.
-            res_num, X_name, H_name, intensity = self.intensity(file_data[i])
+            res_num, X_name, H_name, intensity = self.intensity(self.file_data[i])
 
             # Skip data.
             if X_name != self.heteronuc or H_name != self.proton:
-                print "Skipping the data: " + `file_data[i]`
+                print "Skipping the data: " + `self.file_data[i]`
                 continue
 
             # Find the index of self.relax.data.res[self.run] which corresponds to res_num.
@@ -153,7 +192,7 @@ class Intensity:
                     index = j
                     break
             if index == None:
-                print "Skipping the data: " + `file_data[i]`
+                print "Skipping the data: " + `self.file_data[i]`
                 continue
 
             # Remap the data structure 'self.relax.data.res[self.run][index]'.
