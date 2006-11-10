@@ -21,10 +21,12 @@
 ###############################################################################
 
 
+from math import cos, sin
+from Numeric import Float64, dot, identity, transpose, zeros
+from re import search
 from types import ListType
 
 from data_classes import Element, SpecificData
-from diff_tensor_auto_objects import *
 
 
 
@@ -53,327 +55,713 @@ class DiffTensorElement(Element):
     def __init__(self):
         """An empty data container for the diffusion tensor elements."""
 
-        # Automatically generated objects for all tensor types.
-        #######################################################
-
-        # The diagonalised diffusion tensor (within the diffusion frame).
-        self.tensor_diag = DiffAutoNumericObject(auto_object_tensor_diag, self)
-
-        # The diffusion tensor (within the structural frame).
-        self.tensor = DiffAutoNumericObject(auto_object_tensor, self)
-
-        # The rotation matrix (diffusion frame to structural frame).
-        self.rotation = DiffAutoNumericObject(auto_object_rotation, self)
-
-        # The isotropic diffusion rate.
-        #self.Diso = DiffAutoFloat(auto_object_tensor)
-        self.Diso_sim = DiffAutoSimArrayObject(auto_object_Diso, self)
+        # Set the initial diffusion type to None.
+        self.type = None
 
 
-        # Automatically generated objects for spherical diffusion.
-        ##########################################################
-
-        # Eigenvalue parallel to the unique axis.
-        self.Dpar_sim = DiffAutoSimArrayObject(auto_object_Dpar, self)
-
-        # Eigenvalue perpendicular to the unique axis.
-        self.Dper_sim = DiffAutoSimArrayObject(auto_object_Dper, self)
-
-        # Unit vector parallel to the axis.
-        self.Dpar_unit = DiffAutoNumericObject(auto_object_Dpar_unit, self)
-        self.Dpar_unit_sim = DiffAutoSimArrayObject(auto_object_Dpar_unit, self)
-
-
-        # Automatically generated objects for ellipsoidal diffusion.
-        ############################################################
-
-        # Eigenvalues Dx, Dy, and Dz.
-        self.Dx_sim = DiffAutoSimArrayObject(auto_object_Dx, self)
-        self.Dy_sim = DiffAutoSimArrayObject(auto_object_Dy, self)
-        self.Dz_sim = DiffAutoSimArrayObject(auto_object_Dz, self)
-
-        # Unit vectors parallel to the axes.
-        self.Dx_unit = DiffAutoNumericObject(auto_object_Dx_unit, self)
-        self.Dy_unit = DiffAutoNumericObject(auto_object_Dy_unit, self)
-        self.Dz_unit = DiffAutoNumericObject(auto_object_Dz_unit, self)
-        self.Dx_unit_sim = DiffAutoSimArrayObject(auto_object_Dx_unit, self)
-        self.Dy_unit_sim = DiffAutoSimArrayObject(auto_object_Dy_unit, self)
-        self.Dz_unit_sim = DiffAutoSimArrayObject(auto_object_Dz_unit, self)
-
-
-    def __getattr__(self, name):
+    def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
-
-        All tensor types
-        ================
-
-        The equation for calculating Diso is
-
-            Diso  =  1 / (6tm).
-
-
-        Spheroidal diffusion
-        ====================
 
         The equations for the parameters Dper, Dpar, and Dratio are
 
-            Dper  =  Diso - 1/3 Da,
-
-            Dpar  =  Diso + 2/3 Da,
-
             Dratio  =  Dpar / Dper.
-
-
-        Ellipsoidal diffusion
-        =====================
-
-        The equations for the parameters Dx, Dy, and Dz are
-
-            Dx  =  Diso - 1/3 Da(1 + 3Dr),
-
-            Dy  =  Diso - 1/3 Da(1 - 3Dr),
-
-            Dz  =  Diso + 2/3 Da.
-
-
         """
 
-        # All tensor types.
-        ###################
+        ######################
+        # Set the attribute. #
+        ######################
 
-        # Diso.
-        if name == 'Diso':
-            return 1.0 / (6.0 * self.tm)
+        # Get the base parameter name and determine the object category ('val', 'err', or 'sim').
+        if search('_err$', name):
+            category = 'err'
+            base_name = name[:-4]
+        elif search('_sim$', name):
+            category = 'sim'
+            base_name = name[:-4]
+        else:
+            category = 'val'
+            base_name = name
+
+        # List of modifiable attributes.
+        mod_attr = ['type',
+                    'fixed',
+                    'spheroid_type',
+                    'tm',
+                    'Da',
+                    'Dr',
+                    'theta',
+                    'phi',
+                    'alpha',
+                    'beta',
+                    'gamma']
+
+        # Test if the attribute that is trying to be set is modifiable.
+        if not base_name in mod_attr:
+            raise RelaxError, "The object " + `name` + " is not modifiable."
+
+        # Set the attribute normally.
+        self.__dict__[name] = value
+
+        # Skip the updating process for certain objects.
+        if name in ['type', 'fixed', 'spheroid_type']:
+            return
+
+
+        ###############################
+        # Update the data structures. #
+        ###############################
+
+
+        # Objects for all tensor types.
+        ###############################
+
+        # The isotropic diffusion rate Diso.
+        self._update_object(base_name, target='Diso', update_if_set=['tm'], depends=['tm'], category=category)
+
+
+        # Spherical diffusion.
+        ######################
+
+        if self.type == 'sphere':
+            # Update the diagonalised diffusion tensor (within the diffusion frame).
+            self._update_object(base_name, target='tensor_diag', update_if_set=['tm'], depends=['Diso'], category=category)
+
+            # The rotation matrix (diffusion frame to structural frame).
+            self._update_object(base_name, target='rotation', update_if_set=['tm'], depends=[], category=category)
+
+            # The diffusion tensor (within the structural frame).
+            self._update_object(base_name, target='tensor', update_if_set=['tm'], depends=['rotation', 'tensor_diag'], category=category)
 
 
         # Spheroidal diffusion.
         #######################
 
-        # Dper.
-        if name == 'Dper' and self.type == 'spheroid':
-            return self.Diso - 1.0/3.0 * self.Da
+        elif self.type == 'spheroid':
+            # Update Dpar, Dper, and Dratio.
+            self._update_object(base_name, target='Dpar', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
+            self._update_object(base_name, target='Dper', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
+            self._update_object(base_name, target='Dratio', update_if_set=['tm', 'Da'], depends=['Dpar', 'Dper'], category=category)
 
-        # Dpar.
-        if name == 'Dpar' and self.type == 'spheroid':
-            return self.Diso + 2.0/3.0 * self.Da
+            # Update the unit vector parallel to the axis.
+            self._update_object(base_name, target='Dpar_unit', update_if_set=['theta', 'phi'], depends=['theta', 'phi'], category=category)
 
-        # Dratio.
-        if name == 'Dratio' and self.type == 'spheroid':
-            return self.Dpar / self.Dper
+            # Update the diagonalised diffusion tensor (within the diffusion frame).
+            self._update_object(base_name, target='tensor_diag', update_if_set=['tm', 'Da'], depends=['Dpar', 'Dper'], category=category)
+
+            # The rotation matrix (diffusion frame to structural frame).
+            self._update_object(base_name, target='rotation', update_if_set=['theta', 'phi'], depends=['theta', 'phi', 'Dpar_unit'], category=category)
+
+            # The diffusion tensor (within the structural frame).
+            self._update_object(base_name, target='tensor', update_if_set=['tm', 'Da', 'theta', 'phi'], depends=['rotation', 'tensor_diag'], category=category)
 
 
         # Ellipsoidal diffusion.
         ########################
 
-        # Dx.
-        if name == 'Dx' and self.type == 'ellipsoid':
-            return self.Diso - 1.0/3.0 * self.Da * (1.0 + 3.0*self.Dr)
+        elif self.type == 'ellipsoid':
+            # Update Dx, Dy, and Dz.
+            self._update_object(base_name, target='Dx', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
+            self._update_object(base_name, target='Dy', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
+            self._update_object(base_name, target='Dz', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
 
-        # Dy.
-        if name == 'Dy' and self.type == 'ellipsoid':
-            return self.Diso - 1.0/3.0 * self.Da * (1.0 - 3.0*self.Dr)
+            # Update the unit vectors parallel to the axes.
+            self._update_object(base_name, target='Dx_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
+            self._update_object(base_name, target='Dy_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
+            self._update_object(base_name, target='Dz_unit', update_if_set=['beta', 'gamma'], depends=['beta', 'gamma'], category=category)
 
-        # Dz.
-        if name == 'Dz' and self.type == 'ellipsoid':
-            return self.Diso + 2.0/3.0 * self.Da
+            # Update the diagonalised diffusion tensor (within the diffusion frame).
+            self._update_object(base_name, target='tensor_diag', update_if_set=['tm', 'Da', 'Dr'], depends=['Dx', 'Dy', 'Dz'], category=category)
 
-        # The attribute asked for does not exist.
-        raise AttributeError, name
+            # The rotation matrix (diffusion frame to structural frame).
+            self._update_object(base_name, target='rotation', update_if_set=['alpha', 'beta', 'gamma'], depends=['Dx_unit', 'Dy_unit', 'Dz_unit'], category=category)
 
-
-# Automatic Numeric-like objects.
-class DiffAutoNumericObject(ListType):
-    def __init__(self, object, diff_data):
-        """Class for implementing an automatically generated Numeric-like object."""
-
-        # Function which returns the Numeric data structure (to be called at run-time).
-        self.object = object
-
-        # The local scope of the diffusion tensor data structure.
-        self.diff_data = diff_data
+            # The diffusion tensor (within the structural frame).
+            self._update_object(base_name, target='tensor', update_if_set=['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'], depends=['rotation', 'tensor_diag'], category=category)
 
 
-    def __add__(self, x):
-        """Function for the implementation of addition.
+    def _calc_Diso(self, tm=None):
+        """Function for calculating the Diso value.
 
-        @return:    The array plus x.
-        @rtype:     array
+        The equation for calculating the parameter is
+
+            Diso  =  1 / (6tm).
+
+        @keyword tm:    The global correlation time.
+        @type tm:       float
+        @return:        The isotropic diffusion rate (Diso).
+        @rtype:         float
         """
 
-        return self.object(self.diff_data) + x
+        # Calculated and return the Diso value.
+        return 1.0 / (6.0 * tm)
 
 
-    def __getitem__(self, i):
-        """Function for selecting individual elements of the array.
+    def _calc_Dpar(self, Diso=None, Da=None):
+        """Function for calculating the Dpar value.
 
-        @return:    Element i of the array.
-        @rtype:     float
+        The equation for calculating the parameter is
+
+            Dpar  =  Diso + 2/3 Da.
+
+        @keyword Diso:  The isotropic diffusion rate.
+        @type Diso:     float
+        @keyword Da:    The anisotropic diffusion rate.
+        @type Da:       float
+        @return:        The diffusion rate parallel to the unique axis of the spheroid.
+        @rtype:         float
         """
 
-        return self.object(self.diff_data)[i]
+        # Dpar value.
+        return Diso + 2.0/3.0 * Da
 
 
-    def __iter__(self):
-        """Function for looping over the array.
+    def _calc_Dpar_unit(self, theta=None, phi=None):
+        """Function for calculating the Dpar unit vector.
 
-        @return:    An iterator object for looping over the array.
-        @rtype:     iterator object
+        The unit vector parallel to the unique axis of the diffusion tensor is
+
+                          | sin(theta) * cos(phi) |
+            Dpar_unit  =  | sin(theta) * sin(phi) |.
+                          |      cos(theta)       |
+
+        @keyword theta: The azimuthal angle in radians.
+        @type theta:    float
+        @keyword phi:   The polar angle in radians.
+        @type phi:      float
+        @return:        The Dpar unit vector.
+        @rtype:         Numeric array (Float64)
         """
 
-        # Get the object.
-        object = self.object(self.diff_data)
+        # Initilise the vector.
+        Dpar_unit = zeros(3, Float64)
 
-        # Return the iterator.
-        if object != None:
-            return iter(object)
-        else:
-            return iter([])
+        # Calculate the x, y, and z components.
+        Dpar_unit[0] = sin(theta) * cos(phi)
+        Dpar_unit[1] = sin(theta) * sin(phi)
+        Dpar_unit[2] = cos(theta)
+
+        # Return the unit vector.
+        return Dpar_unit
 
 
-    def __len__(self):
-        """Function to calculate the length of the array.
+    def _calc_Dper(self, Diso=None, Da=None):
+        """Function for calculating the Dper value.
 
-        @return:    The length of the array.
-        @rtype:     int
+        The equation for calculating the parameter is
+
+            Dper  =  Diso - 1/3 Da.
+
+        @keyword Diso:  The isotropic diffusion rate.
+        @type Diso:     float
+        @keyword Da:    The anisotropic diffusion rate.
+        @type Da:       float
+        @return:        The diffusion rate perpendicular to the unique axis of the spheroid.
+        @rtype:         float
         """
 
-        return len(self.object(self.diff_data))
+        # Dper value.
+        return Diso - 1.0/3.0 * Da
 
 
-    def __mul__(self, x):
-        """Function for the implementation of multiplication.
+    def _calc_Dratio(self, Dpar=None, Dper=None):
+        """Function for calculating the Dratio value.
 
-        @return:    The array multiplied by x.
-        @rtype:     array
+        The equation for calculating the parameter is
+
+            Dratio  =  Dpar / Dper.
+
+        @keyword Dpar:  The diffusion rate parallel to the unique axis of the spheroid.
+        @type Dpar:     float
+        @keyword Dper:  The diffusion rate perpendicular to the unique axis of the spheroid.
+        @type Dper:     float
+        @return:        The ratio of the parallel and perpendicular diffusion rates.
+        @rtype:         float
         """
 
-        return self.object(self.diff_data) * x
+        # Dratio value.
+        return Dpar / Dper
 
 
-    def __repr__(self):
-        """Function for computing the 'official' string representation of the array.
+    def _calc_Dx(self, Diso=None, Da=None, Dr=None):
+        """Function for calculating the Dx value.
 
-        @return:    The string representation of the array.
-        @rtype:     string
+        The equation for calculating the parameter is
+
+            Dx  =  Diso - 1/3 Da(1 + 3Dr).
+
+        @keyword Diso:  The isotropic diffusion rate.
+        @type Diso:     float
+        @keyword Da:    The anisotropic diffusion rate.
+        @type Da:       float
+        @keyword Dr:    The rhombic component of the diffusion tensor.
+        @type Dr:       float
+        @return:        The diffusion rate parallel to the x-axis of the ellipsoid.
+        @rtype:         float
         """
 
-        return `self.object(self.diff_data)`
+        # Dx value.
+        return Diso - 1.0/3.0 * Da * (1.0 + 3.0*Dr)
 
 
-    def __setitem__(self, key, value):
-        """Disallow modifications to the array.
+    def _calc_Dx_unit(self, alpha=None, beta=None, gamma=None):
+        """Function for calculating the Dx unit vector.
 
-        @raise:     RelaxError.
+        The unit Dx vector is
+
+                        | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+            Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
+                        |                    cos(alpha) * sin(beta)                      |
+
+        @keyword alpha: The Euler angle alpha in radians using the z-y-z convention.
+        @type alpha:    float
+        @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
+        @type beta:     float
+        @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
+        @type gamma:    float
+        @return:        The Dx unit vector.
+        @rtype:         Numeric array (Float64)
         """
 
-        raise RelaxError, "This object cannot be modified!"
+        # Initilise the vector.
+        Dx_unit = zeros(3, Float64)
+
+        # Calculate the x, y, and z components.
+        Dx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
+        Dx_unit[1] = -sin(alpha) * cos(gamma)  -  cos(alpha) * cos(beta) * sin(gamma)
+        Dx_unit[2] = cos(alpha) * sin(beta)
+
+        # Return the unit vector.
+        return Dx_unit
 
 
+    def _calc_Dy(self, Diso=None, Da=None, Dr=None):
+        """Function for calculating the Dy value.
 
-# Automatic array-like objects for the Monte Carlo simulations.
-class DiffAutoSimArrayObject(ListType):
-    def __init__(self, object, diff_data):
-        """Class for implementing an automatically generated array-like object for the MC sims."""
+        The equation for calculating the parameter is
 
-        # Function which returns the Numeric data structure (to be called at run-time).
-        self.object = object
+            Dy  =  Diso - 1/3 Da(1 - 3Dr),
 
-        # The local scope of the diffusion tensor data structure.
-        self.diff_data = diff_data
-
-
-    def __add__(self, x):
-        """Disallow addition.
-
-        @raise:     RelaxError.
+        @keyword Diso:  The isotropic diffusion rate.
+        @type Diso:     float
+        @keyword Da:    The anisotropic diffusion rate.
+        @type Da:       float
+        @keyword Dr:    The rhombic component of the diffusion tensor.
+        @type Dr:       float
+        @return:        The Dy value.
+        @rtype:         float
         """
 
-        raise RelaxError, "Addition is not allowed."
+        # Dy value.
+        return Diso - 1.0/3.0 * Da * (1.0 - 3.0*Dr)
 
 
-    def __getitem__(self, i):
-        """Function for selecting individual elements of the array.
+    def _calc_Dy_unit(self, alpha=None, beta=None, gamma=None):
+        """Function for calculating the Dy unit vector.
 
-        @return:    Element i of the array.
-        @rtype:     float
+        The unit Dy vector is
+
+                        | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+            Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
+                        |                   sin(alpha) * sin(beta)                      |
+
+        @keyword alpha: The Euler angle alpha in radians using the z-y-z convention.
+        @type alpha:    float
+        @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
+        @type beta:     float
+        @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
+        @type gamma:    float
+        @return:        The Dy unit vector.
+        @rtype:         Numeric array (Float64)
         """
 
-        return self.object(self.diff_data, i)
+        # Initilise the vector.
+        Dy_unit = zeros(3, Float64)
+
+        # Calculate the x, y, and z components.
+        Dy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
+        Dy_unit[1] = cos(alpha) * cos(gamma)  -  sin(alpha) * cos(beta) * sin(gamma)
+        Dy_unit[2] = sin(alpha) * sin(beta)
+
+        # Return the unit vector.
+        return Dy_unit
 
 
-    def __iter__(self):
-        """Function for looping over the array.
+    def _calc_Dz(self, Diso=None, Da=None):
+        """Function for calculating the Dz value.
 
-        @return:    An iterator object for looping over the array.
-        @rtype:     iterator object
+        The equation for calculating the parameter is
+
+            Dz  =  Diso + 2/3 Da.
+
+        @keyword Diso:  The isotropic diffusion rate.
+        @type Diso:     float
+        @keyword Da:    The anisotropic diffusion rate.
+        @type Da:       float
+        @return:        The Dz value.
+        @rtype:         float
         """
 
-        # Get the object.
-        object = self.create_array()
-
-        # Return the iterator.
-        if object != None:
-            return iter(self.create_array())
-        else:
-            return iter([])
+        # Dz value.
+        return Diso + 2.0/3.0 * Da
 
 
-    def __len__(self):
-        """Function to calculate the length of the array.
+    def _calc_Dz_unit(self, beta=None, gamma=None):
+        """Function for calculating the Dz unit vector.
 
-        @return:    The length of the array.
-        @rtype:     int
+        The unit Dz vector is
+
+                        | -sin(beta) * cos(gamma) |
+            Dz_unit  =  |  sin(beta) * sin(gamma) |.
+                        |        cos(beta)        |
+
+        @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
+        @type beta:     float
+        @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
+        @type gamma:    float
+        @return:        The Dz unit vector.
+        @rtype:         Numeric array (Float64)
         """
 
-        if hasattr(self.diff_data, 'tm_sim'):
-            return len(self.diff_data.tm_sim)
+        # Initilise the vector.
+        Dz_unit = zeros(3, Float64)
+
+        # Calculate the x, y, and z components.
+        Dz_unit[0] = -sin(beta) * cos(gamma)
+        Dz_unit[1] = sin(beta) * sin(gamma)
+        Dz_unit[2] = cos(beta)
+
+        # Return the unit vector.
+        return Dz_unit
 
 
-    def __mul__(self, x):
-        """Disallow multiplication.
+    def _calc_rotation(self, *args):
+        """Function for calculating the rotation matrix.
 
-        @raise:     RelaxError.
+        Spherical diffusion
+        ===================
+
+        As the orientation of the diffusion tensor within the structural frame is undefined when the
+        molecule diffuses as a sphere, the rotation matrix is simply the identity matrix
+
+                  | 1  0  0 |
+            R  =  | 0  1  0 |.
+                  | 0  0  1 |
+
+
+        Spheroidal diffusion
+        ====================
+
+        The rotation matrix required to shift from the diffusion tensor frame to the structural
+        frame is equal to
+
+                  |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
+            R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
+                  | -sin(theta)              0          cos(theta)            |
+
+
+        Ellipsoidal diffusion
+        =====================
+
+        The rotation matrix required to shift from the diffusion tensor frame to the structural
+        frame is equal to
+
+            R  =  | Dx_unit  Dy_unit  Dz_unit |,
+
+                  | Dx_unit[0]  Dy_unit[0]  Dz_unit[0] |
+               =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
+                  | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
+
+        @param *args:       All the function arguments.
+        @type *args:        tuple
+        @param theta:       The azimuthal angle in radians.
+        @type theta:        float
+        @param phi:         The polar angle in radians.
+        @type phi:          float
+        @param Dpar_unit:   The Dpar unit vector.
+        @type Dpar_unit:    Numeric array (Float64)
+        @param Dx_unit:     The Dx unit vector.
+        @type Dx_unit:      Numeric array (Float64)
+        @param Dy_unit:     The Dy unit vector.
+        @type Dy_unit:      Numeric array (Float64)
+        @param Dz_unit:     The Dz unit vector.
+        @type Dz_unit:      Numeric array (Float64)
+        @return:            The rotation matrix.
+        @rtype:             Numeric array ((3, 3), Float64)
         """
 
-        raise RelaxError, "Multiplication is not allowed."
+        # The rotation matrix for the sphere.
+        if self.type == 'sphere':
+            return identity(3, Float64)
+
+        # The rotation matrix for the spheroid.
+        elif self.type == 'spheroid':
+            # Unpack the arguments.
+            theta, phi, Dpar_unit = args
+
+            # Initialise the rotation matrix.
+            rotation = identity(3, Float64)
+
+            # First row of the rotation matrix.
+            rotation[0, 0] = cos(theta) * cos(phi)
+            rotation[1, 0] = cos(theta) * sin(phi)
+            rotation[2, 0] = -sin(theta)
+
+            # Second row of the rotation matrix.
+            rotation[0, 1] = -sin(phi)
+            rotation[1, 1] = cos(phi)
+
+            # Replace the last row of the rotation matrix with the Dpar unit vector.
+            rotation[:, 2] = Dpar_unit
+
+            # Return the tensor.
+            return rotation
+
+        # The rotation matrix for the ellipsoid.
+        elif self.type == 'ellipsoid':
+            # Unpack the arguments.
+            Dx_unit, Dy_unit, Dz_unit = args
+
+            # Initialise the rotation matrix.
+            rotation = identity(3, Float64)
+
+            # First column of the rotation matrix.
+            rotation[:, 0] = Dx_unit
+
+            # Second column of the rotation matrix.
+            rotation[:, 1] = Dy_unit
+
+            # Third column of the rotation matrix.
+            rotation[:, 2] = Dz_unit
+
+            # Return the tensor.
+            return rotation
 
 
-    def __repr__(self):
-        """Function for computing the 'official' string representation of the array.
+    def _calc_tensor(self, rotation=None, tensor_diag=None):
+        """Function for calculating the diffusion tensor (in the structural frame).
 
-        @return:    The string representation of the array.
-        @rtype:     string
+        The diffusion tensor is calculated using the diagonalised tensor and the rotation matrix
+        through the equation
+
+            R . tensor_diag . R^T.
+
+        @keyword rotation:      The rotation matrix.
+        @type rotation:         Numeric array ((3, 3), Float64)
+        @keyword tensor_diag:   The diagonalised diffusion tensor.
+        @type tensor_diag:      Numeric array ((3, 3), Float64)
+        @return:                The diffusion tensor (within the structural frame).
+        @rtype:                 Numeric array ((3, 3), Float64)
         """
 
-        return `self.create_array()`
+        # Rotation (R . tensor_diag . R^T).
+        return dot(rotation, dot(tensor_diag, transpose(rotation)))
 
 
-    def __setitem__(self, key, value):
-        """Disallow modifications to the array.
+    def _calc_tensor_diag(self, *args):
+        """Function for calculating the diagonalised diffusion tensor.
 
-        @raise:     RelaxError.
+        The diagonalised spherical diffusion tensor is defined as
+
+                       | Diso     0     0 |
+            tensor  =  |    0  Diso     0 |.
+                       |    0     0  Diso |
+
+        The diagonalised spheroidal tensor is defined as
+
+                       | Dper     0     0 |
+            tensor  =  |    0  Dper     0 |.
+                       |    0     0  Dpar |
+
+        The diagonalised ellipsoidal diffusion tensor is defined as
+
+                       | Dx   0   0 |
+            tensor  =  |  0  Dy   0 |.
+                       |  0   0  Dz |
+
+        @param *args:   All the arguments.
+        @type *args:    tuple
+        @param Diso:    The Diso parameter of the sphere.
+        @type Diso:     float
+        @param Dpar:    The Dpar parameter of the spheroid.
+        @type Dpar:     float
+        @param Dper:    The Dper parameter of the spheroid.
+        @type Dper:     float
+        @param Dx:      The Dx parameter of the ellipsoid.
+        @type Dx:       float
+        @param Dy:      The Dy parameter of the ellipsoid.
+        @type Dy:       float
+        @param Dz:      The Dz parameter of the ellipsoid.
+        @type Dz:       float
+        @return:        The diagonalised diffusion tensor.
+        @rtype:         Numeric array ((3, 3), Float64)
         """
 
-        raise RelaxError, "This object cannot be modified!"
+        # Spherical diffusion tensor.
+        if self.type == 'sphere':
+            # Unpack the arguments.
+            Diso, = args
+
+            # Initialise the tensor.
+            tensor = zeros((3, 3), Float64)
+
+            # Populate the diagonal elements.
+            tensor[0, 0] = Diso
+            tensor[1, 1] = Diso
+            tensor[2, 2] = Diso
+
+            # Return the tensor.
+            return tensor
+
+        # Spheroidal diffusion tensor.
+        elif self.type == 'spheroid':
+            # Unpack the arguments.
+            Dpar, Dper = args
+
+            # Initialise the tensor.
+            tensor = zeros((3, 3), Float64)
+
+            # Populate the diagonal elements.
+            tensor[0, 0] = Dper
+            tensor[1, 1] = Dper
+            tensor[2, 2] = Dpar
+
+            # Return the tensor.
+            return tensor
+
+        # Ellipsoidal diffusion tensor.
+        elif self.type == 'ellipsoid':
+            # Unpack the arguments.
+            Dx, Dy, Dz = args
+
+            # Initialise the tensor.
+            tensor = zeros((3, 3), Float64)
+
+            # Populate the diagonal elements.
+            tensor[0, 0] = Dx
+            tensor[1, 1] = Dy
+            tensor[2, 2] = Dz
+
+            # Return the tensor.
+            return tensor
 
 
-    def create_array(self):
-        """Generate the array.
+    def _update_object(self, base_name, target, update_if_set, depends, category):
+        """Function for updating the target object, its error, and the MC simulations.
 
-        @return:    The array of objects.
-        @rtype:     list
+        If the base name of the object is not within the 'update_if_set' list, this function returns
+        without doing anything (to avoid wasting time).  Dependant upon the category the object
+        (target), its error (target+'_err'), or all Monte Carlo simulations (target+'_sim') are
+        updated.
+
+        @param name:            The parameter name which is being set in the __setattr__() function.
+        @type name:             str
+        @param target:          The name of the object to update.
+        @type target:           str
+        @param update_if_set:   If the parameter being set by the __setattr__() function is not
+            within this list of parameters, don't waste time updating the
+            target.
+        @param depends:         An array of names objects that the target is dependant upon.
+        @type depends:          array of str
+        @param category:        The category of the object to update (one of 'val', 'err', or
+            'sim').
+        @type category:         str
+        @return:                None
         """
 
-        # No simulations.
-        if not hasattr(self.diff_data, 'tm_sim'):
+        # Only update if the parameter name is within the 'update_if_set' list.
+        if not base_name in update_if_set:
             return
 
-        # Initialise the array.
-        array = []
+        # Get the function for calculating the value.
+        fn = getattr(self, '_calc_'+target)
 
-        # Loop over the elements, appending the structure to the array.
-        for i in xrange(len(self.diff_data.tm_sim)):
-            array.append(self.object(self.diff_data, i))
 
-        # Return the array.
-        return array
+        # The value.
+        ############
+
+        if category == 'val':
+            # Get all the dependancies if possible.
+            missing_dep = 0
+            deps = ()
+            for dep_name in depends:
+                # Test if the object exists.
+                if not hasattr(self, dep_name):
+                    missing_dep = 1
+                    break
+
+                # Get the object and place it into the 'deps' tuple.
+                deps = deps+(getattr(self, dep_name),)
+
+            # Only update the object if its dependancies exist.
+            if not missing_dep:
+                # Calculate the value.
+                value = fn(*deps)
+
+                # Set the attribute.
+                self.__dict__[target] = value
+
+
+        # The error.
+        ############
+
+        if category == 'err':
+            # Get all the dependancies if possible.
+            missing_dep = 0
+            deps = ()
+            for dep_name in depends:
+                # Test if the error object exists.
+                if not hasattr(self, dep_name+'_err'):
+                    missing_dep = 1
+                    break
+
+                # Get the object and place it into the 'deps' tuple.
+                deps = deps+(getattr(self, dep_name+'_err'),)
+
+            # Only update the error object if its dependancies exist.
+            if not missing_dep:
+                # Calculate the value.
+                value = fn(*deps)
+
+                # Set the attribute.
+                self.__dict__[target+'_err'] = value
+
+
+        # The Monte Carlo simulations.
+        ##############################
+
+        if category == 'sim':
+            # Get all the dependancies if possible.
+            missing_dep = 0
+            deps = []
+            for dep_name in depends:
+                # Test if the error object exists.
+                if not hasattr(self, dep_name+'_sim'):
+                    missing_dep = 1
+                    break
+
+                # Get the object and place it into the 'deps' array.
+                deps.append(getattr(self, dep_name+'_sim'))
+
+            # The number of simulations.
+            if deps:
+                num_sim = len(deps[0])
+            else:
+                num_sim = len(getattr(self, update_if_set[0]+'_sim'))
+
+            # Only update the MC simulation object if its dependancies exist.
+            if not missing_dep:
+                # Initialise an empty array to store the MC simulation object elements.
+                sim_values = []
+
+                # Loop over the simulations.
+                for i in xrange(num_sim):
+                    # Create a tuple of the dependancies.
+                    deps_tuple = ()
+                    for dep in deps:
+                        deps_tuple = deps_tuple+(dep[i],)
+
+                    # Calculate the value.
+                    sim_values.append(fn(*deps_tuple))
+
+                # Set the attribute.
+                self.__dict__[target+'_sim'] = sim_values
