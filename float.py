@@ -637,6 +637,7 @@ def isPosInf(obj):
     '''        
     return isInf(obj) and isPositive(obj)
 
+
 def isNegInf(obj):
     ''' check to see if a python float is negative infinity 
         
@@ -647,11 +648,124 @@ def isNegInf(obj):
         
         throws -- throws a TypeError if obj isn't a python float     
     '''
-        
-    return isInf(obj) and not isPositive(obj)   
-    
 
-    
+    return isInf(obj) and not isPositive(obj)
 
 
+def bitpatternToFloat(string, endian='big'):
+    """Convert a 64 bit IEEE-754 ascii bit pattern into a 64 bit Python float.
 
+    @param string:  The ascii bit pattern repesenting the IEEE-754 float.
+    @type string:   str
+    @param endian:  The endianness of the bit pattern (can be 'big' or 'little').
+    @type endian:   str
+    @return:        The 64 bit float corresponding to the IEEE-754 bit pattern.
+    @returntype:    float
+    @raise:         TypeError if 'string' is not a string, the length of the 'string' is not 64, or
+        if 'string' does not consist solely of the characters '0' and '1'.
+    """
+
+    # Test that the bit pattern is a string.
+    if type(string) != str:
+        raise TypeError, "The string argument '%s' is not a string." % string
+
+    # Test the length of the bit pattern.
+    if len(string) != 64:
+        raise TypeError, "The string '%s' is not 64 characters long." % string
+
+    # Test that the string consists solely of zeros and ones.
+    for char in string:
+        if char not in ['0', '1']:
+            raise TypeError, "The string '%s' should be composed solely of the characters '0' and '1'." % string
+
+    # Reverse the byte order as neccessary.
+    if endian == 'big' and sys.byteorder == 'little':
+        string = string[::-1]
+    elif endian == 'little' and sys.byteorder == 'big':
+        string = string[::-1]
+
+    # Convert the bit pattern into a byte array (of integers).
+    bytes = []
+    for i in xrange(8):
+        bytes.append(bitpatternToInt(string[i*8:i*8+8], endian=sys.byteorder))
+
+    # Pack the byte array into a float and return it.
+    return packBytesAsPyFloat(bytes)
+
+
+def bitpatternToInt(string, endian='big'):
+    """Convert a bit pattern into its integer representation.
+
+    @param string:  The ascii string repesenting binary data.
+    @type string:   str
+    @param endian:  The endianness of the bit pattern (can be 'big' or 'little').
+    @type endian:   str
+    @return:        The integer value.
+    @returntype:    int
+    """
+
+    # Test that the bit pattern is a string.
+    if type(string) != str:
+        raise TypeError, "The string argument '%s' is not a string." % string
+
+    # Test that the string consists solely of zeros and ones.
+    for char in string:
+        if char not in ['0', '1']:
+            raise TypeError, "The string '%s' should be composed solely of the characters '0' and '1'." % string
+
+    # Reverse the byte order as neccessary.
+    if endian == 'big' and sys.byteorder == 'little':
+        string = string[::-1]
+    elif endian == 'little' and sys.byteorder == 'big':
+        string = string[::-1]
+
+    # Calculate the integer corresponding to the string.
+    int_val = 0
+    for i in xrange(len(string)):
+        if int(string[i]):
+            int_val = int_val + 2**i
+
+    # Return the integer value.
+    return int_val
+
+
+# IEEE-754 Constants.
+#####################
+
+# The following bit patterns are to be read from right to left (big-endian).
+# Hence bit positions 0 and 63 are to the far right and far left respectively.
+PosZero             = bitpatternToFloat('0000000000000000000000000000000000000000000000000000000000000000', endian='big')
+NegZero             = bitpatternToFloat('1000000000000000000000000000000000000000000000000000000000000000', endian='big')
+PosEpsilonDenorm    = bitpatternToFloat('0000000000000000000000000000000000000000000000000000000000000001', endian='big')
+NegEpsilonDenorm    = bitpatternToFloat('1000000000000000000000000000000000000000000000000000000000000001', endian='big')
+PosEpsilonNorm      = bitpatternToFloat('0000000000010000000000000000000000000000000000000000000000000001', endian='big')
+NegEpsilonNorm      = bitpatternToFloat('1000000000010000000000000000000000000000000000000000000000000001', endian='big')
+PosMax              = bitpatternToFloat('0111111111101111111111111111111111111111111111111111111111111111', endian='big')
+NegMin              = bitpatternToFloat('1111111111101111111111111111111111111111111111111111111111111111', endian='big')
+PosInf              = bitpatternToFloat('0111111111110000000000000000000000000000000000000000000000000000', endian='big')
+NegInf              = bitpatternToFloat('1111111111110000000000000000000000000000000000000000000000000000', endian='big')
+PosNaN_A            = bitpatternToFloat('0111111111110000000000000000000000000000001000000000000000000000', endian='big')
+NegNaN_A            = bitpatternToFloat('1111111111110000000000000000000000000000001000000000000000000000', endian='big')
+PosNaN_B            = bitpatternToFloat('0111111111110000000000000000011111111111111111111110000000000000', endian='big')
+NegNaN_B            = bitpatternToFloat('1111111111110000000000000000011111111111111111111110000000000000', endian='big')
+PosNaN_C            = bitpatternToFloat('0111111111110101010101010101010101010101010101010101010101010101', endian='big')
+NegNaN_C            = bitpatternToFloat('1111111111110101010101010101010101010101010101010101010101010101', endian='big')
+PosNaN = PosNaN_C
+NegNaN = NegNaN_C
+
+#print "%-30s%-20.40g" % ("Pos zero: ", PosZero)
+#print "%-30s%-20.40g" % ("Neg zero: ", NegZero)
+#print "%-30s%-20.40g" % ("Pos epsilon denorm: ", PosEpsilonDenorm)
+#print "%-30s%-20.40g" % ("Neg epsilon denorm: ", NegEpsilonDenorm)
+#print "%-30s%-20.40g" % ("Pos epsilon norm: ", PosEpsilonNorm)
+#print "%-30s%-20.40g" % ("Neg epsilon norm: ", NegEpsilonNorm)
+#print "%-30s%-20.40g" % ("Max: ", PosMax)
+#print "%-30s%-20.40g" % ("Min: ", NegMin)
+#print "%-30s%-20.40g" % ("Pos inf: ", PosInf)
+#print "%-30s%-20.40g" % ("Neg inf: ", NegInf)
+#print "%-30s%-20.40g" % ("Pos NaN (A): ", PosNaN_A)
+#print "%-30s%-20.40g" % ("Neg NaN (A): ", NegNaN_A)
+#print "%-30s%-20.40g" % ("Pos NaN (B): ", PosNaN_B)
+#print "%-30s%-20.40g" % ("Neg NaN (B): ", NegNaN_B)
+#print "%-30s%-20.40g" % ("Pos NaN (C): ", PosNaN_C)
+#print "%-30s%-20.40g" % ("Neg NaN (C): ", NegNaN_C)
