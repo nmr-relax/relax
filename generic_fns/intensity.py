@@ -94,7 +94,7 @@ class Intensity:
             raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
         # Return the data.
-        return res_num, x_name, h_name, intensity
+        return res_num, h_name, x_name, intensity
 
 
     def intensity_xeasy(self, line):
