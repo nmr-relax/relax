@@ -1164,11 +1164,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -1648,7 +1648,7 @@
    &   \\
   More and Thuente line search & \quotecmd{\^{}[Mm][Tt]} or \quotecmd{\^{}[Mm]ore[ \_][Tt]huente\$}  \\
    &   \\
-  No line search & \quotecmd{\^{}[Nn]one\$}  \\
+  No line search & \quotecmd{\^{}[Nn]o [Ll]ine [Ss]earch\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -1662,7 +1662,7 @@
  \toprule 
   Hessian modification & Patterns  \\ 
  \midrule 
-  Unmodified Hessian & \quotecmd{[Nn]one}  \\
+  Unmodified Hessian & \quotecmd{\^{}[Nn]o [Hh]essian [Mm]od}  \\
    &   \\
   Eigenvalue\index{eigenvalues} modification & \quotecmd{\^{}[Ee]igen}  \\
    &   \\
@@ -3991,7 +3991,7 @@
 
  \newpage 
 
- \subsection{pdb} 
+ \subsection{pdb.read} 
 
   
  \subsubsection{Synopsis} 
@@ -4002,7 +4002,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{pdb}(self, run=None, file=None, dir=None, model=None, heteronuc=`N', proton=`H', load\_seq=1)} 
+ \textsf{\textbf{pdb.read}(self, run=None, file=None, dir=None, model=None, load\_seq=1)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -4014,10 +4014,6 @@
  \keyword{ dir:}  The directory where the file is located.   
 
  \keyword{ model:}  The PDB\index{PDB} model number.   
-
- \keyword{ heteronuc:}  The name of the heteronucleus as specified in the PDB\index{PDB} file.   
-
- \keyword{ proton:}  The name of the proton as specified in the PDB\index{PDB} file.   
 
  \keyword{ load\_seq:}  A flag specifying whether the sequence\index{sequence} should be loaded from the PDB\index{PDB} file.  
 
@@ -4032,25 +4028,86 @@
  To load the sequence\index{sequence} from the PDB\index{PDB} file, set the \quotecmd{load\_seq} flag to 1.  If the sequence\index{sequence} has previously been loaded, then this flag will be ignored. 
   
 
- Once the PDB\index{PDB} structures are loaded, unit XH bond vectors will be calculated.  The vectors are calculated using the atomic coordinates of the atoms specified by the arguments heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for each model will be calculated and the final unit XH vector will be taken as the average. 
+  
+ \subsubsection{Example} 
+
+ To load all structures from the PDB\index{PDB} file \quotecmd{test.pdb} in the directory \quotecmd{\~{}/pdb} for use in the model-free analysis run \quotecmd{m8}, type: 
+  
+
+ \example{relax> pdb.read(`m8', `test.pdb', `\~{}/pdb', 1)} 
+
+ \example{relax> pdb.read(run=`m8', file=`test.pdb', dir=`pdb', model=1)} 
+
+ To load the 10$^\mathrm{th}$ model from the file \quotecmd{test.pdb}, use: 
+  
+
+ \example{relax> pdb.read(`m1', `test.pdb', model=10)} 
+
+ \example{relax> pdb.read(run=`m1', file=`test.pdb', model=10)} 
+
+  
+
+ \newpage 
+
+ \subsection{pdb.vectors} 
+
+  
+ \subsubsection{Synopsis} 
+
+ Function for calculating/extracting XH vectors from the structure. 
+  
+
+  
+ \subsubsection{Defaults} 
+
+ \textsf{\textbf{pdb.vectors}(self, run=None, heteronuc=`N', proton=`H', res\_num=None, res\_name=None)} 
+
+  
+ \subsubsection{Keyword arguments} 
+
+ \keyword{run:}  The run to assign the vectors to.   
+
+ \keyword{ heteronuc:}  The heteronucleus name as specified in the PDB\index{PDB} file.   
+
+ \keyword{ proton:}  The name of the proton as specified in the PDB\index{PDB} file.   
+
+ \keyword{ res\_num:}  The residue number.   
+
+ \keyword{ res\_name:}  The name of the residue.  
+
+  
+
+  
+ \subsubsection{Description} 
+
+ Once the PDB\index{PDB} structures have been loaded, the unit XH bond vectors must be calculated for the non-spherical diffusion models.  The vectors are calculated using the atomic coordinates of the atoms specified by the arguments heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for each model will be calculated and the final unit XH vector will be taken as the average. 
   
 
   
  \subsubsection{Example} 
 
- To load all structures from the PDB\index{PDB} file \quotecmd{test.pdb} in the directory \quotecmd{\~{}/pdb} for use in the model-free analysis run \quotecmd{m8} where the heteronucleus in the PDB\index{PDB} file is \quotecmd{N} and the proton is \quotecmd{H}, type: 
+ To calculate the XH vectors of the backbone amide nitrogens where in the PDB\index{PDB} file the backbone nitrogen is called \quotecmd{N} and the attached proton is called \quotecmd{H}, assuming the run \quotecmd{test}, type: 
   
 
- \example{relax> pdb(`m8', `test.pdb', `\~{}/pdb', 1, `N', `H')} 
+ \example{relax> pdb.vectors(`test')} 
 
- \example{relax> pdb(run=`m8', file=`test.pdb', dir=`pdb', model=1, heteronuc=`N', proton=`H')} 
+ \example{relax> pdb.vectors(`test', `N')} 
 
- To load the 10$^\mathrm{th}$ model from the file \quotecmd{test.pdb}, use: 
+ \example{relax> pdb.vectors(`test', `N', `H')} 
+
+ \example{relax> pdb.vectors(`test', heteronuc=`N', proton=`H')} 
+
+ If the attached proton is called \quotecmd{HN}, type: 
   
 
- \example{relax> pdb(`m1', `test.pdb', model=10)} 
+ \example{relax> pdb.vectors(`test', proton=`HN')} 
 
- \example{relax> pdb(run=`m1', file=`test.pdb', model=10)} 
+ If you are working with RNA, you can use the residue name identifier to calculate the vectors for each residue separately.  For example: 
+  
+
+ \example{relax> pdb.vectors(`m1', `N1', `H1', res\_name=`G')} 
+
+ \example{relax> pdb.vectors(`m1', `N3', `H3', res\_name=`U')} 
 
   
 
@@ -5765,11 +5822,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -5905,11 +5962,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -6092,11 +6149,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -6386,11 +6443,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
@@ -6726,11 +6783,11 @@
  \toprule 
   Data type & Object name & Patterns  \\ 
  \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj](0)}  \\
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
    &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj](w[Xx])}  \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
    &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj](w[Hh])}  \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
