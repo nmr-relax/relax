@@ -47,7 +47,7 @@ The chi-squared equation is itself dependent on the relaxation equations through
 % The relaxation equations.
 \subsection{The relaxation equations -- $\Ri'(\theta)$}
 
-The relaxation values of the set R$'(\theta)$ include the spin-lattice\index{relaxation rate!spin-lattice}, spin-spin\index{relaxation rate!spin-spin}, and cross-relaxation rates\index{relaxation rate!cross rate} at all field strenghts.  These rates are respectively \citep{Abragam61}
+The relaxation values of the set R$'(\theta)$ include the spin-lattice\index{relaxation rate!spin-lattice}, spin-spin\index{relaxation rate!spin-spin}, and cross-relaxation rates\index{relaxation rate!cross rate} at all field strengths.  These rates are respectively \citep{Abragam61}
 \begin{subequations}
 \begin{align}
     \Rone(\theta) &= d \Big( J(\omega_H - \omega_X) + 3J(\omega_X) + 6J(\omega_H + \omega_X) \Big) + cJ(\omega_X),     \label{eq: R1} \\
@@ -224,15 +224,59 @@ In the situation of a molecule diffusing as a sphere\index{diffusion!sphere (iso
 \noindent This is diffusion equation presented in \citet{Bloembergen48}.
 
 
+% The model-free models.
+%~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The model-free models}
+
+Extending the list of models given in \citet{Mandel95, Fushman97, Orekhov99b, Korzhnev01, Zhuravleva04}, the models built into relax include
+\begin{subequations}
+\renewcommand{\theequation}{\theparentequation .\arabic{equation}}
+\addtocounter{equation}{-1}
+\begin{align}
+ m0 &= \{\},                                   \label{model: m0} \\
+ m1 &= \{S^2\},                                \label{model: m1} \\
+ m2 &= \{S^2, \tau_e\},                        \label{model: m2} \\
+ m3 &= \{S^2, R_{ex}\},                        \label{model: m3} \\
+ m4 &= \{S^2, \tau_e, R_{ex}\},                \label{model: m4} \\
+ m5 &= \{S^2, S^2_f, \tau_s\},                 \label{model: m5} \\
+ m6 &= \{S^2, \tau_f, S^2_f, \tau_s\},         \label{model: m6} \\
+ m7 &= \{S^2, S^2_f, \tau_s, R_{ex}\},         \label{model: m7} \\
+ m8 &= \{S^2, \tau_f, S^2_f, \tau_s, R_{ex}\}, \label{model: m8} \\
+ m9 &= \{R_{ex}\}.                             \label{model: m9}
+\end{align}
+\end{subequations}
+
+\noindent The parameter $R_{ex}$ is scaled quadratically with field strength in these models as it is assumed to be fast.  In the set theory notation, the model-free model for the spin system $i$ is represented by the symbol $\Mfset_i$.  Through the addition of the local $\tau_m$ to each of these models, only the component of Brownian rotational diffusion experienced by the spin system is probed.  These models, represented in set notation by the symbol $\Localset_i$, are
+\begin{subequations}
+\renewcommand{\theequation}{\theparentequation .\arabic{equation}}
+\addtocounter{equation}{-1}
+\begin{align}
+ tm0 &= \{\tau_m\},                                     \label{model: tm0} \\
+ tm1 &= \{\tau_m, S^2\},                                \label{model: tm1} \\
+ tm2 &= \{\tau_m, S^2, \tau_e\},                        \label{model: tm2} \\
+ tm3 &= \{\tau_m, S^2, R_{ex}\},                        \label{model: tm3} \\
+ tm4 &= \{\tau_m, S^2, \tau_e, R_{ex}\},                \label{model: tm4} \\
+ tm5 &= \{\tau_m, S^2, S^2_f, \tau_s\},                 \label{model: tm5} \\
+ tm6 &= \{\tau_m, S^2, \tau_f, S^2_f, \tau_s\},         \label{model: tm6} \\
+ tm7 &= \{\tau_m, S^2, S^2_f, \tau_s, R_{ex}\},         \label{model: tm7} \\
+ tm8 &= \{\tau_m, S^2, \tau_f, S^2_f, \tau_s, R_{ex}\}, \label{model: tm8} \\
+ tm9 &= \{\tau_m, R_{ex}\}.                             \label{model: tm9}
+\end{align}
+\end{subequations}
+
+
+
 
 % Optimisation of a single model-free model.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
 \section{Optimisation of a single model-free model}
 
 
 % The sample script.
+%~~~~~~~~~~~~~~~~~~~
+
 \subsection{The sample script}
 
 The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \texttt{`model-free.py'}.  The text of the script is:
@@ -287,6 +331,8 @@ state.save(`save', force=1)
 
 
 % The rest.
+%~~~~~~~~~~
+
 \subsection{The rest}
 
 \textbf{\textit{Please write me!}}
@@ -298,11 +344,12 @@ Until this section is completed please look at the sample script \texttt{`model-
 % Optimisation of all model-free models.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
 \section{Optimisation of all model-free models}
 
 
 % The sample script.
+%~~~~~~~~~~~~~~~~~~~
+
 \subsection{The sample script}
 
 The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual residues is \texttt{`mf\_multimodel.py'}.  The text of the script is:
@@ -353,6 +400,8 @@ state.save(`save', force=1)
 
 
 % The rest.
+%~~~~~~~~~~
+
 \subsection{The rest}
 
 \textbf{\textit{Please write me!}}
@@ -364,11 +413,12 @@ Until this section is completed please look at the sample script \texttt{`mf\_mu
 % Model-free model selection.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
 \section{Model-free model selection}
 
 
 % The sample script.
+%~~~~~~~~~~~~~~~~~~~
+
 \subsection{The sample script}
 
 The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \texttt{`modsel.py'}.  The text of the script is:
@@ -406,6 +456,8 @@ results.write(run=`aic', file=`results', force=1)
 
 
 % The rest.
+%~~~~~~~~~~
+
 \subsection{The rest}
 
 \textbf{\textit{Please write me!}}
@@ -414,12 +466,53 @@ Until this section is completed please look at the sample script \texttt{`modsel
 
 
 
+% The methodology of Mandel et al., 1995.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The methodology of Mandel et al., 1995}
+
+By presenting a systematic methodology for obtaining a consistent model-free description of the dynamics of the system, the manuscript of \citet{Mandel95} revolutionised the application of model-free analysis.  The full protocol is presented in Figure~\ref{fig: Mandel et al.}.
+
+All of the data analysis techniques required for this protocol can be implemented within relax.  The chi-squared distributions required for the chi-squared tests are constructed by Modelfree4 from the Monte Carlo simulations.  If the optimisation algorithms and Monte Carlo simulations built into relax are utilised, then the relax script will need to construct the chi-squared distributions from the results as this is not yet coded into relax.  The specific step-up hypothesis testing model selection of \citet{Mandel95} is available through the \texttt{model\_selection()} user function.  Coding the rest of the protocol into a script should be straightforward.
+
+
+
+% Mandel et al., 1995 figure.
+\begin{figure}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 436 532]{images/model_free/mandel95.eps.gz}}
+\caption[A schematic of the model-free optimisation protocol of Mandel et al., 1995]{A schematic of the model-free optimisation protocol of \citet{Mandel95}.  This specific protocol is for single field strength data.  The initial diffusion tensor estimate is calculated using the $\Rtwo/\Rone$ ratio.  The diffusion parameters of $\Diffset$ are held constant while model-free models $m1$ to $m5$ (\ref{model: m1}--\ref{model: m5}) of the set $\Mfset_i$ for each residue $i$ are optimised and 500 Monte Carlo simulations executed.  Using a web of ANOVA statistical tests, specifically $\chi^2$ and F-tests, a step-up hypothesis testing model selection procedure is used to choose the best model-free model.  These steps are repeated for all residues of the protein.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The iterative process is repeated for both isotropic diffusion (sphere) and anisotropic diffusion (spheroid).} \label{fig: Mandel et al.}
+\end{figure}
+
+
+
+% Kay's paradigm -- the initial diffusion tensor estimate.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Kay's paradigm -- the initial diffusion tensor estimate}
+
+Ever since \citet{Kay89}, the question of how to obtain the model-free description of the system has followed the route in which the diffusion tensor is initially estimated.  Using this rough estimate, the model-free models are optimised for each spin system $i$, the best model selected, and then the global model $\Space$ of the diffusion model $\Diffset$ with each model-free model $\Mfset_i$ is optimised.  This procedure is then repeated using the diffusion tensor parameters of $\Space$ as the initial input.  Finally the global model is selected.  The full protocol is illustrated in Figure~\ref{fig: init diff estimate}.
+
+
+% Kay's paradigm figure.
+\begin{figure}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 437 516]{images/model_free/init_diff_est.eps.gz}}
+\caption[Model-free analysis using Kay's paradigm -- the initial diffusion tensor estimate]{A schematic of model-free analysis using Kay's paradigm -- the initial diffusion tensor estimate -- together with AIC model selection and model elimination.  The initial estimates of the parameters of $\Diffset$ are held constant while model-free models $m0$ to $m9$ (\ref{model: m0}--\ref{model: m9}) of the set $\Mfset_i$ for each spin system $i$ are optimised, model elimination applied to remove failed models, and AIC model selection used to determine the best model.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The entire iterative process is repeated for each of the Brownian diffusion models.  Finally AIC model selection is used to determine the best description of the dynamics of the molecule by selecting between the global models $\Space$ including the sphere, oblate spheroid, prolate spheroid, and ellipsoid.  Once the solution has been found, Monte Carlo simulations can be utilised for error analysis.} \label{fig: init diff estimate}
+\end{figure}
+
+
+
 % The new model-free optimisations protocol.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
 \section{The new model-free optimisation protocol}
 
 \textbf{\textit{Please write me!}}
 
-Until this section is written please look at the sample script \texttt{`full\_analysis.py'}.
+Until this section is written please look at the sample script \texttt{`full\_analysis.py'}.  A description of the protocol is given at the top of the script.  The protocol is summarised in Figure~\ref{fig: new protocol}.
+
+
+% New model-free optimisation protocol figure.
+\begin{figure}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 461 697]{images/model_free/new_protocol.eps.gz}}
+\caption[A schematic of the new model-free optimisation protocol]{A schematic of the new model-free optimisation protocol.  Initially models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9}) of the set $\Localset_i$ for each spin system $i$ are optimised, model elimination used to remove failed models, and AIC model selection used to pick the best model.  Once all the $\Localset_i$ have been determined for the system the the local $\tau_m$ parameter is removed, the model-free parameters are held fixed, and the global diffusion parameters of $\Diffset$ are optimised.  These parameters are used as input for the central part of the schematic which follows the same procedure as that of Figure~\ref{fig: init diff estimate}.  Convergence is however precisely defined as identical models $\Space$, identical $\chi^2$ values, and identical parameters $\theta$ between two iterations.  The universal solution $\widehat\Univset$, the best description of the dynamics of the molecule, is determined using AIC model selection to select between the local $\tau_m$ models for all spins, the sphere, oblate spheroid, prolate spheroid, ellipsoid, and possibly hybrid models whereby multiple diffusion tensors have been applied to different parts of the molecule.} \label{fig: new protocol}
+\end{figure}
