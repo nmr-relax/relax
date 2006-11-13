@@ -838,10 +838,6 @@ class PDB:
         if self.print_flag:
             print "\nCalculating unit XH vectors.\n"
 
-        # Nuclei.
-        self.relax.data.pdb[self.run].proton = proton
-        self.relax.data.pdb[self.run].heteronuc = heteronuc
-
         # Number of structures.
         num_str = len(self.relax.data.pdb[self.run].structures)
 
@@ -957,6 +953,10 @@ class PDB:
             if res_name != None:
                 if not match(res_name, data.name):
                     continue
+
+            # Set the proton and heteronucleus names.
+            data.proton = proton
+            data.heteronuc = heteronuc
 
             # No vectors.
             if data.xh_vect[0] == None:

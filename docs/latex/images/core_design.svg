@@ -6,14 +6,14 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="744.09448819"
    height="1052.3622047"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
-   sodipodi:docbase="/mnt/removable/relax/docs/latex/images"
+   inkscape:version="0.44"
+   sodipodi:docbase="/mnt/removable/relax/relax-1.3/docs/latex/images"
    sodipodi:docname="core_design.svg">
   <defs
      id="defs4">
@@ -281,11 +281,11 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="478.66397"
-     inkscape:cy="579.98943"
+     inkscape:cx="317.34409"
+     inkscape:cy="610.02604"
      inkscape:document-units="px"
-     inkscape:current-layer="layer6"
-     showgrid="false"
+     inkscape:current-layer="layer5"
+     showgrid="true"
      showguides="false"
      inkscape:window-width="1390"
      inkscape:window-height="970"
@@ -412,7 +412,7 @@
      inkscape:label="Boxes"
      inkscape:groupmode="layer"
      id="layer1"
-     style="display:inline">
+     style="opacity:1;display:inline">
     <rect
        style="opacity:1;fill:#dbffdb;fill-opacity:1;stroke:#006b00;stroke-linejoin:miter;stroke-opacity:1"
        id="rect1381"
@@ -563,14 +563,14 @@
          y="332.47937">Script</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="140.96875"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="122.96875"
        y="355.78015"
        id="text17410"><tspan
          sodipodi:role="line"
          id="tspan17412"
-         x="140.96875"
-         y="355.78015">(macros)</tspan></text>
+         x="122.96875"
+         y="355.78015">(user functions)</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"

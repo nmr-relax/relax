@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 
 ###############################################################################
 #                                                                             #
@@ -453,7 +453,7 @@ if __name__ == "__main__":
     if not profile_flag:
         Relax()
     else:
-        def print_stats(stats):
+        def print_stats(stats, status=0):
             pstats.Stats(stats).sort_stats('time', 'name').print_stats()
 
         profile.Profile.print_stats = print_stats

@@ -126,7 +126,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         # Function call, test, and increment grid_size.
         if not skip:
             # Back calculate the current function value.
-            f = apply(func, (params,)+args)
+            f = func(*(params,)+args)
 
             # Test if the current function value is less than the least function value.
             if f < f_min:
