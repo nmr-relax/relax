@@ -5,7 +5,7 @@ name = 'noe'
 run.create(name, 'noe')
 
 # Load the sequence from a PDB file.
-pdb(name, 'Ap4Aase_new_3.pdb', load_seq=1)
+structure.read_pdb(name, 'Ap4Aase_new_3.pdb', load_seq=1)
 
 # Load the reference spectrum and saturated spectrum peak intensities.
 noe.read(name, file='ref.list', spectrum_type='ref')
