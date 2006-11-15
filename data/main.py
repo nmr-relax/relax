@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,46 +21,60 @@
 ###############################################################################
 
 
-__all__ = ['angles',
-           'command',
-           'dasha',
-           'diffusion_tensor',
-           'dx',
-           'eliminate',
-           'fix',
-           'gpl',
-           'grace',
-           'help',
-           'init_data'
-           'interpreter',
-           'jw_mapping',
-           'minimisation',
-           'model_free',
-           'model_selection',
-           'molmol',
-           'monte_carlo',
-           'noe',
-           'nuclei',
-           'palmer',
-           'pdb',
-           'pymol',
-           'relax_data',
-           'relax_fit',
-           'run',
-           'rw',
-           'select',
-           'sequence',
-           'state',
-           'thread',
-           'tab_completion',
-           'unselect',
-           'value',
-           'view',
-           'vmd']
+from math import pi
+from re import match
+from types import DictType, ListType
 
-__doc__ = \
-"""Package for the prompt based interface.
+from data_classes import Element, Residue, SpecificData
+from diff_tensor import DiffTensorData
 
-The functions should only contain code for checking the validity of arguments.  If any other code is
-required, this should be placed elsewhere.
-"""
+
+
+# Global data.
+##############
+
+class Data:
+    def __init__(self):
+        """Class containing all the program data."""
+
+        # Fundamental constants.
+        #self.h = 6.6260755e-34    # Old low precision value.
+        self.h = 6.62606876e-34
+        self.h_bar = self.h / ( 2.0*pi )
+        self.mu0 = 4.0 * pi * 1e-7
+
+        # PDB data.
+        self.pdb = SpecificData()
+
+        # Diffusion data.
+        self.diff = DiffTensorData()
+
+        # The residue specific data.
+        self.res = Residue()
+
+        # The name of the runs.
+        self.run_names = []
+
+        # The type of the runs.
+        self.run_types = []
+
+        # Hybrid models.
+        self.hybrid_runs = {}
+
+        # Global minimisation statistics.
+        self.chi2 = {}
+        self.iter = {}
+        self.f_count = {}
+        self.g_count = {}
+        self.h_count = {}
+        self.warning = {}
+
+
+    def __repr__(self):
+        text = "The data class containing all permanent program data.\n"
+        text = text + "The class contains the following objects:\n"
+        for name in dir(self):
+            if match("^_", name):
+                continue
+            text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
+        return text

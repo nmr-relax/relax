@@ -59,6 +59,7 @@ from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
 from pdb import PDB
+from pymol import Pymol
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
@@ -116,6 +117,7 @@ class Interpreter:
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
         self._PDB = PDB(relax)
+        self._Pymol = Pymol(relax)
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Results = Results(relax)
@@ -173,6 +175,7 @@ class Interpreter:
         noe = self._Noe
         palmer = self._Palmer
         pdb = self._PDB
+        pymol = self._Pymol
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
         results = self._Results

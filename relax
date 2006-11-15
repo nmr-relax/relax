@@ -67,7 +67,7 @@ except ImportError:
 
 # relax modules.
 from colour import Colour
-from data import Data
+from data.main import Data
 from errors import RelaxErrors, RelaxWarnings
 from io import IO
 from generic_fns.main import Generic
@@ -400,7 +400,7 @@ class Relax:
 
 
     def spacing(self, string, width=100):
-        """Function for formatting the string to be centered to 100 spaces."""
+        """Function for formatting the string to be centred to 100 spaces."""
 
         # Calculate the number of spaces needed.
         spaces = (width - len(string)) / 2

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2006 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,46 +21,7 @@
 ###############################################################################
 
 
-__all__ = ['angles',
-           'command',
-           'dasha',
-           'diffusion_tensor',
-           'dx',
-           'eliminate',
-           'fix',
-           'gpl',
-           'grace',
-           'help',
-           'init_data'
-           'interpreter',
-           'jw_mapping',
-           'minimisation',
-           'model_free',
-           'model_selection',
-           'molmol',
-           'monte_carlo',
-           'noe',
-           'nuclei',
-           'palmer',
-           'pdb',
-           'pymol',
-           'relax_data',
-           'relax_fit',
-           'run',
-           'rw',
-           'select',
-           'sequence',
-           'state',
-           'thread',
-           'tab_completion',
-           'unselect',
-           'value',
-           'view',
-           'vmd']
-
-__doc__ = \
-"""Package for the prompt based interface.
-
-The functions should only contain code for checking the validity of arguments.  If any other code is
-required, this should be placed elsewhere.
-"""
+__all__ = [ 'data_classes',
+            'diff_tensor',
+            'diff_tensor_auto_objects',
+            'main' ]
