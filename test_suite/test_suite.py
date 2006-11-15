@@ -263,8 +263,8 @@ class Test_suite:
                 sys.stdout.write('#')
             sys.stdout.write("\n\n")
 
-            # Reinitialise all data.
-            self.relax.interpreter._Init_data.init()
+            # Reset relax.
+            self.relax.interpreter._Reset.reset()
 
             # The run name.
             self.run = 'test'
