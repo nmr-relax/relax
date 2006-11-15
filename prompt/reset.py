@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,14 +24,18 @@
 from data.main import Data
 
 
-class Init_data:
+class Reset:
     def __init__(self, relax):
         """Class containing the function for reinitialising self.relax.data"""
 
         self.relax = relax
 
 
-    def init(self):
-        """Function for reinitialising self.relax.data"""
+    def reset(self):
+        """Reset relax.
+        
+        All of the data stored in self.relax.data will be erased and hence relax will return to its
+        initial state.
+        """
 
         self.relax.data = Data()
