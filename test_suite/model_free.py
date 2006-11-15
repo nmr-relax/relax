@@ -281,8 +281,8 @@ class Mf:
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
         # Read the PDF file and set the vectors.
-        self.relax.interpreter._PDB.read(run, file='pdb', dir=path, model=1, load_seq=0)
-        self.relax.interpreter._PDB.vectors(run, heteronuc='N', proton='H')
+        self.relax.interpreter._Structure.read_pdb(run, file='pdb', dir=path, model=1, load_seq=0)
+        self.relax.interpreter._Structure.vectors(run, heteronuc='N', proton='H')
 
         # Read the relaxation data.
         self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)

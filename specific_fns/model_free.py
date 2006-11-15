@@ -3268,7 +3268,7 @@ class Model_free(Common_functions):
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
-            self.relax.generic.pdb.read(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
+            self.relax.generic.structure.read(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
             return 1
         else:
             return 0
@@ -3461,7 +3461,7 @@ class Model_free(Common_functions):
                 raise RelaxError, "The XH unit vector " + self.file_line[self.col['xh_vect']] + " is invalid."
 
             # Set the vector.
-            self.relax.generic.pdb.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
+            self.relax.generic.structure.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
 
 
     def remove_tm(self, run, res_num):
