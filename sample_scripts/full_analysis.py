@@ -12,7 +12,7 @@ from re import search
 
 
 class Main:
-    def __init__(self):
+    def __init__(self, relax):
         """Script for black-box model-free analysis.
 
         The value of the variable self.diff_model will determine the behaviour of this script.  The
@@ -123,6 +123,9 @@ class Main:
 
         The final black-box model-free results will be placed in the file 'final/results'.
         """
+
+        # Setup.
+        self.relax = relax
 
         # The diffusion model (this is the variable which should be changed).
         self.diff_model = 'local_tm'
@@ -272,8 +275,9 @@ class Main:
             # Monte Carlo simulations.
             ##########################
 
-            # Fix the diffusion tensor.
-            fix('final', 'diff')
+            # Fix the diffusion tensor (if it exists!).
+            if self.relax.data.diff.has_key('final'):
+                fix('final', 'diff')
 
             # Simulations.
             monte_carlo.setup('final', number=200)
@@ -418,4 +422,4 @@ class Main:
 
 
 # The main class.
-Main()
+Main(self.relax)
