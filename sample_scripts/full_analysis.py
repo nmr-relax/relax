@@ -12,7 +12,7 @@ from re import search
 
 
 class Main:
-    def __init__(self):
+    def __init__(self, relax):
         """Script for black-box model-free analysis.
 
         The value of the variable self.diff_model will determine the behaviour of this script.  The
@@ -123,6 +123,9 @@ class Main:
 
         The final black-box model-free results will be placed in the file 'final/results'.
         """
+
+        # Setup.
+        self.relax = relax
 
         # The diffusion model (this is the variable which should be changed).
         self.diff_model = 'local_tm'
@@ -246,9 +249,15 @@ class Main:
                 # Determine which was the last round of optimisation for each of the models.
                 self.round = self.determine_rnd(model=model) - 1
 
-                # Skip the diffusion model if no directories begining with 'round_' exist.
+                # If no directories begining with 'round_' exist, the script has not been properly utilised! 
                 if self.round < 1:
-                    continue
+                    # Construct the name of the diffusion tensor.
+                    name = model
+                    if model == 'prolate' or model == 'oblate':
+                        name = name + ' spheroid'
+
+                    # Throw an error to prevent misuse of the script.
+                    raise RelaxError, "Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script."
 
                 # Create the run.
                 run.create(model, 'mf')
@@ -266,8 +275,9 @@ class Main:
             # Monte Carlo simulations.
             ##########################
 
-            # Fix the diffusion tensor.
-            fix('final', 'diff')
+            # Fix the diffusion tensor (if it exists!).
+            if self.relax.data.diff.has_key('final'):
+                fix('final', 'diff')
 
             # Simulations.
             monte_carlo.setup('final', number=200)
@@ -412,4 +422,4 @@ class Main:
 
 
 # The main class.
-Main()
+Main(self.relax)
